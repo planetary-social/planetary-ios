@@ -1,0 +1,190 @@
+
+//  Post.swift
+//  FBTTUnitTests
+//
+//  Created by Christoph on 1/28/19.
+//  Copyright © 2019 Verse Communications Inc. All rights reserved.
+//
+
+import Foundation
+import SwiftyMarkdown
+
+class Post: ContentCodable {
+
+    enum CodingKeys: String, CodingKey {
+        case blobs
+        case branch
+        case hashtags
+        case mentions
+        case recps
+        case reply
+        case root 
+        case text
+        case type
+    }
+
+    let branch: [Identifier]?
+    let blobs: [Blob]?
+    let hashtags: Hashtags?
+    let mentions: [Mention]?
+    let recps: [RecipientElement]?
+    let reply: [Identifier: Identifier]?
+    let root: MessageIdentifier?
+    let text: String
+    let type: ContentType
+
+    // MARK: Calculated temporal unserialized properties
+
+    internal var _attributedString: NSMutableAttributedString?
+
+    // MARK: Lifecycle
+
+    /// Intended to be used when publishing a new Post from a UI.
+    /// Check out NewPostViewController for an example.
+    init(attributedText: NSAttributedString,
+         root: MessageIdentifier? = nil,
+         branches: [MessageIdentifier]? = nil)
+    {
+        // required
+        self.blobs = nil
+        self.branch = branches
+        self.hashtags = attributedText.string.hashtags()
+        self.mentions = attributedText.mentions()
+        self.root = root
+        self.text = attributedText.markdown
+        self.type = .post
+
+        // unused
+        self.recps = nil
+        self.reply = nil
+    }
+
+    /// Intended to be used to create models in the view database or unit tests.
+    init(blobs: Blobs? = nil,
+         branches: [MessageIdentifier]? = nil,
+         hashtags: Hashtags? = nil,
+         mentions: [Mention]? = nil,
+         root: MessageIdentifier? = nil,
+         text: String)
+    {
+        // required
+        self.blobs = blobs
+        self.branch = branches
+        self.hashtags = hashtags
+        self.mentions = mentions
+        self.root = root
+        self.text = text
+        self.type = .post
+        
+        // unused
+        self.recps = nil
+        self.reply = nil
+    }
+
+    /// Intended to be used to decode a model from JSON.
+    required init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        blobs = try? values.decode([Blob].self, forKey: .blobs)
+        branch = Post.decodeBranch(from: values)
+        hashtags = try? values.decode(Hashtags.self, forKey: .hashtags)
+        mentions = try? values.decode([Mention].self, forKey: .mentions)
+        recps = try? values.decode([RecipientElement].self, forKey: .recps)
+        reply = try? values.decode([Identifier: Identifier].self, forKey: .reply)
+        root = try? values.decode(Identifier.self, forKey: .root)
+        text = try values.decode(String.self, forKey: .text)
+        type = try values.decode(ContentType.self, forKey: .type)
+    }
+
+    private static func decodeBranch(from values: KeyedDecodingContainer<Post.CodingKeys>) -> [Identifier]? {
+        if let branch = try? values.decode(Identifier.self, forKey: .branch) {
+            return [branch]
+        } else {
+            return try? values.decode([Identifier].self, forKey: .branch)
+        }
+    }
+}
+
+extension Post {
+
+    var isRoot: Bool {
+        return self.root == nil
+    }
+
+    func doesMention(_ identity: Identity?) -> Bool {
+        guard let identity = identity else { return false }
+        return self.mentions?.contains(where: { $0.identity == identity }) ?? false
+    }
+}
+
+/* code to handle both kinds of recpients:
+ patchcore publishes this object instead of just the key as a string
+ { link: @pubkey, name: somenick}
+ 
+ 
+ handling from https://stackoverflow.com/a/49023027
+*/
+
+enum RecipientElement: Codable {
+    case namedKey(RecipientNamedKey)
+    case string(Identity)
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let x = try? container.decode(Identity.self) {
+            self = .string(x)
+            return
+        }
+        if let x = try? container.decode(RecipientNamedKey.self) {
+            self = .namedKey(x)
+            return
+        }
+        throw DecodingError.typeMismatch(RecipientElement.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for RecipientElement"))
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .namedKey(let x):
+            try container.encode(x.link)
+        case .string(let x):
+            try container.encode(x)
+        }
+    }
+}
+
+struct RecipientNamedKey: Codable {
+    let link: Identity
+    let name: String
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case link
+    }
+}
+
+
+/* TODO: there is a cleaner solution here
+ tried this to get [Identity] but got the following error so I added getRecipientIdentities as a workaround
+ Constrained extension must be declared on the unspecialized generic type 'Array' with constraints specified by a 'where' clause
+ 
+ 
+ typealias Recipients = [RecipientElement]
+ 
+ extension Recipients {
+     func recipients() -> [Identity] {
+        return getRecipientIdentities(self)
+     }
+ }
+*/
+func getRecipientIdentities(recps: [RecipientElement]) -> [Identity] {
+    var identities: [Identity] = []
+    for r in recps {
+        switch r {
+        case .string(let str):
+            identities.append(str)
+        case .namedKey(let nk):
+            identities.append(nk.link)
+        }
+    }
+    return identities
+}

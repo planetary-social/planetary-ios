@@ -1,0 +1,77 @@
+[
+    {
+        "type": "about",
+        "about": "@WidzxlRBJEK6Tnz9S1n008BjvjLBFSQzKKuATgqMl94=.ed25519",
+        "name": "cryptix-verse"
+    },
+    {
+        "type": "about",
+        "about": "@p13zSAiOpguI9nsawkGijsnMfWmFd5rlUNpzekEE+vI=.ed25519",
+        "name": "cryptix",
+        "image": {
+            "link": "&Gcs9kWaQAzJo8Vyw207B0IRUWrVJ+AW9rxCHbse8t/E=.sha256",
+            "size": 153268,
+            "type": "image/png",
+            "width": 275,
+            "height": 275
+        },
+        "description": "If you want to contact me on a different channel, see my [pub key ledger](%U5wfpbfWURifzmqBV3xizc/m1N7okzbsk3Sr4s8zOcY=.sha256).\n\n\nIf you like techno music, I sometimes share releases I like [here](%oSYWDGRYFpfIs2metXliqBb5ItftW++4vXjpx89tfNA=.sha256) and you can find set recordings [here](%A5FV7cjpgD9mSOUEuvS2PHvFhLExdh83lMrhtEZ5xS4=.sha256). If you want to surprise me, I regularly update [my bandcamp wishlist](https://bandcamp.com/werryb/wishlist).\n\nI also hack on a lot of stuff. #golang if I can but try to be more pragmatic these days.\n\nAlso working on [tale:net](%pa69+6ICtclE8lbJmSCpS0BlGU2polpx5VY543bhEWk=.sha256) (on [github](https://github.com/talenet/talenet)).\n* Here is it's initial mission statement: %q6Im24T1TPRiHrBA5OmjN1dW3Ss4xYuGH+jPAgDdaCQ=.sha256\n* find some history on #talenet and our [blog](https://blog.t4l3.net)"
+    },
+    {
+        "type": "about",
+        "about": "@p13zSAiOpguI9nsawkGijsnMfWmFd5rlUNpzekEE+vI=.ed25519",
+        "image": "&Koc0kavSmAw37T2gTmZgUesgYPlH2BPz5O8GDQehS6g=.sha256"
+    },
+    {
+        "type": "about",
+        "about": "@VJM7w1W19ZsKmG2KnfaoKIM66BRoreEkzaVm/J//wl8=.ed25519",
+        "name": "one.butt.nz",
+        "description": "newbie-friendly pub hosted by [@dinosaur](@6ilZq3kN0F+dXFHAPjAwMm87JEb/VdB+LC9eIMW3sa0=.ed25519)"
+    },
+    {
+        "type": "about",
+        "about": "%8KZ8n0sWmm7tvhCXJr/dNvK1VxpXk0QHLW5SctWnaDo=.sha256",
+        "attendee": {
+            "link": "@vzoU7/XuBB5B0xueC9NHFr9Q76VvPktD9GUkYgN9lAc=.ed25519"
+        }
+    },
+    {
+        "type": "about",
+        "about": "%VYMDiAmQreopygieZnVpC4qUSGYzzoxwrQ6HyNCycS0=.sha256",
+        "name": "go-muxrpc"
+    },
+    {
+        "type": "about",
+        "about": "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519",
+        "name": "christoph@verse",
+        "image": {
+            "link": "&Gcs9kWaQAzJo8Vyw207B0IRUWrVJ+AW9rxCHbse8t/E=.sha256",
+            "size": 153268,
+            "type": "image/png",
+            "width": 275,
+            "height": 275
+        },
+        "description": "I'm working with Tom Coates, rabble, cryptix, and Christian Bundy on an SSB iOS client.  Looking forward to meeting the community at ssb-camp in late February :)\n\nProfessional:  https://hermiteer.com\nPersonal:  http://soundcloud.com/rumblemunk"
+    },
+    {
+        "type": "about",
+        "name": "Tom Coates",
+        "about": "@7A2ZxHX+WyIVezulnt0FogzeUVWLq3YHmtX3r7ja4Fw=.ed25519",
+        "image": "&j88Q6SmaCVEut41UHUqIybVh8Edn+S22khZ/3FtiTt4=.sha256",
+        "description": "The personal Scuttlebutt account of Tom Coates - technologist, designer and occasional writer. Prev: Thington, BBC, Yahoo Brickhouse, Time Out etc."
+    },
+    {
+        "type": "about",
+        "name": "rabble",
+        "about": "@5fYRrgyJON0r0R9SPrK0oxR1XKhqNXqiN0FBX+MgfH4=.ed25519",
+        "description": "This is an alternate account for [@rabble](@vzoU7/XuBB5B0xueC9NHFr9Q76VvPktD9GUkYgN9lAc=.ed25519)",
+        "image": "&+EJonWx5LLtMGan/QIj6aoY/Bn1UnM8d1FqlGDiO9+A=.sha256"
+    },
+    {
+        "type": "about",
+        "name": "Christian Bundy",
+        "about": "@+oaWWDs8g73EZFUMfW37R/ULtFEjwKN/DczvdYihjbU=.ed25519",
+        "description": "Human in [Cascadia][1] trying to do the right thing(s). **We have enough for everyone.**\n\n- Testing #manyverse on my [other identity][7].\n- Working with software systems at [Fraction][2].\n- Raising [Jerome and Sunshine][3] with [Kathleen][4]. \n- Tinkering with [@libra.fraction.io][5] and [@Current Events][6].\n\n```\n _______________________________ \n< no cages, no gods, no masters >\n ------------------------------- \n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||\n\n```\n\n[1]: https://en.wikipedia.org/wiki/Cascadia_(bioregion)\n[2]: https://fraction.io\n[3]: %5izJsbsGq/u4EDyhLUwHtdfIYwBc2FGjKaedNvm2ZqI=.sha256\n[4]: @GSuGLzJa8t3aJCLvs66Ekn7MXdr3yqCSzsd6z2iUEBY=.ed25519\n[5]: @gTsBPQbdSd763h0qoZsBjPlgWbhKKmMFW8kmTv/XrV8=.ed25519 \n[6]: @wNmXqk80DL4FrBjzZcYqbKs/SpsPv6MVX6BLICabPfI=.ed25519\n[7]: @9hl0g6iMzu7U4vXUdSJtFJ1v+E5WJkYVX90C1kt/7Ks=.ed25519",
+        "image": "&nBmGtTlQew5bSiy5CwKA7Qz6Qfj6UYzmf9gYgcNg+90=.sha256"
+    }
+]

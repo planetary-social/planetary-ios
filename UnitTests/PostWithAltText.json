@@ -1,0 +1,25 @@
+{
+    "key": "%qBZw41oHFPCmtY6VEY1Qh70zliWnNRliRVskWfJtmd4=.sha256",
+    "value": {
+        "previous": "%cWFNBZPsQgHJJXIOldVs9PDdzdU//Yx82dstAjiZVx8=.sha256",
+        "sequence": 14045,
+        "author": "@f/6sQ6d2CMxRUhLpspgGIulDxDCwYD7DzFzPNr7u5AU=.ed25519",
+        "timestamp": 1567616421471,
+        "hash": "sha256",
+        "content": {
+            "type": "post",
+            "text": "![we-must-get-back-to-oakland-at-once.jpg](&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256 \"We must get back to Oakland at once!\")",
+            "mentions": [
+                {
+                    "link": "&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256",
+                    "name": "we-must-get-back-to-oakland-at-once.jpg",
+                    "size": 146579,
+                    "type": "image/jpeg"
+                }
+            ],
+            "channel": "oakland"
+        },
+        "signature": "TXqEe8JongMRe3OdpXuTsg6gfVF7IdPObZUchKkcA0ZjLd//7ZSIolKxJd1atw6Roq/1d/Ohmg+Ntj848sbnAg==.sig.ed25519"
+    },
+    "timestamp": 0
+}

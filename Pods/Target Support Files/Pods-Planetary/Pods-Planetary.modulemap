@@ -1,0 +1,6 @@
+framework module Pods_Planetary {
+  umbrella header "Pods-Planetary-umbrella.h"
+
+  export *
+  module * { export * }
+}

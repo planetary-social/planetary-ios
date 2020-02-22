@@ -1,0 +1,73 @@
+//
+//  PostTruncatedTextCache.swift
+//  Planetary
+//
+//  Created by Christoph on 12/16/19.
+//  Copyright © 2019 Verse Communications Inc. All rights reserved.
+//
+
+import Foundation
+
+/// An in-memory cache of `NSAttributedString` generated from truncated
+/// `Post.text` markdown.  This different than `PostTextCache` which is
+/// the full text, not truncated.  Note that the values between the two caches are NOT
+/// shared because they will likely be styled aka "attributed" differently.
+///
+/// This is suitable for showing truncated post content, like on the Home screen.
+class PostTruncatedTextCache: AttributedStringCache {
+
+    /// If the truncated length is too close to the actual length of
+    /// the string, then there is not much point in truncating it.  Use
+    /// the two values to determine when truncation should happen.
+    /// Be aware of how these values will affect `NSAttributedString.TruncationSettings`.
+    /// If the truncation setting limit is too high, then the string will be
+    /// shown without a See More.
+    private let truncationLength = Int(600)
+    private let lengthToTruncate = Int(700)
+
+    @discardableResult
+    func from(_ post: KeyValue) -> NSAttributedString {
+
+        guard let text = post.value.content.post?.text else {
+            assertionFailure("KeyValue is not a Post")
+            return NSAttributedString(string: "KeyValue is not a Post")
+        }
+
+        // truncate the text and generate the string
+        // one optimization would be to check the cache
+        // before bothering to truncate the text
+        let truncated = self.truncate(text)
+        return self.attributedString(for: post.key, markdown: truncated)
+    }
+
+    /// Returns the original string or a truncated version based on the configured
+    /// `truncationLength` and `lengthToTruncate`.  The lengths are
+    /// overlapping so ensure that a string is sufficiently long enough past the minimum
+    /// that truncating won't impact layout.
+    private func truncate(_ markdown: String) -> String {
+        if markdown.count > self.lengthToTruncate {
+            return String(markdown.prefix(self.truncationLength))
+        } else {
+            return markdown
+        }
+    }
+
+    /// Convenience func to transform an array of `Post` into the
+    /// lower level `KeyMarkdown`.
+    func prefill(_ posts: KeyValues) {
+        let markdowns: [KeyMarkdown] = posts.compactMap {
+            guard let post = $0.value.content.post else { return nil }
+            let truncated = self.truncate(post.text)
+            return (key: $0.key, markdown: truncated)
+        }
+        self.prefill(markdowns)
+    }
+
+    /// Adds analytics to the underlying `invalidate()` call.
+    override func invalidate() {
+        Analytics.trackPurge(.truncatedText,
+                             from: (count: self.count, numberOfBytes: self.estimatedBytes),
+                             to: (count: 0, numberOfBytes: self.estimatedBytes))
+        super.invalidate()
+    }
+}

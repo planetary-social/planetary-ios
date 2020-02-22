@@ -1,0 +1,8 @@
+{
+    "type": "vote",
+    "vote": {
+        "link": "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.sha256",
+        "value": 1,
+        "expression": "Like"
+    }
+}

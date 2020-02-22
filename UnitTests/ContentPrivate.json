@@ -1,0 +1,33 @@
+[
+    {
+        "type": "vote",
+        "vote": {
+            "link": "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.sha256",
+            "value": 1,
+            "expression": "Like"
+        },
+        "recps": [
+            "@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519",
+            "@3cEmxKx9ScNK8Pd1yz0qh5A2URzIbL7+VvpjfETU050=.ed25519",
+            "@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519",
+            "@27PkouhQuhr9Ffn+rgSnN0zabcfoE31qD3ZMkCs3c+0=.ed25519",
+            "@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519"
+        ]
+    },
+    {
+        "type": "post",
+        "recps": [
+            "@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519",
+            {
+                "link": "@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519",
+                "name": "userOne"
+            },
+            {
+                "link": "@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519",
+                "name": "realUserThree"
+            }
+        ],
+        "subject": null,
+        "text": "some PM for you"
+    }
+]

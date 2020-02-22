@@ -1,0 +1,65 @@
+PODS:
+  - ImageSlideshow (1.8.0):
+    - ImageSlideshow/Core (= 1.8.0)
+  - ImageSlideshow/Core (1.8.0)
+  - KeychainSwift (15.0.0)
+  - Mixpanel (3.5.1)
+  - Multipart (0.1.0)
+  - PhoneNumberKit (2.6.0):
+    - PhoneNumberKit/PhoneNumberKitCore (= 2.6.0)
+    - PhoneNumberKit/UIKit (= 2.6.0)
+  - PhoneNumberKit/PhoneNumberKitCore (2.6.0)
+  - PhoneNumberKit/UIKit (2.6.0):
+    - PhoneNumberKit/PhoneNumberKitCore
+  - SQLite.swift (0.12.2):
+    - SQLite.swift/standard (= 0.12.2)
+  - SQLite.swift/standard (0.12.2)
+  - SVProgressHUD (2.2.5)
+  - SwiftyMarkdown (0.6.0)
+  - ZendeskSDK (3.0.3):
+    - ZendeskSDK/Providers (= 3.0.3)
+    - ZendeskSDK/UI (= 3.0.3)
+  - ZendeskSDK/Core (3.0.3)
+  - ZendeskSDK/Providers (3.0.3):
+    - ZendeskSDK/Core
+  - ZendeskSDK/UI (3.0.3):
+    - ZendeskSDK/Core
+    - ZendeskSDK/Providers
+
+DEPENDENCIES:
+  - ImageSlideshow (= 1.8.0)
+  - KeychainSwift (= 15.0.0)
+  - Mixpanel (= 3.5.1)
+  - Multipart (= 0.1.0)
+  - PhoneNumberKit (= 2.6.0)
+  - SQLite.swift (= 0.12.2)
+  - SVProgressHUD (= 2.2.5)
+  - SwiftyMarkdown (= 0.6.0)
+  - ZendeskSDK (= 3.0.3)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - ImageSlideshow
+    - KeychainSwift
+    - Mixpanel
+    - Multipart
+    - PhoneNumberKit
+    - SQLite.swift
+    - SVProgressHUD
+    - SwiftyMarkdown
+    - ZendeskSDK
+
+SPEC CHECKSUMS:
+  ImageSlideshow: 197130fe349aafa9446f54277c792551d41eadf9
+  KeychainSwift: c6fc018d287804faf1ce3f258a1e51a7178c8382
+  Mixpanel: 1839fc7299c43b009c301883f895423715437431
+  Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
+  PhoneNumberKit: 167ee1f0bbb6efce7c62559e620eae745595532f
+  SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftyMarkdown: 698fe6b283dddac69747f4e08ed0d067c18e0356
+  ZendeskSDK: 12f516028e26e2e47a861cc0f5da968f4db3989a
+
+PODFILE CHECKSUM: 7b8d2c69035bacc733c4c138090c24dd101c8f8a
+
+COCOAPODS: 1.6.1

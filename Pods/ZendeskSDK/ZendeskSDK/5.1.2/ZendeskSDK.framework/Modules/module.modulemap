@@ -1,0 +1,11 @@
+framework module ZendeskSDK {
+  umbrella header "ZendeskSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module ZendeskSDK.Swift {
+    header "ZendeskSDK-Swift.h"
+    requires objc
+}

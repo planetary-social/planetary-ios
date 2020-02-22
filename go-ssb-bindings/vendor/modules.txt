@@ -1,0 +1,209 @@
+# github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96
+github.com/AndreasBriese/bbloom
+# github.com/RoaringBitmap/roaring v0.4.21-0.20190925020156-96f2302555b6
+github.com/RoaringBitmap/roaring
+# github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412
+github.com/agl/ed25519
+github.com/agl/ed25519/edwards25519
+github.com/agl/ed25519/extra25519
+# github.com/cryptix/go v1.5.0
+github.com/cryptix/go/encodedTime
+github.com/cryptix/go/logging
+github.com/cryptix/go/logging/countconn
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
+# github.com/dgraph-io/badger v2.0.0-rc2+incompatible
+github.com/dgraph-io/badger
+github.com/dgraph-io/badger/options
+github.com/dgraph-io/badger/pb
+github.com/dgraph-io/badger/skl
+github.com/dgraph-io/badger/table
+github.com/dgraph-io/badger/y
+# github.com/dgryski/go-farm v0.0.0-20191112170834-c2139c5d712b
+github.com/dgryski/go-farm
+# github.com/dustin/go-humanize v1.0.0
+github.com/dustin/go-humanize
+# github.com/edsrzf/mmap-go v1.0.0
+github.com/edsrzf/mmap-go
+# github.com/glycerine/go-unsnap-stream v0.0.0-20181221182339-f9677308dec2
+github.com/glycerine/go-unsnap-stream
+# github.com/go-kit/kit v0.9.0
+github.com/go-kit/kit/log
+github.com/go-kit/kit/log/level
+github.com/go-kit/kit/metrics
+# github.com/go-logfmt/logfmt v0.4.0
+github.com/go-logfmt/logfmt
+# github.com/golang/protobuf v1.3.2
+github.com/golang/protobuf/proto
+# github.com/golang/snappy v0.0.1
+github.com/golang/snappy
+# github.com/hashicorp/errwrap v1.0.0
+github.com/hashicorp/errwrap
+# github.com/hashicorp/go-multierror v1.0.0
+github.com/hashicorp/go-multierror
+# github.com/keks/nocomment v0.0.0-20181007001506-30c6dcb4a472
+github.com/keks/nocomment
+# github.com/keks/persist v0.0.0-20191006175951-43c124092b8b
+github.com/keks/persist
+# github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515
+github.com/kr/logfmt
+# github.com/libp2p/go-reuseport v0.0.1
+github.com/libp2p/go-reuseport
+# github.com/mattn/go-sqlite3 v1.11.0
+github.com/mattn/go-sqlite3
+# github.com/mschoch/smat v0.0.0-20160514031455-90eadee771ae
+github.com/mschoch/smat
+# github.com/philhofer/fwd v1.0.0
+github.com/philhofer/fwd
+# github.com/pkg/errors v0.8.1
+github.com/pkg/errors
+# github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237
+github.com/remyoudompheng/bigfft
+# github.com/tinylib/msgp v1.1.0
+github.com/tinylib/msgp/msgp
+# github.com/ugorji/go/codec v1.1.7
+github.com/ugorji/go/codec
+# github.com/willf/bitset v1.1.10
+github.com/willf/bitset
+# go.cryptoscope.co/librarian v0.2.0
+go.cryptoscope.co/librarian
+go.cryptoscope.co/librarian/badger
+go.cryptoscope.co/librarian/mkv
+# go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8
+go.cryptoscope.co/luigi
+go.cryptoscope.co/luigi/mfr
+# go.cryptoscope.co/margaret v0.1.3-0.20200130132800-da010cde3254
+go.cryptoscope.co/margaret
+go.cryptoscope.co/margaret/codec/msgpack
+go.cryptoscope.co/margaret/internal/persist
+go.cryptoscope.co/margaret/internal/persist/fs
+go.cryptoscope.co/margaret/internal/persist/mkv
+go.cryptoscope.co/margaret/internal/persist/sqlite
+go.cryptoscope.co/margaret/internal/seqobsv
+go.cryptoscope.co/margaret/multilog
+go.cryptoscope.co/margaret/multilog/badger
+go.cryptoscope.co/margaret/multilog/roaringfiles
+go.cryptoscope.co/margaret/offset2
+# go.cryptoscope.co/muxrpc v1.5.4-0.20200212114344-0403d7496950
+go.cryptoscope.co/muxrpc
+go.cryptoscope.co/muxrpc/codec
+# go.cryptoscope.co/netwrap v0.1.1
+go.cryptoscope.co/netwrap
+# go.cryptoscope.co/secretstream v1.2.2-0.20200130134156-5301f8b5dcff
+go.cryptoscope.co/secretstream
+go.cryptoscope.co/secretstream/boxstream
+go.cryptoscope.co/secretstream/internal/lo25519
+go.cryptoscope.co/secretstream/secrethandshake
+# go.cryptoscope.co/ssb v0.0.0-20200213220200-31c6f1d67c94
+go.cryptoscope.co/ssb
+go.cryptoscope.co/ssb/blobstore
+go.cryptoscope.co/ssb/graph
+go.cryptoscope.co/ssb/indexes
+go.cryptoscope.co/ssb/internal/ctxutils
+go.cryptoscope.co/ssb/internal/luigiutils
+go.cryptoscope.co/ssb/internal/multiserver
+go.cryptoscope.co/ssb/internal/mutil
+go.cryptoscope.co/ssb/internal/neterr
+go.cryptoscope.co/ssb/internal/netwraputil
+go.cryptoscope.co/ssb/internal/transform
+go.cryptoscope.co/ssb/message
+go.cryptoscope.co/ssb/message/legacy
+go.cryptoscope.co/ssb/message/multimsg
+go.cryptoscope.co/ssb/multilogs
+go.cryptoscope.co/ssb/network
+go.cryptoscope.co/ssb/plugins/blobs
+go.cryptoscope.co/ssb/plugins/control
+go.cryptoscope.co/ssb/plugins/get
+go.cryptoscope.co/ssb/plugins/gossip
+go.cryptoscope.co/ssb/plugins/private
+go.cryptoscope.co/ssb/plugins/publish
+go.cryptoscope.co/ssb/plugins/rawread
+go.cryptoscope.co/ssb/plugins/replicate
+go.cryptoscope.co/ssb/plugins/status
+go.cryptoscope.co/ssb/plugins/whoami
+go.cryptoscope.co/ssb/plugins2
+go.cryptoscope.co/ssb/private
+go.cryptoscope.co/ssb/repo
+go.cryptoscope.co/ssb/repo/migrations
+go.cryptoscope.co/ssb/sbot
+# go.mindeco.de/ssb-gabbygrove v0.1.6
+go.mindeco.de/ssb-gabbygrove
+# golang.org/x/crypto v0.0.0-20191002192127-34f69633bfdc
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/nacl/auth
+golang.org/x/crypto/nacl/box
+golang.org/x/crypto/nacl/secretbox
+golang.org/x/crypto/poly1305
+golang.org/x/crypto/salsa20/salsa
+# golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0
+golang.org/x/exp/rand
+# golang.org/x/net v0.0.0-20190909003024-a7b16738d86b
+golang.org/x/net/internal/timeseries
+golang.org/x/net/trace
+# golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
+golang.org/x/sync/errgroup
+# golang.org/x/sys v0.0.0-20191007154456-ef33b2fb2c41
+golang.org/x/sys/cpu
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.3.2
+golang.org/x/text/encoding
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/unicode
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/runes
+golang.org/x/text/transform
+# gonum.org/v1/gonum v0.0.0-20190911200027-40d3308efe80
+gonum.org/v1/gonum/blas
+gonum.org/v1/gonum/blas/blas64
+gonum.org/v1/gonum/blas/cblas128
+gonum.org/v1/gonum/blas/gonum
+gonum.org/v1/gonum/floats
+gonum.org/v1/gonum/graph
+gonum.org/v1/gonum/graph/encoding
+gonum.org/v1/gonum/graph/encoding/dot
+gonum.org/v1/gonum/graph/formats/dot
+gonum.org/v1/gonum/graph/formats/dot/ast
+gonum.org/v1/gonum/graph/formats/dot/internal/astx
+gonum.org/v1/gonum/graph/formats/dot/internal/errors
+gonum.org/v1/gonum/graph/formats/dot/internal/lexer
+gonum.org/v1/gonum/graph/formats/dot/internal/parser
+gonum.org/v1/gonum/graph/formats/dot/internal/token
+gonum.org/v1/gonum/graph/internal/linear
+gonum.org/v1/gonum/graph/internal/ordered
+gonum.org/v1/gonum/graph/internal/set
+gonum.org/v1/gonum/graph/internal/uid
+gonum.org/v1/gonum/graph/iterator
+gonum.org/v1/gonum/graph/path
+gonum.org/v1/gonum/graph/simple
+gonum.org/v1/gonum/graph/traverse
+gonum.org/v1/gonum/internal/asm/c128
+gonum.org/v1/gonum/internal/asm/c64
+gonum.org/v1/gonum/internal/asm/f32
+gonum.org/v1/gonum/internal/asm/f64
+gonum.org/v1/gonum/internal/cmplx64
+gonum.org/v1/gonum/internal/math32
+gonum.org/v1/gonum/lapack
+gonum.org/v1/gonum/lapack/gonum
+gonum.org/v1/gonum/lapack/lapack64
+gonum.org/v1/gonum/mat
+# modernc.org/fileutil v1.0.1-0.20191220121946-b2535a37172b
+modernc.org/fileutil
+# modernc.org/internal v1.0.0
+modernc.org/internal/buffer
+modernc.org/internal/file
+modernc.org/internal/slice
+# modernc.org/kv v1.0.0
+modernc.org/kv
+# modernc.org/lldb v1.0.0
+modernc.org/lldb
+# modernc.org/mathutil v1.0.0
+modernc.org/mathutil
+# modernc.org/sortutil v1.0.0
+modernc.org/sortutil
+# modernc.org/zappy v1.0.0
+modernc.org/zappy
