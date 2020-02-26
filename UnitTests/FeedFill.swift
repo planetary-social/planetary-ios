@@ -73,7 +73,7 @@ class ViewDatabaseTest: XCTestCase {
             _ = self.vdb.close()
             
             // get random location for the new db
-            self.tmpURL = NSURL.fileURL(withPathComponents: ["viewDBtest-feedFill2"])!
+            self.tmpURL = NSURL.fileURL(withPathComponents: [NSTemporaryDirectory(), "viewDBtest-feedFill2"])!
 
             do {
                 try FileManager.default.removeItem(at: self.tmpURL)
