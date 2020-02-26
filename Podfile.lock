@@ -38,7 +38,7 @@ DEPENDENCIES:
   - ZendeskSDK (= 3.0.3)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - ImageSlideshow
     - KeychainSwift
     - Mixpanel
@@ -62,4 +62,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7b8d2c69035bacc733c4c138090c24dd101c8f8a
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.9.0
