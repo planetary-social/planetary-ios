@@ -25,6 +25,9 @@
                <Test
                   Identifier = "API_GoBot">
                </Test>
+               <Test
+                  Identifier = "ContentTests/test_postWithBlobAltText()">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>

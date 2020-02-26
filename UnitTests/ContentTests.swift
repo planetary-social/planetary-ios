@@ -308,7 +308,7 @@ class ContentTests: XCTestCase {
             XCTAssertTrue(val.content.type == .vote)
             XCTAssertEqual(val.timestamp, 1573673656588.0159)
             let kv = KeyValue(key: "%test.msg", value: val, timestamp: 0)
-            XCTAssertEqual(kv.userDate, Date(timeIntervalSinceReferenceDate: 1573673656588))
+            XCTAssertEqual(kv.userDate, Date(timeIntervalSince1970: 1573673656.5880159))
         } catch {
             XCTFail("\(error)")
         }

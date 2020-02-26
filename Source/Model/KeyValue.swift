@@ -74,7 +74,7 @@ extension KeyValue {
 
     // Convenience var for received time as Date
     var receivedDate: Date {
-        return Date(timeIntervalSinceReferenceDate: self.timestamp)
+        return Date(timeIntervalSince1970: self.timestamp)
     }
 
     var receivedDateString: String {
