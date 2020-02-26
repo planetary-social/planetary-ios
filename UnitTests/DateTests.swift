@@ -65,11 +65,12 @@ class DateTests: XCTestCase {
         components.hour = 12
         components.minute = 12
         components.second = 12
+        components.timeZone = TimeZone(secondsFromGMT: 0)
         let date = Calendar.current.date(from: components) ?? Date()
         // TODO: This fails on Zef's machine, which is in a different time zone
         // the faling result is "2012-12-12T19:12:12Z"
         // https://app.asana.com/0/1140308184568993/1144083857934697/f
-        XCTAssertTrue(date.iso8601String == "2012-12-12T20:12:12Z")
+        XCTAssertTrue(date.iso8601String == "2012-12-12T12:12:12Z")
 
         // transform a dictionary
         let dictionary: [String: Any] = ["date": date, "ignore": true]
@@ -78,7 +79,7 @@ class DateTests: XCTestCase {
             return value.iso8601String
         }
         XCTAssertTrue(transformed.count == 2)
-        XCTAssertTrue((transformed["date"] as? String) == "2012-12-12T20:12:12Z")
+        XCTAssertTrue((transformed["date"] as? String) == "2012-12-12T12:12:12Z")
 
         // transformed dictionary should serialize
         // transformed should serialize the same as original
