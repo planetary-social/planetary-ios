@@ -1,0 +1,31 @@
+# .circleci/config.yml
+version: 2
+jobs:
+  build-and-test:
+    macos:
+      xcode: "11.3.1"
+    steps:
+      - checkout
+      - run:
+          name: pre-start simulator
+          command: xcrun instruments -w "iPhone X (12.4) [" || true
+# so that we see compile breakage early (could also store the build artifacts?)
+# whines about provisioning settings though
+#      - run:
+#          name: Build the App 
+#          command: xcodebuild build -workspace FBTT/FBTT.xcworkspace -scheme FBTT
+      - run:
+          name: list schemes
+          command: xcodebuild test -workspace FBTT/Planetary.xcworkspace -list
+      - run:
+          name: run UnitTests
+          command: xcodebuild test -workspace FBTT/Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 8,OS=12.2"
+      - run:
+          name: run APITests
+          command: xcodebuild test -workspace FBTT/Planetary.xcworkspace -scheme APITests -destination "platform=iOS Simulator,name=iPhone 8,OS=12.2"
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build-and-test
