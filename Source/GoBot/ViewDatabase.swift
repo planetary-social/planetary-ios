@@ -1349,8 +1349,8 @@ class ViewDatabase {
         try self.insertBranches(msgID: msgID, root: v.root, branches: v.branch)
     }
     
-    private let now = Date(timeIntervalSinceNow: 0)
     private func isOldMessage(msg: KeyValue) -> Bool {
+        let now = Date(timeIntervalSinceNow: 0)
         let claimed = Date(timeIntervalSince1970: msg.value.timestamp/1000)
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
@@ -1372,6 +1372,7 @@ class ViewDatabase {
         try db.transaction { // also batches writes! helps a lot with perf
             var lastRxSeq: Int64 = -1
             
+            let loopStart = Date().timeIntervalSince1970*1000
             for msg in msgs {
                 if let msgRxSeq = msg.receivedSeq {
                     lastRxSeq = msgRxSeq
@@ -1397,6 +1398,13 @@ class ViewDatabase {
                     continue
                 }
                 
+                // make sure we dont have messages from the future
+                // and force them to the _received_ timestamp so that they are not pinned to the top of the views
+                var claimed = msg.value.timestamp
+                if claimed > loopStart {
+                    claimed = msg.timestamp
+                }
+
                 // can only insert PMs when the unencrypted was inserted before
                 let msgKeyID = try self.msgID(from: msg.key, make: !pms)
                 let authorID = try self.authorID(from: msg.value.author, make: true)
@@ -1411,7 +1419,7 @@ class ViewDatabase {
                         colDecrypted <- true,
                         colMsgType <- msg.value.content.type.rawValue,
                         colReceivedAt <- msg.timestamp,
-                        colClaimedAt <- msg.value.timestamp
+                        colClaimedAt <- claimed
                     ))
                 } else {
                     do {
@@ -1422,7 +1430,7 @@ class ViewDatabase {
                             colSequence <- msg.value.sequence,
                             colMsgType <- msg.value.content.type.rawValue,
                             colReceivedAt <- msg.timestamp,
-                            colClaimedAt <- msg.value.timestamp
+                            colClaimedAt <- claimed
                         ))
                     
                     } catch Result.error(let errMsg, let errCode, _) {
