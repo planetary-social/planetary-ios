@@ -12,7 +12,7 @@ require (
 	go.cryptoscope.co/muxrpc v1.5.4-0.20200212114344-0403d7496950 // indirect
 	go.cryptoscope.co/netwrap v0.1.1
 	go.cryptoscope.co/secretstream v1.2.2-0.20200130134156-5301f8b5dcff
-	go.cryptoscope.co/ssb v0.0.0-20200213220200-31c6f1d67c94
+	go.cryptoscope.co/ssb v0.0.0-20200228103507-a70154f9edc0
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
 	golang.org/x/net v0.0.0-20190909003024-a7b16738d86b // indirect
 	gonum.org/v1/gonum v0.0.0-20190911200027-40d3308efe80 // indirect
@@ -20,4 +20,3 @@ require (
 )
 
 go 1.13
-

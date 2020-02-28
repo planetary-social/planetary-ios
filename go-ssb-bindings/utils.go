@@ -4,9 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/go-kit/kit/log/level"
 	"os"
 	"strconv"
+
+	"github.com/go-kit/kit/log/level"
 
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/margaret"
@@ -175,6 +176,8 @@ func ssbHealRepo() *C.char {
 		retErr = ErrNotInitialized
 		return nil
 	}
+
+	sbot.Network.GetConnTracker().CloseAll()
 
 	retErr = sbot.HealRepo(lastFSCK)
 	if retErr != nil {

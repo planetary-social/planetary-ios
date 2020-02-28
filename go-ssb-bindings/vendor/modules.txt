@@ -94,7 +94,7 @@ go.cryptoscope.co/secretstream
 go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
-# go.cryptoscope.co/ssb v0.0.0-20200213220200-31c6f1d67c94 => /Users/cryptix/go/src/go.cryptoscope.co/ssb
+# go.cryptoscope.co/ssb v0.0.0-20200228103507-a70154f9edc0
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
 go.cryptoscope.co/ssb/client

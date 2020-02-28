@@ -224,11 +224,11 @@ func ssbInviteAccept(token string) bool {
 
 	ctx, cancel := context.WithCancel(longCtx)
 	err = invite.Redeem(ctx, tok, sbot.KeyPair.Id)
+	defer cancel()
 	if err != nil {
 		retErr = err
 		return false
 	}
-	cancel()
 
 	_, err = sbot.PublishLog.Publish(ssb.NewContactFollow(&tok.Peer))
 	if err != nil {
@@ -236,7 +236,7 @@ func ssbInviteAccept(token string) bool {
 		return false
 	}
 
-	pubMsg err:= invite.NewPubMessageFromToken(tok)
+	pubMsg, err := invite.NewPubMessageFromToken(tok)
 	if err != nil {
 		retErr = err
 		return false
@@ -250,4 +250,3 @@ func ssbInviteAccept(token string) bool {
 
 	return true
 }
-
