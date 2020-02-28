@@ -488,11 +488,9 @@ class GoBot: Bot {
                  // trying to re-sync the feed
                 self.bot.dial(atLeast: 1)
                 #if DEBUG
-                print("[rx log] viewdb fill of aborted and repaired. retrying in 5 seconds")
+                print("[rx log] viewdb fill of aborted and repaired.")
                 #endif
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5), execute: {
-                    self.refresh() { err, _ in completion(err)  }
-                })
+                completion(err)
                 return
             } catch {
                 let err = GoBotError.duringProcessing("viewDB: message filling failed", error)
