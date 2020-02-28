@@ -93,7 +93,7 @@ class GoBotInternal {
     private var allPeers: [ String : (Peer, [Peer]) ] = [
         NetworkKey.ssb.string: ( Peer(tcpAddr: "pub3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!) , [
             Peer(tcpAddr: "pub2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
-//            Peer(tcpAddr: "pub2.planetary.social:8118", pubKey: Identities.ssb.pubs["planetary-pub2"]!),
+            Peer(tcpAddr: "35.222.177.227:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!),
             Peer(tcpAddr: "mindeco.de:8008", pubKey: Identities.ssb.pubs["cryptix-pub"]!)
         ]),
 
