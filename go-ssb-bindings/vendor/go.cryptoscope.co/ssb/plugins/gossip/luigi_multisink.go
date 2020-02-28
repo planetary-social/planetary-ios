@@ -1,24 +1,22 @@
 // SPDX-License-Identifier: MIT
 
-package luigiutils
+package gossip
 
 import (
 	"context"
-
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/muxrpc"
 
-	"go.cryptoscope.co/ssb/internal/neterr"
+	"go.cryptoscope.co/luigi"
+	"go.cryptoscope.co/margaret"
 )
 
-// MultiSink takes each message poured into it, and passes it on to all
+// multiSink takes each message poured into it, and passes it on to all
 // registered sinks.
 //
-// MultiSink is like luigi.Broadcaster but with context support.
+// multiSink is like luigi.Broadcaster but with context support.
 // TODO(cryptix): cool utility! might want to move it to internal until we find  better place
-type MultiSink struct {
+type multiSink struct {
 	seq   int64
 	sinks []luigi.Sink
 	ctxs  map[luigi.Sink]context.Context
@@ -27,23 +25,23 @@ type MultiSink struct {
 	isClosed bool
 }
 
-var _ luigi.Sink = (*MultiSink)(nil)
-var _ margaret.Seq = (*MultiSink)(nil)
+var _ luigi.Sink = (*multiSink)(nil)
+var _ margaret.Seq = (*multiSink)(nil)
 
-func NewMultiSink(seq int64) *MultiSink {
-	return &MultiSink{
+func newMultiSink(seq int64) *multiSink {
+	return &multiSink{
 		seq:   seq,
 		ctxs:  make(map[luigi.Sink]context.Context),
 		until: make(map[luigi.Sink]int64),
 	}
 }
 
-func (f *MultiSink) Seq() int64 {
+func (f *multiSink) Seq() int64 {
 	return f.seq
 }
 
 // Register adds a sink to propagate messages to upto the 'until'th sequence.
-func (f *MultiSink) Register(
+func (f *multiSink) Register(
 	ctx context.Context,
 	sink luigi.Sink,
 	until int64,
@@ -54,7 +52,7 @@ func (f *MultiSink) Register(
 	return nil
 }
 
-func (f *MultiSink) Unregister(
+func (f *multiSink) Unregister(
 	sink luigi.Sink,
 ) error {
 	for i, s := range f.sinks {
@@ -69,18 +67,13 @@ func (f *MultiSink) Unregister(
 	return nil
 }
 
-// Count returns the number of registerd sinks
-func (f *MultiSink) Count() uint {
-	return uint(len(f.sinks))
-}
-
-func (f *MultiSink) Close() error {
+func (f *multiSink) Close() error {
 	f.isClosed = true
 	return nil
 }
 
-func (f *MultiSink) Pour(
-	_ context.Context,
+func (f *multiSink) Pour(
+	ctx context.Context,
 	msg interface{},
 ) error {
 	if f.isClosed {
@@ -92,16 +85,13 @@ func (f *MultiSink) Pour(
 
 	for i, s := range f.sinks {
 		err := s.Pour(f.ctxs[s], msg)
-		if err != nil {
-			causeErr := errors.Cause(err)
-			if muxrpc.IsSinkClosed(err) || causeErr == context.Canceled || neterr.IsConnBrokenErr(causeErr) {
-				deadFeeds = append(deadFeeds, s)
-				continue
-			}
-			return errors.Wrapf(err, "MultiSink: failed to pour into sink #%d (%v)", i)
-		}
-		if f.until[s] <= f.seq {
+		if luigi.IsEOS(err) || muxrpc.IsSinkClosed(err) || f.until[s] <= f.seq {
 			deadFeeds = append(deadFeeds, s)
+			continue
+		} else if err != nil {
+			// QUESTION: should CloseWithError be used here?
+			err := errors.Wrapf(err, "multiSink: failed to pour into sink #%d (%v)", i, f.until[s] <= f.seq)
+			return err
 		}
 	}
 

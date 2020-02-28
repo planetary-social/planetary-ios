@@ -21,6 +21,8 @@ extern char* ssbBotStatus(void);
 extern int ssbOffsetFSCK(uint32_t mode);
 extern char* ssbHealRepo(void);
 
+extern bool ssbInviteAccept(gostring_t token);
+
 extern int ssbNullContent(gostring_t author, uint64_t sequence);
 extern int ssbNullFeed(gostring_t author);
 

@@ -111,7 +111,7 @@ func (cdr *dropContentTrigger) consume() {
 			continue
 		}
 
-		level.Info(evtLog).Log("msg", "nulled successfully", "author", evt.author.Ref()[1:5], "seq", evt.dcr.Sequence)
+		level.Info(evtLog).Log("msg", "nulled successfully", "author", evt.author.ShortRef(), "seq", evt.dcr.Sequence)
 	}
 }
 

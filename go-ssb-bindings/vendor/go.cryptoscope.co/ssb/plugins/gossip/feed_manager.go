@@ -17,23 +17,21 @@ import (
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/multilog"
-
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/internal/luigiutils"
 	"go.cryptoscope.co/ssb/internal/mutil"
 	"go.cryptoscope.co/ssb/internal/transform"
 	"go.cryptoscope.co/ssb/message"
 )
 
-// FeedPushManager handles serving feeds via gossip
-type FeedPushManager struct {
+// FeedManager handles serving gossip about User Feeds.
+type FeedManager struct {
 	rootCtx context.Context
 
 	RootLog   margaret.Log
 	UserFeeds multilog.MultiLog
 	logger    logging.Interface
 
-	liveFeeds    map[string]*luigiutils.MultiSink
+	liveFeeds    map[string]*multiSink
 	liveFeedsMut sync.Mutex
 
 	// metrics
@@ -41,31 +39,31 @@ type FeedPushManager struct {
 	sysCtr   metrics.Counter
 }
 
-// NewFeedPushManager returns a new FeedPushManager used for gossiping about User
+// NewFeedManager returns a new FeedManager used for gossiping about User
 // Feeds.
-func NewFeedPushManager(
+func NewFeedManager(
 	ctx context.Context,
 	rootLog margaret.Log,
 	userFeeds multilog.MultiLog,
 	info logging.Interface,
 	sysGauge metrics.Gauge,
 	sysCtr metrics.Counter,
-) *FeedPushManager {
-	fm := &FeedPushManager{
+) *FeedManager {
+	fm := &FeedManager{
 		RootLog:   rootLog,
 		UserFeeds: userFeeds,
 		logger:    info,
 		rootCtx:   ctx,
 		sysCtr:    sysCtr,
 		sysGauge:  sysGauge,
-		liveFeeds: make(map[string]*luigiutils.MultiSink),
+		liveFeeds: make(map[string]*multiSink),
 	}
 	// QUESTION: How should the error case be handled?
 	go fm.serveLiveFeeds()
 	return fm
 }
 
-func (m *FeedPushManager) pour(ctx context.Context, val interface{}, err error) error {
+func (m *FeedManager) pour(ctx context.Context, val interface{}, err error) error {
 	m.liveFeedsMut.Lock()
 	defer m.liveFeedsMut.Unlock()
 
@@ -77,18 +75,15 @@ func (m *FeedPushManager) pour(ctx context.Context, val interface{}, err error) 
 		return err
 	}
 
-	sw := val.(margaret.SeqWrapper)
-	ssbMsg := sw.Value().(ssb.Message)
-	author := ssbMsg.Author()
+	author := val.(margaret.SeqWrapper).Value().(ssb.Message).Author()
 	sink, ok := m.liveFeeds[author.Ref()]
 	if !ok {
 		return nil
 	}
-
-	return sink.Pour(ctx, ssbMsg)
+	return sink.Pour(ctx, val)
 }
 
-func (m *FeedPushManager) serveLiveFeeds() {
+func (m *FeedManager) serveLiveFeeds() {
 	seqv, err := m.RootLog.Seq().Value()
 	if err != nil {
 		err = errors.Wrap(err, "failed to get root log sequence")
@@ -105,15 +100,13 @@ func (m *FeedPushManager) serveLiveFeeds() {
 	}
 
 	err = luigi.Pump(m.rootCtx, luigi.FuncSink(m.pour), src)
-	if err != nil && err != ssb.ErrShuttingDown && err != context.Canceled {
+	if err != nil && err != ssb.ErrShuttingDown {
 		err = errors.Wrap(err, "error while serving live feed")
 		panic(err)
 	}
-
-	// TODO: remove live feeds?
 }
 
-func (m *FeedPushManager) addLiveFeed(
+func (m *FeedManager) addLiveFeed(
 	ctx context.Context,
 	sink luigi.Sink,
 	ssbID string,
@@ -127,7 +120,7 @@ func (m *FeedPushManager) addLiveFeed(
 
 	liveFeed, ok := m.liveFeeds[ssbID]
 	if !ok {
-		m.liveFeeds[ssbID] = luigiutils.NewMultiSink(seq)
+		m.liveFeeds[ssbID] = newMultiSink(seq)
 		liveFeed = m.liveFeeds[ssbID]
 	}
 
@@ -200,7 +193,7 @@ func getLatestSeq(log margaret.Log) (int64, error) {
 }
 
 // CreateStreamHistory serves the sink a CreateStreamHistory request to the sink.
-func (m *FeedPushManager) CreateStreamHistory(
+func (m *FeedManager) CreateStreamHistory(
 	ctx context.Context,
 	sink luigi.Sink,
 	arg *message.CreateHistArgs,
@@ -215,33 +208,9 @@ func (m *FeedPushManager) CreateStreamHistory(
 		return errors.Wrap(err, "userLog sequence")
 	}
 
-	// setup desired sink mapping
-	switch arg.ID.Algo {
-	case ssb.RefAlgoFeedSSB1:
-		sink = transform.NewKeyValueWrapper(sink, arg.Keys)
-
-	case ssb.RefAlgoFeedGabby:
-		switch {
-		case arg.AsJSON:
-			sink = transform.NewKeyValueWrapper(sink, arg.Keys)
-		default:
-			sink = luigiutils.NewGabbyStreamSink(sink)
-		}
-	default:
-		return errors.Errorf("unsupported feed format.")
-	}
-
 	if arg.Seq != 0 {
 		arg.Seq--             // our idx is 0 ed
 		if arg.Seq > latest { // more than we got
-			if arg.Live {
-				return m.addLiveFeed(
-					ctx, sink,
-					arg.ID.Ref(),
-					latest,
-					liveLimit(arg, latest),
-				)
-			}
 			return errors.Wrap(sink.Close(), "pour: failed to close")
 		}
 	}
@@ -261,13 +230,28 @@ func (m *FeedPushManager) CreateStreamHistory(
 		return errors.Wrapf(err, "invalid user log query")
 	}
 
+	switch arg.ID.Algo {
+	case ssb.RefAlgoFeedSSB1:
+		sink = transform.NewKeyValueWrapper(sink, arg.Keys)
+
+	case ssb.RefAlgoFeedGabby:
+		switch {
+		case arg.AsJSON:
+			sink = transform.NewKeyValueWrapper(sink, arg.Keys)
+		default:
+			sink = gabbyStreamSink(sink)
+		}
+	default:
+		return errors.Errorf("unsupported feed format.")
+	}
+
 	sent := 0
-	err = luigi.Pump(ctx, luigiutils.NewSinkCounter(&sent, sink), src)
+	err = luigi.Pump(ctx, newSinkCounter(&sent, sink), src)
 	if m.sysCtr != nil {
 		m.sysCtr.With("event", "gossiptx").Add(float64(sent))
 	} else {
 		if sent > 0 {
-			level.Debug(m.logger).Log("event", "gossiptx", "n", sent, "fr", arg.ID.Ref()[1:5])
+			level.Debug(m.logger).Log("event", "gossiptx", "n", sent, "fr", arg.ID.ShortRef())
 		}
 	}
 	if errors.Cause(err) == context.Canceled {
@@ -276,16 +260,15 @@ func (m *FeedPushManager) CreateStreamHistory(
 		return errors.Wrap(err, "failed to pump messages to peer")
 	}
 
-	if arg.Live {
-		if arg.Reverse {
-			return errors.New("gossip: cant be both live and reverse query")
-		}
-		return m.addLiveFeed(
-			ctx, sink,
-			arg.ID.Ref(),
-			latest,
-			liveLimit(arg, latest),
-		)
-	}
+	// cryptix: this seems to produce some hangs
+	// TODO: make tests with leaving and joining peers while messages are published
+	//if arg.Live {
+	//	return m.addLiveFeed(
+	//		ctx, sink,
+	//		arg.ID,
+	//		latest,
+	//		liveLimit(arg, latest),
+	//	)
+	//}
 	return sink.Close()
 }

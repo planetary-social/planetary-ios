@@ -15,6 +15,7 @@ import (
 	"go.cryptoscope.co/secretstream"
 
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/invite"
 )
 
 import "C"
@@ -198,3 +199,55 @@ func ssbNullFeed(ref string) int {
 
 	return 0
 }
+
+//export ssbInviteAccept
+func ssbInviteAccept(token string) bool {
+	var retErr error
+	defer func() {
+		if retErr != nil {
+			level.Error(log).Log("where", "ssbInviteAccept", "err", retErr)
+		}
+	}()
+
+	tok, err := invite.ParseLegacyToken(token)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot == nil {
+		err = ErrNotInitialized
+		return false
+	}
+
+	ctx, cancel := context.WithCancel(longCtx)
+	err = invite.Redeem(ctx, tok, sbot.KeyPair.Id)
+	if err != nil {
+		retErr = err
+		return false
+	}
+	cancel()
+
+	_, err = sbot.PublishLog.Publish(ssb.NewContactFollow(&tok.Peer))
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	pubMsg err:= invite.NewPubMessageFromToken(tok)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	_, err = sbot.PublishLog.Publish(pubMsg)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	return true
+}
+
