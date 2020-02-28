@@ -2068,7 +2068,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n\n# Type a script or drag a script file from your workspace to insert its path.\nif [ ${CONFIGURATION} == \"AppStore\" ]\nthen\n    set -e\n    ${PROJECT_DIR}/Scripts/increment_build.sh ${PROJECT_DIR}/Resources/Info.plist\nfi\n";
+			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n\n# Type a script or drag a script file from your workspace to insert its path.\nif [ ${CONFIGURATION} == \"Release\" ]\nthen\n    set -e\n    ${PROJECT_DIR}/Scripts/increment_build.sh ${PROJECT_DIR}/Resources/Info.plist\nfi\n";
 		};
 		79232A0BDB520E7E70C3774E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
