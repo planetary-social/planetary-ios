@@ -30,6 +30,7 @@ extension ContentCodable {
             case .dropContentRequest: // i can re-pad this
                             if let encodable = self as? DropContentRequest // if the PR is fine (i'd love it if swift had gofmt)
                                                                        { return try JSONEncoder().encode(encodable) }
+            case .pub:      if let encodable = self as? Pub            { return try JSONEncoder().encode(encodable) }
             case .post:     if let encodable = self as? Post           { return try JSONEncoder().encode(encodable) }
             case .vote:     if let encodable = self as? ContentVote    { return try JSONEncoder().encode(encodable) }
             

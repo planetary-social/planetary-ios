@@ -1463,6 +1463,9 @@ class ViewDatabase {
                     case .dropContentRequest:
                         try self.checkAndExecuteDCR(msgID: msgKeyID, msg: msg)
 
+                    case .pub:
+                        print("TODO: insert pub: \(msg.key)")
+
                     case .post:
                         try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)
                 

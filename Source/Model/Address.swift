@@ -17,3 +17,15 @@ struct Address: Codable {
     let address: String
     let availability: Double
 }
+
+
+struct Pub: Codable {
+    let type: ContentType
+    let address: PubAddress
+}
+
+struct PubAddress: Codable {
+    let key: Identifier
+    let host: String
+    let port: UInt
+}
