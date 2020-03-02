@@ -10,7 +10,6 @@ import (
 	"regexp"
 
 	"github.com/dgraph-io/badger"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/librarian"
 	libmkv "go.cryptoscope.co/librarian/mkv"
@@ -19,7 +18,7 @@ import (
 	"go.cryptoscope.co/margaret/codec/msgpack"
 	"go.cryptoscope.co/margaret/multilog"
 	multibadger "go.cryptoscope.co/margaret/multilog/badger"
-	"go.cryptoscope.co/margaret/multilog/roaringfiles"
+	multimkv "go.cryptoscope.co/margaret/multilog/roaring/mkv"
 	"modernc.org/kv"
 
 	"go.cryptoscope.co/ssb"
@@ -106,7 +105,7 @@ func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog,
 	}
 
 	mkvPath := filepath.Join(dbPath, "mkv")
-	mlog, err := roaringfiles.NewMKV(mkvPath)
+	mlog, err := multimkv.NewMultiLog(mkvPath)
 	if err != nil {
 		// yuk..
 		if !isLockFileExistsErr(err) {
@@ -116,7 +115,7 @@ func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog,
 			return nil, nil, errors.Wrapf(err, "failed to recover lockfiles")
 
 		}
-		mlog, err = roaringfiles.NewMKV(mkvPath)
+		mlog, err = multimkv.NewMultiLog(mkvPath)
 		if err != nil {
 			return nil, nil, errors.Wrapf(err, "failed to open roaring db")
 		}

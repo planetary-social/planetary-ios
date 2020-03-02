@@ -49,13 +49,11 @@ github.com/keks/persist
 github.com/kr/logfmt
 # github.com/libp2p/go-reuseport v0.0.1
 github.com/libp2p/go-reuseport
-# github.com/mattn/go-sqlite3 v1.11.0
-github.com/mattn/go-sqlite3
 # github.com/mschoch/smat v0.0.0-20160514031455-90eadee771ae
 github.com/mschoch/smat
 # github.com/philhofer/fwd v1.0.0
 github.com/philhofer/fwd
-# github.com/pkg/errors v0.8.1
+# github.com/pkg/errors v0.9.1
 github.com/pkg/errors
 # github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237
 github.com/remyoudompheng/bigfft
@@ -72,17 +70,16 @@ go.cryptoscope.co/librarian/mkv
 # go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8
 go.cryptoscope.co/luigi
 go.cryptoscope.co/luigi/mfr
-# go.cryptoscope.co/margaret v0.1.3-0.20200130132800-da010cde3254
+# go.cryptoscope.co/margaret v0.1.4
 go.cryptoscope.co/margaret
 go.cryptoscope.co/margaret/codec/msgpack
 go.cryptoscope.co/margaret/internal/persist
-go.cryptoscope.co/margaret/internal/persist/fs
 go.cryptoscope.co/margaret/internal/persist/mkv
-go.cryptoscope.co/margaret/internal/persist/sqlite
 go.cryptoscope.co/margaret/internal/seqobsv
 go.cryptoscope.co/margaret/multilog
 go.cryptoscope.co/margaret/multilog/badger
-go.cryptoscope.co/margaret/multilog/roaringfiles
+go.cryptoscope.co/margaret/multilog/roaring
+go.cryptoscope.co/margaret/multilog/roaring/mkv
 go.cryptoscope.co/margaret/offset2
 # go.cryptoscope.co/muxrpc v1.5.4-0.20200212114344-0403d7496950
 go.cryptoscope.co/muxrpc
@@ -94,7 +91,7 @@ go.cryptoscope.co/secretstream
 go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
-# go.cryptoscope.co/ssb v0.0.0-20200228103507-a70154f9edc0
+# go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
 go.cryptoscope.co/ssb/client
