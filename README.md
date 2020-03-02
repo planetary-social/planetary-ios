@@ -4,6 +4,10 @@ The repo does have some Carthage and Cocoapod dependencies, however all have bee
 
 While this project uses [Go](https://golang.org) in parts, the build and unit test targets of the XCode project have automated install scripts for the specific versions. See _Go Development_ for more.
 
+**CONFIGURE**
+
+Before running the app, you need to complete the configuration files stored inside `Config` folder. Request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
+
 **LAUNCH & RUN**
 
 To install and run on a device, your Apple ID must be part of the Verse Apple Developer team.  Contact christoph@verse.app if you need access.

@@ -1,14 +1,3 @@
-## Configuration Files
-
-APITests.debug.xcconfig	
-Planetary.debug.xcconfig	
-UITests.release.xcconfig
-APITests.release.xcconfig	
-Planetary.release.xcconfig	
-UnitTests.debug.xcconfig
-UITests.debug.xcconfig		
-UnitTests.release.xcconfig
-
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore

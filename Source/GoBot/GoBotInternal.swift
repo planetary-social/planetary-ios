@@ -110,7 +110,7 @@ class GoBotInternal {
             Peer(tcpAddr: "pub2.planetary.social:7667", pubKey: Identities.planetary.pubs["testpub_go_testing2"]!)
         ]),
 
-        NetworkKey.integrationTests.string: (Peer(tcpAddr: "pub.planetary.social:9119", pubKey: Identities.testNet.pubs["integrationpub1"]!), [])
+        NetworkKey.integrationTests.string: (Peer(tcpAddr: "testing-ci.planetary.social:9119", pubKey: Identities.testNet.pubs["integrationpub1"]!), [])
     ]
     
     private var peers: [Peer] {
