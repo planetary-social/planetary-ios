@@ -34,7 +34,7 @@ extension VerseAPI {
     static func me(completion: @escaping ((Person?, APIError?) -> Void)) {
         guard let identity = Bots.current.identity else { completion(nil, .invalidIdentity); return }
         let headers: APIHeaders = ["X-Identity": identity]
-        VerseAPI.api.get(path: "/mainnet-directory/me", query: [], headers: headers) {
+        VerseAPI.api.get(path: "/\(Environment.Verse.directoryPath)/me", query: [], headers: headers) {
             me, error in
             completion(me?.person(), error)
         }

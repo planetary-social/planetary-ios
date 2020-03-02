@@ -25,7 +25,7 @@ extension VerseAPI {
              "name": name,
              "using_plural": true,
              "verified_phone": true]
-        self.api.post(path: "/mainnet-directory/people", json: json) {
+        self.api.post(path: "/\(Environment.Verse.directoryPath)/people", json: json) {
             data, error in
             completion(data?.person(), error)
         }

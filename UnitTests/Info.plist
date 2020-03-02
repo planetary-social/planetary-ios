@@ -26,6 +26,8 @@
     <string>$(VERSE_HOST)</string>
     <key>PLVerseToken</key>
     <string>$(VERSE_TOKEN)</string>
+    <key>PLVerseDirectoryPath</key>
+    <string>$(VERSE_DIRECTORY_PATH)</string>
     <key>PLDefaultNetworkName</key>
     <string>$(DEFAULT_NETWORK_NAME)</string>
     <key>PLDefaultNetworkKey</key>

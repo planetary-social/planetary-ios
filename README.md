@@ -6,7 +6,7 @@ While this project uses [Go](https://golang.org) in parts, the build and unit te
 
 **CONFIGURE**
 
-Before running the app, you need to complete the configuration files stored inside `Config` folder. Request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
+Before running the app, you need to complete the configuration files stored inside `Config` folder (just update Shared.debug.xcconfig and Shared.release.xcconfig). Request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
 
 **LAUNCH & RUN**
 

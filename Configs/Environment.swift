@@ -79,12 +79,16 @@ enum Environment {
         private enum Keys {
             static let token = "PLVerseToken"
             static let host = "PLVerseHost"
+            static let directoryPath = "PLVerseDirectoryPath"
         }
         static let token: String = {
             return Environment.value(for: Keys.token)
         }()
         static let host: String = {
             return Environment.value(for: Keys.host)
+        }()
+        static let directoryPath: String = {
+            return Environment.value(for: Keys.directoryPath)
         }()
     }
     
