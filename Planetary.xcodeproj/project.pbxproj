@@ -601,6 +601,8 @@
 		0AD00E6E23FB33B5006BF017 /* UnitTests.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UnitTests.release.xcconfig; sourceTree = "<group>"; };
 		0AD00E6F23FB3C02006BF017 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		0AD8D62D2408627000D87A95 /* go_install.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = go_install.sh; sourceTree = "<group>"; };
+		0AD8D62E240D9D6300D87A95 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
+		0AD8D62F240D9D9400D87A95 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
 		231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDatabaseSchema.sql; sourceTree = "<group>"; };
@@ -1059,6 +1061,8 @@
 				0AD00E6D23FB33AA006BF017 /* UnitTests.debug.xcconfig */,
 				0AD00E6E23FB33B5006BF017 /* UnitTests.release.xcconfig */,
 				0AD00E6F23FB3C02006BF017 /* Environment.swift */,
+				0AD8D62E240D9D6300D87A95 /* Shared.debug.xcconfig */,
+				0AD8D62F240D9D9400D87A95 /* Shared.release.xcconfig */,
 			);
 			path = Configs;
 			sourceTree = "<group>";

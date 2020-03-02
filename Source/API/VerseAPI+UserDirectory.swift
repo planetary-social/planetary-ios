@@ -18,7 +18,7 @@ extension VerseAPI {
     static func directory(includeMe: Bool = true, completion: @escaping (([Person], APIError?) -> Void)) {
         //Todo: we'll need to change this to do pagination before we get 1000 users
         let per_page = URLQueryItem(name: "per_page", value: "1000")
-        self.api.get(path: "/mainnet-directory/", query: [per_page]) {
+        self.api.get(path: "/\(Environment.Verse.directoryPath)/", query: [per_page]) {
             data, error in
             var people = data?.persons() ?? []
             people = people.filter { $0.name.isValidName }
@@ -35,7 +35,7 @@ extension VerseAPI {
     {
         // TODO https://app.asana.com/0/1109616169284147/1135482214678101/f
         // TODO ticket for parameter name casing
-        let path = "/mainnet-directory/people/"
+        let path = "/\(Environment.Verse.directoryPath)/people/"
         let json: [String: Any] = ["Identity": identity,
                                    "in_directory": true]
 
@@ -50,7 +50,7 @@ extension VerseAPI {
     {
         // TODO https://app.asana.com/0/1109616169284147/1135482214678101/f
         // TODO ticket for parameter name casing
-        let path = "/mainnet-directory/people/"
+        let path = "/\(Environment.Verse.directoryPath)/people/"
         let json: [String: Any] = ["Identity": identity,
                                    "in_directory": false]
 
@@ -65,7 +65,7 @@ extension VerseAPI {
     {
         // TODO https://app.asana.com/0/1109616169284147/1135482214678101/f
         // TODO ticket for parameter name casing
-        let path = "/mainnet-directory/people/"
+        let path = "/\(Environment.Verse.directoryPath)/people/"
         let json: [String: Any] = ["Identity": identity,
                                    "in_directory": false,
                                    "offboarded": true]
