@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"net"
+	"runtime"
 	"strings"
 	"time"
 
@@ -140,6 +141,7 @@ func ssbDisconnectAllPeers() bool {
 
 	sbot.Network.GetConnTracker().CloseAll()
 	level.Debug(log).Log("event", "disconnect")
+	runtime.GC()
 	return true
 }
 

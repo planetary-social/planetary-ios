@@ -177,7 +177,7 @@ class GoBotInternal {
             KeyBlob: secret.jsonString()!,
             Repo: self.repoPath,
             ListenAddr: listenAddr,
-            Hops: 2)
+            Hops: 1)
         
         let enc = JSONEncoder()
         var cfgStr: String

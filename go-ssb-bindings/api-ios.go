@@ -33,7 +33,6 @@ import (
 
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/multilogs"
-	"go.cryptoscope.co/ssb/network"
 	"go.cryptoscope.co/ssb/repo"
 	"go.cryptoscope.co/ssb/repo/migrations"
 	mksbot "go.cryptoscope.co/ssb/sbot"
@@ -258,7 +257,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		mksbot.WithAppKey(appKeyBytes),
 		mksbot.WithJSONKeyPair(keyblob),
 		mksbot.WithListenAddr(listenAddr),
-		mksbot.WithNetworkConnTracker(network.NewAcceptAllTracker()),
 		mksbot.WithHops(cfg.Hops),
 		mksbot.EnableAdvertismentDialing(true),
 		mksbot.EnableAdvertismentBroadcasts(true),
