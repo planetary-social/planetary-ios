@@ -60,7 +60,7 @@ class ViewDatabase {
 
     // TODO: use this to trigger fill on update and wipe previous versions
     // https://app.asana.com/0/914798787098068/1151842364054322/f
-    let schemaVersion: Int = 17
+    static var schemaVersion: UInt = 19
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
@@ -153,10 +153,11 @@ class ViewDatabase {
     // contact_id
     
     private let addresses: Table
+    private let colAddressID = Expression<String>("address_id")
+    // colAuthorID
     private let colAddress = Expression<String>("address")
-    private let colWorked = Expression<Int>("worked")
-    private let colAvail = Expression<Double>("availability")
-    
+    private let colWorkedLast = Expression<Date>("worked_last")
+    private let colUse = Expression<Bool>("use")
 
     init() {
         self.addresses = Table(ViewDatabaseTableNames.addresses.rawValue)
@@ -191,7 +192,7 @@ class ViewDatabase {
             throw ViewDatabaseError.alreadyOpen
         }
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
-        self.dbPath = "\(path)/schema-built\(self.schemaVersion).sqlite"
+        self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
         self.openDB = db
         
@@ -1135,9 +1136,10 @@ class ViewDatabase {
             return
         }
         
-        try db.run(self.addresses.insert(
-            colMessageRef <- msgID,
-            colAvail <- a.availability,
+        let authorID = try self.authorID(from: msg.value.author, make: true)
+        
+        try db.run(self.addresses.insert(or: .replace,
+            colAboutID <- authorID,
             colAddress <- a.address
         ))
     }
@@ -1285,6 +1287,26 @@ class ViewDatabase {
         }
 
         try self.deleteNoTransact(message: dcr.hash)
+    }
+    
+    private func fillPub(msgID: Int64, msg: KeyValue) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        guard let p = msg.value.content.pub else {
+            Log.info("[viewdb/fill] broken pub message: \(msg.key)")
+            return
+        }
+
+        let pubKeyID = try self.authorID(from: p.address.key, make: true)
+
+        let lazyMultiServ = "net:\(p.address.host):\(p.address.port)~shs:\(p.address.key.id)"
+
+        try db.run(self.addresses.insert(or: .replace,
+            colAboutID <- pubKeyID,
+            colAddress <- lazyMultiServ
+        ))
     }
     
     private func fillPost(msgID: Int64, msg: KeyValue, pms: Bool) throws {
@@ -1452,7 +1474,7 @@ class ViewDatabase {
                     switch msg.value.content.type { // insert individual message types
 
                     case .address:
-                        try self.fillAddress(msgID: msgKeyID, msg: msg)
+                         try self.fillAddress(msgID: msgKeyID, msg: msg)
                         
                     case .about:
                         try self.fillAbout(msgID: msgKeyID, msg: msg)
@@ -1464,7 +1486,7 @@ class ViewDatabase {
                         try self.checkAndExecuteDCR(msgID: msgKeyID, msg: msg)
 
                     case .pub:
-                        print("TODO: insert pub: \(msg.key)")
+                         try self.fillPub(msgID: msgKeyID, msg: msg)
 
                     case .post:
                         try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)

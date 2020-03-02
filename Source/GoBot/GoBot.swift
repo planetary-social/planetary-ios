@@ -58,7 +58,7 @@ class GoBot: Bot {
         self.queue.async {
             // make some sync connections to pull new messages
             let n = 2 // how many connections to establish
-            if !self.bot.dial(atLeast: n) {
+            if !self.bot.dialSomePeers() {
                 Log.unexpected(.botError, "failed to make \(n) sync connections after app resume")
             }
         }
@@ -177,7 +177,7 @@ class GoBot: Bot {
 
         self.queue.async {
             let before = self.repoNumberOfMessages()
-            self.bot.dial(atLeast: 2)
+            self.bot.dialSomePeers()
             let after = self.repoNumberOfMessages()
             let new = after - before
             self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,

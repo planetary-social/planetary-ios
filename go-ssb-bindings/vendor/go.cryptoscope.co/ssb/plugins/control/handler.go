@@ -12,9 +12,9 @@ import (
 	"go.cryptoscope.co/muxrpc"
 	"go.cryptoscope.co/netwrap"
 	"go.cryptoscope.co/secretstream"
+	multiserver "go.mindeco.de/ssb-multiserver"
 
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/internal/multiserver"
 )
 
 type handler struct {

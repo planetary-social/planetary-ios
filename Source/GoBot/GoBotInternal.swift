@@ -73,6 +73,7 @@ fileprivate struct BotConfig: Encodable {
     let Repo: String
     let ListenAddr: String
     let Hops: UInt
+    let SchemaVersion: UInt
     #if DEBUG
     let Testing: Bool = true
     #else
@@ -177,7 +178,8 @@ class GoBotInternal {
             KeyBlob: secret.jsonString()!,
             Repo: self.repoPath,
             ListenAddr: listenAddr,
-            Hops: 1)
+            Hops: 1,
+            SchemaVersion: ViewDatabase.schemaVersion)
         
         let enc = JSONEncoder()
         var cfgStr: String
@@ -278,8 +280,10 @@ class GoBotInternal {
         return self.dialOne(peer: p)
     }
     
+    @discardableResult
     func dialSomePeers() -> Bool {
-        for p in self.peers.randomSample(2) {
+        ssbConnectPeers(2)
+        if let p = self.peers.randomSample(1).first {
             let worked = self.dialOne(peer: p)
             if worked {
                 return true
@@ -289,9 +293,9 @@ class GoBotInternal {
     }
     
     func dialOne(peer: Peer) -> Bool {
-        let fooNS = "\(peer.tcpAddr)::\(peer.pubKey)"
+        let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
         var worked: Bool = false
-        fooNS.withGoString {
+        multiServ.withGoString {
             worked = ssbConnectPeer($0)
         }
         if !worked {

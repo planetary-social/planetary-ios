@@ -14,7 +14,7 @@ import (
 	"github.com/libp2p/go-reuseport"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/internal/multiserver"
+	multiserver "go.mindeco.de/ssb-multiserver"
 )
 
 type Advertiser struct {

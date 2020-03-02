@@ -49,6 +49,8 @@ github.com/keks/persist
 github.com/kr/logfmt
 # github.com/libp2p/go-reuseport v0.0.1
 github.com/libp2p/go-reuseport
+# github.com/mattn/go-sqlite3 v1.11.0
+github.com/mattn/go-sqlite3
 # github.com/mschoch/smat v0.0.0-20160514031455-90eadee771ae
 github.com/mschoch/smat
 # github.com/philhofer/fwd v1.0.0
@@ -91,14 +93,13 @@ go.cryptoscope.co/secretstream
 go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
-# go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635
+# go.cryptoscope.co/ssb v0.0.0-20200302164846-59e814f46ed2
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
 go.cryptoscope.co/ssb/client
 go.cryptoscope.co/ssb/graph
 go.cryptoscope.co/ssb/indexes
 go.cryptoscope.co/ssb/internal/ctxutils
-go.cryptoscope.co/ssb/internal/multiserver
 go.cryptoscope.co/ssb/internal/mutil
 go.cryptoscope.co/ssb/internal/netwraputil
 go.cryptoscope.co/ssb/internal/transform
@@ -126,6 +127,8 @@ go.cryptoscope.co/ssb/repo/migrations
 go.cryptoscope.co/ssb/sbot
 # go.mindeco.de/ssb-gabbygrove v0.1.6
 go.mindeco.de/ssb-gabbygrove
+# go.mindeco.de/ssb-multiserver v0.0.0-20200302171328-987e421fadee
+go.mindeco.de/ssb-multiserver
 # golang.org/x/crypto v0.0.0-20191002192127-34f69633bfdc
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
