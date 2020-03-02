@@ -79,7 +79,10 @@ class Onboarding {
                       completion: @escaping StartCompletion)
     {
         guard birthdate.olderThan(yearsAgo: 16) else { completion(nil, .invalidBirthdate); return }
-        guard phone.isValidPhoneNumber else { completion(nil, .invalidPhoneNumber); return }
+        
+        // Phone verification is not used anymore
+        // guard phone.isValidPhoneNumber else { completion(nil, .invalidPhoneNumber); return }
+        
         guard name.isValidName else { completion(nil, .invalidName); return }
         guard Bots.current.identity == nil else { completion(nil, .cannotOnboardWhileLoggedIn); return }
 
