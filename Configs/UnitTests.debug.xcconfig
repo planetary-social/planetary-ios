@@ -10,4 +10,4 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 #include "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.release.xcconfig"
-#include "Planetary.debug.xcconfig"
+#include "Shared.debug.xcconfig"
