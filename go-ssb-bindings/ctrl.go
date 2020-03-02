@@ -73,6 +73,7 @@ func ssbConnectPeers(count uint32) bool {
 	for i, row := range addrs {
 		err = sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
 		if err != nil {
+			viewDB.Exec(`UPDATE addresses set worked_last=0 where address_id = ?`, row.addrID)
 			level.Warn(log).Log("where", "ssbConnectPeers", "dial", i, "err", err)
 			continue
 		}
@@ -99,7 +100,7 @@ func queryAddresses(limit uint32) ([]addrRow, error) {
 		err       error
 	)
 
-	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last LIMIT ?;`, limit)
+	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, limit)
 	if err != nil {
 		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
 	}
@@ -117,6 +118,7 @@ func queryAddresses(limit uint32) ([]addrRow, error) {
 
 		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
 		if err != nil {
+			viewDB.Exec(`UPDATE addresses set use=false where address_id = ?`, id)
 			return nil, errors.Wrapf(err, "queryAddresses: row %d not a multiserver", i)
 		}
 
