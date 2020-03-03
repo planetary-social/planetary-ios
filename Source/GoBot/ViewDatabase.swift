@@ -153,10 +153,10 @@ class ViewDatabase {
     // contact_id
     
     private let addresses: Table
-    private let colAddressID = Expression<String>("address_id")
+    private let colAddressID = Expression<Int64>("address_id")
     // colAboutID
     private let colAddress = Expression<String>("address")
-    private let colWorkedLast = Expression<Date>("worked_last")
+    private let colWorkedLast = Expression<Date?>("worked_last")
     private let colLastErr = Expression<String>("last_err")
     private let colUse = Expression<Bool>("use")
 
@@ -276,6 +276,35 @@ class ViewDatabase {
         }
         
         return -1
+    }
+    
+    // MARK: pubs
+
+    func getAllKnownPubs() throws -> [KnownPub] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let qry = self.addresses
+           .join(self.authors, on: self.authors[colID] == self.addresses[colAboutID])
+           .order(colWorkedLast.desc)
+
+        return try db.prepare(qry).map { row in
+            var workedWhen = "not yet"
+            let workedLastMaybe = try? row.get(colWorkedLast)
+            if  let didWork = workedLastMaybe {
+                workedWhen = didWork.shortDateTimeString
+            }
+
+            return KnownPub(
+                AddressID: try row.get(colAddressID),
+                ForFeed: try row.get(colAuthor),
+                Address: try row.get(colAddress),
+                InUse: try row.get(colUse),
+                WorkedLast: workedWhen,
+                LastError: try row.get(colLastErr)
+            )
+        }
     }
     
     // MARK: moderation / delete

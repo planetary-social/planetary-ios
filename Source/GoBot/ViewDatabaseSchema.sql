@@ -142,11 +142,11 @@ CREATE INDEX helper_profile on messages (is_decrypted, type, author_id, claimed_
 CREATE TABLE addresses (
     address_id   INTEGER PRIMARY KEY,
     about_id     integer not null, -- which feed this address is for
-    address      text unique,  -- the multiserv encoded string i.e. "net:ip:port~shs:key"
+    address      text unique not null,  -- the multiserv encoded string i.e. "net:ip:port~shs:key"
 
     use          boolean default true, -- false means disabled, dont' dial
-    worked_last  integer default 0, -- last time a connection could be made
-    last_err     text
+    worked_last  DATETIME default 0, -- last time a connection could be made
+    last_err     text default ""
 );
 
 -- this just stores the text of a post

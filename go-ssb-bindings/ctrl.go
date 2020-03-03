@@ -82,7 +82,7 @@ func ssbConnectPeers(count uint32) bool {
 			continue
 		}
 
-		_, err := viewDB.Exec(`UPDATE addresses set worked_last=datetime() where address_id = ?`, row.addrID)
+		_, err := viewDB.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, row.addrID)
 		if err != nil {
 			level.Error(log).Log("where", "ssbConnectPeers", "update addr", row.addrID, "err", err)
 			return false
@@ -282,16 +282,17 @@ func ssbInviteAccept(token string) bool {
 
 // todo: add make:bool parameter
 func getAuthorID(ref ssb.FeedRef) (int64, error) {
-	row := viewDB.QueryRow(`SELECT id FROM authors where key = ?`, tok.Peer.Ref())
+	strRef := ref.Ref()
+	row := viewDB.QueryRow(`SELECT id FROM authors where key = ?`, strRef)
 
 	var peerID int64
-	err = row.Scan(&peerID)
+	err := row.Scan(&peerID)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			return -1, err
 		}
 
-		res, err := viewDB.Exec(`INSERT INTO authors (key) VALUES (?)`, tok.Peer.Ref())
+		res, err := viewDB.Exec(`INSERT INTO authors (key) VALUES (?)`, strRef)
 		if err != nil {
 			return -1, err
 		}

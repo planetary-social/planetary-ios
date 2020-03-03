@@ -29,3 +29,14 @@ struct PubAddress: Codable {
     let host: String
     let port: UInt
 }
+
+struct KnownPub {
+    let AddressID: Int64
+
+    let ForFeed: Identifier
+    let Address: String // multiserver
+
+    let InUse: Bool
+    let WorkedLast: String
+    let LastError: String
+}

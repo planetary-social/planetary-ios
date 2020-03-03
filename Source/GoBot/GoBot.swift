@@ -156,7 +156,25 @@ class GoBot: Bot {
         DispatchQueue.main.async { completion(nil) }
     }
 
+    
     // MARK: Sync
+    
+    func knownPubs(completion: @escaping KnownPubsCompletion) {
+       Thread.assertIsMainThread()
+         self.queue.async {
+            var err: Error? = nil
+            var kps: [KnownPub] = []
+            defer {
+                   DispatchQueue.main.async { completion(kps, err) }
+            }
+            
+            do {
+                kps = try self.database.getAllKnownPubs()
+            } catch {
+                err = error
+            }
+         }
+     }
 
     private var _isSyncing = false
     var isSyncing: Bool { return self._isSyncing }
