@@ -15,11 +15,14 @@ import "C"
 
 import (
 	"context"
+	"database/sql"
 	"encoding/base64"
 	"encoding/json"
 	stderr "errors"
+	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -28,12 +31,12 @@ import (
 	"github.com/cryptix/go/logging/countconn"
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
 
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/multilogs"
-	"go.cryptoscope.co/ssb/network"
 	"go.cryptoscope.co/ssb/repo"
 	"go.cryptoscope.co/ssb/repo/migrations"
 	mksbot "go.cryptoscope.co/ssb/sbot"
@@ -53,6 +56,8 @@ var (
 	lock    sync.Mutex
 	sbot    *mksbot.Sbot
 	repoDir string
+
+	viewDB *sql.DB
 
 	longCtx  context.Context
 	shutdown context.CancelFunc
@@ -102,6 +107,9 @@ func ssbBotStop() bool {
 		return false
 	}
 	sbot = nil
+
+	viewDB.Close()
+
 	return true
 }
 
@@ -120,6 +128,8 @@ type botConfig struct {
 	ListenAddr string
 	Hops       uint
 	Testing    bool
+
+	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
 }
 
 var blobsNotifyHandle unsafe.Pointer
@@ -180,6 +190,14 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		}
 	}
 	r := repo.New(repoDir)
+
+	// open viewdatabase for address-stuff
+	vdbPath := filepath.Join(repoDir, "..", fmt.Sprintf("schema-built%d.sqlite", cfg.ViewDBSchemaVersion))
+	viewDB, err = sql.Open("sqlite3", vdbPath)
+	if err != nil {
+		err = errors.Wrap(err, "BotInit: failed to open view database")
+		return false
+	}
 
 	// key should be stored in keychain anyway
 	os.Remove(r.GetPath("secret"))
@@ -248,7 +266,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 	}
 
 	kps = append(kps, userKP)
-
 	mlogPriv := multilogs.NewPrivateRead(kitlog.With(log, "module", "privLogs"), kps...)
 
 	opts := []mksbot.Option{
@@ -258,7 +275,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		mksbot.WithAppKey(appKeyBytes),
 		mksbot.WithJSONKeyPair(keyblob),
 		mksbot.WithListenAddr(listenAddr),
-		mksbot.WithNetworkConnTracker(network.NewAcceptAllTracker()),
 		mksbot.WithHops(cfg.Hops),
 		mksbot.EnableAdvertismentDialing(true),
 		mksbot.EnableAdvertismentBroadcasts(true),

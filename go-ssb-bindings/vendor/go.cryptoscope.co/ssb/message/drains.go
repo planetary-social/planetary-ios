@@ -3,15 +3,14 @@
 package message
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
-	"go.cryptoscope.co/muxrpc/codec"
 	gabbygrove "go.mindeco.de/ssb-gabbygrove"
 
 	"go.cryptoscope.co/ssb"
@@ -51,13 +50,8 @@ type legacyVerify struct {
 func (lv legacyVerify) Verify(v interface{}) (ssb.Message, error) {
 	rmsg, ok := v.(json.RawMessage)
 	if !ok {
-		codec, ok := v.(codec.Body)
-		if !ok {
-			return nil, errors.Errorf("legacyVerify: expected %T - got %T", rmsg, v)
-		}
-		rmsg = json.RawMessage(codec)
+		return nil, errors.Errorf("legacyVerify: expected %T - got %T", rmsg, v)
 	}
-
 	ref, dmsg, err := legacy.Verify(rmsg, lv.hmacKey)
 	if err != nil {
 		return nil, err
@@ -80,11 +74,8 @@ type gabbyVerify struct {
 func (gv gabbyVerify) Verify(v interface{}) (msg ssb.Message, err error) {
 	trBytes, ok := v.([]uint8)
 	if !ok {
-		codec, ok := v.(codec.Body)
-		if !ok {
-			return nil, errors.Errorf("legacyVerify: expected %T - got %T", codec, v)
-		}
-		trBytes = codec
+		err = errors.Errorf("gabbyVerify: expected %T - got %T", trBytes, v)
+		return
 	}
 	var tr gabbygrove.Transfer
 	if uErr := tr.UnmarshalCBOR(trBytes); uErr != nil {
@@ -124,20 +115,17 @@ type streamDrain struct {
 func (ld *streamDrain) Pour(ctx context.Context, v interface{}) error {
 	next, err := ld.verify.Verify(v)
 	if err != nil {
-		return errors.Wrapf(err, "muxDrain(%s:%d) verify failed (%T)", ld.who.Ref()[1:5], ld.latestSeq.Seq(), v)
+		return errors.Wrapf(err, "muxDrain(%s:%d) verify failed", ld.who.ShortRef(), ld.latestSeq.Seq())
 	}
 
 	err = ValidateNext(ld.latestMsg, next)
 	if err != nil {
-		if err == errSkip {
-			return nil
-		}
 		return err
 	}
 
 	err = ld.storage.Pour(ctx, next)
 	if err != nil {
-		return errors.Wrapf(err, "muxDrain(%s): failed to append message(%s:%d)", ld.who.Ref()[1:5], next.Key().Ref(), next.Seq())
+		return errors.Wrapf(err, "muxDrain(%s): failed to append message(%s:%d)", ld.who.ShortRef(), next.Key().Ref(), next.Seq())
 	}
 
 	ld.latestSeq = margaret.BaseSeq(next.Seq())
@@ -151,52 +139,31 @@ func (ld streamDrain) Close() error { return ld.storage.Close() }
 // that he previous hash is correct and that the sequence number is increasing correctly
 // TODO: move all the message's publish and drains to it's own package
 func ValidateNext(current, next ssb.Message) error {
-	nextSeq := next.Seq()
-
 	if current != nil {
-		currSeq := current.Seq()
 		author := current.Author()
+
 		if !author.Equal(next.Author()) {
-			return errors.Errorf("ValidateNext(%s:%d): wrong author: %s", author.Ref()[1:5], currSeq, next.Author().Ref())
+			return errors.Errorf("ValidateNext(%s:%d): wrong author: %s", author.ShortRef(), current.Seq(), next.Author().ShortRef())
 		}
 
-		currKey := current.Key()
-		if currKey == nil {
-			panic("no current key!")
-		}
-		shouldSkip := currSeq >= nextSeq
-
-		nextPrev := next.Previous()
-		if nextPrev == nil {
-			if shouldSkip {
-				return errSkip
-			}
-			panic(fmt.Sprintf("skipped %d %d %v", currSeq, nextSeq, shouldSkip))
-		}
-
-		if currSeq+1 != nextSeq {
-			if shouldSkip {
-				return errSkip
-			}
-			return errors.Errorf("ValidateNext(%s:%d): next.seq(%d) != curr.seq+1", author.Ref()[1:5], currSeq, nextSeq)
-		}
-
-		if !currKey.Equal(*nextPrev) {
+		if bytes.Compare(current.Key().Hash, next.Previous().Hash) != 0 {
 			return errors.Errorf("ValidateNext(%s:%d): previous compare failed expected:%s incoming:%s",
 				author.Ref(),
-				currSeq,
+				current.Seq(),
 				current.Key().Ref(),
 				next.Previous().Ref(),
 			)
 		}
+		if current.Seq()+1 != next.Seq() {
+			return errors.Errorf("ValidateNext(%s:%d): next.seq != curr.seq+1", author.ShortRef(), current.Seq())
+		}
 
 	} else { // first message
+		nextSeq := next.Seq()
 		if nextSeq != 1 {
-			return errors.Errorf("ValidateNext(%s:%d): first message has to have sequence 1", next.Author().Ref()[1:5], nextSeq)
+			return errors.Errorf("ValidateNext(%s:%d): first message has to have sequence 1", next.Author().ShortRef(), nextSeq)
 		}
 	}
 
 	return nil
 }
-
-var errSkip = errors.New("ValidateNext: already got message")

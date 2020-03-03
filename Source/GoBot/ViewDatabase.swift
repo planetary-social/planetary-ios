@@ -60,7 +60,7 @@ class ViewDatabase {
 
     // TODO: use this to trigger fill on update and wipe previous versions
     // https://app.asana.com/0/914798787098068/1151842364054322/f
-    let schemaVersion: Int = 17
+    static var schemaVersion: UInt = 20
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
@@ -153,10 +153,12 @@ class ViewDatabase {
     // contact_id
     
     private let addresses: Table
+    private let colAddressID = Expression<Int64>("address_id")
+    // colAboutID
     private let colAddress = Expression<String>("address")
-    private let colWorked = Expression<Int>("worked")
-    private let colAvail = Expression<Double>("availability")
-    
+    private let colWorkedLast = Expression<Date?>("worked_last")
+    private let colLastErr = Expression<String>("last_err")
+    private let colUse = Expression<Bool>("use")
 
     init() {
         self.addresses = Table(ViewDatabaseTableNames.addresses.rawValue)
@@ -191,7 +193,7 @@ class ViewDatabase {
             throw ViewDatabaseError.alreadyOpen
         }
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
-        self.dbPath = "\(path)/schema-built\(self.schemaVersion).sqlite"
+        self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
         self.openDB = db
         
@@ -274,6 +276,35 @@ class ViewDatabase {
         }
         
         return -1
+    }
+    
+    // MARK: pubs
+
+    func getAllKnownPubs() throws -> [KnownPub] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let qry = self.addresses
+           .join(self.authors, on: self.authors[colID] == self.addresses[colAboutID])
+           .order(colWorkedLast.desc)
+
+        return try db.prepare(qry).map { row in
+            var workedWhen = "not yet"
+            let workedLastMaybe = try? row.get(colWorkedLast)
+            if  let didWork = workedLastMaybe {
+                workedWhen = didWork.shortDateTimeString
+            }
+
+            return KnownPub(
+                AddressID: try row.get(colAddressID),
+                ForFeed: try row.get(colAuthor),
+                Address: try row.get(colAddress),
+                InUse: try row.get(colUse),
+                WorkedLast: workedWhen,
+                LastError: try row.get(colLastErr)
+            )
+        }
     }
     
     // MARK: moderation / delete
@@ -1135,9 +1166,10 @@ class ViewDatabase {
             return
         }
         
-        try db.run(self.addresses.insert(
-            colMessageRef <- msgID,
-            colAvail <- a.availability,
+        let authorID = try self.authorID(from: msg.value.author, make: true)
+        
+        try db.run(self.addresses.insert(or: .replace,
+            colAboutID <- authorID,
             colAddress <- a.address
         ))
     }
@@ -1287,6 +1319,26 @@ class ViewDatabase {
         try self.deleteNoTransact(message: dcr.hash)
     }
     
+    private func fillPub(msgID: Int64, msg: KeyValue) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        guard let p = msg.value.content.pub else {
+            Log.info("[viewdb/fill] broken pub message: \(msg.key)")
+            return
+        }
+
+        let pubKeyID = try self.authorID(from: p.address.key, make: true)
+
+        let lazyMultiServ = "net:\(p.address.host):\(p.address.port)~shs:\(p.address.key.id)"
+
+        try db.run(self.addresses.insert(or: .replace,
+            colAboutID <- pubKeyID,
+            colAddress <- lazyMultiServ
+        ))
+    }
+    
     private func fillPost(msgID: Int64, msg: KeyValue, pms: Bool) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1349,8 +1401,8 @@ class ViewDatabase {
         try self.insertBranches(msgID: msgID, root: v.root, branches: v.branch)
     }
     
-    private let now = Date(timeIntervalSinceNow: 0)
     private func isOldMessage(msg: KeyValue) -> Bool {
+        let now = Date(timeIntervalSinceNow: 0)
         let claimed = Date(timeIntervalSince1970: msg.value.timestamp/1000)
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
@@ -1372,6 +1424,7 @@ class ViewDatabase {
         try db.transaction { // also batches writes! helps a lot with perf
             var lastRxSeq: Int64 = -1
             
+            let loopStart = Date().timeIntervalSince1970*1000
             for msg in msgs {
                 if let msgRxSeq = msg.receivedSeq {
                     lastRxSeq = msgRxSeq
@@ -1397,6 +1450,13 @@ class ViewDatabase {
                     continue
                 }
                 
+                // make sure we dont have messages from the future
+                // and force them to the _received_ timestamp so that they are not pinned to the top of the views
+                var claimed = msg.value.timestamp
+                if claimed > loopStart {
+                    claimed = msg.timestamp
+                }
+
                 // can only insert PMs when the unencrypted was inserted before
                 let msgKeyID = try self.msgID(from: msg.key, make: !pms)
                 let authorID = try self.authorID(from: msg.value.author, make: true)
@@ -1411,7 +1471,7 @@ class ViewDatabase {
                         colDecrypted <- true,
                         colMsgType <- msg.value.content.type.rawValue,
                         colReceivedAt <- msg.timestamp,
-                        colClaimedAt <- msg.value.timestamp
+                        colClaimedAt <- claimed
                     ))
                 } else {
                     do {
@@ -1422,14 +1482,16 @@ class ViewDatabase {
                             colSequence <- msg.value.sequence,
                             colMsgType <- msg.value.content.type.rawValue,
                             colReceivedAt <- msg.timestamp,
-                            colClaimedAt <- msg.value.timestamp
+                            colClaimedAt <- claimed
                         ))
                     
                     } catch Result.error(let errMsg, let errCode, _) {
                         // the constraints on the table are for uniquness:
-                        // message key/id and (author,sequence no)
-                        // the former indicates inserting the exact same message twice, the latter something like a fork
-                        if errCode == SQLITE_CONSTRAINT && errMsg != "UNIQUE constraint failed: messages.msg_id" {
+                        // 1) message key/id
+                        // 2) (author,sequence no)
+                        // while (1) always means duplicate message (2) can also mean fork
+                        // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
+                        if errCode == SQLITE_CONSTRAINT {
                             throw ViewDatabaseError.messageConstraintViolation(msg.value.author)
                         }
                         throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
@@ -1442,7 +1504,7 @@ class ViewDatabase {
                     switch msg.value.content.type { // insert individual message types
 
                     case .address:
-                        try self.fillAddress(msgID: msgKeyID, msg: msg)
+                         try self.fillAddress(msgID: msgKeyID, msg: msg)
                         
                     case .about:
                         try self.fillAbout(msgID: msgKeyID, msg: msg)
@@ -1452,6 +1514,9 @@ class ViewDatabase {
 
                     case .dropContentRequest:
                         try self.checkAndExecuteDCR(msgID: msgKeyID, msg: msg)
+
+                    case .pub:
+                         try self.fillPub(msgID: msgKeyID, msg: msg)
 
                     case .post:
                         try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)
@@ -1575,7 +1640,7 @@ class ViewDatabase {
             Log.optional(ViewDatabaseError.notOpen)
             return nil
         }
-        let knownFormats = ["ggfeed-v1", "ed25519"]
+        let knownFormats = ["ed25519", "ggfeed-v1"]
         for format in knownFormats {
             let ggFormatGuess = "@\(pubKey).\(format)"
             let aid = try? self.authorID(from: ggFormatGuess, make: false)

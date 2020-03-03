@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/cryptix/go/logging"
+	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/muxrpc"
 	"go.cryptoscope.co/netwrap"
@@ -59,9 +60,12 @@ func (h *handler) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrp
 
 	switch req.Method.String() {
 
+	case "ctrl.disconnect":
+		h.node.GetConnTracker().CloseAll()
+		h.check(req.Return(ctx, "disconnected"))
+
 	case "ctrl.connect":
 		if len(req.Args()) != 1 {
-			// TODO: use secretstream
 			h.info.Log("error", "usage", "args", req.Args, "method", req.Method)
 			checkAndClose(errors.New("usage: ctrl.connect host:port:key"))
 			return
@@ -91,7 +95,7 @@ func (h *handler) connect(ctx context.Context, dest string) error {
 	}
 
 	wrappedAddr := netwrap.WrapAddr(&msaddr.Addr, secretstream.Addr{PubKey: msaddr.Ref.PubKey()})
-	h.info.Log("event", "doing gossip.connect", "remote", wrappedAddr.String())
+	level.Info(h.info).Log("event", "doing gossip.connect", "remote", msaddr.Ref.ShortRef())
 	// TODO: add context to tracker to cancel connections
 	err = h.node.Connect(context.Background(), wrappedAddr)
 	return errors.Wrapf(err, "gossip.connect call: error connecting to %q", msaddr.Addr)

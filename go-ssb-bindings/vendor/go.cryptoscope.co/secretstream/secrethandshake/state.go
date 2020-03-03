@@ -15,22 +15,13 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/sha512"
-	"crypto/subtle"
 
 	"go.cryptoscope.co/secretstream/internal/lo25519"
-
-	"github.com/agl/ed25519"
-	"github.com/agl/ed25519/extra25519"
+	"go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519"
 	"golang.org/x/crypto/curve25519"
+	"golang.org/x/crypto/ed25519"
 	"golang.org/x/crypto/nacl/box"
 )
-
-func init() {
-	err := testMemoryLayoutAssumption()
-	if err != nil {
-		panic(err)
-	}
-}
 
 // State is the state each peer holds during the handshake
 type State struct {
@@ -40,7 +31,7 @@ type State struct {
 	localExchange  CurveKeyPair
 	local          EdKeyPair
 	remoteExchange CurveKeyPair
-	remotePublic   [ed25519.PublicKeySize]byte // long-term
+	remotePublic   ed25519.PublicKey // long-term
 
 	secret, secret2, secret3 [32]byte
 
@@ -51,22 +42,25 @@ type State struct {
 
 // EdKeyPair is a keypair for use with github.com/agl/ed25519
 type EdKeyPair struct {
-	Public [ed25519.PublicKeySize]byte
-	Secret [ed25519.PrivateKeySize]byte
+	Public ed25519.PublicKey
+	Secret ed25519.PrivateKey
 }
 
 func NewKeyPair(public, secret []byte) (*EdKeyPair, error) {
 	var kp EdKeyPair
-	if n := copy(kp.Secret[:], secret); n != ed25519.PrivateKeySize {
+	if n := len(secret); n != ed25519.PrivateKeySize {
 		return nil, ErrKeySize{tipe: "private", n: n}
 	}
-	if n := copy(kp.Public[:], public); n != ed25519.PublicKeySize {
+	kp.Secret = secret
+
+	if n := len(public); n != ed25519.PublicKeySize {
 		return nil, ErrKeySize{tipe: "public", n: n}
 	}
 
 	if lo25519.IsEdLowOrder(public) {
 		return nil, ErrInvalidKeyPair
 	}
+	kp.Public = public
 
 	return &kp, nil
 }
@@ -78,13 +72,16 @@ type CurveKeyPair struct {
 }
 
 // NewClientState initializes the state for the client side
-func NewClientState(appKey []byte, local EdKeyPair, remotePublic [ed25519.PublicKeySize]byte) (*State, error) {
+func NewClientState(appKey []byte, local EdKeyPair, remotePublic ed25519.PublicKey) (*State, error) {
 	state, err := newState(appKey, local)
 	if err != nil {
 		return state, err
 	}
 
 	state.remotePublic = remotePublic
+	if l := len(state.remotePublic); l != ed25519.PublicKeySize {
+		return nil, ErrKeySize{tipe: "remote/public", n: l}
+	}
 
 	return state, err
 }
@@ -97,15 +94,27 @@ func NewServerState(appKey []byte, local EdKeyPair) (*State, error) {
 // newState initializes the state needed by both client and server
 func newState(appKey []byte, local EdKeyPair) (*State, error) {
 	pubKey, secKey, err := box.GenerateKey(rand.Reader)
+	if err != nil {
+		return nil, err
+	}
 
 	s := State{
-		appKey: appKey,
+		appKey:       appKey,
+		remotePublic: make([]byte, ed25519.PublicKeySize),
 	}
 	copy(s.localExchange.Public[:], pubKey[:])
 	copy(s.localExchange.Secret[:], secKey[:])
 	s.local = local
 
-	return &s, err
+	if l := len(s.local.Public); l != ed25519.PublicKeySize {
+		return nil, ErrKeySize{tipe: "eph/public", n: l}
+	}
+
+	if l := len(s.local.Secret); l != ed25519.PrivateKeySize {
+		return nil, ErrKeySize{tipe: "eph/private", n: l}
+	}
+
+	return &s, nil
 }
 
 // createChallenge returns a buffer with a challenge
@@ -142,7 +151,9 @@ func (s *State) verifyChallenge(ch []byte) bool {
 // createClientAuth returns a buffer containing a clientAuth message
 func (s *State) createClientAuth() []byte {
 	var curveRemotePubKey [32]byte
-	extra25519.PublicKeyToCurve25519(&curveRemotePubKey, &s.remotePublic)
+	if !extra25519.PublicKeyToCurve25519(&curveRemotePubKey, s.remotePublic) {
+		panic("secrethandshake: could not convert remote to curve key")
+	}
 	var aBob [32]byte
 	curve25519.ScalarMult(&aBob, &s.localExchange.Secret, &curveRemotePubKey)
 	copy(s.aBob[:], aBob[:])
@@ -158,7 +169,7 @@ func (s *State) createClientAuth() []byte {
 	sigMsg.Write(s.remotePublic[:])
 	sigMsg.Write(s.secHash)
 
-	sig := ed25519.Sign(&s.local.Secret, sigMsg.Bytes())
+	sig := ed25519.Sign(s.local.Secret, sigMsg.Bytes())
 
 	var helloBuf bytes.Buffer
 	helloBuf.Write(sig[:])
@@ -171,15 +182,12 @@ func (s *State) createClientAuth() []byte {
 	return out
 }
 
+var nullHello [ed25519.SignatureSize + ed25519.PublicKeySize]byte
+
 // verifyClientAuth returns whether a buffer contains a valid clientAuth message
 func (s *State) verifyClientAuth(data []byte) bool {
-	// this branch is okay because there are no secrets involved
-	if len(data) != ed25519.SignatureSize+ed25519.PublicKeySize+box.Overhead {
-		return false
-	}
-
 	var cvSec, aBob [32]byte
-	extra25519.PrivateKeyToCurve25519(&cvSec, &s.local.Secret)
+	extra25519.PrivateKeyToCurve25519(&cvSec, s.local.Secret)
 	curve25519.ScalarMult(&aBob, &cvSec, &s.remoteExchange.Public)
 	copy(s.aBob[:], aBob[:])
 
@@ -189,39 +197,52 @@ func (s *State) verifyClientAuth(data []byte) bool {
 	secHasher.Write(s.aBob[:])
 	copy(s.secret2[:], secHasher.Sum(nil))
 
-	s.hello = make([]byte, len(data)-16)
+	s.hello = make([]byte, 0, len(data)-16)
 
-	var (
-		nonce  [24]byte // always 0?
-		sig    [ed25519.SignatureSize]byte
-		public [ed25519.PublicKeySize]byte
-		openOk bool
-	)
+	var nonce [24]byte // always 0?
+	var openOk bool
+	s.hello, openOk = box.OpenAfterPrecomputation(s.hello, data, &nonce, &s.secret2)
 
-	_, openOk = box.OpenAfterPrecomputation(s.hello[:0], data, &nonce, &s.secret2)
+	var sig = make([]byte, ed25519.SignatureSize)
+	var public = make([]byte, ed25519.PublicKeySize)
+	/* TODO: is this const time!?!
 
-	// see unsafecast_test.go
-	okInt := castBoolToInt(&openOk)
+	   this is definetly not:
+	   if !openOK {
+	   	s.hello = nullHello
+	   }
+	   copy(sig, ...)
+	   copy(pub, ...)
+	*/
+	if openOk {
+		copy(sig, s.hello[:ed25519.SignatureSize])
+		copy(public[:], s.hello[ed25519.SignatureSize:])
 
-	subtle.ConstantTimeCopy(okInt, sig[:], s.hello[:ed25519.SignatureSize])
-	subtle.ConstantTimeCopy(okInt, public[:], s.hello[ed25519.SignatureSize:ed25519.SignatureSize+ed25519.PublicKeySize])
+	} else {
+		copy(sig, nullHello[:ed25519.SignatureSize])
+		copy(public[:], nullHello[ed25519.SignatureSize:])
+	}
+
+	if lo25519.IsEdLowOrder(sig[:32]) {
+		openOk = false
+	}
 
 	var sigMsg bytes.Buffer
 	sigMsg.Write(s.appKey)
 	sigMsg.Write(s.local.Public[:])
 	sigMsg.Write(s.secHash)
-	verifyOk := ed25519.Verify(&public, sigMsg.Bytes(), &sig)
+	verifyOk := ed25519.Verify(public, sigMsg.Bytes(), sig)
 
-	copy(s.remotePublic[:], public[:])
-
-	keyOk := !lo25519.IsEdLowOrder(sig[:32])
-	return openOk && keyOk && verifyOk
+	copy(s.remotePublic, public)
+	return openOk && verifyOk
 }
 
 // createServerAccept returns a buffer containing a serverAccept message
 func (s *State) createServerAccept() []byte {
 	var curveRemotePubKey [32]byte
-	extra25519.PublicKeyToCurve25519(&curveRemotePubKey, &s.remotePublic)
+	if !extra25519.PublicKeyToCurve25519(&curveRemotePubKey, s.remotePublic) {
+		panic("secrethandshake: could not convert remote to curve key")
+	}
 	var bAlice [32]byte
 	curve25519.ScalarMult(&bAlice, &s.localExchange.Secret, &curveRemotePubKey)
 	copy(s.bAlice[:], bAlice[:])
@@ -238,7 +259,7 @@ func (s *State) createServerAccept() []byte {
 	sigMsg.Write(s.hello[:])
 	sigMsg.Write(s.secHash)
 
-	okay := ed25519.Sign(&s.local.Secret, sigMsg.Bytes())
+	okay := ed25519.Sign(s.local.Secret, sigMsg.Bytes())
 
 	var out = make([]byte, 0, len(okay)+16)
 	var nonce [24]byte // always 0?
@@ -248,7 +269,7 @@ func (s *State) createServerAccept() []byte {
 // verifyServerAccept returns whether the passed buffer contains a valid serverAccept message
 func (s *State) verifyServerAccept(boxedOkay []byte) bool {
 	var curveLocalSec [32]byte
-	extra25519.PrivateKeyToCurve25519(&curveLocalSec, &s.local.Secret)
+	extra25519.PrivateKeyToCurve25519(&curveLocalSec, s.local.Secret)
 	var bAlice [32]byte
 	curve25519.ScalarMult(&bAlice, &curveLocalSec, &s.remoteExchange.Public)
 	copy(s.bAlice[:], bAlice[:])
@@ -261,18 +282,16 @@ func (s *State) verifyServerAccept(boxedOkay []byte) bool {
 	copy(s.secret3[:], secHasher.Sum(nil))
 
 	var nonce [24]byte // always 0?
-	out := make([]byte, 0, len(boxedOkay)-16)
-	out, openOk := box.OpenAfterPrecomputation(out, boxedOkay, &nonce, &s.secret3)
-
-	var sig [ed25519.SignatureSize]byte
-	copy(sig[:], out)
+	sig := make([]byte, 0, len(boxedOkay)-16)
+	sig, openOk := box.OpenAfterPrecomputation(nil, boxedOkay, &nonce, &s.secret3)
 
 	var sigMsg bytes.Buffer
 	sigMsg.Write(s.appKey)
 	sigMsg.Write(s.hello[:])
 	sigMsg.Write(s.secHash)
 
-	return ed25519.Verify(&s.remotePublic, sigMsg.Bytes(), &sig) && openOk
+	verifyOk := ed25519.Verify(s.remotePublic, sigMsg.Bytes(), sig)
+	return verifyOk && openOk
 }
 
 // cleanSecrets overwrites all intermediate secrets and copies the final secret to s.secret

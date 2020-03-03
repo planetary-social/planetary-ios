@@ -58,7 +58,7 @@ class GoBot: Bot {
         self.queue.async {
             // make some sync connections to pull new messages
             let n = 2 // how many connections to establish
-            if !self.bot.dial(atLeast: n) {
+            if !self.bot.dialSomePeers() {
                 Log.unexpected(.botError, "failed to make \(n) sync connections after app resume")
             }
         }
@@ -156,7 +156,25 @@ class GoBot: Bot {
         DispatchQueue.main.async { completion(nil) }
     }
 
+    
     // MARK: Sync
+    
+    func knownPubs(completion: @escaping KnownPubsCompletion) {
+       Thread.assertIsMainThread()
+         self.queue.async {
+            var err: Error? = nil
+            var kps: [KnownPub] = []
+            defer {
+                   DispatchQueue.main.async { completion(kps, err) }
+            }
+            
+            do {
+                kps = try self.database.getAllKnownPubs()
+            } catch {
+                err = error
+            }
+         }
+     }
 
     private var _isSyncing = false
     var isSyncing: Bool { return self._isSyncing }
@@ -177,7 +195,7 @@ class GoBot: Bot {
 
         self.queue.async {
             let before = self.repoNumberOfMessages()
-            self.bot.dial(atLeast: 2)
+            self.bot.dialSomePeers()
             let after = self.repoNumberOfMessages()
             let new = after - before
             self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,
@@ -259,6 +277,24 @@ class GoBot: Bot {
             completion(error, elapsed)
             NotificationCenter.default.post(name: .didRefresh, object: nil)
             Analytics.trackBotDidRefresh(duration: elapsed, error: error)
+        }
+    }
+    
+    // MARK: Invites
+    
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
+        Thread.assertIsMainThread()
+        self.queue.async {
+            token.withGoString {
+                goStr in
+                let worked = ssbInviteAccept(goStr)
+
+                var err: Error? = nil
+                if !worked { // TODO: find a nicer way to pass errors back on the C-API
+                    err = GoBotError.unexpectedFault("invite did not work. Maybe try again?")
+                }
+                DispatchQueue.main.async { completion(err) }
+            }
         }
     }
 
@@ -474,6 +510,7 @@ class GoBot: Bot {
             do {
                 try self.database.fillMessages(msgs: msgs)
             } catch ViewDatabaseError.messageConstraintViolation(let author) {
+                // TODO: we need to spawn the _in progress_ spinner here because this can take a while...
                 var (params, err) = self.repairViewConstraints21012020(with: author, current: current)
                 if let e = err {
                     params["repair_failed"] = e
@@ -487,11 +524,9 @@ class GoBot: Bot {
                  // trying to re-sync the feed
                 self.bot.dial(atLeast: 1)
                 #if DEBUG
-                print("[rx log] viewdb fill of aborted and repaired. retrying in 5 seconds")
+                print("[rx log] viewdb fill of aborted and repaired.")
                 #endif
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5), execute: {
-                    self.refresh() { err, _ in completion(err)  }
-                })
+                completion(err)
                 return
             } catch {
                 let err = GoBotError.duringProcessing("viewDB: message filling failed", error)

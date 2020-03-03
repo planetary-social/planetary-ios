@@ -19,6 +19,7 @@ import (
 	"go.cryptoscope.co/secretstream"
 )
 
+// Some constant identifiers
 const (
 	RefAlgoFeedSSB1    = "ed25519" // ssb v1 (legacy, crappy encoding)
 	RefAlgoMessageSSB1 = "sha256"  // scuttlebutt happend anyway
@@ -127,6 +128,7 @@ func ParseRef(str string) (Ref, error) {
 
 type Ref interface {
 	Ref() string
+	ShortRef() string
 }
 
 // MessageRef defines the content addressed version of a ssb message, identified it's hash.
@@ -135,8 +137,14 @@ type MessageRef struct {
 	Algo string
 }
 
+// Ref prints the full identifieir
 func (ref MessageRef) Ref() string {
 	return fmt.Sprintf("%%%s.%s", base64.StdEncoding.EncodeToString(ref.Hash), ref.Algo)
+}
+
+// ShortRef prints a shortend version
+func (ref MessageRef) ShortRef() string {
+	return fmt.Sprintf("<%%%s.%s>", base64.StdEncoding.EncodeToString(ref.Hash[:3]), ref.Algo)
 }
 
 func (ref MessageRef) Equal(other MessageRef) bool {
@@ -283,6 +291,10 @@ func (ref FeedRef) Ref() string {
 	return fmt.Sprintf("@%s.%s", base64.StdEncoding.EncodeToString(ref.ID), ref.Algo)
 }
 
+func (ref FeedRef) ShortRef() string {
+	return fmt.Sprintf("<@%s.%s>", base64.StdEncoding.EncodeToString(ref.ID[:3]), ref.Algo)
+}
+
 func (ref FeedRef) Equal(b *FeedRef) bool {
 	// TODO: invset time in shs1.1 to signal the format correctly
 	// if ref.Algo != b.Algo {
@@ -370,6 +382,10 @@ func (ref BlobRef) Ref() string {
 	return fmt.Sprintf("&%s.%s", base64.StdEncoding.EncodeToString(ref.Hash), ref.Algo)
 }
 
+func (ref BlobRef) ShortRef() string {
+	return fmt.Sprintf("<&%s.%s>", base64.StdEncoding.EncodeToString(ref.Hash[:3]), ref.Algo)
+}
+
 // ParseBlobRef uses ParseRef and checks that it returns a *BlobRef
 func ParseBlobRef(s string) (*BlobRef, error) {
 	ref, err := ParseRef(s)
@@ -427,6 +443,10 @@ type ContentRef struct {
 
 func (ref ContentRef) Ref() string {
 	return fmt.Sprintf("!%s.%s", base64.StdEncoding.EncodeToString(ref.Hash), ref.Algo)
+}
+
+func (ref ContentRef) ShortRef() string {
+	return fmt.Sprintf("<!%s.%s>", base64.StdEncoding.EncodeToString(ref.Hash[:3]), ref.Algo)
 }
 
 func (ref ContentRef) MarshalBinary() ([]byte, error) {

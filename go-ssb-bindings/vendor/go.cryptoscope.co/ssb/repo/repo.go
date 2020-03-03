@@ -10,7 +10,6 @@ import (
 	"regexp"
 
 	"github.com/dgraph-io/badger"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/librarian"
 	libmkv "go.cryptoscope.co/librarian/mkv"
@@ -19,7 +18,7 @@ import (
 	"go.cryptoscope.co/margaret/codec/msgpack"
 	"go.cryptoscope.co/margaret/multilog"
 	multibadger "go.cryptoscope.co/margaret/multilog/badger"
-	"go.cryptoscope.co/margaret/multilog/roaringfiles"
+	multimkv "go.cryptoscope.co/margaret/multilog/roaring/mkv"
 	"modernc.org/kv"
 
 	"go.cryptoscope.co/ssb"
@@ -106,7 +105,7 @@ func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog,
 	}
 
 	mkvPath := filepath.Join(dbPath, "mkv")
-	mlog, err := roaringfiles.NewMKV(mkvPath)
+	mlog, err := multimkv.NewMultiLog(mkvPath)
 	if err != nil {
 		// yuk..
 		if !isLockFileExistsErr(err) {
@@ -116,7 +115,7 @@ func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog,
 			return nil, nil, errors.Wrapf(err, "failed to recover lockfiles")
 
 		}
-		mlog, err = roaringfiles.NewMKV(mkvPath)
+		mlog, err = multimkv.NewMultiLog(mkvPath)
 		if err != nil {
 			return nil, nil, errors.Wrapf(err, "failed to open roaring db")
 		}
@@ -150,7 +149,7 @@ func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog,
 		}
 
 		err = luigi.Pump(ctx, mlogSink, src)
-		if err == ssb.ErrShuttingDown || errors.Cause(err) == context.Canceled {
+		if err == ssb.ErrShuttingDown {
 			return nil
 		}
 
@@ -182,35 +181,12 @@ func OpenIndex(r Interface, name string, f func(librarian.SeqSetterIndex) librar
 	pth := r.GetPath(PrefixIndex, name, "mkv")
 	err := os.MkdirAll(pth, 0700)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "error making index directory")
+		return nil, nil, errors.Wrap(err, "openIndex: error making index directory")
 	}
 
-	opts := &kv.Options{}
-	dbname := filepath.Join(pth, "idx.mkv")
-	var db *kv.DB
-	_, err = os.Stat(dbname)
-	if os.IsNotExist(err) {
-		db, err = kv.Create(dbname, opts)
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "failed to create mkv")
-		}
-	} else if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to stat path location")
-	} else {
-		db, err = kv.Open(dbname, opts)
-		if err != nil {
-
-			if !isLockFileExistsErr(err) {
-				return nil, nil, err
-			}
-			if err := cleanupLockFiles(pth); err != nil {
-				return nil, nil, errors.Wrapf(err, "failed to recover lockfiles")
-			}
-			db, err = kv.Open(dbname, opts)
-			if err != nil {
-				return nil, nil, errors.Wrap(err, "failed to open mkv")
-			}
-		}
+	db, err := OpenMKV(pth)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "openIndex: failed to open MKV database")
 	}
 
 	idx := libmkv.NewIndex(db, margaret.BaseSeq(0))
@@ -223,7 +199,7 @@ func OpenIndex(r Interface, name string, f func(librarian.SeqSetterIndex) librar
 		}
 
 		err = luigi.Pump(ctx, sinkidx, src)
-		if err == ssb.ErrShuttingDown || errors.Cause(err) == context.Canceled {
+		if err == ssb.ErrShuttingDown {
 			return db.Close()
 		}
 
@@ -231,6 +207,38 @@ func OpenIndex(r Interface, name string, f func(librarian.SeqSetterIndex) librar
 	}
 
 	return idx, serve, nil
+}
+
+func OpenMKV(pth string) (*kv.DB, error) {
+	opts := &kv.Options{}
+	os.MkdirAll(pth, 0700)
+	dbname := filepath.Join(pth, "idx.mkv")
+	var db *kv.DB
+	_, err := os.Stat(dbname)
+	if os.IsNotExist(err) {
+		db, err = kv.Create(dbname, opts)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to create mkv")
+		}
+	} else if err != nil {
+		return nil, errors.Wrap(err, "failed to stat path location")
+	} else {
+		db, err = kv.Open(dbname, opts)
+		if err != nil {
+
+			if !isLockFileExistsErr(err) {
+				return nil, err
+			}
+			if err := cleanupLockFiles(pth); err != nil {
+				return nil, errors.Wrapf(err, "failed to recover lockfiles")
+			}
+			db, err = kv.Open(dbname, opts)
+			if err != nil {
+				return nil, errors.Wrap(err, "failed to open mkv")
+			}
+		}
+	}
+	return db, nil
 }
 
 func OpenBadgerIndex(r Interface, name string, f func(*badger.DB) librarian.SinkIndex) (*badger.DB, librarian.SinkIndex, ServeFunc, error) {
@@ -254,7 +262,7 @@ func OpenBadgerIndex(r Interface, name string, f func(*badger.DB) librarian.Sink
 		}
 
 		err = luigi.Pump(ctx, sinkidx, src)
-		if err == ssb.ErrShuttingDown || errors.Cause(err) == context.Canceled {
+		if err == ssb.ErrShuttingDown {
 			return nil
 		}
 

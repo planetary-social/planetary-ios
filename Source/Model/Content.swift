@@ -31,6 +31,7 @@ struct Content: Codable {
     var contentException: String?
     var about: About?
     var address: Address?
+    var pub: Pub?
     var contact: Contact?
     var dropContentRequest: DropContentRequest?
     var post: Post?
@@ -112,6 +113,7 @@ struct Content: Codable {
                 case .address: self.address = try Address(from: decoder)
                 case .contact: self.contact = try Contact(from: decoder)
                 case .dropContentRequest: self.dropContentRequest = try DropContentRequest(from: decoder)
+                case .pub: self.pub = try Pub(from: decoder)
                 case .post: self.post = try Post(from: decoder)
                 case .vote: self.vote = try ContentVote(from: decoder)
                 default: ()

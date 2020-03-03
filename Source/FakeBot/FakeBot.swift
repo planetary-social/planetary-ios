@@ -14,6 +14,14 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
+    func knownPubs(completion: @escaping KnownPubsCompletion) {
+        fatalError("TODO:knownPubs")
+    }
+    
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
+        fatalError("TODO:invite:redeem")
+    }
+    
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
         fatalError("TODO:thread:byRootKey")
     }

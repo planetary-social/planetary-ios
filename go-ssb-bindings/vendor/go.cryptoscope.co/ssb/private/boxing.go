@@ -7,9 +7,11 @@ import (
 	"crypto/rand"
 	"io"
 
-	"github.com/agl/ed25519/extra25519"
+	"crypto/ed25519"
+
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/internal/extra25519"
 	"golang.org/x/crypto/curve25519"
 	"golang.org/x/crypto/nacl/box"
 	"golang.org/x/crypto/nacl/secretbox"
@@ -52,12 +54,13 @@ func Box(clearMsg []byte, rcpts ...*ssb.FeedRef) ([]byte, error) {
 	// make a key box for each recipient
 	for _, r := range rcpts {
 		var (
-			messageShared [32]byte // the recipients sbox secret
-			cvPub         [32]byte // recpt' pub in curve space
-			rcptPub       [32]byte // can't pass []byte to extra25519
+			messageShared [32]byte          // the recipients sbox secret
+			cvPub         [32]byte          // recpt' pub in curve space
+			rcptPub       ed25519.PublicKey // can't pass []byte to extra25519
 		)
-		copy(rcptPub[:], r.PubKey())
-		extra25519.PublicKeyToCurve25519(&cvPub, &rcptPub)
+		rcptPub = make(ed25519.PublicKey, ed25519.PublicKeySize)
+		copy(rcptPub, r.PubKey())
+		extra25519.PublicKeyToCurve25519(&cvPub, rcptPub)
 		curve25519.ScalarMult(&messageShared, ephSecret, &cvPub)
 
 		boxedMsgKey := secretbox.Seal(nil, smsg[:], &nonce, &messageShared)
@@ -90,7 +93,7 @@ func Unbox(recpt *ssb.KeyPair, rawMsg []byte) ([]byte, error) {
 
 	// construct the key that should/can open the header sbox _for us_
 	var messageShared, cvSec [32]byte
-	extra25519.PrivateKeyToCurve25519(&cvSec, &recpt.Pair.Secret)
+	extra25519.PrivateKeyToCurve25519(&cvSec, recpt.Pair.Secret)
 	curve25519.ScalarMult(&messageShared, &cvSec, &hdrPub)
 
 	var (

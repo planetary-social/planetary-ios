@@ -73,6 +73,7 @@ fileprivate struct BotConfig: Encodable {
     let Repo: String
     let ListenAddr: String
     let Hops: UInt
+    let SchemaVersion: UInt
     #if DEBUG
     let Testing: Bool = true
     #else
@@ -93,8 +94,7 @@ class GoBotInternal {
     private var allPeers: [ String : (Peer, [Peer]) ] = [
         NetworkKey.ssb.string: ( Peer(tcpAddr: "pub3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!) , [
             Peer(tcpAddr: "pub2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
-//            Peer(tcpAddr: "pub2.planetary.social:8118", pubKey: Identities.ssb.pubs["planetary-pub2"]!),
-            Peer(tcpAddr: "mindeco.de:8008", pubKey: Identities.ssb.pubs["cryptix-pub"]!)
+            Peer(tcpAddr: "pub4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!)
         ]),
 
         NetworkKey.verse.string: (Peer(tcpAddr: "pub1.planetary.social:8118", pubKey: Identities.verse.pubs["testpub_go"]!), [
@@ -177,7 +177,8 @@ class GoBotInternal {
             KeyBlob: secret.jsonString()!,
             Repo: self.repoPath,
             ListenAddr: listenAddr,
-            Hops: 2)
+            Hops: 1,
+            SchemaVersion: ViewDatabase.schemaVersion)
         
         let enc = JSONEncoder()
         var cfgStr: String
@@ -278,8 +279,10 @@ class GoBotInternal {
         return self.dialOne(peer: p)
     }
     
+    @discardableResult
     func dialSomePeers() -> Bool {
-        for p in self.peers.randomSample(2) {
+        ssbConnectPeers(2)
+        if let p = self.peers.randomSample(1).first {
             let worked = self.dialOne(peer: p)
             if worked {
                 return true
@@ -289,9 +292,9 @@ class GoBotInternal {
     }
     
     func dialOne(peer: Peer) -> Bool {
-        let fooNS = "\(peer.tcpAddr)::\(peer.pubKey)"
+        let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
         var worked: Bool = false
-        fooNS.withGoString {
+        multiServ.withGoString {
             worked = ssbConnectPeer($0)
         }
         if !worked {

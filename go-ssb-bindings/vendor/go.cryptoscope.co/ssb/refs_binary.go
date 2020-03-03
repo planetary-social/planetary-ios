@@ -73,7 +73,7 @@ func (ref StorageRef) String() string {
 	return "storedRef:" + ref.Ref()
 }
 
-func (ref StorageRef) Ref() string {
+func (ref StorageRef) getRef() Ref {
 	t, err := ref.valid()
 	if err != nil {
 		panic(err)
@@ -82,7 +82,14 @@ func (ref StorageRef) Ref() string {
 	if err != nil {
 		panic(err)
 	}
-	return r.Ref()
+	return r
+}
+func (ref StorageRef) Ref() string {
+	return ref.getRef().Ref()
+}
+
+func (ref StorageRef) ShortRef() string {
+	return ref.getRef().ShortRef()
 }
 
 func (ref StorageRef) FeedRef() (*FeedRef, error) {

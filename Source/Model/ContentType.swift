@@ -15,10 +15,10 @@ enum ContentType: String, CaseIterable, Codable {
     case contact
     case dropContentRequest = "drop-content-request"
     case post
+    case pub
     case vote
 
     // known but unhandled
-    //    case pub                              // legacy pub advertisments
     //    case position                         // these are poll-votes (think doodle or _what kind of pizza do you like_)
     // very nerdy dev stuff
     //    case npmPackages = "npm-packages"
