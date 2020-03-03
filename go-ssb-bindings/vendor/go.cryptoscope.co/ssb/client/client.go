@@ -4,17 +4,13 @@ package client
 
 import (
 	"context"
+	"crypto/ed25519"
 	"encoding/base64"
 	"fmt"
 	"io"
 	"net"
 	"os"
 
-	"go.cryptoscope.co/ssb/blobstore"
-	"go.cryptoscope.co/ssb/plugins/replicate"
-	"go.cryptoscope.co/ssb/plugins/whoami"
-
-	"github.com/agl/ed25519"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
@@ -25,7 +21,10 @@ import (
 	"go.cryptoscope.co/secretstream"
 
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/blobstore"
 	"go.cryptoscope.co/ssb/message"
+	"go.cryptoscope.co/ssb/plugins/replicate"
+	"go.cryptoscope.co/ssb/plugins/whoami"
 )
 
 type Client struct {
@@ -98,7 +97,7 @@ func NewTCP(own *ssb.KeyPair, remote net.Addr, opts ...Option) (*Client, error) 
 		return nil, errors.New("ssbClient: expected an address containing an shs-bs addr")
 	}
 
-	var pubKey [ed25519.PublicKeySize]byte
+	var pubKey = make(ed25519.PublicKey, ed25519.PublicKeySize)
 	shsAddr, ok := boxAddr.(secretstream.Addr)
 	if !ok {
 		return nil, errors.New("ssbClient: expected shs-bs address to be of type secretstream.Addr")

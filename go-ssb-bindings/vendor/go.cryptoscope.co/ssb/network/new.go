@@ -4,13 +4,13 @@ package network
 
 import (
 	"context"
+	"crypto/ed25519"
 	"fmt"
 	"io"
 	"net"
 	"strings"
 	"sync"
 
-	"github.com/agl/ed25519"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/go-kit/kit/metrics"
@@ -239,7 +239,6 @@ func (n *node) handleConnection(ctx context.Context, origConn net.Conn, hws ...m
 		return
 	}
 
-
 	defer func() {
 		n.connTracker.OnClose(conn)
 		conn.Close()
@@ -390,14 +389,15 @@ func (n *node) Connect(ctx context.Context, addr net.Addr) error {
 		return errors.New("node/connect: expected an address containing an shs-bs addr")
 	}
 
-	var pubKey [ed25519.PublicKeySize]byte
+	var pubKey = make(ed25519.PublicKey, ed25519.PublicKeySize)
 	if shsAddr, ok := shsAddr.(secretstream.Addr); ok {
 		copy(pubKey[:], shsAddr.PubKey)
 	} else {
 		return errors.New("node/connect: expected shs-bs address to be of type secretstream.Addr")
 	}
 
-	conn, err := n.dialer(netwrap.GetAddr(addr, "tcp"), append(n.beforeCryptoConnWrappers, n.secretClient.ConnWrapper(pubKey))...)
+	conn, err := n.dialer(netwrap.GetAddr(addr, "tcp"), append(n.beforeCryptoConnWrappers,
+		n.secretClient.ConnWrapper(pubKey))...)
 	if err != nil {
 		if conn != nil {
 			conn.Close()

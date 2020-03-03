@@ -32,6 +32,8 @@ github.com/cryptix/go v1.4.0 h1:9HUWptRQ9j0v7mquHnAM6inuOkUnG15HZpWD3Dtt32I=
 github.com/cryptix/go v1.4.0/go.mod h1:bopBFzjGB7Oqrsvt7HaPZSOX1gJW7hgIb84XNhnOhOY=
 github.com/cryptix/go v1.5.0 h1:2+g9oKxiTc5ELGISY2E4Q4E7X8FwP3cXyKbb93EUaZY=
 github.com/cryptix/go v1.5.0/go.mod h1:bopBFzjGB7Oqrsvt7HaPZSOX1gJW7hgIb84XNhnOhOY=
+github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24 h1:tCYzn+bTBGDEl+OPb7zZp8HF7wc7TP8nA0MB9FngerA=
+github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -233,6 +235,8 @@ go.cryptoscope.co/secretstream v1.2.2-0.20200113122031-363c9610d8de h1:lkefo34tJ
 go.cryptoscope.co/secretstream v1.2.2-0.20200113122031-363c9610d8de/go.mod h1:DSDzjJtgZUjkCFJRYSlFC/I0xxn/phzGi0WMpIz6az4=
 go.cryptoscope.co/secretstream v1.2.2-0.20200130134156-5301f8b5dcff h1:FnVaOzJ7FSWsuJIeqGyG5rTyx8yO/DilABvlLz2fO9Q=
 go.cryptoscope.co/secretstream v1.2.2-0.20200130134156-5301f8b5dcff/go.mod h1:OFgcQlPb6XVBMWY4C4/VA+C8VV95T4craI2IUMzdpxg=
+go.cryptoscope.co/secretstream v1.2.2-0.20200303151838-85cf020cfee6 h1:z02UYPKp2YpunYMD29wSdMLoAgY863sf2ssRIZ3PJG4=
+go.cryptoscope.co/secretstream v1.2.2-0.20200303151838-85cf020cfee6/go.mod h1:BFKqF3sseh9dR2MTWICW7YkWxZb3OVwmxkty+GKBF64=
 go.cryptoscope.co/ssb v0.0.0-20190912121701-f368dd6b09da/go.mod h1:gpgPuN7P0HxY5prZunnKbl278nlMCqUekGsJaaiwxnk=
 go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635 h1:mJbzzjSnXlSjYbj0saXT6UfcdghDZhM7OJu154wutjk=
 go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635/go.mod h1:yS5rZfApf+Twb70/vRTBfK1wFmk2VwXZs7s5KYnk4sk=
@@ -240,6 +244,10 @@ go.cryptoscope.co/ssb v0.0.0-20200302164846-59e814f46ed2 h1:izyepmUNEAZwvcULGNRT
 go.cryptoscope.co/ssb v0.0.0-20200302164846-59e814f46ed2/go.mod h1:e5NrhXP1HFItLJgNn3EdVPFsdJPlibDUWVizHBF6YyU=
 go.cryptoscope.co/ssb v0.0.0-20200303092824-b767e36eafe5 h1:nzyYOwWodVUTmOdY1HuHpJoIrlIxqlljO5M7j4bHBkg=
 go.cryptoscope.co/ssb v0.0.0-20200303092824-b767e36eafe5/go.mod h1:e5NrhXP1HFItLJgNn3EdVPFsdJPlibDUWVizHBF6YyU=
+go.cryptoscope.co/ssb v0.0.0-20200303155317-8ba72d90bab3 h1:nq3wvQbZo9BcTCOaYWIuvmO0XvXdvjEsVFzEVJ4Gqh4=
+go.cryptoscope.co/ssb v0.0.0-20200303155317-8ba72d90bab3/go.mod h1:kJYlSK3KixUfYvmP6ZbZ/AXYmcvtXP9aUOvf2g+eGtE=
+go.cryptoscope.co/ssb v0.0.0-20200303155528-5b1bc413f5a3 h1:p3h6haraXtJdt0MvPSLgy3EFw6tedpwh5GxfOhFJt/Q=
+go.cryptoscope.co/ssb v0.0.0-20200303155528-5b1bc413f5a3/go.mod h1:kJYlSK3KixUfYvmP6ZbZ/AXYmcvtXP9aUOvf2g+eGtE=
 go.mindeco.de/ssb-gabbygrove v0.1.5/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=
 go.mindeco.de/ssb-gabbygrove v0.1.6 h1:JNktjdiGVaHVH3Gtoit+9MHgH5RSqiubL7aFg/53aR0=
 go.mindeco.de/ssb-gabbygrove v0.1.6/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=
@@ -305,6 +313,8 @@ golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20190801041406-cbf593c0f2f3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20191007154456-ef33b2fb2c41 h1:OC2BiV9nQHWgVMNbxZ5/eZKWnnd3Z4H9W5zdNvC4EBc=
 golang.org/x/sys v0.0.0-20191007154456-ef33b2fb2c41/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 h1:uYVVQ9WP/Ds2ROhcaGPeIdVq0RIXVLwsHlnvJ+cT1So=
+golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2 h1:tW2bmiBqwgJj/UpqtC8EpXEZVYOwU0yG4iWbprSVAcs=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=

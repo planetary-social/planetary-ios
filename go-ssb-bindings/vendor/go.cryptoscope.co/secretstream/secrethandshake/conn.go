@@ -7,8 +7,7 @@ import (
 	"io"
 
 	"go.cryptoscope.co/secretstream/internal/lo25519"
-
-	"github.com/agl/ed25519"
+	"golang.org/x/crypto/ed25519"
 )
 
 // ChallengeLength is the length of a challenge message in bytes
@@ -36,7 +35,7 @@ func GenEdKeyPair(r io.Reader) (*EdKeyPair, error) {
 	if lo25519.IsEdLowOrder(pubSrv[:]) {
 		pubSrv, secSrv, err = ed25519.GenerateKey(r)
 	}
-	return &EdKeyPair{*pubSrv, *secSrv}, err
+	return &EdKeyPair{pubSrv, secSrv}, nil
 }
 
 // Client shakes hands using the cryptographic identity specified in s using conn in the client role

@@ -13,7 +13,7 @@ import (
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/netwrap"
 	"go.cryptoscope.co/ssb"
-	multiserver "go.mindeco.de/ssb-multiserver"
+	"go.cryptoscope.co/ssb/internal/multiserver"
 )
 
 func (sbot *Sbot) Status() (ssb.Status, error) {
