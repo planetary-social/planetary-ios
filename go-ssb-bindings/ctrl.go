@@ -73,8 +73,12 @@ func ssbConnectPeers(count uint32) bool {
 	for i, row := range addrs {
 		err = sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
 		if err != nil {
-			viewDB.Exec(`UPDATE addresses set worked_last=0 where address_id = ?`, row.addrID)
 			level.Warn(log).Log("where", "ssbConnectPeers", "dial", i, "err", err)
+			_, execErr := viewDB.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, err.Error(), row.addrID)
+			if execErr != nil {
+				err = errors.Wrapf(execErr, "updateBroken(%d): failed to update parse error row %d", i, row.addrID)
+				return false
+			}
 			continue
 		}
 
@@ -118,8 +122,11 @@ func queryAddresses(limit uint32) ([]addrRow, error) {
 
 		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
 		if err != nil {
-			viewDB.Exec(`UPDATE addresses set use=false where address_id = ?`, id)
-			return nil, errors.Wrapf(err, "queryAddresses: row %d not a multiserver", i)
+			_, execErr := viewDB.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
+			if execErr != nil {
+				return nil, errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
+			}
+			return nil, errors.Wrapf(err, "queryAddresses(%d): row %d (%q) not a multiserver", i, id, addr)
 		}
 
 		addresses = append(addresses, addrRow{
@@ -246,6 +253,18 @@ func ssbInviteAccept(token string) bool {
 		return false
 	}
 
+	peerID, err := getAuthorID(tok.Peer)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address) VALUES (?,?)`, peerID, tok.Address.String())
+	if err != nil {
+		retErr = err
+		return false
+	}
+
 	pubMsg, err := invite.NewPubMessageFromToken(tok)
 	if err != nil {
 		retErr = err
@@ -259,4 +278,29 @@ func ssbInviteAccept(token string) bool {
 	}
 
 	return true
+}
+
+// todo: add make:bool parameter
+func getAuthorID(ref ssb.FeedRef) (int64, error) {
+	row := viewDB.QueryRow(`SELECT id FROM authors where key = ?`, tok.Peer.Ref())
+
+	var peerID int64
+	err = row.Scan(&peerID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return -1, err
+		}
+
+		res, err := viewDB.Exec(`INSERT INTO authors (key) VALUES (?)`, tok.Peer.Ref())
+		if err != nil {
+			return -1, err
+		}
+		newID, err := res.LastInsertId()
+		if err != nil {
+			return -1, err
+		}
+
+		peerID = newID
+	}
+	return peerID, nil
 }

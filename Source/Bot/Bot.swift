@@ -69,6 +69,12 @@ protocol Bot {
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion)
     func logout(completion: @escaping ErrorCompletion)
 
+    // MARK: Invites
+
+    // Redeem uses the invite information and accepts it.
+    // It adds the pub behind the address to the connection sheduling table and follows it.
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion)
+
     // MARK: Publish
 
     // TODO https://app.asana.com/0/914798787098068/1114777817192216/f

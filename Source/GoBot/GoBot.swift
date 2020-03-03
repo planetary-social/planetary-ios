@@ -261,6 +261,24 @@ class GoBot: Bot {
             Analytics.trackBotDidRefresh(duration: elapsed, error: error)
         }
     }
+    
+    // MARK: Invites
+    
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
+        Thread.assertIsMainThread()
+        self.queue.async {
+            token.withGoString {
+                goStr in
+                let worked = ssbInviteAccept(goStr)
+
+                var err: Error? = nil
+                if !worked { // TODO: find a nicer way to pass errors back on the C-API
+                    err = GoBotError.unexpectedFault("invite did not work. Maybe try again?")
+                }
+                DispatchQueue.main.async { completion(err) }
+            }
+        }
+    }
 
     // MARK: Publish
     private var lastPublishFireTime = DispatchTime.now()

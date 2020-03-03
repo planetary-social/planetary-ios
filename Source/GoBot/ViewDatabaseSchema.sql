@@ -145,7 +145,8 @@ CREATE TABLE addresses (
     address      text unique,  -- the multiserv encoded string i.e. "net:ip:port~shs:key"
 
     use          boolean default true, -- false means disabled, dont' dial
-    worked_last  integer default 0 -- last time a connection could be made
+    worked_last  integer default 0, -- last time a connection could be made
+    last_err     text
 );
 
 -- this just stores the text of a post

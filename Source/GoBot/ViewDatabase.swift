@@ -60,7 +60,7 @@ class ViewDatabase {
 
     // TODO: use this to trigger fill on update and wipe previous versions
     // https://app.asana.com/0/914798787098068/1151842364054322/f
-    static var schemaVersion: UInt = 19
+    static var schemaVersion: UInt = 20
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
@@ -154,9 +154,10 @@ class ViewDatabase {
     
     private let addresses: Table
     private let colAddressID = Expression<String>("address_id")
-    // colAuthorID
+    // colAboutID
     private let colAddress = Expression<String>("address")
     private let colWorkedLast = Expression<Date>("worked_last")
+    private let colLastErr = Expression<String>("last_err")
     private let colUse = Expression<Bool>("use")
 
     init() {
@@ -1610,7 +1611,7 @@ class ViewDatabase {
             Log.optional(ViewDatabaseError.notOpen)
             return nil
         }
-        let knownFormats = ["ggfeed-v1", "ed25519"]
+        let knownFormats = ["ed25519", "ggfeed-v1"]
         for format in knownFormats {
             let ggFormatGuess = "@\(pubKey).\(format)"
             let aid = try? self.authorID(from: ggFormatGuess, make: false)
