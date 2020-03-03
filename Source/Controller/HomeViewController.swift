@@ -206,6 +206,7 @@ class HomeViewController: ContentViewController {
             self.reloadTimer.start(fireImmediately: false)
         } else {
             self.emptyView.removeFromSuperview()
+            self.tableView.backgroundView = nil
             self.reloadTimer.stop()
         }
         self.dataSource.keyValues = roots
