@@ -1,3 +1,6 @@
+-- version 1.13
+-- overhaul address table for dialing
+
 -- version 1.12
 -- change deleted to hidden (for moderation / soft-block)
 -- add Blob.Metadata.averageColorRGB
@@ -137,11 +140,13 @@ CREATE INDEX helper_profile on messages (is_decrypted, type, author_id, claimed_
 
 -- address
 CREATE TABLE addresses (
-    msg_ref      integer not null,
-    address      text,  -- the multiserv encoded string i.e. "net:ip:port~shs:key"
-    availability real,  -- not sure if we need it. self-proclaimed by host
-    worked       int,   -- count up or down depending in failures (prioritize working ones)
-    FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
+    address_id   INTEGER PRIMARY KEY,
+    about_id     integer not null, -- which feed this address is for
+    address      text unique not null,  -- the multiserv encoded string i.e. "net:ip:port~shs:key"
+
+    use          boolean default true, -- false means disabled, dont' dial
+    worked_last  DATETIME default 0, -- last time a connection could be made
+    last_err     text default ""
 );
 
 -- this just stores the text of a post

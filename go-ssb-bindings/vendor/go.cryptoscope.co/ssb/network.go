@@ -30,13 +30,24 @@ type Network interface {
 	GetConnTracker() ConnTracker
 
 	io.Closer
-	Closed() bool
 }
 
+// ConnTracker decides if connections should be established and keeps track of them
 type ConnTracker interface {
+	// Active returns true and since when a peer connection is active
 	Active(net.Addr) (bool, time.Duration)
-	OnAccept(conn net.Conn) bool
+
+	// OnAccept receives a new connection as an argument.
+	// If it decides to accept it, it returns true and a context that will be canceled once it should shut down
+	// If it decides to deny it, it returns false (and a nil context)
+	OnAccept(context.Context, net.Conn) (bool, context.Context)
+
+	// OnClose notifies the tracker that a connection was closed
 	OnClose(conn net.Conn) time.Duration
+
+	// Count returns the number of open connections
 	Count() uint
+
+	// CloseAll closes all tracked connections
 	CloseAll()
 }

@@ -381,7 +381,7 @@ func (b *builder) recurseHops(walked *StrFeedSet, vis map[string]struct{}, from 
 				return err
 			}
 		}
-		// b.log.Log("depth", depth, "from", from.Ref()[1:5], "follows", followedByFrom.Ref()[1:5], "friend", isF, "cnt", dstFollows.Count())
+		// b.log.Log("depth", depth, "from", from.ShortRef(), "follows", followedByFrom.ShortRef(), "friend", isF, "cnt", dstFollows.Count())
 	}
 
 	vis[from.Ref()] = struct{}{}

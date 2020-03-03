@@ -3,6 +3,7 @@
 package network
 
 import (
+	"context"
 	"log"
 	"net"
 	"sync"
@@ -40,12 +41,12 @@ func (ict instrumentedConnTracker) Active(a net.Addr) (bool, time.Duration) {
 	return ict.root.Active(a)
 }
 
-func (ict instrumentedConnTracker) OnAccept(conn net.Conn) bool {
-	ok := ict.root.OnAccept(conn)
+func (ict instrumentedConnTracker) OnAccept(ctx context.Context, conn net.Conn) (bool, context.Context) {
+	ok, ctx := ict.root.OnAccept(ctx, conn)
 	if ok {
 		ict.count.With("part", "tracked_conns").Add(1)
 	}
-	return ok
+	return ok, ctx
 }
 
 func (ict instrumentedConnTracker) OnClose(conn net.Conn) time.Duration {
@@ -61,6 +62,7 @@ type connEntry struct {
 	c       net.Conn
 	started time.Time
 	done    chan struct{}
+	cancel  context.CancelFunc
 }
 
 type connLookupMap map[[32]byte]connEntry
@@ -116,20 +118,22 @@ func (ct *connTracker) Active(a net.Addr) (bool, time.Duration) {
 	return true, time.Since(l.started)
 }
 
-func (ct *connTracker) OnAccept(conn net.Conn) bool {
+func (ct *connTracker) OnAccept(ctx context.Context, conn net.Conn) (bool, context.Context) {
 	ct.activeLock.Lock()
 	defer ct.activeLock.Unlock()
 	k := toActive(conn.RemoteAddr())
 	_, ok := ct.active[k]
 	if ok {
-		return false
+		return false, nil
 	}
+	ctx, cancel := context.WithCancel(ctx)
 	ct.active[k] = connEntry{
 		c:       conn,
 		started: time.Now(),
 		done:    make(chan struct{}),
+		cancel:  cancel,
 	}
-	return true
+	return true, ctx
 }
 
 func (ct *connTracker) OnClose(conn net.Conn) time.Duration {
@@ -155,27 +159,30 @@ type trackerLastWins struct {
 	connTracker
 }
 
-func (ct *trackerLastWins) OnAccept(newConn net.Conn) bool {
+func (ct *trackerLastWins) OnAccept(ctx context.Context, newConn net.Conn) (bool, context.Context) {
 	ct.activeLock.Lock()
 	k := toActive(newConn.RemoteAddr())
 	oldConn, ok := ct.active[k]
 	ct.activeLock.Unlock()
 	if ok {
 		oldConn.c.Close()
+		oldConn.cancel()
 		select {
 		case <-oldConn.done:
 			// cleaned up after itself
 		case <-time.After(10 * time.Second):
 			log.Println("[ConnTracker/lastWins] warning: not accepted, would ghost connection:", oldConn.c.RemoteAddr().String(), time.Since(oldConn.started))
-			return false
+			return false, nil
 		}
 	}
 	ct.activeLock.Lock()
+	ctx, cancel := context.WithCancel(ctx)
 	ct.active[k] = connEntry{
 		c:       newConn,
 		started: time.Now(),
 		done:    make(chan struct{}),
+		cancel:  cancel,
 	}
 	ct.activeLock.Unlock()
-	return true
+	return true, ctx
 }

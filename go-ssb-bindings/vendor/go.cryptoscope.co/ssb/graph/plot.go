@@ -74,7 +74,7 @@ func (n contactNode) String() string {
 	if n.name != "" {
 		return n.name
 	}
-	return n.feed.Ref()[:8]
+	return n.feed.ShortRef()
 }
 
 func (n contactNode) Attributes() []encoding.Attribute {

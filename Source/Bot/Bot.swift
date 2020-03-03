@@ -24,6 +24,7 @@ typealias SecretCompletion = ((Secret?, Error?) -> Void)
 typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
 typealias ThreadCompletion = ((KeyValue?, KeyValues, Error?) -> Void)
 typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
+typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 
 // Abstract interface to any SSB bot implementation.
 protocol Bot {
@@ -46,6 +47,8 @@ protocol Bot {
     func createSecret(completion: SecretCompletion)
 
     // MARK: Sync
+    
+    func knownPubs(completion: @escaping KnownPubsCompletion)
 
     // Sync is the bot reaching out to remote peers and gathering the latest
     // data from the network.  This only updates the local log and requires
@@ -68,6 +71,12 @@ protocol Bot {
 
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion)
     func logout(completion: @escaping ErrorCompletion)
+
+    // MARK: Invites
+
+    // Redeem uses the invite information and accepts it.
+    // It adds the pub behind the address to the connection sheduling table and follows it.
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion)
 
     // MARK: Publish
 

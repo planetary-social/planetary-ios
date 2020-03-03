@@ -8,7 +8,6 @@ import (
 	"go.cryptoscope.co/secretstream/boxstream"
 	"go.cryptoscope.co/secretstream/secrethandshake"
 
-	"github.com/agl/ed25519"
 	"go.cryptoscope.co/netwrap"
 )
 
@@ -28,7 +27,7 @@ func NewClient(kp secrethandshake.EdKeyPair, appKey []byte) (*Client, error) {
 }
 
 // ConnWrapper returns a connection wrapper for the client.
-func (c *Client) ConnWrapper(pubKey [ed25519.PublicKeySize]byte) netwrap.ConnWrapper {
+func (c *Client) ConnWrapper(pubKey []byte) netwrap.ConnWrapper {
 	return func(conn net.Conn) (net.Conn, error) {
 		state, err := secrethandshake.NewClientState(c.appKey, c.kp, pubKey)
 		if err != nil {

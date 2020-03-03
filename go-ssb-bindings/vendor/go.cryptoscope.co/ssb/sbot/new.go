@@ -7,9 +7,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/go-kit/kit/log/level"
-
 	kitlog "github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/librarian"
 	"go.cryptoscope.co/muxrpc"
@@ -27,6 +26,7 @@ import (
 	"go.cryptoscope.co/ssb/plugins/control"
 	"go.cryptoscope.co/ssb/plugins/get"
 	"go.cryptoscope.co/ssb/plugins/gossip"
+	"go.cryptoscope.co/ssb/plugins/legacyinvites"
 	privplug "go.cryptoscope.co/ssb/plugins/private"
 	"go.cryptoscope.co/ssb/plugins/publish"
 	"go.cryptoscope.co/ssb/plugins/rawread"
@@ -118,7 +118,7 @@ func initSbot(s *Sbot) (*Sbot, error) {
 
 	uf, ok := s.mlogIndicies[multilogs.IndexNameFeeds]
 	if !ok {
-		level.Debug(s.info).Log("event", "bot init", "msg", "loading default idx", "idx", multilogs.IndexNameFeeds)
+		level.Warn(s.info).Log("event", "bot init", "msg", "loading default idx", "idx", multilogs.IndexNameFeeds)
 		err = MountMultiLog(multilogs.IndexNameFeeds, multilogs.OpenUserFeeds)(s)
 		if err != nil {
 			return nil, errors.Wrap(err, "sbot: failed to open userFeeds index")
@@ -188,16 +188,14 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	// 	s.serveIndex(ctx, "contacts", peerServ)
 	// }
 
+	var inviteService *legacyinvites.Service
+
 	auth := s.GraphBuilder.Authorizer(s.KeyPair.Id, int(s.hopCount+2))
 	mkHandler := func(conn net.Conn) (muxrpc.Handler, error) {
 		// bypassing badger-close bug to go through with an accept (or not) before closing the bot
 		s.closedMu.Lock()
 		defer s.closedMu.Unlock()
 
-		if s.Network.Closed() {
-			conn.Close()
-			return nil, errors.New("sbot: network closed")
-		}
 		remote, err := ssb.GetFeedRefFromAddr(conn.RemoteAddr())
 		if err != nil {
 			return nil, errors.Wrap(err, "sbot: expected an address containing an shs-bs addr")
@@ -211,6 +209,14 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		// 		return peerPlug.Handler(), nil
 		// 	}
 		// }
+
+		if inviteService != nil {
+			err := inviteService.Authorize(remote)
+			if err == nil {
+				return inviteService.GuestHandler(), nil
+			}
+			level.Warn(s.info).Log("invite", err)
+		}
 
 		if s.promisc {
 			return s.public.MakeHandler(conn)
@@ -288,13 +294,13 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		kitlog.With(log, "plugin", "gossip/hist"),
 		s.KeyPair.Id, s.RootLog, uf, s.GraphBuilder,
 		histOpts...)
-	s.public.Register(&hist)
+	s.public.Register(hist)
 
 	s.master.Register(get.New(s))
 
 	// raw log plugins
 	s.master.Register(rawread.NewRXLog(s.RootLog)) // createLogStream
-	s.master.Register(&hist)                       // createHistoryStream
+	s.master.Register(hist)                        // createHistoryStream
 
 	s.master.Register(replicate.NewPlug(uf))
 
@@ -322,6 +328,19 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create network node")
 	}
+
+	inviteService, err = legacyinvites.New(
+		kitlog.With(log, "plugin", "legacyInvites"),
+		r,
+		s.KeyPair.Id,
+		s.Network,
+		s.PublishLog,
+		s.RootLog,
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "sbot: failed to open legacy invites plugin")
+	}
+	s.master.Register(inviteService.MasterPlugin())
 
 	// TODO: should be gossip.connect but conflicts with our namespace assumption
 	s.master.Register(control.NewPlug(kitlog.With(log, "plugin", "ctrl"), s.Network))

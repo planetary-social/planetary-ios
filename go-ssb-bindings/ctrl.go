@@ -2,27 +2,20 @@ package main
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"math"
-	"net"
-	"strings"
-	"time"
+	"os"
+	"runtime"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/margaret"
-	"go.cryptoscope.co/netwrap"
-	"go.cryptoscope.co/secretstream"
-
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/invite"
+	multiserver "go.mindeco.de/ssb-multiserver"
 )
 
 import "C"
-
-// ConnectPeer opens a network connection to the remote tcpAddr (host:port)
-// pubKey is also in std ssb notation @base64=.ed25519
-
-// returns the number of messages that are new or -1 if a connection couldn't be made
 
 //export ssbConnectPeer
 func ssbConnectPeer(quasiMs string) bool {
@@ -40,93 +33,117 @@ func ssbConnectPeer(quasiMs string) bool {
 	}
 	lock.Unlock()
 
-	// TODO: release multiserver package as non-internal
-	splits := strings.Split(quasiMs, "::")
-	tcpAddr := splits[0]
-	pubKey := splits[1]
-
-	pubRef, err := ssb.ParseFeedRef(pubKey)
+	msAddr, err := multiserver.ParseNetAddress([]byte(quasiMs))
 	if err != nil {
-		err = errors.Wrap(err, "pubkey: invalid feedRef")
+		err = errors.Wrapf(err, "parsing passed address failed")
 		return false
 	}
 
-	resolved, err := net.ResolveTCPAddr("tcp", tcpAddr)
+	err = sbot.Network.Connect(longCtx, msAddr.WrappedAddr())
 	if err != nil {
-		err = errors.Wrapf(err, "failed to resolve %s", tcpAddr)
+		err = errors.Wrapf(err, "connecting to %q failed", msAddr.String())
 		return false
 	}
-
-	nwAddr := netwrap.WrapAddr(resolved, secretstream.Addr{PubKey: pubRef.PubKey()})
-
-	err = sbot.Network.Connect(longCtx, nwAddr)
-	if err != nil {
-		err = errors.Wrapf(err, "connecting to %s failed", pubKey)
-		return false
-	}
-	level.Debug(log).Log("event", "dialed", "addr", nwAddr.String())
+	level.Debug(log).Log("event", "dialed", "addr", msAddr.String())
 	return true
 }
 
-//export ssbWaitForNewMessages
-func ssbWaitForNewMessages(try int32) int64 {
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		level.Error(log).Log("event", "ssbWaitForNewMessages", "err", ErrNotInitialized)
-		return -1
-	}
-
+//export ssbConnectPeers
+func ssbConnectPeers(count uint32) bool {
 	var err error
 	defer func() {
-		if err == nil || err == context.DeadlineExceeded || luigi.IsEOS(err) {
-			return
+		if err != nil {
+			level.Error(log).Log("where", "ssbConnectPeers", "n", count, "err", err)
 		}
-		level.Error(log).Log("event", "ssbWaitForNewMessages", "err", err)
 	}()
-	seqv, err := sbot.RootLog.Seq().Value()
+	lock.Lock()
+	if sbot == nil {
+		lock.Unlock()
+		err = ErrNotInitialized
+		return false
+	}
+	lock.Unlock()
+
+	addrs, err := queryAddresses(count)
 	if err != nil {
-		err = errors.Wrapf(err, "failed to get start sequence of rootLog")
-		return -1
+		err = errors.Wrap(err, "querying addresses")
+		return false
 	}
 
-	atStart := seqv.(margaret.Seq).Seq()
-	level.Debug(log).Log("event", "sync waiting for new message", "atStart", atStart)
-
-	time.Sleep(time.Second)
-	try--
-
-	start := time.Now()
-	var last = atStart
-	for {
-		seqv, err = sbot.RootLog.Seq().Value()
+	for i, row := range addrs {
+		err = sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
 		if err != nil {
-			err = errors.Wrapf(err, "failed to get current sequence of rootLog")
-			return -1
-		}
-		now := seqv.(margaret.Seq).Seq()
-		level.Debug(log).Log("event", "ssbWaitForNewMessages", "new", now-atStart, "try", try)
-
-		if now > last {
-			last = now
-			time.Sleep(time.Second)
+			level.Warn(log).Log("where", "ssbConnectPeers", "dial", i, "err", err)
+			_, execErr := viewDB.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, err.Error(), row.addrID)
+			if execErr != nil {
+				err = errors.Wrapf(execErr, "updateBroken(%d): failed to update parse error row %d", i, row.addrID)
+				return false
+			}
 			continue
 		}
 
-		if last > atStart {
-			break
+		_, err := viewDB.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, row.addrID)
+		if err != nil {
+			level.Error(log).Log("where", "ssbConnectPeers", "update addr", row.addrID, "err", err)
+			return false
+		}
+	}
+	return true
+}
+
+type addrRow struct {
+	addrID uint
+	addr   *multiserver.NetAddress
+}
+
+func queryAddresses(limit uint32) ([]addrRow, error) {
+	var (
+		addresses []addrRow
+		i         = 0
+		rows      *sql.Rows
+		err       error
+	)
+
+	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, limit)
+	if err != nil {
+		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			id   uint
+			addr string
+		)
+		err := rows.Scan(&id, &addr)
+		if err != nil {
+			return nil, errors.Wrapf(err, "queryAddresses: sql scan of row %d failed", i)
 		}
 
-		if try == 0 {
-			break
+		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
+		if err != nil {
+			_, execErr := viewDB.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
+			if execErr != nil {
+				return nil, errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
+			}
+			return nil, errors.Wrapf(err, "queryAddresses(%d): row %d (%q) not a multiserver", i, id, addr)
 		}
-		time.Sleep(time.Second)
-		try--
+
+		addresses = append(addresses, addrRow{
+			addrID: id,
+			addr:   msAddr,
+		})
+
+		fmt.Fprintf(os.Stderr, "\t\tTODO[debug]: addr%d: %s\n", i, addr)
+		i++
 	}
 
-	newMsgs := last - atStart
-	level.Debug(log).Log("event", "ssbWaitForNewMessages", "state", "waited", "new", newMsgs, "atStart", atStart, "try", try, "took", time.Since(start))
-	return newMsgs
+	if err := rows.Err(); err != nil {
+		level.Error(log).Log("where", "qryAddrs", "err", err)
+		return nil, err
+	}
+
+	return addresses, nil
 }
 
 //export ssbDisconnectAllPeers
@@ -139,6 +156,7 @@ func ssbDisconnectAllPeers() bool {
 
 	sbot.Network.GetConnTracker().CloseAll()
 	level.Debug(log).Log("event", "disconnect")
+	runtime.GC()
 	return true
 }
 
@@ -197,4 +215,93 @@ func ssbNullFeed(ref string) int {
 	}
 
 	return 0
+}
+
+//export ssbInviteAccept
+func ssbInviteAccept(token string) bool {
+	var retErr error
+	defer func() {
+		if retErr != nil {
+			level.Error(log).Log("where", "ssbInviteAccept", "err", retErr)
+		}
+	}()
+
+	tok, err := invite.ParseLegacyToken(token)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot == nil {
+		err = ErrNotInitialized
+		return false
+	}
+
+	ctx, cancel := context.WithCancel(longCtx)
+	err = invite.Redeem(ctx, tok, sbot.KeyPair.Id)
+	defer cancel()
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	_, err = sbot.PublishLog.Publish(ssb.NewContactFollow(&tok.Peer))
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	peerID, err := getAuthorID(tok.Peer)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address) VALUES (?,?)`, peerID, tok.Address.String())
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	pubMsg, err := invite.NewPubMessageFromToken(tok)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	_, err = sbot.PublishLog.Publish(pubMsg)
+	if err != nil {
+		retErr = err
+		return false
+	}
+
+	return true
+}
+
+// todo: add make:bool parameter
+func getAuthorID(ref ssb.FeedRef) (int64, error) {
+	strRef := ref.Ref()
+	row := viewDB.QueryRow(`SELECT id FROM authors where key = ?`, strRef)
+
+	var peerID int64
+	err := row.Scan(&peerID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return -1, err
+		}
+
+		res, err := viewDB.Exec(`INSERT INTO authors (key) VALUES (?)`, strRef)
+		if err != nil {
+			return -1, err
+		}
+		newID, err := res.LastInsertId()
+		if err != nil {
+			return -1, err
+		}
+
+		peerID = newID
+	}
+	return peerID, nil
 }

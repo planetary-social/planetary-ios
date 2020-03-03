@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"net"
 	"sync"
 	"time"
@@ -44,11 +45,11 @@ func (ct *acceptAllTracker) Active(a net.Addr) (bool, time.Duration) {
 	return false, 0
 }
 
-func (ct *acceptAllTracker) OnAccept(conn net.Conn) bool {
+func (ct *acceptAllTracker) OnAccept(ctx context.Context, conn net.Conn) (bool, context.Context) {
 	ct.countLock.Lock()
 	defer ct.countLock.Unlock()
 	ct.conns = append(ct.conns, conn)
-	return true
+	return true, ctx
 }
 
 func (ct *acceptAllTracker) OnClose(conn net.Conn) time.Duration {

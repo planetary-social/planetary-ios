@@ -21,6 +21,8 @@ extern char* ssbBotStatus(void);
 extern int ssbOffsetFSCK(uint32_t mode);
 extern char* ssbHealRepo(void);
 
+extern bool ssbInviteAccept(gostring_t token);
+
 extern int ssbNullContent(gostring_t author, uint64_t sequence);
 extern int ssbNullFeed(gostring_t author);
 
@@ -41,10 +43,8 @@ extern char* ssbStreamRootLog(uint64_t seq, int limit);
 extern char* ssbStreamPrivateLog(uint64_t seq, int limit);
 
 // returns true if the connection was successfull
+extern bool ssbConnectPeers(uint32_t count);
 extern bool ssbConnectPeer(gostring_t multisrv);
-
-// waits for new messages or returns onces t seconds have passed if nothing happend
-extern int64_t ssbWaitForNewMessages(int32_t t);
 
 extern bool ssbDisconnectAllPeers(void);
 extern uint ssbOpenConnections(void);

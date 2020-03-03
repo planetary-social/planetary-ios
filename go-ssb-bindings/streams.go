@@ -11,6 +11,7 @@ import (
 	"github.com/cryptix/go/encodedTime"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
+	"go.cryptoscope.co/luigi/mfr"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/private"
@@ -90,18 +91,41 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 	src, err := sourceLog.Query(
 		margaret.SeqWrap(true),
 		margaret.Gte(margaret.BaseSeq(seq)),
-		margaret.Limit(limit))
+		margaret.Limit(limit*3)) // HACK: we know we will get less because we skip a lot of stuff but it's dangerous
 	if err != nil {
 		return nil, errors.Wrapf(err, "drainLog: failed to open query")
 	}
 
+	sixMonthAgo := time.Now().Add(-6 * time.Hour * 24 * 30)
+
+	nowOldStuff := func(ctx context.Context, v interface{}) (bool, error) {
+		sw, ok := v.(margaret.SeqWrapper)
+		if !ok {
+			if errv, ok := v.(error); ok && margaret.IsErrNulled(errv) {
+				return false, nil
+			}
+			return false, errors.Errorf("drainLog: want wrapper type got: %T", v)
+		}
+		wrappedVal := sw.Value()
+		msg, ok := wrappedVal.(ssb.Message)
+		if !ok {
+			return false, errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
+		}
+
+		if msg.Claimed().Before(sixMonthAgo) {
+			return false, nil
+		}
+		return true, nil
+	}
+
+	src = mfr.SourceFilter(src, nowOldStuff)
+
 	i := 0
 	w.WriteString("[")
 	for {
-		v, err := src.Next(context.Background())
+		v, err := src.Next(longCtx)
 		if err != nil {
 			if luigi.IsEOS(err) {
-				w.WriteString("]")
 				break
 			}
 			return nil, errors.Wrapf(err, "drainLog: failed to drain log msg:%d", i)
@@ -109,9 +133,6 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 
 		sw, ok := v.(margaret.SeqWrapper)
 		if !ok {
-			if errv, ok := v.(error); ok && margaret.IsErrNulled(errv) {
-				continue
-			}
 			return nil, errors.Errorf("drainLog: want wrapper type got: %T", v)
 		}
 
@@ -138,8 +159,13 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 			return nil, errors.Wrapf(err, "drainLog: failed to k:v map message %d", i)
 		}
 
+		if i > limit {
+			break
+		}
 		i++
 	}
+
+	w.WriteString("]")
 
 	if i > 0 {
 		durr := time.Since(start)

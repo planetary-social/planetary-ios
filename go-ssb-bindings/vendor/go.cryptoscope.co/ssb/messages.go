@@ -286,6 +286,21 @@ type Vote struct {
 	} `json:"vote"`
 }
 
+// OldPubMessage is posted after a legacy invite is used to advertise a pub to your followers
+type OldPubMessage struct {
+	Type    string     `json:"type"`
+	Address OldAddress `json:"address"`
+}
+
+// OldAddress uses an ssb.FeedRef as a key
+// this is not strictly necessary since secret-handshake only cares about the 32bytes of public key (and not the feed type)
+// newer type:address uses multiserver and not this nested object
+type OldAddress struct {
+	Host string  `json:"host"`
+	Port int     `json:"port"`
+	Key  FeedRef `json:"key"`
+}
+
 type KeyValueRaw struct {
 	Key_      *MessageRef           `json:"key"`
 	Value     Value                 `json:"value"`
