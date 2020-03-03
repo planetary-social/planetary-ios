@@ -208,8 +208,6 @@ func (wmgr *wantManager) promGaugeSet(name string, n int) {
 	name = "blobs." + name
 	if wmgr.gauge != nil {
 		wmgr.gauge.With("part", name).Set(float64(n))
-	} else {
-		level.Debug(wmgr.info).Log("gauge", name, "set", n)
 	}
 }
 

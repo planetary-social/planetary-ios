@@ -238,6 +238,8 @@ go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635 h1:mJbzzjSnXlSjYbj0saXT
 go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635/go.mod h1:yS5rZfApf+Twb70/vRTBfK1wFmk2VwXZs7s5KYnk4sk=
 go.cryptoscope.co/ssb v0.0.0-20200302164846-59e814f46ed2 h1:izyepmUNEAZwvcULGNRTmMOoZuNGonTG3nyk7EX8r/4=
 go.cryptoscope.co/ssb v0.0.0-20200302164846-59e814f46ed2/go.mod h1:e5NrhXP1HFItLJgNn3EdVPFsdJPlibDUWVizHBF6YyU=
+go.cryptoscope.co/ssb v0.0.0-20200303092824-b767e36eafe5 h1:nzyYOwWodVUTmOdY1HuHpJoIrlIxqlljO5M7j4bHBkg=
+go.cryptoscope.co/ssb v0.0.0-20200303092824-b767e36eafe5/go.mod h1:e5NrhXP1HFItLJgNn3EdVPFsdJPlibDUWVizHBF6YyU=
 go.mindeco.de/ssb-gabbygrove v0.1.5/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=
 go.mindeco.de/ssb-gabbygrove v0.1.6 h1:JNktjdiGVaHVH3Gtoit+9MHgH5RSqiubL7aFg/53aR0=
 go.mindeco.de/ssb-gabbygrove v0.1.6/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=
