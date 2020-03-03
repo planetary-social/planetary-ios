@@ -10,7 +10,7 @@ Before running the app, you need to complete the configuration files stored insi
 
 **LAUNCH & RUN**
 
-To install and run on a device, your Apple ID must be part of the Verse Apple Developer team.  Contact christoph@verse.app if you need access.
+To install and run on a device, your Apple ID must be part of the Verse Apple Developer team.  Contact contact@verse.app if you need access.
 
 The app can run completely in the iOS simulator, however you will need a valid mobile phone number to complete the SMS verification step during onboarding.
 
