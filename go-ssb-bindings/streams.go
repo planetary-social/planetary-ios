@@ -124,7 +124,7 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 			}
 			// the app viewdb needs older about and contact info
 			if typeStr == "about" || typeStr == "contact" {
-				return return true, nil
+				return true, nil
 			}
 			return false, nil
 		}

@@ -70,7 +70,7 @@ func ssbConnectPeers(count uint32) bool {
 		return false
 	}
 
-	worked := 0
+	worked := uint32(0)
 	for i, row := range addrs {
 		err = sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
 		if err != nil {
