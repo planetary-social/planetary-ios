@@ -190,9 +190,6 @@ func (wmgr *wantManager) promEvent(name string, n float64) {
 	name = "blobs." + name
 	if wmgr.evtCtr != nil {
 		wmgr.evtCtr.With("event", name).Add(n)
-	} else {
-		level.Debug(wmgr.info).Log("evt", name, "add", n)
-
 	}
 }
 
@@ -200,16 +197,12 @@ func (wmgr *wantManager) promGauge(name string, n float64) {
 	name = "blobs." + name
 	if wmgr.gauge != nil {
 		wmgr.gauge.With("part", name).Add(n)
-	} else {
-		level.Debug(wmgr.info).Log("gauge", name, "add", n)
 	}
 }
 func (wmgr *wantManager) promGaugeSet(name string, n int) {
 	name = "blobs." + name
 	if wmgr.gauge != nil {
 		wmgr.gauge.With("part", name).Set(float64(n))
-	} else {
-		level.Debug(wmgr.info).Log("gauge", name, "set", n)
 	}
 }
 

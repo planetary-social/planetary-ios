@@ -57,9 +57,10 @@ func (g *handler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 	info := log.With(g.Info, "remote", remoteRef.ShortRef(), "event", "gossiprx")
 	start := time.Now()
 
-	hasSelf, err := multilog.Has(g.UserFeeds, remoteRef.StoredAddr())
+	// re-sync _our_ feed if we don't have it yet (re-onboarding of an existing feed)
+	hasSelf, err := multilog.Has(g.UserFeeds, g.Id.StoredAddr())
 	if err != nil {
-		info.Log("handleConnect", "multilog.Has(callee)", "err", err)
+		info.Log("handleConnect", "multilog.Has(self)", "err", err)
 		return
 	}
 

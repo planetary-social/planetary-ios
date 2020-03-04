@@ -11,10 +11,11 @@ require (
 	go.cryptoscope.co/margaret v0.1.4
 	go.cryptoscope.co/muxrpc v1.5.4-0.20200212114344-0403d7496950 // indirect
 	go.cryptoscope.co/netwrap v0.1.1
-	go.cryptoscope.co/ssb v0.0.0-20200303155528-5b1bc413f5a3
+	go.cryptoscope.co/ssb v0.0.0-20200304093142-4310d5a24560
 	go.mindeco.de/ssb-multiserver v0.0.0-20200302171328-987e421fadee
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
 	golang.org/x/net v0.0.0-20190909003024-a7b16738d86b // indirect
+	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	gonum.org/v1/gonum v0.0.0-20190911200027-40d3308efe80 // indirect
 	gonum.org/v1/netlib v0.0.0-20190331212654-76723241ea4e // indirect
 )
