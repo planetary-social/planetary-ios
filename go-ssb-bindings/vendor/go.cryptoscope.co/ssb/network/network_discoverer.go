@@ -14,7 +14,7 @@ import (
 	"go.cryptoscope.co/netwrap"
 	"go.cryptoscope.co/secretstream"
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/internal/multiserver"
+	multiserver "go.mindeco.de/ssb-multiserver"
 )
 
 type Discoverer struct {
