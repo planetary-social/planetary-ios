@@ -100,7 +100,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200303155528-5b1bc413f5a3
+# go.cryptoscope.co/ssb v0.0.0-20200304093142-4310d5a24560
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -109,7 +109,6 @@ go.cryptoscope.co/ssb/graph
 go.cryptoscope.co/ssb/indexes
 go.cryptoscope.co/ssb/internal/ctxutils
 go.cryptoscope.co/ssb/internal/extra25519
-go.cryptoscope.co/ssb/internal/multiserver
 go.cryptoscope.co/ssb/internal/mutil
 go.cryptoscope.co/ssb/internal/netwraputil
 go.cryptoscope.co/ssb/internal/transform
@@ -159,6 +158,7 @@ golang.org/x/exp/rand
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
 # golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
+## explicit
 golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527
 golang.org/x/sys/cpu

@@ -281,7 +281,7 @@ class GoBotInternal {
     
     @discardableResult
     func dialSomePeers() -> Bool {
-        ssbConnectPeers(2)
+        ssbConnectPeers(4)
         if let p = self.peers.randomSample(1).first {
             let worked = self.dialOne(peer: p)
             if worked {

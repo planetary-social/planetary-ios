@@ -20,7 +20,7 @@ require (
 	github.com/prometheus/client_golang v1.1.0
 	github.com/rotisserie/eris v0.1.1 // indirect
 	github.com/shurcooL/go-goon v0.0.0-20170922171312-37c2f522c041
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.5.1
 	github.com/ugorji/go/codec v1.1.7
 	go.cryptoscope.co/librarian v0.2.0
 	go.cryptoscope.co/luigi v0.3.5
@@ -30,6 +30,7 @@ require (
 	go.cryptoscope.co/secretstream v1.2.2-0.20200303151838-85cf020cfee6
 	go.mindeco.de/ssb-gabbygrove v0.1.6
 	golang.org/x/crypto v0.0.0-20200303113948-2939d6771b24
+  go.mindeco.de/ssb-multiserver v0.0.0-20200302144839-6902de33e194
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 // indirect
 	golang.org/x/text v0.3.2
