@@ -64,12 +64,13 @@ func ssbConnectPeers(count uint32) bool {
 	}
 	lock.Unlock()
 
-	addrs, err := queryAddresses(count)
+	addrs, err := queryAddresses()
 	if err != nil {
 		err = errors.Wrap(err, "querying addresses")
 		return false
 	}
 
+	worked := uint32(0)
 	for i, row := range addrs {
 		err = sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
 		if err != nil {
@@ -77,16 +78,23 @@ func ssbConnectPeers(count uint32) bool {
 			_, execErr := viewDB.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, err.Error(), row.addrID)
 			if execErr != nil {
 				err = errors.Wrapf(execErr, "updateBroken(%d): failed to update parse error row %d", i, row.addrID)
-				return false
+				level.Warn(log).Log("err", err)
+				// TODO there is a soft-race around the database being locked during bot.refresh()
+				// we probably should collect the errors and make one final transaction with all these updates
+				// but for now just log the errors and continue
 			}
 			continue
 		}
 
 		_, err := viewDB.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, row.addrID)
 		if err != nil {
-			level.Error(log).Log("where", "ssbConnectPeers", "update addr", row.addrID, "err", err)
-			return false
+			level.Warn(log).Log("where", "ssbConnectPeers", "update addr", row.addrID, "err", err)
+			continue
 		}
+		if worked > count {
+			break
+		}
+		worked++
 	}
 	return true
 }
@@ -96,7 +104,7 @@ type addrRow struct {
 	addr   *multiserver.NetAddress
 }
 
-func queryAddresses(limit uint32) ([]addrRow, error) {
+func queryAddresses() ([]addrRow, error) {
 	var (
 		addresses []addrRow
 		i         = 0
@@ -104,7 +112,7 @@ func queryAddresses(limit uint32) ([]addrRow, error) {
 		err       error
 	)
 
-	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, limit)
+	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT 20;`)
 	if err != nil {
 		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
 	}
