@@ -70,12 +70,18 @@ func ssbConnectPeers(count uint32) bool {
 		return false
 	}
 
+	tx, err := viewDB.Begin()
+	if err != nil {
+		err = errors.Wrap(err, "failed to make transaction on viewdb")
+		return false
+	}
+
 	worked := uint32(0)
 	for i, row := range addrs {
 		err = sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
 		if err != nil {
 			level.Warn(log).Log("where", "ssbConnectPeers", "dial", i, "err", err)
-			_, execErr := viewDB.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, err.Error(), row.addrID)
+			_, execErr := tx.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, err.Error(), row.addrID)
 			if execErr != nil {
 				err = errors.Wrapf(execErr, "updateBroken(%d): failed to update parse error row %d", i, row.addrID)
 				level.Warn(log).Log("err", err)
@@ -86,7 +92,7 @@ func ssbConnectPeers(count uint32) bool {
 			continue
 		}
 
-		_, err := viewDB.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, row.addrID)
+		_, err := tx.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, row.addrID)
 		if err != nil {
 			level.Warn(log).Log("where", "ssbConnectPeers", "update addr", row.addrID, "err", err)
 			continue
@@ -95,6 +101,11 @@ func ssbConnectPeers(count uint32) bool {
 			break
 		}
 		worked++
+	}
+	err = tx.Commit()
+	if err != nil {
+		err = errors.Wrap(err, "failed to commit viewdb transaction")
+		return false
 	}
 	return true
 }
