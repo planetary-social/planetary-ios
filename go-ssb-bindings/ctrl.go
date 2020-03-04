@@ -65,7 +65,7 @@ func ssbConnectPeers(count uint32) bool {
 	}
 	lock.Unlock()
 
-	addrs, err := queryAddresses()
+	addrs, err := queryAddresses(count)
 	if err != nil {
 		retErr = errors.Wrap(err, "querying addresses")
 		return false
@@ -76,10 +76,14 @@ func ssbConnectPeers(count uint32) bool {
 
 	var wg errgroup.Group
 
-	wg.Go(makeConnWorker(newConns, connErrs))
-	wg.Go(makeConnWorker(newConns, connErrs))
-	wg.Go(makeConnWorker(newConns, connErrs))
+	for n := count/2 + 1; n > 0; n-- {
+		wg.Go(makeConnWorker(newConns, connErrs))
+	}
 
+	// TODO: make connections until we have as much as we wont
+	// the current code will cancel early if all the connections fail
+	// would be better if it asked for more addresses and kept trying
+	// but this is good enough for now
 	for _, row := range addrs {
 		newConns <- row
 	}
@@ -146,7 +150,7 @@ type addrRow struct {
 	addr   *multiserver.NetAddress
 }
 
-func queryAddresses() ([]*addrRow, error) {
+func queryAddresses(count uint32) ([]*addrRow, error) {
 	var (
 		addresses []*addrRow
 		i         = 0
@@ -154,7 +158,7 @@ func queryAddresses() ([]*addrRow, error) {
 		err       error
 	)
 
-	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT 12;`)
+	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, count)
 	if err != nil {
 		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
 	}
