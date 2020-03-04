@@ -13,6 +13,7 @@ import (
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/invite"
 	multiserver "go.mindeco.de/ssb-multiserver"
+	"golang.org/x/sync/errgroup"
 )
 
 import "C"
@@ -50,64 +51,94 @@ func ssbConnectPeer(quasiMs string) bool {
 
 //export ssbConnectPeers
 func ssbConnectPeers(count uint32) bool {
-	var err error
+	var retErr error
 	defer func() {
-		if err != nil {
-			level.Error(log).Log("where", "ssbConnectPeers", "n", count, "err", err)
+		if retErr != nil {
+			level.Error(log).Log("where", "ssbConnectPeers", "n", count, "err", retErr)
 		}
 	}()
 	lock.Lock()
 	if sbot == nil {
 		lock.Unlock()
-		err = ErrNotInitialized
+		retErr = ErrNotInitialized
 		return false
 	}
 	lock.Unlock()
 
 	addrs, err := queryAddresses()
 	if err != nil {
-		err = errors.Wrap(err, "querying addresses")
+		retErr = errors.Wrap(err, "querying addresses")
 		return false
 	}
+
+	newConns := make(chan *addrRow)
+	connErrs := make(chan *connectResult, len(addrs))
+
+	var wg errgroup.Group
+
+	wg.Go(makeConnWorker(newConns, connErrs))
+	wg.Go(makeConnWorker(newConns, connErrs))
+	wg.Go(makeConnWorker(newConns, connErrs))
+
+	for _, row := range addrs {
+		newConns <- row
+	}
+	close(newConns)
+
+	if err := wg.Wait(); err != nil {
+		retErr = errors.Wrap(err, "waiting for conn workers")
+		return false
+	}
+	close(connErrs)
 
 	tx, err := viewDB.Begin()
 	if err != nil {
-		err = errors.Wrap(err, "failed to make transaction on viewdb")
+		retErr = errors.Wrap(err, "failed to make transaction on viewdb")
 		return false
 	}
 
-	worked := uint32(0)
-	for i, row := range addrs {
-		err = sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
-		if err != nil {
-			level.Warn(log).Log("where", "ssbConnectPeers", "dial", i, "err", err)
-			_, execErr := tx.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, err.Error(), row.addrID)
-			if execErr != nil {
-				err = errors.Wrapf(execErr, "updateBroken(%d): failed to update parse error row %d", i, row.addrID)
-				level.Warn(log).Log("err", err)
-				// TODO there is a soft-race around the database being locked during bot.refresh()
-				// we probably should collect the errors and make one final transaction with all these updates
-				// but for now just log the errors and continue
+	for res := range connErrs {
+		if res.err == nil {
+			_, err := tx.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, res.row.addrID)
+			if err != nil {
+				retErr = errors.Wrapf(err, "updateFailed: working pub %d", res.row.addrID)
+				return false
 			}
 			continue
 		}
 
-		_, err := tx.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, row.addrID)
+		_, err := tx.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, res.err.Error(), res.row.addrID)
 		if err != nil {
-			level.Warn(log).Log("where", "ssbConnectPeers", "update addr", row.addrID, "err", err)
-			continue
+			retErr = errors.Wrapf(err, "updateFailed: failing pub %d", res.row.addrID)
+			return false
 		}
-		if worked > count {
-			break
-		}
-		worked++
 	}
+
 	err = tx.Commit()
 	if err != nil {
-		err = errors.Wrap(err, "failed to commit viewdb transaction")
+		retErr = errors.Wrap(err, "failed to commit viewdb transaction")
 		return false
 	}
 	return true
+}
+
+type connectResult struct {
+	row *addrRow
+	err error
+}
+
+func makeConnWorker(workCh <-chan *addrRow, connErrs chan<- *connectResult) func() error {
+	return func() error {
+		for row := range workCh {
+			err := sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
+			level.Info(log).Log("event", "ssbConnectPeers", "dial", row.addrID, "err", err)
+			connErrs <- &connectResult{
+				row: row,
+				err: err,
+			}
+		}
+		return nil
+	}
 }
 
 type addrRow struct {
@@ -115,15 +146,15 @@ type addrRow struct {
 	addr   *multiserver.NetAddress
 }
 
-func queryAddresses() ([]addrRow, error) {
+func queryAddresses() ([]*addrRow, error) {
 	var (
-		addresses []addrRow
+		addresses []*addrRow
 		i         = 0
 		rows      *sql.Rows
 		err       error
 	)
 
-	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT 20;`)
+	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT 12;`)
 	if err != nil {
 		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
 	}
@@ -148,7 +179,7 @@ func queryAddresses() ([]addrRow, error) {
 			return nil, errors.Wrapf(err, "queryAddresses(%d): row %d (%q) not a multiserver", i, id, addr)
 		}
 
-		addresses = append(addresses, addrRow{
+		addresses = append(addresses, &addrRow{
 			addrID: id,
 			addr:   msAddr,
 		})
