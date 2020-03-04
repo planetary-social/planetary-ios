@@ -305,7 +305,7 @@ func ssbInviteAccept(token string) bool {
 
 	_, err = sbot.PublishLog.Publish(ssb.NewContactFollow(&tok.Peer))
 	if err != nil {
-		retErr = err
+		retErr = errors.Wrap(err, "failed to publish follow pub message")
 		return false
 	}
 
@@ -317,19 +317,19 @@ func ssbInviteAccept(token string) bool {
 
 	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address) VALUES (?,?)`, peerID, tok.Address.String())
 	if err != nil {
-		retErr = err
+		retErr = errors.Wrap(err, "insert new pub into addresses failed")
 		return false
 	}
 
 	pubMsg, err := invite.NewPubMessageFromToken(tok)
 	if err != nil {
-		retErr = err
+		retErr = errors.Wrap(err, "failed to make pub message from token")
 		return false
 	}
 
 	_, err = sbot.PublishLog.Publish(pubMsg)
 	if err != nil {
-		retErr = err
+		retErr = errors.Wrap(err, "failed to publish new pub message")
 		return false
 	}
 
@@ -339,22 +339,21 @@ func ssbInviteAccept(token string) bool {
 // todo: add make:bool parameter
 func getAuthorID(ref ssb.FeedRef) (int64, error) {
 	strRef := ref.Ref()
-	row := viewDB.QueryRow(`SELECT id FROM authors where key = ?`, strRef)
 
 	var peerID int64
-	err := row.Scan(&peerID)
+	err := viewDB.QueryRow(`SELECT id FROM authors where id = ?`, strRef).Scan(&peerID)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			return -1, err
+			return -1, errors.Wrap(err, "getAuthorID: find query error")
 		}
 
-		res, err := viewDB.Exec(`INSERT INTO authors (key) VALUES (?)`, strRef)
+		res, err := viewDB.Exec(`INSERT INTO authors (id) VALUES (?)`, strRef)
 		if err != nil {
-			return -1, err
+			return -1, errors.Wrap(err, "getAuthorID: insert query error")
 		}
 		newID, err := res.LastInsertId()
 		if err != nil {
-			return -1, err
+			return -1, errors.Wrap(err, "getAuthorID: insert result error")
 		}
 
 		peerID = newID
