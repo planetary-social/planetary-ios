@@ -113,6 +113,19 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 		}
 
 		if msg.Claimed().Before(sixMonthAgo) {
+			var typeMsg struct {
+				Type string
+			}
+
+			err := json.Unmarshal(msg.ContentBytes(), &typeMsg)
+			typeStr := typeMsg.Type
+			if err != nil {
+				return false, nil
+			}
+			// the app viewdb needs older about and contact info
+			if typeStr == "about" || typeStr == "contact" {
+				return return true, nil
+			}
 			return false, nil
 		}
 		return true, nil
