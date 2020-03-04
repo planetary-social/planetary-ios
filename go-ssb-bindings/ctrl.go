@@ -175,9 +175,8 @@ func queryAddresses() ([]*addrRow, error) {
 			_, execErr := viewDB.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
 			if execErr != nil {
 				execErr = errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
-				fmt.Fprintf(os.Stderr, "TODO: tx me %+v\n", execErr)
-				continue
-				// return nil, execErr
+				level.Warn(log).Log("event", "broken address record update failed", "err", execErr)
+				continue // would be better to transact these but... might also be an intermittent resolve error
 			}
 			return nil, errors.Wrapf(err, "queryAddresses(%d): row %d (%q) not a multiserver", i, id, addr)
 		}
