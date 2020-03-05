@@ -341,13 +341,13 @@ func getAuthorID(ref ssb.FeedRef) (int64, error) {
 	strRef := ref.Ref()
 
 	var peerID int64
-	err := viewDB.QueryRow(`SELECT id FROM authors where id = ?`, strRef).Scan(&peerID)
+	err := viewDB.QueryRow(`SELECT id FROM authors where author = ?`, strRef).Scan(&peerID)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			return -1, errors.Wrap(err, "getAuthorID: find query error")
 		}
 
-		res, err := viewDB.Exec(`INSERT INTO authors (id) VALUES (?)`, strRef)
+		res, err := viewDB.Exec(`INSERT INTO authors (author) VALUES (?)`, strRef)
 		if err != nil {
 			return -1, errors.Wrap(err, "getAuthorID: insert query error")
 		}
