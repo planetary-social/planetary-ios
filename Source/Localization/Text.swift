@@ -9,6 +9,7 @@ extension Text {
                 Text.Offboarding.self,
                 Text.Onboarding.self,
                 Text.Onboarding.StepTitle.self,
+                Text.ManagePubs.self,
                 Text.Preview.self,
                 Text.Push.self,
                 Text.Reporting.self,
@@ -125,6 +126,9 @@ enum Text: String, Localizable, CaseIterable {
     case like = "Like"
 
     case debug = "Debug"
+    
+    case redeemInvitation = "Redeem an invitation"
+    case pasteAddress = "Token"
 }
 
 // MARK:- ImagePicker
@@ -248,6 +252,17 @@ extension Text {
         case policyStatement = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy"
         case termsOfService = "Terms of Service"
         case privacyPolicy = "Privacy Policy"
+    }
+}
+
+// MARK:- Manage Pubs
+
+extension Text {
+
+    enum ManagePubs: String, Localizable, CaseIterable {
+        case header = "Pubs"
+        case title = "Manage Pubs"
+        case footer = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself."
     }
 }
 

@@ -85,6 +85,8 @@
 "Text.bookmark" = "Bookmark";
 "Text.like" = "Like";
 "Text.debug" = "Debug";
+"Text.redeemInvitation" = "Redeem an invitation";
+"Text.pasteAddress" = "Token";
 
 "Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each others content or be able to contact each other.";
 "Blocking.buttonTitle" = "Yes, block {{ name }}";
@@ -169,6 +171,10 @@
 "OnboardingStepTitle.photoConfirm" = "Profile photo added";
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nA new kind of social\nnetwork for creative,\nindependent people";
+
+"ManagePubs.header" = "Pubs";
+"ManagePubs.title" = "Manage Pubs";
+"ManagePubs.footer" = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
 
 "Preview.title" = "Advanced Settings";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
