@@ -20,7 +20,11 @@ class SettingsViewController: DebugTableViewController {
     }
 
     internal override func updateSettings() {
-        self.settings = [self.directory(), self.push(), self.usage(), self.preview()]
+        self.settings = [self.directory(),
+                         self.push(),
+                         self.usage(),
+                         self.managePubs(),
+                         self.preview()]
         super.updateSettings()
     }
 
@@ -115,6 +119,27 @@ class SettingsViewController: DebugTableViewController {
             })]
 
         return (Text.usageData.text, settings, nil)
+    }
+    
+    // MARK: Manage Pubs
+    
+    private func managePubs() -> DebugTableViewController.Settings {
+        var settings: [DebugTableViewCellModel] = []
+        
+        settings += [DebugTableViewCellModel(title: Text.ManagePubs.title.text,
+                                         valueClosure:
+        {
+            cell in
+            cell.accessoryType = .disclosureIndicator
+        },
+                                         actionClosure:
+        {
+            [unowned self] cell in
+            let controller = ManagePubsViewController()
+            self.navigationController?.pushViewController(controller, animated: true)
+        })]
+        
+        return (Text.ManagePubs.header.text, settings, Text.ManagePubs.footer.text)
     }
 
     // MARK: Preview

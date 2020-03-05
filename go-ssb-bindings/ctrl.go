@@ -95,34 +95,6 @@ func ssbConnectPeers(count uint32) bool {
 	}
 	close(connErrs)
 
-	tx, err := viewDB.Begin()
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to make transaction on viewdb")
-		return false
-	}
-
-	for res := range connErrs {
-		if res.err == nil {
-			_, err := tx.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, res.row.addrID)
-			if err != nil {
-				retErr = errors.Wrapf(err, "updateFailed: working pub %d", res.row.addrID)
-				return false
-			}
-			continue
-		}
-
-		_, err := tx.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, res.err.Error(), res.row.addrID)
-		if err != nil {
-			retErr = errors.Wrapf(err, "updateFailed: failing pub %d", res.row.addrID)
-			return false
-		}
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to commit viewdb transaction")
-		return false
-	}
 	return true
 }
 
@@ -176,13 +148,7 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 
 		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
 		if err != nil {
-			_, execErr := viewDB.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
-			if execErr != nil {
-				execErr = errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
-				level.Warn(log).Log("event", "broken address record update failed", "err", execErr)
-				continue // would be better to transact these but... might also be an intermittent resolve error
-			}
-			return nil, errors.Wrapf(err, "queryAddresses(%d): row %d (%q) not a multiserver", i, id, addr)
+			continue
 		}
 
 		addresses = append(addresses, &addrRow{
@@ -341,13 +307,13 @@ func getAuthorID(ref ssb.FeedRef) (int64, error) {
 	strRef := ref.Ref()
 
 	var peerID int64
-	err := viewDB.QueryRow(`SELECT id FROM authors where id = ?`, strRef).Scan(&peerID)
+	err := viewDB.QueryRow(`SELECT id FROM authors where author = ?`, strRef).Scan(&peerID)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			return -1, errors.Wrap(err, "getAuthorID: find query error")
 		}
 
-		res, err := viewDB.Exec(`INSERT INTO authors (id) VALUES (?)`, strRef)
+		res, err := viewDB.Exec(`INSERT INTO authors (author) VALUES (?)`, strRef)
 		if err != nil {
 			return -1, errors.Wrap(err, "getAuthorID: insert query error")
 		}

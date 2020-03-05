@@ -11,6 +11,8 @@
 		0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7623FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7723FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
+		0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */; };
+		0AD8D635240EFF8800D87A95 /* RedeemInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		230F4FD222F8729700F93B14 /* TestAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 230F4FD122F8729700F93B14 /* TestAPI.swift */; };
@@ -603,6 +605,8 @@
 		0AD8D62D2408627000D87A95 /* go_install.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = go_install.sh; sourceTree = "<group>"; };
 		0AD8D62E240D9D6300D87A95 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
 		0AD8D62F240D9D9400D87A95 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
+		0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePubsViewController.swift; sourceTree = "<group>"; };
+		0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedeemInviteViewController.swift; sourceTree = "<group>"; };
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
 		231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDatabaseSchema.sql; sourceTree = "<group>"; };
@@ -1234,10 +1238,12 @@
 				53B634B1221508B800400403 /* HomeViewController.swift */,
 				5396A62E2245A50300C57A4B /* LaunchViewController.swift */,
 				53B634B322150A4100400403 /* MainViewController.swift */,
+				0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */,
 				5319EBD622F22BA700EC7583 /* MenuViewController.swift */,
 				53E341FB224FF87D002BB5F4 /* NewPostViewController.swift */,
 				53B4F5F022B7123900027C6A /* NotificationsViewController.swift */,
 				8DDA836E237CBE5A00B2A52C /* PostReplyDelegate+DataSource.swift */,
+				0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */,
 				53AD3FE62273AE21005228F9 /* ThreadViewController.swift */,
 				535B6A0523712D79008C248E /* UIViewController+Block.swift */,
 				53C966E1236D037000E70689 /* UIViewController+Report.swift */,
@@ -2553,6 +2559,7 @@
 				53211CD0227C8F85007FB785 /* AboutCellView.swift in Sources */,
 				53EE020022051B6200DFDF16 /* Identifier.swift in Sources */,
 				8D8105822346A9740029C72E /* Relationship.swift in Sources */,
+				0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */,
 				53B5D99E233409B80024CF7A /* Support+UIViewController.swift in Sources */,
 				53211CDC228230D6007FB785 /* UIView+Round.swift in Sources */,
 				53EAB39A239B106900DF5530 /* CachesViewController.swift in Sources */,
@@ -2697,6 +2704,7 @@
 				8DD985D22329B94600FA2F1A /* ThreadInteractionView.swift in Sources */,
 				53362F672208C2B3007264CB /* AppController+Lifecycle.swift in Sources */,
 				53E29CDD22D7EC6F008A2CB1 /* Hashtag+String.swift in Sources */,
+				0AD8D635240EFF8800D87A95 /* RedeemInviteViewController.swift in Sources */,
 				53575509226A3113002A6989 /* KeyValueTableViewDataSource.swift in Sources */,
 				531B92B122CAC203005D5255 /* PostButtonsView.swift in Sources */,
 				531D0A1321EACC0A008E40A8 /* GoBotViewController.swift in Sources */,
