@@ -54,17 +54,11 @@ class GoBot: Bot {
 
     // MARK: App Lifecycle
 
-    func resume()  {
-        self.queue.async {
-            // make some sync connections to pull new messages
-            let n = 2 // how many connections to establish
-            if !self.bot.dialSomePeers() {
-                Log.unexpected(.botError, "failed to make \(n) sync connections after app resume")
-            }
-        }
-    }
+    func resume()  { }
 
-    func suspend() { }
+    func suspend() {
+        self.bot.disconnectAll()
+    }
 
     func exit() {
         self.bot.disconnectAll()

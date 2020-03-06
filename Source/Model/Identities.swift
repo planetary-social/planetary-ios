@@ -12,7 +12,7 @@ typealias Identities = [Identity]
 
 struct SSBIdentities {
     let pubs = [ "planetary-pub1": "@cgZaEEyNixAnq7tMH2CHdusBHV80OwqOSGIcc6Hr6aA=.ed25519",
-//                "planetary-pub2": "@ZOSbNTyKgIecMcSCPlOJt1veIAP1D8p5Ptao+8cRO6c=.ed25519",
+                "planetary-pub2": "@ZOSbNTyKgIecMcSCPlOJt1veIAP1D8p5Ptao+8cRO6c=.ed25519",
                 "planetary-pub3": "@oRMrLWs3AP0VwVw3AtBRL3TfOaxeTOFml33CibRtfcE=.ed25519",
                 "planetary-pub4": "@9Vyi928zwolkNcyDSA6S3p+ycQ8GD87iSU//0dNc0pw=.ed25519",
                 "cryptix-pub": "@xxZeuBUKIXYZZ7y+CIHUuy0NOFXz2MhUBkHemr86S3M=.ed25519"]

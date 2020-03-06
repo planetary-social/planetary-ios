@@ -92,8 +92,9 @@ class GoBotInternal {
     // the Verse REST API
     // tuple of primary and fallbacks TODO: undo this once the live-streaming is in place
     private var allPeers: [ String : (Peer, [Peer]) ] = [
-        NetworkKey.ssb.string: ( Peer(tcpAddr: "pub3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!) , [
-            Peer(tcpAddr: "pub2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
+        NetworkKey.ssb.string: ( Peer(tcpAddr: "main2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub2"]!) , [
+            Peer(tcpAddr: "main1.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
+            Peer(tcpAddr: "main3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!),
             Peer(tcpAddr: "pub4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!)
         ]),
 
@@ -104,10 +105,10 @@ class GoBotInternal {
         NetworkKey.planetary.string: (Peer(tcpAddr: "pub1.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
             Peer(tcpAddr: "pub1.planetary.social:7117", pubKey: Identities.planetary.pubs["testpub_go1"]!),
             Peer(tcpAddr: "pub3.planetary.social:7337", pubKey: Identities.planetary.pubs["testpub_go3"]!),
-            Peer(tcpAddr: "pub3.planetary.social:7447", pubKey: Identities.planetary.pubs["testpub_go4"]!),
+            Peer(tcpAddr: "demo4.planetary.social:7447", pubKey: Identities.planetary.pubs["testpub_go4"]!),
             
             Peer(tcpAddr: "pub2.planetary.social:7557", pubKey: Identities.planetary.pubs["testpub_go_testing1"]!),
-            Peer(tcpAddr: "pub2.planetary.social:7667", pubKey: Identities.planetary.pubs["testpub_go_testing2"]!)
+            Peer(tcpAddr: "demo6.planetary.social:7667", pubKey: Identities.planetary.pubs["testpub_go_testing2"]!)
         ]),
 
         NetworkKey.integrationTests.string: (Peer(tcpAddr: "testing-ci.planetary.social:9119", pubKey: Identities.testNet.pubs["integrationpub1"]!), [])
@@ -281,8 +282,8 @@ class GoBotInternal {
     
     @discardableResult
     func dialSomePeers() -> Bool {
-        ssbConnectPeers(4)
-        if let p = self.peers.randomSample(1).first {
+        ssbConnectPeers(3)
+        if let p = self.peers.randomSample(2).first {
             let worked = self.dialOne(peer: p)
             if worked {
                 return true
