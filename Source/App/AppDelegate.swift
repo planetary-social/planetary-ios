@@ -21,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.rootViewController = AppController.shared
         window.makeKeyAndVisible()
         self.window = window
+        
+        // reset configurations if user enabled switch in settings
+        self.resetIfNeeded()
 
         // next
         // repairs are tracked so analytics must be configured first

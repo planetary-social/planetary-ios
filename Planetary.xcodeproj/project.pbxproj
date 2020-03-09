@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */; };
 		0AD00E7023FB3C02006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7623FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
@@ -593,6 +594,7 @@
 
 /* Begin PBXFileReference section */
 		029F45290FDF6DF49B65B79C /* Pods-UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UITests/Pods-UITests.debug.xcconfig"; sourceTree = "<group>"; };
+		0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Reset.swift"; sourceTree = "<group>"; };
 		0AD00E6723FB3318006BF017 /* Planetary.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.debug.xcconfig; sourceTree = "<group>"; };
 		0AD00E6823FB332A006BF017 /* Planetary.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.release.xcconfig; sourceTree = "<group>"; };
 		0AD00E6923FB3344006BF017 /* APITests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APITests.debug.xcconfig; sourceTree = "<group>"; };
@@ -1179,6 +1181,7 @@
 				53E26C4D23022482009240B2 /* AppDelegate+Push.swift */,
 				53AD3FD4226FBD91005228F9 /* AppDelegate+UIAppearance.swift */,
 				536255DB23AC090D001007D0 /* RemoteNotificationUserInfo.swift */,
+				0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -2588,6 +2591,7 @@
 				53B4F5F122B7123900027C6A /* NotificationsViewController.swift in Sources */,
 				53E29CD622D542B5008A2CB1 /* Dictionary+JSONSerialization.swift in Sources */,
 				533EDBF22389B587008B3565 /* UIImage+AverageColor.swift in Sources */,
+				0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */,
 				53375F812321757C00610932 /* GalleryView.swift in Sources */,
 				531EC4102310C274001A25AD /* Blob+NSAttributedString.swift in Sources */,
 				53E26C5723037927009240B2 /* Date+ISO8601.swift in Sources */,
