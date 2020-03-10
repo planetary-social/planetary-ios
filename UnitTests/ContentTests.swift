@@ -402,7 +402,7 @@ class ContentTests: XCTestCase {
                         XCTAssertTrue(content?.assertValid() ?? false)
 
                     // models that SHOULD NOT be encoded
-                    case .address, .unknown, .unsupported: break
+                    case .pub, .address, .unknown, .unsupported: break
                 }
             }
         } catch {
@@ -435,6 +435,7 @@ fileprivate extension Content {
             case .address: return self.address != nil
             case .contact: return self.contact != nil
             case .dropContentRequest: return self.dropContentRequest != nil
+            case .pub: return self.pub != nil
             case .post: return self.post != nil
             case .vote: return self.vote != nil
             case .unsupported: return false
