@@ -198,6 +198,11 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		err = errors.Wrap(err, "BotInit: failed to open view database")
 		return false
 	}
+	_, err = viewDB.Exec("PRAGMA journal_mode=WAL;")
+	if err != nil {
+		err = errors.Wrap(err, "BotInit: failed to switch mode to WAL")
+		return false
+	}
 
 	// key should be stored in keychain anyway
 	os.Remove(r.GetPath("secret"))
