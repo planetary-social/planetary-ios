@@ -82,7 +82,7 @@ class GoBot: Bot {
         
         // is this saying we need to be the main thread to login? -rabble
         Thread.assertIsMainThread()
-
+        self.queue.async {
         var err: Error? = nil
         defer {
             DispatchQueue.main.async {
@@ -139,6 +139,7 @@ class GoBot: Bot {
         // TODO this does not always get set in time
         // TODO maybe this should be done in defer?
         self._identity = secret.identity
+        }
         return
     }
     
