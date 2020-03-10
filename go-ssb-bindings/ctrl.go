@@ -89,11 +89,12 @@ func ssbConnectPeers(count uint32) bool {
 	}
 	close(newConns)
 
-	if err := wg.Wait(); err != nil {
+	err = wg.Wait()
+	close(connErrs)
+	if err != nil {
 		retErr = errors.Wrap(err, "waiting for conn workers")
 		return false
 	}
-	close(connErrs)
 
 	return true
 }
