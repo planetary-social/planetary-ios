@@ -79,8 +79,10 @@ class GoBot: Bot {
     }
     
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
+        
+        // is this saying we need to be the main thread to login? -rabble
         Thread.assertIsMainThread()
-
+        self.queue.async {
         var err: Error? = nil
         defer {
             DispatchQueue.main.async {
@@ -127,14 +129,17 @@ class GoBot: Bot {
             Log.unexpected(.botError, "\(#function) warning: database still open")
         }
 
-        if !self.bot.repoFSCK(.FeedLength) {
-            err = GoBotError.unexpectedFault("login repo FSCK failed")
-            return
-        }
+        // don't check for fsck on login, we'll be able to check it later
+        // to see if it's working - rabble
+        //if !self.bot.repoFSCK(.FeedLength) {
+        //    err = GoBotError.unexpectedFault("login repo FSCK failed")
+        //    return
+        //}
 
         // TODO this does not always get set in time
         // TODO maybe this should be done in defer?
         self._identity = secret.identity
+        }
         return
     }
     
