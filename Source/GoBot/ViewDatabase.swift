@@ -15,8 +15,8 @@ import SQLite
 // schema migration handling
 extension Connection {
     public var userVersion: Int32 {
-        get { return Int32(try! scalar("PRAGMA user_version") as! Int64)}
-        set { try! run("PRAGMA user_version = \(newValue)") }
+        get { return Int32(try! scalar("PRAGMA user_version;") as! Int64)}
+        set { try! run("PRAGMA user_version = \(newValue);") }
     }
 }
 
@@ -196,6 +196,7 @@ class ViewDatabase {
         self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
         self.openDB = db
+        try db.execute("PRAGMA journal_mode = WAL;")
         
 //        db.trace { Log.info($0) } // print all the statements
         
