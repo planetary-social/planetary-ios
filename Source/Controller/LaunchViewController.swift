@@ -109,7 +109,7 @@ class LaunchViewController: UIViewController {
         // transition to main app UI
         // note that delay which is to help the loginAndSync() call get content
         // removing delay... let syncing happen in the background
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
+        DispatchQueue.main.async {
             AppController.shared.showMainViewController(animated: true)
         }
     }
