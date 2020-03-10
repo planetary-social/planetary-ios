@@ -8,7 +8,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/pkg/errors v0.9.1
 	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8
-	go.cryptoscope.co/margaret v0.1.4
+	go.cryptoscope.co/margaret v0.1.5
 	go.cryptoscope.co/muxrpc v1.5.4-0.20200212114344-0403d7496950 // indirect
 	go.cryptoscope.co/netwrap v0.1.1
 	go.cryptoscope.co/ssb v0.0.0-20200304093142-4310d5a24560

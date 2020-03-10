@@ -190,7 +190,7 @@ func Open(name string, cdc margaret.Codec) (*offsetLog, error) {
 		codec: cdc,
 	}
 
-	err = log.checkConsistency()
+	err = log.checkJournal()
 	if err != nil {
 		return nil, errors.Wrap(err, "offset2: integrity error")
 	}
@@ -265,7 +265,7 @@ func (log *offsetLog) checkJournal() error {
 			return errors.Wrap(err, "recover: could not overwrite journal with offset seq")
 		}
 
-		if err := log.checkConsistency(); err != nil {
+		if err := log.CheckConsistency(); err != nil {
 			return errors.Wrap(err, "recover: check journal 2nd pass")
 		}
 	}
@@ -295,8 +295,8 @@ func (log *offsetLog) checkJournal() error {
 	return nil
 }
 
-// checkConsistency is an fsck for the offset log.
-func (log *offsetLog) checkConsistency() error {
+// CheckConsistency is an fsck for the offset log.
+func (log *offsetLog) CheckConsistency() error {
 	err := log.checkJournal()
 	if err != nil {
 		return errors.Wrap(err, "offset2: journal inconsistent")
