@@ -17,7 +17,7 @@ extension Post {
 
     // Returns the serialized blobs or inline blobs, in order.
     var anyBlobs: Blobs {
-        guard let blobs = self.blobs, !blobs.isEmpty else { return self.inlineBlobs }
+        guard let blobs = self.mentions?.asBlobs(), !blobs.isEmpty else { return self.inlineBlobs }
         return blobs
     }
 

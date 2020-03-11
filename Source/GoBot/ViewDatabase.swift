@@ -1364,7 +1364,7 @@ class ViewDatabase {
             try self.insertMentions(msgID: msgID, mentions: m)
         }
         
-        if let b = p.blobs {
+        if let b = p.mentions?.asBlobs() {
             try self.insertBlobs(msgID: msgID, blobs: b)
         }
 
@@ -1703,10 +1703,12 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
 
-        for m in mentions {
+        let notBlobs = mentions.filter { return !$0.link.isBlob }
+        for m in notBlobs {
             if !m.link.isValidIdentifier {
                 continue
             }
+            // TOOD: name might be a channel!
             switch m.link.sigil {
             case .message:
                 try db.run(self.mentions_msg.insert(
@@ -1719,17 +1721,9 @@ class ViewDatabase {
                     colFeedID <-  try self.authorID(from: m.link, make: true),
                     colName <- m.name
                 ))
-            case .blob:
-                try db.run(self.mentions_image.insert(
-                    colMessageRef <- msgID,
-                    colImage <- m.link,
-                    colName <- m.name
-                    // size and type? should use exif checks to validate instead of depending on the publisher
-                ))
             default:
                 continue
             }
-            
         }
     }
     

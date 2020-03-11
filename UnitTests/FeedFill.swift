@@ -516,8 +516,8 @@ class ViewDatabaseTest: XCTestCase {
                 return
             }
             XCTAssertEqual(p.text, "I swear this one will work...")
-            XCTAssertEqual(p.blobs?.count, 3)
-            if let b = p.blobs {
+            XCTAssertEqual(p.mentions?.asBlobs().count, 3)
+            if let b = p.mentions?.asBlobs() {
                 XCTAssertEqual(b[0].identifier, "&2eD1jIEPz3NC1kD3VoKHbJBt1mkheyA32BjI1IO69CQ=.sha256")
                 XCTAssertEqual(b[0].name, "blob")
                 XCTAssertEqual(b[0].metadata?.dimensions?.width, 100)
