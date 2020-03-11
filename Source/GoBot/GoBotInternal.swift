@@ -102,12 +102,12 @@ class GoBotInternal {
             Peer(tcpAddr: "pub1.planetary.social:8008", pubKey: Identities.verse.pubs["testpub_js"]!)
         ]),
 
-        NetworkKey.planetary.string: (Peer(tcpAddr: "pub1.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
+        NetworkKey.planetary.string: (Peer(tcpAddr: "demo2.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
             Peer(tcpAddr: "demo1.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go1"]!),
             Peer(tcpAddr: "demo3.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go3"]!),
             Peer(tcpAddr: "demo4.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go4"]!),
-            
-            Peer(tcpAddr: "pub2.planetary.social:7557", pubKey: Identities.planetary.pubs["testpub_go_testing1"]!),
+
+            Peer(tcpAddr: "demo5.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go_testing1"]!),
             Peer(tcpAddr: "demo6.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go_testing2"]!)
         ]),
 
