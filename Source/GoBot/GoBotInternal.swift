@@ -95,11 +95,7 @@ class GoBotInternal {
         NetworkKey.ssb.string: ( Peer(tcpAddr: "main2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub2"]!) , [
             Peer(tcpAddr: "main1.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
             Peer(tcpAddr: "main3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!),
-            Peer(tcpAddr: "pub4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!)
-        ]),
-
-        NetworkKey.verse.string: (Peer(tcpAddr: "pub1.planetary.social:8118", pubKey: Identities.verse.pubs["testpub_go"]!), [
-            Peer(tcpAddr: "pub1.planetary.social:8008", pubKey: Identities.verse.pubs["testpub_js"]!)
+            Peer(tcpAddr: "main4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!)
         ]),
 
         NetworkKey.planetary.string: (Peer(tcpAddr: "demo2.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
