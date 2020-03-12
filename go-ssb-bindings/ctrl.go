@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"math"
 	"runtime"
+	"time"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
@@ -133,7 +134,7 @@ type connectResult struct {
 func makeConnWorker(workCh <-chan *addrRow, connErrs chan<- *connectResult) func() error {
 	return func() error {
 		for row := range workCh {
-			ctx, _ := context.WithTimeout(longCtx, 10*60*time.Second)) // kill connections after a while until we have live streaming
+			ctx, _ := context.WithTimeout(longCtx, 10*60*time.Second) // kill connections after a while until we have live streaming
 			err := sbot.Network.Connect(ctx, row.addr.WrappedAddr())
 			level.Info(log).Log("event", "ssbConnectPeers", "dial", row.addrID, "err", err)
 			connErrs <- &connectResult{
