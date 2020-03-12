@@ -3,9 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"math"
-	"os"
 	"runtime"
 
 	"github.com/go-kit/kit/log/level"
