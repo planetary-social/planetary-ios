@@ -54,7 +54,9 @@ class GoBot: Bot {
 
     // MARK: App Lifecycle
 
-    func resume()  { }
+    func resume()  {
+        self.bot.dialSomePeers()
+    }
 
     func suspend() {
         self.bot.disconnectAll()

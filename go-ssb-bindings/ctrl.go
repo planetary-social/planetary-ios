@@ -3,10 +3,9 @@ package main
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"math"
-	"os"
 	"runtime"
+	"time"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
@@ -96,6 +95,34 @@ func ssbConnectPeers(count uint32) bool {
 		return false
 	}
 
+	tx, err := viewDB.Begin()
+	if err != nil {
+		retErr = errors.Wrap(err, "failed to make transaction on viewdb")
+		return false
+	}
+
+	for res := range connErrs {
+		if res.err == nil {
+			_, err := tx.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, res.row.addrID)
+			if err != nil {
+				retErr = errors.Wrapf(err, "updateFailed: working pub %d", res.row.addrID)
+				return false
+			}
+			continue
+		}
+
+		_, err := tx.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, res.err.Error(), res.row.addrID)
+		if err != nil {
+			retErr = errors.Wrapf(err, "updateFailed: failing pub %d", res.row.addrID)
+			return false
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		retErr = errors.Wrap(err, "failed to commit viewdb transaction")
+		return false
+	}
 	return true
 }
 
@@ -107,7 +134,8 @@ type connectResult struct {
 func makeConnWorker(workCh <-chan *addrRow, connErrs chan<- *connectResult) func() error {
 	return func() error {
 		for row := range workCh {
-			err := sbot.Network.Connect(longCtx, row.addr.WrappedAddr())
+			ctx, _ := context.WithTimeout(longCtx, 10*60*time.Second) // kill connections after a while until we have live streaming
+			err := sbot.Network.Connect(ctx, row.addr.WrappedAddr())
 			level.Info(log).Log("event", "ssbConnectPeers", "dial", row.addrID, "err", err)
 			connErrs <- &connectResult{
 				row: row,
@@ -149,7 +177,13 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 
 		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
 		if err != nil {
-			continue
+			_, execErr := viewDB.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
+			if execErr != nil {
+				execErr = errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
+				level.Warn(log).Log("event", "broken address record update failed", "err", execErr)
+				continue // would be better to UPDATE these but might also be an intermittent resolve error
+			}
+			return nil, errors.Wrapf(err, "queryAddresses(%d): row %d (%q) not a multiserver", i, id, addr)
 		}
 
 		addresses = append(addresses, &addrRow{
@@ -157,7 +191,6 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 			addr:   msAddr,
 		})
 
-		fmt.Fprintf(os.Stderr, "\t\tTODO[debug]: addr%d: %s\n", i, addr)
 		i++
 	}
 

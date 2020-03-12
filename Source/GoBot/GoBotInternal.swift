@@ -278,14 +278,10 @@ class GoBotInternal {
     
     @discardableResult
     func dialSomePeers() -> Bool {
+        guard self.openConnections() == 0 else { return true } // only make connections if we dont have any
         ssbConnectPeers(3)
-        if let p = self.peers.randomSample(2).first {
-            let worked = self.dialOne(peer: p)
-            if worked {
-                return true
-            }
-        }
-        return false
+        self.dial(atLeast: 2, tries: 10)
+        return true
     }
     
     func dialOne(peer: Peer) -> Bool {
