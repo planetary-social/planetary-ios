@@ -17,6 +17,7 @@ extension NSAttributedString: Markdownable {
     /// the attributes are iterated in reverse order.
     var markdown: String {
         let string = NSMutableAttributedString(attributedString: self)
+//        string.removeCompatabilityAttachmentLinks()
         string.removeHashtagLinkAttributes()
         string.replaceMentionLinkAttributesWithMarkdown()
         return string.string

@@ -94,6 +94,7 @@ class PostCellView: KeyValueView {
         guard self.textIsExpanded else { return }
         guard let keyValue = self.keyValue, keyValue.value.content.isPost else { return }
         let string = Caches.text.from(keyValue).mutable()
+        print("DEBUG: \(string)")
         string.addAttributes(self.postAttributes)
         self.fullPostText = string
     }

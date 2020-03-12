@@ -29,11 +29,23 @@ extension Post {
     /// the blobs property.  This is required to be able to
     /// publish a post with associated images or binary content.
     func copy(with blobs: Blobs) -> Post {
+        var textWithImages = self.text
+
+        if blobs.count > 0 {
+            // This is meant as compat with other ssb-clients like Patchwork, etc.
+            // TODO: use this marker to cut when viewing in planetary
+            textWithImages += "\n~=~=~Planetary Attachments~=~=~\n"
+            for b in blobs {
+                textWithImages += "![\(b.name)](\(b.identifier))\n"
+            }
+            textWithImages += "\n~=~=~Planetary Attachments~=~=~\n"
+        }
+
         return Post(blobs: blobs,
                     branches: self.branch,
                     hashtags: self.hashtags,
                     mentions: self.mentions,
                     root: self.root,
-                    text: self.text)
+                    text: textWithImages)
     }
 }
