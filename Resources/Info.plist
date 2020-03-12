@@ -23,7 +23,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>0.9.11</string>
 	<key>CFBundleVersion</key>
-	<string>165</string>
+	<string>176</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -75,12 +75,12 @@
 	<string>$(TESTING_NETWORK_KEY)</string>
 	<key>PLTestingNetworkName</key>
 	<string>$(TESTING_NETWORK_NAME)</string>
+	<key>PLVerseDirectoryPath</key>
+	<string>$(VERSE_DIRECTORY_PATH)</string>
 	<key>PLVerseHost</key>
 	<string>$(VERSE_HOST)</string>
 	<key>PLVerseToken</key>
 	<string>$(VERSE_TOKEN)</string>
-    <key>PLVerseDirectoryPath</key>
-    <string>$(VERSE_DIRECTORY_PATH)</string>
 	<key>PLZendeskAppId</key>
 	<string>$(ZENDESK_APP_ID)</string>
 	<key>PLZendeskClientId</key>
