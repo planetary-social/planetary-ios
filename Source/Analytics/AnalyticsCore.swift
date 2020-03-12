@@ -41,7 +41,8 @@ extension AnalyticsCore {
     }
 
     // MARK: Log
-
+    // Use Lumberjack instead
+    @available(*, deprecated)
     func log(_ name: AnalyticsEnums.Name.Log, _ message: String) {
         let params: AnalyticsEnums.Params = ["message": message]
         self.track(event: .log,

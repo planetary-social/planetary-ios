@@ -355,6 +355,15 @@ class DebugViewController: DebugTableViewController {
 
         var settings: [DebugTableViewCellModel] = []
 
+        settings += [DebugTableViewCellModel(title: "Download logs",
+                                         cellReuseIdentifier: DebugValueTableViewCell.className,
+                                         valueClosure: nil,
+                                         actionClosure:
+        {
+            [unowned self] cell in
+            self.shareLogs()
+        })]
+        
         settings += [DebugTableViewCellModel(title: "Simulate onboarding",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
@@ -423,6 +432,12 @@ class DebugViewController: DebugTableViewController {
         }
     }
 
+    private func shareLogs() {
+        let activityController = UIActivityViewController(activityItems: Log.fileUrls,
+                                                          applicationActivities: nil)
+        self.present(activityController, animated: true)
+    }
+    
     private func applyConfigurationAndDismiss() {
         Bots.current.logout {
             [weak self] error in
