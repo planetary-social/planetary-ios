@@ -1,0 +1,24 @@
+name: CI
+on:
+  pull_request
+jobs:
+  unit_test:
+    name : Unit Tests
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Test
+      run: |
+        xcodebuild test -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.3"
+        bash <(curl -s https://codecov.io/bash)
+  api_test:
+    name: API Tests
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Test
+        run: |
+          xcodebuild test -workspace Planetary.xcworkspace -scheme APITests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.3"
+          bash <(curl -s https://codecov.io/bash)
