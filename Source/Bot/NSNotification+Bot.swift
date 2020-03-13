@@ -44,3 +44,8 @@ extension Notification.Name {
     static let didSync = Notification.Name("didSync")
     static let didSyncAndRefresh = Notification.Name("didSyncAndRefresh")
 }
+
+extension Notification.Name {
+    static let didStartFSCKRepair = Notification.Name("didStartFSCKRepair")
+    static let didFinishFSCKRepair = Notification.Name("didFinishFSCKRepair")
+}

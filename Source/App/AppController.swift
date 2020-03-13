@@ -12,6 +12,9 @@ import UIKit
 class AppController: UIViewController {
 
     static let shared = AppController()
+    
+    private var didStartFSCKRepairObserver: NSObjectProtocol?
+    private var didFinishFSCKRepairObserver: NSObjectProtocol?
 
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -20,6 +23,11 @@ class AppController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.background.default
+        self.addObservers()
+    }
+    
+    deinit {
+        removeObservers()
     }
 
     /// Because controllers are nested and presented when the keyboard is also being presented,
@@ -83,5 +91,36 @@ class AppController: UIViewController {
     func showSettingsViewController() {
         let nc = UINavigationController(rootViewController: SettingsViewController())
         self.mainViewController?.present(nc, animated: true)
+    }
+    
+    // MARK: Observers
+    
+    func addObservers() {
+        let showProgress = { [weak self] (notification: Notification) -> Void in
+            self?.showProgress()
+        }
+        let dismissProgress = { [weak self] (notification: Notification) -> Void in
+            self?.hideProgress()
+        }
+        removeObservers()
+        let notificationCenter = NotificationCenter.default
+        didStartFSCKRepairObserver = notificationCenter.addObserver(forName: .didStartFSCKRepair,
+                                                                    object: nil,
+                                                                    queue: .main,
+                                                                    using: showProgress)
+        didFinishFSCKRepairObserver = notificationCenter.addObserver(forName: .didFinishFSCKRepair,
+                                                                     object: nil,
+                                                                     queue: .main,
+                                                                     using: dismissProgress)
+    }
+    
+    func removeObservers() {
+        let notificationCenter = NotificationCenter.default
+        if let didStartFSCKRepairObserver = self.didStartFSCKRepairObserver {
+            notificationCenter.removeObserver(didStartFSCKRepairObserver)
+        }
+        if let didFinishFSCKRepairObserver = self.didFinishFSCKRepairObserver {
+            notificationCenter.removeObserver(didFinishFSCKRepairObserver)
+        }
     }
 }

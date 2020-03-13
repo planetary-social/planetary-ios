@@ -323,6 +323,10 @@ class GoBotInternal {
     }
     
     func fsckAndRepair() -> (Bool, ScuttlegobotHealReport?) {
+        NotificationCenter.default.post(name: .didStartFSCKRepair, object: nil)
+        defer {
+            NotificationCenter.default.post(name: .didFinishFSCKRepair, object: nil)
+        }
         guard self.repoFSCK(.Sequences) == false else {
             Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")
             return (true, nil)
