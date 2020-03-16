@@ -33,13 +33,11 @@ extension Post {
 
         if blobs.count > 0 {
             // This is meant as compat with other ssb-clients like Patchwork, etc.
-            // TODO: use this marker to cut when viewing in planetary
-            textWithImages += PlanetaryCompatBlobsGallery
+            textWithImages += "\n"
             for (i,b) in blobs.enumerated() {
                 // TODO: captionize!
-                textWithImages += "![no.\(i)](\(b.identifier))\n"
+                textWithImages += "\n![planetary attachment no.\(i+1)](\(b.identifier))"
             }
-            textWithImages += PlanetaryCompatBlobsGallery
         }
 
         return Post(blobs: blobs,
@@ -51,19 +49,12 @@ extension Post {
     }
 }
 
-fileprivate let PlanetaryCompatBlobsGallery = "\n~=~=~Planetary Attachments~=~=~\n"
-
 extension String {
     func withoutGallery() -> String {
-        guard let r1 = self.range(of: PlanetaryCompatBlobsGallery) else {
+        guard let attMatch = self.range(of: "\n![planetary attachment no.1") else {
             return self
         }
-        let theRest = self[r1.upperBound..<self.endIndex]
-        
-        if !theRest.contains(PlanetaryCompatBlobsGallery) {
-            return self
-        }
-        let before = self[self.startIndex..<r1.lowerBound]
+        let before = self[self.startIndex..<attMatch.lowerBound]
         return String(before)
     }
 }
