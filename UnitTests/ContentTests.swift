@@ -191,6 +191,34 @@ class ContentTests: XCTestCase {
             XCTFail("\(error)")
         }
     }
+    
+    func test_postMentionsBlob() {
+        let data = self.data(for: "PostMentionsBlob.json")
+        do {
+            let value = try JSONDecoder().decode(Value.self, from: data)
+            let content = value.content
+            XCTAssertEqual(content.type, .post)
+            XCTAssertEqual(content.typeString, "post")
+            XCTAssertNil(content.about)
+            XCTAssertNil(content.contact)
+            XCTAssertNil(content.vote)
+            
+            XCTAssertNotNil(content.post)
+            guard let p = content.post else { return }
+
+            XCTAssertTrue(p.hasBlobs)
+            guard let b = p.mentions?.asBlobs().first else { return }
+            
+            XCTAssertEqual(b.identifier, "&JWofdARjh61uDtdUl5ivwYEPJ4T9TWMyztpgPlgkgek=.sha256")
+            XCTAssertEqual(b.name, "1614434_10206454331651096_887999461891506870_o.jpg")
+            XCTAssertEqual(b.metadata?.numberOfBytes, 67654)
+            XCTAssertEqual(b.metadata?.dimensions?.height, 440)
+            XCTAssertEqual(b.metadata?.dimensions?.width, 1024)
+            XCTAssertEqual(b.metadata?.mimeType, "image/jpeg")
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
 
     // TODO need to confirm string content to ensure everything was captured
     // prefix ![
@@ -254,7 +282,7 @@ class ContentTests: XCTestCase {
 //            let _ = p.attributedString
 
             XCTAssertTrue(p.hasBlobs)
-            guard let b = p.blobs?.first else { return }
+            guard let b = p.mentions?.asBlobs().first else { return }
             
             XCTAssertEqual(b.identifier, "&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256")
             XCTAssertEqual(b.name, "we-must-get-back-to-oakland-at-once.jpg")

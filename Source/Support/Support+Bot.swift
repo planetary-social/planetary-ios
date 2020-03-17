@@ -40,7 +40,7 @@ extension Support {
         attachments.add(post.requestAttachment())
 
         // attach blobs if necessary
-        guard let blobs = post.blobs, blobs.count > 0 else { completion(attachments); return }
+        guard let blobs = post.mentions?.asBlobs(), blobs.count > 0 else { completion(attachments); return }
         Bots.current.blobsAndDatas(for: blobs) {
             blobsAndDatas in
             for (index, blobAndData) in blobsAndDatas.enumerated() {
