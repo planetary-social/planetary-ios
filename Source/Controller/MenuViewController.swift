@@ -59,6 +59,8 @@ class MenuViewController: UIViewController {
     // MARK: Actions
 
     private func addActions() {
+        self.menuView.profileView.imageView.isUserInteractionEnabled = true
+        self.menuView.profileView.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileButtonTouchUpInside)))
         self.menuView.profileButton.addTarget(self, action: #selector(profileButtonTouchUpInside), for: .touchUpInside)
         self.menuView.settingsButton.addTarget(self, action: #selector(settingsButtonTouchUpInside), for: .touchUpInside)
         self.menuView.helpButton.addTarget(self, action: #selector(helpButtonTouchUpInside), for: .touchUpInside)
