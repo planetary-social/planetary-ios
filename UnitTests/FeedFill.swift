@@ -517,14 +517,20 @@ class ViewDatabaseTest: XCTestCase {
             }
             XCTAssertEqual(p.text, "I swear this one will work...")
             XCTAssertEqual(p.mentions?.asBlobs().count, 3)
-            if let b = p.mentions?.asBlobs() {
-                XCTAssertEqual(b[0].identifier, "&2eD1jIEPz3NC1kD3VoKHbJBt1mkheyA32BjI1IO69CQ=.sha256")
-                XCTAssertEqual(b[0].name, "blob")
-                XCTAssertEqual(b[0].metadata?.dimensions?.width, 100)
-                XCTAssertEqual(b[0].metadata?.dimensions?.height, 100)
-                XCTAssertEqual(b[0].metadata?.numberOfBytes, 143333)
-                XCTAssertEqual(b[0].metadata?.mimeType, "image/jpeg")
+            guard let b = p.mentions?.asBlobs() else {
+                XCTFail("not a blob")
+                return
             }
+            guard b.count == 3 else {
+                XCTFail("blob count != 1, got \(b.count)")
+                return
+            }
+            XCTAssertEqual(b[0].identifier, "&2eD1jIEPz3NC1kD3VoKHbJBt1mkheyA32BjI1IO69CQ=.sha256")
+            XCTAssertEqual(b[0].name, "blob")
+            XCTAssertEqual(b[0].metadata?.dimensions?.width, 100)
+            XCTAssertEqual(b[0].metadata?.dimensions?.height, 100)
+            XCTAssertEqual(b[0].metadata?.numberOfBytes, 143333)
+            XCTAssertEqual(b[0].metadata?.mimeType, "image/jpeg")
         } catch {
             XCTFail("\(error)")
         }
