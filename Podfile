@@ -6,7 +6,7 @@ use_frameworks!
 inhibit_all_warnings!
 
 target 'Planetary' do
-    pod 'ImageSlideshow', '1.8.0'
+    pod 'ImageSlideshow', '1.8.3'
     pod 'KeychainSwift', '15.0.0'
     pod 'Mixpanel', '3.5.1'
     pod 'PhoneNumberKit', '2.6.0'
