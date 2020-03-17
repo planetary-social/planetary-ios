@@ -39,8 +39,6 @@ class PostCellView: KeyValueView {
     private lazy var textView: UITextView = {
         let view = UITextView.forAutoLayout()
         view.addGestureRecognizer(self.tapGesture.recognizer)
-        view.dataDetectorTypes = .link
-        view.delegate = self
         view.isEditable = false
         view.isScrollEnabled = false
         view.textContainer.lineFragmentPadding = 0
@@ -203,19 +201,5 @@ class PostCellView: KeyValueView {
         // always do this in case of constraint changes
         self.setNeedsLayout()
         self.layoutIfNeeded()
-    }
-}
-
-// MARK:- UITextViewDelegate
-
-extension PostCellView: UITextViewDelegate {
-
-    func textView(_ textView: UITextView,
-                  shouldInteractWith URL: URL,
-                  in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool
-    {
-        AppController.shared.open(url: URL)
-        return false
     }
 }
