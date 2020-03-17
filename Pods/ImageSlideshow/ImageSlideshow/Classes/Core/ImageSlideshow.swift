@@ -242,6 +242,10 @@ open class ImageSlideshow: UIView {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.autoresizingMask = autoresizingMask
+        if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+            scrollView.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
+        }
+
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
@@ -570,7 +574,7 @@ extension ImageSlideshow: UIScrollViewDelegate {
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if circular {
+        if circular && (scrollViewImages.count > 1) {
             let regularContentOffset = scrollView.frame.size.width * CGFloat(images.count)
 
             if scrollView.contentOffset.x >= scrollView.frame.size.width * CGFloat(images.count + 1) {
