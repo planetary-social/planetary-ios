@@ -2,9 +2,9 @@ PODS:
   - CocoaLumberjack/Core (3.6.1)
   - CocoaLumberjack/Swift (3.6.1):
     - CocoaLumberjack/Core
-  - ImageSlideshow (1.8.0):
-    - ImageSlideshow/Core (= 1.8.0)
-  - ImageSlideshow/Core (1.8.0)
+  - ImageSlideshow (1.8.3):
+    - ImageSlideshow/Core (= 1.8.3)
+  - ImageSlideshow/Core (1.8.3)
   - KeychainSwift (15.0.0)
   - Mixpanel (3.5.1)
   - Multipart (0.1.0)
@@ -31,7 +31,7 @@ PODS:
 
 DEPENDENCIES:
   - CocoaLumberjack/Swift (= 3.6.1)
-  - ImageSlideshow (= 1.8.0)
+  - ImageSlideshow (= 1.8.3)
   - KeychainSwift (= 15.0.0)
   - Mixpanel (= 3.5.1)
   - Multipart (= 0.1.0)
@@ -56,7 +56,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   CocoaLumberjack: b17ae15142558d08bbacf69775fa10c4abbebcc9
-  ImageSlideshow: 197130fe349aafa9446f54277c792551d41eadf9
+  ImageSlideshow: 4694d7d699a1549582e7cc631fb392d8f91630f3
   KeychainSwift: c6fc018d287804faf1ce3f258a1e51a7178c8382
   Mixpanel: 1839fc7299c43b009c301883f895423715437431
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
@@ -66,6 +66,6 @@ SPEC CHECKSUMS:
   SwiftyMarkdown: 698fe6b283dddac69747f4e08ed0d067c18e0356
   ZendeskSDK: 12f516028e26e2e47a861cc0f5da968f4db3989a
 
-PODFILE CHECKSUM: 23848541ecce6c52ed3c206c4a9b42da98cd35ca
+PODFILE CHECKSUM: 95447ea442b909ac634d3b732942f0f4398970d1
 
 COCOAPODS: 1.6.1
