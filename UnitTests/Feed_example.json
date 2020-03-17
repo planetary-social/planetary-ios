@@ -1532,49 +1532,12 @@
       "timestamp": 1567829846284,
       "hash": "sha256",
       "content": {
-        "blobs": [
-          {
-            "name": "blob",
-            "metadata": {
-              "numberOfBytes": 143333,
-              "dimensions": {
-                "width": 100,
-                "height": 100
-              },
-              "mimeType": "image/jpeg"
-            },
-            "identifier": "&2eD1jIEPz3NC1kD3VoKHbJBt1mkheyA32BjI1IO69CQ=.sha256"
-          },
-          {
-            "name": "blob",
-            "metadata": {
-              "numberOfBytes": 143333,
-              "dimensions": {
-                "width": 100,
-                "height": 100
-              },
-              "mimeType": "image/jpeg"
-            },
-            "identifier": "&7XnNgPMnGKHmkKEnXTA0v0/6hO/DH//+EVXkLvnG6Tw=.sha256"
-          },
-          {
-            "name": "blob",
-            "metadata": {
-              "numberOfBytes": 143333,
-              "dimensions": {
-                "width": 100,
-                "height": 100
-              },
-              "mimeType": "image/jpeg"
-            },
-            "identifier": "&VIy/y/CyRTexrOo6DxW/83z+lgPPWNtP1lgnOBMq6Y0=.sha256"
-          }
-        ],
-        "mentions": [],
+        "mentions": [
+           {"name":"blob","size":143333,"width":100,"height":100,"type":"image/jpeg","link":"&2eD1jIEPz3NC1kD3VoKHbJBt1mkheyA32BjI1IO69CQ=.sha256"},{"name":"blob","size":143333,"width":100,"height":100,"type":"image/jpeg","link":"&7XnNgPMnGKHmkKEnXTA0v0/6hO/DH//+EVXkLvnG6Tw=.sha256"},{"name":"blob","size":143333,"width":100,"height":100,"type":"image/jpeg","link":"&VIy/y/CyRTexrOo6DxW/83z+lgPPWNtP1lgnOBMq6Y0=.sha256"}],
         "type": "post",
         "text": "I swear this one will work..."
       },
-      "signature": "+UZZZwbtqKP6mRmNK+DDRkp9L7sPEWthyopgBbvZ3gTU8NLOM1BbQ/5PFn6/2OzZKitIV13N+HCe3e1a3zpsDw==.sig.ed25519"
+      "signature": "sorry-hand-woven-testdata-did-not-regenerate.ed25519"
     },
     "timestamp": 1568037409493,
     "ReceiveLogSeq": 76

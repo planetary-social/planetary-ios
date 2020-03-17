@@ -17,7 +17,7 @@ extension Post {
 
     // Returns the serialized blobs or inline blobs, in order.
     var anyBlobs: Blobs {
-        guard let blobs = self.blobs, !blobs.isEmpty else { return self.inlineBlobs }
+        guard let blobs = self.mentions?.asBlobs(), !blobs.isEmpty else { return self.inlineBlobs }
         return blobs
     }
 
@@ -29,11 +29,32 @@ extension Post {
     /// the blobs property.  This is required to be able to
     /// publish a post with associated images or binary content.
     func copy(with blobs: Blobs) -> Post {
+        var textWithImages = self.text
+
+        if blobs.count > 0 {
+            // This is meant as compat with other ssb-clients like Patchwork, etc.
+            textWithImages += "\n"
+            for (i,b) in blobs.enumerated() {
+                // TODO: captionize!
+                textWithImages += "\n![planetary attachment no.\(i+1)](\(b.identifier))"
+            }
+        }
+
         return Post(blobs: blobs,
                     branches: self.branch,
                     hashtags: self.hashtags,
                     mentions: self.mentions,
                     root: self.root,
-                    text: self.text)
+                    text: textWithImages)
+    }
+}
+
+extension String {
+    func withoutGallery() -> String {
+        guard let attMatch = self.range(of: "\n![planetary attachment no.1") else {
+            return self
+        }
+        let before = self[self.startIndex..<attMatch.lowerBound]
+        return String(before)
     }
 }

@@ -12,7 +12,6 @@ import SwiftyMarkdown
 class Post: ContentCodable {
 
     enum CodingKeys: String, CodingKey {
-        case blobs
         case branch
         case hashtags
         case mentions
@@ -24,7 +23,6 @@ class Post: ContentCodable {
     }
 
     let branch: [Identifier]?
-    let blobs: [Blob]?
     let hashtags: Hashtags?
     let mentions: [Mention]?
     let recps: [RecipientElement]?
@@ -46,7 +44,6 @@ class Post: ContentCodable {
          branches: [MessageIdentifier]? = nil)
     {
         // required
-        self.blobs = nil
         self.branch = branches
         self.hashtags = attributedText.string.hashtags()
         self.mentions = attributedText.mentions()
@@ -68,14 +65,24 @@ class Post: ContentCodable {
          text: String)
     {
         // required
-        self.blobs = blobs
         self.branch = branches
         self.hashtags = hashtags
-        self.mentions = mentions
         self.root = root
         self.text = text
         self.type = .post
         
+        if let mentions = mentions {
+            var m = mentions
+            if let blobs = blobs {
+                for b in blobs {
+                    m.append(b.asMention())
+                }
+            }
+            self.mentions = m
+        } else {
+            self.mentions = nil
+        }
+
         // unused
         self.recps = nil
         self.reply = nil
@@ -84,7 +91,6 @@ class Post: ContentCodable {
     /// Intended to be used to decode a model from JSON.
     required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        blobs = try? values.decode([Blob].self, forKey: .blobs)
         branch = Post.decodeBranch(from: values)
         hashtags = try? values.decode(Hashtags.self, forKey: .hashtags)
         mentions = try? values.decode([Mention].self, forKey: .mentions)

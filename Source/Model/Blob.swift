@@ -44,6 +44,22 @@ struct Blob: Codable {
         self.name = name
         self.metadata = metadata
     }
+    
+    // MARK: mentions gap
 }
 
 typealias Blobs = [Blob]
+
+extension Blob {
+    func asMention() -> Mention {
+        return Mention(link: self.identifier, name: self.name, metadata: self.metadata)
+    }
+}
+
+extension Blobs {
+    func asMentions() -> Mentions {
+        return self.map {
+            return $0.asMention()
+        }
+    }
+}

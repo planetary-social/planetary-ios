@@ -1,0 +1,25 @@
+{
+  "author": "@6ilZq3kN0F+dXFHAPjAwMm87JEb/VdB+LC9eIMW3sa0=.ed25519",
+  "content": {
+    "branch": "%tTyDKSWzEllLKtOTFFdZPpXXDpvnOGL4Bj5ZqQmlklE=.sha256",
+    "channel": "mad-science",
+    "mentions": [
+      {
+        "height": 440,
+        "link": "&JWofdARjh61uDtdUl5ivwYEPJ4T9TWMyztpgPlgkgek=.sha256",
+        "name": "1614434_10206454331651096_887999461891506870_o.jpg",
+        "size": 67654,
+        "type": "image/jpeg",
+        "width": 1024
+      }
+    ],
+    "root": "%WNnS8yP0I5nfqaHOd+fI9OT1zI8P0R3jLZ0q5sgF8a8=.sha256",
+    "text": "woo, another LED art hacker!\n\ni use a BeagleBone Black, [a cape from RGB-123](http://rgb-123.com/product/beaglebone-black-24-output-cape/), [the Ledscape library](https://github.com/Yona-Appletree/LEDscape), either WS28012B or the new APA102 (which are like the old WS2801, my fav) grids or strips, and a fat blob of JavaScript.\n\n[1614434_10206454331651096_887999461891506870_o.jpg](&JWofdARjh61uDtdUl5ivwYEPJ4T9TWMyztpgPlgkgek=.sha256)\n\ni'm working on a module ecosystem which revolve around [ndsamples](https://github.com/livejs/ndsamples) and [ndpixels](https://github.com/livejs/ndpixels)). [here's a shitty example of the full stack that's currently running on hardware](https://github.com/ahdinosaur/pixelbeat/tree/reactive). [here's another example using ndsamples and virtual dom](dinosaur.is/svg-oscilloscope).\n\nit all works well with streams (currently node streams, i'm considering once i get back to art hacking on these i'll port to pull streams) and allow you to develop to many possible outputs ([terminal](https://github.com/ahdinosaur/2dpixels-terminal), [canvas](https://github.com/ahdinosaur/2dpixels-canvas), [opc](https://github.com/ahdinosaur/ndpixels-opc)).\n\nif anyone else is keen, let's collaborate. :rainbow:",
+    "type": "post"
+  },
+  "hash": "sha256",
+  "previous": "%dA8OsWrzvmEbsVnyW5+A1GRohSgrspJdNxgcdxK96NM=.sha256",
+  "sequence": 215,
+  "signature": "xZF1pqIMMn+JKzj8CZqcYjN/O7CzIsdzaSfIVk3ULHNTOdyBJwvMoymE2QS6AfpibTlyIiexk9qq2Vi/AplqAg==.sig.ed25519",
+  "timestamp": 1454495610326
+}
