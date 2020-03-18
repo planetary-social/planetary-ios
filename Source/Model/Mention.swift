@@ -11,7 +11,7 @@ import Foundation
 struct Mention: Codable {
 
     let link: Identifier
-    let name: String
+    let name: String?
 
     var identity: Identifier {
         return self.link
@@ -23,7 +23,20 @@ struct Mention: Codable {
     let height: Int?
     let type: String?
     
-    init(link: Identifier, name: String, metadata: Blob.Metadata? = nil) {
+    
+    // just for hashtags
+//    init(link: String) {
+//        self.link = link
+//        
+//        // empty
+//        self.name = nil
+//        self.size = nil
+//        self.width = nil
+//        self.height = nil
+//        self.type = nil
+//    }
+    
+    init(link: Identifier, name: String? = nil , metadata: Blob.Metadata? = nil) {
         self.link = link
         self.name = name
 
@@ -44,9 +57,8 @@ struct Mention: Codable {
 extension Mention: Markdownable {
 
     var markdown: String {
-        var markdown = "[\(self.name)]"
-        markdown += "(\(self.link))"
-        return markdown
+        guard let name = self.name else { return "" }
+        return "[\(name)](\(self.link))"
     }
 }
 

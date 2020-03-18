@@ -13,7 +13,6 @@ class Post: ContentCodable {
 
     enum CodingKeys: String, CodingKey {
         case branch
-        case hashtags
         case mentions
         case recps
         case reply
@@ -23,7 +22,6 @@ class Post: ContentCodable {
     }
 
     let branch: [Identifier]?
-    let hashtags: Hashtags?
     let mentions: [Mention]?
     let recps: [RecipientElement]?
     let reply: [Identifier: Identifier]?
@@ -45,11 +43,17 @@ class Post: ContentCodable {
     {
         // required
         self.branch = branches
-        self.hashtags = attributedText.string.hashtags()
-        self.mentions = attributedText.mentions()
         self.root = root
         self.text = attributedText.markdown
         self.type = .post
+
+        var mentionsFromHashtags = attributedText.string.hashtags().map {
+            tag in
+            return Mention(link: tag.string)
+        }
+
+        mentionsFromHashtags.append(contentsOf: attributedText.mentions())
+        self.mentions = mentionsFromHashtags
 
         // unused
         self.recps = nil
@@ -66,22 +70,21 @@ class Post: ContentCodable {
     {
         // required
         self.branch = branches
-        self.hashtags = hashtags
         self.root = root
         self.text = text
         self.type = .post
         
+        var m: Mentions = []
         if let mentions = mentions {
-            var m = mentions
-            if let blobs = blobs {
-                for b in blobs {
-                    m.append(b.asMention())
-                }
-            }
-            self.mentions = m
-        } else {
-            self.mentions = nil
+            m = mentions
         }
+        if let blobs = blobs {
+            for b in blobs {
+                m.append(b.asMention())
+            }
+        }
+        // keep it optional
+        self.mentions = m.count > 0 ? m : nil
 
         // unused
         self.recps = nil
@@ -92,7 +95,6 @@ class Post: ContentCodable {
     required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         branch = Post.decodeBranch(from: values)
-        hashtags = try? values.decode(Hashtags.self, forKey: .hashtags)
         mentions = try? values.decode([Mention].self, forKey: .mentions)
         recps = try? values.decode([RecipientElement].self, forKey: .recps)
         reply = try? values.decode([Identifier: Identifier].self, forKey: .reply)

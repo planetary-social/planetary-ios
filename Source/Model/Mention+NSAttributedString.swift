@@ -44,8 +44,9 @@ extension NSAttributedString {
 extension NSMutableAttributedString {
 
     convenience init(from mention: Mention) {
-        self.init(string: mention.name)
-        let range = NSRange(location: 0, length: mention.name.count)
+        let name = mention.name ?? ""
+        self.init(string: name)
+        let range = NSRange(location: 0, length: name.count)
         self.addAttribute(NSAttributedString.Key.link, value: mention.link, range: range)
     }
 
@@ -57,7 +58,8 @@ extension NSMutableAttributedString {
 
     func replaceMentionLinkAttributesWithNamesOnly() {
         for (mention, range) in self.mentionsWithRanges().reversed() {
-            self.replaceCharacters(in: range, with: mention.name.withoutAtPrefix)
+            let name = mention.name ?? ""
+            self.replaceCharacters(in: range, with: name.withoutAtPrefix)
         }
     }
 }

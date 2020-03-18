@@ -42,7 +42,6 @@ extension Post {
 
         return Post(blobs: blobs,
                     branches: self.branch,
-                    hashtags: self.hashtags,
                     mentions: self.mentions,
                     root: self.root,
                     text: textWithImages)
