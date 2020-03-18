@@ -1368,11 +1368,7 @@ class ViewDatabase {
             try self.insertBlobs(msgID: msgID, blobs: b)
         }
 
-        let hashtagsFromMentions = p.mentions?.filter {
-            m in
-            return m.link.hasPrefix("#")
-        }
-        if let htags = hashtagsFromMentions {
+        if let htags = p.mentions?.asHashtags() {
             try self.insertHashtags(msgID: msgID, tags: htags)
         }
     }
@@ -1829,12 +1825,12 @@ class ViewDatabase {
         return blobs
     }
     
-    private func insertHashtags(msgID: Int64, tags: Mentions) throws {
+    private func insertHashtags(msgID: Int64, tags: [Hashtag]) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         for h in tags {
-            let chanID = try self.channelID(from: h.link, make: true)
+            let chanID = try self.channelID(from: h.name, make: true)
             try db.run(self.channelAssigned.insert(
                 colMessageRef <- msgID,
                 colChanRef <- chanID

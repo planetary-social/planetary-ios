@@ -48,3 +48,13 @@ extension Hashtags {
         return self.map { $0.name }
     }
 }
+
+extension Mentions {
+    func asHashtags() -> [Hashtag] {
+        return self.filter {
+            return $0.link.hasPrefix("#")
+        }.map {
+            return Hashtag(name: String($0.link.dropFirst()))
+        }
+    }
+}

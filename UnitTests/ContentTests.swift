@@ -322,7 +322,8 @@ class ContentTests: XCTestCase {
             XCTAssertTrue(content.type == .post)
             XCTAssertTrue(content.isValid)
             guard let post = content.post else { XCTFail(); return }
-            XCTAssertEqual(post.hashtags?.count, 2)
+            guard let tags = post.mentions?.asHashtags() else { XCTFail(); return }
+            XCTAssertEqual(tags.count, 2)
         } catch {
             XCTFail("\(error)")
         }
