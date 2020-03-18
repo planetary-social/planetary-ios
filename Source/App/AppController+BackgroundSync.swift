@@ -38,9 +38,7 @@ extension AppController {
             if notificationsOnly {
                 self?.syncNotifications(task: task, completion: completion)
             } else {
-                
-                
-                //self?.syncEverything(task: task, completion: completion)
+                self?.syncEverything(task: task, completion: completion)
             }
         }
     }
