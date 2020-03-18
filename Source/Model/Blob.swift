@@ -13,7 +13,7 @@ struct Blob: Codable {
     // MARK: Required properties
 
     let identifier: BlobIdentifier
-    let name: String
+    let name: String?
 
     // MARK: Optional metadata
 
@@ -39,7 +39,7 @@ struct Blob: Codable {
 
     // MARK: Lifecycle
 
-    init(identifier: BlobIdentifier, name: String = "blob", metadata: Metadata? = nil) {
+    init(identifier: BlobIdentifier, name: String? = nil, metadata: Metadata? = nil) {
         self.identifier = identifier
         self.name = name
         self.metadata = metadata

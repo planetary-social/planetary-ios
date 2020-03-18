@@ -15,10 +15,10 @@ extension String {
     //
     // # - first required character
     // [a-zA-Z] - alphabet only
-    // [a-zA-Z\\d] - alphanumeric
-    // [a-zA-Z][a-zA-Z\\d] - mixed alphanumeric
+    // [a-zA-Z-\\d] - alphanumeric and the dash
+    // [a-zA-Z][a-zA-Z-\\d] - mixed alphanumeric and the dash
     // ([a-zA-Z\\d]|$) - ending with non-alphanumeric or end of input
-    private static let alphanumericHashtagRegex = "#[a-zA-Z]*[a-zA-Z\\d]*[a-zA-Z][a-zA-Z\\d]*([a-zA-Z\\d]|$)"
+    private static let alphanumericHashtagRegex = "#[a-zA-Z]*[a-zA-Z-\\d]*[a-zA-Z][a-zA-Z-\\d]*([a-zA-Z\\d]|$)"
 
     func hashtagSubstringsWithRanges() -> [(String, NSRange)]
     {

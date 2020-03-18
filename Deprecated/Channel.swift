@@ -13,12 +13,6 @@ struct Channel: ContentCodable {
 
     let type: ContentType = .channel
     let name: String
-    let root: Identifier?
-
-    init(name: String, root: String?) {
-        self.name = name
-        self.root = root
-    }
 
     init(hashtag: String) {
         self.name = hashtag.withoutHashPrefix
