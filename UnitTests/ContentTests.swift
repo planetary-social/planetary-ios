@@ -304,7 +304,7 @@ class ContentTests: XCTestCase {
             text: "test post with hashtags")
         let d = try! p.encodeToData()
         let s = String(data:d, encoding: .utf8)!
-        XCTAssertTrue(s.contains("hashtags\":[\"helloWorld\"]"))
+        XCTAssertTrue(s.contains("{\"link\":\"#helloWorld\"}"))
     }
 
     func test_postWithInlineHashtagEncode() {
@@ -312,7 +312,7 @@ class ContentTests: XCTestCase {
             attributedText: NSAttributedString(string: "test post with hashtags #helloWorld"))
         let d = try! p.encodeToData()
         let s = String(data:d, encoding: .utf8)!
-        XCTAssertTrue(s.contains("hashtags\":[\"helloWorld\"]"))
+        XCTAssertTrue(s.contains("{\"link\":\"#helloWorld\"}"))
     }
     
     func test_postWithHashtagDecode() {
@@ -322,7 +322,8 @@ class ContentTests: XCTestCase {
             XCTAssertTrue(content.type == .post)
             XCTAssertTrue(content.isValid)
             guard let post = content.post else { XCTFail(); return }
-            XCTAssertEqual(post.hashtags?.count, 2)
+            guard let tags = post.mentions?.asHashtags() else { XCTFail(); return }
+            XCTAssertEqual(tags.count, 2)
         } catch {
             XCTFail("\(error)")
         }
