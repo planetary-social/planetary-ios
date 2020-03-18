@@ -83,6 +83,11 @@ class Post: ContentCodable {
                 m.append(b.asMention())
             }
         }
+        if let tags = hashtags {
+            for h in tags {
+                m.append(Mention(link: h.string))
+            }
+        }
         // keep it optional
         self.mentions = m.count > 0 ? m : nil
 
