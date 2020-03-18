@@ -81,66 +81,63 @@ class GoBot: Bot {
     }
     
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
-        
-        // is this saying we need to be the main thread to login? -rabble
         Thread.assertIsMainThread()
         self.queue.async {
-        var err: Error? = nil
-        defer {
-            DispatchQueue.main.async {
-                if let e = err { Log.unexpected(.botError, "[\(#function)] failed: \(e)") }
-                completion(err)
+            var err: Error? = nil
+            defer {
+                DispatchQueue.main.async {
+                    if let e = err { Log.unexpected(.botError, "[GoBot.login] failed: \(e)") }
+                    completion(err)
+                }
             }
-        }
-        if self._identity != nil {
-            if secret.identity == self._identity {
+
+            if self._identity != nil {
+                if secret.identity == self._identity {
+                    return
+                }
+                err = BotError.alreadyLoggedIn
                 return
             }
-            err = BotError.alreadyLoggedIn
-            return
-        }
-        
-        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-        if appSupportDirs.count < 1 {
-            err = GoBotError.unexpectedFault("no support dir")
-            return
-        }
-        
-        let repoPrefix = appSupportDirs[0]
-            .appending("/FBTT")
-            .appending("/"+network.hexEncodedString())
-        
-        #if DEBUG
-        // used for locating the files in the simulator
-        print("===> starting gobot with prefix: \(repoPrefix)")
-        #endif
-        if let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix) {
-            err = loginErr
-            return
-        }
-        
-        if !self.database.isOpen() {
-            do {
-                try self.database.open(path: repoPrefix, user: secret.identity)
-                err = nil
-            } catch {
-                err = error
+
+            let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
+            if appSupportDirs.count < 1 {
+                err = GoBotError.unexpectedFault("no support dir")
                 return
             }
-        } else {
-            Log.unexpected(.botError, "\(#function) warning: database still open")
-        }
 
-        // don't check for fsck on login, we'll be able to check it later
-        // to see if it's working - rabble
-        //if !self.bot.repoFSCK(.FeedLength) {
-        //    err = GoBotError.unexpectedFault("login repo FSCK failed")
-        //    return
-        //}
+            let repoPrefix = appSupportDirs[0]
+                .appending("/FBTT")
+                .appending("/"+network.hexEncodedString())
 
-        // TODO this does not always get set in time
-        // TODO maybe this should be done in defer?
-        self._identity = secret.identity
+            #if DEBUG
+            // used for locating the files in the simulator
+            print("===> starting gobot with prefix: \(repoPrefix)")
+            #endif
+            if let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix) {
+                err = loginErr
+                return
+            }
+
+            if !self.database.isOpen() {
+                do {
+                    try self.database.open(path: repoPrefix, user: secret.identity)
+                    err = nil
+                } catch {
+                    err = error
+                    return
+                }
+            } else {
+                Log.unexpected(.botError, "\(#function) warning: database still open")
+            }
+
+            // create connections a bit after login completed
+            self.queue.asyncAfter(deadline: .now() + .seconds(5)) {
+                self.bot.dial(atLeast: 2)
+            }
+
+            // TODO this does not always get set in time
+            // TODO maybe this should be done in defer?
+            self._identity = secret.identity
         }
         return
     }
