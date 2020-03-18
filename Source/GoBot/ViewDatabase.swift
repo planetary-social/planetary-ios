@@ -1111,6 +1111,7 @@ class ViewDatabase {
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.channelAssigned[colMessageRef])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.channelAssigned[colMessageRef])
             .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.channelAssigned[colMessageRef])
+            .order(colClaimedAt.desc)
 
         return try self.mapQueryToKeyValue(qry: qry)
     }
