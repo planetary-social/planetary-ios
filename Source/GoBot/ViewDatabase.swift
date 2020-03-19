@@ -1819,7 +1819,7 @@ class ViewDatabase {
 
             return Blob(
                 identifier: img_hash,
-                name: try row.get(colName)!,
+                name: try? row.get(colName),
                 metadata: meta
             )
         }

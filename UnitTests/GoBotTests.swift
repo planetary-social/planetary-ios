@@ -527,6 +527,32 @@ class GoBotTests: XCTestCase {
         self.wait()
     }
 
+    func test161_postBlobs() {
+        var msgRef = MessageIdentifier("!!unset")
+
+        let p = Post(text: "test post")
+        let img = UIImage(color: .red)!
+
+        var called = false
+        GoBotTests.shared.publish(p, with: [img]) {
+            ref, err in
+            called = true
+            XCTAssertNil(err)
+            msgRef = ref
+        }
+        self.wait()
+        XCTAssertTrue(called)
+
+        let postedMsg = try! GoBotTests.shared.database.get(key: msgRef)
+        guard let m = postedMsg.value.content.post?.mentions else { XCTFail("not a post?"); return }
+        guard m.count == 1 else { XCTFail("no mentions?"); return }
+
+        let b = m.asBlobs()
+        guard b.count == 1 else { XCTFail("no blobs?"); return }
+
+        XCTAssertNil(b[0].name)
+    }
+
     // MARK: private
     func test170_private_from_alice() {
         GoBotTests.shared.refresh { err, _ in XCTAssertNil(err, "refresh error!") }; self.wait()
@@ -1007,4 +1033,18 @@ fileprivate extension GoBot {
         XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
         return id
     }
+}
+
+fileprivate extension UIImage {
+  convenience init?(color: UIColor, size: CGSize = CGSize(width: 5, height: 5)) {
+    let rect = CGRect(origin: .zero, size: size)
+    UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+    color.setFill()
+    UIRectFill(rect)
+    let image = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    guard let cgImage = image?.cgImage else { return nil }
+    self.init(cgImage: cgImage)
+  }
 }

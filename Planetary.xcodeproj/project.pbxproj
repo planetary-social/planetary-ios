@@ -19,6 +19,7 @@
 		230F4FD222F8729700F93B14 /* TestAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 230F4FD122F8729700F93B14 /* TestAPI.swift */; };
 		231314CC2237ACDC0000C989 /* ViewDatabaseSchema.sql in Resources */ = {isa = PBXBuildFile; fileRef = 231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */; };
 		231314CD2237ACDC0000C989 /* ViewDatabaseSchema.sql in Resources */ = {isa = PBXBuildFile; fileRef = 231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */; };
+		23237A122423CE0300FE112C /* PostsWithMentions.json in Resources */ = {isa = PBXBuildFile; fileRef = 23237A112423CE0300FE112C /* PostsWithMentions.json */; };
 		2334D04521F7786600AB28E2 /* GoBotInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2334D04421F7786600AB28E2 /* GoBotInternal.swift */; };
 		233A8F8A220138F600CE01CE /* ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233A8F89220138F600CE01CE /* ViewDatabase.swift */; };
 		2343E7802326953F00E0B6F5 /* Post+Blob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BD748723235A450060E47E /* Post+Blob.swift */; };
@@ -613,6 +614,7 @@
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
 		231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDatabaseSchema.sql; sourceTree = "<group>"; };
+		23237A112423CE0300FE112C /* PostsWithMentions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostsWithMentions.json; sourceTree = "<group>"; };
 		2334D04421F7786600AB28E2 /* GoBotInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotInternal.swift; sourceTree = "<group>"; };
 		233A8F89220138F600CE01CE /* ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabase.swift; sourceTree = "<group>"; };
 		2344892724195F1B00C65DE2 /* PostMentionsBlob.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostMentionsBlob.json; sourceTree = "<group>"; };
@@ -1115,6 +1117,7 @@
 				5316E95621FFCDFF0053832E /* UnsupportedType.json */,
 				2344892724195F1B00C65DE2 /* PostMentionsBlob.json */,
 				237D057F23351F5B00973D63 /* PostWithHashtags.json */,
+				23237A112423CE0300FE112C /* PostsWithMentions.json */,
 				23E76A5523F2F0F70074F424 /* ValueTimestamp.json */,
 			);
 			path = UnitTests;
@@ -1935,6 +1938,7 @@
 			files = (
 				238E39DB22030E39002677AC /* Feed_cryptix2.json in Resources */,
 				531A8A5321FB78A900D5C8C0 /* Channel.json in Resources */,
+				23237A122423CE0300FE112C /* PostsWithMentions.json in Resources */,
 				2344892824195F1B00C65DE2 /* PostMentionsBlob.json in Resources */,
 				53CF2A49220262B700F0A2CC /* ContentVote.json in Resources */,
 				23C7445E2200B20500FB554A /* Contacts.json in Resources */,
