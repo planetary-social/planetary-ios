@@ -220,6 +220,31 @@ class ContentTests: XCTestCase {
         }
     }
 
+    func test_postMentionsWithAndWithoutname() {
+        let data = self.data(for: "PostsWithMentions.json")
+        do {
+            let posts = try JSONDecoder().decode([Post].self, from: data)
+            guard posts.count == 2 else { XCTFail(); return }
+
+            for (i,p) in posts.enumerated() {
+                guard let m = p.mentions else { XCTFail(); return }
+
+                guard m.count == 1 else { XCTFail(); return }
+
+                switch i {
+                case 0:
+                    XCTAssertEqual("some1", m[0].name)
+                case 1:
+                    XCTAssertNil(m[0].name)
+                default: XCTFail("unhandled case: \(i)")
+                }
+            }
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
+    
+
     // TODO need to confirm string content to ensure everything was captured
     // prefix ![
     // suffix =.sha256)
