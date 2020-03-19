@@ -527,7 +527,7 @@ class GoBotTests: XCTestCase {
         self.wait()
     }
 
-    func test161_postBlobs() {
+    func test162_postBlobsWithoutName() {
         var msgRef = MessageIdentifier("!!unset")
 
         let p = Post(text: "test post")
