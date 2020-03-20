@@ -324,7 +324,8 @@ class GoBotInternal {
     private lazy var fsckProgressNotify: CFSCKProgressCallback = {
         percDone, remaining in
         guard let remStr = remaining else { return }
-        let notification = Notification.didUpdateFSCKProgress(perc: percDone, remaining: String(cString: remStr))
+        let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
+        let notification = Notification.didUpdateFSCKProgress(perc: percDone, status: status)
         NotificationCenter.default.post(notification)
     }
     

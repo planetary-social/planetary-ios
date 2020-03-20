@@ -50,8 +50,9 @@ func (e ErrConsistencyProblems) Error() string {
 	return errStr
 }
 
-// FSCKUpdateFunc is called with the number of messages left to progress
-type FSCKUpdateFunc func(percentage float64, timeLeft string)
+// FSCKUpdateFunc is called with the a percentage float between 0 and 100
+// and a durration who much time it should take, rounded to seconds.
+type FSCKUpdateFunc func(percentage float64, timeLeft time.Duration)
 
 // FSCK checks the consistency of the received messages and the indexes.
 // progressFn offers a way to track the progress. It's okay to pass nil, stdlib log.Println is used in that case.
@@ -65,8 +66,8 @@ func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode, progressFn FSCKU
 	}
 
 	if progressFn == nil {
-		progressFn = func(percentage float64, timeLeft string) {
-			log.Printf("fsck/sequence: %f%% done. Time left: %s", percentage, timeLeft)
+		progressFn = func(percentage float64, timeLeft time.Duration) {
+			log.Printf("fsck/sequence: %f%% done. Time left: %s", percentage, timeLeft.String())
 		}
 	}
 
@@ -179,12 +180,12 @@ func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go func() {
-		p := progress.NewTicker(ctx, &pc, totalMessages, 1*time.Second)
+		p := progress.NewTicker(ctx, &pc, totalMessages, 5*time.Second)
 		for remaining := range p {
 			estDone := remaining.Estimated()
 			// how much time until it's done?
-			timeLeft := estDone.Sub(time.Now().Round(time.Second))
-			progressFn(remaining.Percent(), timeLeft.String())
+			timeLeft := estDone.Sub(time.Now()).Round(time.Second)
+			progressFn(remaining.Percent(), timeLeft)
 		}
 	}()
 	defer cancel()

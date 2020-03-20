@@ -102,8 +102,8 @@ class AppController: UIViewController {
         }
         let updateProgress = { [weak self] (notification: Notification) -> Void in
             guard let percDone = notification.fsckProgressPercentageDone else { return }
-            guard let remaining = notification.fsckProgressTimeRemaining else { return }
-            self?.updateProgress(perc: percDone, status: "FSCK progress. Sorry, this will take a moment.\n\(remaining) Remaining")
+            guard let status = notification.fsckProgressStatus else { return }
+            self?.updateProgress(perc: percDone, status: status)
         }
         let dismissProgress = { [weak self] (notification: Notification) -> Void in
             self?.hideProgress()

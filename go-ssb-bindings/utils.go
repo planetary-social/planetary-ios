@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 	"unsafe"
 
 	"github.com/go-kit/kit/log/level"
@@ -159,8 +160,8 @@ func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 	}
 
 	progressFuncPtr := unsafe.Pointer(progressFn)
-	wrapFn := func(perc float64, remaining string) {
-		remainingCstr := C.CString(remaining)
+	wrapFn := func(perc float64, remaining time.Duration) {
+		remainingCstr := C.CString(remaining.String())
 		C.callFSCKProgressNotify(progressFuncPtr, C.double(perc), remainingCstr)
 		C.free(unsafe.Pointer(remainingCstr))
 	}
