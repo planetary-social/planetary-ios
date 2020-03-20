@@ -836,6 +836,7 @@ class ViewDatabase {
                 .join(self.msgs, on: self.msgs[colMessageID] == self.tangles[colMessageRef])
                 .join(self.authors, on: self.msgs[colAuthorID] == self.authors[colID])
                 .join(self.abouts, on: self.authors[colID] == self.abouts[colAboutID])
+                .filter(colMsgType == ContentType.post.rawValue)
                 .filter(colRoot == msgID)
 
             let count = try self.openDB!.scalar(replies.count)
