@@ -28,6 +28,15 @@ enum Environment {
         }()
     }
     
+    enum Bugsnag {
+        private enum Keys {
+            static let token = "PLBugsnagToken"
+        }
+        static let token: String? = {
+            return Environment.valueIfPresent(for: Keys.token)
+        }()
+    }
+    
     enum Zendesk {
         private enum Keys {
             static let appId = "PLZendeskAppId"
@@ -161,6 +170,10 @@ enum Environment {
             fatalError("\(key) not set in plist")
         }
         return value
+    }
+    
+    private static func valueIfPresent(for key: String) -> String? {
+        return Environment.infoDictionary[key] as? String
     }
     
     private static let infoDictionary: [String: Any] = {

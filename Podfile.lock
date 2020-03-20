@@ -1,4 +1,5 @@
 PODS:
+  - Bugsnag (5.23.0)
   - CocoaLumberjack/Core (3.6.1)
   - CocoaLumberjack/Swift (3.6.1):
     - CocoaLumberjack/Core
@@ -30,6 +31,7 @@ PODS:
     - ZendeskSDK/Providers
 
 DEPENDENCIES:
+  - Bugsnag (= 5.23.0)
   - CocoaLumberjack/Swift (= 3.6.1)
   - ImageSlideshow (= 1.8.3)
   - KeychainSwift (= 15.0.0)
@@ -43,6 +45,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Bugsnag
     - CocoaLumberjack
     - ImageSlideshow
     - KeychainSwift
@@ -55,6 +58,7 @@ SPEC REPOS:
     - ZendeskSDK
 
 SPEC CHECKSUMS:
+  Bugsnag: 1f33ee5b55bc4b131a30e0fe6db714da9c6609f6
   CocoaLumberjack: b17ae15142558d08bbacf69775fa10c4abbebcc9
   ImageSlideshow: 4694d7d699a1549582e7cc631fb392d8f91630f3
   KeychainSwift: c6fc018d287804faf1ce3f258a1e51a7178c8382
@@ -66,6 +70,6 @@ SPEC CHECKSUMS:
   SwiftyMarkdown: 698fe6b283dddac69747f4e08ed0d067c18e0356
   ZendeskSDK: 12f516028e26e2e47a861cc0f5da968f4db3989a
 
-PODFILE CHECKSUM: 95447ea442b909ac634d3b732942f0f4398970d1
+PODFILE CHECKSUM: c8089bbf057ee571e1a29f9f854acc224e86f1cd
 
 COCOAPODS: 1.6.1

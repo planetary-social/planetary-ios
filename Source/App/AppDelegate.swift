@@ -22,6 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         self.window = window
         
+        CrashReporting.configure()
+        
         // reset configurations if user enabled switch in settings
         self.resetIfNeeded()
 
@@ -37,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.configureNotifications()
         AppController.shared.launch()
         Analytics.trackAppLaunch()
-
+        
         // done
         return true
     }
