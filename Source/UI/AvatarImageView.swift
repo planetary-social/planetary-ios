@@ -37,10 +37,17 @@ class AvatarImageView: ImageView {
     func load(for person: Person, animate: Bool = false) -> URLSessionDataTask? {
         guard let path = person.image_url, let url = URL(string: path) else { return nil }
 
-        let request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 3)
+        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 3)
+        
+        if let token = Environment.Verse.blobToken {
+            request.add(["planetary-blob-authorize": token])
+        }
+        
+        Log.info("url: \(url)")
 
         let task = URLSession.shared.dataTask(with: request) {
             data, response, error in
+            guard response?.httpStatusCodeError == nil else { return }
             guard let data = data else { return }
             guard let image = UIImage(data: data) else {
                 Log.unexpected(.incorrectValue, "Invalid image data for \(path)")
