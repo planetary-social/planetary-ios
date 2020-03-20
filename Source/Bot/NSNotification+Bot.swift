@@ -54,6 +54,11 @@ extension Notification.Name {
 }
 
 extension Notification {
+
+    var fsckProgressMessagesLeft: UInt64? {
+        return self.userInfo?["messages_left"] as? UInt64
+    }
+
     static func didUpdateFSCKProgress(_ msgs: UInt64) -> Notification {
         return Notification(name: .didUpdateFSCKProgress,
                             object: nil,

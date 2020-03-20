@@ -14,6 +14,7 @@ class AppController: UIViewController {
     static let shared = AppController()
     
     private var didStartFSCKRepairObserver: NSObjectProtocol?
+    private var didUpdateFSCKProgressObserver: NSObjectProtocol?
     private var didFinishFSCKRepairObserver: NSObjectProtocol?
 
     convenience init() {
@@ -99,6 +100,10 @@ class AppController: UIViewController {
         let showProgress = { [weak self] (notification: Notification) -> Void in
             self?.showProgress()
         }
+        let updateProgress = { [weak self] (notification: Notification) -> Void in
+            guard let left = notification.fsckProgressMessagesLeft else { return }
+            self?.updateProgress(left: left)
+        }
         let dismissProgress = { [weak self] (notification: Notification) -> Void in
             self?.hideProgress()
         }
@@ -108,6 +113,10 @@ class AppController: UIViewController {
                                                                     object: nil,
                                                                     queue: .main,
                                                                     using: showProgress)
+        didUpdateFSCKProgressObserver = notificationCenter.addObserver(forName: .didUpdateFSCKProgress,
+                                                                       object: nil,
+                                                                       queue: .main,
+                                                                       using: updateProgress)
         didFinishFSCKRepairObserver = notificationCenter.addObserver(forName: .didFinishFSCKRepair,
                                                                      object: nil,
                                                                      queue: .main,

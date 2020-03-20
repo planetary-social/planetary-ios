@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"unsafe"
 
 	"github.com/go-kit/kit/log/level"
 
