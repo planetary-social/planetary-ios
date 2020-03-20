@@ -24,7 +24,7 @@ func (sbot *Sbot) Status() (ssb.Status, error) {
 
 	s := ssb.Status{
 		PID:   os.Getpid(),
-		Root:  v.(margaret.Seq),
+		Root:  margaret.BaseSeq(v.(margaret.Seq).Seq()),
 		Blobs: sbot.WantManager.AllWants(),
 	}
 

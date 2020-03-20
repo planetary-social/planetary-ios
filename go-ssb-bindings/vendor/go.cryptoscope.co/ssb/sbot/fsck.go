@@ -50,8 +50,12 @@ func (e ErrConsistencyProblems) Error() string {
 	return errStr
 }
 
-// FSCK checks the consistency of the received messages and the indexes
-func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode) error {
+// FSCKUpdateFunc is called with the number of messages left to progress
+type FSCKUpdateFunc func(msgsLeft uint64)
+
+// FSCK checks the consistency of the received messages and the indexes.
+// progressFn offers a way to track the progress. It's okay to pass nil, stdlib log.Println is used in that case.
+func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode, progressFn FSCKUpdateFunc) error {
 	if feedsMlog == nil {
 		var ok bool
 		feedsMlog, ok = s.GetMultiLog(multilogs.IndexNameFeeds)
@@ -60,12 +64,18 @@ func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode) error {
 		}
 	}
 
+	if progressFn == nil {
+		progressFn = func(left uint64) {
+			log.Println("fsck/sequence: messages left to process:", left)
+		}
+	}
+
 	switch mode {
 	case FSCKModeLength:
 		return lengthFSCK(feedsMlog, s.RootLog)
 
 	case FSCKModeSequences:
-		return sequenceFSCK(s.RootLog)
+		return sequenceFSCK(s.RootLog, progressFn)
 
 	default:
 		return errors.New("sbot: unknown fsck mode")
@@ -134,9 +144,8 @@ func lengthFSCK(authorMlog multilog.MultiLog, receiveLog margaret.Log) error {
 
 // sequenceFSCK goes through every message in the receiveLog
 // and checks tha the sequence of a feed is correctly increasing by one each message
-func sequenceFSCK(receiveLog margaret.Log) error {
+func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 	ctx := context.Background()
-	start := time.Now()
 
 	// the last sequence number we saw of that author
 	lastSequence := make(map[string]int64)
@@ -150,6 +159,7 @@ func sequenceFSCK(receiveLog margaret.Log) error {
 		return err
 	}
 	currentOffsetSeq := currentSeqV.(margaret.Seq).Seq()
+	progressFn(uint64(currentOffsetSeq))
 
 	src, err := receiveLog.Query(margaret.SeqWrap(true))
 	if err != nil {
@@ -158,6 +168,14 @@ func sequenceFSCK(receiveLog margaret.Log) error {
 
 	// which feeds have problems
 	var consistencyErrors []ssb.ErrWrongSequence
+
+	tick := time.NewTicker(5 * time.Second)
+	go func() {
+		for range tick.C {
+			progressFn(uint64(currentOffsetSeq))
+		}
+	}()
+	defer tick.Stop()
 
 	for {
 		v, err := src.Next(ctx)
@@ -228,10 +246,6 @@ func sequenceFSCK(receiveLog margaret.Log) error {
 
 		// bench stats
 		currentOffsetSeq--
-		if time.Since(start) > time.Second {
-			log.Println("fsck/sequence: messages left to process:", currentOffsetSeq)
-			start = time.Now()
-		}
 	}
 
 	if len(consistencyErrors) == 0 {

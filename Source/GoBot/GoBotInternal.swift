@@ -10,7 +10,11 @@ import Foundation
 import UIKit
 
 
+// get's called with the size and the hash (might return a bool just as a demo of passing data back)
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool
+
+// get's called with the messages left to process
+typealias CFSCKProgressCallback = @convention(c) (UInt64) -> Void
 
 enum GoBotError: Error {
     case alreadyStarted
@@ -317,8 +321,14 @@ class GoBotInternal {
     }
     
     // repoFSCK returns true if the repo is fine and otherwise false
+    private lazy var fsckProgressNotify: CFSCKProgressCallback = {
+        msgsLeft in
+        let notification = Notification.didUpdateFSCKProgress(msgsLeft)
+        NotificationCenter.default.post(notification)
+    }
+    
     func repoFSCK(_ mode: ScuttlegobotFSCKMode) -> Bool {
-        let ret = ssbOffsetFSCK(mode.rawValue)
+        let ret = ssbOffsetFSCK(mode.rawValue, self.fsckProgressNotify)
         return ret == 0
     }
     

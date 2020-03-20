@@ -45,7 +45,18 @@ extension Notification.Name {
     static let didSyncAndRefresh = Notification.Name("didSyncAndRefresh")
 }
 
+
+// MARK:- FSCK
 extension Notification.Name {
     static let didStartFSCKRepair = Notification.Name("didStartFSCKRepair")
+    static let didUpdateFSCKProgress = Notification.Name("didUpdateFSCKProgress")
     static let didFinishFSCKRepair = Notification.Name("didFinishFSCKRepair")
+}
+
+extension Notification {
+    static func didUpdateFSCKProgress(_ msgs: UInt64) -> Notification {
+        return Notification(name: .didUpdateFSCKProgress,
+                            object: nil,
+                            userInfo: ["messages_left": msgs])
+    }
 }

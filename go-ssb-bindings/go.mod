@@ -4,7 +4,6 @@ require (
 	github.com/cryptix/go v1.5.0
 	github.com/dgryski/go-farm v0.0.0-20191112170834-c2139c5d712b // indirect
 	github.com/go-kit/kit v0.9.0
-	github.com/keks/persist v0.0.0-20191006175951-43c124092b8b // indirect
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/pkg/errors v0.9.1
 	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8

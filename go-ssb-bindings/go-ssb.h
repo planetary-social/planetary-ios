@@ -9,6 +9,8 @@ typedef struct { const char *p; size_t n; } gostring_t;
 
 typedef bool (blobNotifyHandle_t)(int64_t, const char*);
 
+typedef void (fsckProgressHandle_t)(uint64_t);
+
 extern const char *ssbVersion(void);
 
 extern char* ssbGenKey(void);
@@ -18,7 +20,7 @@ extern bool ssbBotInit(gostring_t configPath, blobNotifyHandle_t notifyFn);
 extern bool ssbBotStop(void);
 extern char* ssbBotStatus(void);
 
-extern int ssbOffsetFSCK(uint32_t mode);
+extern int ssbOffsetFSCK(uint32_t mode, fsckProgressHandle_t updateFn);
 extern char* ssbHealRepo(void);
 
 extern bool ssbInviteAccept(gostring_t token);

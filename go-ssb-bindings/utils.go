@@ -15,6 +15,15 @@ import (
 	mksbot "go.cryptoscope.co/ssb/sbot"
 )
 
+// #include <stdlib.h>
+// #include <sys/types.h>
+// #include <stdint.h>
+// #include <stdbool.h>
+// static void callFSCKProgressNotify(void *func, unsigned long long left)
+// {
+//
+//   ((void(*)(unsigned long long))func)(left);
+// }
 import "C"
 
 //export ssbGenKey
@@ -123,7 +132,7 @@ func ssbReplicateUpTo() int {
 var lastFSCK mksbot.ErrConsistencyProblems
 
 //export ssbOffsetFSCK
-func ssbOffsetFSCK(mode uint32) int {
+func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -150,7 +159,12 @@ func ssbOffsetFSCK(mode uint32) int {
 		return -1
 	}
 
-	retErr = sbot.FSCK(uf, fsckMode)
+	progressFuncPtr := unsafe.Pointer(progressFn)
+	wrapFn := func(left uint64) {
+		C.callFSCKProgressNotify(progressFuncPtr, C.ulonglong(left))
+	}
+
+	retErr = sbot.FSCK(uf, fsckMode, wrapFn)
 	if retErr != nil {
 		if constErrs, ok := retErr.(mksbot.ErrConsistencyProblems); ok {
 			lastFSCK = constErrs
