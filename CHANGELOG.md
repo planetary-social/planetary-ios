@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.13] - 2020-03-20
+### Fixed
+- Login is now more efficient.
+- Posted hashtags are now compatible with other networks.
+- Fix hashtags with - sign in the middle.
+- Channels screen is sorted by newest to oldest.
+
 ## [0.9.12] - 2020-03-17
 ### Added
 - Now you can open your profile tapping on your profile photo.  
