@@ -14,6 +14,7 @@ require (
 	github.com/keks/persist v0.0.0-20191006175951-43c124092b8b // indirect
 	github.com/kylelemons/godebug v1.1.0
 	github.com/libp2p/go-reuseport v0.0.1
+	github.com/machinebox/progress v0.2.0 // indirect
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.1.0

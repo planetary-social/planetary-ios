@@ -9,7 +9,6 @@ import (
 	"unsafe"
 
 	"github.com/go-kit/kit/log/level"
-
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/ssb"
@@ -20,10 +19,9 @@ import (
 // #include <sys/types.h>
 // #include <stdint.h>
 // #include <stdbool.h>
-// static void callFSCKProgressNotify(void *func, unsigned long long left)
+// static void callFSCKProgressNotify(void *func, double percentage, const char* remaining)
 // {
-//
-//   ((void(*)(unsigned long long))func)(left);
+//   ((void(*)(double, const char*))func)(percentage, remaining);
 // }
 import "C"
 
@@ -161,8 +159,10 @@ func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 	}
 
 	progressFuncPtr := unsafe.Pointer(progressFn)
-	wrapFn := func(left uint64) {
-		C.callFSCKProgressNotify(progressFuncPtr, C.ulonglong(left))
+	wrapFn := func(perc float64, remaining string) {
+		remainingCstr := C.CString(remaining)
+		C.callFSCKProgressNotify(progressFuncPtr, C.double(perc), remainingCstr)
+		C.free(unsafe.Pointer(remainingCstr))
 	}
 
 	retErr = sbot.FSCK(uf, fsckMode, wrapFn)

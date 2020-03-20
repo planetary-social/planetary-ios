@@ -9,7 +9,7 @@ typedef struct { const char *p; size_t n; } gostring_t;
 
 typedef bool (blobNotifyHandle_t)(int64_t, const char*);
 
-typedef void (fsckProgressHandle_t)(uint64_t);
+typedef void (fsckProgressHandle_t)(double, const char*);
 
 extern const char *ssbVersion(void);
 

@@ -55,13 +55,17 @@ extension Notification.Name {
 
 extension Notification {
 
-    var fsckProgressMessagesLeft: UInt64? {
-        return self.userInfo?["messages_left"] as? UInt64
+    var fsckProgressPercentageDone: Float64? {
+        return self.userInfo?["percentage_done"] as? Float64
+    }
+    
+    var fsckProgressTimeRemaining: String? {
+        return self.userInfo?["remaining"] as? String
     }
 
-    static func didUpdateFSCKProgress(_ msgs: UInt64) -> Notification {
+    static func didUpdateFSCKProgress(perc: Float64, remaining: String) -> Notification {
         return Notification(name: .didUpdateFSCKProgress,
                             object: nil,
-                            userInfo: ["messages_left": msgs])
+                            userInfo: ["percentage_done": perc, "remaining": remaining])
     }
 }

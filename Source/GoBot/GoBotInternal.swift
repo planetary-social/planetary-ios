@@ -14,7 +14,7 @@ import UIKit
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool
 
 // get's called with the messages left to process
-typealias CFSCKProgressCallback = @convention(c) (UInt64) -> Void
+typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
 
 enum GoBotError: Error {
     case alreadyStarted
@@ -322,8 +322,9 @@ class GoBotInternal {
     
     // repoFSCK returns true if the repo is fine and otherwise false
     private lazy var fsckProgressNotify: CFSCKProgressCallback = {
-        msgsLeft in
-        let notification = Notification.didUpdateFSCKProgress(msgsLeft)
+        percDone, remaining in
+        guard let remStr = remaining else { return }
+        let notification = Notification.didUpdateFSCKProgress(perc: percDone, remaining: String(cString: remStr))
         NotificationCenter.default.post(notification)
     }
     

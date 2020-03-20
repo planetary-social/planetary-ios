@@ -45,6 +45,8 @@ github.com/keks/persist
 github.com/kr/logfmt
 # github.com/libp2p/go-reuseport v0.0.1
 github.com/libp2p/go-reuseport
+# github.com/machinebox/progress v0.2.0
+github.com/machinebox/progress
 # github.com/mattn/go-sqlite3 v1.11.0
 github.com/mattn/go-sqlite3
 # github.com/mschoch/smat v0.0.0-20160514031455-90eadee771ae

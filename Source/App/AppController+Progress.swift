@@ -20,8 +20,8 @@ extension AppController {
         SVProgressHUD.show()
     }
 
-    func updateProgress(left: UInt64) {
-        SVProgressHUD.setStatus("left: \(left)")
+    func updateProgress(perc: Float64, status: String? = nil) {
+        SVProgressHUD.showProgress(Float(perc/100), status: status)
     }
     
     func hideProgress(completion: (() -> Void)? = nil) {
