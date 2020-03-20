@@ -167,7 +167,7 @@ class ThreadViewController: ContentViewController {
         self.dataSource.keyValues = replies.posts.sortedByDateAscending()
         self.tableView.forceReload()
         self.scrollIfNecessary(animated: animated)
-        self.interactionView.replyCount = replies.count
+        self.interactionView.replyCount = replies.posts.count
     }
 
 
