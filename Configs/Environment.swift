@@ -80,6 +80,7 @@ enum Environment {
             static let token = "PLVerseToken"
             static let host = "PLVerseHost"
             static let directoryPath = "PLVerseDirectoryPath"
+            static let blobToken = "PLVerseBlobToken"
         }
         static let token: String = {
             return Environment.value(for: Keys.token)
@@ -89,6 +90,9 @@ enum Environment {
         }()
         static let directoryPath: String = {
             return Environment.value(for: Keys.directoryPath)
+        }()
+        static let blobToken: String? = {
+            return Environment.valueIfPresent(for: Keys.blobToken)
         }()
     }
     
@@ -161,6 +165,10 @@ enum Environment {
             fatalError("\(key) not set in plist")
         }
         return value
+    }
+    
+    private static func valueIfPresent(for key: String) -> String? {
+        return Environment.infoDictionary[key] as? String
     }
     
     private static let infoDictionary: [String: Any] = {
