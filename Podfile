@@ -15,6 +15,7 @@ target 'Planetary' do
     pod 'SVProgressHUD', '2.2.5'
     pod 'ZendeskSDK', '3.0.3'
     pod 'CocoaLumberjack/Swift', '3.6.1'
+    pod 'Bugsnag', '5.23.0'
 end
 
 target 'APITests' do

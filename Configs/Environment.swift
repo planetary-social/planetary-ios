@@ -28,6 +28,15 @@ enum Environment {
         }()
     }
     
+    enum Bugsnag {
+        private enum Keys {
+            static let token = "PLBugsnagToken"
+        }
+        static let token: String? = {
+            return Environment.valueIfPresent(for: Keys.token)
+        }()
+    }
+    
     enum Zendesk {
         private enum Keys {
             static let appId = "PLZendeskAppId"

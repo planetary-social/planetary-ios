@@ -53,6 +53,8 @@
 	<string>$(DEVELOPMENT_NETWORK_NAME)</string>
 	<key>PLMixpanelToken</key>
 	<string>$(MIXPANEL_TOKEN)</string>
+	<key>PLBugsnagToken</key>
+	<string>$(BUGSNAG_TOKEN)</string>
 	<key>PLPlanetaryNetworkHMAC</key>
 	<string>$(PLANETARY_NETWORK_HMAC)</string>
 	<key>PLPlanetaryNetworkKey</key>
