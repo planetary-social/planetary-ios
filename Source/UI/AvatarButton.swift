@@ -11,6 +11,8 @@ import UIKit
 
 class AvatarButton: ImageButton {
 
+    var didUpdateAboutObserver: NSObjectProtocol?
+    
     convenience init() {
         self.init(type: .custom)
         self.useAutoLayout()
@@ -23,16 +25,27 @@ class AvatarButton: ImageButton {
         super.layoutSubviews()
         self.round()
     }
+    
+    deinit {
+        removeObservers()
+    }
 
     func setImageForMe() {
-        self.reset()
-        Bots.current.about() {
-            [weak self] about, _ in
-            self?.setImage(for: about)
-        }
+        setImage(for: Bots.current.about)
     }
 
     func setImage(for about: About?) {
+        let updateBlock = { [weak self] (notification: Notification) in
+            guard let newAbout = notification.about, let about = about, newAbout.identity == about.identity else {
+                return
+            }
+            self?.setImage(for: newAbout)
+        }
+        self.removeObservers()
+        self.didUpdateAboutObserver = NotificationCenter.default.addObserver(forName: .didUpdateAbout,
+                                                                             object: nil,
+                                                                             queue: .main,
+                                                                             using: updateBlock)
         self.reset()
         guard let image = about?.image else { return }
         self.set(image: image)
@@ -40,5 +53,12 @@ class AvatarButton: ImageButton {
 
     func reset() {
         self.setImage(UIImage.verse.missingAbout, for: .normal)
+    }
+    
+    private func removeObservers() {
+        if let observer = self.didUpdateAboutObserver {
+            NotificationCenter.default.removeObserver(observer)
+            self.didUpdateAboutObserver = nil
+        }
     }
 }
