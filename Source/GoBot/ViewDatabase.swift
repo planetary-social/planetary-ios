@@ -770,19 +770,10 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        // TODO: move hacky time measure to utils
-        var since = CFAbsoluteTimeGetCurrent()
-        let fn = "\(#function)"
-        let took = { (msg: String) in
-            let now = CFAbsoluteTimeGetCurrent()
-            print("\tDEBUG(\(fn):\(msg)): took \(now-since)")
-            since = now
-        }
         let colRootMaybe = Expression<Int64?>("root")
-        took("start qry")
+
         // TODO: add switch over type (to support contact, vote, gathering, etc..)
-        var i = Int(0)
-        let mapped: [KeyValue] = try db.prepare(qry).map { row in
+        return try db.prepare(qry).map { row in
             // tried 'return try row.decode()'
             // but failed - see https://github.com/VerseApp/ios/issues/29
             
@@ -794,9 +785,7 @@ class ViewDatabase {
             let blobs = try self.loadBlobs(for: msgID)
 
             let mentions = try self.loadMentions(for: msgID)
-            took("done blobs & mentions \(i)")
-            i+=1
-            
+
             var rootKey: Identifier?
             if let rootID = try row.get(colRootMaybe) {
                 rootKey = try self.msgKey(id: rootID)
@@ -832,8 +821,6 @@ class ViewDatabase {
             keyValue.metadata.isPrivate = try row.get(colDecrypted)
             return keyValue
         }
-        took("done qry \(mapped.count)")
-        return mapped
     }
     
     // MARK: replies
