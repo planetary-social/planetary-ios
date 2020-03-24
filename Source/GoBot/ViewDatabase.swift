@@ -198,7 +198,8 @@ class ViewDatabase {
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
         
-//        db.trace { Log.info($0) } // print all the statements
+        
+//        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
@@ -552,7 +553,7 @@ class ViewDatabase {
     
     // returns the same (who follows this feed) list as above
     // but returns a [KeyValue] (with timestamp) instead of just the public key reference
-    func followedBy(feed: Identity) throws -> [KeyValue] {
+    func followedBy(feed: Identity, limit: Int = 100) throws -> [KeyValue] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -568,6 +569,7 @@ class ViewDatabase {
             .filter(colContactID == feedID)
             .filter(colContactState == 1)
             .group(colAuthor)
+            .limit(limit)
 
         return try db.prepare(qry).map { row in
             // tried 'return try row.decode()'
@@ -768,9 +770,8 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
         let colRootMaybe = Expression<Int64?>("root")
-        
+
         // TODO: add switch over type (to support contact, vote, gathering, etc..)
         return try db.prepare(qry).map { row in
             // tried 'return try row.decode()'
@@ -955,10 +956,12 @@ class ViewDatabase {
 
     // finds all the posts from current user that are not replies.
     // then looks for all replies to these threads.
-    func getRepliesToMyThreads() throws -> [KeyValue] {
+    // TOOD: pagination
+    func getRepliesToMyThreads(limit: Int = 50) throws -> [KeyValue] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
+
         // reminder: SQLite.swift can't do subquerys
         // https://app.asana.com/0/0/1133029620163798/f
 
@@ -971,13 +974,14 @@ class ViewDatabase {
             .filter(colMsgType == "post")
             .filter(colMaybeRoot == nil)
             .filter(colHidden == false)
+            .limit(limit)
 
         var threadIDs: [Int64] = [] // and from self as well
         for row in try db.prepare(threadsStartedByUserQry) {
             threadIDs.append(row[colMessageID])
         }
 
-        let repliesQry = self.basicRecentPostsQuery(limit: 1000, wantPrivate: false, onlyRoots: false)
+        let repliesQry = self.basicRecentPostsQuery(limit: limit, wantPrivate: false, onlyRoots: false)
             .filter(threadIDs.contains(colRoot))
 
         return try self.mapQueryToKeyValue(qry: repliesQry)
@@ -998,6 +1002,7 @@ class ViewDatabase {
             .filter(colAuthorID != self.currentUserID)
             .filter(colHidden == false)
             .order(colClaimedAt.desc)
+            .limit(limit)
         return try self.mapQueryToKeyValue(qry: qry)
     }
 

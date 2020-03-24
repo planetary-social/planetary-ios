@@ -955,15 +955,17 @@ class GoBot: Bot {
                 butt!! we need to revisit this before launch, union and sort them in sql
                 and then apply similar pagination as with recentPosts().
                 */
-                var all: [KeyValue] = []
-                var replies = try self.database.getRepliesToMyThreads()
-                if let me = self.identity { replies = replies.excluding(me) }
-                all.append(contentsOf: replies)
 
-                let mentions = try self.database.mentions(limit: 1000)
+                var all: [KeyValue] = []
+                // TODO: optimize query
+                // var replies = try self.database.getRepliesToMyThreads(limit: 10)
+                // if let me = self.identity { replies = replies.excluding(me) }
+                // all.append(contentsOf: replies)
+
+                let mentions = try self.database.mentions(limit: 50)
                 all.append(contentsOf: mentions)
 
-                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!)
+                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 50)
                 all.append(contentsOf: contacts)
 
                 let sorted = all.sortedByDateDescending()
