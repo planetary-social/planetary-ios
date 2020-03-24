@@ -69,16 +69,23 @@ func SaveKeyPair(kp *KeyPair, path string) error {
 	if err != nil {
 		return errors.Wrap(err, "ssb.SaveKeyPair: failed to create file")
 	}
+
+	if err := EncodeKeyPairAsJSON(kp, f); err != nil {
+		return err
+	}
+
+	return errors.Wrap(f.Close(), "ssb.SaveKeyPair: failed to close file")
+}
+
+func EncodeKeyPairAsJSON(kp *KeyPair, w io.Writer) error {
 	var sec = ssbSecret{
 		Curve:   "ed25519",
 		ID:      kp.Id,
 		Private: base64.StdEncoding.EncodeToString(kp.Pair.Secret[:]) + ".ed25519",
 		Public:  base64.StdEncoding.EncodeToString(kp.Pair.Public[:]) + ".ed25519",
 	}
-	if err := json.NewEncoder(f).Encode(sec); err != nil {
-		return errors.Wrap(err, "ssb.SaveKeyPair: json encoding failed")
-	}
-	return errors.Wrap(f.Close(), "ssb.SaveKeyPair: failed to close file")
+	err := json.NewEncoder(w).Encode(sec)
+	return errors.Wrap(err, "ssb.EncodeKeyPairAsJSON: encoding failed")
 }
 
 // LoadKeyPair opens fname, ignores any line starting with # and passes it ParseKeyPair

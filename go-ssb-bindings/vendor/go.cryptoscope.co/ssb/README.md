@@ -12,7 +12,7 @@ If you encounter a bug, please refer to our [public issue tracker](https://githu
 * [x] [Blobs](https://ssbc.github.io/scuttlebutt-protocol-guide/#blobs) store and replication
 * [x] _Legacy_ gossip [replication](https://ssbc.github.io/scuttlebutt-protocol-guide/#createHistoryStream) ([ebt](https://github.com/dominictarr/epidemic-broadcast-trees) not implementation yet)
 * [x] Publishing new messages to the log
-* [ ] Invite mechanics (might wait for direct-user-invites to stabilize)
+* [x] Invite mechanics ([peer-invites](https://github.com/ssbc/ssb-peer-invites) partially done, too. See [Issue 45](https://github.com/cryptoscope/ssb/issues/45)for more.)
 
 ## Installation
 
@@ -27,7 +27,7 @@ go install ./cmd/sbotcli
 
 Requirements:
 
-  - [Golang](https://www.golang.org) version 1.11 or higher
+  - [Golang](https://www.golang.org) version 1.13 or higher
 
 ## Running go-sbot
 
@@ -263,6 +263,23 @@ $ go test -v
 ## Known Bugs
 
 See our [issue tracker](https://github.com/cryptoscope/ssb/issues) for a complete list.
+
+
+### Forked version of x/crypto
+
+We currently depend on [this patch](https://github.com/cryptix/golang_x_crypto/tree/non-internal-edwards) on x/crypto to support the key-material conversion between ed25519 and curve25519.  See https://github.com/cryptoscope/ssb/issues/44 for all the details.
+
+```
+package golang.org/x/crypto/ed25519/edwards25519: cannot find package "golang.org/x/crypto/ed25519/edwards25519" in any of:
+	/home/cryptix/go.root/src/golang.org/x/crypto/ed25519/edwards25519 (from $GOROOT)
+	/home/cryptix/go-fooooo/src/golang.org/x/crypto/ed25519/edwards25519 (from $GOPATH)
+```
+
+If you see the above error, make sure your project has the following replace directive in place:
+
+```
+replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+```
 
 ### compilation error regarding Badger
 

@@ -118,6 +118,8 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/libp2p/go-reuseport v0.0.1 h1:7PhkfH73VXfPJYKQ6JwS5I/eVcoyYi9IMNGc6FWpFLw=
 github.com/libp2p/go-reuseport v0.0.1/go.mod h1:jn6RmB1ufnQwl0Q1f+YxAj8isJgDCQzaaxIFYDhcYEA=
+github.com/machinebox/progress v0.2.0 h1:7z8+w32Gy1v8S6VvDoOPPBah3nLqdKjr3GUly18P8Qo=
+github.com/machinebox/progress v0.2.0/go.mod h1:hl4FywxSjfmkmCrersGhmJH7KwuKl+Ueq9BXkOny+iE=
 github.com/mattn/go-sqlite3 v1.11.0 h1:LDdKkqtYlom37fkvqs8rMPFKAMe8+SgjbwZ6ex1/A/Q=
 github.com/mattn/go-sqlite3 v1.11.0/go.mod h1:FPy6KqzDD04eiIsT53CuJW3U88zkxoIYsOqkbpncsNc=
 github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0jegS5sx/RkqARlsWZ6pIwiU=
@@ -252,6 +254,8 @@ go.cryptoscope.co/ssb v0.0.0-20200303155528-5b1bc413f5a3 h1:p3h6haraXtJdt0MvPSLg
 go.cryptoscope.co/ssb v0.0.0-20200303155528-5b1bc413f5a3/go.mod h1:kJYlSK3KixUfYvmP6ZbZ/AXYmcvtXP9aUOvf2g+eGtE=
 go.cryptoscope.co/ssb v0.0.0-20200304093142-4310d5a24560 h1:K8iMNeaPymFfislputCii7f2ROqQn2ORHfKPYb3+Mso=
 go.cryptoscope.co/ssb v0.0.0-20200304093142-4310d5a24560/go.mod h1:Tt/tuaj6LwJuBvxpVq6hL6crvCoh4C2+KcmhZ64qwtc=
+go.cryptoscope.co/ssb v0.0.0-20200324132111-56b69ece110d h1:kT6AYC85N1zpRgnNQsjc6CUUD525cGoqwxceSDw6FMs=
+go.cryptoscope.co/ssb v0.0.0-20200324132111-56b69ece110d/go.mod h1:tWJHtYnUEkkRIIJNUYz1T8EHeF2+gNr2exMTCea3S7k=
 go.mindeco.de/ssb-gabbygrove v0.1.5/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=
 go.mindeco.de/ssb-gabbygrove v0.1.6 h1:JNktjdiGVaHVH3Gtoit+9MHgH5RSqiubL7aFg/53aR0=
 go.mindeco.de/ssb-gabbygrove v0.1.6/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=

@@ -10,7 +10,11 @@ import Foundation
 import UIKit
 
 
+// get's called with the size and the hash (might return a bool just as a demo of passing data back)
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool
+
+// get's called with the messages left to process
+typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
 
 enum GoBotError: Error {
     case alreadyStarted
@@ -317,12 +321,24 @@ class GoBotInternal {
     }
     
     // repoFSCK returns true if the repo is fine and otherwise false
+    private lazy var fsckProgressNotify: CFSCKProgressCallback = {
+        percDone, remaining in
+        guard let remStr = remaining else { return }
+        let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
+        let notification = Notification.didUpdateDatabaseProgress(perc: percDone/100, status: status)
+        NotificationCenter.default.post(notification)
+    }
+    
     func repoFSCK(_ mode: ScuttlegobotFSCKMode) -> Bool {
-        let ret = ssbOffsetFSCK(mode.rawValue)
+        let ret = ssbOffsetFSCK(mode.rawValue, self.fsckProgressNotify)
         return ret == 0
     }
     
     func fsckAndRepair() -> (Bool, ScuttlegobotHealReport?) {
+        NotificationCenter.default.post(Notification.didStartFSCKRepair())
+        defer {
+            NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
+        }
         guard self.repoFSCK(.Sequences) == false else {
             Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")
             return (true, nil)

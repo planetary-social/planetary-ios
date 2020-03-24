@@ -45,6 +45,8 @@ github.com/keks/persist
 github.com/kr/logfmt
 # github.com/libp2p/go-reuseport v0.0.1
 github.com/libp2p/go-reuseport
+# github.com/machinebox/progress v0.2.0
+github.com/machinebox/progress
 # github.com/mattn/go-sqlite3 v1.11.0
 github.com/mattn/go-sqlite3
 # github.com/mschoch/smat v0.0.0-20160514031455-90eadee771ae
@@ -90,7 +92,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200304093142-4310d5a24560
+# go.cryptoscope.co/ssb v0.0.0-20200324132111-56b69ece110d
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
 go.cryptoscope.co/ssb/client

@@ -6,15 +6,24 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
+	"unsafe"
 
 	"github.com/go-kit/kit/log/level"
-
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/ssb"
 	mksbot "go.cryptoscope.co/ssb/sbot"
 )
 
+// #include <stdlib.h>
+// #include <sys/types.h>
+// #include <stdint.h>
+// #include <stdbool.h>
+// static void callFSCKProgressNotify(void *func, double percentage, const char* remaining)
+// {
+//   ((void(*)(double, const char*))func)(percentage, remaining);
+// }
 import "C"
 
 //export ssbGenKey
@@ -123,7 +132,7 @@ func ssbReplicateUpTo() int {
 var lastFSCK mksbot.ErrConsistencyProblems
 
 //export ssbOffsetFSCK
-func ssbOffsetFSCK(mode uint32) int {
+func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -150,7 +159,14 @@ func ssbOffsetFSCK(mode uint32) int {
 		return -1
 	}
 
-	retErr = sbot.FSCK(uf, fsckMode)
+	progressFuncPtr := unsafe.Pointer(progressFn)
+	wrapFn := func(perc float64, remaining time.Duration) {
+		remainingCstr := C.CString(remaining.String())
+		C.callFSCKProgressNotify(progressFuncPtr, C.double(perc), remainingCstr)
+		C.free(unsafe.Pointer(remainingCstr))
+	}
+
+	retErr = sbot.FSCK(uf, fsckMode, wrapFn)
 	if retErr != nil {
 		if constErrs, ok := retErr.(mksbot.ErrConsistencyProblems); ok {
 			lastFSCK = constErrs

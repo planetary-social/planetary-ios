@@ -45,8 +45,8 @@ type PeerStatus struct {
 type Status struct {
 	PID   int // process id of the bot
 	Peers []PeerStatus
-	Blobs interface{}
-	Root  margaret.Seq
+	Blobs []BlobWant
+	Root  margaret.BaseSeq
 }
 
 type ContentNuller interface {
