@@ -975,7 +975,7 @@ class ViewDatabase {
             .filter(colMaybeRoot == nil)
             .filter(colHidden == false)
             .limit(limit)
-        
+
         var threadIDs: [Int64] = [] // and from self as well
         for row in try db.prepare(threadsStartedByUserQry) {
             threadIDs.append(row[colMessageID])
@@ -983,7 +983,7 @@ class ViewDatabase {
 
         let repliesQry = self.basicRecentPostsQuery(limit: limit, wantPrivate: false, onlyRoots: false)
             .filter(threadIDs.contains(colRoot))
-        
+
         return try self.mapQueryToKeyValue(qry: repliesQry)
     }
 
