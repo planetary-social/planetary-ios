@@ -13,9 +13,9 @@ class AppController: UIViewController {
 
     static let shared = AppController()
     
-    private var didStartFSCKRepairObserver: NSObjectProtocol?
-    private var didUpdateFSCKProgressObserver: NSObjectProtocol?
-    private var didFinishFSCKRepairObserver: NSObjectProtocol?
+    private var didStartDatabaseProcessingObserver: NSObjectProtocol?
+    private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
+    private var didUpdateDatabaseProgressObserver: NSObjectProtocol?
 
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -101,8 +101,8 @@ class AppController: UIViewController {
             self?.showProgress()
         }
         let updateProgress = { [weak self] (notification: Notification) -> Void in
-            guard let percDone = notification.fsckProgressPercentageDone else { return }
-            guard let status = notification.fsckProgressStatus else { return }
+            guard let percDone = notification.databaseProgressPercentageDone else { return }
+            guard let status = notification.databaseProgressStatus else { return }
             self?.updateProgress(perc: percDone, status: status)
         }
         let dismissProgress = { [weak self] (notification: Notification) -> Void in
@@ -110,27 +110,30 @@ class AppController: UIViewController {
         }
         removeObservers()
         let notificationCenter = NotificationCenter.default
-        didStartFSCKRepairObserver = notificationCenter.addObserver(forName: .didStartFSCKRepair,
+        didStartDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didStartDatabaseProcessing,
                                                                     object: nil,
                                                                     queue: .main,
                                                                     using: showProgress)
-        didUpdateFSCKProgressObserver = notificationCenter.addObserver(forName: .didUpdateFSCKProgress,
-                                                                       object: nil,
-                                                                       queue: .main,
-                                                                       using: updateProgress)
-        didFinishFSCKRepairObserver = notificationCenter.addObserver(forName: .didFinishFSCKRepair,
+        didFinishDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didFinishDatabaseProcessing,
                                                                      object: nil,
                                                                      queue: .main,
                                                                      using: dismissProgress)
+        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateDatabaseProgress,
+                                                                       object: nil,
+                                                                       queue: .main,
+                                                                       using: updateProgress)
     }
     
     func removeObservers() {
         let notificationCenter = NotificationCenter.default
-        if let didStartFSCKRepairObserver = self.didStartFSCKRepairObserver {
-            notificationCenter.removeObserver(didStartFSCKRepairObserver)
+        if let start = self.didStartDatabaseProcessingObserver {
+            notificationCenter.removeObserver(start)
         }
-        if let didFinishFSCKRepairObserver = self.didFinishFSCKRepairObserver {
-            notificationCenter.removeObserver(didFinishFSCKRepairObserver)
+        if let finish = self.didFinishDatabaseProcessingObserver {
+            notificationCenter.removeObserver(finish)
+        }
+        if let progress = self.didUpdateDatabaseProgressObserver {
+            notificationCenter.removeObserver(progress)
         }
     }
 }

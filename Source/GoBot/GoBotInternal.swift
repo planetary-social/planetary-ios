@@ -325,7 +325,7 @@ class GoBotInternal {
         percDone, remaining in
         guard let remStr = remaining else { return }
         let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateFSCKProgress(perc: percDone, status: status)
+        let notification = Notification.didUpdateDatabaseProgress(perc: percDone, status: status)
         NotificationCenter.default.post(notification)
     }
     
@@ -335,9 +335,9 @@ class GoBotInternal {
     }
     
     func fsckAndRepair() -> (Bool, ScuttlegobotHealReport?) {
-        NotificationCenter.default.post(name: .didStartFSCKRepair, object: nil)
+        NotificationCenter.default.post(Notification.didStartFSCKRepair())
         defer {
-            NotificationCenter.default.post(name: .didFinishFSCKRepair, object: nil)
+            NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
         }
         guard self.repoFSCK(.Sequences) == false else {
             Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")

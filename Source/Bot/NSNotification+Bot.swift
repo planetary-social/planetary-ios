@@ -46,25 +46,31 @@ extension Notification.Name {
 }
 
 
-// MARK:- FSCK
+// MARK:- Databae progress
 extension Notification.Name {
-    static let didStartFSCKRepair = Notification.Name("didStartFSCKRepair")
-    static let didUpdateFSCKProgress = Notification.Name("didUpdateFSCKProgress")
-    static let didFinishFSCKRepair = Notification.Name("didFinishFSCKRepair")
+    static let didStartDatabaseProcessing = Notification.Name("didStartDatabaseProcessing")
+    static let didUpdateDatabaseProgress = Notification.Name("didUpdateDatabaseProgress")
+    static let didFinishDatabaseProcessing = Notification.Name("didFinishDatabaseProcessing")
 }
 
 extension Notification {
 
-    var fsckProgressPercentageDone: Float64? {
+    var databaseProgressPercentageDone: Float64? {
         return self.userInfo?["percentage_done"] as? Float64
     }
     
-    var fsckProgressStatus: String? {
+    var databaseProgressStatus: String? {
         return self.userInfo?["status"] as? String
     }
+    
+    static func didStartFSCKRepair() -> Notification {
+        return Notification(name: .didStartDatabaseProcessing,
+                            object: nil,
+                            userInfo: [ "status": "Database consistency check in progress" ])
+    }
 
-    static func didUpdateFSCKProgress(perc: Float64, status: String) -> Notification {
-        return Notification(name: .didUpdateFSCKProgress,
+    static func didUpdateDatabaseProgress(perc: Float64, status: String) -> Notification {
+        return Notification(name: .didUpdateDatabaseProgress,
                             object: nil,
                             userInfo: ["percentage_done": perc, "status": status])
     }
