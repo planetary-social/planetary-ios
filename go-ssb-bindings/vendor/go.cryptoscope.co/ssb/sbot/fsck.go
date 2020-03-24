@@ -3,7 +3,6 @@ package sbot
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/RoaringBitmap/roaring"
@@ -55,7 +54,7 @@ func (e ErrConsistencyProblems) Error() string {
 type FSCKUpdateFunc func(percentage float64, timeLeft time.Duration)
 
 // FSCK checks the consistency of the received messages and the indexes.
-// progressFn offers a way to track the progress. It's okay to pass nil, stdlib log.Println is used in that case.
+// progressFn offers a way to track the progress. It's okay to pass nil, the set sbot.info logger is used in that case.
 func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode, progressFn FSCKUpdateFunc) error {
 	if feedsMlog == nil {
 		var ok bool
@@ -67,7 +66,7 @@ func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode, progressFn FSCKU
 
 	if progressFn == nil {
 		progressFn = func(percentage float64, timeLeft time.Duration) {
-			log.Printf("fsck/sequence: %f%% done. Time left: %s", percentage, timeLeft.String())
+			level.Info(s.info).Log("event", "fsck-progress", "done", percentage, "time-left", timeLeft.String())
 		}
 	}
 
@@ -180,7 +179,7 @@ func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go func() {
-		p := progress.NewTicker(ctx, &pc, totalMessages, 5*time.Second)
+		p := progress.NewTicker(ctx, &pc, totalMessages, 3*time.Second)
 		for remaining := range p {
 			estDone := remaining.Estimated()
 			// how much time until it's done?
