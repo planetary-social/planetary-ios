@@ -956,21 +956,21 @@ class GoBot: Bot {
                 
                 // TODO: move hacky time measure to utils
                 var since = CFAbsoluteTimeGetCurrent()
+                let fn = "\(#function)"
                 let took = { (msg: String) in
                     let now = CFAbsoluteTimeGetCurrent()
-                    print("\tDEBUG(\(msg)): took \(now-since)")
+                    print("\tDEBUG(\(fn):\(msg)): took \(now-since)")
                     since = now
                 }
+                
 
                 var all: [KeyValue] = []
-                var replies = try self.database.getRepliesToMyThreads(limit: 10)
-                if let me = self.identity { replies = replies.excluding(me) }
-                all.append(contentsOf: replies)
-                took("replies")
+//                 
+                
 
                 let mentions = try self.database.mentions(limit: 50)
                 all.append(contentsOf: mentions)
-                took("mentions")
+                took("mentions \(mentions.count)")
 
                 let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 50)
                 all.append(contentsOf: contacts)
