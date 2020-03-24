@@ -953,18 +953,31 @@ class GoBot: Bot {
                 butt!! we need to revisit this before launch, union and sort them in sql
                 and then apply similar pagination as with recentPosts().
                 */
+                
+                // TODO: move hacky time measure to utils
+                var since = CFAbsoluteTimeGetCurrent()
+                let took = { (msg: String) in
+                    let now = CFAbsoluteTimeGetCurrent()
+                    print("\tDEBUG(\(msg)): took \(now-since)")
+                    since = now
+                }
+
                 var all: [KeyValue] = []
-                var replies = try self.database.getRepliesToMyThreads()
+                var replies = try self.database.getRepliesToMyThreads(limit: 10)
                 if let me = self.identity { replies = replies.excluding(me) }
                 all.append(contentsOf: replies)
+                took("replies")
 
-                let mentions = try self.database.mentions(limit: 1000)
+                let mentions = try self.database.mentions(limit: 50)
                 all.append(contentsOf: mentions)
+                took("mentions")
 
-                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!)
+                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 50)
                 all.append(contentsOf: contacts)
+                took("followed")
 
                 let sorted = all.sortedByDateDescending()
+                took("sorted \(sorted.count)")
                 DispatchQueue.main.async { completion(sorted, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
