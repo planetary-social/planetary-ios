@@ -44,3 +44,40 @@ extension Notification.Name {
     static let didSync = Notification.Name("didSync")
     static let didSyncAndRefresh = Notification.Name("didSyncAndRefresh")
 }
+
+
+// MARK:- Databae progress
+extension Notification.Name {
+    static let didStartDatabaseProcessing = Notification.Name("didStartDatabaseProcessing")
+    static let didUpdateDatabaseProgress = Notification.Name("didUpdateDatabaseProgress")
+    static let didFinishDatabaseProcessing = Notification.Name("didFinishDatabaseProcessing")
+}
+
+extension Notification {
+
+    var databaseProgressPercentageDone: Float64? {
+        return self.userInfo?["percentage_done"] as? Float64
+    }
+    
+    var databaseProgressStatus: String? {
+        return self.userInfo?["status"] as? String
+    }
+    
+    static func didStartFSCKRepair() -> Notification {
+        return Notification(name: .didStartDatabaseProcessing,
+                            object: nil,
+                            userInfo: [ "status": "Database consistency check in progress" ])
+    }
+
+    static func didStartViewRefresh() -> Notification {
+        return Notification(name: .didStartDatabaseProcessing,
+                            object: nil,
+                            userInfo: [ "status": "Loading new messages" ])
+    }
+
+    static func didUpdateDatabaseProgress(perc: Float64, status: String) -> Notification {
+        return Notification(name: .didUpdateDatabaseProgress,
+                            object: nil,
+                            userInfo: ["percentage_done": perc, "status": status])
+    }
+}

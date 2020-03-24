@@ -1428,7 +1428,8 @@ class ViewDatabase {
             var lastRxSeq: Int64 = -1
             
             let loopStart = Date().timeIntervalSince1970*1000
-            for msg in msgs {
+            let msgCount = msgs.count
+            for (msgIndex, msg) in msgs.enumerated() {
                 if let msgRxSeq = msg.receivedSeq {
                     lastRxSeq = msgRxSeq
                 } else {
@@ -1452,7 +1453,14 @@ class ViewDatabase {
                     skipped += 1
                     continue
                 }
-                
+
+                if msgIndex%100 == 0 { // don't hammer progress with every message
+                    let done = Float64(msgIndex)/Float64(msgCount)
+                    let prog = Notification.didUpdateDatabaseProgress(perc: done,
+                                                                      status: "Processing new messages")
+                    NotificationCenter.default.post(prog)
+                }
+
                 // make sure we dont have messages from the future
                 // and force them to the _received_ timestamp so that they are not pinned to the top of the views
                 var claimed = msg.value.timestamp

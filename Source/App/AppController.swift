@@ -12,6 +12,10 @@ import UIKit
 class AppController: UIViewController {
 
     static let shared = AppController()
+    
+    private var didStartDatabaseProcessingObserver: NSObjectProtocol?
+    private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
+    private var didUpdateDatabaseProgressObserver: NSObjectProtocol?
 
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -20,6 +24,11 @@ class AppController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.background.default
+        self.addObservers()
+    }
+    
+    deinit {
+        removeObservers()
     }
 
     /// Because controllers are nested and presented when the keyboard is also being presented,
@@ -83,5 +92,48 @@ class AppController: UIViewController {
     func showSettingsViewController() {
         let nc = UINavigationController(rootViewController: SettingsViewController())
         self.mainViewController?.present(nc, animated: true)
+    }
+    
+    // MARK: Observers
+    
+    func addObservers() {
+        let showProgress = { [weak self] (notification: Notification) -> Void in
+            self?.showProgress(statusText: notification.databaseProgressStatus)
+        }
+        let updateProgress = { [weak self] (notification: Notification) -> Void in
+            guard let percDone = notification.databaseProgressPercentageDone else { return }
+            guard let status = notification.databaseProgressStatus else { return }
+            self?.updateProgress(perc: percDone, status: status)
+        }
+        let dismissProgress = { [weak self] (notification: Notification) -> Void in
+            self?.hideProgress()
+        }
+        removeObservers()
+        let notificationCenter = NotificationCenter.default
+        didStartDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didStartDatabaseProcessing,
+                                                                    object: nil,
+                                                                    queue: .main,
+                                                                    using: showProgress)
+        didFinishDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didFinishDatabaseProcessing,
+                                                                     object: nil,
+                                                                     queue: .main,
+                                                                     using: dismissProgress)
+        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateDatabaseProgress,
+                                                                       object: nil,
+                                                                       queue: .main,
+                                                                       using: updateProgress)
+    }
+    
+    func removeObservers() {
+        let notificationCenter = NotificationCenter.default
+        if let start = self.didStartDatabaseProcessingObserver {
+            notificationCenter.removeObserver(start)
+        }
+        if let finish = self.didFinishDatabaseProcessingObserver {
+            notificationCenter.removeObserver(finish)
+        }
+        if let progress = self.didUpdateDatabaseProgressObserver {
+            notificationCenter.removeObserver(progress)
+        }
     }
 }

@@ -16,7 +16,17 @@ import (
 )
 
 func NewKeyValueWrapper(snk luigi.Sink, wrap bool) luigi.Sink {
-	return mfr.SinkMap(snk, func(ctx context.Context, v interface{}) (interface{}, error) {
+
+	noNulled := mfr.FilterFunc(func(ctx context.Context, v interface{}) (bool, error) {
+		if err, ok := v.(error); ok {
+			if margaret.IsErrNulled(err) {
+				return false, nil
+			}
+			return false, err
+		}
+		return true, nil
+	})
+	toJSON := mfr.SinkMap(snk, func(ctx context.Context, v interface{}) (interface{}, error) {
 		abs, ok := v.(ssb.Message)
 		if !ok {
 			seqWrap, ok := v.(margaret.SeqWrapper)
@@ -46,4 +56,6 @@ func NewKeyValueWrapper(snk luigi.Sink, wrap bool) luigi.Sink {
 
 		return json.RawMessage(kvMsg), nil
 	})
+
+	return mfr.SinkFilter(toJSON, noNulled)
 }

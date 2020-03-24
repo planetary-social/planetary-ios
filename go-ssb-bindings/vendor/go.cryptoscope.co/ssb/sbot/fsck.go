@@ -3,13 +3,12 @@ package sbot
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/RoaringBitmap/roaring"
-
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	"github.com/machinebox/progress"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
@@ -50,8 +49,13 @@ func (e ErrConsistencyProblems) Error() string {
 	return errStr
 }
 
-// FSCK checks the consistency of the received messages and the indexes
-func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode) error {
+// FSCKUpdateFunc is called with the a percentage float between 0 and 100
+// and a durration who much time it should take, rounded to seconds.
+type FSCKUpdateFunc func(percentage float64, timeLeft time.Duration)
+
+// FSCK checks the consistency of the received messages and the indexes.
+// progressFn offers a way to track the progress. It's okay to pass nil, the set sbot.info logger is used in that case.
+func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode, progressFn FSCKUpdateFunc) error {
 	if feedsMlog == nil {
 		var ok bool
 		feedsMlog, ok = s.GetMultiLog(multilogs.IndexNameFeeds)
@@ -60,12 +64,18 @@ func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode) error {
 		}
 	}
 
+	if progressFn == nil {
+		progressFn = func(percentage float64, timeLeft time.Duration) {
+			level.Info(s.info).Log("event", "fsck-progress", "done", percentage, "time-left", timeLeft.String())
+		}
+	}
+
 	switch mode {
 	case FSCKModeLength:
 		return lengthFSCK(feedsMlog, s.RootLog)
 
 	case FSCKModeSequences:
-		return sequenceFSCK(s.RootLog)
+		return sequenceFSCK(s.RootLog, progressFn)
 
 	default:
 		return errors.New("sbot: unknown fsck mode")
@@ -132,11 +142,17 @@ func lengthFSCK(authorMlog multilog.MultiLog, receiveLog margaret.Log) error {
 	return nil
 }
 
+// implements machinebox/progress.Counter
+type processedCounter struct{ n int64 }
+
+func (p processedCounter) N() int64 { return p.n }
+
+func (p processedCounter) Err() error { return nil }
+
 // sequenceFSCK goes through every message in the receiveLog
 // and checks tha the sequence of a feed is correctly increasing by one each message
-func sequenceFSCK(receiveLog margaret.Log) error {
+func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 	ctx := context.Background()
-	start := time.Now()
 
 	// the last sequence number we saw of that author
 	lastSequence := make(map[string]int64)
@@ -149,7 +165,9 @@ func sequenceFSCK(receiveLog margaret.Log) error {
 	if err != nil {
 		return err
 	}
-	currentOffsetSeq := currentSeqV.(margaret.Seq).Seq()
+
+	totalMessages := currentSeqV.(margaret.Seq).Seq()
+	var pc processedCounter
 
 	src, err := receiveLog.Query(margaret.SeqWrap(true))
 	if err != nil {
@@ -158,6 +176,18 @@ func sequenceFSCK(receiveLog margaret.Log) error {
 
 	// which feeds have problems
 	var consistencyErrors []ssb.ErrWrongSequence
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		p := progress.NewTicker(ctx, &pc, totalMessages, 3*time.Second)
+		for remaining := range p {
+			estDone := remaining.Estimated()
+			// how much time until it's done?
+			timeLeft := estDone.Sub(time.Now()).Round(time.Second)
+			progressFn(remaining.Percent(), timeLeft)
+		}
+	}()
+	defer cancel()
 
 	for {
 		v, err := src.Next(ctx)
@@ -227,11 +257,7 @@ func sequenceFSCK(receiveLog margaret.Log) error {
 		lastSequence[authorRef] = currSeq + 1
 
 		// bench stats
-		currentOffsetSeq--
-		if time.Since(start) > time.Second {
-			log.Println("fsck/sequence: messages left to process:", currentOffsetSeq)
-			start = time.Now()
-		}
+		pc.n++
 	}
 
 	if len(consistencyErrors) == 0 {
