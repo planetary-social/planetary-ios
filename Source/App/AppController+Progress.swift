@@ -12,16 +12,16 @@ import UIKit
 
 extension AppController {
 
-    func showProgress(after: TimeInterval = 1) {
+    func showProgress(after: TimeInterval = 1, statusText: String? = nil) {
         SVProgressHUD.setDefaultMaskType(.clear)
         SVProgressHUD.setBackgroundColor(UIColor.background.default)
         SVProgressHUD.setForegroundColor(UIColor.tint.default)
         SVProgressHUD.setGraceTimeInterval(after)
-        SVProgressHUD.show()
+        SVProgressHUD.show(withStatus: statusText)
     }
 
     func updateProgress(perc: Float64, status: String? = nil) {
-        SVProgressHUD.showProgress(Float(perc/100), status: status)
+        SVProgressHUD.showProgress(Float(perc), status: status)
     }
     
     func hideProgress(completion: (() -> Void)? = nil) {

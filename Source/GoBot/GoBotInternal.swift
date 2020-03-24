@@ -325,7 +325,7 @@ class GoBotInternal {
         percDone, remaining in
         guard let remStr = remaining else { return }
         let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateDatabaseProgress(perc: percDone, status: status)
+        let notification = Notification.didUpdateDatabaseProgress(perc: percDone/100, status: status)
         NotificationCenter.default.post(notification)
     }
     

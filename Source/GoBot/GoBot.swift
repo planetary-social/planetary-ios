@@ -252,6 +252,7 @@ class GoBot: Bot {
 
     private func internalRefresh(completion: @escaping RefreshCompletion) {
         guard self._isRefreshing == false else { completion(nil, 0); return }
+        NotificationCenter.default.post(Notification.didStartViewRefresh())
         self._isRefreshing = true
         let elapsed = Date()
         self.queue.async {
@@ -260,6 +261,7 @@ class GoBot: Bot {
                 self?.notifyRefreshComplete(in: -elapsed.timeIntervalSinceNow,
                                             error: error,
                                             completion: completion)
+                NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
             }
         }
     }

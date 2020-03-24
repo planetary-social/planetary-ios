@@ -69,6 +69,12 @@ extension Notification {
                             userInfo: [ "status": "Database consistency check in progress" ])
     }
 
+    static func didStartViewRefresh() -> Notification {
+        return Notification(name: .didStartDatabaseProcessing,
+                            object: nil,
+                            userInfo: [ "status": "Loading new messages" ])
+    }
+
     static func didUpdateDatabaseProgress(perc: Float64, status: String) -> Notification {
         return Notification(name: .didUpdateDatabaseProgress,
                             object: nil,
