@@ -199,7 +199,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-        db.trace { print("\tSQL: \($0)") } // print all the statements
+//        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
@@ -961,19 +961,10 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
-        // TODO: move hacky time measure to utils
-        var since = CFAbsoluteTimeGetCurrent()
-        let took = { (msg: String) in
-            let now = CFAbsoluteTimeGetCurrent()
-            print("\tDEBUG(\(msg)): took \(now-since)")
-            since = now
-        }
-        
+
         // reminder: SQLite.swift can't do subquerys
         // https://app.asana.com/0/0/1133029620163798/f
 
-        
         // posts by user that are not replies
         let colMaybeRoot = Expression<Int64?>("root")
         let threadsStartedByUserQry = self.msgs
@@ -984,18 +975,14 @@ class ViewDatabase {
             .filter(colMaybeRoot == nil)
             .filter(colHidden == false)
             .limit(limit)
-
-        took("subquery create \(limit)")
         
         var threadIDs: [Int64] = [] // and from self as well
         for row in try db.prepare(threadsStartedByUserQry) {
             threadIDs.append(row[colMessageID])
         }
-        took("exec subquery")
 
         let repliesQry = self.basicRecentPostsQuery(limit: limit, wantPrivate: false, onlyRoots: false)
             .filter(threadIDs.contains(colRoot))
-        took("load posts")
         
         return try self.mapQueryToKeyValue(qry: repliesQry)
     }
