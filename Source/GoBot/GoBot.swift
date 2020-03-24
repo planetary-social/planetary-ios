@@ -962,11 +962,12 @@ class GoBot: Bot {
                     print("\tDEBUG(\(fn):\(msg)): took \(now-since)")
                     since = now
                 }
-                
 
                 var all: [KeyValue] = []
-//                 
-                
+                // TODO: optimize query
+                // var replies = try self.database.getRepliesToMyThreads(limit: 10)
+                // if let me = self.identity { replies = replies.excluding(me) }
+                // all.append(contentsOf: replies)
 
                 let mentions = try self.database.mentions(limit: 50)
                 all.append(contentsOf: mentions)
