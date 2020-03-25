@@ -67,8 +67,8 @@
 "Text.noReplies" = "No replies";
 "Text.oneReply" = "1 reply";
 "Text.oneReplyFrom" = "One reply from ";
+"Text.repliesFrom" = "Replies from ";
 "Text.oneOther" = "1 other";
-"Text.repliesBy" = "Replies by ";
 "Text.replyCount" = "{{ count }} replies";
 "Text.andCountOthers" = " and {{ count }} others";
 "Text.countOthers" = "{{ count }} others";
