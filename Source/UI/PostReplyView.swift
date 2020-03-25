@@ -128,16 +128,17 @@ class RepliesView: KeyValueView {
         self.avatarImageView.abouts = uniqueAbouts
 
         if !uniqueAbouts.isEmpty {
-            self.updateLabel(from: uniqueAbouts)
+            self.updateLabel(from: uniqueAbouts, total: keyValue.metadata.replies.count)
         }
 
         self.heightConstraint?.constant = uniqueAbouts.isEmpty ? 0 : self.expandedHeight
     }
 
-    private func updateLabel(from abouts: [About]) {
+    private func updateLabel(from abouts: [About], total: Int) {
         let count = abouts.count
         if count == 1 {
-            let text = NSMutableAttributedString(Text.oneReplyFrom.text, font: self.textFont)
+            let replyFrom = total > 1 ? Text.repliesFrom.text : Text.oneReplyFrom.text
+            let text = NSMutableAttributedString(replyFrom, font: self.textFont)
             if let name = abouts.first?.name {
                 text.append(NSAttributedString(name, font: self.nameFont))
             } else {
@@ -146,7 +147,7 @@ class RepliesView: KeyValueView {
             text.addColorAttribute(UIColor.text.default)
             self.label.attributedText = text
         } else {
-            let text = NSMutableAttributedString(Text.repliesBy.text, font: self.textFont)
+            let text = NSMutableAttributedString(Text.repliesFrom.text, font: self.textFont)
             if let name = abouts.first?.name {
                 text.append(NSAttributedString(name, font: self.nameFont))
                 let others = count > 2 ? Text.andCountOthers : Text.andOneOther
