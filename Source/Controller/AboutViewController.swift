@@ -199,11 +199,14 @@ class AboutViewController: ContentViewController {
 
             Bots.current.publish(content: about) {
                 _, error in
-                AppController.shared.hideProgress()
-                if Log.optional(error) { return }
-
-                self?.aboutView.imageView.fade(to: uiimage)
-                self?.imagePicker.dismiss()
+                if Log.optional(error) { AppController.shared.hideProgress(); return }
+                Bots.current.about { (newAbout, error) in
+                    AppController.shared.hideProgress()
+                    if Log.optional(error) { return }
+                    NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
+                    self?.aboutView.imageView.fade(to: uiimage)
+                    self?.imagePicker.dismiss()
+                }
             }
         }
     }
@@ -216,8 +219,12 @@ class AboutViewController: ContentViewController {
             AppController.shared.showProgress()
             Bots.current.publish(content: controller.about) {
                 _, error in
+                if Log.optional(error) { AppController.shared.hideProgress(); return }
                 Log.optional(error)
-                AppController.shared.hideProgress() {
+                Bots.current.about { (newAbout, error) in
+                    AppController.shared.hideProgress()
+                    if Log.optional(error) { return }
+                    NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
                     self?.update(with: controller.about)
                     self?.dismiss(animated: true)
                 }
@@ -286,10 +293,14 @@ extension AboutViewController: UIImagePickerControllerDelegate, UINavigationCont
             guard let about = self?.about?.mutatedCopy(image: image) else   { AppController.shared.hideProgress(); return }
             Bots.current.publish(content: about) {
                 _, error in
-                AppController.shared.hideProgress()
-                if Log.optional(error) { return }
-                self?.aboutView.imageView.fade(to: uiimage)
-                picker.dismiss(animated: true, completion: nil)
+                if Log.optional(error) { AppController.shared.hideProgress(); return }
+                Bots.current.about { (newAbout, error) in
+                    AppController.shared.hideProgress()
+                    Log.optional(error)
+                    NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
+                    self?.aboutView.imageView.fade(to: uiimage)
+                    picker.dismiss(animated: true, completion: nil)
+                }
             }
         }
     }

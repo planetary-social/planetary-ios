@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0A07AB1E242522CE00EFD47F /* CrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB1D242522CE00EFD47F /* CrashReporting.swift */; };
+		0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB21242AC66D00EFD47F /* Notification+About.swift */; };
 		0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */; };
 		0AD00E7023FB3C02006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
@@ -598,6 +599,7 @@
 /* Begin PBXFileReference section */
 		029F45290FDF6DF49B65B79C /* Pods-UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UITests/Pods-UITests.debug.xcconfig"; sourceTree = "<group>"; };
 		0A07AB1D242522CE00EFD47F /* CrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReporting.swift; sourceTree = "<group>"; };
+		0A07AB21242AC66D00EFD47F /* Notification+About.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+About.swift"; sourceTree = "<group>"; };
 		0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Reset.swift"; sourceTree = "<group>"; };
 		0AD00E6723FB3318006BF017 /* Planetary.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.debug.xcconfig; sourceTree = "<group>"; };
 		0AD00E6823FB332A006BF017 /* Planetary.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.release.xcconfig; sourceTree = "<group>"; };
@@ -1744,6 +1746,7 @@
 				53E341F3224D9E3B002BB5F4 /* URL+Identifier.swift */,
 				53AD3FE422735C7B005228F9 /* Value.swift */,
 				5316E96021FFED2E0053832E /* Vote.swift */,
+				0A07AB21242AC66D00EFD47F /* Notification+About.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2729,6 +2732,7 @@
 				5319258022F3A09C00B44FA3 /* NotificationCellView.swift in Sources */,
 				8DE093DA234651D1009E505D /* EditPostButton.swift in Sources */,
 				535754FB22694A2E002A6989 /* KeyValueTableViewCell.swift in Sources */,
+				0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */,
 				53211CE92284B9F5007FB785 /* AppConfigurationViewController.swift in Sources */,
 				53EAB3932399C45000DF5530 /* Analytics+Cache.swift in Sources */,
 				535B6A0E23728049008C248E /* NSNotification+Bot.swift in Sources */,

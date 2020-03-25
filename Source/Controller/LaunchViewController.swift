@@ -86,7 +86,9 @@ class LaunchViewController: UIViewController {
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) {
             [weak self] error in
             if Log.optional(error) { return }
-            self?.launchIntoMain()
+            bot.about { (_,_) in
+                self?.launchIntoMain()
+            }
         }
     }
 
