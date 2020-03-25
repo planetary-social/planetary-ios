@@ -202,6 +202,10 @@ class MiniAboutCellView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func reset() {
+        self.update(with: About())
+    }
+    
     func update(with about: About) {
         self.imageView.set(image: about.image)
         self.nameLabel.text = about.nameOrIdentity
