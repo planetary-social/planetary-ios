@@ -18,6 +18,7 @@ class CrashReporting {
             configured = false
             return
         }
+        Log.info("Configuring Bugsnag...")
         Bugsnag.start(withApiKey: token)
         configured = true
     }

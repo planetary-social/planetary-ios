@@ -14,8 +14,8 @@ enum Environment {
         private enum Keys {
             static let token = "PLMixpanelToken"
         }
-        static let token: String = {
-            return Environment.value(for: Keys.token)
+        static let token: String? = {
+            return Environment.valueIfPresent(for: Keys.token)
         }()
     }
     
@@ -177,7 +177,10 @@ enum Environment {
     }
     
     private static func valueIfPresent(for key: String) -> String? {
-        return Environment.infoDictionary[key] as? String
+        if let value = Environment.infoDictionary[key] as? String, !value.isEmpty {
+            return value
+        }
+        return nil
     }
     
     private static let infoDictionary: [String: Any] = {
