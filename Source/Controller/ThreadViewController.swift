@@ -215,23 +215,6 @@ class ThreadViewController: ContentViewController {
         }
     }
 
-    // Adjusts the buttons view height and scrolls the table view at the same time
-    // as the superclass ContentViewController handles the keyboard.  Because the
-    // superclass implementation wraps the constraint change in an animation, the
-    // changes here are also animated.
-    override func setKeyboardTopConstraint(constant: CGFloat,
-                                           duration: TimeInterval,
-                                           curve: UIView.AnimationCurve)
-    {
-        super.setKeyboardTopConstraint(constant: constant, duration: duration, curve: curve)
-        if constant == 0 {
-            self.buttonsView.minimize(duration: duration)
-        } else {
-            self.buttonsView.maximize(duration: duration)
-            self.scrollToLastVisibleIndexPath()
-        }
-    }
-
     // Forces the reply text view to be first responder if the controller
     // was inited to start replying immediately.
     private func replyTextViewBecomeFirstResponderIfNecessary() {
@@ -263,6 +246,17 @@ class ThreadViewController: ContentViewController {
         self.textViewDelegate.didChangeMention = {
             [unowned self] string in
             self.menu.filter(by: string)
+        }
+        
+        let buttonViewAnimationDuration: TimeInterval = 0.5
+        
+        self.textViewDelegate.didBeginEditing = { _ in
+            self.buttonsView.maximize(duration: buttonViewAnimationDuration)
+            self.scrollToLastVisibleIndexPath()
+        }
+        
+        self.textViewDelegate.didEndEditing = { _ in
+            self.buttonsView.minimize(duration: buttonViewAnimationDuration)
         }
     }
 

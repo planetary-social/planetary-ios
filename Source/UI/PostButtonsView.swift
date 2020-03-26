@@ -11,7 +11,7 @@ import UIKit
 
 class PostButtonsView: UIView {
 
-    static var viewHeight: CGFloat = 50
+    static let viewHeight: CGFloat = 50
 
     let topSeparator = Layout.separatorView()
 
