@@ -361,7 +361,7 @@ class DebugViewController: DebugTableViewController {
                                          actionClosure:
         {
             [unowned self] cell in
-            self.shareLogs()
+            self.shareLogs(cell: cell)
         })]
         
         settings += [DebugTableViewCellModel(title: "Simulate onboarding",
@@ -432,10 +432,18 @@ class DebugViewController: DebugTableViewController {
         }
     }
 
-    private func shareLogs() {
-        let activityController = UIActivityViewController(activityItems: Log.fileUrls,
-                                                          applicationActivities: nil)
-        self.present(activityController, animated: true)
+    private func shareLogs(cell: UITableViewCell) {
+        let fileUrls = Log.fileUrls
+        if fileUrls.isEmpty {
+            self.alert(message: "There aren't logs yet.")
+        } else {
+            let activityController = UIActivityViewController(activityItems: Log.fileUrls,
+                                                              applicationActivities: nil)
+            self.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.sourceView = cell
+            }
+        }
     }
     
     private func applyConfigurationAndDismiss() {

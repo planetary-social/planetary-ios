@@ -14,6 +14,8 @@ typealias Log = NullLog
 /// for use with unit or API test targets.
 class NullLog: LogService {
 
+    static func configure() { }
+    
     @discardableResult
     static func optional(_ error: Error?, _ detail: String? = nil) -> Bool {
         guard let _ = error else { return false }
