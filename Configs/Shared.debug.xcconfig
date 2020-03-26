@@ -9,8 +9,6 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MIXPANEL_TOKEN =
-
 AUTHY_TOKEN =
 
 ZENDESK_APP_ID =

@@ -12,24 +12,41 @@ import Mixpanel
 let Analytics = MixpanelAnalytics()
 
 class MixpanelAnalytics: AnalyticsCore {
+    
+    private var configured: Bool = false
 
     // MixPanel confusingly uses the negative case to indicate status
     // If MixPanel was not initialized, then the user could not have opted out.
     var isEnabled: Bool {
+        guard configured else {
+            return false
+        }
         let optedOut = Mixpanel.sharedInstance()?.hasOptedOutTracking()
         let enabled = !(optedOut ?? true)
         return enabled
     }
 
     func configure() {
-        Mixpanel.sharedInstance(withToken: Environment.Mixpanel.token)
+        guard let token = Environment.Mixpanel.token else {
+            configured = false
+            return
+        }
+        Log.info("Configuring Mixpanel...")
+        Mixpanel.sharedInstance(withToken: token)
+        configured = true
     }
 
     func optIn() {
+        guard configured else {
+            return
+        }
         Mixpanel.sharedInstance()?.optInTracking()
     }
 
     func optOut() {
+        guard configured else {
+            return
+        }
         Mixpanel.sharedInstance()?.optOutTracking()
     }
 
@@ -38,6 +55,9 @@ class MixpanelAnalytics: AnalyticsCore {
                name: AnalyticsEnums.Name.RawValue,
                params:  AnalyticsEnums.Params? = nil)
     {
+        guard configured else {
+            return
+        }
         let event = self.eventName(event: event, element: element, name: name)
         let params = self.compatibleParams(params: params)
         Mixpanel.sharedInstance()?.track(event, properties: params)
@@ -53,6 +73,9 @@ class MixpanelAnalytics: AnalyticsCore {
               element: AnalyticsEnums.Element,
               name: AnalyticsEnums.Name.RawValue)
     {
+        guard configured else {
+            return
+        }
         let event = self.eventName(event: event, element: element, name: name)
         Mixpanel.sharedInstance()?.timeEvent(event)
         UserDefaults.standard.didTrack(event)
