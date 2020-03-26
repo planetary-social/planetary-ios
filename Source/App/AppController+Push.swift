@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Mixpanel
 import UIKit
 import UserNotifications
 
