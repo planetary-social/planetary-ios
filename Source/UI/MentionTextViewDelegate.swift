@@ -180,7 +180,10 @@ class MentionTextViewDelegate: NSObject, UITextViewDelegate {
         textView.typingAttributes = self.fontAttributes
     }
 
+    var didBeginEditing: ((UITextView) -> Void)?
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
+        self.didBeginEditing?(textView)
         guard let placeholder = placeholder else { return }
         if let text = textView.text, text == placeholder {
             textView.text = ""
@@ -188,8 +191,11 @@ class MentionTextViewDelegate: NSObject, UITextViewDelegate {
             textView.typingAttributes = self.fontAttributes
         }
     }
+    
+    var didEndEditing: ((UITextView) -> Void)?
 
     func textViewDidEndEditing(_ textView: UITextView) {
+        self.didEndEditing?(textView)
         guard let placeholder = placeholder else { return }
         if let text = textView.text, text.isEmpty {
             textView.text = placeholder
