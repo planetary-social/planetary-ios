@@ -21,6 +21,7 @@ enum LogReason: String {
 /// `typealias Log = OSLog`.  This allows the implementation
 /// to be changed on a per target level based on needs.
 protocol LogService {
+    static func configure()
     static func optional(_ error: Error?, _ detail: String?) -> Bool
     static func info(_ string: String)
     static func unexpected(_ reason: LogReason, _ detail: String?)

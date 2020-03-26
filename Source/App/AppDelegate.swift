@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         self.window = window
         
+        Log.configure()
         CrashReporting.configure()
         
         // reset configurations if user enabled switch in settings

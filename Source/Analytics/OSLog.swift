@@ -17,6 +17,10 @@ typealias Log = OSLog
 /// https://developer.apple.com/documentation/os/logging
 class OSLog: LogService {
     
+    static func configure() {
+        os_log("%@", self.fileLogger.debugDescription)
+    }
+    
     private static let fileLogger: DDFileLogger = {
         let fileLogger = DDFileLogger() // File Logger
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
