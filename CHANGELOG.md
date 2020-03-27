@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.9.13] - 2020-03-20
+## [0.9.15] - 2020-03-26
+### Fixed
+- Post button not appearing when undocking the keyboard.
+- Crash when downloading logs in iPad.
+- Empty log when downloading logs.
+- Crash when database repair fails.
+- Bad wording for number of replies in a post.
+
+## [0.9.14] - 2020-03-25
 ### Added
 - Show spinning wheel when processing new messages.
 ### Fixed
