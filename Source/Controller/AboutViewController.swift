@@ -174,15 +174,33 @@ class AboutViewController: ContentViewController {
     }
 
     @objc private func didPressCopyIdentifierIcon() {
+        guard let identity = self.about?.identity else {
+            return
+        }
+
+        var actions = [UIAlertAction]()
+
         let copy = UIAlertAction(title: Text.copyPublicIdentifier.text, style: .default) { _ in
-            if let identity = self.about?.identity {
-                UIPasteboard.general.string = identity
+            UIPasteboard.general.string = identity
+        }
+        actions.append(copy)
+
+        if let publicLink = identity.publicLink {
+            let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { [weak self] _ in
+                let activityController = UIActivityViewController(activityItems: [publicLink],
+                                                                  applicationActivities: nil)
+                self?.present(activityController, animated: true)
+                if let popOver = activityController.popoverPresentationController {
+                    popOver.barButtonItem = self?.navigationItem.rightBarButtonItem
+                }
             }
+            actions.append(share)
         }
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        actions.append(cancel)
 
-        AppController.shared.choose(from: [copy, cancel])
+        AppController.shared.choose(from: actions)
     }
 
     private func publishPhotoThenDismiss(_ image: UIImage?) {

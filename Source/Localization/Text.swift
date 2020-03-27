@@ -91,6 +91,7 @@ enum Text: String, Localizable, CaseIterable {
     case unfollow = "Stop following"
 
     case copyPublicIdentifier = "Copy Public Identifier"
+    case shareThisProfile = "Share this profile"
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
