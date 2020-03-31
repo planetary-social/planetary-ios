@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0A07AB1E242522CE00EFD47F /* CrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB1D242522CE00EFD47F /* CrashReporting.swift */; };
 		0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB21242AC66D00EFD47F /* Notification+About.swift */; };
+		0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A143A7A242E6714008745C6 /* AppDelegate+UniversalLink.swift */; };
 		0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */; };
 		0AD00E7023FB3C02006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
@@ -16,6 +17,7 @@
 		0AD00E7723FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */; };
 		0AD8D635240EFF8800D87A95 /* RedeemInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */; };
+		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		230F4FD222F8729700F93B14 /* TestAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 230F4FD122F8729700F93B14 /* TestAPI.swift */; };
@@ -600,6 +602,7 @@
 		029F45290FDF6DF49B65B79C /* Pods-UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UITests/Pods-UITests.debug.xcconfig"; sourceTree = "<group>"; };
 		0A07AB1D242522CE00EFD47F /* CrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReporting.swift; sourceTree = "<group>"; };
 		0A07AB21242AC66D00EFD47F /* Notification+About.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+About.swift"; sourceTree = "<group>"; };
+		0A143A7A242E6714008745C6 /* AppDelegate+UniversalLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+UniversalLink.swift"; sourceTree = "<group>"; };
 		0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Reset.swift"; sourceTree = "<group>"; };
 		0AD00E6723FB3318006BF017 /* Planetary.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.debug.xcconfig; sourceTree = "<group>"; };
 		0AD00E6823FB332A006BF017 /* Planetary.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.release.xcconfig; sourceTree = "<group>"; };
@@ -616,6 +619,7 @@
 		0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePubsViewController.swift; sourceTree = "<group>"; };
 		0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedeemInviteViewController.swift; sourceTree = "<group>"; };
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
+		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
 		231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDatabaseSchema.sql; sourceTree = "<group>"; };
 		23237A112423CE0300FE112C /* PostsWithMentions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostsWithMentions.json; sourceTree = "<group>"; };
@@ -1200,6 +1204,7 @@
 				53AD3FD4226FBD91005228F9 /* AppDelegate+UIAppearance.swift */,
 				536255DB23AC090D001007D0 /* RemoteNotificationUserInfo.swift */,
 				0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */,
+				0A143A7A242E6714008745C6 /* AppDelegate+UniversalLink.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -1747,6 +1752,7 @@
 				53AD3FE422735C7B005228F9 /* Value.swift */,
 				5316E96021FFED2E0053832E /* Vote.swift */,
 				0A07AB21242AC66D00EFD47F /* Notification+About.swift */,
+				1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2633,6 +2639,7 @@
 				2346ECBA22144D61009A94CB /* SimplePublishView.swift in Sources */,
 				53E341F2224D9B9D002BB5F4 /* UIColor+Debug.swift in Sources */,
 				23C7443D2200B12000FB554A /* KeyValue.swift in Sources */,
+				1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */,
 				53211CD0227C8F85007FB785 /* AboutCellView.swift in Sources */,
 				53EE020022051B6200DFDF16 /* Identifier.swift in Sources */,
 				8D8105822346A9740029C72E /* Relationship.swift in Sources */,
@@ -2668,6 +2675,7 @@
 				0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */,
 				53375F812321757C00610932 /* GalleryView.swift in Sources */,
 				531EC4102310C274001A25AD /* Blob+NSAttributedString.swift in Sources */,
+				0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */,
 				53E26C5723037927009240B2 /* Date+ISO8601.swift in Sources */,
 				5396A6252244358A00C57A4B /* UIView+Layout.swift in Sources */,
 				53C966E2236D037000E70689 /* UIViewController+Report.swift in Sources */,
