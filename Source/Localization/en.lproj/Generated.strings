@@ -58,6 +58,7 @@
 "Text.followingShortCount" = "Following {{ count }}";
 "Text.unfollow" = "Stop following";
 "Text.copyPublicIdentifier" = "Copy Public Identifier";
+"Text.shareThisProfile" = "Share this profile";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
 "Text.blockUser" = "Block this user";
