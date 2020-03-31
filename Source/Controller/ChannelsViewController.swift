@@ -45,11 +45,18 @@ class ChannelsViewController: ContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
+        self.addLoadingAnimation()
+        self.load()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.deeregisterDidSyncAndRefresh()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.load()
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.registerDidSyncAndRefresh()
     }
 
     // MARK: Load and refresh
@@ -59,6 +66,7 @@ class ChannelsViewController: ContentViewController {
             [weak self] hashtags, error in
             Log.optional(error)
             self?.update(with: hashtags, animated: false)
+            self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()
         }
     }
@@ -76,6 +84,27 @@ class ChannelsViewController: ContentViewController {
 
     @objc func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
+        self.refresh()
+    }
+    
+    // MARK: Notifications
+
+    override func registerNotifications() {
+        super.registerNotifications()
+        self.registerDidSyncAndRefresh()
+    }
+
+    override func deregisterNotifications() {
+        super.deregisterNotifications()
+        self.deeregisterDidSyncAndRefresh()
+    }
+
+    /// Refreshes the view,  but only if this is the top controller, not when there are any child
+    /// controllers.  The notification will also only be received when the view is not visible,
+    /// check out `viewDidAppear()` and `viewDidDisappear()`.  This is because
+    /// we don't want the view to be updated while someone is looking/scrolling it.
+    override func didSyncAndRefresh(notification: NSNotification) {
+        guard self.navigationController?.topViewController == self else { return }
         self.refresh()
     }
 }

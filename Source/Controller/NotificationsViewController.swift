@@ -46,6 +46,7 @@ class NotificationsViewController: ContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
+        self.addLoadingAnimation()
         self.load()
     }
 
@@ -67,6 +68,7 @@ class NotificationsViewController: ContentViewController {
             [weak self] msgs, error in
             Log.optional(error)
             self?.update(with: msgs, animated: false)
+            self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()
         }
     }

@@ -191,4 +191,34 @@ class ContentViewController: UIViewController, KeyboardHandling {
     func deregisterNotifications() {
         self.deregisterDidBlockUser()
     }
+    
+    // MARK: Loading animation
+    
+    private lazy var loadingAnimation: PeerConnectionAnimation = {
+        let view = PeerConnectionAnimation.forAutoLayout()
+        view.setDotCount(inside: false, count: 1, animated: false)
+        view.setDotCount(inside: true, count: 2, animated: false)
+        return view
+    }()
+    
+    private lazy var loadingLabel: UILabel = {
+        let view = UILabel.forAutoLayout()
+        view.textAlignment = .center
+        view.numberOfLines = 2
+        view.text = Text.loadingUpdates.text
+        view.textColor = UIColor.tint.default
+        return view
+    }()
+    
+    func addLoadingAnimation() {
+        Layout.center(self.loadingLabel, in: self.view)
+        Layout.centerHorizontally(self.loadingAnimation, in: self.view)
+        self.loadingAnimation.constrainSize(to: self.loadingAnimation.totalDiameter)
+        self.loadingAnimation.pinBottom(toTopOf: self.loadingLabel, constant: -20, activate: true)
+    }
+    
+    func removeLoadingAnimation() {
+        self.loadingLabel.removeFromSuperview()
+        self.loadingAnimation.removeFromSuperview()
+    }
 }
