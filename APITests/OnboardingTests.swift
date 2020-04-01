@@ -326,6 +326,7 @@ class OnboardingTests: XCTestCase {
         }
 
         self.wait(for: [expectation], timeout: 30)
+        sleep(5)
     }
 
     func test42_refresh() {
@@ -344,6 +345,7 @@ class OnboardingTests: XCTestCase {
         }
 
         self.wait(for: [expectation], timeout: 30)
+        sleep(5)
     }
 
     func test43_got_messages_from_pub() {
@@ -356,16 +358,16 @@ class OnboardingTests: XCTestCase {
 
         ctx.bot.feed(identity: Identities.testNet.pubs["integrationpub1"]!) {
             msgs, err in
+            defer { expectation.fulfill() }
             XCTAssertNil(err)
             if msgs.count < 1 {
                 XCTAssertGreaterThan(ctx.bot.statistics.repo.feedCount, 1, "didnt even get feed")
                 XCTFail("Expected init message from pub")
-                expectation.fulfill()
                 return
             }
-            XCTAssertEqual(msgs[0].contentType, .post)
-            XCTAssertTrue(msgs[0].value.content.post?.text.hasPrefix("Setup init:") ?? false)
-            expectation.fulfill()
+            guard let msg = msgs.last else { XCTFail("expected msg"); return }
+            XCTAssertEqual(msg.contentType, .post)
+            XCTAssertTrue(msg.value.content.post?.text.hasPrefix("Setup init:") ?? false)
         }
 
         self.wait(for: [expectation], timeout: 30)
