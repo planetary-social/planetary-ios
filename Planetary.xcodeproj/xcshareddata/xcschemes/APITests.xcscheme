@@ -25,6 +25,9 @@
                <Test
                   Identifier = "BlockedTests">
                </Test>
+               <Test
+                  Identifier = "VerseAPITests">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>
