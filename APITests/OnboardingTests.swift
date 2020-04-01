@@ -500,6 +500,7 @@ class OnboardingTests: XCTestCase {
         }
 
         self.wait(for: [expectation], timeout: 30)
+        sleep(5)
     }
 
     func test54_pub_has_new_messages() {
@@ -563,6 +564,7 @@ class OnboardingTests: XCTestCase {
             }
         }
         self.wait(for: [expectation], timeout: 60)
+        sleep(5)
     }
 
     func test62_pub_has_many_messages() {
