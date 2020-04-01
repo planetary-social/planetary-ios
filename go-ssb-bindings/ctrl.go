@@ -71,8 +71,8 @@ func ssbConnectPeers(count uint32) bool {
 	}
 
 	if len(addrs) == 0 {
-		_, unblockPubs := viewDB.Exec(`UPDATE addresses set use=true`)
-		retErr = errors.Errorf("no peers available (%v)", unblockPubs)
+		_, resetAddrErr := viewDB.Exec(`UPDATE addresses set use=true`)
+		retErr = errors.Errorf("no peers available (%v)", resetAddrErr)
 		return false
 	}
 
@@ -166,14 +166,14 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 	)
 
 	// keep the query failures in a seperate transaction and commit it after the parse
-	failureTx, txErr := viewDB.Begin()
+	tx, txErr := viewDB.Begin()
 	if txErr != nil {
 		return nil, errors.Wrap(txErr, "queryAddresses: failed to make transaction for failures")
 	}
 
-	rows, err = failureTx.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, count)
+	rows, err = tx.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, count)
 	if err != nil {
-		failureTx.Rollback()
+		tx.Rollback()
 		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
 	}
 	defer rows.Close()
@@ -190,9 +190,9 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 
 		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
 		if err != nil {
-			_, execErr := failureTx.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
+			_, execErr := tx.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
 			if execErr != nil {
-				failureTx.Rollback()
+				tx.Rollback()
 				return nil, errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
 			}
 		}
@@ -207,11 +207,11 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 
 	if err := rows.Err(); err != nil {
 		level.Error(log).Log("where", "qryAddrs", "err", err)
-		failureTx.Rollback()
+		tx.Rollback()
 		return nil, err
 	}
 
-	commitErr := failureTx.Commit()
+	commitErr := tx.Commit()
 	return addresses, errors.Wrap(commitErr, "broken address record update failed")
 }
 
