@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	stderr "errors"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"path/filepath"
@@ -160,6 +161,17 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 	repoDir = cfg.Repo
 	listenAddr := cfg.ListenAddr
 	hmacSignKey := cfg.HMACKey
+
+	// create logger that writes to stderr and a timestamped file
+	debugLogs := filepath.Join(repoDir, "debug")
+	os.MkdirAll(debugLogs, 0700)
+	logFileName := fmt.Sprintf("gobot-%s.log", time.Now().Format("2006-01-02_15-04"))
+	logFile, err := os.Create(filepath.Join(debugLogs, logFileName))
+	if err != nil {
+		err = errors.Wrapf(err, "BotInit: failed to create debug log file")
+		return false
+	}
+	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(io.MultiWriter(os.Stderr, logFile)))
 
 	if cfg.Hops == 0 || cfg.Hops > 3 {
 		level.Warn(log).Log("event", "bot init", "msg", "invalid hops setting, defaulting to 1", "got", cfg.Hops)
