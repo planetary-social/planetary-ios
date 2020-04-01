@@ -153,7 +153,7 @@ class GoBotInternal {
         return ssbBotIsRunning()
     }
 
-    private var currentNetwork: NetworkKey = NetworkKey.integrationTests // good as a default
+    private var currentNetwork: NetworkKey = NetworkKey.ssb
 
     var getNetworkKey: NetworkKey {
         return self.currentNetwork

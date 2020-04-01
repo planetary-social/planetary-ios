@@ -85,8 +85,28 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) {
             [weak self] error in
+            Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error) { return }
+            
+            guard error == nil else {
+                let controller = UIAlertController(title: "Error",
+                                                   message: "We couldn't log you in. Please, try again or let us know if this persists.",
+                                                   preferredStyle: .alert)
+                
+                var action = UIAlertAction(title: "Retry", style: .default) { _ in
+                    controller.dismiss(animated: true, completion: nil)
+                    self?.launch()
+                }
+                controller.addAction(action)
+
+                action = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    controller.dismiss(animated: true, completion: nil)
+                }
+                controller.addAction(action)
+                
+                self?.present(controller, animated: true, completion: nil)
+                return
+            }
             bot.about { (about, _) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
