@@ -14,6 +14,9 @@ import XCTest
  * TODO: add tests to the view/bot (local) unit tests, that the UI/ViewDB doesn't expose content from the block author
  */
 
+
+// TODO: fix pub setup
+
 // scenario1: unblock works
 class BlockedTests: XCTestCase {
 
