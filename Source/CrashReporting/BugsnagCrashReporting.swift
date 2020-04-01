@@ -1,17 +1,19 @@
 //
-//  CrashReporting.swift
+//  BugsnagCrashReporting.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 3/20/20.
+//  Created by Martin Dutra on 4/1/20.
 //  Copyright © 2020 Verse Communications Inc. All rights reserved.
 //
 
 import Foundation
 import Bugsnag
 
-class CrashReporting {
+typealias CrashReporting = BugsnagCrashReporting
+
+class BugsnagCrashReporting: CrashReportingService {
     
-    static let shared = CrashReporting()
+    static var shared: CrashReportingService = BugsnagCrashReporting()
     
     private var configured: Bool = false
     
