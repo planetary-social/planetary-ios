@@ -70,6 +70,12 @@ func ssbConnectPeers(count uint32) bool {
 		return false
 	}
 
+	if len(addrs) == 0 {
+		_, resetAddrErr := viewDB.Exec(`UPDATE addresses set use=true`)
+		retErr = errors.Errorf("no peers available (%v)", resetAddrErr)
+		return false
+	}
+
 	newConns := make(chan *addrRow)
 	connErrs := make(chan *connectResult, len(addrs))
 
@@ -111,7 +117,7 @@ func ssbConnectPeers(count uint32) bool {
 			continue
 		}
 
-		_, err := tx.Exec(`UPDATE addresses set worked_last=0,last_err=? where address_id = ?`, res.err.Error(), res.row.addrID)
+		_, err := tx.Exec(`UPDATE addresses set worked_last=0,last_err=?,use=false where address_id = ?`, res.err.Error(), res.row.addrID)
 		if err != nil {
 			retErr = errors.Wrapf(err, "updateFailed: failing pub %d", res.row.addrID)
 			return false
@@ -159,8 +165,15 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 		err       error
 	)
 
-	rows, err = viewDB.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, count)
+	// keep the query failures in a seperate transaction and commit it after the parse
+	tx, txErr := viewDB.Begin()
+	if txErr != nil {
+		return nil, errors.Wrap(txErr, "queryAddresses: failed to make transaction for failures")
+	}
+
+	rows, err = tx.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, count)
 	if err != nil {
+		tx.Rollback()
 		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
 	}
 	defer rows.Close()
@@ -177,13 +190,11 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 
 		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
 		if err != nil {
-			_, execErr := viewDB.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
+			_, execErr := tx.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
 			if execErr != nil {
-				execErr = errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
-				level.Warn(log).Log("event", "broken address record update failed", "err", execErr)
-				continue // would be better to UPDATE these but might also be an intermittent resolve error
+				tx.Rollback()
+				return nil, errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
 			}
-			return nil, errors.Wrapf(err, "queryAddresses(%d): row %d (%q) not a multiserver", i, id, addr)
 		}
 
 		addresses = append(addresses, &addrRow{
@@ -196,10 +207,12 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 
 	if err := rows.Err(); err != nil {
 		level.Error(log).Log("where", "qryAddrs", "err", err)
+		tx.Rollback()
 		return nil, err
 	}
 
-	return addresses, nil
+	commitErr := tx.Commit()
+	return addresses, errors.Wrap(commitErr, "broken address record update failed")
 }
 
 //export ssbDisconnectAllPeers
