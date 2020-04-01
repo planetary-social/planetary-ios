@@ -519,7 +519,7 @@ class OnboardingTests: XCTestCase {
             XCTAssertNil(err)
             expectation.fulfill()
         }
-        self.wait(for: [expectation], timeout: 10)
+        self.wait(for: [expectation], timeout: 30)
     }
 
     func test60_PublishMany() {
@@ -600,7 +600,7 @@ class OnboardingTests: XCTestCase {
             }
         }
 
-        self.wait(for: [expectation], timeout: 10)
+        self.wait(for: [expectation], timeout: 30)
     }
 
     // last one switches the lights off
