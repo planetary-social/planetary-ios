@@ -16,7 +16,7 @@ fileprivate let botTestsKey = Secret(from: """
 fileprivate let botTestNetwork = NetworkKey(base64: "4vVhFHLFHeyutypUO842SyFd5jRIVhAyiZV29ftnKSU=")!
 fileprivate let botTestHMAC = HMACKey(base64: "1MQuQUGsRDyMyrFQQRdj8VVsBwn/t0bX7QQRQisMWjY=")!
 
-fileprivate let publishManyCount = 300
+fileprivate let publishManyCount = 50
 
 class GoBotTests: XCTestCase {
 
@@ -142,6 +142,7 @@ class GoBotTests: XCTestCase {
         XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, 1)
     }
 
+    // TODO: turn me into a benchmark
     func test008_PublishMany() {
         for i in 1...publishManyCount {
             let ex = self.expectation(description: "publish \(i)")
