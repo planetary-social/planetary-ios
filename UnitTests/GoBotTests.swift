@@ -99,11 +99,13 @@ class GoBotTests: XCTestCase {
         XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, -1)
 
         // finally log in again
+        let exAgain = self.expectation(description: "\(#function)")
         GoBotTests.shared.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
             loginErr in
             XCTAssertNil(loginErr)
+            exAgain.fulfill()
         }
-        self.wait(for: [ex], timeout: 10)
+        self.wait(for: [exAgain], timeout: 10)
 
         // has the test keys keys
         do {
@@ -148,6 +150,7 @@ class GoBotTests: XCTestCase {
                 XCTAssertNil(publishErr)
                 XCTAssertTrue(newMsgID.hasPrefix("%"))
                 XCTAssertTrue(newMsgID.hasSuffix(Algorithm.ggfeedmsg.rawValue))
+                ex.fulfill()
             }
             self.wait(for: [ex], timeout: 10)
         }
@@ -273,6 +276,7 @@ class GoBotTests: XCTestCase {
         GoBotTests.shared.refresh {
             err, _ in
             XCTAssertNil(err, "refresh error!")
+            ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
 
@@ -309,6 +313,7 @@ class GoBotTests: XCTestCase {
                 for nick in tc.value {
                     XCTAssertTrue(contacts.contains(GoBotTests.pubkeys[nick]!), "\(tc.key): \(nick) not in contacts")
                 }
+                ex.fulfill()
             }
             self.wait(for: [ex], timeout: 10)
         }
@@ -350,10 +355,10 @@ class GoBotTests: XCTestCase {
         ex = self.expectation(description: "\(#function) 3")
         GoBotTests.shared.thread(rootKey: afterUnsupported) {
             root, replies, err in
-            defer { ex.fulfill() }
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replies.count, 0)
+            ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
     }
@@ -376,14 +381,9 @@ class GoBotTests: XCTestCase {
             as: "alice",
             content: Contact(contact: botTestsKey.identity, following: true))
 
-        var ex = self.expectation(description: "\(#function) refresh")
-        GoBotTests.shared.refresh {
-            err, _ in
-            XCTAssertNil(err, "refresh error!")
-        }
-        self.wait(for: [ex], timeout: 10)
+        GoBotTests.shared.testRefresh(self)
 
-        ex = self.expectation(description: "\(#function) notify")
+        let ex = self.expectation(description: "\(#function) notify")
         GoBotTests.shared.notifications() {
             msgs, err in
             defer { ex.fulfill() }
@@ -412,12 +412,11 @@ class GoBotTests: XCTestCase {
     }
 
     func test131_recent_post_by_not_followed() {
-        let ex = self.expectation(description: "\(#function)")
         _ = GoBotTests.shared.testingPublish(
             as: "alice",
             content: Post(text: "hello, world!"))
 
-        GoBotTests.shared.refresh { err, _ in XCTAssertNil(err, "refresh error!") }; self.wait(for: [ex], timeout: 10)
+        GoBotTests.shared.testRefresh(self)
         
         let rex = self.expectation(description: "\(#function)")
         GoBotTests.shared.recent() {
@@ -430,24 +429,27 @@ class GoBotTests: XCTestCase {
     }
 
     func test132_recent_follow_alice() {
-        let ex = self.expectation(description: "\(#function)")
+        let ex1 = self.expectation(description: "1")
         let c = Contact(contact: GoBotTests.pubkeys["alice"]!, following: true)
         GoBotTests.shared.publish(content: c) {
             ref, err in
             XCTAssertNotNil(ref)
             XCTAssertNil(err)
+            ex1.fulfill()
         }
-        self.wait(for: [ex], timeout: 10)
+        self.wait(for: [ex1], timeout: 10)
         
-        GoBotTests.shared.refresh { err, _ in XCTAssertNil(err, "refresh error!") }; self.wait(for: [ex], timeout: 10)
+        GoBotTests.shared.testRefresh(self)
         
+        let ex2 = self.expectation(description: "2")
         GoBotTests.shared.recent() {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, publishManyCount+1+1)
             XCTAssertEqual(msgs[0].value.author, GoBotTests.pubkeys["alice"]!)
+            ex2.fulfill()
         }
-        self.wait(for: [ex], timeout: 10)
+        self.wait(for: [ex2], timeout: 10)
     }
 
     // MARK: threads
