@@ -99,6 +99,7 @@ extension AppController {
     private func registerForPushNotifications(completion: ((UNAuthorizationStatus) -> Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: AppController.pushNotificationOptions) {
             allowed, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             DispatchQueue.main.async {
                 completion?(allowed ? .authorized : .denied)

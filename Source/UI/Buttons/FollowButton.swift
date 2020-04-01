@@ -60,6 +60,7 @@ class FollowButton: PillButton {
                 [weak self] contact, error in
                 guard self != nil else { return }
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 complete()
             }
         } else {
@@ -67,6 +68,7 @@ class FollowButton: PillButton {
                 [weak self] contact, error in
                 guard self != nil else { return }
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 complete()
             }
         }

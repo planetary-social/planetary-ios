@@ -18,6 +18,7 @@ extension Onboarding {
         Onboarding.invitePubsToFollow(identity) {
             success, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
         }
     }
 }

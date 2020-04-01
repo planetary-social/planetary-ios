@@ -144,6 +144,7 @@ class ThreadViewController: ContentViewController {
         Bots.current.thread(keyValue: self.post) {
             [weak self] root, replies, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
             guard let me = self else { return }
             me.update(with: root ?? me.post, replies: replies, animated: animated)
@@ -273,11 +274,13 @@ class ThreadViewController: ContentViewController {
 
     func didPressPostButton() {
         guard let text = self.replyTextView.textView.attributedText, text.length > 0 else { return }
+        CrashReporting.shared.record("Post Button Tapped")
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         AppController.shared.showProgress()
         Bots.current.publish(post) {
             [unowned self] key, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()
             self.replyTextView.clear()
             self.replyTextView.resignFirstResponder()

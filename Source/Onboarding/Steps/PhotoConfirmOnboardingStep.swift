@@ -81,6 +81,8 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
         context.bot.addBlob(jpegOf: image, largestDimension: 1000) {
             [weak self] image, error in
 
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
             if Log.optional(error) {
                 self?.view.lookReady()
                 return
@@ -96,6 +98,7 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
                 _, error in
                 self?.view.lookReady()
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 if error == nil { self?.next() }
             }
         }

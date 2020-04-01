@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         
         Log.configure()
-        CrashReporting.configure()
+        CrashReporting.shared.configure()
         
         // reset configurations if user enabled switch in settings
         self.resetIfNeeded()

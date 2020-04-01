@@ -92,6 +92,7 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
             Onboarding.invitePubsToFollow(context.identity) {
                 [weak self] success, error in
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 self?.view.lookReady()
                 guard success else { return }
                 self?.next()

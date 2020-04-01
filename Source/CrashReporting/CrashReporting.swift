@@ -11,9 +11,19 @@ import Bugsnag
 
 class CrashReporting {
     
-    private static var configured: Bool = false
+    static let shared = CrashReporting()
     
-    static func configure() {
+    private var configured: Bool = false
+    
+    var about: About? {
+        didSet {
+            if let about = about, configured {
+                Bugsnag.configuration()?.setUser(about.identity, withName: about.name, andEmail: nil)
+            }
+        }
+    }
+    
+    func configure() {
         guard let token = Environment.Bugsnag.token else {
             configured = false
             return
@@ -23,11 +33,25 @@ class CrashReporting {
         configured = true
     }
     
-    static func crash() {
+    func crash() {
         guard configured else {
             return
         }
         Bugsnag.notifyError(NSError(domain: "com.planetary.social", code: 408, userInfo: nil))
+    }
+    
+    func record(_ message: String) {
+        guard configured else {
+            return
+        }
+        Bugsnag.leaveBreadcrumb(withMessage: message)
+    }
+    
+    func reportIfNeeded(error: Error?) {
+        guard configured, let error = error else {
+            return
+        }
+        Bugsnag.notifyError(error)
     }
     
 }

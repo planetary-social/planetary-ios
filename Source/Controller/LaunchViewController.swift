@@ -85,8 +85,12 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) {
             [weak self] error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) { return }
-            bot.about { (_,_) in
+            bot.about { (about, _) in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                CrashReporting.shared.about = about
                 self?.launchIntoMain()
             }
         }

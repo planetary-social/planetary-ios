@@ -67,6 +67,7 @@ extension AppDelegate {
                 let request = BGAppRefreshTaskRequest(identifier: identifier)
                 try BGTaskScheduler.shared.submit(request)
             } catch {
+                CrashReporting.shared.reportIfNeeded(error: error)
                 Log.optional(error, "Could not schedule task when entering background")
             }
         }
