@@ -107,6 +107,7 @@ class PreviewSettingsViewController: DebugTableViewController {
 
     private func didError(_ error: OffboardingError?) -> Bool {
         guard let error = error else { return false }
+        CrashReporting.shared.reportIfNeeded(error: error)
         Log.optional(error)
         switch error {
             case .apiError:

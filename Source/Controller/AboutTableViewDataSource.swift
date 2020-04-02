@@ -48,6 +48,7 @@ class AboutTableViewDataSource: NSObject {
     private func loadAbouts(for identities: [Identity], completion: (() -> Void)? = nil) {
         Bots.current.abouts(identities: identities) {
             [weak self] abouts, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) { return }
             for about in abouts { self?.abouts[about.identity] = about }
             completion?()

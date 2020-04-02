@@ -67,6 +67,7 @@ class NotificationsViewController: ContentViewController {
         Bots.current.notifications() {
             [weak self] msgs, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             self?.update(with: msgs, animated: false)
             self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()

@@ -31,6 +31,7 @@ class ResumeOnboardingStep: OnboardingStep {
 
         Onboarding.resume() {
             [weak self] context, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) { self?.alert(); return }
             self?.data.context = context
             self?.scheduledNext()

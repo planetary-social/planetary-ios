@@ -98,6 +98,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // schedule the notification
         UNUserNotificationCenter.current().add(request) {
             error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
         }
     }

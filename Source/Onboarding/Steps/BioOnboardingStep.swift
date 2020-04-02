@@ -70,6 +70,7 @@ class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
             [weak self] _, error in
             self?.view.lookReady()
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             if error == nil { self?.next() }
         }
     }

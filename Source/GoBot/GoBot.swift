@@ -329,6 +329,7 @@ class GoBot: Bot {
                         self?.internalRefresh() { // do a refresh, then return to the caller
                             error, _ in
                             Log.optional(error)
+                            CrashReporting.shared.reportIfNeeded(error: error)
                             // finally, return back to the UI
                             DispatchQueue.main.async { completion(key, nil) }
                         }
@@ -531,6 +532,7 @@ class GoBot: Bot {
             } catch {
                 let err = GoBotError.duringProcessing("viewDB: message filling failed", error)
                 Log.optional(err)
+                CrashReporting.shared.reportIfNeeded(error: err)
                 completion(err)
                 return
             }
@@ -626,6 +628,7 @@ class GoBot: Bot {
             // add to log and return Image if successful
             self.bot.blobsAdd(data: data) {
                 identifier, error in
+                CrashReporting.shared.reportIfNeeded(error: error)
                 if Log.optional(error) { completionOnMain(nil, error); return }
                 let image = Image(link: identifier, jpegImage: uiimage, data: data)
                 completionOnMain(image, nil)
@@ -843,6 +846,7 @@ class GoBot: Bot {
             self.refresh() {
                 err, _ in
                 Log.optional(err)
+                CrashReporting.shared.reportIfNeeded(error: err)
                 completion(ref, nil)
                 NotificationCenter.default.post(name: .didUnblockUser, object: identity)
             }

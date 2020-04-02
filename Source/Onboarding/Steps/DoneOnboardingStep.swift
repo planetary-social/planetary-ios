@@ -60,6 +60,7 @@ class DoneOnboardingStep: OnboardingStep {
         VerseAPI.directory(show: me) {
             [weak self] success, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             guard let me = self else { return }
             me.view.lookReady()
             if success {

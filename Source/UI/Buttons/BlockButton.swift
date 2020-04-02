@@ -63,6 +63,7 @@ class BlockButton: PillButton {
             Bots.current.block(relationship.other) {
                 _, error in
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 complete()
             }
         }
@@ -71,6 +72,7 @@ class BlockButton: PillButton {
             Bots.current.unblock(relationship.other) {
                 _, error in
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 complete()
             }
         }

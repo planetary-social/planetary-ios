@@ -176,6 +176,7 @@ class Onboarding {
     static func reset(completion: @escaping ResetCompletion) {
         Bots.current.logout() {
             error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) {
                 Log.unexpected(.botError, "Bog.logout() failed, future onboarding may be affected.")
             }

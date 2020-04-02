@@ -1653,7 +1653,9 @@ class ViewDatabase {
     // checks if pubKey is a known local thing, otherwise returns nil
     func identityFromPublicKey(pubKey: String) -> Identity? {
         guard let _ = self.openDB else {
-            Log.optional(ViewDatabaseError.notOpen)
+            let error = ViewDatabaseError.notOpen
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             return nil
         }
         let knownFormats = ["ed25519", "ggfeed-v1"]

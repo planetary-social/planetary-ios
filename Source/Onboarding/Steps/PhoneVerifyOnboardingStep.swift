@@ -92,6 +92,7 @@ class PhoneVerifyOnboardingStep: OnboardingStep {
             [weak self] success, error in
             self?.view.lookReady()
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             if success { self?.next() }
             else { self?.view.textField.shake() }
         }

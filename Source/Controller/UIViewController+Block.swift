@@ -35,6 +35,7 @@ extension UIViewController {
         Bots.current.block(identity) {
             message, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()
         }
     }

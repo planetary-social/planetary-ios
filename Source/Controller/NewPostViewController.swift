@@ -118,6 +118,8 @@ class NewPostViewController: ContentViewController {
 
         guard self.textView.text.isEmpty == false else { return }
         guard let text = self.textView.attributedText else { return }
+        
+        CrashReporting.shared.record("Post Button Tapped")
 
         self.lookBusy()
 
@@ -127,6 +129,7 @@ class NewPostViewController: ContentViewController {
         Bots.current.publish(post, with: images) {
             [weak self] identifier, error in
             self?.lookReady()
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) { return }
             self?.dismiss(didPublish: post)
         }

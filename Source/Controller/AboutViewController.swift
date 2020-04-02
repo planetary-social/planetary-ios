@@ -77,6 +77,7 @@ class AboutViewController: ContentViewController {
     private func loadAbout() {
         Bots.current.about(identity: self.identity) {
             [weak self] about, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             guard let about = about else { return }
             self?.about = about
@@ -87,6 +88,7 @@ class AboutViewController: ContentViewController {
     private func loadFeed() {
         Bots.current.feed(identity: self.identity) {
             [weak self] keyValues, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) { return }
             self?.dataSource.keyValues = keyValues.posts.sortedByDateDescending().rootPosts()
             self?.tableView.forceReload()
@@ -96,6 +98,7 @@ class AboutViewController: ContentViewController {
     private func loadFollows() {
         Bots.current.follows(identity: self.identity) {
             [weak self] identities, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             self?.followingIdentities = identities
             self?.updateFollows()
@@ -105,6 +108,7 @@ class AboutViewController: ContentViewController {
     private func loadFollowedBy() {
         Bots.current.followedBy(identity: self.identity) {
             [weak self] identities, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             self?.followedByIdentities = identities
             self?.updateFollows()
@@ -129,6 +133,7 @@ class AboutViewController: ContentViewController {
 
         Bots.current.abouts(identities: Array(allIdentities)) {
             [weak self] abouts, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) { return }
 
             guard let followedByIdentities = self?.followedByIdentities,
@@ -211,15 +216,18 @@ class AboutViewController: ContentViewController {
 
         Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) {
             [weak self] image, error in
-
+            
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error)                                          { AppController.shared.hideProgress(); return }
             guard let about = self?.about?.mutatedCopy(image: image) else   { AppController.shared.hideProgress(); return }
 
             Bots.current.publish(content: about) {
                 _, error in
+                CrashReporting.shared.reportIfNeeded(error: error)
                 if Log.optional(error) { AppController.shared.hideProgress(); return }
                 Bots.current.about { (newAbout, error) in
                     AppController.shared.hideProgress()
+                    CrashReporting.shared.reportIfNeeded(error: error)
                     if Log.optional(error) { return }
                     NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
                     self?.aboutView.imageView.fade(to: uiimage)
@@ -237,10 +245,12 @@ class AboutViewController: ContentViewController {
             AppController.shared.showProgress()
             Bots.current.publish(content: controller.about) {
                 _, error in
+                CrashReporting.shared.reportIfNeeded(error: error)
                 if Log.optional(error) { AppController.shared.hideProgress(); return }
                 Log.optional(error)
                 Bots.current.about { (newAbout, error) in
                     AppController.shared.hideProgress()
+                    CrashReporting.shared.reportIfNeeded(error: error)
                     if Log.optional(error) { return }
                     NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
                     self?.update(with: controller.about)
@@ -307,13 +317,16 @@ extension AboutViewController: UIImagePickerControllerDelegate, UINavigationCont
 
         Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) {
             [weak self] image, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error)                                          { AppController.shared.hideProgress(); return }
             guard let about = self?.about?.mutatedCopy(image: image) else   { AppController.shared.hideProgress(); return }
             Bots.current.publish(content: about) {
                 _, error in
+                CrashReporting.shared.reportIfNeeded(error: error)
                 if Log.optional(error) { AppController.shared.hideProgress(); return }
                 Bots.current.about { (newAbout, error) in
                     AppController.shared.hideProgress()
+                    CrashReporting.shared.reportIfNeeded(error: error)
                     Log.optional(error)
                     NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
                     self?.aboutView.imageView.fade(to: uiimage)
