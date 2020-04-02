@@ -141,13 +141,16 @@ class ThreadViewController: ContentViewController {
     }
 
     private func load(animated: Bool = true) {
-        Bots.current.thread(keyValue: self.post) {
-            [weak self] root, replies, error in
+        let post = self.post
+        Bots.current.thread(keyValue: post) { [weak self] root, replies, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
-            guard let me = self else { return }
-            me.update(with: root ?? me.post, replies: replies, animated: animated)
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.update(with: root ?? post, replies: replies, animated: animated)
+            }
         }
     }
 
@@ -277,15 +280,18 @@ class ThreadViewController: ContentViewController {
         CrashReporting.shared.record("Post Button Tapped")
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         AppController.shared.showProgress()
-        Bots.current.publish(post) {
-            [unowned self] key, error in
+        Bots.current.publish(post) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()
-            self.replyTextView.clear()
-            self.replyTextView.resignFirstResponder()
-            self.onNextUpdateScrollToPostWithKeyValueKey = key
-            self.load()
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.replyTextView.clear()
+                self?.replyTextView.resignFirstResponder()
+                self?.onNextUpdateScrollToPostWithKeyValueKey = key
+                self?.load()
+            }
         }
     }
 

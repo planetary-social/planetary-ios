@@ -51,7 +51,13 @@ class BlockedUsersViewController: ContentViewController, AboutTableViewDelegate 
         guard let identity = Bots.current.identity else { return }
         Bots.current.blocks(identity: identity) {
             [weak self] identities, error in
-            self?.dataSource.identities = identities
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.dataSource.identities = identities
+            }
         }
     }
 
