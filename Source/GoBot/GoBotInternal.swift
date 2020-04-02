@@ -153,7 +153,7 @@ class GoBotInternal {
         return ssbBotIsRunning()
     }
 
-    private var currentNetwork: NetworkKey = NetworkKey.integrationTests // good as a default
+    private var currentNetwork: NetworkKey = NetworkKey.ssb
 
     var getNetworkKey: NetworkKey {
         return self.currentNetwork
@@ -250,7 +250,9 @@ class GoBotInternal {
     
     func disconnectAll() {
         if !ssbDisconnectAllPeers(){
-            Log.optional(GoBotError.unexpectedFault("failed to disconnect all peers"))
+            let error = GoBotError.unexpectedFault("failed to disconnect all peers")
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
         }
     }
 
@@ -355,6 +357,7 @@ class GoBotInternal {
             return (true, report)
         } catch {
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             return (false, nil)
         }
     }

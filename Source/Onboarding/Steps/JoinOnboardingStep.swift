@@ -45,6 +45,7 @@ class JoinOnboardingStep: OnboardingStep {
             [weak self] context, error in
             self?.view.lookReady()
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             guard let context = context else { self?.alert(); return }
             self?.data.context = context
             self?.next()

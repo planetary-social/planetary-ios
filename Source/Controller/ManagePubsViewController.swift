@@ -30,6 +30,7 @@ class ManagePubsViewController: UITableViewController {
     private func load() {
         Bots.current.knownPubs { [weak self] (knownPubs, error) in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             self?.knownPubs = knownPubs
             self?.tableView.reloadData()
         }

@@ -66,6 +66,7 @@ class PhoneOnboardingStep: OnboardingStep {
             [weak self] success, error in
             self?.view.lookReady()
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             if success { self?.next() }
         }
     }

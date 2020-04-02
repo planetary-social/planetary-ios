@@ -64,6 +64,7 @@ class ChannelsViewController: ContentViewController {
     private func load() {
         Bots.current.hashtags() {
             [weak self] hashtags, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             self?.update(with: hashtags, animated: false)
             self?.removeLoadingAnimation()

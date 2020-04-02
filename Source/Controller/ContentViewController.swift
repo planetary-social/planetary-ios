@@ -124,7 +124,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
             AppController.shared.mainViewController?.setTopBorder(hidden: false)
         }
     }
-
+    
     func addSubviews() {
         // clients are encouraged to override but must call super
     }

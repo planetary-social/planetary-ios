@@ -33,6 +33,7 @@ extension Onboarding {
         // request follow back
         PubAPI().invitePubsToFollow(identity) {
             success, error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             if success {
                 Log.info("\(#function): successfully completed follow back request")
             } else {

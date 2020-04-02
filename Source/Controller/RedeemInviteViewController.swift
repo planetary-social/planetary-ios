@@ -91,6 +91,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         AppController.shared.showProgress()
         Bots.current.inviteRedeem(token: redeemCode) { [weak self] error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()
             if let _ = error {
                 self?.alert(style: .alert,
