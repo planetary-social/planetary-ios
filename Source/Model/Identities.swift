@@ -18,7 +18,9 @@ struct SSBIdentities {
                 "cryptix-pub": "@xxZeuBUKIXYZZ7y+CIHUuy0NOFXz2MhUBkHemr86S3M=.ed25519"]
 
     let people = ["Current Events": "@wNmXqk80DL4FrBjzZcYqbKs/SpsPv6MVX6BLICabPfI=.ed25519",
-                  "The Weekley": "@iVPi/B73hJSpsUB8XbSnlxe3NembPXLjOfIexlYdgJA=.ed25519"]
+                  "The Weekley": "@iVPi/B73hJSpsUB8XbSnlxe3NembPXLjOfIexlYdgJA=.ed25519",
+                  "rabble":         "@0uOwBrHIeiRK7lcvpLwjSFkcS3UHSQb/jyN52zf+J6Y=.ed25519",
+                  "Planetary": "@oeNoy1RIArVdMdk8ndeoKbAKuU8b56VgxlYP5y8b9Ic=.ed25519"]
 
     var all: [String: Identity] {
         return self.pubs.merging(self.people) { (current, _) in current }
@@ -31,12 +33,10 @@ struct VerseIdentities {
                 "testpub_go": "@BEN6tlUwG8UbiAjK/dtmkrLFNworYkRJBZuxNbc2x0I=.ed25519"]
 
     let people = ["christian":      "@uZsQmjnC5fjZCrRfH8ADSx9Kbx64Na5wvYoESS3VFqw=.ed25519",
-                  "christoph_ios":  "@6MmU/s6qlBb6kaxoGxQiCDubMdOoDOoKhqfF53zFVFo=.ed25519",
-                  "christoph_sim":  "@WacATfmBwkyi1DcTduD3/sXIGHvrizWJvGXIIM4qMTY=.ed25519",
                   "henry":          "@VG+jsSyURWMocK+oMb8j9wzHV2rLfxxdEZcTJ+CxsOc=.ed25519",
-                  "rabble":         "@1yHRAWUAut2Y6qCkVK0bxcvFy1NgrEujv9t2sOUjcQk=.ed25519",
+                  "rabble":         "@0uOwBrHIeiRK7lcvpLwjSFkcS3UHSQb/jyN52zf+J6Y=.ed25519",
                   "rabble-patch":   "@SwPgz6L0SN78lmv3GDaa2dIAJ0j91GiRI05G9H1w0ys=.ed25519",
-                  "tom":            "@xCLF6kP1NMcVGDSkIcbwB9ZdrX5S/yhE7CjFVdtE8LU=.ed25519"]
+                  "Planetary":      "@oeNoy1RIArVdMdk8ndeoKbAKuU8b56VgxlYP5y8b9Ic=.ed25519"]
 
     var all: [String: Identity] {
         return self.pubs.merging(self.people) { (current, _) in current }
@@ -64,11 +64,7 @@ struct PlanetaryIdentities {
     let people = ["Planetary":          "@1TBkfmdEjgLnjucHWaluBR31mFmkLp8/v+BgqMu4+9U=.ed25519",
                   "Christian":          "@2l7hLH0QYOr1xePsdKvCH2TlLk8crOf7VJCAaNbia7A=.ggfeed-v1",
                   "henry":              "@u8DoI07mlGaqaqA29dcpMmIHoSxenHZpQUaZrU03WFM=.ggfeed-v1",
-                  "Christoph.iPhone":   "@zlQFf3SnQaIB7ShDzqQlY2DaFRJn5Qs4yVyHXgVOBNA=.ggfeed-v1",
-                  "Christoph.sim":      "@yykvlH6l2FGATJxDPr7PNzRROUsnweUudC+C9EF2e3s=.ggfeed-v1",
-                  "Rabble":             "@FJuMvefQLjBGZLaZSTEpRQ/6UwhqcqgjKgvKaurPYuc=.ggfeed-v1",
-                  "Tom":                "@/AoGtAfqdS77/AIOBhI5XwYgRDT8QInuKmofhvI5bgQ=.ggfeed-v1",
-                  "Zef":                "@GnOAKf5u8ynUAENjdibTJ80oIV3csrgjEW5TYMVLjFA=.ggfeed-v1"]
+                  "Rabble":             "@FJuMvefQLjBGZLaZSTEpRQ/6UwhqcqgjKgvKaurPYuc=.ggfeed-v1"]
 
     var all: [String: Identity] {
         return self.pubs.merging(self.people) { (current, _) in current }
