@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.16] - 2020-04-02
+### Added
+- New Planetary typeface.
+- Share your profile link to the world.
+- Loading animation for Notifications and Channels screens.
+### Fixed
+- Show alert dialogs when errors occur.
+- Report handled errors.
+
 ## [0.9.15] - 2020-03-26
 ### Fixed
 - Post button not appearing when undocking the keyboard.
