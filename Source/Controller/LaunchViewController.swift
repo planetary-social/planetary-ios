@@ -109,6 +109,7 @@ class LaunchViewController: UIViewController {
             }
             bot.about { (about, _) in
                 Log.optional(error)
+                // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: error)
                 CrashReporting.shared.about = about
                 self?.launchIntoMain()

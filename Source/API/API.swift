@@ -8,22 +8,6 @@
 
 import Foundation
 
-enum APIError: Error {
-
-    case decodeError
-    case encodeError
-    case invalidIdentity
-    case invalidPath(String)
-    case invalidURL
-    case httpStatusCode(Int)
-    case other(Error)
-
-    static func optional(_ error: Error?) -> APIError? {
-        guard let error = error else { return nil }
-        return APIError.other(error)
-    }
-}
-
 enum APIMethod: String {
     case GET
     case POST

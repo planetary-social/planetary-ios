@@ -31,8 +31,12 @@ class ManagePubsViewController: UITableViewController {
         Bots.current.knownPubs { [weak self] (knownPubs, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.knownPubs = knownPubs
-            self?.tableView.reloadData()
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.knownPubs = knownPubs
+                self?.tableView.reloadData()
+            }
         }
     }
     

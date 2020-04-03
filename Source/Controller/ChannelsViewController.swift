@@ -66,9 +66,14 @@ class ChannelsViewController: ContentViewController {
             [weak self] hashtags, error in
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
-            self?.update(with: hashtags, animated: false)
             self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()
+            
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.update(with: hashtags, animated: false)
+            }
         }
     }
 

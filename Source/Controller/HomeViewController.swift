@@ -139,10 +139,17 @@ class HomeViewController: ContentViewController {
             _, _ in
             Bots.current.recent() {
                 [weak self] roots, error in
-                self?.update(with: roots, animated: animated)
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 self?.refreshControl.endRefreshing()
                 self?.removeLoadingAnimation()
                 AppController.shared.hideProgress()
+             
+                if let error = error {
+                    self?.alert(error: error)
+                } else {
+                    self?.update(with: roots, animated: animated)
+                }
             }
         }
     }

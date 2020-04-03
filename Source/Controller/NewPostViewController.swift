@@ -128,10 +128,14 @@ class NewPostViewController: ContentViewController {
 
         Bots.current.publish(post, with: images) {
             [weak self] identifier, error in
-            self?.lookReady()
+            Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error) { return }
-            self?.dismiss(didPublish: post)
+            self?.lookReady()
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.dismiss(didPublish: post)
+            }
         }
     }
 

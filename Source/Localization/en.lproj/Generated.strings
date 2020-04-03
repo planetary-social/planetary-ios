@@ -1,6 +1,7 @@
 // This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
+"Text.error" = "Oops";
 "Text.cancel" = "Cancel";
 "Text.skip" = "Skip";
 "Text.ok" = "OK";
@@ -194,3 +195,5 @@
 "Debug.debugTitle" = "Hacker Mode";
 "Debug.debugMenu" = "Dangerous and powerful debug menu";
 "Debug.debugFooter" = "This is where we let you shot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options.";
+
+"Error.unexpected" = "Something unexpected happened.";

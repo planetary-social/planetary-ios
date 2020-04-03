@@ -13,7 +13,8 @@ extension Text {
                 Text.Preview.self,
                 Text.Push.self,
                 Text.Reporting.self,
-                Text.Debug.self]
+                Text.Debug.self,
+                Text.Error.self]
     }
 }
 
@@ -23,6 +24,7 @@ enum Text: String, Localizable, CaseIterable {
 
     case planetary = "Planetary"
 
+    case error = "Oops"
     case cancel = "Cancel"
     case skip = "Skip"
     case ok = "OK"
@@ -322,5 +324,12 @@ extension Text {
         case debugTitle = "Hacker Mode"
         case debugMenu = "Dangerous and powerful debug menu"
         case debugFooter = "This is where we let you shot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options."
+    }
+}
+
+extension Text {
+    
+    enum Error: String, Localizable, CaseIterable {
+        case unexpected = "Something unexpected happened."
     }
 }
