@@ -15,6 +15,7 @@ extension XCTestCase {
     // uses the waitForExpectations() construct, but doesn't require littering
     // the script code with expectations.  If the expectation times out, the test
     // will fail.
+    @available(*, deprecated)
     func wait(for duration: TimeInterval = 2, label description: String = "wait") {
         let expectation = self.expectation(description: description)
         let deadline = DispatchTime.now() + Double(Int64(duration * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)

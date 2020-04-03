@@ -38,6 +38,8 @@ class OnboardingTests: XCTestCase {
     }
 
     func test01_start() {
+        let expectation = self.expectation(description: "Start Onboarding")
+
         var name = "APITest \(Date().shortDateTimeString)"
         if let circleBuild = ProcessInfo.processInfo.environment["CIRCLE_BUILD_NUM"] {
             name += "(CircleCI:\(circleBuild))"
@@ -56,10 +58,10 @@ class OnboardingTests: XCTestCase {
             print("created ID: \(context?.identity ?? "<none>")")
             XCTAssertEqual(context?.network.hexEncodedString(), NetworkKey.integrationTests.hexEncodedString())
             XCTAssertEqual(OnboardingTests.context.bot.statistics.repo.messageCount, 1)
+            expectation.fulfill()
         }
 
-        // pause the test while waiting for an async call to complete
-        self.wait()
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test02_pub_doesnt_know_us_yet() {
@@ -67,6 +69,9 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Pubs are online on TestAPI")
+
         TestAPI.shared.pubsAreOnline {
             yes, err in
             XCTAssertNil(err, "\(err.debugDescription)")
@@ -78,9 +83,12 @@ class OnboardingTests: XCTestCase {
                 if let res = res {
                     XCTFail("pre-test ID already onboarded!: \(res)")
                 }
+
+                expectation.fulfill()
             }
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test10_about() {
@@ -88,16 +96,22 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Get current about")
+
         ctx.bot.about {
             info, error in
             XCTAssertNil(error, "\(error.debugDescription)")
             guard let i = info else {
                 XCTFail("nil info")
+                expectation.fulfill()
                 return
             }
             XCTAssertTrue((i.name?.starts(with: "APITest"))!)
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test11_about_landed_in_db() {
@@ -105,12 +119,17 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Refresh bot")
+
         ctx.bot.refresh(completion: {
             (err, _) in
             XCTAssertNil(err)
             XCTAssertEqual(OnboardingTests.context.bot.statistics.repo.messageCount,1)
+            expectation.fulfill()
         })
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     // TODO: pull of VerseAPI.directory
@@ -119,15 +138,19 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Follow identities")
+
         let identities = Identities.for(NetworkKey.integrationTests)
         Onboarding.follow(identities, context: ctx) {
             worked, contacts, err in
             XCTAssertEqual(err.count, 0)
             XCTAssertTrue(worked)
             XCTAssertEqual(contacts.count, 1)
-        
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test21_follow_landed_in_db() {
@@ -135,11 +158,17 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Refresh bot")
+
         ctx.bot.refresh() {
             err, _ in
             XCTAssertNil(err)
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
+
         XCTAssertEqual(OnboardingTests.context.bot.statistics.repo.messageCount,2)
     }
 
@@ -148,13 +177,18 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Get current follows")
+
         ctx.bot.follows(identity: ctx.identity) {
             follows, error in
             XCTAssertNil(error, "\(error.debugDescription)")
             XCTAssertEqual(follows.count, 1)
             XCTAssertTrue(follows.contains(Identities.testNet.pubs["integrationpub1"]!))
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test30_can_publish_blob() {
@@ -176,6 +210,9 @@ class OnboardingTests: XCTestCase {
 
         // blatenty copy of primary() in PhotoConfirmOnboardingStep
         // TODO: we should somehow refactor what does the api stuff from the _is it an image_ stuff? https://app.asana.com/0/0/1134329918920787/f
+
+        let expectation = self.expectation(description: "Add blob")
+
         ctx.bot.addBlob(data: badImage) {
             imgref, error in
             XCTAssertNil(error)
@@ -183,6 +220,7 @@ class OnboardingTests: XCTestCase {
             let img = Image(link: imgref) // TODO: how to do I make an image from Data() ?
             guard var about = ctx.about?.mutatedCopy(image: img) else {
                 XCTAssertNil(error)
+                expectation.fulfill()
                 return
             }
             if let buildHash = ProcessInfo.processInfo.environment["CIRCLE_SHA1"] {
@@ -194,9 +232,11 @@ class OnboardingTests: XCTestCase {
                 XCTAssertNil(error)
 //                ctx.about?.image = img
                 // TODO: can't update image on about or about on context
+                expectation.fulfill()
             }
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     // make sure this is a fresh blob (calls blobs.has on the pub)
@@ -217,12 +257,15 @@ class OnboardingTests: XCTestCase {
 //            return
 //        }
 
+        let expectation = self.expectation(description: "Set current onboarded")
+        
         ctx.bot.about() {
             newAbout, err in
             XCTAssertNil(err)
 
             guard let img = newAbout?.image else {
                 XCTFail("still no image on about")
+                expectation.fulfill()
                 return
             }
 
@@ -236,9 +279,11 @@ class OnboardingTests: XCTestCase {
                 if let res = res {
                     XCTFail("test39: ID already onboarded!: \(res)")
                 }
+                expectation.fulfill()
             }
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test40_invite_pubs() {
@@ -248,12 +293,17 @@ class OnboardingTests: XCTestCase {
         }
         // TODO: https://app.asana.com/0/0/1134329918920786/f
         // this uses the TestAPI instead of Onboarding.invitePubsToFollow, which is currently hardcoded to PubAPI
+
+        let expectation = self.expectation(description: "Invite pubs to follow")
+
         TestAPI.shared.invitePubsToFollow(ctx.identity) {
             success, error in
             XCTAssertNil(error)
             XCTAssertTrue(success)
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test41_connectToPubs() {
@@ -261,15 +311,22 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Sync and refresh bot")
+
         ctx.bot.sync() {
             err, _, _ in
             XCTAssertNil(err)
             ctx.bot.refresh() {
                 (err, _) in
                 XCTAssertNil(err)
+
+                expectation.fulfill()
             }
         }
-        self.wait(for: 10)
+
+        self.wait(for: [expectation], timeout: 30)
+        sleep(5)
     }
 
     func test42_refresh() {
@@ -277,12 +334,18 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Refresh bot")
+
         ctx.bot.refresh() {
             (err, _) in
             XCTAssertNil(err)
             XCTAssertGreaterThan(ctx.bot.statistics.repo.messageCount, 3)
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 30)
+        sleep(5)
     }
 
     func test43_got_messages_from_pub() {
@@ -290,18 +353,24 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Get feed")
+
         ctx.bot.feed(identity: Identities.testNet.pubs["integrationpub1"]!) {
             msgs, err in
+            defer { expectation.fulfill() }
             XCTAssertNil(err)
             if msgs.count < 1 {
                 XCTAssertGreaterThan(ctx.bot.statistics.repo.feedCount, 1, "didnt even get feed")
                 XCTFail("Expected init message from pub")
                 return
             }
-            XCTAssertEqual(msgs[0].contentType, .post)
-            XCTAssertTrue(msgs[0].value.content.post?.text.hasPrefix("Setup init:") ?? false)
+            guard let msg = msgs.last else { XCTFail("expected msg"); return }
+            XCTAssertEqual(msg.contentType, .post)
+            XCTAssertTrue(msg.value.content.post?.text.hasPrefix("Setup init:") ?? false)
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 30)
     }
 
     func test50_ask_pub_about_new_id() {
@@ -320,12 +389,15 @@ class OnboardingTests: XCTestCase {
         //            return
         //        }
 
+        let expectation = self.expectation(description: "Get onboarded")
+
         ctx.bot.about() {
             newAbout, err in
             XCTAssertNil(err)
 
             guard let img = newAbout?.image else {
                 XCTFail("still no image on about")
+                expectation.fulfill()
                 return
             }
 
@@ -339,9 +411,11 @@ class OnboardingTests: XCTestCase {
                 if let res = res {
                     print("ID onboarded!\(res)")
                 }
+                expectation.fulfill()
             }
         }
-        self.wait(for: 10)
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     // this just makes sure we can can follow a large chunk of people, like the directory selection might do
@@ -374,13 +448,18 @@ class OnboardingTests: XCTestCase {
             "@VGltVmVyc2VYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
             "@VG9tVmVyc2VYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
         ]
+
+        let expectation = self.expectation(description: "Follow identities")
+
         Onboarding.follow(set1, context: ctx) {
             worked, contacts, errs in
             XCTAssertEqual(errs.count, 0)
             XCTAssertTrue(worked)
             XCTAssertEqual(contacts.count, 20)
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test52_have_new_follows_locally() {
@@ -388,6 +467,9 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Refresh and get follows")
+
         ctx.bot.refresh() {
             (err, _) in
             XCTAssertNil(err)
@@ -396,9 +478,11 @@ class OnboardingTests: XCTestCase {
                 (contacts, err) in
                 XCTAssertNil(err)
                 XCTAssertGreaterThanOrEqual(contacts.count, 20) // the two pubs are filtered
+                expectation.fulfill()
             }
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test53_trigger_sync_of_new_follows() {
@@ -406,11 +490,17 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Sync bot")
+
         ctx.bot.sync() {
             err, _, _ in
             XCTAssertNil(err)
+            expectation.fulfill()
         }
-        self.wait(for: 10)
+
+        self.wait(for: [expectation], timeout: 30)
+        sleep(5)
     }
 
     func test54_pub_has_new_messages() {
@@ -418,14 +508,18 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Get onboarded")
+
         TestAPI.shared.onboarded(who: ctx.identity,
                                  messageCount: 23,
                                  follows: "set1"
         ) {
             _, err in
             XCTAssertNil(err)
+            expectation.fulfill()
         }
-        self.wait()
+        self.wait(for: [expectation], timeout: 60)
     }
 
     func test60_PublishMany() {
@@ -433,13 +527,22 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        var expectations = [XCTestExpectation]()
         for i in 1...publishManyCount {
+            let expectation = self.expectation(description: "Publish \(i)")
+
             ctx.bot.publish(content: Post(text: "hello tests! (msg no \(i))")) {
                 (_, publishErr) in
                 XCTAssertNil(publishErr)
+
+                expectation.fulfill()
             }
+
+            expectations.append(expectation)
         }
-        self.wait()
+
+        self.wait(for: expectations, timeout: 30)
     }
 
     func test61_trigger_sync_of_new_follows() {
@@ -447,6 +550,9 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Sync and refresh bot")
+
         ctx.bot.sync() {
             err, _, _ in
             XCTAssertNil(err)
@@ -454,9 +560,11 @@ class OnboardingTests: XCTestCase {
                 err, _ in
                 XCTAssertNil(err)
                 XCTAssertGreaterThan(ctx.bot.statistics.repo.messageCount, publishManyCount+3)
+                expectation.fulfill()
             }
         }
-        self.wait(for: 30) // this needs to wait for the refresh
+        self.wait(for: [expectation], timeout: 60)
+        sleep(5)
     }
 
     func test62_pub_has_many_messages() {
@@ -465,6 +573,9 @@ class OnboardingTests: XCTestCase {
             return
         }
         // TODO: see test50
+
+        let expectation = self.expectation(description: "Set current onboarded")
+
         ctx.bot.about() {
             newAbout, err in
             XCTAssertNil(err)
@@ -472,6 +583,7 @@ class OnboardingTests: XCTestCase {
             // make sure we got the image on the 2nd try
             guard let img = newAbout?.image else {
                 XCTFail("still no image on about")
+                expectation.fulfill()
                 return
             }
 
@@ -484,9 +596,11 @@ class OnboardingTests: XCTestCase {
                 if let res = res {
                     print("ID onboarded!\(res)")
                 }
+                expectation.fulfill()
             }
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 60)
     }
 
     // last one switches the lights off
@@ -495,12 +609,17 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Unfollow")
+
         TestAPI.shared.letTestPubUnfollow(ctx.identity) {
             worked, err in
             XCTAssertTrue(worked)
             XCTAssertNil(err)
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 
     func test92_shutdown() {
@@ -508,11 +627,16 @@ class OnboardingTests: XCTestCase {
             XCTFail("no context")
             return
         }
+
+        let expectation = self.expectation(description: "Logout")
+
         ctx.bot.logout {
             err in
             XCTAssertNil(err)
+            expectation.fulfill()
         }
-        self.wait()
+
+        self.wait(for: [expectation], timeout: 10)
     }
 }
 

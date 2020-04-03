@@ -21,6 +21,14 @@
                BlueprintName = "APITests"
                ReferencedContainer = "container:Planetary.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "BlockedTests">
+               </Test>
+               <Test
+                  Identifier = "VerseAPITests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
