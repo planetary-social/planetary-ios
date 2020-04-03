@@ -68,9 +68,14 @@ class NotificationsViewController: ContentViewController {
             [weak self] msgs, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.update(with: msgs, animated: false)
             self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()
+            
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.update(with: msgs, animated: false)
+            }
         }
     }
 

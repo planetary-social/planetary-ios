@@ -77,8 +77,8 @@ class AboutViewController: ContentViewController {
     private func loadAbout() {
         Bots.current.about(identity: self.identity) {
             [weak self] about, error in
-            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             guard let about = about else { return }
             self?.about = about
             self?.update(with: about)
@@ -88,8 +88,11 @@ class AboutViewController: ContentViewController {
     private func loadFeed() {
         Bots.current.feed(identity: self.identity) {
             [weak self] keyValues, error in
+            Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error) { return }
+            guard error == nil else {
+                return
+            }
             self?.dataSource.keyValues = keyValues.posts.sortedByDateDescending().rootPosts()
             self?.tableView.forceReload()
         }
@@ -98,8 +101,8 @@ class AboutViewController: ContentViewController {
     private func loadFollows() {
         Bots.current.follows(identity: self.identity) {
             [weak self] identities, error in
-            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             self?.followingIdentities = identities
             self?.updateFollows()
         }
@@ -108,8 +111,8 @@ class AboutViewController: ContentViewController {
     private func loadFollowedBy() {
         Bots.current.followedBy(identity: self.identity) {
             [weak self] identities, error in
-            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             self?.followedByIdentities = identities
             self?.updateFollows()
         }
@@ -174,7 +177,12 @@ class AboutViewController: ContentViewController {
     @objc private func editPhotoButtonTouchUpInside() {
         self.imagePicker.present(openCameraInSelfieMode: true) {
             [unowned self] image in
-            self.publishPhotoThenDismiss(image)
+            guard let uiimage = image else {
+                return
+            }
+            self.publishProfilePhoto(uiimage) { [weak self] in
+                self?.imagePicker.dismiss()
+            }
         }
     }
 
@@ -208,30 +216,46 @@ class AboutViewController: ContentViewController {
         AppController.shared.choose(from: actions)
     }
 
-    private func publishPhotoThenDismiss(_ image: UIImage?) {
-
-        guard let uiimage = image else { return }
-
+    private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping () -> Void) {
         AppController.shared.showProgress()
 
-        Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) {
-            [weak self] image, error in
-            
+        Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) { [weak self] image, error in
+            Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error)                                          { AppController.shared.hideProgress(); return }
-            guard let about = self?.about?.mutatedCopy(image: image) else   { AppController.shared.hideProgress(); return }
-
-            Bots.current.publish(content: about) {
-                _, error in
-                CrashReporting.shared.reportIfNeeded(error: error)
-                if Log.optional(error) { AppController.shared.hideProgress(); return }
-                Bots.current.about { (newAbout, error) in
-                    AppController.shared.hideProgress()
+            if let error = error {
+                AppController.shared.hideProgress()
+                self?.alert(error: error)
+            } else {
+                guard let about = self?.about?.mutatedCopy(image: image) else {
+                    // I don't see why this should ever happen
+                    // But will leave as it is
+                    let error = AppError.unexpected
+                    Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
-                    if Log.optional(error) { return }
-                    NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
-                    self?.aboutView.imageView.fade(to: uiimage)
-                    self?.imagePicker.dismiss()
+                    AppController.shared.hideProgress()
+                    return
+                }
+                Bots.current.publish(content: about) { _, error in
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    if let error = error {
+                        AppController.shared.hideProgress()
+                        self?.alert(error: error)
+                    } else {
+                        Bots.current.about { (newAbout, error) in
+                            Log.optional(error)
+                            CrashReporting.shared.reportIfNeeded(error: error)
+                            
+                            AppController.shared.hideProgress()
+                            
+                            if let newAbout = newAbout {
+                                NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
+                            }
+                            
+                            self?.aboutView.imageView.fade(to: uiimage)
+                            completionHandler()
+                        }
+                    }
                 }
             }
         }
@@ -243,18 +267,23 @@ class AboutViewController: ContentViewController {
         controller.saveCompletion = {
             [weak self] _ in
             AppController.shared.showProgress()
-            Bots.current.publish(content: controller.about) {
-                _, error in
-                CrashReporting.shared.reportIfNeeded(error: error)
-                if Log.optional(error) { AppController.shared.hideProgress(); return }
+            Bots.current.publish(content: controller.about) { [weak self] (_, error) in
                 Log.optional(error)
-                Bots.current.about { (newAbout, error) in
+                CrashReporting.shared.reportIfNeeded(error: error)
+                if let error = error {
                     AppController.shared.hideProgress()
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    if Log.optional(error) { return }
-                    NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
-                    self?.update(with: controller.about)
-                    self?.dismiss(animated: true)
+                    self?.alert(error: error)
+                } else {
+                    Bots.current.about { (newAbout, error) in
+                        Log.optional(error)
+                        CrashReporting.shared.reportIfNeeded(error: error)
+                        AppController.shared.hideProgress()
+                        if let newAbout = newAbout {
+                            NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
+                            self?.update(with: controller.about)
+                        }
+                        self?.dismiss(animated: true)
+                    }
                 }
             }
         }
@@ -308,31 +337,12 @@ fileprivate class AboutPostView: KeyValueView {
 
 extension AboutViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
-    {
-        guard let uiimage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-
-        AppController.shared.showProgress()
-
-        Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) {
-            [weak self] image, error in
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error)                                          { AppController.shared.hideProgress(); return }
-            guard let about = self?.about?.mutatedCopy(image: image) else   { AppController.shared.hideProgress(); return }
-            Bots.current.publish(content: about) {
-                _, error in
-                CrashReporting.shared.reportIfNeeded(error: error)
-                if Log.optional(error) { AppController.shared.hideProgress(); return }
-                Bots.current.about { (newAbout, error) in
-                    AppController.shared.hideProgress()
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    Log.optional(error)
-                    NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
-                    self?.aboutView.imageView.fade(to: uiimage)
-                    picker.dismiss(animated: true, completion: nil)
-                }
-            }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let uiimage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
+            return
+        }
+        self.publishProfilePhoto(uiimage) {
+            picker.dismiss(animated: true)
         }
     }
 }

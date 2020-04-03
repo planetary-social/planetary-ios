@@ -58,8 +58,14 @@ class ChannelViewController: ContentViewController {
     private func load() {
         Bots.current.posts(with: self.hashtag) {
             [weak self] feed, error in
-            self?.update(with: feed)
+            Log.optional(error)
             self?.refreshControl.endRefreshing()
+            
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.update(with: feed)
+            }
         }
     }
 

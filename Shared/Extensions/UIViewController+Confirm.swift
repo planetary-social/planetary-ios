@@ -11,6 +11,21 @@ import UIKit
 
 extension UIViewController {
 
+    func alert(error: Error) {
+        let controller = UIAlertController(title: Text.error.text,
+                                           message: error.localizedDescription,
+                                           preferredStyle: .alert)
+        controller.view.tintColor = UIColor.tint.system
+        
+        let cancelAction = UIAlertAction(title: Text.cancel.text,
+                                         style: .cancel) { _ in
+                                            controller.dismiss(animated: true)
+        }
+        controller.addAction(cancelAction)
+        
+        self.present(alertController: controller)
+    }
+    
     func alert(style: UIAlertController.Style = .actionSheet,
                title: String? = nil,
                message: String,

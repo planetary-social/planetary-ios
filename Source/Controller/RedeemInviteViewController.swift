@@ -93,10 +93,8 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()
-            if let _ = error {
-                self?.alert(style: .alert,
-                            title: "Error",
-                            message: "Sorry, there was an error when trying to redeem your invite.")
+            if let error = error {
+                self?.alert(error: error)
             } else if let strongSelf = self {
                 self?.saveCompletion?(strongSelf)
             }

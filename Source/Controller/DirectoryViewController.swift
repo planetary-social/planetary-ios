@@ -81,10 +81,12 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     }
 
     private func load(completion: @escaping () -> Void) {
-        VerseAPI.directory(includeMe: false) {
-            [weak self] people, error in
-
-            self?.allPeople = people
+        VerseAPI.directory(includeMe: false) { [weak self] people, error in
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.allPeople = people
+            }
             completion()
         }
     }
