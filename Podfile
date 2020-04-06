@@ -16,6 +16,7 @@ target 'Planetary' do
     pod 'ZendeskSDK', '3.0.3'
     pod 'CocoaLumberjack/Swift', '3.6.1'
     pod 'Bugsnag', '5.23.0'
+    pod 'Down', '0.9.2'
 end
 
 target 'APITests' do
@@ -23,6 +24,7 @@ target 'APITests' do
     pod 'PhoneNumberKit', '2.6.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'SwiftyMarkdown', '0.6.0'
+    pod 'Down', '0.9.2'
 end
 
 target 'UnitTests' do
@@ -30,6 +32,7 @@ target 'UnitTests' do
     pod 'Multipart', '0.1.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'SwiftyMarkdown', '0.6.0'
+    pod 'Down', '0.9.2'
 end
 
 target 'UITests' do

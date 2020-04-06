@@ -24,10 +24,21 @@ extension NSAttributedString {
                                 options: [])
         {
             attribute, range, _ in
-            guard let identity = attribute as? Identity else { return }
-            let name = self.attributedSubstring(from: range).string
-            let mention = Mention(link: identity, name: name)
-            results += [(mention, range)]
+            if let identity = attribute as? Identity {
+                let name = self.attributedSubstring(from: range).string
+                let mention = Mention(link: identity, name: name)
+                results += [(mention, range)]
+            } else if let url = attribute as? URL {
+                if url.scheme == "applewebdata" {
+                    let name = self.attributedSubstring(from: range).string
+                    let mention = Mention(link: String(url.path.dropFirst()), name: name)
+                    results += [(mention, range)]
+                } else {
+                    let name = self.attributedSubstring(from: range).string
+                    let mention = Mention(link: url.absoluteString, name: name)
+                    results += [(mention, range)]
+                }
+            }
         }
         return results
     }

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftyMarkdown
 
 /// It's important to note that the About model is not specifically
 /// referring to human profiles.  Instead if is metadata about a specific
@@ -132,8 +131,7 @@ extension About {
 
     // TODO this is not performant, need to cache md results
     var attributedDescription: NSMutableAttributedString {
-        let md = SwiftyMarkdown(string: self.description ?? "")
-        return NSMutableAttributedString(attributedString: md.attributedString())
+        return NSMutableAttributedString(attributedString: self.description?.decodeMarkdown() ?? NSAttributedString())
     }
 
     var mention: Mention {
