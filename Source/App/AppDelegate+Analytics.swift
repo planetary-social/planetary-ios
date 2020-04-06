@@ -11,25 +11,6 @@ import UIKit
 
 extension MixpanelAnalytics {
 
-    func trackAppStartBackgroundSync() {
-        self.time(event: .did,
-                  element: .app,
-                  name: AnalyticsEnums.Name.backgroundSync.rawValue)
-    }
-
-    // Note that this needs to use the same event name as `trackAppStartBackgroundRefresh`
-    // otherwise the duration property will not be calculated correctly.
-    func trackAppDidBackgroundSync(numberOfMessages: Int,
-                                   notificationsOnly: Bool)
-    {
-        let params = ["number_of_messages": numberOfMessages,
-                      "notifications_only": notificationsOnly] as AnalyticsEnums.Params
-        self.track(event: .did,
-                   element: .app,
-                   name: AnalyticsEnums.Name.backgroundSync.rawValue,
-                   params: params)
-    }
-
     // TODO trackAppStartNotificationRefresh
     // TODO trackAppDidNotificationRefresh
 
