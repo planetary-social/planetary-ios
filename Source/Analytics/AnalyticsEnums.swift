@@ -40,7 +40,6 @@ struct AnalyticsEnums {
         }
 
         case background
-        case backgroundSync = "background_sync"
 
         enum Cache: String, CaseIterable {
             case blob

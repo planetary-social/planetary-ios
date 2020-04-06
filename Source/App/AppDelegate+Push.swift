@@ -41,10 +41,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
 
         // do a background sync, refresh then handle the notification
-        AppController.shared.backgroundSync(notificationsOnly: true) {
+        AppController.shared.backgroundFetch(notificationsOnly: true) {
             [weak self] result in
-            Bots.current.refresh() {
-                _, _ in
+            Bots.current.refresh() { _, _ in
                 self?.handle(notification: userInfo, in: application.applicationState)
                 completionHandler(result)
             }

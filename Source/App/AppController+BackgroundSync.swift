@@ -11,19 +11,30 @@ import UIKit
 
 extension AppController {
 
-    /// Defines the constant used to  mark background tasks with a  name that matches
+    /// Defines the constant used to  mark background tasks with a identifier that matches
     /// the app's Info.plist "Permitted background task scheduler identifiers".
-    static let backgroundTaskLoginAndSync = "com.planetary.loginAndSync"
-
-    // no analytics
-    // wraps in BGTask, but what if there is already a task?
-    // can this take a task to complete?
-    func loginAndSync(notificationsOnly: Bool = false,
-                      completion: ((Int) -> Void)? = nil)
-    {
-        let taskName = AppController.backgroundTaskLoginAndSync
-        let task = UIApplication.shared.beginBackgroundTask(withName: taskName)
-
+    static let backgroundTaskIdentifier = "com.planetary.loginAndSync"
+    
+    /// Defines the constant used to label background task to display in the debugger
+    static let backgroundTaskName = "LoginAndSyncTask"
+    
+    /// Sync the bot asking iOS to wait until the task finishes
+    func loginAndSync(notificationsOnly: Bool = false, completion: ((Int) -> Void)? = nil) {
+        let taskName = AppController.backgroundTaskName
+        let task = UIApplication.shared.beginBackgroundTask(withName: taskName) {
+            // Expiry handler, iOS will call this shortly before ending the task
+            // TODO: Stop login and sync, right now it is not supported
+            //UIApplication.shared.endBackgroundTask(task)
+        }
+        
+        guard task != UIBackgroundTaskIdentifier.invalid else {
+            Log.info("Background tasks not supported")
+            completion?(-1)
+            return
+        }
+        
+        Log.info("\(taskName) started")
+        
         // TODO https://app.asana.com/0/914798787098068/1154847034386753/f
         // TODO ensure specified identity is the logged in one
         // TODO this is only necessary to support multiple accounts
@@ -31,50 +42,34 @@ extension AppController {
         // TODO before forwarding the notification through the OS + app
         // TODO if already logged in should return quickly
         // log in first
-        Bots.current.loginWithCurrentAppConfiguration() {
-            [weak self] didLogin in
-            guard didLogin else { completion?(-1); return }
-
+        Bots.current.loginWithCurrentAppConfiguration() { didLogin in
+            guard didLogin else {
+                completion?(-1)
+                Log.info("\(taskName) ended")
+                UIApplication.shared.endBackgroundTask(task)
+                return
+            }
             if notificationsOnly {
-                self?.syncNotifications(task: task, completion: completion)
+                Bots.current.syncNotifications() { _, _, numberOfMessages in
+                    completion?(numberOfMessages)
+                    Log.info("\(taskName) ended with \(numberOfMessages) messages")
+                    UIApplication.shared.endBackgroundTask(task)
+                }
             } else {
-                self?.syncEverything(task: task, completion: completion)
+                Bots.current.sync() { _, _, numberOfMessages in
+                    completion?(numberOfMessages)
+                    Log.info("\(taskName) ended with \(numberOfMessages) messages")
+                    UIApplication.shared.endBackgroundTask(task)
+                }
             }
         }
     }
 
-    private func syncEverything(task: UIBackgroundTaskIdentifier,
-                                completion: ((Int) -> Void)? = nil)
-    {
-        Bots.current.sync() {
-            _, _, numberOfMessages in
-            completion?(numberOfMessages)
-            UIApplication.shared.endBackgroundTask(task)
-        }
-    }
-
-    private func syncNotifications(task: UIBackgroundTaskIdentifier,
-                                   completion: ((Int) -> Void)? = nil)
-    {
-        Bots.current.syncNotifications() {
-            _, _, numberOfMessages in
-            completion?(numberOfMessages)
-            UIApplication.shared.endBackgroundTask(task)
-        }
-    }
-
-    /// Similar to `loginAndSync()` but includes analytics indicating this was called from
-    /// a background process.
-    func backgroundSync(notificationsOnly: Bool = false,
-                        completion: @escaping ((UIBackgroundFetchResult) -> Void))
-    {
-        Analytics.trackAppStartBackgroundSync()
-        self.loginAndSync(notificationsOnly: notificationsOnly) {
-            numberOfMessages in
+    /// Same as `loginAndSync()` but  uses UIBackgroundFetchResult completion instead
+    func backgroundFetch(notificationsOnly: Bool = false, completion: @escaping ((UIBackgroundFetchResult) -> Void)) {
+        self.loginAndSync(notificationsOnly: notificationsOnly) { numberOfMessages in
             let result = self.backgroundFetchResult(for: numberOfMessages)
             completion(result)
-            Analytics.trackAppDidBackgroundSync(numberOfMessages: numberOfMessages,
-                                                notificationsOnly: notificationsOnly)
         }
     }
 
