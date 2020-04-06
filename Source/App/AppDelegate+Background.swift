@@ -40,20 +40,25 @@ extension AppDelegate {
     func application(_ application: UIApplication,
                      performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
     {
-        AppController.shared.backgroundSync(completion: completionHandler)
+        Log.info("Background fetch")
+        AppController.shared.backgroundFetch(completion: completionHandler)
     }
 
     // MARK: iOS 13+ support
 
     private func configureiOS13BackgroundTasks() {
         if #available(iOS 13, *) {
-            let identifier = AppController.backgroundTaskLoginAndSync
-            BGTaskScheduler.shared.register(forTaskWithIdentifier: identifier,
-                                            using: .main)
-            {
-                task in
-                AppController.shared.backgroundSync() {
-                    result in
+            let taskIdentifier = AppController.backgroundTaskIdentifier
+            Log.info("Registering task \(taskIdentifier)")
+            BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: .main) { [weak self] task in
+                Log.info("Executing task \(taskIdentifier)")
+                self?.scheduleBackgroundSync()
+                
+                task.expirationHandler = {
+                    // Expiry handler, iOS will call this shortly before ending the task
+                    // TODO: Stop backgroundFetch, right now it is not supported
+                }
+                AppController.shared.backgroundFetch() { result in
                     task.setTaskCompleted(success: result != .failed)
                 }
             }
@@ -63,12 +68,17 @@ extension AppDelegate {
     private func scheduleBackgroundSync() {
         if #available(iOS 13, *) {
             do {
-                let identifier = AppController.backgroundTaskLoginAndSync
-                let request = BGAppRefreshTaskRequest(identifier: identifier)
+                let taskIdentifier = AppController.backgroundTaskIdentifier
+                let request = BGAppRefreshTaskRequest(identifier: taskIdentifier)
+                
+                // Fetch no earlier than 5 minutes from now
+                request.earliestBeginDate = Date(timeIntervalSinceNow: 5 * 60)
+                
+                Log.info("Scheduling task \(taskIdentifier)")
                 try BGTaskScheduler.shared.submit(request)
-            } catch {
+            } catch let error {
+                Log.optional(error, "Could not schedule a refresh task when entering background")
                 CrashReporting.shared.reportIfNeeded(error: error)
-                Log.optional(error, "Could not schedule task when entering background")
             }
         }
     }
