@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftyMarkdown
 
 class Post: ContentCodable {
 

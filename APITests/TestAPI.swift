@@ -181,7 +181,7 @@ class TestAPI: PubAPI {
                 body = String(data:d, encoding: .utf8) ?? "<no body>"
                 print("testAPI/blocked/unblocked: \(body)")
                 if let e = error {
-                    err = GoBotError.duringProcessing(body, e)
+                    err = Thr.duringProcessing(body, e)
                 }
             }
             completion(err)
