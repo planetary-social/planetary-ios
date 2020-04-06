@@ -174,6 +174,14 @@ class HomeViewController: ContentViewController {
         self.present(controller, animated: true, completion: nil)
     }
 
+    func syncAndRefresh(animated: Bool = false) {
+        Bots.current.sync { [weak self] (error, _, _) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            self?.load(animated: animated)
+        }
+    }
+    
     func refresh() {
         self.load()
     }
@@ -199,7 +207,7 @@ class HomeViewController: ContentViewController {
 
     @objc func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refresh()
+        self.syncAndRefresh()
     }
 
     @objc func newPostButtonTouchUpInside() {
