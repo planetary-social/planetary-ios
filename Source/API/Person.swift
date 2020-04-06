@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftyMarkdown
 
 struct Person: Codable, Equatable {
 
@@ -21,8 +20,7 @@ struct Person: Codable, Equatable {
     let shortcode: String?
 
     var attributedBio: NSAttributedString {
-        let md = SwiftyMarkdown(string: self.bio ?? "")
-        return md.attributedString()
+        return self.bio?.decodeMarkdown() ?? NSAttributedString()
     }
 
     static func == (lhs: Person, rhs: Person) -> Bool {

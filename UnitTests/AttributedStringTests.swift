@@ -30,17 +30,6 @@ class AttributedStringTests: XCTestCase {
         XCTAssert(markdowns.first == markdown)
     }
 
-    func test_attributedStringToMentions() {
-        let markdown = "This is a test for [one](one.com) link plus a [second](second.com) link in markdown."
-        let string = SwiftyMarkdown(string: markdown).attributedString()
-        let mentions = string.mentions()
-        XCTAssert(mentions.count == 2)
-        XCTAssert(mentions.first?.name == "one")
-        XCTAssert(mentions.first?.link == "one.com")
-        XCTAssert(mentions.last?.name == "second")
-        XCTAssert(mentions.last?.link == "second.com")
-    }
-
     func test_mentionAttributedStringToMarkdown() {
         let string = NSMutableAttributedString(string: "this is a test ")
         let mention = Mention(link: "identity", name: "identity")
@@ -92,17 +81,6 @@ class AttributedStringTests: XCTestCase {
         XCTAssertTrue(count == expected, "Expected \(expected) hashtags, got \(count)")
     }
 
-    func test_markdownToHashtagAttributedString() {
-        let markdown = "this is a test #channel1 and another #channel2 plus a third #channel3"
-        let string = SwiftyMarkdown(string: markdown).attributedString()
-        let mutableString = NSMutableAttributedString(attributedString: string)
-        let hashtags = mutableString.replaceHashtagsWithLinkAttributes().hashtags()
-        XCTAssertTrue(hashtags.count == 3)
-        XCTAssertTrue(hashtags[0].name == "channel1")
-        XCTAssertTrue(hashtags[1].name == "channel2")
-        XCTAssertTrue(hashtags[2].name == "channel3")
-    }
-
     func test_hashtagAttributedStringToMarkdown() {
         let markdown = "this is a test #channel1 and another #channel2 plus a third #channel3"
         let string = SwiftyMarkdown(string: markdown).attributedString()
@@ -115,10 +93,11 @@ class AttributedStringTests: XCTestCase {
     }
 
     func test_attributedStringToMarkdown() {
-        let string = NSMutableAttributedString(string: "test ")
-        string.append(Mention(link: "identity", name: "identity").attributedString)
-        string.append(NSAttributedString(string: " "))
-        string.append(Hashtag.named("test").attributedString)
-        XCTAssertTrue(string.markdown == "test [identity](identity) #test")
+        let attributedString = NSMutableAttributedString(string: "test ")
+        attributedString.append(Mention(link: "identity", name: "identity").attributedString)
+        attributedString.append(NSAttributedString(string: " "))
+        attributedString.append(Hashtag.named("test").attributedString)
+        XCTAssertTrue(attributedString.encodeMarkdown() == "test [identity](identity) #test")
     }
+    
 }

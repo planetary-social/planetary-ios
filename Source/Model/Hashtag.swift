@@ -40,6 +40,14 @@ struct Hashtag: Codable {
     }
 }
 
+extension Hashtag: Equatable {
+    
+    static func == (lhs: Hashtag, rhs: Hashtag) -> Bool {
+        return lhs.name == rhs.name
+    }
+    
+}
+
 typealias Hashtags = [Hashtag]
 
 extension Hashtags {
@@ -58,3 +66,4 @@ extension Mentions {
         }
     }
 }
+
