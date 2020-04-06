@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftyMarkdown
 
 class AttributedStringCache: DictionaryCache {
 
@@ -26,25 +25,10 @@ class AttributedStringCache: DictionaryCache {
         }
 
         // generate and cache
-        let string = self.string(from: markdown)
+        let string = NSMutableAttributedString(attributedString: markdown.decodeMarkdown())
         self.update(string, for: key)
         self.purge()
         return string
-    }
-
-    /// Returns a generated `NSAttributedString` from whatever the configured
-    /// markdown renderer is.  This is the point where subclasses can customize the
-    /// renderer.  Note that this should be stateless to allow use from different queues.
-    private func string(from markdown: String) -> NSMutableAttributedString {
-
-        // even though the Down framework is a lot faster to render
-        // markdown, it has styling differences that are too numerous
-        // to try and correct now, so we're sticking with SwiftyMarkdown
-        let smd = SwiftyMarkdown(string: markdown)
-        let string = smd.attributedString()
-        let mas = NSMutableAttributedString(attributedString: string)
-        mas.replaceHashtagsWithLinkAttributes()
-        return mas
     }
 
     /// Returns -1 indicating that this cache does not purge based on bytes used.
@@ -121,7 +105,7 @@ class AttributedStringCache: DictionaryCache {
         let current = self.array.removeFirst()
 
         self.queue.async {
-            let string = self.string(from: current.markdown)
+            let string = current.markdown.decodeMarkdown()
             DispatchQueue.main.async {
                 self.current = nil
                 self.update(string, for: current.key)

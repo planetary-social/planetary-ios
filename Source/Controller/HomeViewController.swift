@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftyMarkdown
 import UIKit
 
 class HomeViewController: ContentViewController {

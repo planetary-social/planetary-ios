@@ -24,6 +24,13 @@
 		0ABCA8FB2436B08900D7F39C /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8F82436769400D7F39C /* APIError.swift */; };
 		0ABCA8FD2436B41300D7F39C /* APIError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8FC2436B41300D7F39C /* APIError+LocalizedError.swift */; };
 		0ABCA8FF2436B48E00D7F39C /* AppError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8FE2436B48E00D7F39C /* AppError+LocalizedError.swift */; };
+		0ABCA9012437BF3400D7F39C /* String+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9002437BF3400D7F39C /* String+Markdown.swift */; };
+		0ABCA9022437BF4A00D7F39C /* String+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9002437BF3400D7F39C /* String+Markdown.swift */; };
+		0ABCA9042437BF4D00D7F39C /* String+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9002437BF3400D7F39C /* String+Markdown.swift */; };
+		0ABCA9062437C12C00D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
+		0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
+		0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
+		0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9092437C22400D7F39C /* MarkdownTests.swift */; };
 		0AD00E7023FB3C02006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7623FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
@@ -623,6 +630,9 @@
 		0ABCA8F82436769400D7F39C /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		0ABCA8FC2436B41300D7F39C /* APIError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIError+LocalizedError.swift"; sourceTree = "<group>"; };
 		0ABCA8FE2436B48E00D7F39C /* AppError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppError+LocalizedError.swift"; sourceTree = "<group>"; };
+		0ABCA9002437BF3400D7F39C /* String+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Markdown.swift"; sourceTree = "<group>"; };
+		0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Markdown.swift"; sourceTree = "<group>"; };
+		0ABCA9092437C22400D7F39C /* MarkdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTests.swift; sourceTree = "<group>"; };
 		0AD00E6723FB3318006BF017 /* Planetary.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.debug.xcconfig; sourceTree = "<group>"; };
 		0AD00E6823FB332A006BF017 /* Planetary.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.release.xcconfig; sourceTree = "<group>"; };
 		0AD00E6923FB3344006BF017 /* APITests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APITests.debug.xcconfig; sourceTree = "<group>"; };
@@ -1156,6 +1166,7 @@
 				237D057F23351F5B00973D63 /* PostWithHashtags.json */,
 				23237A112423CE0300FE112C /* PostsWithMentions.json */,
 				23E76A5523F2F0F70074F424 /* ValueTimestamp.json */,
+				0ABCA9092437C22400D7F39C /* MarkdownTests.swift */,
 			);
 			path = UnitTests;
 			sourceTree = "<group>";
@@ -1527,6 +1538,8 @@
 				53AD3FD0226F736A005228F9 /* UIViewTapGesture.swift */,
 				5319257D22F286FC00B44FA3 /* URL+Verse.swift */,
 				53631EF223A99CF0009C6999 /* NSAttributedString+Flatten.swift */,
+				0ABCA9002437BF3400D7F39C /* String+Markdown.swift */,
+				0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -2167,6 +2180,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-APITests/Pods-APITests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
@@ -2176,6 +2190,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PhoneNumberKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
@@ -2235,6 +2250,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-UnitTests/Pods-UnitTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyMarkdown/SwiftyMarkdown.framework",
@@ -2244,6 +2260,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyMarkdown.framework",
@@ -2287,6 +2304,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Planetary/Pods-Planetary-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
+				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
 				"${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Mixpanel/Mixpanel.framework",
@@ -2305,6 +2323,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bugsnag.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImageSlideshow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mixpanel.framework",
@@ -2329,9 +2348,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0ABCA9022437BF4A00D7F39C /* String+Markdown.swift in Sources */,
 				237D057E23351E4600973D63 /* Hashtag.swift in Sources */,
 				53211CED22852216007FB785 /* AppConfigurationTests.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
+				0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */,
 				2346ECB522141DAD009A94CB /* KeyValues.swift in Sources */,
 				535CD37D2267DB4E0039BCF2 /* Log.swift in Sources */,
 				237D057B2335139700973D63 /* Bot+Publish.swift in Sources */,
@@ -2410,6 +2431,7 @@
 				2388897C220868B70030CB92 /* ViewDatabase.swift in Sources */,
 				531A8A4721FA36A600D5C8C0 /* ContentTests.swift in Sources */,
 				5316E96121FFED2E0053832E /* Vote.swift in Sources */,
+				0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				23E880B522857F8700486AD0 /* EnocdeJSONtest.swift in Sources */,
@@ -2493,6 +2515,7 @@
 				5314EF6A22EA2B460065D02A /* Hashtag+NSAttributedString.swift in Sources */,
 				5314EF7D22EA35A60065D02A /* XCTest+Test.swift in Sources */,
 				5314EF4E22EA28BE0065D02A /* Identities.swift in Sources */,
+				0ABCA9042437BF4D00D7F39C /* String+Markdown.swift in Sources */,
 				5314EF5822EA293D0065D02A /* ViewDatabase.swift in Sources */,
 				533EDBDD23844AA9008B3565 /* VerseAPI+Me.swift in Sources */,
 				2356500C2369C6CB00C3DBC0 /* DropContentRequest.swift in Sources */,
@@ -2527,6 +2550,7 @@
 				5314EF7B22EA351F0065D02A /* VerseAPI+Join.swift in Sources */,
 				0ABCA8F02435550F00D7F39C /* CrashReportingService.swift in Sources */,
 				5314EF5A22EA298D0065D02A /* Thread+Assert.swift in Sources */,
+				0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				536255CF23AAAA30001007D0 /* AnalyticsEnums.swift in Sources */,
 				5314EF7222EA34230065D02A /* Date+OlderThan.swift in Sources */,
 				5314EF4222EA28640065D02A /* ContentType.swift in Sources */,
@@ -2554,6 +2578,7 @@
 				5369D2AA220BAFC600A65622 /* KeyValues.swift in Sources */,
 				53C2B1282294DFF50018D0A8 /* AppConfiguration+Migrate.swift in Sources */,
 				531B92B322CAC25C005D5255 /* UITextView+Verse.swift in Sources */,
+				0ABCA9012437BF3400D7F39C /* String+Markdown.swift in Sources */,
 				53E26C5D23045D19009240B2 /* Data+Person.swift in Sources */,
 				532751D32224A0CD0026500F /* ContentViewController.swift in Sources */,
 				536255D323AAC8AD001007D0 /* AppDelegate+Analytics.swift in Sources */,
@@ -2595,6 +2620,7 @@
 				539FD4C822C43FC8005A4DF2 /* ImageButton.swift in Sources */,
 				5314EF8122EA54540065D02A /* Analytics+Onboarding.swift in Sources */,
 				53D8FF95236946D300EF986F /* PeersView.swift in Sources */,
+				0ABCA9062437C12C00D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				5314EF6222EA2AA40065D02A /* OSLog.swift in Sources */,
 				53569F3323A85DB400DA291D /* PostTextCache.swift in Sources */,
 				535B6A0C237243E4008C248E /* UINavigationController+Remove.swift in Sources */,
