@@ -31,6 +31,10 @@
 		0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9092437C22400D7F39C /* MarkdownTests.swift */; };
+		0ACA5742243CFAEC001C5E37 /* MarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */; };
+		0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */; };
+		0ACE919B243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */; };
+		0ACE919C243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */; };
 		0AD00E7023FB3C02006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7623FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
@@ -633,6 +637,9 @@
 		0ABCA9002437BF3400D7F39C /* String+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Markdown.swift"; sourceTree = "<group>"; };
 		0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Markdown.swift"; sourceTree = "<group>"; };
 		0ABCA9092437C22400D7F39C /* MarkdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTests.swift; sourceTree = "<group>"; };
+		0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyler.swift; sourceTree = "<group>"; };
+		0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Tracking.swift"; sourceTree = "<group>"; };
+		0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullMarkdownStyler.swift; sourceTree = "<group>"; };
 		0AD00E6723FB3318006BF017 /* Planetary.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.debug.xcconfig; sourceTree = "<group>"; };
 		0AD00E6823FB332A006BF017 /* Planetary.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.release.xcconfig; sourceTree = "<group>"; };
 		0AD00E6923FB3344006BF017 /* APITests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APITests.debug.xcconfig; sourceTree = "<group>"; };
@@ -1106,6 +1113,17 @@
 			path = CrashReporting;
 			sourceTree = "<group>";
 		};
+		0ACA5740243CFA94001C5E37 /* Markdown */ = {
+			isa = PBXGroup;
+			children = (
+				0ABCA9002437BF3400D7F39C /* String+Markdown.swift */,
+				0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */,
+				0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */,
+				0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */,
+			);
+			path = Markdown;
+			sourceTree = "<group>";
+		};
 		0AD00E6223FB2F24006BF017 /* Configs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1427,6 +1445,7 @@
 				5369D2A0220B55DA00A65622 /* FakeBot */,
 				531D0A1121EACBEE008E40A8 /* GoBot */,
 				8D9143EA230C5BF60075BC8A /* Localization */,
+				0ACA5740243CFA94001C5E37 /* Markdown */,
 				53E29CD922D7DFFA008A2CB1 /* Model */,
 				53A4763723A19D62003814DC /* Offboarding */,
 				531587AE229F17D80004E2B1 /* Onboarding */,
@@ -1524,6 +1543,7 @@
 				8DA9567C230DA46C00A334EB /* UIButton+Text.swift */,
 				5396A6342248377900C57A4B /* UIColor+Verse.swift */,
 				531B92BC22CD65ED005D5255 /* UIFont+Verse.swift */,
+				0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */,
 				53E341FD224FF9EE002BB5F4 /* UIImage+Verse.swift */,
 				8D317ECC2357A37C0009E073 /* UIImageView+Fade.swift */,
 				5349E4AD23514CC000E21053 /* UINavigationBar+Verse.swift */,
@@ -1538,8 +1558,6 @@
 				53AD3FD0226F736A005228F9 /* UIViewTapGesture.swift */,
 				5319257D22F286FC00B44FA3 /* URL+Verse.swift */,
 				53631EF223A99CF0009C6999 /* NSAttributedString+Flatten.swift */,
-				0ABCA9002437BF3400D7F39C /* String+Markdown.swift */,
-				0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -2184,7 +2202,6 @@
 				"${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyMarkdown/SwiftyMarkdown.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -2194,7 +2211,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PhoneNumberKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyMarkdown.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2253,7 +2269,6 @@
 				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyMarkdown/SwiftyMarkdown.framework",
 				"${BUILT_PRODUCTS_DIR}/Multipart/Multipart.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -2263,7 +2278,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyMarkdown.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Multipart.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2311,7 +2325,6 @@
 				"${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyMarkdown/SwiftyMarkdown.framework",
 				"${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1.2/ZendeskCoreSDK.framework",
 				"${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1.2/ZendeskProviderSDK.framework",
 				"${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1.2/ZendeskSDK.framework",
@@ -2330,7 +2343,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PhoneNumberKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyMarkdown.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZendeskCoreSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZendeskProviderSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZendeskSDK.framework",
@@ -2364,6 +2376,7 @@
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
 				53C2B13C2295BC940018D0A8 /* Keychain.swift in Sources */,
 				230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */,
+				0ACE919C243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */,
 				533EDBF52389BDD4008B3565 /* UIColor+Hex.swift in Sources */,
 				530F018B22DADCF7007EBAE2 /* Date+OlderThan.swift in Sources */,
 				2394616123A25A9A008F552C /* Analytics+Bot.swift in Sources */,
@@ -2538,6 +2551,7 @@
 				5314EF7722EA34F90065D02A /* Person.swift in Sources */,
 				53E26C62230461D2009240B2 /* Data+Person.swift in Sources */,
 				5314EF5E22EA29E40065D02A /* Date+millisecs.swift in Sources */,
+				0ACE919B243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */,
 				5314EF7422EA34BC0065D02A /* String+IsValid.swift in Sources */,
 				533DC01A2331951400C8472F /* Blob.swift in Sources */,
 				5314EF3F22EA27AF0065D02A /* Identifier.swift in Sources */,
@@ -2601,6 +2615,7 @@
 				5374DF4021E9ADFE00956122 /* AppController.swift in Sources */,
 				53C966E4236D074700E70689 /* Bot+Blobs.swift in Sources */,
 				53B4F5ED22B4A8AE00027C6A /* VerseAPI+UserDirectory.swift in Sources */,
+				0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */,
 				0A07AB1E242522CE00EFD47F /* CrashReportingService.swift in Sources */,
 				8DC4238F236CA68100BA7769 /* PeerConnectionAnimation.swift in Sources */,
 				0ABCA8FF2436B48E00D7F39C /* AppError+LocalizedError.swift in Sources */,
@@ -2852,6 +2867,7 @@
 				53DF335023A069FF0017566D /* Analytics+Bot.swift in Sources */,
 				53362F6A2209108F007264CB /* NetworkKey.swift in Sources */,
 				53E341F4224D9E3B002BB5F4 /* URL+Identifier.swift in Sources */,
+				0ACA5742243CFAEC001C5E37 /* MarkdownStyler.swift in Sources */,
 				8DD985D22329B94600FA2F1A /* ThreadInteractionView.swift in Sources */,
 				53362F672208C2B3007264CB /* AppController+Lifecycle.swift in Sources */,
 				53E29CDD22D7EC6F008A2CB1 /* Hashtag+String.swift in Sources */,
@@ -2961,8 +2977,6 @@
 					"\"Multipart\"",
 					"-framework",
 					"\"SQLite\"",
-					"-framework",
-					"\"SwiftyMarkdown\"",
 					"-lssb-go",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
@@ -2996,8 +3010,6 @@
 					"\"Multipart\"",
 					"-framework",
 					"\"SQLite\"",
-					"-framework",
-					"\"SwiftyMarkdown\"",
 					"-lssb-go",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
@@ -3031,8 +3043,6 @@
 					"\"PhoneNumberKit\"",
 					"-framework",
 					"\"SQLite\"",
-					"-framework",
-					"\"SwiftyMarkdown\"",
 					"-lssb-go",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-D\" \"APITESTS\"";
@@ -3067,8 +3077,6 @@
 					"\"PhoneNumberKit\"",
 					"-framework",
 					"\"SQLite\"",
-					"-framework",
-					"\"SwiftyMarkdown\"",
 					"-lssb-go",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-D\" \"APITESTS\"";
@@ -3269,8 +3277,6 @@
 					"\"SQLite\"",
 					"-framework",
 					"\"SVProgressHUD\"",
-					"-framework",
-					"\"SwiftyMarkdown\"",
 					"-lssb-go",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios;
@@ -3312,8 +3318,6 @@
 					"\"SQLite\"",
 					"-framework",
 					"\"SVProgressHUD\"",
-					"-framework",
-					"\"SwiftyMarkdown\"",
 					"-lssb-go",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios;

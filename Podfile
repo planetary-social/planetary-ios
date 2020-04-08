@@ -11,7 +11,6 @@ target 'Planetary' do
     pod 'Mixpanel', '3.5.1'
     pod 'PhoneNumberKit', '2.6.0'
     pod 'SQLite.swift', '0.12.2'
-    pod 'SwiftyMarkdown', '0.6.0'
     pod 'SVProgressHUD', '2.2.5'
     pod 'ZendeskSDK', '3.0.3'
     pod 'CocoaLumberjack/Swift', '3.6.1'
@@ -23,7 +22,6 @@ target 'APITests' do
     pod 'KeychainSwift', '15.0.0'
     pod 'PhoneNumberKit', '2.6.0'
     pod 'SQLite.swift', '0.12.2'
-    pod 'SwiftyMarkdown', '0.6.0'
     pod 'Down', '0.9.2'
 end
 
@@ -31,7 +29,6 @@ target 'UnitTests' do
     pod 'KeychainSwift', '15.0.0'
     pod 'Multipart', '0.1.0'
     pod 'SQLite.swift', '0.12.2'
-    pod 'SwiftyMarkdown', '0.6.0'
     pod 'Down', '0.9.2'
 end
 
