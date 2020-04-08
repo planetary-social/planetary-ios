@@ -61,9 +61,6 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 	}
 	lock.Unlock()
 
-	// dont bother with private messages until we implement the UI
-	return C.CString("[]")
-
 	pl, ok := sbot.GetMultiLog("privLogs")
 	if !ok {
 		err = errors.Errorf("sbot: missing privLogs index")
