@@ -618,7 +618,7 @@ class GoBotTests: XCTestCase {
             XCTAssertTrue(root?.metadata.isPrivate ?? false)
             XCTAssertEqual(root?.value.author, GoBotTests.pubkeys["alice"]!)
             XCTAssertEqual(msgs.count, 1)
-            guard msgs.count < 0 else {
+            guard msgs.count > 0 else {
                 XCTFail("expected at least one message. got \(msgs.count)")
                 return
             }
