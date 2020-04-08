@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"math"
 	"runtime"
 	"time"
@@ -141,7 +140,6 @@ type connectResult struct {
 func makeConnWorker(workCh <-chan *addrRow, connErrs chan<- *connectResult) func() error {
 	return func() error {
 		for row := range workCh {
-			level.Debug(log).Log("event", "ssbConnectPeers", "row", fmt.Sprintf("%+v", row))
 			ctx, _ := context.WithTimeout(longCtx, 10*60*time.Second) // kill connections after a while until we have live streaming
 			err := sbot.Network.Connect(ctx, row.addr.WrappedAddr())
 			level.Info(log).Log("event", "ssbConnectPeers", "dial", row.addrID, "err", err)
