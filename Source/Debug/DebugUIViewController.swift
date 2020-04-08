@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftyMarkdown
 import UIKit
 
 class DebugUIViewController: DebugTableViewController {
@@ -180,7 +179,7 @@ class DebugUIViewController: DebugTableViewController {
 
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: "JSON crashes SwiftyMarkdown",
+        settings += [DebugTableViewCellModel(title: "JSON crashes Markdown",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure:
             {
@@ -193,8 +192,8 @@ class DebugUIViewController: DebugTableViewController {
                 let controller = ContentViewController(scrollable: false, title: nil)
                 let label = self.label()
                 let text = "[**\\!bang**](https://duckduckgo.com/bang)"
-                let md = SwiftyMarkdown(string: text)
-                label.attributedText = md.attributedString()
+                let md = text.decodeMarkdown()
+                label.attributedText = md
                 Layout.fillTop(of: controller.contentView, with: label)
                 self.navigationController?.pushViewController(controller, animated: true)
         })]

@@ -54,7 +54,6 @@ class ThreadViewController: ContentViewController {
         let view = PostCellView(keyValue: self.root ?? self.post)
         view.displayHeader = false
         view.allowSpaceUnderGallery = false
-        view.postAttributes = UIFont.verse.largePostAttributes
         return view
     }()
 
