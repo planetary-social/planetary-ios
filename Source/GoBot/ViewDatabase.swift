@@ -20,18 +20,6 @@ extension Connection {
     }
 }
 
-enum ViewDatabaseError: Error {
-    case notOpen
-    case alreadyOpen
-    case unknownMessage(MessageIdentifier)
-    case unknownAuthor(Identifier)
-    case unknownReferenceID(Int64)
-    case unexpectedContentType(String)
-    case unknownTable(ViewDatabaseTableNames)
-    case unhandledContentType(ContentType)
-    case messageConstraintViolation(Identity)
-}
-
 enum ViewDatabaseTableNames: String {
     case addresses
     case authors
