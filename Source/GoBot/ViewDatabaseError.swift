@@ -17,5 +17,5 @@ enum ViewDatabaseError: Error {
     case unexpectedContentType(String)
     case unknownTable(ViewDatabaseTableNames)
     case unhandledContentType(ContentType)
-    case messageConstraintViolation(Identity)
+    case messageConstraintViolation(Identity, String)
 }

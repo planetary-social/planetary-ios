@@ -87,7 +87,7 @@ func (h *createWantsHandler) HandleCall(ctx context.Context, req *muxrpc.Request
 	}
 
 	err = luigi.Pump(ctx, snk, src)
-	if err != nil && !muxrpc.IsSinkClosed(err) {
+	if err != nil && !muxrpc.IsSinkClosed(err) && errors.Cause(err) != context.Canceled {
 		level.Debug(h.log).Log("event", "onCall", "handler", "createWants", "err", err)
 	}
 

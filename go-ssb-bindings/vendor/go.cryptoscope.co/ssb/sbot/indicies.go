@@ -110,8 +110,8 @@ var _ ssb.Indexer = (*Sbot)(nil)
 func (s *Sbot) serveIndex(ctx context.Context, name string, f repo.ServeFunc) {
 	s.idxDone.Go(func() error { // could improve this with context version
 		err := f(ctx, s.RootLog, s.liveIndexUpdates)
-		level.Warn(s.info).Log("event", "idx server exited", "idx", name, "error", err)
 		if err != nil {
+			level.Warn(s.info).Log("event", "idx server exited", "idx", name, "error", err)
 			s.Shutdown()
 			return errors.Wrapf(err, "sbot: %s idx update func errored", name)
 		}

@@ -4,6 +4,7 @@ package ssb
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/cryptix/go/encodedTime"
@@ -267,9 +268,70 @@ type Post struct {
 	Mentions []Mention   `json:"mentions,omitempty"`
 }
 
+type AnyRef struct {
+	r Ref
+}
+
+func (ar AnyRef) ShortRef() string {
+	if ar.r == nil {
+		panic("empty ref")
+	}
+	return ar.r.ShortRef()
+}
+
+func (ar AnyRef) Ref() string {
+	if ar.r == nil {
+		panic("empty ref")
+	}
+	return ar.r.Ref()
+}
+
+func (ar AnyRef) IsBlob() (*BlobRef, bool) {
+	br, ok := ar.r.(*BlobRef)
+	return br, ok
+}
+
+func (ar *AnyRef) MarshalJSON() ([]byte, error) {
+	if ar.r == nil {
+		return nil, ErrInvalidRef
+	}
+	refStr := ar.Ref()
+	return []byte(`"` + refStr + `"`), nil
+}
+
+func (ar *AnyRef) UnmarshalJSON(b []byte) error {
+	if len(b) < 53 {
+		return ErrInvalidRef
+	}
+
+	var refStr string
+	err := json.Unmarshal(b, &refStr)
+	if err != nil {
+		return fmt.Errorf("ssb/anyRef: not a valid JSON string (%w)", err)
+	}
+
+	newRef, err := ParseRef(refStr)
+	if err != nil {
+		return err
+	}
+
+	ar.r = newRef
+	return nil
+}
+
+var (
+	_ json.Marshaler   = (*AnyRef)(nil)
+	_ json.Unmarshaler = (*AnyRef)(nil)
+	_ Ref              = (*AnyRef)(nil)
+)
+
 type Mention struct {
-	Link FeedRef `json:"link"`
-	Name string  `json:"name"`
+	Link AnyRef `json:"link,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+func NewMention(r Ref, name string) Mention {
+	return Mention{Link: AnyRef{r: r}, Name: name}
 }
 
 type ValueVote struct {
