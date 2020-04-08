@@ -53,10 +53,10 @@ struct ScuttlegobotBotStatus: Decodable {
 enum ScuttlegobotFSCKMode: UInt32 {
 
     // compares the message count of a feed with the sequence number of last message of a feed
-    case FeedLength = 0 // TODO: wasn't sure if they start from 0 by default
+    case FeedLength = 1
 
     // goes through all the messages and makes sure the sequences increament correctly for each feed
-    case Sequences = 1
+    case Sequences = 2
 }
 
 struct ScuttlegobotHealReport: Decodable {
