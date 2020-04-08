@@ -35,6 +35,19 @@
 		0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */; };
 		0ACE919B243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */; };
 		0ACE919C243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */; };
+		0ACE919E243D734B00EFB4E9 /* BotError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919D243D734B00EFB4E9 /* BotError+LocalizedError.swift */; };
+		0ACE919F243D73DB00EFB4E9 /* BotError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919D243D734B00EFB4E9 /* BotError+LocalizedError.swift */; };
+		0ACE91A0243D73DC00EFB4E9 /* BotError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919D243D734B00EFB4E9 /* BotError+LocalizedError.swift */; };
+		0ACE91A2243D740C00EFB4E9 /* GoBotError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A1243D740C00EFB4E9 /* GoBotError.swift */; };
+		0ACE91A3243D741200EFB4E9 /* GoBotError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A1243D740C00EFB4E9 /* GoBotError.swift */; };
+		0ACE91A4243D741300EFB4E9 /* GoBotError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A1243D740C00EFB4E9 /* GoBotError.swift */; };
+		0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */; };
+		0ACE91A7243D748600EFB4E9 /* GoBotError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */; };
+		0ACE91A8243D748700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */; };
+		0ACE91AA243D74A900EFB4E9 /* ViewDatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */; };
+		0ACE91AB243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */; };
+		0ACE91AC243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */; };
+		0ACE91AE243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE91AD243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift */; };
 		0AD00E7023FB3C02006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD00E7623FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
@@ -640,6 +653,11 @@
 		0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyler.swift; sourceTree = "<group>"; };
 		0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Tracking.swift"; sourceTree = "<group>"; };
 		0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullMarkdownStyler.swift; sourceTree = "<group>"; };
+		0ACE919D243D734B00EFB4E9 /* BotError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BotError+LocalizedError.swift"; sourceTree = "<group>"; };
+		0ACE91A1243D740C00EFB4E9 /* GoBotError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotError.swift; sourceTree = "<group>"; };
+		0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GoBotError+LocalizedError.swift"; sourceTree = "<group>"; };
+		0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabaseError.swift; sourceTree = "<group>"; };
+		0ACE91AD243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewDatabaseError+LocalizedError.swift"; sourceTree = "<group>"; };
 		0AD00E6723FB3318006BF017 /* Planetary.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.debug.xcconfig; sourceTree = "<group>"; };
 		0AD00E6823FB332A006BF017 /* Planetary.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.release.xcconfig; sourceTree = "<group>"; };
 		0AD00E6923FB3344006BF017 /* APITests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APITests.debug.xcconfig; sourceTree = "<group>"; };
@@ -1290,6 +1308,7 @@
 				5315854A2363614100334863 /* Bot+AppConfiguration.swift */,
 				53E29CD122D40462008A2CB1 /* Bot+Publish.swift */,
 				535754F12268DAB0002A6989 /* BotError.swift */,
+				0ACE919D243D734B00EFB4E9 /* BotError+LocalizedError.swift */,
 				532751D0222497A70026500F /* Bots.swift */,
 				535CD3742266901F0039BCF2 /* BotStatistics.swift */,
 				53211CE122836666007FB785 /* MIMEType.swift */,
@@ -1373,6 +1392,10 @@
 				531D0A1221EACC0A008E40A8 /* GoBotViewController.swift */,
 				233A8F89220138F600CE01CE /* ViewDatabase.swift */,
 				231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */,
+				0ACE91A1243D740C00EFB4E9 /* GoBotError.swift */,
+				0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */,
+				0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */,
+				0ACE91AD243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift */,
 			);
 			path = GoBot;
 			sourceTree = "<group>";
@@ -2372,6 +2395,7 @@
 				53B4F5FD22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
 				5369D2AF220CF39E00A65622 /* Data+JSON.swift in Sources */,
 				530F018822DAD5D8007EBAE2 /* Date+Random.swift in Sources */,
+				0ACE91AC243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */,
 				53211CF0228522B2007FB785 /* FakeBot.swift in Sources */,
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
 				53C2B13C2295BC940018D0A8 /* Keychain.swift in Sources */,
@@ -2388,7 +2412,9 @@
 				53C2B12D2295A8DA0018D0A8 /* Identities.swift in Sources */,
 				53C2B1322295A9CB0018D0A8 /* AnalyticsEnums.swift in Sources */,
 				531A8A5121FA622900D5C8C0 /* Bundle+Current.swift in Sources */,
+				0ACE91A0243D73DC00EFB4E9 /* BotError+LocalizedError.swift in Sources */,
 				53E26C5B23039631009240B2 /* Dictionary+Transform.swift in Sources */,
+				0ACE91A8243D748700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				53211CEF228522A0007FB785 /* Bots.swift in Sources */,
 				53E29CCB22D292A3008A2CB1 /* String+Whitespace.swift in Sources */,
 				533EDBF62389BDD4008B3565 /* UIImage+AverageColor.swift in Sources */,
@@ -2435,6 +2461,7 @@
 				531A8A4921FA382400D5C8C0 /* Mention.swift in Sources */,
 				0AD00E7723FC5FA9006BF017 /* Environment.swift in Sources */,
 				53E29CCE22D2974B008A2CB1 /* String+HashtagSubstrings.swift in Sources */,
+				0ACE91A4243D741300EFB4E9 /* GoBotError.swift in Sources */,
 				5369D2B0220CF57800A65622 /* UserDefaults+Debug.swift in Sources */,
 				531A8A4321F8358600D5C8C0 /* Identifier.swift in Sources */,
 				238ED6B2232282D600E054A3 /* Blob.swift in Sources */,
@@ -2493,6 +2520,7 @@
 				5314EF7322EA34B60065D02A /* String+PhoneNumberKit.swift in Sources */,
 				2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */,
 				5314EF4922EA28920065D02A /* KeyValues.swift in Sources */,
+				0ACE919F243D73DB00EFB4E9 /* BotError+LocalizedError.swift in Sources */,
 				5314EF6022EA2A670065D02A /* AppConfiguration+Data.swift in Sources */,
 				5314EF4622EA287C0065D02A /* Vote.swift in Sources */,
 				5314EF7C22EA358F0065D02A /* Dictionary+JSONSerialization.swift in Sources */,
@@ -2509,6 +2537,7 @@
 				5314EF6F22EA2BE10065D02A /* MIMEType.swift in Sources */,
 				0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */,
 				5314EF5022EA28D00065D02A /* Bots.swift in Sources */,
+				0ACE91A7243D748600EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				0ABCA8EE243554D000D7F39C /* NullCrashReporting.swift in Sources */,
 				53EAB396239AC1D400DF5530 /* UIColor+Hex.swift in Sources */,
 				5314EF4422EA28700065D02A /* Post.swift in Sources */,
@@ -2527,6 +2556,7 @@
 				5314EF3B22EA27840065D02A /* AppConfiguration.swift in Sources */,
 				5314EF6A22EA2B460065D02A /* Hashtag+NSAttributedString.swift in Sources */,
 				5314EF7D22EA35A60065D02A /* XCTest+Test.swift in Sources */,
+				0ACE91AB243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */,
 				5314EF4E22EA28BE0065D02A /* Identities.swift in Sources */,
 				0ABCA9042437BF4D00D7F39C /* String+Markdown.swift in Sources */,
 				5314EF5822EA293D0065D02A /* ViewDatabase.swift in Sources */,
@@ -2554,6 +2584,7 @@
 				0ACE919B243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */,
 				5314EF7422EA34BC0065D02A /* String+IsValid.swift in Sources */,
 				533DC01A2331951400C8472F /* Blob.swift in Sources */,
+				0ACE91A3243D741200EFB4E9 /* GoBotError.swift in Sources */,
 				5314EF3F22EA27AF0065D02A /* Identifier.swift in Sources */,
 				5314EF7E22EA35A60065D02A /* XCTestCase+JSON.swift in Sources */,
 				5314EF3E22EA279F0065D02A /* Bot.swift in Sources */,
@@ -2632,6 +2663,7 @@
 				53E341FC224FF87D002BB5F4 /* NewPostViewController.swift in Sources */,
 				5319257E22F286FC00B44FA3 /* URL+Verse.swift in Sources */,
 				5372175522FDF8A7008A760A /* VerseAPI+Me.swift in Sources */,
+				0ACE91A2243D740C00EFB4E9 /* GoBotError.swift in Sources */,
 				539FD4C822C43FC8005A4DF2 /* ImageButton.swift in Sources */,
 				5314EF8122EA54540065D02A /* Analytics+Onboarding.swift in Sources */,
 				53D8FF95236946D300EF986F /* PeersView.swift in Sources */,
@@ -2699,6 +2731,7 @@
 				53211CCA227BA725007FB785 /* Array+SafeSubscript.swift in Sources */,
 				533EDBED238603D8008B3565 /* BlobCache.swift in Sources */,
 				8DE093D52344CA10009E505D /* RelationshipButton.swift in Sources */,
+				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				53EE01F42204F66200DFDF16 /* Secret.swift in Sources */,
 				53B4F5FF22B9E4F200027C6A /* Abouts.swift in Sources */,
 				5357BD7D23CFD0B9005665AB /* UserDefaults+Analytics.swift in Sources */,
@@ -2758,6 +2791,7 @@
 				53E26C5723037927009240B2 /* Date+ISO8601.swift in Sources */,
 				5396A6252244358A00C57A4B /* UIView+Layout.swift in Sources */,
 				53C966E2236D037000E70689 /* UIViewController+Report.swift in Sources */,
+				0ACE919E243D734B00EFB4E9 /* BotError+LocalizedError.swift in Sources */,
 				533F4051225E9E010060B4B9 /* DebugUIViewController.swift in Sources */,
 				53AD3FD92270FF33005228F9 /* UITableView+TableHeaderView.swift in Sources */,
 				533EDBEB2385F8B6008B3565 /* DictionaryCache.swift in Sources */,
@@ -2769,6 +2803,7 @@
 				5394D06522AB3529002AE507 /* VerseAPI.swift in Sources */,
 				53211CDA2281EB22007FB785 /* AppController+Progress.swift in Sources */,
 				8D8A7B17231944030087895B /* CGSize+Square.swift in Sources */,
+				0ACE91AA243D74A900EFB4E9 /* ViewDatabaseError.swift in Sources */,
 				53B4F5F622B85BF200027C6A /* Markdownable.swift in Sources */,
 				5357550322694BCC002A6989 /* AboutView.swift in Sources */,
 				53E29CD822D7DF84008A2CB1 /* Hashtag.swift in Sources */,
@@ -2880,6 +2915,7 @@
 				239F46E721F8CFE00003BE0A /* DebugFeedViewController.swift in Sources */,
 				530F019C22DEAD70007EBAE2 /* SplashOnboardingStep.swift in Sources */,
 				531749972370EED800F4C381 /* UIView+Superview.swift in Sources */,
+				0ACE91AE243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift in Sources */,
 				53569F3523A85DD700DA291D /* PostTruncatedTextCache.swift in Sources */,
 				23D8CE272253DB29001EB7D5 /* Address.swift in Sources */,
 				53E26C6F230CC88B009240B2 /* UIDevice+Simulator.swift in Sources */,
