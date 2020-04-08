@@ -61,6 +61,9 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 	}
 	lock.Unlock()
 
+	// dont bother with private messages until we implement the UI
+	return C.CString("[]")
+
 	pl, ok := sbot.GetMultiLog("privLogs")
 	if !ok {
 		err = errors.Errorf("sbot: missing privLogs index")
@@ -95,6 +98,17 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 	if err != nil {
 		return nil, errors.Wrapf(err, "drainLog: failed to open query")
 	}
+
+	noNulled := mfr.FilterFunc(func(ctx context.Context, v interface{}) (bool, error) {
+		if err, ok := v.(error); ok {
+			if margaret.IsErrNulled(err) {
+				return false, nil
+			}
+			return false, err
+		}
+		return true, nil
+	})
+	src = mfr.SourceFilter(src, noNulled)
 
 	sixMonthAgo := time.Now().Add(-6 * time.Hour * 24 * 30)
 
