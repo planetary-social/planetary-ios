@@ -6,7 +6,6 @@
 //  Copyright © 2019 Verse Communications Inc. All rights reserved.
 //
 
-import SwiftyMarkdown
 import XCTest
 
 class AttributedStringTests: XCTestCase {
@@ -83,13 +82,13 @@ class AttributedStringTests: XCTestCase {
 
     func test_hashtagAttributedStringToMarkdown() {
         let markdown = "this is a test #channel1 and another #channel2 plus a third #channel3"
-        let string = SwiftyMarkdown(string: markdown).attributedString()
-        let mutableString = NSMutableAttributedString(attributedString: string)
-        let hashtags = mutableString.replaceHashtagsWithLinkAttributes().hashtags()
+        let attributedString = markdown.decodeMarkdown()
+        let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
+        let hashtags = mutableAttributedString.replaceHashtagsWithLinkAttributes().hashtags()
         XCTAssertTrue(hashtags.count == 3)
-        mutableString.removeHashtagLinkAttributes()
-        XCTAssertTrue(mutableString.hashtags().isEmpty)
-        XCTAssertTrue(mutableString.string == markdown)
+        mutableAttributedString.removeHashtagLinkAttributes()
+        XCTAssertTrue(mutableAttributedString.hashtags().isEmpty)
+        XCTAssertTrue(mutableAttributedString.string == markdown)
     }
 
     func test_attributedStringToMarkdown() {
