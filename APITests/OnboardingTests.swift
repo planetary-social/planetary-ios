@@ -500,7 +500,7 @@ class OnboardingTests: XCTestCase {
         }
 
         self.wait(for: [expectation], timeout: 30)
-        sleep(5)
+        sleep(10) // TODO: we need a better tool to wait until outgoing syncs finish
     }
 
     func test54_pub_has_new_messages() {

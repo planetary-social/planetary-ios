@@ -22,8 +22,10 @@ import (
 type FSCKMode uint
 
 const (
+	_ FSCKMode = iota
+
 	// FSCKModeLength just checks the feed lengths
-	FSCKModeLength FSCKMode = iota
+	FSCKModeLength
 
 	// FSCKModeSequences makes sure the sequence field of each message on a feed are increasing correctly
 	FSCKModeSequences
@@ -49,33 +51,81 @@ func (e ErrConsistencyProblems) Error() string {
 	return errStr
 }
 
+type fsckOpt struct {
+	feedsIdx   multilog.MultiLog
+	mode       FSCKMode
+	progressFn FSCKUpdateFunc
+}
+
+type FSCKOption func(*fsckOpt) error
+
+func FSCKWithFeedIndex(idx multilog.MultiLog) FSCKOption {
+	return func(o *fsckOpt) error {
+		o.feedsIdx = idx
+		return nil
+	}
+}
+
+func FSCKWithMode(m FSCKMode) FSCKOption {
+	return func(o *fsckOpt) error {
+		if m != FSCKModeLength && m != FSCKModeSequences {
+			return fmt.Errorf("invalid fsck mode: %d", m)
+		}
+		o.mode = m
+		return nil
+	}
+}
+
+func FSCKWithProgress(fn FSCKUpdateFunc) FSCKOption {
+	return func(o *fsckOpt) error {
+		if fn == nil {
+			return fmt.Errorf("warning: nil progress func")
+		}
+		o.progressFn = fn
+		return nil
+	}
+}
+
 // FSCKUpdateFunc is called with the a percentage float between 0 and 100
 // and a durration who much time it should take, rounded to seconds.
 type FSCKUpdateFunc func(percentage float64, timeLeft time.Duration)
 
 // FSCK checks the consistency of the received messages and the indexes.
 // progressFn offers a way to track the progress. It's okay to pass nil, the set sbot.info logger is used in that case.
-func (s *Sbot) FSCK(feedsMlog multilog.MultiLog, mode FSCKMode, progressFn FSCKUpdateFunc) error {
-	if feedsMlog == nil {
+func (s *Sbot) FSCK(opts ...FSCKOption) error {
+	var opt fsckOpt
+
+	for i, o := range opts {
+		err := o(&opt)
+		if err != nil {
+			return fmt.Errorf("sbot/fsck: option #%d failed: %w", i, err)
+		}
+	}
+
+	if opt.feedsIdx == nil {
 		var ok bool
-		feedsMlog, ok = s.GetMultiLog(multilogs.IndexNameFeeds)
+		opt.feedsIdx, ok = s.GetMultiLog(multilogs.IndexNameFeeds)
 		if !ok {
 			return errors.New("sbot: no users multilog")
 		}
 	}
 
-	if progressFn == nil {
-		progressFn = func(percentage float64, timeLeft time.Duration) {
+	if opt.progressFn == nil {
+		opt.progressFn = func(percentage float64, timeLeft time.Duration) {
 			level.Info(s.info).Log("event", "fsck-progress", "done", percentage, "time-left", timeLeft.String())
 		}
 	}
 
-	switch mode {
+	if opt.mode == 0 { // default to quick check
+		opt.mode = FSCKModeLength
+	}
+
+	switch opt.mode {
 	case FSCKModeLength:
-		return lengthFSCK(feedsMlog, s.RootLog)
+		return lengthFSCK(opt.feedsIdx, s.RootLog)
 
 	case FSCKModeSequences:
-		return sequenceFSCK(s.RootLog, progressFn)
+		return sequenceFSCK(s.RootLog, opt.progressFn)
 
 	default:
 		return errors.New("sbot: unknown fsck mode")

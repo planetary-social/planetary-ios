@@ -15,7 +15,8 @@ struct SSBIdentities {
                 "planetary-pub2": "@ZOSbNTyKgIecMcSCPlOJt1veIAP1D8p5Ptao+8cRO6c=.ed25519",
                 "planetary-pub3": "@oRMrLWs3AP0VwVw3AtBRL3TfOaxeTOFml33CibRtfcE=.ed25519",
                 "planetary-pub4": "@9Vyi928zwolkNcyDSA6S3p+ycQ8GD87iSU//0dNc0pw=.ed25519",
-                "cryptix-pub": "@xxZeuBUKIXYZZ7y+CIHUuy0NOFXz2MhUBkHemr86S3M=.ed25519"]
+                "planetary-pub5": "@7y2rK6OEQqE/brYIC9L6JVw4radEiEA2JK7C9nW9NEw=.ed25519",
+                "planetary-pub6": "@EXvEWZDIhmWracjl/4St9AWR42/MGBAXMPPBVJ4hN5A=.ed25519"]
 
     let people = ["Current Events": "@wNmXqk80DL4FrBjzZcYqbKs/SpsPv6MVX6BLICabPfI=.ed25519",
                   "The Weekley": "@iVPi/B73hJSpsUB8XbSnlxe3NembPXLjOfIexlYdgJA=.ed25519",
@@ -57,9 +58,7 @@ struct PlanetaryIdentities {
     let pubs = ["testpub_go1": "@SVigTE9FieHqbHymVX080tR8DCpk5v5LmX4mnxKd7M0=.ggfeed-v1",
                 "testpub_go2": "@pSF/XwM1choNE3sk60QO8jUk+a7n/6jJ5dJ/o9IeloE=.ggfeed-v1",
                 "testpub_go3": "@R2COJoY/JwWUZMu0yv67kGDNCSBCXzvdL7dZ4sIhz/c=.ggfeed-v1",
-                "testpub_go4": "@GotH+E4WwlWTdVDF9VmY2JOsuFfCavit5x+OyEz3HAQ=.ggfeed-v1",
-                "testpub_go_testing1": "@T2zAqlShDWOCLJnleB3XMshoBFXZsLQmiIgK9m+g0To=.ggfeed-v1",
-                "testpub_go_testing2": "@8shdLm9pVJQWnl1JymnljflcNZlCjHgh8/LGTWsMLVA=.ggfeed-v1"]
+                "testpub_go4": "@GotH+E4WwlWTdVDF9VmY2JOsuFfCavit5x+OyEz3HAQ=.ggfeed-v1"]
     
     let people = ["Planetary":          "@1TBkfmdEjgLnjucHWaluBR31mFmkLp8/v+BgqMu4+9U=.ed25519",
                   "Christian":          "@2l7hLH0QYOr1xePsdKvCH2TlLk8crOf7VJCAaNbia7A=.ggfeed-v1",

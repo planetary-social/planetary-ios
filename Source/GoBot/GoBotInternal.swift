@@ -53,10 +53,10 @@ struct ScuttlegobotBotStatus: Decodable {
 enum ScuttlegobotFSCKMode: UInt32 {
 
     // compares the message count of a feed with the sequence number of last message of a feed
-    case FeedLength = 0 // TODO: wasn't sure if they start from 0 by default
+    case FeedLength = 1
 
     // goes through all the messages and makes sure the sequences increament correctly for each feed
-    case Sequences = 1
+    case Sequences = 2
 }
 
 struct ScuttlegobotHealReport: Decodable {
@@ -93,16 +93,15 @@ class GoBotInternal {
         NetworkKey.ssb.string: ( Peer(tcpAddr: "main2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub2"]!) , [
             Peer(tcpAddr: "main1.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
             Peer(tcpAddr: "main3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!),
-            Peer(tcpAddr: "main4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!)
+            Peer(tcpAddr: "main4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!),
+            Peer(tcpAddr: "main5.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub5"]!),
+            Peer(tcpAddr: "main6.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub6"]!),
         ]),
 
         NetworkKey.planetary.string: (Peer(tcpAddr: "demo2.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
             Peer(tcpAddr: "demo1.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go1"]!),
             Peer(tcpAddr: "demo3.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go3"]!),
-            Peer(tcpAddr: "demo4.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go4"]!),
-
-            Peer(tcpAddr: "demo5.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go_testing1"]!),
-            Peer(tcpAddr: "demo6.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go_testing2"]!)
+            Peer(tcpAddr: "demo4.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go4"]!)
         ]),
 
         NetworkKey.integrationTests.string: (Peer(tcpAddr: "testing-ci.planetary.social:9119", pubKey: Identities.testNet.pubs["integrationpub1"]!), [])

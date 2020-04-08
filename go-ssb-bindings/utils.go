@@ -153,12 +153,6 @@ func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 		return -1
 	}
 
-	uf, ok := sbot.GetMultiLog("userFeeds")
-	if !ok {
-		retErr = errors.Errorf("sbot: missing userFeeds index")
-		return -1
-	}
-
 	progressFuncPtr := unsafe.Pointer(progressFn)
 	wrapFn := func(perc float64, remaining time.Duration) {
 		remainingCstr := C.CString(remaining.String())
@@ -166,7 +160,7 @@ func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 		C.free(unsafe.Pointer(remainingCstr))
 	}
 
-	retErr = sbot.FSCK(uf, fsckMode, wrapFn)
+	retErr = sbot.FSCK(mksbot.FSCKWithMode(fsckMode), mksbot.FSCKWithProgress(wrapFn))
 	if retErr != nil {
 		if constErrs, ok := retErr.(mksbot.ErrConsistencyProblems); ok {
 			lastFSCK = constErrs

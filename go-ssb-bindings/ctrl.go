@@ -195,6 +195,7 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 				tx.Rollback()
 				return nil, errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
 			}
+			continue
 		}
 
 		addresses = append(addresses, &addrRow{
