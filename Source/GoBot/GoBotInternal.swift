@@ -16,12 +16,6 @@ typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) ->
 // get's called with the messages left to process
 typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
 
-enum GoBotError: Error {
-    case alreadyStarted
-    case duringProcessing(String, Error)
-    case unexpectedFault(String)
-}
-
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
