@@ -35,8 +35,14 @@ struct PostFonts {
     var heading1: UIFont = UIFont.boldSystemFont(ofSize: 26)
     var heading2: UIFont = UIFont.boldSystemFont(ofSize: 22)
     var heading3: UIFont = UIFont.boldSystemFont(ofSize: 18)
-    var code: UIFont = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
-    var listItemPrefix: UIFont = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
+    var code: UIFont = UIFont.systemFont(ofSize: 16, weight: .regular)
+    var listItemPrefix: UIFont = UIFont.monospacedDigitSystemFont(ofSize: 16, weight: .regular)
+
+    init() {
+        if #available(iOS 13, *) {
+            self.code = UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+        }
+    }
     
 }
 
