@@ -13,11 +13,11 @@ extension GoBotError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .alreadyStarted:
-            return "Already logged in"
+            return "Already started"
         case .duringProcessing(let string, let error):
             return "\(string): \(error.localizedDescription)"
-        case .unexpectedFault:
-            return "Unexpected fault"
+        case .unexpectedFault(let string):
+            return "Unexpected fault: \(string)"
         }
     }
     
