@@ -6,9 +6,10 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/margaret"
+	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret/multilog"
 	"go.cryptoscope.co/muxrpc"
+
 	"go.cryptoscope.co/ssb"
 )
 
@@ -46,51 +47,18 @@ func (g replicateHandler) HandleCall(ctx context.Context, req *muxrpc.Request, e
 		return
 	}
 
-	storedFeeds, err := g.users.List()
+	src, err := ssb.FeedsWithSequnce(g.users)
 	if err != nil {
-		req.CloseWithError(errors.Wrap(err, "replicate: did not get user list"))
+		req.CloseWithError(errors.Wrap(err, "replicate: did not get feed source"))
 		return
 	}
 
-	for i, author := range storedFeeds {
-		var sr ssb.StorageRef
-		err := sr.Unmarshal([]byte(author))
-		if err != nil {
-			req.CloseWithError(errors.Wrapf(err, "replicate(%d): invalid storage ref", i))
-			return
-		}
-		authorRef, err := sr.FeedRef()
-		if err != nil {
-			req.CloseWithError(errors.Wrapf(err, "replicate(%d): stored ref not a feed?", i))
-			return
-		}
-
-		subLog, err := g.users.Get(author)
-		if err != nil {
-			req.CloseWithError(errors.Wrapf(err, "replicate(%d): did not load sublog", i))
-			return
-		}
-
-		currSeq, err := subLog.Seq().Value()
-		if err != nil {
-			req.CloseWithError(errors.Wrapf(err, "replicate(%d): failed to get current seq value", i))
-			return
-		}
-
-		err = req.Stream.Pour(ctx, UpToResponse{
-			ID:       authorRef,
-			Sequence: currSeq.(margaret.Seq).Seq() + 1})
-		if err != nil {
-			req.CloseWithError(errors.Wrapf(err, "replicate(%d): failed to pump msgs", i))
-			return
-		}
+	err = luigi.Pump(ctx, req.Stream, src)
+	if err != nil {
+		req.CloseWithError(errors.Wrapf(err, "replicate: failed to pump feed statuses"))
+		return
 
 	}
 
 	req.Stream.Close()
-}
-
-type UpToResponse struct {
-	ID       *ssb.FeedRef `json:"id"`
-	Sequence int64        `json:"sequence"`
 }

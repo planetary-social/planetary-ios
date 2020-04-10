@@ -612,14 +612,18 @@ class GoBotTests: XCTestCase {
         ex = self.expectation(description: "\(#function) thread")
         GoBotTests.shared.thread(rootKey: privRef) {
             root, msgs, err in
+            defer { ex.fulfill() }
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertTrue(root?.metadata.isPrivate ?? false)
             XCTAssertEqual(root?.value.author, GoBotTests.pubkeys["alice"]!)
             XCTAssertEqual(msgs.count, 1)
+            guard msgs.count > 0 else {
+                XCTFail("expected at least one message. got \(msgs.count)")
+                return
+            }
             XCTAssertNotNil(msgs[0].key, privReply)
             XCTAssertEqual(msgs[0].value.author, GoBotTests.pubkeys["barbara"]!)
-            ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
     }

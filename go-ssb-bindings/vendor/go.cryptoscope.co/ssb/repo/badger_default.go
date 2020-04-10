@@ -9,5 +9,8 @@ import (
 )
 
 func badgerOpts(dbPath string) badger.Options {
-	return badger.DefaultOptions(dbPath)
+	opts := badger.DefaultOptions(dbPath)
+	opts.Logger = nil
+	return opts
+
 }

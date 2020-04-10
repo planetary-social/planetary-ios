@@ -21,6 +21,7 @@ import (
 	"go.cryptoscope.co/secretstream/secrethandshake"
 
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/internal/neterr"
 )
 
 // DefaultPort is the default listening port for ScuttleButt.
@@ -227,7 +228,7 @@ func (n *node) handleConnection(ctx context.Context, origConn net.Conn, hws ...m
 	conn, err := n.applyConnWrappers(origConn)
 	if err != nil {
 		origConn.Close()
-		n.log.Log("msg", "node/Serve: failed to wrap connection", "err", err)
+		level.Error(n.log).Log("msg", "node/Serve: failed to wrap connection", "err", err)
 		return
 	}
 
@@ -251,10 +252,10 @@ func (n *node) handleConnection(ctx context.Context, origConn net.Conn, hws ...m
 
 	h, err := n.opts.MakeHandler(conn)
 	if err != nil {
-		// n.log.Log("conn", "mkHandler", "err", err, "peer", conn.RemoteAddr())
 		if _, ok := errors.Cause(err).(*ssb.ErrOutOfReach); ok {
 			return // ignore silently
 		}
+		level.Warn(n.log).Log("conn", "mkHandler", "err", err, "peer", conn.RemoteAddr())
 		return
 	}
 
@@ -274,8 +275,12 @@ func (n *node) handleConnection(ctx context.Context, origConn net.Conn, hws ...m
 	defer edp.Terminate()
 	srv := edp.(muxrpc.Server)
 
-	if err := srv.Serve(ctx); err != nil {
-		// level.Debug(n.log).Log("conn", "serve", "err", err)
+	err = srv.Serve(ctx)
+	if err != nil {
+		causeErr := errors.Cause(err)
+		if !neterr.IsConnBrokenErr(causeErr) && causeErr != context.Canceled {
+			level.Debug(n.log).Log("conn", "serve", "err", err)
+		}
 	}
 	n.removeRemote(edp)
 }
@@ -323,6 +328,8 @@ func (n *node) Serve(ctx context.Context, wrappers ...muxrpc.HandlerWrapper) err
 					continue
 				}
 				switch cause := errors.Cause(err).(type) {
+				case secrethandshake.ErrProcessing:
+					// ignore
 				case secrethandshake.ErrProtocol:
 					// ignore
 				default:
@@ -348,7 +355,8 @@ func (n *node) Serve(ctx context.Context, wrappers ...muxrpc.HandlerWrapper) err
 				}
 
 				switch cause := errors.Cause(err).(type) {
-
+				case secrethandshake.ErrProcessing:
+					// ignore
 				case secrethandshake.ErrProtocol:
 					// ignore
 				default:

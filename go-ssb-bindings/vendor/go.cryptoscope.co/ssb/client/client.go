@@ -23,7 +23,6 @@ import (
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/blobstore"
 	"go.cryptoscope.co/ssb/message"
-	"go.cryptoscope.co/ssb/plugins/replicate"
 	"go.cryptoscope.co/ssb/plugins/whoami"
 )
 
@@ -139,7 +138,7 @@ func NewUnix(path string, opts ...Option) (*Client, error) {
 
 	conn, err := net.Dial("unix", path)
 	if err != nil {
-		return nil, errors.Errorf("ssbClient: failed to open unix path")
+		return nil, errors.Errorf("ssbClient: failed to open unix path %q", path)
 	}
 	c.closer = conn
 
@@ -186,7 +185,7 @@ func (c Client) Whoami() (*ssb.FeedRef, error) {
 }
 
 func (c Client) ReplicateUpTo() (luigi.Source, error) {
-	src, err := c.Source(c.rootCtx, replicate.UpToResponse{}, muxrpc.Method{"replicate", "upto"})
+	src, err := c.Source(c.rootCtx, ssb.ReplicateUpToResponse{}, muxrpc.Method{"replicate", "upto"})
 	return src, errors.Wrap(err, "ssbClient: failed to create stream")
 }
 

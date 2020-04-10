@@ -23,11 +23,11 @@ github.com/dustin/go-humanize
 github.com/edsrzf/mmap-go
 # github.com/glycerine/go-unsnap-stream v0.0.0-20181221182339-f9677308dec2
 github.com/glycerine/go-unsnap-stream
-# github.com/go-kit/kit v0.9.0
+# github.com/go-kit/kit v0.10.0
 github.com/go-kit/kit/log
 github.com/go-kit/kit/log/level
 github.com/go-kit/kit/metrics
-# github.com/go-logfmt/logfmt v0.4.0
+# github.com/go-logfmt/logfmt v0.5.0
 github.com/go-logfmt/logfmt
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
@@ -35,14 +35,12 @@ github.com/golang/protobuf/proto
 github.com/golang/snappy
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
-# github.com/hashicorp/go-multierror v1.0.0
+# github.com/hashicorp/go-multierror v1.1.0
 github.com/hashicorp/go-multierror
 # github.com/keks/nocomment v0.0.0-20181007001506-30c6dcb4a472
 github.com/keks/nocomment
 # github.com/keks/persist v0.0.0-20191006175951-43c124092b8b
 github.com/keks/persist
-# github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515
-github.com/kr/logfmt
 # github.com/libp2p/go-reuseport v0.0.1
 github.com/libp2p/go-reuseport
 # github.com/machinebox/progress v0.2.0
@@ -86,13 +84,13 @@ go.cryptoscope.co/muxrpc
 go.cryptoscope.co/muxrpc/codec
 # go.cryptoscope.co/netwrap v0.1.1
 go.cryptoscope.co/netwrap
-# go.cryptoscope.co/secretstream v1.2.2-0.20200303151838-85cf020cfee6
+# go.cryptoscope.co/secretstream v1.2.2
 go.cryptoscope.co/secretstream
 go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200324132111-56b69ece110d
+# go.cryptoscope.co/ssb v0.0.0-20200408093359-c2edb4afd66e
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
 go.cryptoscope.co/ssb/client
@@ -101,6 +99,7 @@ go.cryptoscope.co/ssb/indexes
 go.cryptoscope.co/ssb/internal/ctxutils
 go.cryptoscope.co/ssb/internal/extra25519
 go.cryptoscope.co/ssb/internal/mutil
+go.cryptoscope.co/ssb/internal/neterr
 go.cryptoscope.co/ssb/internal/netwraputil
 go.cryptoscope.co/ssb/internal/transform
 go.cryptoscope.co/ssb/invite
@@ -129,7 +128,7 @@ go.cryptoscope.co/ssb/sbot
 go.mindeco.de/ssb-gabbygrove
 # go.mindeco.de/ssb-multiserver v0.0.0-20200302171328-987e421fadee
 go.mindeco.de/ssb-multiserver
-# golang.org/x/crypto v0.0.0-20200303113948-2939d6771b24 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+# golang.org/x/crypto v0.0.0-20200406173513-056763e48d71 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -147,7 +146,7 @@ golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
 # golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527
+# golang.org/x/sys v0.0.0-20200408040146-ea54a3c99b9b
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
 golang.org/x/sys/windows

@@ -24,16 +24,14 @@ class MarkdownTests: XCTestCase {
         let attributedString = markdown.decodeMarkdown()
         XCTAssertNotNil(attributedString)
         
-        let hashtags = attributedString.hashtags()
+        let hashtags = attributedString.mentions()
         XCTAssertEqual(hashtags.count, 3)
-        XCTAssertEqual(hashtags[0], Hashtag(name: "channel1"))
-        XCTAssertEqual(hashtags[1], Hashtag(name: "channel2"))
-        XCTAssertEqual(hashtags[2], Hashtag(name: "channel3"))
-        
-//        let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
-//        mutableAttributedString.removeHashtagLinkAttributes()
-//        XCTAssertTrue(mutableAttributedString.hashtags().isEmpty)
-//        XCTAssertTrue(mutableAttributedString.string == markdown)
+        XCTAssertEqual(hashtags[0].name, "#channel1")
+        XCTAssertEqual(hashtags[0].link, "#channel1")
+        XCTAssertEqual(hashtags[1].name, "#channel2")
+        XCTAssertEqual(hashtags[1].link, "#channel2")
+        XCTAssertEqual(hashtags[2].name, "#channel3")
+        XCTAssertEqual(hashtags[2].link, "#channel3")
     }
    
     func test_decodeManyLinks() {
@@ -80,4 +78,40 @@ class MarkdownTests: XCTestCase {
         XCTAssertNotNil(attributedString)
     }
     
+    func test_decodeAwfulLink() {
+        let markdown = "[**\\!bang**](https://duckduckgo.com/bang)"
+        let attributedString = markdown.decodeMarkdown()
+        let mentions = attributedString.mentions()
+        XCTAssertEqual(mentions.count, 1)
+        XCTAssertEqual(mentions[0].name, "!bang")
+        XCTAssertEqual(mentions[0].link, "https://duckduckgo.com/bang")
+    }
+
+    func test_decodeLinkWithoutFormat() {
+        let markdown = "This is a link http://www.one.com without format"
+        let attributedString = markdown.decodeMarkdown()
+        let mentions = attributedString.mentions()
+        XCTAssertEqual(mentions.count, 1)
+        XCTAssertEqual(mentions[0].link, "http://www.one.com")
+    }
+
+    func test_decodeTwoDifferentLinks() {
+        let markdown = "This is a test for [one](http://www.one.com) link in markdown plus a http://www.second.com link not formatted."
+        let attributedString = markdown.decodeMarkdown()
+        let mentions = attributedString.mentions()
+        XCTAssertEqual(mentions.count, 2)
+        XCTAssertEqual(mentions[0].name, "one")
+        XCTAssertEqual(mentions[0].link, "http://www.one.com")
+        XCTAssertEqual(mentions[1].link, "http://www.second.com")
+    }
+
+    func test_decodeLinkWithUrlAsName() {
+        let markdown = "This is a test for [http://www.one.com](http://www.second.com) link in markdown"
+        let attributedString = markdown.decodeMarkdown()
+        let mentions = attributedString.mentions()
+        XCTAssertEqual(mentions.count, 1)
+        XCTAssertEqual(mentions[0].name, "http://www.one.com")
+        XCTAssertEqual(mentions[0].link, "http://www.second.com")
+    }
+
 }

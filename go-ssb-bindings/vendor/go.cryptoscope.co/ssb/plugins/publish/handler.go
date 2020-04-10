@@ -5,16 +5,17 @@ package publish
 import (
 	"context"
 
-	"go.cryptoscope.co/ssb"
-
 	"github.com/cryptix/go/logging"
+	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/muxrpc"
+
+	"go.cryptoscope.co/ssb"
 )
 
 type handler struct {
-	publish margaret.Log
+	publish ssb.Publisher
 	rootLog margaret.Log // to get the key back
 	info    logging.Interface
 }
@@ -24,32 +25,22 @@ func (h handler) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc
 		req.CloseWithError(errors.Errorf("publish: bad request name: %s", n))
 		return
 	}
-	if n := len(req.Args()); n != 1 {
+
+	args := req.Args()
+	if n := len(args); n != 1 {
 		req.CloseWithError(errors.Errorf("publish: bad request. expected 1 argument got %d", n))
 		return
 	}
 
-	seq, err := h.publish.Append(req.Args()[0])
+	ref, err := h.publish.Publish(args[0])
 	if err != nil {
 		req.CloseWithError(errors.Wrap(err, "publish: pour failed"))
 		return
 	}
 
-	msgv, err := h.rootLog.Get(seq)
-	if err != nil {
-		req.CloseWithError(errors.Wrap(err, "publish: geting new message back failed"))
-		return
-	}
+	level.Info(h.info).Log("event", "published message", "refKey", ref.ShortRef())
 
-	msg, ok := msgv.(ssb.Message)
-	if !ok {
-		req.CloseWithError(errors.Errorf("publish: unexpected message type: %T", msgv))
-		return
-	}
-
-	h.info.Log("info", "published new message", "rootSeq", seq.Seq(), "refKey", msg.Key().Ref())
-
-	err = req.Return(ctx, msg.Key().Ref())
+	err = req.Return(ctx, ref.Ref())
 	if err != nil {
 		req.CloseWithError(errors.Wrap(err, "publish: return failed"))
 		return

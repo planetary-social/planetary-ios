@@ -14,11 +14,10 @@ class PostCellView: KeyValueView {
 
     let verticalSpace: CGFloat = 5
 
-    var postAttributes = UIFont.verse.postAttributes
-
     private lazy var seeMoreString: NSAttributedString = {
         let seeMore = NSMutableAttributedString(string: "... \(Text.seeMore.text)")
-        seeMore.addAttributes(self.postAttributes)
+        let styler = MarkdownStyler()
+        styler.style(seeMore: seeMore)
         let range = (seeMore.string as NSString).range(of: Text.seeMore.text)
         seeMore.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.tint.default], range: range)
         return seeMore
@@ -187,10 +186,8 @@ class PostCellView: KeyValueView {
         guard let post = keyValue.value.content.post else { return }
 
         let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
-        let mutableText = NSMutableAttributedString(attributedString: text)
-        mutableText.addAttributes(self.postAttributes)
-
-        self.fullPostText = mutableText
+        
+        self.fullPostText = text
         self.configureTruncatedState()
 
         self.galleryViewFullHeightConstraint.isActive = post.hasBlobs

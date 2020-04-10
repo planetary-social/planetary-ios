@@ -100,7 +100,7 @@ func (m *FeedManager) serveLiveFeeds() {
 	}
 
 	err = luigi.Pump(m.rootCtx, luigi.FuncSink(m.pour), src)
-	if err != nil && err != ssb.ErrShuttingDown {
+	if err != nil && err != ssb.ErrShuttingDown && err != context.Canceled {
 		err = errors.Wrap(err, "error while serving live feed")
 		panic(err)
 	}
