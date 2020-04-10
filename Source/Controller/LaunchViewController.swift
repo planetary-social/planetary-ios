@@ -84,13 +84,21 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) {
-            [weak self] error in
+            [weak self] loginError in
+            
+            var error = loginError
+            
+            // login can return a .alreadyLoggedIn error, we should be fine dismissing this case
+            if let botError = error as? BotError, botError == .alreadyLoggedIn {
+                error = nil
+            }
+            
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
             guard error == nil else {
-                let controller = UIAlertController(title: "Error",
-                                                   message: "We couldn't log you in. Please, try again or let us know if this persists.",
+                let controller = UIAlertController(title: Text.error.text,
+                                                   message: Text.Error.login.text,
                                                    preferredStyle: .alert)
                 
                 var action = UIAlertAction(title: "Retry", style: .default) { _ in

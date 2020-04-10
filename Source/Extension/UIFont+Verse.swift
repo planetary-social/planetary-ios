@@ -27,45 +27,30 @@ struct VerseFonts {
 
     let pillButton = UIFont.systemFont(ofSize: 14, weight: .medium)
 
-    // MARK: NSAttributedString definitions
+}
 
-    var postAttributes: [NSAttributedString.Key: Any] {
-        let font = UIFont.verse.post
-        let style = NSMutableParagraphStyle()
-        style.lineSpacing = 1
-        return [.font: font,
-                .kern: kerning(7, font: font),
-                .foregroundColor: UIColor.text.default,
-                .paragraphStyle: style]
-    }
+struct PostFonts {
+    
+    var body: UIFont = UIFont.systemFont(ofSize: 16, weight: .regular)
+    var heading1: UIFont = UIFont.boldSystemFont(ofSize: 26)
+    var heading2: UIFont = UIFont.boldSystemFont(ofSize: 22)
+    var heading3: UIFont = UIFont.boldSystemFont(ofSize: 18)
+    var code: UIFont = UIFont.systemFont(ofSize: 16, weight: .regular)
+    var listItemPrefix: UIFont = UIFont.monospacedDigitSystemFont(ofSize: 16, weight: .regular)
 
-    var largePostAttributes: [NSAttributedString.Key: Any] {
-        let font = UIFont.verse.postLarge
-        let style = NSMutableParagraphStyle()
-        style.lineSpacing = 2
-        return [.font: font,
-                .kern: kerning(6, font: font),
-                .foregroundColor: UIColor.text.default,
-                .paragraphStyle: style]
+    init() {
+        if #available(iOS 13, *) {
+            self.code = UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+        }
     }
-
-    var profileBioAttributes: [NSAttributedString.Key: Any] {
-        // Tom said he might like to be able to customize these in the future,
-        // but that for now they should be the same as post.
-        return self.postAttributes
-    }
-
-    // this translates the `tracking` from an Adobe-compatible value
-    // based on the spacing and the font size
-    private func kerning(_ tracking: CGFloat, font: UIFont) -> CGFloat {
-        return font.pointSize * tracking / 1000
-    }
+    
 }
 
 extension UIFont {
 
     static let verse = VerseFonts()
-
+    static let post = PostFonts()
+    
     static func paragraphStyleAttribute(lineSpacing: CGFloat) -> [NSAttributedString.Key: Any] {
         let style = NSMutableParagraphStyle()
         style.lineSpacing = lineSpacing

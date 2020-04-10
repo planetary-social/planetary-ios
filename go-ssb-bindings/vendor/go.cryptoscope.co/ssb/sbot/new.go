@@ -118,7 +118,7 @@ func initSbot(s *Sbot) (*Sbot, error) {
 
 	uf, ok := s.mlogIndicies[multilogs.IndexNameFeeds]
 	if !ok {
-		level.Warn(s.info).Log("event", "bot init", "msg", "loading default idx", "idx", multilogs.IndexNameFeeds)
+		level.Debug(s.info).Log("event", "bot init", "msg", "loading default idx", "idx", multilogs.IndexNameFeeds)
 		err = MountMultiLog(multilogs.IndexNameFeeds, multilogs.OpenUserFeeds)(s)
 		if err != nil {
 			return nil, errors.Wrap(err, "sbot: failed to open userFeeds index")

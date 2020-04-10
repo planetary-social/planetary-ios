@@ -20,18 +20,6 @@ extension Connection {
     }
 }
 
-enum ViewDatabaseError: Error {
-    case notOpen
-    case alreadyOpen
-    case unknownMessage(MessageIdentifier)
-    case unknownAuthor(Identifier)
-    case unknownReferenceID(Int64)
-    case unexpectedContentType(String)
-    case unknownTable(ViewDatabaseTableNames)
-    case unhandledContentType(ContentType)
-    case messageConstraintViolation(Identity)
-}
-
 enum ViewDatabaseTableNames: String {
     case addresses
     case authors
@@ -1508,7 +1496,7 @@ class ViewDatabase {
                         // while (1) always means duplicate message (2) can also mean fork
                         // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
                         if errCode == SQLITE_CONSTRAINT {
-                            throw ViewDatabaseError.messageConstraintViolation(msg.value.author)
+                            throw ViewDatabaseError.messageConstraintViolation(msg.value.author, errMsg)
                         }
                         throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
                     } catch {

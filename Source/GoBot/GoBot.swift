@@ -519,9 +519,10 @@ class GoBot: Bot {
 
             do {
                 try self.database.fillMessages(msgs: msgs)
-            } catch ViewDatabaseError.messageConstraintViolation(let author) {
-                // TODO: we need to spawn the _in progress_ spinner here because this can take a while...
+            } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
                 var (params, err) = self.repairViewConstraints21012020(with: author, current: current)
+                // add original SQL error
+                params["sql_error"] = sqlErr
                 if let e = err {
                     params["repair_failed"] = e.localizedDescription
                 }

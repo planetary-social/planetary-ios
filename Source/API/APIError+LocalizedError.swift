@@ -13,17 +13,17 @@ extension APIError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .decodeError:
-            return Text.Error.unexpected.text
+            return "Decode error"
         case .encodeError:
-            return Text.Error.unexpected.text
+            return "Encode error"
         case .invalidIdentity:
-            return Text.Error.unexpected.text
+            return "Invalid identity"
         case .invalidPath:
-            return Text.Error.unexpected.text
+            return "Invalid path"
         case .invalidURL:
-            return Text.Error.unexpected.text
-        case .httpStatusCode:
-            return Text.Error.unexpected.text
+            return "Invalid URL"
+        case .httpStatusCode(let statusCode):
+            return "Status code: \(statusCode)"
         case .other(let error):
             return error.localizedDescription
         }

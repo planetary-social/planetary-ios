@@ -33,11 +33,10 @@ extension Bot {
     {
         guard configuration.canLaunch else { completion(false); return }
         guard let network = configuration.network else { completion(false); return }
-        guard let key = configuration.hmacKey else { completion(false); return }
         guard let secret = configuration.secret else { completion(false); return }
 
         Bots.current.login(network: network,
-                           hmacKey: key,
+                           hmacKey: configuration.hmacKey,
                            secret: secret)
         {
             error in

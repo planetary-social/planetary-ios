@@ -166,9 +166,7 @@ class AboutView: KeyValueView {
         self.nameLabel.text = name
         self.nameLabel.lineBreakMode = .byWordWrapping
 
-        let description = NSMutableAttributedString(attributedString: bio)
-        description.addAttributes(UIFont.verse.profileBioAttributes)
-        self.descriptionTextView.attributedText = description
+        self.descriptionTextView.attributedText = bio
 
         self.descriptionContainerZeroHeightConstraint?.isActive = bio.string.trimmed.isEmpty
 
