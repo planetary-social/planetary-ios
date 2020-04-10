@@ -46,7 +46,7 @@ extension Bot {
         Thread.assertIsMainThread()
         if images.isEmpty { completion([], nil); return }
 
-        var blobs: Blobs = []
+        var blobs = [Int: Blob]()
 
         // TODO need to add Bot.publish(blobs)
         // TODO check all blobs before publish
@@ -61,8 +61,11 @@ extension Bot {
                 if let error = error { completion([], error); return }
                 let metadata = Blob.Metadata.describing(image, mimeType: .jpeg, data: data)
                 let blob = Blob(identifier: identifier, metadata: metadata)
-                blobs += [blob]
-                if blobs.count == images.count { completion(blobs, nil) }
+                blobs[index] = blob
+                if blobs.count == images.count {
+                    let sortedBlobs = blobs.sorted(by: {$0.0 < $1.0})
+                    completion(sortedBlobs.map{ $1 }, nil)
+                }
             }
         }
     }
