@@ -196,4 +196,5 @@
 "Debug.debugMenu" = "Dangerous and powerful debug menu";
 "Debug.debugFooter" = "This is where we let you shot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options.";
 
+"Error.login" = "The peer to peer engine failed to start. Please try turning the app off and on again to see if that fixes it.";
 "Error.unexpected" = "Something unexpected happened.";
