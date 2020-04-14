@@ -192,6 +192,9 @@ class ViewDatabase {
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
             try db.execute(String(contentsOf: schemaV1url))
+            db.userVersion = 2
+        } else if db.userVersion == 1 {
+            try db.execute("CREATE INDEX msg_refs on posts (msg_ref);")
             db.userVersion = 1
         }
 

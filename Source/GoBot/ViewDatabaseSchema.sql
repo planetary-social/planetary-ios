@@ -157,6 +157,7 @@ msg_ref              integer not null,
 text                 text,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
+CREATE INDEX posts_msgrefs on posts (msg_ref);
 
 -- reply trees aka tangles
 -- a message in a thread (or hopefully soon gatherings) references the first message (root)
