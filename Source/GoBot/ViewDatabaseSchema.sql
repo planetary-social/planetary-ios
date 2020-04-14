@@ -99,6 +99,10 @@ CREATE TABLE messagekeys (
     key TEXT UNIQUE
 );
 
+CREATE INDEX idx_messagekeys_key ON messagekeys(key);
+CREATE INDEX idx_messagekeys_id ON messagekeys(id);
+
+
 -- BUT: this is mostly just glossing over the fact msg_key is referencing our messages table.
 -- the above remark is only true for root/branch on tangles and mention references
 -- msg_key will only point to stored messages.
@@ -134,6 +138,7 @@ CREATE INDEX msgs_received ON messages ( received_at );
 CREATE INDEX msgs_claimed ON messages ( claimed_at );
 
 CREATE INDEX msgs_decrypted on messages (is_decrypted);
+CREATE INDEX msgs_rx_seq on messages (rx_seq);
 
 -- quick profile listing
 CREATE INDEX helper_profile on messages (is_decrypted, type, author_id, claimed_at);
@@ -183,6 +188,7 @@ CREATE TABLE tangles (
 );
 CREATE INDEX tangle_roots on tangles (root);
 CREATE INDEX tangle_msgref on tangles (msg_ref);
+CREATE INDEX tangle_id on tangles (id);
 
 CREATE TABLE branches (
     tangle_id       integer not null,
@@ -220,6 +226,8 @@ name                 text, -- filename
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
 CREATE INDEX mention_img_refs on mention_image (msg_ref);
+
+CREATE INDEX idx_message_image_msg_ref_image ON mention_image (msg_ref, image);
 
 -- posts can contain multiple blobs
 CREATE TABLE post_blobs (
@@ -277,8 +285,8 @@ FOREIGN KEY ( author_id ) REFERENCES authors( "msg_id" ),
 FOREIGN KEY ( contact_id ) REFERENCES authors( "id" )
 );
 
-
-
+CREATE INDEX idx_contact_state ON contacts (contact_id, state);
+CREATE INDEX idx_author_contact_state ON contacts (author_id, contact_id, state); 
 
 -- private recps
 -- TODO: until we have changing groups, it would be enough to save these for the first message

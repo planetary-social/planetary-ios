@@ -195,6 +195,15 @@ class ViewDatabase {
             db.userVersion = 2
         } else if db.userVersion == 1 {
             try db.execute("CREATE INDEX msg_refs on posts (msg_ref);")
+            try db.execute("CREATE INDEX idx_author_identity ON authors (author);");
+            try db.execute("CREATE INDEX idx_author_id ON authors(id);");
+            try db.execute("CREATE INDEX idx_messagekeys_key ON messagekeys(key);");
+            try db.execute("CREATE INDEX idx_messagekeys_id ON messagekeys(id);");
+            try db.execute("CREATE INDEX msgs_rx_seq on messages (rx_seq);");
+            try db.execute("CREATE INDEX tangle_id on tangles (id);");
+            try db.execute("CREATE INDEX idx_message_image_msg_ref_image ON mention_image (msg_ref, image);");
+            try db.execute("CREATE INDEX idx_contact_state ON contacts (contact_id, state);");
+            try db.execute("CREATE INDEX idx_author_contact_state ON contacts (author_id, contact_id, state);");
             db.userVersion = 2
         }
 
