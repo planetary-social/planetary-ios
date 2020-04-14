@@ -195,7 +195,7 @@ class ViewDatabase {
             db.userVersion = 2
         } else if db.userVersion == 1 {
             try db.execute("CREATE INDEX msg_refs on posts (msg_ref);")
-            db.userVersion = 1
+            db.userVersion = 2
         }
 
         self.currentUserID = try self.authorID(from: user, make: true)
