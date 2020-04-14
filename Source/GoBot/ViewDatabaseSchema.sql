@@ -277,6 +277,9 @@ FOREIGN KEY ( author_id ) REFERENCES authors( "msg_id" ),
 FOREIGN KEY ( contact_id ) REFERENCES authors( "id" )
 );
 
+
+
+
 -- private recps
 -- TODO: until we have changing groups, it would be enough to save these for the first message
 CREATE TABLE private_recps (
