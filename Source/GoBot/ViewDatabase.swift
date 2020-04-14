@@ -261,8 +261,9 @@ class ViewDatabase {
         }
         
         let rxMaybe = Expression<Int64?>("rx_seq")
-        if let rx = try db.scalar(self.msgs.select(rxMaybe).order(self.colRXseq.desc).limit(1)) {
-            return rx
+        
+        if let rx = try db.scalar(self.msgs.select(rxMaybe.max)) {
+           return rx
         }
         
         return -1
