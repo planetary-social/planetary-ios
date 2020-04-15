@@ -11,18 +11,18 @@ import Foundation
 extension Identity {
 
     var publicLink: URL? {
-        let base64Identifier = Data(self.utf8).base64EncodedString()
-        return URL(string: "https://planetary.social/p/\(base64Identifier)")
+        return URL(string: "https://planetary.social/p/\(self)")
     }
 
     static func parse(publicLink: URL) -> Identity? {
+        let path = publicLink.path
         let components = publicLink.pathComponents
-        if components.count >= 3, components[1] == "p" {
-            let base64Identifier = components[2]
-            guard let data = Data(base64Encoded: base64Identifier) else {
-                return nil
+        if components.count >= 2, components[1] == "p" {
+            let identifier = Identifier(path.dropFirst(3))
+            if identifier.isValidIdentifier {
+                return identifier
             }
-            return Identity(data: data, encoding: .utf8)
+            return nil
         } else {
             return nil
         }
