@@ -1,0 +1,349 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)
+// swift-module-flags: -target arm64-apple-ios9.3 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -module-name ZendeskSDK
+import AVFoundation
+import CommonUISDK
+import Foundation
+import MobileCoreServices
+import Photos
+import QuickLook
+import Swift
+import UIKit
+import ZendeskCoreSDK
+import ZendeskProviderSDK
+@_exported import ZendeskSDK
+import os
+public struct Subscription<StateType> {
+  public func informWithCurrentState()
+  public func removeListener()
+  public func linkLifeCycleTo(object: ObjectiveC.NSObject)
+}
+public struct ActionSubscription {
+  public func removeListener()
+  public func linkLifeCycleTo(object: ObjectiveC.NSObject)
+}
+public let alwaysFilter: ZendeskSDK.FilterFunction<Any>
+public let EqualsFilter: ZendeskSDK.FilterFunction<Any>
+@objc public class ContainerViewController : UIKit.UIViewController {
+  @objc override dynamic public func viewDidLoad()
+  @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc deinit
+}
+extension ContainerViewController : ZendeskSDK.ContainerChildControllerDelegate {
+  @objc dynamic public var navItem: UIKit.UINavigationItem? {
+    @objc get
+  }
+  @objc dynamic public func willDismiss()
+}
+@objc(ZDKSupportUI) public class SupportUI : ObjectiveC.NSObject {
+  @objc public var helpCenterLocaleOverride: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @objc public class func initialize(withZendesk zendesk: ZendeskCoreSDK.Zendesk?)
+  @objc public static var instance: ZendeskSDK.SupportUI? {
+    @objc get
+  }
+  @objc public func refreshRequest(requestId: Swift.String) -> Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKHelpCenterUiConfiguration) final public class HelpCenterUiConfiguration : ObjectiveC.NSObject, CommonUISDK.UiConfiguration {
+  @objc final public var labels: [Swift.String] {
+    @objc get
+    @objc set
+  }
+  @objc final public var groupType: ZendeskProviderSDK.ZDKHelpCenterOverviewGroupType {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "use showContactOptionsOnEmptySearch instead")
+  @objc final public var hideContactSupport: Swift.Bool
+  @objc final public var showContactOptions: Swift.Bool
+  @objc final public var showContactOptionsOnEmptySearch: Swift.Bool
+  @objc final public var deflectionEnabled: Swift.Bool
+  @objc final public var groupIds: [Foundation.NSNumber] {
+    @objc get
+    @objc set
+  }
+  @objc final public var overviewContentModel: ZendeskProviderSDK.ZDKHelpCenterOverviewContentModel {
+    get
+    }
+  @objc override required dynamic public init()
+  @objc deinit
+}
+@objc(ZDKDismissUtil) final public class DismissUtil : ObjectiveC.NSObject {
+  @objc public static func remove(_ viewController: UIKit.UIViewController?, from navigationController: UIKit.UINavigationController?)
+  @objc public static func navigationController(_ navigationController: UIKit.UINavigationController?, didPush viewController: UIKit.UIViewController?) -> Swift.Bool
+  @objc public static func barButtonFor(_ viewController: UIKit.UIViewController, embededIn navigationController: UIKit.UINavigationController?, action: ObjectiveC.Selector) -> UIKit.UIBarButtonItem
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKHelpCenterContactUsRouter) final public class HelpCenterContactUsRouter : ObjectiveC.NSObject {
+  @objc required public init(withPresentingViewController presentingViewController: UIKit.UIViewController, uiConfigs: [CommonUISDK.UiConfiguration], zendesk: ZendeskCoreSDK.Zendesk, isDeflectionEnabled: Swift.Bool)
+  @objc final public func decideButtonActionForNavBar()
+  @objc final public func decideButtonActionForEmptySearch()
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKFileType) public enum FileType : Swift.Int {
+  case png
+  case jpg
+  case pdf
+  case plain
+  case word
+  case excel
+  case powerpoint
+  case powerpointX
+  case keynote
+  case pages
+  case numbers
+  case binary
+  case heic
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public protocol Middleware {
+  func onAction(action: ZendeskSDK.Action, getState: @escaping ZendeskSDK.GetStateFunction, dispatch: @escaping ZendeskSDK.DispatchFunction, next: @escaping ZendeskSDK.NextFunction)
+}
+final public class BlockMiddleware : ZendeskSDK.Middleware {
+  public init(actionFunction: @escaping ZendeskSDK.MiddlewareFunction)
+  final public func onAction(action: ZendeskSDK.Action, getState: @escaping ZendeskSDK.GetStateFunction, dispatch: @escaping ZendeskSDK.DispatchFunction, next: @escaping ZendeskSDK.NextFunction)
+  @objc deinit
+}
+public func + (lhs: ZendeskSDK.Middleware, rhs: ZendeskSDK.Middleware) -> ZendeskSDK.Middleware
+@objc(ZDKTheme) public class Theme : ObjectiveC.NSObject {
+  @objc public static let currentTheme: ZendeskSDK.Theme
+  @objc public var primaryColor: UIKit.UIColor {
+    @objc get
+    @objc set
+  }
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKRequestUi) final public class RequestUi : ObjectiveC.NSObject {
+  @objc public static func buildRequestList() -> UIKit.UIViewController
+  @objc public static func buildRequestList(with configurations: [CommonUISDK.UiConfiguration]) -> UIKit.UIViewController
+  @objc public static func buildRequestUi() -> UIKit.UIViewController
+  @objc public static func buildRequestUi(with configurations: [CommonUISDK.UiConfiguration]) -> UIKit.UIViewController
+  @objc public static func buildRequestUi(requestId: Swift.String) -> UIKit.UIViewController
+  @objc public static func buildRequestUi(requestId: Swift.String, configurations: [CommonUISDK.UiConfiguration]) -> UIKit.UIViewController
+  @objc override dynamic public init()
+  @objc deinit
+}
+public typealias ContainerChildController = UIKit.UIViewController & ZendeskSDK.ContainerChild
+@objc(ZDKCoordinator) public protocol Coordinator {
+  @objc func start(present: @escaping (ZendeskSDK.ContainerChildController) -> Swift.Void, with containerDelegate: ZendeskSDK.ContainerChildControllerDelegate)
+}
+@objc(ZDKHelpCenterCoordinator) final public class HelpCenterCoordinator : ObjectiveC.NSObject, ZendeskSDK.Coordinator {
+  @objc public init(helpCenterController: UIKit.UIViewController & ZendeskSDK.ContainerChild, uiConfigurations: [CommonUISDK.UiConfiguration] = [])
+  @objc final public func start(present: @escaping (ZendeskSDK.ContainerChildController) -> Swift.Void, with containerDelegate: ZendeskSDK.ContainerChildControllerDelegate)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc final public class RequestCoordinator : ObjectiveC.NSObject, ZendeskSDK.Coordinator {
+  @objc final public func start(present: @escaping (ZendeskSDK.ContainerChildController) -> Swift.Void, with containerDelegate: ZendeskSDK.ContainerChildControllerDelegate)
+  @objc override dynamic public init()
+  @objc deinit
+}
+final public class Store {
+  final public var state: ZendeskSDK.State
+  @objc deinit
+}
+extension Store {
+  final public func dispatch(action: ZendeskSDK.Action)
+}
+extension Store {
+  final public func addListener<StateType>(forStateType type: StateType.Type, stateKey: ZendeskSDK.StateKey? = nil, if filterBlock: ZendeskSDK.FilterFunction<StateType>? = nil, callback: @escaping (StateType) -> Swift.Void) -> ZendeskSDK.Subscription<StateType>
+  final public func addListener<StateType>(if filterBlock: ZendeskSDK.FilterFunction<ZendeskSDK.State>? = nil, stateSelector: @escaping ZendeskSDK.StateSelector<StateType>, callback: @escaping (StateType) -> Swift.Void) -> ZendeskSDK.Subscription<StateType>
+  final public func addListener(if filterBlock: ZendeskSDK.FilterFunction<ZendeskSDK.State>? = nil, callback: @escaping (ZendeskSDK.State) -> Swift.Void) -> ZendeskSDK.Subscription<ZendeskSDK.State>
+  final public func addActionListener(actionListener: @escaping ZendeskSDK.ActionListenerFunction) -> ZendeskSDK.ActionSubscription
+}
+extension Store {
+  final public func reset(state: Any)
+  final public func reset(state: Any, forKey key: ZendeskSDK.StateKey)
+  final public func resetFullState(_ state: ZendeskSDK.KeyedState)
+}
+public protocol Action {
+}
+public protocol Window {
+  var windowLevel: UIKit.UIWindow.Level { get set }
+  var layer: QuartzCore.CALayer { get }
+  var bounds: CoreGraphics.CGRect { get }
+  func addSubview(_ view: UIKit.UIView)
+}
+extension UIWindow : ZendeskSDK.Window {
+}
+public protocol ApplicationType {
+  var topWindow: ZendeskSDK.Window? { get }
+}
+extension UIApplication : ZendeskSDK.ApplicationType {
+  public var topWindow: ZendeskSDK.Window? {
+    get
+  }
+}
+public typealias HelpCenterUi = ZendeskSDK.ZDKHelpCenterUi
+public typealias HelpCenterDelegate = ZendeskSDK.ZDKHelpCenterDelegate
+@objc public class ZDKConstants : ObjectiveC.NSObject {
+  @objc public static func colorForToast() -> UIKit.UIColor
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKSuasDebugLogger) final public class SuasDebugLogger : ObjectiveC.NSObject {
+  @objc public static var enabled: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  @objc override dynamic public init()
+  @objc deinit
+}
+public protocol AsyncAction : ZendeskSDK.Action {
+  func execute(getState: @escaping ZendeskSDK.GetStateFunction, dispatch: @escaping ZendeskSDK.DispatchFunction)
+}
+public struct BlockAsyncAction : ZendeskSDK.AsyncAction {
+  public init(executionBlock: @escaping (@escaping ZendeskSDK.GetStateFunction, @escaping ZendeskSDK.DispatchFunction) -> Swift.Void)
+  public func execute(getState: @escaping ZendeskSDK.GetStateFunction, dispatch: @escaping ZendeskSDK.DispatchFunction)
+}
+public struct AsyncMiddleware : ZendeskSDK.Middleware {
+  public init()
+  public func onAction(action: ZendeskSDK.Action, getState: @escaping ZendeskSDK.GetStateFunction, dispatch: @escaping ZendeskSDK.DispatchFunction, next: @escaping ZendeskSDK.NextFunction)
+}
+@objc(ZDKArticleUiConfiguration) final public class ArticleUiConfiguration : ObjectiveC.NSObject, CommonUISDK.UiConfiguration {
+  @objc override required dynamic public init()
+  @objc final public var showContactOptions: Swift.Bool
+  @available(*, deprecated, message: "use showContactOptions instead")
+  @objc final public var hideContactSupport: Swift.Bool
+  @objc final public var deflectionEnabled: Swift.Bool
+  @objc deinit
+}
+@objc(ZDKRequestAttachment) public class RequestAttachment : ObjectiveC.NSObject {
+  @objc final public let filename: Swift.String
+  @objc final public let data: Foundation.Data
+  @objc final public let fileType: ZendeskSDK.FileType
+  @objc public init(filename: Swift.String, data: Foundation.Data, fileType: ZendeskSDK.FileType)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKCoordinatingViewController) public class CoordinatingViewController : ZendeskSDK.ContainerViewController {
+  @objc public init(coordinator: ZendeskSDK.Coordinator)
+  @objc override dynamic public func viewDidLoad()
+  @objc override dynamic public func viewWillAppear(_ animated: Swift.Bool)
+  @objc override dynamic public func viewDidAppear(_ animated: Swift.Bool)
+  @objc override dynamic public func viewDidDisappear(_ animated: Swift.Bool)
+  @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @objc deinit
+}
+@objc(ZDKRequestUiConfiguration) final public class RequestUiConfiguration : ObjectiveC.NSObject, CommonUISDK.UiConfiguration {
+  @objc final public var subject: Swift.String
+  @objc final public var tags: [Swift.String]
+  @objc final public var customFields: [ZendeskProviderSDK.CustomField]
+  @objc final public var ticketFormID: Foundation.NSNumber?
+  @objc final public var fileAttachments: [ZendeskSDK.RequestAttachment]
+  @objc override required dynamic public init()
+  @objc deinit
+}
+public protocol Reducer {
+  associatedtype StateType
+  var initialState: Self.StateType { get }
+  var stateKey: ZendeskSDK.StateKey { get }
+  func reduce(state: Self.StateType, action: ZendeskSDK.Action) -> Self.StateType?
+}
+extension Reducer {
+  public var stateKey: ZendeskSDK.StateKey {
+    get
+  }
+}
+final public class BlockReducer<StateType> : ZendeskSDK.Reducer {
+  final public let initialState: StateType
+  final public let stateKey: Swift.String
+  convenience public init(initialState: StateType, reduce: @escaping ZendeskSDK.ReducerFunction<StateType>)
+  public init(initialState: StateType, stateKey: ZendeskSDK.StateKey, reduce: @escaping ZendeskSDK.ReducerFunction<StateType>)
+  final public func reduce(state: StateType, action: ZendeskSDK.Action) -> StateType?
+  @objc deinit
+}
+final public class CombinedReducer : ZendeskSDK.Reducer {
+  final public var initialState: Any {
+    get
+  }
+  final public func reduce(state: Any, action: ZendeskSDK.Action) -> Any?
+  public typealias StateType = Any
+  @objc deinit
+}
+public func + <R1, R2>(lhs: R1, rhs: R2) -> ZendeskSDK.CombinedReducer where R1 : ZendeskSDK.Reducer, R2 : ZendeskSDK.Reducer
+public typealias StateKey = Swift.String
+public typealias ListenerFunction<Type> = (Type) -> Swift.Void
+public typealias ActionListenerFunction = (ZendeskSDK.Action) -> Swift.Void
+public typealias FilterFunction<StateType> = (StateType, StateType) -> Swift.Bool
+public typealias StateSelector<SelectedType> = (ZendeskSDK.State) -> (SelectedType?)
+public typealias KeyedState = [ZendeskSDK.StateKey : Any]
+public typealias ReducerFunction<Type> = (Type, ZendeskSDK.Action) -> Type?
+public typealias DispatchFunction = (ZendeskSDK.Action) -> Swift.Void
+public typealias NextFunction = ZendeskSDK.DispatchFunction
+public typealias MiddlewareFunction = (ZendeskSDK.Action, () -> ZendeskSDK.State, (ZendeskSDK.Action) -> Swift.Void, (ZendeskSDK.Action) -> Swift.Void) -> Swift.Void
+public typealias GetStateFunction = () -> ZendeskSDK.State
+extension Suas {
+  public static var enableDebugLogging: Swift.Bool
+}
+@objc(ZDKContainerChildControllerDelegate) public protocol ContainerChildControllerDelegate : ObjectiveC.NSObjectProtocol {
+  @objc func willDismiss()
+  @objc var navItem: UIKit.UINavigationItem? { get }
+}
+@objc(ZDKContainerChild) public protocol ContainerChild : ObjectiveC.NSObjectProtocol {
+  @objc var childDelegate: ZendeskSDK.ContainerChildControllerDelegate? { get set }
+}
+public struct LoggerMiddleware : ZendeskSDK.Middleware {
+  public init(showTimestamp: Swift.Bool = true, showDuration: Swift.Bool = false, lineLength: Swift.Int? = nil, predicate: ((ZendeskSDK.State, ZendeskSDK.Action) -> Swift.Bool)? = nil, debugOnly: Swift.Bool = true, titleFormatter: ((ZendeskSDK.Action, Foundation.Date, Swift.UInt64) -> Swift.String)? = nil, stateTransformer: ((ZendeskSDK.State) -> Any)? = nil, actionTransformer: ((ZendeskSDK.Action) -> Any)? = nil, logger: @escaping (Swift.String) -> Swift.Void = defaultLogger)
+  public func onAction(action: ZendeskSDK.Action, getState: @escaping ZendeskSDK.GetStateFunction, dispatch: @escaping ZendeskSDK.DispatchFunction, next: @escaping ZendeskSDK.NextFunction)
+}
+public let defaultLogger: (Swift.String) -> ()
+public protocol SuasDynamicEquatable {
+  func isEqual(to other: Any) -> Swift.Bool
+}
+extension SuasDynamicEquatable where Self : Swift.Equatable {
+  public func isEqual(to other: Any) -> Swift.Bool
+}
+public struct State {
+  public init(dictionary: [ZendeskSDK.StateKey : Any])
+  public subscript(key: Swift.String) -> Any? {
+    get
+    set
+  }
+  public subscript<Type>(forKey key: Swift.String, ofType type: Type.Type) -> Type? {
+    get
+    set
+  }
+  public subscript<Type>(forKeyOfType type: Type.Type) -> Type? {
+    get
+  }
+  public func value(forKey key: Swift.String) -> Any?
+  public func value<Type>(forKeyOfType type: Type.Type) -> Type?
+  public func value<Type>(forKey key: Swift.String, ofType type: Type.Type) -> Type?
+  public var keys: [ZendeskSDK.StateKey] {
+    get
+  }
+}
+extension State : Swift.ExpressibleByDictionaryLiteral {
+  public init(dictionaryLiteral elements: (ZendeskSDK.StateKey, Any)...)
+  public typealias Key = ZendeskSDK.StateKey
+  public typealias Value = Any
+}
+extension String : ZendeskSDK.SuasDynamicEquatable {
+}
+@objc public class HelpCenterArticleVotingHandler : ObjectiveC.NSObject, ZendeskSDK.ZDKHelpCenterArticleRatingHandlerProtocol {
+  @objc convenience public init(withArticleId articleId: Swift.String, andLocale locale: Swift.String)
+  @objc public func articleRatingVoteSelected(_ ratingState: ZendeskSDK.ZDKHelpCenterArticleRatingStateProtocol, at index: Swift.Int)
+  @objc public func currentArticleVote() -> Swift.Int
+  @objc override dynamic public init()
+  @objc deinit
+}
+public enum Suas {
+  public static func createStore<R>(reducer: R, state: ZendeskSDK.KeyedState, middleware: ZendeskSDK.Middleware? = nil) -> ZendeskSDK.Store where R : ZendeskSDK.Reducer
+  public static func createStore<R, StateType>(reducer: R, state: StateType, middleware: ZendeskSDK.Middleware? = nil) -> ZendeskSDK.Store where R : ZendeskSDK.Reducer
+  public static func createStore<R>(reducer: R, middleware: ZendeskSDK.Middleware? = nil) -> ZendeskSDK.Store where R : ZendeskSDK.Reducer
+}
+extension ZendeskSDK.FileType : Swift.Hashable {}
+extension ZendeskSDK.FileType : Swift.RawRepresentable {}
