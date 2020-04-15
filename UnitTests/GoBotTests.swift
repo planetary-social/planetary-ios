@@ -712,7 +712,7 @@ class GoBotTests: XCTestCase {
                 return
             }
             XCTAssertNil(err)
-            XCTAssertEqual(msgs[2].key, whoopsRef)
+            XCTAssertTrue(msgs.contains { return $0.key == whoopsRef })
         }
         self.wait(for: [ex5], timeout: 10)
         
