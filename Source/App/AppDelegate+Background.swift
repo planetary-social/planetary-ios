@@ -76,6 +76,9 @@ extension AppDelegate {
                 
                 Log.info("Scheduling task \(taskIdentifier)")
                 try BGTaskScheduler.shared.submit(request)
+            } catch BGTaskScheduler.Error.notPermitted {
+                // User could have just disabled background refresh in settings
+                Log.info("Background refresh are not permitted")
             } catch let error {
                 Log.optional(error, "Could not schedule a refresh task when entering background")
                 CrashReporting.shared.reportIfNeeded(error: error)
