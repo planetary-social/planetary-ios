@@ -723,7 +723,7 @@ class ViewDatabase {
         }
         
         let qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
-            .order(colClaimedAt.desc)
+            .order(colReceivedAt.desc)
         
         let followed = try self.filterOnlyFollowedPeople(qry: qry)
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: followed)
@@ -783,7 +783,7 @@ class ViewDatabase {
             let msgKey = try row.get(colKey)
             let msgAuthor = try row.get(colAuthor)
 
-            let blobs = try self.loadBlobs(for: msgID)
+            //let blobs = try self.loadBlobs(for: msgID)
 
             //let mentions = try self.loadMentions(for: msgID)
 
@@ -793,7 +793,7 @@ class ViewDatabase {
             }
 
             let p = Post(
-                blobs: blobs,
+                //blobs: blobs,
                 //mentions: mentions,
                 root: rootKey,
                 text: try row.get(colText)
@@ -842,7 +842,7 @@ class ViewDatabase {
                 .filter(colMsgType == ContentType.post.rawValue)
                 .filter(colRoot == msgID)
 
-            let count = try self.openDB!.scalar(replies.count)
+            //let count = try self.openDB!.scalar(replies.count)
 
             var abouts: [About] = []
             for row in try self.openDB!.prepare(replies.limit(3, offset: 0)) {
@@ -853,7 +853,7 @@ class ViewDatabase {
                 abouts += [about]
             }
 
-            msg.metadata.replies.count = count
+            msg.metadata.replies.count = abouts.count
             msg.metadata.replies.abouts = abouts
             r.append(msg)
         }
