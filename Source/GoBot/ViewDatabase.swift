@@ -785,7 +785,7 @@ class ViewDatabase {
 
             let blobs = try self.loadBlobs(for: msgID)
 
-            let mentions = try self.loadMentions(for: msgID)
+            //let mentions = try self.loadMentions(for: msgID)
 
             var rootKey: Identifier?
             if let rootID = try row.get(colRootMaybe) {
@@ -794,7 +794,7 @@ class ViewDatabase {
 
             let p = Post(
                 blobs: blobs,
-                mentions: mentions,
+                //mentions: mentions,
                 root: rootKey,
                 text: try row.get(colText)
             )
@@ -827,6 +827,7 @@ class ViewDatabase {
     // MARK: replies
 
     // turns an array of messages into an array of (msg, #people replied)
+    // Notes: called once for each message... seems inefficent - rabble
     private func addNumberOfPeopleReplied(msgs: [KeyValue]) throws -> KeyValues {
         var r: KeyValues = []
         for (index, _) in msgs.enumerated() {
@@ -899,7 +900,7 @@ class ViewDatabase {
                 
                 let p = Post(
                     blobs: try self.loadBlobs(for:msgID),
-                    mentions: try self.loadMentions(for: msgID),
+                    //mentions: try self.loadMentions(for: msgID),
                     root: rootKey,
                     text: try row.get(colText)
                 )
@@ -989,6 +990,7 @@ class ViewDatabase {
     }
 
     func mentions(limit: Int = 200, wantPrivate: Bool = false) throws -> Feed {
+        
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1004,6 +1006,7 @@ class ViewDatabase {
             .filter(colHidden == false)
             .order(colClaimedAt.desc)
             .limit(limit)
+
         return try self.mapQueryToKeyValue(qry: qry)
     }
 
@@ -1749,7 +1752,7 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
+       
         // load mentions for this message
         let feedQry = self.mentions_feed.where(colMessageRef == msgID)
         let feedMentions: [Mention] = try db.prepare(feedQry).map {
@@ -1788,7 +1791,7 @@ class ViewDatabase {
                 name: try row.get(colName) ?? ""
             )
         }
-        
+       
         return feedMentions + msgMentions + imgMentions
     }
     
