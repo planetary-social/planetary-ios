@@ -15,6 +15,9 @@ class NullAnalytics: AnalyticsCore {
     var isEnabled: Bool { return false }
 
     func configure() {}
+    
+    func identify(about: About?, network: NetworkKey) { }
+    func forget() { }
 
     func optIn() {}
     func optOut() {}

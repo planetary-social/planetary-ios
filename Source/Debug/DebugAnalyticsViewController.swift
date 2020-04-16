@@ -22,7 +22,9 @@ class DebugAnalyticsViewController: UIViewController {
         let bar = controller.searchBar
         bar.isTranslucent = false
         bar.placeholder = "Filter event names"
-        bar.searchTextField.autocapitalizationType = .none
+        if #available(iOS 13.0, *) {
+            bar.searchTextField.autocapitalizationType = .none
+        }
         bar.showsCancelButton = false
 
         return controller

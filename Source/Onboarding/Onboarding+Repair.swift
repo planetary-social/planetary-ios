@@ -21,32 +21,46 @@ extension Onboarding {
         // only run on our network
         guard AppConfiguration.current?.network == NetworkKey.planetary else { return }
 
-        guard Bots.current.statistics.repo.feedCount != -1 else {
-            Log.unexpected(.botError, "\(#function): warning: repo stats not ready yet")
-            return
-        }
-
-        // check feedCount indicates that there are pubs following
-        guard Bots.current.statistics.repo.feedCount < 2 else { return }
-        Log.info("\(#function): feedCount < 2 so likely this identity is not being followed by pubs")
-
-        // request follow back
-        PubAPI().invitePubsToFollow(identity) {
-            success, error in
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if success {
-                Log.info("\(#function): successfully completed follow back request")
-            } else {
-                Log.info("\(#function): failed follow back request")
-                Log.optional(error)
+        let group = DispatchGroup()
+        group.enter()
+        
+        Bots.current.statistics { stats in
+            guard stats.repo.feedCount != -1 else {
+                Log.unexpected(.botError, "\(#function): warning: repo stats not ready yet")
+                group.leave()
+                return
             }
-        }
 
-        // analytics
-        Analytics.track(event: .did,
-                        element: .app,
-                        name: AnalyticsEnums.Name.repair.rawValue,
-                        param: "function",
-                        value: #function)
+            // check feedCount indicates that there are pubs following
+            guard stats.repo.feedCount < 2 else {
+                group.leave()
+                return
+            }
+            
+            Log.info("\(#function): feedCount < 2 so likely this identity is not being followed by pubs")
+
+            // request follow back
+            PubAPI().invitePubsToFollow(identity) {
+                success, error in
+                CrashReporting.shared.reportIfNeeded(error: error)
+                if success {
+                    Log.info("\(#function): successfully completed follow back request")
+                } else {
+                    Log.info("\(#function): failed follow back request")
+                    Log.optional(error)
+                }
+            }
+
+            // analytics
+            Analytics.track(event: .did,
+                            element: .app,
+                            name: AnalyticsEnums.Name.repair.rawValue,
+                            param: "function",
+                            value: #function)
+            
+            group.leave()
+        }
+        
+        group.wait()
     }
 }

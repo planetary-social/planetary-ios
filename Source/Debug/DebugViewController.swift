@@ -449,7 +449,12 @@ class DebugViewController: DebugTableViewController {
     private func applyConfigurationAndDismiss() {
         Bots.current.logout {
             [weak self] error in
+            
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
+            Analytics.forget()
+            
             AppController.shared.launch()
             self?.dismiss(animated: true, completion: nil)
         }

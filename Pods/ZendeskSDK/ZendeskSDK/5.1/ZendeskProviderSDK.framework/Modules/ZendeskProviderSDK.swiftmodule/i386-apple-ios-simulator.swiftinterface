@@ -1,0 +1,264 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)
+// swift-module-flags: -target i386-apple-ios9.3-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -Onone -module-name ZendeskProviderSDK
+import Foundation
+import Swift
+import UIKit
+import ZendeskCoreSDK
+@_exported import ZendeskProviderSDK
+@objc(ZDKRequestUpdates) public class RequestUpdates : ObjectiveC.NSObject {
+  @objc final public let requestUpdates: [Swift.String : Swift.Int]
+  @objc public var totalUpdates: Swift.Int {
+    @objc get
+  }
+  @objc public func isRequestUnread(_ requestId: Swift.String) -> Swift.Bool
+  @objc public func hasUpdatedRequests() -> Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKHelpCenterBlips) public class HelpCenterBlips : ObjectiveC.NSObject {
+  @objc deinit
+}
+extension HelpCenterBlips {
+  @objc public static func blipArticleViewed(_ pageTitle: Swift.String, url: Swift.String, navigatorLanguage: Swift.String)
+  @objc public static func blipSearchQuery(_ query: Swift.String)
+  @objc public static func blipArticleVote(_ articleId: Swift.String, vote: Swift.Int)
+}
+@objc(ZDKAttachmentSettings) public class AttachmentSettings : ObjectiveC.NSObject, Swift.Decodable, ZendeskCoreSDK.DecodableDefault {
+  @objc final public let enabled: Swift.Bool
+  @objc final public let maxAttachmentSize: Swift.Int
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override required dynamic public init()
+  public typealias DefaultType = ZendeskProviderSDK.AttachmentSettings
+  public static var `default`: ZendeskProviderSDK.AttachmentSettings {
+    get
+  }
+  @objc deinit
+}
+@objc public class ZDKAttachmentSettingsProvider : ObjectiveC.NSObject {
+  @objc public static func getAttachmentSettings(callback: @escaping (ZendeskProviderSDK.AttachmentSettings?) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct NoActionBlip : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc(ZDKRequestForStorage) public class RequestForStorage : ObjectiveC.NSObject, Swift.Codable {
+  public var commentCount: Swift.Int
+  @objc override dynamic public init()
+  @objc deinit
+  required public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension RequestForStorage {
+  @objc dynamic public class func createFromRequest(_ request: ZendeskProviderSDK.ZDKRequest, readCommentCount: Swift.Int) -> ZendeskProviderSDK.RequestForStorage
+  @objc dynamic public func incrementCommentCounts()
+}
+@objc(ZDKConversationsSettings) public class ConversationsSettings : ObjectiveC.NSObject, Swift.Decodable, ZendeskCoreSDK.DecodableDefault {
+  public typealias DefaultType = ZendeskProviderSDK.ConversationsSettings
+  @objc final public let enabled: Swift.Bool
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override required dynamic public init()
+  public static var `default`: ZendeskProviderSDK.ConversationsSettings {
+    get
+  }
+  @objc deinit
+}
+@objc public class ZDKConversationsSettingsProvider : ObjectiveC.NSObject {
+  @objc public static func getConversationsSettings(callback: @escaping (ZendeskProviderSDK.ConversationsSettings?) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public enum DispatcherNotifications {
+  public static let UnauthorizedNotificationName: Swift.String
+}
+@objc public class DispatcherAdapter : ObjectiveC.NSObject {
+  @objc public static func performRequest(zendesk: ZendeskCoreSDK.Zendesk, urlRequest: Foundation.URLRequest, requiresAuth: Swift.Bool, completionHandler: @escaping (Foundation.URLResponse?, Foundation.Data?, Swift.Error?) -> Swift.Void)
+  @objc public static func convertError(response: Foundation.URLResponse?, originalError error: Swift.Error?) -> Swift.Error?
+  @objc public static func clearSettingsAndSession()
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKLegacyRequestStorageMigrator) public class LegacyRequestStorageMigrator : ObjectiveC.NSObject {
+  @objc public init(withRequestStorage requestStorage: ZendeskProviderSDK.RequestStorage)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKSupportSettings) public class SupportSettings : ObjectiveC.NSObject, Swift.Decodable, ZendeskCoreSDK.DecodableDefault {
+  public typealias DefaultType = ZendeskProviderSDK.SupportSettings
+  @objc final public let neverRequestEmail: Swift.Bool
+  @objc final public let showClosedRequests: Swift.Bool
+  @objc final public let showReferrerLogo: Swift.Bool
+  @objc final public let referrerUrl: Swift.String
+  @objc final public let systemMessage: Swift.String
+  @objc final public let conversationSettings: ZendeskProviderSDK.ConversationsSettings
+  @objc final public let attachmentSettings: ZendeskProviderSDK.AttachmentSettings
+  @objc final public let ticketFormsSettings: ZendeskProviderSDK.TicketFormsSettings
+  @objc final public let contactUsSettings: ZendeskProviderSDK.ContactUsSettings
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override required dynamic public init()
+  public static var `default`: ZendeskProviderSDK.SupportSettings {
+    get
+  }
+  @objc deinit
+}
+@objc public class ZDKSupportSettingsProvider : ObjectiveC.NSObject {
+  @objc public static func getSupportSettings(callback: @escaping (ZendeskProviderSDK.SupportSettings?) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKRequestBlips) public class RequestBlips : ObjectiveC.NSObject {
+  @objc deinit
+}
+extension RequestBlips {
+  @objc public static func requestCreatedBlip(_ requestId: Swift.String)
+  @objc public static func requestUpdateBlip(_ requestId: Swift.String)
+}
+@objc(ZDKHelpCenterSettings) public class HelpCenterSettings : ObjectiveC.NSObject, Swift.Decodable, ZendeskCoreSDK.DecodableDefault {
+  public typealias DefaultType = ZendeskProviderSDK.HelpCenterSettings
+  @objc final public let helpCenterArticleVotingEnabled: Swift.Bool
+  @objc final public let enabled: Swift.Bool
+  @objc final public let locale: Swift.String
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override required dynamic public init()
+  public static var `default`: ZendeskProviderSDK.HelpCenterSettings {
+    get
+  }
+  @objc deinit
+}
+@objc public class ZDKHelpCenterSettingsProvider : ObjectiveC.NSObject {
+  @objc public static func getHelpCenterSettings(callback: @escaping (ZendeskProviderSDK.HelpCenterSettings?) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKTicketFormsSettings) public class TicketFormsSettings : ObjectiveC.NSObject, Swift.Decodable, ZendeskCoreSDK.DecodableDefault {
+  public typealias DefaultType = ZendeskProviderSDK.TicketFormsSettings
+  @objc final public let available: Swift.Bool
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override required dynamic public init()
+  public static var `default`: ZendeskProviderSDK.TicketFormsSettings {
+    get
+  }
+  @objc deinit
+}
+@objc public class ZDKTicketFormsSettingsProvider : ObjectiveC.NSObject {
+  @objc public static func getTicketFormsSettings(callback: @escaping (ZendeskProviderSDK.TicketFormsSettings?) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKContactUsSettings) public class ContactUsSettings : ObjectiveC.NSObject, Swift.Decodable, ZendeskCoreSDK.DecodableDefault {
+  public typealias DefaultType = ZendeskProviderSDK.ContactUsSettings
+  @objc final public let tags: [Swift.String]
+  @objc public init(with tags: [Swift.String])
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override required dynamic public init()
+  public static var `default`: ZendeskProviderSDK.ContactUsSettings {
+    get
+  }
+  @objc deinit
+}
+@objc public class ZDKContactUsSettingsProvider : ObjectiveC.NSObject {
+  @objc public static func getContactUsSettings(callback: @escaping (ZendeskProviderSDK.ContactUsSettings?) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public protocol HelpCenterProviderProtocol {
+  func upVoteArticle(withId articleId: Swift.String!, withCallback callback: ZendeskProviderSDK.ZDKHelpCenterCallback!)
+}
+extension ZDKHelpCenterProvider : ZendeskProviderSDK.HelpCenterProviderProtocol {
+}
+@objc(ZDKHelpCenterSectionViewModel) final public class HelpCenterSectionViewModel : ObjectiveC.NSObject, Swift.Decodable {
+  @objc final public let name: Swift.String
+  @objc final public let articles: [ZendeskProviderSDK.HelpCenterArticleViewModel]
+  @objc final public let id: Swift.String, category_id: Swift.String
+  @objc final public let article_count: Swift.Int
+  @objc final public var detailTitle: Swift.String {
+    @objc get
+  }
+  required public init(from decoder: Swift.Decoder) throws
+  @objc final public func sectionByReplacing(articles: [ZendeskProviderSDK.HelpCenterArticleViewModel]) -> ZendeskProviderSDK.HelpCenterSectionViewModel
+  @objc override final public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKHelpCenterArticleViewModel) final public class HelpCenterArticleViewModel : ObjectiveC.NSObject, Swift.Decodable {
+  @objc final public let name: Swift.String
+  @objc final public let id: Swift.String, section_id: Swift.String
+  required public init(from decoder: Swift.Decoder) throws
+  @objc public static func convert(articles: [ZendeskProviderSDK.ZDKHelpCenterArticle]) -> [ZendeskProviderSDK.HelpCenterArticleViewModel]
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension ZDKRequestProvider {
+  @objc dynamic public func getUpdatesForDevice(callback: @escaping (ZendeskProviderSDK.RequestUpdates?) -> Swift.Void)
+  @objc dynamic public func markRequestAsRead(_ requestId: Swift.String, withCommentCount commentCount: Swift.Int)
+  @objc dynamic public func markRequestAsUnread(_ requestId: Swift.String)
+  public static func calculateRequestUpdates(_ requests: [ZendeskProviderSDK.RequestForStorage]) -> ZendeskProviderSDK.RequestUpdates
+  @objc dynamic public func updateRequestStorageWithRequests(_ requests: [ZendeskProviderSDK.ZDKRequest])
+}
+@objc public class HTMLSanitizer : ObjectiveC.NSObject {
+  @objc public static func clean(html: Swift.String) -> Swift.String
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKCustomField) final public class CustomField : ObjectiveC.NSObject {
+  @objc final public let fieldId: Swift.Int64
+  @objc final public let value: Any?
+  @available(swift, obsoleted: 1.0)
+  @objc convenience public init(fieldId: Foundation.NSNumber, value: Any?)
+  public init(fieldId: Swift.Int64, value: Any?)
+  @objc convenience public init(dictionary: [Swift.String : Any])
+  @objc final public var customFieldDictionary: [Swift.String : Any] {
+    @objc get
+  }
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct RequestUserAction : Swift.Encodable {
+  public init(requestId: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public protocol RequestStorageProtocol {
+  func store(value: Any?, forKey key: Swift.String) -> Swift.Bool
+  func value(forKey key: Swift.String) -> Any?
+}
+extension SessionStore : ZendeskProviderSDK.RequestStorageProtocol {
+}
+@objc(ZDKRequestStorage) public class RequestStorage : ObjectiveC.NSObject {
+  @objc convenience public init(withZendesk zendesk: ZendeskCoreSDK.Zendesk)
+  public func getRequests() -> [ZendeskProviderSDK.RequestForStorage]
+  @objc public func getRequestForId(_ requestId: Swift.String) -> ZendeskProviderSDK.RequestForStorage?
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension RequestStorage {
+  @objc dynamic public func getRequestIds() -> [Swift.String]
+  @discardableResult
+  @objc dynamic public func storeRequest(_ request: ZendeskProviderSDK.RequestForStorage?) -> Swift.Bool
+}
+@objc(ZDKHelpCenterCategoryViewModelContainer) final public class HelpCenterCategoryViewModelContainer : ObjectiveC.NSObject, Swift.Decodable {
+  required public init(from decoder: Swift.Decoder) throws
+  @objc public static func parse(data: Foundation.Data) throws -> [ZendeskProviderSDK.HelpCenterCategoryViewModel]
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKHelpCenterCategoryViewModel) final public class HelpCenterCategoryViewModel : ObjectiveC.NSObject, Swift.Decodable {
+  @objc final public let name: Swift.String
+  @objc final public var sections: [ZendeskProviderSDK.HelpCenterSectionViewModel]
+  final public let id: Swift.String
+  final public let section_count: Swift.Int
+  required public init(from decoder: Swift.Decoder) throws
+  @objc final public func update(section newSection: ZendeskProviderSDK.HelpCenterSectionViewModel) -> ZendeskProviderSDK.HelpCenterCategoryViewModel
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc(ZDKSupport) public class Support : ObjectiveC.NSObject {
+  @objc public var helpCenterLocaleOverride: Swift.String?
+  @objc public class func initialize(withZendesk zendesk: ZendeskCoreSDK.Zendesk?)
+  @objc public static var instance: ZendeskProviderSDK.Support? {
+    @objc get
+  }
+  @objc public func refreshRequest(requestId: Swift.String) -> Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}

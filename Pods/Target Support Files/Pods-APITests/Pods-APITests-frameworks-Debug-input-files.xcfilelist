@@ -1,0 +1,5 @@
+${PODS_ROOT}/Target Support Files/Pods-APITests/Pods-APITests-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Down/Down.framework
+${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework
+${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework
+${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework

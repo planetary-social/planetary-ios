@@ -133,11 +133,11 @@ class HomeViewController: ContentViewController {
 
     // MARK: Load and refresh
 
-    private func load(animated: Bool = false) {
-        Bots.current.refresh() {
-            _, _ in
-            Bots.current.recent() {
-                [weak self] roots, error in
+    func load(animated: Bool = false) {
+        Bots.current.refresh() { error, _ in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            Bots.current.recent() { [weak self] roots, error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 self?.refreshControl.endRefreshing()
@@ -174,18 +174,6 @@ class HomeViewController: ContentViewController {
         self.present(controller, animated: true, completion: nil)
     }
 
-    func syncAndRefresh(animated: Bool = false) {
-        Bots.current.sync { [weak self] (error, _, _) in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            self?.load(animated: animated)
-        }
-    }
-    
-    func refresh() {
-        self.load()
-    }
-
     private func update(with roots: KeyValues, animated: Bool) {
         if roots.isEmpty {
             self.tableView.backgroundView = self.emptyView
@@ -207,14 +195,14 @@ class HomeViewController: ContentViewController {
 
     @objc func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.syncAndRefresh()
+        self.load()
     }
 
     @objc func newPostButtonTouchUpInside() {
         let controller = NewPostViewController()
         controller.didPublish = {
             [weak self] post in
-            self?.refresh()
+            self?.load()
         }
         controller.addDismissBarButtonItem()
         let navController = UINavigationController(rootViewController: controller)
