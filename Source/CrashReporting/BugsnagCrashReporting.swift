@@ -17,14 +17,6 @@ class BugsnagCrashReporting: CrashReportingService {
     
     private var configured: Bool = false
     
-    var about: About? {
-        didSet {
-            if let about = about, configured {
-                Bugsnag.configuration()?.setUser(about.identity, withName: about.name, andEmail: nil)
-            }
-        }
-    }
-    
     func configure() {
         guard let token = Environment.Bugsnag.token else {
             configured = false
@@ -33,6 +25,16 @@ class BugsnagCrashReporting: CrashReportingService {
         Log.info("Configuring Bugsnag...")
         Bugsnag.start(withApiKey: token)
         configured = true
+    }
+    
+    func identify(about: About?, network: NetworkKey) {
+        if let about = about, configured {
+            Bugsnag.configuration()?.setUser(about.identity,
+                                             withName: about.name,
+                                             andEmail: nil)
+            Bugsnag.addAttribute("key", withValue: network, toTabWithName: "network")
+            Bugsnag.addAttribute("name", withValue: network.name, toTabWithName: "network")
+        }
     }
     
     func crash() {

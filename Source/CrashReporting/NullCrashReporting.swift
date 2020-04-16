@@ -17,9 +17,9 @@ class NullCrashReporting: CrashReportingService {
     
     static var shared: CrashReportingService = NullCrashReporting()
     
-    var about: About?
-    
     func configure() { }
+    
+    func identify(about: About?, network: NetworkKey) { }
     
     func crash() { }
     

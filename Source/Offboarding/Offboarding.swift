@@ -45,14 +45,19 @@ class Offboarding {
                 // errors not allowed
                 Bots.current.logout {
                     error in
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    
                     if let error = error { completion(.botError(error)); return }
-
+                    
                     // remove configuration
                     configuration.unapply()
                     AppConfigurations.delete(configuration)
 
                     // done
                     Analytics.trackOffboardingEnd()
+                    Analytics.forget()
+                    
                     completion(nil)
                 }
             }
