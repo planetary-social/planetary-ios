@@ -13,8 +13,10 @@ protocol AnalyticsCore {
     var isEnabled: Bool { get }
 
     func configure()
+    func identify(about: About?, network: NetworkKey)
     func optIn()
     func optOut()
+    func forget()
 
     func track(event: AnalyticsEnums.Event,
                element: AnalyticsEnums.Element,

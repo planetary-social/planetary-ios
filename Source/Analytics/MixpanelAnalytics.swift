@@ -35,6 +35,19 @@ class MixpanelAnalytics: AnalyticsCore {
         Mixpanel.sharedInstance(withToken: token)
         configured = true
     }
+    
+    func identify(about: About?, network: NetworkKey) {
+        if let about = about, configured {
+            Mixpanel.sharedInstance()?.identify(about.identity)
+            let properties = ["Network": network.name,
+                              "$name": about.name ?? ""]
+            Mixpanel.sharedInstance()?.people.set(properties)
+        }
+    }
+    
+    func forget() {
+        Mixpanel.sharedInstance()?.reset()
+    }
 
     func optIn() {
         guard configured else {
