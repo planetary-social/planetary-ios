@@ -25,6 +25,7 @@ typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
 typealias ThreadCompletion = ((KeyValue?, KeyValues, Error?) -> Void)
 typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
+typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
 // Abstract interface to any SSB bot implementation.
 protocol Bot {
@@ -179,6 +180,9 @@ protocol Bot {
 
     // MARK: Statistics
 
+    func statistics(completion: @escaping StatisticsCompletion )
+    
+    @available(*, deprecated)
     var statistics: BotStatistics { get }
 }
 
