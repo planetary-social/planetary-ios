@@ -119,7 +119,8 @@ class LaunchViewController: UIViewController {
                 Log.optional(error)
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: error)
-                CrashReporting.shared.about = about
+                CrashReporting.shared.identify(about: about, network: network)
+                Analytics.identify(about: about, network: network)
                 self?.launchIntoMain()
             }
         }
