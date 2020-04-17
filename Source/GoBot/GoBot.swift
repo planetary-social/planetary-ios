@@ -1033,8 +1033,35 @@ class GoBot: Bot {
 
     private var _statistics = MutableBotStatistics()
     
-    
-    var statistics: BotStatistics { return self._statistics }
+    var statistics: BotStatistics {
+        let counts = try? self.bot.repoStatus()
+        let sequence = try? self.database.stats(table: .messagekeys)
+
+        var fc: Int = -1
+        if let feedCount = counts?.feeds { fc = Int(feedCount) }
+        var mc: Int = -1
+        if let msgs = counts?.messages { mc = Int(msgs) }
+        self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
+                                               feedCount: fc,
+                                               messageCount: mc,
+                                               lastReceivedMessage: sequence ?? -3)
+        let identities = self.bot.peerIdentities
+
+        let open = self.bot.openConnectionList()
+        var openWithIdentities: [(String, Identity)] = []
+        for peer in open {
+            if let id = self.database.identityFromPublicKey(pubKey: peer.1) {
+                openWithIdentities.append((peer.0, id))
+            }
+        }
+
+        self._statistics.peer = PeerStatistics(count: identities.count,
+                                               connectionCount: self.bot.openConnections(),
+                                               identities: openWithIdentities, // just faking to see some data
+                                               open: openWithIdentities)
+        
+        return self._statistics
+    }
     
     func statistics(completion: @escaping StatisticsCompletion) {
         self.queue.async {
