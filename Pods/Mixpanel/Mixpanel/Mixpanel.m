@@ -31,10 +31,14 @@
 #error The Mixpanel library must be compiled with ARC enabled
 #endif
 
-#define VERSION @"3.5.1"
+#define VERSION @"3.6.0"
 
 NSString *const MPNotificationTypeMini = @"mini";
 NSString *const MPNotificationTypeTakeover = @"takeover";
+
+NSString *const MPPushTapActionTypeBrowser = @"browser";
+NSString *const MPPushTapActionTypeDeeplink = @"deeplink";
+NSString *const MPPushTapActionTypeHomescreen = @"homescreen";
 
 @implementation Mixpanel
 
@@ -196,7 +200,7 @@ static NSString *defaultProjectToken;
                 [self setupAutomaticPushTracking];
                 NSDictionary *remoteNotification = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
                 if (remoteNotification) {
-                    [self trackPushNotification:remoteNotification event:@"$app_open"];
+                    [self trackPushNotification:remoteNotification event:@"$app_open" properties:@{}];
                 }
             }
 #endif
@@ -800,17 +804,25 @@ static NSString *defaultProjectToken;
     }
 }
 
-- (void)trackPushNotification:(NSDictionary *)userInfo event:(NSString *)event
+- (void)trackPushNotification:(NSDictionary *)userInfo event:(NSString *)event properties:(NSDictionary *)additionalProperties
 {
     MPLogInfo(@"%@ tracking push payload %@", self, userInfo);
 
     id rawMp = userInfo[@"mp"];
     if (rawMp) {
+        NSDictionary *mpPayload = [rawMp isKindOfClass:[NSDictionary class]] ? rawMp : @{};
+        NSMutableDictionary *properties = [mpPayload mutableCopy];
 
-        NSDictionary *mpPayload = [rawMp isKindOfClass:[NSDictionary class]] ? rawMp : nil;
+        // "token" and "distinct_id" are sent with the Mixpanel push payload but we don't need to track them
+        // they are handled upstream to initialize the mixpanel instance and "distinct_id" will be passed in
+        // explicitly in "additionalProperties"
+        [properties removeObjectForKey:@"token"];
+        [properties removeObjectForKey:@"distinct_id"];
+
+        // merge in additional properties we explicitly want to include
+        [properties addEntriesFromDictionary:additionalProperties];
 
         if (mpPayload[@"m"] && mpPayload[@"c"]) {
-            NSMutableDictionary *properties = [mpPayload mutableCopy];
             properties[@"campaign_id"] = mpPayload[@"c"];
             properties[@"message_id"] = mpPayload[@"m"];
             properties[@"message_type"] = @"push";
@@ -824,9 +836,41 @@ static NSString *defaultProjectToken;
     }
 }
 
+
++ (void)trackPushNotificationEventFromRequest:(UNNotificationRequest *)request event:(NSString *)event properties:(NSDictionary *)additionalProperties
+{
+    NSDictionary* userInfo = request.content.userInfo;
+
+    id mpPayload = userInfo[@"mp"];
+    if (!mpPayload) {
+        NSLog(@"%@ Malformed mixpanel push payload, not tracking %@", self, event);
+        return;
+    }
+
+    NSString *distinctId = mpPayload[@"distinct_id"];
+    if (!distinctId) {
+        NSLog(@"%@ \"distinct_id\" not found in mixpanel push payload, not tracking %@", self, event);
+        return;
+    }
+
+    NSString *projectToken = mpPayload[@"token"];
+    if (!projectToken) {
+        NSLog(@"%@ \"token\" not found in mixpanel push payload, not tracking %@", self, event);
+        return;
+    }
+
+    NSMutableDictionary *properties = [additionalProperties mutableCopy];
+    [properties addEntriesFromDictionary:@{@"distinct_id": distinctId, @"$ios_notification_id": request.identifier}];
+
+    // Track using project token and distinct_id from push payload
+    Mixpanel *instance = [Mixpanel sharedInstanceWithToken:projectToken];
+    [instance trackPushNotification:userInfo event:event properties:properties];
+    [instance flush];
+}
+
 - (void)trackPushNotification:(NSDictionary *)userInfo
 {
-    [self trackPushNotification:userInfo event:@"$campaign_received"];
+    [self trackPushNotification:userInfo event:@"$campaign_received" properties:@{}];
 }
 #endif
 
@@ -1851,6 +1895,108 @@ static void MixpanelReachabilityCallback(SCNetworkReachabilityRef target, SCNetw
         return gLoggingEnabled;
     }
 }
+
+#if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
+#pragma mark - Mixpanel Push Notifications
+
++ (BOOL)isMixpanelPushNotification:(UNNotificationContent *)content {
+    if ([content userInfo] == nil) {
+        MPLogInfo(@"%@ userInfo was nil, returning false");
+        return false;
+    }
+    return [content.userInfo objectForKey:@"mp"] != nil;
+}
+
++ (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
+
+    if (![self isMixpanelPushNotification:response.notification.request.content]) {
+        MPLogWarning(@"%@Calling MixpanelPushNotifications.handleResponse on a non-Mixpanel push notification is a noop", self);
+        completionHandler();
+        return;
+    }
+
+    UNNotificationRequest *request = response.notification.request;
+    NSDictionary *userInfo = request.content.userInfo;
+
+    MPLogInfo(@"%@ didReceiveNotificationResponse action: %@", self, response.actionIdentifier);
+
+    // If the notification was dismissed, just track and return
+    if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
+        [Mixpanel trackPushNotificationEventFromRequest:request event:@"$push_notification_dismissed" properties:@{}];
+        completionHandler();
+        return;
+    }
+
+    // Initialize additonal properties to track to Mixpanel with the $push_notification_tap event
+    NSMutableDictionary *additionalTrackingProps = [[NSMutableDictionary alloc] init];
+
+    NSDictionary *ontap = nil;
+
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        // The action that indicates the user opened the app from the notification interface.
+        additionalTrackingProps[@"$tap_target"] = @"notification";
+        if (userInfo[@"mp_ontap"]) {
+            ontap = userInfo[@"mp_ontap"];
+        }
+    } else {
+        // Non-default, non-dismiss action -- probably a button tap
+        BOOL wasButtonTapped = [response.actionIdentifier containsString:@"MP_ACTION_"];
+        if (wasButtonTapped) {
+            NSArray *buttons = userInfo[@"mp_buttons"];
+            NSInteger idx = [[response.actionIdentifier stringByReplacingOccurrencesOfString:@"MP_ACTION_" withString:@""] integerValue];
+            NSDictionary *buttonDict = buttons[idx];
+            ontap = buttonDict[@"ontap"];
+            [additionalTrackingProps addEntriesFromDictionary:@{
+                @"$button_id": buttonDict[@"id"],
+                @"$button_label": buttonDict[@"lbl"],
+                @"$tap_target": @"button",
+            }];
+        }
+    }
+
+    // Add additional tracking props
+    if (ontap != nil && ontap != (id)[NSNull null]) {
+        NSString *tapActionType = ontap[@"type"];
+        if (tapActionType != nil) {
+            additionalTrackingProps[@"$tap_action_type"] = tapActionType;
+        }
+        NSString *tapActionUri = ontap[@"uri"];
+        if (tapActionUri != nil) {
+            additionalTrackingProps[@"$tap_action_uri"] = tapActionUri;
+        }
+    }
+
+    // Track tap event
+    [Mixpanel trackPushNotificationEventFromRequest:request event:@"$push_notification_tap" properties:additionalTrackingProps];
+
+    if (ontap == nil || ontap == (id)[NSNull null]) {
+        // Default to homescreen if no ontap info
+        MPLogInfo(@"%@ No tap instructions found.", self);
+        completionHandler();
+    } else {
+
+        NSString *type = ontap[@"type"];
+
+        if ([type isEqualToString:MPPushTapActionTypeHomescreen]) {
+           // Do nothing, already going to be at homescreen
+           completionHandler();
+        } else if ([type isEqualToString:MPPushTapActionTypeBrowser] || [type isEqualToString:MPPushTapActionTypeDeeplink]) {
+#if !MIXPANEL_NO_UIAPPLICATION_ACCESS
+           NSURL *url = [[NSURL alloc] initWithString: ontap[@"uri"]];
+           UIApplication *sharedApplication = [Mixpanel sharedUIApplication];
+           if ([sharedApplication respondsToSelector:@selector(openURL:)]) {
+               dispatch_async(dispatch_get_main_queue(), ^{
+                   [sharedApplication performSelector:@selector(openURL:) withObject:url];
+                   completionHandler();
+               });
+           } else {
+               completionHandler();
+           }
+#endif
+        }
+    }
+}
+#endif
 
 #if !MIXPANEL_NO_NOTIFICATION_AB_TEST_SUPPORT
 

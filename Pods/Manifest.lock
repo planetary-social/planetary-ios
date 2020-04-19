@@ -1,5 +1,5 @@
 PODS:
-  - Bugsnag (5.23.0)
+  - Bugsnag (5.23.1)
   - CocoaLumberjack/Core (3.6.1)
   - CocoaLumberjack/Swift (3.6.1):
     - CocoaLumberjack/Core
@@ -7,44 +7,44 @@ PODS:
   - ImageSlideshow (1.8.3):
     - ImageSlideshow/Core (= 1.8.3)
   - ImageSlideshow/Core (1.8.3)
-  - KeychainSwift (15.0.0)
-  - Mixpanel (3.5.1)
+  - KeychainSwift (19.0.0)
+  - Mixpanel (3.6.0)
   - Multipart (0.1.0)
-  - PhoneNumberKit (2.6.0):
-    - PhoneNumberKit/PhoneNumberKitCore (= 2.6.0)
-    - PhoneNumberKit/UIKit (= 2.6.0)
-  - PhoneNumberKit/PhoneNumberKitCore (2.6.0)
-  - PhoneNumberKit/UIKit (2.6.0):
+  - PhoneNumberKit (3.2.0):
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.2.0)
+    - PhoneNumberKit/UIKit (= 3.2.0)
+  - PhoneNumberKit/PhoneNumberKitCore (3.2.0)
+  - PhoneNumberKit/UIKit (3.2.0):
     - PhoneNumberKit/PhoneNumberKitCore
   - SQLite.swift (0.12.2):
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
   - SVProgressHUD (2.2.5)
-  - ZendeskSDK (4.0.0):
-    - ZendeskSDK/Providers (= 4.0.0)
-    - ZendeskSDK/UI (= 4.0.0)
-  - ZendeskSDK/Core (4.0.0)
-  - ZendeskSDK/Providers (4.0.0):
+  - ZendeskSDK (4.0.1):
+    - ZendeskSDK/Providers (= 4.0.1)
+    - ZendeskSDK/UI (= 4.0.1)
+  - ZendeskSDK/Core (4.0.1)
+  - ZendeskSDK/Providers (4.0.1):
     - ZendeskSDK/Core
-  - ZendeskSDK/UI (4.0.0):
+  - ZendeskSDK/UI (4.0.1):
     - ZendeskSDK/Core
     - ZendeskSDK/Providers
 
 DEPENDENCIES:
-  - Bugsnag (= 5.23.0)
+  - Bugsnag (= 5.23.1)
   - CocoaLumberjack/Swift (= 3.6.1)
   - Down (= 0.9.2)
   - ImageSlideshow (= 1.8.3)
-  - KeychainSwift (= 15.0.0)
-  - Mixpanel (= 3.5.1)
+  - KeychainSwift (= 19.0.0)
+  - Mixpanel (= 3.6.0)
   - Multipart (= 0.1.0)
-  - PhoneNumberKit (= 2.6.0)
+  - PhoneNumberKit (= 3.2.0)
   - SQLite.swift (= 0.12.2)
   - SVProgressHUD (= 2.2.5)
-  - ZendeskSDK (= 4.0.0)
+  - ZendeskSDK (= 4.0.1)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - Bugsnag
     - CocoaLumberjack
     - Down
@@ -55,22 +55,21 @@ SPEC REPOS:
     - PhoneNumberKit
     - SQLite.swift
     - SVProgressHUD
-  trunk:
     - ZendeskSDK
 
 SPEC CHECKSUMS:
-  Bugsnag: 1f33ee5b55bc4b131a30e0fe6db714da9c6609f6
+  Bugsnag: caa15cf2a5d9278f04e1dda70c0cc6d42d3c9625
   CocoaLumberjack: b17ae15142558d08bbacf69775fa10c4abbebcc9
   Down: 1f6a14846dff45ae8e7e4334b4e386a5fd3b2412
   ImageSlideshow: 4694d7d699a1549582e7cc631fb392d8f91630f3
-  KeychainSwift: c6fc018d287804faf1ce3f258a1e51a7178c8382
-  Mixpanel: 1839fc7299c43b009c301883f895423715437431
+  KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
+  Mixpanel: 446b6e7713aa34a9a3516ff7648d56551384fc94
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
-  PhoneNumberKit: 167ee1f0bbb6efce7c62559e620eae745595532f
+  PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  ZendeskSDK: 99679d8420a6d862773e2ddef0ebcc51b282317d
+  ZendeskSDK: a5d4a6b1f117ed3177d72bbcc09b51d7600dd299
 
-PODFILE CHECKSUM: 471fcb8278fe0f6873cabcbe175f7c60e6cc4df8
+PODFILE CHECKSUM: e542109d042d1422b62205c206ca61bec5fb2408
 
 COCOAPODS: 1.9.1
