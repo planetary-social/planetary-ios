@@ -98,6 +98,8 @@ CREATE TABLE messagekeys (
     id INTEGER PRIMARY KEY,
     key TEXT UNIQUE
 );
+CREATE INDEX messagekeys_key ON messagekeys(key);
+CREATE INDEX messagekeys_id ON messagekeys(id);
 
 -- BUT: this is mostly just glossing over the fact msg_key is referencing our messages table.
 -- the above remark is only true for root/branch on tangles and mention references
@@ -125,6 +127,9 @@ CREATE TABLE messages (
     FOREIGN KEY ( author_id ) REFERENCES authors( "id" ),
     FOREIGN KEY ( msg_id ) REFERENCES msgkeys( "id" )
 );
+
+-- make _needs refresh_ faster
+CREATE INDEX messages_rxseq on messages (rx_seq);
 
 -- make looking for authors fast
 CREATE INDEX author ON messages ( author_id );
@@ -157,6 +162,7 @@ msg_ref              integer not null,
 text                 text,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
+CREATE INDEX posts_msgrefs on posts (msg_ref);
 
 -- reply trees aka tangles
 -- a message in a thread (or hopefully soon gatherings) references the first message (root)
@@ -182,6 +188,7 @@ CREATE TABLE tangles (
 );
 CREATE INDEX tangle_roots on tangles (root);
 CREATE INDEX tangle_msgref on tangles (msg_ref);
+CREATE INDEX tangle_id on tangles (id);
 
 CREATE TABLE branches (
     tangle_id       integer not null,
@@ -275,6 +282,9 @@ FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
 FOREIGN KEY ( author_id ) REFERENCES authors( "msg_id" ),
 FOREIGN KEY ( contact_id ) REFERENCES authors( "id" )
 );
+
+CREATE INDEX contacts_state ON contacts (contact_id, state);
+CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
 
 -- private recps
 -- TODO: until we have changing groups, it would be enough to save these for the first message

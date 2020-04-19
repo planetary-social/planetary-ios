@@ -33,6 +33,7 @@ extension AppController {
     func poke() {
         guard let identity = Bots.current.identity else { return }
         guard Onboarding.status(for: identity) == .completed else { return }
+        Log.info("Poking the bot into doing a sync")
         self.loginAndSync()
     }
 

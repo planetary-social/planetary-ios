@@ -105,8 +105,9 @@ class PeersView: UIView {
     }
 
     private func setStats(animated: Bool = true) {
-        let stats = Bots.current.statistics
-        self.update(with: stats.peer, animated: animated)
+        Bots.current.statistics { stats in
+            self.update(with: stats.peer, animated: animated)
+        }
     }
 
     // MARK: Update

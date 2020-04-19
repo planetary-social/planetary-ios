@@ -18,9 +18,9 @@ protocol CrashReportingService {
     
     static var shared: CrashReportingService  { get }
     
-    var about: About? { get set }
-    
     func configure()
+    
+    func identify(about: About?, network: NetworkKey)
     
     func crash()
     

@@ -33,13 +33,7 @@ class RelationshipButton: IconButton {
     }
 
     func configureImage() {
-        if self.relationship.isBlocking {
-            self.image = UIImage.verse.relationshipBlocked
-        } else if relationship.isFollowing {
-            self.image = UIImage.verse.relationshipFollowing
-        } else {
-            self.image = UIImage.verse.relationship
-        }
+        self.image = UIImage.verse.options
     }
 
     typealias ActionData = (title: Text, style: UIAlertAction.Style, action: () -> Void)
@@ -110,7 +104,7 @@ class RelationshipButton: IconButton {
             }
             self.relationship.load(reload: true) {
                 self.relationship.notifyUpdate()
-                AppController.shared.mainViewController?.homeViewController?.refresh()
+                AppController.shared.mainViewController?.homeViewController?.load()
             }
         }
     }
@@ -128,7 +122,7 @@ class RelationshipButton: IconButton {
             }
             self.relationship.load(reload: true) {
                 self.relationship.notifyUpdate()
-                AppController.shared.mainViewController?.homeViewController?.refresh()
+                AppController.shared.mainViewController?.homeViewController?.load()
             }
         }
     }

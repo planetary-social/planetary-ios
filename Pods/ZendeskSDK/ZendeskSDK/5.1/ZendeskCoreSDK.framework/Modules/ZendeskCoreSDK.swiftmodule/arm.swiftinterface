@@ -1,0 +1,458 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)
+// swift-module-flags: -target armv7-apple-ios9.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name ZendeskCoreSDK
+import Foundation
+import Swift
+import UIKit
+@_exported import ZendeskCoreSDK
+public protocol AccountDetails {
+  var clientId: Swift.String { get }
+  var accountUrl: Swift.String { get }
+  var applicationId: Swift.String { get }
+}
+public struct PushRegistrationResponse : Swift.Decodable {
+  public let identifier: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+}
+public protocol URLService {
+  var urlComponent: Foundation.URL { get }
+  var httpMethod: ZendeskCoreSDK.HttpMethod { get }
+  var headers: [Swift.String : Swift.String] { get }
+  var body: Foundation.Data? { get }
+  var request: Foundation.URLRequest { get }
+  var environment: ZendeskCoreSDK.AccountDetails { get }
+}
+@objc(ZDKUserFieldOption) public class UserFieldOption : ObjectiveC.NSObject, Swift.Decodable {
+  @objc final public let id: Swift.String
+  @objc final public let name: Swift.String
+  @objc final public let position: Swift.Int
+  @objc final public let raw_name: Swift.String
+  @objc final public let url: Swift.String
+  @objc final public let value: Swift.String
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct VersionConstants {
+  public static let ZendeskCoreSDKVersionString: Swift.String
+}
+public typealias ActionInfo = [Swift.String : Any]
+public protocol ActionHandler {
+  func canHandle(actionName: Swift.String) -> Swift.Bool
+  func handle(with info: ZendeskCoreSDK.ActionInfo)
+  func update(with settingsData: Foundation.Data)
+  var priority: Swift.Int { get }
+  var actionDescription: ZendeskCoreSDK.ActionDescription? { get }
+}
+extension ActionHandler {
+  public func update(with settingsData: Foundation.Data)
+}
+public protocol CachedHTTPURLResponseTransformer {
+  func transform(_ proposedResponse: Foundation.CachedURLResponse) -> Foundation.CachedURLResponse
+}
+public struct PageView<T> : Swift.Encodable where T : Swift.Encodable {
+  public init(version: Swift.String, channel: Swift.String, url: Swift.String, pageTitle: Swift.String, navigatorLanguage: Swift.String, value: T? = nil)
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public typealias CompletionHandler = (Foundation.Data?, Foundation.URLResponse?, Swift.Error?) -> Swift.Void
+@objc(ZDKUser) public class User : ObjectiveC.NSObject, Swift.Decodable {
+  @objc final public let id: Swift.String
+  @objc final public let name: Swift.String
+  @objc final public let content_url: Swift.String
+  @objc final public let agent: Swift.Bool
+  @objc final public let tags: [Swift.String]
+  @objc final public let user_fields: [Swift.String : Swift.String]
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct ActionDescription {
+  public let localisedLabel: Swift.String
+  public let localisedAccessibilityLabel: Swift.String
+  public let iconName: Swift.String?
+  public let bundleUrl: Foundation.URL?
+  public var iconImage: UIKit.UIImage? {
+    mutating get
+    set
+  }
+  public init(localisedLabel: Swift.String, localisedAccessibilityLabel: Swift.String, iconName: Swift.String? = nil, bundleUrl: Foundation.URL? = nil)
+}
+@objc final public class ZDKPushProvider : ObjectiveC.NSObject {
+  @objc public init(zendesk: ZendeskCoreSDK.Zendesk)
+  @objc final public func register(deviceIdentifier: Swift.String, locale: Swift.String, completion: @escaping (Swift.String?, Swift.Error?) -> Swift.Void)
+  @objc final public func register(UAIdentifier: Swift.String, locale: Swift.String, completion: @escaping (Swift.String?, Swift.Error?) -> Swift.Void)
+  @objc final public func unregisterForPush()
+  @objc override dynamic public init()
+  @objc deinit
+}
+public protocol ProviderModule {
+  var push: ZendeskCoreSDK.PushRegistrationProvider { get }
+  var settings: ZendeskCoreSDK.SettingsProvider { get }
+  var blip: ZendeskCoreSDK.BlipsProvider { get }
+  var user: ZendeskCoreSDK.UserProvider { get }
+}
+extension NSNotification.Name {
+  public static let zendeskNotInitialised: Foundation.Notification.Name
+}
+@objc(ZDKZendesk) final public class Zendesk : ObjectiveC.NSObject {
+  @objc final public var zendeskUrl: Swift.String {
+    @objc get
+  }
+  final public var actionHandlerRegistry: ZendeskCoreSDK.ActionHandlerRegistry
+  final public var identity: ZendeskCoreSDK.Identity? {
+    get
+  }
+  final public func setIdentity(_ newIdentity: ZendeskCoreSDK.Identity)
+  @objc final public class func initialize(appId: Swift.String, clientId: Swift.String, zendeskUrl: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension Zendesk {
+  final public var providerModule: ZendeskCoreSDK.ProviderModule {
+    get
+  }
+  final public var storeModule: ZendeskCoreSDK.StoreModule {
+    get
+  }
+  final public var accountDetails: ZendeskCoreSDK.AccountDetails {
+    get
+  }
+}
+extension Zendesk {
+  @objc public static var instance: ZendeskCoreSDK.Zendesk? {
+    @objc get
+  }
+  @objc final public func setIdentity(_ newIdentity: ZendeskCoreSDK.ZDKObjCIdentity)
+  @objc final public func objCIdentity() -> ZendeskCoreSDK.ZDKObjCIdentity?
+}
+public struct SDKError : Swift.Error {
+  public let description: Swift.String
+  public init(description: Swift.String)
+}
+public struct Anonymous : Swift.Codable {
+  public var name: Swift.String?, email: Swift.String?
+  public var guid: Swift.String? {
+    get
+    }
+  public init(withName name: Swift.String? = nil, email: Swift.String? = nil)
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Anonymous : Swift.Equatable {
+  public static func == (lhs: ZendeskCoreSDK.Anonymous, rhs: ZendeskCoreSDK.Anonymous) -> Swift.Bool
+}
+@objc public class ZDKObjCAnonymous : ObjectiveC.NSObject, ZendeskCoreSDK.ZDKObjCIdentity {
+  @objc public var name: Swift.String? {
+    @objc get
+  }
+  @objc public var email: Swift.String? {
+    @objc get
+  }
+  @objc public var guid: Swift.String? {
+    @objc get
+  }
+  @objc public init(withName name: Swift.String?, email: Swift.String?)
+  public func update(email: Swift.String) -> ZendeskCoreSDK.ZDKObjCAnonymous
+  @objc override dynamic public init()
+  @objc deinit
+}
+final public class PushRegistrationProvider {
+  @objc deinit
+}
+extension PushRegistrationProvider {
+  public typealias PushRegistrationResult = Swift.Result<ZendeskCoreSDK.PushRegistrationResponse, Swift.Error>
+  final public func registerForPush(withDeviceIdentifier identifier: Swift.String, locale: Swift.String, callback: @escaping (ZendeskCoreSDK.PushRegistrationProvider.PushRegistrationResult) -> Swift.Void)
+  final public func registerForPush(withUAChannelId identifier: Swift.String, locale: Swift.String, callback: @escaping (ZendeskCoreSDK.PushRegistrationProvider.PushRegistrationResult) -> Swift.Void)
+  final public func unregisterForPush()
+}
+@objc final public class ZDKUserProvider : ObjectiveC.NSObject {
+  @objc public init(zendesk: ZendeskCoreSDK.Zendesk)
+  @objc final public func getUserWithCompletion(_ completion: @escaping ((ZendeskCoreSDK.User?, Swift.Error?) -> Swift.Void))
+  @objc final public func setUserFields(_ userFields: [Swift.String : Any], completion: @escaping ((ZendeskCoreSDK.User?, Swift.Error?) -> Swift.Void))
+  @objc final public func getUserFieldsWithCompletion(_ completion: @escaping (([ZendeskCoreSDK.UserField], Swift.Error?) -> Swift.Void))
+  @objc final public func addTags(_ tags: [Swift.String], _ completion: @escaping ([Swift.String], Swift.Error?) -> Swift.Void)
+  @objc final public func deleteTags(_ tags: [Swift.String], completion: @escaping ([Swift.String], Swift.Error?) -> Swift.Void)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct SessionStore {
+  @discardableResult
+  public func store(value: Any?, forKey key: Swift.String) -> Swift.Bool
+  public func value(forKey key: Swift.String) -> Any?
+}
+public enum BlipsGroup : Swift.Int {
+  case required
+  case behavioural
+  case pathfinder
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public protocol LoggerType {
+  static func log(format: Swift.String, string: Swift.String)
+}
+public enum ConsoleLogger : ZendeskCoreSDK.LoggerType {
+  public static func log(format: Swift.String, string: Swift.String)
+}
+public enum LoggerConfig {
+  public static var logger: ZendeskCoreSDK.LoggerType.Type
+}
+public protocol StoreModule {
+  var cacheDirectory: Foundation.URL? { get }
+  var sessionStore: ZendeskCoreSDK.SessionStore { get }
+  func clearAll()
+  func clearSettingsAndSession()
+  func clearSession()
+}
+final public class Stores : ZendeskCoreSDK.StoreModule {
+  final public let sessionStore: ZendeskCoreSDK.SessionStore
+  final public var cacheDirectory: Foundation.URL? {
+    get
+  }
+  final public func clearSession()
+  final public func clearSettingsAndSession()
+  final public func clearAll()
+  @objc deinit
+}
+public struct UserAction<T> : Swift.Encodable where T : Swift.Encodable {
+  public init(version: Swift.String = VersionConstants.ZendeskCoreSDKVersionString, action: Swift.String, label: Swift.String? = nil, channel: Swift.String = "core_sdk", category: Swift.String, value: T? = nil)
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public protocol URLProvider {
+  var url: Foundation.URL { get }
+}
+public struct ProviderService : ZendeskCoreSDK.URLService {
+  public let urlComponent: Foundation.URL
+  public var httpMethod: ZendeskCoreSDK.HttpMethod
+  public var headers: [Swift.String : Swift.String]
+  public var body: Foundation.Data?
+  public var dispatchQueue: Dispatch.DispatchQueue
+  public var request: Foundation.URLRequest {
+    get
+  }
+  public var reporter: ZendeskCoreSDK.Reporter
+  public var environment: ZendeskCoreSDK.AccountDetails
+  public init(environment: ZendeskCoreSDK.AccountDetails, urlComponent: Foundation.URL, requiresAuth: Swift.Bool = false, httpMethod: ZendeskCoreSDK.HttpMethod = HttpMethod.get, clientHeaders: ZendeskCoreSDK.ClientHeaders, body: Foundation.Data? = nil, dispatchQueue: Dispatch.DispatchQueue = DispatchQueue.main, reporter: ZendeskCoreSDK.Reporter = .none, cachingDelegate: ZendeskCoreSDK.CachedHTTPURLResponseDelegate? = nil)
+}
+extension ProviderService : ZendeskCoreSDK.Executor {
+  public func perform(callback: @escaping ZendeskCoreSDK.CompletionHandler)
+}
+@objc public protocol IdentityMigration : ObjectiveC.NSObjectProtocol {
+  @objc func getMigratedAnonymousName() -> Swift.String?
+  @objc func getMigratedAnonymousEmail() -> Swift.String?
+  @objc func getMigratedJwtIdentifier() -> Swift.String?
+}
+public struct ActionHandlerRegistry {
+  mutating public func add<T>(actionHandler: T) where T : Swift.Equatable, T : ZendeskCoreSDK.ActionHandler
+  mutating public func clear()
+  public func handler(forAction actionName: Swift.String) -> ZendeskCoreSDK.ActionHandler?
+  public func handlers(forAction actionName: Swift.String) -> [ZendeskCoreSDK.ActionHandler]
+  mutating public func remove<T>(actionHandler: T) where T : Swift.Equatable, T : ZendeskCoreSDK.ActionHandler
+}
+@objc(ZDKLogLevel) public enum LogLevel : Swift.Int {
+  case error, warn, info, debug, verbose
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc(ZDKCoreLogger) final public class CoreLogger : ObjectiveC.NSObject {
+  @objc public static var logLevel: ZendeskCoreSDK.LogLevel
+  @objc public static var enabled: Swift.Bool
+  @objc public static func error(_ message: Swift.String)
+  @objc public static func warn(_ message: Swift.String)
+  @objc public static func info(_ message: Swift.String)
+  @objc public static func debug(_ message: Swift.String)
+  @objc public static func verbose(_ message: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct NilAction : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@objc(ZDKUserField) public class UserField : ObjectiveC.NSObject, Swift.Decodable {
+  @objc final public let id: Swift.String
+  @objc final public let url: Swift.String
+  @objc final public let key: Swift.String
+  final public let type: ZendeskCoreSDK.UserField.FieldType
+  @objc public var fieldType: Swift.String {
+    @objc get
+  }
+  @objc final public let title: Swift.String
+  @objc final public let raw_title: Swift.String
+  @objc final public let fieldDescription: Swift.String
+  @objc final public let raw_description: Swift.String
+  @objc final public let position: Swift.Int
+  @objc final public let active: Swift.Bool
+  @objc final public let system: Swift.Bool
+  @objc final public let regexp_for_validation: Swift.String
+  @objc final public let created_at: Foundation.Date
+  @objc final public let updated_at: Foundation.Date
+  @objc final public let custom_field_options: [ZendeskCoreSDK.UserFieldOption]?
+  public enum FieldType : Swift.String, Swift.Decodable {
+    case checkbox, date, decimal, dropdown, integer, regexp, text, textarea
+    public typealias RawValue = Swift.String
+    public init?(rawValue: Swift.String)
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  required public init(from decoder: Swift.Decoder) throws
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct BlipsProvider {
+}
+extension BlipsProvider {
+  public func send<T>(blip: ZendeskCoreSDK.UserAction<T>, group: ZendeskCoreSDK.BlipsGroup) where T : Swift.Encodable
+  public func send<T>(blip: ZendeskCoreSDK.PageView<T>, group: ZendeskCoreSDK.BlipsGroup) where T : Swift.Encodable
+}
+public protocol ClientHeaders {
+  var client: Swift.String { get }
+  var version: Swift.String { get }
+  var aditionalHeaders: [Swift.String : Swift.String] { get }
+}
+public enum Identity {
+  case anonymous(ZendeskCoreSDK.Anonymous)
+  case jwt(ZendeskCoreSDK.Jwt)
+  public static func createAnonymous(name: Swift.String? = nil, email: Swift.String? = nil) -> ZendeskCoreSDK.Identity
+  public static func createJwt(token: Swift.String) -> ZendeskCoreSDK.Identity
+}
+extension Identity : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Identity : Swift.Equatable {
+  public static func == (lhs: ZendeskCoreSDK.Identity, rhs: ZendeskCoreSDK.Identity) -> Swift.Bool
+}
+@objc public protocol ZDKObjCIdentity {
+}
+public struct ApplicationConfiguration : ZendeskCoreSDK.AccountDetails {
+  public let applicationId: Swift.String
+  public let clientId: Swift.String
+  public let accountUrl: Swift.String
+}
+public struct CoreSettings : Swift.Decodable {
+  public let authentication: ZendeskCoreSDK.CoreSettings.AuthenticationType?
+  public enum AuthenticationType : Swift.String, Swift.Decodable {
+    case jwt
+    case anonymous
+    public typealias RawValue = Swift.String
+    public init?(rawValue: Swift.String)
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public init(from decoder: Swift.Decoder) throws
+}
+extension CoreSettings : ZendeskCoreSDK.DecodableDefault {
+  public typealias DefaultType = ZendeskCoreSDK.CoreSettings
+  public static var `default`: ZendeskCoreSDK.CoreSettings {
+    get
+  }
+}
+extension CoreSettings : Swift.Equatable {
+  public static func == (lhs: ZendeskCoreSDK.CoreSettings, rhs: ZendeskCoreSDK.CoreSettings) -> Swift.Bool
+}
+public enum HttpMethod : Swift.String {
+  case get
+  case post
+  case delete
+  case put
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+  public init?(rawValue: Swift.String)
+}
+public protocol CachedHTTPURLResponseDetails {
+  var url: Foundation.URL? { get }
+  var textEncodingName: Swift.String? { get }
+  var mimeType: Swift.String? { get }
+  var statusCode: Swift.Int { get }
+  var allHeaderFields: [Swift.AnyHashable : Any] { get }
+}
+extension HTTPURLResponse : ZendeskCoreSDK.CachedHTTPURLResponseDetails {
+}
+public enum Reporter {
+  case progress(Foundation.Progress)
+  case callback(ZendeskCoreSDK.ProgressCallback)
+  case none
+}
+public typealias ProgressCallback = (Swift.Int64, Swift.Int64) -> Swift.Void
+@objc(ZDKHelpCenterUtil) final public class HelpCenterUtil : ObjectiveC.NSObject {
+  @objc public static var zendeskURL: Swift.String? {
+    @objc get
+  }
+  @objc public static var hasAuth: Swift.Bool {
+    @objc get
+  }
+  @objc public static func canonicalRequest(for request: Foundation.NSURLRequest) -> Foundation.NSURLRequest
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct SharedHeaders {
+}
+public struct UserProvider {
+}
+extension UserProvider {
+  public typealias UserResult = Swift.Result<ZendeskCoreSDK.User, Swift.Error>
+  public func user(callback: @escaping (ZendeskCoreSDK.UserProvider.UserResult) -> Swift.Void)
+  public func add(tags: [Swift.String], callback: @escaping (ZendeskCoreSDK.UserProvider.UserResult) -> Swift.Void)
+  public func delete(tags: [Swift.String], callback: @escaping (ZendeskCoreSDK.UserProvider.UserResult) -> Swift.Void)
+  public func set(userFields: [Swift.String : Any], callback: @escaping (ZendeskCoreSDK.UserProvider.UserResult) -> Swift.Void)
+  public func userFields(callback: @escaping (Swift.Result<[ZendeskCoreSDK.UserField], Swift.Error>) -> Swift.Void)
+}
+public protocol DecodableDefault {
+  associatedtype DefaultType : Swift.Decodable
+  static var `default`: Self.DefaultType { get }
+}
+public struct Jwt : Swift.Codable {
+  public var token: Swift.String
+  public init(token: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Jwt : Swift.Equatable {
+  public static func == (lhs: ZendeskCoreSDK.Jwt, rhs: ZendeskCoreSDK.Jwt) -> Swift.Bool
+}
+@objc public class ZDKObjCJwt : ObjectiveC.NSObject, ZendeskCoreSDK.ZDKObjCIdentity {
+  @objc public var token: Swift.String {
+    @objc get
+  }
+  @objc public init(withToken token: Swift.String)
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct SettingsProvider {
+  public init(accountDetails: ZendeskCoreSDK.AccountDetails)
+}
+extension SettingsProvider {
+  public func getSettings<T>(_ type: T.Type, callback: @escaping (T.DefaultType) -> Swift.Void) where T : ZendeskCoreSDK.DecodableDefault
+}
+public enum Settings {
+  public static func decode<T>(_ type: T.Type, data: Foundation.Data) throws -> T where T : Swift.Decodable
+}
+public protocol Executor {
+  func perform(callback: @escaping ZendeskCoreSDK.CompletionHandler)
+}
+public protocol CachedHTTPURLResponseDelegate {
+  func transformer(for response: ZendeskCoreSDK.CachedHTTPURLResponseDetails) -> ZendeskCoreSDK.CachedHTTPURLResponseTransformer?
+}
+extension ZendeskCoreSDK.BlipsGroup : Swift.Equatable {}
+extension ZendeskCoreSDK.BlipsGroup : Swift.Hashable {}
+extension ZendeskCoreSDK.BlipsGroup : Swift.RawRepresentable {}
+extension ZendeskCoreSDK.LogLevel : Swift.Equatable {}
+extension ZendeskCoreSDK.LogLevel : Swift.Hashable {}
+extension ZendeskCoreSDK.LogLevel : Swift.RawRepresentable {}
+extension ZendeskCoreSDK.UserField.FieldType : Swift.Equatable {}
+extension ZendeskCoreSDK.UserField.FieldType : Swift.Hashable {}
+extension ZendeskCoreSDK.UserField.FieldType : Swift.RawRepresentable {}
+extension ZendeskCoreSDK.CoreSettings.AuthenticationType : Swift.Hashable {}
+extension ZendeskCoreSDK.CoreSettings.AuthenticationType : Swift.RawRepresentable {}
+extension ZendeskCoreSDK.HttpMethod : Swift.Equatable {}
+extension ZendeskCoreSDK.HttpMethod : Swift.Hashable {}
+extension ZendeskCoreSDK.HttpMethod : Swift.RawRepresentable {}

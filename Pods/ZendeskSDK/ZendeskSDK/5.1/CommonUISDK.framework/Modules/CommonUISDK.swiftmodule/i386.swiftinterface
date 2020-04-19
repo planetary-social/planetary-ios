@@ -1,0 +1,706 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.1 (swiftlang-1100.0.270.13 clang-1100.0.33.7)
+// swift-module-flags: -target i386-apple-ios9.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name CommonUISDK
+@_exported import CommonUISDK
+import Foundation
+import QuickLook
+import Swift
+import UIKit
+@objc(ZDKUiConfiguration) public protocol UiConfiguration : ObjectiveC.NSObjectProtocol {
+  @objc init()
+}
+public protocol ContactOptionsTableCellDelegate : AnyObject {
+  func didSelectContactOptionsTableCell(_ cell: CommonUISDK.ContactOptionsTableViewCell, with contactOptionViewModel: CommonUISDK.ContactOptionViewModelProtocol)
+}
+@objc final public class ContactOptionsTableViewCell : CommonUISDK.InteractionCell {
+  weak final public var delegate: CommonUISDK.InteractionCellDelegate?
+  @objc override final public func awakeFromNib()
+  @objc override final public func prepareForReuse()
+  @objc override final public func canPerformAction(_ action: ObjectiveC.Selector, withSender sender: Any?) -> Swift.Bool
+  @objc override final public var canBecomeFirstResponder: Swift.Bool {
+    @objc get
+  }
+  @objc deinit
+}
+extension ContactOptionsTableViewCell {
+  final public func updateWithViewModel(_ viewModel: CommonUISDK.InteractionCellViewModelProtocol?)
+}
+public protocol ConversationViewModelProtocol {
+  var avatarImage: UIKit.UIImage? { get }
+  var isEnabled: Swift.Bool { get }
+  var connection: CommonUISDK.Connection { get }
+  var dataSource: [CommonUISDK.InteractionCellViewModelProtocol] { get }
+  func newItems(oldViewModel: CommonUISDK.ConversationViewModelProtocol?) -> [(offset: Swift.Int, element: CommonUISDK.EquatableCellViewModel)]
+  func updatedItems(oldViewModel: CommonUISDK.ConversationViewModelProtocol?) -> [(offset: Swift.Int, element: CommonUISDK.EquatableCellViewModel)]
+  func removedItems(oldViewModel: CommonUISDK.ConversationViewModelProtocol?) -> [(offset: Swift.Int, element: CommonUISDK.EquatableCellViewModel)]
+}
+public protocol KeyboardHelper {
+  var keyboardVisible: Swift.Bool { get }
+  var keyboardHeight: Swift.Double { get }
+  var absKeyboardHeight: Swift.Double { get }
+  var keyboardWillShowEvent: CommonUISDK.EventListener<CommonUISDK.KeyboardHelper> { get }
+  var keyboardWillAnimateShowingEvent: CommonUISDK.EventListener<CommonUISDK.KeyboardHelper> { get }
+  var keyboardWillHideEvent: CommonUISDK.EventListener<CommonUISDK.KeyboardHelper> { get }
+}
+final public class ConcreteKeyboardHelper : CommonUISDK.KeyboardHelper {
+  final public var keyboardVisible: Swift.Bool
+  final public var keyboardHeight: Swift.Double
+  final public var absKeyboardHeight: Swift.Double
+  final public var keyboardWillShowEvent: CommonUISDK.EventListener<CommonUISDK.KeyboardHelper>
+  final public var keyboardWillHideEvent: CommonUISDK.EventListener<CommonUISDK.KeyboardHelper>
+  final public var keyboardWillAnimateShowingEvent: CommonUISDK.EventListener<CommonUISDK.KeyboardHelper>
+  public init(bottomConstraint: UIKit.NSLayoutConstraint, parentView: UIKit.UIView)
+  @objc deinit
+}
+public struct AttachmentViewModel : Swift.Equatable {
+  public let name: Swift.String
+  public let size: Swift.Int
+  public let url: Foundation.URL?
+  public let fileExtension: CommonUISDK.FileExtension
+  public init(name: Swift.String, size: Swift.Int, url: Foundation.URL?, fileExtension: CommonUISDK.FileExtension)
+  public init(name: Swift.String, size: Swift.Int, url: Foundation.URL?)
+  public static func == (a: CommonUISDK.AttachmentViewModel, b: CommonUISDK.AttachmentViewModel) -> Swift.Bool
+}
+public struct ImageCellViewModel : CommonUISDK.InteractionCellViewModelProtocol, CommonUISDK.PresentableCellViewModel, Swift.Equatable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let messageStatus: CommonUISDK.MessageStatus
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public let url: Foundation.URL?
+  public let filename: Swift.String
+  public var fileURL: Foundation.URL? {
+    get
+    }
+  public var isAgent: Swift.Bool {
+    get
+  }
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), name: Swift.String, isBot: Swift.Bool, messageStatus: CommonUISDK.MessageStatus, filename: Swift.String, url: Foundation.URL?)
+  public static func == (a: CommonUISDK.ImageCellViewModel, b: CommonUISDK.ImageCellViewModel) -> Swift.Bool
+}
+public struct StatusViewModel : CommonUISDK.InteractionCellViewModelProtocol, Swift.Equatable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let name: Swift.String
+  public let messageStatus: CommonUISDK.MessageStatus
+  public var isAgent: Swift.Bool {
+    get
+  }
+  public let isBot: Swift.Bool
+  public var cellPinning: CommonUISDK.CellPinning {
+    get
+  }
+  public init(id: Swift.String = UUID().uuidString, timestamp: Foundation.Date = Date(), name: Swift.String, isBot: Swift.Bool = false, messageStatus: CommonUISDK.MessageStatus)
+  public static func == (a: CommonUISDK.StatusViewModel, b: CommonUISDK.StatusViewModel) -> Swift.Bool
+}
+public protocol ResponseOptionsViewViewModelProtocol {
+  var responseOptionViewModels: [CommonUISDK.ResponseOptionViewModel] { get }
+}
+public struct ResponseOptionsViewViewModel : CommonUISDK.ResponseOptionsViewViewModelProtocol, Swift.Equatable {
+  public let responseOptionViewModels: [CommonUISDK.ResponseOptionViewModel]
+  public init(responseOptionViewModels: [CommonUISDK.ResponseOptionViewModel])
+  public static func == (a: CommonUISDK.ResponseOptionsViewViewModel, b: CommonUISDK.ResponseOptionsViewViewModel) -> Swift.Bool
+}
+extension UIColor {
+  public static func colorFromHex(_ hexString: Swift.String) -> UIKit.UIColor
+}
+public protocol ResponseOptionsCellViewModelProtocol : CommonUISDK.InteractionCellViewModelProtocol {
+  var responseOptionsViewViewModel: CommonUISDK.ResponseOptionsViewViewModel { get }
+}
+public struct ResponseOptionsCellViewModel : CommonUISDK.ResponseOptionsCellViewModelProtocol, Swift.Equatable {
+  public let responseOptionsViewViewModel: CommonUISDK.ResponseOptionsViewViewModel
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let messageStatus: CommonUISDK.MessageStatus
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public init(id: Swift.String = UUID().uuidString, timestamp: Foundation.Date = Date(), name: Swift.String, isBot: Swift.Bool = false, responseOptionsViewViewModel: CommonUISDK.ResponseOptionsViewViewModel)
+  public static func == (a: CommonUISDK.ResponseOptionsCellViewModel, b: CommonUISDK.ResponseOptionsCellViewModel) -> Swift.Bool
+}
+public struct AttachmentCellViewModel : CommonUISDK.InteractionCellViewModelProtocol, CommonUISDK.PresentableCellViewModel, Swift.Equatable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let messageStatus: CommonUISDK.MessageStatus
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public let attachment: CommonUISDK.AttachmentViewModel
+  public var url: Foundation.URL? {
+    get
+  }
+  public var filename: Swift.String {
+    get
+  }
+  public var fileURL: Foundation.URL? {
+    get
+    }
+  public var isAgent: Swift.Bool {
+    get
+  }
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), name: Swift.String, isBot: Swift.Bool, messageStatus: CommonUISDK.MessageStatus, attachment: CommonUISDK.AttachmentViewModel)
+  public static func == (a: CommonUISDK.AttachmentCellViewModel, b: CommonUISDK.AttachmentCellViewModel) -> Swift.Bool
+}
+public protocol NavigationBarShadow {
+}
+extension NavigationBarShadow where Self : UIKit.UIViewController {
+  public var navBarShadow: UIKit.UIImageView? {
+    get
+  }
+}
+public enum MessageStatus {
+  case sent
+  case pending
+  case errored
+  case received
+  public static func == (a: CommonUISDK.MessageStatus, b: CommonUISDK.MessageStatus) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum CellPosition : Swift.Int {
+  case left
+  case center
+  case right
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum CellPinning : Swift.Int {
+  case none
+  case bottom
+  case bottomWithinSection
+  case topWithinSection
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public protocol CellViewModelProtocol : CommonUISDK.Identifier {
+  var id: Swift.String { get }
+  var timestamp: Foundation.Date { get }
+  var cellPosition: CommonUISDK.CellPosition { get }
+  var cellPinning: CommonUISDK.CellPinning { get }
+}
+extension CellViewModelProtocol {
+  public var cellPinning: CommonUISDK.CellPinning {
+    get
+  }
+}
+public protocol InteractionCellViewModelProtocol : CommonUISDK.CellViewModelProtocol {
+  var messageStatus: CommonUISDK.MessageStatus { get }
+  var name: Swift.String { get }
+  var isBot: Swift.Bool { get }
+}
+extension InteractionCellViewModelProtocol {
+  public var cellPosition: CommonUISDK.CellPosition {
+    get
+  }
+}
+public protocol ContactOptionViewModelProtocol {
+  var description: Swift.String { get }
+  var iconImage: UIKit.UIImage? { get }
+  var localizedLabelText: Swift.String { get }
+  var contactOptionAction: (([Swift.String : Any]) -> Swift.Void) { get }
+}
+public struct ContactOptionViewModel : CommonUISDK.ContactOptionViewModelProtocol {
+  public let description: Swift.String
+  public let iconImage: UIKit.UIImage?
+  public let localizedLabelText: Swift.String
+  public let contactOptionAction: (([Swift.String : Any]) -> Swift.Void)
+  public init(description: Swift.String, iconImage: UIKit.UIImage? = nil, localisedLabelText: Swift.String, contactOptionAction: @escaping (([Swift.String : Any]) -> Swift.Void))
+}
+extension ContactOptionViewModel : Swift.Equatable {
+  public static func == (lhs: CommonUISDK.ContactOptionViewModel, rhs: CommonUISDK.ContactOptionViewModel) -> Swift.Bool
+}
+public protocol ContactOptionsCellViewModelProtocol : CommonUISDK.InteractionCellViewModelProtocol {
+  var contactOptionViewModels: [CommonUISDK.ContactOptionViewModel] { get }
+  var titleText: Swift.String { get }
+}
+public struct ContactOptionsCellViewModel : CommonUISDK.ContactOptionsCellViewModelProtocol, Swift.Equatable {
+  public let contactOptionViewModels: [CommonUISDK.ContactOptionViewModel]
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let messageStatus: CommonUISDK.MessageStatus
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public let titleText: Swift.String
+  public init(id: Swift.String = UUID().uuidString, timestamp: Foundation.Date = Date(), name: Swift.String, titleText: Swift.String = Constants.Strings.getInTouchReply, isBot: Swift.Bool = false, contactOptionViewModels: [CommonUISDK.ContactOptionViewModel])
+  public static func == (a: CommonUISDK.ContactOptionsCellViewModel, b: CommonUISDK.ContactOptionsCellViewModel) -> Swift.Bool
+}
+@objc(ZDKCommonTheme) final public class CommonTheme : ObjectiveC.NSObject {
+  @objc public static let currentTheme: CommonUISDK.CommonTheme
+  @objc final public var primaryColor: UIKit.UIColor
+  @objc deinit
+}
+extension UIView {
+  public static func animateViewAppear(_ view: UIKit.UIView, animationGroup: Swift.String, delay: Foundation.TimeInterval = 0)
+}
+public protocol StatusIndicatorCell {
+  var statusIndicatorImageView: UIKit.UIImageView { get }
+}
+public enum ConversationCoordinatorAction {
+  case sendQuery(query: Swift.String)
+  case didChangeInputText(text: Swift.String?, textView: UIKit.UITextView)
+  case showArticle(articleId: Swift.String, interactionData: CommonUISDK.InteractionDataProtocol, navigationController: UIKit.UINavigationController?)
+  case didSelectContactOption(contactOptionViewModel: CommonUISDK.ContactOptionViewModelProtocol, uiConfigs: [CommonUISDK.UiConfiguration], viewController: UIKit.UIViewController)
+  case didSelectResponseOptionViewModel(optionViewModel: CommonUISDK.ResponseOptionViewModelProtocol, responseCellViewModel: CommonUISDK.ResponseOptionsCellViewModelProtocol)
+  case resendTextMessage(textViewModel: CommonUISDK.TextCellViewModelProtocol)
+  case deleteTextMessage(textViewModel: CommonUISDK.TextCellViewModelProtocol)
+  case retryConnection
+}
+public protocol ConversationCoordinatorProtocol : AnyObject {
+  var interactions: [CommonUISDK.InteractionCellViewModelProtocol] { get }
+  var delegate: CommonUISDK.ConversationCoordinatorDelegate? { get set }
+  func configureViewController(avatarImage: UIKit.UIImage?, isEnabled: Swift.Bool) -> UIKit.UIViewController
+  func set(avatarImage: UIKit.UIImage?, isInputFieldEnabled: Swift.Bool)
+  func appendInteractions(_ interactions: [CommonUISDK.InteractionCellViewModelProtocol])
+  func batchUpdate(added: [CommonUISDK.InteractionCellViewModelProtocol], updated: [CommonUISDK.InteractionCellViewModelProtocol], removed: [CommonUISDK.InteractionCellViewModelProtocol])
+  func updateExistingInteraction(_ interaction: CommonUISDK.InteractionCellViewModelProtocol)
+  func removeExistingInteraction(with id: Swift.String)
+  func updateConnection(with viewModel: CommonUISDK.ConnectionViewModel)
+  func stopTyping()
+  func startTyping(subscriptLabel: Swift.String?)
+}
+public protocol ConversationCoordinatorDelegate : AnyObject {
+  func conversationCoordinator(_ coordinator: CommonUISDK.ConversationCoordinatorProtocol, didPerformAction: CommonUISDK.ConversationCoordinatorAction)
+}
+final public class ConversationCoordinator : CommonUISDK.ConversationCoordinatorProtocol {
+  final public var delegate: CommonUISDK.ConversationCoordinatorDelegate?
+  final public var interactions: [CommonUISDK.InteractionCellViewModelProtocol] {
+    get
+  }
+  public init(configs: [CommonUISDK.UiConfiguration] = [])
+  final public func configureViewController(avatarImage: UIKit.UIImage?, isEnabled: Swift.Bool = true) -> UIKit.UIViewController
+  final public func set(avatarImage: UIKit.UIImage? = nil, isInputFieldEnabled: Swift.Bool)
+  final public func appendInteractions(_ interactions: [CommonUISDK.InteractionCellViewModelProtocol])
+  final public func batchUpdate(added: [CommonUISDK.InteractionCellViewModelProtocol], updated: [CommonUISDK.InteractionCellViewModelProtocol], removed: [CommonUISDK.InteractionCellViewModelProtocol])
+  final public func updateExistingInteraction(_ interaction: CommonUISDK.InteractionCellViewModelProtocol)
+  final public func removeExistingInteraction(with id: Swift.String)
+  final public func updateConnection(with viewModel: CommonUISDK.ConnectionViewModel)
+  final public func startTyping(subscriptLabel: Swift.String? = nil)
+  final public func stopTyping()
+  @objc deinit
+}
+public protocol DeflectionArticleViewModelProtocol {
+  var title: Swift.String { get }
+  var snippet: Swift.String { get }
+  var hideBorder: Swift.Bool { get }
+  var articleId: Swift.Int64 { get }
+}
+public struct DeflectionArticleViewModel : CommonUISDK.DeflectionArticleViewModelProtocol, Swift.Equatable {
+  public let title: Swift.String
+  public let snippet: Swift.String
+  public let hideBorder: Swift.Bool
+  public let articleId: Swift.Int64
+  public init(title: Swift.String, snippet: Swift.String = "", hideBorder: Swift.Bool, articleId: Swift.Int64)
+  public static func == (a: CommonUISDK.DeflectionArticleViewModel, b: CommonUISDK.DeflectionArticleViewModel) -> Swift.Bool
+}
+public protocol TextCellViewModelProtocol : CommonUISDK.InteractionCellViewModelProtocol {
+  var text: Swift.String { get }
+}
+public struct TextCellViewModel : CommonUISDK.TextCellViewModelProtocol, Swift.Equatable {
+  public var identifier: Swift.String {
+    get
+  }
+  public let text: Swift.String
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let messageStatus: CommonUISDK.MessageStatus
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public init(id: Swift.String = UUID().uuidString, timestamp: Foundation.Date = Date(), text: Swift.String, name: Swift.String = UUID().uuidString, isBot: Swift.Bool = false, messageStatus: CommonUISDK.MessageStatus = .received)
+  public static func == (a: CommonUISDK.TextCellViewModel, b: CommonUISDK.TextCellViewModel) -> Swift.Bool
+}
+public struct ConversationViewModel : CommonUISDK.ConversationViewModelProtocol {
+  public let connection: CommonUISDK.Connection
+  public let avatarImage: UIKit.UIImage?
+  public let isEnabled: Swift.Bool
+  public let dataSource: [CommonUISDK.InteractionCellViewModelProtocol]
+  public init(messages: [CommonUISDK.InteractionCellViewModelProtocol], avatarImage: UIKit.UIImage?, connection: CommonUISDK.Connection = .connected, isEnabled: Swift.Bool)
+  public func newItems(oldViewModel: CommonUISDK.ConversationViewModelProtocol?) -> [(offset: Swift.Int, element: CommonUISDK.EquatableCellViewModel)]
+  public func updatedItems(oldViewModel: CommonUISDK.ConversationViewModelProtocol?) -> [(offset: Swift.Int, element: CommonUISDK.EquatableCellViewModel)]
+  public func removedItems(oldViewModel: CommonUISDK.ConversationViewModelProtocol?) -> [(offset: Swift.Int, element: CommonUISDK.EquatableCellViewModel)]
+}
+final public class EventListener<Sender> {
+  @objc deinit
+}
+@objc public enum UiConfigurationError : Swift.Int, Foundation.LocalizedError {
+  case noConfig
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+  public static var _nsErrorDomain: Swift.String {
+    get
+  }
+}
+@objc(ZDKUIConfigurations) final public class UIConfigurations : ObjectiveC.NSObject {
+  public typealias UIConfigArrayType = [CommonUISDK.UiConfiguration]
+  @objc final public var configs: CommonUISDK.UIConfigurations.UIConfigArrayType {
+    get
+    }
+  @objc public init(configs: [CommonUISDK.UiConfiguration])
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension UIConfigurations : Swift.Collection {
+  public typealias Index = CommonUISDK.UIConfigurations.UIConfigArrayType.Index
+  public typealias Element = CommonUISDK.UIConfigurations.UIConfigArrayType.Element
+  final public var startIndex: CommonUISDK.UIConfigurations.Index {
+    get
+  }
+  final public var endIndex: CommonUISDK.UIConfigurations.Index {
+    get
+  }
+  @objc final public func insert(_ configuration: CommonUISDK.UiConfiguration)
+  @objc final public subscript(index: CommonUISDK.UIConfigurations.Index) -> Swift.IndexingIterator<CommonUISDK.UIConfigurations>.Element {
+    @objc get
+  }
+  final public subscript<T>(forType type: T.Type) -> T? where T : CommonUISDK.UiConfiguration {
+    get
+  }
+  @objc final public func index(after i: CommonUISDK.UIConfigurations.Index) -> CommonUISDK.UIConfigurations.Index
+  final public func addDefaultConfigIfNeeded<T>(ofType type: T.Type) where T : CommonUISDK.UiConfiguration
+  @available(swift, obsoleted: 1.0)
+  @objc final public func addDefaultConfigIfNeeded(_ config: CommonUISDK.UiConfiguration)
+  public typealias Iterator = Swift.IndexingIterator<CommonUISDK.UIConfigurations>
+  public typealias SubSequence = Swift.Slice<CommonUISDK.UIConfigurations>
+  public typealias Indices = Swift.DefaultIndices<CommonUISDK.UIConfigurations>
+}
+@objc final public class ResponseOptionsView : UIKit.UIView {
+  @objc deinit
+}
+extension ResponseOptionsView : UIKit.UICollectionViewDataSource, UIKit.UICollectionViewDelegate {
+  @objc final public func numberOfSections(in collectionView: UIKit.UICollectionView) -> Swift.Int
+  @objc final public func collectionView(_ collectionView: UIKit.UICollectionView, numberOfItemsInSection section: Swift.Int) -> Swift.Int
+  @objc final public func collectionView(_ collectionView: UIKit.UICollectionView, cellForItemAt indexPath: Foundation.IndexPath) -> UIKit.UICollectionViewCell
+  @objc final public func collectionView(_ collectionView: UIKit.UICollectionView, didSelectItemAt indexPath: Foundation.IndexPath)
+}
+@objc final public class TypingIndicatorTableViewCell : CommonUISDK.InteractionCell {
+  weak final public var delegate: CommonUISDK.InteractionCellDelegate?
+  @objc override final public func awakeFromNib()
+  final public func updateWithViewModel(_ viewModel: CommonUISDK.InteractionCellViewModelProtocol?)
+  @objc deinit
+}
+public enum Connection : Swift.String {
+  case disconnected
+  case connecting
+  case reconnecting
+  case connected
+  case failed
+  public typealias RawValue = Swift.String
+  public init?(rawValue: Swift.String)
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ConnectionViewModel {
+  public let connection: CommonUISDK.Connection
+  public init(connection: CommonUISDK.Connection)
+}
+public protocol ArticlesTableViewCellDelegate : AnyObject {
+  func articlesTableViewCell(_ cell: CommonUISDK.ArticlesTableViewCell?, didSelectArticleID articleID: Swift.Int64, withInteractionData interactionData: CommonUISDK.InteractionDataProtocol)
+}
+@objc final public class ArticlesTableViewCell : CommonUISDK.InteractionCell {
+  weak final public var delegate: CommonUISDK.InteractionCellDelegate?
+  @objc override final public func awakeFromNib()
+  @objc override final public func prepareForReuse()
+  @objc override final public func canPerformAction(_ action: ObjectiveC.Selector, withSender sender: Any?) -> Swift.Bool
+  @objc override final public var canBecomeFirstResponder: Swift.Bool {
+    @objc get
+  }
+  @objc deinit
+}
+extension ArticlesTableViewCell {
+  final public func updateWithViewModel(_ viewModel: CommonUISDK.InteractionCellViewModelProtocol?)
+}
+public protocol ResponseOptionViewModelProtocol {
+  var id: Swift.String { get }
+  var text: Swift.String { get }
+  var furtherOptions: [CommonUISDK.ResponseOptionViewModel]? { get }
+}
+public struct ResponseOptionViewModel : CommonUISDK.ResponseOptionViewModelProtocol, Swift.Equatable {
+  public let id: Swift.String
+  public let text: Swift.String
+  public let furtherOptions: [CommonUISDK.ResponseOptionViewModel]?
+  public init(id: Swift.String = UUID().uuidString, text: Swift.String, furtherOptions: [CommonUISDK.ResponseOptionViewModel]? = nil)
+  public static func == (a: CommonUISDK.ResponseOptionViewModel, b: CommonUISDK.ResponseOptionViewModel) -> Swift.Bool
+}
+public protocol Identifier {
+  static var staticIdentifier: Swift.String { get }
+  var identifier: Swift.String { get }
+}
+extension Identifier {
+  public static var staticIdentifier: Swift.String {
+    get
+  }
+  public var identifier: Swift.String {
+    get
+  }
+}
+public protocol ArticlesCellViewModelProtocol : CommonUISDK.InteractionCellViewModelProtocol {
+  var deflectionViewModels: [CommonUISDK.DeflectionArticleViewModel] { get }
+  var interactionData: CommonUISDK.InteractionData { get }
+}
+extension ArticlesCellViewModelProtocol {
+  public var titleText: Swift.String {
+    get
+  }
+  public var firstArticleViewIsHidden: Swift.Bool {
+    get
+  }
+  public var secondArticleViewIsHidden: Swift.Bool {
+    get
+  }
+  public var thirdArticleViewIsHidden: Swift.Bool {
+    get
+  }
+  public var titleBorderIsHidden: Swift.Bool {
+    get
+  }
+}
+public protocol InteractionDataProtocol {
+  var deflectionId: Swift.Int64 { get }
+  var interactionAccessToken: Swift.String { get }
+}
+public struct InteractionData : CommonUISDK.InteractionDataProtocol, Swift.Equatable {
+  public let deflectionId: Swift.Int64
+  public let interactionAccessToken: Swift.String
+  public init(deflectionId: Swift.Int64, interactionAccessToken: Swift.String)
+  public static func == (a: CommonUISDK.InteractionData, b: CommonUISDK.InteractionData) -> Swift.Bool
+}
+public struct ArticlesCellViewModel : CommonUISDK.ArticlesCellViewModelProtocol, Swift.Equatable {
+  public let deflectionViewModels: [CommonUISDK.DeflectionArticleViewModel]
+  public let interactionData: CommonUISDK.InteractionData
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let messageStatus: CommonUISDK.MessageStatus
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public init(id: Swift.String = UUID().uuidString, timestamp: Foundation.Date = Date(), name: Swift.String, isBot: Swift.Bool = false, interactionData: CommonUISDK.InteractionData, deflectionViewModels: [CommonUISDK.DeflectionArticleViewModel] = [DeflectionArticleViewModel]())
+  public static func == (a: CommonUISDK.ArticlesCellViewModel, b: CommonUISDK.ArticlesCellViewModel) -> Swift.Bool
+}
+public protocol InputFieldDelegate : AnyObject {
+  func inputField(inputField: CommonUISDK.InputField, didSendWithText text: Swift.String)
+  func inputFieldDidBeginEditing(inputField: CommonUISDK.InputField)
+  func inputField(inputField: CommonUISDK.InputField, textViewDidChange textView: UIKit.UITextView)
+}
+@objc final public class InputField : UIKit.UIView {
+  weak final public var delegate: CommonUISDK.InputFieldDelegate?
+  convenience public init(delegate: CommonUISDK.InputFieldDelegate?)
+  @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  final public func updateWithViewModel(viewModel: CommonUISDK.InputFieldViewModel?)
+  @objc deinit
+}
+extension InputField : UIKit.UITextViewDelegate {
+  @objc final public func textViewDidChange(_ textView: UIKit.UITextView)
+  @objc final public func textViewDidBeginEditing(_ textView: UIKit.UITextView)
+}
+final public class InputFieldViewModel {
+  public init(isEnabled: Swift.Bool = false)
+  @objc deinit
+}
+public protocol InteractionCellDelegate : AnyObject {
+}
+public protocol ResponseOptionsCellDelegate : CommonUISDK.InteractionCellDelegate {
+  func responseOptionsCell(_ responseOptionsCell: CommonUISDK.ResponseOptionsTableViewCell, didSelectResponseOptionViewModel optionViewModel: CommonUISDK.ResponseOptionViewModelProtocol, forResponseViewModel responseCellViewModel: CommonUISDK.ResponseOptionsCellViewModelProtocol)
+}
+@objc final public class ResponseOptionsTableViewCell : CommonUISDK.InteractionCell {
+  weak final public var delegate: CommonUISDK.InteractionCellDelegate?
+  @objc deinit
+}
+extension ResponseOptionsTableViewCell {
+  final public func updateWithViewModel(_ viewModel: CommonUISDK.InteractionCellViewModelProtocol?)
+}
+@objc final public class ContactOptionView : UIKit.UIView {
+  @objc deinit
+}
+public struct SeparatorWithTextViewModel : CommonUISDK.InteractionCellViewModelProtocol, Swift.Equatable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let text: Swift.String
+  public let cellPosition: CommonUISDK.CellPosition
+  public let cellPinning: CommonUISDK.CellPinning
+  public let messageStatus: CommonUISDK.MessageStatus
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public init(id: Swift.String, name: Swift.String = UUID().uuidString, timestamp: Foundation.Date, text: Swift.String, cellPinning: CommonUISDK.CellPinning)
+  public static func == (a: CommonUISDK.SeparatorWithTextViewModel, b: CommonUISDK.SeparatorWithTextViewModel) -> Swift.Bool
+}
+public enum Constants {
+  public static let controller: Swift.String
+  public static let configs: Swift.String
+  public enum UI {
+    public static let midGrey: UIKit.UIColor
+    public static let systemGrey: UIKit.UIColor
+    public static let backgroundColor: UIKit.UIColor
+    public static let primaryColor: UIKit.UIColor
+    public static let lightGreyColor: UIKit.UIColor
+    public static let disabledInputFieldColor: UIKit.UIColor
+    public static let disabledPlaceholderTextColor: UIKit.UIColor
+  }
+  public enum Strings {
+    public static let getInTouchReply: Swift.String
+  }
+}
+public protocol InteractionTableViewCell : AnyObject, CommonUISDK.Identifier {
+  var delegate: CommonUISDK.InteractionCellDelegate? { get set }
+  func updateWithViewModel(_ viewModel: CommonUISDK.InteractionCellViewModelProtocol?)
+}
+public typealias InteractionCell = UIKit.UITableViewCell & CommonUISDK.InteractionTableViewCell
+final public class EquatableCellViewModel {
+  @objc deinit
+}
+extension EquatableCellViewModel : Swift.Equatable {
+  public static func == (lhs: CommonUISDK.EquatableCellViewModel, rhs: CommonUISDK.EquatableCellViewModel) -> Swift.Bool
+}
+public enum FileExtension : Swift.Equatable {
+  case png
+  case jpg
+  case heic
+  case gif
+  case pdf
+  case txt
+  case excel
+  case word
+  case other(type: Swift.String)
+  public var mimeType: Swift.String {
+    get
+  }
+  public var description: Swift.String {
+    get
+  }
+  public var isImage: Swift.Bool {
+    get
+  }
+}
+extension FileExtension {
+  public var icon: UIKit.UIImage? {
+    get
+  }
+}
+extension FileExtension : Swift.RawRepresentable {
+  public typealias RawValue = Swift.String
+  public init(rawValue: Swift.String)
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension UIView {
+  public enum Dimension {
+    case height
+    case width
+    public static func == (a: UIKit.UIView.Dimension, b: UIKit.UIView.Dimension) -> Swift.Bool
+    public var hashValue: Swift.Int {
+      get
+    }
+    public func hash(into hasher: inout Swift.Hasher)
+  }
+  public enum Attribute : Swift.String {
+    case top
+    case bottom
+    case left
+    case right
+    case centerX
+    case centerY
+    case trailing
+    case leading
+    public typealias RawValue = Swift.String
+    public init?(rawValue: Swift.String)
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public enum Axis {
+    case horizontal
+    case vertical
+    public static func == (a: UIKit.UIView.Axis, b: UIKit.UIView.Axis) -> Swift.Bool
+    public var hashValue: Swift.Int {
+      get
+    }
+    public func hash(into hasher: inout Swift.Hasher)
+  }
+  public var safeTopAnchor: UIKit.NSLayoutYAxisAnchor {
+    get
+  }
+  public var safeBottomAnchor: UIKit.NSLayoutYAxisAnchor {
+    get
+  }
+  public var safeLeftAnchor: UIKit.NSLayoutXAxisAnchor {
+    get
+  }
+  public var safeRightAnchor: UIKit.NSLayoutXAxisAnchor {
+    get
+  }
+  public var safeLeadingAnchor: UIKit.NSLayoutXAxisAnchor {
+    get
+  }
+  public var safeTrailingAnchor: UIKit.NSLayoutXAxisAnchor {
+    get
+  }
+  public var safeCenterXAnchor: UIKit.NSLayoutXAxisAnchor {
+    get
+  }
+  public var safeCenterYAnchor: UIKit.NSLayoutYAxisAnchor {
+    get
+  }
+  @discardableResult
+  public func constrainToSuperview(axis: UIKit.UIView.Axis, constant: CoreGraphics.CGFloat = 0) -> [UIKit.NSLayoutConstraint]
+  @discardableResult
+  public func constrainToSuperviewSafeLayout(axis: UIKit.UIView.Axis, constant: CoreGraphics.CGFloat = 0) -> [UIKit.NSLayoutConstraint?]
+  @discardableResult
+  public func constrainToSuperViewSafeLayout(constant: CoreGraphics.CGFloat = 0) -> [UIKit.NSLayoutConstraint?]
+  @discardableResult
+  public func constrainToSuperViewEdges(constant: CoreGraphics.CGFloat = 0) -> [UIKit.NSLayoutConstraint]
+  @discardableResult
+  public func constrainCenterToView(view: UIKit.UIView) -> [UIKit.NSLayoutConstraint]
+  @discardableResult
+  public func constrainToSuperviewSafeLayout(attribute: UIKit.UIView.Attribute, constant: CoreGraphics.CGFloat = 0) -> UIKit.NSLayoutConstraint?
+  @discardableResult
+  public func constrainSafeLayout(attribute: UIKit.UIView.Attribute, toAttribute: UIKit.UIView.Attribute, ofView view: UIKit.UIView, constant: CoreGraphics.CGFloat = 0.0) -> UIKit.NSLayoutConstraint?
+  @discardableResult
+  public func constrainToSuperview(attribute: UIKit.UIView.Attribute, relatedBy relation: UIKit.NSLayoutConstraint.Relation = .equal, constant: CoreGraphics.CGFloat = 0) -> UIKit.NSLayoutConstraint
+  @discardableResult
+  public func constrain(dimension: UIKit.UIView.Dimension, withConstant constant: CoreGraphics.CGFloat = 0, relation: UIKit.NSLayoutConstraint.Relation = .equal) -> UIKit.NSLayoutConstraint
+  @discardableResult
+  public func constrain(attribute: UIKit.UIView.Attribute, toView view: UIKit.UIView, relatedBy relation: UIKit.NSLayoutConstraint.Relation = .equal, constant: CoreGraphics.CGFloat = 0) -> UIKit.NSLayoutConstraint
+  @discardableResult
+  public func constrain(attribute: UIKit.UIView.Attribute, toAttribute: UIKit.UIView.Attribute, ofView view: UIKit.UIView?, relatedBy relation: UIKit.NSLayoutConstraint.Relation = .equal, constant: CoreGraphics.CGFloat = 0) -> UIKit.NSLayoutConstraint
+}
+public protocol PresentableCellViewModel {
+  var url: Foundation.URL? { get }
+  var fileURL: Foundation.URL? { get }
+  var filename: Swift.String { get }
+}
+public protocol TypingIndicatorCellViewModelProtocol : CommonUISDK.InteractionCellViewModelProtocol {
+}
+public struct TypingIndicatorCellViewModel : CommonUISDK.TypingIndicatorCellViewModelProtocol {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public let cellPinning: CommonUISDK.CellPinning
+  public let messageStatus: CommonUISDK.MessageStatus
+}
+extension CommonUISDK.MessageStatus : Swift.Hashable {}
+extension CommonUISDK.CellPosition : Swift.Hashable {}
+extension CommonUISDK.CellPosition : Swift.RawRepresentable {}
+extension CommonUISDK.CellPinning : Swift.Equatable {}
+extension CommonUISDK.CellPinning : Swift.Hashable {}
+extension CommonUISDK.CellPinning : Swift.RawRepresentable {}
+extension CommonUISDK.UiConfigurationError : Swift.Equatable {}
+extension CommonUISDK.UiConfigurationError : Swift.Hashable {}
+extension CommonUISDK.UiConfigurationError : Swift.RawRepresentable {}
+extension CommonUISDK.Connection : Swift.Hashable {}
+extension CommonUISDK.Connection : Swift.RawRepresentable {}
+extension UIKit.UIView.Dimension : Swift.Equatable {}
+extension UIKit.UIView.Dimension : Swift.Hashable {}
+extension UIKit.UIView.Attribute : Swift.Equatable {}
+extension UIKit.UIView.Attribute : Swift.Hashable {}
+extension UIKit.UIView.Attribute : Swift.RawRepresentable {}
+extension UIKit.UIView.Axis : Swift.Equatable {}
+extension UIKit.UIView.Axis : Swift.Hashable {}

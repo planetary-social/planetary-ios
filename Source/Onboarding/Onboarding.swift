@@ -142,6 +142,9 @@ class Onboarding {
                         _, error in
                         if let error = error { completion(nil, .botError(error)); return }
 
+                        CrashReporting.shared.identify(about: about, network: configuration.network!)
+                        Analytics.identify(about: about, network: configuration.network!)
+                        
                         // done
                         context.about = about
                         context.person = person
@@ -176,10 +179,11 @@ class Onboarding {
     static func reset(completion: @escaping ResetCompletion) {
         Bots.current.logout() {
             error in
+            Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error) {
-                Log.unexpected(.botError, "Bog.logout() failed, future onboarding may be affected.")
-            }
+            
+            Analytics.forget()
+            
             completion()
         }
     }
@@ -213,6 +217,9 @@ class Onboarding {
                 about, error in
                 guard let about = about else { completion(context, .botError(error)); return }
                 context.about = about
+                
+                CrashReporting.shared.identify(about: about, network: context.network)
+                Analytics.identify(about: about, network: context.network)
 
                 // get Person for identity
                 VerseAPI.me() {
