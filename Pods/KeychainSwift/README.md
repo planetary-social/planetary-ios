@@ -2,6 +2,7 @@
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![CocoaPods Version](https://img.shields.io/cocoapods/v/KeychainSwift.svg?style=flat)](http://cocoadocs.org/docsets/KeychainSwift)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 [![License](https://img.shields.io/cocoapods/l/KeychainSwift.svg?style=flat)](http://cocoadocs.org/docsets/KeychainSwift)
 [![Platform](https://img.shields.io/cocoapods/p/KeychainSwift.svg?style=flat)](http://cocoadocs.org/docsets/KeychainSwift)
 
@@ -36,7 +37,7 @@ Simply add [KeychainSwiftDistrib.swift](https://github.com/evgenyneu/keychain-sw
 
 #### Setup with Carthage (iOS 8+)
 
-Alternatively, add `github "evgenyneu/keychain-swift" ~> 15.0` to your Cartfile and run `carthage update`.
+Alternatively, add `github "evgenyneu/keychain-swift" ~> 19.0` to your Cartfile and run `carthage update`.
 
 #### Setup with CocoaPods (iOS 8+)
 
@@ -44,30 +45,13 @@ If you are using CocoaPods add this text to your Podfile and run `pod install`.
 
     use_frameworks!
     target 'Your target name'
-    pod 'KeychainSwift', '~> 15.0'
+    pod 'KeychainSwift', '~> 19.0'
 
 
 #### Setup with Swift Package Manager
 
-Here is an example of a Package.swift file.
-
-```Swift
-// swift-tools-version:4.0
-import PackageDescription
-
-let package = Package(
-    name: "MyApp",
-    dependencies: [
-        .package(url: "https://github.com/evgenyneu/keychain-swift.git", from: "15.0.0")
-    ],
-    targets: [
-        .target(
-            name: "MyApp",
-            dependencies: ["KeychainSwift"],
-            path: "Sources")
-    ]
-)
-```
+* In Xcode 11+ select *File > Packages > Add Package Dependency...*.
+* Enter this project's URL: https://github.com/evgenyneu/keychain-swift.git
 
 
 ## Legacy Swift versions
@@ -111,8 +95,14 @@ keychain.delete("my key") // Remove single key
 keychain.clear() // Delete everything from app's Keychain. Does not work on macOS.
 ```
 
-## Advanced options
+#### Return all keys
 
+```Swift
+let keychain = KeychainSwift()
+keychain.allKeys // Returns the names of all keys
+```
+
+## Advanced options
 
 <h3 id="keychain_item_access">Keychain item access</h3>
 
@@ -216,10 +206,9 @@ keychain.getData("my key", asReference: true)
 
 [This manual](https://github.com/evgenyneu/keychain-swift/wiki/Using-KeychainSwift-in-Objective-C-project) describes how to use KeychainSwift in Objective-C apps.
 
-## Known serious issue
+## ❗️Known critical issue - call to action❗️
 
-It [has been reported](https://github.com/evgenyneu/keychain-swift/issues/15) that the library sometimes returns `nil`  instead of the stored Keychain value. The issue seems to be random and hard to reproduce. It may be connected with [the Keychain issue](https://forums.developer.apple.com/thread/4743) reported on Apple developer forums. If you experienced this problem feel free to create an issue so we can discuss it and find solutions.
-
+It [has been reported](https://github.com/evgenyneu/keychain-swift/issues/15) that the library sometimes returns `nil`  instead of the stored Keychain value. It may be connected with [the Keychain issue](https://forums.developer.apple.com/thread/4743) reported on Apple developer forums. The issue is random and hard to reproduce. If you experienced this problem feel free to create an issue and share your story, so we can find solutions.
 
 ## Video tutorial
 
@@ -259,6 +248,9 @@ Here are some other Keychain libraries.
 * Thanks to [xuaninbox](https://github.com/xuaninbox) for fixing watchOS deployment target for Xcode 10.
 * Thanks to [schayes04](https://github.com/schayes04) for adding Swift 5.0 support.
 * Thanks to [mediym41](https://github.com/mediym41) for adding ability to return data as reference.
+* Thanks to [AnthonyOliveri](https://github.com/AnthonyOliveri) for adding ability to run unit tests from Swift Package Manager.
+* Thanks to [philippec](https://github.com/philippec) for removing deprecated access options.
+* Thanks to [lucasmpaim](https://github.com/lucasmpaim) for adding ability to return the names of all keys.
 
 
 

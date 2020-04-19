@@ -33,7 +33,8 @@ open class KeychainSwift {
   */
   open var synchronizable: Bool = false
 
-  private let readLock = NSLock()
+  private let lock = NSLock()
+
   
   /// Instantiate a KeychainSwift object
   public init() { }
@@ -84,7 +85,12 @@ open class KeychainSwift {
   open func set(_ value: Data, forKey key: String,
     withAccess access: KeychainSwiftAccessOptions? = nil) -> Bool {
     
-    delete(key) // Delete any existing key before saving it
+    // The lock prevents the code to be run simultaneously
+    // from multiple threads which may result in crashing
+    lock.lock()
+    defer { lock.unlock() }
+    
+    deleteNoLock(key) // Delete any existing key before saving it
 
     let accessible = access?.value ?? KeychainSwiftAccessOptions.defaultOption.value
       
@@ -158,10 +164,10 @@ open class KeychainSwift {
   
   */
   open func getData(_ key: String, asReference: Bool = false) -> Data? {
-    // The lock prevents the code to be run simlultaneously
+    // The lock prevents the code to be run simultaneously
     // from multiple threads which may result in crashing
-    readLock.lock()
-    defer { readLock.unlock() }
+    lock.lock()
+    defer { lock.unlock() }
     
     let prefixedKey = keyWithPrefix(key)
     
@@ -218,8 +224,58 @@ open class KeychainSwift {
   */
   @discardableResult
   open func delete(_ key: String) -> Bool {
-    let prefixedKey = keyWithPrefix(key)
+    // The lock prevents the code to be run simultaneously
+    // from multiple threads which may result in crashing
+    lock.lock()
+    defer { lock.unlock() }
+    
+    return deleteNoLock(key)
+  }
+  
+  /**
+  Return all keys from keychain
+   
+  - returns: An string array with all keys from the keychain.
+   
+  */
+  public var allKeys: [String] {
+    var query: [String: Any] = [
+      KeychainSwiftConstants.klass : kSecClassGenericPassword,
+      KeychainSwiftConstants.returnData : true,
+      KeychainSwiftConstants.returnAttributes: true,
+      KeychainSwiftConstants.returnReference: true,
+      KeychainSwiftConstants.matchLimit: KeychainSwiftConstants.secMatchLimitAll
+    ]
+  
+    query = addAccessGroupWhenPresent(query)
+    query = addSynchronizableIfRequired(query, addingItems: false)
 
+    var result: AnyObject?
+
+    let lastResultCode = withUnsafeMutablePointer(to: &result) {
+      SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0))
+    }
+    
+    if lastResultCode == noErr {
+      return (result as? [[String: Any]])?.compactMap {
+        $0[KeychainSwiftConstants.attrAccount] as? String } ?? []
+    }
+    
+    return []
+  }
+    
+  /**
+   
+  Same as `delete` but is only accessed internally, since it is not thread safe.
+   
+   - parameter key: The key that is used to delete the keychain item.
+   - returns: True if the item was successfully deleted.
+   
+   */
+  @discardableResult
+  func deleteNoLock(_ key: String) -> Bool {
+    let prefixedKey = keyWithPrefix(key)
+    
     var query: [String: Any] = [
       KeychainSwiftConstants.klass       : kSecClassGenericPassword,
       KeychainSwiftConstants.attrAccount : prefixedKey
@@ -243,6 +299,11 @@ open class KeychainSwift {
   */
   @discardableResult
   open func clear() -> Bool {
+    // The lock prevents the code to be run simultaneously
+    // from multiple threads which may result in crashing
+    lock.lock()
+    defer { lock.unlock() }
+    
     var query: [String: Any] = [ kSecClass as String : kSecClassGenericPassword ]
     query = addAccessGroupWhenPresent(query)
     query = addSynchronizableIfRequired(query, addingItems: false)
