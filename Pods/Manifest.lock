@@ -20,13 +20,13 @@ PODS:
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
   - SVProgressHUD (2.2.5)
-  - ZendeskSDK (3.0.3):
-    - ZendeskSDK/Providers (= 3.0.3)
-    - ZendeskSDK/UI (= 3.0.3)
-  - ZendeskSDK/Core (3.0.3)
-  - ZendeskSDK/Providers (3.0.3):
+  - ZendeskSDK (4.0.0):
+    - ZendeskSDK/Providers (= 4.0.0)
+    - ZendeskSDK/UI (= 4.0.0)
+  - ZendeskSDK/Core (4.0.0)
+  - ZendeskSDK/Providers (4.0.0):
     - ZendeskSDK/Core
-  - ZendeskSDK/UI (3.0.3):
+  - ZendeskSDK/UI (4.0.0):
     - ZendeskSDK/Core
     - ZendeskSDK/Providers
 
@@ -41,10 +41,10 @@ DEPENDENCIES:
   - PhoneNumberKit (= 2.6.0)
   - SQLite.swift (= 0.12.2)
   - SVProgressHUD (= 2.2.5)
-  - ZendeskSDK (= 3.0.3)
+  - ZendeskSDK (= 4.0.0)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Bugsnag
     - CocoaLumberjack
     - Down
@@ -55,6 +55,7 @@ SPEC REPOS:
     - PhoneNumberKit
     - SQLite.swift
     - SVProgressHUD
+  trunk:
     - ZendeskSDK
 
 SPEC CHECKSUMS:
@@ -68,8 +69,8 @@ SPEC CHECKSUMS:
   PhoneNumberKit: 167ee1f0bbb6efce7c62559e620eae745595532f
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  ZendeskSDK: 12f516028e26e2e47a861cc0f5da968f4db3989a
+  ZendeskSDK: 99679d8420a6d862773e2ddef0ebcc51b282317d
 
-PODFILE CHECKSUM: 5edc696684c3416cb0716d196af113c253062d7e
+PODFILE CHECKSUM: 471fcb8278fe0f6873cabcbe175f7c60e6cc4df8
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.9.1

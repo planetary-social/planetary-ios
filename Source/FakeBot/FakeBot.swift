@@ -241,4 +241,8 @@ class FakeBot: Bot {
 
     private var _statistics = MutableBotStatistics()
     var statistics: BotStatistics { return self._statistics }
+    
+    func statistics(completion: @escaping StatisticsCompletion) {
+        completion(_statistics)
+    }
 }

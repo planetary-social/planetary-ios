@@ -119,7 +119,8 @@ class LaunchViewController: UIViewController {
                 Log.optional(error)
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: error)
-                CrashReporting.shared.about = about
+                CrashReporting.shared.identify(about: about, network: network)
+                Analytics.identify(about: about, network: network)
                 self?.launchIntoMain()
             }
         }
@@ -138,8 +139,8 @@ class LaunchViewController: UIViewController {
         // do any repairs or migrations
         Onboarding.repair2019113()
 
-        // start a sync
-        AppController.shared.loginAndSync()
+        // no need to start a sync here, we can do it later
+        // also, user is already logged in
 
         // transition to main app UI
         // note that delay which is to help the loginAndSync() call get content

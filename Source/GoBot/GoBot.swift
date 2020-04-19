@@ -448,7 +448,7 @@ class GoBot: Bot {
         var params: AnalyticsEnums.Params = [
             "function": "ViewConstraints21012020",
             "viewdb_current": current,
-            "repo_messages_count": self.statistics.repo.messageCount,
+            "repo_messages_count": self._statistics.repo.messageCount,
         ]
         // TODO: maybe make an enum for all these errors?
         let (worked, maybeReport) = self.bot.fsckAndRepair()
@@ -894,7 +894,7 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 1000)
+                let msgs = try self.database.recentPosts(limit: 200)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error)  }
@@ -1032,7 +1032,7 @@ class GoBot: Bot {
     // MARK: Statistics
 
     private var _statistics = MutableBotStatistics()
-
+    
     var statistics: BotStatistics {
         let counts = try? self.bot.repoStatus()
         let sequence = try? self.database.stats(table: .messagekeys)
@@ -1059,6 +1059,42 @@ class GoBot: Bot {
                                                connectionCount: self.bot.openConnections(),
                                                identities: openWithIdentities, // just faking to see some data
                                                open: openWithIdentities)
+        
         return self._statistics
+    }
+    
+    func statistics(completion: @escaping StatisticsCompletion) {
+        self.queue.async {
+            let counts = try? self.bot.repoStatus()
+            let sequence = try? self.database.stats(table: .messagekeys)
+
+            var fc: Int = -1
+            if let feedCount = counts?.feeds { fc = Int(feedCount) }
+            var mc: Int = -1
+            if let msgs = counts?.messages { mc = Int(msgs) }
+            self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
+                                                   feedCount: fc,
+                                                   messageCount: mc,
+                                                   lastReceivedMessage: sequence ?? -3)
+            let identities = self.bot.peerIdentities
+
+            let open = self.bot.openConnectionList()
+            var openWithIdentities: [(String, Identity)] = []
+            for peer in open {
+                if let id = self.database.identityFromPublicKey(pubKey: peer.1) {
+                    openWithIdentities.append((peer.0, id))
+                }
+            }
+
+            self._statistics.peer = PeerStatistics(count: identities.count,
+                                                   connectionCount: self.bot.openConnections(),
+                                                   identities: openWithIdentities, // just faking to see some data
+                                                   open: openWithIdentities)
+            
+            let statistics = self._statistics
+            DispatchQueue.main.async {
+                completion(statistics)
+            }
+        }
     }
 }
