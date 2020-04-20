@@ -33,7 +33,8 @@ class RelationshipButton: IconButton {
     }
 
     func configureImage() {
-        self.image = UIImage.verse.options
+        self.image = UIImage.verse.optionsOff
+        self.highlightedImage = UIImage.verse.optionsOn
     }
 
     typealias ActionData = (title: Text, style: UIAlertAction.Style, action: () -> Void)
@@ -43,6 +44,7 @@ class RelationshipButton: IconButton {
             let actionData: [ActionData] = [
                 (.follow,   .default, self.follow),
                 (.unfollow, .default, self.unfollow),
+                (.copyMessageIdentifier, .default, self.copyMessageIdentifier),
 
 //                (.addFriend,    .default,     self.follow),
 //                (.removeFriend, .destructive, self.unfollow),
@@ -85,7 +87,7 @@ class RelationshipButton: IconButton {
                 return alertAction
             }
 
-            AppController.shared.choose(from: actions, title: self.otherUserName)
+            AppController.shared.choose(from: actions)
         }
     }
 
@@ -134,7 +136,11 @@ class RelationshipButton: IconButton {
     func removeFriend() {
         AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement remove friend.", cancelTitle: Text.ok.text)
     }
-
+    
+    func copyMessageIdentifier() {
+        UIPasteboard.general.string = content.key
+        AppController.shared.showToast(Text.identifierCopied.text)
+    }
 
     func blockUser() {
         AppController.shared.promptToBlock(self.content.value.author, name: self.otherUserName)
@@ -145,9 +151,13 @@ class RelationshipButton: IconButton {
     }
 
     func reportUser() {
-        let controller = Support.newTicketViewController(from: self.relationship.identity,
-                                                         reporting: self.relationship.other,
-                                                         name: self.otherUserName)
+        guard let controller = Support.shared.newTicketViewController(from: self.relationship.identity, reporting: self.relationship.other, name: self.otherUserName) else {
+            AppController.shared.alert(style: .alert,
+                                       title: Text.error.text,
+                                       message: Text.Error.supportNotConfigured.text,
+                                       cancelTitle: Text.ok.text)
+            return
+        }
         AppController.shared.push(controller)
     }
 
@@ -172,7 +182,7 @@ class RelationshipButton: IconButton {
     }
 }
 
-extension Support.Reason {
+extension SupportReason {
 
     var string: String {
         switch self {

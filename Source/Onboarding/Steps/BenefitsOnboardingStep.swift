@@ -18,7 +18,7 @@ class BenefitsOnboardingStep: OnboardingStep {
     override func customizeView() {
         let text = NSMutableAttributedString(string: Text.Onboarding.benefits.text)
         text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.text.default)
-        text.addLinkAttribute(value: Support.Article.whatIsPlanetary.rawValue,
+        text.addLinkAttribute(value: SupportArticle.whatIsPlanetary.rawValue,
                               to: Text.Onboarding.findOutMore.text)
         text.addParagraphAlignCenter()
         self.view.textView.isEditable = false
@@ -37,8 +37,14 @@ extension BenefitsOnboardingStep: UITextViewDelegate {
                   in characterRange: NSRange,
                   interaction: UITextItemInteraction) -> Bool
     {
-        guard let article = Support.Article(rawValue: URL.absoluteString) else { return false }
-        let controller = Support.articleViewController(article)
+        guard let article = SupportArticle(rawValue: URL.absoluteString) else { return false }
+        guard let controller = Support.shared.articleViewController(article) else {
+            AppController.shared.alert(style: .alert,
+                                       title: Text.error.text,
+                                       message: Text.Error.supportNotConfigured.text,
+                                       cancelTitle: Text.ok.text)
+            return false
+        }
         let nc = UINavigationController(rootViewController: controller)
         AppController.shared.present(nc, animated: true)
         return false

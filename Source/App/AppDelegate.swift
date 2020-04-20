@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.repair20200116()
 
         // then
-        Support.configure()
+        Support.shared.configure()
         self.configureAppearance()
         self.configureBackground()
         self.configureNotifications()
