@@ -33,7 +33,8 @@ class RelationshipButton: IconButton {
     }
 
     func configureImage() {
-        self.image = UIImage.verse.options
+        self.image = UIImage.verse.optionsOff
+        self.highlightedImage = UIImage.verse.optionsOn
     }
 
     typealias ActionData = (title: Text, style: UIAlertAction.Style, action: () -> Void)

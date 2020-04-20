@@ -13,9 +13,8 @@ class EditPostButton: IconButton {
 
     init(post: KeyValue) {
         self.post = post
-        super.init(icon: UIImage.verse.options)
-        // TODO: Nice to have once we have it
-        // self.highlightedImage = UIImage.verse.editProfileOn
+        super.init(icon: UIImage.verse.optionsOff)
+        self.highlightedImage = UIImage.verse.optionsOn
     }
 
     override func defaultAction() {
