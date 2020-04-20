@@ -153,7 +153,10 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure:
             {
                 cell in
-                let controller = Support.mainViewController()
+                guard let controller = Support.shared.mainViewController() else {
+                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    return
+                }
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
@@ -167,7 +170,10 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure:
             {
                 cell in
-                let controller = Support.myTicketsViewController()
+                guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
+                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    return
+                }
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
@@ -181,7 +187,10 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure:
             {
                 cell in
-                let controller = Support.newTicketViewController()
+                guard let controller = Support.shared.newTicketViewController() else {
+                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    return
+                }
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 

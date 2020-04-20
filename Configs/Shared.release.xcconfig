@@ -9,13 +9,17 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MIXPANEL_TOKEN =
-
 AUTHY_TOKEN =
 
-ZENDESK_APP_ID =
-ZENDESK_CLIENT_ID =
-ZENDESK_URL =
+// Optionally add this key if you want to use MixpanelAnalytics implementation
+// MIXPANEL_TOKEN =
+
+// Optionally add this key if you want to use BugsnagCrashReporting implementation
+// BUGSNAG_TOKEN =
+
+// Optionally add these keys if you want to use ZendeskSupport implementation
+// ZENDESK_APP_ID =
+// ZENDESK_CLIENT_ID =
 
 PUSH_HOST =
 PUSH_TOKEN =

@@ -89,8 +89,6 @@
 	<string>$(ZENDESK_APP_ID)</string>
 	<key>PLZendeskClientId</key>
 	<string>$(ZENDESK_CLIENT_ID)</string>
-	<key>PLZendeskURL</key>
-	<string>$(ZENDESK_URL)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

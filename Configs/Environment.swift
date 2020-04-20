@@ -41,16 +41,12 @@ enum Environment {
         private enum Keys {
             static let appId = "PLZendeskAppId"
             static let clientId = "PLZendeskClientId"
-            static let url = "PLZendeskURL"
         }
-        static let appId: String = {
-            return Environment.value(for: Keys.appId)
+        static let appId: String? = {
+            return Environment.valueIfPresent(for: Keys.appId)
         }()
-        static let clientId: String = {
-            return Environment.value(for: Keys.clientId)
-        }()
-        static let url: String = {
-            return Environment.value(for: Keys.url)
+        static let clientId: String? = {
+            return Environment.valueIfPresent(for: Keys.clientId)
         }()
     }
     
