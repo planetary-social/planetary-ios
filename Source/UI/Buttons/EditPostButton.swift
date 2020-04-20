@@ -13,25 +13,27 @@ class EditPostButton: IconButton {
 
     init(post: KeyValue) {
         self.post = post
-        super.init(icon: UIImage.verse.editProfileOff)
-        self.highlightedImage = UIImage.verse.editProfileOn
+        super.init(icon: UIImage.verse.options)
+        // TODO: Nice to have once we have it
+        // self.highlightedImage = UIImage.verse.editProfileOn
     }
 
     override func defaultAction() {
-        let delete = UIAlertAction(title: Text.deletePost.text, style: .destructive) { [unowned self] _ in
-            AppController.shared.confirm(message: Text.confirmDeletePost.text, isDestructive: true, confirmTitle: Text.deletePost.text) {
-                Bots.current.delete(message: self.post.key) { (error) in
-                    if let error = error {
-                        let detail = "Error deleting post: \(error)"
-                        Log.unexpected(.botError, detail)
-                        AppController.shared.alert(message: "Sorry, there was an error when trying to delete your post.")
-                    } else {
-                        // TODO: Update UI for post deletion
-                        // https://app.asana.com/0/914798787098068/1114068646928290/f
-                    }
-                }
+        let copy = UIAlertAction(title: Text.copyMessageIdentifier.text, style: .default) { [post] _ in
+            UIPasteboard.general.string = post.key
+            AppController.shared.showToast(Text.identifierCopied.text)
+        }
+        
+        let delete = UIAlertAction(title: Text.deletePost.text, style: .destructive) { _ in
+            guard let controller = Support.shared.articleViewController(.editPost) else {
+                AppController.shared.alert(style: .alert,
+                                           title: Text.error.text,
+                                           message: Text.Error.supportNotConfigured.text,
+                                           cancelTitle: Text.ok.text)
+                return
             }
-
+            let nc = UINavigationController(rootViewController: controller)
+            AppController.shared.present(nc, animated: true)
         }
 
         // TODO: Reenable edit later
@@ -41,7 +43,7 @@ class EditPostButton: IconButton {
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
 
-        AppController.shared.choose(from: [delete, cancel])
+        AppController.shared.choose(from: [copy, delete, cancel])
     }
 
     required init?(coder aDecoder: NSCoder) {
