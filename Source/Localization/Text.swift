@@ -92,8 +92,12 @@ enum Text: String, Localizable, CaseIterable {
 
     case unfollow = "Stop following"
 
-    case copyPublicIdentifier = "Copy Public Identifier"
-    case shareThisProfile = "Share this profile"
+    case identifierCopied = "Identifier copied to clipboard"
+    
+    case copyMessageIdentifier = "Copy Message Identifier"
+    
+    case copyPublicIdentifier = "Copy Profile Identifier"
+    case shareThisProfile = "Share This Profile"
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
@@ -332,5 +336,6 @@ extension Text {
     enum Error: String, Localizable, CaseIterable {
         case login = "The peer to peer engine failed to start. Please try turning the app off and on again to see if that fixes it."
         case unexpected = "Something unexpected happened."
+        case supportNotConfigured = "Support is not configured."
     }
 }

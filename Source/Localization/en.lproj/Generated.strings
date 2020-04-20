@@ -58,8 +58,10 @@
 "Text.followedByShortCount" = "{{ count }} Followers";
 "Text.followingShortCount" = "Following {{ count }}";
 "Text.unfollow" = "Stop following";
-"Text.copyPublicIdentifier" = "Copy Public Identifier";
-"Text.shareThisProfile" = "Share this profile";
+"Text.identifierCopied" = "Identifier copied to clipboard";
+"Text.copyMessageIdentifier" = "Copy Message Identifier";
+"Text.copyPublicIdentifier" = "Copy Profile Identifier";
+"Text.shareThisProfile" = "Share This Profile";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
 "Text.blockUser" = "Block this user";
@@ -198,3 +200,4 @@
 
 "Error.login" = "The peer to peer engine failed to start. Please try turning the app off and on again to see if that fixes it.";
 "Error.unexpected" = "Something unexpected happened.";
+"Error.supportNotConfigured" = "Support is not configured.";

@@ -12,6 +12,12 @@ import UIKit
 
 extension AppController {
 
+    func showToast(_ text: String) {
+        SVProgressHUD.setGraceTimeInterval(0)
+        SVProgressHUD.setMinimumDismissTimeInterval(2)
+        SVProgressHUD.showSuccess(withStatus: text)
+    }
+    
     func showProgress(after: TimeInterval = 1, statusText: String? = nil) {
         SVProgressHUD.setDefaultMaskType(.clear)
         SVProgressHUD.setBackgroundColor(UIColor.background.default)
