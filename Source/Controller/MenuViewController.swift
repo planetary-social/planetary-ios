@@ -84,15 +84,27 @@ class MenuViewController: UIViewController {
     }
 
     @objc private func helpButtonTouchUpInside() {
+        guard let controller = Support.shared.mainViewController() else {
+            AppController.shared.alert(style: .alert,
+                                       title: Text.error.text,
+                                       message: Text.Error.supportNotConfigured.text,
+                                       cancelTitle: Text.ok.text)
+            return
+        }
         self.close() {
-            let controller = Support.mainViewController()
             AppController.shared.push(controller)
         }
     }
 
     @objc private func reportBugButtonTouchUpInside() {
+        guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
+            AppController.shared.alert(style: .alert,
+                                       title: Text.error.text,
+                                       message: Text.Error.supportNotConfigured.text,
+                                       cancelTitle: Text.ok.text)
+            return
+        }
         self.close() {
-            let controller = Support.myTicketsViewController(from: Bots.current.identity)
             AppController.shared.push(controller)
         }
     }

@@ -195,6 +195,7 @@ class AboutViewController: ContentViewController {
 
         let copy = UIAlertAction(title: Text.copyPublicIdentifier.text, style: .default) { _ in
             UIPasteboard.general.string = identity
+            AppController.shared.showToast(Text.identifierCopied.text)
         }
         actions.append(copy)
 

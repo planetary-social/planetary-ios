@@ -16,7 +16,7 @@ extension UIViewController {
                 from reporter: Identity)
     {
         var actions: [UIAlertAction] = []
-        for reason in Support.Reason.allCases {
+        for reason in SupportReason.allCases {
             let action = UIAlertAction(title: reason.string, style: .default) {
                 [weak self] action in
                 self?.report(post, in: view, reason: reason, from: reporter)
@@ -32,13 +32,16 @@ extension UIViewController {
 
     private func report(_ post: KeyValue,
                         in view: UIView? = nil,
-                        reason: Support.Reason,
+                        reason: SupportReason,
                         from reporter: Identity)
     {
-        let controller = Support.newTicketViewController(from: reporter,
-                                                         reporting: post,
-                                                         reason: reason,
-                                                         view: view)
+        guard let controller = Support.shared.newTicketViewController(from: reporter, reporting: post, reason: reason, view: view) else {
+            AppController.shared.alert(style: .alert,
+            title: Text.error.text,
+            message: Text.Error.supportNotConfigured.text,
+            cancelTitle: Text.ok.text)
+            return
+        }
         AppController.shared.push(controller)
     }
 }
