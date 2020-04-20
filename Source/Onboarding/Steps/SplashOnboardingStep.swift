@@ -19,9 +19,9 @@ class StartOnboardingStep: OnboardingStep {
         let text = NSMutableAttributedString(Text.Onboarding.policyStatement.text,
                                              font: UIFont.systemFont(ofSize: 13, weight: .medium),
                                              color: UIColor.text.detail)
-        text.addLinkAttribute(value: Support.Article.termsOfService.rawValue,
+        text.addLinkAttribute(value: SupportArticle.termsOfService.rawValue,
                               to: Text.Onboarding.termsOfService.text)
-        text.addLinkAttribute(value: Support.Article.privacyPolicy.rawValue,
+        text.addLinkAttribute(value: SupportArticle.privacyPolicy.rawValue,
                               to: Text.Onboarding.privacyPolicy.text)
         view.attributedText = text
         return view
@@ -67,8 +67,14 @@ extension StartOnboardingStep: UITextViewDelegate {
                   in characterRange: NSRange,
                   interaction: UITextItemInteraction) -> Bool
     {
-        guard let article = Support.Article(rawValue: URL.absoluteString) else { return false }
-        let controller = Support.articleViewController(article)
+        guard let article = SupportArticle(rawValue: URL.absoluteString) else { return false }
+        guard let controller = Support.shared.articleViewController(article) else {
+            AppController.shared.alert(style: .alert,
+                                       title: Text.error.text,
+                                       message: Text.Error.supportNotConfigured.text,
+                                       cancelTitle: Text.ok.text)
+            return false
+        }
         let nc = UINavigationController(rootViewController: controller)
         AppController.shared.present(nc, animated: true)
         return false

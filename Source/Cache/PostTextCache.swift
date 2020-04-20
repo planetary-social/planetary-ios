@@ -16,12 +16,12 @@ class PostTextCache: AttributedStringCache {
     @discardableResult
     func from(_ post: KeyValue) -> NSAttributedString {
 
-        guard let text = post.value.content.post?.text else {
+        guard let innerPost = post.value.content.post else {
             assertionFailure("KeyValue is not a Post")
             return NSAttributedString(string: "KeyValue is not a Post")
         }
 
-        return self.attributedString(for: post.key, markdown: text)
+        return self.attributedString(for: post.key, markdown: innerPost.hasBlobs ? innerPost.text.withoutGallery() : innerPost.text)
     }
 
     override func invalidate() {
