@@ -164,7 +164,7 @@
 "OnboardingStepTitle.bio" = "Why not say a little about yourself...";
 "OnboardingStepTitle.birthday" = "Before we start, when's your birthday?";
 "OnboardingStepTitle.contacts" = "You can connect your address book to see which of your friends are using Planetary";
-"OnboardingStepTitle.directory" = "People you know";
+"OnboardingStepTitle.directory" = "People you might know";
 "OnboardingStepTitle.done" = "Well done, you made it through in one piece";
 "OnboardingStepTitle.earlyAccess" = "Gentle reminder: This is early access software";
 "OnboardingStepTitle.join" = "Creating your identity on Planetary...";

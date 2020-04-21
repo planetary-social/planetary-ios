@@ -61,9 +61,9 @@ class AboutView: KeyValueView {
 
     var descriptionContainerZeroHeightConstraint: NSLayoutConstraint?
 
-    private let descriptionTextView: UITextView = {
+    private lazy var descriptionTextView: UITextView = {
         let view = UITextView.forAutoLayout()
-        view.dataDetectorTypes = .link
+        view.addGestureRecognizer(self.tapGesture.recognizer)
         view.isEditable = false
         view.isScrollEnabled = false
         view.textContainer.lineFragmentPadding = 0
