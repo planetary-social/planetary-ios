@@ -1048,6 +1048,18 @@ class GoBot: Bot {
             }
         }
     }
+    
+    func paginatedFeed(identity: Identity, completion: @escaping PaginatedFeedCompletion) {
+        Thread.assertIsMainThread()
+        self.queue.async {
+            do {
+                let ds = try self.database.paginated(feed: identity)
+                DispatchQueue.main.async { completion(ds, nil) }
+            } catch {
+                DispatchQueue.main.async { completion(EmptyPaginatedDataProxy(), error) }
+            }
+        }
+    }
 
     // MARK: Hashtags
 

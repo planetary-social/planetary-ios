@@ -16,9 +16,8 @@ class AboutViewController: ContentViewController {
 
     private let aboutView = AboutView()
 
-    private let dataSource = PostReplyDataSource()
+    private let dataSource = KeyValuePaginatedTableViewDataSource()
     private lazy var delegate = PostReplyDelegate(on: self)
-    private let prefetchDataSource = PostReplyDataSourcePrefetching()
 
     private var followingIdentities: Identities = []
     private var followedByIdentities: Identities = []
@@ -27,7 +26,7 @@ class AboutViewController: ContentViewController {
         let view = UITableView.forVerse()
         view.dataSource = self.dataSource
         view.delegate = self.delegate
-        view.prefetchDataSource = self.prefetchDataSource
+        view.prefetchDataSource = self.dataSource
         return view
     }()
 
@@ -92,14 +91,14 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFeed() {
-        Bots.current.feed(identity: self.identity) {
-            [weak self] keyValues, error in
+        Bots.current.paginatedFeed(identity: self.identity) {
+            [weak self] src, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             guard error == nil else {
                 return
             }
-            self?.dataSource.keyValues = keyValues.posts.sortedByDateDescending().rootPosts()
+            self?.dataSource.update(source: src)
             self?.tableView.forceReload()
         }
     }

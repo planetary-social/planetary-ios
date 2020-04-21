@@ -227,6 +227,11 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         self.currentUserID = -1
     }
     
+    func getOpenDB() -> Connection? {
+        guard let db = self.openDB else { return nil }
+        return db
+    }
+    
     // returns the number of rows for the respective tables
     func stats() throws -> [ViewDatabaseTableNames:Int] {
         guard let db = self.openDB else {
@@ -264,6 +269,39 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             default: throw ViewDatabaseError.unknownTable(table)
         }
         return cnt
+    }
+    
+    // helper to get some counts for pagination
+    func statsForRootPosts() throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let allPosts = try db.scalar(self.posts.count)
+        let allReplies = try db.scalar(self.tangles.count)
+        return allPosts - allReplies
+    }
+
+    // posts for a feed
+    func stats(for feed: FeedIdentifier) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            let authorID = try self.authorID(from: feed, make: false)
+            let allPosts = try db.scalar(self.msgs
+                .filter(colAuthorID == authorID)
+                .filter(colMsgType == "post").count)
+
+            let repliesByAuthor = try db.scalar(self.tangles
+                .join(self.msgs, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
+                .filter(colAuthorID == authorID).count)
+
+            return allPosts - repliesByAuthor
+        } catch {
+            Log.optional(GoBotError.duringProcessing("stats for feed failed", error))
+            return 0
+        }
     }
     
     func lastReceivedSeq() throws -> Int64 {
@@ -744,7 +782,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
     
     // MARK: common query constructors
 
-    private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true) -> Table {
+    private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {
         var qry = self.msgs
             .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
@@ -754,7 +792,13 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
-            .limit(limit)
+
+        if let offset = offset {
+            qry = qry.limit(limit, offset: offset)
+        } else {
+            qry = qry.limit(limit)
+        }
+
         // TODO: this is a very handy query but also used in a lot of places
         // maybe should be split apart into a wrapper like filterOnlyFollowedPeople which is just func(Table) -> Table
         if onlyRoots {
@@ -1019,11 +1063,11 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         return try self.mapQueryToKeyValue(qry: qry)
     }
 
-    func feed(for identity: Identity, limit: Int = 100) throws -> [KeyValue] {
+    func feed(for identity: Identity, limit: Int = 100, offset: Int? = nil) throws -> [KeyValue] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
+        let timeStart = CFAbsoluteTimeGetCurrent()
         let feedAuthorID = try self.authorID(from: identity, make: false)
         
         let doWeBlockThemQry = self.contacts
@@ -1034,16 +1078,22 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             throw GoBotError.duringProcessing("user blocked", ViewDatabaseError.unknownAuthor(identity))
         }
 
-        let postsQry = self.basicRecentPostsQuery(limit: limit, wantPrivate: false, onlyRoots: false)
+        let postsQry = self.basicRecentPostsQuery(
+            limit: limit,
+            wantPrivate: false,
+            onlyRoots: true,
+            offset: offset)
             .filter(colAuthorID == feedAuthorID)
             .order(colClaimedAt.desc)
             .filter(colHidden == false)
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
-    }
-    
 
-    
+        let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
+        let msgs = try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
+        let timeDone = CFAbsoluteTimeGetCurrent()
+        print("\(#function) took \(timeDone-timeStart)")
+        return msgs
+    }
+
     func get(key: MessageIdentifier) throws -> KeyValue {
         let msgId = try self.msgID(from: key, make: false)
         // TODO: add 2nd signature to get message by internal ID

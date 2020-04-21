@@ -77,6 +77,9 @@
 		2334D04521F7786600AB28E2 /* GoBotInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2334D04421F7786600AB28E2 /* GoBotInternal.swift */; };
 		233A8F8A220138F600CE01CE /* ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233A8F89220138F600CE01CE /* ViewDatabase.swift */; };
 		2343E7802326953F00E0B6F5 /* Post+Blob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BD748723235A450060E47E /* Post+Blob.swift */; };
+		2343F1CB245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */; };
+		2343F1CC245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */; };
+		2343F1CD245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */; };
 		2344892824195F1B00C65DE2 /* PostMentionsBlob.json in Resources */ = {isa = PBXBuildFile; fileRef = 2344892724195F1B00C65DE2 /* PostMentionsBlob.json */; };
 		23448C20235F07ED00F6E484 /* GoBotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23448C1F235F07ED00F6E484 /* GoBotTests.swift */; };
 		2346ECB422141D9E009A94CB /* Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A2C21F18BF400D5C8C0 /* Bot.swift */; };
@@ -88,6 +91,10 @@
 		2356500C2369C6CB00C3DBC0 /* DropContentRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2356500A2369C6CB00C3DBC0 /* DropContentRequest.swift */; };
 		2356500D2369C6CB00C3DBC0 /* DropContentRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2356500A2369C6CB00C3DBC0 /* DropContentRequest.swift */; };
 		235FC915220096300083420F /* FirstAndEncrypted.json in Resources */ = {isa = PBXBuildFile; fileRef = 235FC914220096300083420F /* FirstAndEncrypted.json */; };
+		23676157244F197100A97140 /* KeyValuePaginatedTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23676156244F197100A97140 /* KeyValuePaginatedTableViewDataSource.swift */; };
+		236761592450681800A97140 /* ViewDatabase+Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 236761582450681800A97140 /* ViewDatabase+Pagination.swift */; };
+		2367615A2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 236761582450681800A97140 /* ViewDatabase+Pagination.swift */; };
+		2367615B2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 236761582450681800A97140 /* ViewDatabase+Pagination.swift */; };
 		236BCB7222689406006DF05B /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D8CE262253DB29001EB7D5 /* Address.swift */; };
 		2370620823CFC53C0070712C /* GoBotReproductionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */; };
 		237D057B2335139700973D63 /* Bot+Publish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E29CD122D40462008A2CB1 /* Bot+Publish.swift */; };
@@ -697,12 +704,15 @@
 		23237A112423CE0300FE112C /* PostsWithMentions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostsWithMentions.json; sourceTree = "<group>"; };
 		2334D04421F7786600AB28E2 /* GoBotInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotInternal.swift; sourceTree = "<group>"; };
 		233A8F89220138F600CE01CE /* ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabase.swift; sourceTree = "<group>"; };
+		2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Deduped.swift"; sourceTree = "<group>"; };
 		2344892724195F1B00C65DE2 /* PostMentionsBlob.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostMentionsBlob.json; sourceTree = "<group>"; };
 		23448C1F235F07ED00F6E484 /* GoBotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTests.swift; sourceTree = "<group>"; };
 		2346ECB6221420E1009A94CB /* GoBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBot.swift; sourceTree = "<group>"; };
 		2346ECB922144D61009A94CB /* SimplePublishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePublishView.swift; sourceTree = "<group>"; };
 		2356500A2369C6CB00C3DBC0 /* DropContentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropContentRequest.swift; sourceTree = "<group>"; };
 		235FC914220096300083420F /* FirstAndEncrypted.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FirstAndEncrypted.json; sourceTree = "<group>"; };
+		23676156244F197100A97140 /* KeyValuePaginatedTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValuePaginatedTableViewDataSource.swift; sourceTree = "<group>"; };
+		236761582450681800A97140 /* ViewDatabase+Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewDatabase+Pagination.swift"; sourceTree = "<group>"; };
 		2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoBotReproductionHelper.swift; sourceTree = "<group>"; };
 		237D057F23351F5B00973D63 /* PostWithHashtags.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostWithHashtags.json; sourceTree = "<group>"; };
 		2380CE90238D32A700E9D3F7 /* BlockedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedTests.swift; sourceTree = "<group>"; };
@@ -1412,6 +1422,7 @@
 				0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */,
 				0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */,
 				0ACE91AD243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift */,
+				236761582450681800A97140 /* ViewDatabase+Pagination.swift */,
 			);
 			path = GoBot;
 			sourceTree = "<group>";
@@ -1533,6 +1544,7 @@
 				53631EE923A8704F009C6999 /* KeyValueTableViewDataSourcePrefetching.swift */,
 				53AD3FDC22712CE0005228F9 /* KeyValueTableViewDelegate.swift */,
 				53AD3FE022721CAE005228F9 /* KeyValueUpdateable.swift */,
+				23676156244F197100A97140 /* KeyValuePaginatedTableViewDataSource.swift */,
 				5357550622694D8C002A6989 /* KeyValueView.swift */,
 				53631EEC23A87474009C6999 /* PostTruncatedTextTableViewDataSourcePrefetching.swift */,
 			);
@@ -1596,6 +1608,7 @@
 				53AD3FD0226F736A005228F9 /* UIViewTapGesture.swift */,
 				5319257D22F286FC00B44FA3 /* URL+Verse.swift */,
 				53631EF223A99CF0009C6999 /* NSAttributedString+Flatten.swift */,
+				2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -2451,6 +2464,7 @@
 				53E26C5F23045D4C009240B2 /* Person.swift in Sources */,
 				531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */,
 				0ABCA8EF243554D000D7F39C /* NullCrashReporting.swift in Sources */,
+				2343F1CD245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */,
 				2343E7802326953F00E0B6F5 /* Post+Blob.swift in Sources */,
 				535754F622692B4B002A6989 /* BotStatistics.swift in Sources */,
 				53AD3FEB22776A3C005228F9 /* Value.swift in Sources */,
@@ -2463,6 +2477,7 @@
 				2370620823CFC53C0070712C /* GoBotReproductionHelper.swift in Sources */,
 				5319258522F9E63900B44FA3 /* Date+Elapsed.swift in Sources */,
 				5314EF6622EA2B180065D02A /* NullLog.swift in Sources */,
+				2367615B2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
 				53C2B1302295A9800018D0A8 /* NullAnalytics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2504,6 +2519,7 @@
 				5314EF5422EA290A0065D02A /* Mention.swift in Sources */,
 				53E26C6123046054009240B2 /* VerseAPITests.swift in Sources */,
 				53E26C64230462D4009240B2 /* Date+ISO8601.swift in Sources */,
+				2343F1CC245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */,
 				5314EF6F22EA2BE10065D02A /* MIMEType.swift in Sources */,
 				0AD00E7523FC5FA9006BF017 /* Environment.swift in Sources */,
 				5314EF5022EA28D00065D02A /* Bots.swift in Sources */,
@@ -2523,6 +2539,7 @@
 				5314EF7822EA35040065D02A /* URLRequest+APIHeaders.swift in Sources */,
 				5314EF3D22EA27980065D02A /* Secret.swift in Sources */,
 				5314EF7122EA34160065D02A /* Date+Random.swift in Sources */,
+				2367615A2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
 				5314EF3B22EA27840065D02A /* AppConfiguration.swift in Sources */,
 				5314EF6A22EA2B460065D02A /* Hashtag+NSAttributedString.swift in Sources */,
 				5314EF7D22EA35A60065D02A /* XCTest+Test.swift in Sources */,
@@ -2665,6 +2682,7 @@
 				5396A6212244312400C57A4B /* UIEdgeInsets+Layout.swift in Sources */,
 				53211CD42280E1E1007FB785 /* EditAboutViewController.swift in Sources */,
 				5336611322D965C700100707 /* UIColor+UIImage.swift in Sources */,
+				2343F1CB245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */,
 				53B4F5FC22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
 				531B92B522CBDDAD005D5255 /* UIView+NSLayoutConstraint.swift in Sources */,
 				53C422AD21C4769900A314AD /* DebugViewController.swift in Sources */,
@@ -2805,6 +2823,7 @@
 				539FD4B122C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				53F1E56721E3C59C007EF3AD /* UIDevice+Localhost.swift in Sources */,
 				530F018F22DCEC08007EBAE2 /* OnboardingStepView.swift in Sources */,
+				236761592450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
 				53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */,
 				53BD748623232FB70060E47E /* Blob+UIImage.swift in Sources */,
 				53DF334E239F2A720017566D /* Log+API.swift in Sources */,
@@ -2846,6 +2865,7 @@
 				2334D04521F7786600AB28E2 /* GoBotInternal.swift in Sources */,
 				5363A23622B05B3D009154B7 /* PubAPI.swift in Sources */,
 				0AF9E09A2461E92100910575 /* Analytics+Conversions.swift in Sources */,
+				23676157244F197100A97140 /* KeyValuePaginatedTableViewDataSource.swift in Sources */,
 				23E8805E22F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				5306F776228F07D00058D67A /* AnalyticsEnums.swift in Sources */,
 				530F01A822DEAE3F007EBAE2 /* ContactsOnboardingStep.swift in Sources */,
