@@ -191,7 +191,7 @@ extension Text {
             case bio = "Why not say a little about yourself..."
             case birthday = "Before we start, when's your birthday?"
             case contacts = "You can connect your address book to see which of your friends are using Planetary"
-            case directory = "People you know"
+            case directory = "People you might know"
             case done = "Well done, you made it through in one piece"
             case earlyAccess = "Gentle reminder: This is early access software"
             case join = "Creating your identity on Planetary..."
