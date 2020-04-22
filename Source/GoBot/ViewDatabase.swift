@@ -184,7 +184,7 @@ class ViewDatabase {
         self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
         self.openDB = db
-        try db.execute("PRAGMA journal_mode = WAL;)
+        try db.execute("PRAGMA journal_mode = WAL;")
         
         
         db.trace { print("\tSQL: \($0)") } // print all the statements
