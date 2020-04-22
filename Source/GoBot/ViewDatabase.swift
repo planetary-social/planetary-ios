@@ -184,10 +184,10 @@ class ViewDatabase {
         self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
         self.openDB = db
-        try db.execute("PRAGMA journal_mode = WAL;")
+        try db.execute("PRAGMA journal_mode = WAL; PRAGMA LOCKING_MODE = EXCLUSIVE; PRAGMA JOURNAL_MODE = TRUNCATE; PRAGMA synchronous = OFF;")
         
         
-//        db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
@@ -1092,15 +1092,26 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let qry = self.channels.order(colName.asc)
-        return try db.prepare(qry).map {
-            row in
-            guard let name = try row.get(colName) else {
-                // TODO: use proper error
-                throw ViewDatabaseError.unexpectedContentType("unnamed hashtag?!")
-            }
-            return Hashtag(name: name)
+        
+        
+        let qry = try db.prepare("""
+        SELECT channels.name FROM "channels", "channel_assignments", "messages"
+        WHERE (
+            "messages"."msg_id" = "channel_assignments"."msg_ref"
+            AND
+            "channels"."id" = "channel_assignments"."chan_ref"
+        )
+        ORDER BY "messages.claimed_at" ASC
+        """)
+
+        var channels: [Hashtag] = []
+        
+        for f in try qry.run() {
+            //let name =
+            let hashtag = Hashtag(name: "\(f[0]!)")
+            channels += [hashtag]
         }
+        return channels
     }
     
     // TODO: pagination
