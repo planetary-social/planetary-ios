@@ -29,6 +29,7 @@ class LaunchViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        CrashReporting.shared.record("Launch did appear")
         self.launch()
     }
 
@@ -94,7 +95,10 @@ class LaunchViewController: UIViewController {
             }
             
             Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
+            CrashReporting.shared.reportIfNeeded(error: error,
+                                                 metadata: ["action": "login-from-launch",
+                                                            "network": network,
+                                                            "identity": secret.identity])
             
             guard error == nil else {
                 let controller = UIAlertController(title: Text.error.text,

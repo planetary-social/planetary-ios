@@ -75,6 +75,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        CrashReporting.shared.record("Onboarding did appear")
         self.forceNavigationControllerDelegateDidShowViewController()
     }
 
