@@ -57,5 +57,14 @@ class BugsnagCrashReporting: CrashReportingService {
         }
         Bugsnag.notifyError(error)
     }
+
+    func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]) {
+        guard configured, let error = error else {
+            return
+        }
+        Bugsnag.notifyError(error) { report in
+            report.addMetadata(metadata, toTabWithName: "metadata")
+        }
+    }
     
 }
