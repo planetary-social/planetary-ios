@@ -19,6 +19,7 @@ extension AppDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        CrashReporting.shared.record("App did enter background")
         AppController.shared.suspend()
         self.scheduleBackgroundSync()
         Analytics.trackAppBackground()
@@ -52,6 +53,7 @@ extension AppDelegate {
             Log.info("Registering task \(taskIdentifier)")
             BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: .main) { [weak self] task in
                 Log.info("Executing task \(taskIdentifier)")
+
                 self?.scheduleBackgroundSync()
                 
                 task.expirationHandler = {

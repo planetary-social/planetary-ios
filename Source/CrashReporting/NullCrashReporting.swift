@@ -26,5 +26,7 @@ class NullCrashReporting: CrashReportingService {
     func record(_ message: String) { }
     
     func reportIfNeeded(error: Error?) { }
+
+    func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]) { }
     
 }
