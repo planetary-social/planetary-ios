@@ -181,11 +181,11 @@ extension ZendeskSupport {
 }
 
 fileprivate struct SupportArticleID {
-    let faq = ""
+    let faq = "360039199393"
     let privacyPolicy = "360036147293"
     let termsOfService = "360035642794"
     let whatIsPlanetary = "360036488373"
-    let editPost = "360035642794"
+    let editPost = "360039199393"
 }
 
 fileprivate let ids = SupportArticleID()
