@@ -67,6 +67,7 @@ extension AppController {
 
     /// Same as `loginAndSync()` but  uses UIBackgroundFetchResult completion instead
     func backgroundFetch(notificationsOnly: Bool = false, completion: @escaping ((UIBackgroundFetchResult) -> Void)) {
+        CrashReporting.shared.record("Background fetch")
         self.loginAndSync(notificationsOnly: notificationsOnly) { numberOfMessages in
             let result = self.backgroundFetchResult(for: numberOfMessages)
             completion(result)

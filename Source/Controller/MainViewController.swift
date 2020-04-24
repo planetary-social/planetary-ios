@@ -44,6 +44,11 @@ class MainViewController: UITabBarController {
         self.setViewControllers(controllers, animated: false)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Main did appear")
+    }
+
     func setTopBorder(hidden: Bool, animated: Bool = true) {
         let duration = animated ? 0.3 : 0
         UIView.animate(withDuration: duration) {
