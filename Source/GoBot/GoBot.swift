@@ -55,7 +55,7 @@ class GoBot: Bot {
     // MARK: App Lifecycle
 
     func resume()  {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             self.bot.dialSomePeers()
         }
@@ -78,7 +78,7 @@ class GoBot: Bot {
     // MARK: Login/Logout
     
     func createSecret(completion: SecretCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         
         guard let kp = ssbGenKey() else {
             completion(nil, GoBotError.unexpectedFault("createSecret failed"))
@@ -90,7 +90,7 @@ class GoBot: Bot {
     }
     
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             var err: Error? = nil
             defer {
@@ -167,7 +167,7 @@ class GoBot: Bot {
     // MARK: Sync
     
     func knownPubs(completion: @escaping KnownPubsCompletion) {
-       Thread.assertIsMainThread()
+       //Thread.assertIsMainThread()
          self.queue.async {
             var err: Error? = nil
             var kps: [KnownPub] = []
@@ -302,7 +302,7 @@ class GoBot: Bot {
     // MARK: Invites
     
     func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             token.withGoString {
                 goStr in
@@ -321,7 +321,7 @@ class GoBot: Bot {
     private var lastPublishFireTime = DispatchTime.now()
 
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             self.bot.publish(content) {
                 [weak self] key, error in
@@ -659,7 +659,7 @@ class GoBot: Bot {
     func data(for identifier: BlobIdentifier,
               completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
     {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
 
         guard identifier.isValidIdentifier else {
             completion(identifier, nil, BotError.blobInvalidIdentifier)
@@ -700,7 +700,7 @@ class GoBot: Bot {
     var about: About? { return self._about }
 
     func about(completion: @escaping AboutCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         guard let user = self._identity else {
             completion(nil, BotError.notLoggedIn)
             return
@@ -709,7 +709,7 @@ class GoBot: Bot {
     }
     
     func about(identity: Identity, completion: @escaping AboutCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let a = try self.database.getAbout(for: identity)
@@ -724,7 +724,7 @@ class GoBot: Bot {
     }
 
     func abouts(identities: Identities, completion: @escaping AboutsCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             var abouts: [About] = []
             for identity in identities {
@@ -759,7 +759,7 @@ class GoBot: Bot {
     }
 
     func follows(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let follows = try self.database.getFollows(feed: identity)
@@ -772,7 +772,7 @@ class GoBot: Bot {
     }
     
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
@@ -785,7 +785,7 @@ class GoBot: Bot {
     }
     
     func friends(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let who = try self.database.getBidirectionalFollows(feed: identity)
@@ -797,7 +797,7 @@ class GoBot: Bot {
     }
     
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let who = try self.database.getBlocks(feed: identity)
@@ -813,7 +813,7 @@ class GoBot: Bot {
     }
     
     func blockedBy(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let who = try self.database.blockedBy(feed: identity)
@@ -877,7 +877,7 @@ class GoBot: Bot {
     // MARK: Feeds
 
     func recent(newer than: Date, count: Int, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.recentPosts(newer: than, limit: count)
@@ -889,7 +889,7 @@ class GoBot: Bot {
     }
     
     func recent(older than: Date, count: Int, wantPrivate: Bool, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.recentPosts(older: than, limit: count)
@@ -902,7 +902,7 @@ class GoBot: Bot {
     
     // old recent
     func recent(completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.recentPosts(limit: 200)
@@ -915,7 +915,7 @@ class GoBot: Bot {
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             if let rootKey = keyValue.value.content.post?.root {
                 do {
@@ -936,7 +936,7 @@ class GoBot: Bot {
     }
 
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             self.internalThread(rootKey: rootKey, completion: completion)
         }
@@ -957,7 +957,7 @@ class GoBot: Bot {
     }
 
     func mentions(completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let messages = try self.database.mentions(limit: 1000)
@@ -970,7 +970,7 @@ class GoBot: Bot {
 
     // TODO consider a different form that returns a tuple of arrays
     func notifications(completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 /* TODO:
@@ -1002,7 +1002,7 @@ class GoBot: Bot {
     }
 
     func feed(identity: Identity, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.feed(for: identity)
@@ -1016,7 +1016,7 @@ class GoBot: Bot {
     // MARK: Hashtags
 
     func hashtags(completion: @escaping HashtagsCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 var hashtags = try self.database.hashtags()
@@ -1029,7 +1029,7 @@ class GoBot: Bot {
     }
 
     func posts(with hashtag: Hashtag, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let keyValues = try self.database.messagesForHashtag(name: hashtag.name)

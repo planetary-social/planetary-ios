@@ -17,7 +17,7 @@ extension Bot {
                  with images: [UIImage] = [],
                  completion: @escaping PublishCompletion)
     {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
 
         // publish all images first
         self.prepare(images) {
@@ -43,7 +43,7 @@ extension Bot {
     func prepare(_ images: [UIImage],
                  completion: @escaping PublishBlobsCompletion)
     {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         if images.isEmpty { completion([], nil); return }
 
         var blobs = [Int: Blob]()

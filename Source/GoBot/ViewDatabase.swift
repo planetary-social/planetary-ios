@@ -187,7 +187,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-//        db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
