@@ -1095,22 +1095,24 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         
         
         let qry = try db.prepare("""
-        SELECT distinct channels.name FROM "channels", "channel_assignments", "messages"
+        SELECT distinct( channels.name), count(*), messages.received_at
+        FROM "channels", "channel_assignments", "messages"
         WHERE (
             "messages"."msg_id" = "channel_assignments"."msg_ref"
             AND
             "channels"."id" = "channel_assignments"."chan_ref"
         )
         Group by channels.id
-        ORDER BY "messages.claimed_at" ASC
+        ORDER BY "messages.received_at" ASC
         
         """)
 
         var channels: [Hashtag] = []
         
         for f in try qry.run() {
-            //let name =
-            let hashtag = Hashtag(name: "\(f[0]!)")
+            let count = f[1] as! Int64
+            let timestamp = f[2] as! Float64
+            let hashtag = Hashtag(name: "\(f[0]!)", count: count, timestamp: timestamp)
             channels += [hashtag]
         }
         return channels

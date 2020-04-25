@@ -47,7 +47,9 @@ class ChannelViewController: ContentViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addLoadingAnimation()
         Layout.fill(view: self.contentView, with: self.tableView, respectSafeArea: false)
+        self.load()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -59,6 +61,7 @@ class ChannelViewController: ContentViewController {
         Bots.current.posts(with: self.hashtag) {
             [weak self] feed, error in
             Log.optional(error)
+            self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()
             
             if let error = error {
