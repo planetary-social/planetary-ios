@@ -17,7 +17,7 @@ class AttributedStringCache: DictionaryCache {
     func attributedString(for key: String,
                           markdown: String) -> NSAttributedString
     {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
 
         // cached value if possible
         if let string = self.item(for: key) as? NSAttributedString {
@@ -40,7 +40,7 @@ class AttributedStringCache: DictionaryCache {
 
     /// Invalidates the oldest items beyond the `maxNumberOfItems`.
     override func purge() {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         guard self.count > self.maxNumberOfItems else { return }
         let items = self.itemsSortedByDateAscending()
         let itemsToInvalidate = items[self.minNumberOfItems ..< items.endIndex]
@@ -74,7 +74,7 @@ class AttributedStringCache: DictionaryCache {
 
     /// The number of markdowns in the pre-fill queue.
     var prefillCount: Int {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         return self.array.count
     }
 
@@ -83,7 +83,7 @@ class AttributedStringCache: DictionaryCache {
     /// cancelled before new ones are executed.  If any of the markdowns already
     /// exist in the cache, they are filtered out first.
     func prefill(_ markdowns: [KeyMarkdown]) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         let filtered = markdowns.filter { self.item(for: $0.key) == nil }
         guard filtered.count > 0 else { return }
         self.array += filtered
@@ -117,14 +117,14 @@ class AttributedStringCache: DictionaryCache {
 
     /// Cancels pending markdowns by key.
     func cancel(markdownsWithKeys keys: [String]) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         guard self.array.count > 0 else { return }
         for key in keys { self.array.removeAll { $0.key == key } }
     }
 
     /// Cancels all pending markdown renders, except for the one in progress.
     func cancel() {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.array.removeAll()
     }
 }

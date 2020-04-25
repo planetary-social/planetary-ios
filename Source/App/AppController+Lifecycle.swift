@@ -19,7 +19,8 @@ extension AppController {
     }
 
     func relaunch() {
-        Caches.blobs.invalidate()
+        //blobs are immutable and we don't delete them, not reason to invalidate their cache.
+        //Caches.blobs.invalidate()
         self.launch()
     }
 
