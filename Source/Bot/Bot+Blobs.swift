@@ -13,7 +13,7 @@ extension Bot {
     func blobsAndDatas(for blobs: Blobs,
                        completion: @escaping (([(Blob, Data)]) -> Void))
     {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
 
         guard blobs.count > 0 else { completion([]) ; return }
         var datas: [(Blob, Data)] = []
