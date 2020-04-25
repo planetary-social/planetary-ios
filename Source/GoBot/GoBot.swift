@@ -37,7 +37,13 @@ class GoBot: Bot {
     var identity: Identity? { return self._identity }
 
     private let queue: DispatchQueue
-
+    var follows: [FeedIdentifier] = []
+    var withoutPubs: [FeedIdentifier] = []
+    var followedBy: [FeedIdentifier] = []
+    var friends: [Identity] = []
+    var blocks: [FeedIdentifier] = []
+    var anyBlocks: Bool = false
+    
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
     let bot :GoBotInternal
@@ -750,13 +756,18 @@ class GoBot: Bot {
 
     func follows(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         //Thread.assertIsMainThread()
+        
         self.queue.async {
-            do {
-                let follows = try self.database.getFollows(feed: identity)
-                let withoutPubs = follows.withoutPubs()
-                DispatchQueue.main.async { completion(withoutPubs, nil) }
-            } catch {
-                DispatchQueue.main.async { completion([], error) }
+            if self.follows.isEmpty {
+                do {
+                    self.follows = try self.database.getFollows(feed: identity)
+                    self.withoutPubs = self.follows.withoutPubs()
+                    DispatchQueue.main.async { completion(self.withoutPubs, nil) }
+                } catch {
+                    DispatchQueue.main.async { completion([], error) }
+                }
+            } else {
+                DispatchQueue.main.async { completion(self.withoutPubs, nil) }
             }
         }
     }
@@ -764,12 +775,17 @@ class GoBot: Bot {
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
         //Thread.assertIsMainThread()
         self.queue.async {
-            do {
-                let follows: [Identity] = try self.database.followedBy(feed: identity)
-                let withoutPubs = follows.withoutPubs()
-                DispatchQueue.main.async { completion(withoutPubs, nil) }
-            } catch {
-                DispatchQueue.main.async { completion([], error) }
+            if self.followedBy.isEmpty {
+                do {
+                    let follows: [Identity] = try self.database.followedBy(feed: identity)
+                    let withoutPubs = follows.withoutPubs()
+                    self.followedBy = withoutPubs
+                    DispatchQueue.main.async { completion(self.followedBy, nil) }
+                } catch {
+                    DispatchQueue.main.async { completion([], error) }
+                }
+            } else {
+                DispatchQueue.main.async { completion(self.followedBy, nil) }
             }
         }
     }
@@ -777,11 +793,16 @@ class GoBot: Bot {
     func friends(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         //Thread.assertIsMainThread()
         self.queue.async {
-            do {
-                let who = try self.database.getBidirectionalFollows(feed: identity)
-                DispatchQueue.main.async { completion(who, nil) }
-            } catch {
-                DispatchQueue.main.async { completion([], error) }
+            if self.friends.isEmpty {
+                do {
+                    let who = try self.database.getBidirectionalFollows(feed: identity)
+                    self.friends = who
+                    DispatchQueue.main.async { completion(self.friends, nil) }
+                } catch {
+                    DispatchQueue.main.async { completion([], error) }
+                }
+            } else {
+                DispatchQueue.main.async { completion(self.friends, nil) }
             }
         }
     }
@@ -789,15 +810,19 @@ class GoBot: Bot {
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         //Thread.assertIsMainThread()
         self.queue.async {
-            do {
-                let who = try self.database.getBlocks(feed: identity)
-                DispatchQueue.main.async {
-                    completion(who, nil)
+            if self.blocks.isEmpty && self.anyBlocks  {
+                do {
+                    let who = try self.database.getBlocks(feed: identity)
+                    self.blocks = who
+                    self.anyBlocks = true
+                    DispatchQueue.main.async { completion(self.blocks, nil) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([], error)
+                    }
                 }
-            } catch {
-                DispatchQueue.main.async {
-                    completion([], error)
-                }
+            } else {
+                DispatchQueue.main.async { completion(self.blocks, nil) }
             }
         }
     }
