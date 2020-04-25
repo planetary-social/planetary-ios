@@ -742,6 +742,8 @@ class GoBot: Bot {
             let contactOrNilIfError = (error == nil ? contact : nil)
             completion(contactOrNilIfError, error)
         }
+        //resetting the in memory cache of follows
+        self.follows=[]
     }
 
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion) {
@@ -752,6 +754,8 @@ class GoBot: Bot {
             let contactOrNilIfError = (error == nil ? contact : nil)
             completion(contactOrNilIfError, error)
         }
+        //resetting the in memory cache of follows
+        self.follows=[]
     }
 
     func follows(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
@@ -866,6 +870,9 @@ class GoBot: Bot {
             completion(ref, nil)
             NotificationCenter.default.post(name: .didBlockUser, object: identity)
         }
+        //resetting the in memory cache of blocks
+        self.blocks=[]
+        self.anyBlocks=false
     }
 
     func unblock(_ identity: Identity, completion: @escaping PublishCompletion) {
@@ -886,6 +893,9 @@ class GoBot: Bot {
                 NotificationCenter.default.post(name: .didUnblockUser, object: identity)
             }
         }
+        //resetting the in memory cache of blocks
+        self.blocks=[]
+        self.anyBlocks=false
     }
 
     // MARK: Feeds
