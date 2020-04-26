@@ -82,6 +82,7 @@
 "Text.channels" = "Channels";
 "Text.select" = "Select";
 "Text.home" = "Home";
+"Text.everyone" = "Everyone";
 "Text.messages" = "Messages";
 "Text.notifications" = "Notifications";
 "Text.thread" = "Thread";

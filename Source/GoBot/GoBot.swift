@@ -278,8 +278,9 @@ class GoBot: Bot {
             }
             return
         }
-        NotificationCenter.default.post(Notification.didStartViewRefresh())
+        // NotificationCenter.default.post(Notification.didStartViewRefresh())
         self._isRefreshing = true
+        
         let elapsed = Date()
         self.queue.async {
             self.updateReceive(limit: load.rawValue) {
@@ -985,7 +986,7 @@ class GoBot: Bot {
         //Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 200)
+                let msgs = try self.database.recentPosts(limit: 100)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error)  }

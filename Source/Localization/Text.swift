@@ -124,6 +124,7 @@ enum Text: String, Localizable, CaseIterable {
     case channels = "Channels"
     case select = "Select"
     case home = "Home"
+    case everyone = "Everyone"
     case messages = "Messages"
     case notifications = "Notifications"
     case thread = "Thread"

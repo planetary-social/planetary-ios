@@ -1486,7 +1486,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
                     let done = Float64(msgIndex)/Float64(msgCount)
                     let prog = Notification.didUpdateDatabaseProgress(perc: done,
                                                                       status: "Processing new messages")
-                    NotificationCenter.default.post(prog)
+                    //NotificationCenter.default.post(prog)
                 }
 
                 // make sure we dont have messages from the future
