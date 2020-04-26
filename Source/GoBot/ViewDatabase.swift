@@ -687,44 +687,56 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
 
     // MARK: recent
 
-    func recentPosts(newer then: Date, limit: Int, before: Int = 0, wantPrivate: Bool = false) throws -> Feed {
+    func recentPosts(newer then: Date, limit: Int, before: Int = 0, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
-        let qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
+        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
             .filter(colClaimedAt > then.millisecondsSince1970)
             .order(colClaimedAt.asc)
         
-        let followed = try self.filterOnlyFollowedPeople(qry: qry)
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: followed)
+        
+        if onlyFollowed {
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
+        }
+        
+        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
+        
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
     }
 
-    func recentPosts(older then: Date, limit: Int, before: Int = 0, wantPrivate: Bool = false) throws -> Feed {
+    func recentPosts(older then: Date, limit: Int, before: Int = 0, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        let qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
+        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
             .filter(colClaimedAt < then.millisecondsSince1970)
             .order(colClaimedAt.desc)
         
-        let followed = try self.filterOnlyFollowedPeople(qry: qry)
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: followed)
+        if onlyFollowed {
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
+        }
+        
+        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
     }
     
-    func recentPosts(limit: Int, before: Int = 0, wantPrivate: Bool = false) throws -> Feed {
+    func recentPosts(limit: Int, before: Int = 0, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        let qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
+        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
             .order(colClaimedAt.desc)
         
-        let followed = try self.filterOnlyFollowedPeople(qry: qry)
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: followed)
+        if onlyFollowed {
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
+        }
+        
+        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
+            
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
     }
     

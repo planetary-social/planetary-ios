@@ -223,7 +223,7 @@ class HomeViewController: ContentViewController {
         self.present(controller, animated: true, completion: nil)
     }
 
-    private func update(with roots: KeyValues, animated: Bool) {
+    func update(with roots: KeyValues, animated: Bool) {
         if roots.isEmpty {
             self.tableView.backgroundView = self.emptyView
             self.reloadTimer.start(fireImmediately: false)

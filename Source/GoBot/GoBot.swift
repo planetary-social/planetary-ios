@@ -992,6 +992,22 @@ class GoBot: Bot {
             }
         }
     }
+    
+    // posts from everyone, not just who you follow
+    func everyone(completion: @escaping FeedCompletion) {
+        //Thread.assertIsMainThread()
+        self.queue.async {
+            do {
+                let msgs = try self.database.recentPosts(limit: 200, onlyFollowed: false)
+                DispatchQueue.main.async { completion(msgs, nil) }
+            } catch {
+                DispatchQueue.main.async { completion([], error)  }
+            }
+        }
+    }
+    
+
+    
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)

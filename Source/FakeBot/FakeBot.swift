@@ -224,6 +224,13 @@ class FakeBot: Bot {
         completion(feed ?? [], nil)
     }
 
+    func everyone(completion: RootsCompletion) {
+    //        let data = Data.fromJSON(resource: "Feed_big.json")
+            let data = Data.fromJSON(resource: "Feed.json")
+            var feed = try? JSONDecoder().decode(Feed.self, from: data)
+            feed?.sort { $0.value.timestamp < $1.value.timestamp }
+            completion(feed ?? [], nil)
+        }
 
     func feed(identity: Identity, completion: FeedCompletion) {
         completion([], nil)

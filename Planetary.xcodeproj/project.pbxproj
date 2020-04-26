@@ -135,6 +135,7 @@
 		23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
 		23E8806022F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
 		23E880B522857F8700486AD0 /* EnocdeJSONtest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E880B422857F8700486AD0 /* EnocdeJSONtest.swift */; };
+		2D009BF924550868001351CB /* EveryoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D009BF824550868001351CB /* EveryoneViewController.swift */; };
 		53033E98237C9B0B004609F8 /* Onboarding+Repair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E97237C9B0B004609F8 /* Onboarding+Repair.swift */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
@@ -720,6 +721,7 @@
 		23E76A5523F2F0F70074F424 /* ValueTimestamp.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValueTimestamp.json; sourceTree = "<group>"; };
 		23E8805D22F894650074D399 /* Collection+RandomSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+RandomSample.swift"; sourceTree = "<group>"; };
 		23E880B422857F8700486AD0 /* EnocdeJSONtest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnocdeJSONtest.swift; sourceTree = "<group>"; };
+		2D009BF824550868001351CB /* EveryoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveryoneViewController.swift; sourceTree = "<group>"; };
 		316D716D251CC0B347E630DA /* Pods-Planetary.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.appstore.xcconfig"; sourceTree = "<group>"; };
 		3C118088E10BAE1C911EDE02 /* Pods_FBTTUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTTUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4468B60D82AA8885DDD68F4A /* Pods-UnitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -1272,7 +1274,6 @@
 				53C2B12B2294E8A50018D0A8 /* AppConfiguration+Keychain.swift */,
 				53C2B1272294DFF50018D0A8 /* AppConfiguration+Migrate.swift */,
 				5374DF3F21E9ADFE00956122 /* AppController.swift */,
-				539C2AF323C9550C00FB9203 /* AppController+BackgroundSync.swift */,
 				53362F662208C2B3007264CB /* AppController+Lifecycle.swift */,
 				53211CD92281EB22007FB785 /* AppController+Progress.swift */,
 				53E26C4B230223F8009240B2 /* AppController+Push.swift */,
@@ -1282,6 +1283,7 @@
 				5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */,
 				536255D223AAC8AD001007D0 /* AppDelegate+Analytics.swift */,
 				536255D023AAC5F0001007D0 /* AppDelegate+Background.swift */,
+				539C2AF323C9550C00FB9203 /* AppController+BackgroundSync.swift */,
 				53E26C4D23022482009240B2 /* AppDelegate+Push.swift */,
 				53AD3FD4226FBD91005228F9 /* AppDelegate+UIAppearance.swift */,
 				536255DB23AC090D001007D0 /* RemoteNotificationUserInfo.swift */,
@@ -1348,6 +1350,7 @@
 				53211CD32280E1E1007FB785 /* EditAboutViewController.swift */,
 				5396A630224823DD00C57A4B /* FeatureViewController.swift */,
 				53B634B1221508B800400403 /* HomeViewController.swift */,
+				2D009BF824550868001351CB /* EveryoneViewController.swift */,
 				5396A62E2245A50300C57A4B /* LaunchViewController.swift */,
 				53B634B322150A4100400403 /* MainViewController.swift */,
 				0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */,
@@ -2631,6 +2634,7 @@
 				53E341FC224FF87D002BB5F4 /* NewPostViewController.swift in Sources */,
 				5319257E22F286FC00B44FA3 /* URL+Verse.swift in Sources */,
 				5372175522FDF8A7008A760A /* VerseAPI+Me.swift in Sources */,
+				2D009BF924550868001351CB /* EveryoneViewController.swift in Sources */,
 				0ACE91A2243D740C00EFB4E9 /* GoBotError.swift in Sources */,
 				539FD4C822C43FC8005A4DF2 /* ImageButton.swift in Sources */,
 				5314EF8122EA54540065D02A /* Analytics+Onboarding.swift in Sources */,
