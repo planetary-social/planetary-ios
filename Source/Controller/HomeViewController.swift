@@ -133,6 +133,10 @@ class HomeViewController: ContentViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+        super.init(scrollable: scrollable, title: title, dynamicTitle: dynamicTitle)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -223,7 +227,7 @@ class HomeViewController: ContentViewController {
         self.present(controller, animated: true, completion: nil)
     }
 
-    private func update(with roots: KeyValues, animated: Bool) {
+    func update(with roots: KeyValues, animated: Bool) {
         if roots.isEmpty {
             self.tableView.backgroundView = self.emptyView
             self.reloadTimer.start(fireImmediately: false)

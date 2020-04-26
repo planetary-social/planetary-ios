@@ -272,8 +272,9 @@ class GoBot: Bot {
             }
             return
         }
-        NotificationCenter.default.post(Notification.didStartViewRefresh())
+        // NotificationCenter.default.post(Notification.didStartViewRefresh())
         self._isRefreshing = true
+        
         let elapsed = Date()
         self.queue.async {
             self.updateReceive(limit: load.rawValue) {
@@ -905,13 +906,29 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 200)
+                let msgs = try self.database.recentPosts(limit: 50)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error)  }
             }
         }
     }
+    
+    // posts from everyone, not just who you follow
+    func everyone(completion: @escaping FeedCompletion) {
+        //Thread.assertIsMainThread()
+        self.queue.async {
+            do {
+                let msgs = try self.database.recentPosts(limit: 50, onlyFollowed: false)
+                DispatchQueue.main.async { completion(msgs, nil) }
+            } catch {
+                DispatchQueue.main.async { completion([], error)  }
+            }
+        }
+    }
+    
+
+    
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)

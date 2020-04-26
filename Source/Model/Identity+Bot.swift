@@ -19,4 +19,9 @@ extension Identity {
             assertionFailure("Did not expect this to be the current user's Identity.")
         }
     }
+    
+    func isNotMe(identifier: String) -> Bool {
+        return self.self != identifier
+    }
+    
 }

@@ -79,9 +79,10 @@
 "Text.andOneOther" = " and 1 other";
 "Text.countOnlinePeers" = "{{ count }} ONLINE PEERS";
 "Text.countLocalPeers" = "{{ count }} LOCAL PEERS";
-"Text.channels" = "Channels";
+"Text.channels" = "Hashtags";
 "Text.select" = "Select";
 "Text.home" = "Home";
+"Text.explore" = "Explore";
 "Text.messages" = "Messages";
 "Text.notifications" = "Notifications";
 "Text.thread" = "Thread";
