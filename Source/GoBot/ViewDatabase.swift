@@ -763,12 +763,12 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
     }
     
-    func recentPosts(limit: Int, before: Int = 0, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
+    func recentPosts(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
+        let qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
             .order(colClaimedAt.desc)
         
         if onlyFollowed {

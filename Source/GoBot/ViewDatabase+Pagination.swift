@@ -30,8 +30,8 @@ class EmptyPaginatedDataProxy: PaginatedKeyValueDataProxy {
 extension ViewDatabase {
     // returns a pagination proxy for the home (or recent) view
     func paginated() throws -> (PaginatedKeyValueDataProxy) {
-//        self.count = try vdb.stats(for: "root-posts")
-        throw GoBotError.unexpectedFault("TODO:paginated recent view")
+        let src = try RecentViewKeyValueSource(with: self)
+        return try PaginatedFeedDataProxy(with: src)
     }
 
     func paginated(thread msg: MessageIdentifier) throws -> (PaginatedKeyValueDataProxy) {
@@ -40,22 +40,30 @@ extension ViewDatabase {
     }
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
-        guard feed.isValidIdentifier else { throw GoBotError.unexpectedFault("invalid message identifier")}
-        let ds = try NewFeedProxy(with: self, feed: feed)
-        return ds
+        let src = try FeedKeyValueSource(with: self, feed: feed)
+        return try PaginatedFeedDataProxy(with: src)
     }
-}
-
-func NewFeedProxy(with vdb: ViewDatabase, feed: FeedIdentifier) throws -> PaginatedFeedDataProxy {
-    let src = try FeedKeyValueSource(with: vdb, feed: feed)
-    let p = try PaginatedFeedDataProxy(with: src)
-    return p
 }
 
 // abastract the data retreival for the proxy
 protocol KeyValueSource {
     var total: Int { get }
     func retreive(limit: Int, offset: Int) throws -> [KeyValue]
+}
+
+class RecentViewKeyValueSource: KeyValueSource {
+    let view: ViewDatabase
+
+    let total: Int
+
+    init(with vdb: ViewDatabase) throws {
+        self.view = vdb
+        self.total = try vdb.stats(for: "root-posts")
+    }
+
+    func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
+        return try self.view.recentPosts(limit: limit, offset: offset)
+    }
 }
 
 class FeedKeyValueSource: KeyValueSource {
