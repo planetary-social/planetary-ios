@@ -1049,7 +1049,19 @@ class GoBot: Bot {
         }
     }
     
-    func paginatedFeed(identity: Identity, completion: @escaping PaginatedFeedCompletion) {
+    func paginatedRecent(completion: @escaping PaginatedCompletion) {
+        Thread.assertIsMainThread()
+        self.queue.async {
+            do {
+                let ds = try self.database.paginated()
+                DispatchQueue.main.async { completion(ds, nil) }
+            } catch {
+                DispatchQueue.main.async { completion(EmptyPaginatedDataProxy(), error) }
+            }
+        }
+    }
+    
+    func paginatedFeed(identity: Identity, completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {

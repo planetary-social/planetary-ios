@@ -25,9 +25,8 @@ class HomeViewController: ContentViewController {
         return control
     }()
 
-    private let dataSource = PostReplyDataSource()
+    private let dataSource = KeyValuePaginatedTableViewDataSource()
     private lazy var delegate = PostReplyDelegate(on: self)
-    private let prefetchDataSource = PostReplyDataSourcePrefetching()
     
     private lazy var floatingRefreshButton: UIButton = {
         let button = UIButton.forAutoLayout()
@@ -48,7 +47,7 @@ class HomeViewController: ContentViewController {
         let view = UITableView.forVerse()
         view.dataSource = self.dataSource
         view.delegate = self.delegate
-        view.prefetchDataSource = self.prefetchDataSource
+        view.prefetchDataSource = self.dataSource
         view.refreshControl = self.refreshControl
         view.sectionHeaderHeight = 0
         view.separatorStyle = .none
@@ -161,7 +160,7 @@ class HomeViewController: ContentViewController {
     // MARK: Load and refresh
     
     func load(animated: Bool = false) {
-        Bots.current.recent() { [weak self] roots, error in
+        Bots.current.recent() { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
@@ -172,7 +171,7 @@ class HomeViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.update(with: roots, animated: animated)
+                self?.update(with: proxy, animated: animated)
             }
             
         }
@@ -233,8 +232,8 @@ class HomeViewController: ContentViewController {
         self.present(controller, animated: true, completion: nil)
     }
 
-    func update(with roots: KeyValues, animated: Bool) {
-        if roots.isEmpty {
+    private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
+        if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
             self.reloadTimer.start(fireImmediately: false)
         } else {
@@ -242,7 +241,7 @@ class HomeViewController: ContentViewController {
             self.tableView.backgroundView = nil
             self.reloadTimer.stop()
         }
-        self.dataSource.keyValues = roots
+        self.dataSource.update(source: proxy)
         if animated {
             self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
         } else {

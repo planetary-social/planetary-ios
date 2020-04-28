@@ -15,7 +15,7 @@ typealias ContactCompletion = ((Contact?, Error?) -> Void)
 typealias ContactsCompletion = (([Identity], Error?) -> Void)
 typealias ErrorCompletion = ((Error?) -> Void)
 typealias FeedCompletion = ((Feed, Error?) -> Void)
-typealias PaginatedFeedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
+typealias PaginatedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
 typealias RootsCompletion = ((KeyValues, Error?) -> Void)
 typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
@@ -159,14 +159,13 @@ protocol Bot {
     func recent(completion: @escaping RootsCompletion)
 
     // everyone's posts
-    func everyone(completion: @escaping RootsCompletion)
-
+    func everyone(completion: @escaping PaginatedCompletion)
     
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.
     func feed(identity: Identity, completion: @escaping FeedCompletion)
-    func paginatedFeed(identity: Identity, completion: @escaping PaginatedFeedCompletion)
+    func paginatedFeed(identity: Identity, completion: @escaping PaginatedCompletion)
     
     /// Returns the thread of messages related to the specified message.  The root
     /// of the thread will be returned if it is not the specified message.

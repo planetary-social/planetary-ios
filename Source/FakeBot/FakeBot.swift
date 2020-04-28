@@ -14,8 +14,11 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
-    
-    func paginatedFeed(identity: Identity, completion: @escaping PaginatedFeedCompletion) {
+    func paginatedRecent(completion: @escaping PaginatedCompletion) {
+           fatalError("TODO:paginatedRecent")
+    }
+
+    func paginatedFeed(identity: Identity, completion: @escaping PaginatedCompletion) {
         fatalError("TODO:paginatedFeed")
     }
 
