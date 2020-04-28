@@ -36,6 +36,7 @@ enum ViewDatabaseTableNames: String {
     case votes
     case tangles
     case branches
+    case mentions
     case mentionsMsg = "mention_message"
     case mentionsFeed = "mention_feed"
     case mentionsImage = "mention_image"
@@ -115,6 +116,13 @@ class ViewDatabase {
     // msg_ref
     // link_id
     
+    private var mentions: Table
+    private let colType = Expression<Int>("type")
+    private let colLink = Expression<Identifier>("link")
+    // msg_ref
+    // link_id
+    // msg_id
+
     private var votes: Table
     private let colLinkID = Expression<Int64>("link_id")
     private let colValue = Expression<Int>("value")
@@ -160,6 +168,7 @@ class ViewDatabase {
         self.privateRecps = Table(ViewDatabaseTableNames.privateRecps.rawValue)
         self.posts = Table(ViewDatabaseTableNames.posts.rawValue)
         self.post_blobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
+        self.mentions = Table(ViewDatabaseTableNames.mentions.rawValue)
         self.mentions_msg = Table(ViewDatabaseTableNames.mentionsMsg.rawValue)
         self.mentions_feed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
         self.mentions_image = Table(ViewDatabaseTableNames.mentionsImage.rawValue)
@@ -187,13 +196,14 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-//        db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
             try db.execute(String(contentsOf: schemaV1url))
-            db.userVersion = 2
-        } else if db.userVersion == 1 {
+            db.userVersion = 3
+        }
+        if db.userVersion == 1 {
             try db.execute("""
 CREATE INDEX messagekeys_key ON messagekeys(key);
 CREATE INDEX messagekeys_id ON messagekeys(id);
@@ -204,6 +214,33 @@ CREATE INDEX contacts_state ON contacts (contact_id, state);
 CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
 """);
             db.userVersion = 2
+        }
+        if db.userVersion == 2 {
+            try db.execute("""
+            CREATE TABLE mentions (
+            msg_ref              integer not null,
+            feed_id              integer,
+            name                 text,
+            link_id              integer,
+            type                 integer not null,
+            link                 text,
+            FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+            FOREIGN KEY ( feed_id ) REFERENCES authors( "id" )
+            FOREIGN KEY ( link_id ) REFERENCES messages( "msg_id" )
+            );
+            CREATE INDEX mentions_refs on mentions (msg_ref);
+            CREATE INDEX mentions_author on mentions (feed_id);
+                         
+            INSERT INTO mentions (msg_ref, feed_id, name, type, link)
+                SELECT msg_ref, feed_id, name, 1, authors.author
+                FROM mention_feed, authors where mention_feed.feed_id = authors.id ;
+             
+            INSERT INTO mentions (msg_ref, link_id, type, link)
+                SELECT msg_ref, link_id, 2, messagekeys.key
+                FROM mention_message, messagekeys where mention_message.link_id = messagekeys.id;
+            """);
+            db.userVersion = 3
+
         }
 
         self.currentUserID = try self.authorID(from: user, make: true)
@@ -990,8 +1027,8 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let qry = self.mentions_feed
-            .join(self.msgs, on: self.msgs[colMessageID] == self.mentions_feed[colMessageRef])
+        let qry = self.mentions
+            .join(self.msgs, on: self.msgs[colMessageID] == self.mentions[colMessageRef])
             .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
             .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
             .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
@@ -1000,6 +1037,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             .filter(colFeedID == self.currentUserID)
             .filter(colAuthorID != self.currentUserID)
             .filter(colHidden == false)
+            //.where(colType = 1)
             .order(colClaimedAt.desc)
             .limit(limit)
         return try self.mapQueryToKeyValue(qry: qry)
@@ -1718,7 +1756,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-
+        
         let notBlobs = mentions.filter { return !$0.link.isBlob }
         for m in notBlobs {
             if !m.link.isValidIdentifier {
@@ -1727,15 +1765,19 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             // TOOD: name might be a channel!
             switch m.link.sigil {
             case .message:
-                try db.run(self.mentions_msg.insert(
+                try db.run(self.mentions.insert(
                     colMessageRef <- msgID,
-                    colLinkID <-  try self.msgID(from: m.link, make: true)
+                    colLinkID <-  try self.msgID(from: m.link, make: true),
+                    colLink <- m.link,
+                    colType <- 1
                 ))
             case .feed:
-                try db.run(self.mentions_feed.insert(
+                try db.run(self.mentions.insert(
                     colMessageRef <- msgID,
                     colFeedID <-  try self.authorID(from: m.link, make: true),
-                    colName <- m.name
+                    colName <- m.name,
+                    colLink <- m.link,
+                    colType <- 2
                 ))
             default:
                 continue
@@ -1748,46 +1790,20 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             throw ViewDatabaseError.notOpen
         }
         
-        // load mentions for this message
-        let feedQry = self.mentions_feed.where(colMessageRef == msgID)
-        let feedMentions: [Mention] = try db.prepare(feedQry).map {
+        
+        // new unified mentions table
+        let qry = self.mentions.where(colMessageRef == msgID)
+        
+        let mentions: [Mention] = try db.prepare(qry).map {
             row in
-            
-            let feedID = try row.get(colFeedID)
-            let feed = try self.author(from: feedID)
-            
+           
             return Mention(
-                link: feed,
-                name: try row.get(colName) ?? ""
+                link: try row.get(colLink),
+                name: try row.get(colName) ?? "",
+                type: try row.get(colType)
             )
         }
-        
-        let msgMentionQry = self.mentions_msg.where(colMessageRef == msgID)
-        let msgMentions: [Mention] = try db.prepare(msgMentionQry).map {
-            row in
-            
-            let linkID = try row.get(colLinkID)
-            return Mention(
-                link: try self.msgKey(id: linkID),
-                name: ""
-            )
-        }
-        
-        let imgMentionQry = self.mentions_image
-            .where(colMessageRef == msgID)
-            .where(colImage != "")
-        let imgMentions: [Mention] = try db.prepare(imgMentionQry).map {
-            row in
-            
-            let img = try row.get(colImage)
-            
-            return Mention(
-                link: img!, // illegal insert
-                name: try row.get(colName) ?? ""
-            )
-        }
-        
-        return feedMentions + msgMentions + imgMentions
+        return mentions
     }
     
     private func insertBlobs(msgID: Int64, blobs: [Blob]) throws {

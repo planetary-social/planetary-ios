@@ -197,6 +197,23 @@ CREATE TABLE branches (
     FOREIGN KEY ( branch )      REFERENCES messages( "msg_id" )
 );
 
+-- unified mentions
+CREATE TABLE mentions (
+msg_ref              integer not null,
+feed_id              integer,
+name                 text,
+link_id              integer,
+type                 integer not null,
+link                 text,
+FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+FOREIGN KEY ( feed_id ) REFERENCES authors( "id" )
+FOREIGN KEY ( link_id ) REFERENCES messages( "msg_id" )
+);
+CREATE INDEX mentions_refs on mentions (msg_ref);
+CREATE INDEX mentions_author on mentions (feed_id);
+
+
+
 
 -- posts can mention people
 CREATE TABLE mention_feed (
