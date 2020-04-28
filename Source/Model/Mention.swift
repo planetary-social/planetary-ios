@@ -36,7 +36,7 @@ struct Mention: Codable {
 //        self.type = nil
 //    }
     
-    init(link: Identifier, name: String? = nil , metadata: Blob.Metadata? = nil) {
+    init(link: Identifier, name: String? = nil, type: Int? = nil, metadata: Blob.Metadata? = nil) {
         self.link = link
         self.name = name
 
