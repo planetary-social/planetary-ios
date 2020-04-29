@@ -10,7 +10,7 @@ import Foundation
 
 import UIKit
 
-class EveryoneViewController: HomeViewController {
+class EveryoneViewController: ContentViewController {
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
@@ -18,27 +18,119 @@ class EveryoneViewController: HomeViewController {
         return item
     }()
 
-    private lazy var selectPhotoBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-camera")
-        let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(selectPhotoButtonTouchUpInside))
-        return item
-    }()
+
+     lazy var refreshControl: UIRefreshControl = {
+         let control = UIRefreshControl.forAutoLayout()
+         control.addTarget(self, action: #selector(refreshControlValueChanged(control:)), for: .valueChanged)
+         return control
+     }()
+
+     private let dataSource = PostReplyDataSource()
+     private lazy var delegate = PostReplyDelegate(on: self)
+     private let prefetchDataSource = PostReplyDataSourcePrefetching()
+
+     private lazy var tableView: UITableView = {
+         let view = UITableView.forVerse()
+         view.dataSource = self.dataSource
+         view.delegate = self.delegate
+         view.prefetchDataSource = self.prefetchDataSource
+         view.refreshControl = self.refreshControl
+         view.sectionHeaderHeight = 0
+         view.separatorStyle = .none
+         return view
+     }()
+     
+     private lazy var emptyView: UIView = {
+         let view = UIView()
+         
+         let imageView = UIImageView(image: UIImage(imageLiteralResourceName: "icon-planetary"))
+         Layout.centerHorizontally(imageView, in: view)
+         NSLayoutConstraint.activate([
+             imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50)
+         ])
+         
+         let titleLabel = UILabel.forAutoLayout()
+         titleLabel.numberOfLines = 0
+         titleLabel.font = UIFont.systemFont(ofSize: 25, weight: .medium)
+         titleLabel.text = "Explore Planetary"
+         titleLabel.textColor = UIColor.text.default
+         titleLabel.textAlignment = .center
+         Layout.centerHorizontally(titleLabel, in: view)
+         NSLayoutConstraint.activate([
+             titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20)
+         ])
+         
+         let detailLabel = UILabel.forAutoLayout()
+         detailLabel.numberOfLines = 0
+         detailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+         detailLabel.text = "The expore tab lets you see more people on Planetary. Specifically it's everything the people you follow are following. "
+         detailLabel.textColor = UIColor.text.default
+         detailLabel.textAlignment = .center
+         view.addSubview(detailLabel)
+         NSLayoutConstraint.activate([
+             detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+             detailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 60),
+             detailLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -60)
+         ])
+        /*
+         let button = UIButton(type: .custom).useAutoLayout()
+         button.addTarget(self, action: #selector(directoryButtonTouchUpInside), for: .touchUpInside)
+         let image = UIColor.tint.default.image().resizableImage(withCapInsets: .zero)
+         button.setBackgroundImage(image, for: .normal)
+         button.setTitle("Go to Directory", for: .normal)
+         button.setTitleColor(.white, for: .normal)
+         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+         button.contentEdgeInsets = .pillButton
+         button.roundedCorners(radius: 20)
+         button.constrainHeight(to: 40)
+         view.addSubview(button)
+         NSLayoutConstraint.activate([
+             button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+             button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 60),
+             button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -60)
+         ])
+         */
+         
+         return view
+     }()
+     
+     private lazy var reloadTimer: RepeatingTimer = {
+         // Set timer to 3 minutes
+         let timer = RepeatingTimer(interval: 60 * 3) { [weak self] in
+             self?.emptyView.removeFromSuperview()
+             self?.addLoadingAnimation()
+             self?.load(animated: true)
+         }
+         return timer
+     }()
+
     
-    override init() {
-        super.init(scrollable: false, title: .everyone)
+    init() {
+        super.init(scrollable: false, title: .explore)
+        /*
         let imageView = UIImageView(image: UIImage(named: "title"))
         imageView.contentMode = .scaleAspectFit
         let view = UIView.forAutoLayout()
         Layout.fill(view: view, with: imageView, respectSafeArea: false)
         self.navigationItem.titleView = view
+     */
         self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func load(animated: Bool = false) {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        Layout.fill(view: self.view, with: self.tableView)
+        self.addLoadingAnimation()
+        self.load()
+    }
+
+    
+    func load(animated: Bool = false) {
         Bots.current.refresh() { error, _ in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -58,7 +150,62 @@ class EveryoneViewController: HomeViewController {
         }
     }
     
+    
+    func update(with roots: KeyValues, animated: Bool) {
+        if roots.isEmpty {
+            self.tableView.backgroundView = self.emptyView
+            self.reloadTimer.start(fireImmediately: false)
+        } else {
+            self.emptyView.removeFromSuperview()
+            self.tableView.backgroundView = nil
+            self.reloadTimer.stop()
+        }
+        self.dataSource.keyValues = roots
+        if animated {
+            self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        } else {
+            self.tableView.forceReload()
+        }
+    }
+    
+    // MARK: Actions
 
+     @objc func refreshControlValueChanged(control: UIRefreshControl) {
+         control.beginRefreshing()
+         self.load()
+     }
+
+     @objc func newPostButtonTouchUpInside() {
+         let controller = NewPostViewController()
+         controller.didPublish = {
+             [weak self] post in
+             self?.load()
+         }
+         controller.addDismissBarButtonItem()
+         let navController = UINavigationController(rootViewController: controller)
+         self.present(navController, animated: true, completion: nil)
+     }
+
+     @objc func selectPhotoButtonTouchUpInside() {
+         let controller = ContentViewController(scrollable: false, title: .select)
+         controller.addDismissBarButtonItem()
+         let navController = UINavigationController(rootViewController: controller)
+         AppController.shared.present(navController, animated: true, completion: nil)
+     }
+     
+     @objc func directoryButtonTouchUpInside() {
+         guard let homeViewController = self.parent?.parent as? MainViewController else {
+             return
+         }
+         homeViewController.selectDirectoryTab()
+     }
+
+     // MARK: Notifications
+
+     override func didBlockUser(notification: NSNotification) {
+         guard let identity = notification.object as? Identity else { return }
+         self.tableView.deleteKeyValues(by: identity)
+     }
 
 }
 

@@ -30,6 +30,8 @@ class MainViewController: UITabBarController {
     private let everyoneViewController = FeatureViewController(rootViewController: EveryoneViewController(),
                                                                        tabBarItemImageName: "tab-icon-everyone")
 
+    
+    
 
     // custom separator on the top edge of the tab bar
     private var topBorder: UIView?

@@ -986,7 +986,7 @@ class GoBot: Bot {
         //Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 100)
+                let msgs = try self.database.recentPosts(limit: 50)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error)  }
@@ -999,7 +999,7 @@ class GoBot: Bot {
         //Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 200, onlyFollowed: false)
+                let msgs = try self.database.recentPosts(limit: 50, onlyFollowed: false)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error)  }

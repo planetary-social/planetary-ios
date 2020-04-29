@@ -15,7 +15,15 @@ class NotificationsViewController: ContentViewController {
     
     private let dataSource = NotificationsTableViewDataSource()
     private lazy var delegate = NotificationsTableViewDelegate(on: self)
-
+    
+    
+    private lazy var newPostBarButtonItem: UIBarButtonItem = {
+        let image = UIImage(named: "nav-icon-write")
+        let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newPostButtonTouchUpInside))
+        return item
+    }()
+    
+    
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
         view.dataSource = self.dataSource
@@ -39,6 +47,7 @@ class NotificationsViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .notifications)
+        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -154,6 +163,19 @@ class NotificationsViewController: ContentViewController {
             // self.load()
         }
     }
+    
+    
+    @objc func newPostButtonTouchUpInside() {
+        let controller = NewPostViewController()
+        controller.didPublish = {
+            [weak self] post in
+            self?.load()
+        }
+        controller.addDismissBarButtonItem()
+        let navController = UINavigationController(rootViewController: controller)
+        self.present(navController, animated: true, completion: nil)
+    }
+
 
     // TODO this won't work because until the data source is updated
     // TODO notifications() will keep returning the same list and the
@@ -221,6 +243,7 @@ fileprivate class NotificationsTableViewDataSource: KeyValueTableViewDataSource 
         let cell = KeyValueTableViewCell(for: type, with: view)
         return cell
     }
+    
 }
 
 extension NotificationsViewController: TopScrollable {
