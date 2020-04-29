@@ -14,14 +14,22 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
-    func paginatedRecent(completion: @escaping PaginatedCompletion) {
-           fatalError("TODO:paginatedRecent")
+    func resume() {
+        fatalError("TODO:\(#function)")
     }
-
-    func paginatedFeed(identity: Identity, completion: @escaping PaginatedCompletion) {
-        fatalError("TODO:paginatedFeed")
+    
+    func suspend() {
+        fatalError("TODO:\(#function)")
     }
-
+    
+    func exit() {
+        fatalError("TODO:\(#function)")
+    }
+    
+    func notifications(completion: @escaping KeyValuesCompletion) {
+        fatalError("TODO:\(#function)")
+    }
+    
     func knownPubs(completion: @escaping KnownPubsCompletion) {
         fatalError("TODO:knownPubs")
     }
@@ -59,7 +67,7 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
 
-    func posts(with hashtag: Hashtag, completion: @escaping FeedCompletion) {
+    func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) {
         fatalError("TODO")
     }
     
@@ -225,12 +233,16 @@ class FakeBot: Bot {
 
     // MARK: Feed content
 
-    func recent(completion: RootsCompletion) {
+    func recent(completion: PaginatedCompletion) {
 //        let data = Data.fromJSON(resource: "Feed_big.json")
         let data = Data.fromJSON(resource: "Feed.json")
-        var feed = try? JSONDecoder().decode(Feed.self, from: data)
+        var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
         feed?.sort { $0.value.timestamp < $1.value.timestamp }
-        completion(feed ?? [], nil)
+        if let feed = feed {
+            completion(StaticDataProxy(with: feed), nil)
+        } else {
+            completion(StaticDataProxy(), nil)
+        }
     }
 
     func everyone(completion: RootsCompletion) {
@@ -241,20 +253,20 @@ class FakeBot: Bot {
             completion(feed ?? [], nil)
         }
 
-    func feed(identity: Identity, completion: FeedCompletion) {
-        completion([], nil)
+    func feed(identity: Identity, completion: PaginatedCompletion) {
+        completion(StaticDataProxy(), nil)
     }
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
-        completion(nil, [], nil)
+        completion(nil, StaticDataProxy(), nil)
     }
     
-    func replies(message: MessageIdentifier, wantPrivate: Bool, completion: @escaping FeedCompletion) {
-        completion([], FakeBotError.runtimeError("TODO:replies"))
+    func replies(message: MessageIdentifier, wantPrivate: Bool, completion: @escaping PaginatedCompletion) {
+        completion(StaticDataProxy(), FakeBotError.runtimeError("TODO:replies"))
     }
 
-    func mentions(completion: @escaping FeedCompletion) {
-        completion([], FakeBotError.runtimeError("TODO:mentions"))
+    func mentions(completion: @escaping PaginatedCompletion) {
+        completion(StaticDataProxy(), FakeBotError.runtimeError("TODO:mentions"))
     }
     
     // MARK: Statistics

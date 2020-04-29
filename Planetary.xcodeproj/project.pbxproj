@@ -118,7 +118,6 @@
 		2394616323A262B5008F552C /* Log+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF334D239F2A720017566D /* Log+API.swift */; };
 		2394616423A262DC008F552C /* NullAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C2B12E2295A95A0018D0A8 /* NullAnalytics.swift */; };
 		2394616523A262F0008F552C /* AnalyticsCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D66626222A55640001D9BB /* AnalyticsCore.swift */; };
-		239F46E721F8CFE00003BE0A /* DebugFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239F46E621F8CFE00003BE0A /* DebugFeedViewController.swift */; };
 		23A0A3B422490B1C00CAC295 /* ContentPrivate.json in Resources */ = {isa = PBXBuildFile; fileRef = 23A0A3B322490B1C00CAC295 /* ContentPrivate.json */; };
 		23C744342200B11900FB554A /* About.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5316E96621FFED620053832E /* About.swift */; };
 		23C744392200B12000FB554A /* Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A2C21F18BF400D5C8C0 /* Bot.swift */; };
@@ -722,7 +721,6 @@
 		238E39DA22030E39002677AC /* Feed_cryptix2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Feed_cryptix2.json; sourceTree = "<group>"; };
 		2391BF6F22FC69C5005DE311 /* GoBotBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoBotBridge.h; sourceTree = "<group>"; };
 		2394335122708B8400D56B94 /* Date+millisecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+millisecs.swift"; sourceTree = "<group>"; };
-		239F46E621F8CFE00003BE0A /* DebugFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugFeedViewController.swift; sourceTree = "<group>"; };
 		23A0A3B322490B1C00CAC295 /* ContentPrivate.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ContentPrivate.json; sourceTree = "<group>"; };
 		23C744562200B13F00FB554A /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		23C7445B2200B1EF00FB554A /* KeyValueVote.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueVote.json; sourceTree = "<group>"; };
@@ -1411,7 +1409,6 @@
 		531D0A1121EACBEE008E40A8 /* GoBot */ = {
 			isa = PBXGroup;
 			children = (
-				239F46E621F8CFE00003BE0A /* DebugFeedViewController.swift */,
 				2346ECB6221420E1009A94CB /* GoBot.swift */,
 				2391BF6F22FC69C5005DE311 /* GoBotBridge.h */,
 				2334D04421F7786600AB28E2 /* GoBotInternal.swift */,
@@ -2904,7 +2901,6 @@
 				531D0A1321EACC0A008E40A8 /* GoBotViewController.swift in Sources */,
 				53C2B12C2294E8A50018D0A8 /* AppConfiguration+Keychain.swift in Sources */,
 				5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */,
-				239F46E721F8CFE00003BE0A /* DebugFeedViewController.swift in Sources */,
 				530F019C22DEAD70007EBAE2 /* SplashOnboardingStep.swift in Sources */,
 				531749972370EED800F4C381 /* UIView+Superview.swift in Sources */,
 				0ACE91AE243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift in Sources */,

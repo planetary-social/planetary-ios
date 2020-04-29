@@ -14,7 +14,7 @@ import UIKit
 
 class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UITableViewDataSourcePrefetching {
     
-    var data: PaginatedKeyValueDataProxy = EmptyPaginatedDataProxy()
+    var data: PaginatedKeyValueDataProxy = StaticDataProxy()
 
     func update(source: PaginatedKeyValueDataProxy) {
         self.data = source

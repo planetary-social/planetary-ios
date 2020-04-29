@@ -75,12 +75,17 @@ class ChannelViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.update(with: feed)
+                fatalError("TODO: port to new data source")
+//                self?.update(with: feed) TODO
             }
         }
     }
 
-    private func update(with feed: Feed, animated: Bool = true) {
+    private func refresh() {
+        self.load()
+    }
+
+    private func update(with feed: KeyValues, animated: Bool = true) {
         self.dataSource.keyValues = feed
         self.tableView.forceReload()
     }

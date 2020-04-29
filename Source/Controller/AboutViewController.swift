@@ -91,7 +91,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFeed() {
-        Bots.current.paginatedFeed(identity: self.identity) {
+        Bots.current.feed(identity: self.identity) {
             [weak self] src, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)

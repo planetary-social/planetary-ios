@@ -14,16 +14,15 @@ typealias BlobsAddCompletion = ((BlobIdentifier, Error?) -> Void)
 typealias ContactCompletion = ((Contact?, Error?) -> Void)
 typealias ContactsCompletion = (([Identity], Error?) -> Void)
 typealias ErrorCompletion = ((Error?) -> Void)
-typealias FeedCompletion = ((Feed, Error?) -> Void)
+typealias KeyValuesCompletion = ((KeyValues, Error?) -> Void)
 typealias PaginatedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
-typealias RootsCompletion = ((KeyValues, Error?) -> Void)
 typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias RefreshCompletion = ((Error?, TimeInterval) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
 typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
-typealias ThreadCompletion = ((KeyValue?, KeyValues, Error?) -> Void)
+typealias ThreadCompletion = ((KeyValue?, PaginatedKeyValueDataProxy, Error?) -> Void)
 typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 typealias StatisticsCompletion = ((BotStatistics) -> Void)
@@ -134,38 +133,19 @@ protocol Bot {
     // MARK: Hashtags
 
     func hashtags(completion: @escaping HashtagsCompletion)
-    func posts(with hashtag: Hashtag, completion: @escaping FeedCompletion)
+    func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion)
     
     // MARK: Feed
-
-    /// Returns all the messages of type .post that do not have a root.
-    /// In other words, this returns all the roots for recent threads.
-    /// The `before` and `after` Identifier arguments should be
-    /// used to bound the returned items so that duplicates are
-    /// not included.
-    func recent(newer than: Date,
-                before: MessageIdentifier?,
-                count: Int,
-                wantPrivate: Bool,
-                completion: @escaping RootsCompletion)
-    func recent(older than: Date,
-                after: MessageIdentifier?,
-                count: Int,
-                wantPrivate: Bool,
-                completion: @escaping RootsCompletion)
     
-    
-    // old version
-    func recent(completion: @escaping RootsCompletion)
-
     // everyone's posts
     func everyone(completion: @escaping PaginatedCompletion)
+
+    func recent(completion: @escaping PaginatedCompletion)
     
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.
-    func feed(identity: Identity, completion: @escaping FeedCompletion)
-    func paginatedFeed(identity: Identity, completion: @escaping PaginatedCompletion)
+    func feed(identity: Identity, completion: @escaping PaginatedCompletion)
     
     /// Returns the thread of messages related to the specified message.  The root
     /// of the thread will be returned if it is not the specified message.
@@ -173,10 +153,10 @@ protocol Bot {
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion)
 
     /// Returns all the messages in a feed that mention the active identity.
-    func mentions(completion: @escaping FeedCompletion)
+    func mentions(completion: @escaping PaginatedCompletion)
 
     /// Notifications (unifies mentions, replies, follows) for the active identity.
-    func notifications(completion: @escaping FeedCompletion)
+    func notifications(completion: @escaping KeyValuesCompletion)
 
     // MARK: Blob publishing
 
@@ -202,29 +182,3 @@ protocol Bot {
     var statistics: BotStatistics { get }
 }
 
-// temporary extension to allow compiling without having
-// to FakeBot
-extension Bot {
-
-    func recent(newer than: Date,
-                before to: MessageIdentifier?,
-                count: Int = 100,
-                wantPrivate: Bool,
-                completion: @escaping RootsCompletion) {}
-
-    func recent(older than: Date,
-                after: MessageIdentifier?,
-                count: Int = 100,
-                wantPrivate: Bool,
-                completion: @escaping RootsCompletion) {}
-
-    // lifecycle
-    func resume()  { print("TODO:lifecycle:resume") }
-    func suspend() { print("TODO:lifecycle:suspend") }
-    func exit()    { print("TODO:lifecycle:exit") }
-    
-    
-    func notifications(completion: @escaping FeedCompletion) {
-        print("TODO:notifications")
-    }
-}

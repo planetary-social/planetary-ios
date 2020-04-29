@@ -162,18 +162,15 @@ class HomeViewController: ContentViewController {
     func load(animated: Bool = false) {
         Bots.current.recent() { [weak self] proxy, error in
             Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            
             self?.refreshControl.endRefreshing()
             self?.removeLoadingAnimation()
             AppController.shared.hideProgress()
-         
+             
             if let error = error {
                 self?.alert(error: error)
             } else {
                 self?.update(with: proxy, animated: animated)
             }
-            
         }
     }
     

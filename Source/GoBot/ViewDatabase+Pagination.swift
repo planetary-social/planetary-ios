@@ -18,11 +18,21 @@ protocol PaginatedKeyValueDataProxy {
     func prefetchUpTo(index: Int) -> Void
 }
 
-// just an empty stub
-class EmptyPaginatedDataProxy: PaginatedKeyValueDataProxy {
-    let count: Int = 0
+class StaticDataProxy: PaginatedKeyValueDataProxy {
+    let kvs: KeyValues
+    let count: Int
 
-    func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { return nil }
+    init() {
+        self.kvs = []
+        self.count = 0
+    }
+
+    init(with kvs: KeyValues) {
+        self.kvs = kvs
+        self.count = kvs.count
+    }
+    
+    func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { return self.kvs[index] }
     
     func prefetchUpTo(index: Int) { /* noop */ }
 }

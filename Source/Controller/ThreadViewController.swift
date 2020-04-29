@@ -13,14 +13,16 @@ class ThreadViewController: ContentViewController {
 
     private let post: KeyValue
     private var root: KeyValue?
-    private let dataSource = ThreadTableViewDataSource()
+//    private let dataSource = ThreadTableViewDataSource() TODO: port below to base class of this
+    private let dataSource = KeyValuePaginatedTableViewDataSource()
     private let textViewDelegate = ThreadTextViewDelegate(font: UIFont.verse.reply,
                                                           color: UIColor.text.reply,
                                                           placeholderText: .postAReply,
                                                           placeholderColor: UIColor.text.placeholder)
 
     private var branchKey: Identifier {
-        return self.dataSource.keyValues.last?.key ?? self.rootKey
+        fatalError("TODO: lastKeyForBranching")
+//        return self.dataSource.keyValues.last?.key ?? self.rootKey
     }
 
     private var rootKey: Identifier {
@@ -105,7 +107,7 @@ class ThreadViewController: ContentViewController {
         self.showsTabBarBorder = false
         self.addActions()
         self.replyTextViewBecomeFirstResponder = startReplying
-        self.update(with: keyValue, replies: [])
+        self.update(with: keyValue)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -155,7 +157,22 @@ class ThreadViewController: ContentViewController {
         }
     }
 
-    private func update(with root: KeyValue, replies: KeyValues, animated: Bool = true) {
+    private func refresh() {
+        self.load()
+    }
+
+    private func update(with root: KeyValue) {
+        self.root = root
+
+        self.headerView.update(with: root)
+        self.addNavigationHeaderViewIfNeeded()
+
+        self.rootPostView.update(with: root)
+        self.tableView.tableHeaderView = self.topView
+        self.tableView.tableHeaderView?.layoutIfNeeded()
+    }
+
+    private func update(with root: KeyValue, replies: PaginatedKeyValueDataProxy, animated: Bool = true) {
         self.root = root
 
         self.headerView.update(with: root)
@@ -165,10 +182,10 @@ class ThreadViewController: ContentViewController {
         self.tableView.tableHeaderView = self.topView
         self.tableView.tableHeaderView?.layoutIfNeeded()
 
-        self.dataSource.keyValues = replies.posts.sortedByDateAscending()
+        self.dataSource.update(source: replies)
         self.tableView.forceReload()
         self.scrollIfNecessary(animated: animated)
-        self.interactionView.replyCount = replies.posts.count
+        self.interactionView.replyCount = replies.count
     }
 
 
