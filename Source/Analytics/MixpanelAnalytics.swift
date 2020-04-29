@@ -91,7 +91,6 @@ class MixpanelAnalytics: AnalyticsCore {
         }
         let event = self.eventName(event: event, element: element, name: name)
         Mixpanel.sharedInstance()?.timeEvent(event)
-        UserDefaults.standard.didTrack(event)
     }
 
     // MARK: Lexicon

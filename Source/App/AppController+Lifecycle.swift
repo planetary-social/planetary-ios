@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import UIKit
 
 extension AppController {
 
     func launch() {
         let controller = LaunchViewController()
         self.setRootViewController(controller, animated: false)
-        Timers.pokeTimer.start()
+        Timers.pokeTimers.forEach{$0.start()}
         self.syncPushNotificationsSettings()
     }
 
@@ -24,22 +25,13 @@ extension AppController {
 
     func resume() {
         Bots.current.resume()
-        Timers.pokeTimer.start(fireImmediately: true)
+        Timers.pokeTimers.forEach{$0.start()}
         self.syncPushNotificationsSettings()
-    }
-
-    /// Pokes the bot into doing a sync, but only if logged in, and only if
-    /// not during an onboarding process.
-    func poke() {
-        guard let identity = Bots.current.identity else { return }
-        guard Onboarding.status(for: identity) == .completed else { return }
-        Log.info("Poking the bot into doing a sync")
-        self.loginAndSync()
     }
 
     func suspend() {
         Bots.current.suspend()
-        Timers.pokeTimer.stop()
+        Timers.pokeTimers.forEach{$0.stop()}
         Caches.invalidate()
     }
 

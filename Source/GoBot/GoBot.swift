@@ -191,11 +191,19 @@ class GoBot: Bot {
     // note that dialSomePeers() is called, then the completion is called
     // some time later, this is a workaround until we can figure out how
     // to determine peer connection status and progress
-    func sync(completion: @escaping SyncCompletion) {
-
-        assert(Thread.isMainThread)
-        guard self.bot.isRunning() else { completion(GoBotError.unexpectedFault("bot not started"), 0, 0); return }
-        guard self._isSyncing == false else { completion(nil, 0, 0); return }
+    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+        guard self.bot.isRunning() else {
+            queue.async {
+                completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
+            }
+            return
+        }
+        guard self._isSyncing == false else {
+            queue.async {
+                completion(nil, 0, 0);
+            }
+            return
+        }
 
         self._isSyncing = true
         let elapsed = Date()
@@ -205,9 +213,11 @@ class GoBot: Bot {
             self.bot.dialSomePeers()
             let after = self.repoNumberOfMessages()
             let new = after - before
-            self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,
-                                    numberOfMessages: new,
-                                    completion: completion)
+            queue.async {
+                self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,
+                                        numberOfMessages: new,
+                                        completion: completion)
+            }
         }
     }
 
@@ -239,14 +249,11 @@ class GoBot: Bot {
                                     numberOfMessages: Int,
                                     completion: @escaping SyncCompletion)
     {
-        DispatchQueue.main.async {
-            self._isSyncing = false
-            self._statistics.lastSyncDate = Date()
-            self._statistics.lastSyncDuration = elapsed
-            completion(nil, elapsed, numberOfMessages)
-            NotificationCenter.default.post(name: .didSync, object: nil)
-            Analytics.trackBotDidSync(duration: elapsed, numberOfMessages: numberOfMessages)
-        }
+        self._isSyncing = false
+        self._statistics.lastSyncDate = Date()
+        self._statistics.lastSyncDuration = elapsed
+        completion(nil, elapsed, numberOfMessages)
+        NotificationCenter.default.post(name: .didSync, object: nil)
     }
 
     // MARK: Refresh
@@ -254,23 +261,29 @@ class GoBot: Bot {
     private var _isRefreshing = false
     var isRefreshing: Bool { return self._isRefreshing }
 
-    func refresh(completion: @escaping RefreshCompletion) {
-        assert(Thread.isMainThread)
-        self.internalRefresh(completion: completion)
+    func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
+        self.internalRefresh(load: load, queue: queue, completion: completion)
     }
 
-    private func internalRefresh(completion: @escaping RefreshCompletion) {
-        guard self._isRefreshing == false else { completion(nil, 0); return }
+    private func internalRefresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
+        guard self._isRefreshing == false else {
+            queue.async {
+                completion(nil, 0)
+            }
+            return
+        }
         NotificationCenter.default.post(Notification.didStartViewRefresh())
         self._isRefreshing = true
         let elapsed = Date()
         self.queue.async {
-            self.updateReceive() {
+            self.updateReceive(limit: load.rawValue) {
                 [weak self] error in
-                self?.notifyRefreshComplete(in: -elapsed.timeIntervalSinceNow,
-                                            error: error,
-                                            completion: completion)
-                NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
+                queue.async {
+                    self?.notifyRefreshComplete(in: -elapsed.timeIntervalSinceNow,
+                                                error: error,
+                                                completion: completion)
+                    NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
+                }
             }
         }
     }
@@ -279,14 +292,11 @@ class GoBot: Bot {
                                        error: Error?,
                                        completion: @escaping RefreshCompletion)
     {
-        DispatchQueue.main.async {
-            self._isRefreshing = false
-            self._statistics.lastRefreshDate = Date()
-            self._statistics.lastRefreshDuration = elapsed
-            completion(error, elapsed)
-            NotificationCenter.default.post(name: .didRefresh, object: nil)
-            Analytics.trackBotDidRefresh(duration: elapsed, error: error)
-        }
+        self._isRefreshing = false
+        self._statistics.lastRefreshDate = Date()
+        self._statistics.lastRefreshDuration = elapsed
+        completion(error, elapsed)
+        NotificationCenter.default.post(name: .didRefresh, object: nil)
     }
     
     // MARK: Invites
@@ -335,7 +345,7 @@ class GoBot: Bot {
 
                     // the call happend after the given timeout (refreshDelay)
                     if now.rawValue >= when.rawValue {
-                        self?.internalRefresh() { // do a refresh, then return to the caller
+                        self?.internalRefresh(load: .short, queue: .global(qos: .userInteractive)) { // do a refresh, then return to the caller
                             error, _ in
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
@@ -671,7 +681,7 @@ class GoBot: Bot {
             catch {
                 DispatchQueue.main.async {
                     completion(identifier, nil, error)
-                    self.sync() { _, _, _ in }
+                    self.sync(queue: .global(qos: .background)) { _, _, _ in }
                 }
             }
         }
@@ -852,8 +862,9 @@ class GoBot: Bot {
             }
 
             // we implement real feed delete now, so we will need to trigger a sync to fetch the feed again
+            // TODO: Do we need refresh here
             self.bot.dial(atLeast: 2)
-            self.refresh() {
+            self.refresh(load: .short, queue: .main) {
                 err, _ in
                 Log.optional(err)
                 CrashReporting.shared.reportIfNeeded(error: err)

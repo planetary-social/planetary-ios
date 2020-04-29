@@ -327,37 +327,41 @@ class DebugViewController: DebugTableViewController {
             }
         )]
 
-        settings += [DebugTableViewCellModel(title: "Tap to force a sync",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             actionClosure:
-            {
-                cell in
-                cell.showActivityIndicator()
-                AppController.shared.loginAndSync() {
-                    _ in
-                    cell.hideActivityIndicator()
-                }
-            }
-        )]
-
-        settings += [DebugTableViewCellModel(title: "Sync & refresh timer",
+        settings += [DebugTableViewCellModel(title: "Sync timer",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure:
             {
                 cell in
-                cell.detailTextLabel?.text = "\(Int(Timers.pokeTimer.interval)) secs"
+                cell.detailTextLabel?.text = "\(Int(Timers.syncTimer.interval)) secs"
                 let toggle = UISwitch(frame: .zero)
-                toggle.isOn = Timers.pokeTimer.isRunning
-                toggle.addTarget(self, action: #selector(self.botTimerValueChanged(toggle:)), for: .valueChanged)
+                toggle.isOn = Timers.syncTimer.isRunning
+                toggle.addTarget(self, action: #selector(self.botSyncTimerValueChanged(toggle:)), for: .valueChanged)
                 cell.accessoryView = toggle
             },
                                              actionClosure: nil)]
+        
+        settings += [DebugTableViewCellModel(title: "Refresh timer",
+                                         cellReuseIdentifier: DebugValueTableViewCell.className,
+                                         valueClosure:
+        {
+            cell in
+            cell.detailTextLabel?.text = "\(Int(Timers.refreshTimer.interval)) secs"
+            let toggle = UISwitch(frame: .zero)
+            toggle.isOn = Timers.refreshTimer.isRunning
+            toggle.addTarget(self, action: #selector(self.botRefreshTimerValueChanged(toggle:)), for: .valueChanged)
+            cell.accessoryView = toggle
+        },
+                                         actionClosure: nil)]
 
         return ("Bots", settings, "A forced sync will return immediately if already in progress.")
     }
 
-    @objc private func botTimerValueChanged(toggle: UISwitch) {
-        toggle.isOn ? Timers.pokeTimer.start() : Timers.pokeTimer.stop()
+    @objc private func botSyncTimerValueChanged(toggle: UISwitch) {
+        toggle.isOn ? Timers.syncTimer.start() : Timers.syncTimer.stop()
+    }
+    
+    @objc private func botRefreshTimerValueChanged(toggle: UISwitch) {
+        toggle.isOn ? Timers.refreshTimer.start() : Timers.refreshTimer.stop()
     }
 
     private func operations() -> DebugTableViewController.Settings {

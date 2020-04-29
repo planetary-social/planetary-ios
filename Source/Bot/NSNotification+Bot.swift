@@ -42,7 +42,6 @@ extension Notification {
 extension Notification.Name {
     static let didRefresh = Notification.Name("didRefresh")
     static let didSync = Notification.Name("didSync")
-    static let didSyncAndRefresh = Notification.Name("didSyncAndRefresh")
 }
 
 

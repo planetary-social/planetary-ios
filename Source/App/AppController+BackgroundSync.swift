@@ -10,16 +10,14 @@ import Foundation
 import UIKit
 
 extension AppController {
-
-    /// Defines the constant used to  mark background tasks with a identifier that matches
-    /// the app's Info.plist "Permitted background task scheduler identifiers".
-    static let backgroundTaskIdentifier = "com.planetary.loginAndSync"
     
     /// Defines the constant used to label background task to display in the debugger
     static let backgroundTaskName = "LoginAndSyncTask"
     
     /// Sync the bot asking iOS to wait until the task finishes
+    @available(*, deprecated)
     func loginAndSync(notificationsOnly: Bool = false, completion: ((Int) -> Void)? = nil) {
+        
         let taskName = AppController.backgroundTaskName
         let task = UIApplication.shared.beginBackgroundTask(withName: taskName) {
             // Expiry handler, iOS will call this shortly before ending the task
@@ -56,7 +54,7 @@ extension AppController {
                     UIApplication.shared.endBackgroundTask(task)
                 }
             } else {
-                Bots.current.sync() { _, _, numberOfMessages in
+                Bots.current.sync(queue: .main) { _, _, numberOfMessages in
                     completion?(numberOfMessages)
                     Log.info("\(taskName) ended with \(numberOfMessages) messages")
                     UIApplication.shared.endBackgroundTask(task)
@@ -64,21 +62,5 @@ extension AppController {
             }
         }
     }
-
-    /// Same as `loginAndSync()` but  uses UIBackgroundFetchResult completion instead
-    func backgroundFetch(notificationsOnly: Bool = false, completion: @escaping ((UIBackgroundFetchResult) -> Void)) {
-        CrashReporting.shared.record("Background fetch")
-        self.loginAndSync(notificationsOnly: notificationsOnly) { numberOfMessages in
-            let result = self.backgroundFetchResult(for: numberOfMessages)
-            completion(result)
-        }
-    }
-
-    private func backgroundFetchResult(for numberOfMessages: Int) -> UIBackgroundFetchResult {
-        switch numberOfMessages {
-            case -1:    return .failed
-            case 0:     return .noData
-            default:    return .newData
-        }
-    }
+    
 }

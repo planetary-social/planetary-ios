@@ -11,15 +11,11 @@ import UIKit
 
 class HomeViewController: ContentViewController {
 
+    static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+    
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
         let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newPostButtonTouchUpInside))
-        return item
-    }()
-
-    private lazy var selectPhotoBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-camera")
-        let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(selectPhotoButtonTouchUpInside))
         return item
     }()
 
@@ -32,6 +28,21 @@ class HomeViewController: ContentViewController {
     private let dataSource = PostReplyDataSource()
     private lazy var delegate = PostReplyDelegate(on: self)
     private let prefetchDataSource = PostReplyDataSourcePrefetching()
+    
+    private lazy var floatingRefreshButton: UIButton = {
+        let button = UIButton.forAutoLayout()
+        let titleAttributes = [NSAttributedString.Key.font: UIFont.verse.floatingRefresh,
+                               NSAttributedString.Key.foregroundColor: UIColor.white]
+        let attributedTitle = NSAttributedString(string: "REFRESH", attributes: titleAttributes)
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        button.backgroundColor = UIColor.tint.default
+        button.contentEdgeInsets = .floatingRefreshButton
+        button.addTarget(self,
+                         action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
+                         for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
@@ -126,30 +137,70 @@ class HomeViewController: ContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
+        
+        Layout.centerHorizontally(self.floatingRefreshButton, in: self.view)
+        self.floatingRefreshButton.constrainHeight(to: 32)
+        self.floatingRefreshButton.roundedCorners(radius: 16)
+        self.floatingRefreshButton.constrainTop(toTopOf: self.tableView, constant: 8)
+        
         self.addLoadingAnimation()
         self.load()
         self.showLogoutNoticeIfNeeded()
+        
+        self.registerDidSync()
     }
 
     // MARK: Load and refresh
 
+    func refreshAndLoad(animated: Bool = false) {
+        if HomeViewController.refreshBackgroundTaskIdentifier != .invalid {
+            UIApplication.shared.endBackgroundTask(HomeViewController.refreshBackgroundTaskIdentifier)
+        }
+        
+        Log.info("Pull down to refresh triggering a medium refresh")
+        let refreshOperation = RefreshOperation()
+        refreshOperation.refreshLoad = .medium
+        
+        let taskName = "RefreshPullDownToRefresh"
+        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
+            // Expiry handler, iOS will call this shortly before ending the task
+            refreshOperation.cancel()
+            UIApplication.shared.endBackgroundTask(HomeViewController.refreshBackgroundTaskIdentifier)
+            HomeViewController.refreshBackgroundTaskIdentifier = .invalid
+        }
+        HomeViewController.refreshBackgroundTaskIdentifier = taskIdentifier
+        
+        refreshOperation.completionBlock = { [weak self] in
+            Log.optional(refreshOperation.error)
+            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
+            
+            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
+                UIApplication.shared.endBackgroundTask(taskIdentifier)
+                HomeViewController.refreshBackgroundTaskIdentifier = .invalid
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.load(animated: animated)
+            }
+        }
+        AppController.shared.operationQueue.addOperation(refreshOperation)
+    }
+    
     func load(animated: Bool = false) {
-        Bots.current.refresh() { error, _ in
+        Bots.current.recent() { [weak self] roots, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            Bots.current.recent() { [weak self] roots, error in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                self?.refreshControl.endRefreshing()
-                self?.removeLoadingAnimation()
-                AppController.shared.hideProgress()
-             
-                if let error = error {
-                    self?.alert(error: error)
-                } else {
-                    self?.update(with: roots, animated: animated)
-                }
+            
+            self?.refreshControl.endRefreshing()
+            self?.removeLoadingAnimation()
+            AppController.shared.hideProgress()
+         
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.update(with: roots, animated: animated)
             }
+            
         }
     }
     
@@ -195,7 +246,21 @@ class HomeViewController: ContentViewController {
 
     @objc func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.load()
+        self.refreshAndLoad()
+    }
+    
+    @objc func floatingRefreshButtonDidTouchUpInside(button: UIButton) {
+        self.refreshControl.beginRefreshing()
+        self.refreshControl.sendActions(for: .valueChanged)
+        self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height),
+                                        animated: true)
+        UIView.animate(withDuration: 1.0,
+                       delay: 0,
+                       usingSpringWithDamping: CGFloat(0.20),
+                       initialSpringVelocity: CGFloat(6.0),
+                       options: UIView.AnimationOptions.allowUserInteraction,
+                       animations: { self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0) },
+                       completion: { _ in self.floatingRefreshButton.isHidden = true })
     }
 
     @objc func newPostButtonTouchUpInside() {
@@ -207,13 +272,6 @@ class HomeViewController: ContentViewController {
         controller.addDismissBarButtonItem()
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
-    }
-
-    @objc func selectPhotoButtonTouchUpInside() {
-        let controller = ContentViewController(scrollable: false, title: .select)
-        controller.addDismissBarButtonItem()
-        let navController = UINavigationController(rootViewController: controller)
-        AppController.shared.present(navController, animated: true, completion: nil)
     }
     
     @objc func directoryButtonTouchUpInside() {
@@ -228,6 +286,18 @@ class HomeViewController: ContentViewController {
     override func didBlockUser(notification: NSNotification) {
         guard let identity = notification.object as? Identity else { return }
         self.tableView.deleteKeyValues(by: identity)
+    }
+    
+    override func didSync(notification: NSNotification) {
+//        self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0)
+//        self.floatingRefreshButton.isHidden = false
+//        UIView.animate(withDuration: 1.0,
+//                       delay: 0,
+//                       usingSpringWithDamping: CGFloat(0.20),
+//                       initialSpringVelocity: CGFloat(6.0),
+//                       options: UIView.AnimationOptions.allowUserInteraction,
+//                       animations: { self.floatingRefreshButton.transform = .identity },
+//                       completion: { _ in })
     }
 }
 

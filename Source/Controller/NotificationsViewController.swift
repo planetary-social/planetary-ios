@@ -53,12 +53,12 @@ class NotificationsViewController: ContentViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AppController.shared.promptForPushNotificationsIfNotDetermined(in: self)
-        self.deeregisterDidSyncAndRefresh()
+        self.deeregisterDidSync()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.registerDidSyncAndRefresh()
+        self.registerDidSync()
     }
 
     // MARK: Load and refresh
@@ -80,7 +80,7 @@ class NotificationsViewController: ContentViewController {
     }
 
     func refresh() {
-        Bots.current.refresh() {
+        Bots.current.refresh(load: .medium, queue: .main) {
             _, _ in
             self.load()
         }
@@ -103,21 +103,26 @@ class NotificationsViewController: ContentViewController {
 
     override func registerNotifications() {
         super.registerNotifications()
-        self.registerDidSyncAndRefresh()
+        self.registerDidSync()
     }
 
     override func deregisterNotifications() {
         super.deregisterNotifications()
-        self.deeregisterDidSyncAndRefresh()
+        self.deeregisterDidSync()
     }
 
     /// Refreshes the view,  but only if this is the top controller, not when there are any child
     /// controllers.  The notification will also only be received when the view is not visible,
     /// check out `viewDidAppear()` and `viewDidDisappear()`.  This is because
     /// we don't want the view to be updated while someone is looking/scrolling it.
-    override func didSyncAndRefresh(notification: NSNotification) {
-        guard self.navigationController?.topViewController == self else { return }
-        self.refresh()
+    override func didSync(notification: NSNotification) {
+        DispatchQueue.main.async {
+            guard self.navigationController?.topViewController == self else {
+                return
+            }
+            // TODO: Just say that there are new updates
+            // self.refresh()
+        }
     }
 
     // TODO this won't work because until the data source is updated

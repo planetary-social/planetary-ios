@@ -33,4 +33,22 @@ extension MixpanelAnalytics {
     func trackAppExit() {
         self.track(event: .did, element: .app, name: AnalyticsEnums.Name.exit.rawValue)
     }
+    
+    func trackBackgroundFetch() {
+        self.time(event: .did, element: .app, name: AnalyticsEnums.Name.backgroundFetch.rawValue)
+    }
+    
+    func trackDidBackgroundFetch() {
+        self.track(event: .did, element: .app, name: AnalyticsEnums.Name.backgroundFetch.rawValue)
+    }
+    
+    func trackBackgroundTask() {
+        self.time(event: .did, element: .app, name: AnalyticsEnums.Name.backgroundTask.rawValue)
+    }
+    
+    func trackDidBackgroundTask(taskIdentifier: String) {
+        let params: AnalyticsEnums.Params = ["task_identifier": taskIdentifier]
+        self.track(event: .did, element: .app, name: AnalyticsEnums.Name.backgroundTask.rawValue, params: params)
+    }
+    
 }

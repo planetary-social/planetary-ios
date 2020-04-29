@@ -40,14 +40,23 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
 
-        // do a background sync, refresh then handle the notification
-        AppController.shared.backgroundFetch(notificationsOnly: true) {
-            [weak self] result in
-            Bots.current.refresh() { _, _ in
-                self?.handle(notification: userInfo, in: application.applicationState)
-                completionHandler(result)
+        let syncOperation = SyncOperation()
+        syncOperation.notificationsOnly = true
+        syncOperation.completionBlock = { [weak self] in
+            self?.handle(notification: userInfo, in: application.applicationState)
+            let result: UIBackgroundFetchResult
+            if syncOperation.isCancelled || syncOperation.error != nil {
+                result = .failed
+            } else if syncOperation.newMessages > 0 {
+                result = .newData
+            } else {
+                result = .noData
             }
+            completionHandler(result)
         }
+        
+        let operationQueue = OperationQueue()
+        operationQueue.addOperation(syncOperation)
     }
 
     private func handle(notification: RemoteNotificationUserInfo,
@@ -65,8 +74,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         switch state {
             case .background:
                 self.scheduleLocalNotification(notification)
-                break
-
             default:
                 AppController.shared.received(foregroundNotification: notification)
         }

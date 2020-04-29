@@ -22,6 +22,7 @@ protocol AnalyticsCore {
                element: AnalyticsEnums.Element,
                name: AnalyticsEnums.Name.RawValue,
                params:  AnalyticsEnums.Params?)
+    
 }
 
 extension AnalyticsCore {

@@ -12,5 +12,7 @@ import Foundation
 /// the project.  This struct is intended to capture those timers in a
 /// single accessible place to better understand the number and scope.
 struct Timers {
-    static let pokeTimer = RepeatingTimer(interval: 60, completion: { AppController.shared.poke() })
+    static let syncTimer = RepeatingTimer(interval: 60, completion: { AppController.shared.pokeSync() })
+    static let refreshTimer = RepeatingTimer(interval: 15, completion: { AppController.shared.pokeRefresh() })
+    static let pokeTimers = [syncTimer, refreshTimer]
 }

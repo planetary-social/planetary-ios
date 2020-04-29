@@ -1,0 +1,11 @@
+{
+    "Simulator Target Bundle": "com.planetary.ios",
+    "aps": {
+        "type": "follow",
+        "content-available": 1,
+        "alert": {
+            "body": "Gerard added something new - take a look",
+            "title": "Photos"
+        }
+    }
+}
