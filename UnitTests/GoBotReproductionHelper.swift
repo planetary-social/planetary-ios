@@ -83,7 +83,7 @@ class API_GoBot: XCTestCase {
     
     // make sure view db is uptodate with gosbot repo
     func test03_refresh() {
-        API_GoBot.bot.refresh() {
+        API_GoBot.bot.refresh(load: .short, queue: .main) {
             (err, took) in
             XCTAssertNil(err)
             print("ref1:\(took)")
@@ -91,7 +91,7 @@ class API_GoBot: XCTestCase {
         self.wait(for: 30)
         
         // TODO: retrigger refesh after repair sync
-        API_GoBot.bot.refresh() {
+        API_GoBot.bot.refresh(load: .short, queue: .main) {
             (err, took) in
             XCTAssertNil(err)
             print("ref2:\(took)")
@@ -107,7 +107,7 @@ class API_GoBot: XCTestCase {
     }
 
     func test05_refresh() {
-        API_GoBot.bot.refresh() {
+        API_GoBot.bot.refresh(load: .short, queue: .main) {
             (err, took) in
             XCTAssertNil(err)
         }
@@ -115,7 +115,7 @@ class API_GoBot: XCTestCase {
     }
 
     func test07_refresh() {
-        API_GoBot.bot.refresh() {
+        API_GoBot.bot.refresh(load: .short, queue: .main) {
             (err, took) in
             XCTAssertNil(err)
         }

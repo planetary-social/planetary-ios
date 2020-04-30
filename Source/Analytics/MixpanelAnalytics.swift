@@ -45,6 +45,17 @@ class MixpanelAnalytics: AnalyticsCore {
         }
     }
     
+    func updatePushToken(pushToken: Data?) {
+        guard configured else {
+            return
+        }
+        if let pushToken = pushToken {
+            Mixpanel.sharedInstance()?.people.addPushDeviceToken(pushToken)
+        } else {
+            Mixpanel.sharedInstance()?.people.removeAllPushDeviceTokens()
+        }
+    }
+    
     func forget() {
         Mixpanel.sharedInstance()?.reset()
     }
@@ -77,11 +88,6 @@ class MixpanelAnalytics: AnalyticsCore {
         UserDefaults.standard.didTrack(event)
     }
 
-    /// Mixpanel allows timing between two events of the same name.  We composite the
-    /// event, element and name into a single string for `track()` so we do the same thing
-    /// here.  The oddity is that Mixpanel doesn't allow any additional properties with the time
-    /// call, so `name` needs to be unique if multiple events, like downloading a blob, can
-    /// happen at the same time.  Note that this is Mixpanel specific, and is not in the AnalyticsCore.
     func time(event: AnalyticsEnums.Event,
               element: AnalyticsEnums.Element,
               name: AnalyticsEnums.Name.RawValue)

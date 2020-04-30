@@ -11,7 +11,7 @@ import UIKit
 
 class HomeViewController: ContentViewController {
 
-    static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
@@ -146,12 +146,28 @@ class HomeViewController: ContentViewController {
         self.addLoadingAnimation()
         self.load()
         self.showLogoutNoticeIfNeeded()
-        
-        self.registerDidSync()
     }
 
     // MARK: Load and refresh
-
+    
+    func load(animated: Bool = false) {
+        Bots.current.recent() { [weak self] roots, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
+            self?.refreshControl.endRefreshing()
+            self?.removeLoadingAnimation()
+            AppController.shared.hideProgress()
+         
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.update(with: roots, animated: animated)
+            }
+            
+        }
+    }
+    
     func refreshAndLoad(animated: Bool = false) {
         if HomeViewController.refreshBackgroundTaskIdentifier != .invalid {
             UIApplication.shared.endBackgroundTask(HomeViewController.refreshBackgroundTaskIdentifier)
@@ -161,7 +177,7 @@ class HomeViewController: ContentViewController {
         let refreshOperation = RefreshOperation()
         refreshOperation.refreshLoad = .medium
         
-        let taskName = "RefreshPullDownToRefresh"
+        let taskName = "HomePullDownToRefresh"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
             // Expiry handler, iOS will call this shortly before ending the task
             refreshOperation.cancel()
@@ -184,24 +200,6 @@ class HomeViewController: ContentViewController {
             }
         }
         AppController.shared.operationQueue.addOperation(refreshOperation)
-    }
-    
-    func load(animated: Bool = false) {
-        Bots.current.recent() { [weak self] roots, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            
-            self?.refreshControl.endRefreshing()
-            self?.removeLoadingAnimation()
-            AppController.shared.hideProgress()
-         
-            if let error = error {
-                self?.alert(error: error)
-            } else {
-                self?.update(with: roots, animated: animated)
-            }
-            
-        }
     }
     
     func showLogoutNoticeIfNeeded() {
@@ -288,7 +286,7 @@ class HomeViewController: ContentViewController {
         self.tableView.deleteKeyValues(by: identity)
     }
     
-    override func didSync(notification: NSNotification) {
+    override func didRefresh(notification: NSNotification) {
 //        self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0)
 //        self.floatingRefreshButton.isHidden = false
 //        UIView.animate(withDuration: 1.0,

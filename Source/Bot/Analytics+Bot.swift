@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension MixpanelAnalytics {
+extension AnalyticsCore {
 
     func trackBotRefresh() {
         self.time(event: .did, element: .bot, name: AnalyticsEnums.Name.refresh.rawValue)

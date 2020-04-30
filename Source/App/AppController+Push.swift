@@ -130,6 +130,7 @@ extension AppController {
                 _, _ in
             }
         }
+        Analytics.updatePushToken(pushToken: token)
     }
 
     /// Asks the main view controller to update the notification tab icon.

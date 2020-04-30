@@ -66,6 +66,8 @@ struct AnalyticsEnums {
             case unexpected
         }
 
+        case receive_remote_notification = "receive_remote_notification"
+        
         case notification
         
         case offboarding

@@ -39,34 +39,24 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler(.noData)
             return
         }
-
-        let syncOperation = SyncOperation()
-        syncOperation.notificationsOnly = true
-        syncOperation.completionBlock = { [weak self] in
-            self?.handle(notification: userInfo, in: application.applicationState)
-            let result: UIBackgroundFetchResult
-            if syncOperation.isCancelled || syncOperation.error != nil {
-                result = .failed
-            } else if syncOperation.newMessages > 0 {
-                result = .newData
-            } else {
-                result = .noData
-            }
-            completionHandler(result)
-        }
         
-        let operationQueue = OperationQueue()
-        operationQueue.addOperation(syncOperation)
+        self.handleRemoteNotification(notification: userInfo,
+                                      in: application.applicationState,
+                                      completionHandler: completionHandler)
     }
 
-    private func handle(notification: RemoteNotificationUserInfo,
-                        in state: UIApplication.State)
-    {
+    private func handleRemoteNotification(notification: RemoteNotificationUserInfo,
+                                          in state: UIApplication.State,
+                                          completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         // only supported viewable notifications should be forwarded to the app
         guard notification.isSupported else {
             Log.fatal(.incorrectValue, "Received unsupported remote notification with type: \(notification.rawType)")
+            completionHandler(.noData)
             return
         }
+        
+        Log.info("Handling Remote notification")
+        Analytics.trackDidReceiveRemoteNotification()
 
         // badge is incremented regardless of foreground/background
         UIApplication.shared.applicationIconBadgeNumber += 1
@@ -74,8 +64,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         switch state {
             case .background:
                 self.scheduleLocalNotification(notification)
+                self.handleBackgroundFetch(completionHandler: completionHandler)
             default:
                 AppController.shared.received(foregroundNotification: notification)
+                completionHandler(.newData)
         }
     }
 
@@ -116,7 +108,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void)
     {
-        guard response.actionIdentifier == UNNotificationDefaultActionIdentifier else { return }
+        guard response.actionIdentifier == UNNotificationDefaultActionIdentifier else {
+            completionHandler()
+            return
+        }
         AppController.shared.received(backgroundNotification: response.notification)
+        completionHandler()
     }
 }

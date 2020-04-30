@@ -14,10 +14,15 @@ protocol AnalyticsCore {
 
     func configure()
     func identify(about: About?, network: NetworkKey)
+    func updatePushToken(pushToken: Data?)
     func optIn()
     func optOut()
     func forget()
 
+    func time(event: AnalyticsEnums.Event,
+              element: AnalyticsEnums.Element,
+              name: AnalyticsEnums.Name.RawValue)
+    
     func track(event: AnalyticsEnums.Event,
                element: AnalyticsEnums.Element,
                name: AnalyticsEnums.Name.RawValue,

@@ -51,4 +51,8 @@ extension MixpanelAnalytics {
         self.track(event: .did, element: .app, name: AnalyticsEnums.Name.backgroundTask.rawValue, params: params)
     }
     
+    func trackDidReceiveRemoteNotification() {
+        self.track(event: .did, element: .app, name: AnalyticsEnums.Name.receive_remote_notification.rawValue)
+    }
+    
 }
