@@ -543,9 +543,10 @@ class ViewDatabaseTest: XCTestCase {
             if hashtags.count != 3 {
                 return
             }
-            XCTAssertEqual(hashtags[0].name, "hashtag")
-            XCTAssertEqual(hashtags[1].name, "hello")
-            XCTAssertEqual(hashtags[2].name, "world")
+            // These are shown chronologically
+            XCTAssertEqual(hashtags[0].name, "hello")
+            XCTAssertEqual(hashtags[1].name, "world")
+            XCTAssertEqual(hashtags[2].name, "hashtag")
         } catch {
             XCTFail("\(error)")
         }
