@@ -17,9 +17,9 @@ class ChannelsViewController: ContentViewController {
         let view = UITableView.forVerse()
         view.dataSource = self.dataSource
         view.delegate = self
-        view.estimatedRowHeight = 44
+        view.estimatedRowHeight = 54
         view.refreshControl = self.refreshControl
-        view.rowHeight = 44
+        view.rowHeight = 54
         view.sectionHeaderHeight = 0
         view.separatorColor = UIColor.separator.middle
         view.addSeparatorAsHeaderView()
@@ -130,15 +130,23 @@ fileprivate class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .default, reuseIdentifier: "cell")
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         let hashtag = self.hashtags[indexPath.row]
         cell.accessoryType = .disclosureIndicator
         cell.textLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         cell.textLabel?.text = hashtag.string
         cell.selectionStyle = .none
+        
+        let post_text = (hashtag.count == 1) ? "post" : "posts"
+        let ago = hashtag.timeAgo()
+        
+        cell.detailTextLabel?.text = "\(hashtag.count) \(post_text) last updated \(ago)"
+        
         return cell
     }
 }
+
+//"\(f[0]!)"
 
 extension ChannelsViewController: UITableViewDelegate {
 
