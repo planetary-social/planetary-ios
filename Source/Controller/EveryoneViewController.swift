@@ -12,6 +12,8 @@ import UIKit
 
 class EveryoneViewController: ContentViewController {
     
+    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+    
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
         let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newPostButtonTouchUpInside))
@@ -131,23 +133,53 @@ class EveryoneViewController: ContentViewController {
 
     
     func load(animated: Bool = false) {
-        Bots.current.refresh() { error, _ in
+        Bots.current.everyone() { [weak self] roots, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            Bots.current.everyone() { [weak self] roots, error in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                self?.refreshControl.endRefreshing()
-                self?.removeLoadingAnimation()
-                AppController.shared.hideProgress()
-             
-                if let error = error {
-                    self?.alert(error: error)
-                } else {
-                    self?.update(with: roots, animated: animated)
-                }
+            self?.refreshControl.endRefreshing()
+            self?.removeLoadingAnimation()
+            AppController.shared.hideProgress()
+         
+            if let error = error {
+                self?.alert(error: error)
+            } else {
+                self?.update(with: roots, animated: animated)
             }
         }
+    }
+    
+    func refreshAndLoad(animated: Bool = false) {
+        if EveryoneViewController.refreshBackgroundTaskIdentifier != .invalid {
+            UIApplication.shared.endBackgroundTask(EveryoneViewController.refreshBackgroundTaskIdentifier)
+        }
+        
+        Log.info("Pull down to refresh triggering a medium refresh")
+        let refreshOperation = RefreshOperation()
+        refreshOperation.refreshLoad = .medium
+        
+        let taskName = "EveryonePullDownToRefresh"
+        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
+            // Expiry handler, iOS will call this shortly before ending the task
+            refreshOperation.cancel()
+            UIApplication.shared.endBackgroundTask(EveryoneViewController.refreshBackgroundTaskIdentifier)
+            EveryoneViewController.refreshBackgroundTaskIdentifier = .invalid
+        }
+        EveryoneViewController.refreshBackgroundTaskIdentifier = taskIdentifier
+        
+        refreshOperation.completionBlock = { [weak self] in
+            Log.optional(refreshOperation.error)
+            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
+            
+            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
+                UIApplication.shared.endBackgroundTask(taskIdentifier)
+                EveryoneViewController.refreshBackgroundTaskIdentifier = .invalid
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.load(animated: animated)
+            }
+        }
+        AppController.shared.operationQueue.addOperation(refreshOperation)
     }
     
     
@@ -172,7 +204,7 @@ class EveryoneViewController: ContentViewController {
 
      @objc func refreshControlValueChanged(control: UIRefreshControl) {
          control.beginRefreshing()
-         self.load()
+         self.refreshAndLoad()
      }
 
      @objc func newPostButtonTouchUpInside() {
