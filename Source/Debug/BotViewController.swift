@@ -81,7 +81,7 @@ class BotViewController: DebugTableViewController {
             {
                 [unowned self] cell in
                 cell.showActivityIndicator()
-                self.bot.sync() {
+                self.bot.sync(queue: .main) {
                     [weak self] _, _, _ in
                     cell.hideActivityIndicator()
                     self?.updateSettings()
@@ -100,7 +100,7 @@ class BotViewController: DebugTableViewController {
             {
                 [unowned self] cell in
                 cell.showActivityIndicator()
-                self.bot.refresh() {
+                self.bot.refresh(load: .long, queue: .main) {
                     [weak self] _, _ in
                     cell.hideActivityIndicator()
                     self?.updateSettings()

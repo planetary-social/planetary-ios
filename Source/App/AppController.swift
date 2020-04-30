@@ -13,6 +13,9 @@ class AppController: UIViewController {
 
     static let shared = AppController()
     
+    /// Queue to handle background operations
+    var operationQueue = OperationQueue()
+    
     private var didStartDatabaseProcessingObserver: NSObjectProtocol?
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
     private var didUpdateDatabaseProgressObserver: NSObjectProtocol?

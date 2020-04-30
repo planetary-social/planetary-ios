@@ -153,10 +153,6 @@ class ThreadViewController: ContentViewController {
         }
     }
 
-    private func refresh() {
-        self.load()
-    }
-
     private func update(with root: KeyValue, replies: KeyValues, animated: Bool = true) {
         self.root = root
 
@@ -265,7 +261,7 @@ class ThreadViewController: ContentViewController {
 
     @objc func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refresh()
+        self.load()
     }
 
     @objc private func replyTextViewSwipeDown(gesture: UISwipeGestureRecognizer) {

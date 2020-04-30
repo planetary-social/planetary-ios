@@ -28,4 +28,22 @@ extension UIViewController {
     func didSync(notification: NSNotification) {
         // subclasses are encouraged to override
     }
+    
+    func registerDidRefresh() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didRefresh(notification:)),
+                                               name: .didRefresh,
+                                               object: nil)
+    }
+
+    func deeregisterDidRefresh() {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: .didRefresh,
+                                                  object: nil)
+    }
+
+    @objc
+    func didRefresh(notification: NSNotification) {
+        // subclasses are encouraged to override
+    }
 }

@@ -48,6 +48,10 @@ struct AnalyticsEnums {
         }
 
         case exit
+        
+        case backgroundFetch = "background_fetch"
+        
+        case backgroundTask = "background_task"
 
         case foreground
 
@@ -62,6 +66,8 @@ struct AnalyticsEnums {
             case unexpected
         }
 
+        case receive_remote_notification = "receive_remote_notification"
+        
         case notification
         
         case offboarding

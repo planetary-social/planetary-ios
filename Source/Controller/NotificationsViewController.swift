@@ -11,6 +11,8 @@ import UIKit
 
 class NotificationsViewController: ContentViewController {
 
+    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+    
     private let dataSource = NotificationsTableViewDataSource()
     private lazy var delegate = NotificationsTableViewDelegate(on: self)
 
@@ -53,17 +55,17 @@ class NotificationsViewController: ContentViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         AppController.shared.promptForPushNotificationsIfNotDetermined(in: self)
-        self.deeregisterDidSyncAndRefresh()
+        self.deeregisterDidRefresh()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.registerDidSyncAndRefresh()
+        self.registerDidRefresh()
     }
 
     // MARK: Load and refresh
 
-    func load() {
+    func load(animated: Bool = false) {
         Bots.current.notifications() {
             [weak self] msgs, error in
             Log.optional(error)
@@ -74,16 +76,43 @@ class NotificationsViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.update(with: msgs, animated: false)
+                self?.update(with: msgs, animated: animated)
             }
         }
     }
 
-    func refresh() {
-        Bots.current.refresh() {
-            _, _ in
-            self.load()
+    func refreshAndLoad(animated: Bool = false) {
+        if NotificationsViewController.refreshBackgroundTaskIdentifier != .invalid {
+            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
         }
+        
+        Log.info("Pull down to refresh triggering a medium refresh")
+        let refreshOperation = RefreshOperation()
+        refreshOperation.refreshLoad = .medium
+        
+        let taskName = "NotificationsPullDownToRefresh"
+        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
+            // Expiry handler, iOS will call this shortly before ending the task
+            refreshOperation.cancel()
+            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
+            NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
+        }
+        NotificationsViewController.refreshBackgroundTaskIdentifier = taskIdentifier
+        
+        refreshOperation.completionBlock = { [weak self] in
+            Log.optional(refreshOperation.error)
+            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
+            
+            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
+                UIApplication.shared.endBackgroundTask(taskIdentifier)
+                NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.load(animated: animated)
+            }
+        }
+        AppController.shared.operationQueue.addOperation(refreshOperation)
     }
 
     private func update(with feed: Feed?, animated: Bool = true) {
@@ -96,28 +125,34 @@ class NotificationsViewController: ContentViewController {
 
     @objc func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refresh()
+        self.refreshAndLoad()
     }
 
     // MARK: Notifications
 
     override func registerNotifications() {
         super.registerNotifications()
-        self.registerDidSyncAndRefresh()
+        self.registerDidRefresh()
     }
 
     override func deregisterNotifications() {
         super.deregisterNotifications()
-        self.deeregisterDidSyncAndRefresh()
+        self.deeregisterDidRefresh()
     }
 
     /// Refreshes the view,  but only if this is the top controller, not when there are any child
     /// controllers.  The notification will also only be received when the view is not visible,
     /// check out `viewDidAppear()` and `viewDidDisappear()`.  This is because
     /// we don't want the view to be updated while someone is looking/scrolling it.
-    override func didSyncAndRefresh(notification: NSNotification) {
-        guard self.navigationController?.topViewController == self else { return }
-        self.refresh()
+    override func didRefresh(notification: NSNotification) {
+        DispatchQueue.main.async {
+            guard self.navigationController?.topViewController == self else {
+                return
+            }
+            // TODO: Maybe we want to update the table here
+            // Or show a REFRESH button
+            // self.load()
+        }
     }
 
     // TODO this won't work because until the data source is updated

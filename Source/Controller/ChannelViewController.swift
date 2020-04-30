@@ -72,10 +72,6 @@ class ChannelViewController: ContentViewController {
         }
     }
 
-    private func refresh() {
-        self.load()
-    }
-
     private func update(with feed: Feed, animated: Bool = true) {
         self.dataSource.keyValues = feed
         self.tableView.forceReload()
@@ -85,7 +81,7 @@ class ChannelViewController: ContentViewController {
 
     @objc func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refresh()
+        self.load()
     }
 
     // MARK: Notifications

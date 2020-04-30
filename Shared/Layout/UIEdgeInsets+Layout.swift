@@ -22,6 +22,7 @@ extension UIEdgeInsets {
     static let debugTableViewCell = UIEdgeInsets(top: Layout.verticalSpacing, left: Layout.horizontalSpacing, bottom: -Layout.verticalSpacing, right: -Layout.horizontalSpacing)
 
     static let pillButton = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+    static let floatingRefreshButton = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 30)
 }
 
 extension UIEdgeInsets {

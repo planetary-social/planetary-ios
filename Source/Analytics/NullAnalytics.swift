@@ -11,6 +11,9 @@ import Foundation
 let Analytics = NullAnalytics()
 
 class NullAnalytics: AnalyticsCore {
+    
+    func updatePushToken(pushToken: Data?) { }
+    
 
     var isEnabled: Bool { return false }
 
@@ -22,6 +25,10 @@ class NullAnalytics: AnalyticsCore {
     func optIn() {}
     func optOut() {}
 
+    func time(event: AnalyticsEnums.Event,
+              element: AnalyticsEnums.Element,
+              name: AnalyticsEnums.Name.RawValue) { }
+    
     func track(event: AnalyticsEnums.Event,
                element: AnalyticsEnums.Element,
                name: AnalyticsEnums.Name.RawValue,

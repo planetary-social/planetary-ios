@@ -27,6 +27,13 @@ typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
+enum RefreshLoad: Int, CaseIterable {
+    case tiny = 500
+    case short = 15000
+    case medium = 45000
+    case long = 100000
+}
+
 // Abstract interface to any SSB bot implementation.
 protocol Bot {
 
@@ -55,7 +62,7 @@ protocol Bot {
     // data from the network.  This only updates the local log and requires
     // calling `refresh` to ensure the view database is updated.
     var isSyncing: Bool { get }
-    func sync(completion: @escaping SyncCompletion)
+    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
     func syncNotifications(completion: @escaping SyncCompletion)
@@ -66,7 +73,7 @@ protocol Bot {
     // that `sync` and `refresh` can be called at different intervals, it's just
     // that `refresh` should be called before `recent` if the newest data is desired.
     var isRefreshing: Bool { get }
-    func refresh(completion: @escaping RefreshCompletion)
+    func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion)
 
     // MARK: Login
 

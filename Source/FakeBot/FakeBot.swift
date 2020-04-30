@@ -150,22 +150,26 @@ class FakeBot: Bot {
 
     let isSyncing = false
 
-    func sync(completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
-        completion(nil, 0, 0)
+        queue.async {
+            completion(nil, 0, 0)
+        }
     }
     
     func syncNotifications(completion: @escaping SyncCompletion) {
-        self.sync(completion: completion)
+        self.sync(queue: .main, completion: completion)
       }
 
     // MARK: Refresh
 
     let isRefreshing = false
 
-    func refresh(completion: @escaping RefreshCompletion) {
+    func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
-        completion(nil, 0)
+        queue.async {
+            completion(nil, 0)
+        }
     }
 
     // MARK: Publish

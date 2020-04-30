@@ -17,6 +17,11 @@
 		0A65A635244DEFFA004C48C8 /* NullSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A65A633244DEFDB004C48C8 /* NullSupport.swift */; };
 		0A65A636244DEFFB004C48C8 /* NullSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A65A633244DEFDB004C48C8 /* NullSupport.swift */; };
 		0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */; };
+		0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736B824577451000190F8 /* RefreshOperation.swift */; };
+		0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */; };
+		0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BD2457772B000190F8 /* SyncOperation.swift */; };
+		0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BF24577CB4000190F8 /* LoginOperation.swift */; };
+		0AB736C22458C031000190F8 /* AppController+Poke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736C12458C031000190F8 /* AppController+Poke.swift */; };
 		0ABCA8ED243553CF00D7F39C /* BugsnagCrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8EC243553CF00D7F39C /* BugsnagCrashReporting.swift */; };
 		0ABCA8EE243554D000D7F39C /* NullCrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */; };
 		0ABCA8EF243554D000D7F39C /* NullCrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */; };
@@ -380,7 +385,6 @@
 		535CD37D2267DB4E0039BCF2 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A61E224429C700C57A4B /* Log.swift */; };
 		535CD37F2267F2C60039BCF2 /* ContentCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535CD37E2267F2C60039BCF2 /* ContentCodable.swift */; };
 		535CD3802267F5F90039BCF2 /* ContentCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535CD37E2267F2C60039BCF2 /* ContentCodable.swift */; };
-		535EF5CB23AE89BD0004E492 /* UIViewController+SyncAndRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535EF5CA23AE89BD0004E492 /* UIViewController+SyncAndRefresh.swift */; };
 		536255CF23AAAA30001007D0 /* AnalyticsEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F775228F07D00058D67A /* AnalyticsEnums.swift */; };
 		536255D123AAC5F0001007D0 /* AppDelegate+Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536255D023AAC5F0001007D0 /* AppDelegate+Background.swift */; };
 		536255D323AAC8AD001007D0 /* AppDelegate+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536255D223AAC8AD001007D0 /* AppDelegate+Analytics.swift */; };
@@ -647,6 +651,11 @@
 		0A65A62F244DEC5E004C48C8 /* ZendeskSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZendeskSupport.swift; sourceTree = "<group>"; };
 		0A65A633244DEFDB004C48C8 /* NullSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullSupport.swift; sourceTree = "<group>"; };
 		0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Reset.swift"; sourceTree = "<group>"; };
+		0AB736B824577451000190F8 /* RefreshOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshOperation.swift; sourceTree = "<group>"; };
+		0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
+		0AB736BD2457772B000190F8 /* SyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
+		0AB736BF24577CB4000190F8 /* LoginOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginOperation.swift; sourceTree = "<group>"; };
+		0AB736C12458C031000190F8 /* AppController+Poke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppController+Poke.swift"; sourceTree = "<group>"; };
 		0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullCrashReporting.swift; sourceTree = "<group>"; };
 		0ABCA8EC243553CF00D7F39C /* BugsnagCrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugsnagCrashReporting.swift; sourceTree = "<group>"; };
 		0ABCA8F424366B9700D7F39C /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
@@ -888,7 +897,6 @@
 		535B6A0F237362AE008C248E /* BlockedUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUsersViewController.swift; sourceTree = "<group>"; };
 		535CD3742266901F0039BCF2 /* BotStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotStatistics.swift; sourceTree = "<group>"; };
 		535CD37E2267F2C60039BCF2 /* ContentCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCodable.swift; sourceTree = "<group>"; };
-		535EF5CA23AE89BD0004E492 /* UIViewController+SyncAndRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+SyncAndRefresh.swift"; sourceTree = "<group>"; };
 		536255D023AAC5F0001007D0 /* AppDelegate+Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Background.swift"; sourceTree = "<group>"; };
 		536255D223AAC8AD001007D0 /* AppDelegate+Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Analytics.swift"; sourceTree = "<group>"; };
 		536255D423AB16A6001007D0 /* Date+Holidays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Holidays.swift"; sourceTree = "<group>"; };
@@ -1269,6 +1277,7 @@
 				53211CD92281EB22007FB785 /* AppController+Progress.swift */,
 				53E26C4B230223F8009240B2 /* AppController+Push.swift */,
 				53E341F5224D9FC7002BB5F4 /* AppController+URL.swift */,
+				0AB736C12458C031000190F8 /* AppController+Poke.swift */,
 				5344D82E21C4649700704A34 /* AppDelegate.swift */,
 				5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */,
 				536255D223AAC8AD001007D0 /* AppDelegate+Analytics.swift */,
@@ -1317,6 +1326,9 @@
 				53211CE122836666007FB785 /* MIMEType.swift */,
 				53362F692209108F007264CB /* NetworkKey.swift */,
 				535B6A0D23728049008C248E /* NSNotification+Bot.swift */,
+				0AB736B824577451000190F8 /* RefreshOperation.swift */,
+				0AB736BD2457772B000190F8 /* SyncOperation.swift */,
+				0AB736BF24577CB4000190F8 /* LoginOperation.swift */,
 			);
 			path = Bot;
 			sourceTree = "<group>";
@@ -1348,7 +1360,6 @@
 				535B6A0523712D79008C248E /* UIViewController+Block.swift */,
 				53C966E1236D037000E70689 /* UIViewController+Report.swift */,
 				536255DD23AC4C46001007D0 /* UIViewController+Sync.swift */,
-				535EF5CA23AE89BD0004E492 /* UIViewController+SyncAndRefresh.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1693,6 +1704,7 @@
 				53C422B121C476AF00A314AD /* Debug */,
 				53C422AF21C476AF00A314AD /* Extensions */,
 				531D0A0B21EAADEC008E40A8 /* Layout */,
+				0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2653,6 +2665,7 @@
 				531B92B522CBDDAD005D5255 /* UIView+NSLayoutConstraint.swift in Sources */,
 				53C422AD21C4769900A314AD /* DebugViewController.swift in Sources */,
 				53375F7F231F12E400610932 /* UIViewController+UIAlertController.swift in Sources */,
+				0AB736C22458C031000190F8 /* AppController+Poke.swift in Sources */,
 				5396A62B22445BE900C57A4B /* AppConfiguration.swift in Sources */,
 				5357BD7F23D15471005665AB /* AppDelegate+Repair.swift in Sources */,
 				5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */,
@@ -2663,6 +2676,7 @@
 				53E341FE224FF9EE002BB5F4 /* UIImage+Verse.swift in Sources */,
 				53C9FA2C22FBBC3C00EAC35F /* NSAttributedString+FontColor.swift in Sources */,
 				53A4763B23A3385A003814DC /* Analytics+Offboarding.swift in Sources */,
+				0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */,
 				53EE01F12204C16800DFDF16 /* Post.swift in Sources */,
 				53E341F6224D9FC7002BB5F4 /* AppController+URL.swift in Sources */,
 				530F019122DCEC4E007EBAE2 /* OnboardingStep.swift in Sources */,
@@ -2777,8 +2791,10 @@
 				53AD3FDD22712CE0005228F9 /* KeyValueTableViewDelegate.swift in Sources */,
 				536255DE23AC4C46001007D0 /* UIViewController+Sync.swift in Sources */,
 				23C7443B2200B12000FB554A /* Content.swift in Sources */,
+				0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */,
 				530F01B222DFCEED007EBAE2 /* String+IsValid.swift in Sources */,
 				5376FADC228B9B4900411F5B /* IdentitiesViewController.swift in Sources */,
+				0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */,
 				531EC4122310C9EE001A25AD /* Blob.swift in Sources */,
 				535754FF22694AAA002A6989 /* UnsupportedView.swift in Sources */,
 				53C2B1382295AE080018D0A8 /* Keychain.swift in Sources */,
@@ -2786,7 +2802,6 @@
 				53F1E56721E3C59C007EF3AD /* UIDevice+Localhost.swift in Sources */,
 				530F018F22DCEC08007EBAE2 /* OnboardingStepView.swift in Sources */,
 				53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */,
-				535EF5CB23AE89BD0004E492 /* UIViewController+SyncAndRefresh.swift in Sources */,
 				53BD748623232FB70060E47E /* Blob+UIImage.swift in Sources */,
 				53DF334E239F2A720017566D /* Log+API.swift in Sources */,
 				53BD748A23289B3F0060E47E /* ImageGalleryView.swift in Sources */,
@@ -2851,6 +2866,7 @@
 				53C422BA21C4772D00A314AD /* UIViewController+Debug.swift in Sources */,
 				8D317ECD2357A37C0009E073 /* UIImageView+Fade.swift in Sources */,
 				535754F22268DAB0002A6989 /* BotError.swift in Sources */,
+				0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */,
 				535B6A0623712D79008C248E /* UIViewController+Block.swift in Sources */,
 				53DF335023A069FF0017566D /* Analytics+Bot.swift in Sources */,
 				53362F6A2209108F007264CB /* NetworkKey.swift in Sources */,

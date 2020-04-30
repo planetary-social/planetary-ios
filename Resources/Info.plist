@@ -4,7 +4,8 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.planetary.loginAndSync</string>
+		<string>com.planetary.sync</string>
+		<string>com.planetary.refresh</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -23,7 +24,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>0.9.20</string>
 	<key>CFBundleVersion</key>
-	<string>199</string>
+	<string>200</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

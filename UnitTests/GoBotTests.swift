@@ -83,7 +83,7 @@ class GoBotTests: XCTestCase {
         // make sure we can't sync
         for i in 1...20 {
             let ex = self.expectation(description: "\(#function) cant sync")
-            GoBotTests.shared.sync() {
+            GoBotTests.shared.sync(queue: .main) {
                 err, ts, numberOfMessages in
                 XCTAssertNotNil(err, "try\(i): should get an error")
                 XCTAssertEqual(ts, 0)
@@ -274,7 +274,7 @@ class GoBotTests: XCTestCase {
         }
 
         let ex = self.expectation(description: "\(#function) refresh")
-        GoBotTests.shared.refresh {
+        GoBotTests.shared.refresh(load: .short, queue: .main) {
             err, _ in
             XCTAssertNil(err, "refresh error!")
             ex.fulfill()
@@ -333,7 +333,7 @@ class GoBotTests: XCTestCase {
         let afterUnsupported = GoBotTests.shared.testingPublish(as: "denise", content: Post(text: "after lots of unsupported"))
 
         var ex = self.expectation(description: "\(#function) 1")
-        GoBotTests.shared.refresh {
+        GoBotTests.shared.refresh(load: .short, queue: .main) {
             err, _ in
             XCTAssertNil(err, "refresh error!")
             ex.fulfill()
@@ -342,7 +342,7 @@ class GoBotTests: XCTestCase {
 
         // need two refresh calls to consume the whole batch
         ex = self.expectation(description: "\(#function) 2")
-        GoBotTests.shared.refresh {
+        GoBotTests.shared.refresh(load: .short, queue: .main) {
             err, _ in
             XCTAssertNil(err, "refresh error!")
             ex.fulfill()
@@ -1001,7 +1001,7 @@ class GoBotTests: XCTestCase {
 fileprivate extension GoBot {
     func testRefresh(_ tc: XCTestCase) -> Void {
         let syncExpectation = tc.expectation(description: "Sync")
-        self.sync() {
+        self.sync(queue: .main) {
             error, _, _ in
             XCTAssertNil(error)
             syncExpectation.fulfill()
@@ -1009,7 +1009,7 @@ fileprivate extension GoBot {
         tc.wait(for: [syncExpectation], timeout: 30)
 
         let refreshExpectation = tc.expectation(description: "Refresh")
-        self.refresh() {
+        self.refresh(load: .short, queue: .main) {
             error, _ in
             XCTAssertNil(error, "view refresh failed")
             refreshExpectation.fulfill()
