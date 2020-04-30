@@ -15,7 +15,9 @@ class ChannelViewController: ContentViewController {
     private let dataSource = PostReplyDataSource()
     private lazy var delegate = PostReplyDelegate(on: self)
     private let prefetchDataSource = PostReplyDataSourcePrefetching()
+    
 
+    
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
         view.dataSource = self.dataSource

@@ -149,10 +149,15 @@ protocol Bot {
                 count: Int,
                 wantPrivate: Bool,
                 completion: @escaping RootsCompletion)
-
+    
+    
     // old version
     func recent(completion: @escaping RootsCompletion)
 
+    // everyone's posts
+    func everyone(completion: @escaping RootsCompletion)
+
+    
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.

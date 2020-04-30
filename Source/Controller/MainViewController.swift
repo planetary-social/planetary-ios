@@ -27,6 +27,12 @@ class MainViewController: UITabBarController {
     private let directoryFeatureViewController = FeatureViewController(rootViewController: DirectoryViewController(),
                                                                        tabBarItemImageName: "tab-icon-directory")
 
+    private let everyoneViewController = FeatureViewController(rootViewController: EveryoneViewController(),
+                                                                       tabBarItemImageName: "tab-icon-everyone")
+
+    
+    
+
     // custom separator on the top edge of the tab bar
     private var topBorder: UIView?
 
@@ -38,6 +44,7 @@ class MainViewController: UITabBarController {
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
 
         let controllers = [self.homeFeatureViewController,
+                           self.everyoneViewController,
                            self.notificationsFeatureViewController,
                            self.channelsFeatureViewController,
                            self.directoryFeatureViewController]
