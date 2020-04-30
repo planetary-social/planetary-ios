@@ -13,12 +13,12 @@ class DictionaryCache: Cache {
     private var dictionary: [String: (Date, Any)] = [:]
 
     var count: Int {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         return self.dictionary.count
     }
 
     var estimatedBytes: Int {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         var bytes = 0
         self.dictionary.forEach {
             bytes += self.bytes(for: $0.value.1)
@@ -27,7 +27,7 @@ class DictionaryCache: Cache {
     }
 
     func bytes(for item: Any) -> Int {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         // subclasses should implement
         return 0
     }
@@ -36,14 +36,14 @@ class DictionaryCache: Cache {
     /// If the item is found, the current `TimeInterval` is updated for that item.
     /// This allows `purge()` to correctly clean up items.
     func item(for key: String) -> Any? {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         guard let (_, item) = self.dictionary[key] else { return nil }
         self.update(item, for: key)
         return item
     }
 
     func itemsSortedByDateAscending() -> [(key: String, value: (Date, Any))] {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         let items = self.dictionary.sorted {
             (first: (key: String, value: (Date, Any)), second: (key: String, value: (Date, Any))) in
             return first.value.0 < second.value.0
@@ -52,7 +52,7 @@ class DictionaryCache: Cache {
     }
 
     internal func update(_ item: Any, for key: String) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.dictionary[key] = (Date(), item)
     }
 
@@ -61,12 +61,12 @@ class DictionaryCache: Cache {
     }
 
     func invalidate() {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.dictionary.removeAll()
     }
 
     func invalidateItem(for key: String) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.dictionary.removeValue(forKey: key)
     }
 }

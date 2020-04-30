@@ -32,7 +32,7 @@ class BlobCache: DictionaryCache {
     /// Immediately returns the cached image for the identifier.  This will
     /// not request to load the image from the bot, use `image(for:completion)` instead.
     func image(for identifier: BlobIdentifier) -> UIImage? {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         return self.item(for: identifier) as? UIImage
     }
 
@@ -49,7 +49,7 @@ class BlobCache: DictionaryCache {
     func image(for identifier: BlobIdentifier,
                completion: @escaping UIImageCompletion) -> UIImageCompletionHandle?
     {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
 
         // returns the cached image immediately
         if let image = self.item(for: identifier) as? UIImage {
@@ -289,7 +289,7 @@ class BlobCache: DictionaryCache {
     }
 
     private func didLoadBlob(_ notification: Notification) {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         guard let identifier = notification.blobIdentifier else { return }
         guard self.completions(for: identifier).isEmpty == false else { return }
         self.loadImage(for: identifier)

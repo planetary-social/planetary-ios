@@ -37,7 +37,13 @@ class GoBot: Bot {
     var identity: Identity? { return self._identity }
 
     private let queue: DispatchQueue
-
+    var follows: [FeedIdentifier] = []
+    var withoutPubs: [FeedIdentifier] = []
+    var followedBy: [FeedIdentifier] = []
+    var friends: [Identity] = []
+    var blocks: [FeedIdentifier] = []
+    var anyBlocks: Bool = false
+    
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
     let bot :GoBotInternal
@@ -55,7 +61,7 @@ class GoBot: Bot {
     // MARK: App Lifecycle
 
     func resume()  {
-        Thread.assertIsMainThread()
+        //Thread.assertIsMainThread()
         self.queue.async {
             self.bot.dialSomePeers()
         }
@@ -78,8 +84,6 @@ class GoBot: Bot {
     // MARK: Login/Logout
     
     func createSecret(completion: SecretCompletion) {
-        Thread.assertIsMainThread()
-        
         guard let kp = ssbGenKey() else {
             completion(nil, GoBotError.unexpectedFault("createSecret failed"))
             return
@@ -90,7 +94,6 @@ class GoBot: Bot {
     }
     
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             var err: Error? = nil
             defer {
@@ -152,7 +155,6 @@ class GoBot: Bot {
     }
     
     func logout(completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
         if self._identity == nil {
             DispatchQueue.main.async { completion(BotError.notLoggedIn) }
             return
@@ -167,7 +169,6 @@ class GoBot: Bot {
     // MARK: Sync
     
     func knownPubs(completion: @escaping KnownPubsCompletion) {
-       Thread.assertIsMainThread()
          self.queue.async {
             var err: Error? = nil
             var kps: [KnownPub] = []
@@ -192,8 +193,6 @@ class GoBot: Bot {
     // some time later, this is a workaround until we can figure out how
     // to determine peer connection status and progress
     func sync(completion: @escaping SyncCompletion) {
-
-        assert(Thread.isMainThread)
         guard self.bot.isRunning() else { completion(GoBotError.unexpectedFault("bot not started"), 0, 0); return }
         guard self._isSyncing == false else { completion(nil, 0, 0); return }
 
@@ -212,7 +211,6 @@ class GoBot: Bot {
     }
 
     func syncNotifications(completion: @escaping SyncCompletion) {
-        assert(Thread.isMainThread)
         guard self.bot.isRunning() else { completion(GoBotError.unexpectedFault("bot not started"), 0, 0); return }
         guard self._isSyncing == false else { completion(nil, 0, 0); return }
 
@@ -292,7 +290,6 @@ class GoBot: Bot {
     // MARK: Invites
     
     func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             token.withGoString {
                 goStr in
@@ -311,7 +308,6 @@ class GoBot: Bot {
     private var lastPublishFireTime = DispatchTime.now()
 
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.bot.publish(content) {
                 [weak self] key, error in
@@ -649,8 +645,6 @@ class GoBot: Bot {
     func data(for identifier: BlobIdentifier,
               completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
     {
-        Thread.assertIsMainThread()
-
         guard identifier.isValidIdentifier else {
             completion(identifier, nil, BotError.blobInvalidIdentifier)
             return
@@ -690,7 +684,6 @@ class GoBot: Bot {
     var about: About? { return self._about }
 
     func about(completion: @escaping AboutCompletion) {
-        Thread.assertIsMainThread()
         guard let user = self._identity else {
             completion(nil, BotError.notLoggedIn)
             return
@@ -699,7 +692,6 @@ class GoBot: Bot {
     }
     
     func about(identity: Identity, completion: @escaping AboutCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let a = try self.database.getAbout(for: identity)
@@ -714,7 +706,6 @@ class GoBot: Bot {
     }
 
     func abouts(identities: Identities, completion: @escaping AboutsCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             var abouts: [About] = []
             for identity in identities {
@@ -736,6 +727,8 @@ class GoBot: Bot {
             let contactOrNilIfError = (error == nil ? contact : nil)
             completion(contactOrNilIfError, error)
         }
+        //resetting the in memory cache of follows
+        self.follows=[]
     }
 
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion) {
@@ -746,24 +739,57 @@ class GoBot: Bot {
             let contactOrNilIfError = (error == nil ? contact : nil)
             completion(contactOrNilIfError, error)
         }
+        //resetting the in memory cache of follows
+        self.follows=[]
     }
 
     func follows(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
-        self.queue.async {
-            do {
-                let follows = try self.database.getFollows(feed: identity)
-                let withoutPubs = follows.withoutPubs()
-                DispatchQueue.main.async { completion(withoutPubs, nil) }
-            } catch {
-                DispatchQueue.main.async { completion([], error) }
+        //this should be refactored, i gave up on being clever. - rabble
+        if identity == self.identity {
+            self.queue.async {
+                 if self.follows.isEmpty {
+                     do {
+                         self.follows = try self.database.getFollows(feed: identity)
+                         self.withoutPubs = self.follows.withoutPubs()
+                         DispatchQueue.main.async { completion(self.withoutPubs, nil) }
+                     } catch {
+                         DispatchQueue.main.async { completion([], error) }
+                     }
+                 } else {
+                     DispatchQueue.main.async { completion(self.withoutPubs, nil) }
+                 }
+             }
+        } else {
+            self.queue.async {
+                do {
+                    let follows = try self.database.getFollows(feed: identity)
+                    let withoutPubs = follows.withoutPubs()
+                    DispatchQueue.main.async { completion(withoutPubs, nil) }
+                } catch {
+                    DispatchQueue.main.async { completion([], error) }
+                }
             }
         }
     }
     
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
-        self.queue.async {
+        //this should be refactored, i gave up on being clever. - rabble
+        if identity == self.identity {
+            self.queue.async {
+                if self.followedBy.isEmpty {
+                    do {
+                        let follows: [Identity] = try self.database.followedBy(feed: identity)
+                        let withoutPubs = follows.withoutPubs()
+                        self.followedBy = withoutPubs
+                        DispatchQueue.main.async { completion(self.followedBy, nil) }
+                    } catch {
+                        DispatchQueue.main.async { completion([], error) }
+                    }
+                } else {
+                    DispatchQueue.main.async { completion(self.followedBy, nil) }
+                }
+            }
+        } else {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
                 let withoutPubs = follows.withoutPubs()
@@ -771,29 +797,58 @@ class GoBot: Bot {
             } catch {
                 DispatchQueue.main.async { completion([], error) }
             }
+
         }
     }
     
     func friends(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
-        self.queue.async {
+        if identity == self.identity {
+            self.queue.async {
+                if self.friends.isEmpty {
+                    do {
+                        let who = try self.database.getBidirectionalFollows(feed: identity)
+                        self.friends = who
+                        DispatchQueue.main.async { completion(self.friends, nil) }
+                    } catch {
+                        DispatchQueue.main.async { completion([], error) }
+                    }
+                } else {
+                    DispatchQueue.main.async { completion(self.friends, nil) }
+                }
+            }
+        } else {
             do {
                 let who = try self.database.getBidirectionalFollows(feed: identity)
                 DispatchQueue.main.async { completion(who, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
             }
+
         }
     }
     
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
-        self.queue.async {
+        if identity == self.identity {
+            self.queue.async {
+                if self.blocks.isEmpty && self.anyBlocks  {
+                    do {
+                        let who = try self.database.getBlocks(feed: identity)
+                        self.blocks = who
+                        self.anyBlocks = true
+                        DispatchQueue.main.async { completion(self.blocks, nil) }
+                    } catch {
+                        DispatchQueue.main.async {
+                            completion([], error)
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async { completion(self.blocks, nil) }
+                }
+            }
+        } else {
             do {
                 let who = try self.database.getBlocks(feed: identity)
-                DispatchQueue.main.async {
-                    completion(who, nil)
-                }
+                DispatchQueue.main.async { completion(who, nil) }
             } catch {
                 DispatchQueue.main.async {
                     completion([], error)
@@ -803,7 +858,6 @@ class GoBot: Bot {
     }
     
     func blockedBy(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let who = try self.database.blockedBy(feed: identity)
@@ -841,6 +895,9 @@ class GoBot: Bot {
             completion(ref, nil)
             NotificationCenter.default.post(name: .didBlockUser, object: identity)
         }
+        //resetting the in memory cache of blocks
+        self.blocks=[]
+        self.anyBlocks=false
     }
 
     func unblock(_ identity: Identity, completion: @escaping PublishCompletion) {
@@ -861,12 +918,14 @@ class GoBot: Bot {
                 NotificationCenter.default.post(name: .didUnblockUser, object: identity)
             }
         }
+        //resetting the in memory cache of blocks
+        self.blocks=[]
+        self.anyBlocks=false
     }
 
     // MARK: Feeds
 
     func recent(newer than: Date, count: Int, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.recentPosts(newer: than, limit: count)
@@ -878,7 +937,6 @@ class GoBot: Bot {
     }
     
     func recent(older than: Date, count: Int, wantPrivate: Bool, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.recentPosts(older: than, limit: count)
@@ -891,7 +949,6 @@ class GoBot: Bot {
     
     // old recent
     func recent(completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.recentPosts(limit: 200)
@@ -904,7 +961,6 @@ class GoBot: Bot {
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)
-        Thread.assertIsMainThread()
         self.queue.async {
             if let rootKey = keyValue.value.content.post?.root {
                 do {
@@ -925,7 +981,6 @@ class GoBot: Bot {
     }
 
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.internalThread(rootKey: rootKey, completion: completion)
         }
@@ -946,7 +1001,6 @@ class GoBot: Bot {
     }
 
     func mentions(completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let messages = try self.database.mentions(limit: 1000)
@@ -959,7 +1013,6 @@ class GoBot: Bot {
 
     // TODO consider a different form that returns a tuple of arrays
     func notifications(completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 /* TODO:
@@ -991,7 +1044,6 @@ class GoBot: Bot {
     }
 
     func feed(identity: Identity, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.feed(for: identity)
@@ -1005,7 +1057,6 @@ class GoBot: Bot {
     // MARK: Hashtags
 
     func hashtags(completion: @escaping HashtagsCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 var hashtags = try self.database.hashtags()
@@ -1018,7 +1069,6 @@ class GoBot: Bot {
     }
 
     func posts(with hashtag: Hashtag, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let keyValues = try self.database.messagesForHashtag(name: hashtag.name)
