@@ -906,7 +906,7 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 50)
+                let msgs = try self.database.recentPosts(limit: 200)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error)  }
