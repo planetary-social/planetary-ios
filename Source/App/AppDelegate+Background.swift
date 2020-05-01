@@ -47,10 +47,11 @@ extension AppDelegate {
         UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
     }
     
-    func handleBackgroundFetch(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func handleBackgroundFetch(notificationsOnly: Bool = false, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         Log.info("Handling background fetch")
         Analytics.trackBackgroundFetch()
         let syncOperation = SyncOperation()
+        syncOperation.notificationsOnly = notificationsOnly
 
         let refreshOperation = RefreshOperation()
         refreshOperation.refreshLoad = .short
