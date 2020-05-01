@@ -64,7 +64,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         switch state {
             case .background:
                 self.scheduleLocalNotification(notification)
-                self.handleBackgroundFetch(completionHandler: completionHandler)
+                self.handleBackgroundFetch(notificationsOnly: true, completionHandler: completionHandler)
             default:
                 AppController.shared.received(foregroundNotification: notification)
                 completionHandler(.newData)
