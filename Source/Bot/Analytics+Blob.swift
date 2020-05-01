@@ -20,11 +20,11 @@ extension MixpanelAnalytics {
     
 
     func trackBotDidPublish(_ identifier: BlobIdentifier, numberOfBytes: Int? = nil) {
-        var params: AnalyticsEnums.Params = ["identifier": identifier]
+        var params: AnalyticsEnums.Params = ["identifier": identifier, "blob": AnalyticsEnums.Name.publishBlob.rawValue]
         if let numberOfBytes = numberOfBytes { params["number_of_bytes"] = numberOfBytes }
         self.track(event: .did,
                    element: .bot,
-                   name: AnalyticsEnums.Name.publishBlob.rawValue,
+                   name: "publish_blob",
                    params: params)
     }
 
@@ -35,11 +35,11 @@ extension MixpanelAnalytics {
     }
 
     func trackAppDidLoad(_ identifier: BlobIdentifier, error: DidLoadBlobError? = nil) {
-        var params: AnalyticsEnums.Params = ["identifier": identifier]
+        var params: AnalyticsEnums.Params = ["identifier": identifier, "blob": AnalyticsEnums.Name.loadBlob.rawValue]
         if let error = error { params["error"] = error.rawValue }
         self.track(event: .did,
                    element: .app,
-                   name: AnalyticsEnums.Name.loadBlob.rawValue,
+                   name: "load_blob",
                    params: params)
     }
     
