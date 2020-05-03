@@ -444,9 +444,9 @@ class GoBot: Bot {
                 return (lastRxSeq, 0)
             }
             let diff = Int(Int64(repoStats.messages)-1-lastRxSeq)
-            if diff < 0 {
-                throw GoBotError.unexpectedFault("needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))")
-            }
+            //if diff < 0 {
+            //    throw GoBotError.unexpectedFault("needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))")
+            //}
             
             return (lastRxSeq, diff)
         } catch {

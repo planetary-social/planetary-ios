@@ -48,7 +48,7 @@ class ViewDatabase {
 
     // TODO: use this to trigger fill on update and wipe previous versions
     // https://app.asana.com/0/914798787098068/1151842364054322/f
-    static var schemaVersion: UInt = 20
+    static var schemaVersion: UInt = 2
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
@@ -185,23 +185,29 @@ class ViewDatabase {
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
+
         
-        
-//        db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
             try db.execute(String(contentsOf: schemaV1url))
+            let dumpedSql = Bundle.current.url(forResource: "ViewDatabaseDump.sql", withExtension: nil)!
+            try db.execute(String(contentsOf: dumpedSql))
+
             db.userVersion = 2
+            
+            
+        
         } else if db.userVersion == 1 {
             try db.execute("""
-CREATE INDEX messagekeys_key ON messagekeys(key);
-CREATE INDEX messagekeys_id ON messagekeys(id);
-CREATE INDEX posts_msgrefs on posts (msg_ref);
-CREATE INDEX messages_rxseq on messages (rx_seq);
-CREATE INDEX tangle_id on tangles (id);
-CREATE INDEX contacts_state ON contacts (contact_id, state);
-CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+CREATE INDEX IF NOT EXISTS messagekeys_key ON messagekeys(key);
+CREATE INDEX IF NOT EXISTS messagekeys_id ON messagekeys(id);
+CREATE INDEX IF NOT EXISTS posts_msgrefs on posts (msg_ref);
+CREATE INDEX IF NOT EXISTS messages_rxseq on messages (rx_seq);
+CREATE INDEX IF NOT EXISTS tangle_id on tangles (id);
+CREATE INDEX IF NOT EXISTS contacts_state ON contacts (contact_id, state);
+CREATE INDEX IF NOT EXISTS contacts_state_with_author ON contacts (author_id, contact_id, state);
 """);
             db.userVersion = 2
         }
@@ -1452,6 +1458,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         #endif
 
         var skipped: UInt = 0
+        
         try db.transaction { // also batches writes! helps a lot with perf
             var lastRxSeq: Int64 = -1
             
@@ -1514,7 +1521,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
                     ))
                 } else {
                     do {
-                        try db.run(self.msgs.insert(
+                        try db.run(self.msgs.insert(or: .replace,
                             colRXseq <- lastRxSeq,
                             colMessageID <- msgKeyID,
                             colAuthorID <- authorID,

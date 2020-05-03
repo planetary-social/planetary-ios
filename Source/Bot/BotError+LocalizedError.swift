@@ -28,6 +28,9 @@ extension BotError: LocalizedError {
             return "Invalid identity"
         case .notLoggedIn:
             return "Not logged in"
+        case .alreadyStarted:
+            return "Bot is already running"
+        
         }
     }
     

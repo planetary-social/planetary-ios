@@ -94,6 +94,15 @@ class LaunchViewController: UIViewController {
                 error = nil
             }
             
+            if let botError = error as? BotError, botError == .alreadyStarted {
+                error = nil
+            }
+            
+            if error as? BotError == BotError.alreadyLoggedIn{
+                Log.optional(error)
+            }
+            
+            
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error,
                                                  metadata: ["action": "login-from-launch",
