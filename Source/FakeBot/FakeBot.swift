@@ -120,6 +120,7 @@ class FakeBot: Bot {
 
     let name = "FakeBot"
     let version = "1.0"
+    let logFileUrls: [URL] = []
     
     // MARK: Login
     private var _network: String?

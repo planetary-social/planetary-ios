@@ -41,7 +41,14 @@ class BugsnagCrashReporting: CrashReportingService {
         guard configured else {
             return
         }
-        Bugsnag.notifyError(NSError(domain: "com.planetary.social", code: 408, userInfo: nil))
+        Bugsnag.notifyError(NSError(domain: "com.planetary.social", code: 408, userInfo: nil)) { report in
+            if let log = Log.fileUrls.first, let data = try? Data(contentsOf: log), let string = String(data: data, encoding: .utf8) {
+                report.addMetadata(["app": string], toTabWithName: "logs")
+            }
+            if let log = Bots.current.logFileUrls.first, let data = try? Data(contentsOf: log), let string = String(data: data, encoding: .utf8) {
+                report.addMetadata(["bot": string], toTabWithName: "logs")
+            }
+        }
     }
     
     func record(_ message: String) {
@@ -55,7 +62,14 @@ class BugsnagCrashReporting: CrashReportingService {
         guard configured, let error = error else {
             return
         }
-        Bugsnag.notifyError(error)
+        Bugsnag.notifyError(error) { report in
+            if let log = Log.fileUrls.first, let data = try? Data(contentsOf: log), let string = String(data: data, encoding: .utf8) {
+                report.addMetadata(["app": string], toTabWithName: "logs")
+            }
+            if let log = Bots.current.logFileUrls.first, let data = try? Data(contentsOf: log), let string = String(data: data, encoding: .utf8) {
+                report.addMetadata(["bot": string], toTabWithName: "logs")
+            }
+        }
     }
 
     func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]) {
@@ -64,6 +78,12 @@ class BugsnagCrashReporting: CrashReportingService {
         }
         Bugsnag.notifyError(error) { report in
             report.addMetadata(metadata, toTabWithName: "metadata")
+            if let log = Log.fileUrls.first, let data = try? Data(contentsOf: log), let string = String(data: data, encoding: .utf8) {
+                report.addMetadata(["app": string], toTabWithName: "logs")
+            }
+            if let log = Bots.current.logFileUrls.first, let data = try? Data(contentsOf: log), let string = String(data: data, encoding: .utf8) {
+                report.addMetadata(["bot": string], toTabWithName: "logs")
+            }
         }
     }
     

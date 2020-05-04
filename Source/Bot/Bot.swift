@@ -47,6 +47,9 @@ protocol Bot {
     func suspend()
     func exit()
     
+    // MARK: Logs
+    var logFileUrls: [URL] { get }
+    
     // MARK: Identity
 
     var identity: Identity? { get }
