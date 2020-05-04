@@ -245,13 +245,16 @@ class FakeBot: Bot {
         }
     }
 
-    func everyone(completion: RootsCompletion) {
-    //        let data = Data.fromJSON(resource: "Feed_big.json")
-            let data = Data.fromJSON(resource: "Feed.json")
-            var feed = try? JSONDecoder().decode(Feed.self, from: data)
-            feed?.sort { $0.value.timestamp < $1.value.timestamp }
-            completion(feed ?? [], nil)
+    func everyone(completion: PaginatedCompletion) {
+        let data = Data.fromJSON(resource: "Feed.json")
+        var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
+        feed?.sort { $0.value.timestamp < $1.value.timestamp }
+        if let feed = feed {
+            completion(StaticDataProxy(with: feed), nil)
+        } else {
+            completion(StaticDataProxy(), nil)
         }
+    }
 
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)

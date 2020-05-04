@@ -731,7 +731,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             throw ViewDatabaseError.notOpen
         }
         
-        let qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
+        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
             .order(colClaimedAt.desc)
         
         if onlyFollowed {

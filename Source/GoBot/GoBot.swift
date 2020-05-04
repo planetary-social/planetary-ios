@@ -910,14 +910,15 @@ class GoBot: Bot {
     }
     
     // posts from everyone, not just who you follow
-    func everyone(completion: @escaping FeedCompletion) {
+    func everyone(completion: @escaping PaginatedCompletion) {
         //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.recentPosts(limit: 50, onlyFollowed: false)
-                DispatchQueue.main.async { completion(msgs, nil) }
+                let p = StaticDataProxy(with: msgs)
+                DispatchQueue.main.async { completion(p, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error)  }
+                DispatchQueue.main.async { completion(StaticDataProxy(), error)  }
             }
         }
     }
