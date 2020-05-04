@@ -374,7 +374,21 @@ class DebugViewController: DebugTableViewController {
                                          actionClosure:
         {
             [unowned self] cell in
-            self.shareLogs(cell: cell)
+            let alertController = UIAlertController(title: "Share Logs", message: nil, preferredStyle: .actionSheet)
+            alertController.addAction(UIAlertAction(title: "All files", style: .default, handler: { (_) in
+                self.shareLogs(shouldZip: false, allFiles: true, cell: cell)
+            }))
+            alertController.addAction(UIAlertAction(title: "All files in a ZIP file", style: .default, handler: { (_) in
+                self.shareLogs(shouldZip: true, allFiles: true, cell: cell)
+            }))
+            alertController.addAction(UIAlertAction(title: "Recent files", style: .default, handler: { (_) in
+                self.shareLogs(shouldZip: false, allFiles: false, cell: cell)
+            }))
+            alertController.addAction(UIAlertAction(title: "Recent files in a ZIP file", style: .default, handler: { (_) in
+                self.shareLogs(shouldZip: true, allFiles: false, cell: cell)
+            }))
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alertController: alertController)
         })]
         
         settings += [DebugTableViewCellModel(title: "Simulate onboarding",
@@ -445,16 +459,79 @@ class DebugViewController: DebugTableViewController {
         }
     }
 
-    private func shareLogs(cell: UITableViewCell) {
-        let fileUrls = Log.fileUrls
-        if fileUrls.isEmpty {
-            self.alert(message: "There aren't logs yet.")
-        } else {
-            let activityController = UIActivityViewController(activityItems: Log.fileUrls,
+    private func shareLogs(shouldZip: Bool, allFiles: Bool, cell: UITableViewCell) {
+        let share = { [weak self] (activityItems: [Any]) in
+            let activityController = UIActivityViewController(activityItems: activityItems,
                                                               applicationActivities: nil)
-            self.present(activityController, animated: true)
+            self?.present(activityController, animated: true)
             if let popOver = activityController.popoverPresentationController {
                 popOver.sourceView = cell
+            }
+        }
+        
+        let botFileURLs = Bots.current.logFileUrls
+        let appFileUrls = Log.fileUrls
+        if appFileUrls.isEmpty, botFileURLs.isEmpty {
+            self.alert(message: "There aren't logs yet.")
+        } else if shouldZip {
+            let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+            let url = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            DispatchQueue.global(qos: .background).async {
+                do {
+                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+                    let zipFileURL = temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
+                    let copy = { (appFileURL: URL) throws in
+                        let destFileURL = url.appendingPathComponent(appFileURL.lastPathComponent)
+                        try FileManager.default.copyItem(at: appFileURL, to: destFileURL)
+                    }
+                    
+                    if allFiles {
+                        try appFileUrls.forEach{try copy($0)}
+                        try botFileURLs.forEach{try copy($0)}
+                    } else if let firstAppFileURL = appFileUrls.first, let firstBotFileURL = botFileURLs.first {
+                        try copy(firstAppFileURL)
+                        try copy(firstBotFileURL)
+                    } else if let firstAppFileURL = appFileUrls.first {
+                        try copy(firstAppFileURL)
+                    } else if let firstBotFileURL = botFileURLs.first {
+                        try copy(firstBotFileURL)
+                    } else {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.alert(message: "There aren't logs yet.")
+                        }
+                    }
+                    
+                    let coord = NSFileCoordinator()
+                    var readError: NSError?
+                    coord.coordinate(readingItemAt: url, options: .forUploading, error: &readError) { (zippedURL: URL) -> Void in
+                        do {
+                            try FileManager.default.copyItem(at: zippedURL, to: zipFileURL)
+                        } catch let error {
+                            DispatchQueue.main.async { [weak self] in
+                                self?.alert(error: error)
+                            }
+                        }
+                        DispatchQueue.main.async {
+                            share([zipFileURL])
+                        }
+                    }
+                } catch let error {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.alert(error: error)
+                    }
+                }
+            }
+        } else {
+            if allFiles {
+                share(appFileUrls + botFileURLs)
+            } else if let firstAppFileURL = appFileUrls.first, let firstBotFileURL = botFileURLs.first {
+                share([firstAppFileURL, firstBotFileURL])
+            } else if let firstAppFileURL = appFileUrls.first {
+                share([firstAppFileURL])
+            } else if let firstBotFileURL = botFileURLs.first {
+                share([firstBotFileURL])
+            } else {
+                self.alert(message: "There aren't logs yet.")
             }
         }
     }

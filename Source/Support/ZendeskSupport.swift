@@ -60,6 +60,14 @@ class ZendeskSupport: SupportService {
         let reporter = reporter ?? Identity.notLoggedIn
         let config = RequestUiConfiguration()
         config.tags = tags + [reporter]
+        var attachments = [RequestAttachment]()
+        if let log = Log.fileUrls.first, let data = try? Data(contentsOf: log) {
+            attachments.append(RequestAttachment(filename: log.lastPathComponent, data: data, fileType: .plain))
+        }
+        if let log = Bots.current.logFileUrls.first, let data = try? Data(contentsOf: log) {
+            attachments.append(RequestAttachment(filename: log.lastPathComponent, data: data, fileType: .plain))
+        }
+        config.fileAttachments = attachments
         return RequestUi.buildRequestList(with: [config])
     }
     
@@ -167,9 +175,13 @@ extension ZendeskSupport {
     private func _newTicketViewController(from reporter: Identity? = nil,
                                           subject: SupportSubject = .bugReport,
                                           attachments: [RequestAttachment] = [],
-                                          tags: [String] = []) -> UIViewController? {
-        guard configured else {
-            return nil
+                                          tags: [String] = []) -> UIViewController {
+        var attachments = attachments
+        if let log = Log.fileUrls.first, let data = try? Data(contentsOf: log) {
+            attachments.append(RequestAttachment(filename: log.lastPathComponent, data: data, fileType: .plain))
+        }
+        if let log = Bots.current.logFileUrls.first, let data = try? Data(contentsOf: log) {
+            attachments.append(RequestAttachment(filename: log.lastPathComponent, data: data, fileType: .plain))
         }
         let reporter = reporter ?? Identity.notLoggedIn
         let config = RequestUiConfiguration()

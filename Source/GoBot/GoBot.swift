@@ -35,6 +35,26 @@ class GoBot: Bot {
 
     private var _identity: Identity? = nil
     var identity: Identity? { return self._identity }
+    
+    var logFileUrls: [URL] {
+        let url = URL(fileURLWithPath: self.bot.currentRepoPath.appending("/debug"))
+        guard let urls = try? FileManager.default.contentsOfDirectory(at: url,
+                                                                      includingPropertiesForKeys: [URLResourceKey.creationDateKey],
+                                                                      options: .skipsHiddenFiles) else {
+                                                                        return []
+        }
+        return urls.sorted { (lhs, rhs) -> Bool in
+            let lhsCreationDate = try? lhs.resourceValues(forKeys: [.creationDateKey]).creationDate
+            let rhsCreationDate = try? rhs.resourceValues(forKeys: [.creationDateKey]).creationDate
+            if let lhsCreationDate = lhsCreationDate, let rhsCreationDate = rhsCreationDate {
+                return lhsCreationDate.compare(rhsCreationDate) == .orderedAscending
+            } else if lhsCreationDate == nil {
+                return false
+            } else {
+                return true
+            }
+        }
+    }
 
     private let queue: DispatchQueue
 
