@@ -40,6 +40,7 @@ class RelationshipButton: IconButton {
     typealias ActionData = (title: Text, style: UIAlertAction.Style, action: () -> Void)
 
     override func defaultAction() {
+        Analytics.trackDidTapButton(buttonName: "options")
         self.relationship.load {
             let actionData: [ActionData] = [
                 (.follow,   .default, self.follow),
@@ -94,15 +95,18 @@ class RelationshipButton: IconButton {
     // MARK: Actions
 
     func follow() {
+        Analytics.trackDidSelectAction(actionName: "follow_identity")
+        
         // manually override the image for immediate feedback, assuming success
         // but will be reverted in case of failure
         self.relationship.isFollowing = true
         self.relationship.notifyUpdate()
 
         Bots.current.follow(self.relationship.other) { (contact, error) in
-            if let error = error {
-                let detail = "Failed to follow: \(error)"
-                Log.unexpected(.botError, detail)
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            if error != nil {
+                Analytics.trackDidFollowIdentity()
             }
             self.relationship.load(reload: true) {
                 self.relationship.notifyUpdate()
@@ -112,15 +116,18 @@ class RelationshipButton: IconButton {
     }
 
     func unfollow() {
+        Analytics.trackDidSelectAction(actionName: "unfollow_identity")
+        
         // manually override the image for immediate feedback, assuming success
         // but will be reverted in case of failure
         self.relationship.isFollowing = false
         self.relationship.notifyUpdate()
 
         Bots.current.unfollow(self.relationship.other) { (contact, error) in
-            if let error = error {
-                let detail = "Failed to unfollow: \(error)"
-                Log.unexpected(.botError, detail)
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            if error != nil {
+                Analytics.trackDidUnfollowIdentity()
             }
             self.relationship.load(reload: true) {
                 self.relationship.notifyUpdate()
@@ -130,27 +137,33 @@ class RelationshipButton: IconButton {
     }
 
     func addFriend() {
+        Analytics.trackDidSelectAction(actionName: "add_friend")
         AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement add friend.", cancelTitle: Text.ok.text)
     }
 
     func removeFriend() {
+        Analytics.trackDidSelectAction(actionName: "remove_friend")
         AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement remove friend.", cancelTitle: Text.ok.text)
     }
     
     func copyMessageIdentifier() {
+        Analytics.trackDidSelectAction(actionName: "copy_message_identifier")
         UIPasteboard.general.string = content.key
         AppController.shared.showToast(Text.identifierCopied.text)
     }
 
     func blockUser() {
+        Analytics.trackDidSelectAction(actionName: "block_identity")
         AppController.shared.promptToBlock(self.content.value.author, name: self.otherUserName)
     }
 
     func unblockUser() {
+        Analytics.trackDidSelectAction(actionName: "unblock_identity")
         AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement unblock user.", cancelTitle: Text.ok.text)
     }
 
     func reportUser() {
+        Analytics.trackDidSelectAction(actionName: "report_user")
         guard let controller = Support.shared.newTicketViewController(from: self.relationship.identity, reporting: self.relationship.other, name: self.otherUserName) else {
             AppController.shared.alert(style: .alert,
                                        title: Text.error.text,
@@ -162,6 +175,7 @@ class RelationshipButton: IconButton {
     }
 
     func reportPost() {
+        Analytics.trackDidSelectAction(actionName: "report_post")
         AppController.shared.report(self.content,
                                     in: self.superview(of: UITableViewCell.self),
                                     from: self.relationship.identity)

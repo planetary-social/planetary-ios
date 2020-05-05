@@ -49,6 +49,12 @@ class MenuViewController: UIViewController {
         self.menuView.constrainWidth(to: 300)
         self.load()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Menu")
+        Analytics.trackDidShowScreen(screenName: "menu")
+    }
 
     private func load() {
         guard let about = Bots.current.about else { return }
@@ -60,7 +66,7 @@ class MenuViewController: UIViewController {
 
     private func addActions() {
         self.menuView.profileView.imageView.isUserInteractionEnabled = true
-        self.menuView.profileView.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileButtonTouchUpInside)))
+        self.menuView.profileView.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileViewTouchUpInside)))
         self.menuView.profileButton.addTarget(self, action: #selector(profileButtonTouchUpInside), for: .touchUpInside)
         self.menuView.settingsButton.addTarget(self, action: #selector(settingsButtonTouchUpInside), for: .touchUpInside)
         self.menuView.helpButton.addTarget(self, action: #selector(helpButtonTouchUpInside), for: .touchUpInside)
@@ -71,19 +77,29 @@ class MenuViewController: UIViewController {
         self.close()
     }
 
+    @objc private func profileViewTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "profile")
+        guard let identity = Bots.current.identity else { return }
+        AppController.shared.pushViewController(for: .about, with: identity)
+        self.close()
+    }
+    
     @objc private func profileButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "your_profile")
         guard let identity = Bots.current.identity else { return }
         AppController.shared.pushViewController(for: .about, with: identity)
         self.close()
     }
 
     @objc private func settingsButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "settings")
         self.close() {
             AppController.shared.showSettingsViewController()
         }
     }
 
     @objc private func helpButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "support")
         guard let controller = Support.shared.mainViewController() else {
             AppController.shared.alert(style: .alert,
                                        title: Text.error.text,
@@ -97,6 +113,7 @@ class MenuViewController: UIViewController {
     }
 
     @objc private func reportBugButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "report_bug")
         guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
             AppController.shared.alert(style: .alert,
                                        title: Text.error.text,

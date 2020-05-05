@@ -38,6 +38,8 @@ extension UIViewController {
             AppController.shared.hideProgress()
             if let error = error {
                 self?.alert(error: error)
+            } else {
+                Analytics.trackDidBlockIdentity()
             }
         }
     }

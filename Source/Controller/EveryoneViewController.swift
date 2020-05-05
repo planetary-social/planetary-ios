@@ -131,6 +131,11 @@ class EveryoneViewController: ContentViewController {
         self.load()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Everyone")
+        Analytics.trackDidShowScreen(screenName: "everyone")
+    }
     
     func load(animated: Bool = false) {
         Bots.current.everyone() { [weak self] roots, error in
@@ -208,6 +213,7 @@ class EveryoneViewController: ContentViewController {
      }
 
      @objc func newPostButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "compose")
          let controller = NewPostViewController()
          controller.didPublish = {
              [weak self] post in

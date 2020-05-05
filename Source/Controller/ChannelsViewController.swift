@@ -53,6 +53,8 @@ class ChannelsViewController: ContentViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Channels")
+        Analytics.trackDidShowScreen(screenName: "channels")
         self.deeregisterDidRefresh()
     }
 
@@ -189,6 +191,7 @@ fileprivate class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
 extension ChannelsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        Analytics.trackDidSelectItem(kindName: "channel")
         let controller = ChannelViewController(with: self.dataSource.hashtags[indexPath.row])
         self.navigationController?.pushViewController(controller, animated: true)
     }

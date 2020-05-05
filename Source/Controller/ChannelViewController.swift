@@ -58,6 +58,12 @@ class ChannelViewController: ContentViewController {
         super.viewWillAppear(animated)
         self.load()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Channel")
+        Analytics.trackDidShowScreen(screenName: "channel")
+    }
 
     private func load() {
         Bots.current.posts(with: self.hashtag) {

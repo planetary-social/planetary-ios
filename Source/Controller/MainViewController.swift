@@ -50,12 +50,7 @@ class MainViewController: UITabBarController {
                            self.directoryFeatureViewController]
         self.setViewControllers(controllers, animated: false)
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        CrashReporting.shared.record("Main did appear")
-    }
-
+    
     func setTopBorder(hidden: Bool, animated: Bool = true) {
         let duration = animated ? 0.3 : 0
         UIView.animate(withDuration: duration) {
@@ -118,7 +113,22 @@ extension MainViewController: UITabBarControllerDelegate {
 
         guard let targetIndex = viewControllers?.firstIndex(where: { $0 == viewController }),
               self.selectedIndex == targetIndex else { return true }
-
+        
+        switch targetIndex {
+        case 0:
+            Analytics.trackDidTapTab(tabName: "home")
+        case 1:
+            Analytics.trackDidTapTab(tabName: "everyone")
+        case 2:
+            Analytics.trackDidTapTab(tabName: "notifications")
+        case 3:
+            Analytics.trackDidTapTab(tabName: "channels")
+        case 4:
+            Analytics.trackDidTapTab(tabName: "directory")
+        default:
+            break
+        }
+        
         if let featureVC = viewController as? FeatureViewController,
             featureVC.viewControllers.count == 1,
             let rootVC = featureVC.viewControllers.first as? TopScrollable

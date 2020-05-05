@@ -25,9 +25,7 @@ class PostTextCache: AttributedStringCache {
     }
 
     override func invalidate() {
-        Analytics.trackPurge(.text,
-                             from: (count: self.count, numberOfBytes: self.estimatedBytes),
-                             to: (count: 0, numberOfBytes: self.estimatedBytes))
+        Log.info("Purging with count=\(self.count), estimatedBytes=\(self.estimatedBytes)")
         super.invalidate()
     }
 }

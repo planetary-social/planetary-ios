@@ -63,6 +63,8 @@ class NotificationsViewController: ContentViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Notifications")
+        Analytics.trackDidShowScreen(screenName: "notifications")
         AppController.shared.promptForPushNotificationsIfNotDetermined(in: self)
         self.deeregisterDidRefresh()
     }
@@ -166,6 +168,7 @@ class NotificationsViewController: ContentViewController {
     
     
     @objc func newPostButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "compose")
         let controller = NewPostViewController()
         controller.didPublish = {
             [weak self] post in
@@ -263,11 +266,13 @@ fileprivate class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
     override func tableView(_ tableView: UITableView, didSelect keyValue: KeyValue) {
 
         if keyValue.contentType == .contact {
+            Analytics.trackDidSelectItem(kindName: "identity")
             let controller = AboutViewController(with: keyValue.value.author)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         }
 
         else if keyValue.contentType == .post {
+            Analytics.trackDidSelectItem(kindName: "post")
             let controller = ThreadViewController(with: keyValue)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         }

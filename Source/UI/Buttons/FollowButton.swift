@@ -43,6 +43,8 @@ class FollowButton: PillButton {
             return
         }
 
+        Analytics.trackDidTapButton(buttonName: "follow")
+        
         let shouldFollow = !self.isSelected
 
         func complete() {
@@ -56,19 +58,25 @@ class FollowButton: PillButton {
         AppController.shared.showProgress()
         self.isEnabled = false
         if shouldFollow {
-            Bots.current.follow(relationship.other) {
-                [weak self] contact, error in
-                guard self != nil else { return }
+            Bots.current.follow(relationship.other) { contact, error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if error != nil {
+                    Analytics.trackDidFollowIdentity()
+                }
+                
                 complete()
             }
         } else {
-            Bots.current.unfollow(relationship.other) {
-                [weak self] contact, error in
-                guard self != nil else { return }
+            Bots.current.unfollow(relationship.other) { contact, error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if error != nil {
+                    Analytics.trackDidUnfollowIdentity()
+                }
+                
                 complete()
             }
         }

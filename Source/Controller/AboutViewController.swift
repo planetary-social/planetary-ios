@@ -60,6 +60,12 @@ class AboutViewController: ContentViewController {
                                                                  action: #selector(didPressCopyIdentifierIcon))
 
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show About")
+        Analytics.trackDidShowScreen(screenName: "about")
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -175,6 +181,7 @@ class AboutViewController: ContentViewController {
     }
 
     @objc private func editPhotoButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "update_avatar")
         self.imagePicker.present(openCameraInSelfieMode: true) {
             [unowned self] image in
             guard let uiimage = image else {
@@ -191,9 +198,12 @@ class AboutViewController: ContentViewController {
             return
         }
 
+        Analytics.trackDidTapButton(buttonName: "share")
+        
         var actions = [UIAlertAction]()
 
         let copy = UIAlertAction(title: Text.copyPublicIdentifier.text, style: .default) { _ in
+            Analytics.trackDidSelectAction(actionName: "copy_profile_identifier")
             UIPasteboard.general.string = identity
             AppController.shared.showToast(Text.identifierCopied.text)
         }
@@ -201,6 +211,8 @@ class AboutViewController: ContentViewController {
 
         if let publicLink = identity.publicLink {
             let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { [weak self] _ in
+                Analytics.trackDidSelectAction(actionName: "share_profile")
+                
                 let activityController = UIActivityViewController(activityItems: [publicLink],
                                                                   applicationActivities: nil)
                 self?.present(activityController, animated: true)
@@ -243,6 +255,7 @@ class AboutViewController: ContentViewController {
                         AppController.shared.hideProgress()
                         self?.alert(error: error)
                     } else {
+                        Analytics.trackDidUpdateAvatar()
                         Bots.current.about { (newAbout, error) in
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
@@ -263,6 +276,8 @@ class AboutViewController: ContentViewController {
     }
 
     private func didPressEdit() {
+        Analytics.trackDidTapButton(buttonName: "update_profile")
+        
         guard let about = self.about else { return }
         let controller = EditAboutViewController(with: about)
         controller.saveCompletion = {
@@ -275,6 +290,7 @@ class AboutViewController: ContentViewController {
                     AppController.shared.hideProgress()
                     self?.alert(error: error)
                 } else {
+                    Analytics.trackDidUpdateProfile()
                     Bots.current.about { (newAbout, error) in
                         Log.optional(error)
                         CrashReporting.shared.reportIfNeeded(error: error)
@@ -293,6 +309,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func didTapFollowing() {
+        Analytics.trackDidTapButton(buttonName: "following")
         let controller = ContactsViewController(title: .followingShortCount,
                                                 identity: self.identity,
                                                 identities: self.followingIdentities)
@@ -300,6 +317,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func didTapFollowedBy() {
+        Analytics.trackDidTapButton(buttonName: "followed_by")
         let controller = ContactsViewController(title: .followedByShortCount,
                                                 identity: self.identity,
                                                 identities: self.followedByIdentities)
@@ -333,17 +351,5 @@ fileprivate class AboutPostView: KeyValueView {
 
     override func update(with keyValue: KeyValue) {
         self.view.update(with: keyValue)
-    }
-}
-
-extension AboutViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let uiimage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
-            return
-        }
-        self.publishProfilePhoto(uiimage) {
-            picker.dismiss(animated: true)
-        }
     }
 }

@@ -29,7 +29,8 @@ class LaunchViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        CrashReporting.shared.record("Launch did appear")
+        CrashReporting.shared.record("Did Show Launch")
+        Analytics.trackDidShowScreen(screenName: "launch")
         self.launch()
     }
 

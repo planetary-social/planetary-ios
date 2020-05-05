@@ -79,6 +79,12 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             AppController.shared.hideProgress()
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Directory")
+        Analytics.trackDidShowScreen(screenName: "directory")
+    }
 
     private func load(completion: @escaping () -> Void) {
         VerseAPI.directory(includeMe: false) { [weak self] people, error in
@@ -123,6 +129,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
 extension DirectoryViewController: UISearchResultsUpdating, UISearchBarDelegate {
 
     func updateSearchResults(for searchController: UISearchController) {
+        Analytics.trackDidTapSearchbar(searchBarName: "directory")
         self.filter = searchController.searchBar.text ?? ""
     }
 

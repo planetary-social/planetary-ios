@@ -34,10 +34,6 @@ class NullAnalytics: AnalyticsCore {
                name: AnalyticsEnums.Name.RawValue,
                params:  AnalyticsEnums.Params?) {}
 
-    func trackPurge(_ cache: AnalyticsEnums.Name.Cache,
-                    from: (count: Int, numberOfBytes: Int),
-                    to: (count: Int, numberOfBytes: Int)) {}
-
     func trackOnboardingStart() {}
 
     func trackOnboardingEnd() {}

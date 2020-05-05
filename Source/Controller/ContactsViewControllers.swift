@@ -35,6 +35,12 @@ class ContactsViewController: ContentViewController, AboutTableViewDelegate {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Contacts")
+        Analytics.trackDidShowScreen(screenName: "contacts")
+    }
 
     func reload() {
         self.tableView.reloadData()
