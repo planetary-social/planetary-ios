@@ -18,6 +18,12 @@ class SettingsViewController: DebugTableViewController {
         self.navigationItem.title = Text.settings.text
         self.addDismissBarButtonItem()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Settings")
+        Analytics.trackDidShowScreen(screenName: "settings")
+    }
 
     internal override func updateSettings() {
         self.settings = [self.directory(),

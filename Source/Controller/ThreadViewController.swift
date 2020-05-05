@@ -131,9 +131,11 @@ class ThreadViewController: ContentViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Post")
+        Analytics.trackDidShowScreen(screenName: "post")
         self.replyTextViewBecomeFirstResponderIfNecessary()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         headerView.removeFromSuperview()
@@ -272,7 +274,7 @@ class ThreadViewController: ContentViewController {
 
     func didPressPostButton() {
         guard let text = self.replyTextView.textView.attributedText, text.length > 0 else { return }
-        CrashReporting.shared.record("Post Button Tapped")
+        Analytics.trackDidTapButton(buttonName: "reply")
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         AppController.shared.showProgress()
         Bots.current.publish(post) { [weak self] key, error in
@@ -282,6 +284,7 @@ class ThreadViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
+                Analytics.trackDidReply()
                 self?.replyTextView.clear()
                 self?.replyTextView.resignFirstResponder()
                 self?.onNextUpdateScrollToPostWithKeyValueKey = key

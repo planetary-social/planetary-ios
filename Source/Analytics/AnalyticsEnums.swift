@@ -12,24 +12,29 @@ struct AnalyticsEnums {
 
     enum Event: String, CaseIterable {
         case did
-        case load
-        case log
-        case publish
-        case purge
         case tap
         case time
         case view
+        case select
+        case show
+        
+        case publish
     }
 
     enum Element: String, CaseIterable {
         case api
         case app
-        case blob
         case bot
         case button
-        case cache
-        case os         // OS = operating system
         case screen
+        case tab
+        case action
+        case searchBar = "search_bar"
+        case item
+        
+        case profile
+        case identity
+        case post
     }
 
     enum Name: String, CaseIterable {
@@ -56,8 +61,6 @@ struct AnalyticsEnums {
         case foreground
 
         case launch
-        
-        case loadBlob = "load_blob"
 
         enum Log: String, CaseIterable {
             case error
@@ -72,8 +75,6 @@ struct AnalyticsEnums {
         
         case offboarding
         case onboarding
-
-        case publishBlob = "publish_blob"
 
         case refresh
 

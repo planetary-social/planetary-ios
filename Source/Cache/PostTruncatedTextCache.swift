@@ -63,11 +63,8 @@ class PostTruncatedTextCache: AttributedStringCache {
         self.prefill(markdowns)
     }
 
-    /// Adds analytics to the underlying `invalidate()` call.
     override func invalidate() {
-        Analytics.trackPurge(.truncatedText,
-                             from: (count: self.count, numberOfBytes: self.estimatedBytes),
-                             to: (count: 0, numberOfBytes: self.estimatedBytes))
+        Log.info("Purging with count=\(self.count), estimatedBytes=\(self.estimatedBytes)")
         super.invalidate()
     }
 }

@@ -635,7 +635,6 @@ class GoBot: Bot {
             self.bot.blobsAdd(data: data) {
                 identifier, error in
                 DispatchQueue.main.async {
-                    Analytics.trackBotDidPublish(identifier, numberOfBytes: data.count)
                     completion(identifier, error)
                 }
             }

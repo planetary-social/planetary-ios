@@ -151,6 +151,12 @@ class HomeViewController: ContentViewController {
         self.load()
         self.showLogoutNoticeIfNeeded()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Home")
+        Analytics.trackDidShowScreen(screenName: "home")
+    }
 
     // MARK: Load and refresh
     
@@ -266,6 +272,7 @@ class HomeViewController: ContentViewController {
     }
 
     @objc func newPostButtonTouchUpInside() {
+        Analytics.trackDidTapButton(buttonName: "compose")
         let controller = NewPostViewController()
         controller.didPublish = {
             [weak self] post in

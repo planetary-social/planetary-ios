@@ -33,6 +33,12 @@ class BlobViewController: ContentViewController {
         Layout.fill(view: self.contentView, with: self.imageView)
         self.update()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Blob")
+        Analytics.trackDidShowScreen(screenName: "blob")
+    }
 
     private func update() {
         Caches.blobs.image(for: self.blob) {

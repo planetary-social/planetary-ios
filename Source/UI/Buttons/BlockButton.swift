@@ -46,6 +46,8 @@ class BlockButton: PillButton {
             assertionFailure("button action was called, but no relationship is setup yet.")
             return
         }
+        
+        Analytics.trackDidTapButton(buttonName: "block")
 
         let shouldBlock = !self.isSelected
 
@@ -60,19 +62,25 @@ class BlockButton: PillButton {
         self.isEnabled = false
 
         if shouldBlock {
-            Bots.current.block(relationship.other) {
-                _, error in
+            Bots.current.block(relationship.other) { _, error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if error != nil {
+                    Analytics.trackDidBlockIdentity()
+                }
+                
                 complete()
             }
-        }
-
-        else {
-            Bots.current.unblock(relationship.other) {
-                _, error in
+        } else {
+            Bots.current.unblock(relationship.other) { _, error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if error != nil {
+                    Analytics.trackDidUnblockIdentity()
+                }
+                
                 complete()
             }
         }

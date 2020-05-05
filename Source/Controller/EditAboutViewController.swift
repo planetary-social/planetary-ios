@@ -48,6 +48,8 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Edit About")
+        Analytics.trackDidShowScreen(screenName: "edit_about")
         self.aboutView.becomeFirstResponder()
     }
 
@@ -60,6 +62,7 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
     var saveCompletion: SaveCompletion?
 
     @objc func save() {
+        Analytics.trackDidTapButton(buttonName: "save")
         self.aboutView.resignFirstResponders()
         let name = self.aboutView.nameView.textView.text
         let description = self.aboutView.bioView.textView.text

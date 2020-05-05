@@ -65,6 +65,8 @@
 		0AD00E7723FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */; };
 		0AD8D635240EFF8800D87A95 /* RedeemInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */; };
+		0AF9E0982461B3BB00910575 /* Analytics+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0972461B3BB00910575 /* Analytics+UI.swift */; };
+		0AF9E09A2461E92100910575 /* Analytics+Conversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0992461E92100910575 /* Analytics+Conversions.swift */; };
 		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
@@ -376,7 +378,6 @@
 		5357BD7B23CEB798005665AB /* DebugAnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5357BD7A23CEB798005665AB /* DebugAnalyticsViewController.swift */; };
 		5357BD7D23CFD0B9005665AB /* UserDefaults+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5357BD7C23CFD0B9005665AB /* UserDefaults+Analytics.swift */; };
 		5357BD7F23D15471005665AB /* AppDelegate+Repair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */; };
-		53594CC32395CBF4004C7F6C /* Analytics+Blob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53594CC22395CBF3004C7F6C /* Analytics+Blob.swift */; };
 		535B6A0623712D79008C248E /* UIViewController+Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0523712D79008C248E /* UIViewController+Block.swift */; };
 		535B6A0A2372360F008C248E /* UIViewController+TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A092372360F008C248E /* UIViewController+TopViewController.swift */; };
 		535B6A0C237243E4008C248E /* UINavigationController+Remove.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0B237243E4008C248E /* UINavigationController+Remove.swift */; };
@@ -556,7 +557,6 @@
 		53E34200225000D4002BB5F4 /* UIViewController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E341FF225000D4002BB5F4 /* UIViewController+Keyboard.swift */; };
 		53E34202225008FE002BB5F4 /* Notification+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E34201225008FE002BB5F4 /* Notification+Keyboard.swift */; };
 		53EAB3912398692000DF5530 /* AvatarStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EAB3902398692000DF5530 /* AvatarStackView.swift */; };
-		53EAB3932399C45000DF5530 /* Analytics+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EAB3922399C45000DF5530 /* Analytics+Cache.swift */; };
 		53EAB394239ABA2200DF5530 /* BlobCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533EDBDF2385F3B1008B3565 /* BlobCache.swift */; };
 		53EAB395239AC1C100DF5530 /* UIImage+AverageColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533EDBF12389B587008B3565 /* UIImage+AverageColor.swift */; };
 		53EAB396239AC1D400DF5530 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A632224836E800C57A4B /* UIColor+Hex.swift */; };
@@ -688,6 +688,8 @@
 		0AD8D62F240D9D9400D87A95 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
 		0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePubsViewController.swift; sourceTree = "<group>"; };
 		0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedeemInviteViewController.swift; sourceTree = "<group>"; };
+		0AF9E0972461B3BB00910575 /* Analytics+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+UI.swift"; sourceTree = "<group>"; };
+		0AF9E0992461E92100910575 /* Analytics+Conversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Conversions.swift"; sourceTree = "<group>"; };
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
@@ -891,7 +893,6 @@
 		5357BD7A23CEB798005665AB /* DebugAnalyticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAnalyticsViewController.swift; sourceTree = "<group>"; };
 		5357BD7C23CFD0B9005665AB /* UserDefaults+Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Analytics.swift"; sourceTree = "<group>"; };
 		5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Repair.swift"; sourceTree = "<group>"; };
-		53594CC22395CBF3004C7F6C /* Analytics+Blob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Blob.swift"; sourceTree = "<group>"; };
 		535B6A0523712D79008C248E /* UIViewController+Block.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Block.swift"; sourceTree = "<group>"; };
 		535B6A092372360F008C248E /* UIViewController+TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+TopViewController.swift"; sourceTree = "<group>"; };
 		535B6A0B237243E4008C248E /* UINavigationController+Remove.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Remove.swift"; sourceTree = "<group>"; };
@@ -1040,7 +1041,6 @@
 		53E341FF225000D4002BB5F4 /* UIViewController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Keyboard.swift"; sourceTree = "<group>"; };
 		53E34201225008FE002BB5F4 /* Notification+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Keyboard.swift"; sourceTree = "<group>"; };
 		53EAB3902398692000DF5530 /* AvatarStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarStackView.swift; sourceTree = "<group>"; };
-		53EAB3922399C45000DF5530 /* Analytics+Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Cache.swift"; sourceTree = "<group>"; };
 		53EAB399239B106900DF5530 /* CachesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachesViewController.swift; sourceTree = "<group>"; };
 		53EE01F32204F66200DFDF16 /* Secret.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secret.swift; sourceTree = "<group>"; };
 		53EE01F52204FFC400DFDF16 /* SecretTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretTests.swift; sourceTree = "<group>"; };
@@ -1315,7 +1315,6 @@
 		531A8A2B21F18BE000D5C8C0 /* Bot */ = {
 			isa = PBXGroup;
 			children = (
-				53594CC22395CBF3004C7F6C /* Analytics+Blob.swift */,
 				53DF334F23A069FF0017566D /* Analytics+Bot.swift */,
 				531A8A2C21F18BF400D5C8C0 /* Bot.swift */,
 				53C966E3236D074700E70689 /* Bot+Blobs.swift */,
@@ -1429,7 +1428,6 @@
 		533EDBDE2385F3B1008B3565 /* Cache */ = {
 			isa = PBXGroup;
 			children = (
-				53EAB3922399C45000DF5530 /* Analytics+Cache.swift */,
 				533EDBE12385F3B1008B3565 /* AttributedStringCache.swift */,
 				533EDBDF2385F3B1008B3565 /* BlobCache.swift */,
 				533EDBE02385F3B1008B3565 /* Cache.swift */,
@@ -1806,6 +1804,8 @@
 				5314EF6322EA2ABE0065D02A /* NullLog.swift */,
 				5314EF6122EA2AA40065D02A /* OSLog.swift */,
 				5357BD7C23CFD0B9005665AB /* UserDefaults+Analytics.swift */,
+				0AF9E0972461B3BB00910575 /* Analytics+UI.swift */,
+				0AF9E0992461E92100910575 /* Analytics+Conversions.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -2820,7 +2820,6 @@
 				53C422B621C476B000A314AD /* UserDefaults+Debug.swift in Sources */,
 				539246DA22A82F9000D01EEC /* API.swift in Sources */,
 				0AD00E7023FB3C02006BF017 /* Environment.swift in Sources */,
-				53594CC32395CBF4004C7F6C /* Analytics+Blob.swift in Sources */,
 				8DB042022355ECC6006AC35B /* AboutTableViewDataSource.swift in Sources */,
 				53E34200225000D4002BB5F4 /* UIViewController+Keyboard.swift in Sources */,
 				5319258022F3A09C00B44FA3 /* NotificationCellView.swift in Sources */,
@@ -2828,7 +2827,6 @@
 				535754FB22694A2E002A6989 /* KeyValueTableViewCell.swift in Sources */,
 				0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */,
 				53211CE92284B9F5007FB785 /* AppConfigurationViewController.swift in Sources */,
-				53EAB3932399C45000DF5530 /* Analytics+Cache.swift in Sources */,
 				535B6A0E23728049008C248E /* NSNotification+Bot.swift in Sources */,
 				53C422B821C476B000A314AD /* DebugTableViewCell.swift in Sources */,
 				531587BB22A18C280004E2B1 /* Onboarding+Migrate.swift in Sources */,
@@ -2847,6 +2845,7 @@
 				5372175322FD11B3008A760A /* Bool+YesOrNo.swift in Sources */,
 				2334D04521F7786600AB28E2 /* GoBotInternal.swift in Sources */,
 				5363A23622B05B3D009154B7 /* PubAPI.swift in Sources */,
+				0AF9E09A2461E92100910575 /* Analytics+Conversions.swift in Sources */,
 				23E8805E22F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				5306F776228F07D00058D67A /* AnalyticsEnums.swift in Sources */,
 				530F01A822DEAE3F007EBAE2 /* ContactsOnboardingStep.swift in Sources */,
@@ -2894,6 +2893,7 @@
 				53E26C6F230CC88B009240B2 /* UIDevice+Simulator.swift in Sources */,
 				531B92C022CE7CF8005D5255 /* UITableView+VisibleIndexPath.swift in Sources */,
 				53AD3FDB2271131B005228F9 /* UIImage+Round.swift in Sources */,
+				0AF9E0982461B3BB00910575 /* Analytics+UI.swift in Sources */,
 				531EC40C230F6B9E001A25AD /* DebugPostsViewController.swift in Sources */,
 				0A65A62E244DEB65004C48C8 /* SupportService.swift in Sources */,
 				530F01AE22DEAE86007EBAE2 /* DoneOnboardingStep.swift in Sources */,

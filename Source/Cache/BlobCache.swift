@@ -70,8 +70,6 @@ class BlobCache: DictionaryCache {
     }
 
     private func loadImage(for identifier: BlobIdentifier) {
-
-        Analytics.trackLoad(identifier)
         
         Bots.current.data(for: identifier) {
             [weak self] identifier, data, error in
@@ -79,7 +77,6 @@ class BlobCache: DictionaryCache {
 
             // wait if blob unavailable
             if me.blobUnavailable(error, for: identifier) {
-                Analytics.trackAppDidLoad(identifier, error: .notAvailable)
                 return
             }
 
@@ -87,14 +84,12 @@ class BlobCache: DictionaryCache {
             // will be requested again if necessary
             guard let data = data, data.isEmpty == false else {
                 me.forgetCompletions(for: identifier)
-                Analytics.trackAppDidLoad(identifier, error: .emptyData)
                 return
             }
 
             // forget if blob is not an image
             guard let image = UIImage(data: data) else {
                 me.forgetCompletions(for: identifier)
-                Analytics.trackAppDidLoad(identifier, error: .notImageData)
                 return
             }
 
@@ -102,8 +97,6 @@ class BlobCache: DictionaryCache {
             me.update(image, for: identifier)
             me.didLoad(image, for: identifier)
             me.purge()
-            Analytics.trackAppDidLoad(identifier)
-            Analytics.trackDidLoad(identifier)
         }
     }
 
@@ -246,9 +239,7 @@ class BlobCache: DictionaryCache {
 
             // done if below minimum bytes
             if self.bytes < self.minNumberOfBytes {
-                Analytics.trackPurge(.blob,
-                                     from: from,
-                                     to: to)
+                Log.info("Purging with count=\(from.count), bytes=\(from.numberOfBytes)")
                 return
             }
         }
@@ -263,9 +254,7 @@ class BlobCache: DictionaryCache {
 
     /// Resets the number of bytes and clears all cached items.
     override func invalidate() {
-        Analytics.trackPurge(.blob,
-                             from: (count: self.count, numberOfBytes: self.bytes),
-                             to: (count: 0, numberOfBytes: 0))
+        Log.info("Purging with count=\(self.count), bytes=\(self.bytes)")
         self.bytes = 0
         super.invalidate()
     }
