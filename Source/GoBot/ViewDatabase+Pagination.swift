@@ -111,8 +111,10 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
 
             // notify calls to keyValueBy that happend to soon
             for (idx, lateCompletions) in proxy.inflight {
-                if idx > newCount-1 { // handle calls to keyValueBy() for data right after the prefetch window
+                // handle calls to keyValueBy() for data right after the prefetch window
+                if idx > newCount-1 {
                     proxy.prefetchUpTo(index: idx)
+                    print("WARNING: prefetching again for \(idx)!")
                     continue
                 }
                 let kv = proxy.msgs[idx]
@@ -121,7 +123,10 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
                 }
                 proxy.inflight.removeValue(forKey: idx)
             }
-            proxy.inflight = [:]
+            if moreMessages.count == 0 {
+                print("expected to prefetch(\(diff):\(current)) more messages but got none - clearning inflight")
+                proxy.inflight = [:]
+            }
             proxy.inflightSema.signal()
         }
     }
