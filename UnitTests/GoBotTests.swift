@@ -321,7 +321,7 @@ class GoBotTests: XCTestCase {
     }
 
     // MARK: various safty checks
-    func Xtest111_skip_unsupported_messages() {
+    func test111_skip_unsupported_messages() {
         let currentCount = GoBotTests.shared.statistics.repo.lastReceivedMessage
 
         let n = 6000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
@@ -509,7 +509,6 @@ class GoBotTests: XCTestCase {
         
     }
 
-    /*
     // MARK: threads
     func test140_threads_simple() {
         let posts = [
@@ -1042,7 +1041,6 @@ class GoBotTests: XCTestCase {
         self.wait(for: [ex4], timeout: 10)
         
     }
- */
 
     // MARK: TODOS
 
