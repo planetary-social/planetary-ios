@@ -273,11 +273,16 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
     }
     
     // helper to get some counts for pagination
-    func statsForRootPosts() throws -> Int {
+    func statsForRootPosts(onlyFollowed: Bool = false) throws -> Int {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        return try db.scalar(self.posts.filter(colIsRoot == true).count)
+        var qry = self.posts.filter(colIsRoot == true)
+        if onlyFollowed {
+            let qryWithAuthors = qry.join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
+            qry = try self.filterOnlyFollowedPeople(qry: qryWithAuthors)
+        }
+        return try db.scalar(qry.count)
     }
 
     // posts for a feed

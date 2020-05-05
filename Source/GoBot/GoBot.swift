@@ -922,9 +922,6 @@ class GoBot: Bot {
             }
         }
     }
-    
-
-    
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)

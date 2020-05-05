@@ -73,7 +73,7 @@ class RecentViewKeyValueSource: KeyValueSource {
 
     init(with vdb: ViewDatabase) throws {
         self.view = vdb
-        self.total = try vdb.statsForRootPosts()
+        self.total = try vdb.statsForRootPosts(onlyFollowed: true)
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
