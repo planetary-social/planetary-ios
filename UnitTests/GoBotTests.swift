@@ -16,7 +16,7 @@ fileprivate let botTestsKey = Secret(from: """
 fileprivate let botTestNetwork = NetworkKey(base64: "4vVhFHLFHeyutypUO842SyFd5jRIVhAyiZV29ftnKSU=")!
 fileprivate let botTestHMAC = HMACKey(base64: "1MQuQUGsRDyMyrFQQRdj8VVsBwn/t0bX7QQRQisMWjY=")!
 
-fileprivate let publishManyCount = 0
+fileprivate let publishManyCount = 25
 
 class GoBotTests: XCTestCase {
 
@@ -143,7 +143,7 @@ class GoBotTests: XCTestCase {
     }
 
     // TODO: turn me into a benchmark
-    func Xtest008_PublishMany() {
+    func test008_PublishMany() {
         for i in 1...publishManyCount {
             let ex = self.expectation(description: "publish \(i)")
             GoBotTests.shared.publish(content: Post(text: "hello test \(i)")) {
@@ -413,7 +413,7 @@ class GoBotTests: XCTestCase {
     }
 
     func test131_recent_post_by_not_followed() {
-        _ = GoBotTests.shared.testingPublish(
+        let newRef = GoBotTests.shared.testingPublish(
             as: "alice",
             content: Post(text: "hello, world!"))
 
@@ -424,6 +424,18 @@ class GoBotTests: XCTestCase {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, publishManyCount+1)
+            if msgs.count > publishManyCount {
+                msgs.prefetchUpTo(index: msgs.count+10)
+                sleep(2)
+                for i in 0...msgs.count-1 {
+                    if let kv = msgs.keyValueBy(index: i) {
+                        XCTAssertFalse(kv.key == newRef, "found message from unfollowed person")
+                        print("\(i):\(kv.key)")
+                    } else {
+                        XCTFail("\(i): not available?!")
+                    }
+                }
+            }
             rex.fulfill()
         }
         self.wait(for: [rex], timeout: 10)

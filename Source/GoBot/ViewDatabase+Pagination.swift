@@ -121,13 +121,13 @@ class PaginatedFeedDataProxy: PaginatedKeyValueDataProxy {
     }
 
     func keyValueBy(index: Int) -> KeyValue? {
-        if index >= self.count { fatalError("FeedDataProxy out-of-bounds") }
+        if index >= self.count { fatalError("FeedDataProxy #\(index) out-of-bounds") }
         guard index < self.msgs.count else { return nil }
         return self.msgs[index]
     }
 
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? {
-        if index >= self.count { fatalError("FeedDataProxy out-of-bounds") }
+        if index >= self.count { fatalError("FeedDataProxy #\(index) out-of-bounds") }
         if index > self.msgs.count-1 {
             self.inflightSema.wait()
             var forIdx = self.inflight[index] ?? []
