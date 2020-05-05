@@ -44,8 +44,8 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
 
 extension ViewDatabase {
     // returns a pagination proxy for the home (or recent) view
-    func paginated() throws -> (PaginatedKeyValueDataProxy) {
-        let src = try RecentViewKeyValueSource(with: self)
+    func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
+        let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
         return try PaginatedFeedDataProxy(with: src)
     }
 
@@ -71,13 +71,17 @@ class RecentViewKeyValueSource: KeyValueSource {
 
     let total: Int
 
-    init(with vdb: ViewDatabase) throws {
+    // home or explore view?
+    private let onlyFollowed: Bool
+
+    init(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws {
         self.view = vdb
-        self.total = try vdb.statsForRootPosts(onlyFollowed: true)
+        self.total = try vdb.statsForRootPosts(onlyFollowed: onlyFollowed)
+        self.onlyFollowed = onlyFollowed
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        return try self.view.recentPosts(limit: limit, offset: offset)
+        return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
     }
 }
 
