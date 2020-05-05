@@ -772,7 +772,7 @@ class GoBotTests: XCTestCase {
                 return
             }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.all.contains { return $0.key == whoopsRef })
+            XCTAssertTrue(msgs.getAllMessages().contains { return $0.key == whoopsRef })
         }
         self.wait(for: [ex5], timeout: 10)
         
@@ -833,7 +833,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { ex.fulfill() }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.all.contains { return $0.key == ughMsg })
+            XCTAssertTrue(msgs.getAllMessages().contains { return $0.key == ughMsg })
         }
         self.wait(for: [ex], timeout: 10)
         
@@ -854,7 +854,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { exGone.fulfill() }
             XCTAssertNil(err)
-            XCTAssertFalse(msgs.all.contains { return $0.key == ughMsg })
+            XCTAssertFalse(msgs.getAllMessages().contains { return $0.key == ughMsg })
         }
         self.wait(for: [exGone], timeout: 10)
         
@@ -925,7 +925,7 @@ class GoBotTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replyCount+1, replies.count) // one new post
-            XCTAssertTrue(replies.all.contains { kv in
+            XCTAssertTrue(replies.getAllMessages().contains { kv in
                 return kv.key == offseniveRef
             })
             exThread.fulfill()
@@ -971,7 +971,7 @@ class GoBotTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replyCount, replies.count)
-            XCTAssertFalse(replies.all.contains { return $0.key == offseniveRef })
+            XCTAssertFalse(replies.getAllMessages().contains { return $0.key == offseniveRef })
             exThreadGone.fulfill()
         }
         self.wait(for: [exThreadGone], timeout: 10)
@@ -1183,4 +1183,31 @@ fileprivate extension UIImage {
     guard let cgImage = image?.cgImage else { return nil }
     self.init(cgImage: cgImage)
   }
+}
+
+fileprivate extension PaginatedKeyValueDataProxy {
+    func getAllMessages() -> KeyValues {
+        self.prefetchUpTo(index: self.count)
+
+        // wait for prefetch
+        let done = DispatchSemaphore(value: 1)
+        _ = self.keyValueBy(index: self.count-1, late: {
+            idx, _ in
+            done.signal()
+            print("prefetch done \(idx)")
+        })
+
+        print("waiting for prefetch")
+        done.wait()
+
+        var kvs = KeyValues()
+        for i in 0...self.count-1 {
+            guard let kv = self.keyValueBy(index: i) else {
+                XCTFail("failed to get item \(i)")
+                return []
+            }
+            kvs.append(kv)
+        }
+        return kvs
+    }
 }

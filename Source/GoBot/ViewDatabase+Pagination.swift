@@ -19,20 +19,11 @@ protocol PaginatedKeyValueDataProxy {
 
     // notify the proxy to fetch more messages (up to and including index)
     func prefetchUpTo(index: Int) -> Void
-
-    #if DEBUG
-    // only for Testing!!
-    var all: KeyValues { get }
-    #endif
 }
 
 class StaticDataProxy: PaginatedKeyValueDataProxy {
     let kvs: KeyValues
     let count: Int
-
-    #if DEBUG
-    var all: KeyValues { return self.kvs }
-    #endif
 
     init() {
         self.kvs = []
@@ -49,24 +40,6 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
     func keyValueBy(index: Int) -> KeyValue? { return self.kvs[index] }
 
     func prefetchUpTo(index: Int) { /* noop */ }
-}
-
-extension ViewDatabase {
-    // returns a pagination proxy for the home (or recent) view
-    func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
-        return try PaginatedFeedDataProxy(with: src)
-    }
-
-    func paginated(thread msg: MessageIdentifier) throws -> (PaginatedKeyValueDataProxy) {
-        guard msg.isValidIdentifier else { throw GoBotError.unexpectedFault("invalid message identifier")}
-        throw GoBotError.unexpectedFault("TODO:paginated thread")
-    }
-
-    func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedFeedDataProxy(with: src)
-    }
 }
 
 // abastract the data retreival for the proxy
@@ -127,10 +100,6 @@ class PaginatedFeedDataProxy: PaginatedKeyValueDataProxy {
     private var source: KeyValueSource
     private var msgs: [KeyValue] = []
     
-    #if DEBUG
-    var all: KeyValues { return self.msgs }
-    #endif
-
     init(with src: KeyValueSource) throws {
         self.source = src
         self.count = self.source.total
