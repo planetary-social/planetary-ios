@@ -730,12 +730,12 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
     // returns a pagination proxy for the home (or recent) view
     func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
         let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
-        return try PaginatedFeedDataProxy(with: src)
+        return try PaginatedPrefetchDataProxy(with: src)
     }
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
         let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedFeedDataProxy(with: src)
+        return try PaginatedPrefetchDataProxy(with: src)
     }
 
     // MARK: recent

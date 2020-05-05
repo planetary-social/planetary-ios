@@ -21,6 +21,7 @@ protocol PaginatedKeyValueDataProxy {
     func prefetchUpTo(index: Int) -> Void
 }
 
+// StaticDataProxy only has a fixed set of messages from the start and cant prefetch
 class StaticDataProxy: PaginatedKeyValueDataProxy {
     let kvs: KeyValues
     let count: Int
@@ -42,52 +43,7 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
     func prefetchUpTo(index: Int) { /* noop */ }
 }
 
-// abastract the data retreival for the proxy
-protocol KeyValueSource {
-    var total: Int { get }
-    func retreive(limit: Int, offset: Int) throws -> [KeyValue]
-}
-
-class RecentViewKeyValueSource: KeyValueSource {
-    let view: ViewDatabase
-
-    let total: Int
-
-    // home or explore view?
-    private let onlyFollowed: Bool
-
-    init(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws {
-        self.view = vdb
-        self.total = try vdb.statsForRootPosts(onlyFollowed: onlyFollowed)
-        self.onlyFollowed = onlyFollowed
-    }
-
-    func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
-    }
-}
-
-class FeedKeyValueSource: KeyValueSource {
-    let view: ViewDatabase
-    let feed: FeedIdentifier
-
-    let total: Int
-
-    init(with vdb: ViewDatabase, feed: FeedIdentifier) throws {
-        self.view = vdb
-
-        guard feed.isValidIdentifier else { fatalError("invalid feed handle: \(feed)") }
-        self.feed = feed
-
-        self.total = try self.view.stats(for: self.feed)
-    }
-
-    func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        return try self.view.feed(for: self.feed, limit: limit, offset: offset)
-    }
-}
-
-class PaginatedFeedDataProxy: PaginatedKeyValueDataProxy {
+class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     private let backgroundQueue = DispatchQueue.global(qos: .userInitiated)
 
     // store _late_ completions for when background finishes
@@ -168,5 +124,52 @@ class PaginatedFeedDataProxy: PaginatedKeyValueDataProxy {
             proxy.inflight = [:]
             proxy.inflightSema.signal()
         }
+    }
+}
+
+// MARK: sources
+
+// abastract the data retreival for the proxy
+protocol KeyValueSource {
+    var total: Int { get }
+    func retreive(limit: Int, offset: Int) throws -> [KeyValue]
+}
+
+class RecentViewKeyValueSource: KeyValueSource {
+    let view: ViewDatabase
+
+    let total: Int
+
+    // home or explore view?
+    private let onlyFollowed: Bool
+
+    init(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws {
+        self.view = vdb
+        self.total = try vdb.statsForRootPosts(onlyFollowed: onlyFollowed)
+        self.onlyFollowed = onlyFollowed
+    }
+
+    func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
+        return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
+    }
+}
+
+class FeedKeyValueSource: KeyValueSource {
+    let view: ViewDatabase
+    let feed: FeedIdentifier
+
+    let total: Int
+
+    init(with vdb: ViewDatabase, feed: FeedIdentifier) throws {
+        self.view = vdb
+
+        guard feed.isValidIdentifier else { fatalError("invalid feed handle: \(feed)") }
+        self.feed = feed
+
+        self.total = try self.view.stats(for: self.feed)
+    }
+
+    func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
+        return try self.view.feed(for: self.feed, limit: limit, offset: offset)
     }
 }

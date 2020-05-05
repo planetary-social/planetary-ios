@@ -1188,9 +1188,11 @@ fileprivate extension UIImage {
 fileprivate extension PaginatedKeyValueDataProxy {
     func getAllMessages() -> KeyValues {
         self.prefetchUpTo(index: self.count)
-
-        // wait for prefetch
-        let done = DispatchSemaphore(value: 1)
+        
+        // TODO
+        sleep(5)
+        /* TODO: wait for prefetch
+        let done = DispatchSemaphore(value: 0)
         _ = self.keyValueBy(index: self.count-1, late: {
             idx, _ in
             done.signal()
@@ -1199,15 +1201,17 @@ fileprivate extension PaginatedKeyValueDataProxy {
 
         print("waiting for prefetch")
         done.wait()
+        */
 
         var kvs = KeyValues()
         for i in 0...self.count-1 {
             guard let kv = self.keyValueBy(index: i) else {
-                XCTFail("failed to get item \(i)")
+                XCTFail("failed to get item \(i) of \(self.count)")
                 return []
             }
             kvs.append(kv)
         }
+        XCTAssertEqual(kvs.count, self.count, "did not fetch all messages")
         return kvs
     }
 }
