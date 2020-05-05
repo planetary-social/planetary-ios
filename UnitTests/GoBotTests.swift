@@ -447,7 +447,8 @@ class GoBotTests: XCTestCase {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, publishManyCount+1+1)
-            XCTAssertEqual(msgs[0].value.author, GoBotTests.pubkeys["alice"]!)
+            guard let kv =  msgs.keyValueBy(index: 0) else { XCTFail("no message"); return }
+            XCTAssertEqual(kv.value.author, GoBotTests.pubkeys["alice"]!)
             ex2.fulfill()
         }
         self.wait(for: [ex2], timeout: 10)
@@ -463,8 +464,8 @@ class GoBotTests: XCTestCase {
         GoBotTests.shared.testRefresh(self)
         
         let ex1 = self.expectation(description: "get proxy")
-        var proxy: PaginatedKeyValueDataProxy = EmptyPaginatedDataProxy()
-        GoBotTests.shared.paginatedFeed(identity: GoBotTests.pubkeys["alice"]!) {
+        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        GoBotTests.shared.feed(identity: GoBotTests.pubkeys["alice"]!) {
             p, err in
             XCTAssertNotNil(p)
             XCTAssertNil(err)

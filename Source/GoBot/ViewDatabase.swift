@@ -92,6 +92,7 @@ class ViewDatabase {
     
     private var posts: Table
     private let colText = Expression<String>("text")
+    private let colIsRoot = Expression<Bool>("is_root")
     
     private var post_blobs: Table
     // msg_ref
@@ -276,10 +277,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
-        let allPosts = try db.scalar(self.posts.count)
-        let allReplies = try db.scalar(self.tangles.count)
-        return allPosts - allReplies
+        return try db.scalar(self.posts.filter(colIsRoot == true).count)
     }
 
     // posts for a feed
@@ -289,15 +287,13 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         }
         do {
             let authorID = try self.authorID(from: feed, make: false)
-            let allPosts = try db.scalar(self.msgs
+            let theirRootPosts = try db.scalar(self.posts
+                .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
                 .filter(colAuthorID == authorID)
-                .filter(colMsgType == "post").count)
+                .filter(colIsRoot == true)
+                .count)
 
-            let repliesByAuthor = try db.scalar(self.tangles
-                .join(self.msgs, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
-                .filter(colAuthorID == authorID).count)
-
-            return allPosts - repliesByAuthor
+            return theirRootPosts
         } catch {
             Log.optional(GoBotError.duringProcessing("stats for feed failed", error))
             return 0
@@ -765,8 +761,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         // TODO: this is a very handy query but also used in a lot of places
         // maybe should be split apart into a wrapper like filterOnlyFollowedPeople which is just func(Table) -> Table
         if onlyRoots {
-            let colMaybeRoot = Expression<Int64?>("root")
-            qry = qry.filter(colMaybeRoot == nil)   // only thread-starting posts (no replies)
+            qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
         }
         return qry
     }
@@ -1400,6 +1395,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         
         try db.run(self.posts.insert(
             colMessageRef <- msgID,
+            colIsRoot <- p.root == nil,
             colText <- p.text
         ))
         

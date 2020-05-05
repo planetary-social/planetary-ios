@@ -159,10 +159,12 @@ CREATE TABLE addresses (
 -- mentions of people and artifacts are stored in the mention_ tables
 CREATE TABLE posts (
 msg_ref              integer not null,
+is_root              boolean default false,
 text                 text,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
 CREATE INDEX posts_msgrefs on posts (msg_ref);
+CREATE INDEX posts_roots on posts (is_root);
 
 -- reply trees aka tangles
 -- a message in a thread (or hopefully soon gatherings) references the first message (root)

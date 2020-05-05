@@ -14,6 +14,9 @@ protocol PaginatedKeyValueDataProxy {
     // late get's called with the KeyValue if prefetch didn't finish in time
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue?
     
+    // TODO: i'm unable to make the above late: optional
+    func keyValueBy(index: Int) -> KeyValue?
+
     // notify the proxy to fetch more messages (up to and including index)
     func prefetchUpTo(index: Int) -> Void
 }
@@ -34,6 +37,8 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
     
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { return self.kvs[index] }
     
+    func keyValueBy(index: Int) -> KeyValue? { return self.kvs[index] }
+
     func prefetchUpTo(index: Int) { /* noop */ }
 }
 
@@ -113,6 +118,12 @@ class PaginatedFeedDataProxy: PaginatedKeyValueDataProxy {
         self.source = src
         self.count = self.source.total
         self.msgs = try self.source.retreive(limit: 10, offset: 0)
+    }
+
+    func keyValueBy(index: Int) -> KeyValue? {
+        if index >= self.count { fatalError("FeedDataProxy out-of-bounds") }
+        guard index < self.msgs.count else { return nil }
+        return self.msgs[index]
     }
 
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? {
