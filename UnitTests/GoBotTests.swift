@@ -678,8 +678,12 @@ class GoBotTests: XCTestCase {
                 XCTFail("expected at least one message. got \(msgs.count)")
                 return
             }
-            XCTAssertNotNil(msgs[0].key, privReply)
-            XCTAssertEqual(msgs[0].value.author, GoBotTests.pubkeys["barbara"]!)
+            guard let kv0 = msgs.keyValueBy(index: 0) else {
+                XCTFail("failed to get msg[0]")
+                return
+            }
+            XCTAssertNotNil(kv0.key, privReply)
+            XCTAssertEqual(kv0.value.author, GoBotTests.pubkeys["barbara"]!)
         }
         self.wait(for: [ex], timeout: 10)
     }
@@ -768,7 +772,7 @@ class GoBotTests: XCTestCase {
                 return
             }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.contains { return $0.key == whoopsRef })
+            XCTAssertTrue(msgs.all.contains { return $0.key == whoopsRef })
         }
         self.wait(for: [ex5], timeout: 10)
         
@@ -829,7 +833,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { ex.fulfill() }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.contains { return $0.key == ughMsg })
+            XCTAssertTrue(msgs.all.contains { return $0.key == ughMsg })
         }
         self.wait(for: [ex], timeout: 10)
         
@@ -850,7 +854,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { exGone.fulfill() }
             XCTAssertNil(err)
-            XCTAssertFalse(msgs.contains { return $0.key == ughMsg })
+            XCTAssertFalse(msgs.all.contains { return $0.key == ughMsg })
         }
         self.wait(for: [exGone], timeout: 10)
         
@@ -921,7 +925,7 @@ class GoBotTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replyCount+1, replies.count) // one new post
-            XCTAssertTrue(replies.contains { kv in
+            XCTAssertTrue(replies.all.contains { kv in
                 return kv.key == offseniveRef
             })
             exThread.fulfill()
@@ -967,7 +971,7 @@ class GoBotTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replyCount, replies.count)
-            XCTAssertFalse(replies.contains { return $0.key == offseniveRef })
+            XCTAssertFalse(replies.all.contains { return $0.key == offseniveRef })
             exThreadGone.fulfill()
         }
         self.wait(for: [exThreadGone], timeout: 10)
@@ -1000,8 +1004,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { ex2.fulfill() }
             XCTAssertNil(err)
-            let keys = msgs.map { return $0.key }
-            XCTAssertEqual(msgs.count, currentCount+1, "keys: \(keys)")
+            XCTAssertEqual(msgs.count, currentCount+1)
         }
         self.wait(for: [ex2], timeout: 10)
 
@@ -1017,10 +1020,15 @@ class GoBotTests: XCTestCase {
                 return
             }
 
-            XCTAssertEqual(msgs[0].key, mistakeRef)
+            guard let kv0 = msgs.keyValueBy(index: 0) else {
+                XCTFail("failed to get msg[0]")
+                return
+            }
+
+            XCTAssertEqual(kv0.key, mistakeRef)
 
             let delContent = DropContentRequest(
-                sequence: UInt(msgs[0].value.sequence),
+                sequence: UInt(kv0.value.sequence),
                     hash: mistakeRef)
             _ = GoBotTests.shared.testingPublish(
                 as: "alice",
