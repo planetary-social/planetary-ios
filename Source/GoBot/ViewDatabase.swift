@@ -203,14 +203,20 @@ class ViewDatabase {
             CREATE INDEX tangle_id on tangles (id);
             CREATE INDEX contacts_state ON contacts (contact_id, state);
             CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+            -- add new column to posts and migrate existing data
             ALTER TABLE posts ADD is_root boolean default false;
             CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+            UPDATE posts set is_root=true;
+            UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
             """);
             db.userVersion = 3
         } else if db.userVersion == 2 {
             try db.execute("""
+            -- add new column to posts and migrate existing data
             ALTER TABLE posts ADD is_root boolean default false;
             CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+            UPDATE posts set is_root=true;
+            UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
             """);
             db.userVersion = 3
         }
