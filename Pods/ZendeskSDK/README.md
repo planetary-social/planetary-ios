@@ -1,4 +1,4 @@
-:warning: *Use of this software is subject to important terms and conditions as set forth in the License file* :warning:
+:warning: *This Repository has been deprecated, please go to [here](https://github.com/zendesk/support_sdk_ios) for the Zendesk Support SDK* :warning:
 
 # Zendesk Mobile SDK for iOS
 
