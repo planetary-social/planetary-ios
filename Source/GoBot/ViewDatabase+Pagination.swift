@@ -81,6 +81,11 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
         return self.msgs[index]
     }
     
+    // TODO: need to track the last range we fired a prefetch for
+    // so that we can execute the next one for the correct window
+    // if the user manages to trigger one while it is in flight
+    // otherwise we get duplicated posts in the view
+
     func prefetchUpTo(index: Int) {
         // TODO: i think this might race without an extra lock...?
         guard index > self.msgs.count-1 else { return }

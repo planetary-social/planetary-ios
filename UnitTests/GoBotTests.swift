@@ -661,6 +661,10 @@ class GoBotTests: XCTestCase {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, currentCount)
+            let allMsgs = msgs.getAllMessages()
+            XCTAssertEqual(allMsgs.count, currentCount)
+            XCTAssertFalse(allMsgs.contains { return $0.key == privRef })
+            XCTAssertFalse(allMsgs.contains { return $0.key == privReply })
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -772,7 +776,10 @@ class GoBotTests: XCTestCase {
                 return
             }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.getAllMessages().contains { return $0.key == whoopsRef })
+            let allMsgs = msgs.getAllMessages()
+            XCTAssertTrue(allMsgs.contains { return $0.key == whoopsRef })
+            let xref = Dictionary(grouping: allMsgs, by: { $0.key })
+            XCTAssertEqual(xref.filter { $1.count > 1 }.count, 0)
         }
         self.wait(for: [ex5], timeout: 10)
         
@@ -1207,11 +1214,13 @@ fileprivate extension PaginatedKeyValueDataProxy {
         for i in 0...self.count-1 {
             guard let kv = self.keyValueBy(index: i) else {
                 XCTFail("failed to get item \(i) of \(self.count)")
-                return []
+                continue
             }
             kvs.append(kv)
         }
         XCTAssertEqual(kvs.count, self.count, "did not fetch all messages")
+        let xref = Dictionary(grouping: kvs, by: { $0.key })
+        XCTAssertEqual(xref.filter { $1.count > 1 }.count, 0, "found duplicate messages in view")
         return kvs
     }
 }

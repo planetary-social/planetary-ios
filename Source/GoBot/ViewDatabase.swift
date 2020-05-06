@@ -291,10 +291,14 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        var qry = self.posts.filter(colIsRoot == true)
+        var qry = self.posts
+            .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
+            .filter(colIsRoot == true)
+            .filter(colHidden == false)
+            .filter(colDecrypted == false)
+        
         if onlyFollowed {
-            let qryWithAuthors = qry.join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
-            qry = try self.filterOnlyFollowedPeople(qry: qryWithAuthors)
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
         }
         return try db.scalar(qry.count)
     }
