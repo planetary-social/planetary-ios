@@ -32,7 +32,7 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
             return KeyValueTableViewCell(for: .post)
         }
         let cell = self.dequeueReusuableCell(in: tableView, at: indexPath, for: keyValue)
-        cell.update(with: keyValue)
+        self.loadKeyValue(keyValue, in: cell)
         return cell
     }
 
@@ -47,9 +47,9 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) { }
 
     // have a way get data from prefetches that were too late
-    private func latePrefetch(idx: Int, kv: KeyValue) {
+    func latePrefetch(idx: Int, kv: KeyValue) {
         let c = self.cell(at: IndexPath.init(row: idx, section: 0), for: kv.value.content.type)
-        c.update(with: kv)
+        self.loadKeyValue(kv, in: c)
     }
 
     // more copy pasta
@@ -66,19 +66,20 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
         return cell ?? self.cell(at: indexPath, for: type)
     }
 
+    /// Convenience function to return a `KeyValueTableViewCell` instance
+    /// for the specified `ContentType`.  Subclasses are encouraged to override
+    /// if a dfferent cell is required for their use case.
     func cell(at indexPath: IndexPath, for type: ContentType) -> KeyValueTableViewCell {
-        let view = PostReplyView()
-        view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-        let cell = KeyValueTableViewCell(for: .post, with: view)
-        return cell
+        switch type {
+            case .post:     return KeyValueTableViewCell(for: type, height: 300)
+            default:        return KeyValueTableViewCell(for: type)
+        }
     }
     
-    private func truncationLimitForPost(at indexPath: IndexPath) -> TruncationSettings? {
-        guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: noop) else { return nil }
-        guard let post = keyValue.value.content.post else { return nil }
-        let settings: TruncationSettings = post.hasBlobs ? (over: 8, to: 5) : (over: 10, to: 8)
-        return settings
+    func loadKeyValue(_ keyValue: KeyValue, in cell: KeyValueTableViewCell) {
+        cell.update(with: keyValue)
     }
+    
 }
 
-fileprivate let noop: PrefetchCompletion = { _, _ in }
+let noop: PrefetchCompletion = { _, _ in }

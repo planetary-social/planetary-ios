@@ -193,18 +193,26 @@ class ViewDatabase {
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
             try db.execute(String(contentsOf: schemaV1url))
-            db.userVersion = 2
+            db.userVersion = 3
         } else if db.userVersion == 1 {
             try db.execute("""
-CREATE INDEX messagekeys_key ON messagekeys(key);
-CREATE INDEX messagekeys_id ON messagekeys(id);
-CREATE INDEX posts_msgrefs on posts (msg_ref);
-CREATE INDEX messages_rxseq on messages (rx_seq);
-CREATE INDEX tangle_id on tangles (id);
-CREATE INDEX contacts_state ON contacts (contact_id, state);
-CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
-""");
-            db.userVersion = 2
+            CREATE INDEX messagekeys_key ON messagekeys(key);
+            CREATE INDEX messagekeys_id ON messagekeys(id);
+            CREATE INDEX posts_msgrefs on posts (msg_ref);
+            CREATE INDEX messages_rxseq on messages (rx_seq);
+            CREATE INDEX tangle_id on tangles (id);
+            CREATE INDEX contacts_state ON contacts (contact_id, state);
+            CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+            ALTER TABLE posts ADD is_root boolean default false;
+            CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+            """);
+            db.userVersion = 3
+        } else if db.userVersion == 2 {
+            try db.execute("""
+            ALTER TABLE posts ADD is_root boolean default false;
+            CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+            """);
+            db.userVersion = 3
         }
 
         self.currentUserID = try self.authorID(from: user, make: true)
