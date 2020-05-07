@@ -27,15 +27,20 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         print("[DEBUG] cellForRowAt \(indexPath)")
-        guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: self.latePrefetch) else {
-            // TODO: return a better in-progress / spinner cell here
-            return KeyValueTableViewCell(for: .post)
+        let latePrefetch = { [weak tableView] (idx: Int, keyValue: KeyValue) -> Void in
+            DispatchQueue.main.async { [weak tableView] in
+                let indexPath = IndexPath(item: idx, section: 0)
+                tableView?.reloadRows(at: [indexPath], with: .fade)
+            }
+        }
+        guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: latePrefetch) else {
+            return emptyCell()
         }
         let cell = self.dequeueReusuableCell(in: tableView, at: indexPath, for: keyValue)
         self.loadKeyValue(keyValue, in: cell)
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if let biggest = indexPaths.max()?.row {
             // prefetch everything up to the last row
@@ -47,9 +52,10 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) { }
 
     // have a way get data from prefetches that were too late
-    func latePrefetch(idx: Int, kv: KeyValue) {
-        let c = self.cell(at: IndexPath.init(row: idx, section: 0), for: kv.value.content.type)
-        self.loadKeyValue(kv, in: c)
+    func latePrefetch(idx: Int) {
+//
+//        let c = self.cell(at: IndexPath.init(row: idx, section: 0), for: kv.value.content.type)
+//        self.loadKeyValue(kv, in: c)
     }
 
     // more copy pasta
@@ -74,6 +80,12 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
             case .post:     return KeyValueTableViewCell(for: type, height: 300)
             default:        return KeyValueTableViewCell(for: type)
         }
+    }
+    
+    /// Subclasses are encouraged to override
+    /// if a dfferent cell is required for their use case.
+    func emptyCell() -> KeyValueTableViewCell {
+        return KeyValueTableViewCell(for: .post)
     }
     
     func loadKeyValue(_ keyValue: KeyValue, in cell: KeyValueTableViewCell) {

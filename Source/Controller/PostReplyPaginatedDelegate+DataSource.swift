@@ -18,6 +18,12 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
     
     weak var delegate: PostReplyPaginatedDataSourceDelegate?
     
+    override func emptyCell() -> KeyValueTableViewCell {
+        let view = PostReplyView()
+        view.postView.truncationLimit = TruncationSettings(over: 10, to: 8)
+        return KeyValueTableViewCell(for: .post, with: view)
+    }
+    
     override func cell(at indexPath: IndexPath, for type: ContentType) -> KeyValueTableViewCell {
         let view = PostReplyView()
         view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
@@ -26,17 +32,23 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
     }
     
     private func truncationLimitForPost(at indexPath: IndexPath) -> TruncationSettings? {
-        guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: noop) else { return nil }
+        guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: noop) else {
+            return TruncationSettings(over: 10, to: 8)
+        }
+        return truncationLimitForPost(keyValue: keyValue)
+    }
+    
+    private func truncationLimitForPost(keyValue: KeyValue) -> TruncationSettings? {
         guard let post = keyValue.value.content.post else { return nil }
         let settings: TruncationSettings = post.hasBlobs ? (over: 8, to: 5) : (over: 10, to: 8)
         return settings
     }
     
     override func loadKeyValue(_ keyValue: KeyValue, in cell: KeyValueTableViewCell) {
+        let postReplyView = cell.keyValueView as! PostReplyView
+        postReplyView.postView.truncationLimit = self.truncationLimitForPost(keyValue: keyValue)
         super.loadKeyValue(keyValue, in: cell)
-        if let postReplyView = cell.keyValueView as? PostReplyView {
-            self.delegate?.postReplyView(view: postReplyView, didLoad: keyValue)
-        }
+        self.delegate?.postReplyView(view: postReplyView, didLoad: keyValue)
     }
     
 }
