@@ -426,18 +426,6 @@ class GoBotTests: XCTestCase {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, publishManyCount+1)
-            if msgs.count > publishManyCount {
-                msgs.prefetchUpTo(index: msgs.count+10)
-                sleep(2)
-                for i in 0...msgs.count-1 {
-                    if let kv = msgs.keyValueBy(index: i) {
-                        XCTAssertFalse(kv.key == newRef, "found message from unfollowed person")
-                        print("\(i):\(kv.key)")
-                    } else {
-                        XCTFail("\(i): not available?!")
-                    }
-                }
-            }
             rex.fulfill()
         }
         self.wait(for: [rex], timeout: 10)
