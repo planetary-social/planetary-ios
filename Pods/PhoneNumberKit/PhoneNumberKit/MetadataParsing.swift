@@ -10,8 +10,7 @@ import Foundation
 
 // MARK: - MetadataTerritory
 
-extension MetadataTerritory {
-
+public extension MetadataTerritory {
     enum CodingKeys: String, CodingKey {
         case codeID = "id"
         case countryCode
@@ -78,7 +77,7 @@ extension MetadataTerritory {
 
 // MARK: - MetadataPhoneNumberFormat
 
-extension MetadataPhoneNumberFormat {
+public extension MetadataPhoneNumberFormat {
     enum CodingKeys: String, CodingKey {
         case pattern
         case format
@@ -124,7 +123,7 @@ extension PhoneNumberMetadata {
 
 // MARK: - Parsing helpers
 
-private extension KeyedDecodingContainer where K : CodingKey {
+private extension KeyedDecodingContainer where K: CodingKey {
     /// Decodes a string to a boolean. Returns false if empty.
     ///
     /// - Parameter key: Coding key to decode

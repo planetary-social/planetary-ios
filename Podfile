@@ -7,26 +7,26 @@ inhibit_all_warnings!
 
 target 'Planetary' do
     pod 'ImageSlideshow', '1.8.3'
-    pod 'KeychainSwift', '15.0.0'
-    pod 'Mixpanel', '3.5.1'
-    pod 'PhoneNumberKit', '2.6.0'
+    pod 'KeychainSwift', '19.0.0'
+    pod 'Mixpanel', '3.6.1'
+    pod 'PhoneNumberKit', '3.2.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'SVProgressHUD', '2.2.5'
-    pod 'ZendeskSDK', '4.0.0'
+    pod 'ZendeskSDK', '4.0.1'
     pod 'CocoaLumberjack/Swift', '3.6.1'
-    pod 'Bugsnag', '5.23.0'
+    pod 'Bugsnag', '5.23.1'
     pod 'Down', '0.9.2'
 end
 
 target 'APITests' do
-    pod 'KeychainSwift', '15.0.0'
-    pod 'PhoneNumberKit', '2.6.0'
+    pod 'KeychainSwift', '19.0.0'
+    pod 'PhoneNumberKit', '3.2.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'Down', '0.9.2'
 end
 
 target 'UnitTests' do
-    pod 'KeychainSwift', '15.0.0'
+    pod 'KeychainSwift', '19.0.0'
     pod 'Multipart', '0.1.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'Down', '0.9.2'
