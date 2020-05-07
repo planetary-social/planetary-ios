@@ -92,7 +92,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     
     func prefetchUpTo(index: Int) {
         // TODO: i think this might race without an extra lock...?
-        guard index < self.count-1 else { fatalError("FeedDataProxy prefetch #\(index) out-of-bounds") }
+        guard index < self.count && index >= 0 else { fatalError("FeedDataProxy prefetch #\(index) out-of-bounds") }
         guard index > self.msgs.count-1 else { return }
 
         self.backgroundQueue.asyncDeduped(target: self, after: 0.125) { [weak self] in
