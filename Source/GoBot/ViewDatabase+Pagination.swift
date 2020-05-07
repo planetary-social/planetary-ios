@@ -44,7 +44,7 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
 }
 
 class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
-    private let backgroundQueue = DispatchQueue.global(qos: .userInitiated)
+    private let backgroundQueue = DispatchQueue(label: "planetary.view.prefetches") // simple, serial queue
 
     // store _late_ completions for when background finishes
     private let inflightSema = DispatchSemaphore(value: 1)
