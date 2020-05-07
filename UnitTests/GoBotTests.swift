@@ -1229,7 +1229,7 @@ fileprivate extension UIImage {
 
 fileprivate extension PaginatedKeyValueDataProxy {
     func getAllMessages() -> KeyValues {
-        self.prefetchUpTo(index: self.count)
+        self.prefetchUpTo(index: self.count-1)
         
         // TODO
         sleep(5)
