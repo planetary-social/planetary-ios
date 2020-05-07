@@ -46,10 +46,10 @@ extension DispatchQueue {
      ```
      */
     public func asyncDeduped(target: AnyObject, after delay: TimeInterval, execute work: @escaping @convention(block) () -> Void) {
+        DispatchQueue.workLock.wait()
         let dedupeIdentifier = DispatchQueue.dedupeIdentifierFor(target)
         if let existingWorkItem = DispatchQueue.workItems.removeValue(forKey: dedupeIdentifier) {
             existingWorkItem.cancel()
-//            NSLog("Deduped work item: \(dedupeIdentifier)")
         }
         let workItem = DispatchWorkItem {
             DispatchQueue.workItems.removeValue(forKey: dedupeIdentifier)
@@ -57,7 +57,6 @@ extension DispatchQueue {
             for ptr in DispatchQueue.weakTargets.allObjects {
                 if dedupeIdentifier == DispatchQueue.dedupeIdentifierFor(ptr as AnyObject) {
                     work()
-//                    NSLog("Ran work item: \(dedupeIdentifier)")
                     break
                 }
             }
@@ -65,14 +64,16 @@ extension DispatchQueue {
 
         DispatchQueue.workItems[dedupeIdentifier] = workItem
         DispatchQueue.weakTargets.addPointer(Unmanaged.passUnretained(target).toOpaque())
+        DispatchQueue.workLock.signal()
 
         asyncAfter(deadline: .now() + delay, execute: workItem)
     }
-
 }
 
 // MARK: - Static Properties for De-Duping
 private extension DispatchQueue {
+
+    static var workLock = DispatchSemaphore.init(value: 1)
 
     static var workItems = [AnyHashable : DispatchWorkItem]()
 
