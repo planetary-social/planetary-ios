@@ -187,7 +187,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-//        db.trace { print("\tSQL: \($0)") } // print all the statements
+        // db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
@@ -538,6 +538,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             .join(self.authors, on: colAuthorID == self.authors[colID])
             .filter(colContactID == feedID)
             .filter(colContactState == 1)
+            .order(colClaimedAt.desc)
         
         var who: [Identity] = []
         
@@ -567,6 +568,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             .join(self.abouts, on: self.abouts[colAboutID] == self.contacts[colAuthorID])
             .filter(colContactID == feedID)
             .filter(colContactState == 1)
+            .order(colClaimedAt.desc)
             .group(colAuthor)
             .limit(limit)
 

@@ -1023,10 +1023,10 @@ class GoBot: Bot {
                 // if let me = self.identity { replies = replies.excluding(me) }
                 // all.append(contentsOf: replies)
 
-                let mentions = try self.database.mentions(limit: 50)
+                let mentions = try self.database.mentions(limit: 500)
                 all.append(contentsOf: mentions)
 
-                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 50)
+                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 500)
                 all.append(contentsOf: contacts)
 
                 let sorted = all.sortedByDateDescending()

@@ -591,10 +591,10 @@ class ViewDatabaseTest: XCTestCase {
             if msgs.count != 2 {
                 return
             }
-            XCTAssertEqual(msgs[0].value.author, testFeeds[1])
+            XCTAssertEqual(msgs[0].value.author, testFeeds[4])
             XCTAssertNotEqual(msgs[0].timestamp, 0)
             XCTAssertNotEqual(msgs[0].value.timestamp, 0)
-            XCTAssertEqual(msgs[1].value.author, testFeeds[4])
+            XCTAssertEqual(msgs[1].value.author, testFeeds[1])
             XCTAssertNotEqual(msgs[1].timestamp, 0)
             XCTAssertNotEqual(msgs[1].value.timestamp, 0)
         } catch {
