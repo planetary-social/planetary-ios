@@ -60,6 +60,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
         self.source = src
         self.count = self.source.total
         self.msgs = try self.source.retreive(limit: 10, offset: 0)
+        self.lastPrefetch = self.msgs.count
     }
 
     func keyValueBy(index: Int) -> KeyValue? {
@@ -68,6 +69,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
         return self.msgs[index]
     }
 
+    // we don't plan to spoort growing the backing list beyond it's initialisation
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? {
         if index >= self.count { fatalError("FeedDataProxy #\(index) out-of-bounds") }
         if index > self.msgs.count-1 {
@@ -86,28 +88,31 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     // if the user manages to trigger one while it is in flight
     // otherwise we get duplicated posts in the view
 
+    private var lastPrefetch: Int
+    
     func prefetchUpTo(index: Int) {
         // TODO: i think this might race without an extra lock...?
+        guard index < self.count-1 else { fatalError("FeedDataProxy prefetch #\(index) out-of-bounds") }
         guard index > self.msgs.count-1 else { return }
 
         self.backgroundQueue.asyncDeduped(target: self, after: 0.125) { [weak self] in
             guard let proxy = self else { return }
 
-            // how many messages do we have
-            let current = proxy.msgs.count
-
             // how many messages do we need?
             // +1 because we want fetch up to that index, not message count
-            var diff = 1+index - current
+            var diff = 1+index - proxy.lastPrefetch
             if diff < 10 { // don't just do a little work
                 diff = 25 // do a little extra
             }
+            guard diff > 0 else { return }
 
-            print("pre-fetching \(diff) messages current:\(current)")
-            guard let moreMessages = try? proxy.source.retreive(limit: diff, offset: current) else {
+            print("pre-fetching \(diff) messages current:\(proxy.lastPrefetch)")
+            guard let moreMessages = try? proxy.source.retreive(limit: diff, offset: proxy.lastPrefetch) else {
                 Log.unexpected(.botError, "failed to prefetch messages")
                 return
             }
+            // track the window so the next prefetch starts from where this ends
+            proxy.lastPrefetch += diff
 
             // add new messages
             proxy.inflightSema.wait()
@@ -129,7 +134,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
                 proxy.inflight.removeValue(forKey: idx)
             }
             if moreMessages.count == 0 {
-                print("expected to prefetch(\(diff):\(current)) more messages but got none - clearning inflight")
+                print("expected to prefetch(\(diff):\(proxy.lastPrefetch-diff)) more messages but got none - clearning inflight")
                 proxy.inflight = [:]
             }
             proxy.inflightSema.signal()
@@ -180,6 +185,11 @@ class FeedKeyValueSource: KeyValueSource {
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
+        // TODO: timing dependant test
+        /// This is a bit annoying.. The new test test136_paginate_quickly only tests the functionality
+        /// if the retreival process takes a long time, we need to find a better way to simulate that.
+//        usleep(500_000)
+//        print("WARNING: simulate slow query...")
         return try self.view.feed(for: self.feed, limit: limit, offset: offset)
     }
 }

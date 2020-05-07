@@ -50,7 +50,7 @@ class GoBotTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
 
-        let nicks = ["alice", "barbara", "claire", "denise"]
+        let nicks = ["alice", "barbara", "claire", "denise", "page"]
         do {
             for n in nicks {
                 try GoBotTests.shared.testingCreateKeypair(nick: n)
@@ -78,7 +78,6 @@ class GoBotTests: XCTestCase {
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
-        
 
         // make sure we can't sync
         for i in 1...20 {
@@ -113,7 +112,7 @@ class GoBotTests: XCTestCase {
         } catch {
             XCTFail("create test keys failed: \(error)")
         }
-        let names = ["alice", "barbara", "claire", "denise"]
+        let names = ["alice", "barbara", "claire", "denise", "page"]
         XCTAssertEqual(GoBotTests.pubkeys.count, names.count)
         for n in names {
             XCTAssertNotNil(GoBotTests.pubkeys[n], "failed to find \(n) in pubkeys")
@@ -226,7 +225,7 @@ class GoBotTests: XCTestCase {
     }
 
     func test102_testuserAbouts() {
-        let nicks = ["alice", "barbara", "claire", "denise"]
+        let nicks = ["alice", "barbara", "claire", "denise", "page"]
         for n in nicks {
             let abt = About(about: GoBotTests.pubkeys[n]!, name: n)
             _ = GoBotTests.shared.testingPublish(as: n, content: abt)
@@ -262,7 +261,8 @@ class GoBotTests: XCTestCase {
             "alice":   ["barbara", "claire"],
             "barbara": ["alice"],
             "claire":  [],
-            "denise":  ["alice", "barbara", "claire"]
+            "denise":  ["alice", "barbara", "claire"],
+            "page":    [],
         ]
         for tcase in whoFollowsWho {
             for who in tcase.value {
@@ -282,7 +282,8 @@ class GoBotTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
 
         let nFollows = 6
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, 1+publishManyCount+5+nFollows)
+        let extra = 2 + 5 // abouts
+        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, publishManyCount+extra+nFollows)
 
         for tc in whoFollowsWho {
             let ex = self.expectation(description: "\(#function) follow \(tc)")
@@ -303,7 +304,8 @@ class GoBotTests: XCTestCase {
                   "alice":   ["barbara", "denise"],
                   "barbara": ["alice", "denise"],
                   "claire":  ["alice", "denise"],
-                  "denise":  []
+                  "denise":  [],
+                  "page":    [],
               ]
         for tc in whoIsFollowedByWho {
             let ex = self.expectation(description: "\(#function) check \(tc)")
@@ -467,7 +469,6 @@ class GoBotTests: XCTestCase {
     }
     
     func test135_recent_paginated_feed() {
-        
         // publish more so we have some to work with
         for i in 0...100 {
             let data = try! Post(text: "lots of spam posts \(i)").encodeToData()
@@ -506,7 +507,53 @@ class GoBotTests: XCTestCase {
         sleep(1)
         XCTAssertNotNil(proxy.keyValueBy(index: 80))
         XCTAssertNil(proxy.keyValueBy(index: 81))
+    }
+    
+    // fire another prefetch while one is in-flight and check for duplicates
+    func test136_paginate_quickly() {
+        var refs = [MessageIdentifier]()
+        for i in 1...100 {
+            let data = try! Post(text: "lots of spam posts \(i)").encodeToData()
+            let newRef = GoBotTests.shared.testingPublish(as: "page", raw: data)
+            refs.append(newRef)
+            
+        }
+        GoBotTests.shared.testRefresh(self)
+       
+        let ex1 = self.expectation(description: "get proxy")
+        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        GoBotTests.shared.feed(identity: GoBotTests.pubkeys["page"]!) {
+            p, err in
+            XCTAssertNotNil(p)
+            XCTAssertNil(err)
+            proxy = p
+            ex1.fulfill()
+        }
+        self.wait(for: [ex1], timeout: 10)
+
+        // check we have the start (default is 10 messages pre-fetched)
+        XCTAssertEqual(proxy.count, 100)
+        XCTAssertNotNil(proxy.keyValueBy(index: 0))
+        XCTAssertNotNil(proxy.keyValueBy(index: 9))
+        XCTAssertNil(proxy.keyValueBy(index: 10))
         
+        // run two prefetches right after another
+        proxy.prefetchUpTo(index: 40)
+        usleep(130000) // prefetch debounce is 125ms
+        proxy.prefetchUpTo(index: 50)
+        usleep(130000) // prefetch debounce is 125ms
+        proxy.prefetchUpTo(index: 60)
+        sleep(1)
+        
+        for i in 0...59 {
+            guard let kv = proxy.keyValueBy(index: i) else {
+                XCTFail("expected idx \(i)")
+                return
+            }
+            // profile view is most recent (last published) first
+            let want = "lots of spam posts \(100-i)"
+            XCTAssertEqual(kv.value.content.post?.text, want)
+        }
     }
 
     // MARK: threads
