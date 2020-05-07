@@ -57,6 +57,7 @@ class HomeViewController: ContentViewController {
         view.refreshControl = self.refreshControl
         view.sectionHeaderHeight = 0
         view.separatorStyle = .none
+        view.showsVerticalScrollIndicator = false
         return view
     }()
     

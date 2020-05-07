@@ -20,6 +20,7 @@ class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
         super.init(style: .default, reuseIdentifier: type.reuseIdentifier)
         self.constrainKeyValueViewToContentView(height)
         self.selectionStyle = .none
+        self.keyValueView.showSkeleton()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -33,10 +34,16 @@ class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
         constraint.priority = .defaultHigh
         constraint.isActive = true
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.keyValueView.showSkeleton()
+    }
 
     // MARK: KeyValueUpdateable
 
     func update(with keyValue: KeyValue) {
+        self.keyValueView.hideSkeleton()
         self.keyValueView.update(with: keyValue)
     }
 }

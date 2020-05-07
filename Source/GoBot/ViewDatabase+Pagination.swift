@@ -188,7 +188,7 @@ class FeedKeyValueSource: KeyValueSource {
         // TODO: timing dependant test
         /// This is a bit annoying.. The new test test136_paginate_quickly only tests the functionality
         /// if the retreival process takes a long time, we need to find a better way to simulate that.
-        usleep(500_000)
+//        usleep(500_000)
 //        print("WARNING: simulate slow query...")
         return try self.view.feed(for: self.feed, limit: limit, offset: offset)
     }

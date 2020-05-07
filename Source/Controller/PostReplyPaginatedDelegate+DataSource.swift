@@ -20,7 +20,7 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
     
     override func emptyCell() -> KeyValueTableViewCell {
         let view = PostReplyView()
-        view.postView.truncationLimit = TruncationSettings(over: 10, to: 8)
+        view.postView.truncationLimit = TruncationSettings(over: 8, to: 5)
         return KeyValueTableViewCell(for: .post, with: view)
     }
     
@@ -33,7 +33,7 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
     
     private func truncationLimitForPost(at indexPath: IndexPath) -> TruncationSettings? {
         guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: noop) else {
-            return TruncationSettings(over: 10, to: 8)
+            return TruncationSettings(over: 8, to: 5)
         }
         return truncationLimitForPost(keyValue: keyValue)
     }

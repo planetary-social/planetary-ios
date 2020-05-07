@@ -15,6 +15,7 @@ class PostHeaderView: UIView {
     private lazy var identityButton: AvatarButton = {
         let button = AvatarButton()
         button.addTarget(self,action: #selector(selectAboutIdentity), for: .touchUpInside)
+        button.isSkeletonable = true
         return button
     }()
 
@@ -26,6 +27,7 @@ class PostHeaderView: UIView {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.titleLabel?.numberOfLines = 1
+        button.isSkeletonable = true
         return button
     }()
 
@@ -66,6 +68,8 @@ class PostHeaderView: UIView {
 
         self.nameButton.constrainHeight(to: 19)
         self.dateLabel.constrainHeight(to: 19)
+        
+        self.isSkeletonable = true
     }
 
     required init?(coder aDecoder: NSCoder) {

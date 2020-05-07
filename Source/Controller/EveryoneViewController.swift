@@ -27,8 +27,14 @@ class EveryoneViewController: ContentViewController {
          return control
      }()
 
-     private let dataSource = KeyValuePaginatedTableViewDataSource()
-     private lazy var delegate = PostReplyDelegate(on: self)
+     private lazy var dataSource: PostReplyPaginatedDataSource = {
+         let dataSource = PostReplyPaginatedDataSource()
+         dataSource.delegate = self
+         return dataSource
+         
+     }()
+    
+     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
 
      private lazy var tableView: UITableView = {
          let view = UITableView.forVerse()
@@ -38,6 +44,7 @@ class EveryoneViewController: ContentViewController {
          view.refreshControl = self.refreshControl
          view.sectionHeaderHeight = 0
          view.separatorStyle = .none
+         view.showsVerticalScrollIndicator = false
          return view
      }()
      
@@ -246,3 +253,31 @@ class EveryoneViewController: ContentViewController {
 
 }
 
+extension EveryoneViewController: PostReplyPaginatedDataSourceDelegate {
+    
+    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+        view.postView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue)
+        }
+        view.repliesView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            self?.pushThreadViewController(with: keyValue)
+        }
+
+        // open thread and start reply
+        view.replyTextView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue, startReplying: true)
+        }
+    }
+    
+    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
+}

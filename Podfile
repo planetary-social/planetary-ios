@@ -16,6 +16,7 @@ target 'Planetary' do
     pod 'CocoaLumberjack/Swift', '3.6.1'
     pod 'Bugsnag', '5.23.1'
     pod 'Down', '0.9.2'
+    pod 'SkeletonView'
 end
 
 target 'APITests' do

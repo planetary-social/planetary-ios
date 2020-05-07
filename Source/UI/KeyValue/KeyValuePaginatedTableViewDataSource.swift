@@ -30,7 +30,9 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
         let latePrefetch = { [weak tableView] (idx: Int, keyValue: KeyValue) -> Void in
             DispatchQueue.main.async { [weak tableView] in
                 let indexPath = IndexPath(item: idx, section: 0)
-                tableView?.reloadRows(at: [indexPath], with: .fade)
+                if let visibleIndexPaths = tableView?.indexPathsForVisibleRows, visibleIndexPaths.contains(indexPath) {
+                    tableView?.reloadRows(at: [indexPath], with: .fade)
+                }
             }
         }
         guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: latePrefetch) else {
