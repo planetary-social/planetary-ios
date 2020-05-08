@@ -329,7 +329,7 @@ class ViewDatabaseTest: XCTestCase {
         do {
             // TODO: verify ordering
             let replies = try self.vdb.getRepliesTo(thread: "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWs=.sha256")
-            XCTAssertEqual(replies.count, 13)
+            XCTAssertEqual(replies.count, 7)
             for (i, kv) in replies.enumerated() {
                 XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
                 
@@ -355,53 +355,17 @@ class ViewDatabaseTest: XCTestCase {
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "[@realUserThree](@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519) who are you?!")
                 case 4:
-                    XCTAssertEqual(kv.key, "%l1IwSOOeofqmiOyT84y42Tcn9RJKLeg6zKtVN0v/nIE=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[0])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%2q0+HuVVun2LWCb/uQVQThFAA65VHxrzDIwRYuljoSY=.sha256")
-                case 5:
                     XCTAssertEqual(kv.key, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
                     XCTAssertEqual(kv.value.author, testFeeds[3])
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "hello people!")
-                case 6:
-                    XCTAssertEqual(kv.key, "%YR/7RhApX0Znb5s4w9B/eDK8fN3/5Jx3z5ih/gOoB6Y=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 7:
-                    XCTAssertEqual(kv.key, "%oQTjGmUQ9S0SLAoKSz+KNL8mRN6aCj2Mrsy0E/nRwOg=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 0)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 8:
-                    XCTAssertEqual(kv.key, "%as5O7FtNV1ZfIHnmirVZ2ptHfrBpQWVITtvL5z/CfUc=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                case 9:
-                    XCTAssertEqual(kv.key, "%CRGKl5idyt7UjFQf7GlgVDd3lcvvCUaWqYs4iip9sjE=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 10:
-                    XCTAssertEqual(kv.key, "%00TehcsrAYe1fHbivR1j0htNj26mzeldSNt7uDO4RZ0=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                case 11:
+                case 5:
                     XCTAssertEqual(kv.key, "%YGZ8L7iAv3b50k3/Nks7Jm//2v6t9Jd/di1l6q/eIe8=.sha256")
                     XCTAssertEqual(kv.value.author, testFeeds[1])
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "[@userFour](@27PkouhQuhr9Ffn+rgSnN0zabcfoE31qD3ZMkCs3c+0=.ed25519) hey you!\n\n[@userOne](@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519) i don\'t know either..")
                     // TODO: decode & check mentions
-                case 12:
+                case 6:
                     XCTAssertEqual(kv.key, "%ruVFSar2PMCK1WZdz0AL7JIOgxjbFuwcHL8zWrqw9Ig=.sha256")
                     XCTAssertEqual(kv.value.author, testKey.identity)
                     XCTAssertEqual(kv.value.content.type, .post)
@@ -422,15 +386,15 @@ class ViewDatabaseTest: XCTestCase {
                 let replies = try self.vdb.feed(for: tf)
                 switch i {
                 case 0:
-                    XCTAssertEqual(replies.count, 3)
-                case 1:
-                    XCTAssertEqual(replies.count, 7)
-                case 2:
-                    XCTAssertEqual(replies.count, 9)
-                case 3:
                     XCTAssertEqual(replies.count, 1)
-                case 4:
+                case 1:
                     XCTAssertEqual(replies.count, 5)
+                case 2:
+                    XCTAssertEqual(replies.count, 4)
+                case 3:
+                    XCTAssertEqual(replies.count, 0)
+                case 4:
+                    XCTAssertEqual(replies.count, 3)
                 default:
                     XCTFail("unhandled reply: \(i)")
                 }
@@ -442,26 +406,19 @@ class ViewDatabaseTest: XCTestCase {
     
     func test41_feed() {
         do {
-            let replies = try self.vdb.feed(for: testFeeds[0])
+            let replies = try self.vdb.feed(for: testFeeds[4])
             for (i, kv) in replies.enumerated() {
                 XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
-                
+                XCTAssertEqual(kv.value.author, testFeeds[4])
+                XCTAssertEqual(kv.value.content.type, .post)
                 switch i {
                 case 0:
-                    XCTAssertEqual(kv.key, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[0])
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "[@realUserThree](@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519) who are you?!")
+                    XCTAssertEqual(kv.key, "%mGqnXFLLANmscYjQCafniOTbnTC4RoRP8lZNlswaCdc=.sha256")
+
                 case 1:
-                    XCTAssertEqual(kv.key, "%A779Qiywc+HJoMT1xfmuqGymyS9pnjNal+WfHBgk2GQ=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[0])
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "here is a reply")
+                    XCTAssertEqual(kv.key, "%KfVCyfVWiFAS75sSura943LTN/ylGvYBfBtfzZkRO28=.sha256")
                 case 2:
-                    XCTAssertEqual(kv.key, "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWs=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[0])
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "i\'m the first test feed!")
+                    XCTAssertEqual(kv.key, "%7TK9l4TT0yc8PCarcnLZEuxb0FtShl2M8vvbCSjceXY=.sha256")
 
                 default:
                     XCTFail("unhandled reply: \(i)")
@@ -471,7 +428,39 @@ class ViewDatabaseTest: XCTestCase {
             XCTFail("\(error)")
         }
     }
-    
+
+    func test42_feed_paginated() {
+        do {
+            let dataProxy = try self.vdb.paginated(feed: testFeeds[4])
+            XCTAssertEqual(dataProxy.count, 3)
+            for idx in 0...dataProxy.count-1 {
+                guard let kv = dataProxy.keyValueBy(index: idx) else {
+                    XCTFail("failed to get KV for index \(idx)")
+                    continue
+                }
+                XCTAssertEqual(kv.value.author, testFeeds[4])
+                XCTAssertEqual(kv.value.content.type, .post)
+                switch idx {
+                    case 0:
+                        XCTAssertEqual(kv.key, "%mGqnXFLLANmscYjQCafniOTbnTC4RoRP8lZNlswaCdc=.sha256")
+                        
+                        XCTAssertEqual(kv.value.content.post?.text, "no one would mention themselves.. right [@privateUser](@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519)???")
+                    case 1:
+                        XCTAssertEqual(kv.key, "%KfVCyfVWiFAS75sSura943LTN/ylGvYBfBtfzZkRO28=.sha256")
+                        XCTAssertEqual(kv.value.content.post?.text, "so.. nobody is following me?! feels right.. i can\'t even follow myself most of the time.")
+                    case 2:
+                        XCTAssertEqual(kv.key, "%7TK9l4TT0yc8PCarcnLZEuxb0FtShl2M8vvbCSjceXY=.sha256")
+                        XCTAssertEqual(kv.value.content.post?.text, "so what?")
+
+                    default:
+                        XCTFail("unhandled reply: \(idx)")
+                }
+            }
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
+
     func test50_mentions_names() {
         let k = "%W0qeHpJqbvq3RsAXkAPp4G6GMomOWs+OoQJLEEK+dUE=.sha256"
         do {

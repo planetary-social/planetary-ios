@@ -16,7 +16,7 @@ fileprivate let botTestsKey = Secret(from: """
 fileprivate let botTestNetwork = NetworkKey(base64: "4vVhFHLFHeyutypUO842SyFd5jRIVhAyiZV29ftnKSU=")!
 fileprivate let botTestHMAC = HMACKey(base64: "1MQuQUGsRDyMyrFQQRdj8VVsBwn/t0bX7QQRQisMWjY=")!
 
-fileprivate let publishManyCount = 50
+fileprivate let publishManyCount = 25
 
 class GoBotTests: XCTestCase {
 
@@ -50,7 +50,7 @@ class GoBotTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
 
-        let nicks = ["alice", "barbara", "claire", "denise"]
+        let nicks = ["alice", "barbara", "claire", "denise", "page"]
         do {
             for n in nicks {
                 try GoBotTests.shared.testingCreateKeypair(nick: n)
@@ -78,7 +78,6 @@ class GoBotTests: XCTestCase {
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
-        
 
         // make sure we can't sync
         for i in 1...20 {
@@ -113,7 +112,7 @@ class GoBotTests: XCTestCase {
         } catch {
             XCTFail("create test keys failed: \(error)")
         }
-        let names = ["alice", "barbara", "claire", "denise"]
+        let names = ["alice", "barbara", "claire", "denise", "page"]
         XCTAssertEqual(GoBotTests.pubkeys.count, names.count)
         for n in names {
             XCTAssertNotNil(GoBotTests.pubkeys[n], "failed to find \(n) in pubkeys")
@@ -226,7 +225,7 @@ class GoBotTests: XCTestCase {
     }
 
     func test102_testuserAbouts() {
-        let nicks = ["alice", "barbara", "claire", "denise"]
+        let nicks = ["alice", "barbara", "claire", "denise", "page"]
         for n in nicks {
             let abt = About(about: GoBotTests.pubkeys[n]!, name: n)
             _ = GoBotTests.shared.testingPublish(as: n, content: abt)
@@ -262,7 +261,8 @@ class GoBotTests: XCTestCase {
             "alice":   ["barbara", "claire"],
             "barbara": ["alice"],
             "claire":  [],
-            "denise":  ["alice", "barbara", "claire"]
+            "denise":  ["alice", "barbara", "claire"],
+            "page":    [],
         ]
         for tcase in whoFollowsWho {
             for who in tcase.value {
@@ -282,7 +282,8 @@ class GoBotTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
 
         let nFollows = 6
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, 1+publishManyCount+5+nFollows)
+        let extra = 2 + 5 // abouts
+        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, publishManyCount+extra+nFollows)
 
         for tc in whoFollowsWho {
             let ex = self.expectation(description: "\(#function) follow \(tc)")
@@ -303,7 +304,8 @@ class GoBotTests: XCTestCase {
                   "alice":   ["barbara", "denise"],
                   "barbara": ["alice", "denise"],
                   "claire":  ["alice", "denise"],
-                  "denise":  []
+                  "denise":  [],
+                  "page":    [],
               ]
         for tc in whoIsFollowedByWho {
             let ex = self.expectation(description: "\(#function) check \(tc)")
@@ -413,7 +415,7 @@ class GoBotTests: XCTestCase {
     }
 
     func test131_recent_post_by_not_followed() {
-        _ = GoBotTests.shared.testingPublish(
+        let newRef = GoBotTests.shared.testingPublish(
             as: "alice",
             content: Post(text: "hello, world!"))
 
@@ -447,10 +449,99 @@ class GoBotTests: XCTestCase {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, publishManyCount+1+1)
-            XCTAssertEqual(msgs[0].value.author, GoBotTests.pubkeys["alice"]!)
+            guard let kv =  msgs.keyValueBy(index: 0) else { XCTFail("no message"); return }
+            XCTAssertEqual(kv.value.author, GoBotTests.pubkeys["alice"]!)
             ex2.fulfill()
         }
         self.wait(for: [ex2], timeout: 10)
+    }
+    
+    func test135_recent_paginated_feed() {
+        // publish more so we have some to work with
+        for i in 0...100 {
+            let data = try! Post(text: "lots of spam posts \(i)").encodeToData()
+            _ = GoBotTests.shared.testingPublish(as: "alice", raw: data)
+        }
+        GoBotTests.shared.testRefresh(self)
+        
+        let ex1 = self.expectation(description: "get proxy")
+        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        GoBotTests.shared.feed(identity: GoBotTests.pubkeys["alice"]!) {
+            p, err in
+            XCTAssertNotNil(p)
+            XCTAssertNil(err)
+            proxy = p
+            ex1.fulfill()
+        }
+        self.wait(for: [ex1], timeout: 10)
+
+        // check we have the start (default is 10 messages pre-fetched)
+        XCTAssertEqual(proxy.count, 102)
+        XCTAssertNotNil(proxy.keyValueBy(index: 0))
+        XCTAssertNotNil(proxy.keyValueBy(index: 9))
+        XCTAssertNil(proxy.keyValueBy(index: 10))
+
+        // fetch more
+        proxy.prefetchUpTo(index: 50)
+        sleep(1)
+        XCTAssertNotNil(proxy.keyValueBy(index: 23))
+        XCTAssertNotNil(proxy.keyValueBy(index: 50))
+        XCTAssertNil(proxy.keyValueBy(index: 51))
+        
+        // simulate bunch of calls (de-bounce)
+        proxy.prefetchUpTo(index: 60)
+        proxy.prefetchUpTo(index: 70)
+        proxy.prefetchUpTo(index: 80)
+        sleep(1)
+        XCTAssertNotNil(proxy.keyValueBy(index: 80))
+        XCTAssertNil(proxy.keyValueBy(index: 81))
+    }
+    
+    // fire another prefetch while one is in-flight and check for duplicates
+    func test136_paginate_quickly() {
+        var refs = [MessageIdentifier]()
+        for i in 1...100 {
+            let data = try! Post(text: "lots of spam posts \(i)").encodeToData()
+            let newRef = GoBotTests.shared.testingPublish(as: "page", raw: data)
+            refs.append(newRef)
+            
+        }
+        GoBotTests.shared.testRefresh(self)
+       
+        let ex1 = self.expectation(description: "get proxy")
+        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        GoBotTests.shared.feed(identity: GoBotTests.pubkeys["page"]!) {
+            p, err in
+            XCTAssertNotNil(p)
+            XCTAssertNil(err)
+            proxy = p
+            ex1.fulfill()
+        }
+        self.wait(for: [ex1], timeout: 10)
+
+        // check we have the start (default is 10 messages pre-fetched)
+        XCTAssertEqual(proxy.count, 100)
+        XCTAssertNotNil(proxy.keyValueBy(index: 0))
+        XCTAssertNotNil(proxy.keyValueBy(index: 9))
+        XCTAssertNil(proxy.keyValueBy(index: 10))
+        
+        // run two prefetches right after another
+        proxy.prefetchUpTo(index: 40)
+        usleep(130000) // prefetch debounce is 125ms
+        proxy.prefetchUpTo(index: 50)
+        usleep(130000) // prefetch debounce is 125ms
+        proxy.prefetchUpTo(index: 60)
+        sleep(1)
+        
+        for i in 0...59 {
+            guard let kv = proxy.keyValueBy(index: i) else {
+                XCTFail("expected idx \(i)")
+                return
+            }
+            // profile view is most recent (last published) first
+            let want = "lots of spam posts \(100-i)"
+            XCTAssertEqual(kv.value.content.post?.text, want)
+        }
     }
 
     // MARK: threads
@@ -605,6 +696,10 @@ class GoBotTests: XCTestCase {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, currentCount)
+            let allMsgs = msgs.getAllMessages()
+            XCTAssertEqual(allMsgs.count, currentCount)
+            XCTAssertFalse(allMsgs.contains { return $0.key == privRef })
+            XCTAssertFalse(allMsgs.contains { return $0.key == privReply })
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -622,8 +717,12 @@ class GoBotTests: XCTestCase {
                 XCTFail("expected at least one message. got \(msgs.count)")
                 return
             }
-            XCTAssertNotNil(msgs[0].key, privReply)
-            XCTAssertEqual(msgs[0].value.author, GoBotTests.pubkeys["barbara"]!)
+            guard let kv0 = msgs.keyValueBy(index: 0) else {
+                XCTFail("failed to get msg[0]")
+                return
+            }
+            XCTAssertNotNil(kv0.key, privReply)
+            XCTAssertEqual(kv0.value.author, GoBotTests.pubkeys["barbara"]!)
         }
         self.wait(for: [ex], timeout: 10)
     }
@@ -712,7 +811,10 @@ class GoBotTests: XCTestCase {
                 return
             }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.contains { return $0.key == whoopsRef })
+            let allMsgs = msgs.getAllMessages()
+            XCTAssertTrue(allMsgs.contains { return $0.key == whoopsRef })
+            let xref = Dictionary(grouping: allMsgs, by: { $0.key })
+            XCTAssertEqual(xref.filter { $1.count > 1 }.count, 0)
         }
         self.wait(for: [ex5], timeout: 10)
         
@@ -773,7 +875,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { ex.fulfill() }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.contains { return $0.key == ughMsg })
+            XCTAssertTrue(msgs.getAllMessages().contains { return $0.key == ughMsg })
         }
         self.wait(for: [ex], timeout: 10)
         
@@ -794,7 +896,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { exGone.fulfill() }
             XCTAssertNil(err)
-            XCTAssertFalse(msgs.contains { return $0.key == ughMsg })
+            XCTAssertFalse(msgs.getAllMessages().contains { return $0.key == ughMsg })
         }
         self.wait(for: [exGone], timeout: 10)
         
@@ -865,7 +967,7 @@ class GoBotTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replyCount+1, replies.count) // one new post
-            XCTAssertTrue(replies.contains { kv in
+            XCTAssertTrue(replies.getAllMessages().contains { kv in
                 return kv.key == offseniveRef
             })
             exThread.fulfill()
@@ -911,7 +1013,7 @@ class GoBotTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replyCount, replies.count)
-            XCTAssertFalse(replies.contains { return $0.key == offseniveRef })
+            XCTAssertFalse(replies.getAllMessages().contains { return $0.key == offseniveRef })
             exThreadGone.fulfill()
         }
         self.wait(for: [exThreadGone], timeout: 10)
@@ -944,8 +1046,7 @@ class GoBotTests: XCTestCase {
             msgs, err in
             defer { ex2.fulfill() }
             XCTAssertNil(err)
-            let keys = msgs.map { return $0.key }
-            XCTAssertEqual(msgs.count, currentCount+1, "keys: \(keys)")
+            XCTAssertEqual(msgs.count, currentCount+1)
         }
         self.wait(for: [ex2], timeout: 10)
 
@@ -961,10 +1062,15 @@ class GoBotTests: XCTestCase {
                 return
             }
 
-            XCTAssertEqual(msgs[0].key, mistakeRef)
+            guard let kv0 = msgs.keyValueBy(index: 0) else {
+                XCTFail("failed to get msg[0]")
+                return
+            }
+
+            XCTAssertEqual(kv0.key, mistakeRef)
 
             let delContent = DropContentRequest(
-                sequence: UInt(msgs[0].value.sequence),
+                sequence: UInt(kv0.value.sequence),
                     hash: mistakeRef)
             _ = GoBotTests.shared.testingPublish(
                 as: "alice",
@@ -1119,4 +1225,37 @@ fileprivate extension UIImage {
     guard let cgImage = image?.cgImage else { return nil }
     self.init(cgImage: cgImage)
   }
+}
+
+fileprivate extension PaginatedKeyValueDataProxy {
+    func getAllMessages() -> KeyValues {
+        self.prefetchUpTo(index: self.count-1)
+        
+        // TODO
+        sleep(5)
+        /* TODO: wait for prefetch
+        let done = DispatchSemaphore(value: 0)
+        _ = self.keyValueBy(index: self.count-1, late: {
+            idx, _ in
+            done.signal()
+            print("prefetch done \(idx)")
+        })
+
+        print("waiting for prefetch")
+        done.wait()
+        */
+
+        var kvs = KeyValues()
+        for i in 0...self.count-1 {
+            guard let kv = self.keyValueBy(index: i) else {
+                XCTFail("failed to get item \(i) of \(self.count)")
+                continue
+            }
+            kvs.append(kv)
+        }
+        XCTAssertEqual(kvs.count, self.count, "did not fetch all messages")
+        let xref = Dictionary(grouping: kvs, by: { $0.key })
+        XCTAssertEqual(xref.filter { $1.count > 1 }.count, 0, "found duplicate messages in view")
+        return kvs
+    }
 }

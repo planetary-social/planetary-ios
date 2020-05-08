@@ -8,8 +8,7 @@
 
 import Foundation
 
-typealias Feed = [KeyValue]
-typealias KeyValues = Feed
+typealias KeyValues = [KeyValue]
 
 // MARK:- KeyValues filtering
 

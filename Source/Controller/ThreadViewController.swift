@@ -13,14 +13,20 @@ class ThreadViewController: ContentViewController {
 
     private let post: KeyValue
     private var root: KeyValue?
-    private let dataSource = ThreadTableViewDataSource()
+    
+    private lazy var dataSource: ThreadReplyPaginatedTableViewDataSource = {
+        var dataSource = ThreadReplyPaginatedTableViewDataSource()
+        dataSource.delegate = self
+        return dataSource
+    }()
+    
     private let textViewDelegate = ThreadTextViewDelegate(font: UIFont.verse.reply,
                                                           color: UIColor.text.reply,
                                                           placeholderText: .postAReply,
                                                           placeholderColor: UIColor.text.placeholder)
 
     private var branchKey: Identifier {
-        return self.dataSource.keyValues.last?.key ?? self.rootKey
+        return self.rootKey
     }
 
     private var rootKey: Identifier {
@@ -37,6 +43,7 @@ class ThreadViewController: ContentViewController {
         let view = UITableView.forVerse()
         view.contentInset = .bottom(10)
         view.dataSource = self.dataSource
+        view.prefetchDataSource = self.dataSource
         view.delegate = self
         view.refreshControl = self.refreshControl
         return view
@@ -105,7 +112,7 @@ class ThreadViewController: ContentViewController {
         self.showsTabBarBorder = false
         self.addActions()
         self.replyTextViewBecomeFirstResponder = startReplying
-        self.update(with: keyValue, replies: [])
+        self.update(with: keyValue)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -155,7 +162,22 @@ class ThreadViewController: ContentViewController {
         }
     }
 
-    private func update(with root: KeyValue, replies: KeyValues, animated: Bool = true) {
+    private func refresh() {
+        self.load()
+    }
+
+    private func update(with root: KeyValue) {
+        self.root = root
+
+        self.headerView.update(with: root)
+        self.addNavigationHeaderViewIfNeeded()
+
+        self.rootPostView.update(with: root)
+        self.tableView.tableHeaderView = self.topView
+        self.tableView.tableHeaderView?.layoutIfNeeded()
+    }
+
+    private func update(with root: KeyValue, replies: PaginatedKeyValueDataProxy, animated: Bool = true) {
         self.root = root
 
         self.headerView.update(with: root)
@@ -165,10 +187,10 @@ class ThreadViewController: ContentViewController {
         self.tableView.tableHeaderView = self.topView
         self.tableView.tableHeaderView?.layoutIfNeeded()
 
-        self.dataSource.keyValues = replies.posts.sortedByDateAscending()
+        self.dataSource.update(source: replies)
         self.tableView.forceReload()
         self.scrollIfNecessary(animated: animated)
-        self.interactionView.replyCount = replies.posts.count
+        self.interactionView.replyCount = replies.count
     }
 
 
@@ -322,52 +344,23 @@ extension ThreadViewController: UITableViewDelegate {
     }
 }
 
-fileprivate class ThreadTableViewDataSource: KeyValueTableViewDataSource {
-
-    var expandedPosts = Set<Identifier>()
-
-    override func cell(at indexPath: IndexPath,
-                       for type: ContentType,
-                       tableView: UITableView) -> KeyValueTableViewCell
-    {
-        let view = ThreadReplyView()
-        let key = self.keyValue(at: indexPath).key
-        view.textIsExpanded = self.expandedPosts.contains(key)
-
-        // this is important so that the logic is scoped to the
-        // keyValue that we care about, which is not always that
-        // of the previous scope due to cell reuse
-        view.tapGesture.tap = {
-            guard let keyValue = view.keyValue else { return }
-
-            tableView.beginUpdates()
+extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate {
+    
+    func threadReplyView(view: ThreadReplyView, didLoad keyValue: KeyValue) {
+        view.tapGesture.tap = { [weak self] in
+            self?.tableView.beginUpdates()
             view.toggleExpanded()
-            tableView.endUpdates()
+            self?.tableView.endUpdates()
 
             if view.textIsExpanded {
-                self.expandedPosts.insert(keyValue.key)
+                self?.dataSource.expandedPosts.insert(keyValue.key)
             } else {
-                self.expandedPosts.remove(keyValue.key)
+                self?.dataSource.expandedPosts.remove(keyValue.key)
             }
         }
-
-        let cell = KeyValueTableViewCell(for: .post, with: view)
-        return cell
     }
 }
 
-fileprivate class ThreadReplyView: PostCellView {
-
-    override init() {
-        super.init()
-        self.truncationLimit = (over: 12, to: 8)
-        Layout.addSeparator(toBottomOf: self)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
 
 fileprivate class ThreadTextViewDelegate: MentionTextViewDelegate {
 

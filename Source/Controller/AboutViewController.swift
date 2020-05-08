@@ -16,9 +16,14 @@ class AboutViewController: ContentViewController {
 
     private let aboutView = AboutView()
 
-    private let dataSource = PostReplyDataSource()
-    private lazy var delegate = PostReplyDelegate(on: self)
-    private let prefetchDataSource = PostReplyDataSourcePrefetching()
+    private lazy var dataSource: PostReplyPaginatedDataSource = {
+        let dataSource = PostReplyPaginatedDataSource()
+        dataSource.delegate = self
+        return dataSource
+        
+    }()
+    
+    private lazy var delegate = PostReplyPaginatedDelegate(on: self)
 
     private var followingIdentities: Identities = []
     private var followedByIdentities: Identities = []
@@ -27,7 +32,7 @@ class AboutViewController: ContentViewController {
         let view = UITableView.forVerse()
         view.dataSource = self.dataSource
         view.delegate = self.delegate
-        view.prefetchDataSource = self.prefetchDataSource
+        view.prefetchDataSource = self.dataSource
         return view
     }()
 
@@ -93,13 +98,13 @@ class AboutViewController: ContentViewController {
 
     private func loadFeed() {
         Bots.current.feed(identity: self.identity) {
-            [weak self] keyValues, error in
+            [weak self] src, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             guard error == nil else {
                 return
             }
-            self?.dataSource.keyValues = keyValues.posts.sortedByDateDescending().rootPosts()
+            self?.dataSource.update(source: src)
             self?.tableView.forceReload()
         }
     }
@@ -352,4 +357,33 @@ fileprivate class AboutPostView: KeyValueView {
     override func update(with keyValue: KeyValue) {
         self.view.update(with: keyValue)
     }
+}
+
+extension AboutViewController: PostReplyPaginatedDataSourceDelegate {
+    
+    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+        view.postView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue)
+        }
+        view.repliesView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            self?.pushThreadViewController(with: keyValue)
+        }
+
+        // open thread and start reply
+        view.replyTextView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue, startReplying: true)
+        }
+    }
+    
+    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
 }

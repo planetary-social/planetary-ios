@@ -76,6 +76,9 @@ class ReplyTextView: KeyValueView {
         self.calculateHeight()
 
         self.button.setImageForMe()
+        
+        self.button.isSkeletonable = true
+        self.textView.isSkeletonable = true
     }
 
     func calculateHeight() {

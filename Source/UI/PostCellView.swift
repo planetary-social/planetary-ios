@@ -9,6 +9,7 @@
 import Foundation
 import ImageSlideshow
 import UIKit
+import SkeletonView
 
 class PostCellView: KeyValueView {
 
@@ -42,6 +43,8 @@ class PostCellView: KeyValueView {
         view.isScrollEnabled = false
         view.textContainer.lineFragmentPadding = 0
         view.textContainer.lineBreakMode = .byTruncatingTail
+        view.isSkeletonable = true
+        view.linesCornerRadius = 30
         return view
     }()
 
@@ -164,6 +167,8 @@ class PostCellView: KeyValueView {
         self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
         self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
         self.galleryViewZeroHeightConstraint.isActive = true
+        
+        self.isSkeletonable = true
     }
 
     convenience init(keyValue: KeyValue) {
@@ -182,17 +187,37 @@ class PostCellView: KeyValueView {
         self.keyValue = keyValue
         self.headerView.update(with: keyValue)
 
-        guard let post = keyValue.value.content.post else { return }
+        if let vote = keyValue.value.content.vote {
+            let expression: String
+            if vote.vote.value > 0 {
+                expression = "👍"
+            } else {
+                expression = "👎"
+            }
+            
+            self.fullPostText = NSAttributedString(string: expression)
+            self.textView.text = expression
+            
+            
+            self.galleryViewFullHeightConstraint.isActive = false
+            self.galleryViewZeroHeightConstraint.isActive = true
+            self.galleryViewBottomConstraint?.constant = 0
+        } else if let post = keyValue.value.content.post {
+            let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
+            
+            self.fullPostText = text
+            self.configureTruncatedState()
 
-        let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
+            self.galleryViewFullHeightConstraint.isActive = post.hasBlobs
+            self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
+            self.galleryViewBottomConstraint?.constant = (post.hasBlobs && self.allowSpaceUnderGallery) ? -Layout.verticalSpacing : 0
+            self.galleryView.update(with: post)
+        } else {
+            return
+        }
         
-        self.fullPostText = text
-        self.configureTruncatedState()
 
-        self.galleryViewFullHeightConstraint.isActive = post.hasBlobs
-        self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
-        self.galleryViewBottomConstraint?.constant = (post.hasBlobs && self.allowSpaceUnderGallery) ? -Layout.verticalSpacing : 0
-        self.galleryView.update(with: post)
+        
 
         // always do this in case of constraint changes
         self.setNeedsLayout()
