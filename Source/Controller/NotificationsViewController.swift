@@ -126,7 +126,7 @@ class NotificationsViewController: ContentViewController {
         AppController.shared.operationQueue.addOperation(refreshOperation)
     }
 
-    private func update(with feed: Feed?, animated: Bool = true) {
+    private func update(with feed: KeyValues?, animated: Bool = true) {
         guard let feed = feed else { return }
         self.dataSource.keyValues = feed
         self.tableView.reloadData()

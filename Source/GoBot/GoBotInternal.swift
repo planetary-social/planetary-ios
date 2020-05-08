@@ -509,14 +509,8 @@ class GoBotInternal {
     
     // MARK: message streams
     
-    
-    // aka createUserStream
-    func getMessagesForFeed(feed: String, startSeq: Int, limit: Int, completion: @escaping FeedCompletion) {
-        completion([], GoBotError.unexpectedFault("getMessagesForFeed: deperecated - use viewDB"))
-    }
-    
     // aka createLogStream
-    func getReceiveLog(startSeq: Int64, limit: Int, completion: @escaping FeedCompletion) {
+    func getReceiveLog(startSeq: Int64, limit: Int, completion: @escaping KeyValuesCompletion) {
         var err: Error? = nil
         var msgs = [KeyValue]()
         defer {
@@ -539,7 +533,7 @@ class GoBotInternal {
     }
     
     // aka private.read
-    func getPrivateLog(startSeq: Int64, limit: Int, completion: @escaping FeedCompletion) {
+    func getPrivateLog(startSeq: Int64, limit: Int, completion: @escaping KeyValuesCompletion) {
         var err: Error? = nil
         var msgs = [KeyValue]()
         defer {

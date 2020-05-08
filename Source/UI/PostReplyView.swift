@@ -27,6 +27,7 @@ class PostReplyView: KeyValueView {
         view.textView.isUserInteractionEnabled = false
         view.topSeparator.isHidden = true
         view.addGestureRecognizer(view.tapGesture.recognizer)
+        view.isSkeletonable = true
         return view
     }()
 
@@ -47,6 +48,8 @@ class PostReplyView: KeyValueView {
         Layout.fillSouth(of: self.replyTextView, with: bottomBorder)
         Layout.fillSouth(of: bottomBorder, with: bottomSeparator)
         bottomSeparator.pinBottomToSuperviewBottom()
+        
+        self.isSkeletonable = true
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -92,6 +92,7 @@ class ViewDatabase {
     
     private var posts: Table
     private let colText = Expression<String>("text")
+    private let colIsRoot = Expression<Bool>("is_root")
     
     private var post_blobs: Table
     // msg_ref
@@ -192,18 +193,32 @@ class ViewDatabase {
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
             try db.execute(String(contentsOf: schemaV1url))
-            db.userVersion = 2
+            db.userVersion = 3
         } else if db.userVersion == 1 {
             try db.execute("""
-CREATE INDEX messagekeys_key ON messagekeys(key);
-CREATE INDEX messagekeys_id ON messagekeys(id);
-CREATE INDEX posts_msgrefs on posts (msg_ref);
-CREATE INDEX messages_rxseq on messages (rx_seq);
-CREATE INDEX tangle_id on tangles (id);
-CREATE INDEX contacts_state ON contacts (contact_id, state);
-CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
-""");
-            db.userVersion = 2
+            CREATE INDEX messagekeys_key ON messagekeys(key);
+            CREATE INDEX messagekeys_id ON messagekeys(id);
+            CREATE INDEX posts_msgrefs on posts (msg_ref);
+            CREATE INDEX messages_rxseq on messages (rx_seq);
+            CREATE INDEX tangle_id on tangles (id);
+            CREATE INDEX contacts_state ON contacts (contact_id, state);
+            CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+            -- add new column to posts and migrate existing data
+            ALTER TABLE posts ADD is_root boolean default false;
+            CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+            UPDATE posts set is_root=true;
+            UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
+            """);
+            db.userVersion = 3
+        } else if db.userVersion == 2 {
+            try db.execute("""
+            -- add new column to posts and migrate existing data
+            ALTER TABLE posts ADD is_root boolean default false;
+            CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+            UPDATE posts set is_root=true;
+            UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
+            """);
+            db.userVersion = 3
         }
 
         self.currentUserID = try self.authorID(from: user, make: true)
@@ -225,6 +240,11 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
     func close() {
         self.openDB = nil
         self.currentUserID = -1
+    }
+    
+    func getOpenDB() -> Connection? {
+        guard let db = self.openDB else { return nil }
+        return db
     }
     
     // returns the number of rows for the respective tables
@@ -264,6 +284,43 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             default: throw ViewDatabaseError.unknownTable(table)
         }
         return cnt
+    }
+    
+    // helper to get some counts for pagination
+    func statsForRootPosts(onlyFollowed: Bool = false) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        var qry = self.posts
+            .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
+            .filter(colIsRoot == true)
+            .filter(colHidden == false)
+            .filter(colDecrypted == false)
+        
+        if onlyFollowed {
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
+        }
+        return try db.scalar(qry.count)
+    }
+
+    // posts for a feed
+    func stats(for feed: FeedIdentifier) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            let authorID = try self.authorID(from: feed, make: false)
+            let theirRootPosts = try db.scalar(self.posts
+                .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
+                .filter(colAuthorID == authorID)
+                .filter(colIsRoot == true)
+                .count)
+
+            return theirRootPosts
+        } catch {
+            Log.optional(GoBotError.duringProcessing("stats for feed failed", error))
+            return 0
+        }
     }
     
     func lastReceivedSeq() throws -> Int64 {
@@ -687,50 +744,25 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         return who
     }
 
+    // MARK: pagination
+    // returns a pagination proxy for the home (or recent) view
+    func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
+        let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
+        return try PaginatedPrefetchDataProxy(with: src)
+    }
+
+    func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
+        let src = try FeedKeyValueSource(with: self, feed: feed)
+        return try PaginatedPrefetchDataProxy(with: src)
+    }
+
     // MARK: recent
-
-    func recentPosts(newer then: Date, limit: Int, before: Int = 0, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
-        guard let _ = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
-            .filter(colClaimedAt > then.millisecondsSince1970)
-            .order(colClaimedAt.asc)
-        
-        
-        if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
-        }
-        
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
-        
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
-    }
-
-    func recentPosts(older then: Date, limit: Int, before: Int = 0, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
+    func recentPosts(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> KeyValues {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
-            .filter(colClaimedAt < then.millisecondsSince1970)
-            .order(colClaimedAt.desc)
-        
-        if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
-        }
-        
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
-    }
-    
-    func recentPosts(limit: Int, before: Int = 0, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> Feed {
-        guard let _ = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate)
+        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
             .order(colClaimedAt.desc)
         
         if onlyFollowed {
@@ -744,7 +776,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
     
     // MARK: common query constructors
 
-    private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true) -> Table {
+    private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {
         var qry = self.msgs
             .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
@@ -754,12 +786,17 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
-            .limit(limit)
+
+        if let offset = offset {
+            qry = qry.limit(limit, offset: offset)
+        } else {
+            qry = qry.limit(limit)
+        }
+
         // TODO: this is a very handy query but also used in a lot of places
         // maybe should be split apart into a wrapper like filterOnlyFollowedPeople which is just func(Table) -> Table
         if onlyRoots {
-            let colMaybeRoot = Expression<Int64?>("root")
-            qry = qry.filter(colMaybeRoot == nil)   // only thread-starting posts (no replies)
+            qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
         }
         return qry
     }
@@ -887,6 +924,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.tangles[colMessageRef])
             .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.tangles[colMessageRef])
+            .filter(colMsgType == ContentType.post.rawValue)
             .filter(colRoot == msgID)
             .filter(colHidden == false)
         
@@ -1000,7 +1038,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         return try self.mapQueryToKeyValue(qry: repliesQry)
     }
 
-    func mentions(limit: Int = 200, wantPrivate: Bool = false) throws -> Feed {
+    func mentions(limit: Int = 200, wantPrivate: Bool = false) throws -> KeyValues {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1019,11 +1057,11 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         return try self.mapQueryToKeyValue(qry: qry)
     }
 
-    func feed(for identity: Identity, limit: Int = 100) throws -> [KeyValue] {
+    func feed(for identity: Identity, limit: Int = 100, offset: Int? = nil) throws -> KeyValues {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
+        let timeStart = CFAbsoluteTimeGetCurrent()
         let feedAuthorID = try self.authorID(from: identity, make: false)
         
         let doWeBlockThemQry = self.contacts
@@ -1034,16 +1072,22 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
             throw GoBotError.duringProcessing("user blocked", ViewDatabaseError.unknownAuthor(identity))
         }
 
-        let postsQry = self.basicRecentPostsQuery(limit: limit, wantPrivate: false, onlyRoots: false)
+        let postsQry = self.basicRecentPostsQuery(
+            limit: limit,
+            wantPrivate: false,
+            onlyRoots: true,
+            offset: offset)
             .filter(colAuthorID == feedAuthorID)
             .order(colClaimedAt.desc)
             .filter(colHidden == false)
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
-    }
-    
 
-    
+        let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
+        let msgs = try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
+        let timeDone = CFAbsoluteTimeGetCurrent()
+        print("\(#function) took \(timeDone-timeStart)")
+        return msgs
+    }
+
     func get(key: MessageIdentifier) throws -> KeyValue {
         let msgId = try self.msgID(from: key, make: false)
         // TODO: add 2nd signature to get message by internal ID
@@ -1387,6 +1431,7 @@ CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, stat
         
         try db.run(self.posts.insert(
             colMessageRef <- msgID,
+            colIsRoot <- p.root == nil,
             colText <- p.text
         ))
         

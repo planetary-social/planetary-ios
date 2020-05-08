@@ -12,17 +12,21 @@ import UIKit
 class ChannelViewController: ContentViewController {
 
     private let hashtag: Hashtag
-    private let dataSource = PostReplyDataSource()
-    private lazy var delegate = PostReplyDelegate(on: self)
-    private let prefetchDataSource = PostReplyDataSourcePrefetching()
     
-
+    private lazy var dataSource: PostReplyPaginatedDataSource = {
+        let dataSource = PostReplyPaginatedDataSource()
+        dataSource.delegate = self
+        return dataSource
+        
+    }()
+    
+    private lazy var delegate = PostReplyPaginatedDelegate(on: self)
     
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
         view.dataSource = self.dataSource
         view.delegate = self.delegate
-        view.prefetchDataSource = self.prefetchDataSource
+        view.prefetchDataSource = self.dataSource
         view.refreshControl = self.refreshControl
         return view
     }()
@@ -65,24 +69,33 @@ class ChannelViewController: ContentViewController {
         Analytics.trackDidShowScreen(screenName: "channel")
     }
 
-    private func load() {
-        Bots.current.posts(with: self.hashtag) {
-            [weak self] feed, error in
+    private func load(animated: Bool = false) {
+        Bots.current.posts(with: self.hashtag) { [weak self] proxy, error in
             Log.optional(error)
-            self?.removeLoadingAnimation()
-            self?.refreshControl.endRefreshing()
-            
-            if let error = error {
-                self?.alert(error: error)
-            } else {
-                self?.update(with: feed)
+            DispatchQueue.main.async { [weak self] in
+                self?.removeLoadingAnimation()
+                self?.refreshControl.endRefreshing()
+                
+                if let error = error {
+                    self?.alert(error: error)
+                } else {
+                    self?.update(with: proxy, animated: animated)
+                }
             }
         }
     }
 
-    private func update(with feed: Feed, animated: Bool = true) {
-        self.dataSource.keyValues = feed
-        self.tableView.forceReload()
+    private func refresh() {
+        self.load()
+    }
+
+    private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool = true) {
+        self.dataSource.update(source: proxy)
+        if animated {
+            self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        } else {
+            self.tableView.forceReload()
+        }
     }
 
     // MARK: Actions
@@ -97,8 +110,34 @@ class ChannelViewController: ContentViewController {
     override func didBlockUser(notification: NSNotification) {
         guard let identity = notification.object as? Identity else { return }
         self.tableView.deleteKeyValues(by: identity)
-        if self.dataSource.keyValues.isEmpty {
-            self.navigationController?.remove(viewController: self)
+    }
+}
+
+extension ChannelViewController: PostReplyPaginatedDataSourceDelegate {
+    
+    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+        view.postView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue)
+        }
+        view.repliesView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            self?.pushThreadViewController(with: keyValue)
+        }
+
+        // open thread and start reply
+        view.replyTextView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue, startReplying: true)
         }
     }
+    
+    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
 }

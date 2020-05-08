@@ -896,58 +896,31 @@ class GoBot: Bot {
 
     // MARK: Feeds
 
-    func recent(newer than: Date, count: Int, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
-        self.queue.async {
-            do {
-                let msgs = try self.database.recentPosts(newer: than, limit: count)
-                DispatchQueue.main.async { completion(msgs, nil) }
-            } catch {
-                DispatchQueue.main.async { completion([], error) }
-            }
-        }
-    }
-    
-    func recent(older than: Date, count: Int, wantPrivate: Bool, completion: @escaping FeedCompletion) {
-        Thread.assertIsMainThread()
-        self.queue.async {
-            do {
-                let msgs = try self.database.recentPosts(older: than, limit: count)
-                DispatchQueue.main.async { completion(msgs, nil) }
-            } catch {
-                DispatchQueue.main.async { completion([], error) }
-            }
-        }
-    }
-    
     // old recent
-    func recent(completion: @escaping FeedCompletion) {
+    func recent(completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 200)
-                DispatchQueue.main.async { completion(msgs, nil) }
+                let ds = try self.database.paginated(onlyFollowed: true)
+                DispatchQueue.main.async { completion(ds, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error)  }
+                DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
     }
     
     // posts from everyone, not just who you follow
-    func everyone(completion: @escaping FeedCompletion) {
+    func everyone(completion: @escaping PaginatedCompletion) {
         //Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.recentPosts(limit: 50, onlyFollowed: false)
+                let msgs = try self.database.paginated(onlyFollowed: false)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error)  }
+                DispatchQueue.main.async { completion(StaticDataProxy(), error)  }
             }
         }
     }
-    
-
-    
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)
@@ -958,11 +931,11 @@ class GoBot: Bot {
                     let root = try self.database.get(key: rootKey)
                     let replies = try self.database.getRepliesTo(thread: root.key)
                     DispatchQueue.main.async {
-                        completion(root, replies, nil)
+                        completion(root, StaticDataProxy(with:replies), nil)
                     }
                 } catch {
                     DispatchQueue.main.async {
-                        completion(nil, [], error)
+                        completion(nil, StaticDataProxy(), error)
                     }
                 }
             } else {
@@ -983,29 +956,30 @@ class GoBot: Bot {
             let root = try self.database.get(key: rootKey)
             let replies = try self.database.getRepliesTo(thread: rootKey)
             DispatchQueue.main.async {
-                completion(root, replies, nil)
+                completion(root, StaticDataProxy(with:replies), nil)
             }
         } catch {
             DispatchQueue.main.async {
-                completion(nil, [], error)
+                completion(nil, StaticDataProxy(), error)
             }
         }
     }
 
-    func mentions(completion: @escaping FeedCompletion) {
+    func mentions(completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let messages = try self.database.mentions(limit: 1000)
-                DispatchQueue.main.async { completion(messages, nil) }
+                let p = StaticDataProxy(with:messages)
+                DispatchQueue.main.async { completion(p, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
     }
 
     // TODO consider a different form that returns a tuple of arrays
-    func notifications(completion: @escaping FeedCompletion) {
+    func notifications(completion: @escaping KeyValuesCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
@@ -1030,6 +1004,9 @@ class GoBot: Bot {
                 all.append(contentsOf: contacts)
 
                 let sorted = all.sortedByDateDescending()
+
+                // TODO: notifications view expect a datasource that is an array (didSet override)
+                //                let p = StaticDataProxy(with: sorted)
                 DispatchQueue.main.async { completion(sorted, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
@@ -1037,14 +1014,14 @@ class GoBot: Bot {
         }
     }
 
-    func feed(identity: Identity, completion: @escaping FeedCompletion) {
+    func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.feed(for: identity)
-                DispatchQueue.main.async { completion(msgs, nil) }
+                let ds = try self.database.paginated(feed: identity)
+                DispatchQueue.main.async { completion(ds, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
     }
@@ -1064,14 +1041,15 @@ class GoBot: Bot {
         }
     }
 
-    func posts(with hashtag: Hashtag, completion: @escaping FeedCompletion) {
+    func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let keyValues = try self.database.messagesForHashtag(name: hashtag.name)
-                DispatchQueue.main.async { completion(keyValues, nil) }
+                let p = StaticDataProxy(with: keyValues)
+                DispatchQueue.main.async { completion(p, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
     }

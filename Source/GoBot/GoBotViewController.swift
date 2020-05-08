@@ -236,21 +236,6 @@ class GoBotViewController: DebugTableViewController {
         
         
         var settings: [DebugTableViewCellModel] = []
-    
-        settings += [DebugTableViewCellModel(title: "Feeds",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                cell.detailTextLabel?.text = String(stats.feeds)
-            },
-                                             actionClosure:
-            {
-                cell in
-                let feedCtrl = DebugFeedOverviewViewController()
-                self.navigationController?.pushViewController(feedCtrl, animated: true)
-            }
-        )]
 
         settings += [DebugTableViewCellModel(title: "Messages",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,

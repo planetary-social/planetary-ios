@@ -27,18 +27,24 @@ class EveryoneViewController: ContentViewController {
          return control
      }()
 
-     private let dataSource = PostReplyDataSource()
-     private lazy var delegate = PostReplyDelegate(on: self)
-     private let prefetchDataSource = PostReplyDataSourcePrefetching()
+     private lazy var dataSource: PostReplyPaginatedDataSource = {
+         let dataSource = PostReplyPaginatedDataSource()
+         dataSource.delegate = self
+         return dataSource
+         
+     }()
+    
+     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
 
      private lazy var tableView: UITableView = {
          let view = UITableView.forVerse()
          view.dataSource = self.dataSource
          view.delegate = self.delegate
-         view.prefetchDataSource = self.prefetchDataSource
+         view.prefetchDataSource = self.dataSource
          view.refreshControl = self.refreshControl
          view.sectionHeaderHeight = 0
          view.separatorStyle = .none
+         view.showsVerticalScrollIndicator = false
          return view
      }()
      
@@ -138,7 +144,7 @@ class EveryoneViewController: ContentViewController {
     }
     
     func load(animated: Bool = false) {
-        Bots.current.everyone() { [weak self] roots, error in
+        Bots.current.everyone() { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
@@ -148,7 +154,7 @@ class EveryoneViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.update(with: roots, animated: animated)
+                self?.update(with: proxy, animated: animated)
             }
         }
     }
@@ -188,8 +194,8 @@ class EveryoneViewController: ContentViewController {
     }
     
     
-    func update(with roots: KeyValues, animated: Bool) {
-        if roots.isEmpty {
+    func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
+        if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
             self.reloadTimer.start(fireImmediately: false)
         } else {
@@ -197,7 +203,7 @@ class EveryoneViewController: ContentViewController {
             self.tableView.backgroundView = nil
             self.reloadTimer.stop()
         }
-        self.dataSource.keyValues = roots
+        self.dataSource.update(source: proxy)
         if animated {
             self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
         } else {
@@ -247,3 +253,31 @@ class EveryoneViewController: ContentViewController {
 
 }
 
+extension EveryoneViewController: PostReplyPaginatedDataSourceDelegate {
+    
+    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+        view.postView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue)
+        }
+        view.repliesView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            self?.pushThreadViewController(with: keyValue)
+        }
+
+        // open thread and start reply
+        view.replyTextView.tapGesture.tap = {
+            [weak self] in
+            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            self?.pushThreadViewController(with: keyValue, startReplying: true)
+        }
+    }
+    
+    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
+}

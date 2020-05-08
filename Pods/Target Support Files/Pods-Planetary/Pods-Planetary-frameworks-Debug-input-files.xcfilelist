@@ -8,6 +8,7 @@ ${BUILT_PRODUCTS_DIR}/Mixpanel/Mixpanel.framework
 ${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework
 ${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework
 ${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework
+${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework
 ${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskCoreSDK.framework
 ${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskProviderSDK.framework
 ${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskSDK.framework
