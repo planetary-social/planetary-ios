@@ -40,7 +40,7 @@ DEPENDENCIES:
   - Mixpanel (= 3.6.1)
   - Multipart (= 0.1.0)
   - PhoneNumberKit (= 3.2.0)
-  - SkeletonView
+  - SkeletonView (= 1.8.7)
   - SQLite.swift (= 0.12.2)
   - SVProgressHUD (= 2.2.5)
   - ZendeskSDK (= 4.0.1)
@@ -55,10 +55,9 @@ SPEC REPOS:
     - Mixpanel
     - Multipart
     - PhoneNumberKit
+    - SkeletonView
     - SQLite.swift
     - SVProgressHUD
-  trunk:
-    - SkeletonView
     - ZendeskSDK
 
 SPEC CHECKSUMS:
@@ -75,6 +74,6 @@ SPEC CHECKSUMS:
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   ZendeskSDK: a5d4a6b1f117ed3177d72bbcc09b51d7600dd299
 
-PODFILE CHECKSUM: 93f8ce9471eb26850691817e87d37a82157102da
+PODFILE CHECKSUM: 862391eca09a96bfac06c9a7b3307428ce76fa5d
 
 COCOAPODS: 1.9.1
