@@ -33,6 +33,7 @@ extension KeyValueView {
         switch type {
             case .about:    return AboutView()
             case .post:     return PostCellView()
+            case .vote:     return PostCellView()
             default:        return UnsupportedView()
         }
     }

@@ -924,6 +924,7 @@ class ViewDatabase {
             .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.tangles[colMessageRef])
             .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.tangles[colMessageRef])
+            .filter(colMsgType == ContentType.post.rawValue)
             .filter(colRoot == msgID)
             .filter(colHidden == false)
         

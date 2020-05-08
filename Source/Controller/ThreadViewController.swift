@@ -13,16 +13,20 @@ class ThreadViewController: ContentViewController {
 
     private let post: KeyValue
     private var root: KeyValue?
-//    private let dataSource = ThreadTableViewDataSource() TODO: port below to base class of this
-    private let dataSource = KeyValuePaginatedTableViewDataSource()
+    
+    private lazy var dataSource: ThreadReplyPaginatedTableViewDataSource = {
+        var dataSource = ThreadReplyPaginatedTableViewDataSource()
+        dataSource.delegate = self
+        return dataSource
+    }()
+    
     private let textViewDelegate = ThreadTextViewDelegate(font: UIFont.verse.reply,
                                                           color: UIColor.text.reply,
                                                           placeholderText: .postAReply,
                                                           placeholderColor: UIColor.text.placeholder)
 
     private var branchKey: Identifier {
-        fatalError("TODO: lastKeyForBranching")
-//        return self.dataSource.keyValues.last?.key ?? self.rootKey
+        return self.rootKey
     }
 
     private var rootKey: Identifier {
@@ -39,6 +43,7 @@ class ThreadViewController: ContentViewController {
         let view = UITableView.forVerse()
         view.contentInset = .bottom(10)
         view.dataSource = self.dataSource
+        view.prefetchDataSource = self.dataSource
         view.delegate = self
         view.refreshControl = self.refreshControl
         return view
@@ -339,52 +344,23 @@ extension ThreadViewController: UITableViewDelegate {
     }
 }
 
-fileprivate class ThreadTableViewDataSource: KeyValueTableViewDataSource {
-
-    var expandedPosts = Set<Identifier>()
-
-    override func cell(at indexPath: IndexPath,
-                       for type: ContentType,
-                       tableView: UITableView) -> KeyValueTableViewCell
-    {
-        let view = ThreadReplyView()
-        let key = self.keyValue(at: indexPath).key
-        view.textIsExpanded = self.expandedPosts.contains(key)
-
-        // this is important so that the logic is scoped to the
-        // keyValue that we care about, which is not always that
-        // of the previous scope due to cell reuse
-        view.tapGesture.tap = {
-            guard let keyValue = view.keyValue else { return }
-
-            tableView.beginUpdates()
+extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate {
+    
+    func threadReplyView(view: ThreadReplyView, didLoad keyValue: KeyValue) {
+        view.tapGesture.tap = { [weak self] in
+            self?.tableView.beginUpdates()
             view.toggleExpanded()
-            tableView.endUpdates()
+            self?.tableView.endUpdates()
 
             if view.textIsExpanded {
-                self.expandedPosts.insert(keyValue.key)
+                self?.dataSource.expandedPosts.insert(keyValue.key)
             } else {
-                self.expandedPosts.remove(keyValue.key)
+                self?.dataSource.expandedPosts.remove(keyValue.key)
             }
         }
-
-        let cell = KeyValueTableViewCell(for: .post, with: view)
-        return cell
     }
 }
 
-fileprivate class ThreadReplyView: PostCellView {
-
-    override init() {
-        super.init()
-        self.truncationLimit = (over: 12, to: 8)
-        Layout.addSeparator(toBottomOf: self)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
 
 fileprivate class ThreadTextViewDelegate: MentionTextViewDelegate {
 
