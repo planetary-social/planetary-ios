@@ -128,6 +128,10 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
     
+    func loadDefaultContent(completion: @escaping ErrorCompletion) {
+        fatalError("TODO")
+    }
+
 
     private init() {}
     static let shared = FakeBot()

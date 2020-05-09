@@ -706,6 +706,41 @@ class GoBot: Bot {
             }
         }
     }
+    
+    func loadDefaultContent( completion: @escaping ErrorCompletion) {
+        do {
+            if let path = Bundle.main.path(forResource: "Feed_big", ofType: "json") {
+                do {
+                    let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                    do {
+                        let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+                        
+                        var newMesgs = [KeyValue]()
+                        //this is a hack, @martin please fix. It's losing receivedSeq in the json parsing
+                        for (index, msg) in msgs.enumerated() {
+                            var newmsg = msg
+                            newmsg.receivedSeq=Int64(index)
+                            newMesgs.append(newmsg)
+                        }
+                        
+                        try self.database.fillMessages(msgs: newMesgs)
+                    }catch{
+                        print(error) // shows error
+                        print("Decoding failed")// local message
+                        completion(error)
+                    }
+                } catch {
+                    print(error) // shows error
+                    print("Unable to read file")// local message
+                    completion(error)
+                }
+            }
+         }
+        completion(nil)
+    }
+    
+    
+
 
     // MARK: About
 

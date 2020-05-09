@@ -174,6 +174,9 @@ protocol Bot {
     func data(for identifier: BlobIdentifier,
               completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
 
+    
+    func loadDefaultContent(completion: @escaping ErrorCompletion)
+    
     // MARK: Statistics
 
     func statistics(completion: @escaping StatisticsCompletion )

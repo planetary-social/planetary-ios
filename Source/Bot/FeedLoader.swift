@@ -23,13 +23,14 @@ class FeedLoader: AsynchronousOperation {
     
     override func main() {
         Log.info("FeedLoader started.")
-        insertDefaultFeeds()
+        //loadDefaultContent()
     }
     
-    
-    func insertDefaultFeeds() {
-        let data = self.data(for: "Feed_big.json")
 
+    
+    func loadDefaultContent(identity: Identity) {
+        //let data = self.data(for: "Feed_big.json")
+/*
         var urls: [URL] = []
         do {
             // get test messages from JSON
@@ -43,7 +44,7 @@ class FeedLoader: AsynchronousOperation {
             urls += [tmpURL] // don't litter
             
             let  damnPath = tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try! vdb.open(path: damnPath, user: testKey.identity)
+            try! vdb.open(path: damnPath, user: identity)
             
             try! vdb.fillMessages(msgs: msgs)
             
@@ -52,6 +53,7 @@ class FeedLoader: AsynchronousOperation {
         } catch {
              Log.info("FeedLoader Failed.")
         }
+ */
     }
 
 }

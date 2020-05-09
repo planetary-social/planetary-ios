@@ -19,7 +19,7 @@ struct KeyValue: Codable {
 
     let key: Identifier
     let value: Value
-    let receivedSeq: Int64? // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
+    var receivedSeq: Int64? // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
     let timestamp: Float64 // received time
 
     init(key: Identifier, value: Value, timestamp: Float64) {

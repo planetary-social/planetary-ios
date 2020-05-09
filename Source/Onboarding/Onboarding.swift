@@ -153,6 +153,7 @@ class Onboarding {
                     }
                 }
             }
+            context.bot.loadDefaultContent(completion: { _ in })
         }
     }
 
@@ -231,4 +232,5 @@ class Onboarding {
             }
         }
     }
+    
 }
