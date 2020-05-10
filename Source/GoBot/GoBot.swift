@@ -914,7 +914,7 @@ class GoBot: Bot {
         //Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let msgs = try self.database.paginated(onlyFollowed: false)
+                let msgs = try self.database.paginated(onlyFollowed: false, onlyRoots: false)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error)  }

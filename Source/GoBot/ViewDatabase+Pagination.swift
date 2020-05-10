@@ -157,15 +157,17 @@ class RecentViewKeyValueSource: KeyValueSource {
 
     // home or explore view?
     private let onlyFollowed: Bool
-
-    init(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws {
+    private let onlyRoots: Bool
+    
+    init(with vdb: ViewDatabase, onlyFollowed: Bool = true, onlyRoots: Bool = true) throws {
         self.view = vdb
         self.total = try vdb.statsForRootPosts(onlyFollowed: onlyFollowed)
         self.onlyFollowed = onlyFollowed
+        self.onlyRoots = onlyRoots
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
+        return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed, onlyRoots: self.onlyRoots)
     }
 }
 

@@ -746,8 +746,8 @@ class ViewDatabase {
 
     // MARK: pagination
     // returns a pagination proxy for the home (or recent) view
-    func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
+    func paginated(onlyFollowed: Bool, onlyRoots: Bool = true) throws -> (PaginatedKeyValueDataProxy) {
+        let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed, onlyRoots: onlyRoots)
         return try PaginatedPrefetchDataProxy(with: src)
     }
 
@@ -757,12 +757,12 @@ class ViewDatabase {
     }
 
     // MARK: recent
-    func recentPosts(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> KeyValues {
+    func recentPosts(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true, onlyRoots: Bool = true) throws -> KeyValues {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
+        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, onlyRoots: onlyRoots, offset: offset)
             .order(colClaimedAt.desc)
         
         if onlyFollowed {
