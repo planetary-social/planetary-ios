@@ -20,11 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All new Explore tab that shows posts from your greater network.
 - New sync/refresh strategy that should be better at having your feed up to date.
 
-## [0.9.21] - 2020-04-30
-### Added
-- All new Explore tab that shows posts from your greater network.
-- New sync/refresh strategy that should be better at having your feed up to date.
-
 ## [0.9.20] - 2020-04-16
 ### Added
 - Public profile links now work with the public identifier.
