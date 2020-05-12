@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.21] - 2020-05-10
+### Added:
+- New system for loading content so the UI updates faster and you can scroll back through history as far as you want.
+- Changed the explore tab to show replies and new posts to help with discovering new content.
+
+### Fixed:
+- Fix bug where if you had more than 50 follows you wouldn't see new follows in your notifications tab.
+- Changed Mixpanel actions to log user navigation through the app instead of just bot behavior. 
+- Attaching GoBot logs to Share logs in Debug, to Bugsnag crash reports and to Zendesk tickets.
+- Fix bug in background sync on notification of new content. 
+
+## [0.9.21] - 2020-04-30
+### Added
+- All new Explore tab that shows posts from your greater network.
+- New sync/refresh strategy that should be better at having your feed up to date.
+
 ## [0.9.21] - 2020-04-30
 ### Added
 - All new Explore tab that shows posts from your greater network.
