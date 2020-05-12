@@ -20,6 +20,12 @@ class PreviewSettingsViewController: DebugTableViewController {
         self.navigationItem.title = Text.Preview.title.text
         self.registerApplicationWillEnterForeground()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Advanced Settings")
+        Analytics.trackDidShowScreen(screenName: "advanced_settings")
+    }
 
     internal override func updateSettings() {
         self.settings = [self.blocks(), self.reset(), self.debug()]

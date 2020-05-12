@@ -21,6 +21,12 @@ class DebugViewController: DebugTableViewController {
         }
         self.navigationItem.title = Text.debug.text
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Debug")
+        Analytics.trackDidShowScreen(screenName: "debug")
+    }
 
     internal override func updateSettings() {
         self.settings = [self.application(),
@@ -544,6 +550,7 @@ class DebugViewController: DebugTableViewController {
             CrashReporting.shared.reportIfNeeded(error: error)
             
             Analytics.forget()
+            CrashReporting.shared.forget()
             
             AppController.shared.launch()
             self?.dismiss(animated: true, completion: nil)
@@ -572,7 +579,11 @@ class DebugViewController: DebugTableViewController {
         self.confirm(message: "Are you sure you want to logout of the current configuration?  Any pending operations will be lost.",
                      isDestructive: true,
                      confirmTitle: "Logout",
-                     confirmClosure: { self.applyConfigurationAndDismiss() })
+                     confirmClosure: {
+                        Analytics.trackDidLogout()
+                        self.applyConfigurationAndDismiss()
+                        
+        })
     }
 
     private func logoutAndRelaunch() {

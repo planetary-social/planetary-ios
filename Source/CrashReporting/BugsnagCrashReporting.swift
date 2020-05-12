@@ -37,6 +37,14 @@ class BugsnagCrashReporting: CrashReportingService {
         }
     }
     
+    func forget() {
+        guard configured else {
+                   return
+               }
+        Bugsnag.configuration()?.setUser(nil, withName: nil, andEmail: nil)
+        Bugsnag.clearTab(withName: "network")
+    }
+    
     func crash() {
         guard configured else {
             return
