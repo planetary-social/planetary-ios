@@ -142,7 +142,7 @@ class GoBotInternal {
         self.queue = queue
     }
 
-    func isRunning() -> Bool {
+    var isRunning: Bool {
         return ssbBotIsRunning()
     }
 
@@ -155,8 +155,10 @@ class GoBotInternal {
     // MARK: login / logout
 
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String) -> Error? {
-        if self.isRunning() {
-            return GoBotError.alreadyStarted
+        if self.isRunning {
+            guard self.logout() == true else {
+                return GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
+            }
         }
         
         self.repoPath = pathPrefix.appending("/GoSbot")
@@ -197,16 +199,17 @@ class GoBotInternal {
         return GoBotError.unexpectedFault("failed to start")
     }
     
-    func logout() {
-        guard self.isRunning() else {
+    func logout() -> Bool {
+        guard self.isRunning else {
             Log.info("[GoBot] wanted to logout but bot not running")
-            return
+            return false
         }
             
         if !ssbBotStop() {
             Log.fatal(.botError, "stoping GoSbot failed.")
-            return
+            return false
         }
+        return true
     }
 
     // MARK: connections

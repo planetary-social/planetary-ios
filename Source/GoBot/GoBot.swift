@@ -174,7 +174,9 @@ class GoBot: Bot {
             DispatchQueue.main.async { completion(BotError.notLoggedIn) }
             return
         }
-        self.bot.logout()
+        if !self.bot.logout() {
+            Log.unexpected(.botError, "failed to logout")
+        }
         _ = self.database.close()
         self._identity = nil
         DispatchQueue.main.async { completion(nil) }
@@ -209,7 +211,7 @@ class GoBot: Bot {
     // some time later, this is a workaround until we can figure out how
     // to determine peer connection status and progress
     func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
-        guard self.bot.isRunning() else {
+        guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
             }
@@ -239,7 +241,7 @@ class GoBot: Bot {
     }
 
     func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
-        guard self.bot.isRunning() else {
+        guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
             }

@@ -87,19 +87,23 @@ func ssbBotStop() bool {
 
 	shutdown()
 	sbot.Shutdown()
-	ct := sbot.Network.GetConnTracker()
-	sbot.Network.Close()
-	// we have to set the network peer nil so that it isn't closed again by sbot.Close
-	sbot.Network = nil
-	level.Debug(stopEvt).Log("msg", "shutdown")
-	var waited uint
-	for ct.Count() > 0 && waited < 10 {
-		ct.CloseAll()
-		waited++
-		time.Sleep(1 * time.Second)
-		count := ct.Count()
-		if count > 0 {
-			level.Warn(stopEvt).Log("msg", "still open connectionss", "n", count)
+	if sbot.Network != nil {
+		ct := sbot.Network.GetConnTracker()
+		sbot.Network.Close()
+
+		// we have to set the network peer nil so that it isn't closed again by sbot.Close
+		sbot.Network = nil
+
+		level.Debug(stopEvt).Log("msg", "shutdown")
+		var waited uint
+		for ct.Count() > 0 && waited < 10 {
+			ct.CloseAll()
+			waited++
+			time.Sleep(1 * time.Second)
+			count := ct.Count()
+			if count > 0 {
+				level.Warn(stopEvt).Log("msg", "still open connectionss", "n", count)
+			}
 		}
 	}
 

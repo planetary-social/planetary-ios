@@ -161,11 +161,11 @@ func (s *Sbot) serveIndex(name string, snk librarian.SinkIndex) {
 
 		err = luigi.Pump(s.rootCtx, &ps, src)
 		cancel()
-		if err == ssb.ErrShuttingDown {
+		if err == ssb.ErrShuttingDown || err == context.Canceled {
 			return nil
 		}
 		if err != nil {
-			return errors.Wrapf(err, "sbot index(%s) update failed", name)
+			return errors.Wrapf(err, "sbot index(%s) backlog update failed", name)
 		}
 		s.idxInSync.Done()
 
@@ -183,11 +183,11 @@ func (s *Sbot) serveIndex(name string, snk librarian.SinkIndex) {
 		s.indexStateMu.Unlock()
 
 		err = luigi.Pump(s.rootCtx, snk, src)
-		if err == ssb.ErrShuttingDown {
+		if err == ssb.ErrShuttingDown || err == context.Canceled {
 			return nil
 		}
 		if err != nil {
-			return errors.Wrapf(err, "sbot index(%s) update failed", name)
+			return errors.Wrapf(err, "sbot index(%s) live update failed", name)
 		}
 		return nil
 	})
