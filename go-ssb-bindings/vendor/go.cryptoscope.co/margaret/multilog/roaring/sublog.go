@@ -24,7 +24,7 @@ type sublog struct {
 	luigiObsv luigi.Observable
 	bmap      *roaring.Bitmap
 
-	lastSave uint64
+	dirty bool
 
 	deleted bool
 }
@@ -105,36 +105,36 @@ func (log *sublog) Append(v interface{}) (margaret.Seq, error) {
 
 	log.bmap.Add(uint32(val.Seq()))
 
-	newSeq, err := log.update()
-	if err != nil {
-		return nil, err
-	}
+	log.dirty = true
 
+	/*
+		newSeq, err := log.update()
+		if err != nil {
+			return nil, err
+		}
+	*/
+	log.seq.Inc()
+
+	count := log.bmap.GetCardinality() - 1
+	newSeq := margaret.BaseSeq(count)
+
+	err := log.luigiObsv.Set(newSeq)
+	if err != nil {
+		err = errors.Wrap(err, "roaringfiles: failed to update sequence")
+		return margaret.BaseSeq(-2), err
+	}
 	return newSeq, nil
 }
 
-func (log *sublog) update() (margaret.BaseSeq, error) {
-	// TODO: make store a bitmapStore, then we can also skip uncesessary unmarshals
+func (log *sublog) store() error {
 	data, err := log.bmap.MarshalBinary()
 	if err != nil {
-		return -2, errors.Wrap(err, "roaringfiles: failed to encode bitmap")
+		return errors.Wrap(err, "roaringfiles: failed to encode bitmap")
 	}
 
 	err = log.mlog.store.Put(log.key, data)
 	if err != nil {
-		return -2, errors.Wrap(err, "roaringfiles: file write failed")
+		return errors.Wrap(err, "roaringfiles: file write failed")
 	}
-
-	count := log.bmap.GetCardinality() - 1
-
-	log.seq.Inc()
-
-	newSeq := margaret.BaseSeq(count)
-	err = log.luigiObsv.Set(newSeq)
-	if err != nil {
-		err = errors.Wrap(err, "roaringfiles: failed to update sequence")
-		return -2, err
-	}
-
-	return newSeq, nil
+	return nil
 }

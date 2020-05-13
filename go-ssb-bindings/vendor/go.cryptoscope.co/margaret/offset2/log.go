@@ -357,21 +357,23 @@ func (log *offsetLog) Get(seq margaret.Seq) (interface{}, error) {
 func (log *offsetLog) readFrame(seq margaret.Seq) (interface{}, error) {
 	ofst, err := log.ofst.readOffset(seq)
 	if err != nil {
-		return nil, errors.Wrap(err, "error read offset")
+		return nil, errors.Wrapf(err, "error read offset of seq:%d", seq.Seq())
 	}
 
 	r, err := log.data.frameReader(ofst)
 	if err != nil {
-		return nil, errors.Wrap(err, "error getting frame reader")
+		return nil, errors.Wrapf(err, "error getting frame reader for seq:%d (ofst:%d)", seq.Seq(), ofst)
 	}
 
 	dec := log.codec.NewDecoder(r)
 	v, err := dec.Decode()
-	if errors.Cause(err) == io.EOF {
-		return v, luigi.EOS{}
+	if err != nil {
+		if errors.Cause(err) == io.EOF {
+			return v, luigi.EOS{}
+		}
+		return nil, errors.Wrapf(err, "error decoding data for seq:%d (ofst:%d)", seq.Seq(), ofst)
 	}
-
-	return v, err
+	return v, nil
 }
 
 func (log *offsetLog) Query(specs ...margaret.QuerySpec) (luigi.Source, error) {

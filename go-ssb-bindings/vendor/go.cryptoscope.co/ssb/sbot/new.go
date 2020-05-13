@@ -44,6 +44,9 @@ func (s *Sbot) Close() error {
 	if s.closed {
 		return s.closeErr
 	}
+	if s.replicator != nil {
+		s.replicator.updateTicker.Stop()
+	}
 
 	closeEvt := kitlog.With(s.info, "event", "sbot closing")
 	s.closed = true
@@ -67,6 +70,7 @@ func (s *Sbot) Close() error {
 		s.closeErr = err
 		return s.closeErr
 	}
+
 	level.Info(closeEvt).Log("msg", "closers closed")
 	return nil
 }
@@ -102,10 +106,12 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		}
 	}
 
-	// TODO: add flag to filter specific levels and/or units and pass nop to the others
 	wantsLog := kitlog.With(log, "module", "WantManager")
-	// wantsLog := kitlog.NewNopLogger()
-	wm := blobstore.NewWantManager(wantsLog, s.BlobStore, s.eventCounter, s.systemGauge)
+	wm := blobstore.NewWantManager(s.BlobStore,
+		blobstore.WantWithLogger(wantsLog),
+		blobstore.WantWithContext(s.rootCtx),
+		blobstore.WantWithMetrics(s.systemGauge, s.eventCounter),
+	)
 	s.WantManager = wm
 	s.closers.addCloser(wm)
 
@@ -129,17 +135,17 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		}
 	}
 
-	if _, ok := s.simpleIndex["content-delete-requests"]; !ok {
-		var dcrTrigger dropContentTrigger
-		dcrTrigger.logger = kitlog.With(log, "module", "dcrTrigger")
-		dcrTrigger.root = s.RootLog
-		dcrTrigger.feeds = uf
-		dcrTrigger.nuller = s
-		err = MountSimpleIndex("content-delete-requests", dcrTrigger.MakeSimpleIndex)(s)
-		if err != nil {
-			return nil, errors.Wrap(err, "sbot: failed to open load default DCR index")
-		}
-	}
+	// if _, ok := s.simpleIndex["content-delete-requests"]; !ok {
+	// 	var dcrTrigger dropContentTrigger
+	// 	dcrTrigger.logger = kitlog.With(log, "module", "dcrTrigger")
+	// 	dcrTrigger.root = s.RootLog
+	// 	dcrTrigger.feeds = uf
+	// 	dcrTrigger.nuller = s
+	// 	err = MountSimpleIndex("content-delete-requests", dcrTrigger.MakeSimpleIndex)(s)
+	// 	if err != nil {
+	// 		return nil, errors.Wrap(err, "sbot: failed to open load default DCR index")
+	// 	}
+	// }
 
 	var pubopts = []message.PublishOption{
 		message.UseNowTimestamps(true),
@@ -164,16 +170,22 @@ func initSbot(s *Sbot) (*Sbot, error) {
 			return nil, errors.Wrap(err, "sbot: NewLogBuilder failed")
 		}
 	} else {
-		gb, serveContacts, err := indexes.OpenContacts(kitlog.With(log, "module", "graph"), r)
+		gb, updateIdx, err := indexes.OpenContacts(kitlog.With(log, "module", "graph"), r)
 		if err != nil {
 			return nil, errors.Wrap(err, "sbot: OpenContacts failed")
 		}
-		s.serveIndex(ctx, "contacts", serveContacts)
+		s.serveIndex("contacts", updateIdx)
 		s.GraphBuilder = gb
+		s.closers.addCloser(gb)
 	}
 
 	if s.disableNetwork {
 		return s, nil
+	}
+
+	s.replicator, err = s.newGraphReplicator()
+	if err != nil {
+		return nil, err
 	}
 
 	// TODO: make plugabble
@@ -190,11 +202,13 @@ func initSbot(s *Sbot) (*Sbot, error) {
 
 	var inviteService *legacyinvites.Service
 
-	auth := s.GraphBuilder.Authorizer(s.KeyPair.Id, int(s.hopCount+2))
+	// auth := s.GraphBuilder.Authorizer(s.KeyPair.Id, int(s.hopCount+2))
 	mkHandler := func(conn net.Conn) (muxrpc.Handler, error) {
 		// bypassing badger-close bug to go through with an accept (or not) before closing the bot
 		s.closedMu.Lock()
 		defer s.closedMu.Unlock()
+
+		auth := s.replicator.makeLister()
 
 		remote, err := ssb.GetFeedRefFromAddr(conn.RemoteAddr())
 		if err != nil {
@@ -286,13 +300,13 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	}
 	s.public.Register(gossip.New(ctx,
 		kitlog.With(log, "plugin", "gossip"),
-		s.KeyPair.Id, s.RootLog, uf, s.GraphBuilder,
+		s.KeyPair.Id, s.RootLog, uf, s.replicator.makeLister(),
 		histOpts...))
 
 	// incoming createHistoryStream handler
 	hist := gossip.NewHist(ctx,
 		kitlog.With(log, "plugin", "gossip/hist"),
-		s.KeyPair.Id, s.RootLog, uf, s.GraphBuilder,
+		s.KeyPair.Id, s.RootLog, uf, s.replicator.makeLister(),
 		histOpts...)
 	s.public.Register(hist)
 

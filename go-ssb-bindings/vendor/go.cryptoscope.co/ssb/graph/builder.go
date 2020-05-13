@@ -20,6 +20,7 @@ import (
 	"gonum.org/v1/gonum/graph/simple"
 
 	"go.cryptoscope.co/ssb"
+	"io"
 )
 
 // Builder can build a trust graph and answer other questions
@@ -35,13 +36,15 @@ type Builder interface {
 	State(from, to *ssb.FeedRef) int
 
 	// Follows returns a set of all people ref follows
-	Follows(*ssb.FeedRef) (*StrFeedSet, error)
+	Follows(*ssb.FeedRef) (*ssb.StrFeedSet, error)
 
-	Hops(*ssb.FeedRef, int) *StrFeedSet
+	Hops(*ssb.FeedRef, int) *ssb.StrFeedSet
 
 	Authorizer(from *ssb.FeedRef, maxHops int) ssb.Authorizer
 
 	DeleteAuthor(who *ssb.FeedRef) error
+
+	io.Closer
 }
 
 type IndexingBuilder interface {
@@ -67,6 +70,10 @@ func NewBuilder(log kitlog.Logger, db *badger.DB) *builder {
 		log: log,
 	}
 	return b
+}
+
+func (b *builder) Close() error {
+	return b.idx.Close()
 }
 
 func (b *builder) OpenIndex() librarian.SinkIndex {
@@ -288,11 +295,11 @@ func (l Lookup) Dist(to *ssb.FeedRef) ([]graph.Node, float64) {
 	return l.dijk.To(nTo.ID())
 }
 
-func (b *builder) Follows(forRef *ssb.FeedRef) (*StrFeedSet, error) {
+func (b *builder) Follows(forRef *ssb.FeedRef) (*ssb.StrFeedSet, error) {
 	if forRef == nil {
 		panic("nil feed ref")
 	}
-	fs := NewFeedSet(50)
+	fs := ssb.NewFeedSet(50)
 	err := b.kv.View(func(txn *badger.Txn) error {
 		iter := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer iter.Close()
@@ -330,9 +337,9 @@ func (b *builder) Follows(forRef *ssb.FeedRef) (*StrFeedSet, error) {
 // max == 0: only direct follows of from
 // max == 1: max:0 + follows of friends of from
 // max == 2: max:1 + follows of their friends
-func (b *builder) Hops(from *ssb.FeedRef, max int) *StrFeedSet {
+func (b *builder) Hops(from *ssb.FeedRef, max int) *ssb.StrFeedSet {
 	max++
-	walked := NewFeedSet(0)
+	walked := ssb.NewFeedSet(0)
 	visited := make(map[string]struct{}) // tracks the nodes we already recursed from (so we don't do them multiple times on common friends)
 	err := b.recurseHops(walked, visited, from, max)
 	if err != nil {
@@ -343,7 +350,7 @@ func (b *builder) Hops(from *ssb.FeedRef, max int) *StrFeedSet {
 	return walked
 }
 
-func (b *builder) recurseHops(walked *StrFeedSet, vis map[string]struct{}, from *ssb.FeedRef, depth int) error {
+func (b *builder) recurseHops(walked *ssb.StrFeedSet, vis map[string]struct{}, from *ssb.FeedRef, depth int) error {
 	// b.log.Log("recursing", from.Ref(), "d", depth)
 	if depth == 0 {
 		return nil
@@ -352,7 +359,6 @@ func (b *builder) recurseHops(walked *StrFeedSet, vis map[string]struct{}, from 
 	if _, ok := vis[from.Ref()]; ok {
 		return nil
 	}
-
 
 	fromFollows, err := b.Follows(from)
 	if err != nil {

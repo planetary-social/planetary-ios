@@ -96,6 +96,9 @@ func (pkr *packer) Pour(_ context.Context, v interface{}) error {
 	pkr.wl.Lock()
 	defer pkr.wl.Unlock()
 	err := pkr.w.WritePacket(pkt)
+	if err != nil {
+
+	}
 
 	return errors.Wrap(err, "muxrpc: error writing packet")
 }
@@ -111,15 +114,6 @@ func IsSinkClosed(err error) bool {
 	if causeErr == errSinkClosed {
 		return true
 	}
-
-	if causeErr == ErrSessionTerminated {
-		return true
-	}
-
-	if isAlreadyClosed(err) {
-		return true
-	}
-
 	return false
 }
 

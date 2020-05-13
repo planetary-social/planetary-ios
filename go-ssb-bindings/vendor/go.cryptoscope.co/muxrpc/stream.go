@@ -109,10 +109,6 @@ func (str *stream) Next(ctx context.Context) (interface{}, error) {
 		return nil, ErrStreamNotReadable
 	}
 
-	if str.pktSrc == nil {
-		return nil, ErrStreamNotReadable
-	}
-
 	// cancellation
 	ctx, cancel := withError(ctx, luigi.EOS{})
 	defer cancel()

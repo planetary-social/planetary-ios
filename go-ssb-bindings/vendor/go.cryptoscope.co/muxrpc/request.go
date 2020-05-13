@@ -5,7 +5,6 @@ package muxrpc
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 	"strings"
 
@@ -17,6 +16,22 @@ import (
 
 type Method []string
 
+func (m *Method) UnmarshalJSON(d []byte) error {
+	var newM []string
+
+	err := json.Unmarshal(d, &newM)
+	if err != nil {
+		var meth string
+		err := json.Unmarshal(d, &meth)
+		if err != nil {
+			return errors.Wrap(err, "muxrpc/method: error decoding packet")
+		}
+		newM = Method{meth}
+	}
+	*m = newM
+
+	return nil
+}
 func (m Method) String() string {
 	return strings.Join(m, ".")
 }
@@ -70,13 +85,7 @@ func (req *Request) CloseWithError(cerr error) error {
 	if cerr == nil || luigi.IsEOS(errors.Cause(cerr)) {
 		inErr = req.in.Close()
 	} else {
-		closer, ok := req.in.(luigi.ErrorCloser)
-		if ok {
-			inErr = closer.CloseWithError(cerr)
-		} else {
-			fmt.Fprintf(os.Stderr, "muxrpc/request%d: req.in(%T) not a closer! %v", req.id, req.in, cerr)
-		}
-
+		inErr = req.in.(luigi.ErrorCloser).CloseWithError(cerr)
 	}
 	if inErr != nil {
 		return errors.Wrap(inErr, "failed to close request input")
@@ -87,7 +96,7 @@ func (req *Request) CloseWithError(cerr error) error {
 	// this makes sure the resources go away.
 	s := req.Stream.(*stream)
 	err := s.doCloseWithError(cerr)
-	if errors.Cause(err) == os.ErrClosed || IsSinkClosed(err) {
+	if errors.Cause(err) == os.ErrClosed || isAlreadyClosed(err) {
 		return nil
 	}
 	return errors.Wrap(err, "muxrpc: failed to close request stream")

@@ -40,7 +40,12 @@ func Redeem(ctx context.Context, tok Token, longTerm *ssb.FeedRef) error {
 	if !ok {
 		return errors.Errorf("invite: reply was not a message")
 	}
-	log.Println("invite redeemed. Peer replied with msg", msg.Key().Ref())
+	if msg.Key() != nil {
+		log.Println("invite redeemed. Peer replied with msg", msg.Key().Ref())
+	} else {
+		log.Println("warning: peer replied with empty message")
+	}
 
-	return inviteClient.Close()
+	inviteClient.Close()
+	return nil
 }

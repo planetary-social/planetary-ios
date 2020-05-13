@@ -7,6 +7,7 @@ import (
 
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
+	"io"
 )
 
 // Addr is an address (or key) in the index.
@@ -56,6 +57,8 @@ type SeqSetterIndex interface {
 
 	SetSeq(margaret.Seq) error
 	GetSeq() (margaret.Seq, error)
+
+	io.Closer
 }
 
 // TODO maybe provide other index builders as well, e.g. for managing
