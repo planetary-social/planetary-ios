@@ -48,8 +48,6 @@ github.com/keks/persist
 github.com/libp2p/go-reuseport
 # github.com/machinebox/progress v0.2.0
 github.com/machinebox/progress
-# github.com/matryer/is v1.3.0
-## explicit
 # github.com/mattn/go-sqlite3 v1.11.0
 ## explicit
 github.com/mattn/go-sqlite3
@@ -70,7 +68,7 @@ github.com/tinylib/msgp/msgp
 github.com/ugorji/go/codec
 # github.com/willf/bitset v1.1.10
 github.com/willf/bitset
-# go.cryptoscope.co/librarian v0.2.1-0.20200511130715-93c9138ef4b2
+# go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a
 go.cryptoscope.co/librarian
 go.cryptoscope.co/librarian/badger
 go.cryptoscope.co/librarian/mkv
@@ -90,7 +88,7 @@ go.cryptoscope.co/margaret/multilog/badger
 go.cryptoscope.co/margaret/multilog/roaring
 go.cryptoscope.co/margaret/multilog/roaring/mkv
 go.cryptoscope.co/margaret/offset2
-# go.cryptoscope.co/muxrpc v1.5.4-0.20200422174348-fc975b161059
+# go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48
 go.cryptoscope.co/muxrpc
 go.cryptoscope.co/muxrpc/codec
 # go.cryptoscope.co/netwrap v0.1.1
@@ -103,7 +101,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200512153553-8a244f588e39
+# go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore

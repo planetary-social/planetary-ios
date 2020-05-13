@@ -57,6 +57,10 @@ type Request struct {
 	// tipe is a value that has the type of data we expect to receive.
 	// This is needed for unmarshaling JSON.
 	tipe interface{}
+
+	// used to stop producing more data on this request
+	// the calling sight might tell us they had enough of this stream
+	abort context.CancelFunc
 }
 
 // Legacy
@@ -96,7 +100,7 @@ func (req *Request) CloseWithError(cerr error) error {
 	// this makes sure the resources go away.
 	s := req.Stream.(*stream)
 	err := s.doCloseWithError(cerr)
-	if errors.Cause(err) == os.ErrClosed || isAlreadyClosed(err) {
+	if errors.Cause(err) == os.ErrClosed || IsSinkClosed(err) {
 		return nil
 	}
 	return errors.Wrap(err, "muxrpc: failed to close request stream")

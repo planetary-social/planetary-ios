@@ -24,10 +24,10 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/teivah/onecontext v0.0.0-20190805212053-7a1893e577e7
 	github.com/ugorji/go/codec v1.1.7
-	go.cryptoscope.co/librarian v0.2.1-0.20200511130715-93c9138ef4b2
+	go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a
 	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8
 	go.cryptoscope.co/margaret v0.1.7-0.20200511124419-30f93c451238
-	go.cryptoscope.co/muxrpc v1.5.4-0.20200422174348-fc975b161059
+	go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48
 	go.cryptoscope.co/netwrap v0.1.1
 	go.cryptoscope.co/secretstream v1.2.2-0.20200303151838-85cf020cfee6
 	go.mindeco.de/ssb-gabbygrove v0.1.6
@@ -48,9 +48,3 @@ require (
 // Background: https://github.com/agl/ed25519/issues/27#issuecomment-591073699
 // The branch in use: https://github.com/cryptix/golang_x_crypto/tree/non-internal-edwards
 replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
-
-replace go.cryptoscope.co/muxrpc => /home/cryptix/go-repos/muxrpc
-
-replace go.cryptoscope.co/margaret => /home/cryptix/go-repos/margaret
-
-replace go.cryptoscope.co/librarian => /home/cryptix/go-repos/librarian/

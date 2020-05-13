@@ -384,6 +384,8 @@ go.cryptoscope.co/librarian v0.2.0 h1:HmtNjpIbJMC92WGP3klMqybHyEx1+CyezLfLOFFkAm
 go.cryptoscope.co/librarian v0.2.0/go.mod h1:uFope0IyQiNu+ultHuG9cDtrh94WAZeGhLpU8JTz1gc=
 go.cryptoscope.co/librarian v0.2.1-0.20200511130715-93c9138ef4b2 h1:YiFcHbm7tIZ4B+80uIBiJTt8YLacZtOvJRC9Ry/0IbM=
 go.cryptoscope.co/librarian v0.2.1-0.20200511130715-93c9138ef4b2/go.mod h1:P8YuIifKwAnrQzkHdBe06jMUoICJYv7tCJc+ONG34yY=
+go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a h1:8dwHp75fTkL91j+mzSpwUmg0LuH28p77o6pDSnhvBjc=
+go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a/go.mod h1:P8YuIifKwAnrQzkHdBe06jMUoICJYv7tCJc+ONG34yY=
 go.cryptoscope.co/luigi v0.0.1/go.mod h1:bdU2SNXp28+MnejXrdgtWyLBd10ODLY5ZHzWSjewS04=
 go.cryptoscope.co/luigi v0.3.0/go.mod h1:RFlNZMl3Ckc4jIPrLBn3WGwSgpzb0lGDIoGsmBSqEDY=
 go.cryptoscope.co/luigi v0.3.2/go.mod h1:sKanbHitI0dybhcgijJzqQmKbIT1zu6uwzeobLUnvks=
@@ -407,6 +409,8 @@ go.cryptoscope.co/muxrpc v1.5.4-0.20191205134222-b1563255bffa h1:wwBK13xg2akKHUP
 go.cryptoscope.co/muxrpc v1.5.4-0.20191205134222-b1563255bffa/go.mod h1:kB8EGlRBgr5M8E80CKaTxC2Ga8OCMLUVnw8YNiFSVrw=
 go.cryptoscope.co/muxrpc v1.5.4-0.20200422174348-fc975b161059 h1:IbSxAkxcoDWdpzbiM9hLq6HSggSFc28bIHFXOoH1SkM=
 go.cryptoscope.co/muxrpc v1.5.4-0.20200422174348-fc975b161059/go.mod h1:kB8EGlRBgr5M8E80CKaTxC2Ga8OCMLUVnw8YNiFSVrw=
+go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48 h1:Q8PiCE2GITWYxswN/j19YsD4/qL2CkbDYkSieUrrElg=
+go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48/go.mod h1:kB8EGlRBgr5M8E80CKaTxC2Ga8OCMLUVnw8YNiFSVrw=
 go.cryptoscope.co/netwrap v0.0.0-20180427130219-dae5b5bc35c3/go.mod h1:arPOz1SB/sunS41F1iBgMgkx4fRhKkG221uUMjzkAqc=
 go.cryptoscope.co/netwrap v0.0.3/go.mod h1:arPOz1SB/sunS41F1iBgMgkx4fRhKkG221uUMjzkAqc=
 go.cryptoscope.co/netwrap v0.1.0 h1:7MMji1HpnjBhqJXzkGEt7HE+l3IVr5fwoDGsoEXPeqQ=
@@ -425,6 +429,8 @@ go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635 h1:mJbzzjSnXlSjYbj0saXT
 go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635/go.mod h1:yS5rZfApf+Twb70/vRTBfK1wFmk2VwXZs7s5KYnk4sk=
 go.cryptoscope.co/ssb v0.0.0-20200512153553-8a244f588e39 h1:i97w0BgoMv1LIIBSvzCE0H5ui4V7qeIzreNw+ztLqlk=
 go.cryptoscope.co/ssb v0.0.0-20200512153553-8a244f588e39/go.mod h1:G12Ivzv/XOz5OfLxpf1SAz1ldSuBy6X8mssx3dNkAbI=
+go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707 h1:YKsARsTDmSiOnbv17AojsKbTkaMdl3378dbkPVgeLK0=
+go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707/go.mod h1:YnFKl0Ls58dM22RUMHhn2nZ6V57BqVwyrqozrt9oR0U=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738/go.mod h1:dnLIgRNXwCJa5e+c6mIZCrds/GIG4ncV9HhK5PX7jPg=
 go.mindeco.de/ssb-gabbygrove v0.1.5/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=

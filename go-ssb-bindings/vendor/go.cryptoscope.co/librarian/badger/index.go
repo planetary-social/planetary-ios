@@ -170,6 +170,10 @@ func (idx *index) Get(ctx context.Context, addr librarian.Addr) (luigi.Observabl
 		return obv, nil
 	}
 
+	if err := idx.flushBatch(); err != nil {
+		return nil, err
+	}
+
 	t := reflect.TypeOf(idx.tipe)
 	v := reflect.New(t).Interface()
 

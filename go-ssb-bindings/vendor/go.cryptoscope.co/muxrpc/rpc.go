@@ -247,6 +247,9 @@ func (r *rpc) Terminate() error {
 func (r *rpc) Do(ctx context.Context, req *Request) error {
 	dbg := level.Debug(r.logger)
 	dbg = log.With(dbg, "call", req.Type, "method", req.Method.String())
+	if req.abort == nil {
+		req.abort = func() {} // noop
+	}
 
 	var (
 		pkt codec.Packet
@@ -357,6 +360,8 @@ func (r *rpc) fetchRequest(ctx context.Context, pkt *codec.Packet) (*Request, bo
 		if err != nil {
 			return nil, false, errors.Wrap(err, "error parsing request")
 		}
+		ctx, req.abort = context.WithCancel(ctx)
+
 		r.reqs[pkt.Req] = req
 		// TODO:
 		// buffer new requests to not mindlessly spawn goroutines
@@ -432,8 +437,8 @@ func (r *rpc) Serve(ctx context.Context) (err error) {
 
 			var ok bool
 			if req, ok = getReq(pkt.Req); ok {
-
 				var streamErr error
+				req.abort()
 
 				if !isTrue(pkt.Body) {
 					streamErr, err = parseError(pkt.Body)
@@ -467,7 +472,6 @@ func (r *rpc) Serve(ctx context.Context) (err error) {
 }
 
 func (r *rpc) closeStream(req *Request, streamErr error) {
-
 	err := req.CloseWithError(streamErr)
 	if err != nil {
 		level.Warn(r.logger).Log("event", "close stream failed", "reqID", req.id, "method", req.Method.String(), "err", err)

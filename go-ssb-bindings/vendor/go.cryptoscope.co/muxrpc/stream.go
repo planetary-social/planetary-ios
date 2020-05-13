@@ -103,7 +103,6 @@ func (str *stream) WithReq(req int32) {
 
 // Next returns the next incoming value on the stream
 func (str *stream) Next(ctx context.Context) (interface{}, error) {
-
 	switch str.inCap {
 	case streamCapNone:
 		return nil, ErrStreamNotReadable
@@ -122,6 +121,9 @@ func (str *stream) Next(ctx context.Context) (interface{}, error) {
 
 	vpkt, err := str.pktSrc.Next(ctx)
 	if err != nil {
+		if errors.Cause(err) == context.Canceled {
+			return nil, luigi.EOS{}
+		}
 		return nil, errors.Wrap(err, "muxrpc: error reading from packet source")
 	}
 
@@ -175,6 +177,12 @@ func (str *stream) Pour(ctx context.Context, v interface{}) error {
 		pkt *codec.Packet
 		err error
 	)
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+	}
 
 	var (
 		isStream bool

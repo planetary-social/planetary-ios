@@ -5,9 +5,10 @@ package librarian // import "go.cryptoscope.co/librarian"
 import (
 	"context"
 
+	"io"
+
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
-	"io"
 )
 
 // Addr is an address (or key) in the index.
@@ -42,12 +43,13 @@ type Setter interface {
 type SetterIndex interface {
 	Index
 	Setter
+
+	Flush() error
 }
 
 // SinkIndex is an index that is updated by processing a stream.
 type SinkIndex interface {
 	luigi.Sink
-	Index
 
 	QuerySpec() margaret.QuerySpec
 }
