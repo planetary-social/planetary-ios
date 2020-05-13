@@ -177,10 +177,10 @@ fileprivate class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
         cell.textLabel?.text = hashtag.string
         cell.selectionStyle = .none
         
-        let post_text = (hashtag.count == 1) ? "post" : "posts"
+        let post_text = (hashtag.count == 1) ? Text.Post.one.text : Text.Post.many.text
         let ago = hashtag.timeAgo()
         
-        cell.detailTextLabel?.text = "\(hashtag.count) \(post_text) last updated \(ago)"
+        cell.detailTextLabel?.text = "\(hashtag.count) \(post_text) \(Text.Channel.lastUpdated.text) \(ago)"
         
         return cell
     }

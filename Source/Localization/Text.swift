@@ -14,7 +14,9 @@ extension Text {
                 Text.Push.self,
                 Text.Reporting.self,
                 Text.Debug.self,
-                Text.Error.self]
+                Text.Error.self,
+                Text.Channel.self,
+                Text.Post.self]
     }
 }
 
@@ -338,5 +340,20 @@ extension Text {
         case login = "The peer to peer engine failed to start. Please try turning the app off and on again to see if that fixes it."
         case unexpected = "Something unexpected happened."
         case supportNotConfigured = "Support is not configured."
+    }
+}
+
+extension Text {
+    enum Channel: String, Localizable, CaseIterable {
+        case one = "channel"
+        case many = "channels"
+        case lastUpdated = "last updated"
+    }
+}
+
+extension Text {
+    enum Post: String, Localizable, CaseIterable {
+        case one = "post"
+        case many = "posts"
     }
 }
