@@ -333,6 +333,23 @@ class GoBotInternal {
     }
     
     func fsckAndRepair() -> (Bool, ScuttlegobotHealReport?) {
+        // disable sync during fsck check and cleanup
+        // new message kill the performance of this process
+        self.disconnectAll()
+
+        // TODO: disable network listener to stop local connections
+        // would be better then a polling timer but this suffices as a bug fix
+        let dcTimer = RepeatingTimer(interval: 5, completion: {
+            self.disconnectAll()
+        })
+        dcTimer.start()
+
+        Timers.syncTimer.stop()
+        defer {
+            dcTimer.stop()
+            Timers.syncTimer.start(fireImmediately: true)
+        }
+
         NotificationCenter.default.post(Notification.didStartFSCKRepair())
         defer {
             NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
