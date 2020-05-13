@@ -75,7 +75,7 @@ class DoneOnboardingStep: OnboardingStep {
         
         let data = self.data
 
-        var skipToNextStep = {
+        let skipToNextStep = {
             self.view.lookBusy()
             self.refresh { [weak self] in
                 self?.view.lookReady()
@@ -109,8 +109,8 @@ class DoneOnboardingStep: OnboardingStep {
             CrashReporting.shared.reportIfNeeded(error: error)
             if success {
                 self?.refresh { [weak self] in
-                    Analytics.trackOnboardingComplete(data)
                     self?.view.lookReady()
+                    Analytics.trackOnboardingComplete(data)
                     self?.next()
                 }
             } else {

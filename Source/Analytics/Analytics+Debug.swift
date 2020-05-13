@@ -10,8 +10,16 @@ import Foundation
 
 extension AnalyticsCore {
     
+    func trackDidShareLogs() {
+        self.track(event: .select, element: .action, name: "share_logs")
+    }
+    
     func trackDidLogout() {
-        
+        self.track(event: .select, element: .action, name: "logout")
+    }
+    
+    func trackDidLogoutAndOnboard() {
+        self.track(event: .select, element: .action, name: "logout_onboard")
     }
     
 }

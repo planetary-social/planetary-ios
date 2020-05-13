@@ -13,6 +13,6 @@ import Foundation
 /// single accessible place to better understand the number and scope.
 struct Timers {
     static let syncTimer = RepeatingTimer(interval: 60, completion: { AppController.shared.pokeSync() })
-    static let refreshTimer = RepeatingTimer(interval: 15, completion: { AppController.shared.pokeRefresh() })
+    static let refreshTimer = RepeatingTimer(interval: 17, completion: { AppController.shared.pokeRefresh() })
     static let pokeTimers = [syncTimer, refreshTimer]
 }

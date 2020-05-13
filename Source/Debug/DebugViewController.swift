@@ -382,15 +382,19 @@ class DebugViewController: DebugTableViewController {
             [unowned self] cell in
             let alertController = UIAlertController(title: "Share Logs", message: nil, preferredStyle: .actionSheet)
             alertController.addAction(UIAlertAction(title: "All files", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: false, allFiles: true, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "All files in a ZIP file", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: true, allFiles: true, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Recent files", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: false, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Recent files in a ZIP file", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: true, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -590,6 +594,9 @@ class DebugViewController: DebugTableViewController {
         self.confirm(message: "Are you sure you want to logout of the current configuration?  Any pending operations will be lost.",
                      isDestructive: true,
                      confirmTitle: "Logout and relaunch",
-                     confirmClosure: { self.clearConfigurationAndRelaunch() })
+                     confirmClosure: {
+                        Analytics.trackDidLogoutAndOnboard()
+                        self.clearConfigurationAndRelaunch()
+        })
     }
 }
