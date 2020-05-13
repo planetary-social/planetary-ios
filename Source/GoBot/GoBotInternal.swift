@@ -281,8 +281,8 @@ class GoBotInternal {
     @discardableResult
     func dialSomePeers() -> Bool {
         guard self.openConnections() == 0 else { return true } // only make connections if we dont have any
-        ssbConnectPeers(3)
-        self.dial(atLeast: 2, tries: 10)
+        ssbConnectPeers(2)
+        self.dial(atLeast: 1, tries: 10)
         return true
     }
     
