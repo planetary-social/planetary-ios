@@ -165,7 +165,7 @@ func (s *Sbot) serveIndex(name string, snk librarian.SinkIndex) {
 			return nil
 		}
 		if err != nil {
-			return errors.Wrapf(err, "sbot index(%s) backlog update failed", name)
+			return errors.Wrapf(err, "sbot index(%s) update of backlog failed", name)
 		}
 		s.idxInSync.Done()
 

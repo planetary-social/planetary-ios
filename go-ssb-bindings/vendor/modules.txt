@@ -68,7 +68,7 @@ github.com/tinylib/msgp/msgp
 github.com/ugorji/go/codec
 # github.com/willf/bitset v1.1.10
 github.com/willf/bitset
-# go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a
+# go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a => /Users/cryptix/go/src/go.cryptoscope.co/librarian
 go.cryptoscope.co/librarian
 go.cryptoscope.co/librarian/badger
 go.cryptoscope.co/librarian/mkv
@@ -101,7 +101,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707
+# go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707 => /Users/cryptix/ssb/go-ssb
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -230,3 +230,5 @@ modernc.org/sortutil
 # modernc.org/zappy v1.0.0
 modernc.org/zappy
 # golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+# go.cryptoscope.co/ssb => /Users/cryptix/ssb/go-ssb
+# go.cryptoscope.co/librarian => /Users/cryptix/go/src/go.cryptoscope.co/librarian

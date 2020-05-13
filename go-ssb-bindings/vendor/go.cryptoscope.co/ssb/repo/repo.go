@@ -187,21 +187,23 @@ func OpenMKV(pth string) (*kv.DB, error) {
 	return db, nil
 }
 
-func OpenBadgerIndex(r Interface, name string, f func(*badger.DB) librarian.SinkIndex) (*badger.DB, librarian.SinkIndex, error) {
+type LibrarianIndexCreater func(*badger.DB) (librarian.SeqSetterIndex, librarian.SinkIndex)
+
+func OpenBadgerIndex(r Interface, name string, f LibrarianIndexCreater) (*badger.DB, librarian.SeqSetterIndex, librarian.SinkIndex, error) {
 	pth := r.GetPath(PrefixIndex, name, "db")
 	err := os.MkdirAll(pth, 0700)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "error making index directory")
+		return nil, nil, nil, errors.Wrap(err, "error making index directory")
 	}
 
 	db, err := badger.Open(badgerOpts(pth))
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "db/idx: badger failed to open")
+		return nil, nil, nil, errors.Wrap(err, "db/idx: badger failed to open")
 	}
 
-	sinkidx := f(db)
+	idx, sinkidx := f(db)
 
-	return db, sinkidx, nil
+	return db, idx, sinkidx, nil
 }
 
 func OpenBlobStore(r Interface) (ssb.BlobStore, error) {

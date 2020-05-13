@@ -170,13 +170,13 @@ func initSbot(s *Sbot) (*Sbot, error) {
 			return nil, errors.Wrap(err, "sbot: NewLogBuilder failed")
 		}
 	} else {
-		gb, updateIdx, err := indexes.OpenContacts(kitlog.With(log, "module", "graph"), r)
+		gb, seqSetter, updateIdx, err := indexes.OpenContacts(kitlog.With(log, "module", "graph"), r)
 		if err != nil {
 			return nil, errors.Wrap(err, "sbot: OpenContacts failed")
 		}
 		s.serveIndex("contacts", updateIdx)
+		s.closers.addCloser(seqSetter)
 		s.GraphBuilder = gb
-		s.closers.addCloser(gb)
 	}
 
 	if s.disableNetwork {

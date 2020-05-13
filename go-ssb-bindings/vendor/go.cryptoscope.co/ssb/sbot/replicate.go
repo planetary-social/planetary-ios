@@ -97,7 +97,11 @@ func (l lister) Authorize(remote *ssb.FeedRef) error {
 	if l.feedWants.Has(remote) {
 		return nil
 	}
-	return errors.New("nope - access denied")
+	wantCount := l.feedWants.Count()
+	if wantCount == 0 {
+		return nil
+	}
+	return errors.Errorf("nope - access denied (%d)", wantCount)
 }
 
 func (l lister) ReplicationList() *ssb.StrFeedSet { return l.feedWants }

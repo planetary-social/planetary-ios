@@ -19,12 +19,10 @@ import (
 const FolderNameGet = "get"
 
 // OpenGet supplies the get(msgRef) -> rootLogSeq idx
-func OpenGet(r repo.Interface) (librarian.Index, librarian.SinkIndex, error) {
-
-	var idx librarian.SeqSetterIndex
-	updateFn := func(db *badger.DB) librarian.SinkIndex {
-		idx = libbadger.NewIndex(db, margaret.BaseSeq(0))
-		return librarian.NewSinkIndex(func(ctx context.Context, seq margaret.Seq, val interface{}, idx librarian.SetterIndex) error {
+func OpenGet(r repo.Interface) (librarian.SeqSetterIndex, librarian.SinkIndex, error) {
+	updateFn := func(db *badger.DB) (librarian.SeqSetterIndex, librarian.SinkIndex) {
+		idx := libbadger.NewIndex(db, margaret.BaseSeq(0))
+		sink := librarian.NewSinkIndex(func(ctx context.Context, seq margaret.Seq, val interface{}, idx librarian.SetterIndex) error {
 			msg, ok := val.(ssb.Message)
 			if !ok {
 				return errors.Errorf("index/get: unexpected message type: %T", val)
@@ -32,10 +30,10 @@ func OpenGet(r repo.Interface) (librarian.Index, librarian.SinkIndex, error) {
 			err := idx.Set(ctx, librarian.Addr(msg.Key().Hash), seq.Seq())
 			return errors.Wrapf(err, "index/get: failed to update message %s (seq: %d)", msg.Key().Ref(), seq.Seq())
 		}, idx)
+		return idx, sink
 	}
 
-	// TODO: closing
-	_, sinkIdx, err := repo.OpenBadgerIndex(r, FolderNameGet, updateFn)
+	_, idx, sinkIdx, err := repo.OpenBadgerIndex(r, FolderNameGet, updateFn)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "error getting get() index")
 	}
