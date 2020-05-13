@@ -107,63 +107,63 @@ class GoBot: Bot {
     }
     
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
+        var err: Error? = nil
+        defer {
+            DispatchQueue.main.async {
+                if let e = err { Log.unexpected(.botError, "[GoBot.login] failed: \(e)") }
+                completion(err)
+            }
+        }
+
+        if self._identity != nil {
+            if secret.identity == self._identity {
+                return
+            }
+            err = BotError.alreadyLoggedIn
+            return
+        }
+
+        // lookup Application Support folder for bot and database
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
+        if appSupportDirs.count < 1 {
+            err = GoBotError.unexpectedFault("no support dir")
+            return
+        }
+
+        let repoPrefix = appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/"+network.hexEncodedString())
+        
+        if !self.database.isOpen() {
+            do {
+                try self.database.open(path: repoPrefix, user: secret.identity)
+                err = nil
+            } catch {
+                err = error
+                return
+            }
+        } else {
+            Log.unexpected(.botError, "\(#function) warning: database still open")
+        }
+
+        // TODO this does not always get set in time
+        // TODO maybe this should be done in defer?
+        self._identity = secret.identity
         self.queue.async {
-            var err: Error? = nil
-            defer {
-                DispatchQueue.main.async {
-                    if let e = err { Log.unexpected(.botError, "[GoBot.login] failed: \(e)") }
-                    completion(err)
-                }
-            }
-
-            if self._identity != nil {
-                if secret.identity == self._identity {
-                    return
-                }
-                err = BotError.alreadyLoggedIn
-                return
-            }
-
-            let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-            if appSupportDirs.count < 1 {
-                err = GoBotError.unexpectedFault("no support dir")
-                return
-            }
-
-            let repoPrefix = appSupportDirs[0]
-                .appending("/FBTT")
-                .appending("/"+network.hexEncodedString())
-
             #if DEBUG
             // used for locating the files in the simulator
             print("===> starting gobot with prefix: \(repoPrefix)")
             #endif
             if let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix) {
-                err = loginErr
+                // TODO: mark bot state as failed
+                Log.unexpected(.botError, "Login failed: \(loginErr)")
                 return
-            }
-
-            if !self.database.isOpen() {
-                do {
-                    try self.database.open(path: repoPrefix, user: secret.identity)
-                    err = nil
-                } catch {
-                    err = error
-                    return
-                }
-            } else {
-                Log.unexpected(.botError, "\(#function) warning: database still open")
             }
 
             // create connections a bit after login completed
             self.queue.asyncAfter(deadline: .now() + .seconds(5)) {
                 self.bot.dial(atLeast: 2)
             }
-
-            // TODO this does not always get set in time
-            // TODO maybe this should be done in defer?
-            self._identity = secret.identity
         }
         return
     }
