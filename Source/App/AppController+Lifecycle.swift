@@ -24,19 +24,19 @@ extension AppController {
     }
 
     func resume() {
-        Bots.current.resume()
+        self.operationQueue.addOperation(ResumeOperation())
         Timers.pokeTimers.forEach{$0.start()}
         self.syncPushNotificationsSettings()
     }
 
     func suspend() {
-        Bots.current.suspend()
+        self.operationQueue.addOperation(SuspendOperation())
         Timers.pokeTimers.forEach{$0.stop()}
         Caches.invalidate()
     }
 
     func exit() {
-        Bots.current.exit()
+        self.operationQueue.addOperation(ExitOperation())
     }
 }
 

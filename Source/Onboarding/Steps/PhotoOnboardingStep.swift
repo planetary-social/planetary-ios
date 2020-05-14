@@ -59,9 +59,9 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
     }
 
     override func didStart() {
-        // TODO should be a background task
-//        self.data.context?.bot.syncAndRefresh()
-        AppController.shared.loginAndSync()
+        // Last step was directory, it followed
+        // identities and bots
+        AppController.shared.pokeSync()
     }
 
     override func secondary() {

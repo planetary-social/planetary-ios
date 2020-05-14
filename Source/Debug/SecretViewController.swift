@@ -67,6 +67,12 @@ class SecretViewController: UIViewController {
         self.addSubviews()
         self.update()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Secret")
+        Analytics.trackDidShowScreen(screenName: "secret")
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

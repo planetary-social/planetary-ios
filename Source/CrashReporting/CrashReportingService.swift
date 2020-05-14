@@ -21,6 +21,7 @@ protocol CrashReportingService {
     func configure()
     
     func identify(about: About?, network: NetworkKey)
+    func forget()
     
     func crash()
     

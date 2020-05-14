@@ -75,21 +75,18 @@ class GoBot: Bot {
     // MARK: App Lifecycle
 
     func resume()  {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.bot.dialSomePeers()
         }
     }
 
     func suspend() {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.bot.disconnectAll()
         }
     }
 
     func exit() {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.bot.disconnectAll()
         }

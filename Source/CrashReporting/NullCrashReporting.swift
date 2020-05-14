@@ -21,6 +21,8 @@ class NullCrashReporting: CrashReportingService {
     
     func identify(about: About?, network: NetworkKey) { }
     
+    func forget() { }
+    
     func crash() { }
     
     func record(_ message: String) { }

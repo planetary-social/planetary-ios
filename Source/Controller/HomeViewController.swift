@@ -113,16 +113,6 @@ class HomeViewController: ContentViewController {
         
         return view
     }()
-    
-    private lazy var reloadTimer: RepeatingTimer = {
-        // Set timer to 3 minutes
-        let timer = RepeatingTimer(interval: 60 * 3) { [weak self] in
-            self?.emptyView.removeFromSuperview()
-            self?.addLoadingAnimation()
-            self?.load(animated: true)
-        }
-        return timer
-    }()
 
     // MARK: Lifecycle
 
@@ -239,11 +229,11 @@ class HomeViewController: ContentViewController {
     private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
-            self.reloadTimer.start(fireImmediately: false)
+            self.registerDidRefresh()
         } else {
+            self.deeregisterDidRefresh()
             self.emptyView.removeFromSuperview()
             self.tableView.backgroundView = nil
-            self.reloadTimer.stop()
         }
         self.dataSource.update(source: proxy)
         if animated {
@@ -301,6 +291,11 @@ class HomeViewController: ContentViewController {
     }
     
     override func didRefresh(notification: NSNotification) {
+        DispatchQueue.main.async {
+            if self.tableView.backgroundView == self.emptyView {
+                self.load(animated: true)
+            }
+        }
 //        self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0)
 //        self.floatingRefreshButton.isHidden = false
 //        UIView.animate(withDuration: 1.0,
