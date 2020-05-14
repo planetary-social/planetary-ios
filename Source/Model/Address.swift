@@ -30,7 +30,7 @@ struct PubAddress: Codable {
     let port: UInt
 }
 
-struct KnownPub {
+struct KnownPub: Hashable {
     let AddressID: Int64
 
     let ForFeed: Identifier
@@ -39,4 +39,10 @@ struct KnownPub {
     let InUse: Bool
     let WorkedLast: String
     let LastError: String
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.AddressID)
+    }
 }
+
+typealias KnownPubs = [KnownPub]

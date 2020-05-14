@@ -42,6 +42,7 @@
 		0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9092437C22400D7F39C /* MarkdownTests.swift */; };
+		0AC10DE6246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */; };
 		0ACA5742243CFAEC001C5E37 /* MarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */; };
 		0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */; };
 		0ACE919B243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */; };
@@ -679,6 +680,7 @@
 		0ABCA9002437BF3400D7F39C /* String+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Markdown.swift"; sourceTree = "<group>"; };
 		0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Markdown.swift"; sourceTree = "<group>"; };
 		0ABCA9092437C22400D7F39C /* MarkdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTests.swift; sourceTree = "<group>"; };
+		0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownPubsTableViewDataSource.swift; sourceTree = "<group>"; };
 		0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyler.swift; sourceTree = "<group>"; };
 		0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Tracking.swift"; sourceTree = "<group>"; };
 		0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullMarkdownStyler.swift; sourceTree = "<group>"; };
@@ -1388,6 +1390,7 @@
 				53C966E1236D037000E70689 /* UIViewController+Report.swift */,
 				536255DD23AC4C46001007D0 /* UIViewController+Sync.swift */,
 				0AF9E0A12465D7A700910575 /* ThreadReplyPaginatedDataSource.swift */,
+				0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2696,6 +2699,7 @@
 				0ABCA8F524366B9700D7F39C /* AppError.swift in Sources */,
 				53E26C6B23062B10009240B2 /* Layout+Center.swift in Sources */,
 				53211CE222836666007FB785 /* MIMEType.swift in Sources */,
+				0AC10DE6246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift in Sources */,
 				5306F770228E65240058D67A /* RepeatingTimer.swift in Sources */,
 				5396A62F2245A50300C57A4B /* LaunchViewController.swift in Sources */,
 				5376FADF228CF83A00411F5B /* Saveable.swift in Sources */,
