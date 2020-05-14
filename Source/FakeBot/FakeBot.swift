@@ -174,8 +174,8 @@ class FakeBot: Bot {
         }
     }
     
-    func syncNotifications(completion: @escaping SyncCompletion) {
-        self.sync(queue: .main, completion: completion)
+    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+        self.sync(queue: queue, completion: completion)
       }
 
     // MARK: Refresh

@@ -238,10 +238,19 @@ class GoBot: Bot {
         }
     }
 
-    func syncNotifications(completion: @escaping SyncCompletion) {
-        assert(Thread.isMainThread)
-        guard self.bot.isRunning() else { completion(GoBotError.unexpectedFault("bot not started"), 0, 0); return }
-        guard self._isSyncing == false else { completion(nil, 0, 0); return }
+    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+        guard self.bot.isRunning() else {
+            queue.async {
+                completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
+            }
+            return
+        }
+        guard self._isSyncing == false else {
+            queue.async {
+                completion(nil, 0, 0);
+            }
+            return
+        }
 
         self._isSyncing = true
         let elapsed = Date()
@@ -251,9 +260,11 @@ class GoBot: Bot {
             self.bot.dialForNotifications()
             let after = self.repoNumberOfMessages()
             let new = after - before
-            self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,
-                                    numberOfMessages: new,
-                                    completion: completion)
+            queue.async {
+                self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,
+                                        numberOfMessages: new,
+                                        completion: completion)
+            }
         }
     }
 
