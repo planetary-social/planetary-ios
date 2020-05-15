@@ -271,6 +271,10 @@ extension Text {
         case header = "Pubs"
         case title = "Manage Pubs"
         case footer = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself."
+        case addingPubs = "Adding Pubs"
+        case yourPubs = "Your Pubs"
+        case lastWorked = "Last worked on"
+        case pasteAddress = "Paste the address here"
     }
 }
 
