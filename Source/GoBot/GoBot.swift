@@ -107,26 +107,20 @@ class GoBot: Bot {
     }
     
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
-        var err: Error? = nil
-        defer {
-            DispatchQueue.main.async {
-                if let e = err { Log.unexpected(.botError, "[GoBot.login] failed: \(e)") }
-                completion(err)
-            }
-        }
 
         if self._identity != nil {
             if secret.identity == self._identity {
+                DispatchQueue.main.async { completion(nil) }
                 return
             }
-            err = BotError.alreadyLoggedIn
+            DispatchQueue.main.async { completion(BotError.alreadyLoggedIn) }
             return
         }
 
         // lookup Application Support folder for bot and database
         let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
         if appSupportDirs.count < 1 {
-            err = GoBotError.unexpectedFault("no support dir")
+            DispatchQueue.main.async { completion(GoBotError.unexpectedFault("no support dir")) }
             return
         }
 
@@ -137,18 +131,18 @@ class GoBot: Bot {
         if !self.database.isOpen() {
             do {
                 try self.database.open(path: repoPrefix, user: secret.identity)
-                err = nil
             } catch {
-                err = error
+                DispatchQueue.main.async { completion(error) }
                 return
             }
         } else {
             Log.unexpected(.botError, "\(#function) warning: database still open")
         }
 
-        // TODO this does not always get set in time
-        // TODO maybe this should be done in defer?
         self._identity = secret.identity
+        DispatchQueue.main.async { completion(nil) }
+   
+        // spawn go-bot in the background to return early
         self.queue.async {
             #if DEBUG
             // used for locating the files in the simulator
@@ -158,11 +152,6 @@ class GoBot: Bot {
                 // TODO: mark bot state as failed
                 Log.unexpected(.botError, "Login failed: \(loginErr)")
                 return
-            }
-
-            // create connections a bit after login completed
-            self.queue.asyncAfter(deadline: .now() + .seconds(5)) {
-                self.bot.dial(atLeast: 2)
             }
         }
         return
