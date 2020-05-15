@@ -187,3 +187,7 @@ func (log *mlog) Delete(addr librarian.Addr) error {
 func (log *mlog) Close() error {
 	return log.db.Close()
 }
+
+// Flush is a no-op on this implementation.
+// should be usefull but all my projects use the roaring bitmap version by now
+func (log *mlog) Flush() error { return nil }

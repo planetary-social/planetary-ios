@@ -62,14 +62,14 @@ func (g *Graph) Blocks(from, to *ssb.FeedRef) bool {
 	return math.IsInf(w.Weight(), 1)
 }
 
-func (g *Graph) BlockedList(from *ssb.FeedRef) map[librarian.Addr]struct{} {
+func (g *Graph) BlockedList(from *ssb.FeedRef) *ssb.StrFeedSet {
 	g.Mutex.Lock()
 	defer g.Mutex.Unlock()
+	blocked := ssb.NewFeedSet(0)
 	nFrom, has := g.lookup[from.StoredAddr()]
 	if !has {
-		return nil
+		return blocked
 	}
-	blocked := make(map[librarian.Addr]struct{})
 	edgs := g.From(nFrom.ID())
 	for edgs.Next() {
 		nTo := edgs.Node()
@@ -77,7 +77,12 @@ func (g *Graph) BlockedList(from *ssb.FeedRef) map[librarian.Addr]struct{} {
 
 		if math.IsInf(edg.Weight(), 1) {
 			ctNode := nTo.(*contactNode)
-			blocked[ctNode.feed.StoredAddr()] = struct{}{}
+			fr, err := ctNode.feed.FeedRef()
+			if err != nil {
+				panic(err)
+			}
+			blocked.AddRef(fr)
+
 		}
 	}
 	return blocked

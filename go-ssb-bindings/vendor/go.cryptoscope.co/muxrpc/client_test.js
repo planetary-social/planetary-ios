@@ -13,11 +13,13 @@ var api = {
   callme: { // start calling back
     async: 'async',
     source: 'async',
-    magic: 'async'
+    magic: 'async',
+    withAbort: 'async'
   },
   object: 'async',
   stuff: 'source',
-  magic: 'duplex'
+  magic: 'duplex',
+  takeSome: 'source'
 }
 
 var server = MRPC(api, api)({
@@ -82,6 +84,17 @@ var server = MRPC(api, api)({
           if (value && value.RXJS && value.RXJS === 9) {
             p.end()
           }
+        })
+      )
+    },
+    withAbort: function(count, cb) {
+      pull(
+        server.takeSome(),
+        pull.take(count),
+        pull.collect(function(err, val) {
+          if (err) return cb(err)
+          if (val.length !== count) return cb(new Error('wrong item count:' + val.length))
+          cb(null, "thanks!")
         })
       )
     }

@@ -17,6 +17,7 @@ import (
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/multilog"
+	"go.cryptoscope.co/muxrpc"
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/internal/mutil"
 	"go.cryptoscope.co/ssb/internal/transform"
@@ -247,6 +248,8 @@ func (m *FeedManager) CreateStreamHistory(
 
 	sent := 0
 	err = luigi.Pump(ctx, newSinkCounter(&sent, sink), src)
+
+	// track number of messages sent
 	if m.sysCtr != nil {
 		m.sysCtr.With("event", "gossiptx").Add(float64(sent))
 	} else {
@@ -254,8 +257,10 @@ func (m *FeedManager) CreateStreamHistory(
 			level.Debug(m.logger).Log("event", "gossiptx", "n", sent, "fr", arg.ID.ShortRef())
 		}
 	}
-	if errors.Cause(err) == context.Canceled {
-		return sink.Close()
+
+	if errors.Cause(err) == context.Canceled || muxrpc.IsSinkClosed(err) {
+		sink.Close()
+		return nil
 	} else if err != nil {
 		return errors.Wrap(err, "failed to pump messages to peer")
 	}

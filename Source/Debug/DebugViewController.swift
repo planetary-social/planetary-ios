@@ -338,9 +338,9 @@ class DebugViewController: DebugTableViewController {
                                              valueClosure:
             {
                 cell in
-                cell.detailTextLabel?.text = "\(Int(Timers.syncTimer.interval)) secs"
+                cell.detailTextLabel?.text = "\(Int(Timers.shared.syncTimer.interval)) secs"
                 let toggle = UISwitch(frame: .zero)
-                toggle.isOn = Timers.syncTimer.isRunning
+                toggle.isOn = Timers.shared.syncTimer.isRunning
                 toggle.addTarget(self, action: #selector(self.botSyncTimerValueChanged(toggle:)), for: .valueChanged)
                 cell.accessoryView = toggle
             },
@@ -351,9 +351,9 @@ class DebugViewController: DebugTableViewController {
                                          valueClosure:
         {
             cell in
-            cell.detailTextLabel?.text = "\(Int(Timers.refreshTimer.interval)) secs"
+            cell.detailTextLabel?.text = "\(Int(Timers.shared.refreshTimer.interval)) secs"
             let toggle = UISwitch(frame: .zero)
-            toggle.isOn = Timers.refreshTimer.isRunning
+            toggle.isOn = Timers.shared.refreshTimer.isRunning
             toggle.addTarget(self, action: #selector(self.botRefreshTimerValueChanged(toggle:)), for: .valueChanged)
             cell.accessoryView = toggle
         },
@@ -363,11 +363,11 @@ class DebugViewController: DebugTableViewController {
     }
 
     @objc private func botSyncTimerValueChanged(toggle: UISwitch) {
-        toggle.isOn ? Timers.syncTimer.start() : Timers.syncTimer.stop()
+        toggle.isOn ? Timers.shared.syncTimer.start() : Timers.shared.syncTimer.stop()
     }
     
     @objc private func botRefreshTimerValueChanged(toggle: UISwitch) {
-        toggle.isOn ? Timers.refreshTimer.start() : Timers.refreshTimer.stop()
+        toggle.isOn ? Timers.shared.refreshTimer.start() : Timers.shared.refreshTimer.stop()
     }
 
     private func operations() -> DebugTableViewController.Settings {

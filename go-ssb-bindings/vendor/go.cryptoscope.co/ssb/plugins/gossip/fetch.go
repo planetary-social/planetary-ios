@@ -20,30 +20,25 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/graph"
 	"go.cryptoscope.co/ssb/message"
 )
 
 func (h *handler) fetchAll(
 	ctx context.Context,
 	e muxrpc.Endpoint,
-	fs *graph.StrFeedSet,
+	set *ssb.StrFeedSet,
 ) error {
+
+	lst, err := set.List()
+	if err != nil {
+		return err
+	}
 	// we don't just want them all parallel right nw
 	// this kind of concurrency is way to harsh on the runtime
 	// we need some kind of FeedManager, similar to Blobs
 	// which we can ask for which feeds aren't in transit,
 	// due for a (probabilistic) update
 	// and manage live feeds more granularly across open connections
-
-	lst, err := fs.List()
-	if err != nil {
-		return err
-	}
-	tGraph, err := h.GraphBuilder.Build()
-	if err != nil {
-		return err
-	}
 
 	ctx, cancel := context.WithCancel(ctx)
 	fetchGroup, ctx := errgroup.WithContext(ctx)
@@ -59,9 +54,6 @@ func (h *handler) fetchAll(
 	}
 
 	for _, r := range lst {
-		if tGraph.Blocks(h.Id, r) {
-			continue
-		}
 		select {
 		case <-ctx.Done():
 			close(work)

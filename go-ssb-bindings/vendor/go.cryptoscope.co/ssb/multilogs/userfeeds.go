@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
+	"go.cryptoscope.co/librarian"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/multilog"
 	"go.cryptoscope.co/ssb"
@@ -14,7 +15,7 @@ import (
 
 const IndexNameFeeds = "userFeeds"
 
-func OpenUserFeeds(r repo.Interface) (multilog.MultiLog, repo.ServeFunc, error) {
+func OpenUserFeeds(r repo.Interface) (multilog.MultiLog, librarian.SinkIndex, error) {
 	return repo.OpenMultiLog(r, IndexNameFeeds, UserFeedsUpdate)
 }
 

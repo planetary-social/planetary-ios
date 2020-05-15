@@ -14,22 +14,21 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/go-kit/kit/metrics"
 	"github.com/pkg/errors"
+	"github.com/teivah/onecontext"
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/muxrpc"
 
 	"go.cryptoscope.co/ssb"
 )
 
-const DefaultMaxSize = 5 * 1024 * 1024
-
-type MaxSize int
-
 var ErrBlobBlocked = errors.New("blobstore: unable to receive blob")
 
-func NewWantManager(log logging.Interface, bs ssb.BlobStore, opts ...interface{}) ssb.WantManager {
+func NewWantManager(bs ssb.BlobStore, opts ...WantManagerOption) ssb.WantManager {
 	wmgr := &wantManager{
 		bs:        bs,
-		info:      log,
+		info:      log.NewNopLogger(),
+		maxSize:   DefaultMaxSize,
+		longCtx:   context.Background(),
 		wants:     make(map[string]int64),
 		blocked:   make(map[string]struct{}),
 		procs:     make(map[string]*wantProc),
@@ -37,17 +36,8 @@ func NewWantManager(log logging.Interface, bs ssb.BlobStore, opts ...interface{}
 	}
 
 	for i, o := range opts {
-		switch v := o.(type) {
-		case metrics.Gauge:
-			wmgr.gauge = v
-		case metrics.Counter:
-			wmgr.evtCtr = v
-		case MaxSize:
-			wmgr.maxSize = uint(v)
-		default:
-			if v != nil {
-				level.Warn(log).Log("event", "unhandled option", "i", i, "type", fmt.Sprintf("%T", o))
-			}
+		if err := o(wmgr); err != nil {
+			panic(errors.Wrapf(err, "NewWantManager called with invalid option #%d", i))
 		}
 	}
 
@@ -91,7 +81,7 @@ func NewWantManager(log logging.Interface, bs ssb.BlobStore, opts ...interface{}
 		for has := range wmgr.available {
 			sz, _ := wmgr.bs.Size(has.Want.Ref)
 			if sz > 0 {
-				level.Debug(log).Log("msg", "skipping already stored blob")
+				level.Debug(wmgr.info).Log("msg", "skipping already stored blob")
 				continue
 			}
 
@@ -127,6 +117,8 @@ func NewWantManager(log logging.Interface, bs ssb.BlobStore, opts ...interface{}
 type wantManager struct {
 	luigi.Broadcast
 
+	longCtx context.Context
+
 	bs ssb.BlobStore
 
 	maxSize uint
@@ -154,7 +146,9 @@ func (wmgr *wantManager) getBlob(ctx context.Context, edp muxrpc.Endpoint, ref *
 	log := log.With(wmgr.info, "event", "blobs.get", "ref", ref.ShortRef())
 
 	arg := GetWithSize{ref, wmgr.maxSize}
-	src, err := edp.Source(ctx, []byte{}, muxrpc.Method{"blobs", "get"}, arg)
+	allCtxs, cancel := onecontext.Merge(ctx, wmgr.longCtx)
+	defer cancel()
+	src, err := edp.Source(allCtxs, []byte{}, muxrpc.Method{"blobs", "get"}, arg)
 	if err != nil {
 		err = errors.Wrap(err, "blob create source failed")
 		level.Warn(log).Log("err", err)
@@ -266,8 +260,7 @@ func (wmgr *wantManager) WantWithDist(ref *ssb.BlobRef, dist int64) error {
 	wmgr.wants[ref.Ref()] = dist
 	wmgr.promGaugeSet("nwants", len(wmgr.wants))
 
-	// TODO: ctx?? this pours into the broadcast, right?
-	err = wmgr.wantSink.Pour(context.TODO(), ssb.BlobWant{ref, dist})
+	err = wmgr.wantSink.Pour(wmgr.longCtx, ssb.BlobWant{Ref: ref, Dist: dist})
 	err = errors.Wrap(err, "error pouring want to broadcast")
 	return err
 }
@@ -375,7 +368,9 @@ func (proc *wantProc) updateFromBlobStore(ctx context.Context, v interface{}, er
 	}
 
 	m := map[string]int64{notif.Ref.Ref(): sz}
-	err = proc.out.Pour(ctx, m)
+	allCtxs, cancel := onecontext.Merge(ctx, proc.rootCtx, proc.wmgr.longCtx)
+	err = proc.out.Pour(allCtxs, m)
+	cancel()
 	dbg.Log("cause", "broadcasting received blob", "sz", sz)
 	return errors.Wrap(err, "errors pouring into sink")
 
@@ -419,8 +414,9 @@ func (proc *wantProc) updateWants(ctx context.Context, v interface{}, err error)
 
 	newW := WantMsg{w}
 	// dbg.Log("op", "sending want we now want", "wantCount", len(proc.wmgr.wants))
-	// TODO: should use rootCtx from sbot?
-	return proc.out.Pour(ctx, newW)
+	allCtxs, cancel := onecontext.Merge(ctx, proc.rootCtx, proc.wmgr.longCtx)
+	defer cancel()
+	return proc.out.Pour(allCtxs, newW)
 }
 
 type GetWithSize struct {
@@ -494,8 +490,9 @@ func (proc *wantProc) Pour(ctx context.Context, v interface{}) error {
 		return nil
 	}
 
-	// cryptix: feel like we might need to wrap rootCtx in, too?
-	err := proc.out.Pour(ctx, mOut)
+	allCtxs, cancel := onecontext.Merge(ctx, proc.rootCtx, proc.wmgr.longCtx)
+	defer cancel()
+	err := proc.out.Pour(allCtxs, mOut)
 	return errors.Wrap(err, "error responding to wants")
 }
 
@@ -535,7 +532,8 @@ func (msg *WantMsg) UnmarshalJSON(data []byte) error {
 	for ref, dist := range wantsMap {
 		br, err := ssb.ParseBlobRef(ref)
 		if err != nil {
-			return errors.Wrap(err, "WantMsg: error parsing blob reference")
+			fmt.Println(errors.Wrap(err, "WantMsg: error parsing blob reference"))
+			continue
 		}
 
 		wants = append(wants, ssb.BlobWant{

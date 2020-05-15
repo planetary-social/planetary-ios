@@ -17,7 +17,10 @@ var ErrSublogDeleted = errors.Errorf("multilog: stored sublog was deleted. pleas
 type MultiLog interface {
 	Get(librarian.Addr) (margaret.Log, error)
 	List() ([]librarian.Addr, error)
+
 	io.Closer
+
+	Flush() error
 
 	// Delete removes all entries related to that log
 	Delete(librarian.Addr) error
