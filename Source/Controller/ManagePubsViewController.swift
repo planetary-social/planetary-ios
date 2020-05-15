@@ -9,9 +9,9 @@
 import Foundation
 import UIKit
 
-class ManagePubsViewController: UITableViewController {
+class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSourceDelegate {
     
-    var knownPubs = [KnownPub]()
+    lazy var dataSource = KnownPubsTableViewDataSource(knownPubs: [])
     
     // MARK: Lifecycle
     
@@ -28,50 +28,23 @@ class ManagePubsViewController: UITableViewController {
     // MARK: Load and refresh
 
     private func load() {
+        self.dataSource.delegate = self
+        self.tableView.dataSource = self.dataSource
+        self.tableView.prefetchDataSource = self.dataSource
         Bots.current.knownPubs { [weak self] (knownPubs, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.knownPubs = knownPubs
+                self?.dataSource.knownPubs = knownPubs
                 self?.tableView.reloadData()
             }
         }
     }
     
-    // MARK:- UITableViewDataSource
-    
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        if knownPubs.isEmpty {
-            return 1
-        }
-        return 2
-    }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return 1
-        }
-        return knownPubs.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .default, reuseIdentifier: "cell")
-        if indexPath.section == 0 {
-            cell.textLabel?.text = "Redeem an invitation"
-        } else {
-            cell.textLabel?.text = knownPubs[indexPath.row].ForFeed
-        }
-        cell.accessoryType = .disclosureIndicator
-        return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
-            return "Adding Pubs"
-        }
-        return "Your Pubs"
+    func reload() {
+        self.tableView.reloadData()
     }
     
     // MARK:- UITableViewDelegate
@@ -87,7 +60,7 @@ class ManagePubsViewController: UITableViewController {
             }
             targetController?.pushViewController(controller, animated: true)
         } else {
-            let controller = AboutViewController(with: knownPubs[indexPath.row].ForFeed)
+            let controller = AboutViewController(with: self.dataSource.knownPubs[indexPath.row].ForFeed)
             targetController?.pushViewController(controller, animated: true)
         }
     }

@@ -180,6 +180,10 @@
 "ManagePubs.header" = "Pubs";
 "ManagePubs.title" = "Manage Pubs";
 "ManagePubs.footer" = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
+"ManagePubs.addingPubs" = "Adding Pubs";
+"ManagePubs.yourPubs" = "Your Pubs";
+"ManagePubs.lastWorked" = "Last worked on";
+"ManagePubs.pasteAddress" = "Paste the address here";
 
 "Preview.title" = "Advanced Settings";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
