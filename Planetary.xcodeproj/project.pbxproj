@@ -113,6 +113,12 @@
 		2380CE91238D32A700E9D3F7 /* BlockedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2380CE90238D32A700E9D3F7 /* BlockedTests.swift */; };
 		2383DDA822F0FA5100D9E47C /* Onboarding+Follow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B822A0CDFB0004E2B1 /* Onboarding+Follow.swift */; };
 		2383DDA922F0FAD200D9E47C /* PubAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363A23522B05B3D009154B7 /* PubAPI.swift */; };
+		238793E2246EC26B00C9AD36 /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F771228E653A0058D67A /* Timers.swift */; };
+		238793E3246EC27200C9AD36 /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F771228E653A0058D67A /* Timers.swift */; };
+		238793E4246EC34D00C9AD36 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F76F228E65240058D67A /* RepeatingTimer.swift */; };
+		238793E5246EC34F00C9AD36 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F76F228E65240058D67A /* RepeatingTimer.swift */; };
+		238793E6246EC47100C9AD36 /* AppController+Poke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736C12458C031000190F8 /* AppController+Poke.swift */; };
+		238793E7246EC47200C9AD36 /* AppController+Poke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736C12458C031000190F8 /* AppController+Poke.swift */; };
 		23888979220867DB0030CB92 /* FeedFill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23888978220867DB0030CB92 /* FeedFill.swift */; };
 		2388897B220867F00030CB92 /* Feed_example.json in Resources */ = {isa = PBXBuildFile; fileRef = 2388897A220867F00030CB92 /* Feed_example.json */; };
 		2388897C220868B70030CB92 /* ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233A8F89220138F600CE01CE /* ViewDatabase.swift */; };
@@ -2478,6 +2484,7 @@
 				53211CE522838107007FB785 /* UIImage+Resize.swift in Sources */,
 				23888979220867DB0030CB92 /* FeedFill.swift in Sources */,
 				53211CE622838121007FB785 /* Image+UIImage.swift in Sources */,
+				238793E6246EC47100C9AD36 /* AppController+Poke.swift in Sources */,
 				53362F6F2209F8D5007264CB /* NetworkKey.swift in Sources */,
 				53E26C5F23045D4C009240B2 /* Person.swift in Sources */,
 				531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */,
@@ -2494,8 +2501,10 @@
 				533EDBE82385F7CD008B3565 /* CacheTests.swift in Sources */,
 				2370620823CFC53C0070712C /* GoBotReproductionHelper.swift in Sources */,
 				5319258522F9E63900B44FA3 /* Date+Elapsed.swift in Sources */,
+				238793E4246EC34D00C9AD36 /* RepeatingTimer.swift in Sources */,
 				5314EF6622EA2B180065D02A /* NullLog.swift in Sources */,
 				2367615B2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
+				238793E2246EC26B00C9AD36 /* Timers.swift in Sources */,
 				53C2B1302295A9800018D0A8 /* NullAnalytics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2519,6 +2528,7 @@
 				5314EF4722EA28820065D02A /* BotError.swift in Sources */,
 				5314EF6922EA2B3E0065D02A /* Data+JSON.swift in Sources */,
 				5314EF5D22EA29D70065D02A /* Bundle+Current.swift in Sources */,
+				238793E5246EC34F00C9AD36 /* RepeatingTimer.swift in Sources */,
 				5314EF5522EA29210065D02A /* Address.swift in Sources */,
 				5314EF7322EA34B60065D02A /* String+PhoneNumberKit.swift in Sources */,
 				2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */,
@@ -2529,6 +2539,8 @@
 				5314EF7C22EA358F0065D02A /* Dictionary+JSONSerialization.swift in Sources */,
 				5314EF5F22EA2A240065D02A /* Keychain.swift in Sources */,
 				5314EF6B22EA2B730065D02A /* Hashtag+String.swift in Sources */,
+				238793E3246EC27200C9AD36 /* Timers.swift in Sources */,
+				238793E7246EC47200C9AD36 /* AppController+Poke.swift in Sources */,
 				2383DDA822F0FA5100D9E47C /* Onboarding+Follow.swift in Sources */,
 				23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				2394616323A262B5008F552C /* Log+API.swift in Sources */,
