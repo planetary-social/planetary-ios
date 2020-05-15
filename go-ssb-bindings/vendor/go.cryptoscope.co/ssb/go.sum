@@ -207,6 +207,8 @@ go.cryptoscope.co/librarian v0.2.0 h1:HmtNjpIbJMC92WGP3klMqybHyEx1+CyezLfLOFFkAm
 go.cryptoscope.co/librarian v0.2.0/go.mod h1:uFope0IyQiNu+ultHuG9cDtrh94WAZeGhLpU8JTz1gc=
 go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a h1:8dwHp75fTkL91j+mzSpwUmg0LuH28p77o6pDSnhvBjc=
 go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a/go.mod h1:P8YuIifKwAnrQzkHdBe06jMUoICJYv7tCJc+ONG34yY=
+go.cryptoscope.co/librarian v0.2.1-0.20200514123714-04a3bc2226cb h1:JoYZwiuxySCaB4Gs9hX3X1Z9x/aLlg//yMe0K/owtH8=
+go.cryptoscope.co/librarian v0.2.1-0.20200514123714-04a3bc2226cb/go.mod h1:P8YuIifKwAnrQzkHdBe06jMUoICJYv7tCJc+ONG34yY=
 go.cryptoscope.co/luigi v0.0.1/go.mod h1:bdU2SNXp28+MnejXrdgtWyLBd10ODLY5ZHzWSjewS04=
 go.cryptoscope.co/luigi v0.3.0/go.mod h1:RFlNZMl3Ckc4jIPrLBn3WGwSgpzb0lGDIoGsmBSqEDY=
 go.cryptoscope.co/luigi v0.3.2/go.mod h1:sKanbHitI0dybhcgijJzqQmKbIT1zu6uwzeobLUnvks=

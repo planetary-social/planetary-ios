@@ -386,6 +386,8 @@ go.cryptoscope.co/librarian v0.2.1-0.20200511130715-93c9138ef4b2 h1:YiFcHbm7tIZ4
 go.cryptoscope.co/librarian v0.2.1-0.20200511130715-93c9138ef4b2/go.mod h1:P8YuIifKwAnrQzkHdBe06jMUoICJYv7tCJc+ONG34yY=
 go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a h1:8dwHp75fTkL91j+mzSpwUmg0LuH28p77o6pDSnhvBjc=
 go.cryptoscope.co/librarian v0.2.1-0.20200512101147-c92d76d1c19a/go.mod h1:P8YuIifKwAnrQzkHdBe06jMUoICJYv7tCJc+ONG34yY=
+go.cryptoscope.co/librarian v0.2.1-0.20200514123714-04a3bc2226cb h1:JoYZwiuxySCaB4Gs9hX3X1Z9x/aLlg//yMe0K/owtH8=
+go.cryptoscope.co/librarian v0.2.1-0.20200514123714-04a3bc2226cb/go.mod h1:P8YuIifKwAnrQzkHdBe06jMUoICJYv7tCJc+ONG34yY=
 go.cryptoscope.co/luigi v0.0.1/go.mod h1:bdU2SNXp28+MnejXrdgtWyLBd10ODLY5ZHzWSjewS04=
 go.cryptoscope.co/luigi v0.3.0/go.mod h1:RFlNZMl3Ckc4jIPrLBn3WGwSgpzb0lGDIoGsmBSqEDY=
 go.cryptoscope.co/luigi v0.3.2/go.mod h1:sKanbHitI0dybhcgijJzqQmKbIT1zu6uwzeobLUnvks=
@@ -431,6 +433,10 @@ go.cryptoscope.co/ssb v0.0.0-20200512153553-8a244f588e39 h1:i97w0BgoMv1LIIBSvzCE
 go.cryptoscope.co/ssb v0.0.0-20200512153553-8a244f588e39/go.mod h1:G12Ivzv/XOz5OfLxpf1SAz1ldSuBy6X8mssx3dNkAbI=
 go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707 h1:YKsARsTDmSiOnbv17AojsKbTkaMdl3378dbkPVgeLK0=
 go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707/go.mod h1:YnFKl0Ls58dM22RUMHhn2nZ6V57BqVwyrqozrt9oR0U=
+go.cryptoscope.co/ssb v0.0.0-20200515094155-02a4e9b64e1f h1:jXyVhB6SQh1c9DlFOKwuPiYynOLQplL6MoPR1OqCDBY=
+go.cryptoscope.co/ssb v0.0.0-20200515094155-02a4e9b64e1f/go.mod h1:YnFKl0Ls58dM22RUMHhn2nZ6V57BqVwyrqozrt9oR0U=
+go.cryptoscope.co/ssb v0.0.0-20200515122437-a5f1900c98cd h1:eYowu7pqleHIILk+wbkGyf3f1JJOLBdJSl/GgV2MxNU=
+go.cryptoscope.co/ssb v0.0.0-20200515122437-a5f1900c98cd/go.mod h1:1RjjvACGRQX/0/nNdlyM1kP2/gyOaAq9rKO7dAXJiMs=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738/go.mod h1:dnLIgRNXwCJa5e+c6mIZCrds/GIG4ncV9HhK5PX7jPg=
 go.mindeco.de/ssb-gabbygrove v0.1.5/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=

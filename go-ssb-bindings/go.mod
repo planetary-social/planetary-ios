@@ -10,7 +10,7 @@ require (
 	go.cryptoscope.co/margaret v0.1.7-0.20200511124419-30f93c451238
 	go.cryptoscope.co/netwrap v0.1.1
 	go.cryptoscope.co/secretstream v1.2.2 // indirect
-	go.cryptoscope.co/ssb v0.0.0-20200513103125-a41d39974707
+	go.cryptoscope.co/ssb v0.0.0-20200515122437-a5f1900c98cd
 	go.mindeco.de/ssb-multiserver v0.0.0-20200302171328-987e421fadee
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71 // indirect
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
@@ -24,7 +24,3 @@ require (
 go 1.14
 
 replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
-
-replace go.cryptoscope.co/ssb => /Users/cryptix/ssb/go-ssb
-
-replace go.cryptoscope.co/librarian => /Users/cryptix/go/src/go.cryptoscope.co/librarian
