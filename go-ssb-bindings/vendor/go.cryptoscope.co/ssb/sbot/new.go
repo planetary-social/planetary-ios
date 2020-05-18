@@ -44,9 +44,6 @@ func (s *Sbot) Close() error {
 	if s.closed {
 		return s.closeErr
 	}
-	if s.replicator != nil {
-		s.replicator.updateTicker.Stop()
-	}
 
 	closeEvt := kitlog.With(s.info, "event", "sbot closing")
 	s.closed = true
@@ -135,17 +132,17 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		}
 	}
 
-	// if _, ok := s.simpleIndex["content-delete-requests"]; !ok {
-	// 	var dcrTrigger dropContentTrigger
-	// 	dcrTrigger.logger = kitlog.With(log, "module", "dcrTrigger")
-	// 	dcrTrigger.root = s.RootLog
-	// 	dcrTrigger.feeds = uf
-	// 	dcrTrigger.nuller = s
-	// 	err = MountSimpleIndex("content-delete-requests", dcrTrigger.MakeSimpleIndex)(s)
-	// 	if err != nil {
-	// 		return nil, errors.Wrap(err, "sbot: failed to open load default DCR index")
-	// 	}
-	// }
+	if _, ok := s.simpleIndex["content-delete-requests"]; !ok {
+		var dcrTrigger dropContentTrigger
+		dcrTrigger.logger = kitlog.With(log, "module", "dcrTrigger")
+		dcrTrigger.root = s.RootLog
+		dcrTrigger.feeds = uf
+		dcrTrigger.nuller = s
+		err = MountSimpleIndex("content-delete-requests", dcrTrigger.MakeSimpleIndex)(s)
+		if err != nil {
+			return nil, errors.Wrap(err, "sbot: failed to open load default DCR index")
+		}
+	}
 
 	var pubopts = []message.PublishOption{
 		message.UseNowTimestamps(true),

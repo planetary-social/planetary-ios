@@ -36,7 +36,7 @@ type index struct {
 
 func (idx *index) Flush() error { return nil }
 
-func (idx *index) Close() error { return nil }
+func (idx *index) Close() error { return idx.db.Close() }
 
 func (idx *index) Get(ctx context.Context, addr librarian.Addr) (luigi.Observable, error) {
 	idx.l.Lock()
@@ -152,9 +152,8 @@ func (idx *index) SetSeq(seq margaret.Seq) error {
 	binary.BigEndian.PutUint64(raw, uint64(seq.Seq()))
 
 	err = idx.db.Set([]byte(addr), raw)
-
 	if err != nil {
-		return errors.Wrap(err, "error in badger transaction (update)")
+		return errors.Wrapf(err, "error during mkv update (%T)", seq.Seq())
 	}
 
 	idx.l.Lock()

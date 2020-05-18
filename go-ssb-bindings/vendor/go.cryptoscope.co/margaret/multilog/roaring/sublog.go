@@ -3,8 +3,6 @@
 package roaring
 
 import (
-	"sync"
-
 	"github.com/RoaringBitmap/roaring"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
@@ -18,7 +16,6 @@ import (
 type sublog struct {
 	mlog *MultiLog
 
-	sync.Mutex
 	key       persist.Key
 	seq       *seqobsv.Observable
 	luigiObsv luigi.Observable
@@ -34,8 +31,8 @@ func (log *sublog) Seq() luigi.Observable {
 }
 
 func (log *sublog) Get(seq margaret.Seq) (interface{}, error) {
-	log.Mutex.Lock()
-	defer log.Mutex.Unlock()
+	log.mlog.l.Lock()
+	defer log.mlog.l.Unlock()
 	return log.get(seq)
 }
 
@@ -56,8 +53,8 @@ func (log *sublog) get(seq margaret.Seq) (interface{}, error) {
 }
 
 func (log *sublog) Query(specs ...margaret.QuerySpec) (luigi.Source, error) {
-	log.Mutex.Lock()
-	defer log.Mutex.Unlock()
+	log.mlog.l.Lock()
+	defer log.mlog.l.Unlock()
 	if log.deleted {
 		return nil, multilog.ErrSublogDeleted
 	}
@@ -81,8 +78,8 @@ func (log *sublog) Query(specs ...margaret.QuerySpec) (luigi.Source, error) {
 }
 
 func (log *sublog) Append(v interface{}) (margaret.Seq, error) {
-	log.Mutex.Lock()
-	defer log.Mutex.Unlock()
+	log.mlog.l.Lock()
+	defer log.mlog.l.Unlock()
 	if log.deleted {
 		return nil, multilog.ErrSublogDeleted
 	}
@@ -106,13 +103,6 @@ func (log *sublog) Append(v interface{}) (margaret.Seq, error) {
 	log.bmap.Add(uint32(val.Seq()))
 
 	log.dirty = true
-
-	/*
-		newSeq, err := log.update()
-		if err != nil {
-			return nil, err
-		}
-	*/
 	log.seq.Inc()
 
 	count := log.bmap.GetCardinality() - 1

@@ -19,7 +19,7 @@ import (
 const FolderNameGet = "get"
 
 // OpenGet supplies the get(msgRef) -> rootLogSeq idx
-func OpenGet(r repo.Interface) (librarian.SeqSetterIndex, librarian.SinkIndex, error) {
+func OpenGet(r repo.Interface) (librarian.Index, librarian.SinkIndex, error) {
 	updateFn := func(db *badger.DB) (librarian.SeqSetterIndex, librarian.SinkIndex) {
 		idx := libbadger.NewIndex(db, margaret.BaseSeq(0))
 		sink := librarian.NewSinkIndex(func(ctx context.Context, seq margaret.Seq, val interface{}, idx librarian.SetterIndex) error {

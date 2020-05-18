@@ -31,8 +31,8 @@ type handler struct {
 	hopCount int
 	promisc  bool // ask for remote feed even if it's not on owns fetch list
 
-	activeLock  sync.Mutex
-	activeFetch sync.Map
+	activeLock  *sync.Mutex
+	activeFetch map[string]struct{}
 
 	sysGauge metrics.Gauge
 	sysCtr   metrics.Counter

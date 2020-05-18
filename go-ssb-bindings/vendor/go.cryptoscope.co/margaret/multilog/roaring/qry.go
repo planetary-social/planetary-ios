@@ -82,17 +82,17 @@ func (qry *query) Reverse(rev bool) error {
 }
 
 func (qry *query) Next(ctx context.Context) (interface{}, error) {
-	qry.log.Lock()
+	qry.log.mlog.l.Lock()
 
 	if qry.limit == 0 {
-		qry.log.Unlock()
+		qry.log.mlog.l.Unlock()
 		return nil, luigi.EOS{}
 	}
 	qry.limit--
 
 	if qry.nextSeq == margaret.SeqEmpty {
 		if qry.reverse {
-			qry.log.Unlock()
+			qry.log.mlog.l.Unlock()
 			return nil, luigi.EOS{}
 		}
 		qry.nextSeq = 0
@@ -100,7 +100,7 @@ func (qry *query) Next(ctx context.Context) (interface{}, error) {
 
 	if qry.lt != margaret.SeqEmpty {
 		if qry.nextSeq >= qry.lt {
-			qry.log.Unlock()
+			qry.log.mlog.l.Unlock()
 			return nil, luigi.EOS{}
 		}
 	}
@@ -110,14 +110,14 @@ func (qry *query) Next(ctx context.Context) (interface{}, error) {
 	v = margaret.BaseSeq(seqVal)
 	if err != nil {
 		if !strings.Contains(err.Error(), "th integer in a bitmap with only ") {
-			qry.log.Unlock()
+			qry.log.mlog.l.Unlock()
 			return nil, errors.Wrapf(err, "roaringfiles/qry: error in read transaction (%T)", err)
 		}
 
 		// key not found, so we reached the end
 		// abort if not a live query, else wait until it's written
 		if !qry.live {
-			qry.log.Unlock()
+			qry.log.mlog.l.Unlock()
 			return nil, luigi.EOS{}
 		}
 
@@ -131,7 +131,7 @@ func (qry *query) Next(ctx context.Context) (interface{}, error) {
 		} else {
 			qry.nextSeq++
 		}
-		qry.log.Unlock()
+		qry.log.mlog.l.Unlock()
 		return v, nil
 	}
 
@@ -140,13 +140,13 @@ func (qry *query) Next(ctx context.Context) (interface{}, error) {
 	} else {
 		qry.nextSeq++
 	}
-	qry.log.Unlock()
+	qry.log.mlog.l.Unlock()
 	return v, nil
 }
 
 func (qry *query) livequery(ctx context.Context) (interface{}, error) {
 	thisNextSeq := qry.nextSeq
-	qry.log.Unlock()
+	qry.log.mlog.l.Unlock()
 
 	var (
 		v   interface{}

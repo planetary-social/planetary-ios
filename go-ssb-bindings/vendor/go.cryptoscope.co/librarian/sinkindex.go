@@ -57,8 +57,7 @@ func (idx *sinkIndex) Pour(ctx context.Context, v interface{}) error {
 }
 
 func (idx *sinkIndex) Close() error {
-	// TODO implement index closing
-	return nil
+	return idx.idx.Close()
 }
 
 func (idx *sinkIndex) Get(ctx context.Context, a Addr) (luigi.Observable, error) {

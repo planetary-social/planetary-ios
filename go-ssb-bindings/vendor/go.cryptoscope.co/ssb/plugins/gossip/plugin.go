@@ -5,6 +5,7 @@ package gossip
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/cryptix/go/logging"
 	"github.com/go-kit/kit/metrics"
@@ -36,6 +37,9 @@ func New(
 		WantList:  wantList,
 		Info:      log,
 		rootCtx:   ctx,
+
+		activeLock:  &sync.Mutex{},
+		activeFetch: make(map[string]struct{}),
 	}
 
 	for i, o := range opts {
@@ -86,6 +90,10 @@ func NewHist(
 		WantList:  wantList,
 		Info:      log,
 		rootCtx:   ctx,
+
+		// not using fetch here
+		activeLock:  nil,
+		activeFetch: nil,
 	}
 
 	for i, o := range opts {

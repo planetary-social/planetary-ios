@@ -26,6 +26,7 @@ func NewStore(store persist.Saver) *MultiLog {
 	ctx, cancel := context.WithCancel(context.TODO())
 	ml := &MultiLog{
 		store:   store,
+		l:       &sync.Mutex{},
 		sublogs: make(map[librarian.Addr]*sublog),
 		curSeq:  margaret.BaseSeq(-2),
 
@@ -75,7 +76,7 @@ type MultiLog struct {
 
 	curSeq margaret.Seq
 
-	l       sync.Mutex
+	l       *sync.Mutex
 	sublogs map[librarian.Addr]*sublog
 
 	processing  context.Context

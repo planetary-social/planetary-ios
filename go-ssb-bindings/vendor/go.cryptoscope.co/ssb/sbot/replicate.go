@@ -1,11 +1,15 @@
 package sbot
 
 import (
+	"context"
 	"fmt"
 	"time"
 
+	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
+	"go.cryptoscope.co/luigi"
+	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/graph"
 )
@@ -14,66 +18,90 @@ var _ ssb.Replicator = (*Sbot)(nil)
 
 type replicator struct {
 	builder graph.Builder
-
-	updateTicker *time.Ticker
-	current      *lister
+	current *lister
 }
 
 func (s *Sbot) newGraphReplicator() (*replicator, error) {
 	var r replicator
 	r.builder = s.GraphBuilder
+	r.current = newLister()
 
-	// init graph and fill
-	var lis lister
-	lis.feedWants = r.builder.Hops(s.KeyPair.Id, int(s.hopCount))
-	level.Warn(s.info).Log("event", "replicate", "want", lis.feedWants.Count(), "hops", s.hopCount)
-	g, err := r.builder.Build()
-	if err != nil {
-		return nil, err
-	}
-	lis.blocked = g.BlockedList(s.KeyPair.Id)
+	replicateEvt := log.With(s.info, "event", "update-replicate")
+	update := r.makeUpdater(replicateEvt, s.KeyPair.Id, int(s.hopCount))
 
-	r.current = &lis
+	update() // init graph and fill
 
-	// TODO: make a smarter update mechanism
-	r.updateTicker = time.NewTicker(time.Minute * 10)
-	go func() {
-
-		for {
-			select {
-			case <-r.updateTicker.C:
-			case <-s.rootCtx.Done():
-				return
-			}
-			newWants := r.builder.Hops(s.KeyPair.Id, int(s.hopCount))
-
-			refs, err := newWants.List()
-			if err != nil {
-				level.Error(s.info).Log("event", "replicate", "err", err, "wants", newWants.Count())
-				continue
-			}
-			for _, ref := range refs {
-				r.current.feedWants.AddRef(ref)
-			}
-
-			// make sure we dont fetch and allow blocked feeds
-			g, err := r.builder.Build()
-			if err != nil {
-				continue
-			}
-
-			lis.blocked = g.BlockedList(s.KeyPair.Id)
-			lst, err := lis.blocked.List()
-			if err == nil {
-				for _, bf := range lst {
-					r.current.feedWants.Delete(bf)
-				}
-			}
-
-		}
-	}()
+	// update for new messages but only every 15seconds
+	go debounce(s.rootCtx, 15*time.Second, s.RootLog.Seq(), update)
 
 	return &r, nil
+}
+
+// makeUpdater returns a func that does the hop-walk and block checks, used together with debounce
+func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int) func() {
+	return func() {
+		newWants := r.builder.Hops(self, hopCount)
+		level.Warn(log).Log("want", r.current.feedWants.Count(), "hops", hopCount)
+
+		refs, err := newWants.List()
+		if err != nil {
+			level.Error(log).Log("msg", "want list failed", "err", err, "wants", newWants.Count())
+			return
+		}
+		for _, ref := range refs {
+			r.current.feedWants.AddRef(ref)
+		}
+
+		// make sure we dont fetch and allow blocked feeds
+		g, err := r.builder.Build()
+		if err != nil {
+			level.Error(log).Log("msg", "failed to build blocks", "err", err)
+			return
+		}
+
+		r.current.blocked = g.BlockedList(self)
+		lst, err := r.current.blocked.List()
+		if err == nil {
+			for _, bf := range lst {
+				r.current.feedWants.Delete(bf)
+			}
+		}
+	}
+}
+
+func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable, work func()) {
+	var seq = margaret.SeqEmpty
+	timer := time.NewTimer(interval)
+
+	handle := luigi.FuncSink(func(ctx context.Context, val interface{}, err error) error {
+		if err != nil {
+			return err
+		}
+		newSeq, ok := val.(margaret.BaseSeq)
+		if !ok {
+			return fmt.Errorf("graph rebuild debounce: wrong type: %T", val)
+		}
+		seq = newSeq
+		timer.Reset(interval)
+		return nil
+	})
+	done := obs.Register(handle)
+
+	for {
+		select {
+		case <-ctx.Done():
+			done()
+			return
+
+		case <-timer.C:
+			if seq != -1 {
+				work()
+				seq = margaret.SeqEmpty
+			}
+		}
+	}
+	//	done()
+
 }
 
 func (r *replicator) Block(ref *ssb.FeedRef)   { r.current.blocked.AddRef(ref) }
@@ -89,6 +117,13 @@ type lister struct {
 	blocked   *ssb.StrFeedSet
 }
 
+func newLister() *lister {
+	return &lister{
+		feedWants: ssb.NewFeedSet(0),
+		blocked:   ssb.NewFeedSet(0),
+	}
+}
+
 func (l lister) Authorize(remote *ssb.FeedRef) error {
 	if l.blocked.Has(remote) {
 		return fmt.Errorf("peer blocked")
@@ -97,11 +132,12 @@ func (l lister) Authorize(remote *ssb.FeedRef) error {
 	if l.feedWants.Has(remote) {
 		return nil
 	}
-	wantCount := l.feedWants.Count()
-	if wantCount == 0 {
+
+	if l.feedWants.Count() == 0 {
 		return nil
 	}
-	return errors.Errorf("nope - access denied (%d)", wantCount)
+
+	return errors.New("nope - access denied")
 }
 
 func (l lister) ReplicationList() *ssb.StrFeedSet { return l.feedWants }

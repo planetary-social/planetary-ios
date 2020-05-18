@@ -66,6 +66,7 @@ func MountMultiLog(name string, fn repo.MakeMultiLog) Option {
 		if err != nil {
 			return errors.Wrapf(err, "sbot/index: failed to open idx %s", name)
 		}
+		s.closers.addCloser(updateSink)
 		s.closers.addCloser(mlog)
 		s.serveIndex(name, updateSink)
 		s.mlogIndicies[name] = mlog
@@ -79,6 +80,7 @@ func MountSimpleIndex(name string, fn repo.MakeSimpleIndex) Option {
 		if err != nil {
 			return errors.Wrapf(err, "sbot/index: failed to open idx %s", name)
 		}
+		s.closers.addCloser(updateSink)
 		s.serveIndex(name, updateSink)
 		s.simpleIndex[name] = idx
 		return nil
@@ -223,4 +225,4 @@ func (ps *progressSink) Pour(ctx context.Context, v interface{}) error {
 	return nil
 }
 
-func (ps progressSink) Close() error { return ps.backing.Close() }
+func (ps progressSink) Close() error { return nil }
