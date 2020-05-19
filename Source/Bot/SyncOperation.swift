@@ -29,8 +29,13 @@ class SyncOperation: AsynchronousOperation {
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
         if notificationsOnly {
-            Bots.current.syncNotifications { [weak self] (error, timeInterval, newMessages) in
+            Analytics.trackBotSync()
+            Bots.current.syncNotifications(queue: queue) { [weak self] (error, timeInterval, newMessages) in
+                Analytics.trackBotDidSync(duration: timeInterval,
+                                          numberOfMessages: newMessages,
+                                          error: error)
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 Log.info("SyncOperation finished with \(newMessages) new messages. Took \(timeInterval) seconds to sync.")
                 if let strongSelf = self, !strongSelf.isCancelled {
                     self?.newMessages = newMessages
@@ -40,7 +45,7 @@ class SyncOperation: AsynchronousOperation {
             }
         } else {
             Analytics.trackBotSync()
-            Bots.current.sync (queue: queue) { [weak self] (error, timeInterval, newMessages) in
+            Bots.current.sync(queue: queue) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.trackBotDidSync(duration: timeInterval,
                                           numberOfMessages: newMessages,
                                           error: error)

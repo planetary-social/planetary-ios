@@ -34,6 +34,10 @@ type index struct {
 	curSeq margaret.Seq
 }
 
+func (idx *index) Flush() error { return nil }
+
+func (idx *index) Close() error { return nil }
+
 func (idx *index) Get(ctx context.Context, addr librarian.Addr) (luigi.Observable, error) {
 	idx.l.Lock()
 	defer idx.l.Unlock()

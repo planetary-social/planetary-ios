@@ -3,7 +3,6 @@
 package repo
 
 import (
-	"context"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,7 +12,6 @@ import (
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/librarian"
 	libmkv "go.cryptoscope.co/librarian/mkv"
-	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/codec/msgpack"
 	"go.cryptoscope.co/margaret/multilog"
@@ -42,13 +40,11 @@ func (r repo) GetPath(rel ...string) string {
 
 const PrefixMultiLog = "sublogs"
 
-type ServeFunc func(context.Context, margaret.Log, bool) error
-
 // OpenBadgerMultiLog uses the repo to determine the paths where to finds the multilog with given name and opens it.
 //
 // Exposes the badger db for 100% hackability. This will go away in future versions!
 // badger + librarian as index
-func OpenBadgerMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog, ServeFunc, error) {
+func OpenBadgerMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog, librarian.SinkIndex, error) {
 
 	dbPath := r.GetPath(PrefixMultiLog, name, "db")
 	err := os.MkdirAll(dbPath, 0700)
@@ -75,28 +71,10 @@ func OpenBadgerMultiLog(r Interface, name string, f multilog.Func) (multilog.Mul
 
 	mlogSink := multilog.NewSink(idxStateFile, mlog, f)
 
-	serve := func(ctx context.Context, rootLog margaret.Log, live bool) error {
-		if rootLog == nil {
-			return errors.Errorf("repo/multilog: %s was passed a nil root log", name)
-		}
-
-		src, err := rootLog.Query(margaret.Live(live), margaret.SeqWrap(true), mlogSink.QuerySpec())
-		if err != nil {
-			return errors.Wrap(err, "error querying rootLog for mlog")
-		}
-
-		err = luigi.Pump(ctx, mlogSink, src)
-		if err == ssb.ErrShuttingDown {
-			return nil
-		}
-
-		return errors.Wrap(err, "error reading query for mlog")
-	}
-
-	return mlog, serve, nil
+	return mlog, mlogSink, nil
 }
 
-func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog, ServeFunc, error) {
+func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog, librarian.SinkIndex, error) {
 
 	dbPath := r.GetPath(PrefixMultiLog, name, "roaring")
 	err := os.MkdirAll(dbPath, 0700)
@@ -109,7 +87,9 @@ func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog,
 	if err != nil {
 		// yuk..
 		if !isLockFileExistsErr(err) {
-			return nil, nil, errors.Wrapf(err, "failed to recover lockfiles")
+			// delete it if we cant recover it
+			os.RemoveAll(dbPath)
+			return nil, nil, errors.Wrapf(err, "not a lockfile problem - deleting index")
 		}
 		if err := cleanupLockFiles(dbPath); err != nil {
 			return nil, nil, errors.Wrapf(err, "failed to recover lockfiles")
@@ -138,25 +118,7 @@ func OpenMultiLog(r Interface, name string, f multilog.Func) (multilog.MultiLog,
 
 	mlogSink := multilog.NewSink(idxStateFile, mlog, f)
 
-	serve := func(ctx context.Context, rootLog margaret.Log, live bool) error {
-		if rootLog == nil {
-			return errors.Errorf("repo/multilog: %s was passed a nil root log", name)
-		}
-
-		src, err := rootLog.Query(margaret.Live(live), margaret.SeqWrap(true), mlogSink.QuerySpec())
-		if err != nil {
-			return errors.Wrap(err, "error querying rootLog for mlog")
-		}
-
-		err = luigi.Pump(ctx, mlogSink, src)
-		if err == ssb.ErrShuttingDown {
-			return nil
-		}
-
-		return errors.Wrap(err, "error reading query for mlog")
-	}
-
-	return mlog, serve, nil
+	return mlog, mlogSink, nil
 }
 
 func cleanupLockFiles(root string) error {
@@ -177,7 +139,7 @@ func cleanupLockFiles(root string) error {
 
 const PrefixIndex = "indexes"
 
-func OpenIndex(r Interface, name string, f func(librarian.SeqSetterIndex) librarian.SinkIndex) (librarian.Index, ServeFunc, error) {
+func OpenIndex(r Interface, name string, f func(librarian.SeqSetterIndex) librarian.SinkIndex) (librarian.Index, librarian.SinkIndex, error) {
 	pth := r.GetPath(PrefixIndex, name, "mkv")
 	err := os.MkdirAll(pth, 0700)
 	if err != nil {
@@ -190,23 +152,7 @@ func OpenIndex(r Interface, name string, f func(librarian.SeqSetterIndex) librar
 	}
 
 	idx := libmkv.NewIndex(db, margaret.BaseSeq(0))
-	sinkidx := f(idx)
-
-	serve := func(ctx context.Context, rootLog margaret.Log, live bool) error {
-		src, err := rootLog.Query(margaret.Live(live), margaret.SeqWrap(true), sinkidx.QuerySpec())
-		if err != nil {
-			return errors.Wrap(err, "error querying root log")
-		}
-
-		err = luigi.Pump(ctx, sinkidx, src)
-		if err == ssb.ErrShuttingDown {
-			return db.Close()
-		}
-
-		return errors.Wrap(err, "contacts index pump failed")
-	}
-
-	return idx, serve, nil
+	return idx, f(idx), nil
 }
 
 func OpenMKV(pth string) (*kv.DB, error) {
@@ -241,7 +187,9 @@ func OpenMKV(pth string) (*kv.DB, error) {
 	return db, nil
 }
 
-func OpenBadgerIndex(r Interface, name string, f func(*badger.DB) librarian.SinkIndex) (*badger.DB, librarian.SinkIndex, ServeFunc, error) {
+type LibrarianIndexCreater func(*badger.DB) (librarian.SeqSetterIndex, librarian.SinkIndex)
+
+func OpenBadgerIndex(r Interface, name string, f LibrarianIndexCreater) (*badger.DB, librarian.SeqSetterIndex, librarian.SinkIndex, error) {
 	pth := r.GetPath(PrefixIndex, name, "db")
 	err := os.MkdirAll(pth, 0700)
 	if err != nil {
@@ -253,23 +201,9 @@ func OpenBadgerIndex(r Interface, name string, f func(*badger.DB) librarian.Sink
 		return nil, nil, nil, errors.Wrap(err, "db/idx: badger failed to open")
 	}
 
-	sinkidx := f(db)
+	idx, sinkidx := f(db)
 
-	serve := func(ctx context.Context, rootLog margaret.Log, live bool) error {
-		src, err := rootLog.Query(margaret.Live(live), margaret.SeqWrap(true), sinkidx.QuerySpec())
-		if err != nil {
-			return errors.Wrap(err, "error querying root log")
-		}
-
-		err = luigi.Pump(ctx, sinkidx, src)
-		if err == ssb.ErrShuttingDown {
-			return nil
-		}
-
-		return errors.Wrap(err, "contacts index pump failed")
-	}
-
-	return db, sinkidx, serve, nil
+	return db, idx, sinkidx, nil
 }
 
 func OpenBlobStore(r Interface) (ssb.BlobStore, error) {

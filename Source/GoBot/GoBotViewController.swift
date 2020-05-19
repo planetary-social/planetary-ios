@@ -19,7 +19,7 @@ class GoBotViewController: DebugTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if !GoBot.shared.bot.isRunning() {
+        if !GoBot.shared.bot.isRunning {
             self.settings = [self.actions()]
             self.tableView.reloadData()
             return
@@ -37,8 +37,8 @@ class GoBotViewController: DebugTableViewController {
     }
     
     @objc func runningToggleDidChange(toggle: UISwitch) {
-        if GoBot.shared.bot.isRunning() {
-            GoBot.shared.bot.logout()
+        if GoBot.shared.bot.isRunning {
+            _ = GoBot.shared.bot.logout()
         } else {
             Log.unexpected(.apiError, "TODO: just trigger logout")
         }
@@ -64,7 +64,7 @@ class GoBotViewController: DebugTableViewController {
             {
                 cell in
                 let toggle = UISwitch()
-                toggle.isOn = GoBot.shared.bot.isRunning()
+                toggle.isOn = GoBot.shared.bot.isRunning
                 toggle.addTarget(self, action: #selector(self.runningToggleDidChange), for: .valueChanged)
                 cell.accessoryView = toggle
             },
@@ -126,7 +126,7 @@ class GoBotViewController: DebugTableViewController {
     private func actions() -> DebugTableViewController.Settings {
         var a: [DebugTableViewCellModel] = []
         
-        if GoBot.shared.bot.isRunning() {
+        if GoBot.shared.bot.isRunning {
             
             a += [DebugTableViewCellModel(title: "Publish",
                                      cellReuseIdentifier: DebugValueTableViewCell.className,
@@ -263,8 +263,8 @@ extension GoBotViewController {
         let delRepo = UIAlertAction(title: "Repo and View", style: .destructive) {
             action in
             do {
-                if GoBot.shared.bot.isRunning() {
-                    GoBot.shared.bot.logout() // wait?!
+                if GoBot.shared.bot.isRunning {
+                    GoBot.shared.bot.logout()
                 }
 
                 // TODO https://app.asana.com/0/914798787098068/1153254864207581/f
@@ -287,8 +287,8 @@ extension GoBotViewController {
         let delView = UIAlertAction(title: "Just view DB", style: .destructive) {
             action in
             do {
-                if GoBot.shared.bot.isRunning() {
-                    GoBot.shared.bot.logout() // wait?!
+                if GoBot.shared.bot.isRunning {
+                    _ = GoBot.shared.bot.logout()
                 }
                 let dbPath = GoBot.shared.database.currentPath
                 GoBot.shared.database.close()

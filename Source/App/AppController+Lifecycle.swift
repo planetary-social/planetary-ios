@@ -14,7 +14,7 @@ extension AppController {
     func launch() {
         let controller = LaunchViewController()
         self.setRootViewController(controller, animated: false)
-        Timers.pokeTimers.forEach{$0.start()}
+        Timers.shared.pokeTimers.forEach{$0.start()}
         self.syncPushNotificationsSettings()
     }
 
@@ -24,19 +24,19 @@ extension AppController {
     }
 
     func resume() {
-        Bots.current.resume()
-        Timers.pokeTimers.forEach{$0.start()}
+        self.operationQueue.addOperation(ResumeOperation())
+        Timers.shared.pokeTimers.forEach{$0.start()}
         self.syncPushNotificationsSettings()
     }
 
     func suspend() {
-        Bots.current.suspend()
-        Timers.pokeTimers.forEach{$0.stop()}
+        self.operationQueue.addOperation(SuspendOperation())
+        Timers.shared.pokeTimers.forEach{$0.stop()}
         Caches.invalidate()
     }
 
     func exit() {
-        Bots.current.exit()
+        self.operationQueue.addOperation(ExitOperation())
     }
 }
 

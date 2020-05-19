@@ -42,6 +42,13 @@
 		0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9092437C22400D7F39C /* MarkdownTests.swift */; };
+		0AC10DEB246EFB3400CCA22A /* TimersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEA246EFB3400CCA22A /* TimersService.swift */; };
+		0AC10DEC246EFBD800CCA22A /* TimersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEA246EFB3400CCA22A /* TimersService.swift */; };
+		0AC10DED246EFBD900CCA22A /* TimersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEA246EFB3400CCA22A /* TimersService.swift */; };
+		0AC10DEF246EFBE700CCA22A /* AppTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEE246EFBE700CCA22A /* AppTimers.swift */; };
+		0AC10DF2246EFCC200CCA22A /* NullTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DF0246EFC7600CCA22A /* NullTimers.swift */; };
+		0AC10DF3246EFCC200CCA22A /* NullTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DF0246EFC7600CCA22A /* NullTimers.swift */; };
+		0AC10DE6246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */; };
 		0ACA5742243CFAEC001C5E37 /* MarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */; };
 		0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */; };
 		0ACE919B243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */; };
@@ -71,6 +78,10 @@
 		0AF9E09E246234BE00910575 /* PostReplyPaginatedDelegate+DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E09D246234BE00910575 /* PostReplyPaginatedDelegate+DataSource.swift */; };
 		0AF9E0A22465D7A800910575 /* ThreadReplyPaginatedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A12465D7A700910575 /* ThreadReplyPaginatedDataSource.swift */; };
 		0AF9E0A42465D7D000910575 /* ThreadReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A32465D7D000910575 /* ThreadReplyView.swift */; };
+		0AF9E0A6246B149900910575 /* Analytics+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A5246B149900910575 /* Analytics+Debug.swift */; };
+		0AF9E0A8246B22DC00910575 /* ResumeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A7246B22DC00910575 /* ResumeOperation.swift */; };
+		0AF9E0AA246B23C700910575 /* SuspendOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A9246B23C700910575 /* SuspendOperation.swift */; };
+		0AF9E0AC246B23F900910575 /* ExitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0AB246B23F900910575 /* ExitOperation.swift */; };
 		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
@@ -109,6 +120,8 @@
 		2380CE91238D32A700E9D3F7 /* BlockedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2380CE90238D32A700E9D3F7 /* BlockedTests.swift */; };
 		2383DDA822F0FA5100D9E47C /* Onboarding+Follow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B822A0CDFB0004E2B1 /* Onboarding+Follow.swift */; };
 		2383DDA922F0FAD200D9E47C /* PubAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363A23522B05B3D009154B7 /* PubAPI.swift */; };
+		238793E4246EC34D00C9AD36 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F76F228E65240058D67A /* RepeatingTimer.swift */; };
+		238793E5246EC34F00C9AD36 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F76F228E65240058D67A /* RepeatingTimer.swift */; };
 		23888979220867DB0030CB92 /* FeedFill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23888978220867DB0030CB92 /* FeedFill.swift */; };
 		2388897B220867F00030CB92 /* Feed_example.json in Resources */ = {isa = PBXBuildFile; fileRef = 2388897A220867F00030CB92 /* Feed_example.json */; };
 		2388897C220868B70030CB92 /* ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233A8F89220138F600CE01CE /* ViewDatabase.swift */; };
@@ -153,7 +166,6 @@
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
 		53033E9F2383322B004609F8 /* Onboarding+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9E2383322B004609F8 /* Onboarding+AppConfiguration.swift */; };
 		5306F770228E65240058D67A /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F76F228E65240058D67A /* RepeatingTimer.swift */; };
-		5306F772228E653A0058D67A /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F771228E653A0058D67A /* Timers.swift */; };
 		5306F776228F07D00058D67A /* AnalyticsEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F775228F07D00058D67A /* AnalyticsEnums.swift */; };
 		5308168821C46A53005C48ED /* IdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5308168721C46A53005C48ED /* IdentifierTests.swift */; };
 		5308169421C46A6E005C48ED /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5308169321C46A6E005C48ED /* OnboardingTests.swift */; };
@@ -447,7 +459,6 @@
 		5396A631224823DD00C57A4B /* FeatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A630224823DD00C57A4B /* FeatureViewController.swift */; };
 		5396A633224836E800C57A4B /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A632224836E800C57A4B /* UIColor+Hex.swift */; };
 		5396A6352248377900C57A4B /* UIColor+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6342248377900C57A4B /* UIColor+Verse.swift */; };
-		539C2AF423C9550C00FB9203 /* AppController+BackgroundSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C2AF323C9550C00FB9203 /* AppController+BackgroundSync.swift */; };
 		539FD4AF22C19B9F005A4DF2 /* AboutsMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD4AE22C19B9F005A4DF2 /* AboutsMenu.swift */; };
 		539FD4B122C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD4B022C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift */; };
 		539FD4BD22C2DACB005A4DF2 /* NSAttributedString+NSRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD4BC22C2DACB005A4DF2 /* NSAttributedString+NSRange.swift */; };
@@ -676,6 +687,10 @@
 		0ABCA9002437BF3400D7F39C /* String+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Markdown.swift"; sourceTree = "<group>"; };
 		0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Markdown.swift"; sourceTree = "<group>"; };
 		0ABCA9092437C22400D7F39C /* MarkdownTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTests.swift; sourceTree = "<group>"; };
+		0AC10DEA246EFB3400CCA22A /* TimersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimersService.swift; sourceTree = "<group>"; };
+		0AC10DEE246EFBE700CCA22A /* AppTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTimers.swift; sourceTree = "<group>"; };
+		0AC10DF0246EFC7600CCA22A /* NullTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullTimers.swift; sourceTree = "<group>"; };
+		0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownPubsTableViewDataSource.swift; sourceTree = "<group>"; };
 		0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyler.swift; sourceTree = "<group>"; };
 		0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Tracking.swift"; sourceTree = "<group>"; };
 		0ACE919A243D599E00EFB4E9 /* NullMarkdownStyler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullMarkdownStyler.swift; sourceTree = "<group>"; };
@@ -704,6 +719,10 @@
 		0AF9E09D246234BE00910575 /* PostReplyPaginatedDelegate+DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostReplyPaginatedDelegate+DataSource.swift"; sourceTree = "<group>"; };
 		0AF9E0A12465D7A700910575 /* ThreadReplyPaginatedDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadReplyPaginatedDataSource.swift; sourceTree = "<group>"; };
 		0AF9E0A32465D7D000910575 /* ThreadReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadReplyView.swift; sourceTree = "<group>"; };
+		0AF9E0A5246B149900910575 /* Analytics+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Debug.swift"; sourceTree = "<group>"; };
+		0AF9E0A7246B22DC00910575 /* ResumeOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeOperation.swift; sourceTree = "<group>"; };
+		0AF9E0A9246B23C700910575 /* SuspendOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspendOperation.swift; sourceTree = "<group>"; };
+		0AF9E0AB246B23F900910575 /* ExitOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitOperation.swift; sourceTree = "<group>"; };
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
@@ -748,7 +767,6 @@
 		53033E9B23831CD1004609F8 /* Onboarding+Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Onboarding+Status.swift"; sourceTree = "<group>"; };
 		53033E9E2383322B004609F8 /* Onboarding+AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Onboarding+AppConfiguration.swift"; sourceTree = "<group>"; };
 		5306F76F228E65240058D67A /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
-		5306F771228E653A0058D67A /* Timers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timers.swift; sourceTree = "<group>"; };
 		5306F773228E65DF0058D67A /* Bot+SyncAndRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bot+SyncAndRefresh.swift"; sourceTree = "<group>"; };
 		5306F775228F07D00058D67A /* AnalyticsEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEnums.swift; sourceTree = "<group>"; };
 		5308168521C46A52005C48ED /* UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -960,7 +978,6 @@
 		5396A630224823DD00C57A4B /* FeatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureViewController.swift; sourceTree = "<group>"; };
 		5396A632224836E800C57A4B /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		5396A6342248377900C57A4B /* UIColor+Verse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Verse.swift"; sourceTree = "<group>"; };
-		539C2AF323C9550C00FB9203 /* AppController+BackgroundSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppController+BackgroundSync.swift"; sourceTree = "<group>"; };
 		539D3782224A843300453CF5 /* check_symbols.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = check_symbols.sh; sourceTree = "<group>"; };
 		539FD4AE22C19B9F005A4DF2 /* AboutsMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutsMenu.swift; sourceTree = "<group>"; };
 		539FD4B022C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+NSMutableAttributedString.swift"; sourceTree = "<group>"; };
@@ -1160,6 +1177,16 @@
 			path = CrashReporting;
 			sourceTree = "<group>";
 		};
+		0AC10DE9246EFB1E00CCA22A /* Timers */ = {
+			isa = PBXGroup;
+			children = (
+				0AC10DEA246EFB3400CCA22A /* TimersService.swift */,
+				0AC10DEE246EFBE700CCA22A /* AppTimers.swift */,
+				0AC10DF0246EFC7600CCA22A /* NullTimers.swift */,
+			);
+			path = Timers;
+			sourceTree = "<group>";
+		};
 		0ACA5740243CFA94001C5E37 /* Markdown */ = {
 			isa = PBXGroup;
 			children = (
@@ -1299,7 +1326,6 @@
 				5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */,
 				536255D223AAC8AD001007D0 /* AppDelegate+Analytics.swift */,
 				536255D023AAC5F0001007D0 /* AppDelegate+Background.swift */,
-				539C2AF323C9550C00FB9203 /* AppController+BackgroundSync.swift */,
 				53E26C4D23022482009240B2 /* AppDelegate+Push.swift */,
 				53AD3FD4226FBD91005228F9 /* AppDelegate+UIAppearance.swift */,
 				536255DB23AC090D001007D0 /* RemoteNotificationUserInfo.swift */,
@@ -1346,6 +1372,9 @@
 				0AB736B824577451000190F8 /* RefreshOperation.swift */,
 				0AB736BD2457772B000190F8 /* SyncOperation.swift */,
 				0AB736BF24577CB4000190F8 /* LoginOperation.swift */,
+				0AF9E0A7246B22DC00910575 /* ResumeOperation.swift */,
+				0AF9E0A9246B23C700910575 /* SuspendOperation.swift */,
+				0AF9E0AB246B23F900910575 /* ExitOperation.swift */,
 			);
 			path = Bot;
 			sourceTree = "<group>";
@@ -1380,6 +1409,7 @@
 				53C966E1236D037000E70689 /* UIViewController+Report.swift */,
 				536255DD23AC4C46001007D0 /* UIViewController+Sync.swift */,
 				0AF9E0A12465D7A700910575 /* ThreadReplyPaginatedDataSource.swift */,
+				0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1506,6 +1536,7 @@
 				53A4763723A19D62003814DC /* Offboarding */,
 				531587AE229F17D80004E2B1 /* Onboarding */,
 				5376FADD228CF82300411F5B /* Protocol */,
+				0AC10DE9246EFB1E00CCA22A /* Timers */,
 				5369D2AB220CB09E00A65622 /* Service */,
 				53C9FA2D22FCF18000EAC35F /* Settings */,
 				53B5D9982333FAF70024CF7A /* Support */,
@@ -1575,7 +1606,6 @@
 			children = (
 				53C2B1372295AE080018D0A8 /* Keychain.swift */,
 				5306F76F228E65240058D67A /* RepeatingTimer.swift */,
-				5306F771228E653A0058D67A /* Timers.swift */,
 				53B4F5FE22B9E4F200027C6A /* Abouts.swift */,
 			);
 			path = Service;
@@ -1828,6 +1858,7 @@
 				5357BD7C23CFD0B9005665AB /* UserDefaults+Analytics.swift */,
 				0AF9E0972461B3BB00910575 /* Analytics+UI.swift */,
 				0AF9E0992461E92100910575 /* Analytics+Conversions.swift */,
+				0AF9E0A5246B149900910575 /* Analytics+Debug.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -2385,6 +2416,7 @@
 				5369D2AF220CF39E00A65622 /* Data+JSON.swift in Sources */,
 				530F018822DAD5D8007EBAE2 /* Date+Random.swift in Sources */,
 				0ACE91AC243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */,
+				0AC10DF3246EFCC200CCA22A /* NullTimers.swift in Sources */,
 				53211CF0228522B2007FB785 /* FakeBot.swift in Sources */,
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
 				53C2B13C2295BC940018D0A8 /* Keychain.swift in Sources */,
@@ -2454,6 +2486,7 @@
 				0ACE91A4243D741300EFB4E9 /* GoBotError.swift in Sources */,
 				0A65A632244DEFBF004C48C8 /* SupportService.swift in Sources */,
 				5369D2B0220CF57800A65622 /* UserDefaults+Debug.swift in Sources */,
+				0AC10DED246EFBD900CCA22A /* TimersService.swift in Sources */,
 				531A8A4321F8358600D5C8C0 /* Identifier.swift in Sources */,
 				238ED6B2232282D600E054A3 /* Blob.swift in Sources */,
 				535754F522692B29002A6989 /* ContentType.swift in Sources */,
@@ -2485,6 +2518,7 @@
 				533EDBE82385F7CD008B3565 /* CacheTests.swift in Sources */,
 				2370620823CFC53C0070712C /* GoBotReproductionHelper.swift in Sources */,
 				5319258522F9E63900B44FA3 /* Date+Elapsed.swift in Sources */,
+				238793E4246EC34D00C9AD36 /* RepeatingTimer.swift in Sources */,
 				5314EF6622EA2B180065D02A /* NullLog.swift in Sources */,
 				2367615B2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
 				53C2B1302295A9800018D0A8 /* NullAnalytics.swift in Sources */,
@@ -2510,6 +2544,7 @@
 				5314EF4722EA28820065D02A /* BotError.swift in Sources */,
 				5314EF6922EA2B3E0065D02A /* Data+JSON.swift in Sources */,
 				5314EF5D22EA29D70065D02A /* Bundle+Current.swift in Sources */,
+				238793E5246EC34F00C9AD36 /* RepeatingTimer.swift in Sources */,
 				5314EF5522EA29210065D02A /* Address.swift in Sources */,
 				5314EF7322EA34B60065D02A /* String+PhoneNumberKit.swift in Sources */,
 				2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */,
@@ -2520,6 +2555,7 @@
 				5314EF7C22EA358F0065D02A /* Dictionary+JSONSerialization.swift in Sources */,
 				5314EF5F22EA2A240065D02A /* Keychain.swift in Sources */,
 				5314EF6B22EA2B730065D02A /* Hashtag+String.swift in Sources */,
+				0AC10DEC246EFBD800CCA22A /* TimersService.swift in Sources */,
 				2383DDA822F0FA5100D9E47C /* Onboarding+Follow.swift in Sources */,
 				23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				2394616323A262B5008F552C /* Log+API.swift in Sources */,
@@ -2537,6 +2573,7 @@
 				53EAB396239AC1D400DF5530 /* UIColor+Hex.swift in Sources */,
 				5314EF4422EA28700065D02A /* Post.swift in Sources */,
 				5314EF4122EA27CC0065D02A /* About.swift in Sources */,
+				0AC10DF2246EFCC200CCA22A /* NullTimers.swift in Sources */,
 				5314EF7A22EA351C0065D02A /* VerseAPI+UserDirectory.swift in Sources */,
 				8DB041FE234FAA48006AC35B /* Identity+Bot.swift in Sources */,
 				5314EF5B22EA29AA0065D02A /* Mention+NSAttributedString.swift in Sources */,
@@ -2650,7 +2687,6 @@
 				0ABCA8FF2436B48E00D7F39C /* AppError+LocalizedError.swift in Sources */,
 				5319258222F3B13600B44FA3 /* AvatarImageView.swift in Sources */,
 				53EAB3912398692000DF5530 /* AvatarStackView.swift in Sources */,
-				5306F772228E653A0058D67A /* Timers.swift in Sources */,
 				535B6A10237362AE008C248E /* BlockedUsersViewController.swift in Sources */,
 				8D74DE012335601F003C284B /* UIViewController+NavigationItems.swift in Sources */,
 				539FD4AF22C19B9F005A4DF2 /* AboutsMenu.swift in Sources */,
@@ -2666,6 +2702,7 @@
 				539FD4C822C43FC8005A4DF2 /* ImageButton.swift in Sources */,
 				5314EF8122EA54540065D02A /* Analytics+Onboarding.swift in Sources */,
 				53D8FF95236946D300EF986F /* PeersView.swift in Sources */,
+				0AF9E0AC246B23F900910575 /* ExitOperation.swift in Sources */,
 				0ABCA9062437C12C00D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				5314EF6222EA2AA40065D02A /* OSLog.swift in Sources */,
 				53569F3323A85DB400DA291D /* PostTextCache.swift in Sources */,
@@ -2686,6 +2723,7 @@
 				0ABCA8F524366B9700D7F39C /* AppError.swift in Sources */,
 				53E26C6B23062B10009240B2 /* Layout+Center.swift in Sources */,
 				53211CE222836666007FB785 /* MIMEType.swift in Sources */,
+				0AC10DE6246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift in Sources */,
 				5306F770228E65240058D67A /* RepeatingTimer.swift in Sources */,
 				5396A62F2245A50300C57A4B /* LaunchViewController.swift in Sources */,
 				5376FADF228CF83A00411F5B /* Saveable.swift in Sources */,
@@ -2718,6 +2756,7 @@
 				5369D2A4220B596800A65622 /* Data+JSON.swift in Sources */,
 				53AD3FE922775936005228F9 /* Thread+Assert.swift in Sources */,
 				535754FD22694A4C002A6989 /* PostCellView.swift in Sources */,
+				0AC10DEF246EFBE700CCA22A /* AppTimers.swift in Sources */,
 				535B6A0A2372360F008C248E /* UIViewController+TopViewController.swift in Sources */,
 				531B92C422CEAD25005D5255 /* PostReplyView.swift in Sources */,
 				53A4763923A19D7D003814DC /* Offboarding.swift in Sources */,
@@ -2755,6 +2794,7 @@
 				1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */,
 				53211CD0227C8F85007FB785 /* AboutCellView.swift in Sources */,
 				53EE020022051B6200DFDF16 /* Identifier.swift in Sources */,
+				0AF9E0A6246B149900910575 /* Analytics+Debug.swift in Sources */,
 				8D8105822346A9740029C72E /* Relationship.swift in Sources */,
 				0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */,
 				53211CDC228230D6007FB785 /* UIView+Round.swift in Sources */,
@@ -2762,6 +2802,7 @@
 				53B634B6221627CC00400403 /* UIView+AutoLayout.swift in Sources */,
 				53BD748823235A450060E47E /* Post+Blob.swift in Sources */,
 				23C7443E2200B12000FB554A /* Mention.swift in Sources */,
+				0AF9E0AA246B23C700910575 /* SuspendOperation.swift in Sources */,
 				5319F06B234EDC8000F4D3C1 /* UIView+HeaderView.swift in Sources */,
 				530AC93522051D5600B7F2F2 /* SecretViewController.swift in Sources */,
 				23C744572200B13F00FB554A /* Contact.swift in Sources */,
@@ -2829,6 +2870,7 @@
 				5376FADC228B9B4900411F5B /* IdentitiesViewController.swift in Sources */,
 				0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */,
 				531EC4122310C9EE001A25AD /* Blob.swift in Sources */,
+				0AC10DEB246EFB3400CCA22A /* TimersService.swift in Sources */,
 				535754FF22694AAA002A6989 /* UnsupportedView.swift in Sources */,
 				53C2B1382295AE080018D0A8 /* Keychain.swift in Sources */,
 				539FD4B122C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift in Sources */,
@@ -2895,6 +2937,7 @@
 				53AD3FD5226FBD91005228F9 /* AppDelegate+UIAppearance.swift in Sources */,
 				53E26C6923062AC3009240B2 /* Layout+Fill.swift in Sources */,
 				531B92C722D125DA005D5255 /* ChannelsViewController.swift in Sources */,
+				0AF9E0A8246B22DC00910575 /* ResumeOperation.swift in Sources */,
 				536255D523AB16A6001007D0 /* Date+Holidays.swift in Sources */,
 				533F4055225FB3B40060B4B9 /* Layout+SpacerView.swift in Sources */,
 				53211CDE228250D7007FB785 /* UIView+Stroke.swift in Sources */,
@@ -2930,7 +2973,6 @@
 				0A65A62E244DEB65004C48C8 /* SupportService.swift in Sources */,
 				530F01AE22DEAE86007EBAE2 /* DoneOnboardingStep.swift in Sources */,
 				5396A62922444D9D00C57A4B /* UIViewController+Confirm.swift in Sources */,
-				539C2AF423C9550C00FB9203 /* AppController+BackgroundSync.swift in Sources */,
 				8DE093DC234651E1009E505D /* FollowButton.swift in Sources */,
 				539246E022A9CCBF00D01EEC /* Person.swift in Sources */,
 				53C422B721C476B000A314AD /* DebugTableViewController.swift in Sources */,

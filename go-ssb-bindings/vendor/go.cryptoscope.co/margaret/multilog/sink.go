@@ -74,6 +74,8 @@ func (slog *sinkLog) Pour(ctx context.Context, v interface{}) error {
 	return errors.Wrap(err, "multilog/sink: error in processing function")
 }
 
+func (slog *sinkLog) Flush() error { return nil }
+
 // Close does nothing.
 // TODO: It could close it's backing multilog but that trashes other open sublogs
 // Maybe have something like a "multiple-open tracker" that tracks all the users of the multilog and closes it if all users closed it?

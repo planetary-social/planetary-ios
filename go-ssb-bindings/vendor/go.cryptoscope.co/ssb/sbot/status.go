@@ -43,19 +43,41 @@ func (sbot *Sbot) Status() (ssb.Status, error) {
 			Since: humanize.Time(time.Now().Add(-es.Since)),
 		})
 	}
+
+	var idxState ssb.IndexStates
+	sbot.indexStateMu.Lock()
+
+	for n, s := range sbot.indexStates {
+		idxState = append(idxState, ssb.IndexState{
+			Name:  n,
+			State: s,
+		})
+	}
+
+	sbot.indexStateMu.Unlock()
+
+	sort.Sort(byName(idxState))
+	s.Indicies = idxState
+
 	return s, nil
 }
 
 type byConnTime []ssb.EndpointStat
 
-func (bct byConnTime) Len() int {
-	return len(bct)
-}
+func (bct byConnTime) Len() int { return len(bct) }
 
 func (bct byConnTime) Less(i int, j int) bool {
 	return bct[i].Since < bct[j].Since
 }
 
-func (bct byConnTime) Swap(i int, j int) {
-	bct[i], bct[j] = bct[j], bct[i]
+func (bct byConnTime) Swap(i int, j int) { bct[i], bct[j] = bct[j], bct[i] }
+
+type byName ssb.IndexStates
+
+func (bn byName) Len() int { return len(bn) }
+
+func (bct byName) Less(i int, j int) bool {
+	return bct[i].Name < bct[j].Name
 }
+
+func (bct byName) Swap(i int, j int) { bct[i], bct[j] = bct[j], bct[i] }

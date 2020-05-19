@@ -10,6 +10,7 @@ import (
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
+	"go.cryptoscope.co/librarian"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/multilog"
 	gabbygrove "go.mindeco.de/ssb-gabbygrove"
@@ -37,12 +38,12 @@ type Private struct {
 }
 
 // OpenRoaring uses roaring bitmaps with a slim key-value store backend
-func (pr Private) OpenRoaring(r repo.Interface) (multilog.MultiLog, repo.ServeFunc, error) {
+func (pr Private) OpenRoaring(r repo.Interface) (multilog.MultiLog, librarian.SinkIndex, error) {
 	return repo.OpenMultiLog(r, IndexNamePrivates, pr.update)
 }
 
 // OpenBadger uses a pretty memory hungry but battle-tested backend
-func (pr Private) OpenBadger(r repo.Interface) (multilog.MultiLog, repo.ServeFunc, error) {
+func (pr Private) OpenBadger(r repo.Interface) (multilog.MultiLog, librarian.SinkIndex, error) {
 	return repo.OpenBadgerMultiLog(r, IndexNamePrivates, pr.update)
 }
 

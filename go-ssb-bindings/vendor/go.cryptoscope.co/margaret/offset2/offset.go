@@ -23,7 +23,7 @@ func (o *offset) readOffset(seq margaret.Seq) (int64, error) {
 
 	var ofst int64
 	err = binary.Read(o, binary.BigEndian, &ofst)
-	return ofst, errors.Wrap(err, "error reading offset")
+	return ofst, errors.Wrapf(err, "error reading offset %d", seq.Seq())
 }
 
 func (o *offset) readLastOffset() (int64, margaret.Seq, error) {

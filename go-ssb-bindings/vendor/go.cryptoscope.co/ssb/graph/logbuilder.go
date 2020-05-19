@@ -45,6 +45,8 @@ func NewLogBuilder(logger kitlog.Logger, contacts margaret.Log) (*logBuilder, er
 	return &lb, errors.Wrap(err, "failed to build graph")
 }
 
+func (b *logBuilder) Close() error { return nil }
+
 func (b *logBuilder) startQuery(ctx context.Context) {
 	src, err := b.contactsLog.Query(margaret.Live(true))
 	if err != nil {
@@ -173,7 +175,7 @@ func (b *logBuilder) buildGraph(ctx context.Context, v interface{}, err error) e
 	return nil
 }
 
-func (b *logBuilder) Follows(from *ssb.FeedRef) (*StrFeedSet, error) {
+func (b *logBuilder) Follows(from *ssb.FeedRef) (*ssb.StrFeedSet, error) {
 	g, err := b.Build()
 	if err != nil {
 		return nil, errors.Wrap(err, "follows: couldn't build graph")
@@ -186,7 +188,7 @@ func (b *logBuilder) Follows(from *ssb.FeedRef) (*StrFeedSet, error) {
 
 	nodes := g.From(nFrom.ID())
 
-	refs := NewFeedSet(nodes.Len())
+	refs := ssb.NewFeedSet(nodes.Len())
 
 	for nodes.Next() {
 		cnv := nodes.Node().(*contactNode)
@@ -201,7 +203,7 @@ func (b *logBuilder) Follows(from *ssb.FeedRef) (*StrFeedSet, error) {
 	return refs, nil
 }
 
-func (b *logBuilder) Hops(from *ssb.FeedRef, max int) *StrFeedSet {
+func (b *logBuilder) Hops(from *ssb.FeedRef, max int) *ssb.StrFeedSet {
 	g, err := b.Build()
 	if err != nil {
 		panic(err)
@@ -211,7 +213,7 @@ func (b *logBuilder) Hops(from *ssb.FeedRef, max int) *StrFeedSet {
 	fb := from.StoredAddr()
 	nFrom, has := g.lookup[fb]
 	if !has {
-		fs := NewFeedSet(1)
+		fs := ssb.NewFeedSet(1)
 		fs.AddRef(from)
 		return fs
 	}
@@ -227,7 +229,7 @@ func (b *logBuilder) Hops(from *ssb.FeedRef, max int) *StrFeedSet {
 			return ce.Weight() == 1 && rev.(contactEdge).Weight() == 1
 		},
 	}
-	fs := NewFeedSet(10)
+	fs := ssb.NewFeedSet(10)
 	w.Walk(g, nFrom, func(n graph.Node, d int) bool {
 		if d > max+1 {
 			return true

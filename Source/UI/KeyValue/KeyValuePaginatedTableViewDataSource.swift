@@ -21,12 +21,10 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("[DEBUG] number of rows: \(self.data.count)")
         return self.data.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("[DEBUG] cellForRowAt \(indexPath)")
         let latePrefetch = { [weak tableView] (idx: Int, keyValue: KeyValue) -> Void in
             DispatchQueue.main.async { [weak tableView] in
                 let indexPath = IndexPath(item: idx, section: 0)

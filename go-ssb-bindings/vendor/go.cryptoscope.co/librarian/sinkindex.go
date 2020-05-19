@@ -35,18 +35,25 @@ func (r *sinkIndex) QuerySpec() margaret.QuerySpec {
 }
 
 func (idx *sinkIndex) Pour(ctx context.Context, v interface{}) error {
-	seqwrap, ok := v.(margaret.SeqWrapper)
-	if !ok {
-		return errors.New("expecting seqwrapped value")
+
+	switch tv := v.(type) {
+	case margaret.SeqWrapper:
+		err := idx.f(ctx, tv.Seq(), tv.Value(), idx.idx)
+		if err != nil {
+			return errors.Wrap(err, "error calling setter func")
+		}
+		err = idx.idx.SetSeq(tv.Seq())
+		return errors.Wrap(err, "error setting sequence number")
+	case error:
+		if margaret.IsErrNulled(tv) {
+			return nil
+		}
+		return tv
+
+	default:
+		return errors.Errorf("expecting seqwrapped value (%T)", v)
 	}
 
-	err := idx.f(ctx, seqwrap.Seq(), seqwrap.Value(), idx.idx)
-	if err != nil {
-		return errors.Wrap(err, "error calling setter func")
-	}
-
-	err = idx.idx.SetSeq(seqwrap.Seq())
-	return errors.Wrap(err, "error setting sequence number")
 }
 
 func (idx *sinkIndex) Close() error {

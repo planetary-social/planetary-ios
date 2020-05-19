@@ -21,6 +21,12 @@ class DebugViewController: DebugTableViewController {
         }
         self.navigationItem.title = Text.debug.text
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CrashReporting.shared.record("Did Show Debug")
+        Analytics.trackDidShowScreen(screenName: "debug")
+    }
 
     internal override func updateSettings() {
         self.settings = [self.application(),
@@ -332,9 +338,9 @@ class DebugViewController: DebugTableViewController {
                                              valueClosure:
             {
                 cell in
-                cell.detailTextLabel?.text = "\(Int(Timers.syncTimer.interval)) secs"
+                cell.detailTextLabel?.text = "\(Int(Timers.shared.syncTimer.interval)) secs"
                 let toggle = UISwitch(frame: .zero)
-                toggle.isOn = Timers.syncTimer.isRunning
+                toggle.isOn = Timers.shared.syncTimer.isRunning
                 toggle.addTarget(self, action: #selector(self.botSyncTimerValueChanged(toggle:)), for: .valueChanged)
                 cell.accessoryView = toggle
             },
@@ -345,9 +351,9 @@ class DebugViewController: DebugTableViewController {
                                          valueClosure:
         {
             cell in
-            cell.detailTextLabel?.text = "\(Int(Timers.refreshTimer.interval)) secs"
+            cell.detailTextLabel?.text = "\(Int(Timers.shared.refreshTimer.interval)) secs"
             let toggle = UISwitch(frame: .zero)
-            toggle.isOn = Timers.refreshTimer.isRunning
+            toggle.isOn = Timers.shared.refreshTimer.isRunning
             toggle.addTarget(self, action: #selector(self.botRefreshTimerValueChanged(toggle:)), for: .valueChanged)
             cell.accessoryView = toggle
         },
@@ -357,11 +363,11 @@ class DebugViewController: DebugTableViewController {
     }
 
     @objc private func botSyncTimerValueChanged(toggle: UISwitch) {
-        toggle.isOn ? Timers.syncTimer.start() : Timers.syncTimer.stop()
+        toggle.isOn ? Timers.shared.syncTimer.start() : Timers.shared.syncTimer.stop()
     }
     
     @objc private func botRefreshTimerValueChanged(toggle: UISwitch) {
-        toggle.isOn ? Timers.refreshTimer.start() : Timers.refreshTimer.stop()
+        toggle.isOn ? Timers.shared.refreshTimer.start() : Timers.shared.refreshTimer.stop()
     }
 
     private func operations() -> DebugTableViewController.Settings {
@@ -376,15 +382,19 @@ class DebugViewController: DebugTableViewController {
             [unowned self] cell in
             let alertController = UIAlertController(title: "Share Logs", message: nil, preferredStyle: .actionSheet)
             alertController.addAction(UIAlertAction(title: "All files", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: false, allFiles: true, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "All files in a ZIP file", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: true, allFiles: true, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Recent files", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: false, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Recent files in a ZIP file", style: .default, handler: { (_) in
+                Analytics.trackDidShareLogs()
                 self.shareLogs(shouldZip: true, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -544,6 +554,7 @@ class DebugViewController: DebugTableViewController {
             CrashReporting.shared.reportIfNeeded(error: error)
             
             Analytics.forget()
+            CrashReporting.shared.forget()
             
             AppController.shared.launch()
             self?.dismiss(animated: true, completion: nil)
@@ -572,13 +583,20 @@ class DebugViewController: DebugTableViewController {
         self.confirm(message: "Are you sure you want to logout of the current configuration?  Any pending operations will be lost.",
                      isDestructive: true,
                      confirmTitle: "Logout",
-                     confirmClosure: { self.applyConfigurationAndDismiss() })
+                     confirmClosure: {
+                        Analytics.trackDidLogout()
+                        self.applyConfigurationAndDismiss()
+                        
+        })
     }
 
     private func logoutAndRelaunch() {
         self.confirm(message: "Are you sure you want to logout of the current configuration?  Any pending operations will be lost.",
                      isDestructive: true,
                      confirmTitle: "Logout and relaunch",
-                     confirmClosure: { self.clearConfigurationAndRelaunch() })
+                     confirmClosure: {
+                        Analytics.trackDidLogoutAndOnboard()
+                        self.clearConfigurationAndRelaunch()
+        })
     }
 }

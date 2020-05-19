@@ -4,7 +4,6 @@ package client
 
 import (
 	"context"
-	"crypto/ed25519"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -19,6 +18,7 @@ import (
 	"go.cryptoscope.co/muxrpc/codec"
 	"go.cryptoscope.co/netwrap"
 	"go.cryptoscope.co/secretstream"
+	"golang.org/x/crypto/ed25519"
 
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/blobstore"
