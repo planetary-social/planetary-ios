@@ -142,7 +142,7 @@ class GoBotInternal {
         self.queue = queue
     }
 
-    func isRunning() -> Bool {
+    var isRunning: Bool {
         return ssbBotIsRunning()
     }
 
@@ -155,8 +155,10 @@ class GoBotInternal {
     // MARK: login / logout
 
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String) -> Error? {
-        if self.isRunning() {
-            return GoBotError.alreadyStarted
+        if self.isRunning {
+            guard self.logout() == true else {
+                return GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
+            }
         }
         
         self.repoPath = pathPrefix.appending("/GoSbot")
@@ -197,16 +199,17 @@ class GoBotInternal {
         return GoBotError.unexpectedFault("failed to start")
     }
     
-    func logout() {
-        guard self.isRunning() else {
+    func logout() -> Bool {
+        guard self.isRunning else {
             Log.info("[GoBot] wanted to logout but bot not running")
-            return
+            return false
         }
             
         if !ssbBotStop() {
             Log.fatal(.botError, "stoping GoSbot failed.")
-            return
+            return false
         }
+        return true
     }
 
     // MARK: connections
@@ -278,8 +281,8 @@ class GoBotInternal {
     @discardableResult
     func dialSomePeers() -> Bool {
         guard self.openConnections() == 0 else { return true } // only make connections if we dont have any
-        ssbConnectPeers(3)
-        self.dial(atLeast: 2, tries: 10)
+        ssbConnectPeers(2)
+        self.dial(atLeast: 1, tries: 10)
         return true
     }
     
@@ -330,6 +333,23 @@ class GoBotInternal {
     }
     
     func fsckAndRepair() -> (Bool, ScuttlegobotHealReport?) {
+        // disable sync during fsck check and cleanup
+        // new message kill the performance of this process
+        self.disconnectAll()
+
+        // TODO: disable network listener to stop local connections
+        // would be better then a polling timer but this suffices as a bug fix
+        let dcTimer = RepeatingTimer(interval: 5, completion: {
+            self.disconnectAll()
+        })
+        dcTimer.start()
+
+        Timers.shared.syncTimer.stop()
+        defer {
+            dcTimer.stop()
+            Timers.shared.syncTimer.start(fireImmediately: true)
+        }
+
         NotificationCenter.default.post(Notification.didStartFSCKRepair())
         defer {
             NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)

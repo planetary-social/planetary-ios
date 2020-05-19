@@ -41,8 +41,6 @@ type rpc struct {
 
 	root Handler
 
-	rootServed sync.Once
-
 	// terminated indicates that the rpc session is being terminated
 	terminated bool
 	tLock      sync.Mutex
@@ -96,6 +94,13 @@ func handle(pkr Packer, handler Handler, remote net.Addr, logger log.Logger) End
 		reqs:   make(map[int32]*Request),
 		root:   handler,
 	}
+
+	// TODO: rpc root context!? serve context?!
+	ctx := context.TODO()
+
+	go func() {
+		handler.HandleConnect(ctx, r)
+	}()
 
 	return r
 }
@@ -167,29 +172,6 @@ func (r *rpc) Source(ctx context.Context, tipe interface{}, method Method, args 
 	}
 
 	return req.Stream, nil
-}
-
-// SunkenSource still does a "Source() call" but takes a sink to write to when receiveing a packet instead of returning a source that can be read from
-func (r *rpc) SunkenSource(ctx context.Context, snk luigi.Sink, method Method, args ...interface{}) error {
-	argData, err := marshalCallArgs(args)
-	if err != nil {
-		return err
-	}
-
-	req := &Request{
-		Type:   "source",
-		Stream: newStream(nil, r.pkr, 0, streamCapMultiple, streamCapNone),
-		in:     snk,
-
-		Method:  method,
-		RawArgs: argData,
-	}
-
-	if err := r.Do(ctx, req); err != nil {
-		return errors.Wrap(err, "error sending request")
-	}
-
-	return nil
 }
 
 // Sink does a sink call on the remote.
@@ -265,6 +247,9 @@ func (r *rpc) Terminate() error {
 func (r *rpc) Do(ctx context.Context, req *Request) error {
 	dbg := level.Debug(r.logger)
 	dbg = log.With(dbg, "call", req.Type, "method", req.Method.String())
+	if req.abort == nil {
+		req.abort = func() {} // noop
+	}
 
 	var (
 		pkt codec.Packet
@@ -375,6 +360,8 @@ func (r *rpc) fetchRequest(ctx context.Context, pkt *codec.Packet) (*Request, bo
 		if err != nil {
 			return nil, false, errors.Wrap(err, "error parsing request")
 		}
+		ctx, req.abort = context.WithCancel(ctx)
+
 		r.reqs[pkt.Req] = req
 		// TODO:
 		// buffer new requests to not mindlessly spawn goroutines
@@ -398,14 +385,9 @@ type Server interface {
 // Serve handles the RPC session
 func (r *rpc) Serve(ctx context.Context) (err error) {
 	level.Debug(r.logger).Log("event", "serving")
-
-	r.rootServed.Do(func() {
-		go r.root.HandleConnect(ctx, r)
-	})
-
 	defer func() {
 		cerr := r.pkr.Close()
-		if err != nil && !strings.Contains(err.Error(), "use of closed network connection") && errors.Cause(err) != context.Canceled {
+		if err != nil && !strings.Contains(err.Error(), "use of closed network connection") {
 			level.Info(r.logger).Log("event", "closed", "handleErr", err, "closeErr", cerr)
 		}
 	}()
@@ -455,8 +437,8 @@ func (r *rpc) Serve(ctx context.Context) (err error) {
 
 			var ok bool
 			if req, ok = getReq(pkt.Req); ok {
-
 				var streamErr error
+				req.abort()
 
 				if !isTrue(pkt.Body) {
 					streamErr, err = parseError(pkt.Body)
@@ -483,26 +465,21 @@ func (r *rpc) Serve(ctx context.Context) (err error) {
 
 		err = req.in.Pour(ctx, pkt)
 		if err != nil {
-			if !luigi.IsEOS(err) {
-				err = errors.Wrap(err, "muxrpc: error pouring data to handler")
-				return
-			}
-
-			req.in = noopSink{}
+			err = errors.Wrap(err, "muxrpc: error pouring data to handler")
+			return
 		}
 	}
 }
 
 func (r *rpc) closeStream(req *Request, streamErr error) {
-
 	err := req.CloseWithError(streamErr)
 	if err != nil {
 		level.Warn(r.logger).Log("event", "close stream failed", "reqID", req.id, "method", req.Method.String(), "err", err)
 	}
 
 	r.rLock.Lock()
+	defer r.rLock.Unlock()
 	delete(r.reqs, req.id)
-	r.rLock.Unlock()
 	return
 }
 
@@ -536,8 +513,3 @@ func parseError(data []byte) (*CallError, error) {
 
 	return &e, nil
 }
-
-type noopSink struct{}
-
-func (noopSink) Pour(ctx context.Context, v interface{}) error { return nil }
-func (noopSink) Close() error                                  { return nil }

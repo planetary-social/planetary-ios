@@ -17,16 +17,15 @@ import (
 	"go.cryptoscope.co/margaret/multilog"
 	"go.cryptoscope.co/muxrpc"
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/graph"
 	"go.cryptoscope.co/ssb/message"
 )
 
 type handler struct {
-	Id           *ssb.FeedRef
-	RootLog      margaret.Log
-	UserFeeds    multilog.MultiLog
-	GraphBuilder graph.Builder
-	Info         logging.Interface
+	Id        *ssb.FeedRef
+	RootLog   margaret.Log
+	UserFeeds multilog.MultiLog
+	WantList  ssb.ReplicationLister
+	Info      logging.Interface
 
 	hmacSec  HMACSecret
 	hopCount int
@@ -97,10 +96,10 @@ func (g *handler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 		return
 	default:
 	}
-
-	hops := g.GraphBuilder.Hops(g.Id, g.hopCount)
-	if hops != nil {
-		err := g.fetchAll(ctx, e, hops)
+	feeds := g.WantList.ReplicationList()
+	// hops := g.GraphBuilder.Hops(g.Id, g.hopCount)
+	if feeds != nil {
+		err := g.fetchAll(ctx, e, feeds)
 		if muxrpc.IsSinkClosed(err) || errors.Cause(err) == context.Canceled {
 			return
 		}
@@ -108,7 +107,7 @@ func (g *handler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 			level.Error(info).Log("msg", "hops failed", "err", err)
 		}
 	}
-	level.Debug(info).Log("msg", "hops fetch done", "count", hops.Count(), "took", time.Since(start))
+	level.Debug(info).Log("msg", "hops fetch done", "count", feeds.Count(), "took", time.Since(start))
 }
 
 func (g *handler) HandleCall(
@@ -170,13 +169,9 @@ func (g *handler) HandleCall(
 
 		// skip this check for self/master or in promisc mode (talk to everyone)
 		if !(g.Id.Equal(remote) || g.promisc) {
-			tg, err := g.GraphBuilder.Build()
-			if err != nil {
-				closeIfErr(errors.Wrap(err, "internal error"))
-				return
-			}
+			blocks := g.WantList.BlockList()
 
-			if tg.Blocks(query.ID, remote) {
+			if blocks.Has(query.ID) {
 				dbgLog.Log("msg", "feed blocked")
 				req.Stream.Close()
 				return

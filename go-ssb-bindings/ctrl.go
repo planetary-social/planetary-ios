@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"math"
 	"runtime"
 	"time"
 
@@ -239,21 +238,26 @@ func ssbNullContent(author string, sequence uint64) int {
 		return -1
 	}
 
-	ref, err := ssb.ParseFeedRef(author)
-	if err != nil {
-		level.Error(log).Log("event", "null content failed", "err", err)
-		return -1
-	}
+	level.Error(log).Log("msg", "refactor in progress")
+	return -1
 
-	if sequence > math.MaxUint32 {
-		level.Warn(log).Log("event", "null content failed", "whops", "this is a very long feed")
-	}
+	/*
+		ref, err := ssb.ParseFeedRef(author)
+		if err != nil {
+			level.Error(log).Log("event", "null content failed", "err", err)
+			return -1
+		}
 
-	err = sbot.NullContent(ref, uint(sequence))
-	if err != nil {
-		level.Error(log).Log("event", "null content failed", "err", err)
-		return -1
-	}
+		if sequence > math.MaxUint32 {
+			level.Warn(log).Log("event", "null content failed", "whops", "this is a very long feed")
+		}
+
+			err = sbot.NullContent(ref, uint(sequence))
+			if err != nil {
+				level.Error(log).Log("event", "null content failed", "err", err)
+				return -1
+			}
+	*/
 	return 0
 }
 

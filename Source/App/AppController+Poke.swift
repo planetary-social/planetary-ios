@@ -18,9 +18,6 @@ extension AppController {
     /// Pokes the bot into doing a sync, but only if logged in, and only if
     /// not during an onboarding process.
     func pokeSync() {
-        guard let identity = Bots.current.identity else { return }
-        guard Onboarding.status(for: identity) == .completed else { return }
-        
         guard AppController.syncPokeBackgroundTaskIdentifier == .invalid else {
             Log.info("There is a sync poke still in progress. Skipping new poke.")
             return
@@ -49,9 +46,6 @@ extension AppController {
     }
     
     func pokeRefresh() {
-        guard let identity = Bots.current.identity else { return }
-        guard Onboarding.status(for: identity) == .completed else { return }
-        
         guard AppController.refreshPokeBackgroundTaskIdentifier == .invalid else {
             Log.info("There is a refresh poke still in progress. Skipping new poke.")
             return

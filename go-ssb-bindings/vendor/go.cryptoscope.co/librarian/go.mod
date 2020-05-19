@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/dgraph-io/badger v2.0.0-rc2+incompatible
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
+	github.com/golang/snappy v0.0.1 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237 // indirect
 	github.com/stretchr/testify v1.3.0

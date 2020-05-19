@@ -5,7 +5,6 @@ package muxrpc
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 	"strings"
 
@@ -17,6 +16,22 @@ import (
 
 type Method []string
 
+func (m *Method) UnmarshalJSON(d []byte) error {
+	var newM []string
+
+	err := json.Unmarshal(d, &newM)
+	if err != nil {
+		var meth string
+		err := json.Unmarshal(d, &meth)
+		if err != nil {
+			return errors.Wrap(err, "muxrpc/method: error decoding packet")
+		}
+		newM = Method{meth}
+	}
+	*m = newM
+
+	return nil
+}
 func (m Method) String() string {
 	return strings.Join(m, ".")
 }
@@ -42,6 +57,10 @@ type Request struct {
 	// tipe is a value that has the type of data we expect to receive.
 	// This is needed for unmarshaling JSON.
 	tipe interface{}
+
+	// used to stop producing more data on this request
+	// the calling sight might tell us they had enough of this stream
+	abort context.CancelFunc
 }
 
 // Legacy
@@ -70,13 +89,7 @@ func (req *Request) CloseWithError(cerr error) error {
 	if cerr == nil || luigi.IsEOS(errors.Cause(cerr)) {
 		inErr = req.in.Close()
 	} else {
-		closer, ok := req.in.(luigi.ErrorCloser)
-		if ok {
-			inErr = closer.CloseWithError(cerr)
-		} else {
-			fmt.Fprintf(os.Stderr, "muxrpc/request%d: req.in(%T) not a closer! %v", req.id, req.in, cerr)
-		}
-
+		inErr = req.in.(luigi.ErrorCloser).CloseWithError(cerr)
 	}
 	if inErr != nil {
 		return errors.Wrap(inErr, "failed to close request input")

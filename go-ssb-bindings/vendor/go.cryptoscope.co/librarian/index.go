@@ -5,6 +5,8 @@ package librarian // import "go.cryptoscope.co/librarian"
 import (
 	"context"
 
+	"io"
+
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
 )
@@ -41,12 +43,13 @@ type Setter interface {
 type SetterIndex interface {
 	Index
 	Setter
+
+	Flush() error
 }
 
 // SinkIndex is an index that is updated by processing a stream.
 type SinkIndex interface {
 	luigi.Sink
-	Index
 
 	QuerySpec() margaret.QuerySpec
 }
@@ -56,6 +59,8 @@ type SeqSetterIndex interface {
 
 	SetSeq(margaret.Seq) error
 	GetSeq() (margaret.Seq, error)
+
+	io.Closer
 }
 
 // TODO maybe provide other index builders as well, e.g. for managing

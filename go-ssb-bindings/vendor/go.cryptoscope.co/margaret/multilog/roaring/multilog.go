@@ -3,7 +3,10 @@
 package roaring
 
 import (
+	"context"
+	"fmt"
 	"sync"
+	"time"
 
 	"github.com/RoaringBitmap/roaring"
 	"github.com/pkg/errors"
@@ -20,11 +23,51 @@ import (
 // It uses files to store roaring bitmaps directly.
 // for this it turns the librarian.Addrs into a hex string.
 func NewStore(store persist.Saver) *MultiLog {
-	return &MultiLog{
+	ctx, cancel := context.WithCancel(context.TODO())
+	ml := &MultiLog{
 		store:   store,
 		sublogs: make(map[librarian.Addr]*sublog),
 		curSeq:  margaret.BaseSeq(-2),
+
+		processing:  ctx,
+		done:        cancel,
+		tickPersist: time.NewTicker(13 * time.Second),
 	}
+	go ml.writeBatches()
+	return ml
+}
+
+func (log *MultiLog) writeBatches() {
+	for {
+		select {
+		case <-log.tickPersist.C:
+		case <-log.processing.Done():
+			return
+		}
+		err := log.Flush()
+		if err != nil {
+			fmt.Println("flush trigger failed")
+		}
+	}
+}
+
+func (log *MultiLog) Flush() error {
+	log.l.Lock()
+	defer log.l.Unlock()
+	return log.flushAllSublogs()
+}
+
+func (log *MultiLog) flushAllSublogs() error {
+	for addr, sublog := range log.sublogs {
+		if sublog.dirty {
+			err := sublog.store()
+			if err != nil {
+				return errors.Wrapf(err, "roaringfiles: sublog(%x) store failed", addr)
+			}
+			sublog.dirty = false
+		}
+	}
+	return nil
 }
 
 type MultiLog struct {
@@ -34,6 +77,10 @@ type MultiLog struct {
 
 	l       sync.Mutex
 	sublogs map[librarian.Addr]*sublog
+
+	processing  context.Context
+	done        context.CancelFunc
+	tickPersist *time.Ticker
 }
 
 func (log *MultiLog) Get(addr librarian.Addr) (margaret.Log, error) {
@@ -134,7 +181,7 @@ func (log *MultiLog) CompressAll() error {
 
 	// save open ones
 	for addr, sublog := range log.sublogs {
-		_, err := sublog.update()
+		err := sublog.store()
 		if err != nil {
 			return errors.Wrapf(err, "failed to update open sublog %x", addr)
 		}
@@ -207,5 +254,12 @@ func (log *MultiLog) loadAll() error {
 }
 
 func (log *MultiLog) Close() error {
+	log.done()
+	log.tickPersist.Stop()
+
+	if err := log.Flush(); err != nil {
+		return errors.Wrap(err, "roaringfiles: close failed to flush")
+	}
+
 	return log.store.Close()
 }

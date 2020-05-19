@@ -6,8 +6,10 @@ import (
 	"context"
 	"encoding/binary"
 	"encoding/json"
+	"log"
 	"reflect"
 	"sync"
+	"time"
 
 	"github.com/dgraph-io/badger"
 	"github.com/pkg/errors"
@@ -17,21 +19,151 @@ import (
 	"go.cryptoscope.co/librarian"
 )
 
+type setOp struct {
+	addr []byte
+	val  []byte
+}
+
+type index struct {
+	stop    context.CancelFunc
+	running context.Context
+
+	l *sync.Mutex
+
+	// these control periodic persistence
+	tickPersistAll, tickIfFull *time.Ticker
+
+	batchLowerLimit uint // only write if there are more batches then this
+	batchFullLimit  uint // more than this cause an problem in badger
+
+	nextbatch []setOp
+
+	db *badger.DB
+
+	obvs   map[librarian.Addr]luigi.Observable
+	tipe   interface{}
+	curSeq margaret.BaseSeq
+}
+
 func NewIndex(db *badger.DB, tipe interface{}) librarian.SeqSetterIndex {
-	return &index{
+	ctx, cancel := context.WithCancel(context.TODO())
+	idx := &index{
+		stop:    cancel,
+		running: ctx,
+
+		l: &sync.Mutex{},
+
+		tickPersistAll: time.NewTicker(17 * time.Second),
+		tickIfFull:     time.NewTicker(5 * time.Second),
+
+		batchLowerLimit: 8192,
+		batchFullLimit:  75000,
+		nextbatch:       make([]setOp, 0),
+
 		db:     db,
 		tipe:   tipe,
 		obvs:   make(map[librarian.Addr]luigi.Observable),
 		curSeq: margaret.BaseSeq(-2),
 	}
+	go idx.writeBatches()
+	return idx
 }
 
-type index struct {
-	l      sync.Mutex
-	db     *badger.DB
-	obvs   map[librarian.Addr]luigi.Observable
-	tipe   interface{}
-	curSeq margaret.Seq
+func (idx *index) Flush() error {
+	idx.l.Lock()
+	defer idx.l.Unlock()
+
+	if err := idx.flushBatch(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (idx *index) Close() error {
+	idx.l.Lock()
+	defer idx.l.Unlock()
+
+	idx.stop()
+	idx.tickIfFull.Stop()
+	idx.tickPersistAll.Stop()
+
+	err := idx.flushBatch()
+	if err != nil {
+		return errors.Wrap(err, "librarian/badger: failed to flush remaining batched operations")
+	}
+	err = errors.Wrap(idx.db.Close(), "librarian/badger: failed to close backing store")
+	return err
+}
+
+func (idx *index) flushBatch() error {
+	start := time.Now()
+	var raw = make([]byte, 8)
+	err := idx.db.Update(func(txn *badger.Txn) error {
+		useq := uint64(idx.curSeq)
+		binary.BigEndian.PutUint64(raw, useq)
+
+		err := txn.Set([]byte("__current_observable"), raw)
+		if err != nil {
+			return errors.Wrap(err, "error setting seq")
+		}
+
+		for bi, op := range idx.nextbatch {
+			err := txn.Set(op.addr, op.val)
+			if err != nil {
+				return errors.Wrapf(err, "error setting batch #%d", bi)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return errors.Wrapf(err, "error in badger transaction (update) %d", len(idx.nextbatch))
+
+	}
+	log.Println("curr seq:", idx.curSeq.Seq(), "writing batch:", len(idx.nextbatch), "took", time.Since(start))
+	idx.nextbatch = []setOp{}
+	return nil
+}
+
+func (idx *index) writeBatches() {
+
+	for {
+		var writeAll = false
+
+		// if this was in the same select with the ticker below,
+		// the ticker with the smaller durration would always overrule the longer one
+		select {
+		case <-idx.tickPersistAll.C:
+			writeAll = true
+		default:
+		}
+
+		select {
+		case <-idx.tickIfFull.C:
+
+		case <-idx.running.Done():
+			return
+		}
+		idx.l.Lock()
+		n := uint(len(idx.nextbatch))
+
+		if !writeAll {
+			if n < idx.batchLowerLimit {
+				idx.l.Unlock()
+				continue
+			}
+		}
+		if n == 0 {
+			idx.l.Unlock()
+			continue
+		}
+
+		err := idx.flushBatch()
+		if err != nil {
+			// TODO: maybe set error and stop further writes?
+			log.Println("librarian: flushing failed", err)
+		}
+		idx.l.Unlock()
+	}
 }
 
 func (idx *index) Get(ctx context.Context, addr librarian.Addr) (luigi.Observable, error) {
@@ -41,6 +173,10 @@ func (idx *index) Get(ctx context.Context, addr librarian.Addr) (luigi.Observabl
 	obv, ok := idx.obvs[addr]
 	if ok {
 		return obv, nil
+	}
+
+	if err := idx.flushBatch(); err != nil {
+		return nil, err
 	}
 
 	t := reflect.TypeOf(idx.tipe)
@@ -84,7 +220,7 @@ func (idx *index) Get(ctx context.Context, addr librarian.Addr) (luigi.Observabl
 	}
 
 	if errors.Cause(err) == badger.ErrKeyNotFound {
-		obv = librarian.NewObservable(librarian.UnsetValue{addr}, idx.deleter(addr))
+		obv = librarian.NewObservable(librarian.UnsetValue{Addr: addr}, idx.deleter(addr))
 	} else {
 		obv = librarian.NewObservable(v, idx.deleter(addr))
 	}
@@ -118,16 +254,20 @@ func (idx *index) Set(ctx context.Context, addr librarian.Addr, v interface{}) e
 		}
 	}
 
-	err = idx.db.Update(func(txn *badger.Txn) error {
-		err := txn.Set([]byte(addr), raw)
-		return errors.Wrap(err, "error setting item")
-	})
-	if err != nil {
-		return errors.Wrap(err, "error in badger transaction (update)")
-	}
-
 	idx.l.Lock()
 	defer idx.l.Unlock()
+	batchedOp := setOp{
+		addr: []byte(addr),
+		val:  raw,
+	}
+	idx.nextbatch = append(idx.nextbatch, batchedOp)
+
+	if n := uint(len(idx.nextbatch)); n > idx.batchFullLimit {
+		err = idx.flushBatch()
+		if err != nil {
+			return errors.Wrapf(err, "failed to write big batch (%d)", n)
+		}
+	}
 
 	obv, ok := idx.obvs[addr]
 	if ok {
@@ -152,7 +292,7 @@ func (idx *index) Delete(ctx context.Context, addr librarian.Addr) error {
 
 	obv, ok := idx.obvs[addr]
 	if ok {
-		err = obv.Set(librarian.UnsetValue{addr})
+		err = obv.Set(librarian.UnsetValue{Addr: addr})
 		err = errors.Wrap(err, "error setting value in observable")
 	}
 
@@ -160,27 +300,10 @@ func (idx *index) Delete(ctx context.Context, addr librarian.Addr) error {
 }
 
 func (idx *index) SetSeq(seq margaret.Seq) error {
-	var (
-		raw  = make([]byte, 8)
-		err  error
-		addr librarian.Addr = "__current_observable"
-	)
-
-	binary.BigEndian.PutUint64(raw, uint64(seq.Seq()))
-
-	err = idx.db.Update(func(txn *badger.Txn) error {
-		err := txn.Set([]byte(addr), raw)
-		return errors.Wrap(err, "error setting item")
-	})
-	if err != nil {
-		return errors.Wrap(err, "error in badger transaction (update)")
-	}
-
 	idx.l.Lock()
 	defer idx.l.Unlock()
 
-	idx.curSeq = seq
-
+	idx.curSeq = margaret.BaseSeq(seq.Seq())
 	return nil
 }
 
@@ -220,9 +343,8 @@ func (idx *index) GetSeq() (margaret.Seq, error) {
 	if err != nil {
 		if errors.Cause(err) == badger.ErrKeyNotFound {
 			return margaret.SeqEmpty, nil
-		} else {
-			return margaret.BaseSeq(0), errors.Wrap(err, "error in badger transaction (view)")
 		}
+		return margaret.BaseSeq(0), errors.Wrap(err, "error in badger transaction (view)")
 	}
 
 	return idx.curSeq, nil

@@ -34,13 +34,19 @@ func ExtractSignature(b []byte) ([]byte, Signature, error) {
 func Verify(raw []byte, hmacSecret *[32]byte) (*ssb.MessageRef, *DeserializedMessage, error) {
 	enc, err := EncodePreserveOrder(raw)
 	if err != nil {
-		return nil, nil, errors.Wrapf(err, "ssb Verify: could not encode message: %q...", raw[:15])
+		if len(raw) > 15 {
+			raw = raw[:15]
+		}
+		return nil, nil, errors.Wrapf(err, "ssb Verify: could not encode message: %q...", raw)
 	}
 
 	// destroys it for the network layer but makes it easier to access its values
 	var dmsg DeserializedMessage
 	if err := json.Unmarshal(raw, &dmsg); err != nil {
-		return nil, nil, errors.Wrapf(err, "ssb Verify: could not json.Unmarshal message: %q...", raw[:15])
+		if len(raw) > 15 {
+			raw = raw[:15]
+		}
+		return nil, nil, errors.Wrapf(err, "ssb Verify: could not json.Unmarshal message: %q...", raw)
 	}
 
 	woSig, sig, err := ExtractSignature(enc)

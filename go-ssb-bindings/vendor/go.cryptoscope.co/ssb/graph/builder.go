@@ -35,9 +35,9 @@ type Builder interface {
 	State(from, to *ssb.FeedRef) int
 
 	// Follows returns a set of all people ref follows
-	Follows(*ssb.FeedRef) (*StrFeedSet, error)
+	Follows(*ssb.FeedRef) (*ssb.StrFeedSet, error)
 
-	Hops(*ssb.FeedRef, int) *StrFeedSet
+	Hops(*ssb.FeedRef, int) *ssb.StrFeedSet
 
 	Authorizer(from *ssb.FeedRef, maxHops int) ssb.Authorizer
 
@@ -47,12 +47,15 @@ type Builder interface {
 type IndexingBuilder interface {
 	Builder
 
-	OpenIndex() librarian.SinkIndex
+	OpenIndex() (librarian.SeqSetterIndex, librarian.SinkIndex)
 }
 
 type builder struct {
-	kv  *badger.DB
-	idx librarian.SeqSetterIndex
+	kv *badger.DB
+
+	idx     librarian.SeqSetterIndex
+	idxSink librarian.SinkIndex
+
 	log kitlog.Logger
 
 	cacheLock   sync.Mutex
@@ -69,56 +72,61 @@ func NewBuilder(log kitlog.Logger, db *badger.DB) *builder {
 	return b
 }
 
-func (b *builder) OpenIndex() librarian.SinkIndex {
-	return librarian.NewSinkIndex(func(ctx context.Context, seq margaret.Seq, val interface{}, idx librarian.SetterIndex) error {
-		b.cacheLock.Lock()
-		defer b.cacheLock.Unlock()
+func (b *builder) indexUpdateFunc(ctx context.Context, seq margaret.Seq, val interface{}, idx librarian.SetterIndex) error {
+	b.cacheLock.Lock()
+	defer b.cacheLock.Unlock()
 
-		if nulled, ok := val.(error); ok {
-			if margaret.IsErrNulled(nulled) {
-				return nil
-			}
-			return nulled
-		}
-
-		abs, ok := val.(ssb.Message)
-		if !ok {
-			err := errors.Errorf("graph/idx: invalid msg value %T", val)
-			b.log.Log("msg", "contact eval failed", "reason", err)
-			return err
-		}
-
-		var c ssb.Contact
-		err := json.Unmarshal(abs.ContentBytes(), &c)
-		if err != nil {
-			// just ignore invalid messages, nothing to do with them (unless you are debugging something)
-			// err = errors.Wrapf(err, "db/idx contacts: first json unmarshal failed (msg: %v)", abs.Key().Ref())
-			// log.Log("msg", "skipped contact message", "reason", err)
+	if nulled, ok := val.(error); ok {
+		if margaret.IsErrNulled(nulled) {
 			return nil
 		}
+		return nulled
+	}
 
-		addr := abs.Author().StoredAddr()
-		addr += c.Contact.StoredAddr()
-		switch {
-		case c.Following:
-			err = idx.Set(ctx, addr, 1)
-		case c.Blocking:
-			err = idx.Set(ctx, addr, 2)
-		default:
-			err = idx.Set(ctx, addr, 0)
-			// cryptix: not sure why this doesn't work
-			// it also removes the node if this is the only follow from that peer
-			// 3 state handling seems saner
-			// err = idx.Delete(ctx, librarian.Addr(addr))
-		}
-		if err != nil {
-			return errors.Wrapf(err, "db/idx contacts: failed to update index. %+v", c)
-		}
+	abs, ok := val.(ssb.Message)
+	if !ok {
+		err := errors.Errorf("graph/idx: invalid msg value %T", val)
+		b.log.Log("msg", "contact eval failed", "reason", err)
+		return err
+	}
 
-		b.cachedGraph = nil
-		// TODO: patch existing graph
+	var c ssb.Contact
+	err := json.Unmarshal(abs.ContentBytes(), &c)
+	if err != nil {
+		// just ignore invalid messages, nothing to do with them (unless you are debugging something)
+		// err = errors.Wrapf(err, "db/idx contacts: first json unmarshal failed (msg: %v)", abs.Key().Ref())
+		// log.Log("msg", "skipped contact message", "reason", err)
 		return nil
-	}, b.idx)
+	}
+
+	addr := abs.Author().StoredAddr()
+	addr += c.Contact.StoredAddr()
+	switch {
+	case c.Following:
+		err = idx.Set(ctx, addr, 1)
+	case c.Blocking:
+		err = idx.Set(ctx, addr, 2)
+	default:
+		err = idx.Set(ctx, addr, 0)
+		// cryptix: not sure why this doesn't work
+		// it also removes the node if this is the only follow from that peer
+		// 3 state handling seems saner
+		// err = idx.Delete(ctx, librarian.Addr(addr))
+	}
+	if err != nil {
+		return errors.Wrapf(err, "db/idx contacts: failed to update index. %+v", c)
+	}
+
+	b.cachedGraph = nil
+	// TODO: patch existing graph
+	return nil
+}
+
+func (b *builder) OpenIndex() (librarian.SeqSetterIndex, librarian.SinkIndex) {
+	if b.idxSink == nil {
+		b.idxSink = librarian.NewSinkIndex(b.indexUpdateFunc, b.idx)
+	}
+	return b.idx, b.idxSink
 }
 
 func (bld *builder) State(a, b *ssb.FeedRef) int {
@@ -288,11 +296,11 @@ func (l Lookup) Dist(to *ssb.FeedRef) ([]graph.Node, float64) {
 	return l.dijk.To(nTo.ID())
 }
 
-func (b *builder) Follows(forRef *ssb.FeedRef) (*StrFeedSet, error) {
+func (b *builder) Follows(forRef *ssb.FeedRef) (*ssb.StrFeedSet, error) {
 	if forRef == nil {
 		panic("nil feed ref")
 	}
-	fs := NewFeedSet(50)
+	fs := ssb.NewFeedSet(50)
 	err := b.kv.View(func(txn *badger.Txn) error {
 		iter := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer iter.Close()
@@ -330,9 +338,9 @@ func (b *builder) Follows(forRef *ssb.FeedRef) (*StrFeedSet, error) {
 // max == 0: only direct follows of from
 // max == 1: max:0 + follows of friends of from
 // max == 2: max:1 + follows of their friends
-func (b *builder) Hops(from *ssb.FeedRef, max int) *StrFeedSet {
+func (b *builder) Hops(from *ssb.FeedRef, max int) *ssb.StrFeedSet {
 	max++
-	walked := NewFeedSet(0)
+	walked := ssb.NewFeedSet(0)
 	visited := make(map[string]struct{}) // tracks the nodes we already recursed from (so we don't do them multiple times on common friends)
 	err := b.recurseHops(walked, visited, from, max)
 	if err != nil {
@@ -343,7 +351,7 @@ func (b *builder) Hops(from *ssb.FeedRef, max int) *StrFeedSet {
 	return walked
 }
 
-func (b *builder) recurseHops(walked *StrFeedSet, vis map[string]struct{}, from *ssb.FeedRef, depth int) error {
+func (b *builder) recurseHops(walked *ssb.StrFeedSet, vis map[string]struct{}, from *ssb.FeedRef, depth int) error {
 	// b.log.Log("recursing", from.Ref(), "d", depth)
 	if depth == 0 {
 		return nil
@@ -352,7 +360,6 @@ func (b *builder) recurseHops(walked *StrFeedSet, vis map[string]struct{}, from 
 	if _, ok := vis[from.Ref()]; ok {
 		return nil
 	}
-
 
 	fromFollows, err := b.Follows(from)
 	if err != nil {

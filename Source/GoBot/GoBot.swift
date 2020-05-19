@@ -75,21 +75,18 @@ class GoBot: Bot {
     // MARK: App Lifecycle
 
     func resume()  {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.bot.dialSomePeers()
         }
     }
 
     func suspend() {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.bot.disconnectAll()
         }
     }
 
     func exit() {
-        Thread.assertIsMainThread()
         self.queue.async {
             self.bot.disconnectAll()
         }
@@ -110,63 +107,52 @@ class GoBot: Bot {
     }
     
     func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
+
+        if self._identity != nil {
+            if secret.identity == self._identity {
+                DispatchQueue.main.async { completion(nil) }
+                return
+            }
+            DispatchQueue.main.async { completion(BotError.alreadyLoggedIn) }
+            return
+        }
+
+        // lookup Application Support folder for bot and database
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
+        if appSupportDirs.count < 1 {
+            DispatchQueue.main.async { completion(GoBotError.unexpectedFault("no support dir")) }
+            return
+        }
+
+        let repoPrefix = appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/"+network.hexEncodedString())
+        
+        if !self.database.isOpen() {
+            do {
+                try self.database.open(path: repoPrefix, user: secret.identity)
+            } catch {
+                DispatchQueue.main.async { completion(error) }
+                return
+            }
+        } else {
+            Log.unexpected(.botError, "\(#function) warning: database still open")
+        }
+
+        self._identity = secret.identity
+        DispatchQueue.main.async { completion(nil) }
+   
+        // spawn go-bot in the background to return early
         self.queue.async {
-            var err: Error? = nil
-            defer {
-                DispatchQueue.main.async {
-                    if let e = err { Log.unexpected(.botError, "[GoBot.login] failed: \(e)") }
-                    completion(err)
-                }
-            }
-
-            if self._identity != nil {
-                if secret.identity == self._identity {
-                    return
-                }
-                err = BotError.alreadyLoggedIn
-                return
-            }
-
-            let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-            if appSupportDirs.count < 1 {
-                err = GoBotError.unexpectedFault("no support dir")
-                return
-            }
-
-            let repoPrefix = appSupportDirs[0]
-                .appending("/FBTT")
-                .appending("/"+network.hexEncodedString())
-
             #if DEBUG
             // used for locating the files in the simulator
             print("===> starting gobot with prefix: \(repoPrefix)")
             #endif
             if let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix) {
-                err = loginErr
+                // TODO: mark bot state as failed
+                Log.unexpected(.botError, "Login failed: \(loginErr)")
                 return
             }
-
-            if !self.database.isOpen() {
-                do {
-                    try self.database.open(path: repoPrefix, user: secret.identity)
-                    err = nil
-                } catch {
-                    err = error
-                    return
-                }
-            } else {
-                Log.unexpected(.botError, "\(#function) warning: database still open")
-            }
-
-            // create connections a bit after login completed
-            self.queue.asyncAfter(deadline: .now() + .seconds(5)) {
-                self.bot.dial(atLeast: 2)
-            }
-
-            // TODO this does not always get set in time
-            // TODO maybe this should be done in defer?
-            self._identity = secret.identity
         }
         return
     }
@@ -177,7 +163,9 @@ class GoBot: Bot {
             DispatchQueue.main.async { completion(BotError.notLoggedIn) }
             return
         }
-        self.bot.logout()
+        if !self.bot.logout() {
+            Log.unexpected(.botError, "failed to logout")
+        }
         _ = self.database.close()
         self._identity = nil
         DispatchQueue.main.async { completion(nil) }
@@ -212,7 +200,7 @@ class GoBot: Bot {
     // some time later, this is a workaround until we can figure out how
     // to determine peer connection status and progress
     func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
-        guard self.bot.isRunning() else {
+        guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
             }
@@ -241,10 +229,19 @@ class GoBot: Bot {
         }
     }
 
-    func syncNotifications(completion: @escaping SyncCompletion) {
-        assert(Thread.isMainThread)
-        guard self.bot.isRunning() else { completion(GoBotError.unexpectedFault("bot not started"), 0, 0); return }
-        guard self._isSyncing == false else { completion(nil, 0, 0); return }
+    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+        guard self.bot.isRunning else {
+            queue.async {
+                completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
+            }
+            return
+        }
+        guard self._isSyncing == false else {
+            queue.async {
+                completion(nil, 0, 0);
+            }
+            return
+        }
 
         self._isSyncing = true
         let elapsed = Date()
@@ -254,9 +251,11 @@ class GoBot: Bot {
             self.bot.dialForNotifications()
             let after = self.repoNumberOfMessages()
             let new = after - before
-            self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,
-                                    numberOfMessages: new,
-                                    completion: completion)
+            queue.async {
+                self.notifySyncComplete(in: -elapsed.timeIntervalSinceNow,
+                                        numberOfMessages: new,
+                                        completion: completion)
+            }
         }
     }
 

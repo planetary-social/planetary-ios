@@ -12,12 +12,12 @@ type Interface interface {
 }
 
 type SimpleIndexMaker interface {
-	MakeSimpleIndex(r Interface) (librarian.Index, ServeFunc, error)
+	MakeSimpleIndex(r Interface) (librarian.Index, librarian.SinkIndex, error)
 }
 
 type MultiLogMaker interface {
-	MakeMultiLog(r Interface) (multilog.MultiLog, ServeFunc, error)
+	MakeMultiLog(r Interface) (multilog.MultiLog, librarian.SinkIndex, error)
 }
 
-type MakeMultiLog func(r Interface) (multilog.MultiLog, ServeFunc, error)
-type MakeSimpleIndex func(r Interface) (librarian.Index, ServeFunc, error)
+type MakeMultiLog func(r Interface) (multilog.MultiLog, librarian.SinkIndex, error)
+type MakeSimpleIndex func(r Interface) (librarian.Index, librarian.SinkIndex, error)

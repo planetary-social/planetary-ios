@@ -89,9 +89,14 @@ class Onboarding {
         Analytics.trackOnboardingStart()
 
         // create secret
-        GoBot.shared.createSecret() {
-            secret, error in
-            guard let secret = secret else { completion(nil, .secretFailed(error)); return }
+        GoBot.shared.createSecret() { secret, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
+            guard let secret = secret else {
+                completion(nil, .secretFailed(error))
+                return
+            }
 
             // create app configuration with name and time stamp
             let configuration = AppConfiguration(with: secret)
@@ -106,14 +111,18 @@ class Onboarding {
             #endif
 
             // login to bot
-            guard var context = Context(from: configuration) else { completion(nil, .configurationFailed); return }
-            context.bot.login(
-                network: configuration.network!,
-                hmacKey: configuration.hmacKey,
-                secret: secret)
-            {
-                error in
-                if let error = error { completion(nil, .botError(error)); return }
+            
+            // Safe to unwrap as configuration has secret, network and bot
+            var context = Context(from: configuration)!
+            
+            context.bot.login(network: configuration.network!, hmacKey: configuration.hmacKey, secret: secret) { error in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if let error = error {
+                    completion(nil, .botError(error));
+                    return
+                }
 
                 // don't spam the directory until we have one for CI
                 #if APITESTS
@@ -132,15 +141,25 @@ class Onboarding {
                 // TODO abstract Verse Directory API
                 // TODO https://app.asana.com/0/0/1134329918920788/f
                 // join verse
-                VerseAPI.join(identity: secret.identity, name: name, birthdate: birthdate, phone: phone) {
-                    person, error in
-                    guard let person = person else { completion(nil, .apiError(error)); return }
+                VerseAPI.join(identity: secret.identity, name: name, birthdate: birthdate, phone: phone) { person, error in
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    
+                    guard let person = person else {
+                        completion(nil, .apiError(error))
+                        return
+                    }
 
+                    // TODO: Move this to happen before verseapi.join
                     // publish about
                     let about = About(about: secret.identity, name: name)
-                    context.bot.publish(content: about) {
-                        _, error in
-                        if let error = error { completion(nil, .botError(error)); return }
+                    context.bot.publish(content: about) { _, error in
+                        Log.optional(error)
+                        CrashReporting.shared.reportIfNeeded(error: error)
+                        if let error = error {
+                            completion(nil, .botError(error));
+                            return
+                        }
 
                         CrashReporting.shared.identify(about: about, network: configuration.network!)
                         Analytics.identify(about: about, network: configuration.network!)
@@ -177,8 +196,7 @@ class Onboarding {
     /// should not have been set.  Check out `Onboarding.start()` to see all the work that is
     /// done, and to use a template to know what work to undo.
     static func reset(completion: @escaping ResetCompletion) {
-        Bots.current.logout() {
-            error in
+        Bots.current.logout() { error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             

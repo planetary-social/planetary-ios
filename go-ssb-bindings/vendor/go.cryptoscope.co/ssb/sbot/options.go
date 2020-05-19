@@ -40,10 +40,11 @@ type Sbot struct {
 
 	lateInit []Option
 
-	rootCtx  context.Context
-	Shutdown context.CancelFunc
-	closers  multiCloser
-	idxDone  errgroup.Group
+	rootCtx   context.Context
+	Shutdown  context.CancelFunc
+	closers   multiCloser
+	idxDone   errgroup.Group
+	idxInSync sync.WaitGroup
 
 	closed   bool
 	closedMu sync.Mutex
@@ -69,16 +70,20 @@ type Sbot struct {
 	enableAdverts   bool
 	enableDiscovery bool
 
-	repoPath         string
-	KeyPair          *ssb.KeyPair
-	RootLog          multimsg.AlterableLog
-	liveIndexUpdates bool
+	repoPath string
+	KeyPair  *ssb.KeyPair
+
+	RootLog multimsg.AlterableLog
 
 	PublishLog     ssb.Publisher
 	signHMACsecret []byte
 
 	mlogIndicies map[string]multilog.MultiLog
 	simpleIndex  map[string]librarian.Index
+
+	liveIndexUpdates bool
+	indexStateMu     sync.Mutex
+	indexStates      map[string]string
 
 	GraphBuilder graph.Builder
 
@@ -89,6 +94,8 @@ type Sbot struct {
 	eventCounter metrics.Counter
 	systemGauge  metrics.Gauge
 	latency      metrics.Histogram
+
+	*replicator
 }
 
 type Option func(*Sbot) error
@@ -366,6 +373,7 @@ func New(fopts ...Option) (*Sbot, error) {
 
 	s.mlogIndicies = make(map[string]multilog.MultiLog)
 	s.simpleIndex = make(map[string]librarian.Index)
+	s.indexStates = make(map[string]string)
 
 	for i, opt := range fopts {
 		err := opt(&s)

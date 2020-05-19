@@ -87,19 +87,23 @@ func ssbBotStop() bool {
 
 	shutdown()
 	sbot.Shutdown()
-	ct := sbot.Network.GetConnTracker()
-	sbot.Network.Close()
-	// we have to set the network peer nil so that it isn't closed again by sbot.Close
-	sbot.Network = nil
-	level.Debug(stopEvt).Log("msg", "shutdown")
-	var waited uint
-	for ct.Count() > 0 && waited < 10 {
-		ct.CloseAll()
-		waited++
-		time.Sleep(1 * time.Second)
-		count := ct.Count()
-		if count > 0 {
-			level.Warn(stopEvt).Log("msg", "still open connectionss", "n", count)
+	if sbot.Network != nil {
+		ct := sbot.Network.GetConnTracker()
+		sbot.Network.Close()
+
+		// we have to set the network peer nil so that it isn't closed again by sbot.Close
+		sbot.Network = nil
+
+		level.Debug(stopEvt).Log("msg", "shutdown")
+		var waited uint
+		for ct.Count() > 0 && waited < 10 {
+			ct.CloseAll()
+			waited++
+			time.Sleep(1 * time.Second)
+			count := ct.Count()
+			if count > 0 {
+				level.Warn(stopEvt).Log("msg", "still open connectionss", "n", count)
+			}
 		}
 	}
 
@@ -204,15 +208,10 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 	r := repo.New(repoDir)
 
 	// open viewdatabase for address-stuff
-	vdbPath := filepath.Join(repoDir, "..", fmt.Sprintf("schema-built%d.sqlite", cfg.ViewDBSchemaVersion))
+	vdbPath := filepath.Join(repoDir, "..", fmt.Sprintf("schema-built%d.sqlite?cache=shared&mode=rwc&_journal_mode=WAL", cfg.ViewDBSchemaVersion))
 	viewDB, err = sql.Open("sqlite3", vdbPath)
 	if err != nil {
 		err = errors.Wrap(err, "BotInit: failed to open view database")
-		return false
-	}
-	_, err = viewDB.Exec("PRAGMA journal_mode=WAL;")
-	if err != nil {
-		err = errors.Wrap(err, "BotInit: failed to switch mode to WAL")
 		return false
 	}
 

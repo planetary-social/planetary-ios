@@ -38,21 +38,22 @@ class JoinOnboardingStep: OnboardingStep {
             return
         }
 
-        Onboarding.start(birthdate: birthdate,
-                         phone: phone,
-                         name: name)
-        {
-            [weak self] context, error in
-            self?.view.lookReady()
+        Onboarding.start(birthdate: birthdate, phone: phone, name: name) { [weak self] context, error in
+            
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            guard let context = context else { self?.alert(); return }
+            
+            self?.view.lookReady()
+            guard let context = context else {
+                self?.alert(error: error)
+                return
+            }
             self?.data.context = context
             self?.next()
         }
     }
 
-    private func alert() {
+    private func alert(error: Error?) {
 
         // this will try Onboarding.start() again, creating a new
         // configuration and such
@@ -75,7 +76,7 @@ class JoinOnboardingStep: OnboardingStep {
         AppController.shared.choose(from: [tryAgain, startOver],
                                     style: .alert,
                                     title: Text.Onboarding.somethingWentWrong.text,
-                                    message: Text.Onboarding.errorRetryMessage.text)
+                                    message: error?.localizedDescription ?? Text.Onboarding.errorRetryMessage.text)
     }
 
     /// If `Onboarding.start()` fails, this will reset onboarding and try again
