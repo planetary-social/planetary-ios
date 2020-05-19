@@ -287,15 +287,18 @@ class ViewDatabase {
     }
     
     // helper to get some counts for pagination
-    func statsForRootPosts(onlyFollowed: Bool = false) throws -> Int {
+    func statsForRootPosts(onlyFollowed: Bool = false, onlyRoots: Bool = true) throws -> Int {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         var qry = self.posts
             .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
-            .filter(colIsRoot == true)
             .filter(colHidden == false)
             .filter(colDecrypted == false)
+        
+        if onlyRoots {
+            qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
+        }
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
@@ -924,7 +927,7 @@ class ViewDatabase {
             .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.tangles[colMessageRef])
             .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.tangles[colMessageRef])
-            .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue )
+            .filter(colMsgType == ContentType.post.rawValue)
             .filter(colRoot == msgID)
             .filter(colHidden == false)
         

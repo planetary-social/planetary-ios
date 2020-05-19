@@ -161,7 +161,7 @@ class RecentViewKeyValueSource: KeyValueSource {
     
     init(with vdb: ViewDatabase, onlyFollowed: Bool = true, onlyRoots: Bool = true) throws {
         self.view = vdb
-        self.total = try vdb.statsForRootPosts(onlyFollowed: onlyFollowed)
+        self.total = try vdb.statsForRootPosts(onlyFollowed: onlyFollowed, onlyRoots: onlyRoots)
         self.onlyFollowed = onlyFollowed
         self.onlyRoots = onlyRoots
     }
