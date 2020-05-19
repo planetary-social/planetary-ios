@@ -66,22 +66,36 @@ class UserDirectorySettingsViewController: DebugTableViewController {
     private func checkInDirectoryIfNecessary() {
         guard self.inDirectory == nil else { return }
         AppController.shared.showProgress()
-        VerseAPI.me.isInDirectory() {
-            [weak self] inDirectory, _ in
-            AppController.shared.hideProgress()
-            self?.inDirectory = inDirectory
-            self?.updateSettings()
+        DirectoryAPI.shared.me { [weak self] (person, error) in
+            DispatchQueue.main.async { [weak self] in
+                AppController.shared.hideProgress()
+                self?.inDirectory = person?.in_directory
+                self?.updateSettings()
+            }
         }
     }
 
     private func toggle(inDirectory: Bool) {
+        guard let identity = Bots.current.identity else {
+            return
+        }
         self.inDirectory = inDirectory
         self.updateSettings()
         AppController.shared.showProgress()
-        VerseAPI.me.showInDirectory(inDirectory) {
-            [weak self] result, _ in
-            AppController.shared.hideProgress()
-            self?.updateSettings()
+        if inDirectory {
+            DirectoryAPI.shared.directory(show: identity) { [weak self] (_, _) in
+                DispatchQueue.main.async { [weak self] in
+                    AppController.shared.hideProgress()
+                    self?.updateSettings()
+                }
+            }
+        } else {
+            DirectoryAPI.shared.directory(hide: identity) { [weak self] (_, _) in
+                DispatchQueue.main.async { [weak self] in
+                    AppController.shared.hideProgress()
+                    self?.updateSettings()
+                }
+            }
         }
     }
 }

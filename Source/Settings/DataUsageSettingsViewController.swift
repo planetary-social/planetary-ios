@@ -15,7 +15,7 @@ class DataUsageSettingsViewController: DebugTableViewController {
                                                   valueClosure:
         {
             cell in
-            cell.accessoryType = Analytics.isEnabled ? .checkmark : .none
+            cell.accessoryType = Analytics.shared.isEnabled ? .checkmark : .none
         },
                                                   actionClosure:
         {
@@ -27,7 +27,7 @@ class DataUsageSettingsViewController: DebugTableViewController {
                                                    valueClosure:
         {
             cell in
-            cell.accessoryType = Analytics.isEnabled ? .none : .checkmark
+            cell.accessoryType = Analytics.shared.isEnabled ? .none : .checkmark
         },
                                                    actionClosure:
         {
@@ -47,7 +47,7 @@ class DataUsageSettingsViewController: DebugTableViewController {
     }
 
     private func toggle(enabled: Bool) {
-        enabled ? Analytics.optIn() : Analytics.optOut()
+        enabled ? Analytics.shared.optIn() : Analytics.shared.optOut()
         self.updateSettings()
     }
 }

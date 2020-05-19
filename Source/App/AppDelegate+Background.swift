@@ -26,7 +26,7 @@ extension AppDelegate {
         if #available(iOS 13, *) {
             self.scheduleBackgroundTasks()
         }
-        Analytics.trackAppBackground()
+        Analytics.shared.trackAppBackground()
     }
 
     /// Sometimes this is called during launch, and will error with `BotError.notLoggedIn`.  Leaving this in to learn from analytics how
@@ -49,7 +49,7 @@ extension AppDelegate {
     
     func handleBackgroundFetch(notificationsOnly: Bool = false, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         Log.info("Handling background fetch")
-        Analytics.trackBackgroundFetch()
+        Analytics.shared.trackBackgroundFetch()
         let syncOperation = SyncOperation()
         syncOperation.notificationsOnly = notificationsOnly
 
@@ -60,7 +60,7 @@ extension AppDelegate {
         DispatchQueue.global(qos: .background).async {
             operationQueue.addOperations([syncOperation, refreshOperation], waitUntilFinished: true)
             Log.info("Completed background fetch")
-            Analytics.trackDidBackgroundFetch()
+            Analytics.shared.trackDidBackgroundFetch()
             if syncOperation.error != nil {
                 completionHandler(.failed)
             } else if syncOperation.newMessages > 0 {
@@ -130,7 +130,7 @@ extension AppDelegate {
     @available(iOS 13.0, *)
     private func handleSyncTask(task: BGTask) {
         Log.info("Handling task \(AppDelegate.syncBackgroundTaskIdentifier)")
-        Analytics.trackBackgroundTask()
+        Analytics.shared.trackBackgroundTask()
         
         // Schedule a new sync task
         self.scheduleSyncTask()
@@ -149,7 +149,7 @@ extension AppDelegate {
         DispatchQueue.global(qos: .background).async {
             operationQueue.addOperations([syncOperation, refreshOperation], waitUntilFinished: true)
             Log.info("Completed task \(AppDelegate.syncBackgroundTaskIdentifier)")
-            Analytics.trackDidBackgroundTask(taskIdentifier: AppDelegate.syncBackgroundTaskIdentifier)
+            Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.syncBackgroundTaskIdentifier)
             task.setTaskCompleted(success: !syncOperation.isCancelled)
         }
     }
@@ -157,7 +157,7 @@ extension AppDelegate {
     @available(iOS 13.0, *)
     private func handleRefreshTask(task: BGTask) {
         Log.info("Handling task \(AppDelegate.refreshBackgroundTaskIdentifier)")
-        Analytics.trackBackgroundTask()
+        Analytics.shared.trackBackgroundTask()
         
         // Schedule a new sync task
         self.scheduleRefreshTask()
@@ -172,7 +172,7 @@ extension AppDelegate {
         
         refreshOperation.completionBlock = {
             Log.info("Completed task \(AppDelegate.refreshBackgroundTaskIdentifier)")
-            Analytics.trackDidBackgroundTask(taskIdentifier: AppDelegate.refreshBackgroundTaskIdentifier)
+            Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.refreshBackgroundTaskIdentifier)
             task.setTaskCompleted(success: !refreshOperation.isCancelled)
         }
         let operationQueue = OperationQueue()

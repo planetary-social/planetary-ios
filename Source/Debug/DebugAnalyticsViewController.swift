@@ -71,7 +71,7 @@ class DebugAnalyticsViewController: UIViewController {
 fileprivate class LexiconTableViewController: UITableViewController, UISearchResultsUpdating {
 
     private var searchText = ""
-    private let names = Analytics.lexicon()
+    private let names = Analytics.shared.lexicon()
     private var filteredNames: [String] = []
 
     var filterByTracked: Bool = false {

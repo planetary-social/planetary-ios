@@ -40,7 +40,7 @@ extension Onboarding {
             Log.info("\(#function): feedCount < 2 so likely this identity is not being followed by pubs")
 
             // request follow back
-            PubAPI().invitePubsToFollow(identity) {
+            PubAPI.shared.invitePubsToFollow(identity) {
                 success, error in
                 CrashReporting.shared.reportIfNeeded(error: error)
                 if success {
@@ -52,7 +52,7 @@ extension Onboarding {
             }
 
             // analytics
-            Analytics.track(event: .did,
+            Analytics.shared.track(event: .did,
                             element: .app,
                             name: AnalyticsEnums.Name.repair.rawValue,
                             param: "function",

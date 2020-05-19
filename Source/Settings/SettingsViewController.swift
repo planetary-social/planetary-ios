@@ -22,7 +22,7 @@ class SettingsViewController: DebugTableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Settings")
-        Analytics.trackDidShowScreen(screenName: "settings")
+        Analytics.shared.trackDidShowScreen(screenName: "settings")
     }
 
     internal override func updateSettings() {
@@ -46,11 +46,13 @@ class SettingsViewController: DebugTableViewController {
             {
                 cell in
                 cell.showActivityIndicator()
-                VerseAPI.me.isInDirectory() {
-                    [weak self] inDirectory, _ in
-                    self?.inDirectory = inDirectory
-                    cell.detailTextLabel?.text = inDirectory.yesOrNo
-                    cell.hideActivityIndicator(andShow: .disclosureIndicator)
+                DirectoryAPI.shared.me {  [weak self] (person, error) in
+                    DispatchQueue.main.async {
+                        let inDirectory = person?.in_directory ?? false
+                        self?.inDirectory = inDirectory
+                        cell.detailTextLabel?.text = inDirectory.yesOrNo
+                        cell.hideActivityIndicator(andShow: .disclosureIndicator)
+                    }
                 }
             },
                                              actionClosure:
@@ -115,7 +117,7 @@ class SettingsViewController: DebugTableViewController {
             {
                 cell in
                 cell.accessoryType = .disclosureIndicator
-                cell.detailTextLabel?.text = Analytics.isEnabled.yesOrNo
+                cell.detailTextLabel?.text = Analytics.shared.isEnabled.yesOrNo
             },
                                              actionClosure:
             {

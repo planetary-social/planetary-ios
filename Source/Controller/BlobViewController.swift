@@ -37,7 +37,7 @@ class BlobViewController: ContentViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Blob")
-        Analytics.trackDidShowScreen(screenName: "blob")
+        Analytics.shared.trackDidShowScreen(screenName: "blob")
     }
 
     private func update() {

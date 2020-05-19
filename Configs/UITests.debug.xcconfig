@@ -2,7 +2,7 @@
 //  UITests.debug.xcconfig
 //  Planetary
 //
-//  Created by Martin Dutra on 2/17/20.
+//  Created by Martin Dutra on 5/21/20.
 //  Copyright © 2020 Verse Communications Inc. All rights reserved.
 //
 
@@ -10,4 +10,9 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 #include "Pods/Target Support Files/Pods-UITests/Pods-UITests.debug.xcconfig"
-#include "Shared.debug.xcconfig"
+
+SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
+
+TESTING_NETWORK_NAME = XXX CI TestNet
+TESTING_NETWORK_KEY = AHSrRkNQlQbJP3FyKxvBUI02LI0OdixEl0pYFTUHrMw=
+TESTING_NETWORK_HMAC = d8mXyv5OAjxTLnPIAnXUk7TjjALroyfdJn+0RUGHxY4=

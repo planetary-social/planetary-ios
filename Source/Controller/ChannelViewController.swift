@@ -66,7 +66,7 @@ class ChannelViewController: ContentViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Channel")
-        Analytics.trackDidShowScreen(screenName: "channel")
+        Analytics.shared.trackDidShowScreen(screenName: "channel")
     }
 
     private func load(animated: Bool = false) {
@@ -118,19 +118,19 @@ extension ChannelViewController: PostReplyPaginatedDataSourceDelegate {
     func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
         view.postView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
             self?.pushThreadViewController(with: keyValue)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue, startReplying: true)
         }
     }

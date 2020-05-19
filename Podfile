@@ -1,6 +1,7 @@
 # Uncomment the next line to define a global platform for your project
 platform :ios, '12.1'
 use_frameworks!
+project 'Planetary', 'Test' => :debug
 
 # ignore all warnings from all pods
 inhibit_all_warnings!
@@ -17,6 +18,7 @@ target 'Planetary' do
     pod 'Bugsnag', '5.23.1'
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
+    
 end
 
 target 'APITests' do
@@ -34,7 +36,25 @@ target 'UnitTests' do
 end
 
 target 'UITests' do
+    pod 'KeychainSwift', '19.0.0'
+    pod 'PhoneNumberKit', '3.2.0'
+    pod 'SQLite.swift', '0.12.2'
+    pod 'Down', '0.9.2'
 end
+
+plugin 'cocoapods-keys', {
+  :project => "Planetary",
+  :keys => [
+    "MixpanelAnalyticsToken",
+    "AuthyPhoneVerificationAPIToken",
+    "BugsnagCrashReportingToken",
+    "ZendeskAppID",
+    "ZendeskClientID",
+    "VersePushAPIToken",
+    "VersePubAPIToken",
+    "VerseDirectoryAPIToken",
+    "VerseBlobToken"
+]}
 
 post_install do | installer |
 

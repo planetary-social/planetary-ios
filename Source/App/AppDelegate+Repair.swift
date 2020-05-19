@@ -30,7 +30,7 @@ extension AppDelegate {
             Onboarding.set(status: status, for: identity)
         }
 
-        Analytics.track(event: .did,
+        Analytics.shared.track(event: .did,
                         element: .app,
                         name: AnalyticsEnums.Name.repair.rawValue,
                         param: "function",

@@ -140,7 +140,7 @@ class EveryoneViewController: ContentViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Everyone")
-        Analytics.trackDidShowScreen(screenName: "everyone")
+        Analytics.shared.trackDidShowScreen(screenName: "everyone")
     }
     
     func load(animated: Bool = false) {
@@ -219,7 +219,7 @@ class EveryoneViewController: ContentViewController {
      }
 
      @objc func newPostButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "compose")
+        Analytics.shared.trackDidTapButton(buttonName: "compose")
          let controller = NewPostViewController()
          controller.didPublish = {
              [weak self] post in
@@ -258,19 +258,19 @@ extension EveryoneViewController: PostReplyPaginatedDataSourceDelegate {
     func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
         view.postView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
             self?.pushThreadViewController(with: keyValue)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue, startReplying: true)
         }
     }

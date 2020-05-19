@@ -39,7 +39,7 @@ extension UIViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                Analytics.trackDidBlockIdentity()
+                Analytics.shared.trackDidBlockIdentity()
             }
         }
     }

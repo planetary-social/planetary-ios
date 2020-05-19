@@ -21,7 +21,7 @@ extension UIViewController {
     }
 
     @objc func didPressDismiss() {
-        Analytics.trackDidTapButton(buttonName: "cancel")
+        Analytics.shared.trackDidTapButton(buttonName: "cancel")
         self.dismiss(animated: true, completion: nil)
     }
 }

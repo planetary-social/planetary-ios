@@ -1,6 +1,10 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
+## Keys
+
+MIT LICENSE Found in the repo
+
 ## Bugsnag
 
 Copyright (c) 2012 Bugsnag, https://bugsnag.com/

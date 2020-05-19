@@ -8,22 +8,17 @@
 
 import Foundation
 
-let Analytics = NullAnalytics()
-
-class NullAnalytics: AnalyticsCore {
+class NullAnalytics: AnalyticsService {
     
-    func updatePushToken(pushToken: Data?) { }
-    
-
     var isEnabled: Bool { return false }
-
-    func configure() {}
     
     func identify(about: About?, network: NetworkKey) { }
     func forget() { }
 
     func optIn() {}
     func optOut() {}
+    
+    func updatePushToken(pushToken: Data?) { }
 
     func time(event: AnalyticsEnums.Event,
               element: AnalyticsEnums.Element,

@@ -11,3 +11,8 @@
 
 #include "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.release.xcconfig"
 #include "Shared.release.xcconfig"
+
+PRODUCT_NAME = Planetary
+PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios
+
+SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h

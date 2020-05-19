@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-enum SupportArticle: RawRepresentable {
+enum SupportArticle {
     
     case faq
     case privacyPolicy
@@ -34,10 +34,6 @@ enum SupportReason: String, CaseIterable {
 
 protocol SupportService {
 
-    static var shared: SupportService  { get }
-
-    func configure()
-
     func mainViewController() -> UIViewController?
     
     func articleViewController(_ article: SupportArticle) -> UIViewController?
@@ -49,5 +45,9 @@ protocol SupportService {
     func newTicketViewController(from reporter: Identity, reporting identity: Identity, name: String) -> UIViewController?
     
     func newTicketViewController(from reporter: Identity, reporting content: KeyValue, reason: SupportReason, view: UIView?) -> UIViewController?
+    
+    func id(for article: SupportArticle) -> String
+    
+    func article(for id: String) -> SupportArticle?
     
 }

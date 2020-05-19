@@ -43,7 +43,7 @@ class FollowButton: PillButton {
             return
         }
 
-        Analytics.trackDidTapButton(buttonName: "follow")
+        Analytics.shared.trackDidTapButton(buttonName: "follow")
         
         let shouldFollow = !self.isSelected
 
@@ -63,7 +63,7 @@ class FollowButton: PillButton {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if error != nil {
-                    Analytics.trackDidFollowIdentity()
+                    Analytics.shared.trackDidFollowIdentity()
                 }
                 
                 complete()
@@ -74,7 +74,7 @@ class FollowButton: PillButton {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if error != nil {
-                    Analytics.trackDidUnfollowIdentity()
+                    Analytics.shared.trackDidUnfollowIdentity()
                 }
                 
                 complete()

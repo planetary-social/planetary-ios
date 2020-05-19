@@ -85,32 +85,32 @@ class DoneOnboardingStep: OnboardingStep {
         
         // SIMULATE ONBOARDING
         if data.simulated {
-            Analytics.trackOnboardingComplete(self.data)
+            Analytics.shared.trackOnboardingComplete(self.data)
             skipToNextStep()
             return
         }
 
         if data.joinedDirectory == false {
-            Analytics.trackOnboardingComplete(self.data)
+            Analytics.shared.trackOnboardingComplete(self.data)
             skipToNextStep()
             return
         }
 
         guard let me = data.context?.identity else {
             Log.unexpected(.missingValue, "Was expecting self.data.context.person.identity, skipping step")
-            Analytics.trackOnboardingComplete(self.data)
+            Analytics.shared.trackOnboardingComplete(self.data)
             skipToNextStep()
             return
         }
 
         self.view.lookBusy(disable: self.view.primaryButton)
-        VerseAPI.directory(show: me) { [weak self] success, error in
+        DirectoryAPI.shared.directory(show: me) { [weak self] success, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if success {
                 self?.refresh { [weak self] in
                     self?.view.lookReady()
-                    Analytics.trackOnboardingComplete(data)
+                    Analytics.shared.trackOnboardingComplete(data)
                     self?.next()
                 }
             } else {

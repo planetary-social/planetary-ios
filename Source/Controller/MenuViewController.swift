@@ -53,7 +53,7 @@ class MenuViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Menu")
-        Analytics.trackDidShowScreen(screenName: "menu")
+        Analytics.shared.trackDidShowScreen(screenName: "menu")
     }
 
     private func load() {
@@ -78,28 +78,28 @@ class MenuViewController: UIViewController {
     }
 
     @objc private func profileViewTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "profile")
+        Analytics.shared.trackDidTapButton(buttonName: "profile")
         guard let identity = Bots.current.identity else { return }
         AppController.shared.pushViewController(for: .about, with: identity)
         self.close()
     }
     
     @objc private func profileButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "your_profile")
+        Analytics.shared.trackDidTapButton(buttonName: "your_profile")
         guard let identity = Bots.current.identity else { return }
         AppController.shared.pushViewController(for: .about, with: identity)
         self.close()
     }
 
     @objc private func settingsButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "settings")
+        Analytics.shared.trackDidTapButton(buttonName: "settings")
         self.close() {
             AppController.shared.showSettingsViewController()
         }
     }
 
     @objc private func helpButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "support")
+        Analytics.shared.trackDidTapButton(buttonName: "support")
         guard let controller = Support.shared.mainViewController() else {
             AppController.shared.alert(style: .alert,
                                        title: Text.error.text,
@@ -113,7 +113,7 @@ class MenuViewController: UIViewController {
     }
 
     @objc private func reportBugButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "report_bug")
+        Analytics.shared.trackDidTapButton(buttonName: "report_bug")
         guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
             AppController.shared.alert(style: .alert,
                                        title: Text.error.text,

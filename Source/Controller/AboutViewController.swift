@@ -69,7 +69,7 @@ class AboutViewController: ContentViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show About")
-        Analytics.trackDidShowScreen(screenName: "about")
+        Analytics.shared.trackDidShowScreen(screenName: "about")
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -186,7 +186,7 @@ class AboutViewController: ContentViewController {
     }
 
     @objc private func editPhotoButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "update_avatar")
+        Analytics.shared.trackDidTapButton(buttonName: "update_avatar")
         self.imagePicker.present(openCameraInSelfieMode: true) {
             [unowned self] image in
             guard let uiimage = image else {
@@ -203,12 +203,12 @@ class AboutViewController: ContentViewController {
             return
         }
 
-        Analytics.trackDidTapButton(buttonName: "share")
+        Analytics.shared.trackDidTapButton(buttonName: "share")
         
         var actions = [UIAlertAction]()
 
         let copy = UIAlertAction(title: Text.copyPublicIdentifier.text, style: .default) { _ in
-            Analytics.trackDidSelectAction(actionName: "copy_profile_identifier")
+            Analytics.shared.trackDidSelectAction(actionName: "copy_profile_identifier")
             UIPasteboard.general.string = identity
             AppController.shared.showToast(Text.identifierCopied.text)
         }
@@ -216,7 +216,7 @@ class AboutViewController: ContentViewController {
 
         if let publicLink = identity.publicLink {
             let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { [weak self] _ in
-                Analytics.trackDidSelectAction(actionName: "share_profile")
+                Analytics.shared.trackDidSelectAction(actionName: "share_profile")
                 
                 let activityController = UIActivityViewController(activityItems: [publicLink],
                                                                   applicationActivities: nil)
@@ -260,7 +260,7 @@ class AboutViewController: ContentViewController {
                         AppController.shared.hideProgress()
                         self?.alert(error: error)
                     } else {
-                        Analytics.trackDidUpdateAvatar()
+                        Analytics.shared.trackDidUpdateAvatar()
                         Bots.current.about { (newAbout, error) in
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
@@ -281,7 +281,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func didPressEdit() {
-        Analytics.trackDidTapButton(buttonName: "update_profile")
+        Analytics.shared.trackDidTapButton(buttonName: "update_profile")
         
         guard let about = self.about else { return }
         let controller = EditAboutViewController(with: about)
@@ -295,7 +295,7 @@ class AboutViewController: ContentViewController {
                     AppController.shared.hideProgress()
                     self?.alert(error: error)
                 } else {
-                    Analytics.trackDidUpdateProfile()
+                    Analytics.shared.trackDidUpdateProfile()
                     Bots.current.about { (newAbout, error) in
                         Log.optional(error)
                         CrashReporting.shared.reportIfNeeded(error: error)
@@ -314,7 +314,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func didTapFollowing() {
-        Analytics.trackDidTapButton(buttonName: "following")
+        Analytics.shared.trackDidTapButton(buttonName: "following")
         let controller = ContactsViewController(title: .followingShortCount,
                                                 identity: self.identity,
                                                 identities: self.followingIdentities)
@@ -322,7 +322,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func didTapFollowedBy() {
-        Analytics.trackDidTapButton(buttonName: "followed_by")
+        Analytics.shared.trackDidTapButton(buttonName: "followed_by")
         let controller = ContactsViewController(title: .followedByShortCount,
                                                 identity: self.identity,
                                                 identities: self.followedByIdentities)
@@ -364,19 +364,19 @@ extension AboutViewController: PostReplyPaginatedDataSourceDelegate {
     func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
         view.postView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
             self?.pushThreadViewController(with: keyValue)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue, startReplying: true)
         }
     }

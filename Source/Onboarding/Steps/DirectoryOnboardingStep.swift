@@ -99,7 +99,7 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
 
     override func didStart() {
         self.view.lookBusy()
-        VerseAPI.directory() {
+        DirectoryAPI.shared.directory(includeMe: true) {
             [weak self] people, error in
             self?.allPeople = people
             self?.tableView.reloadData()

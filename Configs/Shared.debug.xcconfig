@@ -9,19 +9,7 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-AUTHY_TOKEN =
-
-PUSH_HOST =
-PUSH_TOKEN =
-PUSH_ENVIRONMENT = development
-
-PUB_HOST =
-PUB_TOKEN =
-
-VERSE_HOST =
-VERSE_TOKEN =
-VERSE_DIRECTORY_PATH = mainnet-directory
-VERSE_BLOB_TOKEN = 
+VERSE_BLOB_TOKEN =
 
 DEFAULT_NETWORK_NAME = SSB
 DEFAULT_NETWORK_KEY = 1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s=

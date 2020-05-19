@@ -10,107 +10,20 @@ import Foundation
 
 enum Environment {
     
-    enum Mixpanel {
-        private enum Keys {
-            static let token = "PLMixpanelToken"
-        }
-        static let token: String? = {
-            return Environment.valueIfPresent(for: Keys.token)
-        }()
-    }
-    
-    enum Authy {
-        private enum Keys {
-            static let token = "PLAuthyToken"
-        }
-        static let token: String = {
-            return Environment.value(for: Keys.token)
-        }()
-    }
-    
-    enum Bugsnag {
-        private enum Keys {
-            static let token = "PLBugsnagToken"
-        }
-        static let token: String? = {
-            return Environment.valueIfPresent(for: Keys.token)
-        }()
-    }
-    
-    enum Zendesk {
-        private enum Keys {
-            static let appId = "PLZendeskAppId"
-            static let clientId = "PLZendeskClientId"
-        }
-        static let appId: String? = {
-            return Environment.valueIfPresent(for: Keys.appId)
-        }()
-        static let clientId: String? = {
-            return Environment.valueIfPresent(for: Keys.clientId)
-        }()
-    }
-    
-    enum Push {
-        private enum Keys {
-            static let token = "PLPushToken"
-            static let host = "PLPushHost"
-            static let environment = "PLPushEnvironment"
-        }
-        static let token: String = {
-            return Environment.value(for: Keys.token)
-        }()
-        static let host: String = {
-            return Environment.value(for: Keys.host)
-        }()
-        static let environment: String = {
-            return Environment.value(for: Keys.environment)
-        }()
-    }
-    
-    enum Pub {
-        private enum Keys {
-            static let token = "PLPubToken"
-            static let host = "PLPubHost"
-        }
-        static let token: String = {
-            return Environment.value(for: Keys.token)
-        }()
-        static let host: String = {
-            return Environment.value(for: Keys.host)
-        }()
-    }
-    
-    enum Verse {
-        private enum Keys {
-            static let token = "PLVerseToken"
-            static let host = "PLVerseHost"
-            static let directoryPath = "PLVerseDirectoryPath"
-            static let blobToken = "PLVerseBlobToken"
-        }
-        static let token: String = {
-            return Environment.value(for: Keys.token)
-        }()
-        static let host: String = {
-            return Environment.value(for: Keys.host)
-        }()
-        static let directoryPath: String = {
-            return Environment.value(for: Keys.directoryPath)
-        }()
-        static let blobToken: String? = {
-            return Environment.valueIfPresent(for: Keys.blobToken)
-        }()
-    }
-    
     enum DefaultNetwork {
         private enum Keys {
             static let name = "PLDefaultNetworkName"
             static let key = "PLDefaultNetworkKey"
+            static let hmac = "PLDefaultNetworkHMAC"
         }
         static let name: String = {
             return Environment.value(for: Keys.name)
         }()
         static let key: String = {
             return Environment.value(for: Keys.key)
+        }()
+        static let hmac: String? = {
+            return Environment.valueIfPresent(for: Keys.hmac)
         }()
     }
     
@@ -180,7 +93,7 @@ enum Environment {
     }
     
     private static let infoDictionary: [String: Any] = {
-        guard let dict = Bundle(for: AppConfiguration.self).infoDictionary else {
+        guard let dict = Bundle.current.infoDictionary else {
             fatalError("Plist file not found")
         }
         return dict

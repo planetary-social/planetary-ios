@@ -39,7 +39,7 @@ class ContactsViewController: ContentViewController, AboutTableViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Contacts")
-        Analytics.trackDidShowScreen(screenName: "contacts")
+        Analytics.shared.trackDidShowScreen(screenName: "contacts")
     }
 
     func reload() {

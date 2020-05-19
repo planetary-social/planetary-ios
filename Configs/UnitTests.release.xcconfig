@@ -11,3 +11,5 @@
 
 #include "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.release.xcconfig"
 #include "Shared.release.xcconfig"
+
+SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h

@@ -197,6 +197,7 @@ if [ -r "${ARTIFACT_LIST_FILE}" ]; then
 fi
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Keys/Keys.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Down/Down.framework"
@@ -213,6 +214,24 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/CommonUISDK.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Keys/Keys.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Down/Down.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Mixpanel/Mixpanel.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/PhoneNumberKit/PhoneNumberKit.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework"
+  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskCoreSDK.framework"
+  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskProviderSDK.framework"
+  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskSDK.framework"
+  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/CommonUISDK.framework"
+fi
+if [[ "$CONFIGURATION" == "Test" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Keys/Keys.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Bugsnag/Bugsnag.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Down/Down.framework"

@@ -364,11 +364,12 @@ class DebugOnboardingViewController: DebugTableViewController {
             {
                 cell in
                 cell.showActivityIndicator()
-                PubAPI().pubsAreOnline() {
-                    online, error in
-                    cell.hideActivityIndicator()
-                    cell.detailTextLabel?.text = "\(online)"
+                PubAPI.shared.pubsAreOnline() { online, error in
                     Log.optional(error)
+                    DispatchQueue.main.async {
+                        cell.hideActivityIndicator()
+                        cell.detailTextLabel?.text = "\(online)"
+                    }
                 }
             },
                                              actionClosure: nil)]

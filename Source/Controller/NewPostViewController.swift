@@ -71,7 +71,7 @@ class NewPostViewController: ContentViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show New Post")
-        Analytics.trackDidShowScreen(screenName: "new_post")
+        Analytics.shared.trackDidShowScreen(screenName: "new_post")
     }
 
     override func constrainSubviews() {
@@ -113,7 +113,7 @@ class NewPostViewController: ContentViewController {
     }
 
     @objc private func photoButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "attach_photo")
+        Analytics.shared.trackDidTapButton(buttonName: "attach_photo")
         self.imagePicker.present(from: self) {
             [weak self] image in
             if let image = image { self?.galleryView.add(image) }
@@ -125,7 +125,7 @@ class NewPostViewController: ContentViewController {
         guard self.textView.text.isEmpty == false else { return }
         guard let text = self.textView.attributedText else { return }
         
-        Analytics.trackDidTapButton(buttonName: "post")
+        Analytics.shared.trackDidTapButton(buttonName: "post")
 
         self.lookBusy()
 
@@ -140,7 +140,7 @@ class NewPostViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                Analytics.trackDidPost()
+                Analytics.shared.trackDidPost()
                 self?.dismiss(didPublish: post)
             }
         }

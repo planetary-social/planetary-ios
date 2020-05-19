@@ -83,11 +83,11 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Directory")
-        Analytics.trackDidShowScreen(screenName: "directory")
+        Analytics.shared.trackDidShowScreen(screenName: "directory")
     }
 
     private func load(completion: @escaping () -> Void) {
-        VerseAPI.directory(includeMe: false) { [weak self] people, error in
+        DirectoryAPI.shared.directory(includeMe: false) { [weak self] people, error in
             if let error = error {
                 self?.alert(error: error)
             } else {
@@ -129,7 +129,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
 extension DirectoryViewController: UISearchResultsUpdating, UISearchBarDelegate {
 
     func updateSearchResults(for searchController: UISearchController) {
-        Analytics.trackDidTapSearchbar(searchBarName: "directory")
+        Analytics.shared.trackDidTapSearchbar(searchBarName: "directory")
         self.filter = searchController.searchBar.text ?? ""
     }
 

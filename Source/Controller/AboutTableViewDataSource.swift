@@ -88,7 +88,7 @@ extension AboutTableViewDataSource: UITableViewDataSourcePrefetching {
 extension AboutTableViewDataSource: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        Analytics.trackDidSelectItem(kindName: "identity")
+        Analytics.shared.trackDidSelectItem(kindName: "identity")
         
         let identity = self.identities[indexPath.row]
         let targetController = self.delegate?.navigationController

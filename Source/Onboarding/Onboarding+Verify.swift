@@ -18,7 +18,7 @@ extension Onboarding {
         guard !country.isEmpty else { completion(false, .invalidCountryCode); return }
         guard !phone.isEmpty else { completion(false, .invalidPhoneNumber); return }
 
-        AuthyAPI.requestCode(country: country, phone: phone) {
+        PhoneVerificationAPI.shared.requestCode(country: country, phone: phone) {
             response, error in
             completion(response?.success ?? false, OnboardingError.optional(error))
         }
@@ -34,7 +34,7 @@ extension Onboarding {
         guard !country.isEmpty else { completion(false, .invalidCountryCode); return }
         guard !phone.isEmpty else { completion(false, .invalidPhoneNumber); return }
 
-        AuthyAPI.verifyCode(code, country: country, phone: phone) {
+        PhoneVerificationAPI.shared.verifyCode(code, country: country, phone: phone) {
             response, error in
             completion(response?.success ?? false, OnboardingError.optional(error))
         }
