@@ -48,7 +48,7 @@ var versionString *C.char
 func init() {
 	versionString = C.CString("beta1")
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	log = kitlog.With(log, "ts", kitlog.DefaultTimestampUTC)
+	log = kitlog.With(log, "warning", "pre-init")
 }
 
 // globals
@@ -177,6 +177,7 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		return false
 	}
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(io.MultiWriter(os.Stderr, logFile)))
+	log = kitlog.With(log, "ts", kitlog.DefaultTimestampUTC)
 
 	if cfg.Hops == 0 || cfg.Hops > 3 {
 		level.Warn(log).Log("event", "bot init", "msg", "invalid hops setting, defaulting to 1", "got", cfg.Hops)
