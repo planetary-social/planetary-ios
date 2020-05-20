@@ -339,7 +339,7 @@ extension Text {
 extension Text {
     
     enum Error: String, Localizable, CaseIterable {
-        case login = "The peer to peer engine failed to start. Please try restarting the app or use Ignore to browse the content that is already fetched to your device."
+        case login = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device."
         case unexpected = "Something unexpected happened."
         case supportNotConfigured = "Support is not configured."
     }
