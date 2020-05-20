@@ -21,6 +21,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/internal/neterr"
 	"go.cryptoscope.co/ssb/message"
 )
 
@@ -77,7 +78,8 @@ func (h *handler) makeWorker(work <-chan *ssb.FeedRef, ctx context.Context, edp 
 	return func() error {
 		for ref := range work {
 			err := h.fetchFeed(ctx, ref, edp, started)
-			if muxrpc.IsSinkClosed(err) || errors.Cause(err) == context.Canceled || errors.Cause(err) == muxrpc.ErrSessionTerminated {
+			causeErr := errors.Cause(err)
+			if muxrpc.IsSinkClosed(err) || causeErr == context.Canceled || causeErr == muxrpc.ErrSessionTerminated || neterr.IsConnBrokenErr(causeErr) {
 				return err
 			} else if err != nil {
 				// just logging the error assuming forked feed for instance

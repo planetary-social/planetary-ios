@@ -38,7 +38,6 @@ github.com/golang/snappy
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.1.0
-## explicit
 github.com/hashicorp/go-multierror
 # github.com/keks/nocomment v0.0.0-20181007001506-30c6dcb4a472
 github.com/keks/nocomment
@@ -60,8 +59,6 @@ github.com/philhofer/fwd
 github.com/pkg/errors
 # github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237
 github.com/remyoudompheng/bigfft
-# github.com/teivah/onecontext v0.0.0-20190805212053-7a1893e577e7
-## explicit
 # github.com/tinylib/msgp v1.1.0
 github.com/tinylib/msgp/msgp
 # github.com/ugorji/go/codec v1.1.7
@@ -96,13 +93,12 @@ go.cryptoscope.co/muxrpc/codec
 ## explicit
 go.cryptoscope.co/netwrap
 # go.cryptoscope.co/secretstream v1.2.2
-## explicit
 go.cryptoscope.co/secretstream
 go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200519180232-71674c265743
+# go.cryptoscope.co/ssb v0.0.0-20200520132839-d7485ad9385d
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -143,7 +139,6 @@ go.mindeco.de/ssb-gabbygrove
 ## explicit
 go.mindeco.de/ssb-multiserver
 # golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
-## explicit
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -165,7 +160,6 @@ golang.org/x/net/trace
 ## explicit
 golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9
-## explicit
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix

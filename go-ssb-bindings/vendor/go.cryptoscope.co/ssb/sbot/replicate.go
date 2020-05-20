@@ -29,8 +29,6 @@ func (s *Sbot) newGraphReplicator() (*replicator, error) {
 	replicateEvt := log.With(s.info, "event", "update-replicate")
 	update := r.makeUpdater(replicateEvt, s.KeyPair.Id, int(s.hopCount))
 
-	update() // init graph and fill
-
 	// update for new messages but only every 15seconds
 	go debounce(s.rootCtx, 15*time.Second, s.RootLog.Seq(), update)
 
@@ -40,8 +38,9 @@ func (s *Sbot) newGraphReplicator() (*replicator, error) {
 // makeUpdater returns a func that does the hop-walk and block checks, used together with debounce
 func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int) func() {
 	return func() {
+		start := time.Now()
 		newWants := r.builder.Hops(self, hopCount)
-		level.Warn(log).Log("want", r.current.feedWants.Count(), "hops", hopCount)
+		level.Debug(log).Log("feed-want-count", newWants.Count(), "hops", hopCount, "took", time.Since(start))
 
 		refs, err := newWants.List()
 		if err != nil {
@@ -94,14 +93,12 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 			return
 
 		case <-timer.C:
-			if seq != -1 {
+			if seq != margaret.SeqEmpty {
 				work()
 				seq = margaret.SeqEmpty
 			}
 		}
 	}
-	//	done()
-
 }
 
 func (r *replicator) Block(ref *ssb.FeedRef)   { r.current.blocked.AddRef(ref) }
@@ -132,11 +129,6 @@ func (l lister) Authorize(remote *ssb.FeedRef) error {
 	if l.feedWants.Has(remote) {
 		return nil
 	}
-
-	if l.feedWants.Count() == 0 {
-		return nil
-	}
-
 	return errors.New("nope - access denied")
 }
 

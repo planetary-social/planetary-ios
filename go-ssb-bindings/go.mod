@@ -9,7 +9,7 @@ require (
 	go.cryptoscope.co/margaret v0.1.7-0.20200519144842-7c553c9d3bce
 	go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48 // indirect
 	go.cryptoscope.co/netwrap v0.1.1
-	go.cryptoscope.co/ssb v0.0.0-20200519180232-71674c265743
+	go.cryptoscope.co/ssb v0.0.0-20200520132839-d7485ad9385d
 	go.mindeco.de/ssb-multiserver v0.0.0-20200302171328-987e421fadee
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
 	golang.org/x/net v0.0.0-20190909003024-a7b16738d86b // indirect

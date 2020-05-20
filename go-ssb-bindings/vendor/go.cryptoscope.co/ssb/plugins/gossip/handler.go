@@ -89,25 +89,23 @@ func (g *handler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 		}
 	}
 
-	// TODO: ctx to build and list?!
-	// or pass rootCtx to their constructor but than we can't cancel sessions
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
-	feeds := g.WantList.ReplicationList()
-	// hops := g.GraphBuilder.Hops(g.Id, g.hopCount)
-	if feeds != nil {
-		err := g.fetchAll(ctx, e, feeds)
-		if muxrpc.IsSinkClosed(err) || errors.Cause(err) == context.Canceled {
+	for {
+		select {
+		case <-ctx.Done():
 			return
+		default:
 		}
-		if err != nil {
-			level.Error(info).Log("msg", "hops failed", "err", err)
+		feeds := g.WantList.ReplicationList()
+		if feeds != nil {
+			err := g.fetchAll(ctx, e, feeds)
+			if err != nil {
+				level.Error(info).Log("msg", "hops failed", "err", err)
+				return
+			}
 		}
+		level.Debug(info).Log("msg", "hops fetch done", "count", feeds.Count(), "took", time.Since(start))
+		time.Sleep(5 * time.Minute)
 	}
-	level.Debug(info).Log("msg", "hops fetch done", "count", feeds.Count(), "took", time.Since(start))
 }
 
 func (g *handler) HandleCall(
