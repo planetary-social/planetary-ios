@@ -353,12 +353,11 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		return nil
 	}))
 
+	sbot.WaitUntilIndexesAreSynced()
 	log.Log("event", "serving", "self", sbot.KeyPair.Id.Ref()[1:5], "addr", listenAddr)
 	go func() {
 		srvErr := sbot.Network.Serve(longCtx)
-		// stopErr := Stop()
 		log.Log("event", "sbot node.Serve returned", "srvErr", srvErr)
-		shutdown()
 	}()
 	return true
 }

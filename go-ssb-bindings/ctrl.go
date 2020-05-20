@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"math"
 	"runtime"
 	"time"
 
@@ -10,6 +12,8 @@ import (
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/invite"
+	"go.cryptoscope.co/ssb/repo"
+	mksbot "go.cryptoscope.co/ssb/sbot"
 	multiserver "go.mindeco.de/ssb-multiserver"
 	"golang.org/x/sync/errgroup"
 )
@@ -238,26 +242,22 @@ func ssbNullContent(author string, sequence uint64) int {
 		return -1
 	}
 
-	level.Error(log).Log("msg", "refactor in progress")
-	return -1
+	ref, err := ssb.ParseFeedRef(author)
+	if err != nil {
+		level.Error(log).Log("event", "null content failed", "err", err)
+		return -1
+	}
 
-	/*
-		ref, err := ssb.ParseFeedRef(author)
-		if err != nil {
-			level.Error(log).Log("event", "null content failed", "err", err)
-			return -1
-		}
+	if sequence > math.MaxUint32 {
+		level.Warn(log).Log("event", "null content failed", "whops", "this is a very long feed")
+	}
 
-		if sequence > math.MaxUint32 {
-			level.Warn(log).Log("event", "null content failed", "whops", "this is a very long feed")
-		}
+	err = sbot.NullContent(ref, uint(sequence))
+	if err != nil {
+		level.Error(log).Log("event", "null content failed", "err", err)
+		return -1
+	}
 
-			err = sbot.NullContent(ref, uint(sequence))
-			if err != nil {
-				level.Error(log).Log("event", "null content failed", "err", err)
-				return -1
-			}
-	*/
 	return 0
 }
 
@@ -289,6 +289,30 @@ func ssbNullFeed(ref string) int {
 	}
 
 	return 0
+}
+
+//export ssbDropIndexData
+func ssbDropIndexData() bool {
+	var retErr error
+	defer func() {
+		if retErr != nil {
+			level.Error(log).Log("where", "ssbDropIndexData", "err", retErr)
+		}
+	}()
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot != nil {
+		retErr = fmt.Errorf("sbot still running")
+		return false
+	}
+
+	if err := mksbot.DropIndicies(repo.New(repoDir)); err != nil {
+		retErr = errors.Wrap(err, "failed to drop index data")
+		return false
+	}
+
+	return true
 }
 
 //export ssbInviteAccept

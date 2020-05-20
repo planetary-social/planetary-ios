@@ -20,6 +20,8 @@ extern bool ssbBotInit(gostring_t configPath, blobNotifyHandle_t notifyFn);
 extern bool ssbBotStop(void);
 extern char* ssbBotStatus(void);
 
+extern bool ssbDropIndexData(void);
+
 extern int ssbOffsetFSCK(uint32_t mode, fsckProgressHandle_t updateFn);
 extern char* ssbHealRepo(void);
 

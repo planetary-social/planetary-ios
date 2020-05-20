@@ -109,12 +109,20 @@ class LaunchViewController: UIViewController {
                 
                 var action = UIAlertAction(title: "Restart", style: .default) { _ in
                     controller.dismiss(animated: true, completion: nil)
-                    exit(0)
+                    bot.logout() {
+                        err in
+                        Log.optional(err)
+                        ssbDropIndexData()
+                        AppController.shared.relaunch() // this should call self.login() again right?!
+                    }
                 }
                 controller.addAction(action)
 
                 action = UIAlertAction(title: "Ignore", style: .cancel) { _ in
                     controller.dismiss(animated: true, completion: nil)
+                    DispatchQueue.main.async {
+                        AppController.shared.showMainViewController(animated: true)
+                    }
                 }
                 controller.addAction(action)
                 AppController.shared.showAlertController(with: controller, animated: true)
