@@ -199,7 +199,6 @@ func initSbot(s *Sbot) (*Sbot, error) {
 
 	var inviteService *legacyinvites.Service
 
-	// auth := s.GraphBuilder.Authorizer(s.KeyPair.Id, int(s.hopCount+2))
 	mkHandler := func(conn net.Conn) (muxrpc.Handler, error) {
 		// bypassing badger-close bug to go through with an accept (or not) before closing the bot
 		s.closedMu.Lock()
@@ -248,7 +247,11 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		remote.Algo = ssb.RefAlgoFeedGabby
 		err = auth.Authorize(remote)
 		if err == nil {
-			level.Debug(log).Log("warn", "found gg feed, using that")
+			level.Debug(log).Log("TODO", "found gg feed, using that. overhaul shs1 to support more payload in the handshake")
+			return s.public.MakeHandler(conn)
+		}
+		if lst, err := uf.List(); err == nil && len(lst) == 0 {
+			level.Warn(log).Log("event", "no stored feeds - attempting re-sync with trust-on-first-use")
 			return s.public.MakeHandler(conn)
 		}
 		return nil, err

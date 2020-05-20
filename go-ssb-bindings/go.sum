@@ -425,6 +425,8 @@ go.cryptoscope.co/ssb v0.0.0-20200519180232-71674c265743 h1:4XUSSjDdkuww2c7biyoH
 go.cryptoscope.co/ssb v0.0.0-20200519180232-71674c265743/go.mod h1:hAZgQ+vOfKsu4VVwRRsUnV0YDRoqQ7uCoUR7ROfgE90=
 go.cryptoscope.co/ssb v0.0.0-20200520132839-d7485ad9385d h1:uIjPTcY/SH6aNOvfoQb7QHTi9wGiJmDgT6ZkOi6OHc0=
 go.cryptoscope.co/ssb v0.0.0-20200520132839-d7485ad9385d/go.mod h1:hAZgQ+vOfKsu4VVwRRsUnV0YDRoqQ7uCoUR7ROfgE90=
+go.cryptoscope.co/ssb v0.0.0-20200520144233-fda9a98207d8 h1:Y64PxaqpzSZn1dwvN/cq4Hc5e1flxnYHdKl1ff1jFaE=
+go.cryptoscope.co/ssb v0.0.0-20200520144233-fda9a98207d8/go.mod h1:hAZgQ+vOfKsu4VVwRRsUnV0YDRoqQ7uCoUR7ROfgE90=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738/go.mod h1:dnLIgRNXwCJa5e+c6mIZCrds/GIG4ncV9HhK5PX7jPg=
 go.mindeco.de/ssb-gabbygrove v0.1.5/go.mod h1:sBNu1GoyNkLuWcQ2H+pHuBDrXyelbitt5MKHhoWEkAI=

@@ -98,7 +98,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200520132839-d7485ad9385d
+# go.cryptoscope.co/ssb v0.0.0-20200520144233-fda9a98207d8
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
