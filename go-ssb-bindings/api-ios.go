@@ -48,6 +48,7 @@ var versionString *C.char
 func init() {
 	versionString = C.CString("beta1")
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
+	log = kitlog.With(log, "ts", kitlog.DefaultTimestampUTC)
 }
 
 // globals
