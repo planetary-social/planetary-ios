@@ -143,12 +143,15 @@ class GoBot: Bot {
    
         // spawn go-bot in the background to return early
         self.queue.async {
+            DispatchQueue.main.async { completion(GoBotError.unexpectedFault("TODO: restart")) }
+            /*
             #if DEBUG
             // used for locating the files in the simulator
             print("===> starting gobot with prefix: \(repoPrefix)")
             #endif
             let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix)
             DispatchQueue.main.async { completion(loginErr) }
+             */
         }
         return
     }

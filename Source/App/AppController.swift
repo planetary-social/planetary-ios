@@ -59,6 +59,13 @@ class AppController: UIViewController {
         self.children.forEach { $0.removeFromParent() }
     }
 
+    // MARK: alert/warnings
+    func showAlertController(with alert: UIAlertController, animated: Bool = true) {
+        let controller = UIViewController()
+        self.setRootViewController(controller, animated: animated)
+        controller.present(alertController: alert, animated: animated)
+    }
+
     // MARK: Main tab view controller
 
     func showMainViewController(with controller: UIViewController? = nil, animated: Bool = true) {

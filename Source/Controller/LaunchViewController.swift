@@ -87,7 +87,7 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         self.launchIntoMain()
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) {
-            [weak self] loginError in
+            loginError in
             
             var error = loginError
             
@@ -107,17 +107,17 @@ class LaunchViewController: UIViewController {
                                                    message: Text.Error.login.text,
                                                    preferredStyle: .alert)
                 
-                var action = UIAlertAction(title: "Retry", style: .default) { _ in
+                var action = UIAlertAction(title: "Restart", style: .default) { _ in
                     controller.dismiss(animated: true, completion: nil)
-                    self?.launch()
+                    exit(0)
                 }
                 controller.addAction(action)
 
-                action = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                action = UIAlertAction(title: "Ignore", style: .cancel) { _ in
                     controller.dismiss(animated: true, completion: nil)
                 }
                 controller.addAction(action)
-                AppController.shared.present(controller, animated: true, completion: nil)
+                AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
             bot.about { (about, aboutErr) in
