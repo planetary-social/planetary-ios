@@ -177,7 +177,8 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		return false
 	}
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(io.MultiWriter(os.Stderr, logFile)))
-	log = kitlog.With(log, "ts", kitlog.DefaultTimestampUTC)
+	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
+	log = kitlog.With(log, "ts", kitlog.TimestampFormat(time.Now, swiftLikeFormat))
 
 	if cfg.Hops == 0 || cfg.Hops > 3 {
 		level.Warn(log).Log("event", "bot init", "msg", "invalid hops setting, defaulting to 1", "got", cfg.Hops)
