@@ -85,8 +85,9 @@ class LaunchViewController: UIViewController {
         guard let network = configuration.network else { return }
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
+        self.launchIntoMain()
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) {
-            [weak self] loginError in
+            loginError in
             
             var error = loginError
             
@@ -106,27 +107,33 @@ class LaunchViewController: UIViewController {
                                                    message: Text.Error.login.text,
                                                    preferredStyle: .alert)
                 
-                var action = UIAlertAction(title: "Retry", style: .default) { _ in
+                var action = UIAlertAction(title: "Restart", style: .default) { _ in
                     controller.dismiss(animated: true, completion: nil)
-                    self?.launch()
+                    bot.logout() {
+                        err in
+                        Log.optional(err)
+                        ssbDropIndexData()
+                        AppController.shared.relaunch() // this should call self.login() again right?!
+                    }
                 }
                 controller.addAction(action)
 
-                action = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                action = UIAlertAction(title: "Ignore", style: .cancel) { _ in
                     controller.dismiss(animated: true, completion: nil)
+                    DispatchQueue.main.async {
+                        AppController.shared.showMainViewController(animated: true)
+                    }
                 }
                 controller.addAction(action)
-                
-                self?.present(controller, animated: true, completion: nil)
+                AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
-            bot.about { (about, _) in
-                Log.optional(error)
+            bot.about { (about, aboutErr) in
+                Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later
-                CrashReporting.shared.reportIfNeeded(error: error)
+                CrashReporting.shared.reportIfNeeded(error: aboutErr)
                 CrashReporting.shared.identify(about: about, network: network)
                 Analytics.identify(about: about, network: network)
-                self?.launchIntoMain()
             }
         }
     }

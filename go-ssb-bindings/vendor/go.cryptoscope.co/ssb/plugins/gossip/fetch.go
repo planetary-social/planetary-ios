@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"runtime"
 	"time"
 
 	"github.com/go-kit/kit/log"
@@ -20,6 +21,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/internal/neterr"
 	"go.cryptoscope.co/ssb/message"
 )
 
@@ -28,7 +30,6 @@ func (h *handler) fetchAll(
 	e muxrpc.Endpoint,
 	set *ssb.StrFeedSet,
 ) error {
-
 	lst, err := set.List()
 	if err != nil {
 		return err
@@ -41,11 +42,14 @@ func (h *handler) fetchAll(
 	// and manage live feeds more granularly across open connections
 
 	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	fetchGroup, ctx := errgroup.WithContext(ctx)
 	work := make(chan *ssb.FeedRef)
 
 	n := 1 + (len(lst) / 10)
-	const maxWorker = 50
+	// this doesnt pipeline super well
+	// we can do more then one feed per core
+	maxWorker := runtime.NumCPU() * 4
 	if n > maxWorker { // n = max(n,maxWorker)
 		n = maxWorker
 	}
@@ -57,7 +61,6 @@ func (h *handler) fetchAll(
 		select {
 		case <-ctx.Done():
 			close(work)
-			cancel()
 			fetchGroup.Wait()
 			return ctx.Err()
 		case work <- r:
@@ -75,7 +78,8 @@ func (h *handler) makeWorker(work <-chan *ssb.FeedRef, ctx context.Context, edp 
 	return func() error {
 		for ref := range work {
 			err := h.fetchFeed(ctx, ref, edp, started)
-			if muxrpc.IsSinkClosed(err) || errors.Cause(err) == context.Canceled || errors.Cause(err) == muxrpc.ErrSessionTerminated {
+			causeErr := errors.Cause(err)
+			if muxrpc.IsSinkClosed(err) || causeErr == context.Canceled || causeErr == muxrpc.ErrSessionTerminated || neterr.IsConnBrokenErr(causeErr) {
 				return err
 			} else if err != nil {
 				// just logging the error assuming forked feed for instance
@@ -108,9 +112,10 @@ func (g *handler) fetchFeed(
 	default:
 	}
 	// check our latest
-	addr := fr.StoredAddr()
+	frAddr := fr.StoredAddr()
+	addr := string(frAddr)
 	g.activeLock.Lock()
-	_, ok := g.activeFetch.Load(addr)
+	_, ok := g.activeFetch[addr]
 	if ok {
 		//level.Debug(g.logger).Log("fetchFeed", "crawl active", "addr", fr.ShortRef())
 		g.activeLock.Unlock()
@@ -119,17 +124,18 @@ func (g *handler) fetchFeed(
 	if g.sysGauge != nil {
 		g.sysGauge.With("part", "fetches").Add(1)
 	}
-	g.activeFetch.Store(addr, true)
+
+	g.activeFetch[addr] = struct{}{}
 	g.activeLock.Unlock()
 	defer func() {
 		g.activeLock.Lock()
-		g.activeFetch.Delete(addr)
+		delete(g.activeFetch, addr)
 		g.activeLock.Unlock()
 		if g.sysGauge != nil {
 			g.sysGauge.With("part", "fetches").Add(-1)
 		}
 	}()
-	userLog, err := g.UserFeeds.Get(addr)
+	userLog, err := g.UserFeeds.Get(frAddr)
 	if err != nil {
 		return errors.Wrapf(err, "failed to open sublog for user")
 	}

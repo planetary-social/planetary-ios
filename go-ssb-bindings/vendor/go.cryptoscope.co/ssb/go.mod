@@ -9,8 +9,8 @@ require (
 	github.com/dgraph-io/badger v2.0.0-rc2+incompatible
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/dustin/go-humanize v1.0.0
-	github.com/go-kit/kit v0.9.0
-	github.com/hashicorp/go-multierror v1.0.0
+	github.com/go-kit/kit v0.10.0
+	github.com/hashicorp/go-multierror v1.1.0
 	github.com/keks/nocomment v0.0.0-20181007001506-30c6dcb4a472
 	github.com/keks/persist v0.0.0-20191006175951-43c124092b8b // indirect
 	github.com/kylelemons/godebug v1.1.0
@@ -19,22 +19,21 @@ require (
 	github.com/matryer/is v1.3.0 // indirect
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.2
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.1.0
+	github.com/prometheus/client_golang v1.3.0
 	github.com/shurcooL/go-goon v0.0.0-20170922171312-37c2f522c041
 	github.com/stretchr/testify v1.5.1
-	github.com/teivah/onecontext v0.0.0-20190805212053-7a1893e577e7
 	github.com/ugorji/go/codec v1.1.7
-	go.cryptoscope.co/librarian v0.2.1-0.20200514123714-04a3bc2226cb
+	go.cryptoscope.co/librarian v0.2.1-0.20200519132401-80c3b8105d40
 	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8
-	go.cryptoscope.co/margaret v0.1.7-0.20200511124419-30f93c451238
-	go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48
+	go.cryptoscope.co/margaret v0.1.7-0.20200519144842-7c553c9d3bce
+	go.cryptoscope.co/muxrpc v1.5.4-0.20200422174348-fc975b161059
 	go.cryptoscope.co/netwrap v0.1.1
-	go.cryptoscope.co/secretstream v1.2.2-0.20200303151838-85cf020cfee6
+	go.cryptoscope.co/secretstream v1.2.2
 	go.mindeco.de/ssb-gabbygrove v0.1.6
 	go.mindeco.de/ssb-multiserver v0.0.0-20200302144839-6902de33e194
-	golang.org/x/crypto v0.0.0-20200303113948-2939d6771b24
+	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
-	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 // indirect
+	golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9 // indirect
 	golang.org/x/text v0.3.2
 	gonum.org/v1/gonum v0.0.0-20190904110519-2065cbd6b42a
 	gopkg.in/urfave/cli.v2 v2.0.0-20190806201727-b62605953717

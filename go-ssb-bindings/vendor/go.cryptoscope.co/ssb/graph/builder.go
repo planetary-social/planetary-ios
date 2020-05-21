@@ -352,7 +352,6 @@ func (b *builder) Hops(from *ssb.FeedRef, max int) *ssb.StrFeedSet {
 }
 
 func (b *builder) recurseHops(walked *ssb.StrFeedSet, vis map[string]struct{}, from *ssb.FeedRef, depth int) error {
-	// b.log.Log("recursing", from.Ref(), "d", depth)
 	if depth == 0 {
 		return nil
 	}

@@ -199,6 +199,9 @@ func (m *FeedManager) CreateStreamHistory(
 	sink luigi.Sink,
 	arg *message.CreateHistArgs,
 ) error {
+	if arg.ID == nil {
+		return errors.Errorf("bad request: missing id argument")
+	}
 	// check what we got
 	userLog, err := m.UserFeeds.Get(arg.ID.StoredAddr())
 	if err != nil {

@@ -140,7 +140,6 @@ class GoBot: Bot {
         }
 
         self._identity = secret.identity
-        DispatchQueue.main.async { completion(nil) }
    
         // spawn go-bot in the background to return early
         self.queue.async {
@@ -148,11 +147,8 @@ class GoBot: Bot {
             // used for locating the files in the simulator
             print("===> starting gobot with prefix: \(repoPrefix)")
             #endif
-            if let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix) {
-                // TODO: mark bot state as failed
-                Log.unexpected(.botError, "Login failed: \(loginErr)")
-                return
-            }
+            let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix)
+            DispatchQueue.main.async { completion(loginErr) }
         }
         return
     }

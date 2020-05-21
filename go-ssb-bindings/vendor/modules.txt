@@ -38,7 +38,6 @@ github.com/golang/snappy
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
 # github.com/hashicorp/go-multierror v1.1.0
-## explicit
 github.com/hashicorp/go-multierror
 # github.com/keks/nocomment v0.0.0-20181007001506-30c6dcb4a472
 github.com/keks/nocomment
@@ -60,15 +59,13 @@ github.com/philhofer/fwd
 github.com/pkg/errors
 # github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237
 github.com/remyoudompheng/bigfft
-# github.com/teivah/onecontext v0.0.0-20190805212053-7a1893e577e7
-github.com/teivah/onecontext
 # github.com/tinylib/msgp v1.1.0
 github.com/tinylib/msgp/msgp
 # github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
 # github.com/willf/bitset v1.1.10
 github.com/willf/bitset
-# go.cryptoscope.co/librarian v0.2.1-0.20200514123714-04a3bc2226cb
+# go.cryptoscope.co/librarian v0.2.1-0.20200519132401-80c3b8105d40
 go.cryptoscope.co/librarian
 go.cryptoscope.co/librarian/badger
 go.cryptoscope.co/librarian/mkv
@@ -76,7 +73,7 @@ go.cryptoscope.co/librarian/mkv
 ## explicit
 go.cryptoscope.co/luigi
 go.cryptoscope.co/luigi/mfr
-# go.cryptoscope.co/margaret v0.1.7-0.20200511124419-30f93c451238
+# go.cryptoscope.co/margaret v0.1.7-0.20200519144842-7c553c9d3bce
 ## explicit
 go.cryptoscope.co/margaret
 go.cryptoscope.co/margaret/codec/msgpack
@@ -89,19 +86,19 @@ go.cryptoscope.co/margaret/multilog/roaring
 go.cryptoscope.co/margaret/multilog/roaring/mkv
 go.cryptoscope.co/margaret/offset2
 # go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48
+## explicit
 go.cryptoscope.co/muxrpc
 go.cryptoscope.co/muxrpc/codec
 # go.cryptoscope.co/netwrap v0.1.1
 ## explicit
 go.cryptoscope.co/netwrap
 # go.cryptoscope.co/secretstream v1.2.2
-## explicit
 go.cryptoscope.co/secretstream
 go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200515122437-a5f1900c98cd
+# go.cryptoscope.co/ssb v0.0.0-20200520144233-fda9a98207d8
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -141,8 +138,7 @@ go.mindeco.de/ssb-gabbygrove
 # go.mindeco.de/ssb-multiserver v0.0.0-20200302171328-987e421fadee
 ## explicit
 go.mindeco.de/ssb-multiserver
-# golang.org/x/crypto v0.0.0-20200406173513-056763e48d71 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
-## explicit
+# golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -163,9 +159,9 @@ golang.org/x/net/trace
 # golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 ## explicit
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20200408040146-ea54a3c99b9b
-## explicit
+# golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9
 golang.org/x/sys/cpu
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.2

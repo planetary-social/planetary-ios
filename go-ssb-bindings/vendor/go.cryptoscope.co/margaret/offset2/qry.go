@@ -305,7 +305,7 @@ func (qry *offsetQuery) fastFwdPush(ctx context.Context, sink luigi.Sink) (func(
 				close(qry.close)
 			}
 
-			return errors.Wrap(sink.Close(), "error closing sink")
+			return nil
 		}
 
 		sw := v.(margaret.SeqWrapper)

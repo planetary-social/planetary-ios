@@ -14,7 +14,6 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/go-kit/kit/metrics"
 	"github.com/pkg/errors"
-	"github.com/teivah/onecontext"
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/muxrpc"
 
@@ -146,9 +145,7 @@ func (wmgr *wantManager) getBlob(ctx context.Context, edp muxrpc.Endpoint, ref *
 	log := log.With(wmgr.info, "event", "blobs.get", "ref", ref.ShortRef())
 
 	arg := GetWithSize{ref, wmgr.maxSize}
-	allCtxs, cancel := onecontext.Merge(ctx, wmgr.longCtx)
-	defer cancel()
-	src, err := edp.Source(allCtxs, []byte{}, muxrpc.Method{"blobs", "get"}, arg)
+	src, err := edp.Source(ctx, []byte{}, muxrpc.Method{"blobs", "get"}, arg)
 	if err != nil {
 		err = errors.Wrap(err, "blob create source failed")
 		level.Warn(log).Log("err", err)
@@ -368,9 +365,7 @@ func (proc *wantProc) updateFromBlobStore(ctx context.Context, v interface{}, er
 	}
 
 	m := map[string]int64{notif.Ref.Ref(): sz}
-	allCtxs, cancel := onecontext.Merge(ctx, proc.rootCtx, proc.wmgr.longCtx)
-	err = proc.out.Pour(allCtxs, m)
-	cancel()
+	err = proc.out.Pour(ctx, m)
 	dbg.Log("cause", "broadcasting received blob", "sz", sz)
 	return errors.Wrap(err, "errors pouring into sink")
 
@@ -414,9 +409,7 @@ func (proc *wantProc) updateWants(ctx context.Context, v interface{}, err error)
 
 	newW := WantMsg{w}
 	// dbg.Log("op", "sending want we now want", "wantCount", len(proc.wmgr.wants))
-	allCtxs, cancel := onecontext.Merge(ctx, proc.rootCtx, proc.wmgr.longCtx)
-	defer cancel()
-	return proc.out.Pour(allCtxs, newW)
+	return proc.out.Pour(ctx, newW)
 }
 
 type GetWithSize struct {
@@ -490,9 +483,7 @@ func (proc *wantProc) Pour(ctx context.Context, v interface{}) error {
 		return nil
 	}
 
-	allCtxs, cancel := onecontext.Merge(ctx, proc.rootCtx, proc.wmgr.longCtx)
-	defer cancel()
-	err := proc.out.Pour(allCtxs, mOut)
+	err := proc.out.Pour(ctx, mOut)
 	return errors.Wrap(err, "error responding to wants")
 }
 

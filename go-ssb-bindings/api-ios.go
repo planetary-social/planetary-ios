@@ -48,6 +48,7 @@ var versionString *C.char
 func init() {
 	versionString = C.CString("beta1")
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
+	log = kitlog.With(log, "warning", "pre-init")
 }
 
 // globals
@@ -176,6 +177,8 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		return false
 	}
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(io.MultiWriter(os.Stderr, logFile)))
+	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
+	log = kitlog.With(log, "ts", kitlog.TimestampFormat(time.Now, swiftLikeFormat))
 
 	if cfg.Hops == 0 || cfg.Hops > 3 {
 		level.Warn(log).Log("event", "bot init", "msg", "invalid hops setting, defaulting to 1", "got", cfg.Hops)
@@ -350,12 +353,11 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		return nil
 	}))
 
+	sbot.WaitUntilIndexesAreSynced()
 	log.Log("event", "serving", "self", sbot.KeyPair.Id.Ref()[1:5], "addr", listenAddr)
 	go func() {
 		srvErr := sbot.Network.Serve(longCtx)
-		// stopErr := Stop()
 		log.Log("event", "sbot node.Serve returned", "srvErr", srvErr)
-		shutdown()
 	}()
 	return true
 }
