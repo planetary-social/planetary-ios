@@ -206,3 +206,10 @@
 "Error.login" = "The peer to peer engine failed to start. Please try turning the app off and on again to see if that fixes it.";
 "Error.unexpected" = "Something unexpected happened.";
 "Error.supportNotConfigured" = "Support is not configured.";
+
+"Channel.one" = "channel";
+"Channel.many" = "channels";
+"Channel.lastUpdated" = "last updated";
+
+"Post.one" = "post";
+"Post.many" = "posts";
