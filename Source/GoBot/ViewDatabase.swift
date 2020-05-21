@@ -887,7 +887,7 @@ class ViewDatabase {
                 .join(self.msgs, on: self.msgs[colMessageID] == self.tangles[colMessageRef])
                 .join(self.authors, on: self.msgs[colAuthorID] == self.authors[colID])
                 .join(self.abouts, on: self.authors[colID] == self.abouts[colAboutID])
-                .filter(colMsgType == ContentType.post.rawValue)
+                .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue)
                 .filter(colRoot == msgID)
 
             let count = try self.openDB!.scalar(replies.count)
@@ -924,7 +924,7 @@ class ViewDatabase {
             .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.tangles[colMessageRef])
             .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.tangles[colMessageRef])
-            .filter(colMsgType == ContentType.post.rawValue)
+            .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue )
             .filter(colRoot == msgID)
             .filter(colHidden == false)
         
