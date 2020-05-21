@@ -56,4 +56,3 @@ extension Text {
 }
 
 Text.writeFiles(to: "/Source/Localization", locale: "en", translations: [])
-
