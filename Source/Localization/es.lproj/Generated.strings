@@ -1,3 +1,5 @@
+
+
 "Text.planetary" = "Planetary";
 "Text.error" = "Ups";
 "Text.cancel" = "Cancelar";
@@ -178,6 +180,10 @@
 "ManagePubs.header" = "Pubs";
 "ManagePubs.title" = "Administrar Pubs";
 "ManagePubs.footer" = "Los pubs son servidores de retransmisión que distribuyen mensajes a través de la red Scuttlebutt. Tú eres conectado automáticamente a pubs de Planetary, pero te puedes conectar a otros si prefieres, o incluso gestionar uno tú mismo.";
+"ManagePubs.addingPubs" = "Agregar Pubs";
+"ManagePubs.yourPubs" = "Tus Pubs";
+"ManagePubs.lastWorked" = "Última conexión";
+"ManagePubs.pasteAddress" = "Pega aquí la invitación";
 
 "Preview.title" = "Configuración avanzada";
 "Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
