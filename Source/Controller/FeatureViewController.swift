@@ -64,7 +64,7 @@ class FeatureViewController: UINavigationController {
     // MARK: Actions
 
     @objc func profileButtonTouchUpInside() {
-        Analytics.trackDidTapButton(buttonName: "menu")
+        Analytics.shared.trackDidTapButton(buttonName: "menu")
         AppController.shared.showMenuViewController()
     }
 }

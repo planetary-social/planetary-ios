@@ -54,8 +54,7 @@ extension Onboarding {
             return
         }
         // TODO: this code is not run during APITests but should be called in test40_invite_pubs https://app.asana.com/0/0/1134329918920786/f
-        PubAPI().invitePubsToFollow(identity) {
-            success, error in
+        PubAPI.shared.invitePubsToFollow(identity) { success, error in
             completion(success, error)
         }
     }

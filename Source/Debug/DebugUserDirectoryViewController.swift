@@ -47,12 +47,13 @@ class DebugUserDirectoryViewController: DebugTableViewController {
             {
                 cell in
                 cell.showActivityIndicator()
-                VerseAPI.directory() {
-                    [weak self] people, error in
+                DirectoryAPI.shared.directory(includeMe: true) { [weak self] people, error in
                     Log.optional(error)
-                    self?.users = people
-                    self?.updateSettings()
-                    cell.hideActivityIndicator()
+                    DispatchQueue.main.async { [weak self] in
+                        self?.users = people
+                        self?.updateSettings()
+                        cell.hideActivityIndicator()
+                    }
                 }
             })]
 
@@ -98,7 +99,7 @@ class DebugUserDirectoryViewController: DebugTableViewController {
                     return
                 }
                 cell.showActivityIndicator()
-                VerseAPI.directory(show: me) {
+                DirectoryAPI.shared.directory(show: me) {
                     [weak self] result, error in
                     cell.detailTextLabel?.text = result.successOrFailed
                     self?.errorTextView.text = self?.string(for: error)
@@ -116,7 +117,7 @@ class DebugUserDirectoryViewController: DebugTableViewController {
                     self.errorTextView.text = "Cannot join without an Onboarding.Context.person or logged in Identity"
                     return
                 }
-                VerseAPI.directory(hide: me) {
+                DirectoryAPI.shared.directory(hide: me) {
                     [weak self] result, error in
                     cell.detailTextLabel?.text = result.successOrFailed
                     self?.errorTextView.text = self?.string(for: error)

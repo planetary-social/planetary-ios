@@ -12,15 +12,7 @@ import UIKit
 /// A null implementation of the SupportService protocol suitable
 /// for use with unit or API test targets.
 
-typealias Support = NullSupport
-
 class NullSupport: SupportService {
-    
-    static var shared: SupportService = NullSupport()
-    
-    func configure() {
-        
-    }
     
     func mainViewController() -> UIViewController? {
         return nil
@@ -46,18 +38,12 @@ class NullSupport: SupportService {
         return nil
     }
     
-
-}
-
-extension SupportArticle {
-    
-    init?(rawValue: String) {
-        return nil
-    }
-    
-    var rawValue: String {
+    func id(for article: SupportArticle) -> String {
         return ""
     }
     
+    func article(for id: String) -> SupportArticle? {
+        return nil
+    }
+    
 }
-

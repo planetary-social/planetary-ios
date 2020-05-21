@@ -56,7 +56,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         
         Log.info("Handling Remote notification")
-        Analytics.trackDidReceiveRemoteNotification()
+        Analytics.shared.trackDidReceiveRemoteNotification()
 
         // badge is incremented regardless of foreground/background
         UIApplication.shared.applicationIconBadgeNumber += 1

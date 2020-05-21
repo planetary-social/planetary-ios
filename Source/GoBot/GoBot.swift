@@ -553,7 +553,7 @@ class GoBot: Bot {
                     params["repair_failed"] = e.localizedDescription
                 }
 
-                Analytics.track(event: .did,
+                Analytics.shared.track(event: .did,
                                  element: .bot,
                                  name: AnalyticsEnums.Name.repair.rawValue,
                                  params: params)

@@ -24,7 +24,7 @@ class PreviewSettingsViewController: DebugTableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Advanced Settings")
-        Analytics.trackDidShowScreen(screenName: "advanced_settings")
+        Analytics.shared.trackDidShowScreen(screenName: "advanced_settings")
     }
 
     internal override func updateSettings() {

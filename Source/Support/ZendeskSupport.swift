@@ -9,54 +9,37 @@
 import Foundation
 import ZendeskCoreSDK
 import ZendeskSDK
-
-typealias Support = ZendeskSupport
+import Keys
 
 class ZendeskSupport: SupportService {
     
-    static var shared: SupportService = ZendeskSupport()
-    
-    private var configured: Bool = false
     private let zendeskURL = "https://planetarysupport.zendesk.com"
     private let tags = [Bundle.current.versionAndBuild, UIDevice.current.model, UIDevice.current.systemName, UIDevice.current.systemVersion]
     
-    func configure() {
-        guard let appId = Environment.Zendesk.appId, let clientId = Environment.Zendesk.clientId else {
-            configured = false
-            return
-        }
+    init() {
         Log.info("Configuring Zendesk...")
-        Zendesk.initialize(appId: appId,
-                           clientId: clientId,
+        let keys = PlanetaryKeys()
+        Zendesk.initialize(appId: keys.zendeskAppID,
+                           clientId: keys.zendeskClientID,
                            zendeskUrl: zendeskURL)
         SupportUI.initialize(withZendesk: Zendesk.instance)
         Zendesk.instance?.setIdentity(ZendeskCoreSDK.Identity.createAnonymous())
         Theme.currentTheme.primaryColor = UIColor.tint.default
-        configured = true
     }
     
     func mainViewController() -> UIViewController? {
-        guard configured else {
-            return nil
-        }
         return ZDKHelpCenterUi.buildHelpCenterOverviewUi()
     }
     
     func articleViewController(_ article: SupportArticle) -> UIViewController? {
-        guard configured else {
-            return nil
-        }
         let config = HelpCenterUiConfiguration()
         config.showContactOptions = false
         config.showContactOptionsOnEmptySearch = false
-        return ZDKHelpCenterUi.buildHelpCenterArticleUi(withArticleId: article.rawValue,
+        return ZDKHelpCenterUi.buildHelpCenterArticleUi(withArticleId: id(for: article),
                                                         andConfigs: [config])
     }
     
     func myTicketsViewController(from reporter: Identity?) -> UIViewController? {
-        guard self.configured else {
-            return nil
-        }
         let reporter = reporter ?? Identity.notLoggedIn
         let config = RequestUiConfiguration()
         config.tags = tags + [reporter]
@@ -76,9 +59,6 @@ class ZendeskSupport: SupportService {
     }
     
     func newTicketViewController(from reporter: Identity, reporting identity: Identity, name: String) -> UIViewController? {
-        guard self.configured else {
-            return nil
-        }
         let attachment = RequestAttachment(filename: name,
                                            data: identity.utf8data(),
                                            fileType: .plain)
@@ -89,9 +69,6 @@ class ZendeskSupport: SupportService {
     }
     
     func newTicketViewController(from reporter: Identity, reporting content: KeyValue, reason: SupportReason, view: UIView?) -> UIViewController? {
-        guard self.configured else {
-            return nil
-        }
         // note that attachment order is important and it is
         // preferred that people see the screenshot first
         var attachments: [RequestAttachment] = []
@@ -101,6 +78,38 @@ class ZendeskSupport: SupportService {
                                              subject: .contentReport,
                                              attachments: attachments,
                                              tags: [reason.rawValue])
+    }
+    
+    func id(for article: SupportArticle) -> String {
+        switch article {
+        case .whatIsPlanetary:
+            return ids.whatIsPlanetary
+        case .faq:
+            return ids.faq
+        case .privacyPolicy:
+            return ids.privacyPolicy
+        case .editPost:
+            return ids.editPost
+        case .termsOfService:
+            return ids.termsOfService
+        }
+    }
+    
+    func article(for id: String) -> SupportArticle? {
+        switch id {
+        case ids.whatIsPlanetary:
+            return .whatIsPlanetary
+        case ids.faq:
+            return .faq
+        case ids.privacyPolicy:
+            return .privacyPolicy
+        case ids.editPost:
+            return .editPost
+        case ids.termsOfService:
+            return .termsOfService
+        default:
+            return nil
+        }
     }
 
 }
@@ -201,39 +210,3 @@ fileprivate struct SupportArticleID {
 }
 
 fileprivate let ids = SupportArticleID()
-
-extension SupportArticle {
-    
-    init?(rawValue: String) {
-        switch rawValue {
-        case ids.whatIsPlanetary:
-            self = .whatIsPlanetary
-        case ids.faq:
-            self = .faq
-        case ids.privacyPolicy:
-            self = .privacyPolicy
-        case ids.editPost:
-            self = .editPost
-        case ids.termsOfService:
-            self = .termsOfService
-        default:
-            return nil
-        }
-    }
-    
-    var rawValue: String {
-        switch self {
-        case .whatIsPlanetary:
-            return ids.whatIsPlanetary
-        case .faq:
-            return ids.faq
-        case .privacyPolicy:
-            return ids.privacyPolicy
-        case .editPost:
-            return ids.editPost
-        case .termsOfService:
-            return ids.termsOfService
-        }
-    }
-    
-}

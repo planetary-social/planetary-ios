@@ -38,19 +38,19 @@ class PostReplyDelegate: KeyValueTableViewDelegate {
         // open thread
         view.postView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
             self?.pushThreadViewController(with: keyValue)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
-            Analytics.trackDidSelectItem(kindName: "post", param: "area", value: "post")
+            Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
             self?.pushThreadViewController(with: keyValue, startReplying: true)
         }
     }

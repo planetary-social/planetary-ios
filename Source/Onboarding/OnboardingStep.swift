@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import PhoneNumberKit
 import UIKit
 
 protocol OnboardingStepDelegate: class {
@@ -136,9 +135,9 @@ class OnboardingStep: NSObject {
     // MARK: Actions to override
 
     /// This is explicitly final because there should be no
-    /// changes to when the step is tracked by Analytics.
+    /// changes to when the step is tracked by Analytics.shared.
     final func track() {
-        Analytics.trackOnboarding(self.name)
+        Analytics.shared.trackOnboarding(self.name)
     }
 
     func willStart() {

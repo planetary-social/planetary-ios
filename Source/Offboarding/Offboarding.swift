@@ -27,11 +27,11 @@ class Offboarding {
         guard let configuration = AppConfiguration.current else { completion(.invalidConfiguration) ; return }
         guard configuration.identity == identity else { completion(.invalidIdentity); return }
 
-        Analytics.trackOffboardingStart()
+        Analytics.shared.trackOffboardingStart()
 
         // offboard from directory
         // errors not allowed
-        VerseAPI.directory(offboard: identity) {
+        DirectoryAPI.shared.directory(offboard: identity) {
             success, error in
             if let error = error { completion(.apiError(error)); return }
 
@@ -55,8 +55,8 @@ class Offboarding {
                     AppConfigurations.delete(configuration)
 
                     // done
-                    Analytics.trackOffboardingEnd()
-                    Analytics.forget()
+                    Analytics.shared.trackOffboardingEnd()
+                    Analytics.shared.forget()
                     
                     completion(nil)
                 }

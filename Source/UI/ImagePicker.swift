@@ -42,18 +42,18 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
 
         let library = UIAlertAction(title: Text.ImagePicker.selectFrom.text, style: .default) {
             [weak self] action in
-            Analytics.trackDidSelectAction(actionName: "photo_library")
+            Analytics.shared.trackDidSelectAction(actionName: "photo_library")
             self?.openPhotoLibrary()
         }
 
         let camera = UIAlertAction(title: Text.ImagePicker.takePhoto.text, style: .default) {
             [weak self] action in
-            Analytics.trackDidSelectAction(actionName: "camera")
+            Analytics.shared.trackDidSelectAction(actionName: "camera")
             self?.openCamera()
         }
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in
-            Analytics.trackDidSelectAction(actionName: "cancel")
+            Analytics.shared.trackDidSelectAction(actionName: "cancel")
         }
 
         self.presentingViewController?.choose(from: [library, camera, cancel])
@@ -155,7 +155,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
     {
-        Analytics.trackDidTapButton(buttonName: "choose")
+        Analytics.shared.trackDidTapButton(buttonName: "choose")
         let rect = (info[UIImagePickerController.InfoKey.cropRect] as? CGRect) ?? CGRect.zero
         let original = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         let edited = info[UIImagePickerController.InfoKey.editedImage] as? UIImage
@@ -164,7 +164,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        Analytics.trackDidTapButton(buttonName: "cancel")
+        Analytics.shared.trackDidTapButton(buttonName: "cancel")
     }
 }
 

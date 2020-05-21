@@ -11,13 +11,7 @@ import Foundation
 /// A null implementation of the CrashReportingService protocol suitable
 /// for use with unit or API test targets.
 
-typealias CrashReporting = NullCrashReporting
-
 class NullCrashReporting: CrashReportingService {
-    
-    static var shared: CrashReportingService = NullCrashReporting()
-    
-    func configure() { }
     
     func identify(about: About?, network: NetworkKey) { }
     

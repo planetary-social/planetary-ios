@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import PhoneNumberKit
 
 enum OnboardingError: Error {
 
@@ -86,7 +85,7 @@ class Onboarding {
         guard name.isValidName else { completion(nil, .invalidName); return }
         guard Bots.current.identity == nil else { completion(nil, .cannotOnboardWhileLoggedIn); return }
 
-        Analytics.trackOnboardingStart()
+        Analytics.shared.trackOnboardingStart()
 
         // create secret
         GoBot.shared.createSecret() { secret, error in
@@ -104,11 +103,11 @@ class Onboarding {
 
             // TODO https://app.asana.com/0/0/1134329918920789/f
             // TODO abstract GoBot network configuration
-            #if APITESTS
+            if CommandLine.arguments.contains("use-ci-network") {
                 configuration.network = NetworkKey.integrationTests
-            #else
+            } else {
                 configuration.network = NetworkKey.ssb
-            #endif
+            }
 
             // login to bot
             
@@ -124,24 +123,10 @@ class Onboarding {
                     return
                 }
 
-                // don't spam the directory until we have one for CI
-                #if APITESTS
-                    let about = About(about: secret.identity, name: name)
-                    context.bot.publish(content: about) {
-                        _, error in
-                        if let error = error { completion(nil, .botError(error)); return }
-                        // done
-                        context.about = about
-                        completion(context, nil)
-                    }
-                    return
-                #endif
-
-
                 // TODO abstract Verse Directory API
                 // TODO https://app.asana.com/0/0/1134329918920788/f
                 // join verse
-                VerseAPI.join(identity: secret.identity, name: name, birthdate: birthdate, phone: phone) { person, error in
+                DirectoryAPI.shared.join(identity: secret.identity, name: name, birthdate: birthdate, phone: phone) { person, error in
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     
@@ -162,7 +147,7 @@ class Onboarding {
                         }
 
                         CrashReporting.shared.identify(about: about, network: configuration.network!)
-                        Analytics.identify(about: about, network: configuration.network!)
+                        Analytics.shared.identify(about: about, network: configuration.network!)
                         
                         // done
                         context.about = about
@@ -187,7 +172,7 @@ class Onboarding {
         AppConfigurations.current.save()
 
         // mark as started
-        Analytics.trackOnboardingEnd()
+        Analytics.shared.trackOnboardingEnd()
         Onboarding.set(status: .started, for: secret.identity)
     }
 
@@ -200,7 +185,7 @@ class Onboarding {
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
-            Analytics.forget()
+            Analytics.shared.forget()
             
             completion()
         }
@@ -237,10 +222,10 @@ class Onboarding {
                 context.about = about
                 
                 CrashReporting.shared.identify(about: about, network: context.network)
-                Analytics.identify(about: about, network: context.network)
+                Analytics.shared.identify(about: about, network: context.network)
 
                 // get Person for identity
-                VerseAPI.me() {
+                DirectoryAPI.shared.me() {
                     person, error in
                     guard let person = person else { completion(context, .apiError(error)); return }
                     context.person = person

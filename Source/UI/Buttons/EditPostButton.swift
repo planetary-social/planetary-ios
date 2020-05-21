@@ -18,16 +18,16 @@ class EditPostButton: IconButton {
     }
 
     override func defaultAction() {
-        Analytics.trackDidTapButton(buttonName: "options")
+        Analytics.shared.trackDidTapButton(buttonName: "options")
         
         let copy = UIAlertAction(title: Text.copyMessageIdentifier.text, style: .default) { [post] _ in
-            Analytics.trackDidSelectAction(actionName: "copy_message_identifier")
+            Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
             UIPasteboard.general.string = post.key
             AppController.shared.showToast(Text.identifierCopied.text)
         }
         
         let delete = UIAlertAction(title: Text.deletePost.text, style: .destructive) { _ in
-            Analytics.trackDidSelectAction(actionName: "delete_post")
+            Analytics.shared.trackDidSelectAction(actionName: "delete_post")
             guard let controller = Support.shared.articleViewController(.editPost) else {
                 AppController.shared.alert(style: .alert,
                                            title: Text.error.text,

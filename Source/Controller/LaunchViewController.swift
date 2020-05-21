@@ -30,7 +30,7 @@ class LaunchViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Launch")
-        Analytics.trackDidShowScreen(screenName: "launch")
+        Analytics.shared.trackDidShowScreen(screenName: "launch")
         self.launch()
     }
 
@@ -78,7 +78,7 @@ class LaunchViewController: UIViewController {
 
         // TODO this should be an analytics track()
         // TODO include app installation UUID
-        // Analytics.app(launch)
+        // Analytics.shared.app(launch)
         Log.info("Launching with configuration '\(configuration.name)'")
 
         // note that hmac key can be nil to switch it off
@@ -86,8 +86,7 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         self.launchIntoMain()
-        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) {
-            loginError in
+        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { [weak self] loginError in
             
             var error = loginError
             
@@ -128,12 +127,13 @@ class LaunchViewController: UIViewController {
                 AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
-            bot.about { (about, aboutErr) in
+            bot.about { [weak self] (about, aboutErr) in
                 Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: aboutErr)
                 CrashReporting.shared.identify(about: about, network: network)
-                Analytics.identify(about: about, network: network)
+                Analytics.shared.identify(about: about, network: network)
+                self?.launchIntoMain()
             }
         }
     }

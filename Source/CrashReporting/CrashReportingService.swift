@@ -9,16 +9,9 @@
 import Foundation
 
 /// A protocol that defines a stateless crash reporting API for use across
-/// all layers of an application.  Clients are encouraged to
-/// define `CrashReporting` to point to a specific implementation, like
-/// `typealias CrashReporting = BugsnagCrashReporting`.
-/// This allows the implementation to be changed on a per target level based on needs.
+/// all layers of an application.
 
 protocol CrashReportingService {
-    
-    static var shared: CrashReportingService  { get }
-    
-    func configure()
     
     func identify(about: About?, network: NetworkKey)
     func forget()

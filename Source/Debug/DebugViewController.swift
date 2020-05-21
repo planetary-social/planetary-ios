@@ -25,7 +25,7 @@ class DebugViewController: DebugTableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Debug")
-        Analytics.trackDidShowScreen(screenName: "debug")
+        Analytics.shared.trackDidShowScreen(screenName: "debug")
     }
 
     internal override func updateSettings() {
@@ -229,7 +229,7 @@ class DebugViewController: DebugTableViewController {
             {
                 cell in
                 cell.accessoryType = .disclosureIndicator
-                cell.detailTextLabel?.text = "\(UserDefaults.standard.trackedEvents().count) / \(Analytics.lexicon().count)"
+                cell.detailTextLabel?.text = "\(UserDefaults.standard.trackedEvents().count) / \(Analytics.shared.lexicon().count)"
             },
                                              actionClosure:
             {
@@ -382,19 +382,19 @@ class DebugViewController: DebugTableViewController {
             [unowned self] cell in
             let alertController = UIAlertController(title: "Share Logs", message: nil, preferredStyle: .actionSheet)
             alertController.addAction(UIAlertAction(title: "All files", style: .default, handler: { (_) in
-                Analytics.trackDidShareLogs()
+                Analytics.shared.trackDidShareLogs()
                 self.shareLogs(shouldZip: false, allFiles: true, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "All files in a ZIP file", style: .default, handler: { (_) in
-                Analytics.trackDidShareLogs()
+                Analytics.shared.trackDidShareLogs()
                 self.shareLogs(shouldZip: true, allFiles: true, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Recent files", style: .default, handler: { (_) in
-                Analytics.trackDidShareLogs()
+                Analytics.shared.trackDidShareLogs()
                 self.shareLogs(shouldZip: false, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Recent files in a ZIP file", style: .default, handler: { (_) in
-                Analytics.trackDidShareLogs()
+                Analytics.shared.trackDidShareLogs()
                 self.shareLogs(shouldZip: true, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -553,7 +553,7 @@ class DebugViewController: DebugTableViewController {
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
-            Analytics.forget()
+            Analytics.shared.forget()
             CrashReporting.shared.forget()
             
             AppController.shared.launch()
@@ -584,7 +584,7 @@ class DebugViewController: DebugTableViewController {
                      isDestructive: true,
                      confirmTitle: "Logout",
                      confirmClosure: {
-                        Analytics.trackDidLogout()
+                        Analytics.shared.trackDidLogout()
                         self.applyConfigurationAndDismiss()
                         
         })
@@ -595,7 +595,7 @@ class DebugViewController: DebugTableViewController {
                      isDestructive: true,
                      confirmTitle: "Logout and relaunch",
                      confirmClosure: {
-                        Analytics.trackDidLogoutAndOnboard()
+                        Analytics.shared.trackDidLogoutAndOnboard()
                         self.clearConfigurationAndRelaunch()
         })
     }

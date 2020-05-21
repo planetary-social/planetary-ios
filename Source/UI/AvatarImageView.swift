@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Keys
 
 class AvatarImageView: ImageView {
 
@@ -39,9 +40,8 @@ class AvatarImageView: ImageView {
 
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 3)
         
-        if let token = Environment.Verse.blobToken {
-            request.add(["planetary-blob-authorize": token])
-        }
+        let keys = PlanetaryKeys()
+        request.add(["planetary-blob-authorize": keys.verseBlobToken])
         
         Log.info("url: \(url)")
 

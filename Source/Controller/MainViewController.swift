@@ -116,15 +116,15 @@ extension MainViewController: UITabBarControllerDelegate {
         
         switch targetIndex {
         case 0:
-            Analytics.trackDidTapTab(tabName: "home")
+            Analytics.shared.trackDidTapTab(tabName: "home")
         case 1:
-            Analytics.trackDidTapTab(tabName: "everyone")
+            Analytics.shared.trackDidTapTab(tabName: "everyone")
         case 2:
-            Analytics.trackDidTapTab(tabName: "notifications")
+            Analytics.shared.trackDidTapTab(tabName: "notifications")
         case 3:
-            Analytics.trackDidTapTab(tabName: "channels")
+            Analytics.shared.trackDidTapTab(tabName: "channels")
         case 4:
-            Analytics.trackDidTapTab(tabName: "directory")
+            Analytics.shared.trackDidTapTab(tabName: "directory")
         default:
             break
         }

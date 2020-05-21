@@ -126,11 +126,11 @@ extension AppController {
         // TODO make sure this gets called when identities are switched or added
         let identities = AppConfigurations.current.compactMap { $0.identity }
         for identity in identities {
-            PushAPI.update(token, for: identity) {
-                _, _ in
+            PushAPI.shared.update(token, for: identity) { _, _ in
+                
             }
         }
-        Analytics.updatePushToken(pushToken: token)
+        Analytics.shared.updatePushToken(pushToken: token)
     }
 
     /// Asks the main view controller to update the notification tab icon.

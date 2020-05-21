@@ -47,7 +47,7 @@ class BlockButton: PillButton {
             return
         }
         
-        Analytics.trackDidTapButton(buttonName: "block")
+        Analytics.shared.trackDidTapButton(buttonName: "block")
 
         let shouldBlock = !self.isSelected
 
@@ -67,7 +67,7 @@ class BlockButton: PillButton {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if error != nil {
-                    Analytics.trackDidBlockIdentity()
+                    Analytics.shared.trackDidBlockIdentity()
                 }
                 
                 complete()
@@ -78,7 +78,7 @@ class BlockButton: PillButton {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if error != nil {
-                    Analytics.trackDidUnblockIdentity()
+                    Analytics.shared.trackDidUnblockIdentity()
                 }
                 
                 complete()

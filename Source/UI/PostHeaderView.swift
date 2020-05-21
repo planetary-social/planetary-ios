@@ -110,7 +110,7 @@ class PostHeaderView: UIView {
 
     @objc private func selectAboutIdentity() {
         guard let identity = self.identity else { return }
-        Analytics.trackDidTapButton(buttonName: "avatar")
+        Analytics.shared.trackDidTapButton(buttonName: "avatar")
         AppController.shared.pushViewController(for: .about, with: identity)
     }
 }

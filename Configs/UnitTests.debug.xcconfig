@@ -11,3 +11,6 @@
 
 #include "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"
 #include "Shared.debug.xcconfig"
+
+SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
+OTHER_SWIFT_FLAGS = $(inherited) -D UNIT_TESTS
