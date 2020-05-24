@@ -4,7 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.9.21] - 2020-05-10
+## [0.9.23] - 2020-05-23
+## Added:
+- Updated tab bar icon assets
+- Adding localization for Castillian Spanish
+- Add Uruguayan and Argentinian Rioplatenses localizations
+- Add basic support for UI Tests
+- Add support for displaying likes
+- Displaying Pub Names
+
+### Fixed:
+- Fixed bug with background sync on new notifications
+- Optimize onboarding sync and refresh
+- Clean up analytics for optional mixpanel metrics
+- Change DBTests so that take into account likes
+- update to go-ssb rc4
+- rework bot.login & logout > login flow
+- add timestamp to gobot logging
+- fix timestamp setup on log files
+- make timestamp swift-like but it's still UTC
+- support re-syncing of existing key-pair
+- re-do failed login dialog
+- re-work restart on bot.login failure
+- update english error text
+- fixing it so the reply count includes likes
+- fix closing of contacts index
+- stop open connections during fsck
+- reduce number of sync connections
+- gobot: start in the background
+- gobot.login: refactor defer->completion flow
+
+## [0.9.22] - 2020-05-10
 ### Added:
 - New system for loading content so the UI updates faster and you can scroll back through history as far as you want.
 - Changed the explore tab to show replies and new posts to help with discovering new content.
