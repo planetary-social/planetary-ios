@@ -85,7 +85,9 @@ class LaunchViewController: UIViewController {
         guard let network = configuration.network else { return }
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
+        
         self.launchIntoMain()
+        
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { [weak self] loginError in
             
             var error = loginError
@@ -127,13 +129,12 @@ class LaunchViewController: UIViewController {
                 AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
-            bot.about { [weak self] (about, aboutErr) in
+            bot.about { (about, aboutErr) in
                 Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: aboutErr)
                 CrashReporting.shared.identify(about: about, network: network)
                 Analytics.shared.identify(about: about, network: network)
-                self?.launchIntoMain()
             }
         }
     }

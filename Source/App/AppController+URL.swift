@@ -26,7 +26,7 @@ extension AppController {
     // TODO how to extract identifier and content type?
     func open(identifier: Identifier) {
         switch identifier.sigil {
-            case .blob: self.pushViewController(for: identifier)
+            case .blob: self.pushBlobViewController(for: identifier)
             default: self.pushViewController(for: .about, with: identifier)
         }
     }
@@ -46,10 +46,23 @@ extension AppController {
         let controller = AboutViewController(with: identifier)
         self.push(controller, animated: true)
     }
+    
 
-    func pushViewController(for blob: BlobIdentifier) {
+    func pushBlobViewController(for blob: BlobIdentifier) {
         let controller = BlobViewController(with: blob)
         self.push(controller)
+    }
+    
+    func pushThreadViewController(for identifier: MessageIdentifier) {
+        Bots.current.thread(rootKey: identifier) { (root, _, error) in
+            if let root = root {
+                let controller = ThreadViewController(with: root)
+                self.push(controller)
+            } else if let error = error {
+                self.alert(error: error)
+            }
+        }
+        
     }
 
     func pushChannelViewController(for hashtag: String) {

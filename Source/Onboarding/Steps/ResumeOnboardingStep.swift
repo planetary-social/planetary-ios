@@ -55,8 +55,20 @@ class ResumeOnboardingStep: OnboardingStep {
             [weak self] action in
             self?.didStart()
         }
+        
+        let reset = UIAlertAction(title: Text.Onboarding.startOver.text,
+                                  style: .destructive) { _ in
+                                    let configuration = AppConfiguration.current
+                                    Bots.current.logout { _ in
+                                        configuration?.unapply()
+                                        if let configuration = configuration {
+                                            AppConfigurations.delete(configuration)
+                                        }
+                                        AppController.shared.relaunch()
+                                    }
+        }
 
-        AppController.shared.choose(from: [tryAgain],
+        AppController.shared.choose(from: [tryAgain, reset],
                                     style: .alert,
                                     title: Text.Onboarding.somethingWentWrong.text,
                                     message: Text.Onboarding.resumeRetryMessage.text)
