@@ -467,13 +467,22 @@ class GoBotInternal {
         u.appendPathComponent(dir)
         u.appendPathComponent(rest)
         
+        var gsUrl = URL(string: "https://storage.cloud.google.com/mainnet-blobs/")
+        gsUrl?.appendPathComponent(dir)
+        gsUrl?.appendPathComponent(rest)
+
+        
         do {
             let data = try Data(contentsOf: u)
             return data
         } catch {
             do {
+                // dont have it 
+                Log.info("Blob Not Found - Loading: " + gsUrl!.absoluteString)
                 try blobsWant(ref: ref)
-                throw BotError.blobUnavailable
+                
+                guard let data = try? blobFromCloud(url: gsUrl!) else { throw BotError.blobUnavailable }
+                return data
             } catch {
                 throw error
             }
@@ -488,6 +497,21 @@ class GoBotInternal {
         if !worked {
             throw GoBotError.unexpectedFault("BlobsWant failed")
         }
+    }
+    
+   
+
+    
+    // we're having problems with blobs over muxrpc so this is a backup
+    // it'd be better if we fix blob loading over ssb.
+    func blobFromCloud(url: URL) throws -> Data {
+        //guard let imageURL = URL(string: url) else { return }
+
+        // Not sure how to make this work async
+        //DispatchQueue.global().async  throws -> Data {
+            guard let imageData = try? Data(contentsOf: url) else { throw BotError.blobUnavailable  }
+            return imageData
+        //}
     }
     
     // retreive a list of stored feeds and their current sequence number
