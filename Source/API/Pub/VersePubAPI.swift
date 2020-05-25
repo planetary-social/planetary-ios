@@ -53,7 +53,7 @@ class VersePubAPI: PubAPIService {
 extension VersePubAPI: API {
     
     var headers: APIHeaders {
-        return ["planetary-directory-authorize": self.token]
+        return ["Verse-Authorize-Pub": self.token]
     }
 
     func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {

@@ -218,7 +218,11 @@ class Onboarding {
             // get About for context identity
             Bots.current.about(identity: context.identity) {
                 about, error in
-                guard let about = about else { completion(context, .botError(error)); return }
+                guard let about = about else {
+                    // Known case, pub api call failed in previous onboarding
+                    completion(context, .botError(error))
+                    return
+                }
                 context.about = about
                 
                 CrashReporting.shared.identify(about: about, network: context.network)

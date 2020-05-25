@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:planetary.social</string>
+		<string>applinks:planetary.link</string>
 	</array>
 </dict>
 </plist>

@@ -138,13 +138,19 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
             }
 
             // invite pubs
-            Onboarding.invitePubsToFollow(context.identity) {
-                [weak self] success, error in
+            Onboarding.invitePubsToFollow(context.identity) { [weak self] success, error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
-                self?.view.lookReady()
-                guard success else { return }
-                self?.next()
+                DispatchQueue.main.async { [weak self] in
+                    self?.view.lookReady()
+                    if success {
+                        self?.next()
+                    } else if let error = error {
+                        AppController.shared.alert(error: error)
+                    } else {
+                        AppController.shared.alert(error: AppError.unexpected)
+                    }
+                }
             }
         }
     }
