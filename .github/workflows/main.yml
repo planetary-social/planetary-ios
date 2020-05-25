@@ -19,7 +19,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Dependencies
-      run: pod install
+      run: pod install --repo-update
     - name: Build
       run: xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.4.1"
     - name: Test
