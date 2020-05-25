@@ -97,6 +97,12 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 	}
 
 	noNulled := mfr.FilterFunc(func(ctx context.Context, v interface{}) (bool, error) {
+		sw, ok := v.(margaret.SeqWrapper)
+		if ok {
+			if err, ok := sw.Value().(error); ok && margaret.IsErrNulled(err) {
+				return false, nil
+			}
+		}
 		if err, ok := v.(error); ok {
 			if margaret.IsErrNulled(err) {
 				return false, nil
@@ -151,6 +157,9 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 		if err != nil {
 			if luigi.IsEOS(err) {
 				break
+			}
+			if margaret.IsErrNulled(errors.Cause(err)) {
+				continue
 			}
 			return nil, errors.Wrapf(err, "drainLog: failed to drain log msg:%d", i)
 		}
