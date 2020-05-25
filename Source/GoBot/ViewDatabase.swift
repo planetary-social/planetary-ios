@@ -1561,7 +1561,7 @@ class ViewDatabase {
                     ))
                 } else {
                     do {
-                        try db.run(self.msgs.insert(
+                        try db.run(self.msgs.insert(or: .replace,
                             colRXseq <- lastRxSeq,
                             colMessageID <- msgKeyID,
                             colAuthorID <- authorID,
@@ -1570,17 +1570,6 @@ class ViewDatabase {
                             colReceivedAt <- msg.timestamp,
                             colClaimedAt <- claimed
                         ))
-                    
-                    } catch Result.error(let errMsg, let errCode, _) {
-                        // the constraints on the table are for uniquness:
-                        // 1) message key/id
-                        // 2) (author,sequence no)
-                        // while (1) always means duplicate message (2) can also mean fork
-                        // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
-                        if errCode == SQLITE_CONSTRAINT {
-                            throw ViewDatabaseError.messageConstraintViolation(msg.value.author, errMsg)
-                        }
-                        throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
                     } catch {
                         throw error
                     }
