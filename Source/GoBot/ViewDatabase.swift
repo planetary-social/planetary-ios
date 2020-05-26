@@ -188,7 +188,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
@@ -1038,7 +1038,7 @@ class ViewDatabase {
         return try self.mapQueryToKeyValue(qry: repliesQry)
     }
 
-    func mentions(limit: Int = 200, wantPrivate: Bool = false) throws -> KeyValues {
+    func mentions(limit: Int = 200, wantPrivate: Bool = false, onlyImages: Bool = true) throws -> KeyValues {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1054,6 +1054,9 @@ class ViewDatabase {
             .filter(colHidden == false)
             .order(colClaimedAt.desc)
             .limit(limit)
+        
+        
+        
         return try self.mapQueryToKeyValue(qry: qry)
     }
 
@@ -1832,7 +1835,8 @@ class ViewDatabase {
                 name: ""
             )
         }
-        
+        /*
+        // TODO: We don't =populate mentions_images... so why are we looking it up?
         let imgMentionQry = self.mentions_image
             .where(colMessageRef == msgID)
             .where(colImage != "")
@@ -1846,6 +1850,7 @@ class ViewDatabase {
                 name: try row.get(colName) ?? ""
             )
         }
+        */
         
         return feedMentions + msgMentions + imgMentions
     }
@@ -1875,7 +1880,14 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let blobs: [Blob] = try db.prepare(self.post_blobs.where(colMessageRef == msgID)).map {
+        
+        //let supportedMimeTypes = [MIMEType.jpeg, MIMEType.png]
+        
+        let qry = self.post_blobs.where(colMessageRef == msgID)
+            .filter(colMetaMimeType == "image/jpeg" || colMetaMimeType == "image/png" )
+        
+        
+        let blobs: [Blob] = try db.prepare(qry).map {
             row in
             let img_hash = try row.get(colIdentifier)
 
