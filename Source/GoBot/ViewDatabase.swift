@@ -767,6 +767,8 @@ class ViewDatabase {
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
+        } else {
+            qry = try self.filterNotFollowingPeople(qry: qry)
         }
         
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
@@ -815,6 +817,21 @@ class ViewDatabase {
         }
         return qry.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
     }
+    
+    
+    private func filterNotFollowingPeople(qry: Table) throws -> Table {
+        // get the list of people that the active user follows
+        let myFollowsQry = self.contacts
+            .select(colContactID)
+            .filter(colAuthorID == self.currentUserID)
+            .filter(colContactState == 1)
+        var myFollows: [Int64] = [self.currentUserID] // and from self as well
+        for row in try self.openDB!.prepare(myFollowsQry) {
+            myFollows.append(row[colContactID])
+        }
+        return qry.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
+    }
+    //table.filter(!(array.contains(id)))
 
     private func mapQueryToKeyValue(qry: Table) throws -> [KeyValue] {
         guard let db = self.openDB else {
