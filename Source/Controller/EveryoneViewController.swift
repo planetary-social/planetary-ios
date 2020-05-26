@@ -35,6 +35,21 @@ class EveryoneViewController: ContentViewController {
      }()
     
      private lazy var delegate = PostReplyPaginatedDelegate(on: self)
+    
+     private lazy var floatingRefreshButton: UIButton = {
+        let button = UIButton.forAutoLayout()
+        let titleAttributes = [NSAttributedString.Key.font: UIFont.verse.floatingRefresh,
+                               NSAttributedString.Key.foregroundColor: UIColor.white]
+        let attributedTitle = NSAttributedString(string: "REFRESH", attributes: titleAttributes)
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        button.backgroundColor = UIColor.tint.default
+        button.contentEdgeInsets = .floatingRefreshButton
+        button.addTarget(self,
+                         action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
+                         for: .touchUpInside)
+        button.isHidden = true
+        return button
+     }()
 
      private lazy var tableView: UITableView = {
          let view = UITableView.forVerse()
@@ -112,36 +127,47 @@ class EveryoneViewController: ContentViewController {
          return timer
      }()
 
-    
+    // MARK: Lifecycle
+
     init() {
         super.init(scrollable: false, title: .explore)
-        /*
         let imageView = UIImageView(image: UIImage(named: "title"))
         imageView.contentMode = .scaleAspectFit
         let view = UIView.forAutoLayout()
         Layout.fill(view: view, with: imageView, respectSafeArea: false)
         self.navigationItem.titleView = view
-     */
         self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
-
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+        super.init(scrollable: scrollable, title: title, dynamicTitle: dynamicTitle)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
+        
+        Layout.centerHorizontally(self.floatingRefreshButton, in: self.view)
+        self.floatingRefreshButton.constrainHeight(to: 32)
+        self.floatingRefreshButton.roundedCorners(radius: 16)
+        self.floatingRefreshButton.constrainTop(toTopOf: self.tableView, constant: 8)
+        
         self.addLoadingAnimation()
         self.load()
     }
+
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Everyone")
         Analytics.shared.trackDidShowScreen(screenName: "everyone")
     }
+    
+    // MARK: Load and refresh
     
     func load(animated: Bool = false) {
         Bots.current.everyone() { [weak self] proxy, error in
@@ -217,6 +243,20 @@ class EveryoneViewController: ContentViewController {
          control.beginRefreshing()
          self.refreshAndLoad()
      }
+    
+    @objc func floatingRefreshButtonDidTouchUpInside(button: UIButton) {
+        self.refreshControl.beginRefreshing()
+        self.refreshControl.sendActions(for: .valueChanged)
+        self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height),
+                                        animated: true)
+        UIView.animate(withDuration: 1.0,
+                       delay: 0,
+                       usingSpringWithDamping: CGFloat(0.20),
+                       initialSpringVelocity: CGFloat(6.0),
+                       options: UIView.AnimationOptions.allowUserInteraction,
+                       animations: { self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0) },
+                       completion: { _ in self.floatingRefreshButton.isHidden = true })
+    }
 
      @objc func newPostButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
@@ -250,7 +290,20 @@ class EveryoneViewController: ContentViewController {
          guard let identity = notification.object as? Identity else { return }
          self.tableView.deleteKeyValues(by: identity)
      }
+    
+    override func didRefresh(notification: NSNotification) {
+        DispatchQueue.main.async {
+            if self.tableView.backgroundView == self.emptyView {
+                self.load(animated: true)
+            }
+        }
+    }
+}
 
+extension EveryoneViewController: TopScrollable {
+    func scrollToTop() {
+        self.tableView.scrollToTop()
+    }
 }
 
 extension EveryoneViewController: PostReplyPaginatedDataSourceDelegate {

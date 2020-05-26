@@ -145,7 +145,6 @@ class HomeViewController: ContentViewController {
         
         self.addLoadingAnimation()
         self.load()
-        self.showLogoutNoticeIfNeeded()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -205,27 +204,6 @@ class HomeViewController: ContentViewController {
         AppController.shared.operationQueue.addOperation(refreshOperation)
     }
     
-    func showLogoutNoticeIfNeeded() {
-        guard AppConfiguration.needsToBeLoggedOut else {
-            return
-        }
-        let controller = UIAlertController(title: "Planetary is ready to move from testing to working with the larger scuttlebutt network",
-                                           message: "You can stay in our testing environment or you can completely reset your account and switch to the main scuttlebutt network by selecting Logout and Onboard in the Debug menu",
-                                           preferredStyle: .alert)
-        var action = UIAlertAction(title: "Cancel", style: .cancel) {
-            action in
-            controller.dismiss(animated: true, completion: nil)
-        }
-        controller.addAction(action)
-
-        action = UIAlertAction(title: "Open Debug menu", style: .default) {
-            [weak self] action in
-            self?.presentDebugMenu()
-        }
-        controller.addAction(action)
-        self.present(controller, animated: true, completion: nil)
-    }
-
     private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
