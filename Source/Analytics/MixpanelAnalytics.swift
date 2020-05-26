@@ -23,7 +23,7 @@ class MixpanelAnalytics: AnalyticsService {
     init() {
         let keys = PlanetaryKeys()
         Log.info("Configuring Mixpanel...")
-        Mixpanel.sharedInstance(withToken: keys.mixpanelToken)
+        Mixpanel.sharedInstance(withToken: keys.mixpanelAnalyticsToken)
     }
     
     func identify(about: About?, network: NetworkKey) {
