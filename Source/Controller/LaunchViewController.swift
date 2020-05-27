@@ -88,7 +88,7 @@ class LaunchViewController: UIViewController {
         
         self.launchIntoMain()
         
-        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { [weak self] loginError in
+        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { loginError in
             
             var error = loginError
             

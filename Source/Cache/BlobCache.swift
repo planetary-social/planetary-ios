@@ -77,8 +77,8 @@ class BlobCache: DictionaryCache {
 
             // wait if blob unavailable
             if me.blobUnavailable(error, for: identifier) {
-                DispatchQueue.global(qos: .background).async {
-                    self!.loadBlobFromCloud(for: identifier)
+                DispatchQueue.global(qos: .background).async { [weak self] in
+                    self?.loadBlobFromCloud(for: identifier)
                 }
                 return
             }
@@ -113,21 +113,19 @@ class BlobCache: DictionaryCache {
         let rest = String(hexRef[restIdx...])
 
         
-        var gsUrl = URL(string: "https://storage.cloud.google.com/mainnet-blobs/")
-        gsUrl?.appendPathComponent(dir)
-        gsUrl?.appendPathComponent(rest)
-        //guard let data = try? blobFromCloud(url: gsUrl!) else { return }
-        guard let data = try? Data(contentsOf: gsUrl!) else { return  }
-        //return imageData
+        var gsUrl = URL(string: "https://storage.cloud.google.com/mainnet-blobs/")!
+        gsUrl.appendPathComponent(dir)
+        gsUrl.appendPathComponent(rest)
         
-        let image = UIImage(data: data)
-        if image != nil {
-            self.update(image, for: ref)
-            self.didLoad(image!, for: ref)
+        // We are running in a background thread, this is safe
+        guard let data = try? Data(contentsOf: gsUrl), let image = UIImage(data: data) else {
+            return
         }
+        
+        // only complete if valid image
+        self.update(image, for: ref)
+        self.didLoad(image, for: ref)
         self.purge()
-
-        //return image
     }
 
     /// Returns true if the specified Error is a blob unavailablee error.

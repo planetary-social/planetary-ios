@@ -34,18 +34,11 @@ class HomeViewController: ContentViewController {
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
     
-    private lazy var floatingRefreshButton: UIButton = {
-        let button = UIButton.forAutoLayout()
-        let titleAttributes = [NSAttributedString.Key.font: UIFont.verse.floatingRefresh,
-                               NSAttributedString.Key.foregroundColor: UIColor.white]
-        let attributedTitle = NSAttributedString(string: "REFRESH", attributes: titleAttributes)
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        button.backgroundColor = UIColor.tint.default
-        button.contentEdgeInsets = .floatingRefreshButton
+    private lazy var floatingRefreshButton: FloatingRefreshButton = {
+        let button = FloatingRefreshButton()
         button.addTarget(self,
                          action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
                          for: .touchUpInside)
-        button.isHidden = true
         return button
     }()
 
@@ -113,6 +106,11 @@ class HomeViewController: ContentViewController {
         
         return view
     }()
+    
+    // This is read by the floating button to update the table view
+    // without querying the database again, it is set by the didRefresh
+    // notification.
+    private var updatedProxy: PaginatedKeyValueDataProxy?
 
     // MARK: Lifecycle
 
@@ -138,13 +136,12 @@ class HomeViewController: ContentViewController {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
         
-        Layout.centerHorizontally(self.floatingRefreshButton, in: self.view)
-        self.floatingRefreshButton.constrainHeight(to: 32)
-        self.floatingRefreshButton.roundedCorners(radius: 16)
-        self.floatingRefreshButton.constrainTop(toTopOf: self.tableView, constant: 8)
+        self.floatingRefreshButton.layout(in: self.view, below: self.tableView)
         
         self.addLoadingAnimation()
         self.load()
+        
+        self.registerDidRefresh()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -165,6 +162,7 @@ class HomeViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
+                self?.updatedProxy = nil
                 self?.update(with: proxy, animated: animated)
             }
         }
@@ -207,9 +205,7 @@ class HomeViewController: ContentViewController {
     private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
-            self.registerDidRefresh()
         } else {
-            self.deeregisterDidRefresh()
             self.emptyView.removeFromSuperview()
             self.tableView.backgroundView = nil
         }
@@ -228,18 +224,13 @@ class HomeViewController: ContentViewController {
         self.refreshAndLoad()
     }
     
-    @objc func floatingRefreshButtonDidTouchUpInside(button: UIButton) {
-        self.refreshControl.beginRefreshing()
-        self.refreshControl.sendActions(for: .valueChanged)
-        self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height),
-                                        animated: true)
-        UIView.animate(withDuration: 1.0,
-                       delay: 0,
-                       usingSpringWithDamping: CGFloat(0.20),
-                       initialSpringVelocity: CGFloat(6.0),
-                       options: UIView.AnimationOptions.allowUserInteraction,
-                       animations: { self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0) },
-                       completion: { _ in self.floatingRefreshButton.isHidden = true })
+    @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
+        if let proxy = self.updatedProxy {
+            self.dataSource.update(source: proxy)
+            self.tableView.reloadData()
+            self.updatedProxy = nil
+        }
+        button.hide()
     }
 
     @objc func newPostButtonTouchUpInside() {
@@ -269,20 +260,23 @@ class HomeViewController: ContentViewController {
     }
     
     override func didRefresh(notification: NSNotification) {
-        DispatchQueue.main.async {
-            if self.tableView.backgroundView == self.emptyView {
-                self.load(animated: true)
+        let currentProxy = self.dataSource.data
+        Bots.current.recent { [weak self] (newProxy, error) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            if newProxy.count > currentProxy.count {
+                DispatchQueue.main.async { [weak self] in
+                    if currentProxy.count == 0 {
+                        self?.load(animated: true)
+                    } else if let firstCurrent = currentProxy.keyValueBy(index: 0), let firstNew = newProxy.keyValueBy(index: 0), firstCurrent.key != firstNew.key {
+                        self?.updatedProxy = newProxy
+                        let shouldAnimate = self?.navigationController?.topViewController == self
+                        self?.floatingRefreshButton.show(animated: shouldAnimate)
+                    }
+                    
+                }
             }
         }
-//        self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0)
-//        self.floatingRefreshButton.isHidden = false
-//        UIView.animate(withDuration: 1.0,
-//                       delay: 0,
-//                       usingSpringWithDamping: CGFloat(0.20),
-//                       initialSpringVelocity: CGFloat(6.0),
-//                       options: UIView.AnimationOptions.allowUserInteraction,
-//                       animations: { self.floatingRefreshButton.transform = .identity },
-//                       completion: { _ in })
     }
 }
 

@@ -13,6 +13,11 @@ class RefreshOperation: AsynchronousOperation {
     var refreshLoad: RefreshLoad = .short
     private(set) var error: Error?
     
+    convenience init(refreshLoad: RefreshLoad) {
+        self.init()
+        self.refreshLoad = refreshLoad
+    }
+    
     override func main() {
         Log.info("RefreshOperation started.")
         

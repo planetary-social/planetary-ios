@@ -147,6 +147,7 @@
 		0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */; };
 		0AD8D635240EFF8800D87A95 /* RedeemInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */; };
 		0AF2DEEE247C3EE6003F457D /* Hashtag+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */; };
+		0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */; };
 		0AF9E0982461B3BB00910575 /* AnalyticsService+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0972461B3BB00910575 /* AnalyticsService+UI.swift */; };
 		0AF9E09A2461E92100910575 /* AnalyticsService+Conversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0992461E92100910575 /* AnalyticsService+Conversions.swift */; };
 		0AF9E09C2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E09B2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift */; };
@@ -799,6 +800,7 @@
 		0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePubsViewController.swift; sourceTree = "<group>"; };
 		0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedeemInviteViewController.swift; sourceTree = "<group>"; };
 		0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Hashtag+Link.swift"; sourceTree = "<group>"; };
+		0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingRefreshButton.swift; sourceTree = "<group>"; };
 		0AF9E0972461B3BB00910575 /* AnalyticsService+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsService+UI.swift"; sourceTree = "<group>"; };
 		0AF9E0992461E92100910575 /* AnalyticsService+Conversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsService+Conversions.swift"; sourceTree = "<group>"; };
 		0AF9E09B2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValuePaginatedTableViewDelegate.swift; sourceTree = "<group>"; };
@@ -1862,6 +1864,7 @@
 				530F01B322E0D3E7007EBAE2 /* TitledToggle.swift */,
 				535754FE22694AAA002A6989 /* UnsupportedView.swift */,
 				0AF9E0A32465D7D000910575 /* ThreadReplyView.swift */,
+				0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3075,6 +3078,7 @@
 				53AD3FD92270FF33005228F9 /* UITableView+TableHeaderView.swift in Sources */,
 				533EDBEB2385F8B6008B3565 /* DictionaryCache.swift in Sources */,
 				535754F42268E248002A6989 /* ContentType.swift in Sources */,
+				0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */,
 				539246DE22A836A000D01EEC /* DebugUserDirectoryViewController.swift in Sources */,
 				5376FADA228B63AF00411F5B /* Identities.swift in Sources */,
 				53211CD62281D567007FB785 /* EditAboutView.swift in Sources */,
