@@ -893,7 +893,6 @@ class GoBot: Bot {
 
     // old recent
     func recent(completion: @escaping PaginatedCompletion) {
-        Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let ds = try self.database.paginated(onlyFollowed: true)
@@ -906,7 +905,6 @@ class GoBot: Bot {
     
     // posts from everyone, not just who you follow
     func everyone(completion: @escaping PaginatedCompletion) {
-        //Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let msgs = try self.database.paginated(onlyFollowed: false)

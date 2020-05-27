@@ -27,6 +27,7 @@ class SuspendOperation: AsynchronousOperation {
         Bots.current.suspend()
         
         Log.info("SuspendOperation finished.")
+        self.finish()
     }
     
 }

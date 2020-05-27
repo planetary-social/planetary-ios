@@ -467,22 +467,13 @@ class GoBotInternal {
         u.appendPathComponent(dir)
         u.appendPathComponent(rest)
         
-        var gsUrl = URL(string: "https://storage.cloud.google.com/mainnet-blobs/")
-        gsUrl?.appendPathComponent(dir)
-        gsUrl?.appendPathComponent(rest)
-
-        
         do {
             let data = try Data(contentsOf: u)
             return data
         } catch {
             do {
-                // dont have it 
-                Log.info("Blob Not Found - : " + hexRef)
                 try blobsWant(ref: ref)
                 throw BotError.blobUnavailable
-                //guard let data = try? blobFromCloud(url: gsUrl!) else { throw BotError.blobUnavailable }
-                //return data
             } catch {
                 throw error
             }

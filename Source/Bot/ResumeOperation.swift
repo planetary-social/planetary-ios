@@ -27,6 +27,7 @@ class ResumeOperation: AsynchronousOperation {
         Bots.current.resume()
         
         Log.info("ResumeOperation finished.")
+        self.finish()
     }
     
 }

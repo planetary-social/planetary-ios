@@ -27,6 +27,7 @@ class ExitOperation: AsynchronousOperation {
         Bots.current.exit()
         
         Log.info("ExitOperation finished.")
+        self.finish()
     }
     
 }
