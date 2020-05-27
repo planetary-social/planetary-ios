@@ -20,6 +20,14 @@ class PostButtonsView: UIView {
         button.setImage(UIImage.verse.newPostOpenLibrary, for: .normal)
         return button
     }()
+    
+    let markdownNoticeLabel: UILabel = {
+        let label = UILabel.forAutoLayout()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = UIColor.text.detail
+        label.text = Text.markdownSupported.text
+        return label
+    }()
 
     let postButton: PillButton = {
         let button = PillButton()
@@ -45,6 +53,10 @@ class PostButtonsView: UIView {
         self.photoButton.pinLeftToSuperview(constant: Layout.horizontalSpacing)
         self.photoButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         self.photoButton.constrainSize(to: size)
+        
+        self.addSubview(self.markdownNoticeLabel)
+        self.markdownNoticeLabel.leadingAnchor.constraint(equalTo: self.photoButton.trailingAnchor, constant: 8).isActive = true
+        self.markdownNoticeLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
 
         self.addSubview(self.postButton)
         self.postButton.pinRightToSuperview(constant: -Layout.horizontalSpacing)
@@ -57,6 +69,7 @@ class PostButtonsView: UIView {
         UIView.animate(withDuration: duration) {
             self.photoButton.alpha = 0
             self.postButton.alpha = 0
+            self.markdownNoticeLabel.alpha = 0
             self.heightConstraint?.constant = 0
         }
     }
@@ -65,6 +78,7 @@ class PostButtonsView: UIView {
         UIView.animate(withDuration: duration) {
             self.photoButton.alpha = 1
             self.postButton.alpha = 1
+            self.markdownNoticeLabel.alpha = 1
             self.heightConstraint?.constant = Self.viewHeight
         }
     }
