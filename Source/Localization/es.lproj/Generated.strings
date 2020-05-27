@@ -92,6 +92,8 @@
 "Text.debug" = "Debuggear";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
+"Text.refresh" = "Refrescar";
+"Text.markdownSupported" = "Markdown soportado";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres bloquear a {{ name }}? No podrás ver el contenido de ambos ni tampoco volver a contactarse.";
 "Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";

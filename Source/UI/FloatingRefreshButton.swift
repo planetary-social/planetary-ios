@@ -15,7 +15,7 @@ class FloatingRefreshButton: UIButton {
         self.useAutoLayout()
         let titleAttributes = [NSAttributedString.Key.font: UIFont.verse.floatingRefresh,
                                NSAttributedString.Key.foregroundColor: UIColor.white]
-        let attributedTitle = NSAttributedString(string: "REFRESH", attributes: titleAttributes)
+        let attributedTitle = NSAttributedString(string: Text.refresh.text.uppercased(), attributes: titleAttributes)
         self.setAttributedTitle(attributedTitle, for: .normal)
         self.backgroundColor = UIColor.tint.default
         self.contentEdgeInsets = .floatingRefreshButton

@@ -139,6 +139,9 @@ enum Text: String, Localizable, CaseIterable {
     
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
+    
+    case refresh = "Refresh"
+    case markdownSupported = "Markdown supported"
 }
 
 // MARK:- ImagePicker
