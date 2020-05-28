@@ -91,10 +91,33 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.allPeople = people
+                self?.allPeople += people
             }
             completion()
         }
+        Bots.current.abouts() {
+            [weak self] abouts, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            var localPeople:[Person] = []
+            for about in abouts {
+                if about.name != nil && about.about != nil {
+                    let person = Person(
+                         bio: about.description,
+                         id: about.about as String,
+                         identity: about.about,
+                         image: about.image?.link,
+                         image_url: nil,
+                         in_directory: false,
+                         name: about.name!,
+                         shortcode: nil)
+                     
+                     localPeople += [person]
+                }
+             }
+            self?.allPeople += localPeople
+        }
+        
     }
 
     func reload() {
@@ -105,7 +128,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         if self.filter.isEmpty {
             self.people = self.allPeople
         } else {
-            let filter = self.filter.lowercased()
+            let filter = self.filter //.lowercassed()
             self.people = self.allPeople.filter {
                 person in
                 return person.name.lowercased().contains(filter) || person.identity.lowercased().contains(filter)

@@ -110,6 +110,7 @@ protocol Bot {
     func about(completion: @escaping AboutCompletion)
     func about(identity: Identity, completion:  @escaping AboutCompletion)
     func abouts(identities: Identities, completion:  @escaping AboutsCompletion)
+    func abouts(completion:  @escaping AboutsCompletion)
 
     // MARK: Contact
 
