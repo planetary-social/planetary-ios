@@ -128,7 +128,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         if self.filter.isEmpty {
             self.people = self.allPeople
         } else {
-            let filter = self.filter //.lowercassed()
+            let filter = self.filter.lowercased()
             self.people = self.allPeople.filter {
                 person in
                 return person.name.lowercased().contains(filter) || person.identity.lowercased().contains(filter)

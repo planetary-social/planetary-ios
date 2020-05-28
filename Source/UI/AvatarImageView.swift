@@ -36,6 +36,7 @@ class AvatarImageView: ImageView {
     // will need to be part of the incoming cache mechanism.
     @discardableResult
     func load(for person: Person, animate: Bool = false) -> URLSessionDataTask? {
+        
         guard let path = person.image_url, let url = URL(string: path) else { return nil }
 
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 3)
