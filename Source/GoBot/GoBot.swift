@@ -712,7 +712,13 @@ class GoBot: Bot {
     /// this value, this is an incomplete implementation.
     /// DO NOT DO THIS FOR OTHER CONTENT!
     private var _about: About?
-    var about: About? { return self._about }
+    var about: About? {
+        
+        if self._about == nil {
+            self._about = try? self.database.getAbout(for: self.identity!)
+        }
+        return self._about
+    }
 
     func about(completion: @escaping AboutCompletion) {
         Thread.assertIsMainThread()
@@ -722,6 +728,7 @@ class GoBot: Bot {
         }
         self.about(identity: user, completion: completion)
     }
+    
     
     func about(identity: Identity, completion: @escaping AboutCompletion) {
         Thread.assertIsMainThread()
