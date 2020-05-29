@@ -77,9 +77,7 @@ class BlobCache: DictionaryCache {
 
             // wait if blob unavailable
             if me.blobUnavailable(error, for: identifier) {
-                DispatchQueue.global(qos: .background).async { [weak self] in
-                    self?.loadBlobFromCloud(for: identifier)
-                }
+                self?.loadBlobFromCloud(for: identifier)
                 return
             }
             // forget if blob is still unavailable
@@ -104,6 +102,11 @@ class BlobCache: DictionaryCache {
     
     private func  loadBlobFromCloud(for ref: BlobIdentifier)
     {
+        if let dataTask = self.dataTasks[ref] {
+            dataTask.resume()
+            return
+        }
+        
         let hexRef = ref.hexEncodedString()
         
         // first 2 chars are directory
@@ -111,21 +114,54 @@ class BlobCache: DictionaryCache {
         // rest ist filename
         let restIdx = hexRef.index(hexRef.startIndex, offsetBy:2)
         let rest = String(hexRef[restIdx...])
-
         
         var gsUrl = URL(string: "https://storage.cloud.google.com/mainnet-blobs/")!
         gsUrl.appendPathComponent(dir)
         gsUrl.appendPathComponent(rest)
         
-        // We are running in a background thread, this is safe
-        guard let data = try? Data(contentsOf: gsUrl), let image = UIImage(data: data) else {
-            return
+        let dataTask = URLSession.shared.dataTask(with: gsUrl) { [weak self] (data, response, error) in
+             
+            Log.optional(error)
+            
+            guard error == nil,
+                let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200,
+                let data = data else {
+                // Cannot use these because the servers are not reliable
+                //let mimeType = httpResponse.mimeType,
+                // mimeType.hasPrefix("image") else {
+                
+                self?.dataTasks.removeValue(forKey: ref)
+                return
+            }
+            
+            guard let image = UIImage(data: data) else {
+                Log.info("Couldn't parse \(gsUrl.absoluteString)")
+                try? data.write(to: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+                self?.dataTasks.removeValue(forKey: ref)
+                return
+            }
+            
+            Log.info("Could parse \(gsUrl.absoluteString)")
+            
+            Bots.current.store(data: data, for: ref) { [weak self] (url, error) in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if error == nil {
+                    DispatchQueue.main.async {
+                        self?.update(image, for: ref)
+                        self?.didLoad(image, for: ref)
+                        self?.purge()
+                    }
+                }
+                
+                self?.dataTasks.removeValue(forKey: ref)
+            }
         }
+        self.dataTasks[ref] = dataTask
         
-        // only complete if valid image
-        self.update(image, for: ref)
-        self.didLoad(image, for: ref)
-        self.purge()
+        dataTask.resume()
     }
 
     /// Returns true if the specified Error is a blob unavailablee error.
@@ -146,6 +182,7 @@ class BlobCache: DictionaryCache {
     {
         let completions = self.completions(for: identifier)
         self.forgetCompletions(for: identifier)
+        self.cancelDataTask(for: identifier)
 
         completions.forEach {
             (uuid, completion) in
@@ -173,6 +210,9 @@ class BlobCache: DictionaryCache {
 
     // for each blob identifier, there are one or more UUID tagged UIImage completion blocks
     private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
+    
+    // for each blob identifier, there should be one data task
+    private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
 
     /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
     /// be used to forget a pending completion later.
@@ -198,6 +238,18 @@ class BlobCache: DictionaryCache {
     /// Forgets the all the completions for the specified blob identifier.
     func forgetCompletions(for identifier: BlobIdentifier) {
         let _ = self.completions.removeValue(forKey: identifier)
+    }
+    
+    func cancelAllDataTasks() {
+        self.dataTasks.forEach { (ref, dataTask) in
+            dataTask.cancel()
+        }
+        self.dataTasks.removeAll()
+    }
+    
+    func cancelDataTask(for identifier: BlobIdentifier) {
+        self.dataTasks[identifier]?.cancel()
+        self.dataTasks.removeValue(forKey: identifier)
     }
 
     /// Forgets a specific UUID tagged completion for a blob identifier.  This will

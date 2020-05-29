@@ -157,6 +157,7 @@ class HomeViewController: ContentViewController {
             Log.optional(error)
             self?.refreshControl.endRefreshing()
             self?.removeLoadingAnimation()
+            self?.floatingRefreshButton.hide()
             AppController.shared.hideProgress()
              
             if let error = error {

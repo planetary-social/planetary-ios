@@ -449,8 +449,8 @@ class GoBotInternal {
         free(rawBytes)
         completion(newRef, nil)
     }
-
-    func blobGet(ref: BlobIdentifier) throws -> Data {
+    
+    func blobFileURL(ref: BlobIdentifier) throws -> URL {
         let hexRef = ref.hexEncodedString()
         if hexRef.isEmpty {
             throw GoBotError.unexpectedFault("blobGet: could not make hex representation of blob reference")
@@ -466,10 +466,14 @@ class GoBotInternal {
         u.appendPathComponent("sha256")
         u.appendPathComponent(dir)
         u.appendPathComponent(rest)
-        
+       
+        return u
+    }
+
+    func blobGet(ref: BlobIdentifier) throws -> Data {
+        let u = try blobFileURL(ref: ref)
         do {
-            let data = try Data(contentsOf: u)
-            return data
+            return try Data(contentsOf: u)
         } catch {
             do {
                 try blobsWant(ref: ref)

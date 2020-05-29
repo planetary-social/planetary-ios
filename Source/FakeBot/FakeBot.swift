@@ -56,6 +56,14 @@ class FakeBot: Bot {
     {
         fatalError("TODO:blobs:get")
     }
+    
+    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        fatalError("TODO")
+    }
+    
+    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        fatalError("TODO")
+    }
 
     func data(for identifier: BlobIdentifier,
               completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))

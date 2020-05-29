@@ -23,6 +23,7 @@ class ImageView: UIImageView {
         guard let identifier = self.identifier else { return }
         guard let uuid = self.completion else { return }
         Caches.blobs.forgetCompletions(with: uuid, for: identifier)
+        Caches.blobs.cancelDataTask(for: identifier)
     }
 
     func set(image: Image?, animated: Bool = false) {

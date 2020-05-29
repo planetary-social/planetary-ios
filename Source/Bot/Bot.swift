@@ -11,6 +11,7 @@ typealias AboutCompletion = ((About?, Error?) -> Void)
 typealias AboutsCompletion = (([About], Error?) -> Void)
 typealias AddImageCompletion = ((Image?, Error?) -> Void)
 typealias BlobsAddCompletion = ((BlobIdentifier, Error?) -> Void)
+typealias BlobsStoreCompletion = ((URL?, Error?) -> Void)
 typealias ContactCompletion = ((Contact?, Error?) -> Void)
 typealias ContactsCompletion = (([Identity], Error?) -> Void)
 typealias ErrorCompletion = ((Error?) -> Void)
@@ -174,6 +175,11 @@ protocol Bot {
 
     func data(for identifier: BlobIdentifier,
               completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
+    
+    /// Saves a file to disk in the same path it would be if fetched through the net.
+    /// Useful for storing a blob fetched from an external source.
+    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion)
+    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion)
 
     // MARK: Statistics
 

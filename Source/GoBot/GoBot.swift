@@ -701,6 +701,41 @@ class GoBot: Bot {
             }
         }
     }
+    
+    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        // Use a same thread here, no need to mess with the our standard queue.
+        do {
+            let repoURL = try self.bot.blobFileURL(ref: identifier)
+            try FileManager.default.copyItem(at: url, to: repoURL)
+            completion(repoURL, nil)
+        } catch let error {
+            completion(nil, error)
+        }
+    }
+    
+    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        let url: URL
+        do {
+            url = try self.bot.blobFileURL(ref: identifier)
+        } catch let error {
+            completion(nil, error)
+            return
+        }
+        // Use a background thread here, no need to mess with the our standard
+        // queue. If a race condition arises, it is just the same file being
+        // written twice.
+        DispatchQueue.global(qos: .background).async {
+            do {
+                try FileManager.default.createDirectory(at: url.deletingLastPathComponent(),
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+                try data.write(to: url, options: .atomic)
+                completion(url, nil)
+            } catch let error {
+                completion(nil, error)
+            }
+        }
+    }
 
     // MARK: About
 
