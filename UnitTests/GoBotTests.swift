@@ -673,7 +673,7 @@ class GoBotTests: XCTestCase {
         let orangePixel = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEX/TQBcNTh/AAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==",
                                options: .ignoreUnknownCharacters)!
         ex = self.expectation(description: "Store blob")
-        GoBotTests.shared.store(data: orangePixel, for: ref) { (error) in
+        GoBotTests.shared.store(data: orangePixel, for: ref) { _, error in
             XCTAssertNil(error)
             ex.fulfill()
         }

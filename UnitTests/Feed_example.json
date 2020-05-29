@@ -1625,5 +1625,26 @@
     },
     "timestamp": 1568971583834,
     "ReceiveLogSeq": 80
+  },
+  {
+    "key": "%DZ764OpJ08EBTN191nxs5WdtWnY4/I4Q+Humk50sdBI=.sha256",
+    "value": {
+      "previous": "%PfX2TNch9Z1/WR0nHV7V0lf164XOElOanjn3KG3Dets=.sha256",
+      "sequence": 13,
+      "author": "@3cEmxKx9ScNK8Pd1yz0qh5A2URzIbL7+VvpjfETU050=.ed25519",
+      "timestamp": 1568971583833,
+      "hash": "sha256",
+      "content": {
+        "hashtags": [
+          "extag2",
+          "extag3"
+        ],
+        "text": "hashtags test post 2",
+        "type": "post"
+      },
+      "signature": "PmMrRQgBtYpAbUOZxWOF6bs29GLxarpqLtwSeToLn6g1GjP+yxUGwXiPS+1ULYlZa2kIuv6C4Jn8Cg2yPFAdAQ==.sig.ed25519"
+    },
+    "timestamp": 1568971583835,
+    "ReceiveLogSeq": 81
   }
 ]
