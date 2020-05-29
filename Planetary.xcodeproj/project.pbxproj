@@ -1614,12 +1614,12 @@
 				2334D04421F7786600AB28E2 /* GoBotInternal.swift */,
 				531D0A1221EACC0A008E40A8 /* GoBotViewController.swift */,
 				233A8F89220138F600CE01CE /* ViewDatabase.swift */,
+				236761582450681800A97140 /* ViewDatabase+Pagination.swift */,
 				231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */,
 				0ACE91A1243D740C00EFB4E9 /* GoBotError.swift */,
 				0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */,
 				0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */,
 				0ACE91AD243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift */,
-				236761582450681800A97140 /* ViewDatabase+Pagination.swift */,
 			);
 			path = GoBot;
 			sourceTree = "<group>";

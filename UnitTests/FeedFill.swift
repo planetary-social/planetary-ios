@@ -64,7 +64,7 @@ class ViewDatabaseTest: XCTestCase {
     
     var tmpURL :URL = URL(string: "unset")!
     var vdb = ViewDatabase()
-    let expMsgCount = 81
+    let expMsgCount = 82
 
     override func setUp() {
         let data = self.data(for: "Feed_example.json")
