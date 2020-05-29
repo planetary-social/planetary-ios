@@ -172,6 +172,7 @@ class EveryoneViewController: ContentViewController {
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
             self?.removeLoadingAnimation()
+            self?.floatingRefreshButton.hide()
             AppController.shared.hideProgress()
          
             if let error = error {

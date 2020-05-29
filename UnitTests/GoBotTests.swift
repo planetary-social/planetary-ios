@@ -658,6 +658,35 @@ class GoBotTests: XCTestCase {
 
         XCTAssertNil(b[0].name)
     }
+    
+    func test163_storeBlob() {
+        let ref = BlobIdentifier("&d2rP8Tcg6K2QR905Rms8iXTlksL6OD1KOWBxTK7wxPI=.sha256")
+        
+        var ex = self.expectation(description: "Get current blob")
+        GoBotTests.shared.data(for: ref) { (_, data, error) in
+            XCTAssertNil(data)
+            XCTAssertNotNil(error)
+            ex.fulfill()
+        }
+        self.wait(for: [ex], timeout: 10)
+        
+        let orangePixel = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEX/TQBcNTh/AAAACklEQVR4nGNiAAAABgADNjd8qAAAAABJRU5ErkJggg==",
+                               options: .ignoreUnknownCharacters)!
+        ex = self.expectation(description: "Store blob")
+        GoBotTests.shared.store(data: orangePixel, for: ref) { (error) in
+            XCTAssertNil(error)
+            ex.fulfill()
+        }
+        self.wait(for: [ex], timeout: 10)
+        
+        ex = self.expectation(description: "Get new blob")
+        GoBotTests.shared.data(for: ref) { (_, data, error) in
+            XCTAssertNotNil(data)
+            XCTAssertNil(error)
+            ex.fulfill()
+        }
+        self.wait(for: [ex], timeout: 10)
+    }
 
     // MARK: private
     func test170_private_from_alice() {
