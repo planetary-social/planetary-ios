@@ -966,6 +966,7 @@ class ViewDatabase {
             .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue )
             .filter(colRoot == msgID)
             .filter(colHidden == false)
+            .order(colClaimedAt.asc)
         
         // making this a two-pass query until i can figure out how to dynamlicly join based on type
 
