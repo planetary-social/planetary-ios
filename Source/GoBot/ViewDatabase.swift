@@ -551,8 +551,30 @@ class ViewDatabase {
                      imageLink: try row.get(colImage)
                  )
         }
-        
         return msgs.first
+    }
+    
+    func getAbouts() throws -> [About]? {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let qry = self.abouts
+            .join(self.authors, on: colID == self.abouts[colAboutID])
+ //           .filter(colAboutID == aboutID)
+        
+        var abouts: [About] = []
+        
+        let aboutsQry = try db.prepare(qry)
+        for about in aboutsQry {
+            let about = About(about: try about.get(colAuthor),
+                     name: try about.get(colName),
+                     description: try about.get(colDescr),
+                     imageLink: try about.get(colImage)
+                 )
+            abouts += [about]
+        }
+        return abouts
     }
     
     // MARK: follows and blocks

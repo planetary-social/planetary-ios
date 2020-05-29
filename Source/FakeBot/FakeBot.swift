@@ -230,6 +230,10 @@ class FakeBot: Bot {
     func abouts(identities: Identities, completion:  @escaping AboutsCompletion) {
         completion(self.abouts(), nil)
     }
+    
+    func abouts(completion:  @escaping AboutsCompletion) {
+        completion(self.abouts(), nil)
+    }
 
     // MARK: Feed content
 

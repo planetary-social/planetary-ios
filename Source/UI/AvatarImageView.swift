@@ -36,8 +36,39 @@ class AvatarImageView: ImageView {
     // will need to be part of the incoming cache mechanism.
     @discardableResult
     func load(for person: Person, animate: Bool = false) -> URLSessionDataTask? {
-        guard let path = person.image_url, let url = URL(string: path) else { return nil }
+        
+        
+        //TODO: This convert 
+        if (person.image_url == nil && person.image != nil) {
+            
+            // cached image
+            if let image = Caches.blobs.image(for: person.image!) {
+                 DispatchQueue.main.async {
+                    if animate {
+                        self.fade(to: image)
+                    } else {
+                        self.image = image
+                    }
+                }
+                return(nil)
+            }
 
+            // request image
+            let uuid = Caches.blobs.image(for: person.image!) {
+                [weak self] _, image in
+                  DispatchQueue.main.async {
+                       if animate {
+                        self!.fade(to: image)
+                       } else {
+                        self!.image = image
+                       }
+                   }
+                return
+            }
+        }
+        
+        guard let path = person.image_url, let url = URL(string: path) else { return nil }
+        
         var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 3)
         
         let keys = PlanetaryKeys()

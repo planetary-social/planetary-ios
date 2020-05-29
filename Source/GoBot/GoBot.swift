@@ -758,6 +758,16 @@ class GoBot: Bot {
         }
     }
     
+    func abouts(completion: @escaping AboutsCompletion) {
+        Thread.assertIsMainThread()
+        self.queue.async {
+            //var abouts: [About]
+            let abouts = try? self.database.getAbouts()!
+            
+            DispatchQueue.main.async { completion(abouts!, BotError.self as? Error) }
+        }
+    }
+
     // MARK: Contacts
 
     func follow(_ identity: Identity, completion: @escaping ContactCompletion) {
