@@ -64,7 +64,7 @@ class ViewDatabaseTest: XCTestCase {
     
     var tmpURL :URL = URL(string: "unset")!
     var vdb = ViewDatabase()
-    let expMsgCount = 82
+    let expMsgCount = 81
 
     override func setUp() {
         let data = self.data(for: "Feed_example.json")
@@ -90,7 +90,8 @@ class ViewDatabaseTest: XCTestCase {
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
             XCTAssertNotNil(msgs)
-            XCTAssertEqual(msgs.count, expMsgCount)
+            // +1 to fake-cause the duplication bug
+            XCTAssertEqual(msgs.count, expMsgCount+1)
             
             // put them all in
             try vdb.fillMessages(msgs: msgs)
@@ -107,7 +108,7 @@ class ViewDatabaseTest: XCTestCase {
         do {
             // find them all
             let stats = try self.vdb.stats()
-            XCTAssertEqual(stats[.messages], expMsgCount-8) // 8 tag messaes from old test data (TODO better test data creation)
+            XCTAssertEqual(stats[.messages], expMsgCount-8) // 8 tag messages from old test data (TODO better test data creation)
             XCTAssertEqual(stats[.authors], 6)
             XCTAssertEqual(stats[.abouts], 6)
             XCTAssertEqual(stats[.abouts], stats[.authors]) // authors with missing abouts will not be shown
