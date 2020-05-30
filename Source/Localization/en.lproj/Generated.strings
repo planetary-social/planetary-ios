@@ -61,6 +61,7 @@
 "Text.identifierCopied" = "Identifier copied to clipboard";
 "Text.copyMessageIdentifier" = "Copy Message Identifier";
 "Text.copyPublicIdentifier" = "Copy Profile Identifier";
+"Text.copyMesageLink" = "Copy Link to this Message";
 "Text.shareThisProfile" = "Share This Profile";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";

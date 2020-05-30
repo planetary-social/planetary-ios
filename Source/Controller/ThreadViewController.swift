@@ -107,6 +107,7 @@ class ThreadViewController: ContentViewController {
         assert(keyValue.value.content.isPost)
         self.post = keyValue
         self.onNextUpdateScrollToPostWithKeyValueKey = keyValue.key
+        //self.interactionView.postIdentifier = Identity
         super.init(scrollable: false)
         self.isKeyboardHandlingEnabled = true
         self.showsTabBarBorder = false
@@ -191,6 +192,7 @@ class ThreadViewController: ContentViewController {
         self.tableView.forceReload()
         self.scrollIfNecessary(animated: animated)
         self.interactionView.replyCount = replies.count
+        self.interactionView.postIdentifier = root.key
     }
 
 

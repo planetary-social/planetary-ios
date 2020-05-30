@@ -99,6 +99,8 @@ enum Text: String, Localizable, CaseIterable {
     case copyMessageIdentifier = "Copy Message Identifier"
     
     case copyPublicIdentifier = "Copy Profile Identifier"
+    case copyMesageLink = "Copy Link to this Message"
+    
     case shareThisProfile = "Share This Profile"
 
     case addFriend = "Add friend"

@@ -21,6 +21,10 @@ class ThreadInteractionView: UIView {
             }
         }
     }
+    
+    var postIdentifier: Identifier = ""
+    //var post: KeyValue = nil
+    //var root: KeyValue? = nil
 
     private lazy var stack: UIStackView = {
         let view = UIStackView.forAutoLayout()
@@ -65,7 +69,7 @@ class ThreadInteractionView: UIView {
         super.init(frame: .zero)
         self.useAutoLayout()
         self.backgroundColor = UIColor.background.default
-
+        
         Layout.addSeparator(toTopOf: self)
         Layout.addSeparator(toBottomOf: self)
 
@@ -74,28 +78,86 @@ class ThreadInteractionView: UIView {
 
         // spacer separating left/right sides
         self.stack.addArrangedSubview(UIView())
-
-        for button in [self.shareButton, self.bookmarkButton, self.likeButton] {
+        
+        // , self.bookmarkButton,  self.likeButton
+        
+        for button in [self.shareButton] {
             button.constrainSize(to: 25)
             self.stack.addArrangedSubview(button)
 
             // TODO: Temporarily hiding buttons, as they don't do anything yet!
-            button.isHidden = true
+            button.isHidden = false
         }
 
     }
+    
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     @objc func didPressShare(sender: UIButton) {
+        let identity = self.postIdentifier
+
+        Analytics.shared.trackDidTapButton(buttonName: "share")
+        
+        var actions = [UIAlertAction]()
+
+        let copyMessageIdentifier = UIAlertAction(title: Text.copyMessageIdentifier.text, style: .default) { _ in
+            Analytics.shared.trackDidSelectAction(actionName: "copy_profile_identifier")
+            UIPasteboard.general.string = identity
+            AppController.shared.showToast(Text.identifierCopied.text)
+        }
+        actions.append(copyMessageIdentifier)
+        
+        
+        //Todo: Clean this up
+        // Right now it just lets you copy the message link but ideally it would actually
+        // pull up the share sheeet. Which is outlined below but for lack of proper wiring
+        // does not work. So we just let you copy identifiers.
+
+        let publicLinkString = identity?.publicLink?.absoluteString
+        //if let publicLink = "https://planetary.link/" + identity {
+            let copyMesssageLink = UIAlertAction(title: Text.copyMesageLink.text, style: .default) { _ in
+                Analytics.shared.trackDidSelectAction(actionName: "copy_profile_identifier")
+                UIPasteboard.general.string = publicLinkString
+                AppController.shared.showToast(Text.identifierCopied.text)
+            }
+            actions.append(copyMesssageLink)
+        //}
+        
+        /*
+        // TODO: Martin why doesn't this work by bringing up a share sheet
+        if let publicLink = identity.publicLink {
+            let share = UIAlertAction(title: Text.copyMesageLink.text, style: .default) { [weak self] _ in
+                Analytics.shared.trackDidSelectAction(actionName: "share_messsage")
+                
+                let activityController = UIActivityViewController(activityItems: [publicLink],
+                                                                  applicationActivities: nil)
+                //self?.present(activityController, animated: true)
+                if let popOver = activityController.popoverPresentationController {
+                    //popOver.barButtonItem = self?.navigationItem.rightBarButtonItem
+                }
+            }
+            actions.append(share)
+        }
+        */
+        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        actions.append(cancel)
+
+        AppController.shared.choose(from: actions)
+        
+
         print(#function)
     }
     @objc func didPressBookmark(sender: UIButton) {
+        Analytics.shared.trackDidTapButton(buttonName: "bookmark")
+
         print(#function)
     }
     @objc func didPressLike(sender: UIButton) {
+        Analytics.shared.trackDidTapButton(buttonName: "like")
+
         print(#function)
     }
 }
