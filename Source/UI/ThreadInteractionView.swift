@@ -23,7 +23,6 @@ class ThreadInteractionView: UIView {
     }
     
     var post: KeyValue? = nil
-    //var root: KeyValue? = nil
 
     private lazy var stack: UIStackView = {
         let view = UIStackView.forAutoLayout()
@@ -77,10 +76,8 @@ class ThreadInteractionView: UIView {
 
         // spacer separating left/right sides
         self.stack.addArrangedSubview(UIView())
-        
-        // , self.bookmarkButton,  self.likeButton
-        
-        for button in [self.shareButton] {
+
+        for button in [self.likeButton, self.shareButton] {
             button.constrainSize(to: 25)
             self.stack.addArrangedSubview(button)
 
@@ -147,7 +144,28 @@ class ThreadInteractionView: UIView {
         print(#function)
     }
     @objc func didPressLike(sender: UIButton) {
+        guard let post = self.post else {
+            return
+        }
+        
         Analytics.shared.trackDidTapButton(buttonName: "like")
+        
+        let vote = ContentVote( link: post.key , value: 1)
+        AppController.shared.showProgress()
+        
+        Bots.current.publish(content: vote) { [weak self] key, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            AppController.shared.hideProgress()
+            if let error = error {
+                //self?.alert(error: error)
+            } else {
+                Analytics.shared.trackDidReply()
+                //self?.replyTextView.resignFirstResponder()
+                //self?.onNextUpdateScrollToPostWithKeyValueKey = key
+                //self?.load()
+            }
+        }
 
         print(#function)
     }

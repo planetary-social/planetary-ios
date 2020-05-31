@@ -93,4 +93,25 @@ struct ContentVote: ContentCodable {
         // TODO: constructor for PMs (should maybe also live in Content.init
         self.recps = nil
     }
+    
+    
+    init(value: Int, root: MessageIdentifier) {
+        self.type = .vote
+        
+        let exp: String
+        if value == 1 {
+            exp = "heart"
+        } else {
+            exp = "broken_heart"
+        }
+        self.vote = Vote(link: LinkIdentifier.null, value: value, expression: exp)
+        //self.link = Identity.null
+        
+        self.root = root
+        self.branch = nil
+        
+        // TODO: constructor for PMs (should maybe also live in Content.init
+        self.recps = nil
+    }
+
 }
