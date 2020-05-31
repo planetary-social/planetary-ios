@@ -23,7 +23,8 @@ class ThreadInteractionView: UIView {
     }
     
     var post: KeyValue? = nil
-
+    var replies: StaticDataProxy?
+    
     private lazy var stack: UIStackView = {
         let view = UIStackView.forAutoLayout()
         view.axis = .horizontal
@@ -82,9 +83,31 @@ class ThreadInteractionView: UIView {
             self.stack.addArrangedSubview(button)
 
             // TODO: Temporarily hiding buttons, as they don't do anything yet!
-            button.isHidden = false
+            button.isHidden = true
         }
-
+        // set the status of liked
+    }
+    
+    func update() {
+        var userLikes = false
+        //check to see if we're currently linking this post
+        if self.replies!.count-1 > 0 {
+            for index in 0...self.replies!.count-1 {
+                if self.replies!.keyValueBy(index: index)?.value.content.type ==  Planetary.ContentType.vote {
+                    let likeIdentity = self.replies!.keyValueBy(index: 1)?.metadata.author.about?.about
+                    if Bots.current.identity == likeIdentity {
+                        userLikes=true
+                    }
+                }
+            }
+        }
+            
+        if userLikes {
+            self.likeButton.setImage(UIImage.verse.liked, for: .normal)
+        } else {
+            self.likeButton.setImage(UIImage.verse.like, for: .normal)
+        }
+        self.likeButton.isHidden = false
     }
     
 
@@ -143,14 +166,15 @@ class ThreadInteractionView: UIView {
 
         print(#function)
     }
+    
     @objc func didPressLike(sender: UIButton) {
         guard let post = self.post else {
             return
         }
         
         Analytics.shared.trackDidTapButton(buttonName: "like")
-        
         let vote = ContentVote( link: post.key , value: 1)
+        sender.setImage(UIImage.verse.liked, for: .normal)
         AppController.shared.showProgress()
         
         Bots.current.publish(content: vote) { [weak self] key, error in
@@ -161,7 +185,8 @@ class ThreadInteractionView: UIView {
                 //self?.alert(error: error)
             } else {
                 Analytics.shared.trackDidReply()
-                //self?.replyTextView.resignFirstResponder()
+                //TODO: we need it to reset the keyvalue proxy because there is a new like.
+                //self?.updatedProxy = newProxy
                 //self?.onNextUpdateScrollToPostWithKeyValueKey = key
                 //self?.load()
             }

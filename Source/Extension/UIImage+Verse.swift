@@ -24,6 +24,7 @@ struct VerseImages {
     let editProfileOn = UIImage(named: "icon-edit-on")
     let help = UIImage(named: "icon-help")
     let like = UIImage(named: "icon-like")
+    let liked = UIImage(named: "icon-liked")
     let link = UIImage(named: "icon-link")
     let missingAbout = UIImage(named: "missing-about-icon")
     let newPostOpenLibrary = UIImage(named: "icon-library")

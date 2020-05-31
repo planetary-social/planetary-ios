@@ -193,6 +193,8 @@ class ThreadViewController: ContentViewController {
         self.scrollIfNecessary(animated: animated)
         self.interactionView.replyCount = replies.count
         self.interactionView.post = root
+        self.interactionView.replies = replies as? StaticDataProxy
+        self.interactionView.update()
     }
 
 
