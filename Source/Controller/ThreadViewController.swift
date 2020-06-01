@@ -192,7 +192,7 @@ class ThreadViewController: ContentViewController {
         self.tableView.forceReload()
         self.scrollIfNecessary(animated: animated)
         self.interactionView.replyCount = replies.count
-        self.interactionView.postIdentifier = root.key
+        self.interactionView.post = root
     }
 
 

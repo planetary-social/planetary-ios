@@ -22,8 +22,7 @@ class ThreadInteractionView: UIView {
         }
     }
     
-    var postIdentifier: Identifier = ""
-    //var post: KeyValue = nil
+    var post: KeyValue? = nil
     //var root: KeyValue? = nil
 
     private lazy var stack: UIStackView = {
@@ -97,51 +96,43 @@ class ThreadInteractionView: UIView {
     }
 
     @objc func didPressShare(sender: UIButton) {
-        let identity = self.postIdentifier
+        guard let post = self.post else {
+            return
+        }
 
         Analytics.shared.trackDidTapButton(buttonName: "share")
         
         var actions = [UIAlertAction]()
 
         let copyMessageIdentifier = UIAlertAction(title: Text.copyMessageIdentifier.text, style: .default) { _ in
-            Analytics.shared.trackDidSelectAction(actionName: "copy_profile_identifier")
-            UIPasteboard.general.string = identity
+            Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
+            UIPasteboard.general.string = post.key
             AppController.shared.showToast(Text.identifierCopied.text)
         }
         actions.append(copyMessageIdentifier)
         
-        
-        //Todo: Clean this up
-        // Right now it just lets you copy the message link but ideally it would actually
-        // pull up the share sheeet. Which is outlined below but for lack of proper wiring
-        // does not work. So we just let you copy identifiers.
-
-        let publicLinkString = identity?.publicLink?.absoluteString
-        //if let publicLink = "https://planetary.link/" + identity {
-            let copyMesssageLink = UIAlertAction(title: Text.copyMesageLink.text, style: .default) { _ in
-                Analytics.shared.trackDidSelectAction(actionName: "copy_profile_identifier")
-                UIPasteboard.general.string = publicLinkString
-                AppController.shared.showToast(Text.identifierCopied.text)
+        let copyMesssageLink = UIAlertAction(title: Text.shareThisMessage.text, style: .default) { _ in
+            guard let publicLink = post.key.publicLink else {
+                return
             }
-            actions.append(copyMesssageLink)
-        //}
-        
-        /*
-        // TODO: Martin why doesn't this work by bringing up a share sheet
-        if let publicLink = identity.publicLink {
-            let share = UIAlertAction(title: Text.copyMesageLink.text, style: .default) { [weak self] _ in
-                Analytics.shared.trackDidSelectAction(actionName: "share_messsage")
-                
-                let activityController = UIActivityViewController(activityItems: [publicLink],
-                                                                  applicationActivities: nil)
-                //self?.present(activityController, animated: true)
-                if let popOver = activityController.popoverPresentationController {
-                    //popOver.barButtonItem = self?.navigationItem.rightBarButtonItem
-                }
+            
+            let who = post.metadata.author.about?.nameOrIdentity ?? post.value.author
+            let link = publicLink.absoluteString
+            let postWithoutGallery = post.value.content.post?.text.withoutGallery() ?? ""
+            let what = postWithoutGallery.prefix(280 - who.count - link.count - Text.shareThisMessageText.text.count)
+            let text = Text.shareThisMessageText.text(["who": who,
+                                                       "what": String(what),
+                                                       "link": publicLink.absoluteString])
+            Analytics.shared.trackDidSelectAction(actionName: "share_message")
+            let activityController = UIActivityViewController(activityItems: [text],
+                                                              applicationActivities: nil)
+            AppController.shared.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.sourceView = self
             }
-            actions.append(share)
         }
-        */
+        actions.append(copyMesssageLink)
+
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 

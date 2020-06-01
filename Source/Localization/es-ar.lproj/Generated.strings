@@ -62,6 +62,8 @@
 "Text.copyMessageIdentifier" = "Copiar Identificador de Mensaje";
 "Text.copyPublicIdentifier" = "Copiar Identificador de Perfil";
 "Text.shareThisProfile" = "Compartir Este Perfil";
+"Text.shareThisMessage" = "Compartir Este Mensaje";
+"Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar amigos";
 "Text.blockUser" = "Bloquear este usuario";
@@ -213,5 +215,5 @@
 "Channel.many" = "hashtags";
 "Channel.lastUpdated" = "actualizado";
 
-"Post.one" = "posteo";
-"Post.many" = "posteos";
+"Post.one" = "publicación";
+"Post.many" = "publicaciones";

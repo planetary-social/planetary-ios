@@ -61,8 +61,9 @@
 "Text.identifierCopied" = "Identifier copied to clipboard";
 "Text.copyMessageIdentifier" = "Copy Message Identifier";
 "Text.copyPublicIdentifier" = "Copy Profile Identifier";
-"Text.copyMesageLink" = "Copy Link to this Message";
 "Text.shareThisProfile" = "Share This Profile";
+"Text.shareThisMessage" = "Share This Message";
+"Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
 "Text.blockUser" = "Block this user";

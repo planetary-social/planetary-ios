@@ -99,9 +99,10 @@ enum Text: String, Localizable, CaseIterable {
     case copyMessageIdentifier = "Copy Message Identifier"
     
     case copyPublicIdentifier = "Copy Profile Identifier"
-    case copyMesageLink = "Copy Link to this Message"
     
     case shareThisProfile = "Share This Profile"
+    case shareThisMessage = "Share This Message"
+    case shareThisMessageText = "{{ who }} posted: {{ what }} {{ link }}"
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
