@@ -8,6 +8,12 @@
 
 import UIKit
 
+protocol ThreadInteractionViewDelegate: class {
+    
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue)
+    
+}
+
 class ThreadInteractionView: UIView {
 
     var replyCount: Int = 0 {
@@ -22,8 +28,11 @@ class ThreadInteractionView: UIView {
         }
     }
     
+    weak var delegate: ThreadInteractionViewDelegate?
+    
     var post: KeyValue? = nil
     var replies: StaticDataProxy?
+    var userLikes: Bool = false
     
     private lazy var stack: UIStackView = {
         let view = UIStackView.forAutoLayout()
@@ -81,28 +90,29 @@ class ThreadInteractionView: UIView {
         for button in [self.likeButton, self.shareButton] {
             button.constrainSize(to: 25)
             self.stack.addArrangedSubview(button)
-
-            // TODO: Temporarily hiding buttons, as they don't do anything yet!
-            button.isHidden = true
         }
-        // set the status of liked
+        
+        // Lets hide the like button and wait until update() finishes to show it
+        self.likeButton.isHidden = true
+        
+        self.shareButton.isHidden = false
     }
     
     func update() {
-        var userLikes = false
         //check to see if we're currently linking this post
-        if self.replies!.count-1 > 0 {
+        let me = Bots.current.identity
+        if self.replies!.count-1 >= 0 {
             for index in 0...self.replies!.count-1 {
                 if self.replies!.keyValueBy(index: index)?.value.content.type ==  Planetary.ContentType.vote {
-                    let likeIdentity = self.replies!.keyValueBy(index: 1)?.metadata.author.about?.about
-                    if Bots.current.identity == likeIdentity {
-                        userLikes=true
+                    let likeIdentity = self.replies!.keyValueBy(index: index)?.metadata.author.about?.about
+                    if me == likeIdentity {
+                        self.userLikes = true
                     }
                 }
             }
         }
             
-        if userLikes {
+        if self.userLikes {
             self.likeButton.setImage(UIImage.verse.liked, for: .normal)
         } else {
             self.likeButton.setImage(UIImage.verse.like, for: .normal)
@@ -168,30 +178,22 @@ class ThreadInteractionView: UIView {
     }
     
     @objc func didPressLike(sender: UIButton) {
-        guard let post = self.post else {
+        guard let post = self.post, !self.userLikes else {
             return
         }
         
         Analytics.shared.trackDidTapButton(buttonName: "like")
-        let vote = ContentVote( link: post.key , value: 1)
         sender.setImage(UIImage.verse.liked, for: .normal)
-        AppController.shared.showProgress()
         
-        Bots.current.publish(content: vote) { [weak self] key, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            AppController.shared.hideProgress()
-            if let error = error {
-                //self?.alert(error: error)
-            } else {
-                Analytics.shared.trackDidReply()
-                //TODO: we need it to reset the keyvalue proxy because there is a new like.
-                //self?.updatedProxy = newProxy
-                //self?.onNextUpdateScrollToPostWithKeyValueKey = key
-                //self?.load()
-            }
-        }
-
-        print(#function)
+        sender.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        UIView.animate(withDuration: 2.0,
+                       delay: 0,
+                       usingSpringWithDamping: 0.2,
+                       initialSpringVelocity: 6.0,
+                       options: .allowUserInteraction,
+                       animations: { sender.transform = .identity },
+                       completion: nil)
+        
+        self.delegate?.threadInteractionView(self, didLike: post)
     }
 }
