@@ -60,6 +60,8 @@
 "Text.copyMessageIdentifier" = "Copiar Identificador de Mensaje";
 "Text.copyPublicIdentifier" = "Copiar Identificador de Perfil";
 "Text.shareThisProfile" = "Compartir Este Perfil";
+"Text.shareThisProfile" = "Compartir Este Mensaje";
+"Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar de amigos";
 "Text.blockUser" = "Bloquear este usuario";
