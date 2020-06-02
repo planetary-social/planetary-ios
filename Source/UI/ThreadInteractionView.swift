@@ -8,6 +8,12 @@
 
 import UIKit
 
+protocol ThreadInteractionViewDelegate: class {
+    
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue)
+    
+}
+
 class ThreadInteractionView: UIView {
 
     var replyCount: Int = 0 {
@@ -22,9 +28,12 @@ class ThreadInteractionView: UIView {
         }
     }
     
+    weak var delegate: ThreadInteractionViewDelegate?
+    
     var post: KeyValue? = nil
-    //var root: KeyValue? = nil
-
+    var replies: StaticDataProxy?
+    var userLikes: Bool = false
+    
     private lazy var stack: UIStackView = {
         let view = UIStackView.forAutoLayout()
         view.axis = .horizontal
@@ -77,17 +86,38 @@ class ThreadInteractionView: UIView {
 
         // spacer separating left/right sides
         self.stack.addArrangedSubview(UIView())
-        
-        // , self.bookmarkButton,  self.likeButton
-        
-        for button in [self.shareButton] {
+
+        for button in [self.likeButton, self.shareButton] {
             button.constrainSize(to: 25)
             self.stack.addArrangedSubview(button)
-
-            // TODO: Temporarily hiding buttons, as they don't do anything yet!
-            button.isHidden = false
         }
-
+        
+        // Lets hide the like button and wait until update() finishes to show it
+        self.likeButton.isHidden = true
+        
+        self.shareButton.isHidden = false
+    }
+    
+    func update() {
+        //check to see if we're currently linking this post
+        let me = Bots.current.identity
+        if self.replies!.count-1 >= 0 {
+            for index in 0...self.replies!.count-1 {
+                if self.replies!.keyValueBy(index: index)?.value.content.type ==  Planetary.ContentType.vote {
+                    let likeIdentity = self.replies!.keyValueBy(index: index)?.metadata.author.about?.about
+                    if me == likeIdentity {
+                        self.userLikes = true
+                    }
+                }
+            }
+        }
+            
+        if self.userLikes {
+            self.likeButton.setImage(UIImage.verse.liked, for: .normal)
+        } else {
+            self.likeButton.setImage(UIImage.verse.like, for: .normal)
+        }
+        self.likeButton.isHidden = false
     }
     
 
@@ -146,9 +176,24 @@ class ThreadInteractionView: UIView {
 
         print(#function)
     }
+    
     @objc func didPressLike(sender: UIButton) {
+        guard let post = self.post, !self.userLikes else {
+            return
+        }
+        
         Analytics.shared.trackDidTapButton(buttonName: "like")
-
-        print(#function)
+        sender.setImage(UIImage.verse.liked, for: .normal)
+        
+        sender.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        UIView.animate(withDuration: 2.0,
+                       delay: 0,
+                       usingSpringWithDamping: 0.2,
+                       initialSpringVelocity: 6.0,
+                       options: .allowUserInteraction,
+                       animations: { sender.transform = .identity },
+                       completion: nil)
+        
+        self.delegate?.threadInteractionView(self, didLike: post)
     }
 }

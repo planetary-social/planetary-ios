@@ -28,7 +28,7 @@ struct KeyValue: Codable {
         self.timestamp = timestamp
         self.receivedSeq = -1
     }
-
+    
     // MARK: Metadata
 
     struct Metadata {

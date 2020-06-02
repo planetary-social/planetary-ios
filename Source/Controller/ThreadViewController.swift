@@ -55,7 +55,11 @@ class ThreadViewController: ContentViewController {
         return control
     }()
 
-    private var interactionView = ThreadInteractionView()
+    private lazy var interactionView: ThreadInteractionView = {
+        let interactionView = ThreadInteractionView()
+        interactionView.delegate = self
+        return interactionView
+    }()
 
     private lazy var rootPostView: PostCellView = {
         let view = PostCellView(keyValue: self.root ?? self.post)
@@ -149,7 +153,7 @@ class ThreadViewController: ContentViewController {
         headerView.removeFromSuperview()
     }
 
-    private func load(animated: Bool = true) {
+    private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
         let post = self.post
         Bots.current.thread(keyValue: post) { [weak self] root, replies, error in
             Log.optional(error)
@@ -157,8 +161,10 @@ class ThreadViewController: ContentViewController {
             self?.refreshControl.endRefreshing()
             if let error = error {
                 self?.alert(error: error)
+                completion?()
             } else {
                 self?.update(with: root ?? post, replies: replies, animated: animated)
+                completion?()
             }
         }
     }
@@ -193,6 +199,8 @@ class ThreadViewController: ContentViewController {
         self.scrollIfNecessary(animated: animated)
         self.interactionView.replyCount = replies.count
         self.interactionView.post = root
+        self.interactionView.replies = replies as? StaticDataProxy
+        self.interactionView.update()
     }
 
 
@@ -358,6 +366,31 @@ extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate 
                 self?.dataSource.expandedPosts.insert(keyValue.key)
             } else {
                 self?.dataSource.expandedPosts.remove(keyValue.key)
+            }
+        }
+    }
+}
+
+extension ThreadViewController: ThreadInteractionViewDelegate {
+    
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue) {
+        let vote = ContentVote(link: self.rootKey,
+                               value: 1,
+                               root: self.rootKey,
+                               branches: [self.branchKey])
+        AppController.shared.showProgress()
+        Bots.current.publish(content: vote) { [weak self] key, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            DispatchQueue.main.async { [weak self] in
+                if let error = error {
+                    AppController.shared.hideProgress()
+                    self?.alert(error: error)
+                } else {
+                    self?.load(animated: true) {
+                        AppController.shared.hideProgress()
+                    }
+                }
             }
         }
     }
