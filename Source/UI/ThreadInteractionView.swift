@@ -21,6 +21,9 @@ class ThreadInteractionView: UIView {
             }
         }
     }
+    
+    var post: KeyValue? = nil
+    //var root: KeyValue? = nil
 
     private lazy var stack: UIStackView = {
         let view = UIStackView.forAutoLayout()
@@ -65,7 +68,7 @@ class ThreadInteractionView: UIView {
         super.init(frame: .zero)
         self.useAutoLayout()
         self.backgroundColor = UIColor.background.default
-
+        
         Layout.addSeparator(toTopOf: self)
         Layout.addSeparator(toBottomOf: self)
 
@@ -74,28 +77,78 @@ class ThreadInteractionView: UIView {
 
         // spacer separating left/right sides
         self.stack.addArrangedSubview(UIView())
-
-        for button in [self.shareButton, self.bookmarkButton, self.likeButton] {
+        
+        // , self.bookmarkButton,  self.likeButton
+        
+        for button in [self.shareButton] {
             button.constrainSize(to: 25)
             self.stack.addArrangedSubview(button)
 
             // TODO: Temporarily hiding buttons, as they don't do anything yet!
-            button.isHidden = true
+            button.isHidden = false
         }
 
     }
+    
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     @objc func didPressShare(sender: UIButton) {
+        guard let post = self.post else {
+            return
+        }
+
+        Analytics.shared.trackDidTapButton(buttonName: "share")
+        
+        var actions = [UIAlertAction]()
+
+        let copyMessageIdentifier = UIAlertAction(title: Text.copyMessageIdentifier.text, style: .default) { _ in
+            Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
+            UIPasteboard.general.string = post.key
+            AppController.shared.showToast(Text.identifierCopied.text)
+        }
+        actions.append(copyMessageIdentifier)
+        
+        let copyMesssageLink = UIAlertAction(title: Text.shareThisMessage.text, style: .default) { _ in
+            guard let publicLink = post.key.publicLink else {
+                return
+            }
+            
+            let who = post.metadata.author.about?.nameOrIdentity ?? post.value.author
+            let link = publicLink.absoluteString
+            let postWithoutGallery = post.value.content.post?.text.withoutGallery() ?? ""
+            let what = postWithoutGallery.prefix(280 - who.count - link.count - Text.shareThisMessageText.text.count)
+            let text = Text.shareThisMessageText.text(["who": who,
+                                                       "what": String(what),
+                                                       "link": publicLink.absoluteString])
+            Analytics.shared.trackDidSelectAction(actionName: "share_message")
+            let activityController = UIActivityViewController(activityItems: [text],
+                                                              applicationActivities: nil)
+            AppController.shared.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.sourceView = self
+            }
+        }
+        actions.append(copyMesssageLink)
+
+        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        actions.append(cancel)
+
+        AppController.shared.choose(from: actions)
+        
+
         print(#function)
     }
     @objc func didPressBookmark(sender: UIButton) {
+        Analytics.shared.trackDidTapButton(buttonName: "bookmark")
+
         print(#function)
     }
     @objc func didPressLike(sender: UIButton) {
+        Analytics.shared.trackDidTapButton(buttonName: "like")
+
         print(#function)
     }
 }

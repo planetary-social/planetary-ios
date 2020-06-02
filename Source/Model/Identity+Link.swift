@@ -8,10 +8,16 @@
 
 import Foundation
 
+extension CharacterSet {
+    static let rfc3986Unreserved = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+}
+
 extension Identity {
 
     var publicLink: URL? {
-        return URL(string: "https://planetary.link/\(self)")
+        let host = "https://planetary.link/"
+        let msgPath = self.addingPercentEncoding(withAllowedCharacters:.rfc3986Unreserved)!
+        return URL(string: host + msgPath)
     }
 
     static func parse(publicLink: URL) -> Identifier? {
