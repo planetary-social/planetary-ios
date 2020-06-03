@@ -43,6 +43,9 @@
 		0A3880342475CD3E00777843 /* VersePubAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A82724734F00009A5EBF /* VersePubAPI.swift */; };
 		0A3880392475D18E00777843 /* PubAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A82224734EC2009A5EBF /* PubAPIService.swift */; };
 		0A38803A2475D18F00777843 /* PubAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A82224734EC2009A5EBF /* PubAPIService.swift */; };
+		0A41F56A248804D6005BB1DE /* LoadBundleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */; };
+		0A41F56D2488078F005BB1DE /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
+		0A41F57224884A67005BB1DE /* AppTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEE246EFBE700CCA22A /* AppTimers.swift */; };
 		0A64A6C224730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C324730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C424730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
@@ -119,7 +122,6 @@
 		0AC10DEB246EFB3400CCA22A /* TimersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEA246EFB3400CCA22A /* TimersService.swift */; };
 		0AC10DEC246EFBD800CCA22A /* TimersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEA246EFB3400CCA22A /* TimersService.swift */; };
 		0AC10DED246EFBD900CCA22A /* TimersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEA246EFB3400CCA22A /* TimersService.swift */; };
-		0AC10DEF246EFBE700CCA22A /* AppTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEE246EFBE700CCA22A /* AppTimers.swift */; };
 		0AC10DF2246EFCC200CCA22A /* NullTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DF0246EFC7600CCA22A /* NullTimers.swift */; };
 		0AC10DF3246EFCC200CCA22A /* NullTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DF0246EFC7600CCA22A /* NullTimers.swift */; };
 		0ACA5742243CFAEC001C5E37 /* MarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */; };
@@ -741,6 +743,8 @@
 		0A3880182475BB4500777843 /* UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A38801A2475BB4500777843 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 		0A38801C2475BB4500777843 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadBundleOperation.swift; sourceTree = "<group>"; };
+		0A41F56C2488078F005BB1DE /* Preload.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Preload.bundle; sourceTree = "<group>"; };
 		0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryAPIService.swift; sourceTree = "<group>"; };
 		0A64A6C624730D0F009A5EBF /* VerseDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseDirectoryAPI.swift; sourceTree = "<group>"; };
 		0A64A6C824730D8A009A5EBF /* NullDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullDirectoryAPI.swift; sourceTree = "<group>"; };
@@ -1535,6 +1539,7 @@
 				0AF9E0A7246B22DC00910575 /* ResumeOperation.swift */,
 				0AF9E0A9246B23C700910575 /* SuspendOperation.swift */,
 				0AF9E0AB246B23F900910575 /* ExitOperation.swift */,
+				0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */,
 			);
 			path = Bot;
 			sourceTree = "<group>";
@@ -1709,6 +1714,7 @@
 		5344D84021C464C500704A34 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0A41F56C2488078F005BB1DE /* Preload.bundle */,
 				5344D83521C4649A00704A34 /* Assets.xcassets */,
 				53E26C4A23022098009240B2 /* FBTT.entitlements */,
 				5344D83A21C4649A00704A34 /* Info.plist */,
@@ -2333,6 +2339,7 @@
 				5369D2A6220B970100A65622 /* Feed.json in Resources */,
 				53B634B8221634B600400403 /* Feed_big.json in Resources */,
 				5369D2A8220BA60300A65622 /* Abouts.json in Resources */,
+				0A41F56D2488078F005BB1DE /* Preload.bundle in Resources */,
 				530816A821C46E68005C48ED /* Settings.bundle in Resources */,
 				231314CC2237ACDC0000C989 /* ViewDatabaseSchema.sql in Resources */,
 				0A04D8B82477220F00DD37B7 /* Generated.strings in Resources */,
@@ -2996,7 +3003,6 @@
 				5369D2A4220B596800A65622 /* Data+JSON.swift in Sources */,
 				53AD3FE922775936005228F9 /* Thread+Assert.swift in Sources */,
 				535754FD22694A4C002A6989 /* PostCellView.swift in Sources */,
-				0AC10DEF246EFBE700CCA22A /* AppTimers.swift in Sources */,
 				535B6A0A2372360F008C248E /* UIViewController+TopViewController.swift in Sources */,
 				531B92C422CEAD25005D5255 /* PostReplyView.swift in Sources */,
 				53A4763923A19D7D003814DC /* Offboarding.swift in Sources */,
@@ -3124,6 +3130,7 @@
 				236761592450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
 				53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */,
 				53BD748623232FB70060E47E /* Blob+UIImage.swift in Sources */,
+				0A41F57224884A67005BB1DE /* AppTimers.swift in Sources */,
 				53DF334E239F2A720017566D /* Log+API.swift in Sources */,
 				53BD748A23289B3F0060E47E /* ImageGalleryView.swift in Sources */,
 				8D9143F6230C5F4E0075BC8A /* Localizable.swift in Sources */,
@@ -3211,6 +3218,7 @@
 				5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */,
 				530F019C22DEAD70007EBAE2 /* SplashOnboardingStep.swift in Sources */,
 				531749972370EED800F4C381 /* UIView+Superview.swift in Sources */,
+				0A41F56A248804D6005BB1DE /* LoadBundleOperation.swift in Sources */,
 				0ACE91AE243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift in Sources */,
 				53569F3523A85DD700DA291D /* PostTruncatedTextCache.swift in Sources */,
 				23D8CE272253DB29001EB7D5 /* Address.swift in Sources */,

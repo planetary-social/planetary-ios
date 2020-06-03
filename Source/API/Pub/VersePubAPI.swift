@@ -42,8 +42,8 @@ class VersePubAPI: PubAPIService {
     
     func invitePubsToFollow(_ identity: Identity, completion: @escaping ((Bool, APIError?) -> Void)) {
         let headers: APIHeaders = ["Verse-New-Key": identity]
-        self.get(path: "/v1/invite", headers: headers) {
-            data, error in
+        self.get(path: "/v1/invite", headers: headers) { data, error in
+            Log.optional(error)
             completion(error == nil, error)
         }
     }

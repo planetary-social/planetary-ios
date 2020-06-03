@@ -292,4 +292,11 @@ class FakeBot: Bot {
     func statistics(completion: @escaping StatisticsCompletion) {
         completion(_statistics)
     }
+    
+    // MARK: Preload
+    
+    func preloadFeed(at url: URL, completion: @escaping ErrorCompletion) {
+        completion(nil)
+    }
+    
 }
