@@ -156,6 +156,7 @@ class HomeViewController: ContentViewController {
     func load(animated: Bool = false) {
         Bots.current.recent() { [weak self] proxy, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
             self?.removeLoadingAnimation()
             self?.floatingRefreshButton.hide()

@@ -293,6 +293,7 @@ class ViewDatabase {
         }
         var qry = self.posts
             .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
+            .filter(colMsgType == "post")
             .filter(colIsRoot == true)
             .filter(colHidden == false)
             .filter(colDecrypted == false)
@@ -789,8 +790,6 @@ class ViewDatabase {
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
-        } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
         }
         
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
