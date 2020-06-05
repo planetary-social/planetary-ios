@@ -156,7 +156,9 @@ class BlobCache: DictionaryCache {
                     }
                 }
                 
-                self?.dataTasks.removeValue(forKey: ref)
+                if self?.dataTasks.keys.contains(ref) ?? false {
+                    self?.dataTasks.removeValue(forKey: ref)
+                }
             }
         }
         self.dataTasks[ref] = dataTask

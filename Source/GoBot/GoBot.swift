@@ -1180,7 +1180,7 @@ class GoBot: Bot {
                 do {
                     let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
 
-                    var lastRxSeq: Int64 = -1
+                    var lastRxSeq: Int64 = try self.database.minimumReceivedSeq()
                     
                     let newMesgs = msgs.map { (msg: KeyValue) -> KeyValue in
                         lastRxSeq = lastRxSeq - 1
