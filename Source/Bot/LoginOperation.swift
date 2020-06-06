@@ -11,8 +11,8 @@ import Foundation
 class LoginOperation: AsynchronousOperation {
     
     var configuration: AppConfiguration
-    var success: Bool = false
-    var error: Error?
+    private(set) var success: Bool = false
+    private(set) var error: Error?
     
     init(configuration: AppConfiguration) {
         self.configuration = configuration

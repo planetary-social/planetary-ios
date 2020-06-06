@@ -188,7 +188,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-        //db.trace { print("\tSQL: \($0)") } // print all the statements
+        // db.trace { print("\tSQL: \($0)") } // print all the statements
         
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
@@ -293,6 +293,7 @@ class ViewDatabase {
         }
         var qry = self.posts
             .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
+            .filter(colMsgType == "post")
             .filter(colIsRoot == true)
             .filter(colHidden == false)
             .filter(colDecrypted == false)
@@ -330,6 +331,19 @@ class ViewDatabase {
         
         let rxMaybe = Expression<Int64?>("rx_seq")
         if let rx = try db.scalar(self.msgs.select(rxMaybe.max)) {
+            return rx
+        }
+        
+        return -1
+    }
+    
+    func minimumReceivedSeq() throws -> Int64 {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let rxMaybe = Expression<Int64?>("rx_seq")
+        if let rx = try db.scalar(self.msgs.select(rxMaybe.min)) {
             return rx
         }
         
@@ -789,8 +803,6 @@ class ViewDatabase {
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
-        } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
         }
         
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)

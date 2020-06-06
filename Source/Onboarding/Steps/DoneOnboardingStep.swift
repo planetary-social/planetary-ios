@@ -66,7 +66,15 @@ class DoneOnboardingStep: OnboardingStep {
                 completionBlock()
             }
         }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
+        
+        if let path = Bundle.main.path(forResource: "Preload", ofType: "bundle"), let bundle = Bundle(path: path) {
+            let preloadOperation = LoadBundleOperation(bundle: bundle)
+            refreshOperation.addDependency(preloadOperation)
+            AppController.shared.operationQueue.addOperations([preloadOperation, refreshOperation],
+                                                              waitUntilFinished: false)
+        } else {
+            AppController.shared.operationQueue.addOperation(refreshOperation)
+        }
     }
 
     override func primary() {

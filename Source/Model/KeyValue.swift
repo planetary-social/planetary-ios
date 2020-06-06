@@ -29,6 +29,13 @@ struct KeyValue: Codable {
         self.receivedSeq = -1
     }
     
+    init(key: Identifier, value: Value, timestamp: Float64, receivedSeq: Int64) {
+        self.key = key
+        self.value = value
+        self.timestamp = timestamp
+        self.receivedSeq = receivedSeq
+    }
+    
     // MARK: Metadata
 
     struct Metadata {

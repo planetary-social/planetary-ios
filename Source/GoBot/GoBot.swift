@@ -706,6 +706,9 @@ class GoBot: Bot {
         // Use a same thread here, no need to mess with the our standard queue.
         do {
             let repoURL = try self.bot.blobFileURL(ref: identifier)
+            try FileManager.default.createDirectory(at: repoURL.deletingLastPathComponent(),
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil)
             try FileManager.default.copyItem(at: url, to: repoURL)
             completion(repoURL, nil)
         } catch let error {
@@ -1167,4 +1170,40 @@ class GoBot: Bot {
             }
         }
     }
+    
+    // MARK: Preloading
+    
+    func preloadFeed(at url: URL, completion: @escaping ErrorCompletion) {
+        self.queue.async {
+            do {
+                let data = try Data(contentsOf: url, options: .mappedIfSafe)
+                do {
+                    let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+
+                    var lastRxSeq: Int64 = try self.database.minimumReceivedSeq()
+                    
+                    let newMesgs = msgs.map { (msg: KeyValue) -> KeyValue in
+                        lastRxSeq = lastRxSeq - 1
+                        return KeyValue(key: msg.key,
+                                        value: msg.value,
+                                        timestamp: msg.timestamp,
+                                        receivedSeq: lastRxSeq)
+                    }
+
+                    try self.database.fillMessages(msgs: newMesgs)
+                    
+                    completion(nil)
+                } catch {
+                    print(error) // shows error
+                    print("Decoding failed")// local message
+                    completion(error)
+                }
+            } catch {
+                print(error) // shows error
+                print("Unable to read file")// local message
+                completion(error)
+            }
+        }
+    }
+    
 }

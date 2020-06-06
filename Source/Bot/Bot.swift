@@ -187,5 +187,10 @@ protocol Bot {
     
     @available(*, deprecated)
     var statistics: BotStatistics { get }
+    
+    // MARK: Preloading
+    
+    func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
+    
 }
 
