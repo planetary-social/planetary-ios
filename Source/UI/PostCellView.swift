@@ -70,8 +70,13 @@ class PostCellView: KeyValueView {
 
     var truncationLimit: TruncationSettings? {
         didSet {
-            self.truncationData = nil
-            self.configureTruncatedState()
+            if let oldValue = oldValue, let newValue = truncationLimit, newValue.to == oldValue.to, newValue.over == oldValue.over {
+                // Don't recalculate truncated state
+                return
+            } else {
+                self.truncationData = nil
+                self.configureTruncatedState()
+            }
         }
     }
 
