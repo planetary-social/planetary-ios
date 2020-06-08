@@ -102,11 +102,6 @@ class BlobCache: DictionaryCache {
     
     private func  loadBlobFromCloud(for ref: BlobIdentifier)
     {
-        if let dataTask = self.dataTasks[ref] {
-            dataTask.resume()
-            return
-        }
-        
         let hexRef = ref.hexEncodedString()
         
         // first 2 chars are directory
@@ -120,7 +115,11 @@ class BlobCache: DictionaryCache {
         gsUrl.appendPathComponent(rest)
         
         let dataTask = URLSession.shared.dataTask(with: gsUrl) { [weak self] (data, response, error) in
-             
+            if let error = error as NSError?, error.code == NSURLErrorCancelled {
+                // Nothing to do if data task was cancelled on purpose
+                return
+            }
+            
             Log.optional(error)
             
             guard error == nil,
@@ -130,19 +129,14 @@ class BlobCache: DictionaryCache {
                 // Cannot use these because the servers are not reliable
                 //let mimeType = httpResponse.mimeType,
                 // mimeType.hasPrefix("image") else {
-                
-                self?.dataTasks.removeValue(forKey: ref)
+                self?.removeDataTask(for: ref)
                 return
             }
             
             guard let image = UIImage(data: data) else {
-                Log.info("Couldn't parse \(gsUrl.absoluteString)")
-                try? data.write(to: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
-                self?.dataTasks.removeValue(forKey: ref)
+                self?.removeDataTask(for: ref)
                 return
             }
-            
-            Log.info("Could parse \(gsUrl.absoluteString)")
             
             Bots.current.store(data: data, for: ref) { [weak self] (url, error) in
                 Log.optional(error)
@@ -156,12 +150,16 @@ class BlobCache: DictionaryCache {
                     }
                 }
                 
-                if self?.dataTasks.keys.contains(ref) ?? false {
-                    self?.dataTasks.removeValue(forKey: ref)
-                }
+                self?.removeDataTask(for: ref)
             }
         }
-        self.dataTasks[ref] = dataTask
+        
+        self.dataTasksQueue.async { [weak self] in
+            if let dataTask = self?.dataTasks[ref] {
+                dataTask.cancel()
+            }
+            self?.dataTasks[ref] = dataTask
+        }
         
         dataTask.resume()
     }
@@ -214,7 +212,9 @@ class BlobCache: DictionaryCache {
     private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
     
     // for each blob identifier, there should be one data task
+    // use dataTasksQueue to read/write this property
     private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
+    private var dataTasksQueue: DispatchQueue = .global(qos: .background)
 
     /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
     /// be used to forget a pending completion later.
@@ -243,15 +243,26 @@ class BlobCache: DictionaryCache {
     }
     
     func cancelAllDataTasks() {
-        self.dataTasks.forEach { (ref, dataTask) in
-            dataTask.cancel()
+        self.dataTasksQueue.async { [weak self] in
+            self?.dataTasks.forEach { (ref, dataTask) in
+                dataTask.cancel()
+            }
+            self?.dataTasks.removeAll()
         }
-        self.dataTasks.removeAll()
     }
     
     func cancelDataTask(for identifier: BlobIdentifier) {
-        self.dataTasks[identifier]?.cancel()
-        self.dataTasks.removeValue(forKey: identifier)
+        self.dataTasksQueue.async { [weak self] in
+            if let dataTask = self?.dataTasks.removeValue(forKey: identifier) {
+                dataTask.cancel()
+            }
+        }
+    }
+    
+    func removeDataTask(for identifier: BlobIdentifier) {
+        self.dataTasksQueue.async { [weak self] in
+            self?.dataTasks.removeValue(forKey: identifier)
+        }
     }
 
     /// Forgets a specific UUID tagged completion for a blob identifier.  This will

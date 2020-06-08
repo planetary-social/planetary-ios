@@ -54,15 +54,14 @@ class AvatarImageView: ImageView {
             }
 
             // request image
-            let uuid = Caches.blobs.image(for: person.image!) {
-                [weak self] _, image in
-                  DispatchQueue.main.async {
-                       if animate {
-                        self!.fade(to: image)
-                       } else {
-                        self!.image = image
-                       }
-                   }
+            let uuid = Caches.blobs.image(for: person.image!) { [weak self] _, image in
+                DispatchQueue.main.async {
+                    if animate {
+                        self?.fade(to: image)
+                    } else {
+                        self?.image = image
+                    }
+                }
                 return
             }
         }
