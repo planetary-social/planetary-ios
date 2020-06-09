@@ -46,6 +46,7 @@
 		0A41F56A248804D6005BB1DE /* LoadBundleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */; };
 		0A41F56D2488078F005BB1DE /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		0A41F57224884A67005BB1DE /* AppTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEE246EFBE700CCA22A /* AppTimers.swift */; };
+		0A41F578248F1638005BB1DE /* Feed_example_preload.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F577248F1637005BB1DE /* Feed_example_preload.json */; };
 		0A64A6C224730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C324730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C424730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
@@ -745,6 +746,7 @@
 		0A38801C2475BB4500777843 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadBundleOperation.swift; sourceTree = "<group>"; };
 		0A41F56C2488078F005BB1DE /* Preload.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Preload.bundle; sourceTree = "<group>"; };
+		0A41F577248F1637005BB1DE /* Feed_example_preload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Feed_example_preload.json; sourceTree = "<group>"; };
 		0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryAPIService.swift; sourceTree = "<group>"; };
 		0A64A6C624730D0F009A5EBF /* VerseDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseDirectoryAPI.swift; sourceTree = "<group>"; };
 		0A64A6C824730D8A009A5EBF /* NullDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullDirectoryAPI.swift; sourceTree = "<group>"; };
@@ -1409,6 +1411,7 @@
 				23E880B422857F8700486AD0 /* EnocdeJSONtest.swift */,
 				23888981220908110030CB92 /* Feed_big.json */,
 				238E39DA22030E39002677AC /* Feed_cryptix2.json */,
+				0A41F577248F1637005BB1DE /* Feed_example_preload.json */,
 				2388897A220867F00030CB92 /* Feed_example.json */,
 				23888978220867DB0030CB92 /* FeedFill.swift */,
 				235FC914220096300083420F /* FirstAndEncrypted.json */,
@@ -2315,6 +2318,7 @@
 				5316E95921FFD19F0053832E /* Invalid.json in Resources */,
 				23C7445C2200B1EF00FB554A /* KeyValueVote.json in Resources */,
 				237D058023351F5B00973D63 /* PostWithHashtags.json in Resources */,
+				0A41F578248F1638005BB1DE /* Feed_example_preload.json in Resources */,
 				531A8A4C21FA5E4700D5C8C0 /* PostBranchField.json in Resources */,
 				53CF2A4B220268CF00F0A2CC /* Abouts.json in Resources */,
 				23A0A3B422490B1C00CAC295 /* ContentPrivate.json in Resources */,
