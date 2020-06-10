@@ -1120,6 +1120,20 @@ class GoBotTests: XCTestCase {
         self.wait(for: [ex4], timeout: 10)
         
     }
+    
+    // MARK: Everyone
+    
+    func test220_everyone_empty() {
+        let ex = self.expectation(description: "\(#function)")
+        GoBotTests.shared.everyone() {
+            msgs, err in
+            XCTAssertNil(err)
+            // we should have 100 posts from page (as is the only one we don't follow)
+            XCTAssertEqual(msgs.count, 100)
+            ex.fulfill()
+        }
+        self.wait(for: [ex], timeout: 10)
+    }
 
     // MARK: TODOS
 

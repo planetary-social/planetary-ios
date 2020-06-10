@@ -625,6 +625,7 @@ class ViewDatabaseTest: XCTestCase {
             XCTFail("\(error)")
         }
     }
+    
 }
 
 class ViewDatabasePreloadTest: XCTestCase {

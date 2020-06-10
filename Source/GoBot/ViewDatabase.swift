@@ -300,6 +300,8 @@ class ViewDatabase {
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
+        } else {
+            qry = try self.filterNotFollowingPeople(qry: qry)
         }
         return try db.scalar(qry.count)
     }
@@ -803,6 +805,8 @@ class ViewDatabase {
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
+        } else {
+            qry = try self.filterNotFollowingPeople(qry: qry)
         }
         
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
