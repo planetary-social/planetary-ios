@@ -6,15 +6,15 @@ jobs:
     name : Unit Tests
     runs-on: macOS-latest
     env:
-      MixpanelAnalyticsToken: 
-      AuthyPhoneVerificationAPIToken: 
-      BugsnagCrashReportingToken: 
-      ZendeskAppID: 
-      ZendeskClientID: 
-      VersePushAPIToken: 
-      VersePubAPIToken: 
-      VerseDirectoryAPIToken: 
-      VerseBlobToken: 
+      MixpanelAnalyticsToken: ${{ MixpanelAnalyticsToken }}
+      AuthyPhoneVerificationAPIToken: ${{ AuthyPhoneVerificationAPIToken }}
+      BugsnagCrashReportingToken: ${{ BugsnagCrashReportingToken }}
+      ZendeskAppID: ${{ ZendeskAppID }}
+      ZendeskClientID: ${{ ZendeskClientID }}
+      VersePushAPIToken: ${{ VersePushAPIToken }}
+      VersePubAPIToken: ${{ VersePubAPIToken }}
+      VerseDirectoryAPIToken: ${{ VerseDirectoryAPIToken }}
+      VerseBlobToken: ${{ VerseBlobToken }}
     steps:
     - name: Checkout
       uses: actions/checkout@master
