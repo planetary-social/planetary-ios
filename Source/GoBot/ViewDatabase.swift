@@ -570,7 +570,7 @@ class ViewDatabase {
         return msgs.first
     }
     
-    func getAbouts() throws -> [About]? {
+    func getAbouts() throws -> [About] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }

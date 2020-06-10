@@ -111,7 +111,7 @@ protocol Bot {
     func about(completion: @escaping AboutCompletion)
     func about(identity: Identity, completion:  @escaping AboutCompletion)
     func abouts(identities: Identities, completion:  @escaping AboutsCompletion)
-    func abouts(completion:  @escaping AboutsCompletion)
+    func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion)
 
     // MARK: Contact
 
@@ -194,3 +194,10 @@ protocol Bot {
     
 }
 
+extension Bot {
+    
+    func abouts(completion:  @escaping AboutsCompletion) {
+        self.abouts(queue: .main, completion: completion)
+    }
+    
+}

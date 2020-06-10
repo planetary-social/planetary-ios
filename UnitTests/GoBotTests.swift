@@ -1133,6 +1133,38 @@ class GoBotTests: XCTestCase {
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
+
+    }
+    
+    // MARK: Locked
+    
+    func test300_database_locked() {
+        // Here we don't wait for abouts to be completed
+        // So this simulates interacting with the database
+        // While the bot is refreshing or syncing
+        
+        let url = Bundle.current.url(forResource: "Feed_example", withExtension: "json")!
+        
+        let preloadExpectation = self.expectation(description: "preload")
+        GoBotTests.shared.preloadFeed(at: url) { (error) in
+            XCTAssertNil(error, "view preload failed")
+            preloadExpectation.fulfill()
+        }
+        
+        let syncExpectation = self.expectation(description: "sync")
+        GoBotTests.shared.sync(queue: .main) {
+            error, _, _ in
+            XCTAssertNil(error)
+            syncExpectation.fulfill()
+        }
+        
+        let refreshExpectation = self.expectation(description: "refresh")
+        GoBotTests.shared.refresh(load: .long, queue: .main) { error, _ in
+            XCTAssertNil(error, "view refresh failed")
+            refreshExpectation.fulfill()
+        }
+        
+        self.wait(for: [preloadExpectation, syncExpectation, refreshExpectation], timeout: 30)
     }
 
     // MARK: TODOS
