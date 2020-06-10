@@ -19,7 +19,6 @@ struct SSBIdentities {
                 "planetary-pub6": "@EXvEWZDIhmWracjl/4St9AWR42/MGBAXMPPBVJ4hN5A=.ed25519"]
 
     let people = ["Current Events": "@wNmXqk80DL4FrBjzZcYqbKs/SpsPv6MVX6BLICabPfI=.ed25519",
-                  "The Weekley": "@iVPi/B73hJSpsUB8XbSnlxe3NembPXLjOfIexlYdgJA=.ed25519",
                   "rabble":         "@0uOwBrHIeiRK7lcvpLwjSFkcS3UHSQb/jyN52zf+J6Y=.ed25519",
                   "Planetary": "@oeNoy1RIArVdMdk8ndeoKbAKuU8b56VgxlYP5y8b9Ic=.ed25519"]
 
