@@ -21,7 +21,7 @@ jobs:
     - name: Install CocoaPods Keys
       run: gem install cocoapods-keys
     - name: Dependencies
-      run: pod install --repo-update
+      run: pod install --no-repo-update
     - name: Build
       run: xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.5"
     - name: Test
