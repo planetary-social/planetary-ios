@@ -214,7 +214,7 @@ class BlobCache: DictionaryCache {
     // for each blob identifier, there should be one data task
     // use dataTasksQueue to read/write this property
     private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
-    private var dataTasksQueue: DispatchQueue = .global(qos: .background)
+    private var dataTasksQueue: DispatchQueue = DispatchQueue(label: "com.planetary.blobcache")
 
     /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
     /// be used to forget a pending completion later.
