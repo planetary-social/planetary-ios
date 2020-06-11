@@ -123,7 +123,8 @@ fileprivate extension KeyValue {
         let ud = self.userDate
         let day = ud.todayYesterdayDayOfWeekOrNumberOfDaysAgo
         let time = ud.timeOfDay
-        return Text.atDayTime.text(["day": day, "time": time])
+        let text = Text.atDayTime.text(["day": day, "time": time])
+        return text.prefix(1).capitalized + text.dropFirst()
     }
 }
 
