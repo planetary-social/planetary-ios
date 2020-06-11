@@ -10,18 +10,18 @@ jobs:
       uses: actions/checkout@master
     - name: Install CocoaPods Keys
       run: gem install cocoapods-keys
-      env:
-        MixpanelAnalyticsToken: null
-        AuthyPhoneVerificationAPIToken: null
-        BugsnagCrashReportingToken: null
-        ZendeskAppID: null
-        ZendeskClientID: null
-        VersePushAPIToken: null
-        VersePubAPIToken: null
-        VerseDirectoryAPIToken: null
-        VerseBlobToken: null
     - name: Dependencies
       run: pod install --no-repo-update
+      env:
+        MixpanelAnalyticsToken: nil
+        AuthyPhoneVerificationAPIToken: nil
+        BugsnagCrashReportingToken: nil
+        ZendeskAppID: nil
+        ZendeskClientID: nil
+        VersePushAPIToken: nil
+        VersePubAPIToken: nil
+        VerseDirectoryAPIToken: nil
+        VerseBlobToken: nil
     - name: Build
       run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.5" | xcpretty
     - name: Test
