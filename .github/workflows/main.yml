@@ -5,24 +5,24 @@ jobs:
   unit_test:
     name : Unit Tests
     runs-on: macOS-latest
-    env:
-      MixpanelAnalyticsToken: null
-      AuthyPhoneVerificationAPIToken: null
-      BugsnagCrashReportingToken: null
-      ZendeskAppID: null
-      ZendeskClientID: null
-      VersePushAPIToken: null
-      VersePubAPIToken: null
-      VerseDirectoryAPIToken: null
-      VerseBlobToken: null
     steps:
     - name: Checkout
       uses: actions/checkout@master
     - name: Install CocoaPods Keys
       run: gem install cocoapods-keys
+      env:
+        MixpanelAnalyticsToken: null
+	AuthyPhoneVerificationAPIToken: null
+	BugsnagCrashReportingToken: null
+	ZendeskAppID: null
+	ZendeskClientID: null
+	VersePushAPIToken: null
+	VersePubAPIToken: null
+	VerseDirectoryAPIToken: null
+	VerseBlobToken: null
     - name: Dependencies
       run: pod install --no-repo-update
     - name: Build
-      run: xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.5" | xcpretty
+      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.5" | xcpretty
     - name: Test
-      run: xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.5" | xcpretty
+      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.5" | xcpretty
