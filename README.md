@@ -51,5 +51,5 @@ ps: If you are already using [Homebrew](https://brew.sh/) you can also use `brew
 
 ## License
 
-[AGPL-3.0][LICENSE]
+[AGPL-3.0](LICENSE)
 
