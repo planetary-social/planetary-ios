@@ -239,8 +239,11 @@ class FakeBot: Bot {
         completion(self.abouts(), nil)
     }
     
-    func abouts(completion:  @escaping AboutsCompletion) {
-        completion(self.abouts(), nil)
+    func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion) {
+        let abouts = self.abouts()
+        queue.async {
+            completion(abouts, nil)
+        }
     }
 
     // MARK: Feed content

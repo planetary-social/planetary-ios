@@ -47,6 +47,9 @@
 		0A41F56D2488078F005BB1DE /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		0A41F57224884A67005BB1DE /* AppTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DEE246EFBE700CCA22A /* AppTimers.swift */; };
 		0A41F578248F1638005BB1DE /* Feed_example_preload.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F577248F1637005BB1DE /* Feed_example_preload.json */; };
+		0A4870F72492BF6700BCD063 /* AsynchronousBlockOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */; };
+		0A4870F82492C05D00BCD063 /* AsynchronousBlockOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */; };
+		0A4870F92492C06400BCD063 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */; };
 		0A64A6C224730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C324730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C424730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
@@ -747,6 +750,7 @@
 		0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadBundleOperation.swift; sourceTree = "<group>"; };
 		0A41F56C2488078F005BB1DE /* Preload.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Preload.bundle; sourceTree = "<group>"; };
 		0A41F577248F1637005BB1DE /* Feed_example_preload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Feed_example_preload.json; sourceTree = "<group>"; };
+		0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousBlockOperation.swift; sourceTree = "<group>"; };
 		0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryAPIService.swift; sourceTree = "<group>"; };
 		0A64A6C624730D0F009A5EBF /* VerseDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseDirectoryAPI.swift; sourceTree = "<group>"; };
 		0A64A6C824730D8A009A5EBF /* NullDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullDirectoryAPI.swift; sourceTree = "<group>"; };
@@ -1926,6 +1930,7 @@
 				53C422AF21C476AF00A314AD /* Extensions */,
 				531D0A0B21EAADEC008E40A8 /* Layout */,
 				0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */,
+				0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2694,6 +2699,7 @@
 				0A38800F2475ACF000777843 /* PubAPI.swift in Sources */,
 				533EDBE92385F7E7008B3565 /* Cache.swift in Sources */,
 				5336611422D9669E00100707 /* UIColor+Random.swift in Sources */,
+				0A4870F82492C05D00BCD063 /* AsynchronousBlockOperation.swift in Sources */,
 				5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */,
 				2388897D22086A650030CB92 /* GoBotInternal.swift in Sources */,
 				53E29CE422D8E423008A2CB1 /* AttributedStringTests.swift in Sources */,
@@ -2738,6 +2744,7 @@
 				0A64A852247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
 				53E26C5F23045D4C009240B2 /* Person.swift in Sources */,
 				0A3880232475BCE200777843 /* CrashReporting.swift in Sources */,
+				0A4870F92492C06400BCD063 /* AsynchronousOperation.swift in Sources */,
 				531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */,
 				0A64A84D24735766009A5EBF /* PhoneVerificationResponse.swift in Sources */,
 				0A64A80A24734CD2009A5EBF /* AnalyticsService+UI.swift in Sources */,
@@ -3249,6 +3256,7 @@
 				5372175122FD0841008A760A /* DataUsageSettingsViewController.swift in Sources */,
 				53362F6C22091DD4007264CB /* NetworkKeyViewController.swift in Sources */,
 				53F24FB422C70B5200CFCBAA /* AvatarButton.swift in Sources */,
+				0A4870F72492BF6700BCD063 /* AsynchronousBlockOperation.swift in Sources */,
 				5369D2A2220B561800A65622 /* FakeBot.swift in Sources */,
 				531B92B922CD128F005D5255 /* UITextView+Mention.swift in Sources */,
 				533EDBF42389BBE8008B3565 /* Blob+UIColor.swift in Sources */,

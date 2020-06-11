@@ -525,26 +525,36 @@ class GoBot: Bot {
             return
         }
         
-        if diff == 0 {
+        guard diff > 0 else {
             // still might want to update privates
             self.updatePrivate(completion: completion)
             return
         }
         
         // TOOD: redo until diff==0
-        self.bot.getReceiveLog(startSeq: current+1, limit: limit) { msgs, err in
-            if let e = err {
-                completion(e)
-                return
-            }
-            if msgs.count == 0 {
+        do {
+            let msgs = try self.bot.getReceiveLog(startSeq: current+1, limit: limit)
+            
+            guard msgs.count > 0 else {
                 print("warning: triggered update but got no messages from receive log")
                 completion(nil)
                 return
             }
-
+            
             do {
                 try self.database.fillMessages(msgs: msgs)
+                
+                #if DEBUG
+                print("[rx log] viewdb filled with \(msgs.count) messages.")
+                #endif
+                if diff < limit { // view is up2date now
+                    self.updatePrivate(completion: completion)
+                } else {
+                    #if DEBUG
+                    print("#rx log# \(diff-limit) messages left in go-ssb offset log")
+                    #endif
+                    completion(nil)
+                }
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
                 var (params, err) = self.repairViewConstraints21012020(with: author, current: current)
                 // add original SQL error
@@ -564,26 +574,14 @@ class GoBot: Bot {
                 print("[rx log] viewdb fill of aborted and repaired.")
                 #endif
                 completion(err)
-                return
             } catch {
                 let err = GoBotError.duringProcessing("viewDB: message filling failed", error)
                 Log.optional(err)
                 CrashReporting.shared.reportIfNeeded(error: err)
                 completion(err)
-                return
             }
-
-            #if DEBUG
-            print("[rx log] viewdb filled with \(msgs.count) messages.")
-            #endif
-            if diff < limit { // view is up2date now
-                self.updatePrivate(completion: completion)
-            } else {
-                #if DEBUG
-                print("#rx log# \(diff-limit) messages left in go-ssb offset log")
-                #endif
-                completion(nil)
-            }
+        } catch {
+            completion(error)
         }
     }
     
@@ -592,27 +590,19 @@ class GoBot: Bot {
         do {
             let c = try self.database.stats(table: .privates)
             count = Int64(c)
-        } catch {
-            completion(error)
-            return
-        }
-        // TOOD: redo until diff==0
-        self.bot.getPrivateLog(startSeq: count, limit: 1000) { msgs, err in
-            if let e = err {
-                completion(e)
-                return
-            }
-
-            do {
-                try self.database.fillMessages(msgs: msgs, pms: true)
-            } catch {
-                completion(error)
-                return
-            }
+            
+            // TOOD: redo until diff==0
+            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
+            
+            try self.database.fillMessages(msgs: msgs, pms: true)
+            
             if msgs.count > 0 {
                 print("[private log] private log filled with \(msgs.count) msgs (started at \(count))")
             }
+            
             completion(nil)
+        } catch {
+            completion(error)
         }
     }
     
@@ -796,13 +786,18 @@ class GoBot: Bot {
         }
     }
     
-    func abouts(completion: @escaping AboutsCompletion) {
-        Thread.assertIsMainThread()
+    func abouts(queue: DispatchQueue, completion: @escaping AboutsCompletion) {
         self.queue.async {
-            //var abouts: [About]
-            let abouts = try? self.database.getAbouts()!
-            
-            DispatchQueue.main.async { completion(abouts!, BotError.self as? Error) }
+            do {
+                let abouts = try self.database.getAbouts()
+                queue.async {
+                    completion(abouts, nil)
+                }
+            } catch {
+                queue.async {
+                    completion([], error)
+                }
+            }
         }
     }
 

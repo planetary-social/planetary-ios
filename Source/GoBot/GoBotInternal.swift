@@ -534,48 +534,33 @@ class GoBotInternal {
     // MARK: message streams
     
     // aka createLogStream
-    func getReceiveLog(startSeq: Int64, limit: Int, completion: @escaping KeyValuesCompletion) {
-        var err: Error? = nil
-        var msgs = [KeyValue]()
-        defer {
-            completion(msgs, err)
-        }
-
+    func getReceiveLog(startSeq: Int64, limit: Int) throws -> KeyValues {
         guard let rawBytes = ssbStreamRootLog(UInt64(startSeq), Int32(limit)) else {
-            err = GoBotError.unexpectedFault("rxLog pre-processing error")
-            return
+            throw GoBotError.unexpectedFault("rxLog pre-processing error")
         }
         let data = String(cString: rawBytes).data(using: .utf8)!
         free(rawBytes)
         do {
             let decoder = JSONDecoder()
-            msgs = try decoder.decode([KeyValue].self, from: data)
+            return try decoder.decode([KeyValue].self, from: data)
         } catch {
-            err = GoBotError.duringProcessing("rxLog json decoding error:", error)
-            return
+            throw GoBotError.duringProcessing("rxLog json decoding error:", error)
         }
     }
     
     // aka private.read
-    func getPrivateLog(startSeq: Int64, limit: Int, completion: @escaping KeyValuesCompletion) {
-        var err: Error? = nil
-        var msgs = [KeyValue]()
-        defer {
-            completion(msgs, err)
-        }
-
+    func getPrivateLog(startSeq: Int64, limit: Int) throws -> KeyValues {
         guard let rawBytes = ssbStreamPrivateLog(UInt64(startSeq), Int32(limit)) else {
-            err = GoBotError.unexpectedFault("privateLog pre-processing error")
-            return
+            throw GoBotError.unexpectedFault("privateLog pre-processing error")
         }
+        
         let data = String(cString: rawBytes).data(using: .utf8)!
         free(rawBytes)
         let decoder = JSONDecoder()
         do {
-            msgs = try decoder.decode([KeyValue].self, from: data)
+            return try decoder.decode([KeyValue].self, from: data)
         } catch {
-            err = GoBotError.duringProcessing("privateLog json decoding error:", error)
-            return
+            throw GoBotError.duringProcessing("privateLog json decoding error:", error)
         }
     }
     
