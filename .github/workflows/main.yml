@@ -12,14 +12,14 @@ jobs:
       run: gem install cocoapods-keys
       env:
         MixpanelAnalyticsToken: null
-	AuthyPhoneVerificationAPIToken: null
-	BugsnagCrashReportingToken: null
-	ZendeskAppID: null
-	ZendeskClientID: null
-	VersePushAPIToken: null
-	VersePubAPIToken: null
-	VerseDirectoryAPIToken: null
-	VerseBlobToken: null
+        AuthyPhoneVerificationAPIToken: null
+        BugsnagCrashReportingToken: null
+        ZendeskAppID: null
+        ZendeskClientID: null
+        VersePushAPIToken: null
+        VersePubAPIToken: null
+        VerseDirectoryAPIToken: null
+        VerseBlobToken: null
     - name: Dependencies
       run: pod install --no-repo-update
     - name: Build
