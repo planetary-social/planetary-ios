@@ -196,6 +196,10 @@ protocol Bot {
 
 extension Bot {
     
+    func sync(completion: @escaping SyncCompletion) {
+        self.sync(queue: .main, completion: completion)
+    }
+    
     func abouts(completion:  @escaping AboutsCompletion) {
         self.abouts(queue: .main, completion: completion)
     }

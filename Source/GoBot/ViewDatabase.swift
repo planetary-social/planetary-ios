@@ -184,6 +184,12 @@ class ViewDatabase {
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
         self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
+        
+        db.busyTimeout = 1
+        db.busyHandler { (tries) -> Bool in
+            return tries < 4
+        }
+        
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
         
