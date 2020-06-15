@@ -37,7 +37,6 @@ import (
 	"go.cryptoscope.co/luigi"
 
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/multilogs"
 	"go.cryptoscope.co/ssb/repo"
 	"go.cryptoscope.co/ssb/repo/migrations"
 	mksbot "go.cryptoscope.co/ssb/sbot"
@@ -221,24 +220,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 	// key should be stored in keychain anyway
 	os.Remove(r.GetPath("secret"))
 
-	var kps []*ssb.KeyPair
-	if cfg.Testing { // these should only be present and loaded in test environments
-		keysMap, err := repo.AllKeyPairs(r)
-		if err != nil {
-			err = errors.Wrap(err, "sbot: failed to open all keypairs in repo")
-			return false
-		}
-		for _, key := range keysMap {
-			kps = append(kps, key)
-		}
-	}
-
-	userKP, err := ssb.ParseKeyPair(strings.NewReader(keyblob))
-	if err != nil {
-		err = errors.Wrap(err, "sbot: failed to parse passed keypair")
-		return false
-	}
-
 	doUpgradeOffsetEncoding, err := migrations.UpgradeToMultiMessage(log, r)
 	if err != nil {
 		err = errors.Wrap(err, "BotInit: repo migration failed")
@@ -284,9 +265,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		log = level.NewFilter(log, level.AllowInfo())
 	}
 
-	kps = append(kps, userKP)
-	mlogPriv := multilogs.NewPrivateRead(kitlog.With(log, "module", "privLogs"), kps...)
-
 	opts := []mksbot.Option{
 		mksbot.WithInfo(log),
 		mksbot.WithContext(longCtx),
@@ -302,9 +280,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 			// TODO: make version that prints bytes "unhumanized" so that we can count them
 			return countconn.WrapConn(level.Debug(log), c), nil
 		}),
-		// loading this plugin makes the bot badger-less but the alternative graph-builder is still experimental
-		//mksbot.LateOption(mksbot.MountPlugin(&bytype.Plugin{}, plugins2.AuthMaster)),
-		mksbot.LateOption(mksbot.MountMultiLog("privLogs", mlogPriv.OpenRoaring)),
 	}
 
 	if hmacSignKey != "" {

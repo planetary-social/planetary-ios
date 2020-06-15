@@ -47,6 +47,8 @@ func ssbStreamRootLog(seq uint64, limit int) *C.char {
 
 //export ssbStreamPrivateLog
 func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
+	// return empty array until there is actual UI in place for these
+	return C.CString("[]")
 	var err error
 	defer func() {
 		if err != nil {

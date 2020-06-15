@@ -566,7 +566,9 @@ class GoBot: Bot {
                                  params: params)
                 
                 if diff < limit { // view is up2date now
-                    self.updatePrivate(completion: completion)
+                    completion(nil)
+                    // disable private messages until there is UI for it AND ADD SQLCYPHER!!!111
+                    //self.updatePrivate(completion: completion)
                 } else {
                     #if DEBUG
                     print("#rx log# \(diff-limit) messages left in go-ssb offset log")

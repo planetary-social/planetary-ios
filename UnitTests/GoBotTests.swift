@@ -689,6 +689,7 @@ class GoBotTests: XCTestCase {
     }
 
     // MARK: private
+    /* disabled until UI is updated to show and respond to them correctly
     func test170_private_from_alice() {
         GoBotTests.shared.testRefresh(self)
         
@@ -755,6 +756,7 @@ class GoBotTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
     }
+    */
 
     // MARK: hashtags
     func test180_postWithHashtags() {
