@@ -65,7 +65,7 @@ github.com/tinylib/msgp/msgp
 github.com/ugorji/go/codec
 # github.com/willf/bitset v1.1.10
 github.com/willf/bitset
-# go.cryptoscope.co/librarian v0.2.1-0.20200519132401-80c3b8105d40
+# go.cryptoscope.co/librarian v0.2.1-0.20200604160012-d85e03a70e79
 go.cryptoscope.co/librarian
 go.cryptoscope.co/librarian/badger
 go.cryptoscope.co/librarian/mkv
@@ -73,7 +73,7 @@ go.cryptoscope.co/librarian/mkv
 ## explicit
 go.cryptoscope.co/luigi
 go.cryptoscope.co/luigi/mfr
-# go.cryptoscope.co/margaret v0.1.7-0.20200519144842-7c553c9d3bce
+# go.cryptoscope.co/margaret v0.1.7-0.20200603134144-6888097421a8
 ## explicit
 go.cryptoscope.co/margaret
 go.cryptoscope.co/margaret/codec/msgpack
@@ -85,8 +85,7 @@ go.cryptoscope.co/margaret/multilog/badger
 go.cryptoscope.co/margaret/multilog/roaring
 go.cryptoscope.co/margaret/multilog/roaring/mkv
 go.cryptoscope.co/margaret/offset2
-# go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48
-## explicit
+# go.cryptoscope.co/muxrpc v1.5.4-0.20200527143049-1c5d85371ced
 go.cryptoscope.co/muxrpc
 go.cryptoscope.co/muxrpc/codec
 # go.cryptoscope.co/netwrap v0.1.1
@@ -98,7 +97,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200520144233-fda9a98207d8
+# go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635 => /Users/cryptix/ssb/go-ssb
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -108,6 +107,7 @@ go.cryptoscope.co/ssb/indexes
 go.cryptoscope.co/ssb/internal/ctxutils
 go.cryptoscope.co/ssb/internal/extra25519
 go.cryptoscope.co/ssb/internal/mutil
+go.cryptoscope.co/ssb/internal/muxmux
 go.cryptoscope.co/ssb/internal/neterr
 go.cryptoscope.co/ssb/internal/netwraputil
 go.cryptoscope.co/ssb/internal/transform
@@ -119,6 +119,7 @@ go.cryptoscope.co/ssb/multilogs
 go.cryptoscope.co/ssb/network
 go.cryptoscope.co/ssb/plugins/blobs
 go.cryptoscope.co/ssb/plugins/control
+go.cryptoscope.co/ssb/plugins/friends
 go.cryptoscope.co/ssb/plugins/get
 go.cryptoscope.co/ssb/plugins/gossip
 go.cryptoscope.co/ssb/plugins/legacyinvites
@@ -226,3 +227,4 @@ modernc.org/sortutil
 # modernc.org/zappy v1.0.0
 modernc.org/zappy
 # golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+# go.cryptoscope.co/ssb => /Users/cryptix/ssb/go-ssb

@@ -23,10 +23,10 @@ require (
 	github.com/shurcooL/go-goon v0.0.0-20170922171312-37c2f522c041
 	github.com/stretchr/testify v1.5.1
 	github.com/ugorji/go/codec v1.1.7
-	go.cryptoscope.co/librarian v0.2.1-0.20200519132401-80c3b8105d40
+	go.cryptoscope.co/librarian v0.2.1-0.20200604160012-d85e03a70e79
 	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8
-	go.cryptoscope.co/margaret v0.1.7-0.20200519144842-7c553c9d3bce
-	go.cryptoscope.co/muxrpc v1.5.4-0.20200422174348-fc975b161059
+	go.cryptoscope.co/margaret v0.1.7-0.20200603134144-6888097421a8
+	go.cryptoscope.co/muxrpc v1.5.4-0.20200527143049-1c5d85371ced
 	go.cryptoscope.co/netwrap v0.1.1
 	go.cryptoscope.co/secretstream v1.2.2
 	go.mindeco.de/ssb-gabbygrove v0.1.6

@@ -24,6 +24,7 @@ import (
 	"go.cryptoscope.co/ssb/network"
 	"go.cryptoscope.co/ssb/plugins/blobs"
 	"go.cryptoscope.co/ssb/plugins/control"
+	"go.cryptoscope.co/ssb/plugins/friends"
 	"go.cryptoscope.co/ssb/plugins/get"
 	"go.cryptoscope.co/ssb/plugins/gossip"
 	"go.cryptoscope.co/ssb/plugins/legacyinvites"
@@ -72,6 +73,7 @@ func (s *Sbot) Close() error {
 	return nil
 }
 
+// is called by New() in options, sorry
 func initSbot(s *Sbot) (*Sbot, error) {
 	log := s.info
 	var err error
@@ -204,8 +206,6 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		s.closedMu.Lock()
 		defer s.closedMu.Unlock()
 
-		auth := s.replicator.makeLister()
-
 		remote, err := ssb.GetFeedRefFromAddr(conn.RemoteAddr())
 		if err != nil {
 			return nil, errors.Wrap(err, "sbot: expected an address containing an shs-bs addr")
@@ -231,6 +231,12 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		if s.promisc {
 			return s.public.MakeHandler(conn)
 		}
+
+		auth := s.authorizer
+		if auth == nil {
+			auth = s.replicator.makeLister()
+		}
+
 		if s.latency != nil {
 			start := time.Now()
 			defer func() {
@@ -318,6 +324,8 @@ func initSbot(s *Sbot) (*Sbot, error) {
 
 	s.master.Register(replicate.NewPlug(uf))
 
+	s.master.Register(friends.New(log, *s.KeyPair.Id, s.GraphBuilder))
+
 	// tcp+shs
 	opts := network.Options{
 		Logger:              s.info,
@@ -357,7 +365,7 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	s.master.Register(inviteService.MasterPlugin())
 
 	// TODO: should be gossip.connect but conflicts with our namespace assumption
-	s.master.Register(control.NewPlug(kitlog.With(log, "plugin", "ctrl"), s.Network))
+	s.master.Register(control.NewPlug(kitlog.With(log, "plugin", "ctrl"), s.Network, s))
 	s.master.Register(status.New(s))
 
 	return s, nil

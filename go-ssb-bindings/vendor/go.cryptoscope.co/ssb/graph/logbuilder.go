@@ -4,7 +4,6 @@ package graph
 
 import (
 	"context"
-	"encoding/json"
 	"math"
 	"time"
 
@@ -113,11 +112,11 @@ func (b *logBuilder) buildGraph(ctx context.Context, v interface{}, err error) e
 		err := errors.Errorf("graph/idx: invalid msg value %T", v)
 		return err
 	}
-	// fmt.Println("processing", abs.Key())
+
 	var c ssb.Contact
-	err = json.Unmarshal(abs.ContentBytes(), &c)
+	err = c.UnmarshalJSON(abs.ContentBytes())
 	if err != nil {
-		err = errors.Wrapf(err, "db/idx contacts: first json unmarshal failed (msg: %s)", abs.Key().Ref())
+		// ignore invalid messages
 		return nil
 	}
 
@@ -132,12 +131,16 @@ func (b *logBuilder) buildGraph(ctx context.Context, v interface{}, err error) e
 	bfrom := author.StoredAddr()
 	nFrom, has := b.current.lookup[bfrom]
 	if !has {
-
+		// stupid copy
 		sr, err := ssb.NewStorageRef(author)
 		if err != nil {
 			return errors.Wrap(err, "failed to create graph node for author")
 		}
-		nFrom = &contactNode{dg.NewNode(), sr, ""}
+		fr, err := sr.FeedRef()
+		if err != nil {
+			return errors.Wrap(err, "failed to create graph node for author")
+		}
+		nFrom = &contactNode{dg.NewNode(), fr, ""}
 		dg.AddNode(nFrom)
 		b.current.lookup[bfrom] = nFrom
 	}
@@ -149,7 +152,11 @@ func (b *logBuilder) buildGraph(ctx context.Context, v interface{}, err error) e
 		if err != nil {
 			return errors.Wrap(err, "failed to create graph node for contact")
 		}
-		nTo = &contactNode{dg.NewNode(), sr, ""}
+		fr, err := sr.FeedRef()
+		if err != nil {
+			return errors.Wrap(err, "failed to create graph node for author")
+		}
+		nTo = &contactNode{dg.NewNode(), fr, ""}
 		dg.AddNode(nTo)
 		b.current.lookup[bto] = nTo
 	}
@@ -159,7 +166,7 @@ func (b *logBuilder) buildGraph(ctx context.Context, v interface{}, err error) e
 		w = 1
 	} else if c.Blocking {
 		w = math.Inf(1)
-	} else {
+	} else if !c.Following && !c.Blocking {
 		if dg.HasEdgeFromTo(nFrom.ID(), nTo.ID()) {
 			dg.RemoveEdge(nFrom.ID(), nTo.ID())
 		}
@@ -195,7 +202,7 @@ func (b *logBuilder) Follows(from *ssb.FeedRef) (*ssb.StrFeedSet, error) {
 		// warning - ignores edge type!
 		edg := g.Edge(nFrom.ID(), cnv.ID())
 		if edg.(contactEdge).Weight() == 1 {
-			if err := refs.AddStored(cnv.feed); err != nil {
+			if err := refs.AddRef(cnv.feed); err != nil {
 				return nil, err
 			}
 		}
@@ -241,7 +248,7 @@ func (b *logBuilder) Hops(from *ssb.FeedRef, max int) *ssb.StrFeedSet {
 		// got[d] = append(got[d], n.ID())
 
 		cn := n.(*contactNode)
-		fs.AddStored(cn.feed)
+		fs.AddRef(cn.feed)
 		return false
 	})
 

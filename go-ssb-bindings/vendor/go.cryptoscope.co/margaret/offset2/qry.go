@@ -259,7 +259,6 @@ func (qry *offsetQuery) fastFwdPush(ctx context.Context, sink luigi.Sink) (func(
 						break
 					}
 				}
-				sink.Close()
 				return func() {}, err
 			}
 			break
@@ -282,12 +281,12 @@ func (qry *offsetQuery) fastFwdPush(ctx context.Context, sink luigi.Sink) (func(
 
 	if !hasNext(qry.nextSeq) {
 		close(qry.close)
-		return func() {}, sink.Close()
+		return func() {}, nil
 	}
 
 	if !qry.live {
 		close(qry.close)
-		return func() {}, sink.Close()
+		return func() {}, nil
 	}
 
 	var cancel func()

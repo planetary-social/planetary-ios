@@ -3,6 +3,7 @@ package sbot
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/go-kit/kit/log"
@@ -58,10 +59,11 @@ func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int
 			return
 		}
 
-		r.current.blocked = g.BlockedList(self)
-		lst, err := r.current.blocked.List()
+		newBlocked := g.BlockedList(self)
+		lst, err := newBlocked.List()
 		if err == nil {
 			for _, bf := range lst {
+				r.current.blocked.AddRef(bf)
 				r.current.feedWants.Delete(bf)
 			}
 		}
@@ -69,6 +71,7 @@ func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int
 }
 
 func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable, work func()) {
+	var seqMu sync.Mutex
 	var seq = margaret.SeqEmpty
 	timer := time.NewTimer(interval)
 
@@ -80,8 +83,10 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 		if !ok {
 			return fmt.Errorf("graph rebuild debounce: wrong type: %T", val)
 		}
+		seqMu.Lock()
 		seq = newSeq
 		timer.Reset(interval)
+		seqMu.Unlock()
 		return nil
 	})
 	done := obs.Register(handle)
@@ -93,10 +98,12 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 			return
 
 		case <-timer.C:
+			seqMu.Lock()
 			if seq != margaret.SeqEmpty {
 				work()
 				seq = margaret.SeqEmpty
 			}
+			seqMu.Unlock()
 		}
 	}
 }

@@ -16,9 +16,6 @@ import (
 	"go.cryptoscope.co/secretstream/secrethandshake"
 )
 
-// SecretPerms are the file permissions for holding SSB secrets.
-const SecretPerms os.FileMode = 0600
-
 type KeyPair struct {
 	Id   *FeedRef
 	Pair secrethandshake.EdKeyPair

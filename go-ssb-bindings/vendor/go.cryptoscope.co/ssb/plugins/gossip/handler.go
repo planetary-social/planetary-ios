@@ -89,12 +89,26 @@ func (g *handler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 		}
 	}
 
+	feeds := g.WantList.ReplicationList()
+	if feeds != nil {
+		err := g.fetchAll(ctx, e, feeds)
+		if err != nil {
+			level.Error(info).Log("msg", "hops failed", "err", err)
+			return
+		}
+	}
+	level.Debug(info).Log("msg", "hops fetch done", "count", feeds.Count(), "took", time.Since(start))
+
+	tick := time.NewTicker(5 * time.Minute)
 	for {
+		start = time.Now()
 		select {
 		case <-ctx.Done():
+			tick.Stop()
 			return
-		default:
+		case <-tick.C:
 		}
+		start := time.Now()
 		feeds := g.WantList.ReplicationList()
 		if feeds != nil {
 			err := g.fetchAll(ctx, e, feeds)
@@ -103,8 +117,7 @@ func (g *handler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 				return
 			}
 		}
-		level.Debug(info).Log("msg", "hops fetch done", "count", feeds.Count(), "took", time.Since(start))
-		time.Sleep(5 * time.Minute)
+		level.Debug(info).Log("msg", "timer fetch done", "count", feeds.Count(), "took", time.Since(start))
 	}
 }
 
@@ -119,7 +132,6 @@ func (g *handler) HandleCall(
 
 	hlog := log.With(g.Info, "event", "gossiptx")
 	errLog := level.Error(hlog)
-	dbgLog := level.Debug(hlog)
 
 	closeIfErr := func(err error) {
 		if err != nil {
@@ -170,7 +182,6 @@ func (g *handler) HandleCall(
 			blocks := g.WantList.BlockList()
 
 			if blocks.Has(query.ID) {
-				dbgLog.Log("msg", "feed blocked")
 				req.Stream.Close()
 				return
 			}
