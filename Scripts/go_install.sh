@@ -4,7 +4,7 @@ set -e
 
 # source: https://github.com/canha/golang-tools-install-script
 
-VERSION="1.13.11"
+VERSION="1.14.4"
 
 [ -z "$GOROOT" ] && GOROOT="$HOME/.go"
 [ -z "$GOPATH" ] && GOPATH="$HOME/go"
