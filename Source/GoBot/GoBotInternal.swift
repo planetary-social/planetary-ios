@@ -72,6 +72,9 @@ fileprivate struct BotConfig: Encodable {
     let ListenAddr: String
     let Hops: UInt
     let SchemaVersion: UInt
+
+    let ServicePubs: [Identity]? // identities of services which supply planetary specific services
+
     #if DEBUG
     let Testing: Bool = true
     #else
@@ -164,8 +167,21 @@ class GoBotInternal {
         self.repoPath = pathPrefix.appending("/GoSbot")
         
         // TODO: device address enumeration (v6 and v4)
-        // https://github.com/VerseApp/ios/issues/82UInt
+        // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
+
+        var servicePubs: [Identity]?
+        switch network {
+        case NetworkKey.ssb:
+            // TODO: only go pubs   
+            servicePubs = Identities.ssb.pubs.map({ (key, value) in return value })
+        case NetworkKey.planetary:
+            servicePubs = Identities.planetary.pubs.map({ (key, value) in return value })
+        case NetworkKey.integrationTests:
+           servicePubs = Identities.testNet.pubs.map({ (key, value) in return value })
+        default:
+            Log.unexpected(.botError, "unconfigured network for service pubs: \(network)")
+        }
 
         let cfg = BotConfig(
             AppKey: network.string,
@@ -174,7 +190,8 @@ class GoBotInternal {
             Repo: self.repoPath,
             ListenAddr: listenAddr,
             Hops: 1,
-            SchemaVersion: ViewDatabase.schemaVersion)
+            SchemaVersion: ViewDatabase.schemaVersion,
+            ServicePubs: servicePubs)
         
         let enc = JSONEncoder()
         var cfgStr: String

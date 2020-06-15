@@ -37,9 +37,12 @@ import (
 	"go.cryptoscope.co/luigi"
 
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/plugins2"
 	"go.cryptoscope.co/ssb/repo"
 	"go.cryptoscope.co/ssb/repo/migrations"
 	mksbot "go.cryptoscope.co/ssb/sbot"
+
+	"verseproj/scuttlegobridge/servicesplug"
 )
 
 var versionString *C.char
@@ -57,6 +60,8 @@ var (
 	lock    sync.Mutex
 	sbot    *mksbot.Sbot
 	repoDir string
+
+	servicePlug *servicesplug.Plugin
 
 	viewDB *sql.DB
 
@@ -133,6 +138,9 @@ type botConfig struct {
 	ListenAddr string
 	Hops       uint
 	Testing    bool
+
+	// Pubs that host planetary specific muxrpc calls
+	ServicePubs []ssb.FeedRef
 
 	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
 }
@@ -265,6 +273,11 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		log = level.NewFilter(log, level.AllowInfo())
 	}
 
+	var servicePlug *servicesplug.Plugin
+	if len(cfg.ServicePubs) != 0 {
+		servicePlug = servicesplug.New(cfg.ServicePubs)
+	}
+
 	opts := []mksbot.Option{
 		mksbot.WithInfo(log),
 		mksbot.WithContext(longCtx),
@@ -290,6 +303,12 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 			return false
 		}
 		opts = append(opts, mksbot.WithHMACSigning(k))
+	}
+
+	if servicePlug != nil {
+		opts = append(opts,
+			mksbot.LateOption(mksbot.MountPlugin(servicePlug, plugins2.AuthPublic)),
+		)
 	}
 
 	sbot, err = mksbot.New(opts...)

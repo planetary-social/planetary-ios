@@ -48,6 +48,21 @@ func ssbConnectPeer(quasiMs string) bool {
 		return false
 	}
 	level.Debug(log).Log("event", "dialed", "addr", msAddr.String())
+
+	if servicePlug == nil {
+		return true
+	}
+
+	go func() {
+		time.Sleep(10 * time.Second)
+		tok, ok := servicePlug.HasValidToken()
+		if !ok {
+			log.Log("noToken", "service plugin: token expired or not retreived yet.")
+			return
+		}
+		log.Log("hasToken", tok)
+	}()
+
 	return true
 }
 

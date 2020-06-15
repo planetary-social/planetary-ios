@@ -57,4 +57,7 @@ extern bool ssbBlobsWant(gostring_t ref);
 extern int ssbBlobsGet(gostring_t ref);
 extern char* ssbBlobsAdd(int32_t fd);
 
+// TODO: replace with callback from init
+extern char* planetaryBearerToken();
+
 #endif

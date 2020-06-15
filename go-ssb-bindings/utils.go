@@ -215,3 +215,36 @@ type healReport struct {
 	Authors  []*ssb.FeedRef
 	Messages uint64
 }
+
+// TODO: probably want to add a blobsNotify-like callback instead to reduce polling
+
+//export planetaryBearerToken
+func planetaryBearerToken() *C.char {
+	lock.Lock()
+	defer lock.Unlock()
+
+	var err error
+	defer func() {
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "planetaryBearerToken error: %+v", err)
+		}
+	}()
+
+	if sbot == nil {
+		err = ErrNotInitialized
+		return nil
+	}
+
+	if servicePlug == nil {
+		err = errors.Errorf("service plugin not loaded")
+		return nil
+	}
+
+	tok, ok := servicePlug.HasValidToken()
+	if !ok {
+		err = errors.Errorf("service plugin: token expired or not retreived yet.")
+		return nil
+	}
+
+	return C.CString(tok)
+}
