@@ -51,6 +51,7 @@ func (p *Plugin) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 	}
 
 	p.currentToken = tok
+	p.notify(tok)
 }
 
 func (p *Plugin) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc.Endpoint) {}

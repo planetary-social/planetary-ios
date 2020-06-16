@@ -27,6 +27,8 @@ func refAsArray(fr ssb.FeedRef) pubKey {
 type trustedPeerMap map[pubKey]struct{}
 
 type Plugin struct {
+	notify NotifyFn
+
 	trusted trustedPeerMap
 
 	cl           *sync.Mutex
@@ -35,15 +37,29 @@ type Plugin struct {
 
 var _ ssb.Plugin = (*Plugin)(nil)
 
-func New(pubs []ssb.FeedRef) *Plugin {
+// NotifyFn will be called with new tokens
+type NotifyFn func(Token)
+
+func notifyNoop(Token) {}
+
+// New creates a new servicesplug
+func New(pubs []ssb.FeedRef, notify NotifyFn) *Plugin {
+	if notify == nil {
+		notify = notifyNoop
+	}
+
 	p := Plugin{
-		cl: &sync.Mutex{},
+		notify: notify,
 
 		trusted: make(trustedPeerMap, len(pubs)),
+
+		cl: &sync.Mutex{},
 	}
+
 	for _, pub := range pubs {
-		p.trusted[refAsArray(pub)] = struct{}{} // TODO: move to pubkey
+		p.trusted[refAsArray(pub)] = struct{}{}
 	}
+
 	return &p
 }
 

@@ -7,9 +7,14 @@ package main
 // #include <sys/types.h>
 // #include <stdint.h>
 // #include <stdbool.h>
-// static bool callBlobsNotify(void *func, int64_t size, const char *blobRef)
+// static bool callNotifyBlobs(void *func, int64_t size, const char *blobRef)
 // {
 //     return ((bool(*)(int64_t, const char *))func)(size, blobRef);
+// }
+//
+// static void callNotifyNewBearerToken(void *func, const char *token, int64_t expires)
+// {
+//     return ((void(*)(const char *, int64_t))func)(token, expires);
 // }
 import "C"
 
@@ -145,10 +150,13 @@ type botConfig struct {
 	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
 }
 
-var blobsNotifyHandle unsafe.Pointer
+var (
+	notifyBlobsHandle          unsafe.Pointer
+	notifyNewBearerTokenHandle unsafe.Pointer
+)
 
 //export ssbBotInit
-func ssbBotInit(config string, notifyFn uintptr) bool {
+func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerTokenFn uintptr) bool {
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -159,7 +167,8 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		}
 	}()
 
-	blobsNotifyHandle = unsafe.Pointer(notifyFn)
+	notifyBlobsHandle = unsafe.Pointer(notifyBlobReceivedFn)
+	notifyNewBearerTokenHandle = unsafe.Pointer(notifyNewBearerTokenFn)
 
 	var cfg botConfig
 	err = json.NewDecoder(strings.NewReader(config)).Decode(&cfg)
@@ -275,7 +284,13 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 
 	var servicePlug *servicesplug.Plugin
 	if len(cfg.ServicePubs) != 0 {
-		servicePlug = servicesplug.New(cfg.ServicePubs)
+		swiftNotifyer := func(tok servicesplug.Token) {
+			cTok := C.CString(tok.Token)
+			unixTs := time.Time(tok.Expires).Unix()
+			C.callNotifyNewBearerToken(notifyNewBearerTokenHandle, cTok, C.longlong(unixTs))
+			C.free(unsafe.Pointer(cTok))
+		}
+		servicePlug = servicesplug.New(cfg.ServicePubs, swiftNotifyer)
 	}
 
 	opts := []mksbot.Option{
@@ -341,7 +356,7 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		}
 
 		testRef := C.CString(n.Ref.Ref())
-		ret := C.callBlobsNotify(blobsNotifyHandle, C.longlong(sz), testRef)
+		ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(sz), testRef)
 		C.free(unsafe.Pointer(testRef))
 		log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.Ref())
 		return nil

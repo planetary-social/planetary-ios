@@ -16,6 +16,9 @@ typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) ->
 // get's called with the messages left to process
 typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
 
+// get's called with a token and an expiry date as unix timestamp
+typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, Int64) -> Void
+
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
@@ -205,7 +208,7 @@ class GoBotInternal {
         var worked: Bool = false
         cfgStr.withGoString {
             cfgGoStr in
-            worked = ssbBotInit(cfgGoStr, self.blobsNotify)
+            worked = ssbBotInit(cfgGoStr, self.notifyBlobReceived, self.notifyNewBearerToken)
         }
         
         if worked {
@@ -227,6 +230,20 @@ class GoBotInternal {
             return false
         }
         return true
+    }
+
+    // MARK: planetary services
+
+    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = {
+        cstr, expires in
+        let now = Int64(Date.init().timeIntervalSince1970)
+        guard expires - now > 0 else { print("received expired token? \(expires)"); return }
+        guard let token = cstr else { return }
+        let tok = String(cString: token)
+        print("btoken: swift received: \(tok)\nbtoken: expires \(expires)")
+//        let notification = Notification.didReceiveBearerToken(token, expires)
+//        NotificationCenter.default.post(notification)
+        return
     }
 
     // MARK: connections
@@ -439,7 +456,7 @@ class GoBotInternal {
 
     // MARK: blobs
 
-    private lazy var blobsNotify: CBlobsNotifyCallback = {
+    private lazy var notifyBlobReceived: CBlobsNotifyCallback = {
         numberOfBytes, ref in
         guard let ref = ref else { return false }
         let identifier = BlobIdentifier(cString: ref)
