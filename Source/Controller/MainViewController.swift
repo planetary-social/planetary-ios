@@ -27,7 +27,7 @@ class MainViewController: UITabBarController {
     private let directoryFeatureViewController = FeatureViewController(rootViewController: DirectoryViewController(),
                                                                        tabBarItemImageName: "tab-icon-directory")
 
-    private let everyoneViewController = FeatureViewController(rootViewController: EveryoneViewController(),
+    private let everyoneViewController = FeatureViewController(rootViewController: DiscoverViewController(),
                                                                        tabBarItemImageName: "tab-icon-everyone")
 
     

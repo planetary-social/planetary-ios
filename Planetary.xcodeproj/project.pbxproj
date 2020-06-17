@@ -50,6 +50,11 @@
 		0A4870F72492BF6700BCD063 /* AsynchronousBlockOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */; };
 		0A4870F82492C05D00BCD063 /* AsynchronousBlockOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */; };
 		0A4870F92492C06400BCD063 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */; };
+		0A4870FB2497FFAB00BCD063 /* DiscoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870FA2497FFAB00BCD063 /* DiscoverViewController.swift */; };
+		0A4870FD2498014F00BCD063 /* UICollectionView+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870FC2498014F00BCD063 /* UICollectionView+Verse.swift */; };
+		0A4870FF249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870FE249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift */; };
+		0A4871012498030800BCD063 /* PostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4871002498030800BCD063 /* PostCollectionViewCell.swift */; };
+		0A487103249808E700BCD063 /* PinterestCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */; };
 		0A64A6C224730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C324730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C424730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
@@ -751,6 +756,11 @@
 		0A41F56C2488078F005BB1DE /* Preload.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Preload.bundle; sourceTree = "<group>"; };
 		0A41F577248F1637005BB1DE /* Feed_example_preload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Feed_example_preload.json; sourceTree = "<group>"; };
 		0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousBlockOperation.swift; sourceTree = "<group>"; };
+		0A4870FA2497FFAB00BCD063 /* DiscoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewController.swift; sourceTree = "<group>"; };
+		0A4870FC2498014F00BCD063 /* UICollectionView+Verse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Verse.swift"; sourceTree = "<group>"; };
+		0A4870FE249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValuePaginatedCollectionViewDataSource.swift; sourceTree = "<group>"; };
+		0A4871002498030800BCD063 /* PostCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCollectionViewCell.swift; sourceTree = "<group>"; };
+		0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinterestCollectionViewLayout.swift; sourceTree = "<group>"; };
 		0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryAPIService.swift; sourceTree = "<group>"; };
 		0A64A6C624730D0F009A5EBF /* VerseDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseDirectoryAPI.swift; sourceTree = "<group>"; };
 		0A64A6C824730D8A009A5EBF /* NullDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullDirectoryAPI.swift; sourceTree = "<group>"; };
@@ -1566,6 +1576,7 @@
 				53211CD32280E1E1007FB785 /* EditAboutViewController.swift */,
 				5396A630224823DD00C57A4B /* FeatureViewController.swift */,
 				53B634B1221508B800400403 /* HomeViewController.swift */,
+				0A4870FA2497FFAB00BCD063 /* DiscoverViewController.swift */,
 				2D009BF824550868001351CB /* EveryoneViewController.swift */,
 				5396A62E2245A50300C57A4B /* LaunchViewController.swift */,
 				53B634B322150A4100400403 /* MainViewController.swift */,
@@ -1758,9 +1769,11 @@
 				53AD3FDC22712CE0005228F9 /* KeyValueTableViewDelegate.swift */,
 				53AD3FE022721CAE005228F9 /* KeyValueUpdateable.swift */,
 				23676156244F197100A97140 /* KeyValuePaginatedTableViewDataSource.swift */,
+				0A4870FE249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift */,
 				5357550622694D8C002A6989 /* KeyValueView.swift */,
 				53631EEC23A87474009C6999 /* PostTruncatedTextTableViewDataSourcePrefetching.swift */,
 				0AF9E09B2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift */,
+				0A4871002498030800BCD063 /* PostCollectionViewCell.swift */,
 			);
 			path = KeyValue;
 			sourceTree = "<group>";
@@ -1814,6 +1827,7 @@
 				53E26C4F23023074009240B2 /* UISwitch+Verse.swift */,
 				5357550A226A3523002A6989 /* UITableView+KeyValue.swift */,
 				53AD3FD6226FC4B8005228F9 /* UITableView+Verse.swift */,
+				0A4870FC2498014F00BCD063 /* UICollectionView+Verse.swift */,
 				531B92B822CD128F005D5255 /* UITextView+Mention.swift */,
 				531B92B222CAC25C005D5255 /* UITextView+Verse.swift */,
 				5319F06A234EDC7F00F4D3C1 /* UIView+HeaderView.swift */,
@@ -1878,6 +1892,7 @@
 				535754FE22694AAA002A6989 /* UnsupportedView.swift */,
 				0AF9E0A32465D7D000910575 /* ThreadReplyView.swift */,
 				0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */,
+				0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3141,6 +3156,7 @@
 				236761592450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
 				53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */,
 				53BD748623232FB70060E47E /* Blob+UIImage.swift in Sources */,
+				0A4870FF249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift in Sources */,
 				0A41F57224884A67005BB1DE /* AppTimers.swift in Sources */,
 				53DF334E239F2A720017566D /* Log+API.swift in Sources */,
 				53BD748A23289B3F0060E47E /* ImageGalleryView.swift in Sources */,
@@ -3161,6 +3177,7 @@
 				0AF9E09E246234BE00910575 /* PostReplyPaginatedDelegate+DataSource.swift in Sources */,
 				5319258022F3A09C00B44FA3 /* NotificationCellView.swift in Sources */,
 				8DE093DA234651D1009E505D /* EditPostButton.swift in Sources */,
+				0A4871012498030800BCD063 /* PostCollectionViewCell.swift in Sources */,
 				535754FB22694A2E002A6989 /* KeyValueTableViewCell.swift in Sources */,
 				0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */,
 				53211CE92284B9F5007FB785 /* AppConfigurationViewController.swift in Sources */,
@@ -3177,6 +3194,7 @@
 				530F018722DAD0FD007EBAE2 /* Date+Random.swift in Sources */,
 				53631EF523A9A1AA009C6999 /* Blob+String.swift in Sources */,
 				531587AD229F0DC00004E2B1 /* Onboarding.swift in Sources */,
+				0A487103249808E700BCD063 /* PinterestCollectionViewLayout.swift in Sources */,
 				531749952370EC7700F4C381 /* UIView+UIImage.swift in Sources */,
 				53E29CDF22D7EE1C008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
 				5372175322FD11B3008A760A /* Bool+YesOrNo.swift in Sources */,
@@ -3208,6 +3226,7 @@
 				536255D523AB16A6001007D0 /* Date+Holidays.swift in Sources */,
 				533F4055225FB3B40060B4B9 /* Layout+SpacerView.swift in Sources */,
 				53211CDE228250D7007FB785 /* UIView+Stroke.swift in Sources */,
+				0A4870FD2498014F00BCD063 /* UICollectionView+Verse.swift in Sources */,
 				53C422BA21C4772D00A314AD /* UIViewController+Debug.swift in Sources */,
 				8D317ECD2357A37C0009E073 /* UIImageView+Fade.swift in Sources */,
 				535754F22268DAB0002A6989 /* BotError.swift in Sources */,
@@ -3253,6 +3272,7 @@
 				5319EBD722F22BA700EC7583 /* MenuViewController.swift in Sources */,
 				0A65A630244DEC5E004C48C8 /* ZendeskSupport.swift in Sources */,
 				53631EED23A87474009C6999 /* PostTruncatedTextTableViewDataSourcePrefetching.swift in Sources */,
+				0A4870FB2497FFAB00BCD063 /* DiscoverViewController.swift in Sources */,
 				5372175122FD0841008A760A /* DataUsageSettingsViewController.swift in Sources */,
 				53362F6C22091DD4007264CB /* NetworkKeyViewController.swift in Sources */,
 				53F24FB422C70B5200CFCBAA /* AvatarButton.swift in Sources */,
