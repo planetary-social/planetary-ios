@@ -169,6 +169,7 @@
 		0AF9E0A8246B22DC00910575 /* ResumeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A7246B22DC00910575 /* ResumeOperation.swift */; };
 		0AF9E0AA246B23C700910575 /* SuspendOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A9246B23C700910575 /* SuspendOperation.swift */; };
 		0AF9E0AC246B23F900910575 /* ExitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0AB246B23F900910575 /* ExitOperation.swift */; };
+		1B32D378249AAA4800811DC9 /* SmallPostHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */; };
 		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
@@ -833,6 +834,7 @@
 		0AF9E0AB246B23F900910575 /* ExitOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitOperation.swift; sourceTree = "<group>"; };
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		0DE096B2BC326F9BFDBA1514 /* Pods_Planetary_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallPostHeaderView.swift; sourceTree = "<group>"; };
 		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
 		205F056E32449189B64633F4 /* Pods-Planetary-UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary-UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary-UITests/Pods-Planetary-UITests.release.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
@@ -1893,6 +1895,7 @@
 				0AF9E0A32465D7D000910575 /* ThreadReplyView.swift */,
 				0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */,
 				0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */,
+				1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3041,6 +3044,7 @@
 				53211CCA227BA725007FB785 /* Array+SafeSubscript.swift in Sources */,
 				533EDBED238603D8008B3565 /* BlobCache.swift in Sources */,
 				8DE093D52344CA10009E505D /* RelationshipButton.swift in Sources */,
+				1B32D378249AAA4800811DC9 /* SmallPostHeaderView.swift in Sources */,
 				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				0AF9E0A42465D7D000910575 /* ThreadReplyView.swift in Sources */,
 				0A64A83C247353CE009A5EBF /* VersePushAPI.swift in Sources */,

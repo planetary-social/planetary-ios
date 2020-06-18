@@ -40,6 +40,8 @@ protocol Bot {
 
     // MARK: Name
 
+    var token: String?
+
     var name: String { get }
     var version: String { get }
 

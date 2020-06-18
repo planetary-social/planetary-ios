@@ -30,6 +30,8 @@ class GoBot: Bot {
     
     let name = "GoBot"
     var version: String { return self.bot.version }
+
+    weak var delegate: BotDelegate?
     
     static let shared = GoBot()
 
@@ -43,6 +45,7 @@ class GoBot: Bot {
                                                                       options: .skipsHiddenFiles) else {
                                                                         return []
         }
+
         return urls.sorted { (lhs, rhs) -> Bool in
             let lhsCreationDate = try? lhs.resourceValues(forKeys: [.creationDateKey]).creationDate
             let rhsCreationDate = try? rhs.resourceValues(forKeys: [.creationDateKey]).creationDate

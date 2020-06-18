@@ -27,8 +27,10 @@ extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSource 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Post", for: indexPath) as! PostCollectionViewCell
         let latePrefetch = { (_: Int, keyValue: KeyValue) -> Void in
+          DispatchQueue.main.async {
             cell.update(keyValue: keyValue)
             collectionView.collectionViewLayout.invalidateLayout()
+          }
         }
         if let keyValue = self.data.keyValueBy(index: indexPath.row, late: latePrefetch) {
             cell.update(keyValue: keyValue)

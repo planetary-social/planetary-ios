@@ -29,6 +29,11 @@ class PostCollectionViewCell: UICollectionViewCell {
         view.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         return view
     }()
+
+    private lazy var headerView: SmallPostHeaderView = {
+        let view = SmallPostHeaderView.forAutoLayout()
+        return view
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,9 +48,16 @@ class PostCollectionViewCell: UICollectionViewCell {
         self.imageViewHeightConstraint = self.imageView.constrainHeight(to: 0)
         self.imageViewSquareConstraint?.isActive = false
         self.imageViewHeightConstraint?.isActive = true
-        
-        Layout.fillBottom(of: self.contentView, with: self.textView, insets: .zero, respectSafeArea: false)
-        self.textView.pinTop(toBottomOf: self.imageView, constant: 0)
+
+        Layout.fillBottom(of: self.contentView, with: self.headerView, insets: .zero, respectSafeArea: false)
+        self.headerView.constrainHeight(to: 40)
+
+        self.contentView.addSubview(self.textView)
+        // Layout.fillBottom(of: self.contentView, with: self.textView, insets: .zero, respectSafeArea: false)
+        self.textView.constrainLeadingToSuperview()
+        self.textView.constrainTrailingToSuperview()
+        self.textView.pinTop(toBottomOf: self.imageView)
+        self.textView.pinBottom(toTopOf: self.headerView)
     }
     
     required init?(coder: NSCoder) {
@@ -56,8 +68,15 @@ class PostCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         self.imageViewSquareConstraint?.isActive = false
         self.imageViewHeightConstraint?.isActive = true
+        self.textView.text = nil
+        self.textView.textContainer.maximumNumberOfLines = 9
     }
-    
+
+    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+        super.apply(layoutAttributes)
+        self.contentView.setNeedsUpdateConstraints()
+    }
+
     func update(keyValue: KeyValue) {
         guard let post = keyValue.value.content.post else {
             return
@@ -66,7 +85,9 @@ class PostCollectionViewCell: UICollectionViewCell {
             self.imageView.update(with: post)
             self.imageViewSquareConstraint?.isActive = true
             self.imageViewHeightConstraint?.isActive = false
+            self.textView.textContainer.maximumNumberOfLines = 4
         }
-        textView.text = post.text.withoutGallery()
+        textView.attributedText = post.text.withoutGallery().decodeMarkdown(small: true)
+        headerView.update(with: keyValue)
     }
 }
