@@ -102,6 +102,8 @@ class LaunchViewController: UIViewController {
                                                  metadata: ["action": "login-from-launch",
                                                             "network": network,
                                                             "identity": secret.identity])
+            // do any repairs or migrations
+            Onboarding.repair2019113()
             
             guard error == nil else {
                 let controller = UIAlertController(title: Text.error.text,
@@ -149,8 +151,6 @@ class LaunchViewController: UIViewController {
 
     private func launchIntoMain() {
 
-        // do any repairs or migrations
-        Onboarding.repair2019113()
 
         // no need to start a sync here, we can do it later
         // also, user is already logged in

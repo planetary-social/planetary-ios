@@ -79,7 +79,8 @@ struct AnalyticsEnums {
         case refresh
 
         case repair
-
+        case db_update
+        
         case settings
 
         case sync
