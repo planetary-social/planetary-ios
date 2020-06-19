@@ -41,7 +41,7 @@ class PostCollectionViewCell: UICollectionViewCell {
         
         self.contentView.clipsToBounds = true
         self.contentView.backgroundColor = .white
-        self.contentView.layer.borderColor = UIColor(rgb: 0xc3c3c3).cgColor
+        self.contentView.layer.borderColor = UIColor(named: "postBorderColor")?.cgColor
         self.contentView.layer.borderWidth = 0.5
         self.contentView.layer.cornerRadius = 5
         

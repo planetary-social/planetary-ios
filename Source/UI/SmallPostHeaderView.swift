@@ -22,7 +22,7 @@ class SmallPostHeaderView: UIView {
     private lazy var nameButton: UIButton = {
         let button = UIButton(type: .custom).useAutoLayout()
         button.addTarget(self,action: #selector(didTapAvatarButton), for: .touchUpInside)
-        button.setTitleColor(UIColor(rgb: 0x656565), for: .normal)
+        button.setTitleColor(UIColor(named: "headerTextColor"), for: .normal)
         button.contentHorizontalAlignment = .left
         button.titleLabel?.font = UIFont.systemFont(ofSize: 10, weight: .semibold)
         button.titleLabel?.lineBreakMode = .byTruncatingTail
@@ -35,7 +35,7 @@ class SmallPostHeaderView: UIView {
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 10, weight: .regular)
         label.numberOfLines = 1
-        label.textColor = UIColor(rgb: 0x656565)
+        label.textColor = UIColor(named: "headerTextColor")
         label.isSkeletonable = true
         return label
     }()
@@ -48,6 +48,8 @@ class SmallPostHeaderView: UIView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
+        
+        self.backgroundColor = UIColor(named: "backgroundColor")
 
         Layout.fillLeft(of: self,
                         with: self.avatarButton,
