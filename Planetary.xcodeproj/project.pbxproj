@@ -55,6 +55,7 @@
 		0A4870FF249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4870FE249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift */; };
 		0A4871012498030800BCD063 /* PostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4871002498030800BCD063 /* PostCollectionViewCell.swift */; };
 		0A487103249808E700BCD063 /* PinterestCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */; };
+		0A487105249D1B3600BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A487104249D1B3500BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift */; };
 		0A64A6C224730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C324730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C424730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
@@ -762,6 +763,7 @@
 		0A4870FE249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValuePaginatedCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		0A4871002498030800BCD063 /* PostCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCollectionViewCell.swift; sourceTree = "<group>"; };
 		0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinterestCollectionViewLayout.swift; sourceTree = "<group>"; };
+		0A487104249D1B3500BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValuePaginatedCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryAPIService.swift; sourceTree = "<group>"; };
 		0A64A6C624730D0F009A5EBF /* VerseDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseDirectoryAPI.swift; sourceTree = "<group>"; };
 		0A64A6C824730D8A009A5EBF /* NullDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullDirectoryAPI.swift; sourceTree = "<group>"; };
@@ -1776,6 +1778,7 @@
 				53631EEC23A87474009C6999 /* PostTruncatedTextTableViewDataSourcePrefetching.swift */,
 				0AF9E09B2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift */,
 				0A4871002498030800BCD063 /* PostCollectionViewCell.swift */,
+				0A487104249D1B3500BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift */,
 			);
 			path = KeyValue;
 			sourceTree = "<group>";
@@ -3285,6 +3288,7 @@
 				531B92B922CD128F005D5255 /* UITextView+Mention.swift in Sources */,
 				533EDBF42389BBE8008B3565 /* Blob+UIColor.swift in Sources */,
 				8D180359234F5E77004E30AA /* IconButton.swift in Sources */,
+				0A487105249D1B3600BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift in Sources */,
 				530F01A222DEADD9007EBAE2 /* PhoneOnboardingStep.swift in Sources */,
 				53EAB398239AD0D700DF5530 /* AttributedStringCache.swift in Sources */,
 				53E26C4E23022482009240B2 /* AppDelegate+Push.swift in Sources */,

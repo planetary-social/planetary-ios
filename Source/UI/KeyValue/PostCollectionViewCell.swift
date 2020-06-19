@@ -25,8 +25,9 @@ class PostCollectionViewCell: UICollectionViewCell {
         view.textContainerInset = .square(10)
         view.textContainer.lineFragmentPadding = 0
         view.textContainer.lineBreakMode = .byTruncatingTail
-        view.textContainer.maximumNumberOfLines = 9
-        view.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        // view.textContainer.maximumNumberOfLines = 8
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        view.isUserInteractionEnabled = false
         return view
     }()
 
@@ -37,6 +38,7 @@ class PostCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         self.contentView.clipsToBounds = true
         self.contentView.backgroundColor = .white
         self.contentView.layer.borderColor = UIColor(rgb: 0xc3c3c3).cgColor
@@ -69,12 +71,9 @@ class PostCollectionViewCell: UICollectionViewCell {
         self.imageViewSquareConstraint?.isActive = false
         self.imageViewHeightConstraint?.isActive = true
         self.textView.text = nil
-        self.textView.textContainer.maximumNumberOfLines = 9
-    }
-
-    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
-        super.apply(layoutAttributes)
-        self.contentView.setNeedsUpdateConstraints()
+        // self.textView.textContainer.maximumNumberOfLines = 8
+        
+        self.headerView.startSkeletonAnimation()
     }
 
     func update(keyValue: KeyValue) {
@@ -85,9 +84,10 @@ class PostCollectionViewCell: UICollectionViewCell {
             self.imageView.update(with: post)
             self.imageViewSquareConstraint?.isActive = true
             self.imageViewHeightConstraint?.isActive = false
-            self.textView.textContainer.maximumNumberOfLines = 4
+            // self.textView.textContainer.maximumNumberOfLines = 3
         }
-        textView.attributedText = post.text.withoutGallery().decodeMarkdown(small: true)
-        headerView.update(with: keyValue)
+        self.textView.attributedText = post.text.withoutGallery().decodeMarkdown(small: true)
+        self.headerView.stopSkeletonAnimation()
+        self.headerView.update(with: keyValue)
     }
 }

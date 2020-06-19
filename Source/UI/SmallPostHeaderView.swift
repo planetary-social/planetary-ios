@@ -36,6 +36,7 @@ class SmallPostHeaderView: UIView {
         label.font = UIFont.systemFont(ofSize: 10, weight: .regular)
         label.numberOfLines = 1
         label.textColor = UIColor(rgb: 0x656565)
+        label.isSkeletonable = true
         return label
     }()
 
@@ -57,7 +58,7 @@ class SmallPostHeaderView: UIView {
         self.addSubview(self.nameButton)
         self.nameButton.constrainTop(toTopOf: self.avatarButton)
         self.nameButton.constrainLeading(toTrailingOf: self.avatarButton, constant: 5)
-        self.nameButton.constrainTrailingToSuperview(constant: 10)
+        self.nameButton.constrainTrailingToSuperview(constant: -10)
 
         self.addSubview(self.dateLabel)
         self.dateLabel.pinTop(toBottomOf: self.nameButton)
@@ -66,8 +67,6 @@ class SmallPostHeaderView: UIView {
 
         self.nameButton.constrainHeight(to: 10)
         self.dateLabel.constrainHeight(to: 10)
-
-        self.isSkeletonable = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -86,6 +85,7 @@ class SmallPostHeaderView: UIView {
         let about = keyValue.metadata.author.about
         let name = about?.nameOrIdentity ?? keyValue.value.author
         self.nameButton.setTitle(name, for: .normal)
+        self.avatarButton.setImage(for: about)
 
         self.dateLabel.text = keyValue.timestampString
 

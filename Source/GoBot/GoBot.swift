@@ -30,8 +30,6 @@ class GoBot: Bot {
     
     let name = "GoBot"
     var version: String { return self.bot.version }
-
-    weak var delegate: BotDelegate?
     
     static let shared = GoBot()
 

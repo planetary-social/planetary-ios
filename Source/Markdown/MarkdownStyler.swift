@@ -50,7 +50,7 @@ class MarkdownStyler: DownStyler {
             headingStyle.paragraphSpacingBefore = 4
             headingStyle.paragraphSpacing = 4
 
-            bodyStyle.lineSpacing = 0
+            bodyStyle.lineSpacing = 1
             bodyStyle.paragraphSpacing = 1
 
             codeStyle.lineSpacing = 0

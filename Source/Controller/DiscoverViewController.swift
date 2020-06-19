@@ -30,7 +30,7 @@ class DiscoverViewController: ContentViewController {
         
     }()
     
-    private lazy var delegate = PostReplyPaginatedDelegate(on: self)
+    private lazy var delegate = KeyValuePaginatedCollectionViewDelegate(on: self)
     
     private lazy var floatingRefreshButton: FloatingRefreshButton = {
         let button = FloatingRefreshButton()
@@ -42,19 +42,24 @@ class DiscoverViewController: ContentViewController {
     
     private lazy var collectionView: UICollectionView = {
         let layout = PinterestCollectionViewLayout()
+        layout.numberOfColumns = self.numberOfColumns
         layout.delegate = self
         
         let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         view.dataSource = self.dataSource
-        // TODO: Register delegate
-        // view.delegate = self.delegate
+        view.delegate = self.delegate
         view.register(PostCollectionViewCell.self, forCellWithReuseIdentifier: "Post")
         view.prefetchDataSource = self.dataSource
         view.refreshControl = self.refreshControl
         view.showsVerticalScrollIndicator = false
         view.contentInset = .square(5)
         view.backgroundColor = UIColor.background.table
+        
         return view
+    }()
+    
+    private lazy var numberOfColumns: Int = {
+        return Int(UIScreen.main.bounds.width) / 180
     }()
      
      private lazy var emptyView: UIView = {
@@ -271,7 +276,7 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
         let insets = collectionView.contentInset
         let contentWidth = collectionView.bounds.width - (insets.left + insets.right)
         let cellPadding: CGFloat = 5
-        let columnWidth = contentWidth / 2 - cellPadding * 2
+        let columnWidth = contentWidth / CGFloat(self.numberOfColumns) - cellPadding * 2
         if let keyValue = dataSource.data.keyValueBy(index: indexPath.row) {
             if keyValue.value.content.post?.hasBlobs ?? false {
                 return columnWidth * 1.618
@@ -279,7 +284,7 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
                 return columnWidth
             }
         } else {
-            return 50
+            return columnWidth
         }
     }
     
