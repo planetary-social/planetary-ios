@@ -171,7 +171,6 @@ class GoBot: Bot {
         DispatchQueue.main.async { completion(nil) }
     }
 
-    
     // MARK: Sync
     
     func knownPubs(completion: @escaping KnownPubsCompletion) {

@@ -176,7 +176,7 @@ class GoBotInternal {
         var servicePubs: [Identity]?
         switch network {
         case NetworkKey.ssb:
-            // TODO: only go pubs   
+            // TODO: only go pubs have this plugin currently
             servicePubs = Identities.ssb.pubs.map({ (key, value) in return value })
         case NetworkKey.planetary:
             servicePubs = Identities.planetary.pubs.map({ (key, value) in return value })
@@ -240,9 +240,8 @@ class GoBotInternal {
         guard expires - now > 0 else { print("received expired token? \(expires)"); return }
         guard let token = cstr else { return }
         let tok = String(cString: token)
-        print("btoken: swift received: \(tok)\nbtoken: expires \(expires)")
-//        let notification = Notification.didReceiveBearerToken(token, expires)
-//        NotificationCenter.default.post(notification)
+        let expiresWhen = Date(timeIntervalSince1970: Double(expires))
+        TokenStore.shared.update(tok, expires: expiresWhen)
         return
     }
 
