@@ -153,6 +153,14 @@ class GoBot: Bot {
             #endif
             let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix)
             DispatchQueue.main.async { completion(loginErr) }
+            
+            BlockedAPI.shared.retreiveBlockedList() {
+                blocks, err in
+                guard err == nil else { print("failed to get blocks: \(err)"); return }
+                
+                print("received blocks: \(blocks)")
+                
+            }
         }
         return
     }

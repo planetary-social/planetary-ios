@@ -10,8 +10,8 @@ import Foundation
 
 typealias BlockedListCompletion = (([String], APIError?) -> Void)
 
-protocol BlocksAPIService {
-    
+protocol BlockedAPIService {
+
     // retreives the full list, no pagination
     func retreiveBlockedList(completion: @escaping BlockedListCompletion)
 }

@@ -30,7 +30,10 @@ class TokenStore {
         self.waiting = []
     }
 
-    func current() -> String { return self.currentBearerToken }
+    func current() -> String? {
+        guard self.currentBearerToken != "" else { return nil }
+        return self.currentBearerToken
+    }
     
     // TODO: mutex
     private var waiting: [ReadyCallback] = []

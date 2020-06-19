@@ -96,10 +96,12 @@ CREATE INDEX author_pubkey on authors (author);
 
 CREATE TABLE messagekeys (
     id INTEGER PRIMARY KEY,
-    key TEXT UNIQUE
+    key TEXT UNIQUE,
+    hashed blob
 );
 CREATE INDEX messagekeys_key ON messagekeys(key);
 CREATE INDEX messagekeys_id ON messagekeys(id);
+CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
 
 -- BUT: this is mostly just glossing over the fact msg_key is referencing our messages table.
 -- the above remark is only true for root/branch on tangles and mention references

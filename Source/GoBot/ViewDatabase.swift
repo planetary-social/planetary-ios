@@ -11,6 +11,7 @@
 import Foundation
 import SQLite
 
+import CryptoKit
 
 // schema migration handling
 extension Connection {
@@ -65,6 +66,7 @@ class ViewDatabase {
     
     private var msgKeys: Table
     private let colKey = Expression<MessageIdentifier>("key")
+    private let colHashed = Expression<Data>("hashed")
     
     private var msgs: Table
     private let colHidden = Expression<Bool>("hidden")
@@ -199,7 +201,7 @@ class ViewDatabase {
         if db.userVersion == 0 {
             let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
             try db.execute(String(contentsOf: schemaV1url))
-            db.userVersion = 3
+            db.userVersion = 4
         } else if db.userVersion == 1 {
             try db.execute("""
             CREATE INDEX messagekeys_key ON messagekeys(key);
@@ -214,8 +216,11 @@ class ViewDatabase {
             CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
             UPDATE posts set is_root=true;
             UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
+            ALTER TABLE messagekeys ADD hashed blob;
+            CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
             """);
-            db.userVersion = 3
+            try self.migrateHashAllMessageKeys()
+            db.userVersion = 4
         } else if db.userVersion == 2 {
             try db.execute("""
             -- add new column to posts and migrate existing data
@@ -223,11 +228,28 @@ class ViewDatabase {
             CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
             UPDATE posts set is_root=true;
             UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
+            ALTER TABLE messagekeys ADD hashed blob;
+            CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
             """);
-            db.userVersion = 3
+            try self.migrateHashAllMessageKeys()
+            db.userVersion = 4
+        } else if db.userVersion == 3 {
+            try db.execute("""
+            ALTER TABLE messagekeys ADD hashed blob;
+            CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+            """)
+            try self.migrateHashAllMessageKeys()
+            db.userVersion = 4
         }
 
         self.currentUserID = try self.authorID(from: user, make: true)
+    }
+    
+    private func migrateHashAllMessageKeys() throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        for row in try db.prepare(self.msgKeys) {
+            try db.run(self.msgKeys.filter(colID == row[colID]).update(colHashed <- row[colKey].sha256hash))
+        }
     }
     
     // this open() is only needed for testing to extend the max age for the fixures... :'(
@@ -1764,7 +1786,8 @@ class ViewDatabase {
         } else {
             if make {
                 msgID = try db.run(self.msgKeys.insert(
-                    colKey <- from
+                    colKey <- from,
+                    colHashed <- from.sha256hash
                 ))
             } else {
                 throw ViewDatabaseError.unknownMessage(from)
@@ -2034,5 +2057,41 @@ class ViewDatabase {
             ))
         }
     }
-
 } // end class
+
+fileprivate extension MessageIdentifier {
+    var sha256hash: Data {
+        if #available(iOS 13.0, *) {
+            let input = self.data(using: .utf8)!
+            let hashed = SHA256.hash(data: input)
+            // using description is silly but i couldnt figure out https://developer.apple.com/documentation/cryptokit/sha256digest Accessing Underlying Storage
+            let descr = hashed.description
+            let prefix = "SHA256 digest: "
+            guard descr.hasPrefix(prefix) else { fatalError("oh gawd") }
+            return Data(hexString: String(descr.dropFirst(prefix.count)))!
+        } else {
+            // https://augmentedcode.io/2018/04/29/hashing-data-using-commoncrypto/ ?
+            fatalError("TODO: get CommonCrypto method to work or find another swift 5 method")
+        }
+    }
+}
+
+// https://stackoverflow.com/a/46663290
+fileprivate extension Data {
+    init?(hexString: String) {
+        let len = hexString.count / 2
+        var data = Data(capacity: len)
+        for i in 0..<len {
+            let j = hexString.index(hexString.startIndex, offsetBy: i*2)
+            let k = hexString.index(j, offsetBy: 2)
+            let bytes = hexString[j..<k]
+            if var num = UInt8(bytes, radix: 16) {
+                data.append(&num, count: 1)
+            } else {
+                fatalError("hex string WATTT \(hexString) \(j) \(k)")
+                return nil
+            }
+        }
+        self = data
+    }
+}

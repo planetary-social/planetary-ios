@@ -46,7 +46,7 @@ export PATH := $(GOROOT)/bin:$(PATH)
 GO := $(GOROOT)/bin/go
 
 GOEXTRAFLAGS=-trimpath -mod=vendor
-GOBUILDTAGS = ios
+GOBUILDTAGS = nommio ios x509omitbundledroots
 # ifdef DEBUG <  this var is not set when the Build Step script is called  by Xcode
 # ifeq ($(ENABLE_TESTABILITY),YES) < also works, not sure what the difference is
 ifeq ($(CONFIGURATION),Debug)

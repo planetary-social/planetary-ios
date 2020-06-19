@@ -260,6 +260,14 @@
 		23EF5AA4249CE69900469977 /* NullBlocksAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AA2249CE69900469977 /* NullBlocksAPI.swift */; };
 		23EF5AA5249CE69900469977 /* NullBlocksAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AA2249CE69900469977 /* NullBlocksAPI.swift */; };
 		23EF5AA6249CE69900469977 /* NullBlocksAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AA2249CE69900469977 /* NullBlocksAPI.swift */; };
+		23EF5AA8249D177F00469977 /* BlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AA7249D177F00469977 /* BlockedAPI.swift */; };
+		23EF5AA9249D177F00469977 /* BlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AA7249D177F00469977 /* BlockedAPI.swift */; };
+		23EF5AAA249D177F00469977 /* BlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AA7249D177F00469977 /* BlockedAPI.swift */; };
+		23EF5AAB249D177F00469977 /* BlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AA7249D177F00469977 /* BlockedAPI.swift */; };
+		23EF5AAD249D185E00469977 /* BearerBlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */; };
+		23EF5AAE249D185E00469977 /* BearerBlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */; };
+		23EF5AAF249D185E00469977 /* BearerBlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */; };
+		23EF5AB0249D185E00469977 /* BearerBlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */; };
 		2D009BF924550868001351CB /* EveryoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D009BF824550868001351CB /* EveryoneViewController.swift */; };
 		53033E98237C9B0B004609F8 /* Onboarding+Repair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E97237C9B0B004609F8 /* Onboarding+Repair.swift */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
@@ -887,6 +895,8 @@
 		23EF5A98249CDCF900469977 /* BlocksAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlocksAPIService.swift; sourceTree = "<group>"; };
 		23EF5A9D249CDD5400469977 /* TokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStore.swift; sourceTree = "<group>"; };
 		23EF5AA2249CE69900469977 /* NullBlocksAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullBlocksAPI.swift; sourceTree = "<group>"; };
+		23EF5AA7249D177F00469977 /* BlockedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedAPI.swift; sourceTree = "<group>"; };
+		23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearerBlockedAPI.swift; sourceTree = "<group>"; };
 		2D009BF824550868001351CB /* EveryoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveryoneViewController.swift; sourceTree = "<group>"; };
 		316D716D251CC0B347E630DA /* Pods-Planetary.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.appstore.xcconfig"; sourceTree = "<group>"; };
 		3C118088E10BAE1C911EDE02 /* Pods_FBTTUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTTUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1432,6 +1442,8 @@
 			children = (
 				23EF5A98249CDCF900469977 /* BlocksAPIService.swift */,
 				23EF5AA2249CE69900469977 /* NullBlocksAPI.swift */,
+				23EF5AA7249D177F00469977 /* BlockedAPI.swift */,
+				23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */,
 			);
 			path = Blocks;
 			sourceTree = "<group>";
@@ -2662,6 +2674,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				23EF5A9C249CDCF900469977 /* BlocksAPIService.swift in Sources */,
+				23EF5AAB249D177F00469977 /* BlockedAPI.swift in Sources */,
+				23EF5AB0249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
 				0ABCBCA6247708000009036D /* NetworkKey.swift in Sources */,
 				0ABCBCA7247708140009036D /* Environment.swift in Sources */,
 				0A38801B2475BB4500777843 /* UITests.swift in Sources */,
@@ -2710,6 +2724,7 @@
 				53BD748D233191000060E47E /* DateTests.swift in Sources */,
 				53C2B12D2295A8DA0018D0A8 /* Identities.swift in Sources */,
 				53C2B1322295A9CB0018D0A8 /* AnalyticsEnums.swift in Sources */,
+				23EF5AAF249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
 				531A8A5121FA622900D5C8C0 /* Bundle+Current.swift in Sources */,
 				0ACE91A0243D73DC00EFB4E9 /* BotError+LocalizedError.swift in Sources */,
 				53E26C5B23039631009240B2 /* Dictionary+Transform.swift in Sources */,
@@ -2724,6 +2739,7 @@
 				535CD3802267F5F90039BCF2 /* ContentCodable.swift in Sources */,
 				53E29CE022D80424008A2CB1 /* Hashtag+String.swift in Sources */,
 				0A64A84024735520009A5EBF /* NullPushAPI.swift in Sources */,
+				23EF5AAA249D177F00469977 /* BlockedAPI.swift in Sources */,
 				53E26C5E23045D34009240B2 /* Data+Person.swift in Sources */,
 				23C7A47922748E8700F02311 /* URL+Identifier.swift in Sources */,
 				23448C20235F07ED00F6E484 /* GoBotTests.swift in Sources */,
@@ -2827,6 +2843,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23EF5AA9249D177F00469977 /* BlockedAPI.swift in Sources */,
 				5314EF6E22EA2BC20065D02A /* Image+UIImage.swift in Sources */,
 				533EDBDB23844A71008B3565 /* Onboarding+AppConfiguration.swift in Sources */,
 				23EF5A9A249CDCF900469977 /* BlocksAPIService.swift in Sources */,
@@ -2882,6 +2899,7 @@
 				0ABCA8EE243554D000D7F39C /* NullCrashReporting.swift in Sources */,
 				53EAB396239AC1D400DF5530 /* UIColor+Hex.swift in Sources */,
 				0A64A851247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
+				23EF5AAE249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
 				5314EF4422EA28700065D02A /* Post.swift in Sources */,
 				5314EF4122EA27CC0065D02A /* About.swift in Sources */,
 				0AC10DF2246EFCC200CCA22A /* NullTimers.swift in Sources */,
@@ -3164,6 +3182,7 @@
 				53B4F5F622B85BF200027C6A /* Markdownable.swift in Sources */,
 				5357550322694BCC002A6989 /* AboutView.swift in Sources */,
 				53E29CD822D7DF84008A2CB1 /* Hashtag.swift in Sources */,
+				23EF5AA8249D177F00469977 /* BlockedAPI.swift in Sources */,
 				530F01A422DEADFD007EBAE2 /* PhoneVerifyOnboardingStep.swift in Sources */,
 				53B4F5F322B73E0000027C6A /* About+NSMutableAttributedString.swift in Sources */,
 				53211CC6227B5A85007FB785 /* Layout+Separator.swift in Sources */,
@@ -3263,6 +3282,7 @@
 				5357023E2373805700140D6C /* BlockButton.swift in Sources */,
 				531587B922A0CDFB0004E2B1 /* Onboarding+Follow.swift in Sources */,
 				53E29CCD22D296BA008A2CB1 /* String+HashtagSubstrings.swift in Sources */,
+				23EF5AAD249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
 				53AD3FD5226FBD91005228F9 /* AppDelegate+UIAppearance.swift in Sources */,
 				53E26C6923062AC3009240B2 /* Layout+Fill.swift in Sources */,
 				531B92C722D125DA005D5255 /* ChannelsViewController.swift in Sources */,
