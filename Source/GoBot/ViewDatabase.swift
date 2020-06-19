@@ -332,6 +332,21 @@ class ViewDatabase {
         }
     }
     
+    func lastReceivedTimestamp() throws -> Double {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        if let timestamp = try db.scalar(self.msgs.select(colReceivedAt.max)) {
+            return timestamp
+        }
+        
+        return -1
+
+    }
+    
+    
+    
     func lastReceivedSeq() throws -> Int64 {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen

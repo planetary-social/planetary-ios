@@ -125,7 +125,8 @@ enum Text: String, Localizable, CaseIterable {
 
     case countOnlinePeers = "{{ count }} ONLINE PEERS"
     case countLocalPeers = "{{ count }} LOCAL PEERS"
-
+    case lastSynced = "SYNCED: {{ when }}"
+    
     case channels = "Hashtags"
     case select = "Select"
     case home = "Home"
