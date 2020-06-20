@@ -131,7 +131,6 @@ class PeersView: UIView {
                 self.setCount(text: .countOnlinePeers, label: self.onlineLabel, count: online)
                 self.connectionAnimation.setDotCount(inside: false, count: online, animated: animated)
             }
-
         }
     }
 
@@ -148,12 +147,22 @@ class PeersView: UIView {
     
     
     @objc func triggerSync(sender : UITapGestureRecognizer) {
-        DispatchQueue.global(qos: .utility).async {
-            GoBot.shared.bot.dial(atLeast: 10)
-            self.setStats()
-        }
-        //self.start()
+        self.connectionAnimation.searchAnimation()
         
+        DispatchQueue.global(qos:  .userInitiated).async {
+            GoBot.shared.sync(queue: .main) {
+                [weak self] _, _, _ in
+                self?.setStats()
+            }
+        }
+        DispatchQueue.global(qos:  .userInitiated).async {
+            GoBot.shared.refresh(load: .long, queue: .main) {
+                [weak self] _, _ in
+                self?.setStats()
+            }
+        }
+        
+
     }
 }
 
