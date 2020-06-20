@@ -35,7 +35,9 @@ class PeersView: UIView {
         self.connectionAnimation.useAutoLayout()
         Layout.fillLeft(of: self, with: self.connectionAnimation)
         self.connectionAnimation.constrainSize(to: self.connectionAnimation.totalDiameter)
-
+        
+        
+        
         self.addSubview(self.onlineLabel)
         self.onlineLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
         self.onlineLabel.bottomAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: -1).isActive = true
@@ -45,9 +47,14 @@ class PeersView: UIView {
         self.localLabel.topAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: 1).isActive = true
 
         self.update(local: 0, online: 0, animated: false)
+        
+        let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.triggerSync))
+        self.addGestureRecognizer(gesture)
+
 
 //        self.runSimulation()
     }
+
 
     // Ensure the timer is stopped to allow this to be released correctly.
     // If this is not called, then the running timer will cause a retain
@@ -138,6 +145,16 @@ class PeersView: UIView {
         attributed.addColorAttribute(UIColor.text.detail)
         label.attributedText = attributed
     }
+    
+    
+    @objc func triggerSync(sender : UITapGestureRecognizer) {
+        DispatchQueue.global(qos: .utility).async {
+            GoBot.shared.bot.dial(atLeast: 10)
+            self.setStats()
+        }
+        //self.start()
+        
+    }
 }
 
 extension PeerStatistics {
@@ -155,3 +172,9 @@ extension PeerStatistics {
         return online.count
     }
 }
+
+
+
+/*
+
+ */
