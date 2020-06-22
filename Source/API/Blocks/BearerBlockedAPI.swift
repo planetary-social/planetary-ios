@@ -82,7 +82,6 @@ extension PlanetaryBearerBlockedAPI: API {
             data, response, error in
             let apiError = response?.httpStatusCodeError ?? APIError.optional(error)
             completion(data, apiError)
-            Log.optional(apiError, from: response)
         }.resume()
     }
 }

@@ -19,7 +19,7 @@ class TokenStore {
     private var currentBearerToken: String = ""
 
     func update(_ token: String, expires: Date) {
-        Log.info("received new bearer token until: \(expires)") // TODO: analytics event. should track we know where these are going (tack created - consumed)
+        print("received new bearer token until: \(expires)") // TODO: analytics event. should track we know where these are going (tack created - consumed)
         self.currentBearerToken = token
         
         // notify waiting callbacks
