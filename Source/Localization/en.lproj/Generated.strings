@@ -81,6 +81,7 @@
 "Text.andOneOther" = " and 1 other";
 "Text.countOnlinePeers" = "{{ count }} ONLINE PEERS";
 "Text.countLocalPeers" = "{{ count }} LOCAL PEERS";
+"Text.lastSynced" = "SYNCED: {{ when }}";
 "Text.channels" = "Hashtags";
 "Text.select" = "Select";
 "Text.home" = "Home";

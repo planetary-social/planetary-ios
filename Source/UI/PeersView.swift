@@ -26,7 +26,13 @@ class PeersView: UIView {
         let label = UILabel.forAutoLayout()
         return label
     }()
+    
+    let syncedLabel: UILabel = {
+        let label = UILabel.forAutoLayout()
+        return label
+    }()
 
+    
     let connectionAnimation = PeerConnectionAnimation()
 
     convenience init() {
@@ -40,10 +46,15 @@ class PeersView: UIView {
         self.onlineLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
         self.onlineLabel.bottomAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: -1).isActive = true
 
-        self.addSubview(self.localLabel)
-        self.localLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
-        self.localLabel.topAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: 1).isActive = true
-
+        //self.addSubview(self.localLabel)
+        //self.localLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
+        //self.localLabel.topAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: -5).isActive = true
+        
+        self.addSubview(self.syncedLabel)
+        self.syncedLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
+        self.syncedLabel.topAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: 1).isActive = true
+        
+        
         self.update(local: 0, online: 0, animated: false)
 
 //        self.runSimulation()
@@ -117,18 +128,21 @@ class PeersView: UIView {
     }
 
     private func update(local: Int, online: Int, animated: Bool = true) {
-        self.setCount(text: .countLocalPeers, label: self.localLabel, count: local)
+ 
+        //self.setStatus(text: .countLocalPeers, label: self.localLabel, count: local)
         self.connectionAnimation.setDotCount(inside: true, count: local, animated: animated) {
             let delay = animated ? 1.2 : 0
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.setCount(text: .countOnlinePeers, label: self.onlineLabel, count: online)
+                self.setStatus(text: .countOnlinePeers, label: self.onlineLabel, count: online)
                 self.connectionAnimation.setDotCount(inside: false, count: online, animated: animated)
             }
 
         }
+        self.setSync()
     }
+    
 
-    private func setCount(text: Text, label: UILabel, count: Int) {
+    private func setStatus(text: Text, label: UILabel, count: Int) {
         let count = String(count)
         let string = text.text(["count": count])
         let attributed = NSMutableAttributedString(string: string)
@@ -137,6 +151,44 @@ class PeersView: UIView {
         attributed.addAttribute(.font, value: UIFont.verse.peerCountBold, range: range)
         attributed.addColorAttribute(UIColor.text.detail)
         label.attributedText = attributed
+    }
+    
+    private func setSync() {
+        let text = Text.lastSynced
+        let label = self.syncedLabel
+        let string = text.text(["when": lastSyncText])
+        let attributed = NSMutableAttributedString(string: string)
+        attributed.addFontAttribute(UIFont.verse.peerCount)
+        //let range = (string as NSString).range(of: count)
+        //attributed.addAttribute(.font, value: UIFont.verse.peerCountBold, range: range)
+        attributed.addColorAttribute(UIColor.text.detail)
+        label.attributedText = attributed
+    }
+    
+    var lastSyncText: String {
+        if Bots.current.statistics.lastSyncDate != nil {
+            return self.format(date: Bots.current.statistics.lastSyncDate)
+        } else {
+            do {
+                let timestamp = try Bots.current.lastReceivedTimestam()
+                let miliseconds = timestamp/1000
+                
+                return self.format(date: Date(timeIntervalSince1970: miliseconds))
+            } catch {
+                return ""
+            }
+
+            
+            
+        }
+    }
+    
+    private func format(date: Date?) -> String {
+        guard let date = date else { return "" }
+        let dateString = DateFormatter.localizedString(from: date, dateStyle: .short, timeStyle: .none)
+        let timeString = DateFormatter.localizedString(from: date, dateStyle: .none, timeStyle: .short)
+        let string = "\(dateString) @ \(timeString)"
+        return string
     }
 }
 

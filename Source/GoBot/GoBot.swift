@@ -24,6 +24,9 @@ fileprivate let refreshDelay = DispatchTimeInterval.milliseconds(125)
 
 class GoBot: Bot {
 
+
+    
+
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
     private let maxBlobBytes = 1024 * 1024 * 8
@@ -258,6 +261,7 @@ class GoBot: Bot {
     private func repoNumberOfMessages() -> Int {
         guard let counts = try? self.bot.repoStatus() else { return -1 }
         return Int(counts.messages)
+        
     }
 
     private func notifySyncComplete(in elapsed: TimeInterval,
@@ -1104,7 +1108,7 @@ class GoBot: Bot {
     var statistics: BotStatistics {
         let counts = try? self.bot.repoStatus()
         let sequence = try? self.database.stats(table: .messagekeys)
-
+        
         var fc: Int = -1
         if let feedCount = counts?.feeds { fc = Int(feedCount) }
         var mc: Int = -1
@@ -1165,6 +1169,14 @@ class GoBot: Bot {
             }
         }
     }
+    
+    func lastReceivedTimestam() throws -> Double {
+        return Double(try self.database.lastReceivedTimestamp())
+    }
+    
+
+    
+  
     
     // MARK: Preloading
     
