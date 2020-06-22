@@ -74,8 +74,8 @@ class MainViewController: UITabBarController {
 
         // rendering mode is required to disable the "grey" effect when not selected
         // look at FeatureViewController.setTabBarItem() for more
-        self.notificationsFeatureViewController.tabBarItem.image = image?.withRenderingMode(.alwaysOriginal)
-        self.notificationsFeatureViewController.tabBarItem.selectedImage = selectedImage?.withRenderingMode(.alwaysOriginal)
+        self.notificationsFeatureViewController.tabBarItem.image = image
+        self.notificationsFeatureViewController.tabBarItem.selectedImage = selectedImage
     }
 
     // Simply selects the notifications.  Useful during launch or resume if

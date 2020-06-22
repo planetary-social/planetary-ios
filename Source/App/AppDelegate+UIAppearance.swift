@@ -53,7 +53,11 @@ extension UITabBar {
     /// to be used for all versions.
     func configureAppearance() {
         if #available(iOS 13, *) {
+            let itemAppearance = UITabBarItemAppearance()
+            itemAppearance.normal.iconColor = UIColor(named: "tabItemNormalColor")
+            
             let appearance = UITabBarAppearance()
+            appearance.stackedLayoutAppearance = itemAppearance
             appearance.configureWithOpaqueBackground()
             appearance.backgroundColor = UIColor.background.default
             appearance.backgroundImage = UIImage()
