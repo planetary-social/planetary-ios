@@ -1578,11 +1578,18 @@ class ViewDatabase {
                     }
                 }
                 
+                /* This is the don't put older than 6 months in the db. 
                 if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about)  {
                     // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                     skipped += 1
+                    print("Skipped(\(msg.value.content.type) \(msg.key)%)")
+                    Analytics.shared.track(event: .did,
+                               element: .bot,
+                               name: AnalyticsEnums.Name.sync.rawValue,
+                               params: ["Skipped": msg.key, "Reason": "Old Message"])
                     continue
                 }
+                */
                 
                 if !pms && !msg.value.content.isValid {
                     // cant ignore PMs right now. they need to be there to be replaced with unboxed content.

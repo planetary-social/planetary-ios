@@ -83,6 +83,8 @@ struct AnalyticsEnums {
         case settings
 
         case sync
+        
+        //case db
 
         // compiler seems to want this, must be related
         // to a nested enum having an associated value
