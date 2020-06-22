@@ -1,5 +1,3 @@
-// This file should be the same as es-uy/Generated.strings
-
 "Text.planetary" = "Planetary";
 "Text.error" = "Opa";
 "Text.cancel" = "Cancelar";
