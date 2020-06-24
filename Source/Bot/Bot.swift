@@ -185,6 +185,8 @@ protocol Bot {
 
     func statistics(completion: @escaping StatisticsCompletion )
     
+    func lastReceivedTimestam() throws -> Double
+    
     @available(*, deprecated)
     var statistics: BotStatistics { get }
     

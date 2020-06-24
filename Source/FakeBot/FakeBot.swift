@@ -14,6 +14,10 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
+    func lastReceivedTimestam() throws -> Double {
+        fatalError("TODO:\(#function)")
+    }
+    
     func resume() {
         fatalError("TODO:\(#function)")
     }
