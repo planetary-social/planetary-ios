@@ -176,7 +176,7 @@ class GoBotInternal {
         var servicePubs: [Identity]?
         switch network {
         case NetworkKey.ssb:
-            // TODO: only go pubs have this plugin currently
+            // TODO: only planetary service pubs have this plugin currently
             servicePubs = Identities.ssb.pubs.map({ (key, value) in return value })
         case NetworkKey.planetary:
             servicePubs = Identities.planetary.pubs.map({ (key, value) in return value })

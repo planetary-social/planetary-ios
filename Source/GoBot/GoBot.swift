@@ -158,11 +158,23 @@ class GoBot: Bot {
                 blocks, err in
                 guard err == nil else { Log.unexpected(.botError, "failed to get blocks: \(err)"); return } // Analitcis error instead?
 
+                var authors: [FeedIdentifier] = []
                 do {
-                    try self.database.updateBlockedContent(blocks)
+                    authors = try self.database.updateBlockedContent(blocks)
                 } catch {
                     // Analitcis error instead?
                     Log.unexpected(.botError, "viewdb failed to update blocked content: \(error)")
+                }
+
+                // add as blocked peers to bot (those dont have contact messages)
+                do {
+                    for a in authors {
+                        try self.bot.nullFeed(author: a)
+                        try self.bot.blockFeed(a)
+                    }
+                } catch {
+                    // Analitcis error instead?
+                    Log.unexpected(.botError, "failed to drop and block content: \(error)")
                 }
             }
         }

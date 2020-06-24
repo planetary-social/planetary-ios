@@ -119,7 +119,7 @@ extension Identifier {
     var isBlob: Bool {
         return self.sigil == .blob
     }
-    
+
     // TODO: this is a iOS13 specific way to do sha25 hashing....
     // TODO: also it retuns a hex string but i have spent to much time on this already
     var sha256hash: String {
