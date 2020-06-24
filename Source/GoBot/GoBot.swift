@@ -170,7 +170,7 @@ class GoBot: Bot {
                 do {
                     for a in authors {
                         try self.bot.nullFeed(author: a)
-                        try self.bot.blockFeed(a)
+                        self.bot.block(feed: a)
                     }
                 } catch {
                     // Analitcis error instead?
