@@ -98,7 +98,7 @@ type Sbot struct {
 	systemGauge  metrics.Gauge
 	latency      metrics.Histogram
 
-	*replicator
+	ssb.Replicator
 }
 
 type Option func(*Sbot) error
@@ -368,6 +368,14 @@ func WithPublicAuthorizer(auth ssb.Authorizer) Option {
 			return fmt.Errorf("sbot: authorizer already configured")
 		}
 		s.authorizer = auth
+		return nil
+	}
+}
+
+// WithReplicator overwrites the default graph based decision maker, of which feeds to copy or block
+func WithReplicator(r ssb.Replicator) Option {
+	return func(s *Sbot) error {
+		s.Replicator = r
 		return nil
 	}
 }

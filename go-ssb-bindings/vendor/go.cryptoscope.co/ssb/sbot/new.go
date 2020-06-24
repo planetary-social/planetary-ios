@@ -182,9 +182,11 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		return s, nil
 	}
 
-	s.replicator, err = s.newGraphReplicator()
-	if err != nil {
-		return nil, err
+	if s.Replicator == nil {
+		s.Replicator, err = s.newGraphReplicator()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// TODO: make plugabble
@@ -234,7 +236,7 @@ func initSbot(s *Sbot) (*Sbot, error) {
 
 		auth := s.authorizer
 		if auth == nil {
-			auth = s.replicator.makeLister()
+			auth = s.Replicator.Lister()
 		}
 
 		if s.latency != nil {
@@ -306,13 +308,13 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	}
 	s.public.Register(gossip.New(ctx,
 		kitlog.With(log, "plugin", "gossip"),
-		s.KeyPair.Id, s.RootLog, uf, s.replicator.makeLister(),
+		s.KeyPair.Id, s.RootLog, uf, s.Replicator.Lister(),
 		histOpts...))
 
 	// incoming createHistoryStream handler
 	hist := gossip.NewHist(ctx,
 		kitlog.With(log, "plugin", "gossip/hist"),
-		s.KeyPair.Id, s.RootLog, uf, s.replicator.makeLister(),
+		s.KeyPair.Id, s.RootLog, uf, s.Replicator.Lister(),
 		histOpts...)
 	s.public.Register(hist)
 

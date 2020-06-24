@@ -17,13 +17,13 @@ import (
 
 var _ ssb.Replicator = (*Sbot)(nil)
 
-type replicator struct {
+type graphReplicator struct {
 	builder graph.Builder
 	current *lister
 }
 
-func (s *Sbot) newGraphReplicator() (*replicator, error) {
-	var r replicator
+func (s *Sbot) newGraphReplicator() (*graphReplicator, error) {
+	var r graphReplicator
 	r.builder = s.GraphBuilder
 	r.current = newLister()
 
@@ -37,7 +37,7 @@ func (s *Sbot) newGraphReplicator() (*replicator, error) {
 }
 
 // makeUpdater returns a func that does the hop-walk and block checks, used together with debounce
-func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int) func() {
+func (r *graphReplicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int) func() {
 	return func() {
 		start := time.Now()
 		newWants := r.builder.Hops(self, hopCount)
@@ -108,13 +108,13 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 	}
 }
 
-func (r *replicator) Block(ref *ssb.FeedRef)   { r.current.blocked.AddRef(ref) }
-func (r *replicator) Unblock(ref *ssb.FeedRef) { r.current.blocked.Delete(ref) }
+func (r *graphReplicator) Block(ref *ssb.FeedRef)   { r.current.blocked.AddRef(ref) }
+func (r *graphReplicator) Unblock(ref *ssb.FeedRef) { r.current.blocked.Delete(ref) }
 
-func (r *replicator) Replicate(ref *ssb.FeedRef)     { r.current.feedWants.AddRef(ref) }
-func (r *replicator) DontReplicate(ref *ssb.FeedRef) { r.current.feedWants.Delete(ref) }
+func (r *graphReplicator) Replicate(ref *ssb.FeedRef)     { r.current.feedWants.AddRef(ref) }
+func (r *graphReplicator) DontReplicate(ref *ssb.FeedRef) { r.current.feedWants.Delete(ref) }
 
-func (r *replicator) makeLister() ssb.ReplicationLister { return r.current }
+func (r *graphReplicator) Lister() ssb.ReplicationLister { return r.current }
 
 type lister struct {
 	feedWants *ssb.StrFeedSet

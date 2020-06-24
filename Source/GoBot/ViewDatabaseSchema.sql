@@ -96,8 +96,8 @@ CREATE INDEX author_pubkey on authors (author);
 
 CREATE TABLE messagekeys (
     id INTEGER PRIMARY KEY,
-    key TEXT UNIQUE,
-    hashed blob
+    key TEXT UNIQUE NOT NULL,
+    hashed TEXT UNIQUE NOT NULL
 );
 CREATE INDEX messagekeys_key ON messagekeys(key);
 CREATE INDEX messagekeys_id ON messagekeys(id);

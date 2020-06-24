@@ -42,6 +42,8 @@ type Replicator interface {
 	DontReplicate(*FeedRef)
 	Block(*FeedRef)
 	Unblock(*FeedRef)
+
+	Lister() ReplicationLister
 }
 
 // ReplicationLister is used by the executing part to get the lists

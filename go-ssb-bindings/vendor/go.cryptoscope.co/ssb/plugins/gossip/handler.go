@@ -132,6 +132,7 @@ func (g *handler) HandleCall(
 
 	hlog := log.With(g.Info, "event", "gossiptx")
 	errLog := level.Error(hlog)
+	dbgLog := level.Debug(hlog)
 
 	closeIfErr := func(err error) {
 		if err != nil {
@@ -182,6 +183,7 @@ func (g *handler) HandleCall(
 			blocks := g.WantList.BlockList()
 
 			if blocks.Has(query.ID) {
+				dbgLog.Log("msg", "feed blocked")
 				req.Stream.Close()
 				return
 			}

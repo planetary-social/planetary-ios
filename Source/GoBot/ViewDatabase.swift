@@ -66,7 +66,7 @@ class ViewDatabase {
     
     private var msgKeys: Table
     private let colKey = Expression<MessageIdentifier>("key")
-    private let colHashed = Expression<Data>("hashed")
+    private let colHashedKey = Expression<String>("hashed")
     
     private var msgs: Table
     private let colHidden = Expression<Bool>("hidden")
@@ -198,48 +198,50 @@ class ViewDatabase {
         
         // db.trace { print("\tSQL: \($0)") } // print all the statements
         
-        if db.userVersion == 0 {
-            let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
-            try db.execute(String(contentsOf: schemaV1url))
-            db.userVersion = 4
-        } else if db.userVersion == 1 {
-            try db.execute("""
-            CREATE INDEX messagekeys_key ON messagekeys(key);
-            CREATE INDEX messagekeys_id ON messagekeys(id);
-            CREATE INDEX posts_msgrefs on posts (msg_ref);
-            CREATE INDEX messages_rxseq on messages (rx_seq);
-            CREATE INDEX tangle_id on tangles (id);
-            CREATE INDEX contacts_state ON contacts (contact_id, state);
-            CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
-            -- add new column to posts and migrate existing data
-            ALTER TABLE posts ADD is_root boolean default false;
-            CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
-            UPDATE posts set is_root=true;
-            UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
-            ALTER TABLE messagekeys ADD hashed blob;
-            CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-            """);
-            try self.migrateHashAllMessageKeys()
-            db.userVersion = 4
-        } else if db.userVersion == 2 {
-            try db.execute("""
-            -- add new column to posts and migrate existing data
-            ALTER TABLE posts ADD is_root boolean default false;
-            CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
-            UPDATE posts set is_root=true;
-            UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
-            ALTER TABLE messagekeys ADD hashed blob;
-            CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-            """);
-            try self.migrateHashAllMessageKeys()
-            db.userVersion = 4
-        } else if db.userVersion == 3 {
-            try db.execute("""
-            ALTER TABLE messagekeys ADD hashed blob;
-            CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-            """)
-            try self.migrateHashAllMessageKeys()
-            db.userVersion = 4
+        try db.transaction {
+            if db.userVersion == 0 {
+                let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
+                try db.execute(String(contentsOf: schemaV1url))
+                db.userVersion = 4
+            } else if db.userVersion == 1 {
+                try db.execute("""
+                CREATE INDEX messagekeys_key ON messagekeys(key);
+                CREATE INDEX messagekeys_id ON messagekeys(id);
+                CREATE INDEX posts_msgrefs on posts (msg_ref);
+                CREATE INDEX messages_rxseq on messages (rx_seq);
+                CREATE INDEX tangle_id on tangles (id);
+                CREATE INDEX contacts_state ON contacts (contact_id, state);
+                CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+                -- add new column to posts and migrate existing data
+                ALTER TABLE posts ADD is_root boolean default false;
+                CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+                UPDATE posts set is_root=true;
+                UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
+                ALTER TABLE messagekeys ADD hashed blob;
+                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+                """);
+                try self.migrateHashAllMessageKeys()
+                db.userVersion = 4
+            } else if db.userVersion == 2 {
+                try db.execute("""
+                -- add new column to posts and migrate existing data
+                ALTER TABLE posts ADD is_root boolean default false;
+                CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+                UPDATE posts set is_root=true;
+                UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
+                ALTER TABLE messagekeys ADD hashed blob;
+                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+                """);
+                try self.migrateHashAllMessageKeys()
+                db.userVersion = 4
+            } else if db.userVersion == 3 {
+                try db.execute("""
+                ALTER TABLE messagekeys ADD hashed blob;
+                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+                """)
+                try self.migrateHashAllMessageKeys()
+                db.userVersion = 4
+            }
         }
 
         self.currentUserID = try self.authorID(from: user, make: true)
@@ -248,7 +250,7 @@ class ViewDatabase {
     private func migrateHashAllMessageKeys() throws {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
         for row in try db.prepare(self.msgKeys) {
-            try db.run(self.msgKeys.filter(colID == row[colID]).update(colHashed <- row[colKey].sha256hash))
+            try db.run(self.msgKeys.filter(colID == row[colID]).update(colHashedKey <- row[colKey].sha256hash))
         }
     }
     
@@ -425,6 +427,16 @@ class ViewDatabase {
     }
     
     // MARK: moderation / delete
+    
+    func updateBlockedContent(_ blocked: [String]) throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        print("!!!!!\n!!!!!!received blocks: \(blocked)")
+        
+        for row in try db.prepare(self.msgKeys.limit(10)) {
+            print("Key: \(row[colKey]) hashed: \(row[colHashedKey])")
+        }
+    }
 
     func hide(allFrom author: FeedIdentifier) throws {
         guard let db = self.openDB else {
@@ -527,7 +539,7 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let msgID = try self.msgID(from: message, make: false)
+        let msgID = try self.msgID(of: message, make: false)
         let lastRX = try self.lastReceivedSeq()
         let rxSeq = try db.scalar(self.msgs.select(colRXseq).filter(colMessageID == msgID))
         if lastRX == rxSeq {
@@ -557,7 +569,7 @@ class ViewDatabase {
         }
         try db.run(self.msgs.insert(or: .replace,
             colRXseq <- seq,
-            colMessageID <- try self.msgID(from: "%fakemsg.wrong", make: true),
+            colMessageID <- try self.msgID(of: "%fakemsg.wrong", make: true),
             colAuthorID <- try self.authorID(from: "@fakeauthor.wrong", make: true),
             colSequence <- 0,
             colMsgType <- .unsupported,
@@ -978,7 +990,7 @@ class ViewDatabase {
         var r: KeyValues = []
         for (index, _) in msgs.enumerated() {
             var msg = msgs[index]
-            let msgID = try self.msgID(from: msg.key)
+            let msgID = try self.msgID(of: msg.key)
 
             let replies = self.tangles
                 .select(colAuthorID.distinct, colAuthor, colName, colDescr, colImage)
@@ -1014,7 +1026,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
-        let msgID = try self.msgID(from: msg)
+        let msgID = try self.msgID(of: msg)
         let qry = self.tangles
             .join(self.msgKeys, on: self.msgKeys[colID] == self.tangles[colMessageRef])
             .join(self.msgs, on: self.msgs[colMessageID] == self.tangles[colMessageRef])
@@ -1191,12 +1203,12 @@ class ViewDatabase {
     }
 
     func get(key: MessageIdentifier) throws -> KeyValue {
-        let msgId = try self.msgID(from: key, make: false)
+        let msgId = try self.msgID(of: key, make: false)
         // TODO: add 2nd signature to get message by internal ID
 //        guard let db = self.openDB else {
 //            throw ViewDatabaseError.notOpen
 //        }
-//        let msgId = try self.msgID(from: key, make: false)
+//        let msgId = try self.msgID(of: key, make: false)
 //
 //        return self.get(msgID: msgID)
 //    }
@@ -1367,7 +1379,7 @@ class ViewDatabase {
             
             var chanID: Int64
             do {
-                chanID = try self.msgID(from: a.about, make: false)
+                chanID = try self.msgID(of: a.about, make: false)
             } catch ViewDatabaseError.unknownMessage {
                 // Log.info("viewdb/debug: type:about with about:\(a.about) for a msg we don't have (probably git-repo or gathering)")
                 return
@@ -1573,7 +1585,7 @@ class ViewDatabase {
         
         try db.run(self.votes.insert(
             colMessageRef <- msgID,
-            colLinkID <- try self.msgID(from: v.vote.link, make: true),
+            colLinkID <- try self.msgID(of: v.vote.link, make: true),
             colExpression <- v.vote.expression ?? "",
             colValue <- v.vote.value
         ))
@@ -1653,7 +1665,7 @@ class ViewDatabase {
                 }
 
                 // can only insert PMs when the unencrypted was inserted before
-                let msgKeyID = try self.msgID(from: msg.key, make: !pms)
+                let msgKeyID = try self.msgID(of: msg.key, make: !pms)
                 let authorID = try self.authorID(from: msg.value.author, make: true)
                 
                 // insert core message
@@ -1774,28 +1786,37 @@ class ViewDatabase {
     // MARK: utilities
 
     // TODO: RAM cache for these msgRef:IntID maps?
-    
-    private func msgID(from: MessageIdentifier, make: Bool = false) throws -> Int64 {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
+    private func msgID(of key: MessageIdentifier, make: Bool = false) throws -> Int64 {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+
+        if let msgKeysRow = try db.pluck(self.msgKeys.filter(colKey == key)) {
+            return msgKeysRow[colID]
         }
-        
-        var msgID: Int64
-        if let msgKeysRow = try db.pluck(self.msgKeys.filter(colKey == from)) {
-            msgID = msgKeysRow[colID]
-        } else {
-            if make {
-                msgID = try db.run(self.msgKeys.insert(
-                    colKey <- from,
-                    colHashed <- from.sha256hash
-                ))
-            } else {
-                throw ViewDatabaseError.unknownMessage(from)
-            }
-        }
-        return msgID
+
+        guard make else { throw ViewDatabaseError.unknownMessage(key) }
+
+        return try db.run(self.msgKeys.insert(
+            colKey <- key,
+            colHashedKey <- key.sha256hash
+        ))
     }
-    
+
+    private func msgID(of msg: KeyValue, make: Bool = false) throws -> Int64 {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+
+        if let msgKeysRow = try db.pluck(self.msgKeys.filter(colKey == msg.key)) {
+            return msgKeysRow[colID]
+        }
+
+        guard make else { throw ViewDatabaseError.unknownMessage(msg.key) }
+
+        guard let hk = msg.hashedKey else { throw GoBotError.unexpectedFault("missing hashed key on fresh message") }
+        return try db.run(self.msgKeys.insert(
+            colKey <- msg.key,
+            colHashedKey <- hk
+        ))
+    }
+
     private func msgKey(id: Int64) throws -> MessageIdentifier {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1898,13 +1919,13 @@ class ViewDatabase {
 
         let tangleID = try db.run(self.tangles.insert(
             colMessageRef <- msgID,
-            colRoot <- try self.msgID(from: r, make: true)
+            colRoot <- try self.msgID(of: r, make: true)
         ))
     
         for branch in br {
             try db.run(self.branches.insert(
                 colTangleID <- tangleID,
-                colBranch <-  try self.msgID(from: branch, make: true)
+                colBranch <-  try self.msgID(of: branch, make: true)
             ))
         }
     }
@@ -1924,7 +1945,7 @@ class ViewDatabase {
             case .message:
                 try db.run(self.mentions_msg.insert(
                     colMessageRef <- msgID,
-                    colLinkID <-  try self.msgID(from: m.link, make: true)
+                    colLinkID <-  try self.msgID(of: m.link, make: true)
                 ))
             case .feed:
                 try db.run(self.mentions_feed.insert(
@@ -2058,40 +2079,3 @@ class ViewDatabase {
         }
     }
 } // end class
-
-fileprivate extension MessageIdentifier {
-    var sha256hash: Data {
-        if #available(iOS 13.0, *) {
-            let input = self.data(using: .utf8)!
-            let hashed = SHA256.hash(data: input)
-            // using description is silly but i couldnt figure out https://developer.apple.com/documentation/cryptokit/sha256digest Accessing Underlying Storage
-            let descr = hashed.description
-            let prefix = "SHA256 digest: "
-            guard descr.hasPrefix(prefix) else { fatalError("oh gawd") }
-            return Data(hexString: String(descr.dropFirst(prefix.count)))!
-        } else {
-            // https://augmentedcode.io/2018/04/29/hashing-data-using-commoncrypto/ ?
-            fatalError("TODO: get CommonCrypto method to work or find another swift 5 method")
-        }
-    }
-}
-
-// https://stackoverflow.com/a/46663290
-fileprivate extension Data {
-    init?(hexString: String) {
-        let len = hexString.count / 2
-        var data = Data(capacity: len)
-        for i in 0..<len {
-            let j = hexString.index(hexString.startIndex, offsetBy: i*2)
-            let k = hexString.index(j, offsetBy: 2)
-            let bytes = hexString[j..<k]
-            if var num = UInt8(bytes, radix: 16) {
-                data.append(&num, count: 1)
-            } else {
-                fatalError("hex string WATTT \(hexString) \(j) \(k)")
-                return nil
-            }
-        }
-        self = data
-    }
-}

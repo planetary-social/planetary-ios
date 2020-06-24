@@ -1,4 +1,4 @@
-// +build linux freebsd darwin
+// +build linux freebsd
 
 package ssb
 

@@ -156,10 +156,14 @@ class GoBot: Bot {
             
             BlockedAPI.shared.retreiveBlockedList() {
                 blocks, err in
-                guard err == nil else { print("failed to get blocks: \(err)"); return }
-                
-                print("received blocks: \(blocks)")
-                
+                guard err == nil else { Log.unexpected(.botError, "failed to get blocks: \(err)"); return } // Analitcis error instead?
+
+                do {
+                    try self.database.updateBlockedContent(blocks)
+                } catch {
+                    // Analitcis error instead?
+                    Log.unexpected(.botError, "viewdb failed to update blocked content: \(error)")
+                }
             }
         }
         return
@@ -1217,7 +1221,9 @@ class GoBot: Bot {
                         return KeyValue(key: msg.key,
                                         value: msg.value,
                                         timestamp: msg.timestamp,
-                                        receivedSeq: lastRxSeq)
+                                        receivedSeq: lastRxSeq,
+                                        hashedKey: msg.key.sha256hash
+                        )
                     }
 
                     try self.database.fillMessages(msgs: newMesgs)

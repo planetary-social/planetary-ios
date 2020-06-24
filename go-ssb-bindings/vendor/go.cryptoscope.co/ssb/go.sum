@@ -187,6 +187,10 @@ github.com/jtolds/gls v4.20.0+incompatible h1:xdiiI2gbIgH/gLH7ADydsJ1uDOEzR8yvV7
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
+github.com/karrick/bufpool v1.2.0 h1:AfhYmVv8A62iOzB31RuJrGLTdHlvBbl0+rh8Gvgvybg=
+github.com/karrick/bufpool v1.2.0/go.mod h1:ZRBxSXJi05b7mfd7kcL1M86UL1x8dTValcwCQp7I7P8=
+github.com/karrick/gopool v1.1.0 h1:b9C9zwnRjgu9RNQPfiGEFmCDm3OdRuLpY7qYIDf8b28=
+github.com/karrick/gopool v1.1.0/go.mod h1:Llf0mwk3WWtY0AIQoodGWVOU+5xfvUWqJKvck2qNwBU=
 github.com/keks/nocomment v0.0.0-20181007001506-30c6dcb4a472 h1:6nrO82kszcc+rcKPCJGgCj5ACTdmq6aNGav8zE5oYm0=
 github.com/keks/nocomment v0.0.0-20181007001506-30c6dcb4a472/go.mod h1:oLLUlGld/axGHThR36o8bADQUHG+TKSUdoKqCvnoQB4=
 github.com/keks/persist v0.0.0-20180731151133-9546f7b3f97e/go.mod h1:KMIOJFEE+0E/mYfYExA9vOpCFDz4TQfzk6mCOtCXR9k=

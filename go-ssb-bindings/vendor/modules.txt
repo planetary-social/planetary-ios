@@ -57,8 +57,13 @@ github.com/philhofer/fwd
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
 # github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237
 github.com/remyoudompheng/bigfft
+# github.com/stretchr/testify v1.5.1
+## explicit
+github.com/stretchr/testify/assert
 # github.com/tinylib/msgp v1.1.0
 github.com/tinylib/msgp/msgp
 # github.com/ugorji/go/codec v1.1.7
@@ -86,6 +91,7 @@ go.cryptoscope.co/margaret/multilog/roaring
 go.cryptoscope.co/margaret/multilog/roaring/mkv
 go.cryptoscope.co/margaret/offset2
 # go.cryptoscope.co/muxrpc v1.5.4-0.20200527143049-1c5d85371ced
+## explicit
 go.cryptoscope.co/muxrpc
 go.cryptoscope.co/muxrpc/codec
 # go.cryptoscope.co/netwrap v0.1.1
@@ -140,6 +146,7 @@ go.mindeco.de/ssb-gabbygrove
 ## explicit
 go.mindeco.de/ssb-multiserver
 # golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+## explicit
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -210,6 +217,8 @@ gonum.org/v1/gonum/lapack/lapack64
 gonum.org/v1/gonum/mat
 # gonum.org/v1/netlib v0.0.0-20190331212654-76723241ea4e
 ## explicit
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2
 # modernc.org/fileutil v1.0.1-0.20191220121946-b2535a37172b
 modernc.org/fileutil
 # modernc.org/internal v1.0.0
