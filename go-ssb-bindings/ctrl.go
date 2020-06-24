@@ -302,7 +302,7 @@ func ssbFeedBlock(ref string, yes bool) {
 	if yes {
 		sbot.Block(fr)
 	} else {
-		sbot.DontBlock(fr)
+		sbot.Unblock(fr)
 	}
 }
 
