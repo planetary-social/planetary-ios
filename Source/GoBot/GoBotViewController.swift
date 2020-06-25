@@ -48,6 +48,7 @@ class GoBotViewController: DebugTableViewController {
         
         var settings: [DebugTableViewCellModel] = []
         
+        
         settings += [DebugTableViewCellModel(title: "Version",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure:

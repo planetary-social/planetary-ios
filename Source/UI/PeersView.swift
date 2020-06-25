@@ -41,7 +41,9 @@ class PeersView: UIView {
         self.connectionAnimation.useAutoLayout()
         Layout.fillLeft(of: self, with: self.connectionAnimation)
         self.connectionAnimation.constrainSize(to: self.connectionAnimation.totalDiameter)
-
+        
+        
+        
         self.addSubview(self.onlineLabel)
         self.onlineLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
         self.onlineLabel.bottomAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: -1).isActive = true
@@ -56,9 +58,14 @@ class PeersView: UIView {
         
         
         self.update(local: 0, online: 0, animated: false)
+        
+        let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.triggerSync))
+        self.addGestureRecognizer(gesture)
+
 
 //        self.runSimulation()
     }
+
 
     // Ensure the timer is stopped to allow this to be released correctly.
     // If this is not called, then the running timer will cause a retain
@@ -136,7 +143,6 @@ class PeersView: UIView {
                 self.setStatus(text: .countOnlinePeers, label: self.onlineLabel, count: online)
                 self.connectionAnimation.setDotCount(inside: false, count: online, animated: animated)
             }
-
         }
         self.setSync()
     }
@@ -153,6 +159,28 @@ class PeersView: UIView {
         label.attributedText = attributed
     }
     
+    
+    @objc func triggerSync(sender : UITapGestureRecognizer) {
+        self.connectionAnimation.searchAnimation()
+        
+        AppController.shared.pokeSync()
+        
+        /*
+        DispatchQueue.global(qos:  .userInitiated).async {
+            GoBot.shared.sync(queue: .main) {
+                [weak self] _, _, _ in
+                self?.setStats()
+            }
+        }
+        DispatchQueue.global(qos:  .userInitiated).async {
+            GoBot.shared.refresh(load: .long, queue: .main) {
+                [weak self] _, _ in
+                self?.setStats()
+            }
+        }*/
+    }
+
+
     private func setSync() {
         let text = Text.lastSynced
         let label = self.syncedLabel
@@ -207,3 +235,9 @@ extension PeerStatistics {
         return online.count
     }
 }
+
+
+
+/*
+
+ */
