@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Welcome.json">
+   </FileRef>
+   <FileRef
       location = "group:Planetary.xcodeproj">
    </FileRef>
    <FileRef
