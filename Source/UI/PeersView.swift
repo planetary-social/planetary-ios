@@ -163,6 +163,9 @@ class PeersView: UIView {
     @objc func triggerSync(sender : UITapGestureRecognizer) {
         self.connectionAnimation.searchAnimation()
         
+        AppController.shared.pokeSync()
+        
+        /*
         DispatchQueue.global(qos:  .userInitiated).async {
             GoBot.shared.sync(queue: .main) {
                 [weak self] _, _, _ in
@@ -174,7 +177,7 @@ class PeersView: UIView {
                 [weak self] _, _ in
                 self?.setStats()
             }
-        }
+        }*/
     }
 
 
