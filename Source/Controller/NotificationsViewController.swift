@@ -289,7 +289,7 @@ fileprivate class HeaderView: UITableViewHeaderFooterView {
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        self.contentView.backgroundColor = UIColor.background.default
+        self.contentView.backgroundColor = UIColor.tableView.cellBackground
         self.useAutoLayout()
         Layout.addSeparator(toTopOf: self.contentView)
         Layout.fill(view: self.contentView,

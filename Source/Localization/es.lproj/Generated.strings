@@ -81,6 +81,7 @@
 "Text.andOneOther" = " y 1 más";
 "Text.countOnlinePeers" = "{{ count }} PARES EN LÍNEA";
 "Text.countLocalPeers" = "{{ count }} PARES LOCALES";
+"Text.lastSynced" = "ULTIMA: {{ when }}";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
 "Text.home" = "Inicio";

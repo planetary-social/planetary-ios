@@ -40,7 +40,7 @@ class AboutCellView: UIView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = UIColor.tableView.cellBackground
 
         let targetHeight: CGFloat = 60
         let verticalMargin = floor((targetHeight - Layout.profileThumbSize) / 2)

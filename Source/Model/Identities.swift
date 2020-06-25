@@ -18,9 +18,7 @@ struct SSBIdentities {
                 "planetary-pub5": "@7y2rK6OEQqE/brYIC9L6JVw4radEiEA2JK7C9nW9NEw=.ed25519",
                 "planetary-pub6": "@EXvEWZDIhmWracjl/4St9AWR42/MGBAXMPPBVJ4hN5A=.ed25519"]
 
-    let people = ["Current Events": "@wNmXqk80DL4FrBjzZcYqbKs/SpsPv6MVX6BLICabPfI=.ed25519",
-                  //"rabble":         "@0uOwBrHIeiRK7lcvpLwjSFkcS3UHSQb/jyN52zf+J6Y=.ed25519",
-                  "Planetary": "@oeNoy1RIArVdMdk8ndeoKbAKuU8b56VgxlYP5y8b9Ic=.ed25519"]
+    let people = ["Planetary": "@oeNoy1RIArVdMdk8ndeoKbAKuU8b56VgxlYP5y8b9Ic=.ed25519"]
 
     var all: [String: Identity] {
         return self.pubs.merging(self.people) { (current, _) in current }

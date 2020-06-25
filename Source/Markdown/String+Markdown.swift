@@ -11,9 +11,9 @@ import Down
 
 extension String {
     
-    func decodeMarkdown() -> NSAttributedString {
+    func decodeMarkdown(small: Bool = false) -> NSAttributedString {
         let down = Down(markdownString: self)
-        let styler = MarkdownStyler()
+        let styler = MarkdownStyler(small: small)
         do {
             let attributedString = try down.toAttributedString(.default,
                                                                styler: styler)

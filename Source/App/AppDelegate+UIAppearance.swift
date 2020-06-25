@@ -35,13 +35,14 @@ extension AppDelegate {
         appearance.shadowImage = UIColor.clear.image(dimension: 1)
 
         appearance.isTranslucent = false
-        appearance.backgroundColor = UIColor.background.default
+        appearance.backgroundColor = UIColor.navigationBar.background
+        appearance.barTintColor = UIColor.navigationBar.background
 
         // refresh control
         UIRefreshControl.appearance().tintColor = UIColor.tint.default
 
         // search bar
-        UISearchBar.appearance().backgroundColor = UIColor.background.default
+        UISearchBar.appearance().backgroundColor = UIColor.searchBar.background
     }
 }
 
@@ -53,18 +54,23 @@ extension UITabBar {
     /// to be used for all versions.
     func configureAppearance() {
         if #available(iOS 13, *) {
+            let itemAppearance = UITabBarItemAppearance()
+            itemAppearance.normal.iconColor = UIColor.tabBar.normalItem
+            
             let appearance = UITabBarAppearance()
+            appearance.stackedLayoutAppearance = itemAppearance
             appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor.background.default
+            appearance.backgroundColor = UIColor.tabBar.background
             appearance.backgroundImage = UIImage()
             appearance.shadowColor = nil
             appearance.shadowImage = UIImage()
             self.standardAppearance = appearance
         } else {
             let appearance = UITabBar.appearance()
-            appearance.backgroundColor = UIColor.background.default
+            appearance.backgroundColor = UIColor.tabBar.background
             appearance.backgroundImage = UIImage()
             appearance.shadowImage = UIImage()
+            appearance.unselectedItemTintColor = UIColor.tabBar.normalItem
        }
     }
 }

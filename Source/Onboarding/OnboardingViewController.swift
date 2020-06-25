@@ -71,6 +71,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.isNavigationBarHidden = true
+        self.view.backgroundColor = UIColor.navigationBar.background
     }
     
     override func viewDidAppear(_ animated: Bool) {

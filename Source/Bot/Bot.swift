@@ -39,7 +39,6 @@ enum RefreshLoad: Int, CaseIterable {
 protocol Bot {
 
     // MARK: Name
-
     var name: String { get }
     var version: String { get }
 
@@ -184,6 +183,8 @@ protocol Bot {
     // MARK: Statistics
 
     func statistics(completion: @escaping StatisticsCompletion )
+    
+    func lastReceivedTimestam() throws -> Double
     
     @available(*, deprecated)
     var statistics: BotStatistics { get }

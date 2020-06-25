@@ -126,6 +126,15 @@ extension UIView {
         self.constrainWidth(to: size.width)
         self.constrainHeight(to: size.height)
     }
+    
+    @discardableResult
+    func constrainSquare() -> NSLayoutConstraint {
+        self.translatesAutoresizingMaskIntoConstraints = false
+        let constraint = self.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 1)
+        constraint.priority = .defaultHigh
+        constraint.isActive = true
+        return constraint
+    }
 
 
     func constrain(to view: UIView) {
@@ -179,4 +188,5 @@ extension UIView {
         self.topAnchor.constraint(equalTo: view.topAnchor,
                                   constant: constant).isActive = true
     }
+    
 }

@@ -14,12 +14,16 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
     lazy var nameView: EditValueView = {
         let view = EditValueView(label: .name)
         view.textView.delegate = self
+        view.backgroundColor = UIColor.post.background
+        view.textView.backgroundColor = UIColor.post.background
         return view
     }()
 
     lazy var bioView: EditValueView = {
         let view = EditValueView(label: .bio)
         view.textView.delegate = self
+        view.backgroundColor = UIColor.post.background
+        view.textView.backgroundColor = UIColor.post.background
         return view
     }()
 

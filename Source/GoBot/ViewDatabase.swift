@@ -332,6 +332,21 @@ class ViewDatabase {
         }
     }
     
+    func lastReceivedTimestamp() throws -> Double {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        if let timestamp = try db.scalar(self.msgs.select(colReceivedAt.max)) {
+            return timestamp
+        }
+        
+        return -1
+
+    }
+    
+    
+    
     func lastReceivedSeq() throws -> Int64 {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1578,7 +1593,7 @@ class ViewDatabase {
                     }
                 }
                 
-                /* This is the don't put older than 6 months in the db. 
+                /* This is the don't put older than 6 months in the db. */
                 if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about)  {
                     // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                     skipped += 1
@@ -1589,7 +1604,7 @@ class ViewDatabase {
                                params: ["Skipped": msg.key, "Reason": "Old Message"])
                     continue
                 }
-                */
+                
                 
                 if !pms && !msg.value.content.isValid {
                     // cant ignore PMs right now. they need to be there to be replaced with unboxed content.

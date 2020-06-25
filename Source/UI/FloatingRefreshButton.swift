@@ -33,6 +33,13 @@ class FloatingRefreshButton: UIButton {
         self.constrainTop(toTopOf: tableView, constant: 8)
     }
     
+    func layout(in view: UIView, below collectionView: UICollectionView) {
+        Layout.centerHorizontally(self, in: view)
+        self.constrainHeight(to: 32)
+        self.roundedCorners(radius: 16)
+        self.constrainTop(toTopOf: collectionView, constant: 8)
+    }
+    
     func show(animated: Bool = true) {
         guard self.isHidden else {
             return

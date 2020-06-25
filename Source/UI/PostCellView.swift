@@ -45,6 +45,7 @@ class PostCellView: KeyValueView {
         view.textContainer.lineBreakMode = .byTruncatingTail
         view.isSkeletonable = true
         view.linesCornerRadius = 30
+        view.backgroundColor = UIColor.post.background
         return view
     }()
 
@@ -154,6 +155,8 @@ class PostCellView: KeyValueView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
+        
+        self.backgroundColor = UIColor.post.background
 
         Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
 
@@ -195,9 +198,9 @@ class PostCellView: KeyValueView {
         if let vote = keyValue.value.content.vote {
             let expression: String
             if vote.vote.value > 0 {
-                expression = "👍"
+                expression = "❤️"
             } else {
-                expression = "👎"
+                expression = "💔"
             }
             
             self.fullPostText = NSAttributedString(string: expression)
