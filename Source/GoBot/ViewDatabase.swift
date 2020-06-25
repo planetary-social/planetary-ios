@@ -1712,7 +1712,8 @@ class ViewDatabase {
         // debug statistics about unhandled message types
         #if SSB_MSGDEBUG
         let done = CFAbsoluteTimeGetCurrent()
-        print("inserted \(msgs.count) in \(done-start)s")
+        print("inserted \(msgs.count) in \(done)s")
+         
         if unsupported.count > 0 { // TODO: Log.debug?
             for (tipe, cnt) in unsupported {
                 if unsupported.keys.count < 10 {
@@ -1722,6 +1723,19 @@ class ViewDatabase {
             print("unsupported types encountered: \(total) (\(total*100/msgs.count)%)")
         }
         #endif
+        
+        
+         let params = [
+             "inserted": msgs.count
+
+         ]
+
+        
+        Analytics.shared.track(event: .did,
+                         element: .bot,
+                         name: AnalyticsEnums.Name.db_update.rawValue,
+                         params: params)
+        
         
         if skipped > 0 {
             print("skipped \(skipped) messages")

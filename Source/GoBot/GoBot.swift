@@ -552,6 +552,19 @@ class GoBot: Bot {
                 #if DEBUG
                 print("[rx log] viewdb filled with \(msgs.count) messages.")
                 #endif
+                
+                let params = [
+                    "msg.count": msgs.count,
+                    "first.timestamp": msgs[0].timestamp,
+                    "last.timestamp": msgs[msgs.count-1].timestamp,
+                    "last.hash":msgs[msgs.count-1].key
+                    ] as [String : Any]
+                
+                Analytics.shared.track(event: .did,
+                                 element: .bot,
+                                 name: AnalyticsEnums.Name.db_update.rawValue,
+                                 params: params)
+                
                 if diff < limit { // view is up2date now
                     self.updatePrivate(completion: completion)
                 } else {
@@ -599,9 +612,9 @@ class GoBot: Bot {
             // TOOD: redo until diff==0
             let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
             
-            try self.database.fillMessages(msgs: msgs, pms: true)
-            
             if msgs.count > 0 {
+                try self.database.fillMessages(msgs: msgs, pms: true)
+                
                 print("[private log] private log filled with \(msgs.count) msgs (started at \(count))")
             }
             
