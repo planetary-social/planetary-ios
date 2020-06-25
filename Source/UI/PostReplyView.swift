@@ -28,16 +28,21 @@ class PostReplyView: KeyValueView {
         view.topSeparator.isHidden = true
         view.addGestureRecognizer(view.tapGesture.recognizer)
         view.isSkeletonable = true
+        view.backgroundColor = UIColor.post.background
         return view
     }()
 
     init() {
         super.init(frame: .zero)
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = UIColor.post.background
         self.clipsToBounds = true
 
         let topBorder = Layout.separatorView()
         let bottomBorder = Layout.separatorView()
+        
+        topBorder.backgroundColor = UIColor.post.border
+        bottomBorder.backgroundColor = UIColor.post.border
+        
         let bottomSeparator = Layout.separatorView(height: 10,
                                                    color: UIColor.background.table)
 

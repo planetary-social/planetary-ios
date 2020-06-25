@@ -50,12 +50,14 @@ struct PostFonts {
 
 struct SmallPostFonts {
 
-    var body: UIFont = UIFont.systemFont(ofSize: 12, weight: .regular)
-    var heading1: UIFont = UIFont.systemFont(ofSize: 12, weight: .heavy)
-    var heading2: UIFont = UIFont.systemFont(ofSize: 12, weight: .bold)
-    var heading3: UIFont = UIFont.systemFont(ofSize: 12, weight: .semibold)
-    var code: UIFont = UIFont.systemFont(ofSize: 12, weight: .regular)
-    var listItemPrefix: UIFont = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: .regular)
+    var header: UIFont = UIFont.systemFont(ofSize: 10, weight: .semibold)
+    
+    var body: UIFont = UIFont.systemFont(ofSize: 14, weight: .regular)
+    var heading1: UIFont = UIFont.systemFont(ofSize: 14, weight: .heavy)
+    var heading2: UIFont = UIFont.systemFont(ofSize: 14, weight: .bold)
+    var heading3: UIFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
+    var code: UIFont = UIFont.systemFont(ofSize: 14, weight: .regular)
+    var listItemPrefix: UIFont = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
 
     init() {
         if #available(iOS 13, *) {

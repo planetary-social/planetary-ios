@@ -22,17 +22,19 @@ class PostCollectionViewCell: UICollectionViewCell {
         let view = UITextView.forAutoLayout()
         view.isEditable = false
         view.isScrollEnabled = false
-        view.textContainerInset = .square(10)
+        view.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
         view.textContainer.lineFragmentPadding = 0
         view.textContainer.lineBreakMode = .byTruncatingTail
         // view.textContainer.maximumNumberOfLines = 8
         view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         view.isUserInteractionEnabled = false
+        view.backgroundColor = UIColor.post.background
         return view
     }()
 
     private lazy var headerView: SmallPostHeaderView = {
         let view = SmallPostHeaderView.forAutoLayout()
+        view.backgroundColor = UIColor.post.background
         return view
     }()
     
@@ -40,8 +42,8 @@ class PostCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         self.contentView.clipsToBounds = true
-        self.contentView.backgroundColor = .white
-        self.contentView.layer.borderColor = UIColor(named: "postBorderColor")?.cgColor
+        self.contentView.backgroundColor = UIColor.post.background
+        self.contentView.layer.borderColor = UIColor.post.border.cgColor
         self.contentView.layer.borderWidth = 0.5
         self.contentView.layer.cornerRadius = 5
         
@@ -74,6 +76,12 @@ class PostCollectionViewCell: UICollectionViewCell {
         // self.textView.textContainer.maximumNumberOfLines = 8
         
         self.headerView.startSkeletonAnimation()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        self.contentView.layer.borderColor = UIColor.post.border.cgColor
+        self.contentView.setNeedsDisplay()
     }
 
     func update(keyValue: KeyValue) {

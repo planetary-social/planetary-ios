@@ -31,7 +31,7 @@ class ImageGalleryView: UIView {
         layout.itemSize = CGSize.init(square: self.heightConstant - 12)
         layout.scrollDirection = .horizontal
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.post.background
         view.dataSource = self
         view.delegate = self
         view.register(ImageGalleryCell.self, forCellWithReuseIdentifier: ImageGalleryCell.identifier)

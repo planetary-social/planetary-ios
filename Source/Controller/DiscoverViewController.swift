@@ -217,6 +217,7 @@ class DiscoverViewController: ContentViewController {
     
     @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
         if let proxy = self.updatedProxy {
+            self.scrollToTop()
             self.dataSource.update(source: proxy)
             self.collectionView.reloadData()
             self.updatedProxy = nil
