@@ -12,4 +12,8 @@ import Down
 typealias MarkdownStyler = NullMarkdownStyler
 
 /// MarkdownStyler suitable for use with unit or API test targets.
-class NullMarkdownStyler: DownStyler { }
+class NullMarkdownStyler: DownStyler {
+    
+    init(small: Bool = false) {}
+    
+}

@@ -76,7 +76,6 @@ class ThreadInteractionView: UIView {
     init() {
         super.init(frame: .zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.default
         
         Layout.addSeparator(toTopOf: self)
         Layout.addSeparator(toBottomOf: self)

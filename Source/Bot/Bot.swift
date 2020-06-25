@@ -39,7 +39,6 @@ enum RefreshLoad: Int, CaseIterable {
 protocol Bot {
 
     // MARK: Name
-
     var name: String { get }
     var version: String { get }
 

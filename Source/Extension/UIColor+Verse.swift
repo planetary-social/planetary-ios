@@ -21,6 +21,29 @@ extension UIColor {
         static let reply =      UIColor(named: "replyBackground") ?? UIColor(rgb: 0xEFEFEF)
         static let table =      UIColor(named: "tableBackgroundColor") ?? UIColor(rgb: 0xF4F4F4)
     }
+    
+    struct tabBar {
+        static let background = UIColor(named: "tabBarBackgroundColor") ?? UIColor.white
+        static let normalItem = UIColor(named: "tabItemNormalColor") ?? UIColor.black
+    }
+    
+    struct navigationBar {
+        static let background = UIColor(named: "tabBarBackgroundColor") ?? UIColor.white
+    }
+    
+    struct searchBar {
+        static let background = UIColor(named: "tabBarBackgroundColor") ?? UIColor.white
+    }
+    
+    struct tableView {
+        static let cellBackground = UIColor(named: "postBackgroundColor") ?? UIColor.white
+    }
+    
+    struct post {
+        static let background = UIColor(named: "postBackgroundColor") ?? UIColor.white
+        static let border = UIColor(named: "postBorderColor") ?? UIColor.black
+        static let headerText = UIColor(named: "postHeaderTextColor") ?? UIColor.white
+    }
 
     struct border {
         static let text = UIColor(named: "textBorderColor") ?? UIColor(rgb: 0xEAEAEA)

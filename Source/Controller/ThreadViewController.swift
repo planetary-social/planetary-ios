@@ -58,6 +58,7 @@ class ThreadViewController: ContentViewController {
     private lazy var interactionView: ThreadInteractionView = {
         let interactionView = ThreadInteractionView()
         interactionView.delegate = self
+        interactionView.backgroundColor = UIColor.post.background
         return interactionView
     }()
 
@@ -82,12 +83,13 @@ class ThreadViewController: ContentViewController {
     }()
 
     private lazy var replyTextView: ReplyTextView = {
-        let view = ReplyTextView(topSpacing: Layout.verticalSpacing, bottomSpacing: 0)
+        let view = ReplyTextView(topSpacing: Layout.verticalSpacing, bottomSpacing: Layout.verticalSpacing)
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(replyTextViewSwipeDown(gesture:)))
         swipe.direction = .down
         view.addGestureRecognizer(swipe)
         view.textViewDelegate = self.textViewDelegate
         Layout.addSeparator(toTopOf: view)
+        view.backgroundColor = UIColor.post.background
         return view
     }()
 
@@ -100,6 +102,7 @@ class ThreadViewController: ContentViewController {
         view.photoButton.isHidden = true
         view.postButton.setText(.postReply)
         view.postButton.action = didPressPostButton
+        view.backgroundColor = UIColor.post.background
         return view
     }()
 

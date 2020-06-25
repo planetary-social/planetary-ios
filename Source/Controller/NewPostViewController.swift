@@ -39,12 +39,14 @@ class NewPostViewController: ContentViewController {
     private lazy var galleryView: ImageGalleryView = {
         let view = ImageGalleryView(height: 75)
         view.delegate = self
+        view.backgroundColor = UIColor.post.background
         return view
     }()
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
         Layout.addSeparator(toTopOf: view)
+        view.backgroundColor = UIColor.post.background
         return view
     }()
 

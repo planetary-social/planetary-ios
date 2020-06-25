@@ -176,6 +176,7 @@ fileprivate class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         cell.textLabel?.text = hashtag.string
         cell.selectionStyle = .none
+        cell.backgroundColor = UIColor.tableView.cellBackground
         
         let post_text = (hashtag.count == 1) ? Text.Post.one.text : Text.Post.many.text
         let ago = hashtag.timeAgo()

@@ -67,6 +67,7 @@ class AboutView: KeyValueView {
         view.isEditable = false
         view.isScrollEnabled = false
         view.textContainer.lineFragmentPadding = 0
+        view.backgroundColor = UIColor.background.default
         return view
     }()
 
