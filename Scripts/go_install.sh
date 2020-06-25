@@ -98,9 +98,4 @@ echo "Extracting File..."
 mkdir -p "$GOROOT"
 tar -C "$GOROOT" --strip-components=1 -xzf /tmp/go.tar.gz
 
-# remove faulty compilation of native keychain bindings
-# these cause problems in the simulator build
-# https://github.com/golang/go/issues/39503
-rm ${GOROOT}/src/crypto/x509/root_cgo_darwin_amd64.go
-
 rm -f /tmp/go.tar.gz

@@ -213,6 +213,12 @@ class GoBotInternal {
         
         if worked {
             self.currentNetwork = network
+
+            // make sure internal planetary pubs are authorized for connections
+            if let pubs = servicePubs {
+                for pub in pubs { self.replicate(feed: pub) }
+            }
+
             return nil
         }
         
