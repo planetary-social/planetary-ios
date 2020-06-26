@@ -16,6 +16,8 @@ import (
 	"go.cryptoscope.co/secretstream/secrethandshake"
 )
 
+const SecretPerms os.FileMode = 0600
+
 type KeyPair struct {
 	Id   *FeedRef
 	Pair secrethandshake.EdKeyPair
