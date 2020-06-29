@@ -3,7 +3,7 @@ package sbot
 import (
 	"context"
 	"fmt"
-	"sync/atomic"
+	"sync"
 	"time"
 
 	"github.com/RoaringBitmap/roaring"
@@ -194,11 +194,24 @@ func lengthFSCK(authorMlog multilog.MultiLog, receiveLog margaret.Log) error {
 }
 
 // implements machinebox/progress.Counter
-type processedCounter struct{ n *int64 }
+type processedCounter struct {
+	mu sync.Mutex
+	n  int64
+}
 
-func (p processedCounter) N() int64 { return atomic.LoadInt64(p.n) }
+func (p *processedCounter) Incr() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.n++
+}
 
-func (p processedCounter) Err() error { return nil }
+func (p *processedCounter) N() int64 {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.n
+}
+
+func (p *processedCounter) Err() error { return nil }
 
 // sequenceFSCK goes through every message in the receiveLog
 // and checks tha the sequence of a feed is correctly increasing by one each message
@@ -219,7 +232,6 @@ func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 
 	totalMessages := currentSeqV.(margaret.Seq).Seq()
 	var pc processedCounter
-	pc.n = new(int64)
 
 	src, err := receiveLog.Query(margaret.SeqWrap(true))
 	if err != nil {
@@ -309,7 +321,7 @@ func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 		lastSequence[authorRef] = currSeq + 1
 
 		// bench stats
-		atomic.AddInt64(pc.n, 1)
+		pc.Incr()
 	}
 
 	if len(consistencyErrors) == 0 {
@@ -351,6 +363,7 @@ func (s *Sbot) HealRepo(report ErrConsistencyProblems) error {
 		if err != nil {
 			return errors.Wrapf(err, "failed to null message (%d) in receive log", seq)
 		}
+		level.Debug(funcLog).Log("msg", seq)
 	}
 
 	// now remove feed metadata from the indexes

@@ -3,6 +3,7 @@ package sbot
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/go-kit/kit/log"
@@ -16,13 +17,13 @@ import (
 
 var _ ssb.Replicator = (*Sbot)(nil)
 
-type replicator struct {
+type graphReplicator struct {
 	builder graph.Builder
 	current *lister
 }
 
-func (s *Sbot) newGraphReplicator() (*replicator, error) {
-	var r replicator
+func (s *Sbot) newGraphReplicator() (*graphReplicator, error) {
+	var r graphReplicator
 	r.builder = s.GraphBuilder
 	r.current = newLister()
 
@@ -36,7 +37,7 @@ func (s *Sbot) newGraphReplicator() (*replicator, error) {
 }
 
 // makeUpdater returns a func that does the hop-walk and block checks, used together with debounce
-func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int) func() {
+func (r *graphReplicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int) func() {
 	return func() {
 		start := time.Now()
 		newWants := r.builder.Hops(self, hopCount)
@@ -58,10 +59,11 @@ func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int
 			return
 		}
 
-		r.current.blocked = g.BlockedList(self)
-		lst, err := r.current.blocked.List()
+		newBlocked := g.BlockedList(self)
+		lst, err := newBlocked.List()
 		if err == nil {
 			for _, bf := range lst {
+				r.current.blocked.AddRef(bf)
 				r.current.feedWants.Delete(bf)
 			}
 		}
@@ -69,6 +71,7 @@ func (r *replicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int
 }
 
 func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable, work func()) {
+	var seqMu sync.Mutex
 	var seq = margaret.SeqEmpty
 	timer := time.NewTimer(interval)
 
@@ -80,8 +83,10 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 		if !ok {
 			return fmt.Errorf("graph rebuild debounce: wrong type: %T", val)
 		}
+		seqMu.Lock()
 		seq = newSeq
 		timer.Reset(interval)
+		seqMu.Unlock()
 		return nil
 	})
 	done := obs.Register(handle)
@@ -93,21 +98,23 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 			return
 
 		case <-timer.C:
+			seqMu.Lock()
 			if seq != margaret.SeqEmpty {
 				work()
 				seq = margaret.SeqEmpty
 			}
+			seqMu.Unlock()
 		}
 	}
 }
 
-func (r *replicator) Block(ref *ssb.FeedRef)   { r.current.blocked.AddRef(ref) }
-func (r *replicator) Unblock(ref *ssb.FeedRef) { r.current.blocked.Delete(ref) }
+func (r *graphReplicator) Block(ref *ssb.FeedRef)   { r.current.blocked.AddRef(ref) }
+func (r *graphReplicator) Unblock(ref *ssb.FeedRef) { r.current.blocked.Delete(ref) }
 
-func (r *replicator) Replicate(ref *ssb.FeedRef)     { r.current.feedWants.AddRef(ref) }
-func (r *replicator) DontReplicate(ref *ssb.FeedRef) { r.current.feedWants.Delete(ref) }
+func (r *graphReplicator) Replicate(ref *ssb.FeedRef)     { r.current.feedWants.AddRef(ref) }
+func (r *graphReplicator) DontReplicate(ref *ssb.FeedRef) { r.current.feedWants.Delete(ref) }
 
-func (r *replicator) makeLister() ssb.ReplicationLister { return r.current }
+func (r *graphReplicator) Lister() ssb.ReplicationLister { return r.current }
 
 type lister struct {
 	feedWants *ssb.StrFeedSet

@@ -7,7 +7,9 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"log"
+	"os"
 	"reflect"
+	"strconv"
 	"sync"
 	"time"
 
@@ -18,6 +20,22 @@ import (
 
 	"go.cryptoscope.co/librarian"
 )
+
+// badger starts to complain >100k
+var batchFullLimit uint32 = 75000
+
+// NASTY TESTING HACK
+func init() {
+	limit, has := os.LookupEnv("LIBRARIAN_WRITEALL")
+	if has {
+		parsed, err := strconv.ParseUint(limit, 10, 32)
+		if err != nil {
+			panic(err)
+		}
+		log.Println("[librarian/badger] overwrote batch limit", parsed)
+		batchFullLimit = uint32(parsed)
+	}
+}
 
 type setOp struct {
 	addr []byte
@@ -33,8 +51,8 @@ type index struct {
 	// these control periodic persistence
 	tickPersistAll, tickIfFull *time.Ticker
 
-	batchLowerLimit uint // only write if there are more batches then this
-	batchFullLimit  uint // more than this cause an problem in badger
+	batchLowerLimit uint   // only write if there are more batches then this
+	batchFullLimit  uint32 // more than this cause an problem in badger
 
 	nextbatch []setOp
 
@@ -56,8 +74,8 @@ func NewIndex(db *badger.DB, tipe interface{}) librarian.SeqSetterIndex {
 		tickPersistAll: time.NewTicker(17 * time.Second),
 		tickIfFull:     time.NewTicker(5 * time.Second),
 
-		batchLowerLimit: 8192,
-		batchFullLimit:  75000,
+		batchLowerLimit: 32000,
+		batchFullLimit:  batchFullLimit,
 		nextbatch:       make([]setOp, 0),
 
 		db:     db,
@@ -96,7 +114,6 @@ func (idx *index) Close() error {
 }
 
 func (idx *index) flushBatch() error {
-	start := time.Now()
 	var raw = make([]byte, 8)
 	err := idx.db.Update(func(txn *badger.Txn) error {
 		useq := uint64(idx.curSeq)
@@ -119,7 +136,6 @@ func (idx *index) flushBatch() error {
 		return errors.Wrapf(err, "error in badger transaction (update) %d", len(idx.nextbatch))
 
 	}
-	log.Println("curr seq:", idx.curSeq.Seq(), "writing batch:", len(idx.nextbatch), "took", time.Since(start))
 	idx.nextbatch = []setOp{}
 	return nil
 }
@@ -262,7 +278,7 @@ func (idx *index) Set(ctx context.Context, addr librarian.Addr, v interface{}) e
 	}
 	idx.nextbatch = append(idx.nextbatch, batchedOp)
 
-	if n := uint(len(idx.nextbatch)); n > idx.batchFullLimit {
+	if n := uint32(len(idx.nextbatch)); n > idx.batchFullLimit {
 		err = idx.flushBatch()
 		if err != nil {
 			return errors.Wrapf(err, "failed to write big batch (%d)", n)

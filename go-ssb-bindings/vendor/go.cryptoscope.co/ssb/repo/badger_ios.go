@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-// +build darwin
-// +build arm arm64
+// +build nommio
 
 package repo
 

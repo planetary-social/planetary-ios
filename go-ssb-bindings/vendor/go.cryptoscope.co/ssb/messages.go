@@ -121,14 +121,12 @@ func NewContactBlock(who *FeedRef) *Contact {
 }
 
 func (c *Contact) UnmarshalJSON(b []byte) error {
-	var priv string
-	err := json.Unmarshal(b, &priv)
-	if err == nil {
+	if len(b) > 0 && b[0] == '"' {
 		return ErrWrongType{want: "contact", has: "private.box?"}
 	}
 
 	var potential map[string]interface{}
-	err = json.Unmarshal(b, &potential)
+	err := json.Unmarshal(b, &potential)
 	if err != nil {
 		return errors.Wrap(err, "contact: map stage failed")
 	}
@@ -151,11 +149,15 @@ func (c *Contact) UnmarshalJSON(b []byte) error {
 
 	newC.Contact, err = ParseFeedRef(contact)
 	if err != nil {
-		return errors.Wrap(err, "contact: map stage failed")
+		return errors.Wrap(err, "contact: failed to parse contact field")
 	}
 
 	newC.Following, _ = potential["following"].(bool)
 	newC.Blocking, _ = potential["blocking"].(bool)
+
+	if newC.Following && newC.Blocking {
+		return errors.Errorf("invalid contact message")
+	}
 
 	*c = *newC
 	return nil

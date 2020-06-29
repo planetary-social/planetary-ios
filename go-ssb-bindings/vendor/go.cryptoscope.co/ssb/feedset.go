@@ -12,12 +12,13 @@ import (
 type strFeedMap map[librarian.Addr]struct{}
 
 type StrFeedSet struct {
-	mu  sync.Mutex
+	mu  *sync.Mutex
 	set strFeedMap
 }
 
 func NewFeedSet(size int) *StrFeedSet {
 	return &StrFeedSet{
+		mu:  new(sync.Mutex),
 		set: make(strFeedMap, size),
 	}
 }
@@ -38,7 +39,10 @@ func (fs *StrFeedSet) AddStored(r *StorageRef) error {
 func (fs *StrFeedSet) AddRef(ref *FeedRef) error {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
-	fs.set[ref.StoredAddr()] = struct{}{}
+
+	copied := ref.Copy()
+
+	fs.set[copied.StoredAddr()] = struct{}{}
 	return nil
 }
 
@@ -59,18 +63,21 @@ func (fs StrFeedSet) List() ([]*FeedRef, error) {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 	var lst = make([]*FeedRef, len(fs.set))
+
 	i := 0
-	var sr StorageRef
+
 	for feed := range fs.set {
+		var sr StorageRef
 		err := sr.Unmarshal([]byte(feed))
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to decode map entry")
 		}
-		lst[i], err = sr.FeedRef()
+		got, err := sr.FeedRef()
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to make ref from map entry")
 		}
 		// log.Printf("dbg List(%d) %s", i, ref.Ref())
+		lst[i] = got.Copy()
 		i++
 	}
 	return lst, nil

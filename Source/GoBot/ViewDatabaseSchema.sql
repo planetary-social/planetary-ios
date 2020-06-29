@@ -88,18 +88,22 @@
 
 CREATE TABLE authors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    author TEXT UNIQUE
+    author TEXT UNIQUE,
+    hashed TEXT UNIQUE NOT NULL
 );
 
 CREATE INDEX author_id on authors (id);
 CREATE INDEX author_pubkey on authors (author);
+CREATE INDEX authors_hashed ON authors(hashed);
 
 CREATE TABLE messagekeys (
     id INTEGER PRIMARY KEY,
-    key TEXT UNIQUE
+    key TEXT UNIQUE NOT NULL,
+    hashed TEXT UNIQUE NOT NULL
 );
 CREATE INDEX messagekeys_key ON messagekeys(key);
 CREATE INDEX messagekeys_id ON messagekeys(id);
+CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
 
 -- BUT: this is mostly just glossing over the fact msg_key is referencing our messages table.
 -- the above remark is only true for root/branch on tangles and mention references
@@ -142,6 +146,12 @@ CREATE INDEX msgs_decrypted on messages (is_decrypted);
 
 -- quick profile listing
 CREATE INDEX helper_profile on messages (is_decrypted, type, author_id, claimed_at);
+
+-- unblock helper table
+CREATE TABLE blocked_content (
+    id integer not null, -- numerical id of the msg or author
+    type integer not null -- 0 msg, 1 author
+);
 
 -- address
 CREATE TABLE addresses (

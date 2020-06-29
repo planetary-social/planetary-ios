@@ -153,6 +153,30 @@ class GoBot: Bot {
             #endif
             let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix)
             DispatchQueue.main.async { completion(loginErr) }
+            
+            BlockedAPI.shared.retreiveBlockedList() {
+                blocks, err in
+                guard err == nil else { Log.unexpected(.botError, "failed to get blocks: \(err)"); return } // Analitcis error instead?
+
+                var authors: [FeedIdentifier] = []
+                do {
+                    authors = try self.database.updateBlockedContent(blocks)
+                } catch {
+                    // Analitcis error instead?
+                    Log.unexpected(.botError, "viewdb failed to update blocked content: \(error)")
+                }
+
+                // add as blocked peers to bot (those dont have contact messages)
+                do {
+                    for a in authors {
+                        try self.bot.nullFeed(author: a)
+                        self.bot.block(feed: a)
+                    }
+                } catch {
+                    // Analitcis error instead?
+                    Log.unexpected(.botError, "failed to drop and block content: \(error)")
+                }
+            }
         }
         return
     }
@@ -171,7 +195,6 @@ class GoBot: Bot {
         DispatchQueue.main.async { completion(nil) }
     }
 
-    
     // MARK: Sync
     
     func knownPubs(completion: @escaping KnownPubsCompletion) {
@@ -566,7 +589,9 @@ class GoBot: Bot {
                                  params: params)
                 
                 if diff < limit { // view is up2date now
-                    self.updatePrivate(completion: completion)
+                    completion(nil)
+                    // disable private messages until there is UI for it AND ADD SQLCYPHER!!!111
+                    //self.updatePrivate(completion: completion)
                 } else {
                     #if DEBUG
                     print("#rx log# \(diff-limit) messages left in go-ssb offset log")
@@ -1208,7 +1233,9 @@ class GoBot: Bot {
                         return KeyValue(key: msg.key,
                                         value: msg.value,
                                         timestamp: msg.timestamp,
-                                        receivedSeq: lastRxSeq)
+                                        receivedSeq: lastRxSeq,
+                                        hashedKey: msg.key.sha256hash
+                        )
                     }
 
                     try self.database.fillMessages(msgs: newMesgs)

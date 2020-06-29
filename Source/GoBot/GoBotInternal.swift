@@ -16,6 +16,9 @@ typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) ->
 // get's called with the messages left to process
 typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
 
+// get's called with a token and an expiry date as unix timestamp
+typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, Int64) -> Void
+
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
@@ -72,6 +75,9 @@ fileprivate struct BotConfig: Encodable {
     let ListenAddr: String
     let Hops: UInt
     let SchemaVersion: UInt
+
+    let ServicePubs: [Identity]? // identities of services which supply planetary specific services
+
     #if DEBUG
     let Testing: Bool = true
     #else
@@ -164,8 +170,21 @@ class GoBotInternal {
         self.repoPath = pathPrefix.appending("/GoSbot")
         
         // TODO: device address enumeration (v6 and v4)
-        // https://github.com/VerseApp/ios/issues/82UInt
+        // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
+
+        var servicePubs: [Identity]?
+        switch network {
+        case NetworkKey.ssb:
+            // TODO: only planetary service pubs have this plugin currently
+            servicePubs = Identities.ssb.pubs.map({ (key, value) in return value })
+        case NetworkKey.planetary:
+            servicePubs = Identities.planetary.pubs.map({ (key, value) in return value })
+        case NetworkKey.integrationTests:
+           servicePubs = Identities.testNet.pubs.map({ (key, value) in return value })
+        default:
+            Log.unexpected(.botError, "unconfigured network for service pubs: \(network)")
+        }
 
         let cfg = BotConfig(
             AppKey: network.string,
@@ -174,7 +193,8 @@ class GoBotInternal {
             Repo: self.repoPath,
             ListenAddr: listenAddr,
             Hops: 1,
-            SchemaVersion: ViewDatabase.schemaVersion)
+            SchemaVersion: ViewDatabase.schemaVersion,
+            ServicePubs: servicePubs)
         
         let enc = JSONEncoder()
         var cfgStr: String
@@ -188,11 +208,17 @@ class GoBotInternal {
         var worked: Bool = false
         cfgStr.withGoString {
             cfgGoStr in
-            worked = ssbBotInit(cfgGoStr, self.blobsNotify)
+            worked = ssbBotInit(cfgGoStr, self.notifyBlobReceived, self.notifyNewBearerToken)
         }
         
         if worked {
             self.currentNetwork = network
+
+            // make sure internal planetary pubs are authorized for connections
+            if let pubs = servicePubs {
+                for pub in pubs { self.replicate(feed: pub) }
+            }
+
             return nil
         }
         
@@ -210,6 +236,19 @@ class GoBotInternal {
             return false
         }
         return true
+    }
+
+    // MARK: planetary services
+
+    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = {
+        cstr, expires in
+        let now = Int64(Date.init().timeIntervalSince1970)
+        guard expires - now > 0 else { print("received expired token? \(expires)"); return }
+        guard let token = cstr else { return }
+        let tok = String(cString: token)
+        let expiresWhen = Date(timeIntervalSince1970: Double(expires))
+        TokenStore.shared.update(tok, expires: expiresWhen)
+        return
     }
 
     // MARK: connections
@@ -384,6 +423,32 @@ class GoBotInternal {
         let dec = JSONDecoder()
         return try dec.decode(ScuttlegobotBotStatus.self, from: d)
     }
+    
+    // MARK: manual block / replicate
+    func block(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedBlock($0, true)
+        }
+    }
+
+    func unblock(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedBlock($0, false)
+        }
+    }
+
+    // TODO: call this to fetch a feed without following it
+    func replicate(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedReplicate($0, true)
+        }
+    }
+
+    func dontReplicate(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedReplicate($0, false)
+        }
+    }
 
     // MARK: Null / Delete
 
@@ -422,7 +487,7 @@ class GoBotInternal {
 
     // MARK: blobs
 
-    private lazy var blobsNotify: CBlobsNotifyCallback = {
+    private lazy var notifyBlobReceived: CBlobsNotifyCallback = {
         numberOfBytes, ref in
         guard let ref = ref else { return false }
         let identifier = BlobIdentifier(cString: ref)

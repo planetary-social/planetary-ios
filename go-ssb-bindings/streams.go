@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/go-kit/kit/log/level"
@@ -47,6 +49,8 @@ func ssbStreamRootLog(seq uint64, limit int) *C.char {
 
 //export ssbStreamPrivateLog
 func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
+	// return empty array until there is actual UI in place for these
+	return C.CString("[]")
 	var err error
 	defer func() {
 		if err != nil {
@@ -150,6 +154,7 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 
 	src = mfr.SourceFilter(src, nowOldStuff)
 
+	keyHasher := sha256.New()
 	i := 0
 	w.WriteString("[")
 	for {
@@ -183,14 +188,20 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 		var kv struct {
 			ssb.KeyValueRaw
 			ReceiveLogSeq int64 // the sequence no of the log its stored in
+			HashedKey     string
 		}
 		kv.ReceiveLogSeq = rxLogSeq
 		kv.Key_ = msg.Key()
 		kv.Value = *msg.ValueContent()
 		kv.Timestamp = encodedTime.Millisecs(msg.Received())
+
+		keyHasher.Write([]byte(kv.Key_.Ref()))
+		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
+
 		if err := json.NewEncoder(w).Encode(kv); err != nil {
 			return nil, errors.Wrapf(err, "drainLog: failed to k:v map message %d", i)
 		}
+		keyHasher.Reset()
 
 		if i > limit {
 			break

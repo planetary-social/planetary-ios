@@ -44,6 +44,8 @@ type rpc struct {
 	// terminated indicates that the rpc session is being terminated
 	terminated bool
 	tLock      sync.Mutex
+
+	cancel context.CancelFunc
 }
 
 // this sets the buffer size of individual request streams
@@ -87,20 +89,21 @@ func handle(pkr Packer, handler Handler, remote net.Addr, logger log.Logger) End
 		logger = log.With(logger, "remote", remote.String())
 	}
 
+	// TODO: rpc root context!? serve context?!
+	ctx := context.TODO()
+
+	ctx, cancel := context.WithCancel(ctx)
 	r := &rpc{
 		logger: logger,
 		remote: remote,
 		pkr:    pkr,
 		reqs:   make(map[int32]*Request),
 		root:   handler,
+
+		cancel: cancel,
 	}
 
-	// TODO: rpc root context!? serve context?!
-	ctx := context.TODO()
-
-	go func() {
-		handler.HandleConnect(ctx, r)
-	}()
+	go handler.HandleConnect(ctx, r)
 
 	return r
 }
@@ -230,6 +233,7 @@ var ErrSessionTerminated = errors.New("muxrpc: session terminated")
 
 // Terminate ends the RPC session
 func (r *rpc) Terminate() error {
+	r.cancel()
 	r.tLock.Lock()
 	defer r.tLock.Unlock()
 	r.terminated = true

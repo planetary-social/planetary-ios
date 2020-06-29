@@ -5,7 +5,6 @@ package graph
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"math"
 	"sync"
 
@@ -27,12 +26,6 @@ type Builder interface {
 
 	// Build a complete graph of all follow/block relations
 	Build() (*Graph, error)
-
-	// Return the stored state between a and b
-	// 0: no / unfollow
-	// 1: following
-	// -1: blocking
-	State(from, to *ssb.FeedRef) int
 
 	// Follows returns a set of all people ref follows
 	Follows(*ssb.FeedRef) (*ssb.StrFeedSet, error)
@@ -91,11 +84,10 @@ func (b *builder) indexUpdateFunc(ctx context.Context, seq margaret.Seq, val int
 	}
 
 	var c ssb.Contact
-	err := json.Unmarshal(abs.ContentBytes(), &c)
+	err := c.UnmarshalJSON(abs.ContentBytes())
 	if err != nil {
 		// just ignore invalid messages, nothing to do with them (unless you are debugging something)
-		// err = errors.Wrapf(err, "db/idx contacts: first json unmarshal failed (msg: %v)", abs.Key().Ref())
-		// log.Log("msg", "skipped contact message", "reason", err)
+		//level.Warn(b.log).Log("msg", "skipped contact message", "reason", err)
 		return nil
 	}
 
@@ -118,7 +110,7 @@ func (b *builder) indexUpdateFunc(ctx context.Context, seq margaret.Seq, val int
 	}
 
 	b.cachedGraph = nil
-	// TODO: patch existing graph
+	// TODO: patch existing graph instead of invalidating
 	return nil
 }
 
@@ -127,36 +119,6 @@ func (b *builder) OpenIndex() (librarian.SeqSetterIndex, librarian.SinkIndex) {
 		b.idxSink = librarian.NewSinkIndex(b.indexUpdateFunc, b.idx)
 	}
 	return b.idx, b.idxSink
-}
-
-func (bld *builder) State(a, b *ssb.FeedRef) int {
-	addr := a.StoredAddr()
-	addr += b.StoredAddr()
-	obv, err := bld.idx.Get(context.Background(), addr)
-	if err != nil {
-		return 0
-	}
-
-	stv, err := obv.Value()
-	if err != nil {
-		return 0
-	}
-
-	state, ok := stv.(int)
-	if !ok {
-		return 0
-	}
-
-	switch state {
-	case 1:
-		return 1
-	case 2:
-		return -1
-	default:
-		return 0
-	}
-
-	return -1
 }
 
 func (b *builder) DeleteAuthor(who *ssb.FeedRef) error {
@@ -229,7 +191,12 @@ func (b *builder) Build() (*Graph, error) {
 			bfrom := librarian.Addr(rawFrom)
 			nFrom, has := dg.lookup[bfrom]
 			if !has {
-				nFrom = &contactNode{dg.NewNode(), &from, ""}
+				fromRef, err := from.FeedRef()
+				if err != nil {
+					return err
+				}
+
+				nFrom = &contactNode{dg.NewNode(), fromRef.Copy(), ""}
 				dg.AddNode(nFrom)
 				dg.lookup[bfrom] = nFrom
 			}
@@ -237,7 +204,11 @@ func (b *builder) Build() (*Graph, error) {
 			bto := librarian.Addr(rawTo)
 			nTo, has := dg.lookup[bto]
 			if !has {
-				nTo = &contactNode{dg.NewNode(), &to, ""}
+				toRef, err := to.FeedRef()
+				if err != nil {
+					return err
+				}
+				nTo = &contactNode{dg.NewNode(), toRef.Copy(), ""}
 				dg.AddNode(nTo)
 				dg.lookup[bto] = nTo
 			}
@@ -262,16 +233,16 @@ func (b *builder) Build() (*Graph, error) {
 				return nil
 			})
 			if err != nil {
-				return errors.Wrap(err, "failed to get value from item")
+				return errors.Wrapf(err, "failed to get value from item:%q", string(k))
 			}
 
 			if math.IsInf(w, -1) {
+				//dg.RemoveEdge(nFrom.ID(), nTo.ID())
 				continue
 			}
 
-			edg := simple.WeightedEdge{F: nFrom, T: nTo, W: w}
 			dg.SetWeightedEdge(contactEdge{
-				WeightedEdge: edg,
+				WeightedEdge: simple.WeightedEdge{F: nFrom, T: nTo, W: w},
 				isBlock:      math.IsInf(w, 1),
 			})
 		}

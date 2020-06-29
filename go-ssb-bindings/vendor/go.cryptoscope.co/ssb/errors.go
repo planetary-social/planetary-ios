@@ -43,7 +43,7 @@ type ErrMalfromedMsg struct {
 func (emm ErrMalfromedMsg) Error() string {
 	s := "ErrMalfromedMsg: " + emm.reason
 	if emm.m != nil {
-		s += fmt.Sprintf("%+v", emm.m)
+		s += fmt.Sprintf(" %+v", emm.m)
 	}
 	return s
 }

@@ -7,9 +7,14 @@ package main
 // #include <sys/types.h>
 // #include <stdint.h>
 // #include <stdbool.h>
-// static bool callBlobsNotify(void *func, int64_t size, const char *blobRef)
+// static bool callNotifyBlobs(void *func, int64_t size, const char *blobRef)
 // {
 //     return ((bool(*)(int64_t, const char *))func)(size, blobRef);
+// }
+//
+// static void callNotifyNewBearerToken(void *func, const char *token, int64_t expires)
+// {
+//     return ((void(*)(const char *, int64_t))func)(token, expires);
 // }
 import "C"
 
@@ -37,10 +42,12 @@ import (
 	"go.cryptoscope.co/luigi"
 
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/multilogs"
+	"go.cryptoscope.co/ssb/plugins2"
 	"go.cryptoscope.co/ssb/repo"
 	"go.cryptoscope.co/ssb/repo/migrations"
 	mksbot "go.cryptoscope.co/ssb/sbot"
+
+	"verseproj/scuttlegobridge/servicesplug"
 )
 
 var versionString *C.char
@@ -58,6 +65,8 @@ var (
 	lock    sync.Mutex
 	sbot    *mksbot.Sbot
 	repoDir string
+
+	servicePlug *servicesplug.Plugin
 
 	viewDB *sql.DB
 
@@ -135,13 +144,19 @@ type botConfig struct {
 	Hops       uint
 	Testing    bool
 
+	// Pubs that host planetary specific muxrpc calls
+	ServicePubs []ssb.FeedRef
+
 	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
 }
 
-var blobsNotifyHandle unsafe.Pointer
+var (
+	notifyBlobsHandle          unsafe.Pointer
+	notifyNewBearerTokenHandle unsafe.Pointer
+)
 
 //export ssbBotInit
-func ssbBotInit(config string, notifyFn uintptr) bool {
+func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerTokenFn uintptr) bool {
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -152,7 +167,8 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		}
 	}()
 
-	blobsNotifyHandle = unsafe.Pointer(notifyFn)
+	notifyBlobsHandle = unsafe.Pointer(notifyBlobReceivedFn)
+	notifyNewBearerTokenHandle = unsafe.Pointer(notifyNewBearerTokenFn)
 
 	var cfg botConfig
 	err = json.NewDecoder(strings.NewReader(config)).Decode(&cfg)
@@ -221,24 +237,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 	// key should be stored in keychain anyway
 	os.Remove(r.GetPath("secret"))
 
-	var kps []*ssb.KeyPair
-	if cfg.Testing { // these should only be present and loaded in test environments
-		keysMap, err := repo.AllKeyPairs(r)
-		if err != nil {
-			err = errors.Wrap(err, "sbot: failed to open all keypairs in repo")
-			return false
-		}
-		for _, key := range keysMap {
-			kps = append(kps, key)
-		}
-	}
-
-	userKP, err := ssb.ParseKeyPair(strings.NewReader(keyblob))
-	if err != nil {
-		err = errors.Wrap(err, "sbot: failed to parse passed keypair")
-		return false
-	}
-
 	doUpgradeOffsetEncoding, err := migrations.UpgradeToMultiMessage(log, r)
 	if err != nil {
 		err = errors.Wrap(err, "BotInit: repo migration failed")
@@ -284,8 +282,16 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		log = level.NewFilter(log, level.AllowInfo())
 	}
 
-	kps = append(kps, userKP)
-	mlogPriv := multilogs.NewPrivateRead(kitlog.With(log, "module", "privLogs"), kps...)
+	var servicePlug *servicesplug.Plugin
+	if len(cfg.ServicePubs) != 0 {
+		swiftNotifyer := func(tok servicesplug.Token) {
+			cTok := C.CString(tok.Token)
+			unixTs := time.Time(tok.Expires).Unix()
+			C.callNotifyNewBearerToken(notifyNewBearerTokenHandle, cTok, C.longlong(unixTs))
+			C.free(unsafe.Pointer(cTok))
+		}
+		servicePlug = servicesplug.New(cfg.ServicePubs, swiftNotifyer)
+	}
 
 	opts := []mksbot.Option{
 		mksbot.WithInfo(log),
@@ -302,9 +308,6 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 			// TODO: make version that prints bytes "unhumanized" so that we can count them
 			return countconn.WrapConn(level.Debug(log), c), nil
 		}),
-		// loading this plugin makes the bot badger-less but the alternative graph-builder is still experimental
-		//mksbot.LateOption(mksbot.MountPlugin(&bytype.Plugin{}, plugins2.AuthMaster)),
-		mksbot.LateOption(mksbot.MountMultiLog("privLogs", mlogPriv.OpenRoaring)),
 	}
 
 	if hmacSignKey != "" {
@@ -315,6 +318,12 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 			return false
 		}
 		opts = append(opts, mksbot.WithHMACSigning(k))
+	}
+
+	if servicePlug != nil {
+		opts = append(opts,
+			mksbot.LateOption(mksbot.MountPlugin(servicePlug, plugins2.AuthPublic)),
+		)
 	}
 
 	sbot, err = mksbot.New(opts...)
@@ -347,7 +356,7 @@ func ssbBotInit(config string, notifyFn uintptr) bool {
 		}
 
 		testRef := C.CString(n.Ref.Ref())
-		ret := C.callBlobsNotify(blobsNotifyHandle, C.longlong(sz), testRef)
+		ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(sz), testRef)
 		C.free(unsafe.Pointer(testRef))
 		log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.Ref())
 		return nil

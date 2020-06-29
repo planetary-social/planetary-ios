@@ -313,6 +313,16 @@ go-sbot &
 sbotcli connect "net:some.ho.st:8008~shs:SomeActuallyValidPubKey="
 ```
 
+### Startup error / no mmio
+
+The badger key-value database defaults to loading some of it's files using [memory-mapped i/o](https://en.wikipedia.org/wiki/Memory-mapped_I/O). If this turns out to be a problem on your target platform, you can use `go build -tags nommio` when building to fall back to standard files, which can be a bit slower but should still be fully functional.
+
+The error can look like this:
+
+```
+badger failed to open: Mmap value log file. Path=C:\\some\\where\\.ssb-go\\indexes\\contacts\\db\\000000.vlog. Error=MapViewOfFile: Not enough memory resources are available to process this command.
+```
+
 ## Stack links
 
 * [secret-handshake](https://secret-handshake.club) key exchange using [secretstream](https://godoc.org/go.cryptoscope.co/secretstream)

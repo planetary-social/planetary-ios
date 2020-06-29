@@ -24,6 +24,7 @@ import (
 	"go.cryptoscope.co/ssb/network"
 	"go.cryptoscope.co/ssb/plugins/blobs"
 	"go.cryptoscope.co/ssb/plugins/control"
+	"go.cryptoscope.co/ssb/plugins/friends"
 	"go.cryptoscope.co/ssb/plugins/get"
 	"go.cryptoscope.co/ssb/plugins/gossip"
 	"go.cryptoscope.co/ssb/plugins/legacyinvites"
@@ -72,6 +73,7 @@ func (s *Sbot) Close() error {
 	return nil
 }
 
+// is called by New() in options, sorry
 func initSbot(s *Sbot) (*Sbot, error) {
 	log := s.info
 	var err error
@@ -180,9 +182,11 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		return s, nil
 	}
 
-	s.replicator, err = s.newGraphReplicator()
-	if err != nil {
-		return nil, err
+	if s.Replicator == nil {
+		s.Replicator, err = s.newGraphReplicator()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// TODO: make plugabble
@@ -203,8 +207,6 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		// bypassing badger-close bug to go through with an accept (or not) before closing the bot
 		s.closedMu.Lock()
 		defer s.closedMu.Unlock()
-
-		auth := s.replicator.makeLister()
 
 		remote, err := ssb.GetFeedRefFromAddr(conn.RemoteAddr())
 		if err != nil {
@@ -231,6 +233,12 @@ func initSbot(s *Sbot) (*Sbot, error) {
 		if s.promisc {
 			return s.public.MakeHandler(conn)
 		}
+
+		auth := s.authorizer
+		if auth == nil {
+			auth = s.Replicator.Lister()
+		}
+
 		if s.latency != nil {
 			start := time.Now()
 			defer func() {
@@ -300,13 +308,13 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	}
 	s.public.Register(gossip.New(ctx,
 		kitlog.With(log, "plugin", "gossip"),
-		s.KeyPair.Id, s.RootLog, uf, s.replicator.makeLister(),
+		s.KeyPair.Id, s.RootLog, uf, s.Replicator.Lister(),
 		histOpts...))
 
 	// incoming createHistoryStream handler
 	hist := gossip.NewHist(ctx,
 		kitlog.With(log, "plugin", "gossip/hist"),
-		s.KeyPair.Id, s.RootLog, uf, s.replicator.makeLister(),
+		s.KeyPair.Id, s.RootLog, uf, s.Replicator.Lister(),
 		histOpts...)
 	s.public.Register(hist)
 
@@ -317,6 +325,8 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	s.master.Register(hist)                        // createHistoryStream
 
 	s.master.Register(replicate.NewPlug(uf))
+
+	s.master.Register(friends.New(log, *s.KeyPair.Id, s.GraphBuilder))
 
 	// tcp+shs
 	opts := network.Options{
@@ -357,7 +367,7 @@ func initSbot(s *Sbot) (*Sbot, error) {
 	s.master.Register(inviteService.MasterPlugin())
 
 	// TODO: should be gossip.connect but conflicts with our namespace assumption
-	s.master.Register(control.NewPlug(kitlog.With(log, "plugin", "ctrl"), s.Network))
+	s.master.Register(control.NewPlug(kitlog.With(log, "plugin", "ctrl"), s.Network, s))
 	s.master.Register(status.New(s))
 
 	return s, nil

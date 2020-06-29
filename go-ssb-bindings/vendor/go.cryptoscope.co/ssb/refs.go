@@ -303,6 +303,14 @@ func (ref FeedRef) Equal(b *FeedRef) bool {
 	return bytes.Equal(ref.ID, b.ID)
 }
 
+func (ref FeedRef) Copy() *FeedRef {
+	newRef, err := ParseFeedRef(ref.Ref())
+	if err != nil {
+		panic(errors.Wrap(err, "failed to copy existing ref"))
+	}
+	return newRef
+}
+
 var (
 	_ encoding.TextMarshaler   = (*FeedRef)(nil)
 	_ encoding.TextUnmarshaler = (*FeedRef)(nil)
