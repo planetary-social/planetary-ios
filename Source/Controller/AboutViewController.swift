@@ -59,7 +59,7 @@ class AboutViewController: ContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.contentView, with: self.tableView, respectSafeArea: false)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage.verse.link,
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage.verse.optionsOff,
                                                                  style: .plain,
                                                                  target: self,
                                                                  action: #selector(didPressCopyIdentifierIcon))
@@ -228,6 +228,18 @@ class AboutViewController: ContentViewController {
             actions.append(share)
         }
 
+        if !identity.isCurrentUser {
+            let block = UIAlertAction(title: Text.blockUser.text,
+                                      style: .destructive,
+                                      handler: self.didSelectBlockAction(action:))
+            actions.append(block)
+
+            let report = UIAlertAction(title: Text.reportUser.text,
+                                       style: .destructive,
+                                       handler: self.didSelectReportAction(action:))
+            actions.append(report)
+        }
+
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
@@ -327,6 +339,28 @@ class AboutViewController: ContentViewController {
                                                 identity: self.identity,
                                                 identities: self.followedByIdentities)
         self.navigationController?.pushViewController(controller, animated: true)
+    }
+
+    private func didSelectBlockAction(action: UIAlertAction) {
+        Analytics.shared.trackDidSelectAction(actionName: "block_identity")
+        AppController.shared.promptToBlock(identity, name: self.about?.name)
+    }
+
+    private func didSelectReportAction(action: UIAlertAction) {
+        guard let about = self.about, let name = about.name, let me = Bots.current.identity else {
+            return
+        }
+        Analytics.shared.trackDidSelectAction(actionName: "report_user")
+        guard let controller = Support.shared.newTicketViewController(from: me,
+                                                                      reporting: about.identity,
+                                                                      name: name) else {
+            AppController.shared.alert(style: .alert,
+                                       title: Text.error.text,
+                                       message: Text.Error.supportNotConfigured.text,
+                                       cancelTitle: Text.ok.text)
+            return
+        }
+        AppController.shared.push(controller)
     }
 
     // MARK: Notifications
