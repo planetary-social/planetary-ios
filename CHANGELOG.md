@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.28] - 2020-06-29
+## Added:
+- Explore content in the all new discover screen.
+- Block users.
+- Give hearts instead of liking a post.
+- Tap the network status doodle to trigger a sync.
+
+## Fixed:
+- Issues some users where having syncing the latest posts.
+
 ## [0.9.27] - 2020-06-11
 ## Added:
 - We preload some feeds when onboarding so you don't have to wait to see something.
@@ -19,7 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed: 
 - Upper left profile avatar now shows your profile avatar
 
-
 ## [0.9.24] - 2020-05-25
 ## Added:
 - changing explore so it only shows you people you're not following
@@ -31,7 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - scroll top when tapping on the explore icon
 - only display blobs which are images
 - fall back to blobs hosted by planetary if muxrpc fails to get them over ssb
-
 
 ## [0.9.23] - 2020-05-23
 ## Added:
