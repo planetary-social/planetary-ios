@@ -108,7 +108,7 @@ func ssbRepoStats() *C.char {
 	counts.Messages = rootSeq.Seq()
 	counts.Messages += 1 // 0-indexed (empty is -1)
 
-	lm, err := sbot.RootLog.Get(rootSeq.Seq())
+	lm, err := sbot.RootLog.Get(rootSeq)
 	if err != nil {
 		retErr = errors.Wrap(err, "RepoStats: could not get the last message hash")
 		return nil
