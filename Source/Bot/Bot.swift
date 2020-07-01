@@ -185,7 +185,7 @@ protocol Bot {
 
     // MARK: Statistics
 
-    func statistics(completion: @escaping StatisticsCompletion )
+    func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion)
     
     func lastReceivedTimestam() throws -> Double
     
@@ -214,6 +214,10 @@ extension Bot {
 
     func followings(identity: Identity, completion:  @escaping AboutsCompletion) {
         self.followings(identity: identity, queue: .main, completion: completion)
+    }
+
+    func statistics(completion: @escaping StatisticsCompletion) {
+        self.statistics(queue: .main, completion: completion)
     }
     
 }

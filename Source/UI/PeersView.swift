@@ -123,9 +123,18 @@ class PeersView: UIView {
     }
 
     private func setStats(animated: Bool = true) {
-        Bots.current.statistics { stats in
-            self.update(with: stats.peer, animated: animated)
+        let operation = StatisticsOperation()
+        operation.completionBlock = {
+            switch operation.result {
+            case .success(let statistics):
+                DispatchQueue.main.async {
+                    self.update(with: statistics.peer, animated: animated)
+                }
+            case .failure:
+                break
+            }
         }
+        AppController.shared.operationQueue.addOperation(operation)
     }
 
     // MARK: Update

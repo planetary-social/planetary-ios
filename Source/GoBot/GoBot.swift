@@ -1187,7 +1187,6 @@ class GoBot: Bot {
         self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
                                                feedCount: fc,
                                                messageCount: mc,
-                                               lastReceivedMessage: sequence ?? -3,
                                                lastHash: counts?.lastHash ?? "")
         let identities = self.bot.peerIdentities
 
@@ -1203,11 +1202,13 @@ class GoBot: Bot {
                                                connectionCount: self.bot.openConnections(),
                                                identities: openWithIdentities, // just faking to see some data
                                                open: openWithIdentities)
+
+        self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
         
         return self._statistics
     }
     
-    func statistics(completion: @escaping StatisticsCompletion) {
+    func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
         self.queue.async {
             let counts = try? self.bot.repoStatus()
             let sequence = try? self.database.stats(table: .messagekeys)
@@ -1219,7 +1220,6 @@ class GoBot: Bot {
             self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
                                                    feedCount: fc,
                                                    messageCount: mc,
-                                                   lastReceivedMessage: sequence ?? -3,
                                                    lastHash: counts?.lastHash ?? "")
             let identities = self.bot.peerIdentities
 
@@ -1235,9 +1235,11 @@ class GoBot: Bot {
                                                    connectionCount: self.bot.openConnections(),
                                                    identities: openWithIdentities, // just faking to see some data
                                                    open: openWithIdentities)
+
+            self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
             
             let statistics = self._statistics
-            DispatchQueue.main.async {
+            queue.async {
                 completion(statistics)
             }
         }

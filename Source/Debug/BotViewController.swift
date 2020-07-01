@@ -138,7 +138,7 @@ class BotViewController: DebugTableViewController {
                                              valueClosure:
             {
                 cell in
-                cell.detailTextLabel?.text = "\(statistics.repo.lastReceivedMessage)"
+                cell.detailTextLabel?.text = "\(statistics.db.lastReceivedMessage)"
             },
                                              actionClosure: nil)]
 
