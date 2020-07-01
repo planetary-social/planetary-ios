@@ -57,8 +57,9 @@ func ssbOpenConnections() uint {
 }
 
 type repoCounts struct {
-	Feeds    int   `json:"feeds"`
-	Messages int64 `json:"messages"`
+	Feeds    int    `json:"feeds"`
+	Messages int64  `json:"messages"`
+	LastHash string `json:"lastHash"`
 }
 
 //export ssbRepoStats
@@ -107,6 +108,19 @@ func ssbRepoStats() *C.char {
 	counts.Messages = rootSeq.Seq()
 	counts.Messages += 1 // 0-indexed (empty is -1)
 
+	lm, err := sbot.RootLog.Get(rootSeq.Seq())
+	if err != nil {
+		retErr = errors.Wrap(err, "RepoStats: could not get the last message hash")
+		return nil
+	}
+
+	lastMsg, ok := lm.(ssb.Message)
+	if !ok {
+		retErr = errors.Wrap(err, "RepoStats: latest message is not ok")
+		return nil
+	}
+	counts.LastHash = lastMsg.Key().Ref()
+	
 	statBytes, err := json.Marshal(counts)
 	if err != nil {
 		retErr = errors.Wrap(err, "RepoStats: failed to get marshal json")
