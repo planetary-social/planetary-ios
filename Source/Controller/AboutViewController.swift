@@ -110,8 +110,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFollows() {
-        Bots.current.follows(identity: self.identity) {
-            [weak self] identities, error in
+        Bots.current.follows(identity: self.identity) { [weak self] (identities: Identities, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.followingIdentities = identities

@@ -879,6 +879,17 @@ class GoBot: Bot {
         }
     }
     
+    func follows(identity: FeedIdentifier, completion: @escaping AboutsCompletion) {
+        self.queue.async {
+            do {
+                let follows = try self.database.getFollows(feed: identity)
+                DispatchQueue.main.async { completion([], nil) }
+            } catch {
+                DispatchQueue.main.async { completion([], error) }
+            }
+        }
+    }
+    
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {

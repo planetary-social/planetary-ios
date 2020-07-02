@@ -108,6 +108,10 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
     
+    func follows(identity: Identity, completion: @escaping AboutsCompletion) {
+        fatalError("TODO")
+    }
+    
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
         fatalError("TODO")
     }

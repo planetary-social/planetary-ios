@@ -120,6 +120,8 @@ protocol Bot {
     func follows(identity: Identity, completion:  @escaping ContactsCompletion)
     func followedBy(identity: Identity, completion:  @escaping ContactsCompletion)
     
+    func follows(identity: Identity, completion:  @escaping AboutsCompletion)
+    
     func friends(identity: Identity, completion:  @escaping ContactsCompletion)
 
     // TODO the func names should be swapped
