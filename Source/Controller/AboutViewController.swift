@@ -110,11 +110,11 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFollows() {
-        Bots.current.follows(identity: self.identity) { [weak self] (abouts: [About], error) in
+        Bots.current.follows(identity: self.identity) { [weak self] (identities: Identities, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            //self?.followingIdentities = identities
-            //self?.updateFollows()
+            self?.followingIdentities = identities
+            self?.updateFollows()
         }
     }
 
@@ -326,17 +326,13 @@ class AboutViewController: ContentViewController {
 
     private func didTapFollowing() {
         Analytics.shared.trackDidTapButton(buttonName: "following")
-        let controller = ContactsViewController(title: .followingShortCount,
-                                                identity: self.identity,
-                                                identities: self.followingIdentities)
+        let controller = FollowingTableViewController(identity: self.identity)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
     private func didTapFollowedBy() {
         Analytics.shared.trackDidTapButton(buttonName: "followed_by")
-        let controller = ContactsViewController(title: .followedByShortCount,
-                                                identity: self.identity,
-                                                identities: self.followedByIdentities)
+        let controller = FollowerTableViewController(identity: self.identity)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
