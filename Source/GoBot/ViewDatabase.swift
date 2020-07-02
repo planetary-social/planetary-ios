@@ -202,7 +202,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         try db.transaction {
             if db.userVersion == 0 {
@@ -721,7 +721,7 @@ class ViewDatabase {
     // MARK: follows and blocks
     
     // who is this feed following?
-    func getFollows(feed: Identity) throws -> [Identity] {
+    func getFollows(feed: Identity) throws -> Identities {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -742,6 +742,35 @@ class ViewDatabase {
             follows += [authorID]
         }
         
+        return follows
+    }
+
+    func getFollows(feed: Identity) throws -> [About] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let authorID = try self.authorID(of: feed, make: false)
+
+        let qry = self.contacts
+            .select(colAuthor.distinct, self.abouts[colName], self.abouts[colDescr], self.abouts[colImage])
+            .join(self.authors, on: colContactID == self.authors[colID])
+            .join(.leftOuter, self.abouts, on: colContactID == self.abouts[colAboutID])
+            .filter(colAuthorID == authorID)
+            .filter(colContactState == 1)
+
+        var follows: [About] = []
+
+        let followsQry = try db.prepare(qry)
+        for follow in followsQry {
+            let authorID: Identity = try follow.get(colAuthor.distinct)
+            let name: String? = try follow.get(self.abouts[colName])
+            let description: String? = try follow.get(colDescr)
+            let imageLink: String? = try follow.get(colImage)
+            let about = About(about: authorID, name: name, description: description, imageLink: imageLink)
+            follows += [about]
+        }
+
         return follows
     }
     
