@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/netwrap"
-	msg "go.cryptoscope.co/ssb/messages"
+	ssb "go.cryptoscope.co/ssb"
 )
 
 import "C"
@@ -115,7 +115,7 @@ func ssbRepoStats() *C.char {
 		return nil
 	}
 
-	lastMsg, ok := lm.(msg.Message)
+	lastMsg, ok := lm.(ssb.Message)
 	if !ok {
 		retErr = errors.Wrap(err, "RepoStats: latest message is not ok")
 		return nil
