@@ -28,6 +28,9 @@
                <Test
                   Identifier = "ContentTests/test_postWithBlobAltText()">
                </Test>
+               <Test
+                  Identifier = "GoBotTests/test001_regression_tests()">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>
