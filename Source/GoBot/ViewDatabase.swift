@@ -799,6 +799,36 @@ class ViewDatabase {
         
         return who
     }
+
+    func followedBy(feed: Identity) throws -> [About] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let feedID = try self.authorID(of: feed, make: false)
+
+        let qry = self.contacts
+            .select(colAuthor.distinct, self.abouts[colName], self.abouts[colDescr], self.abouts[colImage])
+            .join(self.authors, on: colAuthorID == self.authors[colID])
+            .join(.leftOuter, self.abouts, on: colAuthorID == self.abouts[colAboutID])
+            .filter(colContactID == feedID)
+            .filter(colContactState == 1)
+            .order(colClaimedAt.desc)
+
+        var who: [About] = []
+
+        let followsQry = try db.prepare(qry)
+        for follow in followsQry {
+            let authorID: Identity = try follow.get(colAuthor.distinct)
+            let name: String? = try follow.get(self.abouts[colName])
+            let description: String? = try follow.get(colDescr)
+            let imageLink: String? = try follow.get(colImage)
+            let about = About(about: authorID, name: name, description: description, imageLink: imageLink)
+            who += [about]
+        }
+
+        return who
+    }
     
     // returns the same (who follows this feed) list as above
     // but returns a [KeyValue] (with timestamp) instead of just the public key reference

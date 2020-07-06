@@ -25,8 +25,8 @@ class AboutViewController: ContentViewController {
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
 
-    private var followingIdentities: Identities = []
-    private var followedByIdentities: Identities = []
+    private var followings: [About] = []
+    private var followers: [About] = []
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
@@ -110,20 +110,19 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFollows() {
-        Bots.current.follows(identity: self.identity) { [weak self] (identities: Identities, error) in
+        Bots.current.followings(identity: self.identity) { [weak self] (abouts: [About], error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.followingIdentities = identities
+            self?.followings = abouts
             self?.updateFollows()
         }
     }
 
     private func loadFollowedBy() {
-        Bots.current.followedBy(identity: self.identity) {
-            [weak self] identities, error in
+        Bots.current.followers(identity: self.identity) { [weak self] (abouts: [About], error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.followedByIdentities = identities
+            self?.followers = abouts
             self?.updateFollows()
         }
     }
@@ -142,21 +141,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func updateFollows() {
-        let allIdentities = Set(self.followedByIdentities + self.followingIdentities)
-
-        Bots.current.abouts(identities: Array(allIdentities)) {
-            [weak self] abouts, error in
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error) { return }
-
-            guard let followedByIdentities = self?.followedByIdentities,
-                  let followingIdentities = self?.followingIdentities else { return }
-
-            let followedBy = abouts.filter { followedByIdentities.contains($0.identity) }
-            let following = abouts.filter { followingIdentities.contains($0.identity) }
-
-            self?.aboutView.update(followedBy: followedBy, following: following)
-        }
+        self.aboutView.update(followedBy: followers, following: followings)
     }
 
     // MARK: Actions
@@ -326,13 +311,13 @@ class AboutViewController: ContentViewController {
 
     private func didTapFollowing() {
         Analytics.shared.trackDidTapButton(buttonName: "following")
-        let controller = FollowingTableViewController(identity: self.identity)
+        let controller = FollowingTableViewController(identity: self.identity, followings: self.followings)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
     private func didTapFollowedBy() {
         Analytics.shared.trackDidTapButton(buttonName: "followed_by")
-        let controller = FollowerTableViewController(identity: self.identity)
+        let controller = FollowerTableViewController(identity: self.identity, followers: self.followers)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 

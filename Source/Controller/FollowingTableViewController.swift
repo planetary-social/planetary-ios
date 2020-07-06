@@ -11,9 +11,11 @@ import UIKit
 class FollowingTableViewController: AboutTableViewController {
 
     var identity: Identity
+    var startingAbouts: [About]? = nil
 
-    init(identity: Identity) {
+    init(identity: Identity, followings: [About]? = nil) {
         self.identity = identity
+        self.startingAbouts = followings
         super.init(style: .grouped)
     }
 
@@ -23,19 +25,23 @@ class FollowingTableViewController: AboutTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Following"
-        self.load()
+
+        if let abouts = self.startingAbouts, !abouts.isEmpty {
+            self.title = Text.followingShortCount.text(["count": "\(abouts.count)"])
+            self.allAbouts = abouts.sorted()
+        } else {
+            self.title = Text.followingShortCount.text(["count": "0"])
+            self.load { }
+        }
     }
 
-    func load() {
-        Bots.current.follows(identity: self.identity) { (abouts: [About], error) in
+    override func load(completion: @escaping () -> Void) {
+        Bots.current.followings(identity: self.identity) { (abouts: [About], error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            DispatchQueue.main.async {
-                self.title = Text.followingShortCount.text(["count": "\(abouts.count)"])
-                self.abouts = abouts
-                self.tableView.reloadData()
-            }
+            self.title = Text.followingShortCount.text(["count": "\(abouts.count)"])
+            self.allAbouts = abouts.sorted()
+            completion()
         }
     }
 }

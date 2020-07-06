@@ -120,7 +120,8 @@ protocol Bot {
     func follows(identity: Identity, completion:  @escaping ContactsCompletion)
     func followedBy(identity: Identity, completion:  @escaping ContactsCompletion)
     
-    func follows(identity: Identity, completion:  @escaping AboutsCompletion)
+    func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
+    func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
     
     func friends(identity: Identity, completion:  @escaping ContactsCompletion)
 
@@ -205,6 +206,14 @@ extension Bot {
     
     func abouts(completion:  @escaping AboutsCompletion) {
         self.abouts(queue: .main, completion: completion)
+    }
+
+    func followers(identity: Identity, completion:  @escaping AboutsCompletion) {
+        self.followers(identity: identity, queue: .main, completion: completion)
+    }
+
+    func followings(identity: Identity, completion:  @escaping AboutsCompletion) {
+        self.followings(identity: identity, queue: .main, completion: completion)
     }
     
 }

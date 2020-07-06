@@ -879,17 +879,6 @@ class GoBot: Bot {
         }
     }
     
-    func follows(identity: FeedIdentifier, completion: @escaping AboutsCompletion) {
-        self.queue.async {
-            do {
-                let follows: [About] = try self.database.getFollows(feed: identity)
-                DispatchQueue.main.async { completion(follows, nil) }
-            } catch {
-                DispatchQueue.main.async { completion([], error) }
-            }
-        }
-    }
-    
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
@@ -899,6 +888,38 @@ class GoBot: Bot {
                 DispatchQueue.main.async { completion(withoutPubs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
+            }
+        }
+    }
+
+    func followings(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
+        self.queue.async {
+            do {
+                var follows: [About] = try self.database.getFollows(feed: identity)
+                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                queue.async {
+                    completion(follows, nil)
+                }
+            } catch {
+                queue.async {
+                    completion([], error)
+                }
+            }
+        }
+    }
+
+    func followers(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
+        self.queue.async {
+            do {
+                var follows: [About] = try self.database.followedBy(feed: identity)
+                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                queue.async {
+                    completion(follows, nil)
+                }
+            } catch {
+                queue.async {
+                    completion([], error)
+                }
             }
         }
     }

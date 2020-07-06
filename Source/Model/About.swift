@@ -150,8 +150,11 @@ extension About {
 extension About: Comparable {
 
     static func < (lhs: About, rhs: About) -> Bool {
-        if let lhs = lhs.name, let rhs = rhs.name { return lhs.compare(rhs) == .orderedAscending }
-        return lhs.identity < rhs.identity
+        if let lhs = lhs.name, let rhs = rhs.name { return lhs.compare(rhs, options: .caseInsensitive) == .orderedAscending }
+        if lhs.name == nil, rhs.name == nil {
+            return lhs.identity < rhs.identity
+        }
+        return rhs.name == nil
     }
 
     static func == (lhs: About, rhs: About) -> Bool {
