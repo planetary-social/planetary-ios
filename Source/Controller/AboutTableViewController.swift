@@ -52,6 +52,8 @@ class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlValueChanged(control:)), for: .valueChanged)
         self.refreshControl = refreshControl
+
+         self.tableView.tableHeaderView = UIView(frame: CGRect.init(origin: .zero, size: CGSize.init(width: tableView.frame.size.width, height: 10)))
     }
 
     func applyFilter() {
