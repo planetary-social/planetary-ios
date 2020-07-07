@@ -77,8 +77,7 @@ struct AboutService {
         let group = DispatchGroup()
 
         group.enter()
-        Bots.current.follows(identity: identity) {
-            contacts, _ in
+        Bots.current.follows(identity: identity) { (contacts: Identities, _) in
             identities = identities.union(Set<Identity>(contacts))
             group.leave()
         }

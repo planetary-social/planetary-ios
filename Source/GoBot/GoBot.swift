@@ -870,7 +870,7 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let follows = try self.database.getFollows(feed: identity)
+                let follows: Identities = try self.database.getFollows(feed: identity)
                 let withoutPubs = follows.withoutPubs()
                 DispatchQueue.main.async { completion(withoutPubs, nil) }
             } catch {
@@ -888,6 +888,38 @@ class GoBot: Bot {
                 DispatchQueue.main.async { completion(withoutPubs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
+            }
+        }
+    }
+
+    func followings(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
+        self.queue.async {
+            do {
+                var follows: [About] = try self.database.getFollows(feed: identity)
+                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                queue.async {
+                    completion(follows, nil)
+                }
+            } catch {
+                queue.async {
+                    completion([], error)
+                }
+            }
+        }
+    }
+
+    func followers(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
+        self.queue.async {
+            do {
+                var follows: [About] = try self.database.followedBy(feed: identity)
+                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                queue.async {
+                    completion(follows, nil)
+                }
+            } catch {
+                queue.async {
+                    completion([], error)
+                }
             }
         }
     }
