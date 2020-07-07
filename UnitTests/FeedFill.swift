@@ -180,7 +180,7 @@ class ViewDatabaseTest: XCTestCase {
     func test20_follows() {
         do {
             for (i, f) in testFeeds.enumerated() {
-                let follows = try self.vdb.getFollows(feed: f)
+                let follows: Identities = try self.vdb.getFollows(feed: f)
                 
                 switch i {
                 case 0:
