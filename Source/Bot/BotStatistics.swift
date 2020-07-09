@@ -37,16 +37,19 @@ struct RepoStatistics {
     let feedCount: Int
     let messageCount: Int
     let lastReceivedMessage: Int
+    let lastHash: String
 
     init(path: String? = nil,
          feedCount: Int = -1,
          messageCount: Int = 0,
-         lastReceivedMessage: Int = -2)
+         lastReceivedMessage: Int = -2,
+         lastHash: String = "")
     {
         self.path = path ?? "unknown"
         self.feedCount = feedCount
         self.messageCount = messageCount
         self.lastReceivedMessage = lastReceivedMessage
+        self.lastHash = lastHash
     }
 }
 

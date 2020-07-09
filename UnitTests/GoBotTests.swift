@@ -92,10 +92,16 @@ class GoBotTests: XCTestCase {
             self.wait(for: [ex], timeout: 10)
         }
 
-        // status only gives us -1
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.feedCount, -1)
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.lastReceivedMessage, -3)
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, -1)
+        let exFirstStats = self.expectation(description: "\(#function)")
+        GoBotTests.shared.statistics { statistics in
+            // status only gives us -1
+            XCTAssertEqual(statistics.repo.feedCount, -1)
+            XCTAssertEqual(statistics.repo.lastReceivedMessage, -3)
+            XCTAssertEqual(statistics.repo.messageCount, -1)
+            XCTAssertEqual(statistics.repo.lastHash, "")
+            exFirstStats.fulfill()
+        }
+        self.wait(for: [exFirstStats], timeout: 10)
 
         // finally log in again
         let exAgain = self.expectation(description: "\(#function)")
@@ -118,27 +124,40 @@ class GoBotTests: XCTestCase {
             XCTAssertNotNil(GoBotTests.pubkeys[n], "failed to find \(n) in pubkeys")
         }
 
-        // no messages yet
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.feedCount, 0)
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.lastReceivedMessage, -1)
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, 0)
+        let exSecondStats = self.expectation(description: "\(#function)")
+        GoBotTests.shared.statistics { statistics in
+            // no messages yet
+            XCTAssertEqual(statistics.repo.feedCount, 0)
+            XCTAssertEqual(statistics.repo.lastReceivedMessage, -1)
+            XCTAssertEqual(statistics.repo.messageCount, 0)
+            XCTAssertEqual(statistics.repo.lastHash, "")
+            exSecondStats.fulfill()
+        }
+        self.wait(for: [exSecondStats], timeout: 10)
     }
 
     // MARK: simple publish
     func test006_publish_one() {
+        var messageHash = ""
         let ex = self.expectation(description: "\(#function)")
         GoBotTests.shared.publish(content: Post(text: "hello world")) {
             newMsgID, publishErr in
-            defer { ex.fulfill() }
             XCTAssertNil(publishErr)
             XCTAssertTrue(newMsgID.hasPrefix("%"))
             XCTAssertTrue(newMsgID.hasSuffix(Algorithm.ggfeedmsg.rawValue))
+            messageHash = newMsgID
+            ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
         
-
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.lastReceivedMessage, 0)
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, 1)
+        let exStats = self.expectation(description: "\(#function)")
+        GoBotTests.shared.statistics { statistics in
+            XCTAssertEqual(statistics.repo.lastReceivedMessage, 0)
+            XCTAssertEqual(statistics.repo.messageCount, 1)
+            XCTAssertEqual(statistics.repo.lastHash, messageHash)
+            exStats.fulfill()
+        }
+        self.wait(for: [exStats], timeout: 10)
     }
 
     // TODO: turn me into a benchmark
@@ -157,8 +176,13 @@ class GoBotTests: XCTestCase {
         
         GoBotTests.shared.testRefresh(self)
 
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.lastReceivedMessage, 0+publishManyCount)
-        XCTAssertEqual(GoBotTests.shared.statistics.repo.messageCount, 1+publishManyCount)
+        let exStats = self.expectation(description: "\(#function)")
+        GoBotTests.shared.statistics { statistics in
+            XCTAssertEqual(statistics.repo.lastReceivedMessage, 0+publishManyCount)
+            XCTAssertEqual(statistics.repo.messageCount, 1+publishManyCount)
+            exStats.fulfill()
+        }
+        self.wait(for: [exStats], timeout: 10)
     }
 
 //    Commenting text as after block work makes the following tests to not work properly
