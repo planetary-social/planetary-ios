@@ -13,6 +13,7 @@ class NullAnalytics: AnalyticsService {
     var isEnabled: Bool { return false }
     
     func identify(about: About?, network: NetworkKey) { }
+    func identify(statistics: BotStatistics) { }
     func forget() { }
 
     func optIn() {}

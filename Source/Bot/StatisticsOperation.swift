@@ -56,6 +56,7 @@ class StatisticsOperation: AsynchronousOperation {
             Log.debug("Peers: \(statistics.peer.count)")
             Log.debug("Connected peers: \(statistics.peer.connectionCount)")
 
+            Analytics.shared.identify(statistics: statistics)
             Analytics.shared.trackBotDidStats(statistics: statistics)
 
             self?.result = .success(statistics)

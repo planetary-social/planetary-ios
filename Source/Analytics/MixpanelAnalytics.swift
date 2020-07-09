@@ -34,6 +34,33 @@ class MixpanelAnalytics: AnalyticsService {
             Mixpanel.sharedInstance()?.people.set(properties)
         }
     }
+
+    func identify(statistics: BotStatistics) {
+        var params: [String: Any] = [:]
+
+        if let lastSyncDate = statistics.lastSyncDate {
+            params["Last Sync"] = lastSyncDate
+        }
+
+        if let lastRefreshDate = statistics.lastRefreshDate {
+            params["Last Refresh"] = lastRefreshDate
+        }
+
+        if statistics.repo.feedCount != -1 {
+            params["Feed Count"] = statistics.repo.feedCount
+            params["Message Count"] = statistics.repo.messageCount
+        }
+
+        if statistics.db.lastReceivedMessage != -3 {
+            let lastRxSeq = statistics.db.lastReceivedMessage
+            if statistics.repo.feedCount != -1 {
+                let diff = statistics.repo.messageCount - 1 - lastRxSeq
+                params["Message Diff"] = diff
+            }
+        }
+        
+        Mixpanel.sharedInstance()?.people.set(params)
+    }
     
     func updatePushToken(pushToken: Data?) {
         if let pushToken = pushToken {
