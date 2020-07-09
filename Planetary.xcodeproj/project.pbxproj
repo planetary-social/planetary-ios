@@ -175,6 +175,7 @@
 		1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */; };
 		1B5DB7D224AE5F7F008DCB81 /* FollowingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */; };
 		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
+		1BCEC86724B66DAD00383745 /* PublicWebHostingSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCEC86624B66DAD00383745 /* PublicWebHostingSettingsViewController.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		230F4FD222F8729700F93B14 /* TestAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 230F4FD122F8729700F93B14 /* TestAPI.swift */; };
@@ -878,6 +879,7 @@
 		1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerTableViewController.swift; sourceTree = "<group>"; };
 		1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowingTableViewController.swift; sourceTree = "<group>"; };
 		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
+		1BCEC86624B66DAD00383745 /* PublicWebHostingSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicWebHostingSettingsViewController.swift; sourceTree = "<group>"; };
 		205F056E32449189B64633F4 /* Pods-Planetary-UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary-UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary-UITests/Pods-Planetary-UITests.release.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
 		231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDatabaseSchema.sql; sourceTree = "<group>"; };
@@ -2096,6 +2098,7 @@
 				531EC409230EF2DA001A25AD /* PreviewSettingsViewController.swift */,
 				53C9FA2E22FCF64700EAC35F /* SettingsViewController.swift */,
 				5372174E22FD0084008A760A /* UserDirectorySettingsViewController.swift */,
+				1BCEC86624B66DAD00383745 /* PublicWebHostingSettingsViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -3031,6 +3034,7 @@
 				53E26C4C230223F8009240B2 /* AppController+Push.swift in Sources */,
 				530F01B422E0D3E7007EBAE2 /* TitledToggle.swift in Sources */,
 				53AD3FD1226F736A005228F9 /* UIViewTapGesture.swift in Sources */,
+				1BCEC86724B66DAD00383745 /* PublicWebHostingSettingsViewController.swift in Sources */,
 				532751CF222495940026500F /* AboutViewController.swift in Sources */,
 				530F018D22DCE78A007EBAE2 /* String+PhoneNumberKit.swift in Sources */,
 				533EDBE42385F3B1008B3565 /* Cache.swift in Sources */,

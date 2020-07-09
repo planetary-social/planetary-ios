@@ -27,6 +27,7 @@ class SettingsViewController: DebugTableViewController {
 
     internal override func updateSettings() {
         self.settings = [self.directory(),
+                         self.publicWebHosting(),
                          self.push(),
                          self.usage(),
                          self.managePubs(),
@@ -63,6 +64,35 @@ class SettingsViewController: DebugTableViewController {
             })]
 
         return (Text.userDirectory.text, settings, nil)
+    }
+
+    // MARK: Public web hosting
+
+    private var isPublicWebHostingEnabled: Bool?
+
+    private func publicWebHosting() -> DebugTableViewController.Settings {
+        var settings: [DebugTableViewCellModel] = []
+
+        settings += [DebugTableViewCellModel(title: "Public web hosting",
+                                             valueClosure:
+            {
+                cell in
+                cell.showActivityIndicator()
+                Bots.current.about { [weak self] (about, error) in
+                    let isPublicWebHostingEnabled = about?.publicWebHosting ?? false
+                    self?.isPublicWebHostingEnabled = isPublicWebHostingEnabled
+                    cell.detailTextLabel?.text = isPublicWebHostingEnabled.yesOrNo
+                    cell.hideActivityIndicator(andShow: .disclosureIndicator)
+                }
+            },
+                                             actionClosure:
+            {
+                [unowned self] cell in
+                let controller = PublicWebHostingSettingsViewController(enabled: isPublicWebHostingEnabled)
+                self.navigationController?.pushViewController(controller, animated: true)
+            })]
+
+        return ("Public Web Hosting", settings, nil)
     }
 
     // MARK: Push

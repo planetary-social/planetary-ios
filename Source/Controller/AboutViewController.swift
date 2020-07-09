@@ -150,6 +150,7 @@ class AboutViewController: ContentViewController {
 
     private func addActions() {
         self.aboutView.editButton.action = self.didPressEdit
+        self.aboutView.shareButton.action = self.didPressShare
         self.aboutView.followingView.action = self.didTapFollowing
         self.aboutView.followedByView.action = self.didTapFollowedBy
 
@@ -307,6 +308,25 @@ class AboutViewController: ContentViewController {
         }
         let feature = FeatureViewController(rootViewController: controller)
         self.navigationController?.present(feature, animated: true, completion: nil)
+    }
+
+    private func didPressShare() {
+        guard let publicLink = self.identity.publicLink else {
+            return
+        }
+
+        Analytics.shared.trackDidTapButton(buttonName: "share_profile")
+
+        let who = self.about?.name ?? self.identity
+        let text = Text.shareThisProfileText.text(["who": who,
+                                                   "link": publicLink.absoluteString])
+
+        let activityController = UIActivityViewController(activityItems: [text],
+                                                          applicationActivities: nil)
+        self.present(activityController, animated: true)
+        if let popOver = activityController.popoverPresentationController {
+            popOver.barButtonItem = self.navigationItem.rightBarButtonItem
+        }
     }
 
     private func didTapFollowing() {

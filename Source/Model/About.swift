@@ -22,6 +22,7 @@ struct About: ContentCodable {
         case name
         case shortcode
         case type
+        case publicWebHosting
     }
 
     let about: Identity
@@ -30,6 +31,7 @@ struct About: ContentCodable {
     let name: String?
     let shortcode: String?
     let type: ContentType
+    let publicWebHosting: Bool?
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -39,6 +41,7 @@ struct About: ContentCodable {
         name = try? values.decode(String.self, forKey: .name)
         shortcode = try? values.decode(String.self, forKey: .shortcode)
         type = try values.decode(ContentType.self, forKey: .type)
+        publicWebHosting = try? values.decode(Bool.self, forKey: .publicWebHosting)
     }
 
     init() {
@@ -52,6 +55,7 @@ struct About: ContentCodable {
         self.image = nil
         self.name = nil
         self.shortcode = nil
+        self.publicWebHosting = nil
     }
 
     init(about: Identity, name: String) {
@@ -61,6 +65,7 @@ struct About: ContentCodable {
         self.image = nil
         self.name = name
         self.shortcode = nil
+        self.publicWebHosting = nil
     }
 
     init(about: Identity, descr: String) {
@@ -70,6 +75,7 @@ struct About: ContentCodable {
         self.name = nil
         self.image = nil
         self.shortcode = nil
+        self.publicWebHosting = nil
     }
 
     init(about: Identity, image: BlobIdentifier) {
@@ -79,6 +85,7 @@ struct About: ContentCodable {
         self.image = Image(link: image)
         self.name = nil
         self.shortcode = nil
+        self.publicWebHosting = nil
     }
 
     init(about: Identity, name: String?, description: String?, imageLink: BlobIdentifier?) {
@@ -88,15 +95,17 @@ struct About: ContentCodable {
         self.image = Image(link: imageLink)
         self.name = name
         self.shortcode = nil
+        self.publicWebHosting = nil
     }
 
-    init(identity: Identity, name: String?, description: String?, image: Image?) {
+    init(identity: Identity, name: String?, description: String?, image: Image?, publicWebHosting: Bool?) {
         self.type = .about
         self.about = identity
         self.description = description
         self.image = image
         self.name = name
         self.shortcode = nil
+        self.publicWebHosting = publicWebHosting
     }
 
     private static func decodeImage(from values: KeyedDecodingContainer<About.CodingKeys>) -> Image? {
@@ -110,12 +119,14 @@ struct About: ContentCodable {
     func mutatedCopy(identity: Identity? = nil,
                      name: String? = nil,
                      description: String? = nil,
-                     image: Image? = nil) -> About
+                     image: Image? = nil,
+                     publicWebHosting: Bool? = nil) -> About
     {
         return About(identity: identity ?? self.identity,
                      name: name ?? self.name,
                      description: description ?? self.description,
-                     image: image ?? self.image)
+                     image: image ?? self.image,
+                     publicWebHosting: publicWebHosting ?? self.publicWebHosting)
     }
 }
 
