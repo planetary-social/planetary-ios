@@ -38,4 +38,40 @@ extension AnalyticsService {
                    name: AnalyticsEnums.Name.sync.rawValue,
                    params: params)
     }
+
+    func trackBotDidStats(statistics: BotStatistics) {
+        var params: AnalyticsEnums.Params = [:]
+
+        if let lastSyncDate = statistics.lastSyncDate {
+            params["Last Sync"] = lastSyncDate
+        }
+
+        if let lastRefreshDate = statistics.lastRefreshDate {
+            params["Last Refresh"] = lastRefreshDate
+        }
+
+        if statistics.repo.feedCount != -1 {
+            params["Feed Count"] = statistics.repo.feedCount
+            params["Message Count"] = statistics.repo.messageCount
+            params["Last Hash"] = statistics.repo.lastHash
+        }
+
+        if statistics.db.lastReceivedMessage != -3 {
+            let lastRxSeq = statistics.db.lastReceivedMessage
+            params["Last Received Message"] = lastRxSeq
+
+            if statistics.repo.feedCount != -1 {
+                let diff = statistics.repo.messageCount - 1 - lastRxSeq
+                params["Message Diff"] = diff
+            }
+        }
+
+        params["Peers"] = statistics.peer.count
+        params["Connected Peers"] = statistics.peer.connectionCount
+
+        self.track(event: .did,
+                   element: .bot,
+                   name: AnalyticsEnums.Name.stats.rawValue,
+                   params: params)
+    }
 }

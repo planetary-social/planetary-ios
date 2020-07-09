@@ -174,6 +174,7 @@
 		1B5DB7CE24AE598E008DCB81 /* AboutTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CD24AE598E008DCB81 /* AboutTableViewController.swift */; };
 		1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */; };
 		1B5DB7D224AE5F7F008DCB81 /* FollowingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */; };
+		1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */; };
 		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
@@ -877,6 +878,7 @@
 		1B5DB7CD24AE598E008DCB81 /* AboutTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutTableViewController.swift; sourceTree = "<group>"; };
 		1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerTableViewController.swift; sourceTree = "<group>"; };
 		1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowingTableViewController.swift; sourceTree = "<group>"; };
+		1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsOperation.swift; sourceTree = "<group>"; };
 		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
 		205F056E32449189B64633F4 /* Pods-Planetary-UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary-UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary-UITests/Pods-Planetary-UITests.release.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
@@ -1617,6 +1619,7 @@
 				0AF9E0A9246B23C700910575 /* SuspendOperation.swift */,
 				0AF9E0AB246B23F900910575 /* ExitOperation.swift */,
 				0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */,
+				1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */,
 			);
 			path = Bot;
 			sourceTree = "<group>";
@@ -3058,6 +3061,7 @@
 				5396A633224836E800C57A4B /* UIColor+Hex.swift in Sources */,
 				5396A61F224429C700C57A4B /* LogService.swift in Sources */,
 				1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */,
+				1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */,
 				0ABCA8ED243553CF00D7F39C /* BugsnagCrashReporting.swift in Sources */,
 				53E341FC224FF87D002BB5F4 /* NewPostViewController.swift in Sources */,
 				0A387FF52474E10400777843 /* NullAnalytics.swift in Sources */,

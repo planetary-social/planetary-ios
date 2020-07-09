@@ -96,7 +96,7 @@ class GoBotTests: XCTestCase {
         GoBotTests.shared.statistics { statistics in
             // status only gives us -1
             XCTAssertEqual(statistics.repo.feedCount, -1)
-            XCTAssertEqual(statistics.repo.lastReceivedMessage, -3)
+            XCTAssertEqual(statistics.db.lastReceivedMessage, -3)
             XCTAssertEqual(statistics.repo.messageCount, -1)
             XCTAssertEqual(statistics.repo.lastHash, "")
             exFirstStats.fulfill()
@@ -128,7 +128,7 @@ class GoBotTests: XCTestCase {
         GoBotTests.shared.statistics { statistics in
             // no messages yet
             XCTAssertEqual(statistics.repo.feedCount, 0)
-            XCTAssertEqual(statistics.repo.lastReceivedMessage, -1)
+            XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
             XCTAssertEqual(statistics.repo.messageCount, 0)
             XCTAssertEqual(statistics.repo.lastHash, "")
             exSecondStats.fulfill()
@@ -152,7 +152,7 @@ class GoBotTests: XCTestCase {
         
         let exStats = self.expectation(description: "\(#function)")
         GoBotTests.shared.statistics { statistics in
-            XCTAssertEqual(statistics.repo.lastReceivedMessage, 0)
+            XCTAssertEqual(statistics.db.lastReceivedMessage, 0)
             XCTAssertEqual(statistics.repo.messageCount, 1)
             XCTAssertEqual(statistics.repo.lastHash, messageHash)
             exStats.fulfill()
@@ -178,7 +178,7 @@ class GoBotTests: XCTestCase {
 
         let exStats = self.expectation(description: "\(#function)")
         GoBotTests.shared.statistics { statistics in
-            XCTAssertEqual(statistics.repo.lastReceivedMessage, 0+publishManyCount)
+            XCTAssertEqual(statistics.db.lastReceivedMessage, 0+publishManyCount)
             XCTAssertEqual(statistics.repo.messageCount, 1+publishManyCount)
             exStats.fulfill()
         }
@@ -351,7 +351,7 @@ class GoBotTests: XCTestCase {
 
     // MARK: various safty checks
     func test111_skip_unsupported_messages() {
-        let currentCount = GoBotTests.shared.statistics.repo.lastReceivedMessage
+        let currentCount = GoBotTests.shared.statistics.db.lastReceivedMessage
 
         let n = 6000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
         for i in 1...n {
@@ -378,8 +378,8 @@ class GoBotTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
 
-        XCTAssertNotEqual(GoBotTests.shared.statistics.repo.lastReceivedMessage, currentCount, "still at the old level")
-        XCTAssertGreaterThan(GoBotTests.shared.statistics.repo.lastReceivedMessage, currentCount+n, "did not get all the messages")
+        XCTAssertNotEqual(GoBotTests.shared.statistics.db.lastReceivedMessage, currentCount, "still at the old level")
+        XCTAssertGreaterThan(GoBotTests.shared.statistics.db.lastReceivedMessage, currentCount+n, "did not get all the messages")
 
         // make sure we got the supported message
         ex = self.expectation(description: "\(#function) 3")

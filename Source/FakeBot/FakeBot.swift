@@ -304,8 +304,11 @@ class FakeBot: Bot {
     private var _statistics = MutableBotStatistics()
     var statistics: BotStatistics { return self._statistics }
     
-    func statistics(completion: @escaping StatisticsCompletion) {
-        completion(_statistics)
+    func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
+        let statistics = _statistics
+        queue.async {
+            completion(statistics)
+        }
     }
     
     // MARK: Preload

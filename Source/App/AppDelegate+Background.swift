@@ -55,10 +55,13 @@ extension AppDelegate {
 
         let refreshOperation = RefreshOperation()
         refreshOperation.refreshLoad = .short
+
+        let statisticsOperation = StatisticsOperation()
         
         let operationQueue = OperationQueue()
         DispatchQueue.global(qos: .background).async {
-            operationQueue.addOperations([syncOperation, refreshOperation], waitUntilFinished: true)
+            operationQueue.addOperations([syncOperation, refreshOperation, statisticsOperation],
+                                         waitUntilFinished: true)
             Log.info("Completed background fetch")
             Analytics.shared.trackDidBackgroundFetch()
             if syncOperation.error != nil {
@@ -136,8 +139,11 @@ extension AppDelegate {
         self.scheduleSyncTask()
         
         let syncOperation = SyncOperation()
+
         let refreshOperation = RefreshOperation()
         refreshOperation.refreshLoad = .short
+
+        let statisticsOperation = StatisticsOperation()
         
         task.expirationHandler = {
             Log.info("Task \(AppDelegate.syncBackgroundTaskIdentifier) expired")
@@ -147,7 +153,8 @@ extension AppDelegate {
         
         let operationQueue = OperationQueue()
         DispatchQueue.global(qos: .background).async {
-            operationQueue.addOperations([syncOperation, refreshOperation], waitUntilFinished: true)
+            operationQueue.addOperations([syncOperation, refreshOperation, statisticsOperation],
+                                         waitUntilFinished: true)
             Log.info("Completed task \(AppDelegate.syncBackgroundTaskIdentifier)")
             Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.syncBackgroundTaskIdentifier)
             task.setTaskCompleted(success: !syncOperation.isCancelled)
