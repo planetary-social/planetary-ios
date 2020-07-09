@@ -58,6 +58,7 @@ class PeersView: UIView {
         
         
         self.update(local: 0, online: 0, animated: false)
+        self.setSync(lastSyncDate: nil)
         
         let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.triggerSync))
         self.addGestureRecognizer(gesture)
@@ -128,7 +129,7 @@ class PeersView: UIView {
             switch operation.result {
             case .success(let statistics):
                 DispatchQueue.main.async {
-                    self.update(with: statistics.peer, animated: animated)
+                    self.update(with: statistics.peer, lastSyncDate: statistics.lastSyncDate, animated: animated)
                 }
             case .failure:
                 break
@@ -139,8 +140,9 @@ class PeersView: UIView {
 
     // MARK: Update
 
-    private func update(with peers: PeerStatistics, animated: Bool = true) {
+    private func update(with peers: PeerStatistics, lastSyncDate: Date? = nil, animated: Bool = true) {
         self.update(local: peers.localCount, online: peers.onlineCount, animated: animated)
+        self.setSync(lastSyncDate: lastSyncDate)
     }
 
     private func update(local: Int, online: Int, animated: Bool = true) {
@@ -153,7 +155,6 @@ class PeersView: UIView {
                 self.connectionAnimation.setDotCount(inside: false, count: online, animated: animated)
             }
         }
-        self.setSync()
     }
     
 
@@ -190,10 +191,10 @@ class PeersView: UIView {
     }
 
 
-    private func setSync() {
+    private func setSync(lastSyncDate: Date?) {
         let text = Text.lastSynced
         let label = self.syncedLabel
-        let string = text.text(["when": lastSyncText])
+        let string = text.text(["when": lastSyncText(from: lastSyncDate)])
         let attributed = NSMutableAttributedString(string: string)
         attributed.addFontAttribute(UIFont.verse.peerCount)
         //let range = (string as NSString).range(of: count)
@@ -202,21 +203,17 @@ class PeersView: UIView {
         label.attributedText = attributed
     }
     
-    var lastSyncText: String {
-        if Bots.current.statistics.lastSyncDate != nil {
-            return self.format(date: Bots.current.statistics.lastSyncDate)
+    private func lastSyncText(from date: Date?) -> String {
+        if let lastSyncDate = date {
+            return self.format(date: lastSyncDate)
         } else {
             do {
                 let timestamp = try Bots.current.lastReceivedTimestam()
                 let miliseconds = timestamp/1000
-                
                 return self.format(date: Date(timeIntervalSince1970: miliseconds))
             } catch {
                 return ""
             }
-
-            
-            
         }
     }
     
