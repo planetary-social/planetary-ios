@@ -1187,7 +1187,8 @@ class GoBot: Bot {
         self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
                                                feedCount: fc,
                                                messageCount: mc,
-                                               lastReceivedMessage: sequence ?? -3)
+                                               lastReceivedMessage: sequence ?? -3,
+                                               lastHash: counts?.lastHash ?? "")
         let identities = self.bot.peerIdentities
 
         let open = self.bot.openConnectionList()
@@ -1218,7 +1219,8 @@ class GoBot: Bot {
             self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
                                                    feedCount: fc,
                                                    messageCount: mc,
-                                                   lastReceivedMessage: sequence ?? -3)
+                                                   lastReceivedMessage: sequence ?? -3,
+                                                   lastHash: counts?.lastHash ?? "")
             let identities = self.bot.peerIdentities
 
             let open = self.bot.openConnectionList()
