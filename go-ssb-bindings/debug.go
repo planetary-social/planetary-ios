@@ -110,17 +110,16 @@ func ssbRepoStats() *C.char {
 	counts.Messages += 1 // 0-indexed (empty is -1)
 
 	lm, err := sbot.RootLog.Get(rootSeq)
-	if err != nil {
-		retErr = errors.Wrap(err, "RepoStats: could not get the last message hash")
-		return nil
+	if err == nil {
+		lastMsg, ok := lm.(ssb.Message)
+		if ok {
+			counts.LastHash = lastMsg.Key().Ref()
+		} else {
+			level.Warn(log).Log("RepoStats", errors.Wrap(err, "RepoStats: latest message is not ok"))
+		}
+	} else {
+		level.Warn(log).Log("RepoStats", errors.Wrap(err, "RepoStats: could not get the last message hash"))
 	}
-
-	lastMsg, ok := lm.(ssb.Message)
-	if !ok {
-		retErr = errors.Wrap(err, "RepoStats: latest message is not ok")
-		return nil
-	}
-	counts.LastHash = lastMsg.Key().Ref()
 	
 	statBytes, err := json.Marshal(counts)
 	if err != nil {
