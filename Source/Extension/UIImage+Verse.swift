@@ -37,6 +37,7 @@ struct VerseImages {
     let reportBug = UIImage(named: "icon-report-bug")
     let settings = UIImage(named: "icon-settings")
     let share = UIImage(named: "icon-share")
+    let smallShare = UIImage(named: "button-share")
     let optionsOff = UIImage(named: "icon-options-off")
     let optionsOn = UIImage(named: "icon-options-on")
 }

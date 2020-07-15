@@ -62,7 +62,7 @@ class AboutViewController: ContentViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage.verse.optionsOff,
                                                                  style: .plain,
                                                                  target: self,
-                                                                 action: #selector(didPressCopyIdentifierIcon))
+                                                                 action: #selector(didPressOptionsIcon))
 
     }
     
@@ -150,6 +150,7 @@ class AboutViewController: ContentViewController {
 
     private func addActions() {
         self.aboutView.editButton.action = self.didPressEdit
+        self.aboutView.shareButton.action = self.didPressShare
         self.aboutView.followingView.action = self.didTapFollowing
         self.aboutView.followedByView.action = self.didTapFollowedBy
 
@@ -182,31 +183,36 @@ class AboutViewController: ContentViewController {
         }
     }
 
-    @objc private func didPressCopyIdentifierIcon() {
-        guard let identity = self.about?.identity else {
-            return
-        }
-
-        Analytics.shared.trackDidTapButton(buttonName: "share")
+    @objc private func didPressOptionsIcon() {
+        Analytics.shared.trackDidTapButton(buttonName: "options")
         
         var actions = [UIAlertAction]()
 
-        let copy = UIAlertAction(title: Text.copyPublicIdentifier.text, style: .default) { _ in
-            Analytics.shared.trackDidSelectAction(actionName: "copy_profile_identifier")
-            UIPasteboard.general.string = identity
-            AppController.shared.showToast(Text.identifierCopied.text)
-        }
-        actions.append(copy)
+        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+            Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
-        if let publicLink = identity.publicLink {
-            let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { [weak self] _ in
+            let activityController = UIActivityViewController(activityItems: [self.identity],
+                                                              applicationActivities: nil)
+            self.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.barButtonItem = self.navigationItem.rightBarButtonItem
+            }
+        }
+        actions.append(sharePublicIdentifier)
+
+        if let publicLink = self.identity.publicLink {
+            let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
+
+                let who = self.about?.name ?? self.identity
+                let text = Text.shareThisProfileText.text(["who": who,
+                                                           "link": publicLink.absoluteString])
                 
-                let activityController = UIActivityViewController(activityItems: [publicLink],
+                let activityController = UIActivityViewController(activityItems: [text],
                                                                   applicationActivities: nil)
-                self?.present(activityController, animated: true)
+                self.present(activityController, animated: true)
                 if let popOver = activityController.popoverPresentationController {
-                    popOver.barButtonItem = self?.navigationItem.rightBarButtonItem
+                    popOver.barButtonItem = self.navigationItem.rightBarButtonItem
                 }
             }
             actions.append(share)
@@ -307,6 +313,47 @@ class AboutViewController: ContentViewController {
         }
         let feature = FeatureViewController(rootViewController: controller)
         self.navigationController?.present(feature, animated: true, completion: nil)
+    }
+
+    private func didPressShare() {
+        Analytics.shared.trackDidTapButton(buttonName: "share")
+
+        var actions = [UIAlertAction]()
+
+        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+            Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
+
+            let activityController = UIActivityViewController(activityItems: [self.identity],
+                                                              applicationActivities: nil)
+            self.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.barButtonItem = self.navigationItem.rightBarButtonItem
+            }
+        }
+        actions.append(sharePublicIdentifier)
+
+        if let publicLink = self.identity.publicLink {
+            let sharePublicLink = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
+                Analytics.shared.trackDidSelectAction(actionName: "share_profile")
+
+                let who = self.about?.name ?? self.identity
+                let text = Text.shareThisProfileText.text(["who": who,
+                                                           "link": publicLink.absoluteString])
+
+                let activityController = UIActivityViewController(activityItems: [text],
+                                                                  applicationActivities: nil)
+                self.present(activityController, animated: true)
+                if let popOver = activityController.popoverPresentationController {
+                    popOver.barButtonItem = self.navigationItem.rightBarButtonItem
+                }
+            }
+            actions.append(sharePublicLink)
+        }
+
+        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        actions.append(cancel)
+
+        AppController.shared.choose(from: actions)
     }
 
     private func didTapFollowing() {

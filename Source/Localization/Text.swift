@@ -11,6 +11,7 @@ extension Text {
                 Text.Onboarding.StepTitle.self,
                 Text.ManagePubs.self,
                 Text.Preview.self,
+                Text.PublicWebHosting.self,
                 Text.Push.self,
                 Text.Reporting.self,
                 Text.Debug.self,
@@ -99,9 +100,11 @@ enum Text: String, Localizable, CaseIterable {
     case copyMessageIdentifier = "Copy Message Identifier"
     
     case copyPublicIdentifier = "Copy Profile Identifier"
+    case sharePublicIdentifier = "Share Public Identifier"
     
     case shareThisProfile = "Share This Profile"
     case shareThisMessage = "Share This Message"
+    case shareThisProfileText = "Find {{ who }} on Planetary at {{ link }}"
     case shareThisMessageText = "{{ who }} posted: {{ what }} {{ link }}"
 
     case addFriend = "Add friend"
@@ -294,6 +297,17 @@ extension Text {
     enum Preview: String, Localizable, CaseIterable {
         case title = "Advanced Settings"
         case footer = "New features that are being developed and tested, and haven't found a permanent home yet in the app."
+    }
+}
+
+// MARK:- Public Web Hosting
+
+extension Text {
+
+    enum PublicWebHosting: String, Localizable, CaseIterable {
+        case enabled = "Enabled"
+        case title = "Public Web Hosting"
+        case footer = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible."
     }
 }
 

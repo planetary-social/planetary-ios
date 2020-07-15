@@ -50,6 +50,13 @@ class AboutView: KeyValueView {
         return button
     }()
 
+    lazy var shareButton: PillButton = {
+        let button = PillButton()
+        button.setTitle(.share)
+        button.setImage(UIImage.verse.smallShare)
+        return button
+    }()
+
     lazy var editPhotoButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = UIColor.background.default
@@ -114,6 +121,7 @@ class AboutView: KeyValueView {
         buttonStack.addArrangedSubview(UIView())
         buttonStack.addArrangedSubview(self.editButton)
         buttonStack.addArrangedSubview(self.followButton)
+        buttonStack.addArrangedSubview(self.shareButton)
         buttonStack.addArrangedSubview(UIView())
 
         Layout.fillSouth(of: self.followingLabel, with: buttonStack, insets: .top(Layout.verticalSpacing - 3))
