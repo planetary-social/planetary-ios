@@ -273,6 +273,7 @@ about_id             integer NOT NULL UNIQUE,
 name                 text,
 image                text,
 description          text,
+publicWebHosting     boolean,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
 FOREIGN KEY ( about_id ) REFERENCES auhtors( "id" )
 );

@@ -88,14 +88,14 @@ struct About: ContentCodable {
         self.publicWebHosting = nil
     }
 
-    init(about: Identity, name: String?, description: String?, imageLink: BlobIdentifier?) {
+    init(about: Identity, name: String?, description: String?, imageLink: BlobIdentifier?, publicWebHosting: Bool? = nil) {
         self.type = .about
         self.about = about
         self.description = description
         self.image = Image(link: imageLink)
         self.name = name
         self.shortcode = nil
-        self.publicWebHosting = nil
+        self.publicWebHosting = publicWebHosting
     }
 
     init(identity: Identity, name: String?, description: String?, image: Image?, publicWebHosting: Bool?) {

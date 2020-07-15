@@ -87,6 +87,7 @@ class ViewDatabase {
     private let colName = Expression<String?>("name")
     private let colImage = Expression<BlobIdentifier?>("image")
     private let colDescr = Expression<String?>("description")
+    private let colPublicWebHosting = Expression<Bool?>("publicWebHosting")
     
     private var currentBlockedContent: Table
     // colID
@@ -208,7 +209,7 @@ class ViewDatabase {
             if db.userVersion == 0 {
                 let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
                 try db.execute(String(contentsOf: schemaV1url))
-                db.userVersion = 4
+                db.userVersion = 5
             } else if db.userVersion == 1 {
                 try db.execute("""
                 CREATE INDEX messagekeys_key ON messagekeys(key);
@@ -228,9 +229,10 @@ class ViewDatabase {
                 ALTER TABLE authors ADD hashed text;
                 CREATE INDEX authors_hashed ON authors(hashed);
                 CREATE TABLE blocked_content ( id integer not null, type integer not null );
+                ALTER TABLE abouts ADD publicWebHosting boolean;
                 """);
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 4
+                db.userVersion = 5
             } else if db.userVersion == 2 {
                 try db.execute("""
                 -- add new column to posts and migrate existing data
@@ -243,9 +245,10 @@ class ViewDatabase {
                 ALTER TABLE authors ADD hashed text;
                 CREATE INDEX authors_hashed ON authors(hashed);
                 CREATE TABLE blocked_content ( id integer not null, type integer not null );
+                ALTER TABLE abouts ADD publicWebHosting boolean;
                 """);
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 4
+                db.userVersion = 5
             } else if db.userVersion == 3 {
                 try db.execute("""
                 ALTER TABLE messagekeys ADD hashed text;
@@ -253,9 +256,15 @@ class ViewDatabase {
                 ALTER TABLE authors ADD hashed text;
                 CREATE INDEX authors_hashed ON authors(hashed);
                 CREATE TABLE blocked_content ( id integer not null, type integer not null );
+                ALTER TABLE abouts ADD publicWebHosting boolean;
                 """)
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 4
+                db.userVersion = 5
+            } else if db.userVersion == 4 {
+                try db.execute("""
+                ALTER TABLE abouts ADD publicWebHosting boolean;
+                """)
+                db.userVersion = 5
             }
         }
 
@@ -689,7 +698,8 @@ class ViewDatabase {
             return About(about: id,
                      name: try row.get(colName),
                      description: try row.get(colDescr),
-                     imageLink: try row.get(colImage)
+                     imageLink: try row.get(colImage),
+                     publicWebHosting: try row.get(colPublicWebHosting)
                  )
         }
         return msgs.first
@@ -1556,6 +1566,11 @@ class ViewDatabase {
         if let descr = a.description {
             try db.run(entry.update(
                 colDescr <- descr
+            ))
+        }
+        if let publicWebHosting = a.publicWebHosting {
+            try db.run(entry.update(
+                colPublicWebHosting <- publicWebHosting
             ))
         }
     }

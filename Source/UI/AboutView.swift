@@ -53,7 +53,7 @@ class AboutView: KeyValueView {
     lazy var shareButton: PillButton = {
         let button = PillButton()
         button.setTitle(.share)
-        button.setImage(UIImage.verse.share)
+        button.setImage(UIImage.verse.smallShare)
         return button
     }()
 
