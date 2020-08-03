@@ -1109,23 +1109,23 @@ class GoBot: Bot {
                 and then apply similar pagination as with recentPosts().
                 */
 
-                var all: [KeyValue] = []
+                var all = try self.database.alerts()
                 // TODO: optimize query
                 // var replies = try self.database.getRepliesToMyThreads(limit: 10)
                 // if let me = self.identity { replies = replies.excluding(me) }
                 // all.append(contentsOf: replies)
 
-                let mentions = try self.database.mentions(limit: 500)
-                all.append(contentsOf: mentions)
-
-                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 500)
-                all.append(contentsOf: contacts)
-
-                let sorted = all.sortedByDateDescending()
+//                let mentions = try self.database.mentions(limit: 500)
+//                all.append(contentsOf: mentions)
+//
+//                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 500)
+//                all.append(contentsOf: contacts)
+//
+//                let sorted = all.sortedByDateDescending()
 
                 // TODO: notifications view expect a datasource that is an array (didSet override)
                 //                let p = StaticDataProxy(with: sorted)
-                DispatchQueue.main.async { completion(sorted, nil) }
+                DispatchQueue.main.async { completion(all, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
             }
