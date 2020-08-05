@@ -50,6 +50,7 @@ extension Notification.Name {
     static let didStartDatabaseProcessing = Notification.Name("didStartDatabaseProcessing")
     static let didUpdateDatabaseProgress = Notification.Name("didUpdateDatabaseProgress")
     static let didFinishDatabaseProcessing = Notification.Name("didFinishDatabaseProcessing")
+    static let didCreateReport = Notification.Name("didCreateReport")
 }
 
 extension Notification {

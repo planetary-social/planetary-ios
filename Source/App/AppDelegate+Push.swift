@@ -15,6 +15,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
     func configureNotifications() {
         UNUserNotificationCenter.current().delegate = self
+        self.addReportsObservers()
     }
 
     func application(_ application: UIApplication,
@@ -40,33 +41,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
         
-        self.handleRemoteNotification(notification: userInfo,
-                                      in: application.applicationState,
-                                      completionHandler: completionHandler)
-    }
-
-    private func handleRemoteNotification(notification: RemoteNotificationUserInfo,
-                                          in state: UIApplication.State,
-                                          completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // only supported viewable notifications should be forwarded to the app
-        guard notification.isSupported else {
-            Log.fatal(.incorrectValue, "Received unsupported remote notification with type: \(notification.rawType)")
-            completionHandler(.noData)
-            return
-        }
-        
         Log.info("Handling Remote notification")
         Analytics.shared.trackDidReceiveRemoteNotification()
-
-        // badge is incremented regardless of foreground/background
-        UIApplication.shared.applicationIconBadgeNumber += 1
-
-        switch state {
+        
+        switch application.applicationState {
             case .background:
-                self.scheduleLocalNotification(notification)
                 self.handleBackgroundFetch(notificationsOnly: true, completionHandler: completionHandler)
             default:
-                AppController.shared.received(foregroundNotification: notification)
+                AppController.shared.pokeSync()
                 completionHandler(.newData)
         }
     }
@@ -92,6 +74,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let request = UNNotificationRequest(identifier: identifier,
                                             content: content,
                                             trigger: trigger)
+        
+        // badge is incremented regardless of foreground/background
+        DispatchQueue.main.async {
+            UIApplication.shared.applicationIconBadgeNumber += 1
+            AppController.shared.mainViewController?.updateNotificationsTabIcon(hasNotifications: true)
+        }
 
         // schedule the notification
         UNUserNotificationCenter.current().add(request) {
@@ -99,6 +87,57 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
         }
+    }
+    
+    /// Transforms a report into a scheduled `UNNotificationRequest` that the human
+    /// can interact with.
+    func scheduleLocalNotification(_ report: Report) {
+        
+        
+        Bots.current.about(queue: .global(qos: .background), identity: report.keyValue.value.author) { (about, error) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
+            let content = UNMutableNotificationContent()
+            
+            let who = about?.nameOrIdentity ?? Text.Report.somebody.text
+            
+            switch report.reportType {
+            case .feedFollowed:
+                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.feedFollowed.text,
+                                                                         arguments: [who])
+            case .postReplied:
+                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.postReplied.text,
+                                                                         arguments: [who])
+                if let what = report.keyValue.value.content.post?.text {
+                    content.body = what
+                }
+            case .feedMentioned:
+                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.feedMentioned.text,
+                                                                         arguments: [who])
+                if let what = report.keyValue.value.content.post?.text {
+                    content.body = what
+                }
+            case .messageLiked:
+                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.messageLiked.text,
+                                                                         arguments: [who])
+            }
+            
+            content.sound = UNNotificationSound.default
+            
+            let request = UNNotificationRequest(identifier: report.messageIdentifier,
+                                                content: content,
+                                                trigger: nil)
+
+            // schedule the notification
+            UNUserNotificationCenter.current().add(request) {
+                error in
+                CrashReporting.shared.reportIfNeeded(error: error)
+                Log.optional(error)
+            }
+        }
+        
+        
     }
 
     /// If the response is the default "tap" interaction, forwards the notification to the AppController.
@@ -114,5 +153,34 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         AppController.shared.received(backgroundNotification: response.notification)
         completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
+    
+    // MARK: Reports
+    
+    private func addReportsObservers() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didCreateReportHandler(notification:)),
+                                               name: .didCreateReport,
+                                               object: nil)
+    }
+    
+    @objc func didCreateReportHandler(notification: Notification) {
+        guard let report = notification.userInfo?["report"] as? Report else {
+            return
+        }
+        guard let currentIdentity = Bots.current.identity else {
+            // Don't do anything if user is not logged in
+            return
+        }
+        guard report.authorIdentity == currentIdentity else {
+            // Don't do anything if report is not for the logged in user
+            return
+        }
+        self.scheduleLocalNotification(report)
+        print("RECEIVED REPORT!: \(report)")
     }
 }

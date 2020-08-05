@@ -801,17 +801,16 @@ class GoBot: Bot {
     }
     
     
-    func about(identity: Identity, completion: @escaping AboutCompletion) {
-        Thread.assertIsMainThread()
+    func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
         self.queue.async {
             do {
                 let a = try self.database.getAbout(for: identity)
-                DispatchQueue.main.async {
+                queue.async {
                     if a?.identity == self._identity { self._about = a }
                     completion(a, nil)
                 }
             } catch {
-                DispatchQueue.main.async { completion(nil, error) }
+                queue.async { completion(nil, error) }
             }
         }
     }
@@ -1097,37 +1096,17 @@ class GoBot: Bot {
     }
 
     // TODO consider a different form that returns a tuple of arrays
-    func notifications(completion: @escaping KeyValuesCompletion) {
-        Thread.assertIsMainThread()
+    func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
         self.queue.async {
             do {
-                /* TODO:
-                I _think_ right now it should be fast enough to union and sort contacts,
-                mentions and replies in application space.
-
-                butt!! we need to revisit this before launch, union and sort them in sql
-                and then apply similar pagination as with recentPosts().
-                */
-
-                var all = try self.database.alerts()
-                // TODO: optimize query
-                // var replies = try self.database.getRepliesToMyThreads(limit: 10)
-                // if let me = self.identity { replies = replies.excluding(me) }
-                // all.append(contentsOf: replies)
-
-//                let mentions = try self.database.mentions(limit: 500)
-//                all.append(contentsOf: mentions)
-//
-//                let contacts: [KeyValue] = try self.database.followedBy(feed: self._identity!, limit: 500)
-//                all.append(contentsOf: contacts)
-//
-//                let sorted = all.sortedByDateDescending()
-
-                // TODO: notifications view expect a datasource that is an array (didSet override)
-                //                let p = StaticDataProxy(with: sorted)
-                DispatchQueue.main.async { completion(all, nil) }
+                let all = try self.database.reports()
+                queue.async {
+                    completion(all, nil)
+                }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                queue.async {
+                    completion([],error)
+                }
             }
         }
     }

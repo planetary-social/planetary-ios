@@ -1396,8 +1396,8 @@ class ViewDatabase {
         return try self.mapQueryToKeyValue(qry: qry)
     }
     
-    func alerts(limit: Int = 200) throws -> KeyValues {
-        guard let _ = self.openDB else {
+    func reports(limit: Int = 200) throws -> [Report] {
+        guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         let qry = self.reports
@@ -1414,7 +1414,105 @@ class ViewDatabase {
             
         let sortedQuery = filteredQuery.order(colCreatedAt.desc)
         
-        return try self.mapQueryToKeyValue(qry: sortedQuery)
+        return try db.prepare(sortedQuery).compactMap { row in
+            // tried 'return try row.decode()'
+            // but failed - see https://github.com/VerseApp/ios/issues/29
+            
+            let msgID = try row.get(colMessageID)
+            
+            let msgKey = try row.get(colKey)
+            let msgAuthor = try row.get(colAuthor)
+
+            var c: Content
+               
+            let type = try row.get(self.msgs[colMsgType])
+            
+            switch type {
+            case ContentType.post.rawValue:
+                
+                var rootKey: Identifier?
+                let colRootMaybe = Expression<Int64?>("root")
+                
+                if let rootID = try row.get(colRootMaybe) {
+                    rootKey = try self.msgKey(id: rootID)
+                }
+                
+                let p = Post(
+                    blobs: try self.loadBlobs(for:msgID),
+                    mentions: try self.loadMentions(for: msgID),
+                    root: rootKey,
+                    text: try row.get(colText)
+                )
+                
+                c = Content(from: p)
+                
+            case ContentType.vote.rawValue:
+                
+                let lnkID = try row.get(colLinkID)
+                let lnkKey = try self.msgKey(id: lnkID)
+                
+                let rootID = try row.get(colRoot)
+                let rootKey = try self.msgKey(id: rootID)
+                
+                
+                let cv = ContentVote(
+                    link: lnkKey,
+                    value: try row.get(colValue),
+                    root: rootKey,
+                    branches: [] // TODO: branches for root
+                )
+                
+                c = Content(from: cv)
+            case ContentType.contact.rawValue:
+                if let state = try? row.get(colContactState) {
+                    let following = state == 1
+                    let cc = Contact(contact: msgAuthor, following: following)
+                    
+                    c = Content(from: cc)
+                } else {
+                    // Contacts stores only the latest message
+                    // So, an old follow that was later unfollowed won't appear here.
+                    return nil
+                }
+            default:
+                throw ViewDatabaseError.unexpectedContentType(type)
+            }
+            
+            let v = Value(
+                author: msgAuthor,
+                content: c,
+                hash: "sha256", // only currently supported
+                previous: nil, // TODO: .. needed at this level?
+                sequence: try row.get(colSequence),
+                signature: "verified_by_go-ssb",
+                timestamp: try row.get(colClaimedAt)
+            )
+            var keyValue = KeyValue(
+                key: msgKey,
+                value: v,
+                timestamp: try row.get(colReceivedAt)
+            )
+            keyValue.metadata.author.about = About(
+                about: msgAuthor,
+                name: try row.get(self.abouts[colName]),
+                description: try row.get(colDescr),
+                imageLink: try row.get(colImage)
+            )
+            keyValue.metadata.isPrivate = try row.get(colDecrypted)
+            
+            let rawReportType = try row.get(self.reports[colReportType])
+            let reportType = ReportType(rawValue: rawReportType)!
+            
+            let createdAtTimestamp = try row.get(colCreatedAt)
+            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1000)
+            
+            let report = Report(authorIdentity: "undefined",
+                                messageIdentifier: msgKey,
+                                reportType: reportType,
+                                createdAt: createdAt,
+                                keyValue: keyValue)
+            return report
+        }
     }
 
     func feed(for identity: Identity, limit: Int = 100, offset: Int? = nil) throws -> KeyValues {
@@ -1858,119 +1956,137 @@ class ViewDatabase {
         try self.insertBranches(msgID: msgID, root: v.root, branches: v.branch)
     }
     
-    private func fillReportsIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws {
+    private func fillReportIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws -> Report? {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        let currentAuthorID = self.currentUserID
         let createdAt = Date().timeIntervalSince1970 * 1000
         
         switch msg.value.content.type { // insert individual message types
-        case .address:
-             return
-        case .about:
-            return
         case .contact:
             guard let c = msg.value.content.contact else {
-                return
+                return nil
             }
             guard c.isFollowing else {
                 // Just report on follows
-                return
+                return nil
             }
             let author = try? self.authorID(of: c.contact, make: false)
-            if let followedAuthor = author/*, followedAuthor == currentAuthorID*/ {
-                // Just report if the followed feed is the current identity
+            if let followedAuthor = author {
                 try db.run(self.reports.insert(
                     colMessageRef <- msgID,
                     colAuthorID <- followedAuthor,
-                    colReportType <- "feed_followed",
+                    colReportType <- ReportType.feedFollowed.rawValue,
                     colCreatedAt <- createdAt
                 ))
-                print("feed_followed")
+                let report = Report(authorIdentity: c.contact,
+                                    messageIdentifier: msg.key,
+                                    reportType: .feedFollowed,
+                                    createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                    keyValue: msg)
+                return report
             }
-        case .dropContentRequest:
-            return
-        case .pub:
-             return
         case .post:
             guard let p = msg.value.content.post else {
-                return
+                return nil
             }
             if let identifier = p.root {
                 let msgId = try self.msgID(of: identifier, make: false)
-                let msg = try db.pluck(self.msgs.filter(colMessageID == msgId))
-                if let msg = msg {
-                    let repliedAuthor = msg[colAuthorID]
+                let repliedMsg = try db.pluck(self.msgs.filter(colMessageID == msgId))
+                if let repliedMsg = repliedMsg {
+                    let repliedAuthor = repliedMsg[colAuthorID]
+                    
                     try db.run(self.reports.insert(
                         colMessageRef <- msgID,
                         colAuthorID <- repliedAuthor,
-                        colReportType <- "post_replied",
+                        colReportType <- ReportType.postReplied.rawValue,
                         colCreatedAt <- createdAt
                     ))
-                    print("post_replied")
                     
-                    // If a post is replied, don't generate more notifications
-                    return
+                    let repliedIdentity = try self.author(from: repliedAuthor)
+                    let report = Report(authorIdentity: repliedIdentity,
+                                        messageIdentifier: msg.key,
+                                        reportType: .postReplied,
+                                        createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                        keyValue: msg)
+                    return report
                 }
             }
             if let mentions = p.mentions {
-                try mentions.forEach { mention throws in
+                for mention in mentions {
                     let identifier = mention.link
                     switch identifier.sigil {
                     case .feed:
                         let author = try? self.authorID(of: identifier, make: false)
-                        if let mentionedAuthor = author/*, mentionedAuthor == currentAuthorID*/ {
-                            // Just report if the mentioned feed is the current identity
+                        if let mentionedAuthor = author {
                             try db.run(self.reports.insert(
                                 colMessageRef <- msgID,
                                 colAuthorID <- mentionedAuthor,
-                                colReportType <- "feed_mentioned",
+                                colReportType <- ReportType.feedMentioned.rawValue,
                                 colCreatedAt <- createdAt
                             ))
-                            print("feed_mentioned")
+                            
+                            let report = Report(authorIdentity: identifier,
+                                                messageIdentifier: msg.key,
+                                                reportType: .feedMentioned,
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                                keyValue: msg)
+                            return report
                         }
                     case .message, .blob:
-                        return
+                        continue
                     case .unsupported:
-                        return
+                        continue
                     }
                 }
             }
         case .vote:
             guard let v = msg.value.content.vote, v.vote.link.id != .unsupported else {
-                return
+                return nil
             }
             guard v.vote.value > 0 else {
-                // Just report on likes
-                return
+                // Just report on likes, not dislikes
+                return nil
             }
             let identifier = v.vote.link
             switch identifier.sigil {
             case .message:
                 let msgAuthor = try? self.getAuthorOf(key: identifier)
-                if let likedMsgAuthor = msgAuthor/*, likedMsgAuthor == currentAuthorID */ {
-                    // Just report if the liked message's author is the current identity
+                if let likedMsgAuthor = msgAuthor {
                     try db.run(self.reports.insert(
                         colMessageRef <- msgID,
                         colAuthorID <- likedMsgAuthor,
-                        colReportType <- "message_liked",
+                        colReportType <- ReportType.messageLiked.rawValue,
                         colCreatedAt <- createdAt
                     ))
-                    print("message_liked")
+                    let likedMsgIdentity = try self.author(from: likedMsgAuthor)
+                    let report = Report(authorIdentity: likedMsgIdentity,
+                                        messageIdentifier: msg.key,
+                                        reportType: .messageLiked,
+                                        createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                        keyValue: msg)
+                    return report
                 }
             case .feed, .blob:
-                return
+                break
             case .unsupported:
-                return
+                break
             }
-
+        case .address:
+             break
+        case .about:
+            break
+        case .dropContentRequest:
+            break
+        case .pub:
+            break
         case .unknown:
-            return
+            break
         case .unsupported:
-            return
+            break
         }
+        return nil
     }
     
     private func isOldMessage(msg: KeyValue) -> Bool {
@@ -1991,7 +2107,8 @@ class ViewDatabase {
         // get an idea how many unsupported messages there are
         var unsupported: [String:Int] = [:]
         #endif
-
+        
+        var reports = [Report]()
         var skipped: UInt = 0
         try db.transaction { // also batches writes! helps a lot with perf
             var lastRxSeq: Int64 = -1
@@ -2124,13 +2241,22 @@ class ViewDatabase {
                 }
                 
                 do {
-                    try self.fillReportsIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
+                    let report = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
+                    if let report = report {
+                        reports.append(report)
+                    }
                 } catch {
                     // Don't throw an error here, because we can live without a report
                     // Just send it to the Crash Reporting service
                     CrashReporting.shared.reportIfNeeded(error: error)
                 }
             } // for msgs
+            
+            reports.forEach { report in
+                NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
+                                                object: report.authorIdentity,
+                                                userInfo: ["report": report])
+            }
             
             // if we skipped all messages because they are unsupported,
             // update %fakemsg to that sequence so that we don't iterate over them again

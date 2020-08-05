@@ -108,7 +108,7 @@ protocol Bot {
 
     var about: About? { get }
     func about(completion: @escaping AboutCompletion)
-    func about(identity: Identity, completion:  @escaping AboutCompletion)
+    func about(queue: DispatchQueue, identity: Identity, completion:  @escaping AboutCompletion)
     func abouts(identities: Identities, completion:  @escaping AboutsCompletion)
     func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion)
 
@@ -159,8 +159,8 @@ protocol Bot {
     /// Returns all the messages in a feed that mention the active identity.
     func mentions(completion: @escaping PaginatedCompletion)
 
-    /// Notifications (unifies mentions, replies, follows) for the active identity.
-    func notifications(completion: @escaping KeyValuesCompletion)
+    /// Reports (unifies mentions, replies, follows) for the active identity.
+    func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void))
 
     // MARK: Blob publishing
 
@@ -218,6 +218,14 @@ extension Bot {
 
     func statistics(completion: @escaping StatisticsCompletion) {
         self.statistics(queue: .main, completion: completion)
+    }
+    
+    func reports(completion: @escaping (([Report], Error?) -> Void)) {
+        self.reports(queue: .main, completion: completion)
+    }
+    
+    func about(identity: Identity, completion:  @escaping AboutCompletion) {
+        self.about(queue: .main, identity: identity, completion: completion)
     }
     
 }

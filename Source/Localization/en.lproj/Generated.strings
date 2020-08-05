@@ -224,3 +224,9 @@
 
 "Post.one" = "post";
 "Post.many" = "posts";
+
+"Report.somebody" = "Somebody";
+"Report.feedFollowed" = "%@ is started following you";
+"Report.postReplied" = "%@ replied to your post";
+"Report.feedMentioned" = "%@ mentioned you in a post";
+"Report.messageLiked" = "%@ liked your post";

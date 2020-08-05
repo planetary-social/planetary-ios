@@ -4,7 +4,7 @@
 "Text.error" = "Opa";
 "Text.cancel" = "Cancelar";
 "Text.skip" = "Saltear";
-"Text.ok" = "OK";
+"Text.ok" = "Dale";
 "Text.next" = "Siguiente";
 "Text.done" = "Listo";
 "Text.save" = "Guardar";
@@ -223,3 +223,9 @@
 
 "Post.one" = "publicación";
 "Post.many" = "publicaciones";
+
+"Report.somebody" = "Alguien";
+"Report.feedFollowed" = "%@ empezó a seguirte";
+"Report.postReplied" = "%@ respondió un post tuyo";
+"Report.feedMentioned" = "%@ te mencionó en un un post";
+"Report.messageLiked" = "A %@ le gustó tu post";

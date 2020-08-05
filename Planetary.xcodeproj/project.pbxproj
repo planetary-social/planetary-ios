@@ -160,6 +160,9 @@
 		0AD8D635240EFF8800D87A95 /* RedeemInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */; };
 		0AF2DEEE247C3EE6003F457D /* Hashtag+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */; };
 		0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */; };
+		0AF9966C24D8A0B6001113BE /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9966B24D8A0B6001113BE /* Report.swift */; };
+		0AF9966D24D8A232001113BE /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9966B24D8A0B6001113BE /* Report.swift */; };
+		0AF9966E24D8A232001113BE /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9966B24D8A0B6001113BE /* Report.swift */; };
 		0AF9E0982461B3BB00910575 /* AnalyticsService+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0972461B3BB00910575 /* AnalyticsService+UI.swift */; };
 		0AF9E09A2461E92100910575 /* AnalyticsService+Conversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0992461E92100910575 /* AnalyticsService+Conversions.swift */; };
 		0AF9E09C2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E09B2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift */; };
@@ -171,10 +174,10 @@
 		0AF9E0AA246B23C700910575 /* SuspendOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A9246B23C700910575 /* SuspendOperation.swift */; };
 		0AF9E0AC246B23F900910575 /* ExitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0AB246B23F900910575 /* ExitOperation.swift */; };
 		1B32D378249AAA4800811DC9 /* SmallPostHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */; };
+		1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */; };
 		1B5DB7CE24AE598E008DCB81 /* AboutTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CD24AE598E008DCB81 /* AboutTableViewController.swift */; };
 		1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */; };
 		1B5DB7D224AE5F7F008DCB81 /* FollowingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */; };
-		1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */; };
 		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
@@ -862,6 +865,7 @@
 		0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedeemInviteViewController.swift; sourceTree = "<group>"; };
 		0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Hashtag+Link.swift"; sourceTree = "<group>"; };
 		0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingRefreshButton.swift; sourceTree = "<group>"; };
+		0AF9966B24D8A0B6001113BE /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
 		0AF9E0972461B3BB00910575 /* AnalyticsService+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsService+UI.swift"; sourceTree = "<group>"; };
 		0AF9E0992461E92100910575 /* AnalyticsService+Conversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsService+Conversions.swift"; sourceTree = "<group>"; };
 		0AF9E09B2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValuePaginatedTableViewDelegate.swift; sourceTree = "<group>"; };
@@ -875,10 +879,10 @@
 		0D00E9EC17B652149B64C1DC /* Pods-APITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		0DE096B2BC326F9BFDBA1514 /* Pods_Planetary_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallPostHeaderView.swift; sourceTree = "<group>"; };
+		1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsOperation.swift; sourceTree = "<group>"; };
 		1B5DB7CD24AE598E008DCB81 /* AboutTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutTableViewController.swift; sourceTree = "<group>"; };
 		1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerTableViewController.swift; sourceTree = "<group>"; };
 		1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowingTableViewController.swift; sourceTree = "<group>"; };
-		1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsOperation.swift; sourceTree = "<group>"; };
 		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
 		205F056E32449189B64633F4 /* Pods-Planetary-UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary-UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary-UITests/Pods-Planetary-UITests.release.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
@@ -2164,6 +2168,7 @@
 				0A07AB21242AC66D00EFD47F /* Notification+About.swift */,
 				1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */,
 				0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */,
+				0AF9966B24D8A0B6001113BE /* Report.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2728,6 +2733,7 @@
 				53211CED22852216007FB785 /* AppConfigurationTests.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
 				0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */,
+				0AF9966E24D8A232001113BE /* Report.swift in Sources */,
 				2346ECB522141DAD009A94CB /* KeyValues.swift in Sources */,
 				0A64A80E24734CD8009A5EBF /* AnalyticsService+Debug.swift in Sources */,
 				535CD37D2267DB4E0039BCF2 /* LogService.swift in Sources */,
@@ -2911,6 +2917,7 @@
 				5314EF7C22EA358F0065D02A /* Dictionary+JSONSerialization.swift in Sources */,
 				5314EF5F22EA2A240065D02A /* Keychain.swift in Sources */,
 				5314EF6B22EA2B730065D02A /* Hashtag+String.swift in Sources */,
+				0AF9966D24D8A232001113BE /* Report.swift in Sources */,
 				0A64A80924734CD2009A5EBF /* AnalyticsService+UI.swift in Sources */,
 				0AC10DEC246EFBD800CCA22A /* TimersService.swift in Sources */,
 				0A3880082475AAE000777843 /* PushAPI.swift in Sources */,
@@ -3023,6 +3030,7 @@
 				531B92BB22CD1383005D5255 /* NSMutableAttributedString+Attributes.swift in Sources */,
 				5369D2AA220BAFC600A65622 /* KeyValues.swift in Sources */,
 				53C2B1282294DFF50018D0A8 /* AppConfiguration+Migrate.swift in Sources */,
+				0AF9966C24D8A0B6001113BE /* Report.swift in Sources */,
 				531B92B322CAC25C005D5255 /* UITextView+Verse.swift in Sources */,
 				0ABCA9012437BF3400D7F39C /* String+Markdown.swift in Sources */,
 				53E26C5D23045D19009240B2 /* Data+Person.swift in Sources */,

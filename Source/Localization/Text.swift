@@ -17,7 +17,8 @@ extension Text {
                 Text.Debug.self,
                 Text.Error.self,
                 Text.Channel.self,
-                Text.Post.self]
+                Text.Post.self,
+                Text.Report.self]
     }
 }
 
@@ -380,5 +381,15 @@ extension Text {
     enum Post: String, Localizable, CaseIterable {
         case one = "post"
         case many = "posts"
+    }
+}
+
+extension Text {
+    enum Report: String, Localizable, CaseIterable {
+        case somebody = "Somebody"
+        case feedFollowed = "%@ is started following you"
+        case postReplied = "%@ replied to your post"
+        case feedMentioned = "%@ mentioned you in a post"
+        case messageLiked = "%@ liked your post"
     }
 }
