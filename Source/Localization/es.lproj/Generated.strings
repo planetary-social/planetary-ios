@@ -226,6 +226,6 @@
 
 "Report.somebody" = "Alguien";
 "Report.feedFollowed" = "%@ comenzó a seguirte";
-"Report.postReplied" = "%@ respondió una publicación tuya";
+"Report.postReplied" = "%@ respondió";
 "Report.feedMentioned" = "%@ te mencionó en una publicación";
 "Report.messageLiked" = "A %@ le gustó tu publicación";

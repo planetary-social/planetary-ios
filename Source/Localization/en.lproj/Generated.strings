@@ -227,6 +227,6 @@
 
 "Report.somebody" = "Somebody";
 "Report.feedFollowed" = "%@ is started following you";
-"Report.postReplied" = "%@ replied to your post";
+"Report.postReplied" = "%@ replied";
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";

@@ -1956,7 +1956,7 @@ class ViewDatabase {
         try self.insertBranches(msgID: msgID, root: v.root, branches: v.branch)
     }
     
-    private func fillReportIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws -> Report? {
+    private func fillReportIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws -> [Report] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1966,11 +1966,11 @@ class ViewDatabase {
         switch msg.value.content.type { // insert individual message types
         case .contact:
             guard let c = msg.value.content.contact else {
-                return nil
+                return []
             }
             guard c.isFollowing else {
                 // Just report on follows
-                return nil
+                return []
             }
             let author = try? self.authorID(of: c.contact, make: false)
             if let followedAuthor = author {
@@ -1985,32 +1985,60 @@ class ViewDatabase {
                                     reportType: .feedFollowed,
                                     createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                     keyValue: msg)
-                return report
+                return [report]
             }
         case .post:
             guard let p = msg.value.content.post else {
-                return nil
+                return []
             }
+            var reportsIdentities = [Identity]()
+            var reports = [Report]()
+            
             if let identifier = p.root {
                 let msgId = try self.msgID(of: identifier, make: false)
                 let repliedMsg = try db.pluck(self.msgs.filter(colMessageID == msgId))
                 if let repliedMsg = repliedMsg {
                     let repliedAuthor = repliedMsg[colAuthorID]
-                    
-                    try db.run(self.reports.insert(
-                        colMessageRef <- msgID,
-                        colAuthorID <- repliedAuthor,
-                        colReportType <- ReportType.postReplied.rawValue,
-                        colCreatedAt <- createdAt
-                    ))
-                    
                     let repliedIdentity = try self.author(from: repliedAuthor)
-                    let report = Report(authorIdentity: repliedIdentity,
-                                        messageIdentifier: msg.key,
-                                        reportType: .postReplied,
-                                        createdAt: Date(timeIntervalSince1970: createdAt / 1000),
-                                        keyValue: msg)
-                    return report
+                    
+                    if repliedIdentity != msg.value.author {
+                        try db.run(self.reports.insert(
+                            colMessageRef <- msgID,
+                            colAuthorID <- repliedAuthor,
+                            colReportType <- ReportType.postReplied.rawValue,
+                            colCreatedAt <- createdAt
+                        ))
+                        
+                        
+                        let report = Report(authorIdentity: repliedIdentity,
+                                            messageIdentifier: msg.key,
+                                            reportType: .postReplied,
+                                            createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                            keyValue: msg)
+                        reports.append(report)
+                        reportsIdentities.append(repliedIdentity)
+                    }
+                    
+                    let otherReplies = try self.getRepliesTo(thread: identifier)
+                    for reply in otherReplies {
+                        let replyAuthorIdentity = reply.value.author
+                        if !reportsIdentities.contains(replyAuthorIdentity), let replyAuthorID = try? self.authorID(of: replyAuthorIdentity), replyAuthorIdentity != msg.value.author {
+                            try db.run(self.reports.insert(
+                                colMessageRef <- msgID,
+                                colAuthorID <- replyAuthorID,
+                                colReportType <- ReportType.postReplied.rawValue,
+                                colCreatedAt <- createdAt
+                            ))
+                            
+                            let report = Report(authorIdentity: replyAuthorIdentity,
+                                                messageIdentifier: msg.key,
+                                                reportType: .postReplied,
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                                keyValue: msg)
+                            reports.append(report)
+                            reportsIdentities.append(replyAuthorIdentity)
+                        }
+                    }
                 }
             }
             if let mentions = p.mentions {
@@ -2019,7 +2047,7 @@ class ViewDatabase {
                     switch identifier.sigil {
                     case .feed:
                         let author = try? self.authorID(of: identifier, make: false)
-                        if let mentionedAuthor = author {
+                        if let mentionedAuthor = author, !reportsIdentities.contains(identifier) {
                             try db.run(self.reports.insert(
                                 colMessageRef <- msgID,
                                 colAuthorID <- mentionedAuthor,
@@ -2032,7 +2060,8 @@ class ViewDatabase {
                                                 reportType: .feedMentioned,
                                                 createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                                 keyValue: msg)
-                            return report
+                            reports.append(report)
+                            reportsIdentities.append(identifier)
                         }
                     case .message, .blob:
                         continue
@@ -2041,13 +2070,14 @@ class ViewDatabase {
                     }
                 }
             }
+            return reports
         case .vote:
             guard let v = msg.value.content.vote, v.vote.link.id != .unsupported else {
-                return nil
+                return []
             }
             guard v.vote.value > 0 else {
                 // Just report on likes, not dislikes
-                return nil
+                return []
             }
             let identifier = v.vote.link
             switch identifier.sigil {
@@ -2066,7 +2096,7 @@ class ViewDatabase {
                                         reportType: .messageLiked,
                                         createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                         keyValue: msg)
-                    return report
+                    return [report]
                 }
             case .feed, .blob:
                 break
@@ -2086,7 +2116,7 @@ class ViewDatabase {
         case .unsupported:
             break
         }
-        return nil
+        return []
     }
     
     private func isOldMessage(msg: KeyValue) -> Bool {
@@ -2241,10 +2271,8 @@ class ViewDatabase {
                 }
                 
                 do {
-                    let report = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
-                    if let report = report {
-                        reports.append(report)
-                    }
+                    let reportsFilled = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
+                    reports.append(contentsOf: reportsFilled)
                 } catch {
                     // Don't throw an error here, because we can live without a report
                     // Just send it to the Crash Reporting service
