@@ -30,8 +30,10 @@ class FakeBot: Bot {
         fatalError("TODO:\(#function)")
     }
     
-    func notifications(completion: @escaping KeyValuesCompletion) {
-        fatalError("TODO:\(#function)")
+    func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
+        queue.async {
+            completion([], nil)
+        }
     }
     
     func knownPubs(completion: @escaping KnownPubsCompletion) {
@@ -232,7 +234,7 @@ class FakeBot: Bot {
 
     var about: About? { return nil }
 
-    func about(completion: AboutCompletion) {
+    func about(completion: @escaping AboutCompletion) {
 
         guard let identity = self._identity else {
             completion(nil, FakeBotError.runtimeError("no ID"))
@@ -242,9 +244,11 @@ class FakeBot: Bot {
         self.about(identity: identity, completion: completion)
     }
 
-    func about(identity: Identity, completion: AboutCompletion) {
+    func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
         let about = self.about(for: identity)
-        completion(about, nil)
+        queue.async {
+            completion(about, nil)
+        }
     }
 
     func abouts(identities: Identities, completion:  @escaping AboutsCompletion) {

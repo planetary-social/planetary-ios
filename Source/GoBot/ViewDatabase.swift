@@ -41,6 +41,7 @@ enum ViewDatabaseTableNames: String {
     case mentionsMsg = "mention_message"
     case mentionsFeed = "mention_feed"
     case mentionsImage = "mention_image"
+    case reports
 }
 
 class ViewDatabase {
@@ -156,6 +157,13 @@ class ViewDatabase {
     private let colWorkedLast = Expression<Date?>("worked_last")
     private let colLastErr = Expression<String>("last_err")
     private let colUse = Expression<Bool>("use")
+    
+    // Reports
+    private var reports: Table
+    // colMessageRef
+    // colAuthorID
+    private let colReportType = Expression<String>("type")
+    private let colCreatedAt = Expression<Double>("created_at")
 
     init() {
         self.addresses = Table(ViewDatabaseTableNames.addresses.rawValue)
@@ -176,6 +184,7 @@ class ViewDatabase {
         self.votes = Table(ViewDatabaseTableNames.votes.rawValue)
         self.tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
         self.branches = Table(ViewDatabaseTableNames.branches.rawValue)
+        self.reports = Table(ViewDatabaseTableNames.reports.rawValue)
     }
 
     // MARK: open / close / stats
@@ -203,13 +212,13 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-        db.trace { print("\tSQL: \($0)") } // print all the statements
+        // db.trace { print("\tSQL: \($0)") } // print all the statements
         
         try db.transaction {
             if db.userVersion == 0 {
                 let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
                 try db.execute(String(contentsOf: schemaV1url))
-                db.userVersion = 5
+                db.userVersion = 6
             } else if db.userVersion == 1 {
                 try db.execute("""
                 CREATE INDEX messagekeys_key ON messagekeys(key);
@@ -230,9 +239,16 @@ class ViewDatabase {
                 CREATE INDEX authors_hashed ON authors(hashed);
                 CREATE TABLE blocked_content ( id integer not null, type integer not null );
                 ALTER TABLE abouts ADD publicWebHosting boolean;
+                CREATE TABLE reports (
+                msg_ref integer not null,
+                author_id integer not null,
+                type text NOT NULL,
+                created_at real NOT NULL,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 """);
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 5
+                db.userVersion = 6
             } else if db.userVersion == 2 {
                 try db.execute("""
                 -- add new column to posts and migrate existing data
@@ -246,9 +262,16 @@ class ViewDatabase {
                 CREATE INDEX authors_hashed ON authors(hashed);
                 CREATE TABLE blocked_content ( id integer not null, type integer not null );
                 ALTER TABLE abouts ADD publicWebHosting boolean;
+                CREATE TABLE reports (
+                msg_ref integer not null,
+                author_id integer not null,
+                type text NOT NULL,
+                created_at real NOT NULL,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 """);
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 5
+                db.userVersion = 6
             } else if db.userVersion == 3 {
                 try db.execute("""
                 ALTER TABLE messagekeys ADD hashed text;
@@ -257,14 +280,39 @@ class ViewDatabase {
                 CREATE INDEX authors_hashed ON authors(hashed);
                 CREATE TABLE blocked_content ( id integer not null, type integer not null );
                 ALTER TABLE abouts ADD publicWebHosting boolean;
+                CREATE TABLE reports (
+                msg_ref integer not null,
+                author_id integer not null,
+                type text NOT NULL,
+                created_at real NOT NULL,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 """)
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 5
+                db.userVersion = 6
             } else if db.userVersion == 4 {
                 try db.execute("""
                 ALTER TABLE abouts ADD publicWebHosting boolean;
+                CREATE TABLE reports (
+                msg_ref integer not null,
+                author_id integer not null,
+                type text NOT NULL,
+                created_at real NOT NULL,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 """)
-                db.userVersion = 5
+                db.userVersion = 6
+            } else if db.userVersion == 5 {
+                try db.execute("""
+                CREATE TABLE reports (
+                msg_ref integer not null,
+                author_id integer not null,
+                type text NOT NULL,
+                created_at real NOT NULL,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
+                """)
+                db.userVersion = 6
             }
         }
 
@@ -1072,7 +1120,8 @@ class ViewDatabase {
         let colRootMaybe = Expression<Int64?>("root")
 
         // TODO: add switch over type (to support contact, vote, gathering, etc..)
-        return try db.prepare(qry).map { row in
+
+        return try db.prepare(qry).compactMap { row in
             // tried 'return try row.decode()'
             // but failed - see https://github.com/VerseApp/ios/issues/29
             
@@ -1081,25 +1130,62 @@ class ViewDatabase {
             let msgKey = try row.get(colKey)
             let msgAuthor = try row.get(colAuthor)
 
-            let blobs = try self.loadBlobs(for: msgID)
-
-            let mentions = try self.loadMentions(for: msgID)
-
-            var rootKey: Identifier?
-            if let rootID = try row.get(colRootMaybe) {
-                rootKey = try self.msgKey(id: rootID)
+            var c: Content
+               
+            let type = try row.get(self.msgs[colMsgType])
+            
+            switch type {
+            case ContentType.post.rawValue:
+                
+                var rootKey: Identifier?
+                if let rootID = try row.get(colRootMaybe) {
+                    rootKey = try self.msgKey(id: rootID)
+                }
+                
+                let p = Post(
+                    blobs: try self.loadBlobs(for:msgID),
+                    mentions: try self.loadMentions(for: msgID),
+                    root: rootKey,
+                    text: try row.get(colText)
+                )
+                
+                c = Content(from: p)
+                
+            case ContentType.vote.rawValue:
+                
+                let lnkID = try row.get(colLinkID)
+                let lnkKey = try self.msgKey(id: lnkID)
+                
+                let rootID = try row.get(colRoot)
+                let rootKey = try self.msgKey(id: rootID)
+                
+                
+                let cv = ContentVote(
+                    link: lnkKey,
+                    value: try row.get(colValue),
+                    root: rootKey,
+                    branches: [] // TODO: branches for root
+                )
+                
+                c = Content(from: cv)
+            case ContentType.contact.rawValue:
+                if let state = try? row.get(colContactState) {
+                    let following = state == 1
+                    let cc = Contact(contact: msgAuthor, following: following)
+                    
+                    c = Content(from: cc)
+                } else {
+                    // Contacts stores only the latest message
+                    // So, an old follow that was later unfollowed won't appear here.
+                    return nil
+                }
+            default:
+                throw ViewDatabaseError.unexpectedContentType(type)
             }
-
-            let p = Post(
-                blobs: blobs,
-                mentions: mentions,
-                root: rootKey,
-                text: try row.get(colText)
-            )
-
+            
             let v = Value(
                 author: msgAuthor,
-                content: Content(from: p),
+                content: c,
                 hash: "sha256", // only currently supported
                 previous: nil, // TODO: .. needed at this level?
                 sequence: try row.get(colSequence),
@@ -1309,6 +1395,125 @@ class ViewDatabase {
         
         return try self.mapQueryToKeyValue(qry: qry)
     }
+    
+    func reports(limit: Int = 200) throws -> [Report] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let qry = self.reports
+            .join(self.msgs, on: self.msgs[colMessageID] == self.reports[colMessageRef])
+            .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, self.contacts, on: self.contacts[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.msgs[colMessageID])
+            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
+            .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
+            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
+            .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
+        
+        let filteredQuery = qry.filter(self.reports[colAuthorID] == self.currentUserID)
+            
+        let sortedQuery = filteredQuery.order(colCreatedAt.desc)
+        
+        return try db.prepare(sortedQuery).compactMap { row in
+            // tried 'return try row.decode()'
+            // but failed - see https://github.com/VerseApp/ios/issues/29
+            
+            let msgID = try row.get(colMessageID)
+            
+            let msgKey = try row.get(colKey)
+            let msgAuthor = try row.get(colAuthor)
+
+            var c: Content
+               
+            let type = try row.get(self.msgs[colMsgType])
+            
+            switch type {
+            case ContentType.post.rawValue:
+                
+                var rootKey: Identifier?
+                let colRootMaybe = Expression<Int64?>("root")
+                
+                if let rootID = try row.get(colRootMaybe) {
+                    rootKey = try self.msgKey(id: rootID)
+                }
+                
+                let p = Post(
+                    blobs: try self.loadBlobs(for:msgID),
+                    mentions: try self.loadMentions(for: msgID),
+                    root: rootKey,
+                    text: try row.get(colText)
+                )
+                
+                c = Content(from: p)
+                
+            case ContentType.vote.rawValue:
+                
+                let lnkID = try row.get(colLinkID)
+                let lnkKey = try self.msgKey(id: lnkID)
+                
+                let rootID = try row.get(colRoot)
+                let rootKey = try self.msgKey(id: rootID)
+                
+                
+                let cv = ContentVote(
+                    link: lnkKey,
+                    value: try row.get(colValue),
+                    root: rootKey,
+                    branches: [] // TODO: branches for root
+                )
+                
+                c = Content(from: cv)
+            case ContentType.contact.rawValue:
+                if let state = try? row.get(colContactState) {
+                    let following = state == 1
+                    let cc = Contact(contact: msgAuthor, following: following)
+                    
+                    c = Content(from: cc)
+                } else {
+                    // Contacts stores only the latest message
+                    // So, an old follow that was later unfollowed won't appear here.
+                    return nil
+                }
+            default:
+                throw ViewDatabaseError.unexpectedContentType(type)
+            }
+            
+            let v = Value(
+                author: msgAuthor,
+                content: c,
+                hash: "sha256", // only currently supported
+                previous: nil, // TODO: .. needed at this level?
+                sequence: try row.get(colSequence),
+                signature: "verified_by_go-ssb",
+                timestamp: try row.get(colClaimedAt)
+            )
+            var keyValue = KeyValue(
+                key: msgKey,
+                value: v,
+                timestamp: try row.get(colReceivedAt)
+            )
+            keyValue.metadata.author.about = About(
+                about: msgAuthor,
+                name: try row.get(self.abouts[colName]),
+                description: try row.get(colDescr),
+                imageLink: try row.get(colImage)
+            )
+            keyValue.metadata.isPrivate = try row.get(colDecrypted)
+            
+            let rawReportType = try row.get(self.reports[colReportType])
+            let reportType = ReportType(rawValue: rawReportType)!
+            
+            let createdAtTimestamp = try row.get(colCreatedAt)
+            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1000)
+            
+            let report = Report(authorIdentity: "undefined",
+                                messageIdentifier: msgKey,
+                                reportType: reportType,
+                                createdAt: createdAt,
+                                keyValue: keyValue)
+            return report
+        }
+    }
 
     func feed(for identity: Identity, limit: Int = 100, offset: Int? = nil) throws -> KeyValues {
         guard let db = self.openDB else {
@@ -1341,6 +1546,20 @@ class ViewDatabase {
         return msgs
     }
 
+    func getAuthorOf(key: MessageIdentifier) throws -> Int64? {
+        let msgId = try self.msgID(of: key, make: false)
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let colAuthorID = Expression<Int64?>("colAuthorID")
+        let authorID = try db.scalar(self.msgs
+            .select(colAuthorID)
+            .filter(colMessageID == msgId)
+            .filter(colHidden == false))
+        return authorID
+    }
+    
     func get(key: MessageIdentifier) throws -> KeyValue {
         let msgId = try self.msgID(of: key, make: false)
         // TODO: add 2nd signature to get message by internal ID
@@ -1737,6 +1956,169 @@ class ViewDatabase {
         try self.insertBranches(msgID: msgID, root: v.root, branches: v.branch)
     }
     
+    private func fillReportIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws -> [Report] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let createdAt = Date().timeIntervalSince1970 * 1000
+        
+        switch msg.value.content.type { // insert individual message types
+        case .contact:
+            guard let c = msg.value.content.contact else {
+                return []
+            }
+            guard c.isFollowing else {
+                // Just report on follows
+                return []
+            }
+            let author = try? self.authorID(of: c.contact, make: false)
+            if let followedAuthor = author {
+                try db.run(self.reports.insert(
+                    colMessageRef <- msgID,
+                    colAuthorID <- followedAuthor,
+                    colReportType <- ReportType.feedFollowed.rawValue,
+                    colCreatedAt <- createdAt
+                ))
+                let report = Report(authorIdentity: c.contact,
+                                    messageIdentifier: msg.key,
+                                    reportType: .feedFollowed,
+                                    createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                    keyValue: msg)
+                return [report]
+            }
+        case .post:
+            guard let p = msg.value.content.post else {
+                return []
+            }
+            var reportsIdentities = [Identity]()
+            var reports = [Report]()
+            
+            if let identifier = p.root {
+                let msgId = try self.msgID(of: identifier, make: false)
+                let repliedMsg = try db.pluck(self.msgs.filter(colMessageID == msgId))
+                if let repliedMsg = repliedMsg {
+                    let repliedAuthor = repliedMsg[colAuthorID]
+                    let repliedIdentity = try self.author(from: repliedAuthor)
+                    
+                    if repliedIdentity != msg.value.author {
+                        try db.run(self.reports.insert(
+                            colMessageRef <- msgID,
+                            colAuthorID <- repliedAuthor,
+                            colReportType <- ReportType.postReplied.rawValue,
+                            colCreatedAt <- createdAt
+                        ))
+                        
+                        
+                        let report = Report(authorIdentity: repliedIdentity,
+                                            messageIdentifier: msg.key,
+                                            reportType: .postReplied,
+                                            createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                            keyValue: msg)
+                        reports.append(report)
+                        reportsIdentities.append(repliedIdentity)
+                    }
+                    
+                    let otherReplies = try self.getRepliesTo(thread: identifier)
+                    for reply in otherReplies {
+                        let replyAuthorIdentity = reply.value.author
+                        if !reportsIdentities.contains(replyAuthorIdentity), let replyAuthorID = try? self.authorID(of: replyAuthorIdentity), replyAuthorIdentity != msg.value.author {
+                            try db.run(self.reports.insert(
+                                colMessageRef <- msgID,
+                                colAuthorID <- replyAuthorID,
+                                colReportType <- ReportType.postReplied.rawValue,
+                                colCreatedAt <- createdAt
+                            ))
+                            
+                            let report = Report(authorIdentity: replyAuthorIdentity,
+                                                messageIdentifier: msg.key,
+                                                reportType: .postReplied,
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                                keyValue: msg)
+                            reports.append(report)
+                            reportsIdentities.append(replyAuthorIdentity)
+                        }
+                    }
+                }
+            }
+            if let mentions = p.mentions {
+                for mention in mentions {
+                    let identifier = mention.link
+                    switch identifier.sigil {
+                    case .feed:
+                        let author = try? self.authorID(of: identifier, make: false)
+                        if let mentionedAuthor = author, !reportsIdentities.contains(identifier) {
+                            try db.run(self.reports.insert(
+                                colMessageRef <- msgID,
+                                colAuthorID <- mentionedAuthor,
+                                colReportType <- ReportType.feedMentioned.rawValue,
+                                colCreatedAt <- createdAt
+                            ))
+                            
+                            let report = Report(authorIdentity: identifier,
+                                                messageIdentifier: msg.key,
+                                                reportType: .feedMentioned,
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                                keyValue: msg)
+                            reports.append(report)
+                            reportsIdentities.append(identifier)
+                        }
+                    case .message, .blob:
+                        continue
+                    case .unsupported:
+                        continue
+                    }
+                }
+            }
+            return reports
+        case .vote:
+            guard let v = msg.value.content.vote, v.vote.link.id != .unsupported else {
+                return []
+            }
+            guard v.vote.value > 0 else {
+                // Just report on likes, not dislikes
+                return []
+            }
+            let identifier = v.vote.link
+            switch identifier.sigil {
+            case .message:
+                let msgAuthor = try? self.getAuthorOf(key: identifier)
+                if let likedMsgAuthor = msgAuthor {
+                    try db.run(self.reports.insert(
+                        colMessageRef <- msgID,
+                        colAuthorID <- likedMsgAuthor,
+                        colReportType <- ReportType.messageLiked.rawValue,
+                        colCreatedAt <- createdAt
+                    ))
+                    let likedMsgIdentity = try self.author(from: likedMsgAuthor)
+                    let report = Report(authorIdentity: likedMsgIdentity,
+                                        messageIdentifier: msg.key,
+                                        reportType: .messageLiked,
+                                        createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                        keyValue: msg)
+                    return [report]
+                }
+            case .feed, .blob:
+                break
+            case .unsupported:
+                break
+            }
+        case .address:
+             break
+        case .about:
+            break
+        case .dropContentRequest:
+            break
+        case .pub:
+            break
+        case .unknown:
+            break
+        case .unsupported:
+            break
+        }
+        return []
+    }
+    
     private func isOldMessage(msg: KeyValue) -> Bool {
         let now = Date(timeIntervalSinceNow: 0)
         let claimed = Date(timeIntervalSince1970: msg.value.timestamp/1000)
@@ -1755,7 +2137,8 @@ class ViewDatabase {
         // get an idea how many unsupported messages there are
         var unsupported: [String:Int] = [:]
         #endif
-
+        
+        var reports = [Report]()
         var skipped: UInt = 0
         try db.transaction { // also batches writes! helps a lot with perf
             var lastRxSeq: Int64 = -1
@@ -1886,7 +2269,22 @@ class ViewDatabase {
                 } catch {
                     throw GoBotError.duringProcessing("fillMessages threw on msg(\(msg.key)", error)
                 }
+                
+                do {
+                    let reportsFilled = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
+                    reports.append(contentsOf: reportsFilled)
+                } catch {
+                    // Don't throw an error here, because we can live without a report
+                    // Just send it to the Crash Reporting service
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                }
             } // for msgs
+            
+            reports.forEach { report in
+                NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
+                                                object: report.authorIdentity,
+                                                userInfo: ["report": report])
+            }
             
             // if we skipped all messages because they are unsupported,
             // update %fakemsg to that sequence so that we don't iterate over them again

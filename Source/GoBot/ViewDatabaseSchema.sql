@@ -322,3 +322,12 @@ CREATE TABLE channel_assignments (
     FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
     FOREIGN KEY ( chan_ref ) REFERENCES channels( "id" )
 );
+
+CREATE TABLE reports (
+    msg_ref integer not null,
+    author_id integer not null,
+    type text NOT NULL,
+    created_at real NOT NULL,
+    FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+    FOREIGN KEY ( author_id ) REFERENCES authors( "id" )
+);
