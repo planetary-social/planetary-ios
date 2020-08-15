@@ -12,6 +12,7 @@
 		0A07AB1E242522CE00EFD47F /* CrashReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB1D242522CE00EFD47F /* CrashReportingService.swift */; };
 		0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB21242AC66D00EFD47F /* Notification+About.swift */; };
 		0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A143A7A242E6714008745C6 /* AppDelegate+UniversalLink.swift */; };
+		0A1CA4C524E5D714006CAC43 /* FollowOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */; };
 		0A387FF42474E09200777843 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF32474E09200777843 /* Analytics.swift */; };
 		0A387FF52474E10400777843 /* NullAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C2B12E2295A95A0018D0A8 /* NullAnalytics.swift */; };
 		0A387FF72474E45A00777843 /* CrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF62474E45A00777843 /* CrashReporting.swift */; };
@@ -56,6 +57,9 @@
 		0A4871012498030800BCD063 /* PostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4871002498030800BCD063 /* PostCollectionViewCell.swift */; };
 		0A487103249808E700BCD063 /* PinterestCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */; };
 		0A487105249D1B3600BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A487104249D1B3500BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift */; };
+		0A56ABDD24E32F8000D30649 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABDC24E32F8000D30649 /* Star.swift */; };
+		0A56ABDF24E470A200D30649 /* RedeemInviteOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABDE24E470A200D30649 /* RedeemInviteOperation.swift */; };
+		0A56ABE124E472EE00D30649 /* AppController+ConstellationCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABE024E472EE00D30649 /* AppController+ConstellationCheck.swift */; };
 		0A64A6C224730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C324730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
 		0A64A6C424730C3E009A5EBF /* DirectoryAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */; };
@@ -786,6 +790,7 @@
 		0A07AB1D242522CE00EFD47F /* CrashReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReportingService.swift; sourceTree = "<group>"; };
 		0A07AB21242AC66D00EFD47F /* Notification+About.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+About.swift"; sourceTree = "<group>"; };
 		0A143A7A242E6714008745C6 /* AppDelegate+UniversalLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+UniversalLink.swift"; sourceTree = "<group>"; };
+		0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowOperation.swift; sourceTree = "<group>"; };
 		0A387FF32474E09200777843 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		0A387FF62474E45A00777843 /* CrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReporting.swift; sourceTree = "<group>"; };
 		0A387FF92474E65300777843 /* PhoneVerificationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneVerificationAPI.swift; sourceTree = "<group>"; };
@@ -805,6 +810,9 @@
 		0A4871002498030800BCD063 /* PostCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCollectionViewCell.swift; sourceTree = "<group>"; };
 		0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinterestCollectionViewLayout.swift; sourceTree = "<group>"; };
 		0A487104249D1B3500BCD063 /* KeyValuePaginatedCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValuePaginatedCollectionViewDelegate.swift; sourceTree = "<group>"; };
+		0A56ABDC24E32F8000D30649 /* Star.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Star.swift; sourceTree = "<group>"; };
+		0A56ABDE24E470A200D30649 /* RedeemInviteOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemInviteOperation.swift; sourceTree = "<group>"; };
+		0A56ABE024E472EE00D30649 /* AppController+ConstellationCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppController+ConstellationCheck.swift"; sourceTree = "<group>"; };
 		0A64A6C124730C3E009A5EBF /* DirectoryAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryAPIService.swift; sourceTree = "<group>"; };
 		0A64A6C624730D0F009A5EBF /* VerseDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseDirectoryAPI.swift; sourceTree = "<group>"; };
 		0A64A6C824730D8A009A5EBF /* NullDirectoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullDirectoryAPI.swift; sourceTree = "<group>"; };
@@ -1572,6 +1580,7 @@
 				53E26C4B230223F8009240B2 /* AppController+Push.swift */,
 				53E341F5224D9FC7002BB5F4 /* AppController+URL.swift */,
 				0AB736C12458C031000190F8 /* AppController+Poke.swift */,
+				0A56ABE024E472EE00D30649 /* AppController+ConstellationCheck.swift */,
 				5344D82E21C4649700704A34 /* AppDelegate.swift */,
 				5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */,
 				536255D023AAC5F0001007D0 /* AppDelegate+Background.swift */,
@@ -1624,6 +1633,8 @@
 				0AF9E0AB246B23F900910575 /* ExitOperation.swift */,
 				0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */,
 				1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */,
+				0A56ABDE24E470A200D30649 /* RedeemInviteOperation.swift */,
+				0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */,
 			);
 			path = Bot;
 			sourceTree = "<group>";
@@ -2169,6 +2180,7 @@
 				1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */,
 				0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */,
 				0AF9966B24D8A0B6001113BE /* Report.swift */,
+				0A56ABDC24E32F8000D30649 /* Star.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -3134,6 +3146,7 @@
 				530F019122DCEC4E007EBAE2 /* OnboardingStep.swift in Sources */,
 				2346ECB7221420E1009A94CB /* GoBot.swift in Sources */,
 				530F01B622E0D930007EBAE2 /* JoinOnboardingStep.swift in Sources */,
+				0A56ABE124E472EE00D30649 /* AppController+ConstellationCheck.swift in Sources */,
 				53B4F5E922B457FC00027C6A /* URLRequest+APIHeaders.swift in Sources */,
 				5369D2A4220B596800A65622 /* Data+JSON.swift in Sources */,
 				53AD3FE922775936005228F9 /* Thread+Assert.swift in Sources */,
@@ -3200,6 +3213,7 @@
 				53B634B422150A4100400403 /* MainViewController.swift in Sources */,
 				0A64A84624735717009A5EBF /* PhoneVerificationAPIService.swift in Sources */,
 				8D768CEC2321A38800B6EC29 /* UIScreen+Sizes.swift in Sources */,
+				0A1CA4C524E5D714006CAC43 /* FollowOperation.swift in Sources */,
 				53631EF123A95E7B009C6999 /* NSAttributedString+Empty.swift in Sources */,
 				533EDBF023861169008B3565 /* Caches.swift in Sources */,
 				5357BD7B23CEB798005665AB /* DebugAnalyticsViewController.swift in Sources */,
@@ -3255,6 +3269,7 @@
 				0AD0D31224736C1D003C9F82 /* DirectoryAPI.swift in Sources */,
 				23C7443B2200B12000FB554A /* Content.swift in Sources */,
 				0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */,
+				0A56ABDF24E470A200D30649 /* RedeemInviteOperation.swift in Sources */,
 				530F01B222DFCEED007EBAE2 /* String+IsValid.swift in Sources */,
 				5376FADC228B9B4900411F5B /* IdentitiesViewController.swift in Sources */,
 				0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */,
@@ -3351,6 +3366,7 @@
 				535B6A0623712D79008C248E /* UIViewController+Block.swift in Sources */,
 				53DF335023A069FF0017566D /* AnalyticsService+Bot.swift in Sources */,
 				53362F6A2209108F007264CB /* NetworkKey.swift in Sources */,
+				0A56ABDD24E32F8000D30649 /* Star.swift in Sources */,
 				53E341F4224D9E3B002BB5F4 /* URL+Identifier.swift in Sources */,
 				0ACA5742243CFAEC001C5E37 /* MarkdownStyler.swift in Sources */,
 				8DD985D22329B94600FA2F1A /* ThreadInteractionView.swift in Sources */,

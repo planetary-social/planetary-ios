@@ -40,8 +40,8 @@ class FakeBot: Bot {
         fatalError("TODO:knownPubs")
     }
     
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        fatalError("TODO:invite:redeem")
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
+        queue.async{ completion(nil) }
     }
     
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {

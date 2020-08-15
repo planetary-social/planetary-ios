@@ -87,7 +87,7 @@ protocol Bot {
 
     // Redeem uses the invite information and accepts it.
     // It adds the pub behind the address to the connection sheduling table and follows it.
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion)
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion)
 
     // MARK: Publish
 
@@ -226,6 +226,10 @@ extension Bot {
     
     func about(identity: Identity, completion:  @escaping AboutCompletion) {
         self.about(queue: .main, identity: identity, completion: completion)
+    }
+    
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
+        self.inviteRedeem(queue: .main, token: token, completion: completion)
     }
     
 }

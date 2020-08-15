@@ -17,9 +17,29 @@ extension Onboarding {
             Log.unexpected(.missingValue, "\(#function): Cannot repair onboarding without being logged in")
             return
         }
-
-        // only run on our network
-        guard AppConfiguration.current?.network == NetworkKey.planetary else { return }
+        
+        
+        Bots.current.knownPubs { (knownPubs, error) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
+//            let stars = Set(Environment.Constellation.stars)
+//            
+//            let connectedStars = stars.filter { star in
+//                knownPubs.contains { (knownPub) -> Bool in
+//                    knownPub.ForFeed == star.feed
+//                }
+//            }
+//            
+//            let numberOfMissingStars = 3 - connectedStars.count
+//            if numberOfMissingStars > 0 {
+//                let notConnectedStars = stars.subtracting(connectedStars)
+//                let missingStars = notConnectedStars.randomSample(UInt(numberOfMissingStars))
+//                let redeemInviteOperations = missingStars.map{ RedeemInviteOperation(token: $0.invite) }
+//                
+//            }
+            
+        }
 
         let operation = StatisticsOperation()
         operation.completionBlock = {

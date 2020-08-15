@@ -105,6 +105,8 @@ class LaunchViewController: UIViewController {
             // do any repairs or migrations
             Onboarding.repair2019113()
             
+            AppController.shared.runConstellationCheck()
+            
             guard error == nil else {
                 let controller = UIAlertController(title: Text.error.text,
                                                    message: Text.Error.login.text,

@@ -345,8 +345,7 @@ class GoBot: Bot {
     
     // MARK: Invites
     
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
         self.queue.async {
             token.withGoString {
                 goStr in
@@ -356,7 +355,7 @@ class GoBot: Bot {
                 if !worked { // TODO: find a nicer way to pass errors back on the C-API
                     err = GoBotError.unexpectedFault("invite did not work. Maybe try again?")
                 }
-                DispatchQueue.main.async { completion(err) }
+                queue.async { completion(err) }
             }
         }
     }

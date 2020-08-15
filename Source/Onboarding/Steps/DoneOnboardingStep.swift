@@ -10,8 +10,6 @@ import Foundation
 import UIKit
 
 class DoneOnboardingStep: OnboardingStep {
-    
-    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
 
     private let directoryToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
@@ -36,45 +34,28 @@ class DoneOnboardingStep: OnboardingStep {
     }
     
     func refresh(completionBlock: @escaping () -> Void) {
-        if DoneOnboardingStep.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(DoneOnboardingStep.refreshBackgroundTaskIdentifier)
-        }
         
-        Log.info("Onboarding triggering a medium refresh")
-        let refreshOperation = RefreshOperation()
-        refreshOperation.refreshLoad = .medium
+        let availableStars = Set(Environment.Constellation.stars)
+        let randomStars = availableStars.randomSample(3)
+        let redeemInviteOperations = randomStars.map { RedeemInviteOperation(token: $0.invite) }
         
-        let taskName = "OnboardingRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(DoneOnboardingStep.refreshBackgroundTaskIdentifier)
-            DoneOnboardingStep.refreshBackgroundTaskIdentifier = .invalid
-        }
-        DoneOnboardingStep.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = {
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-           
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                DoneOnboardingStep.refreshBackgroundTaskIdentifier = .invalid
-            }
-           
+        let completionOperation = BlockOperation {
             DispatchQueue.main.async {
                 completionBlock()
             }
         }
+        redeemInviteOperations.forEach { completionOperation.addDependency($0) }
         
+        let operations: [Operation]
         if let path = Bundle.main.path(forResource: "Preload", ofType: "bundle"), let bundle = Bundle(path: path) {
             let preloadOperation = LoadBundleOperation(bundle: bundle)
-            refreshOperation.addDependency(preloadOperation)
-            AppController.shared.operationQueue.addOperations([preloadOperation, refreshOperation],
-                                                              waitUntilFinished: false)
+            redeemInviteOperations.forEach { $0.addDependency(preloadOperation) }
+            operations = [preloadOperation] + redeemInviteOperations + [completionOperation]
         } else {
-            AppController.shared.operationQueue.addOperation(refreshOperation)
+            operations = redeemInviteOperations + [completionOperation]
         }
+        AppController.shared.operationQueue.addOperations(operations,
+                                                          waitUntilFinished: false)
     }
 
     override func primary() {
