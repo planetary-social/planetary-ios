@@ -213,6 +213,21 @@ class GoBot: Bot {
             }
          }
      }
+    
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+        self.queue.async {
+            do {
+                let pubs = try self.database.getRedeemedPubs()
+                queue.async {
+                    completion(pubs, nil)
+                }
+            } catch {
+                queue.async {
+                    completion([], error)
+                }
+            }
+        }
+    }
 
     private var _isSyncing = false
     var isSyncing: Bool { return self._isSyncing }

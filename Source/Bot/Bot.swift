@@ -60,6 +60,8 @@ protocol Bot {
     // MARK: Sync
     
     func knownPubs(completion: @escaping KnownPubsCompletion)
+    
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
 
     // Sync is the bot reaching out to remote peers and gathering the latest
     // data from the network.  This only updates the local log and requires
@@ -232,4 +234,7 @@ extension Bot {
         self.inviteRedeem(queue: .main, token: token, completion: completion)
     }
     
+    func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
+        self.pubs(queue: .main, completion: completion)
+    }
 }

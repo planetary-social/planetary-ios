@@ -39,6 +39,7 @@ struct KnownPub: Hashable {
     let InUse: Bool
     let WorkedLast: String
     let LastError: String
+    let redeemed: Date?
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(self.AddressID)

@@ -92,41 +92,7 @@ class GoBotInternal {
     var currentRepoPath: String { return self.repoPath }
     private var repoPath: String = "/tmp/FBTT/unset"
     
-    // TODO this is little dangerous if Identities.verse is modified
-    // ultimately this should be configured from querying
-    // the Verse REST API
-    // tuple of primary and fallbacks TODO: undo this once the live-streaming is in place
-    private var allPeers: [ String : (Peer, [Peer]) ] = [
-        NetworkKey.ssb.string: ( Peer(tcpAddr: "main2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub2"]!) , [
-            Peer(tcpAddr: "main1.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
-            Peer(tcpAddr: "main3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!),
-            Peer(tcpAddr: "main4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!),
-            Peer(tcpAddr: "main5.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub5"]!),
-            Peer(tcpAddr: "main6.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub6"]!),
-        ]),
-
-        NetworkKey.planetary.string: (Peer(tcpAddr: "demo2.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
-            Peer(tcpAddr: "demo1.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go1"]!),
-            Peer(tcpAddr: "demo3.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go3"]!),
-            Peer(tcpAddr: "demo4.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go4"]!)
-        ]),
-
-        NetworkKey.integrationTests.string: (Peer(tcpAddr: "testing-ci.planetary.social:9119", pubKey: Identities.testNet.pubs["integrationpub1"]!), [])
-    ]
-    
-    private var peers: [Peer] {
-        get {
-            guard let peersForNetwork = self.allPeers[self.currentNetwork.string] else {
-                return []
-            }
-            var peersList: [Peer] = []
-            peersList.append(peersForNetwork.0)
-            for p in peersForNetwork.1 {
-                peersList.append(p)
-            }
-            return peersList
-        }
-    }
+    private let peers: [Peer] = Environment.Constellation.stars.map{$0.toPeer()}
 
     var peerIdentities: [(String, String)] {
         var identities: [(String, String)] = []
@@ -327,6 +293,7 @@ class GoBotInternal {
     }
     
     func dialOne(peer: Peer) -> Bool {
+        Log.debug("Dialing \(peer.pubKey)")
         let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
         var worked: Bool = false
         multiServ.withGoString {
@@ -340,10 +307,7 @@ class GoBotInternal {
 
     @discardableResult
     func dialForNotifications() -> Bool {
-        guard let peersForNetwork = self.allPeers[self.currentNetwork.string] else {
-            return false
-        }
-        return dialOne(peer: peersForNetwork.0)
+        return dialOne(peer: Environment.Constellation.stars.randomElement()!.toPeer())
     }
 
     // MARK: Status / repo stats

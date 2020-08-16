@@ -40,6 +40,11 @@ class FakeBot: Bot {
         fatalError("TODO:knownPubs")
     }
     
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+        queue.async {
+            completion([], nil)
+        }
+    }
     func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
         queue.async{ completion(nil) }
     }

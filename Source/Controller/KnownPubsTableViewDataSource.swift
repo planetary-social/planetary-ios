@@ -16,7 +16,7 @@ protocol KnownPubsTableViewDataSourceDelegate: class {
 
 class KnownPubsTableViewDataSource: NSObject {
 
-    var knownPubs: KnownPubs {
+    var pubs: [Pub] {
         didSet {
             self.load()
         }
@@ -26,14 +26,14 @@ class KnownPubsTableViewDataSource: NSObject {
 
     weak var delegate: KnownPubsTableViewDataSourceDelegate?
 
-    init(knownPubs: KnownPubs) {
-        self.knownPubs = knownPubs
+    init(pubs: [Pub]) {
+        self.pubs = pubs
         super.init()
         self.load()
     }
 
     private func load() {
-        let identities = Array(self.knownPubs.prefix(10)).map{ $0.ForFeed }
+        let identities = Array(self.pubs.prefix(10)).map{ $0.address.key }
         self.loadAbouts(for: identities) {
             [weak self] in
             self?.delegate?.reload()
@@ -56,7 +56,7 @@ class KnownPubsTableViewDataSource: NSObject {
 extension KnownPubsTableViewDataSource: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        if self.knownPubs.isEmpty {
+        if self.pubs.isEmpty {
             return 1
         }
         return 2
@@ -66,7 +66,7 @@ extension KnownPubsTableViewDataSource: UITableViewDataSource {
         if section == 0 {
             return 1
         }
-        return self.knownPubs.count
+        return self.pubs.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -76,14 +76,14 @@ extension KnownPubsTableViewDataSource: UITableViewDataSource {
             cell.accessoryType = .disclosureIndicator
             return cell
         } else {
-            let knownPub = knownPubs[indexPath.row]
+            let pub = pubs[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: "subtitleCell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "subtitleCell")
-            if let index = self.abouts.index(forKey: knownPub.ForFeed) {
-                cell.textLabel?.text = self.abouts[index].value.name ?? knownPub.ForFeed
+            if let index = self.abouts.index(forKey: pub.address.key) {
+                cell.textLabel?.text = self.abouts[index].value.name ?? pub.address.key
             } else {
-                cell.textLabel?.text = knownPub.ForFeed
+                cell.textLabel?.text = pub.address.key
             }
-            cell.detailTextLabel?.text = "\(Text.ManagePubs.lastWorked.text): \(knownPub.WorkedLast)"
+            cell.detailTextLabel?.text = pub.address.key
             cell.accessoryType = .disclosureIndicator
             return cell
         }
@@ -104,7 +104,7 @@ extension KnownPubsTableViewDataSource: UITableViewDataSourcePrefetching {
 
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         let indexes = indexPaths.map { $0.row }
-        let identities = Set(self.knownPubs.elements(at: indexes).map{$0.ForFeed})
+        let identities = Set(self.pubs.elements(at: indexes).map{$0.address.key})
         let unfetchedIdentities = identities.subtracting(Set(self.abouts.keys))
         self.loadAbouts(for: Array(unfetchedIdentities))
     }
