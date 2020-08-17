@@ -11,15 +11,15 @@ import Foundation
 extension AppController {
     
     func runConstellationCheck() {
-        Bots.current.knownPubs { [weak self] (knownPubs, error) in
+        Bots.current.pubs { [weak self] (pubs, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
             let stars = Set(Environment.Constellation.stars)
             
             let connectedStars = stars.filter { star in
-                knownPubs.contains { (knownPub) -> Bool in
-                    knownPub.ForFeed == star.feed
+                pubs.contains { (pub) -> Bool in
+                    pub.address.key == star.feed
                 }
             }
             

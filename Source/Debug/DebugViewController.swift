@@ -69,23 +69,6 @@ class DebugViewController: DebugTableViewController {
             },
                                              actionClosure: nil)]
 
-        settings += [DebugTableViewCellModel(title: "Identities",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                let count = Identities.ssb.all.count + Identities.planetary.all.count + Identities.verse.all.count
-                cell.detailTextLabel?.text = "\(count)"
-                cell.accessoryType = .disclosureIndicator
-            },
-                                             actionClosure:
-            {
-                cell in
-                let controller = IdentitiesViewController()
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
-        )]
-
         return ("Application", settings, nil)
     }
 

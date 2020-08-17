@@ -140,18 +140,7 @@ class GoBotInternal {
         // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
 
-        var servicePubs: [Identity]?
-        switch network {
-        case NetworkKey.ssb:
-            // TODO: only planetary service pubs have this plugin currently
-            servicePubs = Identities.ssb.pubs.map({ (key, value) in return value })
-        case NetworkKey.planetary:
-            servicePubs = Identities.planetary.pubs.map({ (key, value) in return value })
-        case NetworkKey.integrationTests:
-           servicePubs = Identities.testNet.pubs.map({ (key, value) in return value })
-        default:
-            Log.unexpected(.botError, "unconfigured network for service pubs: \(network)")
-        }
+        let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
 
         let cfg = BotConfig(
             AppKey: network.string,
@@ -182,10 +171,13 @@ class GoBotInternal {
             self.currentNetwork = network
 
             // make sure internal planetary pubs are authorized for connections
-            if let pubs = servicePubs {
-                for pub in pubs { self.replicate(feed: pub) }
+            for pub in servicePubs {
+                self.replicate(feed: pub)
             }
 
+            // Dial one pub
+            self.dial(atLeast: 1, tries: 10)
+            
             return nil
         }
         

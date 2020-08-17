@@ -310,29 +310,6 @@ class DebugOnboardingViewController: DebugTableViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
-        settings += [DebugTableViewCellModel(title: "Tap to follow company identities",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                cell.detailTextLabel?.text = "\(Identities.planetary.all.count)"
-            },
-                                             actionClosure:
-            {
-                cell in
-                cell.showActivityIndicator()
-                guard let context = Onboarding.Context.fromCurrentAppConfiguration() else { return }
-                Onboarding.followRequiredIdentities(context: context) {
-                    [weak self] result, contacts, errors in
-                    cell.hideActivityIndicator()
-                    cell.detailTextLabel?.text = result.successOrFailed
-                    let total = contacts.count + errors.count
-                    let text = "Followed \(contacts.count) of \(total), \(errors.count) errors"
-                    self?.followErrorTextView.text = text
-                }
-            }
-        )]
-
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure:

@@ -256,7 +256,7 @@ class FakeBot: Bot {
         }
     }
 
-    func abouts(identities: Identities, completion:  @escaping AboutsCompletion) {
+    func abouts(identities: [Identity], completion:  @escaping AboutsCompletion) {
         completion(self.abouts(), nil)
     }
     

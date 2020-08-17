@@ -236,7 +236,7 @@ extension PeerStatistics {
     // TODO and find others that are on the same subnet
     var localCount: Int {
         var online = Set(self.currentOpen.compactMap { $0.1 })
-        let pubs = Set(Identities.planetary.pubs.compactMap { $0.1 })
+        let pubs = Set(Environment.Constellation.stars.map { $0.feed })
         online.subtract(pubs)
         return online.count
     }

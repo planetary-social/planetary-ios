@@ -347,7 +347,6 @@
 		5314EF4B22EA289F0065D02A /* KeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A3B21F7DBD800D5C8C0 /* KeyValue.swift */; };
 		5314EF4C22EA28A40065D02A /* BotStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535CD3742266901F0039BCF2 /* BotStatistics.swift */; };
 		5314EF4D22EA28B60065D02A /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE422735C7B005228F9 /* Value.swift */; };
-		5314EF4E22EA28BE0065D02A /* Identities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376FAD9228B63AF00411F5B /* Identities.swift */; };
 		5314EF4F22EA28C80065D02A /* String+Whitespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD4C422C3D6CC005A4DF2 /* String+Whitespace.swift */; };
 		5314EF5022EA28D00065D02A /* Bots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532751D0222497A70026500F /* Bots.swift */; };
 		5314EF5122EA28E60065D02A /* AppConfiguration+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C2B12B2294E8A50018D0A8 /* AppConfiguration+Keychain.swift */; };
@@ -560,8 +559,6 @@
 		5372175122FD0841008A760A /* DataUsageSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372175022FD0841008A760A /* DataUsageSettingsViewController.swift */; };
 		5372175322FD11B3008A760A /* Bool+YesOrNo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372175222FD11B3008A760A /* Bool+YesOrNo.swift */; };
 		5374DF4021E9ADFE00956122 /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5374DF3F21E9ADFE00956122 /* AppController.swift */; };
-		5376FADA228B63AF00411F5B /* Identities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376FAD9228B63AF00411F5B /* Identities.swift */; };
-		5376FADC228B9B4900411F5B /* IdentitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376FADB228B9B4900411F5B /* IdentitiesViewController.swift */; };
 		5376FADF228CF83A00411F5B /* Saveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376FADE228CF83A00411F5B /* Saveable.swift */; };
 		5376FAE2228D005600411F5B /* UIBarButtonItem+Saveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376FAE1228D005600411F5B /* UIBarButtonItem+Saveable.swift */; };
 		539208B4235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539208B3235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift */; };
@@ -626,7 +623,6 @@
 		53BD748D233191000060E47E /* DateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F018422DACDC3007EBAE2 /* DateTests.swift */; };
 		53C2B1282294DFF50018D0A8 /* AppConfiguration+Migrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C2B1272294DFF50018D0A8 /* AppConfiguration+Migrate.swift */; };
 		53C2B12C2294E8A50018D0A8 /* AppConfiguration+Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C2B12B2294E8A50018D0A8 /* AppConfiguration+Keychain.swift */; };
-		53C2B12D2295A8DA0018D0A8 /* Identities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376FAD9228B63AF00411F5B /* Identities.swift */; };
 		53C2B1302295A9800018D0A8 /* NullAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C2B12E2295A95A0018D0A8 /* NullAnalytics.swift */; };
 		53C2B1312295A9910018D0A8 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D66626222A55640001D9BB /* AnalyticsService.swift */; };
 		53C2B1322295A9CB0018D0A8 /* AnalyticsEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F775228F07D00058D67A /* AnalyticsEnums.swift */; };
@@ -1126,8 +1122,6 @@
 		5372175022FD0841008A760A /* DataUsageSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUsageSettingsViewController.swift; sourceTree = "<group>"; };
 		5372175222FD11B3008A760A /* Bool+YesOrNo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bool+YesOrNo.swift"; sourceTree = "<group>"; };
 		5374DF3F21E9ADFE00956122 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
-		5376FAD9228B63AF00411F5B /* Identities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identities.swift; sourceTree = "<group>"; };
-		5376FADB228B9B4900411F5B /* IdentitiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentitiesViewController.swift; sourceTree = "<group>"; };
 		5376FADE228CF83A00411F5B /* Saveable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Saveable.swift; sourceTree = "<group>"; };
 		5376FAE1228D005600411F5B /* UIBarButtonItem+Saveable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Saveable.swift"; sourceTree = "<group>"; };
 		539208B3235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+ApplicationWillEnterForeground.swift"; sourceTree = "<group>"; };
@@ -2013,7 +2007,6 @@
 				533F4050225E9E010060B4B9 /* DebugUIViewController.swift */,
 				539246DD22A836A000D01EEC /* DebugUserDirectoryViewController.swift */,
 				53C422AC21C4769900A314AD /* DebugViewController.swift */,
-				5376FADB228B9B4900411F5B /* IdentitiesViewController.swift */,
 				53362F6B22091DD4007264CB /* NetworkKeyViewController.swift */,
 				53FCAFDD22051C88009E9E82 /* SecretViewController.swift */,
 				2346ECB922144D61009A94CB /* SimplePublishView.swift */,
@@ -2158,7 +2151,6 @@
 				53E29CDE22D7EE1C008A2CB1 /* Hashtag+NSAttributedString.swift */,
 				53E29CDC22D7EC6F008A2CB1 /* Hashtag+String.swift */,
 				531A8A4121F7DE0D00D5C8C0 /* Identifier.swift */,
-				5376FAD9228B63AF00411F5B /* Identities.swift */,
 				8D35CEC42347E370004A4191 /* Identity+Bot.swift */,
 				53CF2A4C22026B1700F0A2CC /* Image.swift */,
 				53211CE32283717C007FB785 /* Image+UIImage.swift */,
@@ -2774,7 +2766,6 @@
 				53B4F5F422B73FD000027C6A /* About+NSMutableAttributedString.swift in Sources */,
 				8DB041FD234FA994006AC35B /* Identity+Bot.swift in Sources */,
 				53BD748D233191000060E47E /* DateTests.swift in Sources */,
-				53C2B12D2295A8DA0018D0A8 /* Identities.swift in Sources */,
 				53C2B1322295A9CB0018D0A8 /* AnalyticsEnums.swift in Sources */,
 				23EF5AAF249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
 				531A8A5121FA622900D5C8C0 /* Bundle+Current.swift in Sources */,
@@ -2979,7 +2970,6 @@
 				2358695624A0FAA100F4FC1D /* API.swift in Sources */,
 				0ACE91AB243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */,
 				0A64A83F24735520009A5EBF /* NullPushAPI.swift in Sources */,
-				5314EF4E22EA28BE0065D02A /* Identities.swift in Sources */,
 				0ABCA9042437BF4D00D7F39C /* String+Markdown.swift in Sources */,
 				5314EF5822EA293D0065D02A /* ViewDatabase.swift in Sources */,
 				2356500C2369C6CB00C3DBC0 /* DropContentRequest.swift in Sources */,
@@ -3238,7 +3228,6 @@
 				535754F42268E248002A6989 /* ContentType.swift in Sources */,
 				0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */,
 				539246DE22A836A000D01EEC /* DebugUserDirectoryViewController.swift in Sources */,
-				5376FADA228B63AF00411F5B /* Identities.swift in Sources */,
 				53211CD62281D567007FB785 /* EditAboutView.swift in Sources */,
 				8D6D2E64236387C800E7B0EC /* FollowCountView.swift in Sources */,
 				53211CDA2281EB22007FB785 /* AppController+Progress.swift in Sources */,
@@ -3271,7 +3260,6 @@
 				0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */,
 				0A56ABDF24E470A200D30649 /* RedeemInviteOperation.swift in Sources */,
 				530F01B222DFCEED007EBAE2 /* String+IsValid.swift in Sources */,
-				5376FADC228B9B4900411F5B /* IdentitiesViewController.swift in Sources */,
 				0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */,
 				531EC4122310C9EE001A25AD /* Blob.swift in Sources */,
 				0AC10DEB246EFB3400CCA22A /* TimersService.swift in Sources */,

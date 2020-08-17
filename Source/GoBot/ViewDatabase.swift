@@ -873,7 +873,7 @@ class ViewDatabase {
     // MARK: follows and blocks
     
     // who is this feed following?
-    func getFollows(feed: Identity) throws -> Identities {
+    func getFollows(feed: Identity) throws -> [Identity] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }

@@ -21,7 +21,7 @@ extension AboutTableViewDelegate where Self: ContentViewController {
 
 class AboutTableViewDataSource: NSObject {
 
-    var identities: Identities {
+    var identities: [Identity] {
         didSet {
             self.load()
         }
@@ -31,7 +31,7 @@ class AboutTableViewDataSource: NSObject {
 
     var delegate: AboutTableViewDelegate?
 
-    init(identities: Identities) {
+    init(identities: [Identity]) {
         self.identities = identities
         super.init()
         self.load()

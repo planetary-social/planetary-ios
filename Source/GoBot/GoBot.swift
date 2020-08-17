@@ -829,7 +829,7 @@ class GoBot: Bot {
         }
     }
 
-    func abouts(identities: Identities, completion: @escaping AboutsCompletion) {
+    func abouts(identities: [Identity], completion: @escaping AboutsCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             var abouts: [About] = []
@@ -883,8 +883,9 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let follows: Identities = try self.database.getFollows(feed: identity)
-                let withoutPubs = follows.withoutPubs()
+                let follows: [Identity] = try self.database.getFollows(feed: identity)
+                let defaultStars = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStars.contains($0) }
                 DispatchQueue.main.async { completion(withoutPubs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
@@ -897,7 +898,8 @@ class GoBot: Bot {
         self.queue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
-                let withoutPubs = follows.withoutPubs()
+                let defaultStarsIdentities = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStarsIdentities.contains($0) }
                 DispatchQueue.main.async { completion(withoutPubs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
@@ -908,10 +910,11 @@ class GoBot: Bot {
     func followings(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
         self.queue.async {
             do {
-                var follows: [About] = try self.database.getFollows(feed: identity)
-                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                let follows: [About] = try self.database.getFollows(feed: identity)
+                let defaultStars = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStars.contains($0.identity) }
                 queue.async {
-                    completion(follows, nil)
+                    completion(withoutPubs, nil)
                 }
             } catch {
                 queue.async {
@@ -924,10 +927,11 @@ class GoBot: Bot {
     func followers(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
         self.queue.async {
             do {
-                var follows: [About] = try self.database.followedBy(feed: identity)
-                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                let follows: [About] = try self.database.followedBy(feed: identity)
+                let defaultStars = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStars.contains($0.identity) }
                 queue.async {
-                    completion(follows, nil)
+                    completion(withoutPubs, nil)
                 }
             } catch {
                 queue.async {

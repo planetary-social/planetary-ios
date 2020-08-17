@@ -133,6 +133,7 @@ class LaunchViewController: UIViewController {
                 AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
+            
             bot.about { (about, aboutErr) in
                 Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later

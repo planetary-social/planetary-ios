@@ -66,7 +66,7 @@ typealias Mentions = [Mention]
 
 extension Mentions {
 
-    func identities() -> Identities {
+    func identities() -> [Identity] {
         return self.map { $0.identity }
     }
 
