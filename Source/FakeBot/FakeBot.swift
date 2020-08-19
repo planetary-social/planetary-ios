@@ -18,10 +18,6 @@ class FakeBot: Bot {
         fatalError("TODO:\(#function)")
     }
     
-    func resume() {
-        fatalError("TODO:\(#function)")
-    }
-    
     func suspend() {
         fatalError("TODO:\(#function)")
     }
@@ -194,7 +190,7 @@ class FakeBot: Bot {
 
     let isSyncing = false
 
-    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)
@@ -202,7 +198,10 @@ class FakeBot: Bot {
     }
     
     func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
-        self.sync(queue: queue, completion: completion)
+        self._statistics.lastSyncDate = Date()
+        queue.async {
+            completion(nil, 0, 0)
+        }
       }
 
     // MARK: Refresh

@@ -8,11 +8,25 @@
 
 import Foundation
 
+/// Pokes the bot into doing a sync. Don't use this SyncOperation directly, use
+/// SendMissionOperation instead.
 class SyncOperation: AsynchronousOperation {
     
+    /// List of available peers to establish connection
+    var peers: [Peer]
+    
+    /// If true, only will sync to one peer with no retries
     var notificationsOnly: Bool = false
+    
+    /// Number of new messages available in the repo after the sync
     private(set) var newMessages: Int = 0
+    
     private(set) var error: Error?
+    
+    init(peers: [Peer]) {
+        self.peers = peers
+        super.init()
+    }
      
     override func main() {
         Log.info("SyncOperation (notificationsOnly=\(notificationsOnly)) started.")
@@ -28,7 +42,7 @@ class SyncOperation: AsynchronousOperation {
         }
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        if notificationsOnly {
+        if self.notificationsOnly {
             Analytics.shared.trackBotSync()
             Bots.current.syncNotifications(queue: queue) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
@@ -45,7 +59,7 @@ class SyncOperation: AsynchronousOperation {
             }
         } else {
             Analytics.shared.trackBotSync()
-            Bots.current.sync(queue: queue) { [weak self] (error, timeInterval, newMessages) in
+            Bots.current.sync(queue: queue, peers: peers) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
                                           numberOfMessages: newMessages,
                                           error: error)
@@ -59,7 +73,7 @@ class SyncOperation: AsynchronousOperation {
                 self?.finish()
             }
         }
-     }
+    }
      
     
 }

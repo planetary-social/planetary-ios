@@ -43,7 +43,6 @@ protocol Bot {
     var version: String { get }
 
     // MARK: AppLifecycle
-    func resume()
     func suspend()
     func exit()
     
@@ -67,7 +66,7 @@ protocol Bot {
     // data from the network.  This only updates the local log and requires
     // calling `refresh` to ensure the view database is updated.
     var isSyncing: Bool { get }
-    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion)
+    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
     func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion)
@@ -202,8 +201,8 @@ protocol Bot {
 
 extension Bot {
     
-    func sync(completion: @escaping SyncCompletion) {
-        self.sync(queue: .main, completion: completion)
+    func sync(peers: [Peer], completion: @escaping SyncCompletion) {
+        self.sync(queue: .main, peers: peers, completion: completion)
     }
     
     func abouts(completion:  @escaping AboutsCompletion) {

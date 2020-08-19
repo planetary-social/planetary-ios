@@ -28,6 +28,10 @@ struct PubAddress: Codable {
     let key: Identifier
     let host: String
     let port: UInt
+    
+    func toPeer() -> Peer {
+        return Peer(tcpAddr: "\(self.host):\(self.port)", pubKey: self.key)
+    }
 }
 
 struct KnownPub: Hashable {

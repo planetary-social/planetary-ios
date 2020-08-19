@@ -104,11 +104,15 @@ class BotViewController: DebugTableViewController {
             {
                 [unowned self] cell in
                 cell.showActivityIndicator()
-                self.bot.sync(queue: .main) {
-                    [weak self] _, _, _ in
-                    cell.hideActivityIndicator()
-                    self?.updateSettings()
+                let sendMissionOperation = SendMissionOperation(quality: .high)
+                sendMissionOperation.completionBlock = { [weak self] in
+                    DispatchQueue.main.async { [weak self] in
+                        cell.hideActivityIndicator()
+                        self?.updateSettings()
+                    }
                 }
+                let operationQueue = OperationQueue()
+                operationQueue.addOperation(sendMissionOperation)
             })]
 
         settings += [DebugTableViewCellModel(title: "Refresh",

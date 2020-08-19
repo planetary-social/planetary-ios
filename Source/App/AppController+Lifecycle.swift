@@ -24,10 +24,11 @@ extension AppController {
     }
 
     func resume() {
-        let resumeOperation = ResumeOperation()
+        let sendMissionOperation = SendMissionOperation(quality: .high)
         let refreshOperation = RefreshOperation(refreshLoad: .tiny)
-        refreshOperation.addDependency(resumeOperation)
-        self.operationQueue.addOperations([resumeOperation, refreshOperation], waitUntilFinished: false)
+        refreshOperation.addDependency(sendMissionOperation)
+        self.operationQueue.addOperations([sendMissionOperation, refreshOperation],
+                                          waitUntilFinished: false)
         Timers.shared.pokeTimers.forEach{$0.start()}
         self.syncPushNotificationsSettings()
     }

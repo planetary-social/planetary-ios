@@ -102,10 +102,6 @@ class LaunchViewController: UIViewController {
                                                  metadata: ["action": "login-from-launch",
                                                             "network": network,
                                                             "identity": secret.identity])
-            // do any repairs or migrations
-            Onboarding.repair2019113()
-            
-            AppController.shared.runConstellationCheck()
             
             guard error == nil else {
                 let controller = UIAlertController(title: Text.error.text,
@@ -133,6 +129,9 @@ class LaunchViewController: UIViewController {
                 AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
+            
+            let sendMissionOperation = SendMissionOperation(quality: .high)
+            AppController.shared.operationQueue.addOperation(sendMissionOperation)
             
             bot.about { (about, aboutErr) in
                 Log.optional(aboutErr)

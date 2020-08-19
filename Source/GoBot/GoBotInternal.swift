@@ -92,14 +92,6 @@ class GoBotInternal {
     var currentRepoPath: String { return self.repoPath }
     private var repoPath: String = "/tmp/FBTT/unset"
     
-    private let peers: [Peer] = Environment.Constellation.stars.map{$0.toPeer()}
-
-    var peerIdentities: [(String, String)] {
-        var identities: [(String, String)] = []
-        for peer in self.peers { identities += [(peer.tcpAddr, peer.pubKey)] }
-        return identities
-    }
-
     let name = "GoBot"
 
     var version: String {
@@ -174,9 +166,6 @@ class GoBotInternal {
             for pub in servicePubs {
                 self.replicate(feed: pub)
             }
-
-            // Dial one pub
-            self.dial(atLeast: 1, tries: 10)
             
             return nil
         }
@@ -251,36 +240,40 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dial(atLeast: Int, tries: Int = 10) -> Bool {
-        let wanted = min(self.peers.count, atLeast) // how many connections are we shooting for?
+    func dial(from peers: [Peer], atLeast: Int, tries: Int = 10) -> Bool {
+        let wanted = min(peers.count, atLeast) // how many connections are we shooting for?
         var hasWorked :Int = 0
         var tried: Int = tries
         while hasWorked < wanted && tried > 0 {
-            if self.dialAnyone() {
+            if self.dialAnyone(from: peers) {
                 hasWorked += 1
             }
             tried -= 1
         }
         if hasWorked != wanted {
-            Log.unexpected(.botError, "failed to make pub connection(s)")
+            Log.unexpected(.botError, "failed to make peer connection(s)")
             return false
         }
         return true
     }
 
-    private func dialAnyone() -> Bool {
-        guard let p = self.peers.randomElement() else {
+    private func dialAnyone(from peers: [Peer]) -> Bool {
+        guard let peer = peers.randomElement() else {
             Log.unexpected(.botError, "no peers in sheduler table")
             return false
         }
-        return self.dialOne(peer: p)
+        return self.dialOne(peer: peer)
     }
     
     @discardableResult
-    func dialSomePeers() -> Bool {
+    func dialSomePeers(from peers: [Peer]) -> Bool {
         guard self.openConnections() == 0 else { return true } // only make connections if we dont have any
         ssbConnectPeers(2)
-        self.dial(atLeast: 1, tries: 10)
+        guard peers.count > 0 else {
+            Log.debug("User doesn't have redeemed pubs")
+            return true
+        }
+        self.dial(from: peers, atLeast: 1, tries: 10)
         return true
     }
     
@@ -298,8 +291,12 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dialForNotifications() -> Bool {
-        return dialOne(peer: Environment.Constellation.stars.randomElement()!.toPeer())
+    func dialForNotifications(from peers: [Peer]) -> Bool {
+        if let peer = peers.randomElement() {
+            return dialOne(peer: peer)
+        } else {
+            return false
+        }
     }
 
     // MARK: Status / repo stats

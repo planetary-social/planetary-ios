@@ -34,25 +34,22 @@ class DoneOnboardingStep: OnboardingStep {
     }
     
     func refresh(completionBlock: @escaping () -> Void) {
-        
-        let availableStars = Set(Environment.Constellation.stars)
-        let randomStars = availableStars.randomSample(3)
-        let redeemInviteOperations = randomStars.map { RedeemInviteOperation(token: $0.invite) }
+        let sendMissionOperation = SendMissionOperation(quality: .high)
         
         let completionOperation = BlockOperation {
             DispatchQueue.main.async {
                 completionBlock()
             }
         }
-        redeemInviteOperations.forEach { completionOperation.addDependency($0) }
+        completionOperation.addDependency(sendMissionOperation)
         
         let operations: [Operation]
         if let path = Bundle.main.path(forResource: "Preload", ofType: "bundle"), let bundle = Bundle(path: path) {
             let preloadOperation = LoadBundleOperation(bundle: bundle)
-            redeemInviteOperations.forEach { $0.addDependency(preloadOperation) }
-            operations = [preloadOperation] + redeemInviteOperations + [completionOperation]
+            sendMissionOperation.addDependency(preloadOperation)
+            operations = [preloadOperation, sendMissionOperation, completionOperation]
         } else {
-            operations = redeemInviteOperations + [completionOperation]
+            operations = [sendMissionOperation, completionOperation]
         }
         AppController.shared.operationQueue.addOperations(operations,
                                                           waitUntilFinished: false)

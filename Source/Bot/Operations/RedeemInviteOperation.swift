@@ -31,8 +31,8 @@ class RedeemInviteOperation: AsynchronousOperation {
         }
         
         Log.debug("Redeeming invite \(token)...")
-        
-        Bots.current.inviteRedeem(token: self.token) { [weak self] (error) in
+        let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
+        Bots.current.inviteRedeem(queue: queue, token: self.token) { [weak self] (error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.error = error

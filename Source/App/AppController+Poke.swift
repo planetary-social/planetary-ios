@@ -24,25 +24,25 @@ extension AppController {
         }
         
         Log.info("Poking the bot into doing a sync")
-        let syncOperation = SyncOperation()
+        let sendMissionOperation = SendMissionOperation(quality: .high)
         
         let taskName = "SyncPoke"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
             // Expiry handler, iOS will call this shortly before ending the task
-            syncOperation.cancel()
+            sendMissionOperation.cancel()
             UIApplication.shared.endBackgroundTask(AppController.syncPokeBackgroundTaskIdentifier)
             AppController.syncPokeBackgroundTaskIdentifier = .invalid
         }
         AppController.syncPokeBackgroundTaskIdentifier = taskIdentifier
         
-        syncOperation.completionBlock = {
+        sendMissionOperation.completionBlock = {
             if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
                 UIApplication.shared.endBackgroundTask(taskIdentifier)
                 AppController.syncPokeBackgroundTaskIdentifier = .invalid
             }
         }
         
-        self.operationQueue.addOperation(syncOperation)
+        self.operationQueue.addOperation(sendMissionOperation)
     }
     
     func pokeRefresh() {
