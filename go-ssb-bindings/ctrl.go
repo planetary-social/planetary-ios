@@ -432,7 +432,7 @@ func ssbInviteAccept(token string) bool {
 	}
 
 	stamp := time.Now().Unix()
-	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address, redeemed) VALUES (?,?)`, peerID, tok.Address.String(), stamp)
+	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address, redeemed) VALUES (?,?,?)`, peerID, tok.Address.String(), stamp)
 	if err != nil {
 		retErr = errors.Wrap(err, "insert new pub into addresses failed")
 		return false
