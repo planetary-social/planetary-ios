@@ -7,6 +7,7 @@ import (
 	"math"
 	"runtime"
 	"time"
+    "strings"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
