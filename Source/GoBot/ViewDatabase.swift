@@ -228,7 +228,7 @@ class ViewDatabase {
             if db.userVersion == 0 {
                 let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
                 try db.execute(String(contentsOf: schemaV1url))
-                db.userVersion = 7
+                db.userVersion = 8
             } else if db.userVersion == 1 {
                 try db.execute("""
                 CREATE INDEX messagekeys_key ON messagekeys(key);

@@ -112,8 +112,9 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
     }
 
     override func primary() {
-
         var identities = self.selected.map { $0.identity }
+        identities.append(contentsOf: Environment.PlanetarySystem.planets)
+
         self.data.following = identities
 
         // SIMULATE ONBOARDING

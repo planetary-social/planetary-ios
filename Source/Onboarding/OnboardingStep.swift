@@ -26,6 +26,7 @@ class OnboardingStepData {
     var following: [Identity] = []
     var image: UIImage? = nil
     var joinedDirectory = false
+    var publicWebHosting = false
     var name: String? = nil
     var phone: String? = nil
     var simulated = false

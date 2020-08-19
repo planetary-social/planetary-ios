@@ -95,8 +95,10 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
 
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        fatalError("TODO")
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
+        queue.async {
+            completion(MessageIdentifier.null, nil)
+        }
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {

@@ -381,13 +381,11 @@ class GoBot: Bot {
     // MARK: Publish
     private var lastPublishFireTime = DispatchTime.now()
 
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        Thread.assertIsMainThread()
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
         self.queue.async {
-            self.bot.publish(content) {
-                [weak self] key, error in
+            self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
-                    DispatchQueue.main.async { completion(MessageIdentifier.null, error) }
+                    queue.async { completion(MessageIdentifier.null, error) }
                     return
                 }
 
@@ -406,17 +404,17 @@ class GoBot: Bot {
 
                     // the call happend after the given timeout (refreshDelay)
                     if now.rawValue >= when.rawValue {
-                        self?.internalRefresh(load: .short, queue: .global(qos: .userInteractive)) { // do a refresh, then return to the caller
+                        self?.internalRefresh(load: .tiny, queue: .global(qos: .userInteractive)) { // do a refresh, then return to the caller
                             error, _ in
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
                             // finally, return back to the UI
-                            DispatchQueue.main.async { completion(key, nil) }
+                            queue.async { completion(key, nil) }
                         }
                     } else {
                         // don't do a view refresh, just return to the caller
                         // Q: is this actually called for each asyncAfter call?
-                        DispatchQueue.main.async { completion(key, nil) }
+                        queue.async { completion(key, nil) }
                     }
                 }
             }

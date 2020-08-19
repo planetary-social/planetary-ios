@@ -98,7 +98,7 @@ protocol Bot {
     // The `content` argument label is required to avoid conflicts when specialized
     // forms of `publish` are created.  For example, `publish(post)` will publish a
     // `Post` model, but then also the embedded `Hashtag` models.
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion)
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion)
 
     // MARK: Post Management
 
@@ -235,5 +235,9 @@ extension Bot {
     
     func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
         self.pubs(queue: .main, completion: completion)
+    }
+    
+    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
+        self.publish(queue: .main, content: content, completion: completion)
     }
 }

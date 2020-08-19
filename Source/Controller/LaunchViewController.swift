@@ -86,8 +86,6 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         
-        self.launchIntoMain()
-        
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { loginError in
             
             var error = loginError
@@ -129,6 +127,8 @@ class LaunchViewController: UIViewController {
                 AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
+            
+            self.launchIntoMain()
             
             let sendMissionOperation = SendMissionOperation(quality: .high)
             AppController.shared.operationQueue.addOperation(sendMissionOperation)

@@ -77,6 +77,16 @@ struct About: ContentCodable {
         self.shortcode = nil
         self.publicWebHosting = nil
     }
+    
+    init(about: Identity, publicWebHosting: Bool) {
+        self.type = .about
+        self.about = about
+        self.description = nil
+        self.name = nil
+        self.image = nil
+        self.shortcode = nil
+        self.publicWebHosting = publicWebHosting
+    }
 
     init(about: Identity, image: BlobIdentifier) {
         self.type = .about

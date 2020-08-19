@@ -18,6 +18,14 @@ class DoneOnboardingStep: OnboardingStep {
         view.toggle.isOn = true
         return view
     }()
+    
+    private let publicWebHostingToggle: TitledToggle = {
+        let view = TitledToggle.forAutoLayout()
+        view.titleLabel.text = Text.PublicWebHosting.title.text
+        view.subtitleLabel.text = Text.PublicWebHosting.footer.text
+        view.toggle.isOn = true
+        return view
+    }()
 
     init() {
         super.init(.done)
@@ -27,82 +35,102 @@ class DoneOnboardingStep: OnboardingStep {
 
         let insets = UIEdgeInsets(top: 30, left: 0, bottom: -16, right: 0)
         Layout.fillSouth(of: self.view.hintLabel, with: self.directoryToggle, insets: insets)
+        
+        Layout.fillSouth(of: self.directoryToggle, with: self.publicWebHostingToggle, insets: insets)
 
         self.view.hintLabel.text = Text.Onboarding.thanksForTrying.text
 
         self.view.primaryButton.setText(.doneOnboarding)
     }
     
-    func refresh(completionBlock: @escaping () -> Void) {
-        let sendMissionOperation = SendMissionOperation(quality: .high)
-        
-        let completionOperation = BlockOperation {
-            DispatchQueue.main.async {
-                completionBlock()
-            }
-        }
-        completionOperation.addDependency(sendMissionOperation)
-        
-        let operations: [Operation]
-        if let path = Bundle.main.path(forResource: "Preload", ofType: "bundle"), let bundle = Bundle(path: path) {
-            let preloadOperation = LoadBundleOperation(bundle: bundle)
-            sendMissionOperation.addDependency(preloadOperation)
-            operations = [preloadOperation, sendMissionOperation, completionOperation]
-        } else {
-            operations = [sendMissionOperation, completionOperation]
-        }
-        AppController.shared.operationQueue.addOperations(operations,
-                                                          waitUntilFinished: false)
-    }
 
     override func primary() {
-
+        self.data.publicWebHosting = self.publicWebHostingToggle.toggle.isOn
         self.data.joinedDirectory = self.directoryToggle.toggle.isOn
-        
         let data = self.data
-
-        let skipToNextStep = {
-            self.view.lookBusy()
-            self.refresh { [weak self] in
-                self?.view.lookReady()
-                self?.next()
-            }
-        }
         
         // SIMULATE ONBOARDING
         if data.simulated {
             Analytics.shared.trackOnboardingComplete(self.data)
-            skipToNextStep()
-            return
-        }
-
-        if data.joinedDirectory == false {
-            Analytics.shared.trackOnboardingComplete(self.data)
-            skipToNextStep()
+            self.next()
             return
         }
 
         guard let me = data.context?.identity else {
             Log.unexpected(.missingValue, "Was expecting self.data.context.person.identity, skipping step")
             Analytics.shared.trackOnboardingComplete(self.data)
-            skipToNextStep()
+            self.next()
             return
         }
-
-        self.view.lookBusy(disable: self.view.primaryButton)
-        DirectoryAPI.shared.directory(show: me) { [weak self] success, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if success {
-                self?.refresh { [weak self] in
-                    self?.view.lookReady()
-                    Analytics.shared.trackOnboardingComplete(data)
-                    self?.next()
+        
+        let startOperation = BlockOperation { [weak self] in
+            DispatchQueue.main.async { [weak self] in
+                if let primaryButton = self?.view.primaryButton {
+                    self?.view.lookBusy(disable: primaryButton)
+                } else {
+                    self?.view.lookBusy()
                 }
-            } else {
-                self?.view.lookReady()
             }
         }
+        
+        let joinDirectoryOperation = BlockOperation {
+            guard data.joinedDirectory else {
+                return
+            }
+            let semaphore = DispatchSemaphore(value: 0)
+            DirectoryAPI.shared.directory(show: me) { (success, error) in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                semaphore.signal()
+            }
+            semaphore.wait()
+        }
+        joinDirectoryOperation.addDependency(startOperation)
+        
+        let publicWebHostingOperation = BlockOperation {
+            guard data.publicWebHosting else {
+                return
+            }
+            let semaphore = DispatchSemaphore(value: 0)
+            let about = About(about: me, publicWebHosting: true)
+            let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
+            Bots.current.publish(queue: queue, content: about) { (msg, error) in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                semaphore.signal()
+            }
+            semaphore.wait()
+        }
+        publicWebHostingOperation.addDependency(startOperation)
+        
+        let bundle = Bundle(path: Bundle.main.path(forResource: "Preload", ofType: "bundle")!)!
+        let preloadOperation = LoadBundleOperation(bundle: bundle)
+        preloadOperation.addDependency(publicWebHostingOperation)
+        
+        let sendMissionOperation = SendMissionOperation(quality: .high)
+        sendMissionOperation.addDependency(preloadOperation)
+        
+        let refreshOperation = RefreshOperation(refreshLoad: .medium)
+        refreshOperation.addDependency(sendMissionOperation)
+        
+        let completionOperation = BlockOperation { [weak self] in
+            DispatchQueue.main.async { [weak self] in
+                self?.view.lookReady()
+                Analytics.shared.trackOnboardingComplete(data)
+                self?.next()
+            }
+        }
+        completionOperation.addDependency(refreshOperation)
+        
+        let operations = [startOperation,
+                          joinDirectoryOperation,
+                          publicWebHostingOperation,
+                          preloadOperation,
+                          sendMissionOperation,
+                          refreshOperation,
+                          completionOperation]
+        AppController.shared.operationQueue.addOperations(operations,
+                                                          waitUntilFinished: false)
     }
 
     override func didStart() {

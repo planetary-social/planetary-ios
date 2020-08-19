@@ -87,6 +87,15 @@ enum Environment {
         }()
     }
     
+    enum PlanetarySystem {
+        private enum Keys {
+            static let planetarySystem = "PLPlanetarySystem"
+        }
+        static let planets: [Identity] = {
+            return Environment.value(for: Keys.planetarySystem).split(separator: " ").map { String($0) }
+        }()
+    }
+    
     private static func value(for key: String) -> String {
         guard let value = Environment.infoDictionary[key] as? String else {
             fatalError("\(key) not set in plist")
