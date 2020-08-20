@@ -86,8 +86,6 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         
-        self.launchIntoMain()
-        
         bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { loginError in
             
             var error = loginError
@@ -102,8 +100,6 @@ class LaunchViewController: UIViewController {
                                                  metadata: ["action": "login-from-launch",
                                                             "network": network,
                                                             "identity": secret.identity])
-            // do any repairs or migrations
-            Onboarding.repair2019113()
             
             guard error == nil else {
                 let controller = UIAlertController(title: Text.error.text,
@@ -131,6 +127,9 @@ class LaunchViewController: UIViewController {
                 AppController.shared.showAlertController(with: controller, animated: true)
                 return
             }
+            
+            self.launchIntoMain()
+            
             bot.about { (about, aboutErr) in
                 Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later

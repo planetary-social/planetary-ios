@@ -78,12 +78,6 @@ class GoBot: Bot {
 
     // MARK: App Lifecycle
 
-    func resume()  {
-        self.queue.async {
-            self.bot.dialSomePeers()
-        }
-    }
-
     func suspend() {
         self.queue.async {
             self.bot.disconnectAll()
@@ -152,6 +146,7 @@ class GoBot: Bot {
             print("===> starting gobot with prefix: \(repoPrefix)")
             #endif
             let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix)
+            
             DispatchQueue.main.async { completion(loginErr) }
             
             BlockedAPI.shared.retreiveBlockedList() {
@@ -213,6 +208,21 @@ class GoBot: Bot {
             }
          }
      }
+    
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+        self.queue.async {
+            do {
+                let pubs = try self.database.getRedeemedPubs()
+                queue.async {
+                    completion(pubs, nil)
+                }
+            } catch {
+                queue.async {
+                    completion([], error)
+                }
+            }
+        }
+    }
 
     private var _isSyncing = false
     var isSyncing: Bool { return self._isSyncing }
@@ -222,7 +232,7 @@ class GoBot: Bot {
     // note that dialSomePeers() is called, then the completion is called
     // some time later, this is a workaround until we can figure out how
     // to determine peer connection status and progress
-    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
@@ -241,7 +251,7 @@ class GoBot: Bot {
 
         self.queue.async {
             let before = self.repoNumberOfMessages()
-            self.bot.dialSomePeers()
+            self.bot.dialSomePeers(from: peers)
             let after = self.repoNumberOfMessages()
             let new = after - before
             queue.async {
@@ -252,7 +262,7 @@ class GoBot: Bot {
         }
     }
 
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
@@ -271,7 +281,7 @@ class GoBot: Bot {
 
         self.queue.async {
             let before = self.repoNumberOfMessages()
-            self.bot.dialForNotifications()
+            self.bot.dialForNotifications(from: peers)
             let after = self.repoNumberOfMessages()
             let new = after - before
             queue.async {
@@ -315,7 +325,7 @@ class GoBot: Bot {
             }
             return
         }
-        // NotificationCenter.default.post(Notification.didStartViewRefresh())
+        
         self._isRefreshing = true
         
         let elapsed = Date()
@@ -326,7 +336,6 @@ class GoBot: Bot {
                     self?.notifyRefreshComplete(in: -elapsed.timeIntervalSinceNow,
                                                 error: error,
                                                 completion: completion)
-                    NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
                 }
             }
         }
@@ -345,18 +354,18 @@ class GoBot: Bot {
     
     // MARK: Invites
     
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
         self.queue.async {
-            token.withGoString {
-                goStr in
-                let worked = ssbInviteAccept(goStr)
-
-                var err: Error? = nil
-                if !worked { // TODO: find a nicer way to pass errors back on the C-API
-                    err = GoBotError.unexpectedFault("invite did not work. Maybe try again?")
+            token.withGoString { goStr in
+                if ssbInviteAccept(goStr) {
+                    queue.async {
+                        completion(nil)
+                    }
+                } else {
+                    queue.async {
+                        completion(GoBotError.unexpectedFault("invite did not work. Maybe try again?"))
+                    }
                 }
-                DispatchQueue.main.async { completion(err) }
             }
         }
     }
@@ -364,13 +373,11 @@ class GoBot: Bot {
     // MARK: Publish
     private var lastPublishFireTime = DispatchTime.now()
 
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        Thread.assertIsMainThread()
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
         self.queue.async {
-            self.bot.publish(content) {
-                [weak self] key, error in
+            self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
-                    DispatchQueue.main.async { completion(MessageIdentifier.null, error) }
+                    queue.async { completion(MessageIdentifier.null, error) }
                     return
                 }
 
@@ -389,17 +396,17 @@ class GoBot: Bot {
 
                     // the call happend after the given timeout (refreshDelay)
                     if now.rawValue >= when.rawValue {
-                        self?.internalRefresh(load: .short, queue: .global(qos: .userInteractive)) { // do a refresh, then return to the caller
+                        self?.internalRefresh(load: .tiny, queue: .global(qos: .userInteractive)) { // do a refresh, then return to the caller
                             error, _ in
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
                             // finally, return back to the UI
-                            DispatchQueue.main.async { completion(key, nil) }
+                            queue.async { completion(key, nil) }
                         }
                     } else {
                         // don't do a view refresh, just return to the caller
                         // Q: is this actually called for each asyncAfter call?
-                        DispatchQueue.main.async { completion(key, nil) }
+                        queue.async { completion(key, nil) }
                     }
                 }
             }
@@ -611,8 +618,6 @@ class GoBot: Bot {
                                  name: AnalyticsEnums.Name.repair.rawValue,
                                  params: params)
 
-                 // trying to re-sync the feed
-                self.bot.dial(atLeast: 1)
                 #if DEBUG
                 print("[rx log] viewdb fill of aborted and repaired.")
                 #endif
@@ -729,7 +734,6 @@ class GoBot: Bot {
             catch {
                 DispatchQueue.main.async {
                     completion(identifier, nil, error)
-                    self.sync(queue: .global(qos: .background)) { _, _, _ in }
                 }
             }
         }
@@ -815,7 +819,7 @@ class GoBot: Bot {
         }
     }
 
-    func abouts(identities: Identities, completion: @escaping AboutsCompletion) {
+    func abouts(identities: [Identity], completion: @escaping AboutsCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             var abouts: [About] = []
@@ -869,8 +873,9 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
-                let follows: Identities = try self.database.getFollows(feed: identity)
-                let withoutPubs = follows.withoutPubs()
+                let follows: [Identity] = try self.database.getFollows(feed: identity)
+                let defaultStars = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStars.contains($0) }
                 DispatchQueue.main.async { completion(withoutPubs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
@@ -883,7 +888,8 @@ class GoBot: Bot {
         self.queue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
-                let withoutPubs = follows.withoutPubs()
+                let defaultStarsIdentities = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStarsIdentities.contains($0) }
                 DispatchQueue.main.async { completion(withoutPubs, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
@@ -894,10 +900,11 @@ class GoBot: Bot {
     func followings(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
         self.queue.async {
             do {
-                var follows: [About] = try self.database.getFollows(feed: identity)
-                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                let follows: [About] = try self.database.getFollows(feed: identity)
+                let defaultStars = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStars.contains($0.identity) }
                 queue.async {
-                    completion(follows, nil)
+                    completion(withoutPubs, nil)
                 }
             } catch {
                 queue.async {
@@ -910,10 +917,11 @@ class GoBot: Bot {
     func followers(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
         self.queue.async {
             do {
-                var follows: [About] = try self.database.followedBy(feed: identity)
-                follows.removeAll { Identities.ssb.pubs.values.contains($0.identity) }
+                let follows: [About] = try self.database.followedBy(feed: identity)
+                let defaultStars = Environment.Constellation.stars.map { $0.feed }
+                let withoutPubs = follows.filter { !defaultStars.contains($0.identity) }
                 queue.async {
-                    completion(follows, nil)
+                    completion(withoutPubs, nil)
                 }
             } catch {
                 queue.async {
@@ -999,17 +1007,7 @@ class GoBot: Bot {
                 completion("", e);
                 return;
             }
-
-            // we implement real feed delete now, so we will need to trigger a sync to fetch the feed again
-            // TODO: Do we need refresh here
-            self.bot.dial(atLeast: 2)
-            self.refresh(load: .short, queue: .main) {
-                err, _ in
-                Log.optional(err)
-                CrashReporting.shared.reportIfNeeded(error: err)
-                completion(ref, nil)
-                NotificationCenter.default.post(name: .didUnblockUser, object: identity)
-            }
+            completion(ref, nil)
         }
     }
 
@@ -1167,20 +1165,14 @@ class GoBot: Bot {
                                                feedCount: fc,
                                                messageCount: mc,
                                                lastHash: counts?.lastHash ?? "")
-        let identities = self.bot.peerIdentities
-
-        let open = self.bot.openConnectionList()
-        var openWithIdentities: [(String, Identity)] = []
-        for peer in open {
-            if let id = self.database.identityFromPublicKey(pubKey: peer.1) {
-                openWithIdentities.append((peer.0, id))
-            }
-        }
-
-        self._statistics.peer = PeerStatistics(count: identities.count,
-                                               connectionCount: self.bot.openConnections(),
-                                               identities: openWithIdentities, // just faking to see some data
-                                               open: openWithIdentities)
+        
+        let connectionCount = self.bot.openConnections()
+        let openConnections = self.bot.openConnectionList()
+        
+        self._statistics.peer = PeerStatistics(count: openConnections.count,
+                                               connectionCount: connectionCount,
+                                               identities: openConnections,
+                                               open: openConnections)
 
         self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
         
@@ -1200,20 +1192,14 @@ class GoBot: Bot {
                                                    feedCount: fc,
                                                    messageCount: mc,
                                                    lastHash: counts?.lastHash ?? "")
-            let identities = self.bot.peerIdentities
-
-            let open = self.bot.openConnectionList()
-            var openWithIdentities: [(String, Identity)] = []
-            for peer in open {
-                if let id = self.database.identityFromPublicKey(pubKey: peer.1) {
-                    openWithIdentities.append((peer.0, id))
-                }
-            }
-
-            self._statistics.peer = PeerStatistics(count: identities.count,
-                                                   connectionCount: self.bot.openConnections(),
-                                                   identities: openWithIdentities, // just faking to see some data
-                                                   open: openWithIdentities)
+            
+            let connectionCount = self.bot.openConnections()
+            let openConnections = self.bot.openConnectionList()
+            
+            self._statistics.peer = PeerStatistics(count: openConnections.count,
+                                                   connectionCount: connectionCount,
+                                                   identities: openConnections,
+                                                   open: openConnections)
 
             self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
             

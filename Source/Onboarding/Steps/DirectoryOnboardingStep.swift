@@ -112,8 +112,9 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
     }
 
     override func primary() {
-
         var identities = self.selected.map { $0.identity }
+        identities.append(contentsOf: Environment.PlanetarySystem.planets)
+
         self.data.following = identities
 
         // SIMULATE ONBOARDING
@@ -124,33 +125,14 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
             self.next()
             return
         }
-
-        self.view.lookBusy(disable: self.view.primaryButton)
-
+        
         // follow identities
         // TODO: make sure this uses the identities from the integration test network https://app.asana.com/0/0/1134329918920786/f
-        identities += Identities.for(context.network)
         Onboarding.follow(identities, context: context) {
             [weak self] success, contacts, errors in
-            guard success else {
-                self?.view.lookReady()
-                return
-            }
-
-            // invite pubs
-            Onboarding.invitePubsToFollow(context.identity) { [weak self] success, error in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                DispatchQueue.main.async { [weak self] in
-                    self?.view.lookReady()
-                    if success {
-                        self?.next()
-                    } else if let error = error {
-                        AppController.shared.alert(error: error)
-                    } else {
-                        AppController.shared.alert(error: AppError.unexpected)
-                    }
-                }
+            self?.view.lookReady()
+            if success {
+                self?.next()
             }
         }
     }

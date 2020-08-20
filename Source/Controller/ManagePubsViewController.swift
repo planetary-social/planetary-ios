@@ -11,7 +11,7 @@ import UIKit
 
 class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSourceDelegate {
     
-    lazy var dataSource = KnownPubsTableViewDataSource(knownPubs: [])
+    lazy var dataSource = KnownPubsTableViewDataSource(pubs: [])
     
     // MARK: Lifecycle
     
@@ -31,13 +31,13 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
         self.dataSource.delegate = self
         self.tableView.dataSource = self.dataSource
         self.tableView.prefetchDataSource = self.dataSource
-        Bots.current.knownPubs { [weak self] (knownPubs, error) in
+        Bots.current.pubs { [weak self] (pubs, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.dataSource.knownPubs = knownPubs
+                self?.dataSource.pubs = pubs
                 self?.tableView.reloadData()
             }
         }
@@ -60,7 +60,7 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
             }
             targetController?.pushViewController(controller, animated: true)
         } else {
-            let controller = AboutViewController(with: self.dataSource.knownPubs[indexPath.row].ForFeed)
+            let controller = AboutViewController(with: self.dataSource.pubs[indexPath.row].address.key)
             targetController?.pushViewController(controller, animated: true)
         }
     }

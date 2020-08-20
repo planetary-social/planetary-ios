@@ -42,6 +42,7 @@ enum ViewDatabaseTableNames: String {
     case mentionsFeed = "mention_feed"
     case mentionsImage = "mention_image"
     case reports
+    case pubs
 }
 
 class ViewDatabase {
@@ -157,6 +158,7 @@ class ViewDatabase {
     private let colWorkedLast = Expression<Date?>("worked_last")
     private let colLastErr = Expression<String>("last_err")
     private let colUse = Expression<Bool>("use")
+    private let colRedeemed = Expression<Double?>("redeemed")
     
     // Reports
     private var reports: Table
@@ -164,6 +166,13 @@ class ViewDatabase {
     // colAuthorID
     private let colReportType = Expression<String>("type")
     private let colCreatedAt = Expression<Double>("created_at")
+    
+    // Pubs
+    private var pubs: Table
+    // colMessageRef
+    private let colHost = Expression<String>("host")
+    private let colPort = Expression<Int>("port")
+    // colKey
 
     init() {
         self.addresses = Table(ViewDatabaseTableNames.addresses.rawValue)
@@ -185,6 +194,7 @@ class ViewDatabase {
         self.tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
         self.branches = Table(ViewDatabaseTableNames.branches.rawValue)
         self.reports = Table(ViewDatabaseTableNames.reports.rawValue)
+        self.pubs = Table(ViewDatabaseTableNames.pubs.rawValue)
     }
 
     // MARK: open / close / stats
@@ -218,7 +228,7 @@ class ViewDatabase {
             if db.userVersion == 0 {
                 let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
                 try db.execute(String(contentsOf: schemaV1url))
-                db.userVersion = 6
+                db.userVersion = 8
             } else if db.userVersion == 1 {
                 try db.execute("""
                 CREATE INDEX messagekeys_key ON messagekeys(key);
@@ -246,9 +256,16 @@ class ViewDatabase {
                 created_at real NOT NULL,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
+                ALTER TABLE addresses ADD redeemed real default null;
+                CREATE TABLE pubs (
+                msg_ref integer not null,
+                host text not null,
+                port integer not null,
+                key text not null,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """);
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 6
+                db.userVersion = 8
             } else if db.userVersion == 2 {
                 try db.execute("""
                 -- add new column to posts and migrate existing data
@@ -269,9 +286,16 @@ class ViewDatabase {
                 created_at real NOT NULL,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
+                ALTER TABLE addresses ADD redeemed real default null;
+                CREATE TABLE pubs (
+                msg_ref integer not null,
+                host text not null,
+                port integer not null,
+                key text not null,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """);
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 6
+                db.userVersion = 8
             } else if db.userVersion == 3 {
                 try db.execute("""
                 ALTER TABLE messagekeys ADD hashed text;
@@ -287,9 +311,16 @@ class ViewDatabase {
                 created_at real NOT NULL,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
+                ALTER TABLE addresses ADD redeemed real default null;
+                CREATE TABLE pubs (
+                msg_ref integer not null,
+                host text not null,
+                port integer not null,
+                key text not null,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """)
                 try self.migrateHashAllMessageKeys()
-                db.userVersion = 6
+                db.userVersion = 8
             } else if db.userVersion == 4 {
                 try db.execute("""
                 ALTER TABLE abouts ADD publicWebHosting boolean;
@@ -300,8 +331,15 @@ class ViewDatabase {
                 created_at real NOT NULL,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
+                ALTER TABLE addresses ADD redeemed real default null;
+                CREATE TABLE pubs (
+                msg_ref integer not null,
+                host text not null,
+                port integer not null,
+                key text not null,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """)
-                db.userVersion = 6
+                db.userVersion = 8
             } else if db.userVersion == 5 {
                 try db.execute("""
                 CREATE TABLE reports (
@@ -311,8 +349,36 @@ class ViewDatabase {
                 created_at real NOT NULL,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
+                ALTER TABLE addresses ADD redeemed real default null;
+                CREATE TABLE pubs (
+                msg_ref integer not null,
+                host text not null,
+                port integer not null,
+                key text not null,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """)
-                db.userVersion = 6
+                db.userVersion = 8
+            } else if db.userVersion == 6 {
+                try db.execute("""
+                ALTER TABLE addresses ADD redeemed real default null;
+                CREATE TABLE pubs (
+                msg_ref integer not null,
+                host text not null,
+                port integer not null,
+                key text not null,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
+                """)
+                db.userVersion = 8
+            } else if db.userVersion == 7 {
+                try db.execute("""
+                CREATE TABLE pubs (
+                msg_ref integer not null,
+                host text not null,
+                port integer not null,
+                key text not null,
+                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
+                """)
+                db.userVersion = 8
             }
         }
 
@@ -487,14 +553,42 @@ class ViewDatabase {
                 workedWhen = didWork.shortDateTimeString
             }
 
+            var redeemedDate: Date?
+            if let redeemedTimestamp = try row.get(colRedeemed) {
+                redeemedDate = Date(timeIntervalSince1970: redeemedTimestamp / 1000)
+            }
+            
             return KnownPub(
                 AddressID: try row.get(colAddressID),
                 ForFeed: try row.get(colAuthor),
                 Address: try row.get(colAddress),
                 InUse: try row.get(colUse),
                 WorkedLast: workedWhen,
-                LastError: try row.get(colLastErr)
+                LastError: try row.get(colLastErr),
+                redeemed: redeemedDate
             )
+        }
+    }
+    
+    func getRedeemedPubs() throws -> [Pub] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let qry = self.msgs
+           .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
+            .where(self.msgs[colAuthorID] == currentUserID)
+            .where(self.msgs[colMsgType] == "pub")
+
+        return try db.prepare(qry).map { row in
+            let host = try row.get(colHost)
+            let port = try row.get(colPort)
+            let key = try row.get(colKey)
+            
+            return Pub(type: .pub,
+                       address: PubAddress(key: key,
+                                           host: host,
+                                           port: UInt(port)))
         }
     }
     
@@ -779,7 +873,7 @@ class ViewDatabase {
     // MARK: follows and blocks
     
     // who is this feed following?
-    func getFollows(feed: Identity) throws -> Identities {
+    func getFollows(feed: Identity) throws -> [Identity] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1715,6 +1809,8 @@ class ViewDatabase {
             return
         }
         
+        
+        
         let authorID = try self.authorID(of: msg.value.author, make: true)
         
         try db.run(self.addresses.insert(or: .replace,
@@ -1883,14 +1979,11 @@ class ViewDatabase {
             return
         }
 
-        let pubKeyID = try self.authorID(of: p.address.key, make: true)
-
-        let lazyMultiServ = "net:\(p.address.host):\(p.address.port)~shs:\(p.address.key.id)"
-
-        try db.run(self.addresses.insert(or: .replace,
-            colAboutID <- pubKeyID,
-            colAddress <- lazyMultiServ
-        ))
+        try db.run(self.pubs.insert(or: .replace,
+                                    colMessageRef <- msgID,
+                                    colHost <- p.address.host,
+                                    colPort <- Int(p.address.port),
+                                    colKey <- p.address.key))
     }
     
     private func fillPost(msgID: Int64, msg: KeyValue, pms: Bool) throws {

@@ -92,48 +92,6 @@ class GoBotInternal {
     var currentRepoPath: String { return self.repoPath }
     private var repoPath: String = "/tmp/FBTT/unset"
     
-    // TODO this is little dangerous if Identities.verse is modified
-    // ultimately this should be configured from querying
-    // the Verse REST API
-    // tuple of primary and fallbacks TODO: undo this once the live-streaming is in place
-    private var allPeers: [ String : (Peer, [Peer]) ] = [
-        NetworkKey.ssb.string: ( Peer(tcpAddr: "main2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub2"]!) , [
-            Peer(tcpAddr: "main1.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
-            Peer(tcpAddr: "main3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!),
-            Peer(tcpAddr: "main4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!),
-            Peer(tcpAddr: "main5.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub5"]!),
-            Peer(tcpAddr: "main6.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub6"]!),
-        ]),
-
-        NetworkKey.planetary.string: (Peer(tcpAddr: "demo2.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
-            Peer(tcpAddr: "demo1.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go1"]!),
-            Peer(tcpAddr: "demo3.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go3"]!),
-            Peer(tcpAddr: "demo4.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go4"]!)
-        ]),
-
-        NetworkKey.integrationTests.string: (Peer(tcpAddr: "testing-ci.planetary.social:9119", pubKey: Identities.testNet.pubs["integrationpub1"]!), [])
-    ]
-    
-    private var peers: [Peer] {
-        get {
-            guard let peersForNetwork = self.allPeers[self.currentNetwork.string] else {
-                return []
-            }
-            var peersList: [Peer] = []
-            peersList.append(peersForNetwork.0)
-            for p in peersForNetwork.1 {
-                peersList.append(p)
-            }
-            return peersList
-        }
-    }
-
-    var peerIdentities: [(String, String)] {
-        var identities: [(String, String)] = []
-        for peer in self.peers { identities += [(peer.tcpAddr, peer.pubKey)] }
-        return identities
-    }
-
     let name = "GoBot"
 
     var version: String {
@@ -174,18 +132,7 @@ class GoBotInternal {
         // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
 
-        var servicePubs: [Identity]?
-        switch network {
-        case NetworkKey.ssb:
-            // TODO: only planetary service pubs have this plugin currently
-            servicePubs = Identities.ssb.pubs.map({ (key, value) in return value })
-        case NetworkKey.planetary:
-            servicePubs = Identities.planetary.pubs.map({ (key, value) in return value })
-        case NetworkKey.integrationTests:
-           servicePubs = Identities.testNet.pubs.map({ (key, value) in return value })
-        default:
-            Log.unexpected(.botError, "unconfigured network for service pubs: \(network)")
-        }
+        let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
 
         let cfg = BotConfig(
             AppKey: network.string,
@@ -216,10 +163,10 @@ class GoBotInternal {
             self.currentNetwork = network
 
             // make sure internal planetary pubs are authorized for connections
-            if let pubs = servicePubs {
-                for pub in pubs { self.replicate(feed: pub) }
+            for pub in servicePubs {
+                self.replicate(feed: pub)
             }
-
+            
             return nil
         }
         
@@ -293,40 +240,45 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dial(atLeast: Int, tries: Int = 10) -> Bool {
-        let wanted = min(self.peers.count, atLeast) // how many connections are we shooting for?
+    func dial(from peers: [Peer], atLeast: Int, tries: Int = 10) -> Bool {
+        let wanted = min(peers.count, atLeast) // how many connections are we shooting for?
         var hasWorked :Int = 0
         var tried: Int = tries
         while hasWorked < wanted && tried > 0 {
-            if self.dialAnyone() {
+            if self.dialAnyone(from: peers) {
                 hasWorked += 1
             }
             tried -= 1
         }
         if hasWorked != wanted {
-            Log.unexpected(.botError, "failed to make pub connection(s)")
+            Log.unexpected(.botError, "failed to make peer connection(s)")
             return false
         }
         return true
     }
 
-    private func dialAnyone() -> Bool {
-        guard let p = self.peers.randomElement() else {
+    private func dialAnyone(from peers: [Peer]) -> Bool {
+        guard let peer = peers.randomElement() else {
             Log.unexpected(.botError, "no peers in sheduler table")
             return false
         }
-        return self.dialOne(peer: p)
+        return self.dialOne(peer: peer)
     }
     
     @discardableResult
-    func dialSomePeers() -> Bool {
+    func dialSomePeers(from peers: [Peer]) -> Bool {
         guard self.openConnections() == 0 else { return true } // only make connections if we dont have any
         ssbConnectPeers(2)
-        self.dial(atLeast: 1, tries: 10)
+        guard peers.count > 0 else {
+            Log.debug("User doesn't have redeemed pubs")
+            return true
+        }
+        self.dial(from: peers, atLeast: 1, tries: 10)
         return true
     }
     
     func dialOne(peer: Peer) -> Bool {
+        Log.debug("Dialing \(peer.pubKey)")
         let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
         var worked: Bool = false
         multiServ.withGoString {
@@ -339,11 +291,12 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dialForNotifications() -> Bool {
-        guard let peersForNetwork = self.allPeers[self.currentNetwork.string] else {
+    func dialForNotifications(from peers: [Peer]) -> Bool {
+        if let peer = peers.randomElement() {
+            return dialOne(peer: peer)
+        } else {
             return false
         }
-        return dialOne(peer: peersForNetwork.0)
     }
 
     // MARK: Status / repo stats
@@ -363,7 +316,7 @@ class GoBotInternal {
         percDone, remaining in
         guard let remStr = remaining else { return }
         let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateDatabaseProgress(perc: percDone/100, status: status)
+        let notification = Notification.didUpdateFSCKRepair(perc: percDone/100, status: status)
         NotificationCenter.default.post(notification)
     }
     
@@ -384,15 +337,13 @@ class GoBotInternal {
         })
         dcTimer.start()
 
-        Timers.shared.syncTimer.stop()
         defer {
             dcTimer.stop()
-            Timers.shared.syncTimer.start(fireImmediately: true)
         }
 
         NotificationCenter.default.post(Notification.didStartFSCKRepair())
         defer {
-            NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
+            NotificationCenter.default.post(Notification.didFinishFSCKRepair())
         }
         guard self.repoFSCK(.Sequences) == false else {
             Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")

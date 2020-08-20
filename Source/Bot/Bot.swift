@@ -43,7 +43,6 @@ protocol Bot {
     var version: String { get }
 
     // MARK: AppLifecycle
-    func resume()
     func suspend()
     func exit()
     
@@ -60,15 +59,17 @@ protocol Bot {
     // MARK: Sync
     
     func knownPubs(completion: @escaping KnownPubsCompletion)
+    
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
 
     // Sync is the bot reaching out to remote peers and gathering the latest
     // data from the network.  This only updates the local log and requires
     // calling `refresh` to ensure the view database is updated.
     var isSyncing: Bool { get }
-    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion)
+    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion)
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 
@@ -87,7 +88,7 @@ protocol Bot {
 
     // Redeem uses the invite information and accepts it.
     // It adds the pub behind the address to the connection sheduling table and follows it.
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion)
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion)
 
     // MARK: Publish
 
@@ -97,7 +98,7 @@ protocol Bot {
     // The `content` argument label is required to avoid conflicts when specialized
     // forms of `publish` are created.  For example, `publish(post)` will publish a
     // `Post` model, but then also the embedded `Hashtag` models.
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion)
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion)
 
     // MARK: Post Management
 
@@ -109,7 +110,7 @@ protocol Bot {
     var about: About? { get }
     func about(completion: @escaping AboutCompletion)
     func about(queue: DispatchQueue, identity: Identity, completion:  @escaping AboutCompletion)
-    func abouts(identities: Identities, completion:  @escaping AboutsCompletion)
+    func abouts(identities: [Identity], completion:  @escaping AboutsCompletion)
     func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion)
 
     // MARK: Contact
@@ -200,8 +201,8 @@ protocol Bot {
 
 extension Bot {
     
-    func sync(completion: @escaping SyncCompletion) {
-        self.sync(queue: .main, completion: completion)
+    func sync(peers: [Peer], completion: @escaping SyncCompletion) {
+        self.sync(queue: .main, peers: peers, completion: completion)
     }
     
     func abouts(completion:  @escaping AboutsCompletion) {
@@ -228,4 +229,15 @@ extension Bot {
         self.about(queue: .main, identity: identity, completion: completion)
     }
     
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
+        self.inviteRedeem(queue: .main, token: token, completion: completion)
+    }
+    
+    func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
+        self.pubs(queue: .main, completion: completion)
+    }
+    
+    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
+        self.publish(queue: .main, content: content, completion: completion)
+    }
 }

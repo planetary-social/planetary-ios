@@ -82,7 +82,8 @@ class GoBotTests: XCTestCase {
         // make sure we can't sync
         for i in 1...20 {
             let ex = self.expectation(description: "\(#function) cant sync")
-            GoBotTests.shared.sync(queue: .main) {
+            let peers = Environment.Constellation.stars.map { $0.toPeer() }
+            GoBotTests.shared.sync(queue: .main, peers: peers) {
                 err, ts, numberOfMessages in
                 XCTAssertNotNil(err, "try\(i): should get an error")
                 XCTAssertEqual(ts, 0)
@@ -397,10 +398,10 @@ class GoBotTests: XCTestCase {
 
     func test121_first_notification_empty() {
         let ex = self.expectation(description: "\(#function)")
-        GoBotTests.shared.notifications() {
-            msgs, err in
+        GoBotTests.shared.reports() {
+            reports, err in
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, 0)
+            XCTAssertEqual(reports.count, 0)
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -414,16 +415,16 @@ class GoBotTests: XCTestCase {
         GoBotTests.shared.testRefresh(self)
 
         let ex = self.expectation(description: "\(#function) notify")
-        GoBotTests.shared.notifications() {
-            msgs, err in
+        GoBotTests.shared.reports() {
+            reports, err in
             defer { ex.fulfill() }
             XCTAssertNil(err)
-            guard msgs.count == 1 else {
+            guard reports.count == 1 else {
                 XCTFail("expected 1 message in notification")
                 return
             }
-            XCTAssertEqual(msgs[0].key, followRef)
-            XCTAssertEqual(msgs[0].value.author, GoBotTests.pubkeys["alice"]!)
+            XCTAssertEqual(reports[0].messageIdentifier, followRef)
+            XCTAssertEqual(reports[0].keyValue.value.author, GoBotTests.pubkeys["alice"]!)
         }
         self.wait(for: [ex], timeout: 10)
     }
@@ -1180,7 +1181,8 @@ class GoBotTests: XCTestCase {
 fileprivate extension GoBot {
     func testRefresh(_ tc: XCTestCase) -> Void {
         let syncExpectation = tc.expectation(description: "Sync")
-        self.sync(queue: .main) {
+        let peers = Environment.Constellation.stars.map { $0.toPeer() }
+        self.sync(queue: .main, peers: peers) {
             error, _, _ in
             XCTAssertNil(error)
             syncExpectation.fulfill()

@@ -172,25 +172,9 @@ class PeersView: UIView {
     
     @objc func triggerSync(sender : UITapGestureRecognizer) {
         self.connectionAnimation.searchAnimation()
-        
-        AppController.shared.pokeSync()
-        
-        /*
-        DispatchQueue.global(qos:  .userInitiated).async {
-            GoBot.shared.sync(queue: .main) {
-                [weak self] _, _, _ in
-                self?.setStats()
-            }
-        }
-        DispatchQueue.global(qos:  .userInitiated).async {
-            GoBot.shared.refresh(load: .long, queue: .main) {
-                [weak self] _, _ in
-                self?.setStats()
-            }
-        }*/
+        AppController.shared.missionControlCenter.sendMission()
     }
-
-
+    
     private func setSync(lastSyncDate: Date?) {
         let text = Text.lastSynced
         let label = self.syncedLabel
@@ -236,7 +220,7 @@ extension PeerStatistics {
     // TODO and find others that are on the same subnet
     var localCount: Int {
         var online = Set(self.currentOpen.compactMap { $0.1 })
-        let pubs = Set(Identities.planetary.pubs.compactMap { $0.1 })
+        let pubs = Set(Environment.Constellation.stars.map { $0.feed })
         online.subtract(pubs)
         return online.count
     }
