@@ -114,6 +114,7 @@ class AppController: UIViewController {
     func addObservers() {
         let showProgress = { [weak self] (notification: Notification) -> Void in
             self?.showProgress(statusText: notification.databaseProgressStatus)
+            self?.missionControlCenter.pause()
         }
         let updateProgress = { [weak self] (notification: Notification) -> Void in
             guard let percDone = notification.databaseProgressPercentageDone else { return }
@@ -122,18 +123,19 @@ class AppController: UIViewController {
         }
         let dismissProgress = { [weak self] (notification: Notification) -> Void in
             self?.hideProgress()
+            self?.missionControlCenter.resume()
         }
         removeObservers()
         let notificationCenter = NotificationCenter.default
-        didStartDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didStartDatabaseProcessing,
+        didStartDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didStartFSCKRepair,
                                                                     object: nil,
                                                                     queue: .main,
                                                                     using: showProgress)
-        didFinishDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didFinishDatabaseProcessing,
+        didFinishDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didFinishFSCKRepair,
                                                                      object: nil,
                                                                      queue: .main,
                                                                      using: dismissProgress)
-        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateDatabaseProgress,
+        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateFSCKRepair,
                                                                        object: nil,
                                                                        queue: .main,
                                                                        using: updateProgress)

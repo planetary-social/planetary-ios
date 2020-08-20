@@ -27,6 +27,7 @@ protocol LogService {
     static func configure()
     static func optional(_ error: Error?, _ detail: String?) -> Bool
     static func info(_ string: String)
+    static func debug(_ string: String)
     static func unexpected(_ reason: LogReason, _ detail: String?)
     static func fatal(_ reason: LogReason, _ detail: String?)
 }

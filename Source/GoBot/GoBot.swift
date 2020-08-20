@@ -262,7 +262,7 @@ class GoBot: Bot {
         }
     }
 
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
@@ -281,14 +281,7 @@ class GoBot: Bot {
 
         self.queue.async {
             let before = self.repoNumberOfMessages()
-            do {
-                let pubs = try self.database.getRedeemedPubs()
-                let knownPubs = pubs.filterInConstellation()
-                self.bot.dialForNotifications(from: knownPubs.map { $0.address.toPeer() })
-            } catch {
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-            }
+            self.bot.dialForNotifications(from: peers)
             let after = self.repoNumberOfMessages()
             let new = after - before
             queue.async {
@@ -332,7 +325,7 @@ class GoBot: Bot {
             }
             return
         }
-        // NotificationCenter.default.post(Notification.didStartViewRefresh())
+        
         self._isRefreshing = true
         
         let elapsed = Date()
@@ -343,7 +336,6 @@ class GoBot: Bot {
                     self?.notifyRefreshComplete(in: -elapsed.timeIntervalSinceNow,
                                                 error: error,
                                                 completion: completion)
-                    NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
                 }
             }
         }
@@ -1015,24 +1007,7 @@ class GoBot: Bot {
                 completion("", e);
                 return;
             }
-
-            // we implement real feed delete now, so we will need to trigger a sync to fetch the feed again
-            // TODO: Do we need refresh here
-            do {
-                let pubs = try self.database.getRedeemedPubs()
-                let knownPubs = pubs.filterInConstellation()
-                self.bot.dial(from: knownPubs.map { $0.address.toPeer() }, atLeast: 2)
-            } catch {
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-            }
-            self.refresh(load: .short, queue: .main) {
-                err, _ in
-                Log.optional(err)
-                CrashReporting.shared.reportIfNeeded(error: err)
-                completion(ref, nil)
-                NotificationCenter.default.post(name: .didUnblockUser, object: identity)
-            }
+            completion(ref, nil)
         }
     }
 

@@ -69,7 +69,7 @@ protocol Bot {
     func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion)
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 

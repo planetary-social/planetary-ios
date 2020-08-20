@@ -316,7 +316,7 @@ class GoBotInternal {
         percDone, remaining in
         guard let remStr = remaining else { return }
         let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateDatabaseProgress(perc: percDone/100, status: status)
+        let notification = Notification.didUpdateFSCKRepair(perc: percDone/100, status: status)
         NotificationCenter.default.post(notification)
     }
     
@@ -337,15 +337,13 @@ class GoBotInternal {
         })
         dcTimer.start()
 
-        AppController.shared.missionControlCenter.pause()
         defer {
             dcTimer.stop()
-            AppController.shared.missionControlCenter.resume()
         }
 
         NotificationCenter.default.post(Notification.didStartFSCKRepair())
         defer {
-            NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
+            NotificationCenter.default.post(Notification.didFinishFSCKRepair())
         }
         guard self.repoFSCK(.Sequences) == false else {
             Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")

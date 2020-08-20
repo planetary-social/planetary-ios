@@ -356,7 +356,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Get feed")
 
-        ctx.bot.feed(identity: Identities.testNet.pubs["integrationpub1"]!) {
+        ctx.bot.feed(identity: Environment.Constellation.stars.first!.feed) {
             msgs, err in
             defer { expectation.fulfill() }
             XCTAssertNil(err)

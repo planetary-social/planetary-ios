@@ -12,69 +12,92 @@ import UIKit
 /// Manages sending missions to nearby stars
 class MissionControlCenter {
     
-    private let operationQueue = OperationQueue()
-    
+    /// State of a Mission Control Center object
     enum State {
+        /// Timers are on and Mission Control Center is sending missions periodically
         case started
+        
+        /// Timers are paused
         case paused
+        
+        /// Timers are stopped and Mission Control Center won't send new missions until
+        /// started again
         case stopped
     }
     
+    /// Holds the state of the Mission Control Center
     private(set) var state: State = .stopped
     
-    private lazy var syncTimer: RepeatingTimer = {
+    /// OperationQueue where SendMissionOperation and RefreshOperation are executed
+    private let operationQueue = OperationQueue()
+    
+    /// Timer for the SendMissionOperation
+    private lazy var sendMissionTimer: RepeatingTimer = {
         RepeatingTimer(interval: 60) { [weak self] in self?.sendMissions() }
     }()
     
+    /// Timer for the RefreshOperation
     private lazy var refreshTimer: RepeatingTimer = {
         RepeatingTimer(interval: 17) { [weak self] in self?.pokeRefresh() }
     }()
     
-    private var syncPokeBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+    /// Background Task Identifier for the SendMissionOperation
+    private var sendMissionBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
-    private var refreshPokeBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+    /// Background Task Identifier for the RefreshOperation
+    private var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
+    /// Starts Mission Control Center operations. It starts timers and new missions.
     func start() {
         guard self.state == .stopped else {
             return
         }
+        Log.info("Mission Control Center started operations")
         self.state = .started
-        self.syncTimer.start(fireImmediately: false)
+        self.sendMissionTimer.start(fireImmediately: false)
         self.refreshTimer.start(fireImmediately: false)
         self.sendMission()
     }
     
+    /// Resumes Mission Control Center operations. It resumes timers and starts a new missions.
     func resume() {
         guard self.state == .paused else {
             return
         }
+        Log.info("Mission Control Center resumed operations")
         self.state = .started
-        self.syncTimer.start(fireImmediately: false)
+        self.sendMissionTimer.start(fireImmediately: false)
         self.refreshTimer.start(fireImmediately: false)
         self.sendMission()
     }
     
+    /// Pauses Mission Control Center operations. It pauses timers and cancels current missions.
     func pause() {
         guard self.state == .started else {
             return
         }
+        Log.info("Mission Control Center paused operations")
         self.state = .paused
-        self.syncTimer.stop()
+        self.sendMissionTimer.stop()
         self.refreshTimer.stop()
         self.operationQueue.addOperation(SuspendOperation())
     }
     
+    /// Stops Mission Control Center operations. It pauses timers and cancels current missions.
     func stop() {
         guard self.state != .stopped else {
             return
         }
+        Log.info("Mission Control Center stopped operations")
         self.state = .stopped
-        self.syncTimer.stop()
+        self.sendMissionTimer.stop()
         self.refreshTimer.stop()
         self.operationQueue.addOperation(ExitOperation())
     }
     
+    /// Sends an adhoc mission disregarding Mission Control Center state
     func sendMission() {
+        Log.info("Mission Control Center is sending adhoc missions")
         let sendMissionOperation = SendMissionOperation(quality: .high)
         let refreshOperation = RefreshOperation(refreshLoad: .tiny)
         refreshOperation.addDependency(sendMissionOperation)
@@ -83,27 +106,27 @@ class MissionControlCenter {
     }
     
     private func sendMissions() {
-        guard self.syncPokeBackgroundTaskIdentifier == .invalid else {
-            Log.info("There is a sync poke still in progress. Skipping new poke.")
+        guard self.sendMissionBackgroundTaskIdentifier == .invalid else {
+            Log.info("Mission Controller Center skipped a mission as there is one in progress.")
             return
         }
         
-        Log.info("Poking the bot into doing a sync")
+        Log.info("Mission Control Center is sending a mission")
         let sendMissionOperation = SendMissionOperation(quality: .high)
         
-        let taskName = "SyncPoke"
+        let taskName = "SendMissionBackgroundTask"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
             // Expiry handler, iOS will call this shortly before ending the task
             sendMissionOperation.cancel()
-            UIApplication.shared.endBackgroundTask(self.syncPokeBackgroundTaskIdentifier)
-            self.syncPokeBackgroundTaskIdentifier = .invalid
+            UIApplication.shared.endBackgroundTask(self.sendMissionBackgroundTaskIdentifier)
+            self.sendMissionBackgroundTaskIdentifier = .invalid
         }
-        self.syncPokeBackgroundTaskIdentifier = taskIdentifier
+        self.sendMissionBackgroundTaskIdentifier = taskIdentifier
         
         sendMissionOperation.completionBlock = {
             if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
                 UIApplication.shared.endBackgroundTask(taskIdentifier)
-                self.syncPokeBackgroundTaskIdentifier = .invalid
+                self.sendMissionBackgroundTaskIdentifier = .invalid
             }
         }
         
@@ -111,28 +134,28 @@ class MissionControlCenter {
     }
     
     private func pokeRefresh() {
-        guard self.refreshPokeBackgroundTaskIdentifier == .invalid else {
-            Log.info("There is a refresh poke still in progress. Skipping new poke.")
+        guard self.refreshBackgroundTaskIdentifier == .invalid else {
+            Log.info("Mission Controller Center skipped a refresh as there is one in progress.")
             return
         }
         
-        Log.info("Poking the bot into doing a tiny refresh")
+        Log.info("Mission Control Center is doing a tiny refresh")
         let refreshOperation = RefreshOperation()
         refreshOperation.refreshLoad = .tiny
         
-        let taskName = "RefreshPoke"
+        let taskName = "RefreshBackgroundTask"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
             // Expiry handler, iOS will call this shortly before ending the task
             refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(self.refreshPokeBackgroundTaskIdentifier)
-            self.refreshPokeBackgroundTaskIdentifier = .invalid
+            UIApplication.shared.endBackgroundTask(self.refreshBackgroundTaskIdentifier)
+            self.refreshBackgroundTaskIdentifier = .invalid
         }
-        self.refreshPokeBackgroundTaskIdentifier = taskIdentifier
+        self.refreshBackgroundTaskIdentifier = taskIdentifier
         
         refreshOperation.completionBlock = {
             if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
                 UIApplication.shared.endBackgroundTask(taskIdentifier)
-                self.refreshPokeBackgroundTaskIdentifier = .invalid
+                self.refreshBackgroundTaskIdentifier = .invalid
             }
         }
         

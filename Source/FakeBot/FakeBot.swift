@@ -199,7 +199,7 @@ class FakeBot: Bot {
         }
     }
     
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)

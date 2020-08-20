@@ -81,6 +81,8 @@ class BlockButton: PillButton {
                     Analytics.shared.trackDidUnblockIdentity()
                 }
                 
+                AppController.shared.missionControlCenter.sendMission()
+                
                 complete()
             }
         }

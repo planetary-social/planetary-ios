@@ -102,6 +102,8 @@
 		0A65A636244DEFFB004C48C8 /* NullSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A65A633244DEFDB004C48C8 /* NullSupport.swift */; };
 		0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */; };
 		0A7C5D5224EEC21C005E5035 /* MissionControlCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7C5D5124EEC21C005E5035 /* MissionControlCenter.swift */; };
+		0A7C5D5324EEDD27005E5035 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABDC24E32F8000D30649 /* Star.swift */; };
+		0A7C5D5524EEDD4B005E5035 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABDC24E32F8000D30649 /* Star.swift */; };
 		0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736B824577451000190F8 /* RefreshOperation.swift */; };
 		0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */; };
 		0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BD2457772B000190F8 /* SyncOperation.swift */; };
@@ -2861,6 +2863,7 @@
 				23EF5AA0249CDD5400469977 /* TokenStore.swift in Sources */,
 				5319258522F9E63900B44FA3 /* Date+Elapsed.swift in Sources */,
 				0A64A82D24735169009A5EBF /* NullPubAPI.swift in Sources */,
+				0A7C5D5324EEDD27005E5035 /* Star.swift in Sources */,
 				238793E4246EC34D00C9AD36 /* RepeatingTimer.swift in Sources */,
 				5314EF6622EA2B180065D02A /* NullLog.swift in Sources */,
 				2367615B2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
@@ -2999,6 +3002,7 @@
 				5314EF4222EA28640065D02A /* ContentType.swift in Sources */,
 				0ABCA8FA243676A500D7F39C /* APIError.swift in Sources */,
 				0A64A84C24735766009A5EBF /* PhoneVerificationResponse.swift in Sources */,
+				0A7C5D5524EEDD4B005E5035 /* Star.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
