@@ -337,10 +337,10 @@ class GoBotInternal {
         })
         dcTimer.start()
 
-        Timers.shared.syncTimer.stop()
+        AppController.shared.missionControlCenter.pause()
         defer {
             dcTimer.stop()
-            Timers.shared.syncTimer.start(fireImmediately: true)
+            AppController.shared.missionControlCenter.resume()
         }
 
         NotificationCenter.default.post(Notification.didStartFSCKRepair())

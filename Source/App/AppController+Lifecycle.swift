@@ -12,9 +12,13 @@ import UIKit
 extension AppController {
 
     func launch() {
+        // Stop mission control if it currently started, this way we are sure
+        // it is not sending missions while user onboards or logins. start() is called
+        // when showing MainViewController
+        self.missionControlCenter.stop()
+        
         let controller = LaunchViewController()
         self.setRootViewController(controller, animated: false)
-        Timers.shared.pokeTimers.forEach{$0.start()}
         self.syncPushNotificationsSettings()
     }
 
@@ -24,23 +28,17 @@ extension AppController {
     }
 
     func resume() {
-        let sendMissionOperation = SendMissionOperation(quality: .high)
-        let refreshOperation = RefreshOperation(refreshLoad: .tiny)
-        refreshOperation.addDependency(sendMissionOperation)
-        self.operationQueue.addOperations([sendMissionOperation, refreshOperation],
-                                          waitUntilFinished: false)
-        Timers.shared.pokeTimers.forEach{$0.start()}
+        self.missionControlCenter.resume()
         self.syncPushNotificationsSettings()
     }
 
     func suspend() {
-        self.operationQueue.addOperation(SuspendOperation())
-        Timers.shared.pokeTimers.forEach{$0.stop()}
+        self.missionControlCenter.pause()
         Caches.invalidate()
     }
 
     func exit() {
-        self.operationQueue.addOperation(ExitOperation())
+        self.missionControlCenter.stop()
     }
 }
 

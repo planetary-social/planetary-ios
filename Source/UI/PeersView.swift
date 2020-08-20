@@ -172,25 +172,9 @@ class PeersView: UIView {
     
     @objc func triggerSync(sender : UITapGestureRecognizer) {
         self.connectionAnimation.searchAnimation()
-        
-        AppController.shared.pokeSync()
-        
-        /*
-        DispatchQueue.global(qos:  .userInitiated).async {
-            GoBot.shared.sync(queue: .main) {
-                [weak self] _, _, _ in
-                self?.setStats()
-            }
-        }
-        DispatchQueue.global(qos:  .userInitiated).async {
-            GoBot.shared.refresh(load: .long, queue: .main) {
-                [weak self] _, _ in
-                self?.setStats()
-            }
-        }*/
+        AppController.shared.missionControlCenter.sendMission()
     }
-
-
+    
     private func setSync(lastSyncDate: Date?) {
         let text = Text.lastSynced
         let label = self.syncedLabel

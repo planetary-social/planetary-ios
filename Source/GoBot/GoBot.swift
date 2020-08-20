@@ -742,7 +742,6 @@ class GoBot: Bot {
             catch {
                 DispatchQueue.main.async {
                     completion(identifier, nil, error)
-                    AppController.shared.pokeSync()
                 }
             }
         }

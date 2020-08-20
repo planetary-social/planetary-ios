@@ -107,11 +107,8 @@ class DoneOnboardingStep: OnboardingStep {
         let preloadOperation = LoadBundleOperation(bundle: bundle)
         preloadOperation.addDependency(publicWebHostingOperation)
         
-        let sendMissionOperation = SendMissionOperation(quality: .high)
-        sendMissionOperation.addDependency(preloadOperation)
-        
-        let refreshOperation = RefreshOperation(refreshLoad: .medium)
-        refreshOperation.addDependency(sendMissionOperation)
+        let refreshOperation = RefreshOperation(refreshLoad: .long)
+        refreshOperation.addDependency(preloadOperation)
         
         let completionOperation = BlockOperation { [weak self] in
             DispatchQueue.main.async { [weak self] in
@@ -126,7 +123,6 @@ class DoneOnboardingStep: OnboardingStep {
                           joinDirectoryOperation,
                           publicWebHostingOperation,
                           preloadOperation,
-                          sendMissionOperation,
                           refreshOperation,
                           completionOperation]
         AppController.shared.operationQueue.addOperations(operations,

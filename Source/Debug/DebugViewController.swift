@@ -316,43 +316,18 @@ class DebugViewController: DebugTableViewController {
             }
         )]
 
-        settings += [DebugTableViewCellModel(title: "Sync timer",
+        settings += [DebugTableViewCellModel(title: "Mission Control Center",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure:
             {
                 cell in
-                cell.detailTextLabel?.text = "\(Int(Timers.shared.syncTimer.interval)) secs"
-                let toggle = UISwitch(frame: .zero)
-                toggle.isOn = Timers.shared.syncTimer.isRunning
-                toggle.addTarget(self, action: #selector(self.botSyncTimerValueChanged(toggle:)), for: .valueChanged)
-                cell.accessoryView = toggle
+                cell.detailTextLabel?.text = "\(AppController.shared.missionControlCenter.state)"
             },
                                              actionClosure: nil)]
-        
-        settings += [DebugTableViewCellModel(title: "Refresh timer",
-                                         cellReuseIdentifier: DebugValueTableViewCell.className,
-                                         valueClosure:
-        {
-            cell in
-            cell.detailTextLabel?.text = "\(Int(Timers.shared.refreshTimer.interval)) secs"
-            let toggle = UISwitch(frame: .zero)
-            toggle.isOn = Timers.shared.refreshTimer.isRunning
-            toggle.addTarget(self, action: #selector(self.botRefreshTimerValueChanged(toggle:)), for: .valueChanged)
-            cell.accessoryView = toggle
-        },
-                                         actionClosure: nil)]
 
-        return ("Bots", settings, "A forced sync will return immediately if already in progress.")
-    }
-
-    @objc private func botSyncTimerValueChanged(toggle: UISwitch) {
-        toggle.isOn ? Timers.shared.syncTimer.start() : Timers.shared.syncTimer.stop()
+        return ("Bots", settings, nil)
     }
     
-    @objc private func botRefreshTimerValueChanged(toggle: UISwitch) {
-        toggle.isOn ? Timers.shared.refreshTimer.start() : Timers.shared.refreshTimer.stop()
-    }
-
     private func operations() -> DebugTableViewController.Settings {
 
         var settings: [DebugTableViewCellModel] = []
