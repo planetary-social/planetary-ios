@@ -30,6 +30,10 @@ class NullLog: LogService {
     static func info(_ string: String) {
         print("INFO: \(string)")
     }
+    
+    static func debug(_ string: String) {
+        print("DEBUG: \(string)")
+    }
 
     static func unexpected(_ reason: LogReason, _ detail: String? = nil) {
         switch reason {

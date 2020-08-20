@@ -50,9 +50,8 @@ extension AppDelegate {
     func handleBackgroundFetch(notificationsOnly: Bool = false, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         Log.info("Handling background fetch")
         Analytics.shared.trackBackgroundFetch()
-        let syncOperation = SyncOperation()
-        syncOperation.notificationsOnly = notificationsOnly
-
+        let sendMissionOperation = SendMissionOperation(quality: .low)
+        
         let refreshOperation = RefreshOperation()
         refreshOperation.refreshLoad = .short
 
@@ -60,16 +59,15 @@ extension AppDelegate {
         
         let operationQueue = OperationQueue()
         DispatchQueue.global(qos: .background).async {
-            operationQueue.addOperations([syncOperation, refreshOperation, statisticsOperation],
+            operationQueue.addOperations([sendMissionOperation, refreshOperation, statisticsOperation],
                                          waitUntilFinished: true)
             Log.info("Completed background fetch")
             Analytics.shared.trackDidBackgroundFetch()
-            if syncOperation.error != nil {
-                completionHandler(.failed)
-            } else if syncOperation.newMessages > 0 {
+            switch sendMissionOperation.result {
+            case .success:
                 completionHandler(.newData)
-            } else {
-                completionHandler(.noData)
+            case .failure:
+                completionHandler(.failed)
             }
         }
     }
@@ -138,7 +136,7 @@ extension AppDelegate {
         // Schedule a new sync task
         self.scheduleSyncTask()
         
-        let syncOperation = SyncOperation()
+        let sendMissionOperation = SendMissionOperation(quality: .high)
 
         let refreshOperation = RefreshOperation()
         refreshOperation.refreshLoad = .short
@@ -147,17 +145,17 @@ extension AppDelegate {
         
         task.expirationHandler = {
             Log.info("Task \(AppDelegate.syncBackgroundTaskIdentifier) expired")
-            syncOperation.cancel()
+            sendMissionOperation.cancel()
             refreshOperation.cancel()
         }
         
         let operationQueue = OperationQueue()
         DispatchQueue.global(qos: .background).async {
-            operationQueue.addOperations([syncOperation, refreshOperation, statisticsOperation],
+            operationQueue.addOperations([sendMissionOperation, refreshOperation, statisticsOperation],
                                          waitUntilFinished: true)
             Log.info("Completed task \(AppDelegate.syncBackgroundTaskIdentifier)")
             Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.syncBackgroundTaskIdentifier)
-            task.setTaskCompleted(success: !syncOperation.isCancelled)
+            task.setTaskCompleted(success: !sendMissionOperation.isCancelled)
         }
     }
     

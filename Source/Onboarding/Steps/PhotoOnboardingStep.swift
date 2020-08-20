@@ -58,12 +58,6 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
         Layout.center(self.circleLabel, atTopOf: self.circleView, inset: 94)
     }
 
-    override func didStart() {
-        // Last step was directory, it followed
-        // identities and bots
-        AppController.shared.pokeSync()
-    }
-
     override func secondary() {
         self.next(.bio)
     }

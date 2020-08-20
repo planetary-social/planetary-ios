@@ -161,7 +161,8 @@ CREATE TABLE addresses (
 
     use          boolean default true, -- false means disabled, dont' dial
     worked_last  DATETIME default 0, -- last time a connection could be made
-    last_err     text default ""
+    last_err     text default "",
+    redeemed     real default null
 );
 
 -- this just stores the text of a post
@@ -330,4 +331,12 @@ CREATE TABLE reports (
     created_at real NOT NULL,
     FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
     FOREIGN KEY ( author_id ) REFERENCES authors( "id" )
+);
+
+CREATE TABLE pubs (
+    msg_ref integer not null,
+    host text not null,
+    port integer not null,
+    key text not null,
+    FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );

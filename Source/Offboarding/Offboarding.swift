@@ -69,7 +69,7 @@ class Offboarding {
                                               completion: @escaping ((Error?) -> Void))
     {
         // identities following this identity
-        Bots.current.follows(identity: identity) { (identities: Identities, error) in
+        Bots.current.follows(identity: identity) { (identities: [Identity], error) in
             if let error = error { completion(error); return }
             if identities.isEmpty { completion(nil); return }
 

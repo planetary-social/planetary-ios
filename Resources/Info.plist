@@ -62,6 +62,10 @@
 	<string>$(TESTING_NETWORK_KEY)</string>
 	<key>PLTestingNetworkName</key>
 	<string>$(TESTING_NETWORK_NAME)</string>
+	<key>PLConstellation</key>
+	<string>$(CONSTELLATION)</string>
+	<key>PLPlanetarySystem</key>
+	<string>$(PLANETARY_SYSTEM)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

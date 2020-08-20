@@ -28,6 +28,7 @@ extension AnalyticsService {
                                              "following_count":     data.following.count,
                                              "image_set":           data.image != nil,
                                              "joined_directory":    data.joinedDirectory,
+                                             "public_web_hosting":  data.publicWebHosting,
                                              "name_length":         data.name?.count ?? 0,
                                              "simulated":           data.simulated]
 

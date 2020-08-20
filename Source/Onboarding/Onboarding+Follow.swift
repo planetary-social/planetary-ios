@@ -16,13 +16,6 @@ typealias OnboardingCompletion = ((Bool, OnboardingError?) -> Void)
 
 extension Onboarding {
 
-    static func followRequiredIdentities(context: Context,
-                                         completion: @escaping FollowCompletion)
-    {
-        let identities = Identities.for(context.network)
-        Onboarding.follow(identities, context: context, completion: completion)
-    }
-
     static func follow(_ identities: [Identity],
                        context: Context,
                        completion: @escaping FollowCompletion)

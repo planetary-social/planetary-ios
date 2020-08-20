@@ -43,14 +43,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         Log.info("Handling Remote notification")
         Analytics.shared.trackDidReceiveRemoteNotification()
-        
-        switch application.applicationState {
-            case .background:
-                self.handleBackgroundFetch(notificationsOnly: true, completionHandler: completionHandler)
-            default:
-                AppController.shared.pokeSync()
-                completionHandler(.newData)
-        }
+        self.handleBackgroundFetch(notificationsOnly: true, completionHandler: completionHandler)
     }
 
     // MARK: Local notification

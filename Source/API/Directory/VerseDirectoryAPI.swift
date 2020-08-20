@@ -124,7 +124,6 @@ extension VerseDirectoryAPI: API {
               headers: APIHeaders? = nil,
               completion: @escaping APICompletion)
     {
-        assert(Thread.isMainThread)
         guard path.beginsWithSlash else { completion(nil, .invalidPath(path)); return }
 
         guard var components = URLComponents(string: path) else { completion(nil, .invalidPath(path)); return }

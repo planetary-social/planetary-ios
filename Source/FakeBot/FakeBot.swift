@@ -18,10 +18,6 @@ class FakeBot: Bot {
         fatalError("TODO:\(#function)")
     }
     
-    func resume() {
-        fatalError("TODO:\(#function)")
-    }
-    
     func suspend() {
         fatalError("TODO:\(#function)")
     }
@@ -40,8 +36,13 @@ class FakeBot: Bot {
         fatalError("TODO:knownPubs")
     }
     
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        fatalError("TODO:invite:redeem")
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+        queue.async {
+            completion([], nil)
+        }
+    }
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
+        queue.async{ completion(nil) }
     }
     
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
@@ -94,8 +95,10 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
 
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        fatalError("TODO")
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
+        queue.async {
+            completion(MessageIdentifier.null, nil)
+        }
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
@@ -189,15 +192,18 @@ class FakeBot: Bot {
 
     let isSyncing = false
 
-    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)
         }
     }
     
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
-        self.sync(queue: queue, completion: completion)
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+        self._statistics.lastSyncDate = Date()
+        queue.async {
+            completion(nil, 0, 0)
+        }
       }
 
     // MARK: Refresh
@@ -251,7 +257,7 @@ class FakeBot: Bot {
         }
     }
 
-    func abouts(identities: Identities, completion:  @escaping AboutsCompletion) {
+    func abouts(identities: [Identity], completion:  @escaping AboutsCompletion) {
         completion(self.abouts(), nil)
     }
     
