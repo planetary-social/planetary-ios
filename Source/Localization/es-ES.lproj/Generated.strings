@@ -1,5 +1,3 @@
-// This file is auto-generated at build time and should not be modified by hand
-
 "Text.planetary" = "Planetary";
 "Text.error" = "Ups";
 "Text.cancel" = "Cancelar";
@@ -21,31 +19,31 @@
 "Text.yourProfile" = "Tu Perfil";
 "Text.helpAndSupport" = "Ayuda y Soporte";
 "Text.reportBug" = "Reportar una falla";
-"Text.settings" = "Configuración";
+"Text.settings" = "Configuración";
 "Text.userDirectory" = "Directorio de Usuarios";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "No mostrarme en el directorio de usuarios";
-"Text.analyticsAndCrash" = "Analíticas y Reportes de Fallos";
-"Text.usageData" = "Datos de Uso";
-"Text.userDirectoryMessage" = "Estar en el directorio de usuarios significa que la gente puede encontrarte si ya saben tu nombre, código corto o número de teléfono.";
-"Text.sendAnalytics" = "Enviar analíticas a Planetary";
-"Text.dontSendAnalytics" = "No enviar analíticas";
-"Text.analyticsMessage" = "Nos gustaría capturar datos anónimos sobre tu uso de la app –y reportes de fallos cuando algo sale mal– así podemos mejorar la aplicación.";
+"Text.analyticsAndCrash" = "Analíticas y Reportes de Fallos";
+"Text.usageData" = "Datos de uso";
+"Text.userDirectoryMessage" = "Estar en el directorio de usuarios significa que la gente puede encontrarte si ya saben tu nombre, código corto o número de teléfono.";
+"Text.sendAnalytics" = "Enviar analíticas a Planeta";
+"Text.dontSendAnalytics" = "No enviar analiticas";
+"Text.analyticsMessage" = "Nos gustaría capturar datos anónimos sobre tu uso de la app –y reportes de fallos cuando algo sale mal– así podemos mejorar la aplicación.";
 "Text.loadingUpdates" = "Planetary está buscando actualizaciones\nen la red par-a-par descentralizada.";
 "Text.post" = "Publicar";
-"Text.newPost" = "Nueva Publicación";
-"Text.deletePost" = "Eliminar esta publicación";
-"Text.editPost" = "Editar esta publicación";
-"Text.confirmDeletePost" = "¿Estás seguro que deseas eliminar esta publicación?";
+"Text.newPost" = "Nueva Publicación";
+"Text.deletePost" = "Eliminar esta publicación";
+"Text.editPost" = "Editar esta publicación";
+"Text.confirmDeletePost" = "¿Estás seguro que deseas eliminar esta publicación?";
 "Text.postReply" = "Publicar Respuesta";
 "Text.postAReply" = "Publicar una respuesta";
 "Text.createProfile" = "Crear Perfil";
 "Text.editProfile" = "Editar Perfil";
-"Text.thisIsYou" = "¡Este eres tú!";
+"Text.thisIsYou" = "¡Este eres tú!";
 "Text.name" = "Nombre";
 "Text.bio" = "Bio";
-"Text.seeMore" = "Ver más";
+"Text.seeMore" = "Ver más";
 "Text.block" = "Bloquear";
 "Text.blocked" = "Bloqueado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
@@ -61,11 +59,10 @@
 "Text.identifierCopied" = "Identificador copiado a tu portapapeles";
 "Text.copyMessageIdentifier" = "Copiar Identificador de Mensaje";
 "Text.copyPublicIdentifier" = "Copiar Identificador de Perfil";
-"Text.sharePublicIdentifier" = "Share Public Identifier";
+"Text.sharePublicIdentifier" = "Compartir Identificador de Perfil";
 "Text.shareThisProfile" = "Compartir Este Perfil";
-"Text.shareThisMessage" = "Share This Message";
-"Text.shareThisProfileText" = "Find {{ who }} on Planetary at {{ link }}";
-"Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
+"Text.shareThisProfile" = "Compartir Este Mensaje";
+"Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar de amigos";
 "Text.blockUser" = "Bloquear este usuario";
@@ -83,7 +80,7 @@
 "Text.andOneOther" = " y 1 más";
 "Text.countOnlinePeers" = "{{ count }} PARES EN LÍNEA";
 "Text.countLocalPeers" = "{{ count }} PARES LOCALES";
-"Text.lastSynced" = "SYNCED: {{ when }}";
+"Text.lastSynced" = "ULTIMA: {{ when }}";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
 "Text.home" = "Inicio";
@@ -97,8 +94,8 @@
 "Text.debug" = "Debuggear";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
-"Text.refresh" = "Refresh";
-"Text.markdownSupported" = "Markdown supported";
+"Text.refresh" = "Refrescar";
+"Text.markdownSupported" = "Markdown soportado";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres bloquear a {{ name }}? No podrás ver el contenido de ambos ni tampoco volver a contactarse.";
 "Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";
@@ -109,28 +106,28 @@
 
 "ImagePicker.camera" = "Cámara";
 "ImagePicker.cameraNotAvailable" = "La cámara no está disponible en este dispositivo";
-"ImagePicker.openSettingsMessage" = "Puedes permitir el acceso a la cámara abriendo la apliicación de Preferencias.";
+"ImagePicker.openSettingsMessage" = "Puedes permitir el acceso a la cámara abriendo la apliicación de Preferencias.";
 "ImagePicker.permissionsRequired" = "Permisos requeridos para {{ title }}";
 "ImagePicker.photoLibrary" = "Librería de Fotos";
-"ImagePicker.selectFrom" = "Seleccionar de la Librería de Fotos";
-"ImagePicker.takePhoto" = "Tomar foto con la cámara";
+"ImagePicker.selectFrom" = "Seleccionar de la Librería de Fotos";
+"ImagePicker.takePhoto" = "Tomar foto con la cámara";
 
-"NewPost.confirmRemove" = "¿Eliminar esta imagen de la publicación? Podrás volver a añadirla si te arrepientes.";
+"NewPost.confirmRemove" = "¿Eliminar esta imagen de la publicación? Podrás volver a añadirla si te arrepientes.";
 "NewPost.remove" = "Quitar";
 
 "Offboarding.reset" = "Resetear";
-"Offboarding.resetApplicationAndIdentity" = "Resetear aplicación e identidad";
+"Offboarding.resetApplicationAndIdentity" = "Resetear aplicación e identidad";
 "Offboarding.resetConfirmTitle" = "Cuidado";
-"Offboarding.resetConfirmMessage" = "¿Estás seguro de que quieres resetear tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
-"Offboarding.resetConfirmAgainTitle" = "¿Estás seguro?";
-"Offboarding.resetConfirmAgainMessage" = "¿De verdad estás seguro de que quieres reiniciar tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
-"Offboarding.resetFooter" = "Resetear la aplicación Planetary te quitará del directorio de usuarios, dejarás de seguir a todos, y destruirá tu identidad en tu dispositivo. No te será posible recuperar tu identidad, pero podrás crear una nueva.";
+"Offboarding.resetConfirmMessage" = "¿Estás seguro de que quieres resetear tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
+"Offboarding.resetConfirmAgainTitle" = "¿Está́́s seguro?";
+"Offboarding.resetConfirmAgainMessage" = "¿De verdad estás seguro de que quieres reiniciar tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
+"Offboarding.resetFooter" = "Resetear la aplicación Planetary te quitará del directorio de usuarios, dejarás de seguir a todos, y destruirá tu identidad en tu dispositivo. No te será posible recuperar tu identidad, pero podrás crear una nueva.";
 "Offboarding.resetApiErrorTryAgain" = "No hemos podido contectarnos al directorio para quitarte. Por favor intenta de nuevo.";
-"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió pero no te preocupes, creamos una nota para arreglarlo. Por favor intenta de nuevo.";
+"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió pero no te preocupes, creamos una nota para arreglarlo. Por favor intenta de nuevo.";
 
 "Onboarding.getStartedButton" = "Empecemos";
 "Onboarding.photoButtonAdd" = "Añade una foto";
-"Onboarding.photoButtonLater" = "Lo haré después";
+"Onboarding.photoButtonLater" = "Lo haré después";
 "Onboarding.useRealName" = "Si puedes, usa tu nombre real para ayudar a tus amigos a encontrarte.";
 "Onboarding.phoneNumber" = "Número de teléfono";
 "Onboarding.phoneNumberConfirmationMessage" = "Usamos esto para confirmar tu identidad y para enviarte alertas del servicio.";
@@ -138,11 +135,11 @@
 "Onboarding.reenter" = "Reingresar";
 "Onboarding.resendSMS" = "Reenviar SMS";
 "Onboarding.youEnteredNumber" = "Ingresaste el número {{ phone }}";
-"Onboarding.confirmNumber" = "Si ese número es correcto, toca 'Reenviar SMS'. Si es incorrecto, toca 'Reingresar'.";
-"Onboarding.ageLimit" = "Por razones legales, necesitarás ser mayor de dieciséis para usar Planetary.";
+"Onboarding.confirmNumber" = "Si ese número es correcto, toca 'Reenviar SMS'. Si es incorrecto, toca 'Reingresar'.";
+"Onboarding.ageLimit" = "Por razones legales, necesitarás ser mayor de dieciséis para usar Planetary.";
 "Onboarding.chooseProfileImage" = "Elige una\nimagen de perfil";
 "Onboarding.changePhoto" = "Cambiar foto";
-"Onboarding.confirmPhoto" = "Sí, ¡está bien!";
+"Onboarding.confirmPhoto" = "Sí, ¡está bien!";
 "Onboarding.startOver" = "Empezar de nuevo";
 "Onboarding.contactsHint" = "Encriptamos estos datos en un solo sentido así nunca podremos acceder a ellos directamente.";
 "Onboarding.connect" = "¡Conectar ya!";
@@ -195,9 +192,9 @@
 "Preview.title" = "Configuración avanzada";
 "Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
 
-"PublicWebHosting.enabled" = "Enabled";
-"PublicWebHosting.title" = "Public Web Hosting";
-"PublicWebHosting.footer" = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible.";
+"PublicWebHosting.enabled" = "Activado";
+"PublicWebHosting.title" = "Web Pública";
+"PublicWebHosting.footer" = "Indica que deseas que tus publicaciones aparezcan en sitios web públicos. Los cambios pueden tardar un par de horas en ser efectuados.";
 
 "Push.enabled" = "Activado";
 "Push.title" = "Notificaciones Push";
@@ -225,8 +222,8 @@
 "Post.one" = "publicación";
 "Post.many" = "publicaciones";
 
-"Report.somebody" = "Somebody";
-"Report.feedFollowed" = "%@ is started following you";
-"Report.postReplied" = "%@ replied";
-"Report.feedMentioned" = "%@ mentioned you in a post";
-"Report.messageLiked" = "%@ liked your post";
+"Report.somebody" = "Alguien";
+"Report.feedFollowed" = "%@ comenzó a seguirte";
+"Report.postReplied" = "%@ respondió";
+"Report.feedMentioned" = "%@ te mencionó en una publicación";
+"Report.messageLiked" = "A %@ le gustó tu publicación";
