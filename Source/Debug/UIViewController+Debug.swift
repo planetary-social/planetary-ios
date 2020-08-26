@@ -21,20 +21,3 @@ extension UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
 }
-
-extension AppConfigurations {
-
-    // Not used anymore, it can be used to filter Mixpanel users
-    func hasCompanyIdentities() -> Bool {
-        #if DEBUG
-            return true
-        #else
-            for configuration in self {
-                guard let identity = configuration.identity else { continue }
-                if Identities.verse.people.contains(where: { $0.1 == identity }) { return true }
-                if Identities.planetary.people.contains(where: { $0.1 == identity }) { return true }
-            }
-            return false
-        #endif
-    }
-}
