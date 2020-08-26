@@ -25,13 +25,14 @@ class LaunchViewController: UIViewController {
         let splashImageView = UIImageView(image: UIImage(named: "splash"))
         splashImageView.contentMode = .scaleAspectFit
         Layout.center(splashImageView, in: self.view, size: CGSize(width: 181, height: 231))
+        
+        self.launch()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Launch")
         Analytics.shared.trackDidShowScreen(screenName: "launch")
-        self.launch()
     }
 
     // MARK: Actions
@@ -86,14 +87,7 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         
-        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { loginError in
-            
-            var error = loginError
-            
-            // login can return a .alreadyLoggedIn error, we should be fine dismissing this case
-            if let botError = error as? BotError, botError == .alreadyLoggedIn {
-                error = nil
-            }
+        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { error in
             
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error,

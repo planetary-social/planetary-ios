@@ -104,21 +104,22 @@ class GoBot: Bot {
         completion(sec, nil)
     }
     
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
+    func login(queue: DispatchQueue, network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
 
-        if self._identity != nil {
+        guard self._identity == nil else {
             if secret.identity == self._identity {
-                DispatchQueue.main.async { completion(nil) }
-                return
+                queue.async { completion(nil) }
+            } else {
+                queue.async { completion(BotError.alreadyLoggedIn) }
             }
-            DispatchQueue.main.async { completion(BotError.alreadyLoggedIn) }
             return
         }
 
         // lookup Application Support folder for bot and database
-        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-        if appSupportDirs.count < 1 {
-            DispatchQueue.main.async { completion(GoBotError.unexpectedFault("no support dir")) }
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory,
+                                                                 .userDomainMask, true)
+        guard appSupportDirs.count > 0 else {
+            queue.async { completion(GoBotError.unexpectedFault("no support dir")) }
             return
         }
 
@@ -130,14 +131,12 @@ class GoBot: Bot {
             do {
                 try self.database.open(path: repoPrefix, user: secret.identity)
             } catch {
-                DispatchQueue.main.async { completion(error) }
+                queue.async { completion(error) }
                 return
             }
         } else {
             Log.unexpected(.botError, "\(#function) warning: database still open")
         }
-
-        self._identity = secret.identity
    
         // spawn go-bot in the background to return early
         self.queue.async {
@@ -145,13 +144,27 @@ class GoBot: Bot {
             // used for locating the files in the simulator
             print("===> starting gobot with prefix: \(repoPrefix)")
             #endif
-            let loginErr = self.bot.login(network: network, hmacKey: hmacKey, secret: secret, pathPrefix: repoPrefix)
+            let loginErr = self.bot.login(network: network,
+                                          hmacKey: hmacKey,
+                                          secret: secret,
+                                          pathPrefix: repoPrefix)
             
-            DispatchQueue.main.async { completion(loginErr) }
+            defer {
+                queue.async { completion(loginErr) }
+            }
+            
+            guard loginErr == nil else {
+                return
+            }
+            
+            self._identity = secret.identity
             
             BlockedAPI.shared.retreiveBlockedList() {
                 blocks, err in
-                guard err == nil else { Log.unexpected(.botError, "failed to get blocks: \(err)"); return } // Analitcis error instead?
+                guard err == nil else {
+                    Log.unexpected(.botError, "failed to get blocks: \(err)");
+                    return
+                } // Analitcis error instead?
 
                 var authors: [FeedIdentifier] = []
                 do {
@@ -173,7 +186,6 @@ class GoBot: Bot {
                 }
             }
         }
-        return
     }
     
     func logout(completion: @escaping ErrorCompletion) {

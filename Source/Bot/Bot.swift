@@ -81,7 +81,7 @@ protocol Bot {
 
     // MARK: Login
 
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion)
+    func login(queue: DispatchQueue, network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion)
     func logout(completion: @escaping ErrorCompletion)
 
     // MARK: Invites
@@ -201,6 +201,13 @@ protocol Bot {
 
 extension Bot {
     
+    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
+        self.login(queue: .main,
+                   network: network,
+                   hmacKey: hmacKey,
+                   secret: secret,
+                   completion: completion)
+    }
     func sync(peers: [Peer], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }

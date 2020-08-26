@@ -22,9 +22,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.9.29</string>
+	<string>0.9.30</string>
 	<key>CFBundleVersion</key>
-	<string>225</string>
+	<string>230</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -40,6 +40,8 @@
 	<string>This app allows you to take photos to share with friends or use as your profile image.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app allows you to select photos to share with friends or use as your profile image.</string>
+	<key>PLConstellation</key>
+	<string>$(CONSTELLATION)</string>
 	<key>PLDefaultNetworkKey</key>
 	<string>$(DEFAULT_NETWORK_KEY)</string>
 	<key>PLDefaultNetworkName</key>
@@ -56,16 +58,14 @@
 	<string>$(PLANETARY_NETWORK_KEY)</string>
 	<key>PLPlanetaryNetworkName</key>
 	<string>$(PLANETARY_NETWORK_NAME)</string>
+	<key>PLPlanetarySystem</key>
+	<string>$(PLANETARY_SYSTEM)</string>
 	<key>PLTestingNetworkHMAC</key>
 	<string>$(TESTING_NETWORK_HMAC)</string>
 	<key>PLTestingNetworkKey</key>
 	<string>$(TESTING_NETWORK_KEY)</string>
 	<key>PLTestingNetworkName</key>
 	<string>$(TESTING_NETWORK_NAME)</string>
-	<key>PLConstellation</key>
-	<string>$(CONSTELLATION)</string>
-	<key>PLPlanetarySystem</key>
-	<string>$(PLANETARY_SYSTEM)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
