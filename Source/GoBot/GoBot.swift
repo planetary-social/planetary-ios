@@ -51,7 +51,7 @@ class GoBot: Bot {
             let lhsCreationDate = try? lhs.resourceValues(forKeys: [.creationDateKey]).creationDate
             let rhsCreationDate = try? rhs.resourceValues(forKeys: [.creationDateKey]).creationDate
             if let lhsCreationDate = lhsCreationDate, let rhsCreationDate = rhsCreationDate {
-                return lhsCreationDate.compare(rhsCreationDate) == .orderedAscending
+                return lhsCreationDate.compare(rhsCreationDate) == .orderedDescending
             } else if lhsCreationDate == nil {
                 return false
             } else {
