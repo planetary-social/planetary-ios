@@ -77,7 +77,7 @@ extension UIColor {
     }
 
     struct tint {
-        static let `default` = #colorLiteral(red: 0.5176470588, green: 0.4549019608, blue: 0.9176470588, alpha: 1)
+        static let `default` = #colorLiteral(red: 1, green: 0.1490196078, blue: 0.3058823529, alpha: 1)
         static let system = #colorLiteral(red: 0, green: 0.4623456597, blue: 1, alpha: 1)
     }
 }
