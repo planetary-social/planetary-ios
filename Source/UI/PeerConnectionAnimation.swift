@@ -54,8 +54,8 @@ class PeerConnectionAnimation: UIView {
     private var insideReplicator: CAReplicatorLayer!
     private var outsideReplicator: CAReplicatorLayer!
 
-    let inColor = #colorLiteral(red: 0.9952326417, green: 0.1234170869, blue: 0.2947148085, alpha: 1)
-    let outColor = #colorLiteral(red: 0.9970298409, green: 0.6325244308, blue: 0.714163363, alpha: 1)
+    let inColor = UIColor.tint.default
+    let outColor = UIColor.tint.default.withAlphaComponent(0.6)
     let disabledColor = #colorLiteral(red: 0.6195520163, green: 0.619643569, blue: 0.6195320487, alpha: 1)
     let searchColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
 
