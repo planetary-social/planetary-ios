@@ -1,32 +1,23 @@
 {
   "images" : [
     {
+      "filename" : "onboarding-button.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "resizing" : {
-        "mode" : "3-part-horizontal",
-        "center" : {
-          "mode" : "tile",
-          "width" : 1
-        },
-        "cap-insets" : {
-          "right" : 41,
-          "left" : 41
-        }
-      },
-      "idiom" : "universal",
       "filename" : "onboarding-button@2x.png",
+      "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "onboarding-button@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }
