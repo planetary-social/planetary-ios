@@ -1,12 +1,23 @@
 {
   "images" : [
     {
+      "filename" : "cell-chevron.png",
       "idiom" : "universal",
-      "filename" : "cell-chevron.pdf"
+      "scale" : "1x"
+    },
+    {
+      "filename" : "cell-chevron@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "cell-chevron@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }
