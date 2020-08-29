@@ -801,8 +801,8 @@ class GoBot: Bot {
     private var _about: About?
     var about: About? {
         
-        if self._about == nil {
-            self._about = try? self.database.getAbout(for: self.identity!)
+        if self._about == nil, let identity = self.identity {
+            self._about = try? self.database.getAbout(for: identity)
         }
         return self._about
     }
