@@ -20,6 +20,7 @@ extension String {
             let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
             addHashtagsLinks(in: mutableAttributedString, styler: styler)
             addUnformattedLinks(in: mutableAttributedString, styler: styler)
+            addUnformattedMentions(in: mutableAttributedString, styler: styler)
             return mutableAttributedString
         } catch let error {
             Log.optional(error)
@@ -64,6 +65,27 @@ extension String {
             default:
                 return
             }
+        }
+    }
+    
+    func addUnformattedMentions(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler) {
+        let string = mutableAttributedString.string
+        let range = NSRange(location: 0, length: string.utf16.count)
+        let regex = try! NSRegularExpression(pattern: "[@%&][a-zA-Z0-9+/=]{44}\\.[a-z0-9]+")
+        regex.enumerateMatches(in: string, options: [], range: range) { (result, _, _) in
+            guard let result = result else {
+                return
+            }
+            let range = result.range
+            let currentAttributes = mutableAttributedString.attributes(at: range.location,
+                                                                       effectiveRange: nil)
+            guard !currentAttributes.keys.contains(.link) else {
+                return
+            }
+            let attributedLink = mutableAttributedString.attributedSubstring(from: range)
+            let mutableAttributedLink = NSMutableAttributedString(attributedString: attributedLink)
+            styler.style(link: mutableAttributedLink, title: nil, url: attributedLink.string)
+            mutableAttributedString.replaceCharacters(in: range, with: mutableAttributedLink)
         }
     }
     
