@@ -107,6 +107,7 @@ protocol Bot {
 
     // MARK: About
 
+    @available(*, deprecated)
     var about: About? { get }
     func about(completion: @escaping AboutCompletion)
     func about(queue: DispatchQueue, identity: Identity, completion:  @escaping AboutCompletion)

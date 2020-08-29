@@ -514,7 +514,7 @@ class DebugViewController: DebugTableViewController {
             Analytics.shared.forget()
             CrashReporting.shared.forget()
             
-            AppController.shared.launch()
+            AppController.shared.relaunch()
             self?.dismiss(animated: true, completion: nil)
         }
     }

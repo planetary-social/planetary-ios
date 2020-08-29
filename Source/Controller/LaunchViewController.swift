@@ -99,26 +99,43 @@ class LaunchViewController: UIViewController {
                 let controller = UIAlertController(title: Text.error.text,
                                                    message: Text.Error.login.text,
                                                    preferredStyle: .alert)
-                
-                var action = UIAlertAction(title: "Restart", style: .default) { _ in
-                    controller.dismiss(animated: true, completion: nil)
-                    bot.logout() {
-                        err in
+                let action = UIAlertAction(title: "Restart", style: .default) { _ in
+                    Log.debug("Restarting launch...")
+                    bot.logout { err in
+                        // Don't report error here becuase the normal path is to actually receive
+                        // a notLoggedIn error
                         Log.optional(err)
+                        
                         ssbDropIndexData()
-                        AppController.shared.relaunch() // this should call self.login() again right?!
+                        
+                        Analytics.shared.forget()
+                        CrashReporting.shared.forget()
+                        
+                        AppController.shared.relaunch()
                     }
                 }
                 controller.addAction(action)
+                
+                let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
+                    Log.debug("Resetting current configuration and restarting launch...")
+                    AppConfiguration.current?.unapply()
+                    bot.logout { err in
+                        // Don't report error here becuase the normal path is to actually receive
+                        // a notLoggedIn error
+                        Log.optional(err)
+                        
+                        ssbDropIndexData()
+                        
+                        Analytics.shared.forget()
+                        CrashReporting.shared.forget()
+                        
+                        AppController.shared.relaunch()
+                    }
+                }
+                controller.addAction(reset)
 
-                action = UIAlertAction(title: "Ignore", style: .cancel) { _ in
-                    controller.dismiss(animated: true, completion: nil)
-                    DispatchQueue.main.async {
-                        AppController.shared.showMainViewController(animated: true)
-                    }
-                }
-                controller.addAction(action)
                 AppController.shared.showAlertController(with: controller, animated: true)
+                
                 return
             }
             
