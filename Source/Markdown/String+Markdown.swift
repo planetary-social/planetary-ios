@@ -71,7 +71,13 @@ extension String {
     func addUnformattedMentions(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler) {
         let string = mutableAttributedString.string
         let range = NSRange(location: 0, length: string.utf16.count)
-        let regex = try! NSRegularExpression(pattern: "[@%&][a-zA-Z0-9+/=]{44}\\.[a-z0-9]+")
+        let pattern = "[@%&][a-zA-Z0-9+/=]{44}\\.[a-z0-9]+"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            let error = AppError.unexpected
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            return
+        }
         regex.enumerateMatches(in: string, options: [], range: range) { (result, _, _) in
             guard let result = result else {
                 return

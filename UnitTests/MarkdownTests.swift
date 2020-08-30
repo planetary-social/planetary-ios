@@ -115,7 +115,14 @@ class MarkdownTests: XCTestCase {
     }
     
     func test_decodeIdentifiersWithoutLink() {
-        let markdown = "Hey @8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519 and @34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519!\n\nNext week sounds great. I'd love to help out. I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client on it as well."
+        let markdown = """
+    Hey @8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519
+and @34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519!\n
+\n
+Next week sounds great.
+I'd love to help out.
+I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client on it as well.
+"""
         let attributedString = markdown.decodeMarkdown()
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 2)
@@ -126,7 +133,10 @@ class MarkdownTests: XCTestCase {
     }
     
     func test_decodeLinkwithIdentifierWithoutFormat() {
-        let markdown = "This is a link https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519 without format and with an identifier in the middle"
+        let markdown = """
+    This is a link https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519
+without format and with an identifier in the middle
+"""
         let attributedString = markdown.decodeMarkdown()
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 1)
