@@ -22,12 +22,34 @@ extension AppController {
         else if let identifier = url.identifier { self.open(identifier: identifier) }
         else { UIApplication.shared.open(url, options: [:], completionHandler: completion) }
     }
+    
+    func open(string: String) {
+        Log.info("open(string): \(string)")
+        switch string.prefix(1) {
+        case "&":
+            self.pushBlobViewController(for: string)
+        case "%":
+            self.pushThreadViewController(for: string)
+        case "@":
+            self.pushViewController(for: .about, with: string)
+        case "#":
+            self.pushChannelViewController(for: string)
+        default:
+            return
+        }
+    }
 
     // TODO how to extract identifier and content type?
     func open(identifier: Identifier) {
         switch identifier.sigil {
-            case .blob: self.pushBlobViewController(for: identifier)
-            default: self.pushViewController(for: .about, with: identifier)
+        case .blob:
+            self.pushBlobViewController(for: identifier)
+        case .message:
+            self.pushThreadViewController(for: identifier)
+        case .feed:
+            self.pushViewController(for: .about, with: identifier)
+        case .unsupported:
+            return
         }
     }
 

@@ -12,7 +12,10 @@ extension URL {
 
     var identifier: Identifier? {
         let identifier = self.absoluteString
-        if identifier.isValidIdentifier { return identifier }
-        else { return nil }
+        if identifier.sigil != .unsupported, identifier.algorithm != .unsupported {
+            return identifier
+        } else {
+            return nil
+        }
     }
 }
