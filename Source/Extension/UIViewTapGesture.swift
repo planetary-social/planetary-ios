@@ -55,8 +55,13 @@ class UIViewTapGesture: Tappable {
         let attributes = textView.textStorage.attributes(at: characterIndex,
                                                          effectiveRange: nil)
         let link = attributes[NSAttributedString.Key.link]
-        if let url = self.linkToURL(link)   { self.tapOnURL?(url) }
-        else                                { self.tap?() }
+        if let url = self.linkToURL(link) {
+            AppController.shared.open(url: url)
+        } else if let string = link as? String {
+            AppController.shared.open(string: string)
+        } else {
+            self.tap?()
+        }
     }
 
     private func linkToURL(_ link: Any?) -> URL? {
