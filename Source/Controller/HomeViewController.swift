@@ -117,11 +117,6 @@ class HomeViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .home)
-        let imageView = UIImageView(image: UIImage(named: "title"))
-        imageView.contentMode = .scaleAspectFit
-        let view = UIView.forAutoLayout()
-        Layout.fill(view: view, with: imageView, respectSafeArea: false)
-        self.navigationItem.titleView = view
         self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
     }
 

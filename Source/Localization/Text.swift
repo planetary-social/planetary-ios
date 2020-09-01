@@ -133,7 +133,7 @@ enum Text: String, Localizable, CaseIterable {
     
     case channels = "Hashtags"
     case select = "Select"
-    case home = "Home"
+    case home = "Your Feed"
     case explore = "Explore"
     case messages = "Messages"
     case notifications = "Notifications"

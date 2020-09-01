@@ -86,7 +86,7 @@
 "Text.lastSynced" = "SYNCED: {{ when }}";
 "Text.channels" = "Hashtags";
 "Text.select" = "Select";
-"Text.home" = "Home";
+"Text.home" = "Your Feed";
 "Text.explore" = "Explore";
 "Text.messages" = "Messages";
 "Text.notifications" = "Notifications";
