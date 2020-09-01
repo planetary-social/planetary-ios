@@ -103,13 +103,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 content.title = NSString.localizedUserNotificationString(forKey: Text.Report.postReplied.text,
                                                                          arguments: [who])
                 if let what = report.keyValue.value.content.post?.text {
-                    content.body = what
+                    content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .feedMentioned:
                 content.title = NSString.localizedUserNotificationString(forKey: Text.Report.feedMentioned.text,
                                                                          arguments: [who])
                 if let what = report.keyValue.value.content.post?.text {
-                    content.body = what
+                    content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .messageLiked:
                 content.title = NSString.localizedUserNotificationString(forKey: Text.Report.messageLiked.text,
