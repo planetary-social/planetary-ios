@@ -20,6 +20,7 @@ extension UIColor {
         static let menu =       UIColor(named: "menuBackgroundColor") ?? UIColor(rgb: 0x252525)
         static let reply =      UIColor(named: "replyBackground") ?? UIColor(rgb: 0xEFEFEF)
         static let table =      UIColor(named: "tableBackgroundColor") ?? UIColor(rgb: 0xF4F4F4)
+        static let splash =  UIColor(named: "splashBackgroundColor") ?? UIColor.white
     }
     
     struct tabBar {
