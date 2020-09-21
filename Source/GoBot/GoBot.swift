@@ -1037,6 +1037,21 @@ class GoBot: Bot {
         }
     }
     
+    func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
+        self.queue.async {
+            do {
+                let key = try self.database.paginatedTop(onlyFollowed: true)
+                queue.async {
+                    completion(key)
+                }
+            } catch {
+                queue.async {
+                    completion(nil)
+                }
+            }
+        }
+    }
+    
     // posts from everyone, not just who you follow
     func everyone(completion: @escaping PaginatedCompletion) {
         self.queue.async {
