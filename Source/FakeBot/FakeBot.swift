@@ -304,6 +304,15 @@ class FakeBot: Bot {
             completion(StaticDataProxy(), nil)
         }
     }
+    
+    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
+        queue.async {
+            let data = Data.fromJSON(resource: "Feed.json")
+            var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
+            feed?.sort { $0.value.timestamp < $1.value.timestamp }
+            completion(feed?.first?.key)
+        }
+    }
 
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)

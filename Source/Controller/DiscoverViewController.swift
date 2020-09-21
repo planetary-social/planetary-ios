@@ -242,19 +242,21 @@ class DiscoverViewController: ContentViewController {
     
     override func didRefresh(notification: NSNotification) {
         let currentProxy = self.dataSource.data
-        Bots.current.everyone { [weak self] (newProxy, error) in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if newProxy.count > currentProxy.count {
-                DispatchQueue.main.async { [weak self] in
-                    if currentProxy.count == 0 {
-                        self?.load(animated: true)
-                    } else if let firstCurrent = currentProxy.keyValueBy(index: 0), let firstNew = newProxy.keyValueBy(index: 0), firstCurrent.key != firstNew.key {
-                        self?.updatedProxy = newProxy
-                        let shouldAnimate = self?.navigationController?.topViewController == self
-                        self?.floatingRefreshButton.show(animated: shouldAnimate)
-                    }
-                }
+        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
+        Log.debug("Current key at top: \(currentKeyAtTop ?? "nil")")
+        Log.debug("Checking new key at top...")
+        Bots.current.keyAtEveryoneTop { [weak self] (key) in
+            Log.debug("New key at top: \(key ?? "nil")")
+            guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
+                Log.debug("Nothing has changed")
+                return
+            }
+            Log.debug("There is a new key!")
+            if currentProxy.count == 0 {
+                self?.load(animated: true)
+            } else {
+                let shouldAnimate = self?.navigationController?.topViewController == self
+                self?.floatingRefreshButton.show(animated: shouldAnimate)
             }
         }
     }
