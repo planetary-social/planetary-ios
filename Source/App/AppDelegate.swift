@@ -43,6 +43,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Analytics.shared.trackAppLaunch()
         
+        // Ignore SIGPIPE signals
+        // Check https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/CommonPitfalls/CommonPitfalls.html
+        // for more info.
+        Darwin.signal(SIGPIPE, SIG_IGN)
+        
         // done
         return true
     }
