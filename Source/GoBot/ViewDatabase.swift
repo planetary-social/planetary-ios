@@ -1160,7 +1160,7 @@ class ViewDatabase {
         }
         
         var qry = self.msgs
-            .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
+            .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
             .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
