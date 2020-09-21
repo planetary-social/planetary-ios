@@ -1063,6 +1063,21 @@ class GoBot: Bot {
             }
         }
     }
+    
+    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
+        self.queue.async {
+            do {
+                let key = try self.database.paginatedTop(onlyFollowed: false)
+                queue.async {
+                    completion(key)
+                }
+            } catch {
+                queue.async {
+                    completion(nil)
+                }
+            }
+        }
+    }
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)

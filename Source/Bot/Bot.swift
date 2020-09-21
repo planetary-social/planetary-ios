@@ -145,6 +145,7 @@ protocol Bot {
     
     // everyone's posts
     func everyone(completion: @escaping PaginatedCompletion)
+    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
     
     // your feed
     func recent(completion: @escaping PaginatedCompletion)
@@ -254,4 +255,9 @@ extension Bot {
     func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {
         self.keyAtRecentTop(queue: .main, completion: completion)
     }
+    
+    func keyAtEveryoneTop(completion: @escaping (MessageIdentifier?) -> Void) {
+        self.keyAtEveryoneTop(queue: .main, completion: completion)
+    }
+    
 }
