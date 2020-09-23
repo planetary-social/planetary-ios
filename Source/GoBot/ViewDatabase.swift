@@ -220,9 +220,10 @@ class ViewDatabase {
         
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
+        try db.execute("PRAGMA synchronous = OFF;")
+
         
-        
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        //db.trace { print("\tSQL: \($0)") } // print all the statements
         
         try db.transaction {
             if db.userVersion == 0 {
@@ -1137,7 +1138,7 @@ class ViewDatabase {
         }
         
         var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
-            .order(colClaimedAt.desc)
+            .order(colMessageID.desc)
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
@@ -1356,7 +1357,7 @@ class ViewDatabase {
             .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue )
             .filter(colRoot == msgID)
             .filter(colHidden == false)
-            .order(colClaimedAt.asc)
+            .order(colMessageID.asc)
         
         // making this a two-pass query until i can figure out how to dynamlicly join based on type
 
@@ -1482,7 +1483,7 @@ class ViewDatabase {
             .filter(colFeedID == self.currentUserID)
             .filter(colAuthorID != self.currentUserID)
             .filter(colHidden == false)
-            .order(colClaimedAt.desc)
+            .order(colMessageID.desc)
             .limit(limit)
         
         
@@ -1630,7 +1631,7 @@ class ViewDatabase {
             onlyRoots: true,
             offset: offset)
             .filter(colAuthorID == feedAuthorID)
-            .order(colClaimedAt.desc)
+            .order(colMessageID.desc)
             .filter(colHidden == false)
 
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
@@ -1752,7 +1753,7 @@ class ViewDatabase {
             .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.channelAssigned[colMessageRef])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.channelAssigned[colMessageRef])
-            .order(colClaimedAt.desc)
+            .order(colMessageID.desc)
 
         return try self.mapQueryToKeyValue(qry: qry)
     }
