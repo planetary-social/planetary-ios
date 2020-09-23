@@ -146,18 +146,20 @@ func ValidateNext(current, next ssb.Message) error {
 			return errors.Errorf("ValidateNext(%s:%d): wrong author: %s", author.ShortRef(), current.Seq(), next.Author().ShortRef())
 		}
 		/*
+
 			if bytes.Compare(current.Key().Hash, next.Previous().Hash) != 0 {
-				return errors.Errorf("ValidateNext(%s:%d): previous compare failed expected:%s incoming:%s",
-					author.Ref(),
-					current.Seq(),
-					current.Key().Ref(),
-					next.Previous().Ref(),
-				)
+					return errors.Errorf("ValidateNext(%s:%d): previous compare failed expected:%s incoming:%s",
+						author.Ref(),
+						current.Seq(),
+						current.Key().Ref(),
+						next.Previous().Ref(),
+					)
+				}
+
+			if current.Seq()+1 != next.Seq() {
+				return errors.Errorf("ValidateNext(%s:%d): next.seq != curr.seq+1", author.ShortRef(), current.Seq())
 			}
 		*/
-		if current.Seq()+1 != next.Seq() {
-			return errors.Errorf("ValidateNext(%s:%d): next.seq != curr.seq+1", author.ShortRef(), current.Seq())
-		}
 
 	} else { // first message
 		nextSeq := next.Seq()
