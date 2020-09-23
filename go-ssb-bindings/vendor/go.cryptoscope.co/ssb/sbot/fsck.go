@@ -137,58 +137,64 @@ func (s *Sbot) FSCK(opts ...FSCKOption) error {
 // It expects a multilog as first parameter where each sublog is one feed
 // and each entry maps to another entry in the receiveLog
 func lengthFSCK(authorMlog multilog.MultiLog, receiveLog margaret.Log) error {
-	feeds, err := authorMlog.List()
-	if err != nil {
-		return err
-	}
 
-	for _, author := range feeds {
-		var sr ssb.StorageRef
-		err := sr.Unmarshal([]byte(author))
-		if err != nil {
-			return err
-		}
-		authorRef, err := sr.FeedRef()
+	/*
+		feeds, err := authorMlog.List()
 		if err != nil {
 			return err
 		}
 
-		subLog, err := authorMlog.Get(author)
-		if err != nil {
-			return err
-		}
+			for _, author := range feeds {
+				var sr ssb.StorageRef
+				err := sr.Unmarshal([]byte(author))
+				if err != nil {
+					return err
+				}
 
-		currentSeqV, err := subLog.Seq().Value()
-		if err != nil {
-			return err
-		}
-		currentSeqFromIndex := currentSeqV.(margaret.Seq)
-		rlSeq, err := subLog.Get(currentSeqFromIndex)
-		if err != nil {
-			if margaret.IsErrNulled(err) {
-				continue
-			}
-			return err
-		}
+				//authorRef, err := sr.FeedRef()
+				//_, err := sr.FeedRef()
+				//if err != nil {
+				//	return err
+				//}
 
-		rv, err := receiveLog.Get(rlSeq.(margaret.BaseSeq))
-		if err != nil {
-			if margaret.IsErrNulled(err) {
-				continue
-			}
-			return err
-		}
-		msg := rv.(ssb.Message)
+				subLog, err := authorMlog.Get(author)
+				if err != nil {
+					return err
+				}
 
-		// margaret indexes are 0-based, therefore +1
-		if msg.Seq() != currentSeqFromIndex.Seq()+1 {
-			return ssb.ErrWrongSequence{
-				Ref:     authorRef,
-				Stored:  currentSeqFromIndex,
-				Logical: msg,
-			}
-		}
-	}
+				currentSeqV, err := subLog.Seq().Value()
+				if err != nil {
+					return err
+				}
+				currentSeqFromIndex := currentSeqV.(margaret.Seq)
+				rlSeq, err := subLog.Get(currentSeqFromIndex)
+				if err != nil {
+					if margaret.IsErrNulled(err) {
+						continue
+					}
+					return err
+				}
+
+				//rv, err := receiveLog.Get(rlSeq.(margaret.BaseSeq))
+				//if err != nil {
+				//	if margaret.IsErrNulled(err) {
+				//		continue
+				//	}
+				//	return err
+				//}
+				//msg := rv.(ssb.Message)
+
+				// Commented out to prevent fake forked log bug
+				//
+				// margaret indexes are 0-based, therefore +1
+				//if msg.Seq() != currentSeqFromIndex.Seq()+1 {
+				//	return ssb.ErrWrongSequence{
+				//		Ref:     authorRef,
+				//		Stored:  currentSeqFromIndex,
+				//		Logical: msg,
+				//	}
+				//}
+			} */
 
 	return nil
 }

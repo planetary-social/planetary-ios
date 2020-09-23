@@ -38,7 +38,13 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
     
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { return self.kvs[index] }
     
-    func keyValueBy(index: Int) -> KeyValue? { return self.kvs[index] }
+    func keyValueBy(index: Int) -> KeyValue? {
+        if self.kvs.isEmpty {
+            return nil
+        } else {
+            return self.kvs[index]
+        }
+    }
 
     func prefetchUpTo(index: Int) { /* noop */ }
 }
