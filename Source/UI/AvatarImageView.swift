@@ -50,7 +50,7 @@ class AvatarImageView: ImageView {
                         self.image = image
                     }
                 }
-                return(nil)
+                //return(nil)
             }
 
             // request image
