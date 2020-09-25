@@ -145,8 +145,11 @@ protocol Bot {
     
     // everyone's posts
     func everyone(completion: @escaping PaginatedCompletion)
-
+    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
+    
+    // your feed
     func recent(completion: @escaping PaginatedCompletion)
+    func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
     
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
@@ -248,4 +251,13 @@ extension Bot {
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
         self.publish(queue: .main, content: content, completion: completion)
     }
+    
+    func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {
+        self.keyAtRecentTop(queue: .main, completion: completion)
+    }
+    
+    func keyAtEveryoneTop(completion: @escaping (MessageIdentifier?) -> Void) {
+        self.keyAtEveryoneTop(queue: .main, completion: completion)
+    }
+    
 }
