@@ -222,7 +222,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         try db.transaction {
             if db.userVersion == 0 {
@@ -1124,6 +1124,10 @@ class ViewDatabase {
         let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
         return try PaginatedPrefetchDataProxy(with: src)
     }
+    
+    func paginatedTop(onlyFollowed: Bool) throws -> MessageIdentifier? {
+        return try RecentViewKeyValueSource.top(with: self, onlyFollowed: onlyFollowed)
+    }
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
         let src = try FeedKeyValueSource(with: self, feed: feed)
@@ -1150,6 +1154,39 @@ class ViewDatabase {
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
     }
     
+    func recentIdentifiers(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        var qry = self.msgs
+            .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
+            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
+            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
+            .filter(colDecrypted == wantPrivate)
+            .filter(colHidden == false)
+        
+        if let offset = offset {
+            qry = qry.limit(limit, offset: offset)
+        } else {
+            qry = qry.limit(limit)
+        }
+        
+        qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
+        
+        qry = qry.order(colClaimedAt.desc)
+        
+        if onlyFollowed {
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
+        } else {
+            qry = try self.filterNotFollowingPeople(qry: qry)
+        }
+        
+        return try db.prepare(qry).compactMap { row in
+            return try row.get(colKey)
+        }
+    }
+    
     // MARK: common query constructors
 
     private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {
@@ -1173,6 +1210,26 @@ class ViewDatabase {
         // maybe should be split apart into a wrapper like filterOnlyFollowedPeople which is just func(Table) -> Table
         if onlyRoots {
             qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
+        }
+        return qry
+    }
+    
+    /// Same as basicRecentPostsQuery but just selects columns in msgs tabl
+    private func minimumRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {
+        var qry = self.msgs
+            .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
+            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
+            .filter(colDecrypted == wantPrivate)
+            .filter(colHidden == false)
+
+        if let offset = offset {
+            qry = qry.limit(limit, offset: offset)
+        } else {
+            qry = qry.limit(limit)
+        }
+
+        if onlyRoots {
+            qry = qry.filter(colIsRoot == true)
         }
         return qry
     }
