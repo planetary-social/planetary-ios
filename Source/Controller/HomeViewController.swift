@@ -107,11 +107,6 @@ class HomeViewController: ContentViewController {
         
         return view
     }()
-    
-    // This is read by the floating button to update the table view
-    // without querying the database again, it is set by the didRefresh
-    // notification.
-    private var updatedProxy: PaginatedKeyValueDataProxy?
 
     // MARK: Lifecycle
 
@@ -160,7 +155,6 @@ class HomeViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.updatedProxy = nil
                 self?.update(with: proxy, animated: animated)
             }
         }
@@ -208,11 +202,8 @@ class HomeViewController: ContentViewController {
             self.tableView.backgroundView = nil
         }
         self.dataSource.update(source: proxy)
-        if animated {
-            self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-        } else {
-            self.tableView.forceReload()
-        }
+        self.tableView.reloadData()
+        self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
 
     // MARK: Actions
@@ -223,12 +214,8 @@ class HomeViewController: ContentViewController {
     }
     
     @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
-        if let proxy = self.updatedProxy {
-            self.dataSource.update(source: proxy)
-            self.tableView.reloadData()
-            self.updatedProxy = nil
-        }
         button.hide()
+        self.refreshAndLoad()
     }
 
     @objc func newPostButtonTouchUpInside() {
