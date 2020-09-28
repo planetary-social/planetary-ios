@@ -368,7 +368,6 @@ class ViewDatabase {
                 port integer not null,
                 key text not null,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-<<<<<<< HEAD
                 """)
                 db.userVersion = 8
             } else if db.userVersion == 7 {
@@ -381,20 +380,7 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """)
                 db.userVersion = 8
-=======
-                """)
-                db.userVersion = 8
-            } else if db.userVersion == 7 {
-                try db.execute("""
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
->>>>>>> master
+
             }
         }
 
@@ -1190,11 +1176,7 @@ class ViewDatabase {
         
         qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
         
-<<<<<<< HEAD
-        qry = qry.order(colClaimedAt.desc)
-=======
         qry = qry.order(colMessageID.desc)
->>>>>>> master
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
