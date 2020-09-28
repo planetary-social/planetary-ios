@@ -1175,7 +1175,7 @@ class ViewDatabase {
         
         qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
         
-        qry = qry.order(colClaimedAt.desc)
+        qry = qry.order(colMessageID.desc)
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
