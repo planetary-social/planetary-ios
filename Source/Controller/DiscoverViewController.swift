@@ -97,11 +97,6 @@ class DiscoverViewController: ContentViewController {
          
          return view
      }()
-    
-    // This is read by the floating button to update the table view
-    // without querying the database again, it is set by the didRefresh
-    // notification.
-    private var updatedProxy: PaginatedKeyValueDataProxy?
 
     // MARK: Lifecycle
 
@@ -151,7 +146,6 @@ class DiscoverViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.updatedProxy = nil
                 self?.update(with: proxy, animated: animated)
             }
         }
@@ -201,6 +195,7 @@ class DiscoverViewController: ContentViewController {
         }
         self.dataSource.update(source: proxy)
         self.collectionView.reloadData()
+        self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
     
     // MARK: Actions
@@ -211,13 +206,8 @@ class DiscoverViewController: ContentViewController {
      }
     
     @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
-        if let proxy = self.updatedProxy {
-            self.scrollToTop()
-            self.dataSource.update(source: proxy)
-            self.collectionView.reloadData()
-            self.updatedProxy = nil
-        }
         button.hide()
+        self.refreshAndLoad(animated: false)
     }
 
      @objc func newPostButtonTouchUpInside() {
