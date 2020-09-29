@@ -24,7 +24,7 @@ class SmallPostHeaderView: UIView {
         button.addTarget(self,action: #selector(didTapAvatarButton), for: .touchUpInside)
         button.setTitleColor(UIColor.post.headerText, for: .normal)
         button.contentHorizontalAlignment = .left
-        button.titleLabel?.font = UIFont.smallPost.header
+        button.titleLabel?.font = UIFont.smallPost.bigHeading
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.titleLabel?.numberOfLines = 1
         button.isSkeletonable = true
@@ -60,13 +60,13 @@ class SmallPostHeaderView: UIView {
         self.nameButton.constrainLeading(toTrailingOf: self.avatarButton, constant: 5)
         self.nameButton.constrainTrailingToSuperview(constant: -10)
 
-        self.addSubview(self.dateLabel)
-        self.dateLabel.pinTop(toBottomOf: self.nameButton)
-        self.dateLabel.constrainLeading(to: self.nameButton)
-        self.dateLabel.constrainTrailing(to: self.nameButton)
+        //self.addSubview(self.dateLabel)
+        //self.dateLabel.pinTop(toBottomOf: self.nameButton)
+        //self.dateLabel.constrainLeading(to: self.nameButton)
+        //self.dateLabel.constrainTrailing(to: self.nameButton)
 
-        self.nameButton.constrainHeight(to: 10)
-        self.dateLabel.constrainHeight(to: 10)
+        self.nameButton.constrainHeight(to: 20)
+        //self.dateLabel.constrainHeight(to: 10)
     }
 
     required init?(coder aDecoder: NSCoder) {
