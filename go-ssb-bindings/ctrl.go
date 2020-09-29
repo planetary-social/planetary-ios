@@ -7,6 +7,7 @@ import (
 	"math"
 	"runtime"
 	"time"
+    "strings"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
@@ -413,7 +414,8 @@ func ssbInviteAccept(token string) bool {
 	ctx, cancel := context.WithCancel(longCtx)
 	err = invite.Redeem(ctx, tok, sbot.KeyPair.Id)
 	defer cancel()
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "already following") {
+		// XXX: Don't fail immediatelly if the pub is already following our feed.
 		retErr = err
 		return false
 	}
@@ -430,7 +432,8 @@ func ssbInviteAccept(token string) bool {
 		return false
 	}
 
-	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address) VALUES (?,?)`, peerID, tok.Address.String())
+	stamp := time.Now().Unix()
+	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address, redeemed) VALUES (?,?,?)`, peerID, tok.Address.String(), stamp)
 	if err != nil {
 		retErr = errors.Wrap(err, "insert new pub into addresses failed")
 		return false

@@ -380,6 +380,7 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """)
                 db.userVersion = 8
+
             }
         }
 

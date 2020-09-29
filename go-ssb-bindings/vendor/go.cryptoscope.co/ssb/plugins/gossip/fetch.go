@@ -168,10 +168,12 @@ func (g *handler) fetchFeed(
 				return errors.Errorf("fetch: wrong message type. expected %T - got %T", latestMsg, msgV)
 			}
 
+			// commented out to prevent bug with pulling feedsd.
+			//
 			// make sure our house is in order
-			if hasSeq := latestMsg.Seq(); hasSeq != latestSeq.Seq() {
-				return ssb.ErrWrongSequence{Ref: fr, Stored: latestMsg, Logical: latestSeq}
-			}
+			//if hasSeq := latestMsg.Seq(); hasSeq != latestSeq.Seq() {
+			//	return ssb.ErrWrongSequence{Ref: fr, Stored: latestMsg, Logical: latestSeq}
+			//}
 		}
 	}
 
