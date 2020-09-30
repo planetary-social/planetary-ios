@@ -3773,6 +3773,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.9.32;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3787,6 +3788,7 @@
 					"\"SVProgressHUD\"",
 					"-lssb-go",
 				);
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3811,6 +3813,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.9.32;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3825,6 +3828,7 @@
 					"\"SVProgressHUD\"",
 					"-lssb-go",
 				);
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
