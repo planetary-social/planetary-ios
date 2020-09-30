@@ -195,7 +195,6 @@ class DiscoverViewController: ContentViewController {
         }
         self.dataSource.update(source: proxy)
         self.collectionView.reloadData()
-        self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
     
     // MARK: Actions
@@ -207,7 +206,9 @@ class DiscoverViewController: ContentViewController {
     
     @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
         button.hide()
-        self.refreshAndLoad(animated: false)
+        self.refreshControl.beginRefreshing()
+        self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height), animated: false)
+        self.load(animated: true)
     }
 
      @objc func newPostButtonTouchUpInside() {

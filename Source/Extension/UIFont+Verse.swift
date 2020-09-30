@@ -56,6 +56,7 @@ struct SmallPostFonts {
     var heading1: UIFont = UIFont.systemFont(ofSize: 14, weight: .heavy)
     var heading2: UIFont = UIFont.systemFont(ofSize: 14, weight: .bold)
     var heading3: UIFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
+    var bigHeading: UIFont = UIFont.systemFont(ofSize: 20, weight: .regular)
     var code: UIFont = UIFont.systemFont(ofSize: 14, weight: .regular)
     var listItemPrefix: UIFont = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
 

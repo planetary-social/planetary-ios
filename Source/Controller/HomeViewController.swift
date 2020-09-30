@@ -215,7 +215,9 @@ class HomeViewController: ContentViewController {
     
     @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
         button.hide()
-        self.refreshAndLoad()
+        self.refreshControl.beginRefreshing()
+        self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height), animated: false)
+        self.load(animated: true)
     }
 
     @objc func newPostButtonTouchUpInside() {
