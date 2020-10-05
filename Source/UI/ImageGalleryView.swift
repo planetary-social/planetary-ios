@@ -77,6 +77,11 @@ class ImageGalleryView: UIView {
         self._images.remove(at: indexPath.row)
         self.reload()
     }
+    
+    func removeAll() {
+        self._images.removeAll()
+        self.reload()
+    }
 
     private func reload() {
         self.collectionView.reloadData()
