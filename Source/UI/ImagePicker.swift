@@ -165,6 +165,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         Analytics.shared.trackDidTapButton(buttonName: "cancel")
+        self.dismiss()
     }
 }
 

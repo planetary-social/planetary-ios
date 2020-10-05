@@ -94,17 +94,29 @@ class ThreadViewController: ContentViewController {
     }()
 
     private let headerView = PostHeaderView()
+    
+    // this view manages it's own height constraints
+    // checkout ImageGallery.open() and close()
+    private lazy var galleryView: ImageGalleryView = {
+        let view = ImageGalleryView(height: 75)
+        view.delegate = self
+        view.backgroundColor = UIColor.post.background
+        return view
+    }()
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
         view.minimize()
         view.topSeparator.isHidden = true
-        view.photoButton.isHidden = true
+        view.photoButton.isHidden = false
+        view.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
         view.postButton.setText(.postReply)
         view.postButton.action = didPressPostButton
         view.backgroundColor = UIColor.post.background
         return view
     }()
+    
+    private let imagePicker = ImagePicker()
 
     private var onNextUpdateScrollToPostWithKeyValueKey: Identifier?
     private var indexPathToScrollToOnKeyboardDidShow: IndexPath?
@@ -133,9 +145,13 @@ class ThreadViewController: ContentViewController {
         Layout.fillTop(of: self.contentView, with: self.tableView)
         Layout.fillTop(of: self.contentView, with: self.menu)
         Layout.fillSouth(of: self.tableView, with: self.replyTextView)
-        Layout.fillSouth(of: self.replyTextView, with: self.buttonsView)
+        
+        Layout.fillSouth(of: self.replyTextView, with: self.galleryView)
+        
+        Layout.fillBottom(of: self.contentView, with: self.buttonsView, respectSafeArea: false)
 
-        self.buttonsView.pinBottomToSuperviewBottom(constant: 0, respectSafeArea: false)
+        self.buttonsView.pinTop(toBottomOf: self.galleryView)
+        
         self.buttonsView.constrainHeight(to: 0)
     }
 
@@ -311,8 +327,9 @@ class ThreadViewController: ContentViewController {
         guard let text = self.replyTextView.textView.attributedText, text.length > 0 else { return }
         Analytics.shared.trackDidTapButton(buttonName: "reply")
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
+        let images = self.galleryView.images
         AppController.shared.showProgress()
-        Bots.current.publish(post) { [weak self] key, error in
+        Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()
@@ -322,9 +339,21 @@ class ThreadViewController: ContentViewController {
                 Analytics.shared.trackDidReply()
                 self?.replyTextView.clear()
                 self?.replyTextView.resignFirstResponder()
+                self?.galleryView.removeAll()
+                self?.galleryView.close()
                 self?.onNextUpdateScrollToPostWithKeyValueKey = key
                 self?.load()
             }
+        }
+    }
+    
+    // MARK: Attaching photos
+    
+    @objc private func photoButtonTouchUpInside() {
+        Analytics.shared.trackDidTapButton(buttonName: "attach_photo")
+        self.imagePicker.present(from: self) { [weak self] image in
+            if let image = image { self?.galleryView.add(image) }
+            self?.imagePicker.dismiss()
         }
     }
 
@@ -411,5 +440,22 @@ fileprivate class ThreadTextViewDelegate: MentionTextViewDelegate {
         if let replyTextView = textView.superview as? ReplyTextView {
             replyTextView.calculateHeight()
         }
+    }
+}
+
+extension ThreadViewController: ImageGalleryViewDelegate {
+
+    // Limits the max number of images to 8
+    func imageGalleryViewDidChange(_ view: ImageGalleryView) {
+        self.buttonsView.photoButton.isEnabled = view.images.count < 8
+        view.images.isEmpty ? view.close() : view.open()
+    }
+
+    func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {
+        self.confirm(style: .alert,
+                     message: Text.NewPost.confirmRemove.text,
+                     isDestructive: true,
+                     confirmTitle: Text.NewPost.remove.text,
+                     confirmClosure: { view.remove(at: indexPath) })
     }
 }
