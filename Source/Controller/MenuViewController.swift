@@ -26,7 +26,7 @@ class MenuViewController: UIViewController {
     private let backgroundView: UIView = {
         let view = UIView.forAutoLayout()
         view.alpha = 0
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.22)
+        view.backgroundColor = UIColor.background.default.withAlphaComponent(0.22)
         return view
     }()
 

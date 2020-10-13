@@ -13,6 +13,11 @@ import UIKit
 // note that Asset catalog colors are optional so some may require
 // a non-optional value to be used across the app
 extension UIColor {
+    
+    static let appBackground =  UIColor(named: "appBackground") ?? UIColor.white
+    static let mainText =  UIColor(named: "mainText") ?? UIColor.black
+    static let secondaryText =  UIColor(named: "secondaryText") ?? UIColor.black
+    static let cardBackground =  UIColor(named: "cardBackground") ?? UIColor.white
 
     struct background {
         static let `default` =  UIColor(named: "backgroundColor") ?? UIColor.white
@@ -25,7 +30,7 @@ extension UIColor {
     
     struct tabBar {
         static let background = UIColor(named: "tabBarBackgroundColor") ?? UIColor.white
-        static let normalItem = UIColor(named: "tabItemNormalColor") ?? UIColor.black
+        static let normalItem = UIColor(named: "secondaryAction") ?? UIColor.black
     }
     
     struct navigationBar {
@@ -78,7 +83,7 @@ extension UIColor {
     }
 
     struct tint {
-        static let `default` = #colorLiteral(red: 0.3254901961, green: 0.2431372549, blue: 0.4862745098, alpha: 1)
+        static let `default` = UIColor(named: "defaultTint") ?? #colorLiteral(red: 0.3254901961, green: 0.2431372549, blue: 0.4862745098, alpha: 1)
         static let system = #colorLiteral(red: 0, green: 0.4623456597, blue: 1, alpha: 1)
     }
 }

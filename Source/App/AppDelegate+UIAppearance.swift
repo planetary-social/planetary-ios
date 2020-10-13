@@ -43,6 +43,9 @@ extension AppDelegate {
 
         // search bar
         UISearchBar.appearance().backgroundColor = UIColor.searchBar.background
+        
+        // table footers and headers
+        UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = UIColor.secondaryText
     }
 }
 
