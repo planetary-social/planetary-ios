@@ -50,6 +50,10 @@ class PostCellView: KeyValueView {
     }()
 
     var textViewTopConstraint = NSLayoutConstraint()
+    
+    /// Activate or deactivate this constraint to make text view have no height (5px actually),
+    /// for instance, if the text is empty
+    var textViewZeroHeightConstraint = NSLayoutConstraint()
 
     var textViewTopInset: CGFloat {
         if self.displayHeader {
@@ -106,6 +110,7 @@ class PostCellView: KeyValueView {
     func configureTruncatedState() {
         self.calculateTruncationDataIfNecessary()
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
+        self.textViewZeroHeightConstraint.isActive = self.textView.attributedText.string.isEmpty
     }
 
     /// Calculates the truncation data, but only when necessary.  In some cases, an optimized
@@ -165,6 +170,15 @@ class PostCellView: KeyValueView {
                                          insets: UIEdgeInsets(top: self.textViewTopInset, left: Layout.postSideMargins, bottom: 0, right: -Layout.postSideMargins),
                                          respectSafeArea: false)
         self.textViewTopConstraint = top
+        
+        self.textViewZeroHeightConstraint = NSLayoutConstraint(item: self.textView,
+                                                               attribute: .height,
+                                                               relatedBy: .equal,
+                                                               toItem: nil,
+                                                               attribute: .notAnAttribute,
+                                                               multiplier: 1,
+                                                               constant: 5)
+        self.textViewZeroHeightConstraint.isActive = false
 
         self.addSubview(self.galleryView)
         self.galleryView.pinTop(toBottomOf: self.textView, constant: 5)
