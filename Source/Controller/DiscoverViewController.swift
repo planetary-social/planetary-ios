@@ -267,8 +267,12 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
         let cellPadding: CGFloat = 5
         let columnWidth = contentWidth / CGFloat(self.numberOfColumns) - cellPadding * 2
         if let keyValue = dataSource.data.keyValueBy(index: indexPath.row) {
-            if let post = keyValue.value.content.post, post.hasBlobs, !post.text.withoutGallery().withoutSpacesOrNewlines.isEmpty {
-                return columnWidth * 1.618
+            if let post = keyValue.value.content.post, post.hasBlobs {
+                if post.text.withoutGallery().withoutSpacesOrNewlines.isEmpty {
+                    return columnWidth
+                } else {
+                    return columnWidth * 1.618
+                }
             } else {
                 return columnWidth
             }
