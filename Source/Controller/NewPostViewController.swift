@@ -124,16 +124,13 @@ class NewPostViewController: ContentViewController {
     }
 
     func didPressPostButton() {
-        guard self.textView.text.isEmpty == false else { return }
-        guard let text = self.textView.attributedText else { return }
-        
         Analytics.shared.trackDidTapButton(buttonName: "post")
 
-        self.lookBusy()
-
+        let text = self.textView.attributedText ?? NSAttributedString(string: "")
         let post = Post(attributedText: text)
         let images = self.galleryView.images
 
+        self.lookBusy()
         Bots.current.publish(post, with: images) {
             [weak self] identifier, error in
             Log.optional(error)

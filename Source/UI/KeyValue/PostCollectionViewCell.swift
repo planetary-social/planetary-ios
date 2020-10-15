@@ -17,6 +17,11 @@ class PostCollectionViewCell: UICollectionViewCell {
     
     private var imageViewSquareConstraint: NSLayoutConstraint?
     private var imageViewHeightConstraint: NSLayoutConstraint?
+    private var imageViewBottomConstraint: NSLayoutConstraint?
+    
+    /// Activate or deactivate this constraint to make text view have no height,
+    /// for instance, if the text is empty
+    var textViewZeroHeightConstraint = NSLayoutConstraint()
     
     private lazy var textView: UITextView = {
         let view = UITextView.forAutoLayout()
@@ -60,8 +65,17 @@ class PostCollectionViewCell: UICollectionViewCell {
         // Layout.fillBottom(of: self.contentView, with: self.textView, insets: .zero, respectSafeArea: false)
         self.textView.constrainLeadingToSuperview()
         self.textView.constrainTrailingToSuperview()
-        self.textView.pinTop(toBottomOf: self.imageView)
+        self.imageViewBottomConstraint = self.textView.pinTop(toBottomOf: self.imageView)
         self.textView.pinBottom(toTopOf: self.headerView)
+        
+        self.textViewZeroHeightConstraint = NSLayoutConstraint(item: self.textView,
+                                                               attribute: .height,
+                                                               relatedBy: .equal,
+                                                               toItem: nil,
+                                                               attribute: .notAnAttribute,
+                                                               multiplier: 1,
+                                                               constant: 0)
+        self.textViewZeroHeightConstraint.isActive = false
     }
     
     required init?(coder: NSCoder) {
@@ -72,9 +86,13 @@ class PostCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         self.imageViewSquareConstraint?.isActive = false
         self.imageViewHeightConstraint?.isActive = true
+        self.imageViewBottomConstraint?.isActive = true
+        self.textViewZeroHeightConstraint.isActive = false
         self.textView.text = nil
         // self.textView.textContainer.maximumNumberOfLines = 8
         
+        self.headerView.backgroundColor = UIColor.post.background
+        self.headerView.isOpaque = true
         self.headerView.startSkeletonAnimation()
     }
     
@@ -94,8 +112,20 @@ class PostCollectionViewCell: UICollectionViewCell {
             self.imageViewHeightConstraint?.isActive = false
             // self.textView.textContainer.maximumNumberOfLines = 3
         }
-        self.textView.attributedText = post.text.withoutGallery().decodeMarkdown(small: true)
+        
         self.headerView.stopSkeletonAnimation()
         self.headerView.update(with: keyValue)
+        
+        let textWithoutGallery = post.text.withoutGallery()
+        if textWithoutGallery.withoutSpacesOrNewlines.isEmpty {
+            self.textView.text = ""
+            self.headerView.backgroundColor = .clear
+            self.headerView.isOpaque = false
+            self.imageViewBottomConstraint?.isActive = false
+            self.textViewZeroHeightConstraint.isActive = true
+        } else {
+            self.textView.attributedText = textWithoutGallery.decodeMarkdown(small: true)
+        }
+        
     }
 }
