@@ -126,6 +126,13 @@ class NewPostViewController: ContentViewController {
     func didPressPostButton() {
         Analytics.shared.trackDidTapButton(buttonName: "post")
 
+        let hasText = !self.textView.text.isEmpty
+        let hasImages = !self.galleryView.images.isEmpty
+        
+        guard hasText || hasImages else {
+            return
+        }
+        
         let text = self.textView.attributedText ?? NSAttributedString(string: "")
         let post = Post(attributedText: text)
         let images = self.galleryView.images
