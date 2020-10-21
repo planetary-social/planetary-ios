@@ -259,7 +259,6 @@ class EveryoneViewController: ContentViewController {
              [weak self] post in
              self?.load()
          }
-         controller.addDismissBarButtonItem()
          let navController = UINavigationController(rootViewController: controller)
          self.present(navController, animated: true, completion: nil)
      }

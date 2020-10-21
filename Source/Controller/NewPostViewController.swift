@@ -65,15 +65,26 @@ class NewPostViewController: ContentViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.textView.becomeFirstResponder()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let item = UIBarButtonItem(image: UIImage.verse.dismiss,
+                                   style: .plain,
+                                   target: self,
+                                   action: #selector(dismissWithoutPost))
+        item.accessibilityLabel = Text.done.text
+        self.navigationItem.leftBarButtonItem = item
+        
+        if let draft = Draft.current {
+            self.textView.attributedText = draft.attributedText
+            self.galleryView.add(draft.images)
+            print("Restored draft")
+        }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        CrashReporting.shared.record("Did Show New Post")
-        Analytics.shared.trackDidShowScreen(screenName: "new_post")
+    override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        self.parent?.presentationController?.delegate = self
     }
 
     override func constrainSubviews() {
@@ -153,7 +164,13 @@ class NewPostViewController: ContentViewController {
     }
 
     private func dismiss(didPublish post: Post) {
+        Draft.current = nil
         self.didPublish?(post)
+        self.dismiss(animated: true)
+    }
+    
+    @objc private func dismissWithoutPost() {
+        Draft.current = nil
         self.dismiss(animated: true)
     }
 
@@ -189,5 +206,20 @@ extension NewPostViewController: ImageGalleryViewDelegate {
                      isDestructive: true,
                      confirmTitle: Text.NewPost.remove.text,
                      confirmClosure: { view.remove(at: indexPath) })
+    }
+}
+
+extension NewPostViewController: UIAdaptivePresentationControllerDelegate {
+    
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        print("didDIsmisssss")
+        
+        let hasText = !self.textView.text.isEmpty
+        let hasImages = !self.galleryView.images.isEmpty
+
+        if hasText || hasImages {
+            Draft.current = Draft(attributedText: self.textView.attributedText, images: self.galleryView.images)
+            print("Saved draft")
+        }
     }
 }
