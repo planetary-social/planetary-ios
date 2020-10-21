@@ -10,10 +10,10 @@ import Foundation
 import UIKit
 
 struct Draft {
-    
+
     static var current: Draft?
-    
+
     var attributedText: NSAttributedString
     var images: [UIImage]
-    
+
 }

@@ -72,7 +72,7 @@ class ImageGalleryView: UIView {
         self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
         self.delegate?.imageGalleryViewDidChange(self)
     }
-    
+
     func add(_ images: [UIImage]) {
         self._images += images
         self.collectionView.reloadData()

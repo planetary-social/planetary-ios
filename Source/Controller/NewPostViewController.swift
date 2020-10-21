@@ -68,7 +68,10 @@ class NewPostViewController: ContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let item = UIBarButtonItem(image: UIImage.verse.dismiss, style: .plain, target: self, action: #selector(dismissWithoutPost))
+        let item = UIBarButtonItem(image: UIImage.verse.dismiss,
+                                   style: .plain,
+                                   target: self,
+                                   action: #selector(dismissWithoutPost))
         item.accessibilityLabel = Text.done.text
         self.navigationItem.leftBarButtonItem = item
         
