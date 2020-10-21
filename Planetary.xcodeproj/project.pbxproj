@@ -100,6 +100,7 @@
 		0A65A632244DEFBF004C48C8 /* SupportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A65A62D244DEB65004C48C8 /* SupportService.swift */; };
 		0A65A635244DEFFA004C48C8 /* NullSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A65A633244DEFDB004C48C8 /* NullSupport.swift */; };
 		0A65A636244DEFFB004C48C8 /* NullSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A65A633244DEFDB004C48C8 /* NullSupport.swift */; };
+		0A674A29253F3C4400698CF7 /* Draft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A674A28253F3C4400698CF7 /* Draft.swift */; };
 		0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */; };
 		0A7C5D5224EEC21C005E5035 /* MissionControlCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7C5D5124EEC21C005E5035 /* MissionControlCenter.swift */; };
 		0A7C5D5324EEDD27005E5035 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABDC24E32F8000D30649 /* Star.swift */; };
@@ -821,6 +822,7 @@
 		0A65A62D244DEB65004C48C8 /* SupportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportService.swift; sourceTree = "<group>"; };
 		0A65A62F244DEC5E004C48C8 /* ZendeskSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZendeskSupport.swift; sourceTree = "<group>"; };
 		0A65A633244DEFDB004C48C8 /* NullSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullSupport.swift; sourceTree = "<group>"; };
+		0A674A28253F3C4400698CF7 /* Draft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Draft.swift; sourceTree = "<group>"; };
 		0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Reset.swift"; sourceTree = "<group>"; };
 		0A7C5D5124EEC21C005E5035 /* MissionControlCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionControlCenter.swift; sourceTree = "<group>"; };
 		0AB736B824577451000190F8 /* RefreshOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshOperation.swift; sourceTree = "<group>"; };
@@ -2160,6 +2162,7 @@
 				0AF9966B24D8A0B6001113BE /* Report.swift */,
 				0A56ABDC24E32F8000D30649 /* Star.swift */,
 				0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */,
+				0A674A28253F3C4400698CF7 /* Draft.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -3209,6 +3212,7 @@
 				53AD3FD92270FF33005228F9 /* UITableView+TableHeaderView.swift in Sources */,
 				533EDBEB2385F8B6008B3565 /* DictionaryCache.swift in Sources */,
 				535754F42268E248002A6989 /* ContentType.swift in Sources */,
+				0A674A29253F3C4400698CF7 /* Draft.swift in Sources */,
 				0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */,
 				539246DE22A836A000D01EEC /* DebugUserDirectoryViewController.swift in Sources */,
 				53211CD62281D567007FB785 /* EditAboutView.swift in Sources */,

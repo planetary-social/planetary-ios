@@ -72,6 +72,14 @@ class ImageGalleryView: UIView {
         self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
         self.delegate?.imageGalleryViewDidChange(self)
     }
+    
+    func add(_ images: [UIImage]) {
+        self._images += images
+        self.collectionView.reloadData()
+        let indexPath = self.images.indexPathForLast()
+        self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        self.delegate?.imageGalleryViewDidChange(self)
+    }
 
     func remove(at indexPath: IndexPath) {
         self._images.remove(at: indexPath.row)
