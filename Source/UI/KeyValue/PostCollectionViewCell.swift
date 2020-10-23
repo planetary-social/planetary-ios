@@ -15,6 +15,22 @@ class PostCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var imageOpacityView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.clipsToBounds = true
+        view.layer.addSublayer(self.imageOpacityGradientLayer)
+        return view
+    }()
+    
+    private lazy var imageOpacityGradientLayer: CAGradientLayer = {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 40)
+        gradientLayer.colors = [UIColor.clear.cgColor,
+                                UIColor.black.withAlphaComponent(0.7).cgColor]
+        return gradientLayer
+    }()
+    
     private var imageViewSquareConstraint: NSLayoutConstraint?
     private var imageViewHeightConstraint: NSLayoutConstraint?
     private var imageViewBottomConstraint: NSLayoutConstraint?
@@ -60,6 +76,12 @@ class PostCollectionViewCell: UICollectionViewCell {
 
         Layout.fillBottom(of: self.contentView, with: self.headerView, insets: .zero, respectSafeArea: false)
         self.headerView.constrainHeight(to: 40)
+        
+        self.contentView.insertSubview(self.imageOpacityView, belowSubview: self.headerView)
+        imageOpacityView.constrain(attribute: .top, toAttribute: .top, ofView: self.headerView)
+        imageOpacityView.constrain(attribute: .bottom, toAttribute: .bottom, ofView: self.headerView)
+        imageOpacityView.constrain(attribute: .leading, toAttribute: .leading, ofView: self.headerView)
+        imageOpacityView.constrain(attribute: .trailing, toAttribute: .trailing, ofView: self.headerView)
 
         self.contentView.addSubview(self.textView)
         // Layout.fillBottom(of: self.contentView, with: self.textView, insets: .zero, respectSafeArea: false)
@@ -101,7 +123,7 @@ class PostCollectionViewCell: UICollectionViewCell {
         self.contentView.layer.borderColor = UIColor.post.border.cgColor
         self.contentView.setNeedsDisplay()
     }
-
+    
     func update(keyValue: KeyValue) {
         guard let post = keyValue.value.content.post else {
             return
