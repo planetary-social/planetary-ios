@@ -33,6 +33,7 @@ class AboutViewController: ContentViewController {
         view.dataSource = self.dataSource
         view.delegate = self.delegate
         view.prefetchDataSource = self.dataSource
+        view.backgroundColor = .appBackground
         return view
     }()
 
@@ -63,6 +64,7 @@ class AboutViewController: ContentViewController {
                                                                  style: .plain,
                                                                  target: self,
                                                                  action: #selector(didPressOptionsIcon))
+        self.navigationItem.rightBarButtonItem?.tintColor = .profileSecondaryAction
 
     }
     

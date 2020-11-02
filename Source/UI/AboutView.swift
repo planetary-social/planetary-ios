@@ -38,20 +38,21 @@ class AboutView: KeyValueView {
     }()
 
     lazy var followButton: FollowButton = {
-        let button = FollowButton()
+        let button = FollowButton(color: .profileSecondaryAction)
         return button
     }()
 
     lazy var editButton: PillButton = {
-        let button = PillButton()
+        let button = PillButton(color: UIColor.profileSecondaryAction)
         button.isHidden = true
         button.setTitle(.editProfile)
         button.setImage(UIImage.verse.editPencil)
+        
         return button
     }()
 
     lazy var shareButton: PillButton = {
-        let button = PillButton()
+        let button = PillButton(color: UIColor.profileSecondaryAction)
         button.setTitle(.share)
         button.setImage(UIImage.verse.smallShare)
         return button
@@ -78,15 +79,15 @@ class AboutView: KeyValueView {
         return view
     }()
 
-    var followingView = FollowCountView(text: .followingCount)
-    var followedByView = FollowCountView(text: .followedByCount)
+    var followingView = FollowCountView(text: .followingCount, secondaryText: .inYourNetwork)
+    var followedByView = FollowCountView(text: .followedByCount, secondaryText: .inYourNetwork)
 
     // MARK: Lifecycle
 
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = UIColor.appBackground
         self.addSubviews()
     }
 
@@ -126,7 +127,7 @@ class AboutView: KeyValueView {
 
         Layout.fillSouth(of: self.followingLabel, with: buttonStack, insets: .top(Layout.verticalSpacing - 3))
 
-        var separator = Layout.sectionSeparatorView()
+        var separator = Layout.sectionSeparatorView(color: .appBackground)
         Layout.fillSouth(of: buttonStack, with: separator, insets: .top(Layout.verticalSpacing - 3))
 
         let descriptionContainer = UIView.forAutoLayout()
@@ -148,7 +149,8 @@ class AboutView: KeyValueView {
         Layout.fillSouth(of: separator, with: self.followingView)
         self.followingView.constrainHeight(to: 50)
 
-        separator = Layout.sectionSeparatorView(bottom: false)
+        separator = Layout.sectionSeparatorView(bottom: false,
+                                                color: .appBackground)
         Layout.fillSouth(of: self.followingView, with: separator)
         separator.pinBottomToSuperviewBottom()
     }

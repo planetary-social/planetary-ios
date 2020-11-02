@@ -1632,6 +1632,7 @@
 				53E341F7224DB1D8002BB5F4 /* BlobViewController.swift */,
 				535B6A0F237362AE008C248E /* BlockedUsersViewController.swift */,
 				531B92C622D125DA005D5255 /* ChannelsViewController.swift */,
+				0AD00E6223FB2F24006BF017 /* Configs */,
 				53E29CC522D13272008A2CB1 /* ChannelViewController.swift */,
 				53211CC7227B60EE007FB785 /* ContactsViewControllers.swift */,
 				532751D22224A0CD0026500F /* ContentViewController.swift */,
@@ -1736,7 +1737,6 @@
 		5344D82221C4649700704A34 = {
 			isa = PBXGroup;
 			children = (
-				0AD00E6223FB2F24006BF017 /* Configs */,
 				5308169221C46A6E005C48ED /* APITests */,
 				531B92BE22CDA4F9005D5255 /* Deprecated */,
 				0A3880192475BB4500777843 /* UITests */,

@@ -1,23 +1,56 @@
 {
   "images" : [
     {
+      "filename" : "icon-dark-relationship-follow-1.png",
       "idiom" : "universal",
-      "filename" : "button-follow.png",
       "scale" : "1x"
     },
     {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon-dark-relationship-follow.png",
       "idiom" : "universal",
-      "filename" : "button-follow@2x.png",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "icon-dark-relationship-follow@2x-1.png",
+      "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon-dark-relationship-follow@2x.png",
       "idiom" : "universal",
-      "filename" : "button-follow@3x.png",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "icon-dark-relationship-follow@3x-1.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon-dark-relationship-follow@3x.png",
+      "idiom" : "universal",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

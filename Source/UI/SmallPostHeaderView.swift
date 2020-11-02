@@ -88,9 +88,6 @@ class SmallPostHeaderView: UIView {
         self.avatarButton.setImage(for: about)
 
         self.dateLabel.text = keyValue.timestampString
-
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
     }
 
     @objc private func didTapAvatarButton() {

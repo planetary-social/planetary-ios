@@ -18,6 +18,15 @@ extension UIColor {
     static let mainText =  UIColor(named: "mainText") ?? UIColor.black
     static let secondaryText =  UIColor(named: "secondaryText") ?? UIColor.black
     static let cardBackground =  UIColor(named: "cardBackground") ?? UIColor.white
+    static let splashBackground =  UIColor(named: "splashBackgroundColor") ?? UIColor.white
+    static let screenOverlay =  UIColor(named: "screenOverlay") ?? UIColor.black.withAlphaComponent(30)
+    static let menuBackgroundColor = UIColor(named: "menuBackgroundColor") ?? UIColor.white
+    static let menuBorderColor = UIColor(named: "menuBorderColor") ?? UIColor.black
+    static let menuSelectedItemBackground = UIColor(named: "menuSelectedItemBackground") ?? UIColor.black
+    static let menuSelectedItemText = UIColor(named: "menuSelectedItemText") ?? UIColor.black
+    static let menuUnselectedItemText = UIColor(named: "menuUnselectedItemText") ?? UIColor.black
+    static let profileSecondaryAction = UIColor(named: "profileSecondaryAction") ?? UIColor.black
+    static let loadingIcon = UIColor(named: "loadingIcon") ?? UIColor.black
 
     struct background {
         static let `default` =  UIColor(named: "backgroundColor") ?? UIColor.white
@@ -29,16 +38,16 @@ extension UIColor {
     }
     
     struct tabBar {
-        static let background = UIColor(named: "tabBarBackgroundColor") ?? UIColor.white
+        static let background = UIColor(named: "postBackgroundColor") ?? UIColor.white
         static let normalItem = UIColor(named: "secondaryAction") ?? UIColor.black
     }
     
     struct navigationBar {
-        static let background = UIColor(named: "tabBarBackgroundColor") ?? UIColor.white
+        static let background = UIColor(named: "postBackgroundColor") ?? UIColor.white
     }
     
     struct searchBar {
-        static let background = UIColor(named: "tabBarBackgroundColor") ?? UIColor.white
+        static let background = UIColor(named: "postBackgroundColor") ?? UIColor.white
     }
     
     struct tableView {

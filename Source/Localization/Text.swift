@@ -89,10 +89,12 @@ enum Text: String, Localizable, CaseIterable {
     case following = "Following"
     case followedBy = "Followed By"
     case isFollowingYou = "is currently following you"
-    case followedByCount = "Followed by {{ count }} in your network"
-    case followingCount = "Following {{ count }} in your network"
+    
+    case followedByCount = "Followed by {{ count }}"
+    case followingCount = "Following {{ count }}"
+    case inYourNetwork = " in your network"
+    
     case followedByShortCount = "{{ count }} Followers"
-    case followingShortCount = "Following {{ count }}"
 
     case unfollow = "Stop following"
 

@@ -18,20 +18,20 @@ class PillButton: AppButton {
         }
     }
 
-    override init() {
+    init(color: UIColor = UIColor.tint.default) {
         super.init()
 
         self.useAutoLayout()
 
         self.titleLabel?.font = UIFont.verse.pillButton
 
-        self.setTitleColor(UIColor.tint.default, for: .normal)
+        self.setTitleColor(color, for: .normal)
         self.setTitleColor(UIColor.white, for: .selected)
 
         self.setBackgroundImage(UIColor.clear.image(), for: .normal)
-        self.setBackgroundImage(UIColor.tint.default.image(), for: .selected)
+        self.setBackgroundImage(color.image(), for: .selected)
 
-        self.layer.borderColor = UIColor.tint.default.cgColor
+        self.layer.borderColor = color.cgColor
         self.layer.borderWidth = 1.5
 
         self.constrainHeight(to: self.height)

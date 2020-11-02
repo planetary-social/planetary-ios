@@ -70,7 +70,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
 
     override func loadView() {
         self.view = UIView(frame: CGRect.zero)
-        self.view.backgroundColor = UIColor.background.table
+        self.view.backgroundColor = .appBackground
         Layout.center(self.debugLabel, in: self.view)
         self.loadViewWithScrollView()
     }

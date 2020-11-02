@@ -29,7 +29,8 @@ extension AppDelegate {
         appearance.backIndicatorImage = image
         appearance.backIndicatorTransitionMaskImage = image
         appearance.tintColor = UIColor.tint.default
-        appearance.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .medium)]
+        appearance.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .medium),
+                                          .foregroundColor: UIColor.secondaryText]
 
         // clear the bottom shadow edge to allow for a custom edge
         appearance.shadowImage = UIColor.clear.image(dimension: 1)

@@ -53,10 +53,10 @@
 "Text.following" = "Following";
 "Text.followedBy" = "Followed By";
 "Text.isFollowingYou" = "is currently following you";
-"Text.followedByCount" = "Followed by {{ count }} in your network";
-"Text.followingCount" = "Following {{ count }} in your network";
+"Text.followedByCount" = "Followed by {{ count }}";
+"Text.followingCount" = "Following {{ count }}";
+"Text.inYourNetwork" = " in your network";
 "Text.followedByShortCount" = "{{ count }} Followers";
-"Text.followingShortCount" = "Following {{ count }}";
 "Text.unfollow" = "Stop following";
 "Text.identifierCopied" = "Identifier copied to clipboard";
 "Text.copyMessageIdentifier" = "Copy Message Identifier";

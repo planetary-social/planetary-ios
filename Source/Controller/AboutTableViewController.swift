@@ -45,6 +45,10 @@ class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.backgroundColor = .appBackground
+        
+        self.removeBackItemText()
 
         self.navigationItem.searchController = self.searchController
         self.navigationItem.hidesSearchBarWhenScrolling = false
@@ -53,7 +57,12 @@ class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
         refreshControl.addTarget(self, action: #selector(refreshControlValueChanged(control:)), for: .valueChanged)
         self.refreshControl = refreshControl
 
-         self.tableView.tableHeaderView = UIView(frame: CGRect.init(origin: .zero, size: CGSize.init(width: tableView.frame.size.width, height: 10)))
+        self.tableView.tableHeaderView = UIView(frame: CGRect(origin: .zero,
+                                                              size: CGSize(width: tableView.frame.size.width,
+                                                                           height: 10)))
+        
+        self.tableView.separatorInset = .zero
+        self.tableView.separatorColor = UIColor.separator.middle
     }
 
     func applyFilter() {

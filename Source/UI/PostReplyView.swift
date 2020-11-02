@@ -31,6 +31,15 @@ class PostReplyView: KeyValueView {
         view.backgroundColor = UIColor.post.background
         return view
     }()
+    
+    let degrade: UIView = {
+        let backgroundView = UIView.forAutoLayout()
+        backgroundView.constrainHeight(to: 0)
+        let colorView = UIImageView.forAutoLayout()
+        colorView.image = UIImage(named: "Thread")
+        Layout.fill(view: backgroundView, with: colorView)
+        return backgroundView
+    }()
 
     init() {
         super.init(frame: .zero)
@@ -51,7 +60,10 @@ class PostReplyView: KeyValueView {
         Layout.fillSouth(of: self.postView, with: self.repliesView)
         Layout.fillSouth(of: self.repliesView, with: self.replyTextView)
         Layout.fillSouth(of: self.replyTextView, with: bottomBorder)
-        Layout.fillSouth(of: bottomBorder, with: bottomSeparator)
+        
+        Layout.fillSouth(of: bottomBorder, with: self.degrade)
+        
+        Layout.fillSouth(of: degrade, with: bottomSeparator)
         bottomSeparator.pinBottomToSuperviewBottom()
         
         self.isSkeletonable = true
@@ -64,6 +76,11 @@ class PostReplyView: KeyValueView {
     override func update(with keyValue: KeyValue) {
         self.postView.update(with: keyValue)
         self.repliesView.update(with: keyValue)
+        if keyValue.metadata.replies.count > 0 {
+            self.degrade.heightConstraint?.constant = 12
+        } else {
+            self.degrade.heightConstraint?.constant = 0
+        }
     }
 }
 
