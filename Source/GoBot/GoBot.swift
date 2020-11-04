@@ -387,6 +387,33 @@ class GoBot: Bot {
 
     func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
         self.queue.async {
+            guard let identity = self._identity else {
+                queue.async {
+                    completion(MessageIdentifier.null, BotError.notLoggedIn)
+                }
+                return
+            }
+            
+            guard let numberOfMessagesInRepo = try? self.database.numberOfMessages(for: identity) else {
+                queue.async {
+                    completion(MessageIdentifier.null, GoBotError.unexpectedFault("Failed to access database"))
+                }
+                return
+            }
+            
+            guard let knownNumberOfMessagesInKeychain = AppConfiguration.current?.numberOfPublishedMessages else {
+                queue.async {
+                    completion(MessageIdentifier.null, BotError.notLoggedIn)
+                }
+                return
+            }
+            
+            guard numberOfMessagesInRepo >= knownNumberOfMessagesInKeychain else {
+                queue.async {
+                    completion(MessageIdentifier.null, BotError.notEnoughMessagesInRepo)
+                }
+                return
+            }
             self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
                     queue.async { completion(MessageIdentifier.null, error) }
@@ -1199,6 +1226,11 @@ class GoBot: Bot {
         let counts = try? self.bot.repoStatus()
         let sequence = try? self.database.stats(table: .messagekeys)
         
+        var ownMessages = -1
+        if let identity = self._identity, let omc = try? self.database.numberOfMessages(for: identity) {
+            ownMessages = omc
+        }
+        
         var fc: Int = -1
         if let feedCount = counts?.feeds { fc = Int(feedCount) }
         var mc: Int = -1
@@ -1206,6 +1238,7 @@ class GoBot: Bot {
         self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
                                                feedCount: fc,
                                                messageCount: mc,
+                                               numberOfPublishedMessages: ownMessages,
                                                lastHash: counts?.lastHash ?? "")
         
         let connectionCount = self.bot.openConnections()
@@ -1226,6 +1259,11 @@ class GoBot: Bot {
             let counts = try? self.bot.repoStatus()
             let sequence = try? self.database.stats(table: .messagekeys)
 
+            var ownMessages = -1
+            if let identity = self._identity, let omc = try? self.database.numberOfMessages(for: identity) {
+                ownMessages = omc
+            }
+            
             var fc: Int = -1
             if let feedCount = counts?.feeds { fc = Int(feedCount) }
             var mc: Int = -1
@@ -1233,6 +1271,7 @@ class GoBot: Bot {
             self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
                                                    feedCount: fc,
                                                    messageCount: mc,
+                                                   numberOfPublishedMessages: ownMessages,
                                                    lastHash: counts?.lastHash ?? "")
             
             let connectionCount = self.bot.openConnections()

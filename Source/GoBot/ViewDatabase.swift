@@ -2769,4 +2769,19 @@ class ViewDatabase {
             ))
         }
     }
+    
+    /// Returns the number of messages posted by given feed identifier
+    func numberOfMessages(for feed: FeedIdentifier) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            let authorID = try self.authorID(of: feed, make: false)
+            return try db.scalar(self.msgs.filter(colAuthorID == authorID).count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("numberOfmessages for feed failed", error))
+            return 0
+        }
+    }
+    
 } // end class

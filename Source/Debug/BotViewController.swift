@@ -159,6 +159,15 @@ class BotViewController: DebugTableViewController {
                 cell.detailTextLabel?.text = "\(statistics.repo.messageCount)"
             },
                                              actionClosure: nil)]
+        
+        settings += [DebugTableViewCellModel(title: "Published Messages",
+                                         cellReuseIdentifier: DebugValueTableViewCell.className,
+                                         valueClosure:
+        {
+            cell in
+            cell.detailTextLabel?.text = "\(statistics.repo.numberOfPublishedMessages)"
+        },
+                                         actionClosure: nil)]
 
         settings += [DebugTableViewCellModel(title: "Last received message",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,

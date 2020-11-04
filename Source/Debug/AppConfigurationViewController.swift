@@ -50,6 +50,7 @@ class AppConfigurationViewController: DebugTableViewController {
     private func load() {
         self.settings = [self.configurationName(),
                          self.onboarding(),
+                         self.statistics(),
                          self.identityAndSecret(),
                          self.networks(),
                          self.hmacKeys(),
@@ -124,8 +125,26 @@ class AppConfigurationViewController: DebugTableViewController {
                 cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity!).rawValue
             },
                                              actionClosure: nil)]
+        
 
         return ("Onboarding", settings, nil)
+    }
+    
+    private func statistics() -> DebugTableViewController.Settings {
+
+        var settings: [DebugTableViewCellModel] = []
+
+        settings += [DebugTableViewCellModel(title: "Published messages",
+                                             cellReuseIdentifier: DebugValueTableViewCell.className,
+                                             valueClosure:
+            {
+                [unowned self] cell in
+                cell.detailTextLabel?.text = "\(self.configuration.numberOfPublishedMessages)"
+            },
+                                             actionClosure: nil)]
+        
+
+        return ("Statistics", settings, nil)
     }
 
     private func identityAndSecret() -> DebugTableViewController.Settings {
