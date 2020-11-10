@@ -34,8 +34,8 @@ class BlockButton: PillButton {
     // the Bool is true for following, false when not following
     var onUpdate: ((Bool) -> Void)?
 
-    override init() {
-        super.init()
+    init(color: UIColor = UIColor.tint.default) {
+        super.init(primaryColor: color, secondaryColor: color)
         self.setTitle(.block, selected: .blocked)
         self.setImage(UIImage.verse.buttonBlock, selected: UIImage.verse.buttonBlocked)
     }

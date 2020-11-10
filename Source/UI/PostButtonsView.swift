@@ -44,7 +44,7 @@ class PostButtonsView: UIView {
 
         self.init(frame: .zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .appBackground
 
         Layout.fillTop(of: self, with: self.topSeparator)
 

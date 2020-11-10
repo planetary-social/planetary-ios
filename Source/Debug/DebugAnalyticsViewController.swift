@@ -42,7 +42,7 @@ class DebugAnalyticsViewController: UIViewController {
     override func viewDidLoad() {
 
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.background.default
+        self.view.backgroundColor = .appBackground
         Layout.fill(view: self.view, with: self.lexiconController.view)
         self.lexiconController.view.isHidden = false
 

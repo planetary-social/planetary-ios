@@ -34,7 +34,7 @@ extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSource 
         }
         if let keyValue = self.data.keyValueBy(index: indexPath.row, late: latePrefetch) {
             cell.update(keyValue: keyValue)
-            collectionView.collectionViewLayout.invalidateLayout()
+            // collectionView.collectionViewLayout.invalidateLayout()
         }
         return cell
     }

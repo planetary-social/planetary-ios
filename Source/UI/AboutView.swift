@@ -13,7 +13,7 @@ class AboutView: KeyValueView {
 
     private let circleView: UIView = {
         let view = UIView.forAutoLayout()
-        view.stroke()
+        view.stroke(color: UIColor.avatarRing)
         return view
     }()
 
@@ -47,6 +47,8 @@ class AboutView: KeyValueView {
         button.isHidden = true
         button.setTitle(.editProfile)
         button.setImage(UIImage.verse.editPencil)
+        button.isSelected = true
+        
         return button
     }()
 
@@ -59,10 +61,10 @@ class AboutView: KeyValueView {
 
     lazy var editPhotoButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = UIColor.background.default
+        button.backgroundColor = .avatarRing
         button.isHidden = true
         button.setImage(UIImage.verse.camera, for: .normal)
-        button.stroke()
+        button.stroke(color: .avatarRing)
         return button
     }()
 
@@ -74,19 +76,19 @@ class AboutView: KeyValueView {
         view.isEditable = false
         view.isScrollEnabled = false
         view.textContainer.lineFragmentPadding = 0
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .cardBackground
         return view
     }()
 
-    var followingView = FollowCountView(text: .followingCount)
-    var followedByView = FollowCountView(text: .followedByCount)
+    var followingView = FollowCountView(text: .followingCount, secondaryText: .inYourNetwork)
+    var followedByView = FollowCountView(text: .followedByCount, secondaryText: .inYourNetwork)
 
     // MARK: Lifecycle
 
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .cardBackground
         self.addSubviews()
     }
 
@@ -126,7 +128,7 @@ class AboutView: KeyValueView {
 
         Layout.fillSouth(of: self.followingLabel, with: buttonStack, insets: .top(Layout.verticalSpacing - 3))
 
-        var separator = Layout.sectionSeparatorView()
+        var separator = Layout.sectionSeparatorView(color: .appBackground)
         Layout.fillSouth(of: buttonStack, with: separator, insets: .top(Layout.verticalSpacing - 3))
 
         let descriptionContainer = UIView.forAutoLayout()
@@ -148,7 +150,8 @@ class AboutView: KeyValueView {
         Layout.fillSouth(of: separator, with: self.followingView)
         self.followingView.constrainHeight(to: 50)
 
-        separator = Layout.sectionSeparatorView(bottom: false)
+        separator = Layout.sectionSeparatorView(bottom: false,
+                                                color: .appBackground)
         Layout.fillSouth(of: self.followingView, with: separator)
         separator.pinBottomToSuperviewBottom()
     }
@@ -170,7 +173,7 @@ class AboutView: KeyValueView {
 
     // called by other update functions
     private func update(name: String, bio: NSAttributedString, identity: Identity) {
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .cardBackground
 
         self.nameLabel.text = name
         self.nameLabel.lineBreakMode = .byWordWrapping

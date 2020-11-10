@@ -71,7 +71,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.isNavigationBarHidden = true
-        self.view.backgroundColor = UIColor.navigationBar.background
+        self.view.backgroundColor = .appBackground
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -89,7 +89,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
         controller.isKeyboardHandlingEnabled = true
         controller.navigationItem.title = step.name.title.text
-        controller.view?.backgroundColor = UIColor.background.default
+        controller.view?.backgroundColor = .appBackground
         Layout.fill(view: controller.contentView, with: step.view)
 
         step.customizeController(controller: controller)

@@ -57,14 +57,6 @@ class ThreadInteractionView: UIView {
         return button
     }()
 
-    private lazy var bookmarkButton: UIButton = {
-        let button = UIButton.init(type: .custom)
-        button.setImage(UIImage.verse.bookmark, for: .normal)
-        button.accessibilityHint = Text.bookmark.text
-        button.addTarget(self, action: #selector(didPressBookmark(sender:)), for: .touchUpInside)
-        return button
-    }()
-
     private lazy var likeButton: UIButton = {
         let button = UIButton.init(type: .custom)
         button.setImage(UIImage.verse.like, for: .normal)

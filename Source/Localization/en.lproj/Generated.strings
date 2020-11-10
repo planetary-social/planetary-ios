@@ -53,10 +53,10 @@
 "Text.following" = "Following";
 "Text.followedBy" = "Followed By";
 "Text.isFollowingYou" = "is currently following you";
-"Text.followedByCount" = "Followed by {{ count }} in your network";
-"Text.followingCount" = "Following {{ count }} in your network";
+"Text.followedByCount" = "Followed by {{ count }}";
+"Text.followingCount" = "Following {{ count }}";
+"Text.inYourNetwork" = " in your network";
 "Text.followedByShortCount" = "{{ count }} Followers";
-"Text.followingShortCount" = "Following {{ count }}";
 "Text.unfollow" = "Stop following";
 "Text.identifierCopied" = "Identifier copied to clipboard";
 "Text.copyMessageIdentifier" = "Copy Message Identifier";
@@ -160,7 +160,7 @@
 "Onboarding.backupHint" = "Planetary does not use passwords - you have a secret key that you need to keep safe. If you can, you should back it up. Note: this feature is still a work in progress.";
 "Onboarding.backUp" = "Yes, back up my identity";
 "Onboarding.bioHint" = "Don't worry too much about what you say, you can change it later.";
-"Onboarding.benefits" = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\nFind out more";
+"Onboarding.benefits" = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\n\nFind out more";
 "Onboarding.findOutMore" = "Find out more";
 "Onboarding.thatSoundsGreat" = "That sounds great!";
 "Onboarding.policyStatement" = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy";

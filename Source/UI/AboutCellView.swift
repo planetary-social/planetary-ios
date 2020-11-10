@@ -20,8 +20,9 @@ class AboutCellView: UIView {
     let label: UILabel = {
         let label = UILabel.forAutoLayout()
         label.lineBreakMode = .byCharWrapping
-        label.numberOfLines = 2
+        label.numberOfLines = 1
         label.font = UIFont.verse.aboutCellName
+        label.lineBreakMode = .byTruncatingTail
         return label
     }()
 
@@ -40,7 +41,7 @@ class AboutCellView: UIView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.tableView.cellBackground
+        self.backgroundColor = .cardBackground
 
         let targetHeight: CGFloat = 60
         let verticalMargin = floor((targetHeight - Layout.profileThumbSize) / 2)
@@ -53,16 +54,20 @@ class AboutCellView: UIView {
         self.addSubview(self.label)
         self.label.constrainLeading(toTrailingOf: self.imageView, constant: Layout.horizontalSpacing)
         self.label.constrainTop(toTopOf: self.imageView, constant: -1)
+        self.label.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         self.addSubview(self.identityLabel)
         self.identityLabel.constrainLeading(to: self.label)
         self.identityLabel.constrainTrailing(to: self.label)
         self.identityLabel.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 1).isActive = true
+        self.identityLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        self.identityLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 
         self.addSubview(self.followButton)
         self.followButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        self.followButton.leftAnchor.constraint(greaterThanOrEqualTo: self.label.rightAnchor, constant: 6).isActive = true
-        self.followButton.pinRightToSuperview(constant: -Layout.horizontalSpacing)
+        self.followButton.leftAnchor.constraint(equalTo: self.label.rightAnchor, constant: 6).isActive = true
+        self.followButton.pinRightToSuperview(constant: -Layout.horizontalSpacing)?.priority = .defaultHigh
+        self.followButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
         self.addSubview(self.blockButton)
         self.blockButton.constrain(to: self.followButton)
@@ -174,7 +179,7 @@ class MiniAboutCellView: UIView {
 
     init() {
         super.init(frame: .zero)
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .appBackground
 
         self.addSubview(self.imageView)
         self.imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true

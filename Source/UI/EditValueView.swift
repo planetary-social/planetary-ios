@@ -20,7 +20,7 @@ class EditValueView: UIView {
 
     let textView: UITextView = {
         let view = UITextView.forAutoLayout()
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .appBackground
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         view.isEditable = true
         view.isScrollEnabled = false
@@ -30,7 +30,7 @@ class EditValueView: UIView {
 
     init(label: Text, value: String = "") {
         super.init(frame: .zero)
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .appBackground
         self.label.text = label.text
         self.textView.text = value
         self.addSubviews()

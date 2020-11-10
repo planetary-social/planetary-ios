@@ -26,7 +26,7 @@ class BenefitsOnboardingStep: OnboardingStep {
         self.view.textView.delegate = self
         self.view.textView.layer.borderWidth = 0
         self.view.textView.isScrollEnabled = false
-        self.view.textView.backgroundColor = UIColor.background.default
+        self.view.textView.backgroundColor = .appBackground
         self.view.primaryButton.setText(.thatSoundsGreat)
     }
 }

@@ -40,7 +40,7 @@ class MainViewController: UITabBarController {
 
         self.init(nibName: nil, bundle: nil)
         self.delegate = self
-        self.view.backgroundColor = UIColor.navigationBar.background
+        self.view.backgroundColor = .cardBackground
         self.tabBar.configureAppearance()
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
 

@@ -20,11 +20,9 @@ class RelationshipButton: IconButton {
         self.otherUserName = name
         self.content = content
 
-        super.init(icon: UIImage.verse.relationship)
+        super.init(icon: UIImage.verse.optionsOff)
 
-        relationship.load {
-            self.configureImage()
-        }
+        self.configureImage()
 
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(relationshipDidChange(notification:)),

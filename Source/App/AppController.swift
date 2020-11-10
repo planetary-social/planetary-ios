@@ -30,7 +30,7 @@ class AppController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.background.default
+        self.view.backgroundColor = .appBackground
         self.addObservers()
     }
     

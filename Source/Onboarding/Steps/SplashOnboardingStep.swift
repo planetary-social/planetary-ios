@@ -13,7 +13,7 @@ class StartOnboardingStep: OnboardingStep {
 
     private lazy var textView: UITextView = {
         let view = UITextView.forAutoLayout()
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .appBackground
         view.delegate = self
         view.isEditable = false
         let text = NSMutableAttributedString(Text.Onboarding.policyStatement.text,
@@ -33,7 +33,7 @@ class StartOnboardingStep: OnboardingStep {
 
     override func customizeView() {
 
-        let title = NSAttributedString("\n\(Text.planetary.text)\n",
+        let title = NSAttributedString("\n\(Text.planetary.text)\n\n\n",
                                        font: UIFont.systemFont(ofSize: 50, weight: .semibold),
                                        color: .clear)
 
@@ -50,7 +50,7 @@ class StartOnboardingStep: OnboardingStep {
         // rather than try to position the logo and subtitle text
         // keep the existing attributed title but with a clear
         // and center the logo image view on top
-        let logoImageView = UIImageView(image: UIImage(named: "title"))
+        let logoImageView = UIImageView(image: UIImage(named: "image-onboarding"))
         logoImageView.contentMode = .center
         Layout.center(logoImageView, in: self.view.titleLabel)
 

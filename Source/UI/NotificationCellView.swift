@@ -37,7 +37,7 @@ class NotificationCellView: KeyValueView {
     convenience init() {
 
         self.init(frame: .zero)
-        self.backgroundColor = UIColor.tableView.cellBackground
+        self.backgroundColor = .cardBackground
 
         Layout.fillTopLeft(of: self, with: self.button, insets: .topLeft)
         self.button.constrainSize(to: Layout.profileThumbSize)

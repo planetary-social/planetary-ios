@@ -20,11 +20,11 @@ class LaunchViewController: UIViewController {
     override func viewDidLoad() {
 
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.background.splash
+        self.view.backgroundColor = UIColor.splashBackground
 
-        let splashImageView = UIImageView(image: UIImage(named: "splash"))
+        let splashImageView = UIImageView(image: UIImage(named: "launch"))
         splashImageView.contentMode = .scaleAspectFit
-        Layout.center(splashImageView, in: self.view, size: CGSize(width: 181, height: 220))
+        Layout.center(splashImageView, in: self.view, size: CGSize(width: 188, height: 248))
         
         self.launch()
     }

@@ -24,7 +24,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
     lazy var tokenTextView: UITextView = {
         let view = UITextView.forAutoLayout()
         view.delegate = self
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .appBackground
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         view.isEditable = true
         view.isScrollEnabled = false

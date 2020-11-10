@@ -18,7 +18,7 @@ class NewPostViewController: ContentViewController {
 
     private lazy var textView: UITextView = {
         let view = UITextView.forPostsAndReplies()
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .cardBackground
         view.delegate = self.mentionDelegate
         view.font = font
         view.textColor = UIColor.text.default
@@ -39,14 +39,14 @@ class NewPostViewController: ContentViewController {
     private lazy var galleryView: ImageGalleryView = {
         let view = ImageGalleryView(height: 75)
         view.delegate = self
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
         Layout.addSeparator(toTopOf: view)
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
 
@@ -57,7 +57,7 @@ class NewPostViewController: ContentViewController {
     init(images: [UIImage] = []) {
         super.init(scrollable: false, title: .newPost)
         self.isKeyboardHandlingEnabled = true
-        self.view.backgroundColor = UIColor.background.default
+        self.view.backgroundColor = .cardBackground
         self.addActions()
     }
 
@@ -72,6 +72,7 @@ class NewPostViewController: ContentViewController {
                                    style: .plain,
                                    target: self,
                                    action: #selector(dismissWithoutPost))
+        item.tintColor = .secondaryAction
         item.accessibilityLabel = Text.done.text
         self.navigationItem.leftBarButtonItem = item
         

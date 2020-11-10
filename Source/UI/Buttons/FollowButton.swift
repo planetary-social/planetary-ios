@@ -19,7 +19,7 @@ class FollowButton: PillButton {
                 return
             }
 
-            self.isSelected = relationship.isFollowing
+            self.isSelected = !relationship.isFollowing
             self.isHidden = relationship.identity == relationship.other
 
             NotificationCenter.default.addObserver(self, selector: #selector(relationshipDidChange(notification:)), name: relationship.notificationName, object: nil)
@@ -30,11 +30,11 @@ class FollowButton: PillButton {
     // the Bool is true for following, false when not following
     var onUpdate: ((Bool) -> Void)?
 
-    override init() {
-        super.init()
+    override init(primaryColor: UIColor = .primaryAction, secondaryColor: UIColor = .secondaryAction) {
+        super.init(primaryColor: primaryColor, secondaryColor: secondaryColor)
 
-        self.setTitle(.follow, selected: .following)
-        self.setImage(UIImage.verse.buttonFollow, selected: UIImage.verse.buttonFollowing)
+        self.setTitle(.following, selected: .follow)
+        self.setImage(UIImage.verse.buttonFollowing, selected: UIImage.verse.buttonFollow)
     }
 
     override func defaultAction() {
@@ -45,7 +45,7 @@ class FollowButton: PillButton {
 
         Analytics.shared.trackDidTapButton(buttonName: "follow")
         
-        let shouldFollow = !self.isSelected
+        let shouldFollow = self.isSelected
 
         func complete() {
             AppController.shared.hideProgress()

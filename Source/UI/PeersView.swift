@@ -33,7 +33,7 @@ class PeersView: UIView {
     }()
 
     
-    let connectionAnimation = PeerConnectionAnimation()
+    let connectionAnimation = PeerConnectionAnimation(color: .networkAnimation)
 
     convenience init() {
         self.init(frame: CGRect.zero)

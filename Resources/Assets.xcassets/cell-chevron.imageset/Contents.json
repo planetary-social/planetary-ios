@@ -1,17 +1,50 @@
 {
   "images" : [
     {
-      "filename" : "cell-chevron.png",
+      "filename" : "icon-dark-chevron.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "cell-chevron@2x.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "forward-chevron.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "icon-dark-chevron@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "cell-chevron@3x.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "forward-chevron@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "icon-dark-chevron@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "forward-chevron@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

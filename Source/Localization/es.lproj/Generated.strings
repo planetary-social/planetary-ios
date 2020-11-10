@@ -53,10 +53,10 @@
 "Text.following" = "Siguiendo";
 "Text.followedBy" = "Seguido por";
 "Text.isFollowingYou" = "está siguiéndote actualmente";
-"Text.followedByCount" = "Seguido por {{ count }} en tu red";
-"Text.followingCount" = "Siguiendo {{ count }} en tu red";
+"Text.followedByCount" = "Seguido por {{ count }}";
+"Text.followingCount" = "Siguiendo {{ count }}";
+"Text.inYourNetwork" = " en tu red";
 "Text.followedByShortCount" = "{{ count }} Seguidores";
-"Text.followingShortCount" = "Siguiendo {{ count }}";
 "Text.unfollow" = "Dejar de seguir";
 "Text.identifierCopied" = "Identificador copiado a tu portapapeles";
 "Text.copyMessageIdentifier" = "Copiar Identificador de Mensaje";
@@ -159,7 +159,7 @@
 "Onboarding.backupHint" = "Planetary no usa contraseñas - tienes una llave secreta que debes que guardar de forma segura. Si puedes, deberías respaldarla. Nota: esta funcionalidad está todavía en desarrollo.";
 "Onboarding.backUp" = "Sí, respalda mi identidad";
 "Onboarding.bioHint" = "No te preocupes mucho por lo que dices, puedes cambiarlo después.";
-"Onboarding.benefits" = "Somos parte de un ecosistema abierto que respeta tu privacidad, minimiza la recolección de datos y apunta a recompensar a los creadores.\n\nY si no te gusta nuestra aplicación, ¡puedes tomar tu identidad –y todos tus amigos y contenido– y llevártela a otro servicio!\nAprende más";
+"Onboarding.benefits" = "Somos parte de un ecosistema abierto que respeta tu privacidad, minimiza la recolección de datos y apunta a recompensar a los creadores.\n\nY si no te gusta nuestra aplicación, ¡puedes tomar tu identidad –y todos tus amigos y contenido– y llevártela a otro servicio!\n\nAprende más";
 "Onboarding.findOutMore" = "Aprende más";
 "Onboarding.thatSoundsGreat" = "¡Eso suena muy bien!";
 "Onboarding.policyStatement" = "Si continúas, confirmas que estás de acuerdo con los Términos del Servicio y Política de Privacidad";
