@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "icon-library.png",
+      "filename" : "icon-light-gallery.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -17,7 +17,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "icon-library@2x.png",
+      "filename" : "icon-light-gallery@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -33,7 +33,7 @@
       "scale" : "2x"
     },
     {
-      "filename" : "icon-library@3x.png",
+      "filename" : "icon-light-gallery@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     },

@@ -53,7 +53,7 @@ class DiscoverViewController: ContentViewController {
         view.refreshControl = self.refreshControl
         view.showsVerticalScrollIndicator = false
         view.contentInset = .square(5)
-        view.backgroundColor = UIColor.background.table
+        view.backgroundColor = .appBackground
         
         return view
     }()

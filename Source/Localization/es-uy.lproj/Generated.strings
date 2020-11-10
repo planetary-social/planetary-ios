@@ -159,7 +159,7 @@
 "Onboarding.backupHint" = "Planetary no usa contraseñas - tenés una llave secreta que debés guardar de forma segura. Si podés, deberías respaldarla. Nota: esta funcionalidad todavía está en desarrollo.";
 "Onboarding.backUp" = "Sí, respaldá mi identidad";
 "Onboarding.bioHint" = "Poné cualquier cosa, igual después lo podés cambiar.";
-"Onboarding.benefits" = "Somos parte de un ecosistema abierto que respeta tu privacidad, minimiza la recolección de datos y apunta a recompensar a los creadores.\n\nY si no te gusta nuestra aplicación, ¡podés agarrar tu identidad –y todos tus amigos y contenido– y llevártela a otro servicio!\nAprendé más";
+"Onboarding.benefits" = "Somos parte de un ecosistema abierto que respeta tu privacidad, minimiza la recolección de datos y apunta a recompensar a los creadores.\n\nY si no te gusta nuestra aplicación, ¡podés agarrar tu identidad –y todos tus amigos y contenido– y llevártela a otro servicio!\n\nAprendé más";
 "Onboarding.findOutMore" = "Aprendé más";
 "Onboarding.thatSoundsGreat" = "¡Buenísimo!";
 "Onboarding.policyStatement" = "Si continuás, confirmás que estás de acuerdo con los Términos del Servicio y Política de Privacidad";

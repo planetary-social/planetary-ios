@@ -15,7 +15,7 @@ extension UITableView {
         let view = UITableView(frame: CGRect.zero, style: style)
         view.allowsMultipleSelection = false
         view.allowsSelection = true
-        view.backgroundColor = UIColor.background.table
+        view.backgroundColor = .appBackground
         view.rowHeight = UITableView.automaticDimension
         view.separatorColor = UIColor.clear
         view.separatorInset = UIEdgeInsets.zero

@@ -248,7 +248,7 @@ fileprivate class ProfileImageView: UIView {
 
     let circleView: UIView = {
         let view = UIView.forAutoLayout()
-        view.stroke()
+        view.stroke(color: .avatarRing)
         return view
     }()
 

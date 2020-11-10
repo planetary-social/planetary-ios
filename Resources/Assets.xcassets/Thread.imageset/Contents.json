@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "Thread.png",
+      "filename" : "thread-border-light.png",
       "idiom" : "universal",
       "resizing" : {
         "cap-insets" : {
-          "left" : 187,
-          "right" : 188
+          "left" : 0,
+          "right" : 0
         },
         "center" : {
           "mode" : "tile",
@@ -17,12 +17,34 @@
       "scale" : "1x"
     },
     {
-      "filename" : "Thread@2x.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "thread-border-dark.png",
       "idiom" : "universal",
       "resizing" : {
         "cap-insets" : {
-          "left" : 374,
-          "right" : 375
+          "left" : 0,
+          "right" : 0
+        },
+        "center" : {
+          "mode" : "tile",
+          "width" : 1
+        },
+        "mode" : "3-part-horizontal"
+      },
+      "scale" : "1x"
+    },
+    {
+      "filename" : "thread-border-light@2x.png",
+      "idiom" : "universal",
+      "resizing" : {
+        "cap-insets" : {
+          "left" : 0,
+          "right" : 0
         },
         "center" : {
           "mode" : "tile",
@@ -33,12 +55,56 @@
       "scale" : "2x"
     },
     {
-      "filename" : "Thread@3x.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "thread-border-dark@2x.png",
       "idiom" : "universal",
       "resizing" : {
         "cap-insets" : {
-          "left" : 562,
-          "right" : 563
+          "left" : 0,
+          "right" : 0
+        },
+        "center" : {
+          "mode" : "tile",
+          "width" : 1
+        },
+        "mode" : "3-part-horizontal"
+      },
+      "scale" : "2x"
+    },
+    {
+      "filename" : "thread-border-light@3x.png",
+      "idiom" : "universal",
+      "resizing" : {
+        "cap-insets" : {
+          "left" : 0,
+          "right" : 0
+        },
+        "center" : {
+          "mode" : "tile",
+          "width" : 1
+        },
+        "mode" : "3-part-horizontal"
+      },
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "thread-border-dark@3x.png",
+      "idiom" : "universal",
+      "resizing" : {
+        "cap-insets" : {
+          "left" : 0,
+          "right" : 0
         },
         "center" : {
           "mode" : "tile",

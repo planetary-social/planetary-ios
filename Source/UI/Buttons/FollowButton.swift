@@ -30,8 +30,8 @@ class FollowButton: PillButton {
     // the Bool is true for following, false when not following
     var onUpdate: ((Bool) -> Void)?
 
-    override init(color: UIColor = UIColor.tint.default) {
-        super.init(color: color)
+    override init(primaryColor: UIColor = .primaryAction, secondaryColor: UIColor = .secondaryAction) {
+        super.init(primaryColor: primaryColor, secondaryColor: secondaryColor)
 
         self.setTitle(.following, selected: .follow)
         self.setImage(UIImage.verse.buttonFollowing, selected: UIImage.verse.buttonFollow)

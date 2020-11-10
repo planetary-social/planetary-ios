@@ -28,7 +28,7 @@ class PostReplyView: KeyValueView {
         view.topSeparator.isHidden = true
         view.addGestureRecognizer(view.tapGesture.recognizer)
         view.isSkeletonable = true
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
     
@@ -37,23 +37,24 @@ class PostReplyView: KeyValueView {
         backgroundView.constrainHeight(to: 0)
         let colorView = UIImageView.forAutoLayout()
         colorView.image = UIImage(named: "Thread")
+        colorView.contentMode = .scaleToFill
         Layout.fill(view: backgroundView, with: colorView)
         return backgroundView
     }()
 
     init() {
         super.init(frame: .zero)
-        self.backgroundColor = UIColor.post.background
+        self.backgroundColor = .cardBackground
         self.clipsToBounds = true
 
         let topBorder = Layout.separatorView()
         let bottomBorder = Layout.separatorView()
         
-        topBorder.backgroundColor = UIColor.post.border
-        bottomBorder.backgroundColor = UIColor.post.border
+        topBorder.backgroundColor = .cardBorder
+        bottomBorder.backgroundColor = .cardBorder
         
         let bottomSeparator = Layout.separatorView(height: 10,
-                                                   color: UIColor.background.table)
+                                                   color: .appBackground)
 
         Layout.fillTop(of: self, with: topBorder)
         Layout.fillSouth(of: topBorder, with: self.postView)
@@ -77,7 +78,7 @@ class PostReplyView: KeyValueView {
         self.postView.update(with: keyValue)
         self.repliesView.update(with: keyValue)
         if keyValue.metadata.replies.count > 0 {
-            self.degrade.heightConstraint?.constant = 12
+            self.degrade.heightConstraint?.constant = 12.33
         } else {
             self.degrade.heightConstraint?.constant = 0
         }
@@ -117,7 +118,6 @@ class RepliesView: KeyValueView {
 
 
     private let textFont = UIFont.systemFont(ofSize: 14, weight: .regular)
-    private let nameFont = UIFont.systemFont(ofSize: 14, weight: .medium)
 
     let avatarImageView = AvatarStackView()
 
@@ -163,24 +163,22 @@ class RepliesView: KeyValueView {
         let count = abouts.count
         if count == 1 {
             let replyFrom = total > 1 ? Text.repliesFrom.text : Text.oneReplyFrom.text
-            let text = NSMutableAttributedString(replyFrom, font: self.textFont)
+            let text = NSMutableAttributedString(replyFrom, font: self.textFont, color: .secondaryText)
             if let name = abouts.first?.name {
-                text.append(NSAttributedString(name, font: self.nameFont))
+                text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
             } else {
-                text.append(NSAttributedString(string: Text.oneOther.text))
+                text.append(NSAttributedString(Text.oneOther.text, font: self.textFont, color: .reactionUser))
             }
-            text.addColorAttribute(UIColor.text.default)
             self.label.attributedText = text
         } else {
-            let text = NSMutableAttributedString(Text.repliesFrom.text, font: self.textFont)
+            let text = NSMutableAttributedString(Text.repliesFrom.text, font: self.textFont, color: .secondaryText)
             if let name = abouts.first?.name {
-                text.append(NSAttributedString(name, font: self.nameFont))
+                text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
                 let others = count > 2 ? Text.andCountOthers : Text.andOneOther
-                text.append(NSAttributedString(others.text(["count": String(count - 1)]), font: self.textFont))
+                text.append(NSAttributedString(others.text(["count": String(count - 1)]), font: self.textFont, color: .reactionUser))
             } else {
-                text.append(NSAttributedString(Text.countOthers.text, font: self.textFont))
+                text.append(NSAttributedString(Text.countOthers.text, font: self.textFont, color: .reactionUser))
             }
-            text.addColorAttribute(UIColor.text.default)
             self.label.attributedText = text
         }
     }

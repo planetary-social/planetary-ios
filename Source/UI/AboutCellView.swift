@@ -33,15 +33,15 @@ class AboutCellView: UIView {
         return label
     }()
 
-    let followButton = FollowButton(color: .profileSecondaryAction)
-    let blockButton = BlockButton(color: .profileSecondaryAction)
+    let followButton = FollowButton()
+    let blockButton = BlockButton()
 
     private var image: Image?
 
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.tableView.cellBackground
+        self.backgroundColor = .cardBackground
 
         let targetHeight: CGFloat = 60
         let verticalMargin = floor((targetHeight - Layout.profileThumbSize) / 2)
@@ -179,7 +179,7 @@ class MiniAboutCellView: UIView {
 
     init() {
         super.init(frame: .zero)
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .appBackground
 
         self.addSubview(self.imageView)
         self.imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true

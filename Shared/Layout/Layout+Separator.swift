@@ -71,7 +71,7 @@ extension Layout {
     // and a single-line separator on top and bottom
     // `top` and `bottom` arguments allow omitting one side or the other,
     // which is useful for preventing duplicate separators, when a neighboring element already has one
-    static func sectionSeparatorView(top: Bool = true, bottom: Bool = true, color: UIColor = UIColor.background.table) -> UIView {
+    static func sectionSeparatorView(top: Bool = true, bottom: Bool = true, color: UIColor = .appBackground) -> UIView {
         let separator = Layout.separatorView(height: 10, color: color)
 
         if top {

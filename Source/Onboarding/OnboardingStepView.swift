@@ -176,7 +176,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
     init(buttonStyle: ButtonStyle) {
         self.buttonStyle = buttonStyle
         super.init(frame: .zero)
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .appBackground
         self.constrainSubviews()
     }
 
@@ -198,13 +198,13 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
 
         self.addSubview(self._textField)
         self._textField.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        self._textField.pinTop(toBottomOf: self.titleLabel, constant: 29)
+        self._textField.pinTop(toBottomOf: self.titleLabel, constant: 44)
         self._textField.constrainWidth(to: width)
         self._textField.constrainHeight(to: height)
 
         self.addSubview(self._textView)
         self._textView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        textViewTopConstraint = self._textView.pinTop(toBottomOf: self.titleLabel, constant: 29)
+        textViewTopConstraint = self._textView.pinTop(toBottomOf: self.titleLabel, constant: 44)
         self._textView.constrainWidth(to: 300)
 
         self.addSubview(self.hintLabel)

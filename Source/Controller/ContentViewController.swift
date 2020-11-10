@@ -195,7 +195,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
     // MARK: Loading animation
     
     private lazy var loadingAnimation: PeerConnectionAnimation = {
-        let view = PeerConnectionAnimation.forAutoLayout()
+        let view = PeerConnectionAnimation(color: .networkAnimation)
         view.setDotCount(inside: false, count: 1, animated: false)
         view.setDotCount(inside: true, count: 2, animated: false)
         return view

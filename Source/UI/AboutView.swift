@@ -13,7 +13,7 @@ class AboutView: KeyValueView {
 
     private let circleView: UIView = {
         let view = UIView.forAutoLayout()
-        view.stroke()
+        view.stroke(color: UIColor.avatarRing)
         return view
     }()
 
@@ -38,21 +38,22 @@ class AboutView: KeyValueView {
     }()
 
     lazy var followButton: FollowButton = {
-        let button = FollowButton(color: .profileSecondaryAction)
+        let button = FollowButton()
         return button
     }()
 
     lazy var editButton: PillButton = {
-        let button = PillButton(color: UIColor.profileSecondaryAction)
+        let button = PillButton()
         button.isHidden = true
         button.setTitle(.editProfile)
         button.setImage(UIImage.verse.editPencil)
+        button.isSelected = true
         
         return button
     }()
 
     lazy var shareButton: PillButton = {
-        let button = PillButton(color: UIColor.profileSecondaryAction)
+        let button = PillButton()
         button.setTitle(.share)
         button.setImage(UIImage.verse.smallShare)
         return button
@@ -60,10 +61,10 @@ class AboutView: KeyValueView {
 
     lazy var editPhotoButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = UIColor.background.default
+        button.backgroundColor = .avatarRing
         button.isHidden = true
         button.setImage(UIImage.verse.camera, for: .normal)
-        button.stroke()
+        button.stroke(color: .avatarRing)
         return button
     }()
 
@@ -75,7 +76,7 @@ class AboutView: KeyValueView {
         view.isEditable = false
         view.isScrollEnabled = false
         view.textContainer.lineFragmentPadding = 0
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .cardBackground
         return view
     }()
 
@@ -87,7 +88,7 @@ class AboutView: KeyValueView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.appBackground
+        self.backgroundColor = .cardBackground
         self.addSubviews()
     }
 
@@ -172,7 +173,7 @@ class AboutView: KeyValueView {
 
     // called by other update functions
     private func update(name: String, bio: NSAttributedString, identity: Identity) {
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .cardBackground
 
         self.nameLabel.text = name
         self.nameLabel.lineBreakMode = .byWordWrapping

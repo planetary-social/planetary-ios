@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Options--default.png",
+      "filename" : "icon-dark-options-default-1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -17,7 +17,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "Options--default@2x.png",
+      "filename" : "icon-dark-options-default@2x-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -33,7 +33,7 @@
       "scale" : "2x"
     },
     {
-      "filename" : "Options--default@3x.png",
+      "filename" : "icon-dark-options-default@3x-1.png",
       "idiom" : "universal",
       "scale" : "3x"
     },

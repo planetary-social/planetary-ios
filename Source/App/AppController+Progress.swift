@@ -20,7 +20,7 @@ extension AppController {
     
     func showProgress(after: TimeInterval = 1, statusText: String? = nil) {
         SVProgressHUD.setDefaultMaskType(.clear)
-        SVProgressHUD.setBackgroundColor(UIColor.background.default)
+        SVProgressHUD.setBackgroundColor(.appBackground)
         SVProgressHUD.setForegroundColor(UIColor.tint.default)
         SVProgressHUD.setGraceTimeInterval(after)
         SVProgressHUD.show(withStatus: statusText)

@@ -58,7 +58,7 @@ class ThreadViewController: ContentViewController {
     private lazy var interactionView: ThreadInteractionView = {
         let interactionView = ThreadInteractionView()
         interactionView.delegate = self
-        interactionView.backgroundColor = UIColor.post.background
+        interactionView.backgroundColor = .cardBackground
         return interactionView
     }()
 
@@ -71,7 +71,7 @@ class ThreadViewController: ContentViewController {
 
     private lazy var topView: UIView = {
         let cellView = UIView.forAutoLayout()
-        cellView.backgroundColor = UIColor.background.default
+        cellView.backgroundColor = .appBackground
         Layout.addSeparator(toTopOf: cellView)
 
         Layout.fillTop(of: cellView, with: self.rootPostView)
@@ -89,7 +89,7 @@ class ThreadViewController: ContentViewController {
         view.addGestureRecognizer(swipe)
         view.textViewDelegate = self.textViewDelegate
         Layout.addSeparator(toTopOf: view)
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
 
@@ -100,7 +100,7 @@ class ThreadViewController: ContentViewController {
     private lazy var galleryView: ImageGalleryView = {
         let view = ImageGalleryView(height: 75)
         view.delegate = self
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
 
@@ -112,7 +112,7 @@ class ThreadViewController: ContentViewController {
         view.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
         view.postButton.setText(.postReply)
         view.postButton.action = didPressPostButton
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
     

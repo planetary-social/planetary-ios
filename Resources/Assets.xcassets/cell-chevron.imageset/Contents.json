@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "cell-chevron.png",
+      "filename" : "icon-dark-chevron.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -17,7 +17,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "cell-chevron@2x.png",
+      "filename" : "icon-dark-chevron@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -33,7 +33,7 @@
       "scale" : "2x"
     },
     {
-      "filename" : "cell-chevron@3x.png",
+      "filename" : "icon-dark-chevron@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     },

@@ -265,7 +265,7 @@ extension Text {
         case backUp = "Yes, back up my identity"
         case bioHint = "Don't worry too much about what you say, you can change it later."
 
-        case benefits = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\nFind out more"
+        case benefits = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\n\nFind out more"
         case findOutMore = "Find out more"
         case thatSoundsGreat = "That sounds great!"
 

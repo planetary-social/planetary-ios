@@ -64,7 +64,7 @@ class AboutViewController: ContentViewController {
                                                                  style: .plain,
                                                                  target: self,
                                                                  action: #selector(didPressOptionsIcon))
-        self.navigationItem.rightBarButtonItem?.tintColor = .profileSecondaryAction
+        self.navigationItem.rightBarButtonItem?.tintColor = .secondaryAction
 
     }
     
@@ -408,7 +408,7 @@ fileprivate class AboutPostView: KeyValueView {
     convenience init() {
         self.init(frame: .zero)
         self.tapGesture = self.view.tapGesture
-        let separator = Layout.addSeparator(toTopOf: self, height: 10, color: UIColor.background.table)
+        let separator = Layout.addSeparator(toTopOf: self, height: 10, color: .appBackground)
         Layout.addSeparator(toBottomOf: separator)
         Layout.fill(view: self,
                     with: self.view,

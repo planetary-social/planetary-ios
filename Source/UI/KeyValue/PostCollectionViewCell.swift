@@ -33,13 +33,13 @@ class PostCollectionViewCell: UICollectionViewCell {
         // view.textContainer.maximumNumberOfLines = 8
         view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         view.isUserInteractionEnabled = false
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
 
     private lazy var headerView: SmallPostHeaderView = {
         let view = SmallPostHeaderView.forAutoLayout()
-        view.backgroundColor = UIColor.post.background
+        view.backgroundColor = .cardBackground
         return view
     }()
     
@@ -47,8 +47,8 @@ class PostCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         self.contentView.clipsToBounds = true
-        self.contentView.backgroundColor = UIColor.post.background
-        self.contentView.layer.borderColor = UIColor.post.border.cgColor
+        self.contentView.backgroundColor = .cardBackground
+        self.contentView.layer.borderColor = UIColor.cardBorder.cgColor
         self.contentView.layer.borderWidth = 0.5
         self.contentView.layer.cornerRadius = 5
         
@@ -91,14 +91,14 @@ class PostCollectionViewCell: UICollectionViewCell {
         self.textView.text = nil
         // self.textView.textContainer.maximumNumberOfLines = 8
         
-        self.headerView.backgroundColor = UIColor.post.background
+        self.headerView.backgroundColor = .cardBackground
         self.headerView.isOpaque = true
         self.headerView.startSkeletonAnimation()
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        self.contentView.layer.borderColor = UIColor.post.border.cgColor
+        self.contentView.layer.borderColor = UIColor.cardBorder.cgColor
         self.contentView.setNeedsDisplay()
     }
 

@@ -17,21 +17,26 @@ class PillButton: AppButton {
             self.heightConstraint?.constant = self.height
         }
     }
+    
+    private var primaryColor: UIColor
+    private var secondaryColor: UIColor
 
-    init(color: UIColor = UIColor.tint.default) {
+    init(primaryColor: UIColor = .primaryAction, secondaryColor: UIColor = .secondaryAction) {
+        self.primaryColor = primaryColor
+        self.secondaryColor = secondaryColor
+        
         super.init()
 
         self.useAutoLayout()
 
         self.titleLabel?.font = UIFont.verse.pillButton
 
-        self.setTitleColor(color, for: .normal)
+        self.setTitleColor(secondaryColor, for: .normal)
         self.setTitleColor(UIColor.white, for: .selected)
 
         self.setBackgroundImage(UIColor.clear.image(), for: .normal)
-        self.setBackgroundImage(color.image(), for: .selected)
-
-        self.layer.borderColor = color.cgColor
+        self.setBackgroundImage(primaryColor.image(), for: .selected)
+        
         self.layer.borderWidth = 1.5
 
         self.constrainHeight(to: self.height)
@@ -41,6 +46,15 @@ class PillButton: AppButton {
         setImage(nil)
 
         self.adjustsImageWhenHighlighted = false
+    }
+    
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        if isSelected {
+            self.layer.borderColor = self.primaryColor.cgColor
+        } else {
+            self.layer.borderColor = self.secondaryColor.cgColor
+        }
     }
 
     func setTitle(_ normal: Text, selected: Text? = nil) {

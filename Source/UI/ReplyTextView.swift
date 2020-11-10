@@ -31,7 +31,7 @@ class ReplyTextView: KeyValueView {
         let view = ResizableTextView()
         view.configureForPostsAndReplies()
         view.roundedCorners(radius: Layout.profileThumbSize / 2)
-        view.backgroundColor = UIColor.background.reply
+        view.backgroundColor = UIColor.textInputBackground
         view.isScrollEnabled = true
         view.textContainerInset = UIEdgeInsets(top: 8, left: 13, bottom: 6, right: 13)
 
@@ -39,6 +39,8 @@ class ReplyTextView: KeyValueView {
         view.font = UIFont.verse.reply
         view.text = Text.postAReply.text
         view.textColor = UIColor.text.placeholder
+        view.layer.borderWidth = 1 / UIScreen.main.scale
+        view.layer.borderColor = UIColor.textInputBorder.cgColor
         return view
     }()
 
@@ -55,7 +57,7 @@ class ReplyTextView: KeyValueView {
     convenience init(topSpacing: CGFloat, bottomSpacing: CGFloat) {
 
         self.init(frame: .zero)
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .appBackground
         self.useAutoLayout()
 
         let textViewHeight = Layout.profileThumbSize
@@ -79,6 +81,12 @@ class ReplyTextView: KeyValueView {
         
         self.button.isSkeletonable = true
         self.textView.isSkeletonable = true
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        self.textView.layer.borderColor = UIColor.textInputBorder.cgColor
+        self.textView.setNeedsDisplay()
     }
 
     func calculateHeight() {

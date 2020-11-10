@@ -1,50 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "button-pencil.png",
+      "filename" : "icon-light-edit.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon-dark-edit.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "button-pencil@2x.png",
+      "filename" : "icon-light-edit@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon-dark-edit@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "button-pencil@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon-dark-edit@3x.png",
+      "filename" : "icon-light-edit@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
