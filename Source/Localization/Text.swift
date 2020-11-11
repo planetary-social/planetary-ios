@@ -244,7 +244,7 @@ extension Text {
         case changePhoto = "Change photo"
         case confirmPhoto = "Yes, that's good!"
 
-        case startOver = "Start-Over"
+        case startOver = "Start Over"
 
         case contactsHint = "We one-way encrypt this data so we can never access it directly."
         case connect = "Connect away!"
@@ -258,8 +258,8 @@ extension Text {
         case iUnderstand = "Yes, I understand"
 
         case somethingWentWrong = "Oh no! Something went wrong!"
-        case errorRetryMessage = "This is not your fault, we messed something up. You can try again or start-over, and please come and tell one of us about it."
-        case resumeRetryMessage = "This is not your fault, we messed something up. If some cases, it may mean your device cannot reach the network, and trying again later might help."
+        case errorRetryMessage = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it."
+        case resumeRetryMessage = "This is not your fault, we messed something up. In some cases, it may mean your device cannot reach the network, and trying again later might help."
 
         case backupHint = "Planetary does not use passwords - you have a secret key that you need to keep safe. If you can, you should back it up. Note: this feature is still a work in progress."
         case backUp = "Yes, back up my identity"
@@ -344,7 +344,7 @@ extension Text {
 extension Text {
 
     enum Blocking: String, Localizable, CaseIterable {
-        case alertTitle = "Are you sure you want to block {{ name }}? You will no longer see each others content or be able to contact each other."
+        case alertTitle = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other."
         case buttonTitle = "Yes, block {{ name }}"
         case blockedUsers = "Blocked Users"
         case footer = "Blocked users cannot see your posts or contact you, and you will need to unblock them before you can see their posts or contact them. It may take some time to see users and content once they have been unblocked."
@@ -358,7 +358,7 @@ extension Text {
     enum Debug: String, Localizable, CaseIterable {
         case debugTitle = "Hacker Mode"
         case debugMenu = "Dangerous and powerful debug menu"
-        case debugFooter = "This is where we let you shot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options."
+        case debugFooter = "This is where we let you shoot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options."
     }
 }
 
@@ -389,7 +389,7 @@ extension Text {
 extension Text {
     enum Report: String, Localizable, CaseIterable {
         case somebody = "Somebody"
-        case feedFollowed = "%@ is started following you"
+        case feedFollowed = "%@ started following you"
         case postReplied = "%@ replied to your post"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
