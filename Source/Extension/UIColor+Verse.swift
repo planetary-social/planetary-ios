@@ -41,17 +41,9 @@ extension UIColor {
         static let gallery =    UIColor(named: "galleryColor") ?? UIColor(rgb: 0xEFEFEF)
         static let splash =  UIColor(named: "splashBackgroundColor") ?? UIColor.white
     }
-    
-    struct post {
-        static let headerText = UIColor(named: "postHeaderTextColor") ?? UIColor.white
-    }
 
     struct border {
         static let text = UIColor(named: "textBorderColor") ?? UIColor(rgb: 0xEAEAEA)
-    }
-
-    struct highlight {
-        static let menu = UIColor(named: "menuHighlightColor") ?? UIColor(rgb: 0xF4F4F4)
     }
 
     struct separator {
