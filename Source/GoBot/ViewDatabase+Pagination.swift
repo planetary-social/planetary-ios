@@ -70,7 +70,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     }
 
     func keyValueBy(index: Int) -> KeyValue? {
-        if index >= self.count { fatalError("FeedDataProxy #\(index) out-of-bounds") }
+        if index >= self.count { return nil }
         guard index < self.msgs.count else { return nil }
         return self.msgs[index]
     }

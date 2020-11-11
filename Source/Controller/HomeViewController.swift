@@ -203,7 +203,10 @@ class HomeViewController: ContentViewController {
         }
         self.dataSource.update(source: proxy)
         self.tableView.reloadData()
-        self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        let shouldScrollToTop = proxy.count > 0
+        if shouldScrollToTop {
+            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        }
     }
 
     // MARK: Actions

@@ -856,6 +856,7 @@ class ViewDatabase {
         
         let qry = self.abouts
             .join(self.authors, on: colID == self.abouts[colAboutID])
+            .order(self.abouts[colName])
  //           .filter(colAboutID == aboutID)
         
         var abouts: [About] = []

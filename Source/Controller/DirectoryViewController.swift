@@ -11,14 +11,14 @@ import UIKit
 class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
 
     // unfiltered collection
-    private var allPeople = [Person]() {
+    private var allPeople = [About]() {
         didSet {
             self.applyFilter()
         }
     }
 
     // filtered collection for display
-    private var people = [Person]() {
+    private var people = [About]() {
         didSet {
             self.tableView.reloadData()
         }
@@ -87,35 +87,12 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     }
 
     private func load(completion: @escaping () -> Void) {
-        DirectoryAPI.shared.directory(includeMe: false) { [weak self] people, error in
-            if let error = error {
-                self?.alert(error: error)
-            } else {
-                self?.allPeople += people
-            }
-            completion()
-        }
         Bots.current.abouts() {
             [weak self] abouts, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            var localPeople:[Person] = []
-            for about in abouts {
-                if about.name != nil && about.about != nil {
-                    let person = Person(
-                         bio: about.description,
-                         id: about.about as String,
-                         identity: about.about,
-                         image: about.image?.link,
-                         image_url: nil,
-                         in_directory: false,
-                         name: about.name!,
-                         shortcode: nil)
-                     
-                     localPeople += [person]
-                }
-             }
-            self?.allPeople += localPeople
+            self?.allPeople = abouts
+            completion()
         }
         
     }
@@ -129,9 +106,10 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             self.people = self.allPeople
         } else {
             let filter = self.filter.lowercased()
-            self.people = self.allPeople.filter {
-                person in
-                return person.name.lowercased().contains(filter) || person.identity.lowercased().contains(filter)
+            self.people = self.allPeople.filter { about in
+                let containsName = about.name?.lowercased().contains(filter) ?? false
+                let containsIdentity = about.identity.lowercased().contains(filter)
+                return containsName || containsIdentity
             }
         }
     }
@@ -190,8 +168,8 @@ extension DirectoryViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
-        let person = self.people[indexPath.row]
-        cell.aboutView.update(with: person)
+        let about = self.people[indexPath.row]
+        cell.aboutView.update(with: about.identity, about: about)
         return cell
     }
 }
@@ -199,9 +177,8 @@ extension DirectoryViewController: UITableViewDataSource {
 extension DirectoryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let person = self.people[indexPath.row]
-        let controller = AboutViewController(with: person.identity)
-        controller.update(with: person)
+        let about = self.people[indexPath.row]
+        let controller = AboutViewController(with: about)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }
