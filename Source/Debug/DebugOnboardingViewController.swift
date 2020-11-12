@@ -20,7 +20,6 @@ class DebugOnboardingViewController: DebugTableViewController {
         self.settings = [self.userInput(),
                          self.verification(),
                          self.start(),
-                         self.follow(),
                          self.followBack()]
         super.updateSettings()
     }
@@ -290,37 +289,6 @@ class DebugOnboardingViewController: DebugTableViewController {
         view.isScrollEnabled = false
         return view
     }()
-
-    private func follow() -> DebugTableViewController.Settings {
-
-        var settings: [DebugTableViewCellModel] = []
-
-        settings += [DebugTableViewCellModel(title: "User directory",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                cell.accessoryType = .disclosureIndicator
-            },
-                                             actionClosure:
-            {
-                [unowned self] _ in
-                let controller = DebugUserDirectoryViewController()
-                controller.context = self.context
-                self.navigationController?.pushViewController(controller, animated: true)
-            })]
-
-        settings += [DebugTableViewCellModel(title: "",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                [unowned self] cell in
-                Layout.fill(view: cell.contentView, with: self.followErrorTextView)
-            },
-                                             actionClosure: nil)]
-
-        return ("Follow", settings, nil)
-    }
 
     // MARK: Follow back
 

@@ -52,7 +52,6 @@ plugin 'cocoapods-keys', {
     "ZendeskClientID",
     "VersePushAPIToken",
     "VersePubAPIToken",
-    "VerseDirectoryAPIToken",
     "VerseBlobToken"
 ]}
 

@@ -10,14 +10,6 @@ import Foundation
 import UIKit
 
 class DoneOnboardingStep: OnboardingStep {
-
-    private let directoryToggle: TitledToggle = {
-        let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.Onboarding.listMeTitle.text
-        view.subtitleLabel.text = Text.Onboarding.listMeMessage.text
-        view.toggle.isOn = true
-        return view
-    }()
     
     private let publicWebHostingToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
@@ -34,9 +26,8 @@ class DoneOnboardingStep: OnboardingStep {
     override func customizeView() {
 
         let insets = UIEdgeInsets(top: 30, left: 0, bottom: -16, right: 0)
-        Layout.fillSouth(of: self.view.hintLabel, with: self.directoryToggle, insets: insets)
         
-        Layout.fillSouth(of: self.directoryToggle, with: self.publicWebHostingToggle, insets: insets)
+        Layout.fillSouth(of: self.view.hintLabel, with: self.publicWebHostingToggle, insets: insets)
 
         self.view.hintLabel.text = Text.Onboarding.thanksForTrying.text
 
@@ -46,7 +37,6 @@ class DoneOnboardingStep: OnboardingStep {
 
     override func primary() {
         self.data.publicWebHosting = self.publicWebHostingToggle.toggle.isOn
-        self.data.joinedDirectory = self.directoryToggle.toggle.isOn
         let data = self.data
         
         // SIMULATE ONBOARDING
@@ -73,19 +63,18 @@ class DoneOnboardingStep: OnboardingStep {
             }
         }
         
-        let joinDirectoryOperation = BlockOperation {
-            guard data.joinedDirectory else {
-                return
-            }
-            let semaphore = DispatchSemaphore(value: 0)
-            DirectoryAPI.shared.directory(show: me) { (success, error) in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                semaphore.signal()
+        let followOperation = BlockOperation {
+            let identities = Environment.PlanetarySystem.planets
+            let semaphore = DispatchSemaphore(value: identities.count-1)
+            for identity in identities {
+                Bots.current.follow(identity) {
+                    contact, error in
+                    semaphore.signal()
+                }
             }
             semaphore.wait()
         }
-        joinDirectoryOperation.addDependency(startOperation)
+        followOperation.addDependency(startOperation)
         
         let publicWebHostingOperation = BlockOperation {
             guard data.publicWebHosting else {
@@ -101,7 +90,7 @@ class DoneOnboardingStep: OnboardingStep {
             }
             semaphore.wait()
         }
-        publicWebHostingOperation.addDependency(startOperation)
+        publicWebHostingOperation.addDependency(followOperation)
         
         let bundle = Bundle(path: Bundle.main.path(forResource: "Preload", ofType: "bundle")!)!
         let preloadOperation = LoadBundleOperation(bundle: bundle)
@@ -120,7 +109,7 @@ class DoneOnboardingStep: OnboardingStep {
         completionOperation.addDependency(refreshOperation)
         
         let operations = [startOperation,
-                          joinDirectoryOperation,
+                          followOperation,
                           publicWebHostingOperation,
                           preloadOperation,
                           refreshOperation,

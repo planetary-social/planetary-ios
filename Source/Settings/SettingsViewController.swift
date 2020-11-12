@@ -26,44 +26,12 @@ class SettingsViewController: DebugTableViewController {
     }
 
     internal override func updateSettings() {
-        self.settings = [self.directory(),
-                         self.publicWebHosting(),
+        self.settings = [self.publicWebHosting(),
                          self.push(),
                          self.usage(),
                          self.managePubs(),
                          self.preview()]
         super.updateSettings()
-    }
-
-    // MARK: User directory
-
-    private var inDirectory: Bool?
-
-    private func directory() -> DebugTableViewController.Settings {
-        var settings: [DebugTableViewCellModel] = []
-
-        settings += [DebugTableViewCellModel(title: Text.showMeInDirectory.text,
-                                             valueClosure:
-            {
-                cell in
-                cell.showActivityIndicator()
-                DirectoryAPI.shared.me {  [weak self] (person, error) in
-                    DispatchQueue.main.async {
-                        let inDirectory = person?.in_directory ?? false
-                        self?.inDirectory = inDirectory
-                        cell.detailTextLabel?.text = inDirectory.yesOrNo
-                        cell.hideActivityIndicator(andShow: .disclosureIndicator)
-                    }
-                }
-            },
-                                             actionClosure:
-            {
-                [unowned self] cell in
-                let controller = UserDirectorySettingsViewController(inDirectory: self.inDirectory)
-                self.navigationController?.pushViewController(controller, animated: true)
-            })]
-
-        return (Text.userDirectory.text, settings, nil)
     }
 
     // MARK: Public web hosting
