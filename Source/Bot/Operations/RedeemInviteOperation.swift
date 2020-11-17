@@ -10,11 +10,11 @@ import Foundation
 
 class RedeemInviteOperation: AsynchronousOperation {
 
-    var token: String
-    private(set) var error: Error?
+    var star: Star
+    private(set) var result: Result<Void, Error>?
     
-    init(token: String) {
-        self.token = token
+    init(star: Star) {
+        self.star = star
         super.init()
     }
     
@@ -25,19 +25,50 @@ class RedeemInviteOperation: AsynchronousOperation {
         let loggedInIdentity = Bots.current.identity
         guard loggedInIdentity != nil, loggedInIdentity == configuredIdentity else {
             Log.info("Not logged in. RedeemInviteOperation finished.")
-            self.error = BotError.notLoggedIn
+            self.result = .failure(BotError.notLoggedIn)
             self.finish()
             return
         }
         
-        Log.debug("Redeeming invite \(token)...")
+        Log.debug("Redeeming invite to star \(self.star.feed)...")
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        Bots.current.inviteRedeem(queue: queue, token: self.token) { [weak self] (error) in
+        Bots.current.inviteRedeem(queue: queue, token: self.star.invite) { [weak self, star] (error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.error = error
-            Log.info("RedeemInviteOperation finished.")
-            self?.finish()
+            if let error = error {
+                Log.info("RedeemInviteOperation finished with error \(error.localizedDescription).")
+                self?.result = .failure(error)
+                self?.finish()
+            } else {
+                Log.debug("Publishing Contact message...")
+                let contact = Contact(contact: star.feed, following: true)
+                Bots.current.publish(content: contact) { (message, error) in
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    if let error = error {
+                        Log.info("RedeemInviteOperation finished with error \(error.localizedDescription).")
+                        self?.result = .failure(error)
+                        self?.finish()
+                    } else {
+                        Log.debug("Publishing Pub message...")
+                        let pub = star.toPub()
+                        Bots.current.publish(content: pub) { (message, error) in
+                            Log.optional(error)
+                            CrashReporting.shared.reportIfNeeded(error: error)
+                            if let error = error {
+                                Log.info("RedeemInviteOperation finished with error \(error.localizedDescription).")
+                                self?.result = .failure(error)
+                                self?.finish()
+                            } else {
+                                Log.info("RedeemInviteOperation finished.")
+                                self?.result = .success(())
+                                self?.finish()
+                            }
+                        }
+                    }
+                }
+            }
+            
         }
     }
     

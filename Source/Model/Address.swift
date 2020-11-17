@@ -19,7 +19,7 @@ struct Address: Codable {
 }
 
 
-struct Pub: Codable {
+struct Pub: ContentCodable {
     let type: ContentType
     let address: PubAddress
 }

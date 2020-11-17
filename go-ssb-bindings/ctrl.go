@@ -420,12 +420,6 @@ func ssbInviteAccept(token string) bool {
 		return false
 	}
 
-	_, err = sbot.PublishLog.Publish(ssb.NewContactFollow(&tok.Peer))
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to publish follow pub message")
-		return false
-	}
-
 	peerID, err := getAuthorID(tok.Peer)
 	if err != nil {
 		retErr = err
@@ -436,18 +430,6 @@ func ssbInviteAccept(token string) bool {
 	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address, redeemed) VALUES (?,?,?)`, peerID, tok.Address.String(), stamp)
 	if err != nil {
 		retErr = errors.Wrap(err, "insert new pub into addresses failed")
-		return false
-	}
-
-	pubMsg, err := invite.NewPubMessageFromToken(tok)
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to make pub message from token")
-		return false
-	}
-
-	_, err = sbot.PublishLog.Publish(pubMsg)
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to publish new pub message")
 		return false
 	}
 
