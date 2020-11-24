@@ -17,12 +17,21 @@ class PostTextEditorView: UIView {
     private let mentionDelegate = MentionTextViewDelegate(font: UIFont.verse.newPost,
                                                           color: UIColor.text.default)
 
-    private lazy var textView: UITextView = {
+    private lazy var sourceTextView: UITextView = {
         let view = UITextView.forPostsAndReplies()
         view.backgroundColor = .cardBackground
         view.delegate = self.mentionDelegate
         view.font = font
         view.textColor = UIColor.text.default
+        return view
+    }()
+
+    private lazy var renderedTextView: UITextView = {
+        let view = UITextView.forPostsAndReplies()
+        view.backgroundColor = .cardBackground
+        view.font = font
+        view.textColor = UIColor.text.default
+        view.alpha = 0
         return view
     }()
 
@@ -32,34 +41,30 @@ class PostTextEditorView: UIView {
         return view
     }()
 
-    // This property holds the Markdown source "code" *only* while the rendered preview is shown. This way it also implicitly tells if the preview is currently active.
-    private var sourceBuffer: NSAttributedString?
-
     var attributedText: NSAttributedString {
         get {
-            return sourceBuffer ?? textView.attributedText
+            return sourceTextView.attributedText
         }
 
         set {
-            textView.attributedText = newValue
-            sourceBuffer = nil
+            sourceTextView.attributedText = newValue
         }
     }
 
     var previewActive: Bool {
         get {
-            return sourceBuffer != nil
+            return renderedTextView.alpha > 0.9
         }
 
         set {
             if newValue {
-                textView.isEditable = false
-                sourceBuffer = textView.attributedText
-                textView.attributedText = sourceBuffer!.string.decodeMarkdown()
+                sourceTextView.isEditable = false
+                renderedTextView.attributedText = sourceTextView.attributedText.string.decodeMarkdown()
+                animateToPreview()
             } else {
-                textView.attributedText = sourceBuffer
-                sourceBuffer = nil
-                textView.isEditable = true
+                sourceTextView.isEditable = true
+                renderedTextView.attributedText = nil
+                animateToSourceView()
             }
         }
     }
@@ -68,13 +73,19 @@ class PostTextEditorView: UIView {
         super.init(frame: .zero)
 
         useAutoLayout()
-        backgroundColor = .appBackground
+        backgroundColor = .cardBackground
 
-        addSubview(textView)
-        textView.pinTopToSuperview()
-        textView.pinBottomToSuperviewBottom()
-        textView.pinLeftToSuperview()
-        textView.pinRightToSuperview()
+        addSubview(sourceTextView)
+        sourceTextView.pinTopToSuperview()
+        sourceTextView.pinBottomToSuperviewBottom()
+        sourceTextView.pinLeftToSuperview()
+        sourceTextView.pinRightToSuperview()
+
+        addSubview(renderedTextView)
+        renderedTextView.pinTopToSuperview()
+        renderedTextView.pinBottomToSuperviewBottom()
+        renderedTextView.pinLeftToSuperview()
+        renderedTextView.pinRightToSuperview()
 
         addSubview(menu)
         menu.pinBottomToSuperviewBottom()
@@ -94,13 +105,35 @@ class PostTextEditorView: UIView {
 
         menu.didSelectAbout = { [unowned self] about in
             guard let range = self.mentionDelegate.mentionRange else { return }
-            self.textView.replaceText(in: range, with: about.mention, attributes: self.fontAttribute)
+            self.sourceTextView.replaceText(in: range, with: about.mention, attributes: self.fontAttribute)
             self.mentionDelegate.clear()
             self.menu.hide()
         }
     }
 
     override func becomeFirstResponder() -> Bool {
-        return textView.becomeFirstResponder()
+        return sourceTextView.becomeFirstResponder()
+    }
+
+    private func animateToPreview() {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.sourceTextView.alpha = 0
+        },
+        completion: { (_) in
+            UIView.animate(withDuration: 0.25) {
+                self.renderedTextView.alpha = 1
+            }
+        })
+    }
+
+    private func animateToSourceView() {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.renderedTextView.alpha = 0
+        },
+        completion: { (_) in
+            UIView.animate(withDuration: 0.25) {
+                self.sourceTextView.alpha = 1
+            }
+        })
     }
 }
