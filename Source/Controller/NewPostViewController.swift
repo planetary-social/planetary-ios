@@ -13,26 +13,7 @@ class NewPostViewController: ContentViewController {
 
     var didPublish: ((Post) -> Void)?
 
-    private let font = UIFont.systemFont(ofSize: 19, weight: .regular)
-    private lazy var fontAttribute = [NSAttributedString.Key.font: self.font]
-
-    private lazy var textView: UITextView = {
-        let view = UITextView.forPostsAndReplies()
-        view.backgroundColor = .cardBackground
-        view.delegate = self.mentionDelegate
-        view.font = font
-        view.textColor = UIColor.text.default
-        return view
-    }()
-
-    private let mentionDelegate = MentionTextViewDelegate(font: UIFont.verse.newPost,
-                                                          color: UIColor.text.default)
-
-    private lazy var menu: AboutsMenu = {
-        let view = AboutsMenu()
-        view.bottomSeparator.isHidden = true
-        return view
-    }()
+    private lazy var textView = PostTextEditorView()
 
     // this view manages it's own height constraints
     // checkout ImageGallery.open() and close()
@@ -98,29 +79,11 @@ class NewPostViewController: ContentViewController {
         Layout.fillBottom(of: self.contentView, with: self.buttonsView, respectSafeArea: false)
         self.buttonsView.pinTop(toBottomOf: self.galleryView)
         self.buttonsView.constrainHeight(to: PostButtonsView.viewHeight)
-
-        self.contentView.addSubview(self.menu)
-        self.menu.pinBottom(toTopOf: self.buttonsView)
-        self.menu.constrainWidth(to: self.buttonsView)
     }
 
     // MARK: Actions
 
     private func addActions() {
-
-        self.mentionDelegate.didChangeMention = {
-            [unowned self] string in
-            self.menu.filter(by: string)
-        }
-
-        self.menu.didSelectAbout = {
-            [unowned self] about in
-            guard let range = self.mentionDelegate.mentionRange else { return }
-            self.textView.replaceText(in: range, with: about.mention, attributes: self.fontAttribute)
-            self.mentionDelegate.clear()
-            self.menu.hide()
-        }
-
         self.buttonsView.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
 
         self.buttonsView.postButton.action = didPressPostButton
@@ -138,14 +101,14 @@ class NewPostViewController: ContentViewController {
     func didPressPostButton() {
         Analytics.shared.trackDidTapButton(buttonName: "post")
 
-        let hasText = !self.textView.text.isEmpty
+        let hasText = self.textView.attributedText.length > 0
         let hasImages = !self.galleryView.images.isEmpty
         
         guard hasText || hasImages else {
             return
         }
         
-        let text = self.textView.attributedText ?? NSAttributedString(string: "")
+        let text = self.textView.attributedText
         let post = Post(attributedText: text)
         let images = self.galleryView.images
 
@@ -215,7 +178,7 @@ extension NewPostViewController: UIAdaptivePresentationControllerDelegate {
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         print("didDIsmisssss")
         
-        let hasText = !self.textView.text.isEmpty
+        let hasText = self.textView.attributedText.length > 0
         let hasImages = !self.galleryView.images.isEmpty
 
         if hasText || hasImages {
