@@ -29,6 +29,14 @@ class PostButtonsView: UIView {
         return label
     }()
 
+    let previewButton: PillButton = {
+        let button = PillButton()
+        button.setTitle(.preview)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        button.height = 32
+        return button
+    }()
+
     let postButton: PillButton = {
         let button = PillButton()
         button.setTitle(.post)
@@ -53,14 +61,15 @@ class PostButtonsView: UIView {
         self.photoButton.pinLeftToSuperview(constant: Layout.horizontalSpacing)
         self.photoButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         self.photoButton.constrainSize(to: size)
-        
-        self.addSubview(self.markdownNoticeLabel)
-        self.markdownNoticeLabel.leadingAnchor.constraint(equalTo: self.photoButton.trailingAnchor, constant: 8).isActive = true
-        self.markdownNoticeLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
 
         self.addSubview(self.postButton)
         self.postButton.pinRightToSuperview(constant: -Layout.horizontalSpacing)
         self.postButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+
+        self.addSubview(self.previewButton)
+        self.previewButton.trailingAnchor.constraint(equalTo: self.postButton.leadingAnchor,
+                                                     constant: -Layout.horizontalSpacing).isActive = true
+        self.previewButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
     }
 
     // MARK: Animations

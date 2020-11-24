@@ -86,6 +86,7 @@ class NewPostViewController: ContentViewController {
     private func addActions() {
         self.buttonsView.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
 
+        self.buttonsView.previewButton.action = didPressPreviewButton
         self.buttonsView.postButton.action = didPressPostButton
     }
 
@@ -96,6 +97,12 @@ class NewPostViewController: ContentViewController {
             if let image = image { self?.galleryView.add(image) }
             self?.imagePicker.dismiss()
         }
+    }
+
+    func didPressPreviewButton() {
+        Analytics.shared.trackDidTapButton(buttonName: "preview")
+        self.textView.previewActive = !self.textView.previewActive
+        self.buttonsView.previewButton.isSelected = self.textView.previewActive
     }
 
     func didPressPostButton() {
@@ -144,12 +151,14 @@ class NewPostViewController: ContentViewController {
         AppController.shared.showProgress()
         self.buttonsView.photoButton.isEnabled = false
         self.buttonsView.postButton.isEnabled = false
+        self.buttonsView.previewButton.isEnabled = false
     }
 
     private func lookReady() {
         AppController.shared.hideProgress()
         self.buttonsView.photoButton.isEnabled = true
         self.buttonsView.postButton.isEnabled = true
+        self.buttonsView.previewButton.isEnabled = true
     }   
 }
 
