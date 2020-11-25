@@ -46,71 +46,76 @@ class SendMissionOperation: AsynchronousOperation {
             return
         }
         
-        Log.debug("Retrieving list of available stars...")
         let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
-        Bots.current.pubs(queue: queue) { [weak self, quality] (pubs, error) in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            
-            if let error = error {
-                Log.info("Couldn't get list of available stars. SendMissionOperation finished.")
-                self?.result = .failure(error)
+        
+        let knownStars = Set(Environment.Constellation.stars)
+        let knownStarsAddresses = knownStars.map { $0.address }
+        
+        Log.debug("Seeding known stars stars...")
+        Bots.current.seedPubAddresses(addresses: knownStarsAddresses, queue: queue) { [weak self, quality] result in
+            Log.debug("Retrieving list of available stars...")
+            Bots.current.pubs(queue: queue) { (pubs, error) in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if let error = error {
+                    Log.info("Couldn't get list of available stars. SendMissionOperation finished.")
+                    self?.result = .failure(error)
+                    self?.finish()
+                    return
+                }
+                
+                // Get the stars the users already redeemed an invite to
+                let availableStars = knownStars.filter { star in
+                    pubs.contains { (pub) -> Bool in
+                        pub.address.key == star.feed
+                    }
+                }
+                
+                let starsToSync: Set<Star>
+                let redeemInviteOperations: [RedeemInviteOperation]
+                
+                // Check if the current number of available stars is enough
+                let numberOfMissingStars = SendMissionOperation.minNumberOfStars - availableStars.count
+                if numberOfMissingStars > 0 {
+                    Log.debug("There are \(numberOfMissingStars) missing stars.")
+                    
+                    // Let's take a random set of stars to reach the minimum and create Redeem Invite
+                    // operations
+                    let missingStars = knownStars.subtracting(availableStars)
+                    let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
+                    redeemInviteOperations = randomSampleOfStars.map {
+                        return RedeemInviteOperation(star: $0)
+                    }
+                    
+                    // Lets sync to available stars and newly redeemed stars
+                    starsToSync = availableStars.union(missingStars)
+                } else {
+                    Log.debug("There are \(availableStars.count) available stars.")
+                    
+                    // No need to redeem invite
+                    redeemInviteOperations = []
+                    
+                    // Just sync to the available stars
+                    starsToSync = availableStars
+                }
+                
+                let syncOperation = SyncOperation(peers: starsToSync.map { $0.toPeer() })
+                switch quality {
+                case .low:
+                    syncOperation.notificationsOnly = true
+                case .high:
+                    syncOperation.notificationsOnly = false
+                }
+                redeemInviteOperations.forEach { syncOperation.addDependency($0) }
+                
+                let operations = redeemInviteOperations + [syncOperation]
+                self?.operationQueue.addOperations(operations, waitUntilFinished: true)
+                
+                Log.info("SendMissionOperation finished.")
+                self?.result = .success(())
                 self?.finish()
-                return
             }
-            
-            let knownStars = Set(Environment.Constellation.stars)
-            
-            // Get the stars the users already redeemed an invite to
-            let availableStars = knownStars.filter { star in
-                pubs.contains { (pub) -> Bool in
-                    pub.address.key == star.feed
-                }
-            }
-            
-            let starsToSync: Set<Star>
-            let redeemInviteOperations: [RedeemInviteOperation]
-            
-            // Check if the current number of available stars is enough
-            let numberOfMissingStars = SendMissionOperation.minNumberOfStars - availableStars.count
-            if numberOfMissingStars > 0 {
-                Log.debug("There are \(numberOfMissingStars) missing stars.")
-                
-                // Let's take a random set of stars to reach the minimum and create Redeem Invite
-                // operations
-                let missingStars = knownStars.subtracting(availableStars)
-                let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
-                redeemInviteOperations = randomSampleOfStars.map {
-                    return RedeemInviteOperation(star: $0)
-                }
-                
-                // Lets sync to available stars and newly redeemed stars
-                starsToSync = availableStars.union(missingStars)
-            } else {
-                Log.debug("There are \(availableStars.count) available stars.")
-                
-                // No need to redeem invite
-                redeemInviteOperations = []
-                
-                // Just sync to the available stars
-                starsToSync = availableStars
-            }
-            
-            let syncOperation = SyncOperation(peers: starsToSync.map { $0.toPeer() })
-            switch quality {
-            case .low:
-                syncOperation.notificationsOnly = true
-            case .high:
-                syncOperation.notificationsOnly = false
-            }
-            redeemInviteOperations.forEach { syncOperation.addDependency($0) }
-            
-            let operations = redeemInviteOperations + [syncOperation]
-            self?.operationQueue.addOperations(operations, waitUntilFinished: true)
-            
-            Log.info("SendMissionOperation finished.")
-            self?.result = .success(())
-            self?.finish()
         }
     }
 }

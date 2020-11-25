@@ -414,26 +414,23 @@ func ssbInviteAccept(token string) bool {
 	ctx, cancel := context.WithCancel(longCtx)
 	err = invite.Redeem(ctx, tok, sbot.KeyPair.Id)
 	defer cancel()
-	if err != nil && !strings.Contains(err.Error(), "already following") {
-		// XXX: Don't fail immediatelly if the pub is already following our feed.
-		retErr = err
-		return false
-	}
-
-	peerID, err := getAuthorID(tok.Peer)
-	if err != nil {
-		retErr = err
-		return false
-	}
-
-	stamp := time.Now().Unix()
-	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address, redeemed) VALUES (?,?,?)`, peerID, tok.Address.String(), stamp)
-	if err != nil {
-		retErr = errors.Wrap(err, "insert new pub into addresses failed")
-		return false
-	}
-
-	return true
+    
+    if err == nil {
+        return true
+    }
+    
+    // don't throw error if pub is already following user
+    if strings.Contains(err.Error(), "already following") {
+        return true
+    }
+    
+    // don't throw error if token was already redeemed by user
+    if strings.Contains(err.Error(), "method:invite,use is not in list of allowed methods") {
+        return true
+    }
+    
+    retErr = err
+    return false
 }
 
 // todo: add make:bool parameter

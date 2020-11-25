@@ -204,6 +204,25 @@ class GoBot: Bot {
 
     // MARK: Sync
     
+    func seedPubAddresses(addresses: [PubAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
+        self.queue.async {
+            do {
+                try addresses.forEach { address throws in
+                    try self.database.saveAddress(feed: address.key,
+                                                  address: address.multipeer,
+                                                  redeemed: nil)
+                }
+                queue.async {
+                    completion(.success(()))
+                }
+            } catch {
+                queue.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
     func knownPubs(completion: @escaping KnownPubsCompletion) {
        Thread.assertIsMainThread()
          self.queue.async {
@@ -370,6 +389,15 @@ class GoBot: Bot {
         self.queue.async {
             token.withGoString { goStr in
                 if ssbInviteAccept(goStr) {
+                    do {
+                        let star = Star(invite: token)
+                        let feed = star.feed
+                        let address = star.address.multipeer
+                        let redeemed = Date().timeIntervalSince1970 * 1000
+                        try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
+                    } catch {
+                        CrashReporting.shared.reportIfNeeded(error: error)
+                    }
                     queue.async {
                         completion(nil)
                     }
@@ -394,25 +422,22 @@ class GoBot: Bot {
                 return
             }
             
-            guard let numberOfMessagesInRepo = try? self.database.numberOfMessages(for: identity) else {
-                queue.async {
-                    completion(MessageIdentifier.null, GoBotError.unexpectedFault("Failed to access database"))
+            if UserDefaults.standard.bool(forKey: "prevent_feed_from_forks") {
+                guard let numberOfMessagesInRepo = try? self.database.numberOfMessages(for: identity) else {
+                    queue.async {
+                        completion(MessageIdentifier.null, GoBotError.unexpectedFault("Failed to access database"))
+                    }
+                    return
                 }
-                return
-            }
-            
-            guard let knownNumberOfMessagesInKeychain = AppConfiguration.current?.numberOfPublishedMessages else {
-                queue.async {
-                    completion(MessageIdentifier.null, BotError.notLoggedIn)
+                
+                let knownNumberOfMessagesInKeychain = AppConfiguration.current?.numberOfPublishedMessages ?? 0
+                
+                guard numberOfMessagesInRepo >= knownNumberOfMessagesInKeychain else {
+                    queue.async {
+                        completion(MessageIdentifier.null, BotError.notEnoughMessagesInRepo)
+                    }
+                    return
                 }
-                return
-            }
-            
-            guard numberOfMessagesInRepo >= knownNumberOfMessagesInKeychain else {
-                queue.async {
-                    completion(MessageIdentifier.null, BotError.notEnoughMessagesInRepo)
-                }
-                return
             }
             self.bot.publish(content) { [weak self] key, error in
                 if let error = error {

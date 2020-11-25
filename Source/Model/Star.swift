@@ -19,6 +19,10 @@ struct Star {
         return "\(host):\(port)"
     }
     
+    var address: PubAddress {
+        return PubAddress(key: self.feed, host: self.host, port: self.port)
+    }
+    
     init(invite: String) {
         self.invite = invite
         
@@ -34,13 +38,18 @@ struct Star {
         self.feed = String(invite[feedRange])
     }
     
+    static func isValid(invite: String) -> Bool {
+        let range = NSRange(location: 0, length: invite.utf16.count)
+        let regex = try! NSRegularExpression(pattern: "(.*):([0-9]*):(.*)~.*")
+        return regex.numberOfMatches(in: invite, options: [], range: range) > 0
+    }
+    
     func toPeer() -> Peer {
         return Peer(tcpAddr: self.tcpAddress, pubKey: self.feed)
     }
     
     func toPub() -> Pub {
-        let address = PubAddress(key: self.feed, host: self.host, port: self.port)
-        return Pub(type: .pub, address: address)
+        return Pub(type: .pub, address: self.address)
     }
 }
 

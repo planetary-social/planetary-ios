@@ -36,7 +36,7 @@ class RedeemInviteOperation: AsynchronousOperation {
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
-                Log.info("RedeemInviteOperation finished with error \(error.localizedDescription).")
+                Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error.localizedDescription).")
                 self?.result = .failure(error)
                 self?.finish()
             } else {
@@ -46,7 +46,7 @@ class RedeemInviteOperation: AsynchronousOperation {
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     if let error = error {
-                        Log.info("RedeemInviteOperation finished with error \(error.localizedDescription).")
+                        Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error.localizedDescription).")
                         self?.result = .failure(error)
                         self?.finish()
                     } else {
@@ -56,11 +56,11 @@ class RedeemInviteOperation: AsynchronousOperation {
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
                             if let error = error {
-                                Log.info("RedeemInviteOperation finished with error \(error.localizedDescription).")
+                                Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error.localizedDescription).")
                                 self?.result = .failure(error)
                                 self?.finish()
                             } else {
-                                Log.info("RedeemInviteOperation finished.")
+                                Log.info("RedeemInviteOperation to \(star.feed) finished.")
                                 self?.result = .success(())
                                 self?.finish()
                             }
