@@ -40,7 +40,7 @@ class RedeemInviteOperation: AsynchronousOperation {
             } else {
                 Log.debug("Publishing Contact (\(star.feed)) message...")
                 let contact = Contact(contact: star.feed, following: true)
-                Bots.current.publish(content: contact) { (message, error) in
+                Bots.current.publish(content: contact) { (_, error) in
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     if let error = error {

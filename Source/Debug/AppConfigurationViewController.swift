@@ -141,7 +141,6 @@ class AppConfigurationViewController: DebugTableViewController {
                 cell.detailTextLabel?.text = "\(self.configuration.numberOfPublishedMessages)"
             },
                                              actionClosure: nil)]
-        
 
         return ("Statistics", settings, nil)
     }
