@@ -32,7 +32,9 @@ class FakeBot: Bot {
         }
     }
     
-    func seedPubAddresses(addresses: [PubAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(addresses: [PubAddress],
+                          queue: DispatchQueue,
+                          completion: @escaping (Result<Void, Error>) -> Void) {
         queue.async {
             completion(.success(()))
         }

@@ -20,7 +20,6 @@ class RedeemInviteOperation: AsynchronousOperation {
     
     override func main() {
         Log.info("RedeemInviteOperation started.")
-        
         let configuredIdentity = AppConfiguration.current?.identity
         let loggedInIdentity = Bots.current.identity
         guard loggedInIdentity != nil, loggedInIdentity == configuredIdentity else {
@@ -29,34 +28,33 @@ class RedeemInviteOperation: AsynchronousOperation {
             self.finish()
             return
         }
-        
         Log.debug("Redeeming invite to star \(self.star.feed)...")
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
         Bots.current.inviteRedeem(queue: queue, token: self.star.invite) { [weak self, star] (error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
-                Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error.localizedDescription).")
+                Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error).")
                 self?.result = .failure(error)
                 self?.finish()
             } else {
-                Log.debug("Publishing Contact message...")
+                Log.debug("Publishing Contact (\(star.feed)) message...")
                 let contact = Contact(contact: star.feed, following: true)
                 Bots.current.publish(content: contact) { (message, error) in
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     if let error = error {
-                        Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error.localizedDescription).")
+                        Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error).")
                         self?.result = .failure(error)
                         self?.finish()
                     } else {
-                        Log.debug("Publishing Pub message...")
+                        Log.debug("Publishing Pub (\(star.feed)) message...")
                         let pub = star.toPub()
-                        Bots.current.publish(content: pub) { (message, error) in
+                        Bots.current.publish(content: pub) { (_, error) in
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
                             if let error = error {
-                                Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error.localizedDescription).")
+                                Log.info("RedeemInviteOperation to \(star.feed) finished with error \(error).")
                                 self?.result = .failure(error)
                                 self?.finish()
                             } else {
@@ -68,7 +66,6 @@ class RedeemInviteOperation: AsynchronousOperation {
                     }
                 }
             }
-            
         }
     }
     

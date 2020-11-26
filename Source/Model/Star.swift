@@ -28,7 +28,13 @@ struct Star {
         
         // Parse Feed Identity and TCP Addreess out of the invite
         let range = NSRange(location: 0, length: invite.utf16.count)
-        let regex = try! NSRegularExpression(pattern: "(.*):([0-9]*):(.*)~.*")
+        guard let regex = try? NSRegularExpression(pattern: "(.*):([0-9]*):(.*)~.*") else {
+            Log.debug("Parsing feed from Star invite \(invite) failed")
+            self.host = ""
+            self.port = 0
+            self.feed = Identifier.null
+            return
+        }
         let match = regex.firstMatch(in: invite, options: [], range: range)!
         let hostRange = Range(match.range(at: 1), in: invite)!
         self.host = String(invite[hostRange])

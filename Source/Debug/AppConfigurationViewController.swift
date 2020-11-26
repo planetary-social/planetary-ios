@@ -125,7 +125,6 @@ class AppConfigurationViewController: DebugTableViewController {
                 cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity!).rawValue
             },
                                              actionClosure: nil)]
-        
 
         return ("Onboarding", settings, nil)
     }
