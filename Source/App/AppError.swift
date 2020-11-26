@@ -12,4 +12,5 @@ import Foundation
 /// Not GoBot or something else
 enum AppError: Error {
     case unexpected
+    case invalidInvite
 }

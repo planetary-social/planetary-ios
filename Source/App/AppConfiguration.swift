@@ -13,6 +13,8 @@ class AppConfiguration: NSObject, NSCoding {
     // MARK: Editable properties
 
     var name: String = "New configuration"
+    
+    var numberOfPublishedMessages: Int = 0
 
     private var networkDidChange = false
     var network: NetworkKey? {
@@ -82,6 +84,9 @@ class AppConfiguration: NSObject, NSCoding {
         if let named = aDecoder.decodeObject(forKey: "bot") as? String { self.bot = Bots.bot(named: named) }
         else { self.bot = nil }
         if let string = aDecoder.decodeObject(forKey: "secret") as? String { self.secret = Secret(from: string) }
+        if aDecoder.containsValue(forKey: "numberOfPublishedMessages") {
+            self.numberOfPublishedMessages = aDecoder.decodeInteger(forKey: "numberOfPublishedMessages")
+        }
     }
 
     func encode(with aCoder: NSCoder) {
@@ -89,6 +94,7 @@ class AppConfiguration: NSObject, NSCoding {
         if let secret = self.secret { aCoder.encode(secret.jsonString(), forKey: "secret") }
         if let network = self.network { aCoder.encode(network.data, forKey: "network") }
         if let bot = self.bot { aCoder.encode(bot.name, forKey: "bot") }
+        aCoder.encode(numberOfPublishedMessages, forKey: "numberOfPublishedMessages")
     }
 
     override func isEqual(_ object: Any?) -> Bool {

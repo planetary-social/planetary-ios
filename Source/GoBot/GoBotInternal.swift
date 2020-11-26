@@ -162,6 +162,7 @@ class GoBotInternal {
         if worked {
             self.currentNetwork = network
 
+            self.replicate(feed: secret.identity)
             // make sure internal planetary pubs are authorized for connections
             for pub in servicePubs {
                 self.replicate(feed: pub)
@@ -267,7 +268,7 @@ class GoBotInternal {
     
     @discardableResult
     func dialSomePeers(from peers: [Peer]) -> Bool {
-        guard self.openConnections() == 0 else { return true } // only make connections if we dont have any
+        guard self.openConnections() < 3 else { return true } // only make connections if we dont have any
         ssbConnectPeers(2)
         guard peers.count > 0 else {
             Log.debug("User doesn't have redeemed pubs")

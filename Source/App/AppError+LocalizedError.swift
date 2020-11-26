@@ -13,6 +13,8 @@ extension AppError: LocalizedError {
         switch self {
         case .unexpected:
             return Text.Error.unexpected.text
+        case .invalidInvite:
+            return Text.Error.unexpected.text
         }
     }
 }

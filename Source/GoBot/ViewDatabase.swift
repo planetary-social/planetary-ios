@@ -1860,22 +1860,31 @@ class ViewDatabase {
     // MARK: fill new messages
     
     private func fillAddress(msgID: Int64, msg: KeyValue) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        
         
         guard let a = msg.value.content.address else {
             Log.info("[viewdb/fill] broken addr message: \(msg.key)")
             return
         }
         
+        let author = msg.value.author
+        let address = a.address
+        try saveAddress(feed: author, address: address, redeemed: nil)
+    }
+    
+    func saveAddress(feed: Identity, address: String, redeemed: Double?) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
         
+        let authorID = try self.authorID(of: feed, make: true)
         
-        let authorID = try self.authorID(of: msg.value.author, make: true)
+        let conflictStrategy = redeemed == nil ? OnConflict.ignore : OnConflict.replace
         
-        try db.run(self.addresses.insert(or: .replace,
+        try db.run(self.addresses.insert(or: conflictStrategy,
             colAboutID <- authorID,
-            colAddress <- a.address
+            colAddress <- address,
+            colRedeemed <- redeemed
         ))
     }
     
@@ -2769,4 +2778,19 @@ class ViewDatabase {
             ))
         }
     }
+    
+    /// Returns the number of messages posted by given feed identifier
+    func numberOfMessages(for feed: FeedIdentifier) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            let authorID = try self.authorID(of: feed, make: false)
+            return try db.scalar(self.msgs.filter(colAuthorID == authorID).count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("numberOfmessages for feed failed", error))
+            return 0
+        }
+    }
+    
 } // end class

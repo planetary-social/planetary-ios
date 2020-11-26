@@ -58,6 +58,11 @@ protocol Bot {
 
     // MARK: Sync
     
+    // Ensure that these list of addresses are taken into consideration when establishing connections
+    func seedPubAddresses(addresses: [PubAddress],
+                          queue: DispatchQueue,
+                          completion: @escaping (Result<Void, Error>) -> Void)
+    
     func knownPubs(completion: @escaping KnownPubsCompletion)
     
     func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
@@ -258,6 +263,10 @@ extension Bot {
     
     func keyAtEveryoneTop(completion: @escaping (MessageIdentifier?) -> Void) {
         self.keyAtEveryoneTop(queue: .main, completion: completion)
+    }
+    
+    func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
+        self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
     
 }

@@ -251,15 +251,10 @@ class HomeViewController: ContentViewController {
     override func didRefresh(notification: NSNotification) {
         let currentProxy = self.dataSource.data
         let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
-        Log.debug("Current key at top: \(currentKeyAtTop ?? "nil")")
-        Log.debug("Checking new key at top...")
         Bots.current.keyAtRecentTop { [weak self] (key) in
-            Log.debug("New key at top: \(key ?? "nil")")
             guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
-                Log.debug("Nothing has changed")
                 return
             }
-            Log.debug("There is a new key!")
             if currentProxy.count == 0 {
                 self?.load(animated: true)
             } else {

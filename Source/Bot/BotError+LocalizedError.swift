@@ -28,6 +28,8 @@ extension BotError: LocalizedError {
             return "Invalid identity"
         case .notLoggedIn:
             return "Not logged in"
+        case .notEnoughMessagesInRepo:
+            return "Not enough messages in repo"
         }
     }
     

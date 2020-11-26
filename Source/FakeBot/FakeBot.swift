@@ -32,6 +32,14 @@ class FakeBot: Bot {
         }
     }
     
+    func seedPubAddresses(addresses: [PubAddress],
+                          queue: DispatchQueue,
+                          completion: @escaping (Result<Void, Error>) -> Void) {
+        queue.async {
+            completion(.success(()))
+        }
+    }
+    
     func knownPubs(completion: @escaping KnownPubsCompletion) {
         fatalError("TODO:knownPubs")
     }

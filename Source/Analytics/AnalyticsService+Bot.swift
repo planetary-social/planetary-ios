@@ -53,6 +53,7 @@ extension AnalyticsService {
         if statistics.repo.feedCount != -1 {
             params["Feed Count"] = statistics.repo.feedCount
             params["Message Count"] = statistics.repo.messageCount
+            params["Published Message Count"] = statistics.repo.numberOfPublishedMessages
             params["Last Hash"] = statistics.repo.lastHash
         }
 
