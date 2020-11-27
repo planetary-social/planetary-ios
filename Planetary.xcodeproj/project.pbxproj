@@ -3725,7 +3725,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.9.34;
+				MARKETING_VERSION = 0.9.35;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3769,7 +3769,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.9.34;
+				MARKETING_VERSION = 0.9.35;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
