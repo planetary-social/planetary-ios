@@ -1,8 +1,11 @@
 # Planetary
 
+Planetary IOS is an app based on [Secure Scuttlebutt](https://scuttlebutt.nz/) that doesn't keep your data in the cloud and allows you and your friends to come together and connect even when the internet goes out.  
+Check our website [planetary.social](https://planetary.social/) for more info!
+
 ![](https://github.com/planetary-social/planetary-ios/workflows/CI/badge.svg)
 
-## Installation
+## Developer installation
 
 The repo does have some Carthage and Cocoapod dependencies, however all except one have been versioned and checked into the repo.
 
