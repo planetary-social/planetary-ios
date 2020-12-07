@@ -51,19 +51,19 @@ class MarkdownStyler: DownStyler {
             headingStyle.paragraphSpacing = 4
 
             bodyStyle.lineSpacing = 1
-            bodyStyle.paragraphSpacing = 1
+            bodyStyle.paragraphSpacing = 8
 
             codeStyle.lineSpacing = 0
-            codeStyle.paragraphSpacing = 1
+            codeStyle.paragraphSpacing = 8
         } else {
             headingStyle.paragraphSpacingBefore = 8
             headingStyle.paragraphSpacing = 8
 
             bodyStyle.lineSpacing = 1
-            bodyStyle.paragraphSpacing = 2
+            bodyStyle.paragraphSpacing = 12
 
             codeStyle.lineSpacing = 1
-            codeStyle.paragraphSpacing = 2
+            codeStyle.paragraphSpacing = 8
         }
         
         paragraphStyles.body = bodyStyle
