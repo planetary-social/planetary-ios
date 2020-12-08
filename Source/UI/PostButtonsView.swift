@@ -29,12 +29,11 @@ class PostButtonsView: UIView {
         return label
     }()
 
-    let previewButton: PillButton = {
-        let button = PillButton()
-        button.setTitle(.preview)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        button.height = 32
-        return button
+    let previewToggle: UISwitch = {
+        let toggle = UISwitch()
+        toggle.translatesAutoresizingMaskIntoConstraints = false
+        toggle.tintColor = UIColor.tint.default
+        return toggle
     }()
 
     let postButton: PillButton = {
@@ -66,10 +65,15 @@ class PostButtonsView: UIView {
         self.postButton.pinRightToSuperview(constant: -Layout.horizontalSpacing)
         self.postButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
 
-        self.addSubview(self.previewButton)
-        self.previewButton.trailingAnchor.constraint(equalTo: self.postButton.leadingAnchor,
+        self.addSubview(self.previewToggle)
+        self.previewToggle.trailingAnchor.constraint(equalTo: self.postButton.leadingAnchor,
                                                      constant: -Layout.horizontalSpacing).isActive = true
-        self.previewButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        self.previewToggle.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+
+        self.addSubview(self.markdownNoticeLabel)
+        self.markdownNoticeLabel.trailingAnchor.constraint(equalTo: self.previewToggle.leadingAnchor,
+                                                           constant: -Layout.horizontalSpacing).isActive = true
+        self.markdownNoticeLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
     }
 
     // MARK: Animations

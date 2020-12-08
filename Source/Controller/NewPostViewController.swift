@@ -85,8 +85,7 @@ class NewPostViewController: ContentViewController {
 
     private func addActions() {
         self.buttonsView.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
-
-        self.buttonsView.previewButton.action = didPressPreviewButton
+        self.buttonsView.previewToggle.addTarget(self, action: #selector(previewToggled), for: .valueChanged)
         self.buttonsView.postButton.action = didPressPostButton
     }
 
@@ -99,10 +98,9 @@ class NewPostViewController: ContentViewController {
         }
     }
 
-    func didPressPreviewButton() {
+    @objc private func previewToggled() {
         Analytics.shared.trackDidTapButton(buttonName: "preview")
-        self.textView.previewActive = !self.textView.previewActive
-        self.buttonsView.previewButton.isSelected = self.textView.previewActive
+        self.textView.previewActive = self.buttonsView.previewToggle.isOn
     }
 
     func didPressPostButton() {

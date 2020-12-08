@@ -152,7 +152,7 @@ enum Text: String, Localizable, CaseIterable {
     case pasteAddress = "Token"
     
     case refresh = "Refresh"
-    case markdownSupported = "Markdown supported"
+    case markdownSupported = "Markdown preview"
 }
 
 // MARK:- ImagePicker

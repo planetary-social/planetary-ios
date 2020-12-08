@@ -99,7 +99,7 @@
 "Text.redeemInvitation" = "Redeem an invitation";
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Refresh";
-"Text.markdownSupported" = "Markdown supported";
+"Text.markdownSupported" = "Markdown preview";
 
 "Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each others content or be able to contact each other.";
 "Blocking.buttonTitle" = "Yes, block {{ name }}";
