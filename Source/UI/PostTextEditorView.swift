@@ -116,22 +116,22 @@ class PostTextEditorView: UIView {
     }
 
     private func animateToPreview() {
-        UIView.animate(withDuration: 0.25, animations: {
+        UIView.animate(withDuration: 0.2, animations: {
             self.sourceTextView.alpha = 0
         },
         completion: { (_) in
-            UIView.animate(withDuration: 0.25) {
+            UIView.animate(withDuration: 0.2) {
                 self.renderedTextView.alpha = 1
             }
         })
     }
 
     private func animateToSourceView() {
-        UIView.animate(withDuration: 0.25, animations: {
+        UIView.animate(withDuration: 0.2, animations: {
             self.renderedTextView.alpha = 0
         },
         completion: { (_) in
-            UIView.animate(withDuration: 0.25) {
+            UIView.animate(withDuration: 0.2) {
                 self.sourceTextView.alpha = 1
             }
         })
