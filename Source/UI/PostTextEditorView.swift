@@ -34,6 +34,7 @@ class PostTextEditorView: UIView {
         view.textColor = UIColor.text.default
         view.alpha = 0
         view.contentInset = UIEdgeInsets.default
+        view.isEditable = false
         return view
     }()
 
