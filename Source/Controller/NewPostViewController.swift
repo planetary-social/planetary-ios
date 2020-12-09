@@ -149,14 +149,14 @@ class NewPostViewController: ContentViewController {
         AppController.shared.showProgress()
         self.buttonsView.photoButton.isEnabled = false
         self.buttonsView.postButton.isEnabled = false
-        self.buttonsView.previewButton.isEnabled = false
+        self.buttonsView.previewToggle.isEnabled = false
     }
 
     private func lookReady() {
         AppController.shared.hideProgress()
         self.buttonsView.photoButton.isEnabled = true
         self.buttonsView.postButton.isEnabled = true
-        self.buttonsView.previewButton.isEnabled = true
+        self.buttonsView.previewToggle.isEnabled = true
     }   
 }
 

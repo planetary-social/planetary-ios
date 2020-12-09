@@ -112,7 +112,7 @@ class ThreadViewController: ContentViewController {
         view.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
         view.postButton.setText(.postReply)
         view.postButton.action = didPressPostButton
-        view.previewButton.action = didPressPreviewButton
+        view.previewToggle.addTarget(self, action: #selector(didPressPreviewToggle), for: .valueChanged)
         view.backgroundColor = .cardBackground
         return view
     }()
@@ -347,10 +347,9 @@ class ThreadViewController: ContentViewController {
         }
     }
     
-    func didPressPreviewButton() {
+    @objc func didPressPreviewToggle() {
         Analytics.shared.trackDidTapButton(buttonName: "preview")
-        self.replyTextView.previewActive = !self.replyTextView.previewActive
-        self.buttonsView.previewButton.isSelected = self.replyTextView.previewActive
+        self.replyTextView.previewActive = self.buttonsView.previewToggle.isOn
         self.buttonsView.maximize(duration: 0)
     }
     

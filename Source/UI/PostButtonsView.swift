@@ -82,7 +82,7 @@ class PostButtonsView: UIView {
         UIView.animate(withDuration: duration) {
             self.photoButton.alpha = 0
             self.postButton.alpha = 0
-            self.previewButton.alpha = 0
+            self.previewToggle.alpha = 0
             self.markdownNoticeLabel.alpha = 0
             self.heightConstraint?.constant = 0
         }
@@ -92,7 +92,7 @@ class PostButtonsView: UIView {
         UIView.animate(withDuration: duration) {
             self.photoButton.alpha = 1
             self.postButton.alpha = 1
-            self.previewButton.alpha = 1
+            self.previewToggle.alpha = 1
             self.markdownNoticeLabel.alpha = 1
             self.heightConstraint?.constant = Self.viewHeight
         }
