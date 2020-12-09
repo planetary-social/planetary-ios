@@ -33,12 +33,6 @@ class ThreadViewController: ContentViewController {
         return self.root?.key ?? self.post.key
     }
 
-    private lazy var menu: AboutsMenu = {
-        let view = AboutsMenu()
-        view.topSeparator.isHidden = true
-        return view
-    }()
-
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
         view.contentInset = .bottom(10)
@@ -92,6 +86,12 @@ class ThreadViewController: ContentViewController {
         view.backgroundColor = .cardBackground
         return view
     }()
+    
+    private lazy var menu: AboutsMenu = {
+        let view = AboutsMenu()
+        view.bottomSeparator.isHidden = true
+        return view
+    }()
 
     private let headerView = PostHeaderView()
     
@@ -112,6 +112,7 @@ class ThreadViewController: ContentViewController {
         view.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
         view.postButton.setText(.postReply)
         view.postButton.action = didPressPostButton
+        view.previewButton.action = didPressPreviewButton
         view.backgroundColor = .cardBackground
         return view
     }()
@@ -274,7 +275,7 @@ class ThreadViewController: ContentViewController {
         // become first responder once then clear the flag
         guard self.replyTextViewBecomeFirstResponder else { return }
         self.replyTextViewBecomeFirstResponder = false
-        self.replyTextView.textView.becomeFirstResponder()
+        self.replyTextView.becomeFirstResponder()
 
         self.buttonsView.maximize()
         self.contentView.setNeedsLayout()
@@ -284,19 +285,16 @@ class ThreadViewController: ContentViewController {
     // MARK: Actions
 
     private func addActions() {
-
-        self.menu.didSelectAbout = {
-            [unowned self] about in
+        self.menu.didSelectAbout = { [unowned self] about in
             guard let range = self.textViewDelegate.mentionRange else { return }
-            self.replyTextView.textView.replaceText(in: range,
-                                                with: about.mention,
-                                                attributes: self.textViewDelegate.fontAttributes)
+            self.replyTextView.replaceText(in: range,
+                                           with: about.mention,
+                                           attributes: self.textViewDelegate.fontAttributes)
             self.textViewDelegate.clear()
             self.menu.hide()
         }
-
-        self.textViewDelegate.didChangeMention = {
-            [unowned self] string in
+        
+        self.textViewDelegate.didChangeMention = { [unowned self] string in
             self.menu.filter(by: string)
         }
         
@@ -324,7 +322,8 @@ class ThreadViewController: ContentViewController {
     }
 
     func didPressPostButton() {
-        guard let text = self.replyTextView.textView.attributedText, text.length > 0 else { return }
+        let text = self.replyTextView.attributedText
+        guard text.length > 0 else { return }
         Analytics.shared.trackDidTapButton(buttonName: "reply")
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
@@ -339,12 +338,20 @@ class ThreadViewController: ContentViewController {
                 Analytics.shared.trackDidReply()
                 self?.replyTextView.clear()
                 self?.replyTextView.resignFirstResponder()
+                self?.buttonsView.minimize()
                 self?.galleryView.removeAll()
                 self?.galleryView.close()
                 self?.onNextUpdateScrollToPostWithKeyValueKey = key
                 self?.load()
             }
         }
+    }
+    
+    func didPressPreviewButton() {
+        Analytics.shared.trackDidTapButton(buttonName: "preview")
+        self.replyTextView.previewActive = !self.replyTextView.previewActive
+        self.buttonsView.previewButton.isSelected = self.replyTextView.previewActive
+        self.buttonsView.maximize(duration: 0)
     }
     
     // MARK: Attaching photos
