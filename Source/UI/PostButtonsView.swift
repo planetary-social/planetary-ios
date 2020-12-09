@@ -33,6 +33,7 @@ class PostButtonsView: UIView {
         let toggle = UISwitch()
         toggle.translatesAutoresizingMaskIntoConstraints = false
         toggle.tintColor = UIColor.tint.default
+        toggle.onTintColor = UIColor.tint.default
         return toggle
     }()
 

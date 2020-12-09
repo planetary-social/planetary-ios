@@ -72,7 +72,7 @@ class NewPostViewController: ContentViewController {
     override func constrainSubviews() {
         super.constrainSubviews()
 
-        Layout.fillTop(of: self.contentView, with: self.textView, insets: UIEdgeInsets.default)
+        Layout.fillTop(of: self.contentView, with: self.textView)
 
         Layout.fillSouth(of: self.textView, with: self.galleryView)
 
