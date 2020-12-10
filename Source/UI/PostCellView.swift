@@ -110,6 +110,14 @@ class PostCellView: KeyValueView {
     func configureTruncatedState() {
         self.calculateTruncationDataIfNecessary()
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
+        if self.textView.attributedText.string.isSingleEmoji,
+            let post = self.keyValue?.value.content.post,
+            !post.hasBlobs {
+            self.textView.font = UIFont.post.body.withSize(200)
+            self.textView.textAlignment = .center
+        } else {
+            self.textView.textAlignment = .natural
+        }
         self.textViewZeroHeightConstraint.isActive = self.textView.attributedText.string.isEmpty
     }
 

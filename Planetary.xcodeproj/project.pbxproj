@@ -150,6 +150,7 @@
 		0AD00E7723FC5FA9006BF017 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD00E6F23FB3C02006BF017 /* Environment.swift */; };
 		0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */; };
 		0AD8D635240EFF8800D87A95 /* RedeemInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */; };
+		0AE5EDBB25826FD7008BDA0C /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE5EDBA25826FD7008BDA0C /* String+Emoji.swift */; };
 		0AF2DEEE247C3EE6003F457D /* Hashtag+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */; };
 		0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */; };
 		0AF9966C24D8A0B6001113BE /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9966B24D8A0B6001113BE /* Report.swift */; };
@@ -844,6 +845,7 @@
 		0AD8D62F240D9D9400D87A95 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
 		0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePubsViewController.swift; sourceTree = "<group>"; };
 		0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedeemInviteViewController.swift; sourceTree = "<group>"; };
+		0AE5EDBA25826FD7008BDA0C /* String+Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Hashtag+Link.swift"; sourceTree = "<group>"; };
 		0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingRefreshButton.swift; sourceTree = "<group>"; };
 		0AF9966B24D8A0B6001113BE /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
@@ -1865,6 +1867,7 @@
 				5319257D22F286FC00B44FA3 /* URL+Verse.swift */,
 				53631EF223A99CF0009C6999 /* NSAttributedString+Flatten.swift */,
 				2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */,
+				0AE5EDBA25826FD7008BDA0C /* String+Emoji.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -3159,6 +3162,7 @@
 				53375F812321757C00610932 /* GalleryView.swift in Sources */,
 				531EC4102310C274001A25AD /* Blob+NSAttributedString.swift in Sources */,
 				0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */,
+				0AE5EDBB25826FD7008BDA0C /* String+Emoji.swift in Sources */,
 				53E26C5723037927009240B2 /* Date+ISO8601.swift in Sources */,
 				5396A6252244358A00C57A4B /* UIView+Layout.swift in Sources */,
 				53C966E2236D037000E70689 /* UIViewController+Report.swift in Sources */,
