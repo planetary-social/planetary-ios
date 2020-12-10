@@ -31,14 +31,14 @@ class MarkdownStyler: DownStyler {
         
         var colors = StaticColorCollection()
         colors.body = UIColor.text.default
-        colors.heading1 = UIColor.text.default
-        colors.heading2 = UIColor.text.default
-        colors.heading3 = UIColor.text.default
-        colors.code = UIColor.text.default
+        colors.heading1 = UIColor.secondaryText
+        colors.heading2 = UIColor.secondaryText
+        colors.heading3 = UIColor.secondaryText
+        colors.code = UIColor.secondaryText
         colors.link = UIColor.tint.default
         colors.listItemPrefix = UIColor.tint.default
-        colors.quote = UIColor.text.default
-        colors.quoteStripe = UIColor.text.default
+        colors.quote = UIColor.secondaryText
+        colors.quoteStripe = UIColor.secondaryText
         colors.thematicBreak = UIColor.tint.default
         
         var paragraphStyles = StaticParagraphStyleCollection()
@@ -56,7 +56,7 @@ class MarkdownStyler: DownStyler {
             codeStyle.lineSpacing = 0
             codeStyle.paragraphSpacing = 8
         } else {
-            headingStyle.paragraphSpacingBefore = 8
+            headingStyle.paragraphSpacingBefore = 16
             headingStyle.paragraphSpacing = 8
 
             bodyStyle.lineSpacing = 1
@@ -81,7 +81,7 @@ class MarkdownStyler: DownStyler {
         } else {
             listItemOptions.maxPrefixDigits = 2
             listItemOptions.spacingAfterPrefix = 8
-            listItemOptions.spacingAbove = 4
+            listItemOptions.spacingAbove = 8
             listItemOptions.spacingBelow = 8
         }
 
