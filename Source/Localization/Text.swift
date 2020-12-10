@@ -66,6 +66,7 @@ enum Text: String, Localizable, CaseIterable {
     case loadingUpdates = "Planetary is searching for updates\non the peer to peer decentralized web."
 
     case post = "Post"
+    case preview = "Preview"
     case newPost = "New Post"
     case deletePost = "Delete this post"
     case editPost = "Edit this post"
@@ -151,7 +152,7 @@ enum Text: String, Localizable, CaseIterable {
     case pasteAddress = "Token"
     
     case refresh = "Refresh"
-    case markdownSupported = "Markdown supported"
+    case markdownSupported = "Markdown preview"
 }
 
 // MARK:- ImagePicker

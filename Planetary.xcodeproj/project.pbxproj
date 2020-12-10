@@ -170,6 +170,7 @@
 		1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */; };
 		1B5DB7D224AE5F7F008DCB81 /* FollowingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */; };
 		1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */; };
+		1FFCEC6025646D12007BC13A /* PostTextEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FFCEC5F25646D12007BC13A /* PostTextEditorView.swift */; };
 		230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0D23728049008C248E /* NSNotification+Bot.swift */; };
 		230F4FD222F8729700F93B14 /* TestAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 230F4FD122F8729700F93B14 /* TestAPI.swift */; };
@@ -863,6 +864,7 @@
 		1B5DB7CF24AE5C8E008DCB81 /* FollowerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerTableViewController.swift; sourceTree = "<group>"; };
 		1B5DB7D124AE5F7E008DCB81 /* FollowingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowingTableViewController.swift; sourceTree = "<group>"; };
 		1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Identity+Link.swift"; sourceTree = "<group>"; };
+		1FFCEC5F25646D12007BC13A /* PostTextEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTextEditorView.swift; sourceTree = "<group>"; };
 		205F056E32449189B64633F4 /* Pods-Planetary-UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary-UITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary-UITests/Pods-Planetary-UITests.release.xcconfig"; sourceTree = "<group>"; };
 		230F4FD122F8729700F93B14 /* TestAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAPI.swift; sourceTree = "<group>"; };
 		231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDatabaseSchema.sql; sourceTree = "<group>"; };
@@ -1913,6 +1915,7 @@
 				535754FC22694A4C002A6989 /* PostCellView.swift */,
 				8D8A7B18231995670087895B /* PostHeaderView.swift */,
 				531B92C322CEAD25005D5255 /* PostReplyView.swift */,
+				1FFCEC5F25646D12007BC13A /* PostTextEditorView.swift */,
 				539FD4CA22C586CC005A4DF2 /* ReplyTextView.swift */,
 				536255D723AB16E8001007D0 /* SnowView.swift */,
 				8DD985D12329B94600FA2F1A /* ThreadInteractionView.swift */,
@@ -3162,6 +3165,7 @@
 				0ACE919E243D734B00EFB4E9 /* BotError+LocalizedError.swift in Sources */,
 				533F4051225E9E010060B4B9 /* DebugUIViewController.swift in Sources */,
 				53AD3FD92270FF33005228F9 /* UITableView+TableHeaderView.swift in Sources */,
+				1FFCEC6025646D12007BC13A /* PostTextEditorView.swift in Sources */,
 				533EDBEB2385F8B6008B3565 /* DictionaryCache.swift in Sources */,
 				535754F42268E248002A6989 /* ContentType.swift in Sources */,
 				0A674A29253F3C4400698CF7 /* Draft.swift in Sources */,

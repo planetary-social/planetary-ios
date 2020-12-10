@@ -24,7 +24,7 @@ class PostReplyView: KeyValueView {
     let replyTextView: ReplyTextView = {
         let view = ReplyTextView(topSpacing: 0, bottomSpacing: Layout.verticalSpacing)
         view.button.isUserInteractionEnabled = false
-        view.textView.isUserInteractionEnabled = false
+        view.isUserInteractionEnabled = false
         view.topSeparator.isHidden = true
         view.addGestureRecognizer(view.tapGesture.recognizer)
         view.isSkeletonable = true

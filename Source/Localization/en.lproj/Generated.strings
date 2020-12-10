@@ -34,6 +34,7 @@
 "Text.analyticsMessage" = "We would like to capture anonymized data about your use of the app - and crash reports when something goes wrong - so we can make the application better.";
 "Text.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
 "Text.post" = "Post";
+"Text.preview" = "Preview";
 "Text.newPost" = "New Post";
 "Text.deletePost" = "Delete this post";
 "Text.editPost" = "Edit this post";
@@ -98,7 +99,7 @@
 "Text.redeemInvitation" = "Redeem an invitation";
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Refresh";
-"Text.markdownSupported" = "Markdown supported";
+"Text.markdownSupported" = "Markdown preview";
 
 "Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other.";
 "Blocking.buttonTitle" = "Yes, block {{ name }}";

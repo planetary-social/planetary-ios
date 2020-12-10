@@ -18,16 +18,43 @@ class ReplyTextView: KeyValueView {
     let topSeparator = Layout.separatorView()
 
     let button = AvatarButton()
+    
+    var attributedText: NSAttributedString {
+        get {
+            return sourceTextView.attributedText
+        }
 
-    var textViewDelegate: MentionTextViewDelegate? {
-        didSet {
-            self.textView.delegate = self.textViewDelegate
-            self.textViewDelegate?.styleTextView(textView: self.textView)
+        set {
+            sourceTextView.attributedText = newValue
         }
     }
 
-    // TODO read only?
-    lazy var textView: ResizableTextView = {
+    var textViewDelegate: MentionTextViewDelegate? {
+        didSet {
+            self.sourceTextView.delegate = self.textViewDelegate
+            self.textViewDelegate?.styleTextView(textView: self.sourceTextView)
+        }
+    }
+
+    var previewActive: Bool {
+        get {
+            return renderedTextView.alpha > 0.9
+        }
+
+        set {
+            if newValue {
+                sourceTextView.isEditable = false
+                renderedTextView.attributedText = sourceTextView.attributedText.string.decodeMarkdown()
+                animateToPreview()
+            } else {
+                sourceTextView.isEditable = true
+                renderedTextView.attributedText = nil
+                animateToSourceView()
+            }
+        }
+    }
+    
+    private lazy var sourceTextView: ResizableTextView = {
         let view = ResizableTextView()
         view.configureForPostsAndReplies()
         view.roundedCorners(radius: Layout.profileThumbSize / 2)
@@ -43,9 +70,18 @@ class ReplyTextView: KeyValueView {
         view.layer.borderColor = UIColor.textInputBorder.cgColor
         return view
     }()
+    
+    private lazy var renderedTextView: UITextView = {
+        let view = UITextView.forPostsAndReplies()
+        view.backgroundColor = .cardBackground
+        view.textColor = UIColor.text.default
+        view.alpha = 0
+        view.isEditable = false
+        return view
+    }()
 
     var isEmpty: Bool {
-        return self.textView.text?.isEmpty ?? true
+        return self.sourceTextView.text?.isEmpty ?? true
     }
 
     var textViewHeightConstraint: NSLayoutConstraint?
@@ -59,6 +95,7 @@ class ReplyTextView: KeyValueView {
         self.init(frame: .zero)
         self.backgroundColor = .appBackground
         self.useAutoLayout()
+        self.clipsToBounds = false
 
         let textViewHeight = Layout.profileThumbSize
 
@@ -70,50 +107,104 @@ class ReplyTextView: KeyValueView {
 
         let left: CGFloat = Layout.horizontalSpacing + textViewHeight + 7
         let insets = UIEdgeInsets(top: topSpacing, left: left, bottom: -bottomSpacing, right: -Layout.horizontalSpacing)
-        Layout.fill(view: self, with: self.textView, insets: insets, respectSafeArea: false)
+        Layout.fill(view: self, with: self.sourceTextView, insets: insets, respectSafeArea: false)
 
-        self.textView.constrainHeight(greaterThanOrEqualTo: textViewHeight)
-        self.textViewHeightConstraint = self.textView.heightAnchor.constraint(lessThanOrEqualToConstant: textViewHeight)
+        self.sourceTextView.constrainHeight(greaterThanOrEqualTo: textViewHeight)
+        self.textViewHeightConstraint = self.sourceTextView.heightAnchor.constraint(lessThanOrEqualToConstant: textViewHeight)
         self.textViewHeightConstraint?.isActive = true
         self.calculateHeight()
-
+        
+        addSubview(renderedTextView)
+        renderedTextView.topAnchor.constraint(equalTo: sourceTextView.topAnchor,
+                                              constant: 0).isActive = true
+        renderedTextView.leftAnchor.constraint(equalTo: sourceTextView.leftAnchor,
+                                               constant: 0).isActive = true
+        renderedTextView.bottomAnchor.constraint(equalTo: sourceTextView.bottomAnchor,
+                                                 constant: 0).isActive = true
+        renderedTextView.rightAnchor.constraint(equalTo: sourceTextView.rightAnchor,
+                                                constant: 0).isActive = true
+        
         self.button.setImageForMe()
         
         self.button.isSkeletonable = true
-        self.textView.isSkeletonable = true
+        self.sourceTextView.isSkeletonable = true
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        self.textView.layer.borderColor = UIColor.textInputBorder.cgColor
-        self.textView.setNeedsDisplay()
+        self.sourceTextView.layer.borderColor = UIColor.textInputBorder.cgColor
+        self.renderedTextView.layer.borderColor = UIColor.textInputBorder.cgColor
+        self.sourceTextView.setNeedsDisplay()
+        self.renderedTextView.setNeedsDisplay()
     }
-
+    
     func calculateHeight() {
-        let lineHeight = self.textView.font?.lineHeight ?? 18
-        let sizeToFit = CGSize(width: self.textView.bounds.width, height: CGFloat.greatestFiniteMagnitude)
-        let textSize = self.textView.sizeThatFits(sizeToFit)
+        let lineHeight = self.sourceTextView.font?.lineHeight ?? 18
+        let sizeToFit = CGSize(width: self.sourceTextView.bounds.width, height: CGFloat.greatestFiniteMagnitude)
+        let textSize = self.sourceTextView.sizeThatFits(sizeToFit)
         let maxLines = Int(textSize.height / lineHeight)
         let lineCount = min(ReplyTextView.maxNumberOfLines, max(maxLines, 1))
 
-        let insets = self.textView.textContainerInset
+        let insets = self.sourceTextView.textContainerInset
         let maxHeight = ceil(insets.top + insets.bottom + (lineHeight * CGFloat(lineCount)))
         let defaultHeight = Layout.profileThumbSize
 
         self.textViewHeightConstraint?.constant = max(defaultHeight, maxHeight)
-        self.textView.allowScrolling = maxLines > lineCount
+        self.sourceTextView.allowScrolling = maxLines > lineCount
     }
 
     @discardableResult
+    override func becomeFirstResponder() -> Bool {
+        return self.sourceTextView.becomeFirstResponder()
+    }
+    
+    @discardableResult
     override func resignFirstResponder() -> Bool {
-        self.textView.resignFirstResponder()
+        self.sourceTextView.resignFirstResponder()
         return super.resignFirstResponder()
+    }
+    
+    override var isUserInteractionEnabled: Bool {
+        get {
+            return self.sourceTextView.isUserInteractionEnabled
+        }
+        set {
+            self.sourceTextView.isUserInteractionEnabled = newValue
+        }
+    }
+    
+    func replaceText(in range: NSRange, with mention: Mention, attributes: [NSAttributedString.Key: Any]? = nil) {
+        self.sourceTextView.replaceText(in: range, with: mention, attributes: attributes)
     }
 
     func clear() {
-        self.textView.text = Text.postAReply.text
-        self.textView.textColor = UIColor.text.placeholder
+        self.sourceTextView.text = Text.postAReply.text
+        self.sourceTextView.textColor = UIColor.text.placeholder
+        self.renderedTextView.alpha = 0
+        self.sourceTextView.alpha = 1
         self.calculateHeight()
+    }
+    
+    private func animateToPreview() {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.sourceTextView.alpha = 0
+        },
+        completion: { (_) in
+            UIView.animate(withDuration: 0.25) {
+                self.renderedTextView.alpha = 1
+            }
+        })
+    }
+
+    private func animateToSourceView() {
+        UIView.animate(withDuration: 0.25, animations: {
+            self.renderedTextView.alpha = 0
+        },
+        completion: { (_) in
+            UIView.animate(withDuration: 0.25) {
+                self.sourceTextView.alpha = 1
+            }
+        })
     }
 }
 
