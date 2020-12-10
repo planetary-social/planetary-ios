@@ -147,6 +147,12 @@ class PostCollectionViewCell: UICollectionViewCell {
             self.textViewZeroHeightConstraint.isActive = true
         } else {
             self.textView.attributedText = textWithoutGallery.decodeMarkdown(small: true)
+            
+            if textWithoutGallery.isSingleEmoji {
+                let size: CGFloat = self.contentView.bounds.width / 2
+                self.textView.font = UIFont.smallPost.body.withSize(size)
+                self.textView.textAlignment = .center
+            }
         }
         
     }
