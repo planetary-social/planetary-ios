@@ -15,6 +15,7 @@
 		0A1CA4C524E5D714006CAC43 /* FollowOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */; };
 		0A1CA4C724EB097B006CAC43 /* PubArray+Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */; };
 		0A1CA4CA24EB2353006CAC43 /* SendMissionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CA4C924EB2353006CAC43 /* SendMissionOperation.swift */; };
+		0A30F86F2589253E002B281D /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A30F86D2589253E002B281D /* Generated.strings */; };
 		0A387FF42474E09200777843 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF32474E09200777843 /* Analytics.swift */; };
 		0A387FF52474E10400777843 /* NullAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C2B12E2295A95A0018D0A8 /* NullAnalytics.swift */; };
 		0A387FF72474E45A00777843 /* CrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF62474E45A00777843 /* CrashReporting.swift */; };
@@ -772,6 +773,7 @@
 		0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowOperation.swift; sourceTree = "<group>"; };
 		0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PubArray+Constellation.swift"; sourceTree = "<group>"; };
 		0A1CA4C924EB2353006CAC43 /* SendMissionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMissionOperation.swift; sourceTree = "<group>"; };
+		0A30F86E2589253E002B281D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = Generated.strings; sourceTree = "<group>"; };
 		0A387FF32474E09200777843 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		0A387FF62474E45A00777843 /* CrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReporting.swift; sourceTree = "<group>"; };
 		0A387FF92474E65300777843 /* PhoneVerificationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneVerificationAPI.swift; sourceTree = "<group>"; };
@@ -1343,6 +1345,14 @@
 				0A1CA4C924EB2353006CAC43 /* SendMissionOperation.swift */,
 			);
 			path = Operations;
+			sourceTree = "<group>";
+		};
+		0A30F86C2589253E002B281D /* pl.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				0A30F86D2589253E002B281D /* Generated.strings */,
+			);
+			path = pl.lproj;
 			sourceTree = "<group>";
 		};
 		0A3880192475BB4500777843 /* UITests */ = {
@@ -2161,6 +2171,7 @@
 		8D9143EA230C5BF60075BC8A /* Localization */ = {
 			isa = PBXGroup;
 			children = (
+				0A30F86C2589253E002B281D /* pl.lproj */,
 				0A04D8B9247723C100DD37B7 /* es-ar.lproj */,
 				0A04D8B5247721EE00DD37B7 /* es-uy.lproj */,
 				0AC10DD8246C436800CCA22A /* es.lproj */,
@@ -2326,6 +2337,7 @@
 				"es-uy",
 				"es-ar",
 				"es-AR",
+				pl,
 			);
 			mainGroup = 5344D82221C4649700704A34;
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
@@ -2405,6 +2417,7 @@
 				0A04D8B82477220F00DD37B7 /* Generated.strings in Resources */,
 				5344D83921C4649A00704A34 /* LaunchScreen.storyboard in Resources */,
 				0AC10DDB246C43DC00CCA22A /* Generated.strings in Resources */,
+				0A30F86F2589253E002B281D /* Generated.strings in Resources */,
 				5344D83621C4649A00704A34 /* Assets.xcassets in Resources */,
 				0A04D8BC2477260F00DD37B7 /* Generated.strings in Resources */,
 			);
@@ -3389,6 +3402,14 @@
 			name = Generated.strings;
 			sourceTree = "<group>";
 		};
+		0A30F86D2589253E002B281D /* Generated.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A30F86E2589253E002B281D /* pl */,
+			);
+			name = Generated.strings;
+			sourceTree = "<group>";
+		};
 		0AC10DD9246C43DC00CCA22A /* Generated.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3733,7 +3754,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.9.35;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3777,7 +3798,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.9.35;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
