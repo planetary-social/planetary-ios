@@ -273,8 +273,8 @@ extension Text {
         // note that ToS and PP are used to decorate the substrings in the statement
         // this means that the text must be the same otherwise the decoration will fail
         // check out `SplashOnboardingStep` to see how it is used
-        case policyStatement = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy"
-        case termsOfService = "Terms of Service"
+        case policyStatement = "By continuing, you confirm that you agree to our EULA - Terms of Service and Privacy Policy"
+        case termsOfService = "EULA - Terms of Service"
         case privacyPolicy = "Privacy Policy"
     }
 }

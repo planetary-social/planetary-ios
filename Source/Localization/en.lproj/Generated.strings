@@ -164,8 +164,8 @@
 "Onboarding.benefits" = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\n\nFind out more";
 "Onboarding.findOutMore" = "Find out more";
 "Onboarding.thatSoundsGreat" = "That sounds great!";
-"Onboarding.policyStatement" = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy";
-"Onboarding.termsOfService" = "Terms of Service";
+"Onboarding.policyStatement" = "By continuing, you confirm that you agree to our EULA - Terms of Service and Privacy Policy";
+"Onboarding.termsOfService" = "EULA - Terms of Service";
 "Onboarding.privacyPolicy" = "Privacy Policy";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";

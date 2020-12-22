@@ -17,7 +17,7 @@ class StartOnboardingStep: OnboardingStep {
         view.delegate = self
         view.isEditable = false
         let text = NSMutableAttributedString(Text.Onboarding.policyStatement.text,
-                                             font: UIFont.systemFont(ofSize: 13, weight: .medium),
+                                             font: UIFont.systemFont(ofSize: 14, weight: .medium),
                                              color: UIColor.text.detail)
         text.addLinkAttribute(value: Support.shared.id(for: SupportArticle.termsOfService),
                               to: Text.Onboarding.termsOfService.text)
@@ -56,7 +56,7 @@ class StartOnboardingStep: OnboardingStep {
 
         // add the ToS text below the primary button
         self.textView.constrainHeight(to: 74)
-        self.view.buttonStack.addArrangedSubview(self.textView)
+        self.view.buttonStack.insertArrangedSubview(self.textView, at: 0)
     }
 }
 
