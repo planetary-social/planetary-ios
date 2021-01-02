@@ -102,7 +102,10 @@ class AboutView: KeyValueView {
 
         Layout.addSeparator(toTopOf: self)
 
+        
         Layout.center(self.circleView, atTopOf: self, inset: 23, size: CGSize(square: Layout.profileImageOutside))
+       //self.addLoadingAnimation()
+
         Layout.center(self.imageView, in: self.circleView, size: CGSize(square: Layout.profileImageInside))
 
         self.addSubview(self.editPhotoButton)
@@ -256,5 +259,37 @@ class AboutView: KeyValueView {
         // and hence change it's height, so a layout is likely needed
         self.setNeedsLayout()
         self.layoutIfNeeded()
+    }
+    
+    
+    // MARK: Loading animation
+    
+    private lazy var loadingAnimation: PeerConnectionAnimation = {
+        let view = PeerConnectionAnimation(color: .networkAnimation)
+        //view.multiplier = 2
+        view.setDotCount(inside: false, count: 1, animated: false)
+        view.setDotCount(inside: true, count: 2, animated: false)
+        return view
+    }()
+    
+    private lazy var loadingLabel: UILabel = {
+        let view = UILabel.forAutoLayout()
+        view.textAlignment = .center
+        view.numberOfLines = 2
+        view.text = Text.loadingUpdates.text
+        view.textColor = UIColor.tint.default
+        return view
+    }()
+    
+    func addLoadingAnimation() {
+        //Layout.center(self.loadingLabel, in: self.circleView)
+        Layout.centerHorizontally(self.loadingAnimation, in: self.circleView)
+        self.loadingAnimation.constrainSize(to: Layout.profileImageOutside)
+        self.loadingAnimation.pinBottom(toTopOf: self.loadingLabel, constant: -20, activate: true)
+    }
+    
+    func removeLoadingAnimation() {
+        self.loadingLabel.removeFromSuperview()
+        self.loadingAnimation.removeFromSuperview()
     }
 }

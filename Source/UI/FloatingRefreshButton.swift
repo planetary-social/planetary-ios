@@ -41,6 +41,8 @@ class FloatingRefreshButton: UIButton {
     }
     
     func show(animated: Bool = true) {
+        return
+        /*
         guard self.isHidden else {
             return
         }
@@ -57,7 +59,7 @@ class FloatingRefreshButton: UIButton {
         } else {
             self.transform = .identity
             self.isHidden = false
-        }
+        }*/
     }
     
     func hide(animated: Bool = true) {
