@@ -259,7 +259,7 @@ class HomeViewController: ContentViewController {
                 self?.load(animated: true)
             } else {
                 let shouldAnimate = self?.navigationController?.topViewController == self
-                self?.floatingRefreshButton.show(animated: shouldAnimate)
+                //self?.floatingRefreshButton.show(animated: shouldAnimate)
             }
         }
     }
