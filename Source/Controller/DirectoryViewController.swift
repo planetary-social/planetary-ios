@@ -32,7 +32,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     }
 
     private lazy var tableView: UITableView = {
-        let view = UITableView.forVerse()
+        let view = UITableView.forVerse(style: .grouped)
         view.dataSource = self
         view.delegate = self
         view.refreshControl = self.refreshControl
@@ -162,14 +162,39 @@ extension DirectoryViewController: TopScrollable {
 
 extension DirectoryViewController: UITableViewDataSource {
 
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return "Communities"
+        } else {
+            return "Directory"
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.people.count
+        if section == 0 {
+            return Environment.PlanetarySystem.planets.count
+        } else {
+            return self.people.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
-        let about = self.people[indexPath.row]
-        cell.aboutView.update(with: about.identity, about: about)
+        if indexPath.section == 0 {
+            let planet = Environment.PlanetarySystem.planets[indexPath.row]
+            if let about = self.allPeople.first(where: { $0.identity == planet }) {
+                cell.aboutView.update(with: planet, about: about)
+            } else {
+                cell.aboutView.update(with: planet, about: nil)
+            }
+        } else {
+            let about = self.people[indexPath.row]
+            cell.aboutView.update(with: about.identity, about: about)
+        }
         return cell
     }
 }
@@ -177,8 +202,15 @@ extension DirectoryViewController: UITableViewDataSource {
 extension DirectoryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let about = self.people[indexPath.row]
-        let controller = AboutViewController(with: about)
-        self.navigationController?.pushViewController(controller, animated: true)
+        if indexPath.section == 0 {
+            let planet = Environment.PlanetarySystem.planets[indexPath.row]
+            let controller = AboutViewController(with: planet)
+            self.navigationController?.pushViewController(controller, animated: true)
+        } else {
+            let about = self.people[indexPath.row]
+            let controller = AboutViewController(with: about)
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+        
     }
 }
