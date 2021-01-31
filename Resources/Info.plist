@@ -66,6 +66,8 @@
 	<string>$(TESTING_NETWORK_KEY)</string>
 	<key>PLTestingNetworkName</key>
 	<string>$(TESTING_NETWORK_NAME)</string>
+	<key>PLCommunities</key>
+	<string>$(COMMUNITIES)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

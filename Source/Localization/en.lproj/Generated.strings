@@ -23,6 +23,7 @@
 "Text.reportBug" = "Report a Bug";
 "Text.settings" = "Settings";
 "Text.userDirectory" = "User Directory";
+"Text.communitites" = "Communities";
 "Text.showMeInDirectory" = "Show me in the directory";
 "Text.showMeInUserDirectory" = "Show me in the user directory";
 "Text.hideMeFromUserDirectory" = "Hide me from the user directory";
@@ -96,6 +97,7 @@
 "Text.bookmark" = "Bookmark";
 "Text.like" = "Like";
 "Text.debug" = "Debug";
+"Text.join" = "Join";
 "Text.redeemInvitation" = "Redeem an invitation";
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Refresh";

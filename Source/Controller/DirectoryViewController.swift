@@ -168,34 +168,36 @@ extension DirectoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return "Communities"
+            return Text.communitites.text
         } else {
-            return "Directory"
+            return nil
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return Environment.PlanetarySystem.planets.count
+            return Environment.Communities.stars.count
         } else {
             return self.people.count
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
         if indexPath.section == 0 {
-            let planet = Environment.PlanetarySystem.planets[indexPath.row]
-            if let about = self.allPeople.first(where: { $0.identity == planet }) {
-                cell.aboutView.update(with: planet, about: about)
+            let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
+            let star = Environment.Communities.stars[indexPath.row]
+            if let about = self.allPeople.first(where: { $0.identity == star.feed }) {
+                cell.communityView.update(with: star, about: about)
             } else {
-                cell.aboutView.update(with: planet, about: nil)
+                cell.communityView.update(with: star, about: nil)
             }
+            return cell
         } else {
+            let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
             let about = self.people[indexPath.row]
             cell.aboutView.update(with: about.identity, about: about)
+            return cell
         }
-        return cell
     }
 }
 
@@ -203,8 +205,8 @@ extension DirectoryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
-            let planet = Environment.PlanetarySystem.planets[indexPath.row]
-            let controller = AboutViewController(with: planet)
+            let star = Environment.Communities.stars[indexPath.row]
+            let controller = AboutViewController(with: star.feed)
             self.navigationController?.pushViewController(controller, animated: true)
         } else {
             let about = self.people[indexPath.row]

@@ -100,6 +100,8 @@
 		0A7C5D5224EEC21C005E5035 /* MissionControlCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7C5D5124EEC21C005E5035 /* MissionControlCenter.swift */; };
 		0A7C5D5324EEDD27005E5035 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABDC24E32F8000D30649 /* Star.swift */; };
 		0A7C5D5524EEDD4B005E5035 /* Star.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56ABDC24E32F8000D30649 /* Star.swift */; };
+		0AAF8C4325C6444B00FD8D0F /* CommunityCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAF8C4225C6444B00FD8D0F /* CommunityCellView.swift */; };
+		0AAF8C4725C704B500FD8D0F /* UnfollowOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAF8C4625C704B500FD8D0F /* UnfollowOperation.swift */; };
 		0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736B824577451000190F8 /* RefreshOperation.swift */; };
 		0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */; };
 		0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BD2457772B000190F8 /* SyncOperation.swift */; };
@@ -811,6 +813,8 @@
 		0A674A28253F3C4400698CF7 /* Draft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Draft.swift; sourceTree = "<group>"; };
 		0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Reset.swift"; sourceTree = "<group>"; };
 		0A7C5D5124EEC21C005E5035 /* MissionControlCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionControlCenter.swift; sourceTree = "<group>"; };
+		0AAF8C4225C6444B00FD8D0F /* CommunityCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityCellView.swift; sourceTree = "<group>"; };
+		0AAF8C4625C704B500FD8D0F /* UnfollowOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnfollowOperation.swift; sourceTree = "<group>"; };
 		0AB736B824577451000190F8 /* RefreshOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshOperation.swift; sourceTree = "<group>"; };
 		0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
 		0AB736BD2457772B000190F8 /* SyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
@@ -1343,6 +1347,7 @@
 				0A56ABDE24E470A200D30649 /* RedeemInviteOperation.swift */,
 				0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */,
 				0A1CA4C924EB2353006CAC43 /* SendMissionOperation.swift */,
+				0AAF8C4625C704B500FD8D0F /* UnfollowOperation.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -1938,6 +1943,7 @@
 				0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */,
 				0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */,
 				1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */,
+				0AAF8C4225C6444B00FD8D0F /* CommunityCellView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -2998,6 +3004,7 @@
 				53E26C5D23045D19009240B2 /* Data+Person.swift in Sources */,
 				532751D32224A0CD0026500F /* ContentViewController.swift in Sources */,
 				536255D323AAC8AD001007D0 /* AnalyticsService+AppDelegate.swift in Sources */,
+				0AAF8C4725C704B500FD8D0F /* UnfollowOperation.swift in Sources */,
 				0AF2DEEE247C3EE6003F457D /* Hashtag+Link.swift in Sources */,
 				5396A6232244356600C57A4B /* Layout+ContentView.swift in Sources */,
 				8D9143F7230C5F4E0075BC8A /* Text.swift in Sources */,
@@ -3319,6 +3326,7 @@
 				53575509226A3113002A6989 /* KeyValueTableViewDataSource.swift in Sources */,
 				531B92B122CAC203005D5255 /* PostButtonsView.swift in Sources */,
 				531D0A1321EACC0A008E40A8 /* GoBotViewController.swift in Sources */,
+				0AAF8C4325C6444B00FD8D0F /* CommunityCellView.swift in Sources */,
 				53C2B12C2294E8A50018D0A8 /* AppConfiguration+Keychain.swift in Sources */,
 				5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */,
 				530F019C22DEAD70007EBAE2 /* SplashOnboardingStep.swift in Sources */,
