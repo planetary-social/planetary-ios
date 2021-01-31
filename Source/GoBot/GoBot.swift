@@ -933,7 +933,7 @@ class GoBot: Bot {
         }
     }
 
-    func follows(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
+    func follows(identity: Identity, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
