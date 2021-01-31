@@ -81,7 +81,19 @@ class AppController: UIViewController {
     var mainViewController: MainViewController? {
         return self.children.first as? MainViewController
     }
+    
+    // MARK: Directory tab view controller
+    // this doesn't seem to work correctly... 
+    func showDirectoryViewController(with controller: UIViewController? = nil, animated: Bool = true) {
+        let controller = DirectoryViewController()
+        self.setRootViewController(controller, animated: animated)
+        self.missionControlCenter.start()
+    }
 
+    var directoryViewController: DirectoryViewController? {
+        return self.children.first as? DirectoryViewController
+    }
+    
     // MARK: Onboarding view controller
 
     func showOnboardingViewController(_ status: Onboarding.Status = .notStarted,
