@@ -1,5 +1,3 @@
-// This file should be the same as es-uy/Generated.strings
-
 "Text.planetary" = "Planetary";
 "Text.error" = "Opa";
 "Text.cancel" = "Cancelar";
@@ -23,6 +21,7 @@
 "Text.reportBug" = "Reportá un bug";
 "Text.settings" = "Configuración";
 "Text.userDirectory" = "Directorio de usuarios";
+"Text.communities" = "Comunidades";
 "Text.showMeInDirectory" = "Mostrame en el directorio";
 "Text.showMeInUserDirectory" = "Mostrame en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultame en el directorio de usuarios";
@@ -94,6 +93,7 @@
 "Text.bookmark" = "Marcador";
 "Text.like" = "Me Gusta";
 "Text.debug" = "Debuggear";
+"Text.join" = "Unite";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Recargar";
