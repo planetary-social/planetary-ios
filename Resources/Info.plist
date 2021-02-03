@@ -24,7 +24,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>258</string>
+	<string>260</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -40,6 +40,8 @@
 	<string>This app allows you to take photos to share with friends or use as your profile image.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app allows you to select photos to share with friends or use as your profile image.</string>
+	<key>PLCommunities</key>
+	<string>$(COMMUNITIES)</string>
 	<key>PLConstellation</key>
 	<string>$(CONSTELLATION)</string>
 	<key>PLDefaultNetworkKey</key>

@@ -194,6 +194,12 @@ class AboutView: KeyValueView {
         } else {
             createRelationship(identity: identity)
         }
+        
+        if let star = Environment.Communities.stars.first(where: { $0.feed == identity}) {
+            followButton.star = star
+        } else {
+            followButton.star = nil
+        }
 
         // updating may change the content of the description text view
         // and hence change it's height, so a layout is likely needed

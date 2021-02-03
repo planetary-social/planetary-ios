@@ -78,6 +78,15 @@ enum Environment {
         }()
     }
     
+    enum Communities {
+        private enum Keys {
+            static let communities = "PLCommunities"
+        }
+        static let stars: [Star] = {
+            return Environment.value(for: Keys.communities).split(separator: " ").map{Star(invite: String($0))}
+        }()
+    }
+    
     enum Constellation {
         private enum Keys {
             static let constellation = "PLConstellation"
