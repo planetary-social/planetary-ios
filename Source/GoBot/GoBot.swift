@@ -933,14 +933,12 @@ class GoBot: Bot {
         }
     }
 
-    func follows(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
+    func follows(identity: Identity, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
         self.queue.async {
             do {
                 let follows: [Identity] = try self.database.getFollows(feed: identity)
-                let defaultStars = Environment.Constellation.stars.map { $0.feed }
-                let withoutPubs = follows.filter { !defaultStars.contains($0) }
-                DispatchQueue.main.async { completion(withoutPubs, nil) }
+                DispatchQueue.main.async { completion(follows, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
             }
@@ -952,9 +950,7 @@ class GoBot: Bot {
         self.queue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
-                let defaultStarsIdentities = Environment.Constellation.stars.map { $0.feed }
-                let withoutPubs = follows.filter { !defaultStarsIdentities.contains($0) }
-                DispatchQueue.main.async { completion(withoutPubs, nil) }
+                DispatchQueue.main.async { completion(follows, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }
             }
@@ -965,10 +961,8 @@ class GoBot: Bot {
         self.queue.async {
             do {
                 let follows: [About] = try self.database.getFollows(feed: identity)
-                let defaultStars = Environment.Constellation.stars.map { $0.feed }
-                let withoutPubs = follows.filter { !defaultStars.contains($0.identity) }
                 queue.async {
-                    completion(withoutPubs, nil)
+                    completion(follows, nil)
                 }
             } catch {
                 queue.async {
@@ -982,10 +976,8 @@ class GoBot: Bot {
         self.queue.async {
             do {
                 let follows: [About] = try self.database.followedBy(feed: identity)
-                let defaultStars = Environment.Constellation.stars.map { $0.feed }
-                let withoutPubs = follows.filter { !defaultStars.contains($0.identity) }
                 queue.async {
-                    completion(withoutPubs, nil)
+                    completion(follows, nil)
                 }
             } catch {
                 queue.async {

@@ -25,7 +25,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         // disabled until we work on these again
 //        BackupOnboardingStep(),
 //        ContactsOnboardingStep(),
-        // DirectoryOnboardingStep(),      // Bot and API calls
+//        DirectoryOnboardingStep(),      // Bot and API calls
         PhotoOnboardingStep(),
         PhotoConfirmOnboardingStep(),   // Bot and API calls
         BioOnboardingStep(),            // Bot and API calls
@@ -34,7 +34,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
     private let resumeSteps = [
         ResumeOnboardingStep(),
-        // DirectoryOnboardingStep(),      // Bot and API calls
+        //DirectoryOnboardingStep(),      // Bot and API calls
         //PhotoOnboardingStep(),
         //PhotoConfirmOnboardingStep(),   // Bot and API calls
         BioOnboardingStep(),            // Bot and API calls
@@ -45,7 +45,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     private var steps: [OnboardingStep] = []
 
     private var currentStep: OnboardingStep {
-        return self.steps[self.stepIndex]
+            return self.steps[self.stepIndex]
     }
 
     private var stepData = OnboardingStepData()
@@ -131,6 +131,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     }
 
     private func done() {
+        //AppController.shared.showDirectoryViewController()
         AppController.shared.showMainViewController()
     }
 

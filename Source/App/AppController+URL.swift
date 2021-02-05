@@ -18,9 +18,15 @@ extension AppController {
 
     func open(url: URL, completion: ((Bool) -> Void)? = nil) {
         Log.info("open(url): \(url.absoluteString)")
-        if url.absoluteString.isHashtag { self.pushChannelViewController(for: url.absoluteString) }
-        else if let identifier = url.identifier { self.open(identifier: identifier) }
-        else { UIApplication.shared.open(url, options: [:], completionHandler: completion) }
+        if url.absoluteString.isHashtag {
+            self.pushChannelViewController(for: url.absoluteString)
+        } else if let identifier = url.identifier {
+            self.open(identifier: identifier)
+        } else if Star.isValid(invite: url.absoluteString) {
+            self.redeem(invite: url.absoluteString)
+        } else {
+            UIApplication.shared.open(url, options: [:], completionHandler: completion)
+        }
     }
     
     func open(string: String) {
@@ -57,6 +63,50 @@ extension AppController {
     // as essentially the same so the caller needs to signal intent
     func open(identity: Identity) {
         self.pushViewController(for: .about, with: identity)
+    }
+    
+    func redeem(invite: String) {
+        guard let featureController = self.mainViewController?.selectedViewController as? UINavigationController else {
+            Log.unexpected(.missingValue, "Selected view controller is not a navigation controller")
+            return
+        }
+        let controller = UIAlertController(title: "This is an invite to a Pub",
+                                           message: "Are you sure you want to redeem this invite?",
+                                           preferredStyle: .alert)
+        var action = UIAlertAction(title: Text.cancel.text, style: .cancel) {
+            action in
+            controller.dismiss(animated: true, completion: nil)
+        }
+        controller.addAction(action)
+
+        action = UIAlertAction(title: Text.yes.text, style: .default) { [weak self] _ in
+            controller.dismiss(animated: false, completion: nil)
+            self?.showProgress()
+            let star = Star(invite: invite)
+            let operation = RedeemInviteOperation(star: star, shouldFollow: true)
+            operation.completionBlock = { [weak self] in
+                switch operation.result {
+                case .success:
+                    DispatchQueue.main.async {
+                        self?.hideProgress()
+                    }
+                case .failure(let error):
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    DispatchQueue.main.async {
+                        self?.hideProgress()
+                        self?.alert(error: error)
+                    }
+                case .none:
+                    DispatchQueue.main.async {
+                        self?.hideProgress()
+                    }
+                }
+            }
+            self?.operationQueue.addOperation(operation)
+        }
+        controller.addAction(action)
+        featureController.present(alertController: controller, animated: true)
     }
 
     // TODO this is incorrectly scoped, push to the app controller should

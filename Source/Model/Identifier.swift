@@ -45,6 +45,7 @@ typealias BlobIdentifier = Identifier
 typealias FeedIdentifier = Identifier
 typealias LinkIdentifier = MessageIdentifier
 typealias MessageIdentifier = Identifier
+typealias InviteIdentifier = Identifier
 
 extension Identifier {
 
@@ -58,6 +59,7 @@ extension Identifier {
         if      self.hasPrefix(Sigil.blob.rawValue)         { return .blob }
         else if self.hasPrefix(Sigil.feed.rawValue)         { return .feed }
         else if self.hasPrefix(Sigil.message.rawValue)      { return .message }
+        
         else                                                { return .unsupported }
     }
 

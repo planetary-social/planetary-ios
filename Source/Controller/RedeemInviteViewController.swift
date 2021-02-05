@@ -95,7 +95,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         }
         AppController.shared.showProgress()
         let star = Star(invite: redeemCode)
-        let operation = RedeemInviteOperation(star: star)
+        let operation = RedeemInviteOperation(star: star, shouldFollow: true)
         operation.completionBlock = { [weak self] in
             switch operation.result {
             case .success:
