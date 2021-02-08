@@ -286,9 +286,9 @@
 		23EF5AAF249D185E00469977 /* BearerBlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */; };
 		23EF5AB0249D185E00469977 /* BearerBlockedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */; };
 		2D009BF924550868001351CB /* EveryoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D009BF824550868001351CB /* EveryoneViewController.swift */; };
+		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		2D7FE7E5258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
 		2D7FE7E6258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
-		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
 		53033E9F2383322B004609F8 /* Onboarding+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9E2383322B004609F8 /* Onboarding+AppConfiguration.swift */; };
@@ -916,8 +916,8 @@
 		23EF5AA7249D177F00469977 /* BlockedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedAPI.swift; sourceTree = "<group>"; };
 		23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearerBlockedAPI.swift; sourceTree = "<group>"; };
 		2D009BF824550868001351CB /* EveryoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveryoneViewController.swift; sourceTree = "<group>"; };
-		2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostHogAnalytics.swift; sourceTree = "<group>"; };
 		2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryOnboardingStep.swift; sourceTree = "<group>"; };
+		2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostHogAnalytics.swift; sourceTree = "<group>"; };
 		316D716D251CC0B347E630DA /* Pods-Planetary.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.appstore.xcconfig"; sourceTree = "<group>"; };
 		3C118088E10BAE1C911EDE02 /* Pods_FBTTUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTTUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4468B60D82AA8885DDD68F4A /* Pods-UnitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -3773,7 +3773,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3818,7 +3818,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
