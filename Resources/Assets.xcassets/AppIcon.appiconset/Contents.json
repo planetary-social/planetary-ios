@@ -19,7 +19,7 @@
       "size" : "29x29"
     },
     {
-      "filename" : "icon_29pt@2x.png",
+      "filename" : "iPad_Settings_29_2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
@@ -43,7 +43,7 @@
       "size" : "40x40"
     },
     {
-      "filename" : "icon_60pt@2x.png",
+      "filename" : "iPhone_App_60_2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
@@ -67,13 +67,13 @@
       "size" : "20x20"
     },
     {
-      "filename" : "icon_29pt-1.png",
+      "filename" : "iPad_Settings_29_1x.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "29x29"
     },
     {
-      "filename" : "icon_29pt@2x-1.png",
+      "filename" : "iPad_Settings_29_2x-1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "29x29"
