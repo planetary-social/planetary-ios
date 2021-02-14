@@ -184,8 +184,9 @@ class AboutView: KeyValueView {
         self.descriptionTextView.attributedText = bio
 
         self.descriptionContainerZeroHeightConstraint?.isActive = bio.string.trimmed.isEmpty
-
-        self.followButton.isHidden = identity.isCurrentUser
+        
+        //experiment hide the follow button til we know the status.
+        self.followButton.isHidden = true //identity.isCurrentUser
         self.editButton.isHidden = !identity.isCurrentUser
         self.editPhotoButton.isHidden = self.editButton.isHidden
 

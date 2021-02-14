@@ -228,7 +228,6 @@ class PostCellView: KeyValueView {
             self.fullPostText = NSAttributedString(string: expression)
             self.textView.text = expression
             
-            
             self.galleryViewFullHeightConstraint.isActive = false
             self.galleryViewZeroHeightConstraint.isActive = true
             self.galleryViewBottomConstraint?.constant = 0
