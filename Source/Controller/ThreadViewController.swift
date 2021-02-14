@@ -35,7 +35,7 @@ class ThreadViewController: ContentViewController {
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
-        view.contentInset = .bottom(10)
+        view.contentInset = .bottom(20)
         view.dataSource = self.dataSource
         view.prefetchDataSource = self.dataSource
         view.delegate = self
