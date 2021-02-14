@@ -63,9 +63,9 @@ struct ContentVote: ContentCodable {
         
         let exp: String
         if value == 1 {
-            exp = "heart"
+            exp = "❤️"
         } else {
-            exp = "broken_heart"
+            exp = "💔"
         }
         self.vote = Vote(link: link, value: value, expression: exp)
         
@@ -81,9 +81,9 @@ struct ContentVote: ContentCodable {
         
         let exp: String
         if value == 1 {
-            exp = "heart"
+            exp = "❤️"
         } else {
-            exp = "broken_heart"
+            exp = "💔"
         }
         self.vote = Vote(link: link, value: value, expression: exp)
 
@@ -100,9 +100,9 @@ struct ContentVote: ContentCodable {
         
         let exp: String
         if value == 1 {
-            exp = "heart"
+            exp = "❤️"
         } else {
-            exp = "broken_heart"
+            exp = "💔"
         }
         self.vote = Vote(link: LinkIdentifier.null, value: value, expression: exp)
         //self.link = Identity.null

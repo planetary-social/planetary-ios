@@ -1157,6 +1157,7 @@ class ViewDatabase {
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
     }
     
+    // This gets called a lot from the go-bot... 
     func recentIdentifiers(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
