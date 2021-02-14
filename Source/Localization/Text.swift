@@ -255,7 +255,7 @@ extension Text {
         case contactsWIP = "Apologies, this feature is a work in progress. Tap 'OK' to see a list of recommended users to follow."
         case listMeTitle = "List me in the user directory"
         case listMeMessage = "This allows people to find you if they know your name or phone number"
-        case thanksForTrying = "Thanks for trying Planetary and we look forward to seeing what you post."
+        case thanksForTrying = "Thanks for trying Planetary! It's customary to use the #newpeople hashtag to introduce yourself."
         case doneOnboarding = "Phew! I'm done!"
         case earlyAccess = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!"
         case iUnderstand = "Yes, I understand"
