@@ -110,14 +110,20 @@ class PostCellView: KeyValueView {
     func configureTruncatedState() {
         self.calculateTruncationDataIfNecessary()
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
-        if self.textView.attributedText.string.isSingleEmoji,
-            let post = self.keyValue?.value.content.post,
-            !post.hasBlobs {
+        
+        //not so clean but it gest likes displaying.
+        if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == Planetary.ContentType.vote {
             self.textView.font = UIFont.post.body.withSize(200)
             self.textView.textAlignment = .center
-        } else {
-            self.textView.textAlignment = .natural
+        } else if self.textView.attributedText.string.isSingleEmoji,
+             let post = self.keyValue?.value.content.post,
+              !post.hasBlobs {
+              self.textView.font = UIFont.post.body.withSize(200)
+              self.textView.textAlignment = .center
+          } else {
+              self.textView.textAlignment = .natural
         }
+        
         self.textViewZeroHeightConstraint.isActive = self.textView.attributedText.string.isEmpty
     }
 
@@ -220,7 +226,7 @@ class PostCellView: KeyValueView {
         if let vote = keyValue.value.content.vote {
             let expression: String
             if vote.vote.value > 0 {
-                expression = "❤️"
+                expression = "💜"
             } else {
                 expression = "💔"
             }
@@ -228,7 +234,8 @@ class PostCellView: KeyValueView {
             self.fullPostText = NSAttributedString(string: expression)
             self.textView.text = expression
             
-            
+            self.configureTruncatedState()
+
             self.galleryViewFullHeightConstraint.isActive = false
             self.galleryViewZeroHeightConstraint.isActive = true
             self.galleryViewBottomConstraint?.constant = 0
