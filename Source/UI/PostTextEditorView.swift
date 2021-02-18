@@ -23,7 +23,8 @@ class PostTextEditorView: UIView {
         view.delegate = self.mentionDelegate
         view.font = font
         view.textColor = UIColor.text.default
-        view.textContainerInset = UIEdgeInsets.default
+        view.contentInset = UIEdgeInsets.default
+        view.textContainerInset = UIEdgeInsets.defaultText
         return view
     }()
 
@@ -33,7 +34,8 @@ class PostTextEditorView: UIView {
         view.font = font
         view.textColor = UIColor.text.default
         view.alpha = 0
-        view.textContainerInset = UIEdgeInsets.default
+        view.contentInset = UIEdgeInsets.default
+        view.textContainerInset = UIEdgeInsets.defaultText
         view.isEditable = false
         return view
     }()

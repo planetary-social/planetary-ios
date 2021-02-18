@@ -1200,7 +1200,7 @@ class ViewDatabase {
             .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
             .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
-            .filter(colMsgType == "post" || colMsgType == "contact" )           // only posts (no votes or contact messages)
+            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
 
@@ -1687,7 +1687,7 @@ class ViewDatabase {
 
         let postsQry = self.basicRecentPostsQuery(
             limit: limit,
-            wantPrivate: true,
+            wantPrivate: false,
             onlyRoots: true,
             offset: offset)
             .filter(colAuthorID == feedAuthorID)
