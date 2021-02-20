@@ -207,7 +207,7 @@
 "Push.prompt" = "Push notifications for Planetary are controlled in your device's Settings app.  Would you like to open Settings now?";
 "Push.footer" = "Show a system notification when you are mentioned, replied to, or followed.  The notification infrastructure is still in development, so you may not receive notifications consistently.";
 
-"Reporting.abusive" = "Abusive to me or someone else";
+"Reporting.abusive" = "Missbräuchlich für mich oder jemand anderes";
 "Reporting.copyright" = "Verletzt mein Urheberrecht";
 "Reporting.offensive" = "Anstößig oder unangemessen";
 "Reporting.other" = "Ein anderer Grund";
