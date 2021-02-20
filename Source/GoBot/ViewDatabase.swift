@@ -1687,7 +1687,7 @@ class ViewDatabase {
 
         let postsQry = self.basicRecentPostsQuery(
             limit: limit,
-            wantPrivate: false,
+            wantPrivate: false  ,
             onlyRoots: true,
             offset: offset)
             .filter(colAuthorID == feedAuthorID)
