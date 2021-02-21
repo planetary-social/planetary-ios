@@ -239,7 +239,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping () -> Void) {
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
 
         Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) { [weak self] image, error in
             Log.optional(error)
@@ -291,7 +291,7 @@ class AboutViewController: ContentViewController {
         let controller = EditAboutViewController(with: about)
         controller.saveCompletion = {
             [weak self] _ in
-            AppController.shared.showProgress()
+            //AppController.shared.showProgress()
             Bots.current.publish(content: controller.about) { [weak self] (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
