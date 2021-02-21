@@ -327,7 +327,7 @@ class ThreadViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "reply")
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -416,7 +416,7 @@ extension ThreadViewController: ThreadInteractionViewDelegate {
                                value: 1,
                                root: self.rootKey,
                                branches: [self.branchKey])
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         Bots.current.publish(content: vote) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)

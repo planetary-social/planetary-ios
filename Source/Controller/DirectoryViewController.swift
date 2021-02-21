@@ -74,7 +74,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         self.extendedLayoutIncludesOpaqueBars = false
 
 
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         self.load {
             AppController.shared.hideProgress()
         }

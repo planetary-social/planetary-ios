@@ -31,7 +31,7 @@ extension UIViewController {
     }
 
     private func _block(_ identity: Identity) {
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         Bots.current.block(identity) { [weak self] (message, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)

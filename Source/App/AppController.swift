@@ -125,16 +125,16 @@ class AppController: UIViewController {
     
     func addObservers() {
         let showProgress = { [weak self] (notification: Notification) -> Void in
-            self?.showProgress(statusText: notification.databaseProgressStatus)
+            //self?.showProgress(statusText: notification.databaseProgressStatus)
             self?.missionControlCenter.pause()
         }
         let updateProgress = { [weak self] (notification: Notification) -> Void in
             guard let percDone = notification.databaseProgressPercentageDone else { return }
             guard let status = notification.databaseProgressStatus else { return }
-            self?.updateProgress(perc: percDone, status: status)
+            //self?.updateProgress(perc: percDone, status: status)
         }
         let dismissProgress = { [weak self] (notification: Notification) -> Void in
-            self?.hideProgress()
+            //self?.hideProgress()
             self?.missionControlCenter.resume()
         }
         removeObservers()
