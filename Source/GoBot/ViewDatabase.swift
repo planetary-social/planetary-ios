@@ -1670,7 +1670,7 @@ class ViewDatabase {
         }
     }
 
-    func feed(for identity: Identity, limit: Int = 100, offset: Int? = nil) throws -> KeyValues {
+    func feed(for identity: Identity, limit: Int = 5, offset: Int? = nil) throws -> KeyValues {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }

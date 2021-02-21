@@ -65,7 +65,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     init(with src: KeyValueSource) throws {
         self.source = src
         self.count = self.source.total
-        self.msgs = try self.source.retreive(limit: 10, offset: 0)
+        self.msgs = try self.source.retreive(limit: 2, offset: 0)
         self.lastPrefetch = self.msgs.count
     }
 
