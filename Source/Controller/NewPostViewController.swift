@@ -105,7 +105,8 @@ class NewPostViewController: ContentViewController {
 
     func didPressPostButton() {
         Analytics.shared.trackDidTapButton(buttonName: "post")
-
+        self.buttonsView.postButton.isHidden = true
+        
         let hasText = self.textView.attributedText.length > 0
         let hasImages = !self.galleryView.images.isEmpty
         
@@ -122,13 +123,13 @@ class NewPostViewController: ContentViewController {
             [weak self] identifier, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.lookReady()
             if let error = error {
                 self?.alert(error: error)
             } else {
                 Analytics.shared.trackDidPost()
                 self?.dismiss(didPublish: post)
             }
+            self?.lookReady()
         }
     }
 
@@ -150,12 +151,14 @@ class NewPostViewController: ContentViewController {
         self.buttonsView.photoButton.isEnabled = false
         self.buttonsView.postButton.isEnabled = false
         self.buttonsView.previewToggle.isEnabled = false
+        self.buttonsView.postButton.isHidden = true
     }
 
     private func lookReady() {
         AppController.shared.hideProgress()
         self.buttonsView.photoButton.isEnabled = true
         self.buttonsView.postButton.isEnabled = true
+        self.buttonsView.postButton.isHidden = false
         self.buttonsView.previewToggle.isEnabled = true
     }   
 }

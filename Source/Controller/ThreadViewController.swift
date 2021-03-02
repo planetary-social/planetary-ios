@@ -325,6 +325,8 @@ class ThreadViewController: ContentViewController {
         let text = self.replyTextView.attributedText
         guard text.length > 0 else { return }
         Analytics.shared.trackDidTapButton(buttonName: "reply")
+        self.buttonsView.postButton.isHidden = true
+        
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
         //AppController.shared.showProgress()
