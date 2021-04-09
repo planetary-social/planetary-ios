@@ -17,6 +17,7 @@ protocol BotStatistics {
 
     var repo: RepoStatistics { get }
     var peer: PeerStatistics { get }
+    var db: DatabaseStatistics { get }
 }
 
 struct MutableBotStatistics: BotStatistics {
@@ -29,25 +30,47 @@ struct MutableBotStatistics: BotStatistics {
 
     var repo = RepoStatistics()
     var peer = PeerStatistics()
+    var db = DatabaseStatistics()
 }
 
 struct RepoStatistics {
 
+    /// Path to the repo
     let path: String
+
+    /// Number of feeds in the repo
     let feedCount: Int
+
+    /// Total number of messages
     let messageCount: Int
-    let lastReceivedMessage: Int
+
+    /// Number of messages published by the user
+    let numberOfPublishedMessages: Int
+
+    /// Last message in the repo
+    let lastHash: String
 
     init(path: String? = nil,
          feedCount: Int = -1,
          messageCount: Int = 0,
-         lastReceivedMessage: Int = -2)
-    {
+         numberOfPublishedMessages: Int = 0,
+         lastHash: String = "") {
         self.path = path ?? "unknown"
         self.feedCount = feedCount
         self.messageCount = messageCount
+        self.numberOfPublishedMessages = numberOfPublishedMessages
+        self.lastHash = lastHash
+    }
+}
+
+struct DatabaseStatistics {
+
+    let lastReceivedMessage: Int
+
+    init(lastReceivedMessage: Int = -2) {
         self.lastReceivedMessage = lastReceivedMessage
     }
+
 }
 
 struct PeerStatistics {

@@ -74,6 +74,8 @@ class UITests: XCTestCase {
         
         elementsQuery.buttons["Phew! I'm done!"].tap()
 
+        let count = elementsQuery.tables["FeedTableView"].children(matching: .cell).count
+        XCTAssert(count > 0)
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }

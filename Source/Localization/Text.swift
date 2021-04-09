@@ -11,12 +11,14 @@ extension Text {
                 Text.Onboarding.StepTitle.self,
                 Text.ManagePubs.self,
                 Text.Preview.self,
+                Text.PublicWebHosting.self,
                 Text.Push.self,
                 Text.Reporting.self,
                 Text.Debug.self,
                 Text.Error.self,
                 Text.Channel.self,
-                Text.Post.self]
+                Text.Post.self,
+                Text.Report.self]
     }
 }
 
@@ -50,6 +52,7 @@ enum Text: String, Localizable, CaseIterable {
     case reportBug = "Report a Bug"
     case settings = "Settings"
     case userDirectory = "User Directory"
+    case communitites = "Communities"
     case showMeInDirectory = "Show me in the directory"
     case showMeInUserDirectory = "Show me in the user directory"
     case hideMeFromUserDirectory = "Hide me from the user directory"
@@ -64,6 +67,7 @@ enum Text: String, Localizable, CaseIterable {
     case loadingUpdates = "Planetary is searching for updates\non the peer to peer decentralized web."
 
     case post = "Post"
+    case preview = "Preview"
     case newPost = "New Post"
     case deletePost = "Delete this post"
     case editPost = "Edit this post"
@@ -87,10 +91,12 @@ enum Text: String, Localizable, CaseIterable {
     case following = "Following"
     case followedBy = "Followed By"
     case isFollowingYou = "is currently following you"
-    case followedByCount = "Followed by {{ count }} in your network"
-    case followingCount = "Following {{ count }} in your network"
+    
+    case followedByCount = "Followed by {{ count }}"
+    case followingCount = "Following {{ count }}"
+    case inYourNetwork = " in your network"
+    
     case followedByShortCount = "{{ count }} Followers"
-    case followingShortCount = "Following {{ count }}"
 
     case unfollow = "Stop following"
 
@@ -99,7 +105,12 @@ enum Text: String, Localizable, CaseIterable {
     case copyMessageIdentifier = "Copy Message Identifier"
     
     case copyPublicIdentifier = "Copy Profile Identifier"
+    case sharePublicIdentifier = "Share Public Identifier"
+    
     case shareThisProfile = "Share This Profile"
+    case shareThisMessage = "Share This Message"
+    case shareThisProfileText = "Find {{ who }} on Planetary at {{ link }}"
+    case shareThisMessageText = "{{ who }} posted: {{ what }} {{ link }}"
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
@@ -122,11 +133,12 @@ enum Text: String, Localizable, CaseIterable {
 
     case countOnlinePeers = "{{ count }} ONLINE PEERS"
     case countLocalPeers = "{{ count }} LOCAL PEERS"
-
+    case lastSynced = "SYNCED: {{ when }}"
+    
     case channels = "Hashtags"
     case select = "Select"
-    case home = "Home"
-    case explore = "Explore"
+    case home = "For You"
+    case explore = "Discover"
     case messages = "Messages"
     case notifications = "Notifications"
     case thread = "Thread"
@@ -137,8 +149,12 @@ enum Text: String, Localizable, CaseIterable {
 
     case debug = "Debug"
     
+    case join = "Join"
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
+    
+    case refresh = "Refresh"
+    case markdownSupported = "Markdown preview"
 }
 
 // MARK:- ImagePicker
@@ -231,7 +247,7 @@ extension Text {
         case changePhoto = "Change photo"
         case confirmPhoto = "Yes, that's good!"
 
-        case startOver = "Start-Over"
+        case startOver = "Start Over"
 
         case contactsHint = "We one-way encrypt this data so we can never access it directly."
         case connect = "Connect away!"
@@ -239,20 +255,20 @@ extension Text {
         case contactsWIP = "Apologies, this feature is a work in progress. Tap 'OK' to see a list of recommended users to follow."
         case listMeTitle = "List me in the user directory"
         case listMeMessage = "This allows people to find you if they know your name or phone number"
-        case thanksForTrying = "Thanks for trying Planetary and we look forward to seeing what you post."
+        case thanksForTrying = "Thanks for trying Planetary! It's customary to use the #newpeople hashtag to introduce yourself."
         case doneOnboarding = "Phew! I'm done!"
         case earlyAccess = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!"
         case iUnderstand = "Yes, I understand"
 
         case somethingWentWrong = "Oh no! Something went wrong!"
-        case errorRetryMessage = "This is not your fault, we messed something up. You can try again or start-over, and please come and tell one of us about it."
-        case resumeRetryMessage = "This is not your fault, we messed something up. If some cases, it may mean your device cannot reach the network, and trying again later might help."
+        case errorRetryMessage = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it."
+        case resumeRetryMessage = "This is not your fault, we messed something up. In some cases, it may mean your device cannot reach the network, and trying again later might help."
 
         case backupHint = "Planetary does not use passwords - you have a secret key that you need to keep safe. If you can, you should back it up. Note: this feature is still a work in progress."
         case backUp = "Yes, back up my identity"
         case bioHint = "Don't worry too much about what you say, you can change it later."
 
-        case benefits = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\nFind out more"
+        case benefits = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\n\nFind out more"
         case findOutMore = "Find out more"
         case thatSoundsGreat = "That sounds great!"
 
@@ -290,6 +306,17 @@ extension Text {
     }
 }
 
+// MARK:- Public Web Hosting
+
+extension Text {
+
+    enum PublicWebHosting: String, Localizable, CaseIterable {
+        case enabled = "Enabled"
+        case title = "Public Web Hosting"
+        case footer = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible."
+    }
+}
+
 // MARK:- Push
 
 extension Text {
@@ -320,7 +347,7 @@ extension Text {
 extension Text {
 
     enum Blocking: String, Localizable, CaseIterable {
-        case alertTitle = "Are you sure you want to block {{ name }}? You will no longer see each others content or be able to contact each other."
+        case alertTitle = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other."
         case buttonTitle = "Yes, block {{ name }}"
         case blockedUsers = "Blocked Users"
         case footer = "Blocked users cannot see your posts or contact you, and you will need to unblock them before you can see their posts or contact them. It may take some time to see users and content once they have been unblocked."
@@ -334,7 +361,7 @@ extension Text {
     enum Debug: String, Localizable, CaseIterable {
         case debugTitle = "Hacker Mode"
         case debugMenu = "Dangerous and powerful debug menu"
-        case debugFooter = "This is where we let you shot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options."
+        case debugFooter = "This is where we let you shoot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options."
     }
 }
 
@@ -359,5 +386,15 @@ extension Text {
     enum Post: String, Localizable, CaseIterable {
         case one = "post"
         case many = "posts"
+    }
+}
+
+extension Text {
+    enum Report: String, Localizable, CaseIterable {
+        case somebody = "Somebody"
+        case feedFollowed = "%@ started following you"
+        case postReplied = "%@ replied to your post"
+        case feedMentioned = "%@ mentioned you in a post"
+        case messageLiked = "%@ liked your post"
     }
 }

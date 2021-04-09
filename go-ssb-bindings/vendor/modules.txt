@@ -57,15 +57,20 @@ github.com/philhofer/fwd
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
 # github.com/remyoudompheng/bigfft v0.0.0-20190728182440-6a916e37a237
 github.com/remyoudompheng/bigfft
+# github.com/stretchr/testify v1.5.1
+## explicit
+github.com/stretchr/testify/assert
 # github.com/tinylib/msgp v1.1.0
 github.com/tinylib/msgp/msgp
 # github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
 # github.com/willf/bitset v1.1.10
 github.com/willf/bitset
-# go.cryptoscope.co/librarian v0.2.1-0.20200519132401-80c3b8105d40
+# go.cryptoscope.co/librarian v0.2.1-0.20200604160012-d85e03a70e79
 go.cryptoscope.co/librarian
 go.cryptoscope.co/librarian/badger
 go.cryptoscope.co/librarian/mkv
@@ -73,7 +78,7 @@ go.cryptoscope.co/librarian/mkv
 ## explicit
 go.cryptoscope.co/luigi
 go.cryptoscope.co/luigi/mfr
-# go.cryptoscope.co/margaret v0.1.7-0.20200519144842-7c553c9d3bce
+# go.cryptoscope.co/margaret v0.1.7-0.20200603134144-6888097421a8
 ## explicit
 go.cryptoscope.co/margaret
 go.cryptoscope.co/margaret/codec/msgpack
@@ -85,7 +90,7 @@ go.cryptoscope.co/margaret/multilog/badger
 go.cryptoscope.co/margaret/multilog/roaring
 go.cryptoscope.co/margaret/multilog/roaring/mkv
 go.cryptoscope.co/margaret/offset2
-# go.cryptoscope.co/muxrpc v1.5.4-0.20200501201518-aec356c21b48
+# go.cryptoscope.co/muxrpc v1.5.4-0.20200527143049-1c5d85371ced
 ## explicit
 go.cryptoscope.co/muxrpc
 go.cryptoscope.co/muxrpc/codec
@@ -98,7 +103,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.0.0-20200520144233-fda9a98207d8
+# go.cryptoscope.co/ssb v0.0.0-20200302095059-b4d663e8b635 => /Users/cryptix/ssb/go-ssb
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -108,6 +113,7 @@ go.cryptoscope.co/ssb/indexes
 go.cryptoscope.co/ssb/internal/ctxutils
 go.cryptoscope.co/ssb/internal/extra25519
 go.cryptoscope.co/ssb/internal/mutil
+go.cryptoscope.co/ssb/internal/muxmux
 go.cryptoscope.co/ssb/internal/neterr
 go.cryptoscope.co/ssb/internal/netwraputil
 go.cryptoscope.co/ssb/internal/transform
@@ -119,6 +125,7 @@ go.cryptoscope.co/ssb/multilogs
 go.cryptoscope.co/ssb/network
 go.cryptoscope.co/ssb/plugins/blobs
 go.cryptoscope.co/ssb/plugins/control
+go.cryptoscope.co/ssb/plugins/friends
 go.cryptoscope.co/ssb/plugins/get
 go.cryptoscope.co/ssb/plugins/gossip
 go.cryptoscope.co/ssb/plugins/legacyinvites
@@ -139,6 +146,7 @@ go.mindeco.de/ssb-gabbygrove
 ## explicit
 go.mindeco.de/ssb-multiserver
 # golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+## explicit
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -209,6 +217,8 @@ gonum.org/v1/gonum/lapack/lapack64
 gonum.org/v1/gonum/mat
 # gonum.org/v1/netlib v0.0.0-20190331212654-76723241ea4e
 ## explicit
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2
 # modernc.org/fileutil v1.0.1-0.20191220121946-b2535a37172b
 modernc.org/fileutil
 # modernc.org/internal v1.0.0
@@ -226,3 +236,4 @@ modernc.org/sortutil
 # modernc.org/zappy v1.0.0
 modernc.org/zappy
 # golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+# go.cryptoscope.co/ssb => /Users/cryptix/ssb/go-ssb

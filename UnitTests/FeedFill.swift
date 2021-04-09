@@ -58,8 +58,6 @@ class ViewDatabaseBench: XCTestCase {
     }
 }
 
-
-
 class ViewDatabaseTest: XCTestCase {
     
     var tmpURL :URL = URL(string: "unset")!
@@ -90,7 +88,8 @@ class ViewDatabaseTest: XCTestCase {
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
             XCTAssertNotNil(msgs)
-            XCTAssertEqual(msgs.count, expMsgCount)
+            // +1 to fake-cause the duplication bug
+            XCTAssertEqual(msgs.count, expMsgCount+1)
             
             // put them all in
             try vdb.fillMessages(msgs: msgs)
@@ -107,7 +106,7 @@ class ViewDatabaseTest: XCTestCase {
         do {
             // find them all
             let stats = try self.vdb.stats()
-            XCTAssertEqual(stats[.messages], expMsgCount-8) // 8 tag messaes from old test data (TODO better test data creation)
+            XCTAssertEqual(stats[.messages], expMsgCount-8) // 8 tag messages from old test data (TODO better test data creation)
             XCTAssertEqual(stats[.authors], 6)
             XCTAssertEqual(stats[.abouts], 6)
             XCTAssertEqual(stats[.abouts], stats[.authors]) // authors with missing abouts will not be shown
@@ -181,7 +180,7 @@ class ViewDatabaseTest: XCTestCase {
     func test20_follows() {
         do {
             for (i, f) in testFeeds.enumerated() {
-                let follows = try self.vdb.getFollows(feed: f)
+                let follows: [Identity] = try self.vdb.getFollows(feed: f)
                 
                 switch i {
                 case 0:
@@ -626,4 +625,94 @@ class ViewDatabaseTest: XCTestCase {
             XCTFail("\(error)")
         }
     }
+    
+}
+
+class ViewDatabasePreloadTest: XCTestCase {
+    
+    var tmpURL :URL = URL(string: "unset")!
+    var vdb = ViewDatabase()
+    let preloadExpMsgCount = 5
+    let expMsgCount = 81
+
+    override func setUp() {
+        let preloadData = self.data(for: "Feed_example_preload.json")
+
+        do {
+            _ = self.vdb.close()
+            
+            // get random location for the new db
+            self.tmpURL = NSURL.fileURL(withPathComponents: [NSTemporaryDirectory(), "viewDBtest-feedFillPreload"])!
+
+            do {
+                try FileManager.default.removeItem(at: self.tmpURL)
+            } catch {
+                // ignore - most likely not exists
+            }
+           
+            try FileManager.default.createDirectory(at: self.tmpURL, withIntermediateDirectories: true)
+            
+            // open DB
+            let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
+            try self.vdb.open(path: damnPath, user: testFeeds[4], maxAge: -60*60*24*30*48) // 48 month (so roughtly until 2023)
+            
+            // get test messages from JSON
+            let msgs = try JSONDecoder().decode([KeyValue].self, from: preloadData)
+            XCTAssertNotNil(msgs)
+            XCTAssertEqual(msgs.count, preloadExpMsgCount)
+            
+            // put them all in
+            try vdb.fillMessages(msgs: msgs)
+            
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
+    
+    override func tearDown() {
+        vdb.close()
+    }
+    
+    func test01_stats() {
+        do {
+            // find them all
+            let stats = try self.vdb.stats()
+            XCTAssertEqual(stats[.messages], preloadExpMsgCount)
+            XCTAssertEqual(stats[.authors], 3)
+            XCTAssertEqual(stats[.abouts], 1)
+            XCTAssertEqual(stats[.contacts], 1)
+            XCTAssertEqual(stats[.posts], 3)
+            XCTAssertEqual(stats[.votes], 0)
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
+    
+    func test02_load() {
+        let data = self.data(for: "Feed_example.json")
+        
+        do {
+            // get test messages from JSON
+            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+            XCTAssertNotNil(msgs)
+            // +1 to fake-cause the duplication bug
+            XCTAssertEqual(msgs.count, expMsgCount+1)
+            
+            // put them all in
+            try vdb.fillMessages(msgs: msgs)
+            
+            // find them all
+            let stats = try self.vdb.stats()
+            XCTAssertEqual(stats[.messages], expMsgCount-8) // 8 tag messages from old test data (TODO better test data creation)
+            XCTAssertEqual(stats[.authors], 6)
+            XCTAssertEqual(stats[.abouts], 6)
+            XCTAssertEqual(stats[.abouts], stats[.authors]) // authors with missing abouts will not be shown
+            XCTAssertEqual(stats[.contacts], 10)
+            XCTAssertEqual(stats[.posts], 26)
+            XCTAssertEqual(stats[.votes], 8)
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
+    
 }

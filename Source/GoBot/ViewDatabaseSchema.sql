@@ -88,18 +88,22 @@
 
 CREATE TABLE authors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    author TEXT UNIQUE
+    author TEXT UNIQUE,
+    hashed TEXT UNIQUE NOT NULL
 );
 
 CREATE INDEX author_id on authors (id);
 CREATE INDEX author_pubkey on authors (author);
+CREATE INDEX authors_hashed ON authors(hashed);
 
 CREATE TABLE messagekeys (
     id INTEGER PRIMARY KEY,
-    key TEXT UNIQUE
+    key TEXT UNIQUE NOT NULL,
+    hashed TEXT UNIQUE NOT NULL
 );
 CREATE INDEX messagekeys_key ON messagekeys(key);
 CREATE INDEX messagekeys_id ON messagekeys(id);
+CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
 
 -- BUT: this is mostly just glossing over the fact msg_key is referencing our messages table.
 -- the above remark is only true for root/branch on tangles and mention references
@@ -143,6 +147,12 @@ CREATE INDEX msgs_decrypted on messages (is_decrypted);
 -- quick profile listing
 CREATE INDEX helper_profile on messages (is_decrypted, type, author_id, claimed_at);
 
+-- unblock helper table
+CREATE TABLE blocked_content (
+    id integer not null, -- numerical id of the msg or author
+    type integer not null -- 0 msg, 1 author
+);
+
 -- address
 CREATE TABLE addresses (
     address_id   INTEGER PRIMARY KEY,
@@ -151,7 +161,8 @@ CREATE TABLE addresses (
 
     use          boolean default true, -- false means disabled, dont' dial
     worked_last  DATETIME default 0, -- last time a connection could be made
-    last_err     text default ""
+    last_err     text default "",
+    redeemed     real default null
 );
 
 -- this just stores the text of a post
@@ -263,6 +274,7 @@ about_id             integer NOT NULL UNIQUE,
 name                 text,
 image                text,
 description          text,
+publicWebHosting     boolean,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
 FOREIGN KEY ( about_id ) REFERENCES auhtors( "id" )
 );
@@ -310,4 +322,21 @@ CREATE TABLE channel_assignments (
     chan_ref integer not null,
     FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
     FOREIGN KEY ( chan_ref ) REFERENCES channels( "id" )
+);
+
+CREATE TABLE reports (
+    msg_ref integer not null,
+    author_id integer not null,
+    type text NOT NULL,
+    created_at real NOT NULL,
+    FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
+    FOREIGN KEY ( author_id ) REFERENCES authors( "id" )
+);
+
+CREATE TABLE pubs (
+    msg_ref integer not null,
+    host text not null,
+    port integer not null,
+    key text not null,
+    FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );

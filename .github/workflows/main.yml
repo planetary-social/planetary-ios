@@ -8,7 +8,21 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
+    - name: Install CocoaPods Keys
+      run: gem install cocoapods-keys
+    - name: Dependencies
+      run: pod install --no-repo-update
+      env:
+        MixpanelAnalyticsToken: nil
+        AuthyPhoneVerificationAPIToken: nil
+        BugsnagCrashReportingToken: nil
+        ZendeskAppID: nil
+        ZendeskClientID: nil
+        VersePushAPIToken: nil
+        VersePubAPIToken: nil
+        VerseDirectoryAPIToken: nil
+        VerseBlobToken: nil
     - name: Build
-      run: xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.4.1"
+      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=14.2" | xcpretty
     - name: Test
-      run: xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=13.4.1"
+      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=14.2" | xcpretty

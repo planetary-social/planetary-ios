@@ -27,7 +27,7 @@ class MainViewController: UITabBarController {
     private let directoryFeatureViewController = FeatureViewController(rootViewController: DirectoryViewController(),
                                                                        tabBarItemImageName: "tab-icon-directory")
 
-    private let everyoneViewController = FeatureViewController(rootViewController: EveryoneViewController(),
+    private let everyoneViewController = FeatureViewController(rootViewController: DiscoverViewController(),
                                                                        tabBarItemImageName: "tab-icon-everyone")
 
     
@@ -40,6 +40,7 @@ class MainViewController: UITabBarController {
 
         self.init(nibName: nil, bundle: nil)
         self.delegate = self
+        self.view.backgroundColor = .cardBackground
         self.tabBar.configureAppearance()
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
 
@@ -74,8 +75,8 @@ class MainViewController: UITabBarController {
 
         // rendering mode is required to disable the "grey" effect when not selected
         // look at FeatureViewController.setTabBarItem() for more
-        self.notificationsFeatureViewController.tabBarItem.image = image?.withRenderingMode(.alwaysOriginal)
-        self.notificationsFeatureViewController.tabBarItem.selectedImage = selectedImage?.withRenderingMode(.alwaysOriginal)
+        self.notificationsFeatureViewController.tabBarItem.image = image
+        self.notificationsFeatureViewController.tabBarItem.selectedImage = selectedImage
     }
 
     // Simply selects the notifications.  Useful during launch or resume if

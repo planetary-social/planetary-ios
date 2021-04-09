@@ -18,6 +18,7 @@ class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
     override func customizeView() {
         self.view.textView.becomeFirstResponder()
         self.view.textView.delegate = self
+        self.view.textView.backgroundColor = .appBackground
         self.view.hintLabel.text = Text.Onboarding.bioHint.text
         self.view.secondaryButton.setText(.skip)
         self.view.titleLabelTopConstraint?.constant = UIScreen.main.isShort ? Layout.verticalSpacing : Layout.verticalSpacing * 2

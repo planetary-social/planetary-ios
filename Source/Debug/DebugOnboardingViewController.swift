@@ -20,7 +20,6 @@ class DebugOnboardingViewController: DebugTableViewController {
         self.settings = [self.userInput(),
                          self.verification(),
                          self.start(),
-                         self.follow(),
                          self.followBack()]
         super.updateSettings()
     }
@@ -290,60 +289,6 @@ class DebugOnboardingViewController: DebugTableViewController {
         view.isScrollEnabled = false
         return view
     }()
-
-    private func follow() -> DebugTableViewController.Settings {
-
-        var settings: [DebugTableViewCellModel] = []
-
-        settings += [DebugTableViewCellModel(title: "User directory",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                cell.accessoryType = .disclosureIndicator
-            },
-                                             actionClosure:
-            {
-                [unowned self] _ in
-                let controller = DebugUserDirectoryViewController()
-                controller.context = self.context
-                self.navigationController?.pushViewController(controller, animated: true)
-            })]
-
-        settings += [DebugTableViewCellModel(title: "Tap to follow company identities",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                cell.detailTextLabel?.text = "\(Identities.planetary.all.count)"
-            },
-                                             actionClosure:
-            {
-                cell in
-                cell.showActivityIndicator()
-                guard let context = Onboarding.Context.fromCurrentAppConfiguration() else { return }
-                Onboarding.followRequiredIdentities(context: context) {
-                    [weak self] result, contacts, errors in
-                    cell.hideActivityIndicator()
-                    cell.detailTextLabel?.text = result.successOrFailed
-                    let total = contacts.count + errors.count
-                    let text = "Followed \(contacts.count) of \(total), \(errors.count) errors"
-                    self?.followErrorTextView.text = text
-                }
-            }
-        )]
-
-        settings += [DebugTableViewCellModel(title: "",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                [unowned self] cell in
-                Layout.fill(view: cell.contentView, with: self.followErrorTextView)
-            },
-                                             actionClosure: nil)]
-
-        return ("Follow", settings, nil)
-    }
 
     // MARK: Follow back
 

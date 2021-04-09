@@ -10,6 +10,18 @@ import UIKit
 
 class FollowButton: PillButton {
 
+    var operationQueue = OperationQueue()
+    
+    var star: Star? {
+        didSet {
+            if star == nil {
+                self.setTitle(.following, selected: .follow)
+            } else {
+                self.setTitle(.following, selected: .join)
+            }
+        }
+    }
+    
     var relationship: Relationship? {
         didSet {
             NotificationCenter.default.removeObserver(self)
@@ -19,7 +31,7 @@ class FollowButton: PillButton {
                 return
             }
 
-            self.isSelected = relationship.isFollowing
+            self.isSelected = !relationship.isFollowing
             self.isHidden = relationship.identity == relationship.other
 
             NotificationCenter.default.addObserver(self, selector: #selector(relationshipDidChange(notification:)), name: relationship.notificationName, object: nil)
@@ -30,11 +42,11 @@ class FollowButton: PillButton {
     // the Bool is true for following, false when not following
     var onUpdate: ((Bool) -> Void)?
 
-    override init() {
-        super.init()
+    override init(primaryColor: UIColor = .primaryAction, secondaryColor: UIColor = .secondaryAction) {
+        super.init(primaryColor: primaryColor, secondaryColor: secondaryColor)
 
-        self.setTitle(.follow, selected: .following)
-        self.setImage(UIImage.verse.buttonFollow, selected: UIImage.verse.buttonFollowing)
+        self.setTitle(.following, selected: .follow)
+        self.setImage(UIImage.verse.buttonFollowing, selected: UIImage.verse.buttonFollow)
     }
 
     override func defaultAction() {
@@ -45,40 +57,82 @@ class FollowButton: PillButton {
 
         Analytics.shared.trackDidTapButton(buttonName: "follow")
         
-        let shouldFollow = !self.isSelected
+        let shouldFollow = self.isSelected
 
-        func complete() {
-            AppController.shared.hideProgress()
-            self.isEnabled = true
-            relationship.reloadAndNotify()
-
-            self.onUpdate?(shouldFollow)
-        }
-
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         self.isEnabled = false
         if shouldFollow {
-            Bots.current.follow(relationship.other) { contact, error in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                
-                if error != nil {
-                    Analytics.shared.trackDidFollowIdentity()
+            if let star = self.star {
+                let operation = RedeemInviteOperation(star: star, shouldFollow: true)
+                operation.completionBlock = {
+                    switch operation.result {
+                    case .success, .none:
+                        DispatchQueue.main.async {
+                            AppController.shared.hideProgress()
+                            self.isEnabled = true
+                            relationship.reloadAndNotify()
+                            self.onUpdate?(shouldFollow)
+                        }
+                    case .failure(let error):
+                        Log.optional(error)
+                        CrashReporting.shared.reportIfNeeded(error: error)
+                        DispatchQueue.main.async {
+                            AppController.shared.hideProgress()
+                            self.isEnabled = true
+                            relationship.reloadAndNotify()
+                            AppController.shared.alert(error: error)
+                        }
+                    }
                 }
-                
-                complete()
+                self.operationQueue.addOperation(operation)
+            } else {
+                let operation = FollowOperation(identity: relationship.other)
+                operation.completionBlock = {
+                    if let error = operation.error {
+                        Log.optional(error)
+                        CrashReporting.shared.reportIfNeeded(error: error)
+                        DispatchQueue.main.async {
+                            AppController.shared.hideProgress()
+                            self.isEnabled = true
+                            relationship.reloadAndNotify()
+                            AppController.shared.alert(error: error)
+                        }
+                    } else {
+                        Analytics.shared.trackDidFollowIdentity()
+                        DispatchQueue.main.async {
+                            AppController.shared.hideProgress()
+                            self.isEnabled = true
+                            relationship.reloadAndNotify()
+
+                            self.onUpdate?(shouldFollow)
+                        }
+                    }
+                }
+                self.operationQueue.addOperation(operation)
             }
         } else {
-            Bots.current.unfollow(relationship.other) { contact, error in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                
-                if error != nil {
+            let operation = UnfollowOperation(identity: relationship.other)
+            operation.completionBlock = {
+                if let error = operation.error {
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    DispatchQueue.main.async {
+                        AppController.shared.hideProgress()
+                        self.isEnabled = true
+                        relationship.reloadAndNotify()
+                        AppController.shared.alert(error: error)
+                    }
+                } else {
                     Analytics.shared.trackDidUnfollowIdentity()
+                    DispatchQueue.main.async {
+                        AppController.shared.hideProgress()
+                        self.isEnabled = true
+                        relationship.reloadAndNotify()
+                        self.onUpdate?(shouldFollow)
+                    }
                 }
-                
-                complete()
             }
+            self.operationQueue.addOperation(operation)
         }
     }
 

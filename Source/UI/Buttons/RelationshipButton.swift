@@ -20,11 +20,9 @@ class RelationshipButton: IconButton {
         self.otherUserName = name
         self.content = content
 
-        super.init(icon: UIImage.verse.relationship)
+        super.init(icon: UIImage.verse.optionsOff)
 
-        relationship.load {
-            self.configureImage()
-        }
+        self.configureImage()
 
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(relationshipDidChange(notification:)),
@@ -46,6 +44,7 @@ class RelationshipButton: IconButton {
                 (.follow,   .default, self.follow),
                 (.unfollow, .default, self.unfollow),
                 (.copyMessageIdentifier, .default, self.copyMessageIdentifier),
+                (.shareThisMessage, .default, self.shareMessage),
 
 //                (.addFriend,    .default,     self.follow),
 //                (.removeFriend, .destructive, self.unfollow),
@@ -150,6 +149,26 @@ class RelationshipButton: IconButton {
         Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
         UIPasteboard.general.string = content.key
         AppController.shared.showToast(Text.identifierCopied.text)
+    }
+    
+    func shareMessage() {
+        guard let publicLink = content.key.publicLink else {
+            return
+        }
+        let who = otherUserName
+        let link = publicLink.absoluteString
+        let postWithoutGallery = content.value.content.post?.text.withoutGallery() ?? ""
+        let what = postWithoutGallery.prefix(280 - who.count - link.count - Text.shareThisMessageText.text.count)
+        let text = Text.shareThisMessageText.text(["who": who,
+                                                   "what": String(what),
+                                                   "link": publicLink.absoluteString])
+        Analytics.shared.trackDidSelectAction(actionName: "share_message")
+        let activityController = UIActivityViewController(activityItems: [text],
+                                                          applicationActivities: nil)
+        AppController.shared.present(activityController, animated: true)
+        if let popOver = activityController.popoverPresentationController {
+            popOver.sourceView = self
+        }
     }
 
     func blockUser() {

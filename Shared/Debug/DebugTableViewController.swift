@@ -15,6 +15,7 @@ class DebugTableViewController: UITableViewController {
     /// Subclasses are encouraged to register their own custom UITableViewCells.
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.backgroundColor = UIColor.appBackground
         self.tableView.register(DebugValueTableViewCell.self, forCellReuseIdentifier: DebugValueTableViewCell.className)
         self.tableView.register(DebugSubtitleTableViewCell.self, forCellReuseIdentifier: DebugSubtitleTableViewCell.className)
         self.tableView.register(DebugImageTableViewCell.self, forCellReuseIdentifier: DebugImageTableViewCell.className)
@@ -56,7 +57,10 @@ class DebugTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
         cell.accessoryType = .none
         cell.detailTextLabel?.text = nil
+        cell.detailTextLabel?.textColor = UIColor.secondaryText
+        cell.textLabel?.textColor = UIColor.mainText
         cell.textLabel?.text = model.title
+        cell.backgroundColor = UIColor.cardBackground
         model.valueClosure?(cell)
         return cell
     }

@@ -38,7 +38,13 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
     
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { return self.kvs[index] }
     
-    func keyValueBy(index: Int) -> KeyValue? { return self.kvs[index] }
+    func keyValueBy(index: Int) -> KeyValue? {
+        if self.kvs.isEmpty {
+            return nil
+        } else {
+            return self.kvs[index]
+        }
+    }
 
     func prefetchUpTo(index: Int) { /* noop */ }
 }
@@ -59,12 +65,12 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     init(with src: KeyValueSource) throws {
         self.source = src
         self.count = self.source.total
-        self.msgs = try self.source.retreive(limit: 10, offset: 0)
+        self.msgs = try self.source.retreive(limit: 2, offset: 0)
         self.lastPrefetch = self.msgs.count
     }
 
     func keyValueBy(index: Int) -> KeyValue? {
-        if index >= self.count { fatalError("FeedDataProxy #\(index) out-of-bounds") }
+        if index >= self.count { return nil }
         guard index < self.msgs.count else { return nil }
         return self.msgs[index]
     }
@@ -166,6 +172,10 @@ class RecentViewKeyValueSource: KeyValueSource {
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
         return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
+    }
+    
+    static func top(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws -> MessageIdentifier? {
+        return try vdb.recentIdentifiers(limit: 1, onlyFollowed: onlyFollowed).first
     }
 }
 

@@ -36,12 +36,14 @@ type Indexer interface {
 	GetIndexNamesMultiLog() []string
 }
 
-// Replicator is used to tell the bot which feeds to replicate and which ones to block
+// Replicator is used to tell the bot which feeds to copy from other peers and which ones to block
 type Replicator interface {
 	Replicate(*FeedRef)
 	DontReplicate(*FeedRef)
 	Block(*FeedRef)
 	Unblock(*FeedRef)
+
+	Lister() ReplicationLister
 }
 
 // ReplicationLister is used by the executing part to get the lists

@@ -12,8 +12,8 @@ type connectPlug struct {
 	h muxrpc.Handler
 }
 
-func NewPlug(i logging.Interface, n ssb.Network) ssb.Plugin {
-	return &connectPlug{h: New(i, n)}
+func NewPlug(i logging.Interface, n ssb.Network, r ssb.Replicator) ssb.Plugin {
+	return &connectPlug{h: New(i, n, r)}
 }
 
 func (p connectPlug) Name() string {

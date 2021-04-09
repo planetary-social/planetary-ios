@@ -45,10 +45,15 @@ class PostCellView: KeyValueView {
         view.textContainer.lineBreakMode = .byTruncatingTail
         view.isSkeletonable = true
         view.linesCornerRadius = 30
+        view.backgroundColor = .cardBackground
         return view
     }()
 
     var textViewTopConstraint = NSLayoutConstraint()
+    
+    /// Activate or deactivate this constraint to make text view have no height (5px actually),
+    /// for instance, if the text is empty
+    var textViewZeroHeightConstraint = NSLayoutConstraint()
 
     var textViewTopInset: CGFloat {
         if self.displayHeader {
@@ -70,8 +75,13 @@ class PostCellView: KeyValueView {
 
     var truncationLimit: TruncationSettings? {
         didSet {
-            self.truncationData = nil
-            self.configureTruncatedState()
+            if let oldValue = oldValue, let newValue = truncationLimit, newValue.to == oldValue.to, newValue.over == oldValue.over {
+                // Don't recalculate truncated state
+                return
+            } else {
+                self.truncationData = nil
+                self.configureTruncatedState()
+            }
         }
     }
 
@@ -100,6 +110,21 @@ class PostCellView: KeyValueView {
     func configureTruncatedState() {
         self.calculateTruncationDataIfNecessary()
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
+        
+        //not so clean but it gest likes displaying.
+        if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == Planetary.ContentType.vote {
+            self.textView.font = UIFont.post.body.withSize(200)
+            self.textView.textAlignment = .center
+        } else if self.textView.attributedText.string.isSingleEmoji,
+             let post = self.keyValue?.value.content.post,
+              !post.hasBlobs {
+              self.textView.font = UIFont.post.body.withSize(200)
+              self.textView.textAlignment = .center
+          } else {
+              self.textView.textAlignment = .natural
+        }
+        
+        self.textViewZeroHeightConstraint.isActive = self.textView.attributedText.string.isEmpty
     }
 
     /// Calculates the truncation data, but only when necessary.  In some cases, an optimized
@@ -149,6 +174,8 @@ class PostCellView: KeyValueView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
+        
+        self.backgroundColor = .cardBackground
 
         Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
 
@@ -157,6 +184,15 @@ class PostCellView: KeyValueView {
                                          insets: UIEdgeInsets(top: self.textViewTopInset, left: Layout.postSideMargins, bottom: 0, right: -Layout.postSideMargins),
                                          respectSafeArea: false)
         self.textViewTopConstraint = top
+        
+        self.textViewZeroHeightConstraint = NSLayoutConstraint(item: self.textView,
+                                                               attribute: .height,
+                                                               relatedBy: .equal,
+                                                               toItem: nil,
+                                                               attribute: .notAnAttribute,
+                                                               multiplier: 1,
+                                                               constant: 5)
+        self.textViewZeroHeightConstraint.isActive = false
 
         self.addSubview(self.galleryView)
         self.galleryView.pinTop(toBottomOf: self.textView, constant: 5)
@@ -190,14 +226,14 @@ class PostCellView: KeyValueView {
         if let vote = keyValue.value.content.vote {
             let expression: String
             if vote.vote.value > 0 {
-                expression = "👍"
+                expression = "💜"
             } else {
-                expression = "👎"
+                expression = "💔"
             }
             
             self.fullPostText = NSAttributedString(string: expression)
             self.textView.text = expression
-            
+            self.configureTruncatedState()
             
             self.galleryViewFullHeightConstraint.isActive = false
             self.galleryViewZeroHeightConstraint.isActive = true

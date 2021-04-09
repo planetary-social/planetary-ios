@@ -125,19 +125,22 @@ func (ref *StorageRef) MarshalTo(data []byte) (n int, err error) {
 	}
 	switch t {
 	case StorageRefFeedLegacy:
-		copy(data, append([]byte{0x01}, ref.fr.ID...))
+		n = copy(data, append([]byte{0x01}, ref.fr.ID...))
 	case StorageRefFeedGabby:
-		copy(data, append([]byte{0x02}, ref.fr.ID...))
+		n = copy(data, append([]byte{0x02}, ref.fr.ID...))
 	case StorageRefMessageLegacy:
-		copy(data, append([]byte{0x03}, ref.mr.Hash...))
+		n = copy(data, append([]byte{0x03}, ref.mr.Hash...))
 	case StorageRefMessageGabby:
-		copy(data, append([]byte{0x04}, ref.mr.Hash...))
+		n = copy(data, append([]byte{0x04}, ref.mr.Hash...))
 	case StorageRefBlob:
-		copy(data, append([]byte{0x05}, ref.br.Hash...))
+		n = copy(data, append([]byte{0x05}, ref.br.Hash...))
 	default:
 		return 0, errors.Wrapf(ErrInvalidRefType, "invalid binref type: %x", t)
 	}
-	return binrefSize, nil
+	if n != binrefSize {
+		return 0, errors.Errorf("failed to marshal storage ref")
+	}
+	return n, nil
 }
 
 func (ref *StorageRef) Unmarshal(data []byte) error {

@@ -20,14 +20,14 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
 
     private let circleView: UIView = {
         let view = UIView.forAutoLayout()
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .appBackground
         view.stroke()
         return view
     }()
 
     private lazy var cameraButton: UIButton = {
         let view = UIButton(type: .custom)
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .appBackground
         view.setImage(UIImage.verse.cameraLarge, for: .normal)
         view.imageEdgeInsets = UIEdgeInsets(top: -60, left: 0, bottom: 0, right: 0)
         view.addTarget(self, action: #selector(primary), for: .touchUpInside)
@@ -56,12 +56,6 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
 
         self.circleView.addSubview(self.circleLabel)
         Layout.center(self.circleLabel, atTopOf: self.circleView, inset: 94)
-    }
-
-    override func didStart() {
-        // Last step was directory, it followed
-        // identities and bots
-        AppController.shared.pokeSync()
     }
 
     override func secondary() {

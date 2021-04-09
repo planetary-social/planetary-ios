@@ -16,6 +16,9 @@ typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) ->
 // get's called with the messages left to process
 typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
 
+// get's called with a token and an expiry date as unix timestamp
+typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, Int64) -> Void
+
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
@@ -32,6 +35,7 @@ fileprivate struct FeedLogRequest: Codable {
 struct ScuttlegobotRepoCounts: Decodable {
     let messages: UInt
     let feeds: UInt
+    let lastHash: String
 }
 
 struct ScuttlegobotBlobWant: Decodable {
@@ -72,6 +76,9 @@ fileprivate struct BotConfig: Encodable {
     let ListenAddr: String
     let Hops: UInt
     let SchemaVersion: UInt
+
+    let ServicePubs: [Identity]? // identities of services which supply planetary specific services
+
     #if DEBUG
     let Testing: Bool = true
     #else
@@ -85,48 +92,6 @@ class GoBotInternal {
     var currentRepoPath: String { return self.repoPath }
     private var repoPath: String = "/tmp/FBTT/unset"
     
-    // TODO this is little dangerous if Identities.verse is modified
-    // ultimately this should be configured from querying
-    // the Verse REST API
-    // tuple of primary and fallbacks TODO: undo this once the live-streaming is in place
-    private var allPeers: [ String : (Peer, [Peer]) ] = [
-        NetworkKey.ssb.string: ( Peer(tcpAddr: "main2.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub2"]!) , [
-            Peer(tcpAddr: "main1.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub1"]!),
-            Peer(tcpAddr: "main3.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub3"]!),
-            Peer(tcpAddr: "main4.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub4"]!),
-            Peer(tcpAddr: "main5.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub5"]!),
-            Peer(tcpAddr: "main6.planetary.social:8008", pubKey: Identities.ssb.pubs["planetary-pub6"]!),
-        ]),
-
-        NetworkKey.planetary.string: (Peer(tcpAddr: "demo2.planetary.social:7227", pubKey: Identities.planetary.pubs["testpub_go2"]!), [
-            Peer(tcpAddr: "demo1.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go1"]!),
-            Peer(tcpAddr: "demo3.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go3"]!),
-            Peer(tcpAddr: "demo4.planetary.social:8008", pubKey: Identities.planetary.pubs["testpub_go4"]!)
-        ]),
-
-        NetworkKey.integrationTests.string: (Peer(tcpAddr: "testing-ci.planetary.social:9119", pubKey: Identities.testNet.pubs["integrationpub1"]!), [])
-    ]
-    
-    private var peers: [Peer] {
-        get {
-            guard let peersForNetwork = self.allPeers[self.currentNetwork.string] else {
-                return []
-            }
-            var peersList: [Peer] = []
-            peersList.append(peersForNetwork.0)
-            for p in peersForNetwork.1 {
-                peersList.append(p)
-            }
-            return peersList
-        }
-    }
-
-    var peerIdentities: [(String, String)] {
-        var identities: [(String, String)] = []
-        for peer in self.peers { identities += [(peer.tcpAddr, peer.pubKey)] }
-        return identities
-    }
-
     let name = "GoBot"
 
     var version: String {
@@ -164,8 +129,10 @@ class GoBotInternal {
         self.repoPath = pathPrefix.appending("/GoSbot")
         
         // TODO: device address enumeration (v6 and v4)
-        // https://github.com/VerseApp/ios/issues/82UInt
+        // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
+
+        let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
 
         let cfg = BotConfig(
             AppKey: network.string,
@@ -174,7 +141,8 @@ class GoBotInternal {
             Repo: self.repoPath,
             ListenAddr: listenAddr,
             Hops: 1,
-            SchemaVersion: ViewDatabase.schemaVersion)
+            SchemaVersion: ViewDatabase.schemaVersion,
+            ServicePubs: servicePubs)
         
         let enc = JSONEncoder()
         var cfgStr: String
@@ -188,11 +156,18 @@ class GoBotInternal {
         var worked: Bool = false
         cfgStr.withGoString {
             cfgGoStr in
-            worked = ssbBotInit(cfgGoStr, self.blobsNotify)
+            worked = ssbBotInit(cfgGoStr, self.notifyBlobReceived, self.notifyNewBearerToken)
         }
         
         if worked {
             self.currentNetwork = network
+
+            self.replicate(feed: secret.identity)
+            // make sure internal planetary pubs are authorized for connections
+            for pub in servicePubs {
+                self.replicate(feed: pub)
+            }
+            
             return nil
         }
         
@@ -210,6 +185,19 @@ class GoBotInternal {
             return false
         }
         return true
+    }
+
+    // MARK: planetary services
+
+    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = {
+        cstr, expires in
+        let now = Int64(Date.init().timeIntervalSince1970)
+        guard expires - now > 0 else { print("received expired token? \(expires)"); return }
+        guard let token = cstr else { return }
+        let tok = String(cString: token)
+        let expiresWhen = Date(timeIntervalSince1970: Double(expires))
+        TokenStore.shared.update(tok, expires: expiresWhen)
+        return
     }
 
     // MARK: connections
@@ -253,40 +241,45 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dial(atLeast: Int, tries: Int = 10) -> Bool {
-        let wanted = min(self.peers.count, atLeast) // how many connections are we shooting for?
+    func dial(from peers: [Peer], atLeast: Int, tries: Int = 10) -> Bool {
+        let wanted = min(peers.count, atLeast) // how many connections are we shooting for?
         var hasWorked :Int = 0
         var tried: Int = tries
         while hasWorked < wanted && tried > 0 {
-            if self.dialAnyone() {
+            if self.dialAnyone(from: peers) {
                 hasWorked += 1
             }
             tried -= 1
         }
         if hasWorked != wanted {
-            Log.unexpected(.botError, "failed to make pub connection(s)")
+            Log.unexpected(.botError, "failed to make peer connection(s)")
             return false
         }
         return true
     }
 
-    private func dialAnyone() -> Bool {
-        guard let p = self.peers.randomElement() else {
+    private func dialAnyone(from peers: [Peer]) -> Bool {
+        guard let peer = peers.randomElement() else {
             Log.unexpected(.botError, "no peers in sheduler table")
             return false
         }
-        return self.dialOne(peer: p)
+        return self.dialOne(peer: peer)
     }
     
     @discardableResult
-    func dialSomePeers() -> Bool {
-        guard self.openConnections() == 0 else { return true } // only make connections if we dont have any
+    func dialSomePeers(from peers: [Peer]) -> Bool {
+        guard self.openConnections() < 3 else { return true } // only make connections if we dont have any
         ssbConnectPeers(2)
-        self.dial(atLeast: 1, tries: 10)
+        guard peers.count > 0 else {
+            Log.debug("User doesn't have redeemed pubs")
+            return true
+        }
+        self.dial(from: peers, atLeast: 1, tries: 10)
         return true
     }
     
     func dialOne(peer: Peer) -> Bool {
+        Log.debug("Dialing \(peer.pubKey)")
         let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
         var worked: Bool = false
         multiServ.withGoString {
@@ -299,11 +292,12 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dialForNotifications() -> Bool {
-        guard let peersForNetwork = self.allPeers[self.currentNetwork.string] else {
+    func dialForNotifications(from peers: [Peer]) -> Bool {
+        if let peer = peers.randomElement() {
+            return dialOne(peer: peer)
+        } else {
             return false
         }
-        return dialOne(peer: peersForNetwork.0)
     }
 
     // MARK: Status / repo stats
@@ -323,7 +317,7 @@ class GoBotInternal {
         percDone, remaining in
         guard let remStr = remaining else { return }
         let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateDatabaseProgress(perc: percDone/100, status: status)
+        let notification = Notification.didUpdateFSCKRepair(perc: percDone/100, status: status)
         NotificationCenter.default.post(notification)
     }
     
@@ -344,15 +338,13 @@ class GoBotInternal {
         })
         dcTimer.start()
 
-        Timers.shared.syncTimer.stop()
         defer {
             dcTimer.stop()
-            Timers.shared.syncTimer.start(fireImmediately: true)
         }
 
         NotificationCenter.default.post(Notification.didStartFSCKRepair())
         defer {
-            NotificationCenter.default.post(name: .didFinishDatabaseProcessing, object: nil)
+            NotificationCenter.default.post(Notification.didFinishFSCKRepair())
         }
         guard self.repoFSCK(.Sequences) == false else {
             Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")
@@ -383,6 +375,32 @@ class GoBotInternal {
         free(status)
         let dec = JSONDecoder()
         return try dec.decode(ScuttlegobotBotStatus.self, from: d)
+    }
+    
+    // MARK: manual block / replicate
+    func block(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedBlock($0, true)
+        }
+    }
+
+    func unblock(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedBlock($0, false)
+        }
+    }
+
+    // TODO: call this to fetch a feed without following it
+    func replicate(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedReplicate($0, true)
+        }
+    }
+
+    func dontReplicate(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedReplicate($0, false)
+        }
     }
 
     // MARK: Null / Delete
@@ -422,7 +440,7 @@ class GoBotInternal {
 
     // MARK: blobs
 
-    private lazy var blobsNotify: CBlobsNotifyCallback = {
+    private lazy var notifyBlobReceived: CBlobsNotifyCallback = {
         numberOfBytes, ref in
         guard let ref = ref else { return false }
         let identifier = BlobIdentifier(cString: ref)
@@ -449,8 +467,8 @@ class GoBotInternal {
         free(rawBytes)
         completion(newRef, nil)
     }
-
-    func blobGet(ref: BlobIdentifier) throws -> Data {
+    
+    func blobFileURL(ref: BlobIdentifier) throws -> URL {
         let hexRef = ref.hexEncodedString()
         if hexRef.isEmpty {
             throw GoBotError.unexpectedFault("blobGet: could not make hex representation of blob reference")
@@ -466,10 +484,14 @@ class GoBotInternal {
         u.appendPathComponent("sha256")
         u.appendPathComponent(dir)
         u.appendPathComponent(rest)
-        
+       
+        return u
+    }
+
+    func blobGet(ref: BlobIdentifier) throws -> Data {
+        let u = try blobFileURL(ref: ref)
         do {
-            let data = try Data(contentsOf: u)
-            return data
+            return try Data(contentsOf: u)
         } catch {
             do {
                 try blobsWant(ref: ref)
@@ -530,48 +552,33 @@ class GoBotInternal {
     // MARK: message streams
     
     // aka createLogStream
-    func getReceiveLog(startSeq: Int64, limit: Int, completion: @escaping KeyValuesCompletion) {
-        var err: Error? = nil
-        var msgs = [KeyValue]()
-        defer {
-            completion(msgs, err)
-        }
-
+    func getReceiveLog(startSeq: Int64, limit: Int) throws -> KeyValues {
         guard let rawBytes = ssbStreamRootLog(UInt64(startSeq), Int32(limit)) else {
-            err = GoBotError.unexpectedFault("rxLog pre-processing error")
-            return
+            throw GoBotError.unexpectedFault("rxLog pre-processing error")
         }
         let data = String(cString: rawBytes).data(using: .utf8)!
         free(rawBytes)
         do {
             let decoder = JSONDecoder()
-            msgs = try decoder.decode([KeyValue].self, from: data)
+            return try decoder.decode([KeyValue].self, from: data)
         } catch {
-            err = GoBotError.duringProcessing("rxLog json decoding error:", error)
-            return
+            throw GoBotError.duringProcessing("rxLog json decoding error:", error)
         }
     }
     
     // aka private.read
-    func getPrivateLog(startSeq: Int64, limit: Int, completion: @escaping KeyValuesCompletion) {
-        var err: Error? = nil
-        var msgs = [KeyValue]()
-        defer {
-            completion(msgs, err)
-        }
-
+    func getPrivateLog(startSeq: Int64, limit: Int) throws -> KeyValues {
         guard let rawBytes = ssbStreamPrivateLog(UInt64(startSeq), Int32(limit)) else {
-            err = GoBotError.unexpectedFault("privateLog pre-processing error")
-            return
+            throw GoBotError.unexpectedFault("privateLog pre-processing error")
         }
+        
         let data = String(cString: rawBytes).data(using: .utf8)!
         free(rawBytes)
         let decoder = JSONDecoder()
         do {
-            msgs = try decoder.decode([KeyValue].self, from: data)
+            return try decoder.decode([KeyValue].self, from: data)
         } catch {
-            err = GoBotError.duringProcessing("privateLog json decoding error:", error)
-            return
+            throw GoBotError.duringProcessing("privateLog json decoding error:", error)
         }
     }
     

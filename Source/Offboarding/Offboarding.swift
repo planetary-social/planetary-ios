@@ -29,37 +29,30 @@ class Offboarding {
 
         Analytics.shared.trackOffboardingStart()
 
-        // offboard from directory
+        // unfollow all
         // errors not allowed
-        DirectoryAPI.shared.directory(offboard: identity) {
-            success, error in
-            if let error = error { completion(.apiError(error)); return }
+        Offboarding.unfollowAllFollowedBy(identity) {
+            error in
+            if let error = error { completion(.botError(error)); return }
 
-            // unfollow all
+            // log out
             // errors not allowed
-            Offboarding.unfollowAllFollowedBy(identity) {
+            Bots.current.logout {
                 error in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                
                 if let error = error { completion(.botError(error)); return }
+                
+                // remove configuration
+                configuration.unapply()
+                AppConfigurations.delete(configuration)
 
-                // log out
-                // errors not allowed
-                Bots.current.logout {
-                    error in
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    
-                    if let error = error { completion(.botError(error)); return }
-                    
-                    // remove configuration
-                    configuration.unapply()
-                    AppConfigurations.delete(configuration)
-
-                    // done
-                    Analytics.shared.trackOffboardingEnd()
-                    Analytics.shared.forget()
-                    
-                    completion(nil)
-                }
+                // done
+                Analytics.shared.trackOffboardingEnd()
+                Analytics.shared.forget()
+                
+                completion(nil)
             }
         }
     }
@@ -69,8 +62,7 @@ class Offboarding {
                                               completion: @escaping ((Error?) -> Void))
     {
         // identities following this identity
-        Bots.current.follows(identity: identity) {
-            identities, error in
+        Bots.current.follows(identity: identity) { (identities: [Identity], error) in
             if let error = error { completion(error); return }
             if identities.isEmpty { completion(nil); return }
 

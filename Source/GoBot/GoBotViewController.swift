@@ -48,6 +48,7 @@ class GoBotViewController: DebugTableViewController {
         
         var settings: [DebugTableViewCellModel] = []
         
+        
         settings += [DebugTableViewCellModel(title: "Version",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure:
@@ -98,26 +99,6 @@ class GoBotViewController: DebugTableViewController {
                 }
             )]
             
-        } else {
-            settings += [DebugTableViewCellModel(title: "Trigger Remote Sync",
-                                          cellReuseIdentifier: DebugValueTableViewCell.className,
-                                          valueClosure:
-                {
-                    cell in
-                    cell.accessoryType = .detailButton
-                },
-                                          actionClosure:
-                {
-                    cell in
-                    DispatchQueue.global(qos: .utility).async {
-                        GoBot.shared.bot.dial(atLeast: 3)
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
-                        self.updateSettings()
-                        // TODO: poll if active?
-                    })
-                }
-            )]
         }
         
         return ("Status", settings, nil)

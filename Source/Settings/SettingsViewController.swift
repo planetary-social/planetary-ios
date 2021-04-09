@@ -26,7 +26,7 @@ class SettingsViewController: DebugTableViewController {
     }
 
     internal override func updateSettings() {
-        self.settings = [self.directory(),
+        self.settings = [self.publicWebHosting(),
                          self.push(),
                          self.usage(),
                          self.managePubs(),
@@ -34,35 +34,66 @@ class SettingsViewController: DebugTableViewController {
         super.updateSettings()
     }
 
-    // MARK: User directory
+    // MARK: Public web hosting
 
-    private var inDirectory: Bool?
+    private lazy var publicWebHostingToggle: UISwitch = {
+        let toggle = UISwitch.default()
+        toggle.addTarget(self,
+                         action: #selector(self.publicWebHostingToggleValueChanged(toggle:)),
+                         for: .valueChanged)
+        return toggle
+    }()
 
-    private func directory() -> DebugTableViewController.Settings {
+    private func publicWebHosting() -> DebugTableViewController.Settings {
+        let valueClosure = { (_ cell: UITableViewCell) -> Void in
+            cell.showActivityIndicator()
+            Bots.current.about { [weak self] (about, error) in
+                cell.hideActivityIndicator()
+                let isPublicWebHostingEnabled = about?.publicWebHosting ?? false
+                self?.publicWebHostingToggle.isOn = isPublicWebHostingEnabled
+                cell.accessoryView = self?.publicWebHostingToggle
+            }
+        }
+
         var settings: [DebugTableViewCellModel] = []
+        settings += [DebugTableViewCellModel(title: Text.PublicWebHosting.enabled.text,
+                                             valueClosure: valueClosure,
+                                             actionClosure: nil)]
 
-        settings += [DebugTableViewCellModel(title: Text.showMeInDirectory.text,
-                                             valueClosure:
-            {
-                cell in
-                cell.showActivityIndicator()
-                DirectoryAPI.shared.me {  [weak self] (person, error) in
-                    DispatchQueue.main.async {
-                        let inDirectory = person?.in_directory ?? false
-                        self?.inDirectory = inDirectory
-                        cell.detailTextLabel?.text = inDirectory.yesOrNo
-                        cell.hideActivityIndicator(andShow: .disclosureIndicator)
+        return (Text.PublicWebHosting.title.text, settings, Text.PublicWebHosting.footer.text)
+    }
+
+    @objc private func publicWebHostingToggleValueChanged(toggle: UISwitch) {
+        let isPublicWebHostingEnabled = toggle.isOn
+        //AppController.shared.showProgress()
+        Bots.current.about { [weak self] (about, error) in
+            if let error = error {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                AppController.shared.hideProgress()
+                toggle.isOn = !isPublicWebHostingEnabled
+                self?.alert(error: error)
+            } else if let about = about {
+                let newAbout = about.mutatedCopy(publicWebHosting: isPublicWebHostingEnabled)
+                Bots.current.publish(content: newAbout) { (_, error) in
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+
+                    AppController.shared.hideProgress()
+                    if let error = error {
+                        self?.alert(error: error)
+                        toggle.isOn = !isPublicWebHostingEnabled
                     }
                 }
-            },
-                                             actionClosure:
-            {
-                [unowned self] cell in
-                let controller = UserDirectorySettingsViewController(inDirectory: self.inDirectory)
-                self.navigationController?.pushViewController(controller, animated: true)
-            })]
-
-        return (Text.userDirectory.text, settings, nil)
+            } else {
+                let error = AppError.unexpected
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                AppController.shared.hideProgress()
+                toggle.isOn = !isPublicWebHostingEnabled
+                self?.alert(error: error)
+            }
+        }
     }
 
     // MARK: Push

@@ -42,8 +42,8 @@ class VersePubAPI: PubAPIService {
     
     func invitePubsToFollow(_ identity: Identity, completion: @escaping ((Bool, APIError?) -> Void)) {
         let headers: APIHeaders = ["Verse-New-Key": identity]
-        self.get(path: "/v1/invite", headers: headers) {
-            data, error in
+        self.get(path: "/v1/invite", headers: headers) { data, error in
+            Log.optional(error)
             completion(error == nil, error)
         }
     }
@@ -53,7 +53,7 @@ class VersePubAPI: PubAPIService {
 extension VersePubAPI: API {
     
     var headers: APIHeaders {
-        return ["planetary-directory-authorize": self.token]
+        return ["Verse-Authorize-Pub": self.token]
     }
 
     func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {

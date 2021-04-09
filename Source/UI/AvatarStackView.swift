@@ -38,7 +38,7 @@ class AvatarStackView: UIView {
             let view = AvatarImageView()
             view.useAutoLayout()
 
-            view.layer.borderColor = UIColor.background.default.cgColor
+            view.layer.borderColor = UIColor.appBackground.cgColor
             view.layer.borderWidth = 1
 
             view.set(image: about.image)

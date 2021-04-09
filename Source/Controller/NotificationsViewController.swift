@@ -77,8 +77,7 @@ class NotificationsViewController: ContentViewController {
     // MARK: Load and refresh
 
     func load(animated: Bool = false) {
-        Bots.current.notifications() {
-            [weak self] msgs, error in
+        Bots.current.reports() { [weak self] reports, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.removeLoadingAnimation()
@@ -87,7 +86,7 @@ class NotificationsViewController: ContentViewController {
             if let error = error {
                 self?.alert(error: error)
             } else {
-                self?.update(with: msgs, animated: animated)
+                self?.update(with: reports, animated: animated)
             }
         }
     }
@@ -126,9 +125,8 @@ class NotificationsViewController: ContentViewController {
         AppController.shared.operationQueue.addOperation(refreshOperation)
     }
 
-    private func update(with feed: KeyValues?, animated: Bool = true) {
-        guard let feed = feed else { return }
-        self.dataSource.keyValues = feed
+    private func update(with reports: [Report], animated: Bool = true) {
+        self.dataSource.reports = reports
         self.tableView.reloadData()
     }
 
@@ -174,7 +172,6 @@ class NotificationsViewController: ContentViewController {
             [weak self] post in
             self?.load()
         }
-        controller.addDismissBarButtonItem()
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
@@ -202,17 +199,17 @@ class NotificationsViewController: ContentViewController {
 
 fileprivate class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
 
-    override var keyValues: KeyValues {
+    var reports: [Report] = [] {
         didSet {
 
             // segment keyvalues by date
             var today: KeyValues = []
             var yesterday: KeyValues = []
             var earlier: KeyValues = []
-            for keyValue in keyValues {
-                if      Calendar.current.isDateInToday(keyValue.userDate)     { today += [keyValue] }
-                else if Calendar.current.isDateInYesterday(keyValue.userDate) { yesterday += [keyValue] }
-                else                                                                { earlier += [keyValue] }
+            for report in reports {
+                if      Calendar.current.isDateInToday(report.createdAt)     { today += [report.keyValue] }
+                else if Calendar.current.isDateInYesterday(report.createdAt) { yesterday += [report.keyValue] }
+                else                                                                { earlier += [report.keyValue] }
             }
 
             // label each section
@@ -221,6 +218,8 @@ fileprivate class NotificationsTableViewDataSource: KeyValueTableViewDataSource 
             if yesterday.count > 0  { sections += [(.yesterday, yesterday)] }
             if earlier.count > 0    { sections += [(.recently, earlier)] }
             self.sectionedKeyValues = sections
+            
+            self.keyValues = reports.map{$0.keyValue}
         }
     }
 
@@ -289,7 +288,7 @@ fileprivate class HeaderView: UITableViewHeaderFooterView {
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        self.contentView.backgroundColor = UIColor.background.default
+        self.contentView.backgroundColor = .cardBackground
         self.useAutoLayout()
         Layout.addSeparator(toTopOf: self.contentView)
         Layout.fill(view: self.contentView,

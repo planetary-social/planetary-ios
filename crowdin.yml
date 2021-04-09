@@ -1,0 +1,3 @@
+files:
+  - source: /Source/Localization/*/*
+    translation: /Source/Localization/%locale%.lproj/Generated.strings

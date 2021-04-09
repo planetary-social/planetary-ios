@@ -1,0 +1,6 @@
+framework module PostHog {
+  umbrella header "PostHog-umbrella.h"
+
+  export *
+  module * { export * }
+}

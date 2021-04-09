@@ -31,7 +31,7 @@ class ImageGalleryView: UIView {
         layout.itemSize = CGSize.init(square: self.heightConstant - 12)
         layout.scrollDirection = .horizontal
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.backgroundColor = .white
+        view.backgroundColor = .cardBackground
         view.dataSource = self
         view.delegate = self
         view.register(ImageGalleryCell.self, forCellWithReuseIdentifier: ImageGalleryCell.identifier)
@@ -73,8 +73,21 @@ class ImageGalleryView: UIView {
         self.delegate?.imageGalleryViewDidChange(self)
     }
 
+    func add(_ images: [UIImage]) {
+        self._images += images
+        self.collectionView.reloadData()
+        let indexPath = self.images.indexPathForLast()
+        self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        self.delegate?.imageGalleryViewDidChange(self)
+    }
+
     func remove(at indexPath: IndexPath) {
         self._images.remove(at: indexPath.row)
+        self.reload()
+    }
+
+    func removeAll() {
+        self._images.removeAll()
         self.reload()
     }
 

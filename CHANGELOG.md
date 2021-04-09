@@ -4,6 +4,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.30] = 2020-08-21
+## Fixed
+- Changes in the way the app connects to peers in the network fixes major bug in the app which makes the performance of the feel slow.
+
+## [0.9.29] - 2020-07-09
+## Added
+- Followers are sorted by name.
+- You can now search among your followers by name or identity.
+
+## Fixed
+- Tooling and statistics to figure out why some users aren't seeing updates and syncs.
+
+## [0.9.28] - 2020-06-29
+## Added:
+- Explore content in the all new discover screen.
+- Block users.
+- Give hearts instead of liking a post.
+- Tap the network status doodle to trigger a sync.
+
+## Fixed:
+- Issues some users where having syncing the latest posts.
+
+## [0.9.27] - 2020-06-11
+## Added:
+- We preload some feeds when onboarding so you don't have to wait to see something.
+- Blob loading spinner.
+- Load blobs from cloud as fallback.
+
+## [0.9.25] - 2020-05-28
+## Added:
+- New posts - Pull to refresh notification
+- Directory includes all the people in your follow network, not just planetary users
+- Note on posts reminding users they can use markdown
+
+## Fixed: 
+- Upper left profile avatar now shows your profile avatar
+
+## [0.9.24] - 2020-05-25
+## Added:
+- changing explore so it only shows you people you're not following
+- enable universal links for planetary.link
+
+## Fixed:
+- no more rebuilding db, now it just overwrites duplicate data
+- skip nulled messages in private log
+- scroll top when tapping on the explore icon
+- only display blobs which are images
+- fall back to blobs hosted by planetary if muxrpc fails to get them over ssb
+
 ## [0.9.23] - 2020-05-23
 ## Added:
 - Updated tab bar icon assets

@@ -15,7 +15,7 @@ class BugsnagCrashReporting: CrashReportingService {
     init() {
         Log.info("Configuring Bugsnag...")
         let keys = PlanetaryKeys()
-        Bugsnag.start(withApiKey: keys.bugsnagToken)
+        Bugsnag.start(withApiKey: keys.bugsnagCrashReportingToken)
     }
     
     func identify(about: About?, network: NetworkKey) {

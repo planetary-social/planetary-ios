@@ -14,20 +14,24 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
     lazy var nameView: EditValueView = {
         let view = EditValueView(label: .name)
         view.textView.delegate = self
+        view.backgroundColor = .cardBackground
+        view.textView.backgroundColor = .cardBackground
         return view
     }()
 
     lazy var bioView: EditValueView = {
         let view = EditValueView(label: .bio)
         view.textView.delegate = self
+        view.backgroundColor = .cardBackground
+        view.textView.backgroundColor = .cardBackground
         return view
     }()
 
     init() {
         super.init(frame: .zero)
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .cardBackground
         let spacer = Layout.addSpacerView(toTopOf: self)
-        spacer.backgroundColor = UIColor.background.table
+        spacer.backgroundColor = .appBackground
         var separator = Layout.addSeparator(southOf: spacer)
         Layout.fillSouth(of: separator, with: self.nameView)
         separator = Layout.addSeparator(southOf: self.nameView)

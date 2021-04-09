@@ -33,15 +33,9 @@ class ThreadViewController: ContentViewController {
         return self.root?.key ?? self.post.key
     }
 
-    private lazy var menu: AboutsMenu = {
-        let view = AboutsMenu()
-        view.topSeparator.isHidden = true
-        return view
-    }()
-
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
-        view.contentInset = .bottom(10)
+        view.contentInset = .bottom(20)
         view.dataSource = self.dataSource
         view.prefetchDataSource = self.dataSource
         view.delegate = self
@@ -55,7 +49,12 @@ class ThreadViewController: ContentViewController {
         return control
     }()
 
-    private var interactionView = ThreadInteractionView()
+    private lazy var interactionView: ThreadInteractionView = {
+        let interactionView = ThreadInteractionView()
+        interactionView.delegate = self
+        interactionView.backgroundColor = .cardBackground
+        return interactionView
+    }()
 
     private lazy var rootPostView: PostCellView = {
         let view = PostCellView(keyValue: self.root ?? self.post)
@@ -66,7 +65,7 @@ class ThreadViewController: ContentViewController {
 
     private lazy var topView: UIView = {
         let cellView = UIView.forAutoLayout()
-        cellView.backgroundColor = UIColor.background.default
+        cellView.backgroundColor = .appBackground
         Layout.addSeparator(toTopOf: cellView)
 
         Layout.fillTop(of: cellView, with: self.rootPostView)
@@ -78,26 +77,47 @@ class ThreadViewController: ContentViewController {
     }()
 
     private lazy var replyTextView: ReplyTextView = {
-        let view = ReplyTextView(topSpacing: Layout.verticalSpacing, bottomSpacing: 0)
+        let view = ReplyTextView(topSpacing: Layout.verticalSpacing, bottomSpacing: Layout.verticalSpacing)
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(replyTextViewSwipeDown(gesture:)))
         swipe.direction = .down
         view.addGestureRecognizer(swipe)
         view.textViewDelegate = self.textViewDelegate
         Layout.addSeparator(toTopOf: view)
+        view.backgroundColor = .cardBackground
+        return view
+    }()
+    
+    private lazy var menu: AboutsMenu = {
+        let view = AboutsMenu()
+        view.bottomSeparator.isHidden = true
         return view
     }()
 
     private let headerView = PostHeaderView()
+    
+    // this view manages it's own height constraints
+    // checkout ImageGallery.open() and close()
+    private lazy var galleryView: ImageGalleryView = {
+        let view = ImageGalleryView(height: 75)
+        view.delegate = self
+        view.backgroundColor = .cardBackground
+        return view
+    }()
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
         view.minimize()
         view.topSeparator.isHidden = true
-        view.photoButton.isHidden = true
+        view.photoButton.isHidden = false
+        view.photoButton.addTarget(self, action: #selector(photoButtonTouchUpInside), for: .touchUpInside)
         view.postButton.setText(.postReply)
         view.postButton.action = didPressPostButton
+        view.previewToggle.addTarget(self, action: #selector(didPressPreviewToggle), for: .valueChanged)
+        view.backgroundColor = .cardBackground
         return view
     }()
+    
+    private let imagePicker = ImagePicker()
 
     private var onNextUpdateScrollToPostWithKeyValueKey: Identifier?
     private var indexPathToScrollToOnKeyboardDidShow: IndexPath?
@@ -107,6 +127,7 @@ class ThreadViewController: ContentViewController {
         assert(keyValue.value.content.isPost)
         self.post = keyValue
         self.onNextUpdateScrollToPostWithKeyValueKey = keyValue.key
+        //self.interactionView.postIdentifier = Identity
         super.init(scrollable: false)
         self.isKeyboardHandlingEnabled = true
         self.showsTabBarBorder = false
@@ -125,9 +146,13 @@ class ThreadViewController: ContentViewController {
         Layout.fillTop(of: self.contentView, with: self.tableView)
         Layout.fillTop(of: self.contentView, with: self.menu)
         Layout.fillSouth(of: self.tableView, with: self.replyTextView)
-        Layout.fillSouth(of: self.replyTextView, with: self.buttonsView)
+        
+        Layout.fillSouth(of: self.replyTextView, with: self.galleryView)
+        
+        Layout.fillBottom(of: self.contentView, with: self.buttonsView, respectSafeArea: false)
 
-        self.buttonsView.pinBottomToSuperviewBottom(constant: 0, respectSafeArea: false)
+        self.buttonsView.pinTop(toBottomOf: self.galleryView)
+        
         self.buttonsView.constrainHeight(to: 0)
     }
 
@@ -148,7 +173,7 @@ class ThreadViewController: ContentViewController {
         headerView.removeFromSuperview()
     }
 
-    private func load(animated: Bool = true) {
+    private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
         let post = self.post
         Bots.current.thread(keyValue: post) { [weak self] root, replies, error in
             Log.optional(error)
@@ -156,8 +181,10 @@ class ThreadViewController: ContentViewController {
             self?.refreshControl.endRefreshing()
             if let error = error {
                 self?.alert(error: error)
+                completion?()
             } else {
                 self?.update(with: root ?? post, replies: replies, animated: animated)
+                completion?()
             }
         }
     }
@@ -191,6 +218,9 @@ class ThreadViewController: ContentViewController {
         self.tableView.forceReload()
         self.scrollIfNecessary(animated: animated)
         self.interactionView.replyCount = replies.count
+        self.interactionView.post = root
+        self.interactionView.replies = replies as? StaticDataProxy
+        self.interactionView.update()
     }
 
 
@@ -245,7 +275,7 @@ class ThreadViewController: ContentViewController {
         // become first responder once then clear the flag
         guard self.replyTextViewBecomeFirstResponder else { return }
         self.replyTextViewBecomeFirstResponder = false
-        self.replyTextView.textView.becomeFirstResponder()
+        self.replyTextView.becomeFirstResponder()
 
         self.buttonsView.maximize()
         self.contentView.setNeedsLayout()
@@ -255,19 +285,16 @@ class ThreadViewController: ContentViewController {
     // MARK: Actions
 
     private func addActions() {
-
-        self.menu.didSelectAbout = {
-            [unowned self] about in
+        self.menu.didSelectAbout = { [unowned self] about in
             guard let range = self.textViewDelegate.mentionRange else { return }
-            self.replyTextView.textView.replaceText(in: range,
-                                                with: about.mention,
-                                                attributes: self.textViewDelegate.fontAttributes)
+            self.replyTextView.replaceText(in: range,
+                                           with: about.mention,
+                                           attributes: self.textViewDelegate.fontAttributes)
             self.textViewDelegate.clear()
             self.menu.hide()
         }
-
-        self.textViewDelegate.didChangeMention = {
-            [unowned self] string in
+        
+        self.textViewDelegate.didChangeMention = { [unowned self] string in
             self.menu.filter(by: string)
         }
         
@@ -295,11 +322,15 @@ class ThreadViewController: ContentViewController {
     }
 
     func didPressPostButton() {
-        guard let text = self.replyTextView.textView.attributedText, text.length > 0 else { return }
+        let text = self.replyTextView.attributedText
+        guard text.length > 0 else { return }
         Analytics.shared.trackDidTapButton(buttonName: "reply")
+        self.buttonsView.postButton.isHidden = true
+        
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
-        AppController.shared.showProgress()
-        Bots.current.publish(post) { [weak self] key, error in
+        let images = self.galleryView.images
+        //AppController.shared.showProgress()
+        Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()
@@ -309,9 +340,28 @@ class ThreadViewController: ContentViewController {
                 Analytics.shared.trackDidReply()
                 self?.replyTextView.clear()
                 self?.replyTextView.resignFirstResponder()
+                self?.buttonsView.minimize()
+                self?.galleryView.removeAll()
+                self?.galleryView.close()
                 self?.onNextUpdateScrollToPostWithKeyValueKey = key
                 self?.load()
             }
+        }
+    }
+    
+    @objc func didPressPreviewToggle() {
+        Analytics.shared.trackDidTapButton(buttonName: "preview")
+        self.replyTextView.previewActive = self.buttonsView.previewToggle.isOn
+        self.buttonsView.maximize(duration: 0)
+    }
+    
+    // MARK: Attaching photos
+    
+    @objc private func photoButtonTouchUpInside() {
+        Analytics.shared.trackDidTapButton(buttonName: "attach_photo")
+        self.imagePicker.present(from: self) { [weak self] image in
+            if let image = image { self?.galleryView.add(image) }
+            self?.imagePicker.dismiss()
         }
     }
 
@@ -361,6 +411,31 @@ extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate 
     }
 }
 
+extension ThreadViewController: ThreadInteractionViewDelegate {
+    
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue) {
+        let vote = ContentVote(link: self.rootKey,
+                               value: 1,
+                               root: self.rootKey,
+                               branches: [self.branchKey])
+        //AppController.shared.showProgress()
+        Bots.current.publish(content: vote) { [weak self] key, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            DispatchQueue.main.async { [weak self] in
+                if let error = error {
+                    AppController.shared.hideProgress()
+                    self?.alert(error: error)
+                } else {
+                    self?.load(animated: true) {
+                        AppController.shared.hideProgress()
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 fileprivate class ThreadTextViewDelegate: MentionTextViewDelegate {
 
@@ -373,5 +448,22 @@ fileprivate class ThreadTextViewDelegate: MentionTextViewDelegate {
         if let replyTextView = textView.superview as? ReplyTextView {
             replyTextView.calculateHeight()
         }
+    }
+}
+
+extension ThreadViewController: ImageGalleryViewDelegate {
+
+    // Limits the max number of images to 8
+    func imageGalleryViewDidChange(_ view: ImageGalleryView) {
+        self.buttonsView.photoButton.isEnabled = view.images.count < 8
+        view.images.isEmpty ? view.close() : view.open()
+    }
+
+    func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {
+        self.confirm(style: .alert,
+                     message: Text.NewPost.confirmRemove.text,
+                     isDestructive: true,
+                     confirmTitle: Text.NewPost.remove.text,
+                     confirmClosure: { view.remove(at: indexPath) })
     }
 }

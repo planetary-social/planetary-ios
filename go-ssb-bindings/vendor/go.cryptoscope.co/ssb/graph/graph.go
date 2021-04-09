@@ -13,7 +13,7 @@ import (
 	"gonum.org/v1/gonum/graph/simple"
 )
 
-type key2node map[librarian.Addr]graph.Node
+type key2node map[librarian.Addr]*contactNode
 
 type Graph struct {
 	sync.Mutex
@@ -70,19 +70,15 @@ func (g *Graph) BlockedList(from *ssb.FeedRef) *ssb.StrFeedSet {
 	if !has {
 		return blocked
 	}
-	edgs := g.From(nFrom.ID())
+	fromID := nFrom.ID()
+	edgs := g.From(fromID)
 	for edgs.Next() {
 		nTo := edgs.Node()
-		edg := g.Edge(nFrom.ID(), nTo.ID()).(contactEdge)
-
+		edg := g.Edge(fromID, nTo.ID()).(graph.WeightedEdge)
+		//	if edg.isBlock {
 		if math.IsInf(edg.Weight(), 1) {
 			ctNode := nTo.(*contactNode)
-			fr, err := ctNode.feed.FeedRef()
-			if err != nil {
-				panic(err)
-			}
-			blocked.AddRef(fr)
-
+			blocked.AddRef(ctNode.feed)
 		}
 	}
 	return blocked

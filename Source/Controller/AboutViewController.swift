@@ -25,14 +25,15 @@ class AboutViewController: ContentViewController {
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
 
-    private var followingIdentities: Identities = []
-    private var followedByIdentities: Identities = []
+    private var followings: [About] = []
+    private var followers: [About] = []
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
         view.dataSource = self.dataSource
         view.delegate = self.delegate
         view.prefetchDataSource = self.dataSource
+        view.backgroundColor = .appBackground
         return view
     }()
 
@@ -59,10 +60,11 @@ class AboutViewController: ContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.contentView, with: self.tableView, respectSafeArea: false)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage.verse.link,
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage.verse.optionsOff,
                                                                  style: .plain,
                                                                  target: self,
-                                                                 action: #selector(didPressCopyIdentifierIcon))
+                                                                 action: #selector(didPressOptionsIcon))
+        self.navigationItem.rightBarButtonItem?.tintColor = .secondaryAction
 
     }
     
@@ -110,21 +112,19 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFollows() {
-        Bots.current.follows(identity: self.identity) {
-            [weak self] identities, error in
+        Bots.current.followings(identity: self.identity) { [weak self] (abouts: [About], error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.followingIdentities = identities
+            self?.followings = abouts
             self?.updateFollows()
         }
     }
 
     private func loadFollowedBy() {
-        Bots.current.followedBy(identity: self.identity) {
-            [weak self] identities, error in
+        Bots.current.followers(identity: self.identity) { [weak self] (abouts: [About], error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self?.followedByIdentities = identities
+            self?.followers = abouts
             self?.updateFollows()
         }
     }
@@ -143,21 +143,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func updateFollows() {
-        let allIdentities = Set(self.followedByIdentities + self.followingIdentities)
-
-        Bots.current.abouts(identities: Array(allIdentities)) {
-            [weak self] abouts, error in
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if Log.optional(error) { return }
-
-            guard let followedByIdentities = self?.followedByIdentities,
-                  let followingIdentities = self?.followingIdentities else { return }
-
-            let followedBy = abouts.filter { followedByIdentities.contains($0.identity) }
-            let following = abouts.filter { followingIdentities.contains($0.identity) }
-
-            self?.aboutView.update(followedBy: followedBy, following: following)
-        }
+        self.aboutView.update(followedBy: followers, following: followings)
     }
 
     // MARK: Actions
@@ -166,6 +152,7 @@ class AboutViewController: ContentViewController {
 
     private func addActions() {
         self.aboutView.editButton.action = self.didPressEdit
+        self.aboutView.shareButton.action = self.didPressShare
         self.aboutView.followingView.action = self.didTapFollowing
         self.aboutView.followedByView.action = self.didTapFollowedBy
 
@@ -198,34 +185,51 @@ class AboutViewController: ContentViewController {
         }
     }
 
-    @objc private func didPressCopyIdentifierIcon() {
-        guard let identity = self.about?.identity else {
-            return
-        }
-
-        Analytics.shared.trackDidTapButton(buttonName: "share")
+    @objc private func didPressOptionsIcon() {
+        Analytics.shared.trackDidTapButton(buttonName: "options")
         
         var actions = [UIAlertAction]()
 
-        let copy = UIAlertAction(title: Text.copyPublicIdentifier.text, style: .default) { _ in
-            Analytics.shared.trackDidSelectAction(actionName: "copy_profile_identifier")
-            UIPasteboard.general.string = identity
-            AppController.shared.showToast(Text.identifierCopied.text)
-        }
-        actions.append(copy)
+        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+            Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
-        if let publicLink = identity.publicLink {
-            let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { [weak self] _ in
+            let activityController = UIActivityViewController(activityItems: [self.identity],
+                                                              applicationActivities: nil)
+            self.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.barButtonItem = self.navigationItem.rightBarButtonItem
+            }
+        }
+        actions.append(sharePublicIdentifier)
+
+        if let publicLink = self.identity.publicLink {
+            let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
+
+                let who = self.about?.name ?? self.identity
+                let text = Text.shareThisProfileText.text(["who": who,
+                                                           "link": publicLink.absoluteString])
                 
-                let activityController = UIActivityViewController(activityItems: [publicLink],
+                let activityController = UIActivityViewController(activityItems: [text],
                                                                   applicationActivities: nil)
-                self?.present(activityController, animated: true)
+                self.present(activityController, animated: true)
                 if let popOver = activityController.popoverPresentationController {
-                    popOver.barButtonItem = self?.navigationItem.rightBarButtonItem
+                    popOver.barButtonItem = self.navigationItem.rightBarButtonItem
                 }
             }
             actions.append(share)
+        }
+
+        if !identity.isCurrentUser {
+            let block = UIAlertAction(title: Text.blockUser.text,
+                                      style: .destructive,
+                                      handler: self.didSelectBlockAction(action:))
+            actions.append(block)
+
+            let report = UIAlertAction(title: Text.reportUser.text,
+                                       style: .destructive,
+                                       handler: self.didSelectReportAction(action:))
+            actions.append(report)
         }
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
@@ -235,7 +239,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping () -> Void) {
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
 
         Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) { [weak self] image, error in
             Log.optional(error)
@@ -287,7 +291,7 @@ class AboutViewController: ContentViewController {
         let controller = EditAboutViewController(with: about)
         controller.saveCompletion = {
             [weak self] _ in
-            AppController.shared.showProgress()
+            //AppController.shared.showProgress()
             Bots.current.publish(content: controller.about) { [weak self] (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
@@ -313,20 +317,79 @@ class AboutViewController: ContentViewController {
         self.navigationController?.present(feature, animated: true, completion: nil)
     }
 
+    private func didPressShare() {
+        Analytics.shared.trackDidTapButton(buttonName: "share")
+
+        var actions = [UIAlertAction]()
+
+        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+            Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
+
+            let activityController = UIActivityViewController(activityItems: [self.identity],
+                                                              applicationActivities: nil)
+            self.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.barButtonItem = self.navigationItem.rightBarButtonItem
+            }
+        }
+        actions.append(sharePublicIdentifier)
+
+        if let publicLink = self.identity.publicLink {
+            let sharePublicLink = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
+                Analytics.shared.trackDidSelectAction(actionName: "share_profile")
+
+                let who = self.about?.name ?? self.identity
+                let text = Text.shareThisProfileText.text(["who": who,
+                                                           "link": publicLink.absoluteString])
+
+                let activityController = UIActivityViewController(activityItems: [text],
+                                                                  applicationActivities: nil)
+                self.present(activityController, animated: true)
+                if let popOver = activityController.popoverPresentationController {
+                    popOver.barButtonItem = self.navigationItem.rightBarButtonItem
+                }
+            }
+            actions.append(sharePublicLink)
+        }
+
+        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        actions.append(cancel)
+
+        AppController.shared.choose(from: actions)
+    }
+
     private func didTapFollowing() {
         Analytics.shared.trackDidTapButton(buttonName: "following")
-        let controller = ContactsViewController(title: .followingShortCount,
-                                                identity: self.identity,
-                                                identities: self.followingIdentities)
+        let controller = FollowingTableViewController(identity: self.identity, followings: self.followings)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
     private func didTapFollowedBy() {
         Analytics.shared.trackDidTapButton(buttonName: "followed_by")
-        let controller = ContactsViewController(title: .followedByShortCount,
-                                                identity: self.identity,
-                                                identities: self.followedByIdentities)
+        let controller = FollowerTableViewController(identity: self.identity, followers: self.followers)
         self.navigationController?.pushViewController(controller, animated: true)
+    }
+
+    private func didSelectBlockAction(action: UIAlertAction) {
+        Analytics.shared.trackDidSelectAction(actionName: "block_identity")
+        AppController.shared.promptToBlock(identity, name: self.about?.name)
+    }
+
+    private func didSelectReportAction(action: UIAlertAction) {
+        guard let about = self.about, let name = about.name, let me = Bots.current.identity else {
+            return
+        }
+        Analytics.shared.trackDidSelectAction(actionName: "report_user")
+        guard let controller = Support.shared.newTicketViewController(from: me,
+                                                                      reporting: about.identity,
+                                                                      name: name) else {
+            AppController.shared.alert(style: .alert,
+                                       title: Text.error.text,
+                                       message: Text.Error.supportNotConfigured.text,
+                                       cancelTitle: Text.ok.text)
+            return
+        }
+        AppController.shared.push(controller)
     }
 
     // MARK: Notifications
@@ -345,7 +408,7 @@ fileprivate class AboutPostView: KeyValueView {
     convenience init() {
         self.init(frame: .zero)
         self.tapGesture = self.view.tapGesture
-        let separator = Layout.addSeparator(toTopOf: self, height: 10, color: UIColor.background.table)
+        let separator = Layout.addSeparator(toTopOf: self, height: 10, color: .appBackground)
         Layout.addSeparator(toBottomOf: separator)
         Layout.fill(view: self,
                     with: self.view,

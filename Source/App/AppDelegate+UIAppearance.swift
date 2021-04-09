@@ -29,19 +29,24 @@ extension AppDelegate {
         appearance.backIndicatorImage = image
         appearance.backIndicatorTransitionMaskImage = image
         appearance.tintColor = UIColor.tint.default
-        appearance.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .medium)]
+        appearance.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .medium),
+                                          .foregroundColor: UIColor.secondaryText]
 
         // clear the bottom shadow edge to allow for a custom edge
         appearance.shadowImage = UIColor.clear.image(dimension: 1)
 
         appearance.isTranslucent = false
-        appearance.backgroundColor = UIColor.background.default
+        appearance.backgroundColor = .cardBackground
+        appearance.barTintColor = .cardBackground
 
         // refresh control
-        UIRefreshControl.appearance().tintColor = UIColor.tint.default
+        UIRefreshControl.appearance().tintColor = .loadingIcon
 
         // search bar
-        UISearchBar.appearance().backgroundColor = UIColor.background.default
+        UISearchBar.appearance().backgroundColor = .cardBackground
+        
+        // table footers and headers
+        UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = UIColor.secondaryText
     }
 }
 
@@ -53,18 +58,24 @@ extension UITabBar {
     /// to be used for all versions.
     func configureAppearance() {
         if #available(iOS 13, *) {
+            let itemAppearance = UITabBarItemAppearance()
+            itemAppearance.normal.iconColor = .unselectedTab
+            itemAppearance.selected.iconColor = .selectedTab
+            
             let appearance = UITabBarAppearance()
+            appearance.stackedLayoutAppearance = itemAppearance
             appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor.background.default
+            appearance.backgroundColor = .cardBackground
             appearance.backgroundImage = UIImage()
             appearance.shadowColor = nil
             appearance.shadowImage = UIImage()
             self.standardAppearance = appearance
         } else {
             let appearance = UITabBar.appearance()
-            appearance.backgroundColor = UIColor.background.default
+            appearance.backgroundColor = .cardBackground
             appearance.backgroundImage = UIImage()
             appearance.shadowImage = UIImage()
+            appearance.unselectedItemTintColor = .unselectedTab
        }
     }
 }

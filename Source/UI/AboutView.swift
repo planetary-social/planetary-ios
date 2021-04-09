@@ -13,7 +13,7 @@ class AboutView: KeyValueView {
 
     private let circleView: UIView = {
         let view = UIView.forAutoLayout()
-        view.stroke()
+        view.stroke(color: UIColor.avatarRing)
         return view
     }()
 
@@ -47,15 +47,24 @@ class AboutView: KeyValueView {
         button.isHidden = true
         button.setTitle(.editProfile)
         button.setImage(UIImage.verse.editPencil)
+        button.isSelected = true
+        
+        return button
+    }()
+
+    lazy var shareButton: PillButton = {
+        let button = PillButton()
+        button.setTitle(.share)
+        button.setImage(UIImage.verse.smallShare)
         return button
     }()
 
     lazy var editPhotoButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = UIColor.background.default
+        button.backgroundColor = .avatarRing
         button.isHidden = true
         button.setImage(UIImage.verse.camera, for: .normal)
-        button.stroke()
+        button.stroke(color: .avatarRing)
         return button
     }()
 
@@ -67,18 +76,19 @@ class AboutView: KeyValueView {
         view.isEditable = false
         view.isScrollEnabled = false
         view.textContainer.lineFragmentPadding = 0
+        view.backgroundColor = .cardBackground
         return view
     }()
 
-    var followingView = FollowCountView(text: .followingCount)
-    var followedByView = FollowCountView(text: .followedByCount)
+    var followingView = FollowCountView(text: .followingCount, secondaryText: .inYourNetwork)
+    var followedByView = FollowCountView(text: .followedByCount, secondaryText: .inYourNetwork)
 
     // MARK: Lifecycle
 
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .cardBackground
         self.addSubviews()
     }
 
@@ -92,7 +102,10 @@ class AboutView: KeyValueView {
 
         Layout.addSeparator(toTopOf: self)
 
+        
         Layout.center(self.circleView, atTopOf: self, inset: 23, size: CGSize(square: Layout.profileImageOutside))
+       //self.addLoadingAnimation()
+
         Layout.center(self.imageView, in: self.circleView, size: CGSize(square: Layout.profileImageInside))
 
         self.addSubview(self.editPhotoButton)
@@ -113,11 +126,12 @@ class AboutView: KeyValueView {
         buttonStack.addArrangedSubview(UIView())
         buttonStack.addArrangedSubview(self.editButton)
         buttonStack.addArrangedSubview(self.followButton)
+        buttonStack.addArrangedSubview(self.shareButton)
         buttonStack.addArrangedSubview(UIView())
 
         Layout.fillSouth(of: self.followingLabel, with: buttonStack, insets: .top(Layout.verticalSpacing - 3))
 
-        var separator = Layout.sectionSeparatorView()
+        var separator = Layout.sectionSeparatorView(color: .appBackground)
         Layout.fillSouth(of: buttonStack, with: separator, insets: .top(Layout.verticalSpacing - 3))
 
         let descriptionContainer = UIView.forAutoLayout()
@@ -139,7 +153,8 @@ class AboutView: KeyValueView {
         Layout.fillSouth(of: separator, with: self.followingView)
         self.followingView.constrainHeight(to: 50)
 
-        separator = Layout.sectionSeparatorView(bottom: false)
+        separator = Layout.sectionSeparatorView(bottom: false,
+                                                color: .appBackground)
         Layout.fillSouth(of: self.followingView, with: separator)
         separator.pinBottomToSuperviewBottom()
     }
@@ -161,7 +176,7 @@ class AboutView: KeyValueView {
 
     // called by other update functions
     private func update(name: String, bio: NSAttributedString, identity: Identity) {
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .cardBackground
 
         self.nameLabel.text = name
         self.nameLabel.lineBreakMode = .byWordWrapping
@@ -169,8 +184,9 @@ class AboutView: KeyValueView {
         self.descriptionTextView.attributedText = bio
 
         self.descriptionContainerZeroHeightConstraint?.isActive = bio.string.trimmed.isEmpty
-
-        self.followButton.isHidden = identity.isCurrentUser
+        
+        //experiment hide the follow button til we know the status.
+        self.followButton.isHidden = true //identity.isCurrentUser
         self.editButton.isHidden = !identity.isCurrentUser
         self.editPhotoButton.isHidden = self.editButton.isHidden
 
@@ -178,6 +194,12 @@ class AboutView: KeyValueView {
             self.followingLabel.text = Text.thisIsYou.text
         } else {
             createRelationship(identity: identity)
+        }
+        
+        if let star = Environment.Communities.stars.first(where: { $0.feed == identity}) {
+            followButton.star = star
+        } else {
+            followButton.star = nil
         }
 
         // updating may change the content of the description text view
@@ -244,5 +266,37 @@ class AboutView: KeyValueView {
         // and hence change it's height, so a layout is likely needed
         self.setNeedsLayout()
         self.layoutIfNeeded()
+    }
+    
+    
+    // MARK: Loading animation
+    
+    private lazy var loadingAnimation: PeerConnectionAnimation = {
+        let view = PeerConnectionAnimation(color: .networkAnimation)
+        //view.multiplier = 2
+        view.setDotCount(inside: false, count: 1, animated: false)
+        view.setDotCount(inside: true, count: 2, animated: false)
+        return view
+    }()
+    
+    private lazy var loadingLabel: UILabel = {
+        let view = UILabel.forAutoLayout()
+        view.textAlignment = .center
+        view.numberOfLines = 2
+        view.text = Text.loadingUpdates.text
+        view.textColor = UIColor.tint.default
+        return view
+    }()
+    
+    func addLoadingAnimation() {
+        //Layout.center(self.loadingLabel, in: self.circleView)
+        Layout.centerHorizontally(self.loadingAnimation, in: self.circleView)
+        self.loadingAnimation.constrainSize(to: Layout.profileImageOutside)
+        self.loadingAnimation.pinBottom(toTopOf: self.loadingLabel, constant: -20, activate: true)
+    }
+    
+    func removeLoadingAnimation() {
+        self.loadingLabel.removeFromSuperview()
+        self.loadingAnimation.removeFromSuperview()
     }
 }

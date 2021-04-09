@@ -14,4 +14,5 @@ enum BotError: Error {
     case encodeFailure
     case invalidIdentity
     case notLoggedIn
+    case notEnoughMessagesInRepo
 }

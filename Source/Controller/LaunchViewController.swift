@@ -20,18 +20,19 @@ class LaunchViewController: UIViewController {
     override func viewDidLoad() {
 
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.background.default
+        self.view.backgroundColor = UIColor.splashBackground
 
-        let splashImageView = UIImageView(image: UIImage(named: "splash"))
+        let splashImageView = UIImageView(image: UIImage(named: "launch"))
         splashImageView.contentMode = .scaleAspectFit
-        Layout.center(splashImageView, in: self.view, size: CGSize(width: 181, height: 231))
+        Layout.center(splashImageView, in: self.view, size: CGSize(width: 188, height: 248))
+        
+        self.launch()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Launch")
         Analytics.shared.trackDidShowScreen(screenName: "launch")
-        self.launch()
     }
 
     // MARK: Actions
@@ -85,15 +86,8 @@ class LaunchViewController: UIViewController {
         guard let network = configuration.network else { return }
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
-        self.launchIntoMain()
-        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { [weak self] loginError in
-            
-            var error = loginError
-            
-            // login can return a .alreadyLoggedIn error, we should be fine dismissing this case
-            if let botError = error as? BotError, botError == .alreadyLoggedIn {
-                error = nil
-            }
+        
+        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { error in
             
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error,
@@ -105,35 +99,54 @@ class LaunchViewController: UIViewController {
                 let controller = UIAlertController(title: Text.error.text,
                                                    message: Text.Error.login.text,
                                                    preferredStyle: .alert)
-                
-                var action = UIAlertAction(title: "Restart", style: .default) { _ in
-                    controller.dismiss(animated: true, completion: nil)
-                    bot.logout() {
-                        err in
+                let action = UIAlertAction(title: "Restart", style: .default) { _ in
+                    Log.debug("Restarting launch...")
+                    bot.logout { err in
+                        // Don't report error here becuase the normal path is to actually receive
+                        // a notLoggedIn error
                         Log.optional(err)
+                        
                         ssbDropIndexData()
-                        AppController.shared.relaunch() // this should call self.login() again right?!
+                        
+                        Analytics.shared.forget()
+                        CrashReporting.shared.forget()
+                        
+                        AppController.shared.relaunch()
                     }
                 }
                 controller.addAction(action)
+                
+                let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
+                    Log.debug("Resetting current configuration and restarting launch...")
+                    AppConfiguration.current?.unapply()
+                    bot.logout { err in
+                        // Don't report error here becuase the normal path is to actually receive
+                        // a notLoggedIn error
+                        Log.optional(err)
+                        
+                        ssbDropIndexData()
+                        
+                        Analytics.shared.forget()
+                        CrashReporting.shared.forget()
+                        
+                        AppController.shared.relaunch()
+                    }
+                }
+                controller.addAction(reset)
 
-                action = UIAlertAction(title: "Ignore", style: .cancel) { _ in
-                    controller.dismiss(animated: true, completion: nil)
-                    DispatchQueue.main.async {
-                        AppController.shared.showMainViewController(animated: true)
-                    }
-                }
-                controller.addAction(action)
                 AppController.shared.showAlertController(with: controller, animated: true)
+                
                 return
             }
-            bot.about { [weak self] (about, aboutErr) in
+            
+            self.launchIntoMain()
+            
+            bot.about { (about, aboutErr) in
                 Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: aboutErr)
                 CrashReporting.shared.identify(about: about, network: network)
                 Analytics.shared.identify(about: about, network: network)
-                self?.launchIntoMain()
             }
         }
     }
@@ -148,8 +161,6 @@ class LaunchViewController: UIViewController {
 
     private func launchIntoMain() {
 
-        // do any repairs or migrations
-        Onboarding.repair2019113()
 
         // no need to start a sync here, we can do it later
         // also, user is already logged in

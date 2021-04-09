@@ -4,7 +4,9 @@ set -e
 
 # source: https://github.com/canha/golang-tools-install-script
 
-VERSION="1.13.8"
+# this issue complicates upgrading to 1.14
+# https://github.com/golang/go/issues/11258#issuecomment-465603039
+VERSION="1.14.4"
 
 [ -z "$GOROOT" ] && GOROOT="$HOME/.go"
 [ -z "$GOPATH" ] && GOPATH="$HOME/go"
@@ -95,17 +97,5 @@ fi
 echo "Extracting File..."
 mkdir -p "$GOROOT"
 tar -C "$GOROOT" --strip-components=1 -xzf /tmp/go.tar.gz
-touch "$HOME/.${shell_profile}"
-{
-    echo '# GoLang'
-    echo "export GOROOT=${GOROOT}"
-    echo 'export PATH=$GOROOT/bin:$PATH'
-    echo "export GOPATH=$GOPATH"
-    echo 'export PATH=$GOPATH/bin:$PATH'
-} >> "$HOME/.${shell_profile}"
 
-mkdir -p $GOPATH/{src,pkg,bin}
-echo -e "\nGo $VERSION was installed into $GOROOT.\nMake sure to relogin into your shell or run:"
-echo -e "\n\tsource $HOME/.${shell_profile}\n\nto update your environment variables."
-echo "Tip: Opening a new terminal window usually just works. :)"
 rm -f /tmp/go.tar.gz

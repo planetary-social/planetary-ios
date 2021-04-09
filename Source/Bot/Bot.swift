@@ -11,6 +11,7 @@ typealias AboutCompletion = ((About?, Error?) -> Void)
 typealias AboutsCompletion = (([About], Error?) -> Void)
 typealias AddImageCompletion = ((Image?, Error?) -> Void)
 typealias BlobsAddCompletion = ((BlobIdentifier, Error?) -> Void)
+typealias BlobsStoreCompletion = ((URL?, Error?) -> Void)
 typealias ContactCompletion = ((Contact?, Error?) -> Void)
 typealias ContactsCompletion = (([Identity], Error?) -> Void)
 typealias ErrorCompletion = ((Error?) -> Void)
@@ -38,12 +39,10 @@ enum RefreshLoad: Int, CaseIterable {
 protocol Bot {
 
     // MARK: Name
-
     var name: String { get }
     var version: String { get }
 
     // MARK: AppLifecycle
-    func resume()
     func suspend()
     func exit()
     
@@ -59,16 +58,23 @@ protocol Bot {
 
     // MARK: Sync
     
+    // Ensure that these list of addresses are taken into consideration when establishing connections
+    func seedPubAddresses(addresses: [PubAddress],
+                          queue: DispatchQueue,
+                          completion: @escaping (Result<Void, Error>) -> Void)
+    
     func knownPubs(completion: @escaping KnownPubsCompletion)
+    
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
 
     // Sync is the bot reaching out to remote peers and gathering the latest
     // data from the network.  This only updates the local log and requires
     // calling `refresh` to ensure the view database is updated.
     var isSyncing: Bool { get }
-    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion)
+    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion)
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 
@@ -80,14 +86,14 @@ protocol Bot {
 
     // MARK: Login
 
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion)
+    func login(queue: DispatchQueue, network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion)
     func logout(completion: @escaping ErrorCompletion)
 
     // MARK: Invites
 
     // Redeem uses the invite information and accepts it.
     // It adds the pub behind the address to the connection sheduling table and follows it.
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion)
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion)
 
     // MARK: Publish
 
@@ -97,7 +103,7 @@ protocol Bot {
     // The `content` argument label is required to avoid conflicts when specialized
     // forms of `publish` are created.  For example, `publish(post)` will publish a
     // `Post` model, but then also the embedded `Hashtag` models.
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion)
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion)
 
     // MARK: Post Management
 
@@ -106,10 +112,12 @@ protocol Bot {
 
     // MARK: About
 
+    @available(*, deprecated)
     var about: About? { get }
     func about(completion: @escaping AboutCompletion)
-    func about(identity: Identity, completion:  @escaping AboutCompletion)
-    func abouts(identities: Identities, completion:  @escaping AboutsCompletion)
+    func about(queue: DispatchQueue, identity: Identity, completion:  @escaping AboutCompletion)
+    func abouts(identities: [Identity], completion:  @escaping AboutsCompletion)
+    func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion)
 
     // MARK: Contact
 
@@ -118,6 +126,9 @@ protocol Bot {
 
     func follows(identity: Identity, completion:  @escaping ContactsCompletion)
     func followedBy(identity: Identity, completion:  @escaping ContactsCompletion)
+    
+    func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
+    func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
     
     func friends(identity: Identity, completion:  @escaping ContactsCompletion)
 
@@ -139,8 +150,11 @@ protocol Bot {
     
     // everyone's posts
     func everyone(completion: @escaping PaginatedCompletion)
-
+    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
+    
+    // your feed
     func recent(completion: @escaping PaginatedCompletion)
+    func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
     
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
@@ -155,8 +169,8 @@ protocol Bot {
     /// Returns all the messages in a feed that mention the active identity.
     func mentions(completion: @escaping PaginatedCompletion)
 
-    /// Notifications (unifies mentions, replies, follows) for the active identity.
-    func notifications(completion: @escaping KeyValuesCompletion)
+    /// Reports (unifies mentions, replies, follows) for the active identity.
+    func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void))
 
     // MARK: Blob publishing
 
@@ -173,12 +187,86 @@ protocol Bot {
 
     func data(for identifier: BlobIdentifier,
               completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
+    
+    /// Saves a file to disk in the same path it would be if fetched through the net.
+    /// Useful for storing a blob fetched from an external source.
+    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion)
+    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion)
 
     // MARK: Statistics
 
-    func statistics(completion: @escaping StatisticsCompletion )
+    func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion)
+    
+    func lastReceivedTimestam() throws -> Double
     
     @available(*, deprecated)
     var statistics: BotStatistics { get }
+    
+    // MARK: Preloading
+    
+    func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
+    
 }
 
+extension Bot {
+    
+    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
+        self.login(queue: .main,
+                   network: network,
+                   hmacKey: hmacKey,
+                   secret: secret,
+                   completion: completion)
+    }
+    func sync(peers: [Peer], completion: @escaping SyncCompletion) {
+        self.sync(queue: .main, peers: peers, completion: completion)
+    }
+    
+    func abouts(completion:  @escaping AboutsCompletion) {
+        self.abouts(queue: .main, completion: completion)
+    }
+
+    func followers(identity: Identity, completion:  @escaping AboutsCompletion) {
+        self.followers(identity: identity, queue: .main, completion: completion)
+    }
+
+    func followings(identity: Identity, completion:  @escaping AboutsCompletion) {
+        self.followings(identity: identity, queue: .main, completion: completion)
+    }
+
+    func statistics(completion: @escaping StatisticsCompletion) {
+        self.statistics(queue: .main, completion: completion)
+    }
+    
+    func reports(completion: @escaping (([Report], Error?) -> Void)) {
+        self.reports(queue: .main, completion: completion)
+    }
+    
+    func about(identity: Identity, completion:  @escaping AboutCompletion) {
+        self.about(queue: .main, identity: identity, completion: completion)
+    }
+    
+    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
+        self.inviteRedeem(queue: .main, token: token, completion: completion)
+    }
+    
+    func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
+        self.pubs(queue: .main, completion: completion)
+    }
+    
+    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
+        self.publish(queue: .main, content: content, completion: completion)
+    }
+    
+    func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {
+        self.keyAtRecentTop(queue: .main, completion: completion)
+    }
+    
+    func keyAtEveryoneTop(completion: @escaping (MessageIdentifier?) -> Void) {
+        self.keyAtEveryoneTop(queue: .main, completion: completion)
+    }
+    
+    func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
+        self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
+    }
+    
+}

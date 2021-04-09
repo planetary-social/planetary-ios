@@ -11,14 +11,14 @@ import UIKit
 class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
 
     // unfiltered collection
-    private var allPeople = [Person]() {
+    private var allPeople = [About]() {
         didSet {
             self.applyFilter()
         }
     }
 
     // filtered collection for display
-    private var people = [Person]() {
+    private var people = [About]() {
         didSet {
             self.tableView.reloadData()
         }
@@ -32,7 +32,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     }
 
     private lazy var tableView: UITableView = {
-        let view = UITableView.forVerse()
+        let view = UITableView.forVerse(style: .grouped)
         view.dataSource = self
         view.delegate = self
         view.refreshControl = self.refreshControl
@@ -74,7 +74,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         self.extendedLayoutIncludesOpaqueBars = false
 
 
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         self.load {
             AppController.shared.hideProgress()
         }
@@ -87,14 +87,14 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     }
 
     private func load(completion: @escaping () -> Void) {
-        DirectoryAPI.shared.directory(includeMe: false) { [weak self] people, error in
-            if let error = error {
-                self?.alert(error: error)
-            } else {
-                self?.allPeople = people
-            }
+        Bots.current.abouts() {
+            [weak self] abouts, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            self?.allPeople = abouts
             completion()
         }
+        
     }
 
     func reload() {
@@ -106,9 +106,10 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             self.people = self.allPeople
         } else {
             let filter = self.filter.lowercased()
-            self.people = self.allPeople.filter {
-                person in
-                return person.name.lowercased().contains(filter) || person.identity.lowercased().contains(filter)
+            self.people = self.allPeople.filter { about in
+                let containsName = about.name?.lowercased().contains(filter) ?? false
+                let containsIdentity = about.identity.lowercased().contains(filter)
+                return containsName || containsIdentity
             }
         }
     }
@@ -161,24 +162,57 @@ extension DirectoryViewController: TopScrollable {
 
 extension DirectoryViewController: UITableViewDataSource {
 
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return Text.communitites.text
+        } else {
+            return nil
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.people.count
+        if section == 0 {
+            return Environment.Communities.stars.count
+        } else {
+            return self.people.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
-        let person = self.people[indexPath.row]
-        cell.aboutView.update(with: person)
-        return cell
+        if indexPath.section == 0 {
+            let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
+            let star = Environment.Communities.stars[indexPath.row]
+            if let about = self.allPeople.first(where: { $0.identity == star.feed }) {
+                cell.communityView.update(with: star, about: about)
+            } else {
+                cell.communityView.update(with: star, about: nil)
+            }
+            return cell
+        } else {
+            let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+            let about = self.people[indexPath.row]
+            cell.aboutView.update(with: about.identity, about: about)
+            return cell
+        }
     }
 }
 
 extension DirectoryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let person = self.people[indexPath.row]
-        let controller = AboutViewController(with: person.identity)
-        controller.update(with: person)
-        self.navigationController?.pushViewController(controller, animated: true)
+        if indexPath.section == 0 {
+            let star = Environment.Communities.stars[indexPath.row]
+            let controller = AboutViewController(with: star.feed)
+            self.navigationController?.pushViewController(controller, animated: true)
+        } else {
+            let about = self.people[indexPath.row]
+            let controller = AboutViewController(with: about)
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+        
     }
 }

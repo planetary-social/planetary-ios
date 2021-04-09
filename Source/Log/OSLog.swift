@@ -64,4 +64,10 @@ class OSLog: LogService {
         let message = "LOG:FATAL:\(string)"
         os_log("%@", type: OSLogType.fault, message)
     }
+
+    static func debug(_ string: String) {
+        DDLogDebug(string)
+        let message = "LOG:DEBUG: \(string)"
+        os_log("%@", type: OSLogType.debug, message)
+    }
 }

@@ -77,9 +77,9 @@ class BlobCache: DictionaryCache {
 
             // wait if blob unavailable
             if me.blobUnavailable(error, for: identifier) {
+                self?.loadBlobFromCloud(for: identifier)
                 return
             }
-
             // forget if blob is still unavailable
             // will be requested again if necessary
             guard let data = data, data.isEmpty == false else {
@@ -98,6 +98,70 @@ class BlobCache: DictionaryCache {
             me.didLoad(image, for: identifier)
             me.purge()
         }
+    }
+    
+    private func  loadBlobFromCloud(for ref: BlobIdentifier)
+    {
+        let hexRef = ref.hexEncodedString()
+        
+        // first 2 chars are directory
+        let dir = String(hexRef.prefix(2))
+        // rest ist filename
+        let restIdx = hexRef.index(hexRef.startIndex, offsetBy:2)
+        let rest = String(hexRef[restIdx...])
+        
+        var gsUrl = URL(string: "https://blobs.planetary.social/")!
+        gsUrl.appendPathComponent(dir)
+        gsUrl.appendPathComponent(rest)
+        
+        let dataTask = URLSession.shared.dataTask(with: gsUrl) { [weak self] (data, response, error) in
+            if let error = error as NSError?, error.code == NSURLErrorCancelled {
+                // Nothing to do if data task was cancelled on purpose
+                return
+            }
+            
+            Log.optional(error)
+            
+            guard error == nil,
+                let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200,
+                let data = data else {
+                // Cannot use these because the servers are not reliable
+                //let mimeType = httpResponse.mimeType,
+                // mimeType.hasPrefix("image") else {
+                self?.removeDataTask(for: ref)
+                return
+            }
+            
+            guard let image = UIImage(data: data) else {
+                self?.removeDataTask(for: ref)
+                return
+            }
+            
+            Bots.current.store(data: data, for: ref) { [weak self] (url, error) in
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                
+                if error == nil {
+                    DispatchQueue.main.async {
+                        self?.update(image, for: ref)
+                        self?.didLoad(image, for: ref)
+                        self?.purge()
+                    }
+                }
+                
+                self?.removeDataTask(for: ref)
+            }
+        }
+        
+        self.dataTasksQueue.async { [weak self] in
+            if let dataTask = self?.dataTasks[ref] {
+                dataTask.cancel()
+            }
+            self?.dataTasks[ref] = dataTask
+        }
+        
+        dataTask.resume()
     }
 
     /// Returns true if the specified Error is a blob unavailablee error.
@@ -118,6 +182,7 @@ class BlobCache: DictionaryCache {
     {
         let completions = self.completions(for: identifier)
         self.forgetCompletions(for: identifier)
+        self.cancelDataTask(for: identifier)
 
         completions.forEach {
             (uuid, completion) in
@@ -145,6 +210,11 @@ class BlobCache: DictionaryCache {
 
     // for each blob identifier, there are one or more UUID tagged UIImage completion blocks
     private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
+    
+    // for each blob identifier, there should be one data task
+    // use dataTasksQueue to read/write this property
+    private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
+    private var dataTasksQueue: DispatchQueue = DispatchQueue(label: "com.planetary.blobcache")
 
     /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
     /// be used to forget a pending completion later.
@@ -170,6 +240,29 @@ class BlobCache: DictionaryCache {
     /// Forgets the all the completions for the specified blob identifier.
     func forgetCompletions(for identifier: BlobIdentifier) {
         let _ = self.completions.removeValue(forKey: identifier)
+    }
+    
+    func cancelAllDataTasks() {
+        self.dataTasksQueue.async { [weak self] in
+            self?.dataTasks.forEach { (ref, dataTask) in
+                dataTask.cancel()
+            }
+            self?.dataTasks.removeAll()
+        }
+    }
+    
+    func cancelDataTask(for identifier: BlobIdentifier) {
+        self.dataTasksQueue.async { [weak self] in
+            if let dataTask = self?.dataTasks.removeValue(forKey: identifier) {
+                dataTask.cancel()
+            }
+        }
+    }
+    
+    func removeDataTask(for identifier: BlobIdentifier) {
+        self.dataTasksQueue.async { [weak self] in
+            self?.dataTasks.removeValue(forKey: identifier)
+        }
     }
 
     /// Forgets a specific UUID tagged completion for a blob identifier.  This will

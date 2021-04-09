@@ -34,18 +34,11 @@ class HomeViewController: ContentViewController {
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
     
-    private lazy var floatingRefreshButton: UIButton = {
-        let button = UIButton.forAutoLayout()
-        let titleAttributes = [NSAttributedString.Key.font: UIFont.verse.floatingRefresh,
-                               NSAttributedString.Key.foregroundColor: UIColor.white]
-        let attributedTitle = NSAttributedString(string: "REFRESH", attributes: titleAttributes)
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        button.backgroundColor = UIColor.tint.default
-        button.contentEdgeInsets = .floatingRefreshButton
+    private lazy var floatingRefreshButton: FloatingRefreshButton = {
+        let button = FloatingRefreshButton()
         button.addTarget(self,
                          action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
                          for: .touchUpInside)
-        button.isHidden = true
         return button
     }()
 
@@ -58,6 +51,7 @@ class HomeViewController: ContentViewController {
         view.sectionHeaderHeight = 0
         view.separatorStyle = .none
         view.showsVerticalScrollIndicator = false
+        view.accessibilityIdentifier = "FeedTableView"
         return view
     }()
     
@@ -118,11 +112,6 @@ class HomeViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .home)
-        let imageView = UIImageView(image: UIImage(named: "title"))
-        imageView.contentMode = .scaleAspectFit
-        let view = UIView.forAutoLayout()
-        Layout.fill(view: view, with: imageView, respectSafeArea: false)
-        self.navigationItem.titleView = view
         self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
     }
 
@@ -138,14 +127,12 @@ class HomeViewController: ContentViewController {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
         
-        Layout.centerHorizontally(self.floatingRefreshButton, in: self.view)
-        self.floatingRefreshButton.constrainHeight(to: 32)
-        self.floatingRefreshButton.roundedCorners(radius: 16)
-        self.floatingRefreshButton.constrainTop(toTopOf: self.tableView, constant: 8)
+        self.floatingRefreshButton.layout(in: self.view, below: self.tableView)
         
         self.addLoadingAnimation()
         self.load()
-        self.showLogoutNoticeIfNeeded()
+        
+        self.registerDidRefresh()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -159,8 +146,10 @@ class HomeViewController: ContentViewController {
     func load(animated: Bool = false) {
         Bots.current.recent() { [weak self] proxy, error in
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
             self?.removeLoadingAnimation()
+            self?.floatingRefreshButton.hide()
             AppController.shared.hideProgress()
              
             if let error = error {
@@ -205,41 +194,18 @@ class HomeViewController: ContentViewController {
         AppController.shared.operationQueue.addOperation(refreshOperation)
     }
     
-    func showLogoutNoticeIfNeeded() {
-        guard AppConfiguration.needsToBeLoggedOut else {
-            return
-        }
-        let controller = UIAlertController(title: "Planetary is ready to move from testing to working with the larger scuttlebutt network",
-                                           message: "You can stay in our testing environment or you can completely reset your account and switch to the main scuttlebutt network by selecting Logout and Onboard in the Debug menu",
-                                           preferredStyle: .alert)
-        var action = UIAlertAction(title: "Cancel", style: .cancel) {
-            action in
-            controller.dismiss(animated: true, completion: nil)
-        }
-        controller.addAction(action)
-
-        action = UIAlertAction(title: "Open Debug menu", style: .default) {
-            [weak self] action in
-            self?.presentDebugMenu()
-        }
-        controller.addAction(action)
-        self.present(controller, animated: true, completion: nil)
-    }
-
     private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
-            self.registerDidRefresh()
         } else {
-            self.deeregisterDidRefresh()
             self.emptyView.removeFromSuperview()
             self.tableView.backgroundView = nil
         }
         self.dataSource.update(source: proxy)
-        if animated {
-            self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-        } else {
-            self.tableView.forceReload()
+        self.tableView.reloadData()
+        let shouldScrollToTop = proxy.count > 0
+        if shouldScrollToTop {
+            self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         }
     }
 
@@ -250,18 +216,11 @@ class HomeViewController: ContentViewController {
         self.refreshAndLoad()
     }
     
-    @objc func floatingRefreshButtonDidTouchUpInside(button: UIButton) {
+    @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
+        button.hide()
         self.refreshControl.beginRefreshing()
-        self.refreshControl.sendActions(for: .valueChanged)
-        self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height),
-                                        animated: true)
-        UIView.animate(withDuration: 1.0,
-                       delay: 0,
-                       usingSpringWithDamping: CGFloat(0.20),
-                       initialSpringVelocity: CGFloat(6.0),
-                       options: UIView.AnimationOptions.allowUserInteraction,
-                       animations: { self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0) },
-                       completion: { _ in self.floatingRefreshButton.isHidden = true })
+        self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height), animated: false)
+        self.load(animated: true)
     }
 
     @objc func newPostButtonTouchUpInside() {
@@ -271,7 +230,6 @@ class HomeViewController: ContentViewController {
             [weak self] post in
             self?.load()
         }
-        controller.addDismissBarButtonItem()
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
@@ -291,20 +249,19 @@ class HomeViewController: ContentViewController {
     }
     
     override func didRefresh(notification: NSNotification) {
-        DispatchQueue.main.async {
-            if self.tableView.backgroundView == self.emptyView {
-                self.load(animated: true)
+        let currentProxy = self.dataSource.data
+        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
+        Bots.current.keyAtRecentTop { [weak self] (key) in
+            guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
+                return
+            }
+            if currentProxy.count == 0 {
+                self?.load(animated: true)
+            } else {
+                let shouldAnimate = self?.navigationController?.topViewController == self
+                //self?.floatingRefreshButton.show(animated: shouldAnimate)
             }
         }
-//        self.floatingRefreshButton.transform = CGAffineTransform(scaleX: 0, y: 0)
-//        self.floatingRefreshButton.isHidden = false
-//        UIView.animate(withDuration: 1.0,
-//                       delay: 0,
-//                       usingSpringWithDamping: CGFloat(0.20),
-//                       initialSpringVelocity: CGFloat(6.0),
-//                       options: UIView.AnimationOptions.allowUserInteraction,
-//                       animations: { self.floatingRefreshButton.transform = .identity },
-//                       completion: { _ in })
     }
 }
 

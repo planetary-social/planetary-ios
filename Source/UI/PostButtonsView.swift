@@ -20,6 +20,22 @@ class PostButtonsView: UIView {
         button.setImage(UIImage.verse.newPostOpenLibrary, for: .normal)
         return button
     }()
+    
+    let markdownNoticeLabel: UILabel = {
+        let label = UILabel.forAutoLayout()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = UIColor.text.detail
+        label.text = Text.markdownSupported.text
+        return label
+    }()
+
+    let previewToggle: UISwitch = {
+        let toggle = UISwitch()
+        toggle.translatesAutoresizingMaskIntoConstraints = false
+        toggle.tintColor = UIColor.tint.default
+        toggle.onTintColor = UIColor.tint.default
+        return toggle
+    }()
 
     let postButton: PillButton = {
         let button = PillButton()
@@ -36,7 +52,7 @@ class PostButtonsView: UIView {
 
         self.init(frame: .zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.default
+        self.backgroundColor = .appBackground
 
         Layout.fillTop(of: self, with: self.topSeparator)
 
@@ -49,6 +65,16 @@ class PostButtonsView: UIView {
         self.addSubview(self.postButton)
         self.postButton.pinRightToSuperview(constant: -Layout.horizontalSpacing)
         self.postButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+
+        self.addSubview(self.previewToggle)
+        self.previewToggle.trailingAnchor.constraint(equalTo: self.postButton.leadingAnchor,
+                                                     constant: -Layout.horizontalSpacing).isActive = true
+        self.previewToggle.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+
+        self.addSubview(self.markdownNoticeLabel)
+        self.markdownNoticeLabel.trailingAnchor.constraint(equalTo: self.previewToggle.leadingAnchor,
+                                                           constant: -Layout.horizontalSpacing).isActive = true
+        self.markdownNoticeLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
     }
 
     // MARK: Animations
@@ -57,6 +83,8 @@ class PostButtonsView: UIView {
         UIView.animate(withDuration: duration) {
             self.photoButton.alpha = 0
             self.postButton.alpha = 0
+            self.previewToggle.alpha = 0
+            self.markdownNoticeLabel.alpha = 0
             self.heightConstraint?.constant = 0
         }
     }
@@ -65,6 +93,8 @@ class PostButtonsView: UIView {
         UIView.animate(withDuration: duration) {
             self.photoButton.alpha = 1
             self.postButton.alpha = 1
+            self.previewToggle.alpha = 1
+            self.markdownNoticeLabel.alpha = 1
             self.heightConstraint?.constant = Self.viewHeight
         }
     }

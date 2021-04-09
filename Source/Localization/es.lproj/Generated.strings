@@ -23,6 +23,7 @@
 "Text.reportBug" = "Reportar una falla";
 "Text.settings" = "Configuración";
 "Text.userDirectory" = "Directorio de Usuarios";
+"Text.communities" = "Comunidades";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "No mostrarme en el directorio de usuarios";
@@ -53,15 +54,18 @@
 "Text.following" = "Siguiendo";
 "Text.followedBy" = "Seguido por";
 "Text.isFollowingYou" = "está siguiéndote actualmente";
-"Text.followedByCount" = "Seguido por {{ count }} en tu red";
-"Text.followingCount" = "Siguiendo {{ count }} en tu red";
+"Text.followedByCount" = "Seguido por {{ count }}";
+"Text.followingCount" = "Siguiendo {{ count }}";
+"Text.inYourNetwork" = " en tu red";
 "Text.followedByShortCount" = "{{ count }} Seguidores";
-"Text.followingShortCount" = "Siguiendo {{ count }}";
 "Text.unfollow" = "Dejar de seguir";
 "Text.identifierCopied" = "Identificador copiado a tu portapapeles";
 "Text.copyMessageIdentifier" = "Copiar Identificador de Mensaje";
 "Text.copyPublicIdentifier" = "Copiar Identificador de Perfil";
+"Text.sharePublicIdentifier" = "Compartir Identificador de Perfil";
 "Text.shareThisProfile" = "Compartir Este Perfil";
+"Text.shareThisProfile" = "Compartir Este Mensaje";
+"Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar de amigos";
 "Text.blockUser" = "Bloquear este usuario";
@@ -79,10 +83,11 @@
 "Text.andOneOther" = " y 1 más";
 "Text.countOnlinePeers" = "{{ count }} PARES EN LÍNEA";
 "Text.countLocalPeers" = "{{ count }} PARES LOCALES";
+"Text.lastSynced" = "ULTIMA: {{ when }}";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
-"Text.home" = "Inicio";
-"Text.explore" = "Explorar";
+"Text.home" = "Para tí";
+"Text.explore" = "Descubre";
 "Text.messages" = "Mensajes";
 "Text.notifications" = "Notificaciones";
 "Text.thread" = "Hilo";
@@ -90,8 +95,11 @@
 "Text.bookmark" = "Marcador";
 "Text.like" = "Me Gusta";
 "Text.debug" = "Debuggear";
+"Text.join" = "Unirse";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
+"Text.refresh" = "Refrescar";
+"Text.markdownSupported" = "Markdown soportado";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres bloquear a {{ name }}? No podrás ver el contenido de ambos ni tampoco volver a contactarse.";
 "Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";
@@ -143,7 +151,7 @@
 "Onboarding.contactsWIP" = "Disculpas, esta funcionalidad no está terminada. Toca 'OK' para ver una lista de usuarios que te recomendamos seguir.";
 "Onboarding.listMeTitle" = "Listarme en el directorio de usuarios";
 "Onboarding.listMeMessage" = "Esto le permite a la gente encontrarte si saben tu nombre o número de teléfono";
-"Onboarding.thanksForTrying" = "Gracias por probar Planetary, y esperamos ver lo que publicas.";
+"Onboarding.thanksForTrying" = "Gracias por probar Planetary. Le recomendamos que utilice el hashtag #newpeople para presentarse.";
 "Onboarding.doneOnboarding" = "¡Uf! ¡Ya terminé!";
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes ásperas en la interfaz. ¡Anímate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
@@ -153,7 +161,7 @@
 "Onboarding.backupHint" = "Planetary no usa contraseñas - tienes una llave secreta que debes que guardar de forma segura. Si puedes, deberías respaldarla. Nota: esta funcionalidad está todavía en desarrollo.";
 "Onboarding.backUp" = "Sí, respalda mi identidad";
 "Onboarding.bioHint" = "No te preocupes mucho por lo que dices, puedes cambiarlo después.";
-"Onboarding.benefits" = "Somos parte de un ecosistema abierto que respeta tu privacidad, minimiza la recolección de datos y apunta a recompensar a los creadores.\n\nY si no te gusta nuestra aplicación, ¡puedes tomar tu identidad –y todos tus amigos y contenido– y llevártela a otro servicio!\nAprende más";
+"Onboarding.benefits" = "Somos parte de un ecosistema abierto que respeta tu privacidad, minimiza la recolección de datos y apunta a recompensar a los creadores.\n\nY si no te gusta nuestra aplicación, ¡puedes tomar tu identidad –y todos tus amigos y contenido– y llevártela a otro servicio!\n\nAprende más";
 "Onboarding.findOutMore" = "Aprende más";
 "Onboarding.thatSoundsGreat" = "¡Eso suena muy bien!";
 "Onboarding.policyStatement" = "Si continúas, confirmas que estás de acuerdo con los Términos del Servicio y Política de Privacidad";
@@ -188,6 +196,10 @@
 "Preview.title" = "Configuración avanzada";
 "Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
 
+"PublicWebHosting.enabled" = "Activado";
+"PublicWebHosting.title" = "Web Pública";
+"PublicWebHosting.footer" = "Indica que deseas que tus publicaciones aparezcan en sitios web públicos. Los cambios pueden tardar un par de horas en ser efectuados.";
+
 "Push.enabled" = "Activado";
 "Push.title" = "Notificaciones Push";
 "Push.prompt" = "Las notificaciones Push para Planetary son controladas por la aplicación de Preferencias en tu dispositivo. ¿Te gustaría abrir Preferencias ahora?";
@@ -213,3 +225,9 @@
 
 "Post.one" = "publicación";
 "Post.many" = "publicaciones";
+
+"Report.somebody" = "Alguien";
+"Report.feedFollowed" = "%@ comenzó a seguirte";
+"Report.postReplied" = "%@ respondió";
+"Report.feedMentioned" = "%@ te mencionó en una publicación";
+"Report.messageLiked" = "A %@ le gustó tu publicación";

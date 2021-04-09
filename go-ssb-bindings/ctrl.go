@@ -7,6 +7,7 @@ import (
 	"math"
 	"runtime"
 	"time"
+    "strings"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
@@ -48,6 +49,21 @@ func ssbConnectPeer(quasiMs string) bool {
 		return false
 	}
 	level.Debug(log).Log("event", "dialed", "addr", msAddr.String())
+
+	if servicePlug == nil {
+		return true
+	}
+
+	go func() {
+		time.Sleep(10 * time.Second)
+		tok, ok := servicePlug.HasValidToken()
+		if !ok {
+			log.Log("noToken", "service plugin: token expired or not retreived yet.")
+			return
+		}
+		log.Log("hasToken", tok)
+	}()
+
 	return true
 }
 
@@ -233,6 +249,64 @@ func ssbDisconnectAllPeers() bool {
 	return true
 }
 
+//export ssbFeedReplicate
+func ssbFeedReplicate(ref string, yes bool) {
+	var err error
+	defer func() {
+		if err != nil {
+			level.Error(log).Log("where", "ssbFeedReplicate", "err", err)
+		}
+	}()
+
+	fr, err := ssb.ParseFeedRef(ref)
+	if err != nil {
+		err = errors.Wrapf(err, "replicate: invalid feed reference")
+		return
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot == nil {
+		err = ErrNotInitialized
+		return
+	}
+
+	if yes {
+		sbot.Replicate(fr)
+	} else {
+		sbot.DontReplicate(fr)
+	}
+}
+
+//export ssbFeedBlock
+func ssbFeedBlock(ref string, yes bool) {
+	var err error
+	defer func() {
+		if err != nil {
+			level.Error(log).Log("where", "ssbFeedBlock", "err", err)
+		}
+	}()
+
+	fr, err := ssb.ParseFeedRef(ref)
+	if err != nil {
+		err = errors.Wrapf(err, "block: invalid feed reference")
+		return
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot == nil {
+		err = ErrNotInitialized
+		return
+	}
+
+	if yes {
+		sbot.Block(fr)
+	} else {
+		sbot.Unblock(fr)
+	}
+}
+
 //export ssbNullContent
 func ssbNullContent(author string, sequence uint64) int {
 	lock.Lock()
@@ -340,42 +414,23 @@ func ssbInviteAccept(token string) bool {
 	ctx, cancel := context.WithCancel(longCtx)
 	err = invite.Redeem(ctx, tok, sbot.KeyPair.Id)
 	defer cancel()
-	if err != nil {
-		retErr = err
-		return false
-	}
-
-	_, err = sbot.PublishLog.Publish(ssb.NewContactFollow(&tok.Peer))
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to publish follow pub message")
-		return false
-	}
-
-	peerID, err := getAuthorID(tok.Peer)
-	if err != nil {
-		retErr = err
-		return false
-	}
-
-	_, err = viewDB.Exec(`INSERT INTO addresses (about_id, address) VALUES (?,?)`, peerID, tok.Address.String())
-	if err != nil {
-		retErr = errors.Wrap(err, "insert new pub into addresses failed")
-		return false
-	}
-
-	pubMsg, err := invite.NewPubMessageFromToken(tok)
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to make pub message from token")
-		return false
-	}
-
-	_, err = sbot.PublishLog.Publish(pubMsg)
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to publish new pub message")
-		return false
-	}
-
-	return true
+    
+    if err == nil {
+        return true
+    }
+    
+    // don't throw error if pub is already following user
+    if strings.Contains(err.Error(), "already following") {
+        return true
+    }
+    
+    // don't throw error if token was already redeemed by user
+    if strings.Contains(err.Error(), "method:invite,use is not in list of allowed methods") {
+        return true
+    }
+    
+    retErr = err
+    return false
 }
 
 // todo: add make:bool parameter

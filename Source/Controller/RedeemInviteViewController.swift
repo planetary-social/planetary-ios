@@ -11,6 +11,7 @@ import UIKit
 
 class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, UITextViewDelegate {
     
+    var operationQueue = OperationQueue()
     var saveCompletion: SaveCompletion?
     
     lazy var tokenLabel: UILabel = {
@@ -24,7 +25,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
     lazy var tokenTextView: UITextView = {
         let view = UITextView.forAutoLayout()
         view.delegate = self
-        view.backgroundColor = UIColor.background.default
+        view.backgroundColor = .appBackground
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         view.isEditable = true
         view.isScrollEnabled = false
@@ -88,17 +89,36 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
     func save() {
         self.tokenTextView.resignFirstResponder()
         let redeemCode = self.tokenTextView.text!
-        AppController.shared.showProgress()
-        Bots.current.inviteRedeem(token: redeemCode) { [weak self] error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            AppController.shared.hideProgress()
-            if let error = error {
-                self?.alert(error: error)
-            } else if let strongSelf = self {
-                self?.saveCompletion?(strongSelf)
+        guard Star.isValid(invite: redeemCode) else {
+            self.alert(error: AppError.invalidInvite)
+            return
+        }
+        //AppController.shared.showProgress()
+        let star = Star(invite: redeemCode)
+        let operation = RedeemInviteOperation(star: star, shouldFollow: true)
+        operation.completionBlock = { [weak self] in
+            switch operation.result {
+            case .success:
+                DispatchQueue.main.async {
+                    AppController.shared.hideProgress()
+                    if let strongSelf = self {
+                        self?.saveCompletion?(strongSelf)
+                    }
+                }
+            case .failure(let error):
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                DispatchQueue.main.async {
+                    AppController.shared.hideProgress()
+                    self?.alert(error: error)
+                }
+            case .none:
+                DispatchQueue.main.async {
+                    AppController.shared.hideProgress()
+                }
             }
         }
+        operationQueue.addOperation(operation)
     }
     
     func saveable(_ saveable: Saveable, isReadyToSave: Bool) {

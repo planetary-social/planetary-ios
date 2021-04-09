@@ -20,19 +20,21 @@ class FollowCountView: UIView {
     var action: () -> Void = {}
 
     let text: Text
+    let secondaryText: Text
     let avatarView = AvatarStackView()
 
     let label: UILabel = {
         let view = UILabel.forAutoLayout()
         view.font = UIFont.verse.followCountView
         view.textAlignment = .left
-        view.textColor = UIColor.text.default
+        view.textColor = UIColor.secondaryText
         return view
     }()
 
 
-    init(text: Text) {
+    init(text: Text, secondaryText: Text) {
         self.text = text
+        self.secondaryText = secondaryText
 
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
@@ -58,8 +60,9 @@ class FollowCountView: UIView {
         let count = String(self.abouts.count)
         let string = self.text.text(["count": count])
         let attributed = NSMutableAttributedString(string: string)
-        let range = (string as NSString).range(of: count)
-        attributed.addAttribute(.font, value: UIFont.verse.followCountViewBold, range: range)
+        let range = (string as NSString).range(of: string)
+        attributed.addAttribute(.foregroundColor, value: UIColor.mainText, range: range)
+        attributed.append(NSAttributedString(string: self.secondaryText.text))
         self.label.attributedText = attributed
     }
 

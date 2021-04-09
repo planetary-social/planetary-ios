@@ -79,10 +79,13 @@ struct AnalyticsEnums {
         case refresh
 
         case repair
-
+        case db_update
+        
         case settings
 
         case sync
+        
+        case stats
 
         // compiler seems to want this, must be related
         // to a nested enum having an associated value

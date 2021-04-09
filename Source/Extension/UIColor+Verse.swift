@@ -13,21 +13,37 @@ import UIKit
 // note that Asset catalog colors are optional so some may require
 // a non-optional value to be used across the app
 extension UIColor {
+    
+    static let appBackground =  UIColor(named: "appBackground") ?? UIColor.white
+    static let mainText =  UIColor(named: "mainText") ?? UIColor.black
+    static let secondaryText =  UIColor(named: "secondaryText") ?? UIColor.black
+    static let reactionUser =  UIColor(named: "reactionUser")!
+    static let primaryAction =  UIColor(named: "primaryAction") ?? UIColor.black
+    static let secondaryAction =  UIColor(named: "secondaryAction")!
+    static let cardBackground =  UIColor(named: "cardBackground")!
+    static let cardBorder =  UIColor(named: "cardBorder")!
+    static let splashBackground =  UIColor(named: "splashBackgroundColor") ?? UIColor.white
+    static let screenOverlay =  UIColor(named: "screenOverlay") ?? UIColor.black.withAlphaComponent(30)
+    static let menuBackgroundColor = UIColor(named: "menuBackgroundColor") ?? UIColor.white
+    static let menuBorderColor = UIColor(named: "menuBorderColor") ?? UIColor.black
+    static let menuSelectedItemBackground = UIColor(named: "menuSelectedItemBackground") ?? UIColor.black
+    static let menuSelectedItemText = UIColor(named: "menuSelectedItemText") ?? UIColor.black
+    static let menuUnselectedItemText = UIColor(named: "menuUnselectedItemText") ?? UIColor.black
+    static let loadingIcon = UIColor(named: "loadingIcon") ?? UIColor.black
+    static let avatarRing =  UIColor(named: "avatarRing") ?? UIColor.black
+    static let networkAnimation =  UIColor(named: "networkAnimation") ?? UIColor.black
+    static let selectedTab =  UIColor(named: "selectedTab")!
+    static let unselectedTab =  UIColor(named: "unselectedTab")!
+    static let textInputBorder =  UIColor(named: "textInputBorder")!
+    static let textInputBackground =  UIColor(named: "textInputBackground")!
 
     struct background {
-        static let `default` =  UIColor(named: "backgroundColor") ?? UIColor.white
         static let gallery =    UIColor(named: "galleryColor") ?? UIColor(rgb: 0xEFEFEF)
-        static let menu =       UIColor(named: "menuBackgroundColor") ?? UIColor(rgb: 0x252525)
-        static let reply =      UIColor(named: "replyBackground") ?? UIColor(rgb: 0xEFEFEF)
-        static let table =      UIColor(named: "tableBackgroundColor") ?? UIColor(rgb: 0xF4F4F4)
+        static let splash =  UIColor(named: "splashBackgroundColor") ?? UIColor.white
     }
 
     struct border {
         static let text = UIColor(named: "textBorderColor") ?? UIColor(rgb: 0xEAEAEA)
-    }
-
-    struct highlight {
-        static let menu = UIColor(named: "menuHighlightColor") ?? UIColor(rgb: 0xF4F4F4)
     }
 
     struct separator {
@@ -54,7 +70,7 @@ extension UIColor {
     }
 
     struct tint {
-        static let `default` = UIColor(rgb: 0xFF264E)
+        static let `default` = UIColor(named: "defaultTint") ?? #colorLiteral(red: 0.3254901961, green: 0.2431372549, blue: 0.4862745098, alpha: 1)
         static let system = #colorLiteral(red: 0, green: 0.4623456597, blue: 1, alpha: 1)
     }
 }

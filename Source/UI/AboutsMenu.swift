@@ -39,7 +39,7 @@ class AboutsMenu: UIView {
         view.constrainHeight(to: view.rowHeight * 3)
         view.allowsMultipleSelection = false
         view.allowsSelection = true
-        view.backgroundColor = UIColor.background.table
+        view.backgroundColor = .appBackground
         view.register(MiniAboutTableViewCell.self, forCellReuseIdentifier: MiniAboutTableViewCell.className)
         view.separatorColor = UIColor.separator.middle
         view.separatorInset = UIEdgeInsets.zero
@@ -55,7 +55,7 @@ class AboutsMenu: UIView {
     init(isHidden: Bool = true) {
         super.init(frame: .zero)
         self.useAutoLayout()
-        self.backgroundColor = UIColor.background.table
+        self.backgroundColor = .appBackground
         self.isHidden = isHidden
         Layout.fill(view: self, with: self.tableView)
         Layout.fillTop(of: self, with: self.topSeparator, respectSafeArea: false)
@@ -85,9 +85,9 @@ class AboutsMenu: UIView {
 
     func show(animated: Bool = true) {
         guard self.isShown == false else { return }
-        self.isShown = true
-        self.tableView.contentOffset = .zero
-        self.isHidden = false
+        //self.isShown = true
+        //self.tableView.contentOffset = .zero
+        //self.isHidden = false
     }
 
     func hide(animated: Bool = true) {

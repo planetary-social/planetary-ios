@@ -26,6 +26,26 @@ class EditPostButton: IconButton {
             AppController.shared.showToast(Text.identifierCopied.text)
         }
         
+        let share = UIAlertAction(title: Text.shareThisMessage.text, style: .default) { [post] _ in
+            guard let publicLink = post.key.publicLink, let me = Bots.current.about else {
+                return
+            }
+            let who = me.name ?? me.identity
+            let link = publicLink.absoluteString
+            let postWithoutGallery = post.value.content.post?.text.withoutGallery() ?? ""
+            let what = postWithoutGallery.prefix(280 - who.count - link.count - Text.shareThisMessageText.text.count)
+            let text = Text.shareThisMessageText.text(["who": who,
+                                                       "what": String(what),
+                                                       "link": publicLink.absoluteString])
+            Analytics.shared.trackDidSelectAction(actionName: "share_message")
+            let activityController = UIActivityViewController(activityItems: [text],
+                                                              applicationActivities: nil)
+            AppController.shared.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.sourceView = self
+            }
+        }
+        
         let delete = UIAlertAction(title: Text.deletePost.text, style: .destructive) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "delete_post")
             guard let controller = Support.shared.articleViewController(.editPost) else {
@@ -46,7 +66,7 @@ class EditPostButton: IconButton {
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
 
-        AppController.shared.choose(from: [copy, delete, cancel])
+        AppController.shared.choose(from: [copy, share, delete, cancel])
     }
 
     required init?(coder aDecoder: NSCoder) {

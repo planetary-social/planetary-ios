@@ -8,24 +8,24 @@
 
 import Foundation
 
+extension CharacterSet {
+    static let rfc3986Unreserved = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+}
+
 extension Identity {
 
     var publicLink: URL? {
-        return URL(string: "https://planetary.social/p/\(self)")
+        let host = "https://planetary.link/"
+        let msgPath = self.addingPercentEncoding(withAllowedCharacters:.rfc3986Unreserved)!
+        return URL(string: host + msgPath)
     }
 
-    static func parse(publicLink: URL) -> Identity? {
-        let path = publicLink.path
-        let components = publicLink.pathComponents
-        if components.count >= 2, components[1] == "p" {
-            let identifier = Identifier(path.dropFirst(3))
-            if identifier.isValidIdentifier {
-                return identifier
-            }
-            return nil
-        } else {
-            return nil
+    static func parse(publicLink: URL) -> Identifier? {
+        let identifier = Identifier(publicLink.path.dropFirst())
+        if identifier.isValidIdentifier {
+            return identifier
         }
+        return nil
     }
 
 }

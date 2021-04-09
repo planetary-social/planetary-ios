@@ -13,6 +13,7 @@ protocol AnalyticsService {
     var isEnabled: Bool { get }
 
     func identify(about: About?, network: NetworkKey)
+    func identify(statistics: BotStatistics)
     func updatePushToken(pushToken: Data?)
     func optIn()
     func optOut()

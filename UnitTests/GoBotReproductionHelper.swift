@@ -75,7 +75,7 @@ class API_GoBot: XCTestCase {
     // check we loaded all the messages from the fixtures repo
     func test02_replicateUpto() {
         XCTAssertEqual(API_GoBot.bot.statistics.repo.feedCount, 200)
-        XCTAssertEqual(API_GoBot.bot.statistics.repo.lastReceivedMessage, -1)
+        XCTAssertEqual(API_GoBot.bot.statistics.db.lastReceivedMessage, -1)
         XCTAssertEqual(API_GoBot.bot.statistics.repo.messageCount, 6700)
         
         XCTAssertFalse(API_GoBot.bot.bot.repoFSCK(.Sequences))
@@ -100,7 +100,7 @@ class API_GoBot: XCTestCase {
     }
 
     func test04_same_msgs() {
-        XCTAssertEqual(API_GoBot.bot.statistics.repo.lastReceivedMessage, 6699)
+        XCTAssertEqual(API_GoBot.bot.statistics.db.lastReceivedMessage, 6699)
         XCTAssertEqual(API_GoBot.bot.statistics.repo.messageCount, 6700)
         
         XCTAssertTrue(API_GoBot.bot.bot.repoFSCK(.Sequences))
@@ -120,7 +120,7 @@ class API_GoBot: XCTestCase {
             XCTAssertNil(err)
         }
         self.wait()
-        XCTAssertEqual(API_GoBot.bot.statistics.repo.lastReceivedMessage, 6699)
+        XCTAssertEqual(API_GoBot.bot.statistics.db.lastReceivedMessage, 6699)
         XCTAssertEqual(API_GoBot.bot.statistics.repo.messageCount, 6700)
     }
 

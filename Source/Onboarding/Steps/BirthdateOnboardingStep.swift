@@ -35,7 +35,7 @@ class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerView
         let picker = UIPickerView()
         picker.dataSource = self
         picker.delegate = self
-        picker.backgroundColor = UIColor.background.default
+        picker.backgroundColor = .appBackground
         return picker
     }()
 

@@ -25,7 +25,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         // disabled until we work on these again
 //        BackupOnboardingStep(),
 //        ContactsOnboardingStep(),
-        DirectoryOnboardingStep(),      // Bot and API calls
+//        DirectoryOnboardingStep(),      // Bot and API calls
         PhotoOnboardingStep(),
         PhotoConfirmOnboardingStep(),   // Bot and API calls
         BioOnboardingStep(),            // Bot and API calls
@@ -34,7 +34,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
     private let resumeSteps = [
         ResumeOnboardingStep(),
-        DirectoryOnboardingStep(),      // Bot and API calls
+        //DirectoryOnboardingStep(),      // Bot and API calls
         //PhotoOnboardingStep(),
         //PhotoConfirmOnboardingStep(),   // Bot and API calls
         BioOnboardingStep(),            // Bot and API calls
@@ -45,7 +45,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     private var steps: [OnboardingStep] = []
 
     private var currentStep: OnboardingStep {
-        return self.steps[self.stepIndex]
+            return self.steps[self.stepIndex]
     }
 
     private var stepData = OnboardingStepData()
@@ -71,6 +71,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.isNavigationBarHidden = true
+        self.view.backgroundColor = .appBackground
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -88,7 +89,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
         controller.isKeyboardHandlingEnabled = true
         controller.navigationItem.title = step.name.title.text
-        controller.view?.backgroundColor = UIColor.background.default
+        controller.view?.backgroundColor = .appBackground
         Layout.fill(view: controller.contentView, with: step.view)
 
         step.customizeController(controller: controller)
@@ -130,6 +131,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     }
 
     private func done() {
+        //AppController.shared.showDirectoryViewController()
         AppController.shared.showMainViewController()
     }
 

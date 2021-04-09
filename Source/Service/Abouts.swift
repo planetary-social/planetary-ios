@@ -12,7 +12,7 @@ import Foundation
 // this should become part of Caches.mentions.recent
 struct AboutService {
 
-    private static var identities: Identities = []
+    private static var identities: [Identity] = []
 
     /// Adds the specified identity to the of a stack representing
     /// recently mentioned identities.  This is used to populate the
@@ -50,7 +50,7 @@ struct AboutService {
     /// IMPORTANT!
     /// This will likely be performed on the main thread, so if the
     /// identities array is very large this could be a bottleneck.
-    private static func sortedAbouts(for identities: Identities,
+    private static func sortedAbouts(for identities: [Identity],
                                      filteredBy string: String?,
                                      completion: @escaping AboutsCompletion)
     {
@@ -77,8 +77,7 @@ struct AboutService {
         let group = DispatchGroup()
 
         group.enter()
-        Bots.current.follows(identity: identity) {
-            contacts, _ in
+        Bots.current.follows(identity: identity) { (contacts: [Identity], _) in
             identities = identities.union(Set<Identity>(contacts))
             group.leave()
         }

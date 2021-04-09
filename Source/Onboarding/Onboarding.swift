@@ -37,7 +37,6 @@ class Onboarding {
         let bot: Bot
 
         var about: About?
-        var person: Person?
     }
 
     enum StartError: Error {
@@ -123,38 +122,23 @@ class Onboarding {
                     return
                 }
 
-                // TODO abstract Verse Directory API
-                // TODO https://app.asana.com/0/0/1134329918920788/f
-                // join verse
-                DirectoryAPI.shared.join(identity: secret.identity, name: name, birthdate: birthdate, phone: phone) { person, error in
+                // publish about
+                let about = About(about: secret.identity, name: name)
+                context.bot.publish(content: about) { _, error in
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
-                    
-                    guard let person = person else {
-                        completion(nil, .apiError(error))
+                    if let error = error {
+                        completion(nil, .botError(error));
                         return
                     }
 
-                    // TODO: Move this to happen before verseapi.join
-                    // publish about
-                    let about = About(about: secret.identity, name: name)
-                    context.bot.publish(content: about) { _, error in
-                        Log.optional(error)
-                        CrashReporting.shared.reportIfNeeded(error: error)
-                        if let error = error {
-                            completion(nil, .botError(error));
-                            return
-                        }
-
-                        CrashReporting.shared.identify(about: about, network: configuration.network!)
-                        Analytics.shared.identify(about: about, network: configuration.network!)
-                        
-                        // done
-                        context.about = about
-                        context.person = person
-                        completion(context, nil)
-                        Onboarding.didStart(configuration: configuration, secret: secret)
-                    }
+                    CrashReporting.shared.identify(about: about, network: configuration.network!)
+                    Analytics.shared.identify(about: about, network: configuration.network!)
+                    
+                    // done
+                    context.about = about
+                    completion(context, nil)
+                    Onboarding.didStart(configuration: configuration, secret: secret)
                 }
             }
         }
@@ -218,19 +202,17 @@ class Onboarding {
             // get About for context identity
             Bots.current.about(identity: context.identity) {
                 about, error in
-                guard let about = about else { completion(context, .botError(error)); return }
+                guard let about = about else {
+                    // Known case, pub api call failed in previous onboarding
+                    completion(context, .botError(error))
+                    return
+                }
                 context.about = about
                 
                 CrashReporting.shared.identify(about: about, network: context.network)
                 Analytics.shared.identify(about: about, network: context.network)
 
-                // get Person for identity
-                DirectoryAPI.shared.me() {
-                    person, error in
-                    guard let person = person else { completion(context, .apiError(error)); return }
-                    context.person = person
-                    completion(context, nil)
-                }
+                completion(context, nil)
             }
         }
     }

@@ -14,7 +14,8 @@ extension Date {
         (day: 24, month: 12),
         (day: 25, month: 12),
         (day: 31, month: 12),
-        (day: 1, month: 1)
+        (day: 1, month: 1),
+        (day: 19, month: 4)
     ]
 
     static func todayIsAHoliday() -> Bool {

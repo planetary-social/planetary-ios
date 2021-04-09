@@ -11,6 +11,7 @@ import UIKit
 
 extension UIEdgeInsets {
     static let `default` =          UIEdgeInsets(top: Layout.verticalSpacing, left: Layout.horizontalSpacing, bottom: -Layout.verticalSpacing, right: -Layout.horizontalSpacing)
+    static let defaultText =          UIEdgeInsets(top: Layout.verticalSpacing, left: Layout.horizontalSpacing, bottom: Layout.verticalSpacing, right: Layout.horizontalSpacing)
     static let leftBottomRight =    UIEdgeInsets(top: 0, left: Layout.horizontalSpacing, bottom: -Layout.verticalSpacing, right: -Layout.horizontalSpacing)
     static let leftRight =          UIEdgeInsets(top: 0, left: Layout.horizontalSpacing, bottom: 0, right: -Layout.horizontalSpacing)
     static let topOnly =            UIEdgeInsets(top: Layout.verticalSpacing, left: 0, bottom: 0, right: 0)

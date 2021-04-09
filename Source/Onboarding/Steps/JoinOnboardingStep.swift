@@ -49,6 +49,7 @@ class JoinOnboardingStep: OnboardingStep {
                 return
             }
             self?.data.context = context
+            
             self?.next()
         }
     }

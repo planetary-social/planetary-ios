@@ -1,17 +1,50 @@
 {
   "images" : [
     {
-      "filename" : "options-icon.png",
+      "filename" : "icon-dark-options-pressed-1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "options-icon@2x.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon-dark-options-pressed.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "icon-dark-options-pressed@2x-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "options-icon@3x.png",
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon-dark-options-pressed@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "icon-dark-options-pressed@3x-1.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon-dark-options-pressed@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -1,12 +1,23 @@
 {
   "images" : [
     {
+      "filename" : "icon-light-camera-large.png",
       "idiom" : "universal",
-      "filename" : "camera-large.pdf"
+      "scale" : "1x"
+    },
+    {
+      "filename" : "icon-light-camera-large@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "icon-light-camera-large@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

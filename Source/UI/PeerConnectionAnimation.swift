@@ -54,12 +54,18 @@ class PeerConnectionAnimation: UIView {
     private var insideReplicator: CAReplicatorLayer!
     private var outsideReplicator: CAReplicatorLayer!
 
-    let inColor = #colorLiteral(red: 0.9952326417, green: 0.1234170869, blue: 0.2947148085, alpha: 1)
-    let outColor = #colorLiteral(red: 0.9970298409, green: 0.6325244308, blue: 0.714163363, alpha: 1)
-    let disabledColor = #colorLiteral(red: 0.6195520163, green: 0.619643569, blue: 0.6195320487, alpha: 1)
+    var inColor = UIColor.tint.default
+    var outColor = UIColor.tint.default.withAlphaComponent(0.6)
+    var disabledColor = #colorLiteral(red: 0.6195520163, green: 0.619643569, blue: 0.6195320487, alpha: 1)
+    var searchColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
 
-    init() {
+    init(color: UIColor) {
         super.init(frame: .zero)
+        
+        self.inColor = color
+        self.outColor = color
+        self.disabledColor = color
+        self.searchColor = color
 
         self.insideCircle = addCircle(size: self.insideDiameter)
         self.outsideCircle = addCircle(size: self.outsideDiameter)
@@ -176,6 +182,12 @@ class PeerConnectionAnimation: UIView {
             self.setDots(replicator: outsideReplicator, circle: outsideCircle, dotCount: self.outsideDots, duration: duration, completion: completion)
         }
     }
+    
+    func searchAnimation(completion: (() -> Void)? = nil) {
+        insideCircle.strokeColor = self.searchColor.cgColor
+        outsideCircle.strokeColor = self.searchColor.cgColor
+    }
+    
 
     required init?(coder: NSCoder) {
         fatalError("Not implemented.")

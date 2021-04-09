@@ -15,20 +15,32 @@ struct KeyValue: Codable {
         case value
         case timestamp
         case receivedSeq = "ReceiveLogSeq"
+        case hashedKey = "HashedKey"
     }
 
     let key: Identifier
     let value: Value
-    let receivedSeq: Int64? // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
     let timestamp: Float64 // received time
+    // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
+    let receivedSeq: Int64?
+    let hashedKey: String?
 
     init(key: Identifier, value: Value, timestamp: Float64) {
         self.key = key
         self.value = value
         self.timestamp = timestamp
         self.receivedSeq = -1
+        self.hashedKey = nil
     }
-
+    
+    init(key: Identifier, value: Value, timestamp: Float64, receivedSeq: Int64, hashedKey: String) {
+        self.key = key
+        self.value = value
+        self.timestamp = timestamp
+        self.receivedSeq = receivedSeq
+        self.hashedKey = hashedKey
+    }
+    
     // MARK: Metadata
 
     struct Metadata {

@@ -14,11 +14,13 @@ class GalleryView: UIView, KeyValueUpdateable {
 
     private let slideshow: ImageSlideshow = {
         let view = ImageSlideshow.forAutoLayout()
-        view.backgroundColor = UIColor.background.gallery
+        view.backgroundColor = UIColor.cardBackground
         view.circular = true
         view.contentScaleMode = .scaleAspectFill
         view.pageIndicator = UIPageControl.default()
         view.preload = .all
+        view.activityIndicator = DefaultActivityIndicator(style: .gray,
+                                                          color: UIColor.loadingIcon)
         return view
     }()
 
@@ -26,7 +28,9 @@ class GalleryView: UIView, KeyValueUpdateable {
 
     init(insets: UIEdgeInsets = .zero) {
         super.init(frame: .zero)
+        Layout.addSeparator(toTopOf: self.slideshow, color: UIColor.separator.top)
         Layout.fill(view: self, with: self.slideshow, insets: insets)
+        Layout.addSeparator(toBottomOf: self.slideshow)
         let tap = UITapGestureRecognizer(target: self, action: #selector(slideshowWasTapped))
         self.slideshow.addGestureRecognizer(tap)
     }
@@ -83,6 +87,7 @@ fileprivate class BlobInputSource: InputSource {
     deinit {
         guard let uuid = self.completionUUID else { return }
         Caches.blobs.forgetCompletions(with: uuid, for: self.blob.identifier)
+        Caches.blobs.cancelDataTask(for: self.blob.identifier)
     }
 
     func load(to imageView: UIImageView,

@@ -35,6 +35,14 @@ class EveryoneViewController: ContentViewController {
      }()
     
      private lazy var delegate = PostReplyPaginatedDelegate(on: self)
+    
+     private lazy var floatingRefreshButton: FloatingRefreshButton = {
+         let button = FloatingRefreshButton()
+         button.addTarget(self,
+                          action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
+                          for: .touchUpInside)
+         return button
+     }()
 
      private lazy var tableView: UITableView = {
          let view = UITableView.forVerse()
@@ -111,31 +119,44 @@ class EveryoneViewController: ContentViewController {
          }
          return timer
      }()
-
     
+    // This is read by the floating button to update the table view
+    // without querying the database again, it is set by the didRefresh
+    // notification.
+    private var updatedProxy: PaginatedKeyValueDataProxy?
+
+    // MARK: Lifecycle
+
     init() {
         super.init(scrollable: false, title: .explore)
-        /*
         let imageView = UIImageView(image: UIImage(named: "title"))
         imageView.contentMode = .scaleAspectFit
         let view = UIView.forAutoLayout()
         Layout.fill(view: view, with: imageView, respectSafeArea: false)
         self.navigationItem.titleView = view
-     */
         self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
-
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+        super.init(scrollable: scrollable, title: title, dynamicTitle: dynamicTitle)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
+        
+        self.floatingRefreshButton.layout(in: self.view, below: self.tableView)
+        
         self.addLoadingAnimation()
         self.load()
+        
+        self.registerDidRefresh()
     }
+
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -143,17 +164,21 @@ class EveryoneViewController: ContentViewController {
         Analytics.shared.trackDidShowScreen(screenName: "everyone")
     }
     
+    // MARK: Load and refresh
+    
     func load(animated: Bool = false) {
         Bots.current.everyone() { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
             self?.removeLoadingAnimation()
+            self?.floatingRefreshButton.hide()
             AppController.shared.hideProgress()
          
             if let error = error {
                 self?.alert(error: error)
             } else {
+                self?.updatedProxy = nil
                 self?.update(with: proxy, animated: animated)
             }
         }
@@ -217,6 +242,15 @@ class EveryoneViewController: ContentViewController {
          control.beginRefreshing()
          self.refreshAndLoad()
      }
+    
+    @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
+        if let proxy = self.updatedProxy {
+            self.dataSource.update(source: proxy)
+            self.tableView.reloadData()
+            self.updatedProxy = nil
+        }
+        button.hide()
+    }
 
      @objc func newPostButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
@@ -225,7 +259,6 @@ class EveryoneViewController: ContentViewController {
              [weak self] post in
              self?.load()
          }
-         controller.addDismissBarButtonItem()
          let navController = UINavigationController(rootViewController: controller)
          self.present(navController, animated: true, completion: nil)
      }
@@ -250,7 +283,31 @@ class EveryoneViewController: ContentViewController {
          guard let identity = notification.object as? Identity else { return }
          self.tableView.deleteKeyValues(by: identity)
      }
+    
+    override func didRefresh(notification: NSNotification) {
+        let currentProxy = self.dataSource.data
+        Bots.current.everyone { [weak self] (newProxy, error) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            if newProxy.count > currentProxy.count {
+                DispatchQueue.main.async { [weak self] in
+                    if currentProxy.count == 0 {
+                        self?.load(animated: true)
+                    } else if let firstCurrent = currentProxy.keyValueBy(index: 0), let firstNew = newProxy.keyValueBy(index: 0), firstCurrent.key != firstNew.key {
+                        self?.updatedProxy = newProxy
+                        let shouldAnimate = self?.navigationController?.topViewController == self
+                        self?.floatingRefreshButton.show(animated: shouldAnimate)
+                    }
+                }
+            }
+        }
+    }
+}
 
+extension EveryoneViewController: TopScrollable {
+    func scrollToTop() {
+        self.tableView.scrollToTop()
+    }
 }
 
 extension EveryoneViewController: PostReplyPaginatedDataSourceDelegate {

@@ -26,7 +26,7 @@ class MenuViewController: UIViewController {
     private let backgroundView: UIView = {
         let view = UIView.forAutoLayout()
         view.alpha = 0
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.22)
+        view.backgroundColor = UIColor.screenOverlay
         return view
     }()
 
@@ -47,6 +47,15 @@ class MenuViewController: UIViewController {
         Layout.fill(view: self.view, with: self.closeButton, respectSafeArea: false)
         Layout.fillLeft(of: self.view, with: self.menuView, respectSafeArea: false)
         self.menuView.constrainWidth(to: 300)
+//        let menuBorder = UIView()
+//        menuBorder.backgroundColor = UIColor.menuBorderColor
+//        self.view.addSubview(menuBorder)
+//        NSLayoutConstraint.activate([
+//            menuBorder.topAnchor.constraint(equalTo: self.menuView.topAnchor),
+//            menuBorder.leftAnchor.constraint(equalTo: self.menuView.rightAnchor, constant: 0),
+//            menuBorder.bottomAnchor.constraint(equalTo: self.menuView.bottomAnchor, constant: 0),
+//            menuBorder.widthAnchor.constraint(equalToConstant: 1)
+//        ])
         self.load()
     }
     
@@ -182,7 +191,7 @@ fileprivate class MenuView: UIView {
     override init(frame: CGRect) {
 
         super.init(frame: frame)
-        self.backgroundColor = UIColor.background.menu
+        self.backgroundColor = UIColor.menuBackgroundColor
 
         self.addSubview(self.profileView)
         self.profileView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
@@ -191,22 +200,34 @@ fileprivate class MenuView: UIView {
 
         Layout.fillSouth(of: self.profileView, with: self.label, insets: UIEdgeInsets(top: 20, left: Layout.horizontalSpacing, bottom: 0, right: -Layout.horizontalSpacing))
 
-        let separator = Layout.separatorView(color: UIColor.separator.menu)
-        Layout.fillSouth(of: self.label, with: separator, insets: .top(25))
+        var separator = Layout.separatorView(color: UIColor.menuBorderColor)
+        Layout.fillSouth(of: self.label, with: separator, insets: .top(60))
 
-        Layout.fillSouth(of: separator, with: self.profileButton, insets: .top(32))
+        Layout.fillSouth(of: separator, with: self.profileButton)
         self.profileButton.constrainHeight(to: 50)
         self.profileButton.imageEdgeInsets = .top(-5)
+        
+        separator = Layout.separatorView(color: UIColor.menuBorderColor)
+        Layout.fillSouth(of: self.profileButton, with: separator)
 
-        Layout.fillSouth(of: self.profileButton, with: self.settingsButton)
+        Layout.fillSouth(of: separator, with: self.settingsButton)
         self.settingsButton.constrainHeight(to: 50)
+        
+        separator = Layout.separatorView(color: UIColor.menuBorderColor)
+        Layout.fillSouth(of: self.settingsButton, with: separator)
 
-        Layout.fillSouth(of: self.settingsButton, with: self.helpButton)
+        Layout.fillSouth(of: separator, with: self.helpButton)
         self.helpButton.constrainHeight(to: 50)
         self.helpButton.imageEdgeInsets = .top(2)
+        
+        separator = Layout.separatorView(color: UIColor.menuBorderColor)
+        Layout.fillSouth(of: self.helpButton, with: separator)
 
-        Layout.fillSouth(of: self.helpButton, with: self.reportBugButton)
+        Layout.fillSouth(of: separator, with: self.reportBugButton)
         self.reportBugButton.constrainHeight(to: 50)
+        
+        separator = Layout.separatorView(color: UIColor.menuBorderColor)
+        Layout.fillSouth(of: self.reportBugButton, with: separator)
 
         let insets = UIEdgeInsets(top: 0, left: self.profileButton.contentEdgeInsets.left + 8, bottom: -36, right: -Layout.horizontalSpacing)
         Layout.fillBottom(of: self, with: self.peersView, insets: insets)
@@ -227,7 +248,7 @@ fileprivate class ProfileImageView: UIView {
 
     let circleView: UIView = {
         let view = UIView.forAutoLayout()
-        view.stroke()
+        view.stroke(color: .avatarRing)
         return view
     }()
 
@@ -269,12 +290,13 @@ fileprivate class MenuButton: UIButton {
         self.titleEdgeInsets = UIEdgeInsets(top: 0, left: 19, bottom: 0, right: 0)
 
         self.setTitle(title.text, for: .normal)
-        self.setTitleColor(UIColor.text.default, for: .normal)
+        self.setTitleColor(UIColor.menuUnselectedItemText, for: .normal)
+        self.setTitleColor(UIColor.menuSelectedItemText, for: .highlighted)
         self.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .regular)
 
         self.setImage(image, for: .normal)
 
-        self.setBackgroundImage(UIColor.highlight.menu.image(), for: .highlighted)
+        self.setBackgroundImage(UIColor.menuSelectedItemBackground.image(), for: .highlighted)
     }
 
     required init?(coder aDecoder: NSCoder) {

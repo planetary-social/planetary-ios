@@ -34,8 +34,8 @@ class BlockButton: PillButton {
     // the Bool is true for following, false when not following
     var onUpdate: ((Bool) -> Void)?
 
-    override init() {
-        super.init()
+    init(color: UIColor = UIColor.tint.default) {
+        super.init(primaryColor: color, secondaryColor: color)
         self.setTitle(.block, selected: .blocked)
         self.setImage(UIImage.verse.buttonBlock, selected: UIImage.verse.buttonBlocked)
     }
@@ -58,7 +58,7 @@ class BlockButton: PillButton {
             self.onUpdate?(shouldBlock)
         }
 
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         self.isEnabled = false
 
         if shouldBlock {
@@ -80,6 +80,8 @@ class BlockButton: PillButton {
                 if error != nil {
                     Analytics.shared.trackDidUnblockIdentity()
                 }
+                
+                AppController.shared.missionControlCenter.sendMission()
                 
                 complete()
             }

@@ -12,7 +12,6 @@ import Foundation
 
 extension Notification.Name {
     static let didBlockUser = Notification.Name("didBlockUser")
-    static let didUnblockUser = Notification.Name("didUnblockUser")
 }
 
 // MARK:- Blobs
@@ -47,9 +46,10 @@ extension Notification.Name {
 
 // MARK:- Databae progress
 extension Notification.Name {
-    static let didStartDatabaseProcessing = Notification.Name("didStartDatabaseProcessing")
-    static let didUpdateDatabaseProgress = Notification.Name("didUpdateDatabaseProgress")
-    static let didFinishDatabaseProcessing = Notification.Name("didFinishDatabaseProcessing")
+    static let didStartFSCKRepair = Notification.Name("didStartFSCKRepair")
+    static let didUpdateFSCKRepair = Notification.Name("didUpdateFSCKRepair")
+    static let didFinishFSCKRepair = Notification.Name("didFinishFSCKRepair")
+    static let didCreateReport = Notification.Name("didCreateReport")
 }
 
 extension Notification {
@@ -63,19 +63,18 @@ extension Notification {
     }
     
     static func didStartFSCKRepair() -> Notification {
-        return Notification(name: .didStartDatabaseProcessing,
+        return Notification(name: .didStartFSCKRepair,
                             object: nil,
                             userInfo: [ "status": "Database consistency check in progress" ])
     }
-
-    static func didStartViewRefresh() -> Notification {
-        return Notification(name: .didStartDatabaseProcessing,
-                            object: nil,
-                            userInfo: [ "status": "Loading new messages" ])
+    
+    static func didFinishFSCKRepair() -> Notification {
+        return Notification(name: .didFinishFSCKRepair,
+                            object: nil)
     }
 
-    static func didUpdateDatabaseProgress(perc: Float64, status: String) -> Notification {
-        return Notification(name: .didUpdateDatabaseProgress,
+    static func didUpdateFSCKRepair(perc: Float64, status: String) -> Notification {
+        return Notification(name: .didUpdateFSCKRepair,
                             object: nil,
                             userInfo: ["percentage_done": perc, "status": status])
     }

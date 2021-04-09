@@ -14,7 +14,7 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
-    func resume() {
+    func lastReceivedTimestam() throws -> Double {
         fatalError("TODO:\(#function)")
     }
     
@@ -26,16 +26,31 @@ class FakeBot: Bot {
         fatalError("TODO:\(#function)")
     }
     
-    func notifications(completion: @escaping KeyValuesCompletion) {
-        fatalError("TODO:\(#function)")
+    func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
+        queue.async {
+            completion([], nil)
+        }
+    }
+    
+    func seedPubAddresses(addresses: [PubAddress],
+                          queue: DispatchQueue,
+                          completion: @escaping (Result<Void, Error>) -> Void) {
+        queue.async {
+            completion(.success(()))
+        }
     }
     
     func knownPubs(completion: @escaping KnownPubsCompletion) {
         fatalError("TODO:knownPubs")
     }
     
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        fatalError("TODO:invite:redeem")
+    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+        queue.async {
+            completion([], nil)
+        }
+    }
+    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
+        queue.async{ completion(nil) }
     }
     
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
@@ -55,6 +70,14 @@ class FakeBot: Bot {
                  completion: @escaping AddImageCompletion)
     {
         fatalError("TODO:blobs:get")
+    }
+    
+    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        fatalError("TODO")
+    }
+    
+    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        fatalError("TODO")
     }
 
     func data(for identifier: BlobIdentifier,
@@ -80,8 +103,10 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
 
-    func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        fatalError("TODO")
+    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
+        queue.async {
+            completion(MessageIdentifier.null, nil)
+        }
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
@@ -96,7 +121,15 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
     
+    func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
+        fatalError("TODO")
+    }
+    
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
+        fatalError("TODO")
+    }
+
+    func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
         fatalError("TODO")
     }
     
@@ -147,14 +180,17 @@ class FakeBot: Bot {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
     }
 
-    func login(network: NetworkKey,
+    func login(queue: DispatchQueue,
+               network: NetworkKey,
                hmacKey: HMACKey?,
                secret: Secret,
-               completion: ErrorCompletion)
+               completion: @escaping ErrorCompletion)
     {
         self._network = network.string
         self._identity = secret.identity
-        completion(nil)
+        queue.async {
+            completion(nil)
+        }
     }
 
     func logout(completion: ErrorCompletion) {
@@ -167,15 +203,18 @@ class FakeBot: Bot {
 
     let isSyncing = false
 
-    func sync(queue: DispatchQueue, completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)
         }
     }
     
-    func syncNotifications(queue: DispatchQueue, completion: @escaping SyncCompletion) {
-        self.sync(queue: queue, completion: completion)
+    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+        self._statistics.lastSyncDate = Date()
+        queue.async {
+            completion(nil, 0, 0)
+        }
       }
 
     // MARK: Refresh
@@ -212,7 +251,7 @@ class FakeBot: Bot {
 
     var about: About? { return nil }
 
-    func about(completion: AboutCompletion) {
+    func about(completion: @escaping AboutCompletion) {
 
         guard let identity = self._identity else {
             completion(nil, FakeBotError.runtimeError("no ID"))
@@ -222,17 +261,35 @@ class FakeBot: Bot {
         self.about(identity: identity, completion: completion)
     }
 
-    func about(identity: Identity, completion: AboutCompletion) {
+    func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
         let about = self.about(for: identity)
-        completion(about, nil)
+        queue.async {
+            completion(about, nil)
+        }
     }
 
-    func abouts(identities: Identities, completion:  @escaping AboutsCompletion) {
+    func abouts(identities: [Identity], completion:  @escaping AboutsCompletion) {
         completion(self.abouts(), nil)
+    }
+    
+    func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion) {
+        let abouts = self.abouts()
+        queue.async {
+            completion(abouts, nil)
+        }
     }
 
     // MARK: Feed content
 
+    func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
+        queue.async {
+            let data = Data.fromJSON(resource: "Feed.json")
+            var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
+            feed?.sort { $0.value.timestamp < $1.value.timestamp }
+            completion(feed?.first?.key)
+        }
+    }
+    
     func recent(completion: PaginatedCompletion) {
 //        let data = Data.fromJSON(resource: "Feed_big.json")
         let data = Data.fromJSON(resource: "Feed.json")
@@ -253,6 +310,15 @@ class FakeBot: Bot {
             completion(StaticDataProxy(with: feed), nil)
         } else {
             completion(StaticDataProxy(), nil)
+        }
+    }
+    
+    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
+        queue.async {
+            let data = Data.fromJSON(resource: "Feed.json")
+            var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
+            feed?.sort { $0.value.timestamp < $1.value.timestamp }
+            completion(feed?.first?.key)
         }
     }
 
@@ -277,7 +343,17 @@ class FakeBot: Bot {
     private var _statistics = MutableBotStatistics()
     var statistics: BotStatistics { return self._statistics }
     
-    func statistics(completion: @escaping StatisticsCompletion) {
-        completion(_statistics)
+    func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
+        let statistics = _statistics
+        queue.async {
+            completion(statistics)
+        }
     }
+    
+    // MARK: Preload
+    
+    func preloadFeed(at url: URL, completion: @escaping ErrorCompletion) {
+        completion(nil)
+    }
+    
 }

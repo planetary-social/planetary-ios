@@ -21,7 +21,6 @@ extension Onboarding.Context {
         self.signingKey = configuration.hmacKey
         self.bot = bot
         self.about = nil
-        self.person = nil
     }
 
     static func fromCurrentAppConfiguration() -> Onboarding.Context? {
