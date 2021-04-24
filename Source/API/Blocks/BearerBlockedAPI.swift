@@ -48,7 +48,7 @@ class PlanetaryBearerBlockedAPI: BlockedAPIService {
             })
             return
         }
-
+        
         let authHeader = ["X-Planetary-Bearer-Token": token]
         self.get(path: "/block-list", headers: authHeader, completion: complete)
     }
