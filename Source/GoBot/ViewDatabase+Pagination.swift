@@ -185,13 +185,20 @@ class FeedKeyValueSource: KeyValueSource {
 
     let total: Int
 
-    init(with vdb: ViewDatabase, feed: FeedIdentifier) throws {
+    init?(with vdb: ViewDatabase, feed: FeedIdentifier) throws {
         self.view = vdb
+        //we should find a better way of handling errors than intentionally crashing.
+        if feed.isValidIdentifier {
+            self.feed = feed
 
-        guard feed.isValidIdentifier else { fatalError("invalid feed handle: \(feed)") }
-        self.feed = feed
-
-        self.total = try self.view.stats(for: self.feed)
+            self.total = try self.view.stats(for: self.feed)
+        }
+        else {
+            self.feed = feed
+            self.total = 0
+            print("invalid feed handle: \(feed)")
+            //assertionFailure("invalid feed handle: \(feed)")
+        }
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {

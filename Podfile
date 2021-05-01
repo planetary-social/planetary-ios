@@ -16,6 +16,7 @@ target 'Planetary' do
     pod 'ZendeskSDK', '4.0.1'
     pod 'CocoaLumberjack/Swift', '3.6.1'
     pod 'Bugsnag', '5.23.1'
+    #pod 'cocoapods-bugsnag', '2.2.1'
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
     pod "PostHog", "~> 1.1"
@@ -56,6 +57,8 @@ plugin 'cocoapods-keys', {
     "PostHogAPIKey",
     "PostHogHost"
 ]}
+
+plugin 'cocoapods-bugsnag'
 
 post_install do | installer |
 

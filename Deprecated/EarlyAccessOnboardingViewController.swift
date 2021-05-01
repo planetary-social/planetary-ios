@@ -33,7 +33,8 @@ class EarlyAccessOnboardingViewController: UINavigationController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        //fatalError("init(coder:) has not been implemented")
+        CrashReporting.shared.reportIfNeeded(error: Error.new(errorDescription: "init(coder:) has not been implemented")
     }
 
     // MARK: Content presentation
