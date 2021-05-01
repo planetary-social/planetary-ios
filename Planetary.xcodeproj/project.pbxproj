@@ -289,6 +289,9 @@
 		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		2D7FE7E5258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
 		2D7FE7E6258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
+		2DBA7C97263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C92263DB1FA008B646F /* Generated.strings */; };
+		2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
+		2DBA7C9F263DB2F5008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C9D263DB2F5008B646F /* Generated.strings */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
 		53033E9F2383322B004609F8 /* Onboarding+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9E2383322B004609F8 /* Onboarding+AppConfiguration.swift */; };
@@ -918,6 +921,9 @@
 		2D009BF824550868001351CB /* EveryoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EveryoneViewController.swift; sourceTree = "<group>"; };
 		2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryOnboardingStep.swift; sourceTree = "<group>"; };
 		2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostHogAnalytics.swift; sourceTree = "<group>"; };
+		2DBA7C93263DB1FA008B646F /* de-DE */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "de-DE"; path = Generated.strings; sourceTree = "<group>"; };
+		2DBA7C96263DB1FA008B646F /* zh-CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-CN"; path = Generated.strings; sourceTree = "<group>"; };
+		2DBA7C9E263DB2F5008B646F /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = Generated.strings; sourceTree = "<group>"; };
 		2DFBECE325E1542A00803075 /* development.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = development.entitlements; sourceTree = "<group>"; };
 		2DFBECE425E1545000803075 /* production.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = production.entitlements; sourceTree = "<group>"; };
 		316D716D251CC0B347E630DA /* Pods-Planetary.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.appstore.xcconfig"; sourceTree = "<group>"; };
@@ -1466,6 +1472,30 @@
 				23EF5AAC249D185E00469977 /* BearerBlockedAPI.swift */,
 			);
 			path = Blocks;
+			sourceTree = "<group>";
+		};
+		2DBA7C91263DB1FA008B646F /* de-DE.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				2DBA7C92263DB1FA008B646F /* Generated.strings */,
+			);
+			path = "de-DE.lproj";
+			sourceTree = "<group>";
+		};
+		2DBA7C94263DB1FA008B646F /* zh-CN.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				2DBA7C95263DB1FA008B646F /* Generated.strings */,
+			);
+			path = "zh-CN.lproj";
+			sourceTree = "<group>";
+		};
+		2DBA7C9C263DB2F5008B646F /* pt-BR.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				2DBA7C9D263DB2F5008B646F /* Generated.strings */,
+			);
+			path = "pt-BR.lproj";
 			sourceTree = "<group>";
 		};
 		5308168621C46A53005C48ED /* UnitTests */ = {
@@ -2188,6 +2218,9 @@
 		8D9143EA230C5BF60075BC8A /* Localization */ = {
 			isa = PBXGroup;
 			children = (
+				2DBA7C9C263DB2F5008B646F /* pt-BR.lproj */,
+				2DBA7C91263DB1FA008B646F /* de-DE.lproj */,
+				2DBA7C94263DB1FA008B646F /* zh-CN.lproj */,
 				0A30F86C2589253E002B281D /* pl.lproj */,
 				0A04D8B9247723C100DD37B7 /* es-ar.lproj */,
 				0A04D8B5247721EE00DD37B7 /* es-uy.lproj */,
@@ -2355,6 +2388,9 @@
 				"es-ar",
 				"es-AR",
 				pl,
+				"de-DE",
+				"zh-CN",
+				"pt-BR",
 			);
 			mainGroup = 5344D82221C4649700704A34;
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
@@ -2425,11 +2461,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D9143F5230C5F4E0075BC8A /* Generated.strings in Resources */,
+				2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */,
 				5369D2A6220B970100A65622 /* Feed.json in Resources */,
+				2DBA7C97263DB1FA008B646F /* Generated.strings in Resources */,
 				53B634B8221634B600400403 /* Feed_big.json in Resources */,
 				5369D2A8220BA60300A65622 /* Abouts.json in Resources */,
 				0A41F56D2488078F005BB1DE /* Preload.bundle in Resources */,
 				530816A821C46E68005C48ED /* Settings.bundle in Resources */,
+				2DBA7C9F263DB2F5008B646F /* Generated.strings in Resources */,
 				231314CC2237ACDC0000C989 /* ViewDatabaseSchema.sql in Resources */,
 				0A04D8B82477220F00DD37B7 /* Generated.strings in Resources */,
 				5344D83921C4649A00704A34 /* LaunchScreen.storyboard in Resources */,
@@ -3436,6 +3475,30 @@
 			isa = PBXVariantGroup;
 			children = (
 				0AC10DDA246C43DC00CCA22A /* es */,
+			);
+			name = Generated.strings;
+			sourceTree = "<group>";
+		};
+		2DBA7C92263DB1FA008B646F /* Generated.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DBA7C93263DB1FA008B646F /* de-DE */,
+			);
+			name = Generated.strings;
+			sourceTree = "<group>";
+		};
+		2DBA7C95263DB1FA008B646F /* Generated.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DBA7C96263DB1FA008B646F /* zh-CN */,
+			);
+			name = Generated.strings;
+			sourceTree = "<group>";
+		};
+		2DBA7C9D263DB2F5008B646F /* Generated.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2DBA7C9E263DB2F5008B646F /* pt-BR */,
 			);
 			name = Generated.strings;
 			sourceTree = "<group>";
