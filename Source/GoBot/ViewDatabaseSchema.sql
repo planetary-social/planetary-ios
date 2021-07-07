@@ -86,24 +86,24 @@
 
 -- UPDATE: yes! will introduce a maping table from %msgKey to msgSeqID as int
 
-CREATE TABLE authors (
+CREATE TABLE IF NOT EXISTS authors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     author TEXT UNIQUE,
     hashed TEXT UNIQUE NOT NULL
 );
 
-CREATE INDEX author_id on authors (id);
-CREATE INDEX author_pubkey on authors (author);
-CREATE INDEX authors_hashed ON authors(hashed);
+CREATE INDEX IF NOT EXISTS author_id on authors (id);
+CREATE INDEX IF NOT EXISTS author_pubkey on authors (author);
+CREATE INDEX IF NOT EXISTS authors_hashed ON authors(hashed);
 
-CREATE TABLE messagekeys (
+CREATE TABLE IF NOT EXISTS messagekeys (
     id INTEGER PRIMARY KEY,
     key TEXT UNIQUE NOT NULL,
     hashed TEXT UNIQUE NOT NULL
 );
-CREATE INDEX messagekeys_key ON messagekeys(key);
-CREATE INDEX messagekeys_id ON messagekeys(id);
-CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+CREATE INDEX IF NOT EXISTS messagekeys_key ON messagekeys(key);
+CREATE INDEX IF NOT EXISTS messagekeys_id ON messagekeys(id);
+CREATE INDEX IF NOT EXISTS messagekeys_hashed ON messagekeys(hashed);
 
 -- BUT: this is mostly just glossing over the fact msg_key is referencing our messages table.
 -- the above remark is only true for root/branch on tangles and mention references
@@ -111,7 +111,7 @@ CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
 
 -- this table _just_ stores that there was a message. it's "untyped" so to speak.
 -- ex: to get the author of a post and its timestamp you need to join posts and messages
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
     msg_id               INTEGER PRIMARY KEY,
     rx_seq               INTEGER UNIQUE, -- might have holes
     author_id            INTEGER NOT NULL,
@@ -133,28 +133,28 @@ CREATE TABLE messages (
 );
 
 -- make _needs refresh_ faster
-CREATE INDEX messages_rxseq on messages (rx_seq);
+CREATE INDEX IF NOT EXISTS messages_rxseq on messages (rx_seq);
 
 -- make looking for authors fast
-CREATE INDEX author ON messages ( author_id );
+CREATE INDEX IF NOT EXISTS author ON messages ( author_id );
 
 -- make looking for _what happend last week_ fast
-CREATE INDEX msgs_received ON messages ( received_at );
-CREATE INDEX msgs_claimed ON messages ( claimed_at );
+CREATE INDEX IF NOT EXISTS msgs_received ON messages ( received_at );
+CREATE INDEX IF NOT EXISTS msgs_claimed ON messages ( claimed_at );
 
-CREATE INDEX msgs_decrypted on messages (is_decrypted);
+CREATE INDEX IF NOT EXISTS msgs_decrypted on messages (is_decrypted);
 
 -- quick profile listing
-CREATE INDEX helper_profile on messages (is_decrypted, type, author_id, claimed_at);
+CREATE INDEX IF NOT EXISTS helper_profile on messages (is_decrypted, type, author_id, claimed_at);
 
 -- unblock helper table
-CREATE TABLE blocked_content (
+CREATE TABLE IF NOT EXISTS blocked_content (
     id integer not null, -- numerical id of the msg or author
     type integer not null -- 0 msg, 1 author
 );
 
 -- address
-CREATE TABLE addresses (
+CREATE TABLE IF NOT EXISTS addresses (
     address_id   INTEGER PRIMARY KEY,
     about_id     integer not null, -- which feed this address is for
     address      text unique not null,  -- the multiserv encoded string i.e. "net:ip:port~shs:key"
@@ -168,14 +168,14 @@ CREATE TABLE addresses (
 -- this just stores the text of a post
 -- reply information is stored in tangles
 -- mentions of people and artifacts are stored in the mention_ tables
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
 msg_ref              integer not null,
 is_root              boolean default false,
 text                 text,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
-CREATE INDEX posts_msgrefs on posts (msg_ref);
-CREATE INDEX posts_roots on posts (is_root);
+CREATE INDEX IF NOT EXISTS posts_msgrefs on posts (msg_ref);
+CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
 
 -- reply trees aka tangles
 -- a message in a thread (or hopefully soon gatherings) references the first message (root)
@@ -192,18 +192,18 @@ CREATE INDEX posts_roots on posts (is_root);
 -- INSERT INTO BRANCHES (tangle_id, %otherReply2);
 -- than this can be walked and merged as needed
 -- TODO: could be more efficient to read it all up to the swift layer and condense it there into a tree
-CREATE TABLE tangles (
+CREATE TABLE IF NOT EXISTS tangles (
     id              INTEGER PRIMARY KEY,
     msg_ref              integer not null,
     root                 integer not null,
     FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
     FOREIGN KEY ( root ) REFERENCES messages( "msg_id" )
 );
-CREATE INDEX tangle_roots on tangles (root);
-CREATE INDEX tangle_msgref on tangles (msg_ref);
-CREATE INDEX tangle_id on tangles (id);
+CREATE INDEX IF NOT EXISTS tangle_roots on tangles (root);
+CREATE INDEX IF NOT EXISTS tangle_msgref on tangles (msg_ref);
+CREATE INDEX IF NOT EXISTS tangle_id on tangles (id);
 
-CREATE TABLE branches (
+CREATE TABLE IF NOT EXISTS branches (
     tangle_id       integer not null,
     branch          integer not null,
     FOREIGN KEY ( tangle_id )   REFERENCES tangles( "id" ),
@@ -212,36 +212,36 @@ CREATE TABLE branches (
 
 
 -- posts can mention people
-CREATE TABLE mention_feed (
+CREATE TABLE IF NOT EXISTS mention_feed (
 msg_ref              integer not null,
 feed_id              integer NOT NULL,
 name                 text,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
 FOREIGN KEY ( feed_id ) REFERENCES authors( "id" )
 );
-CREATE INDEX mention_feed_refs on mention_feed (msg_ref);
-CREATE INDEX mention_feed_author on mention_feed (feed_id);
+CREATE INDEX IF NOT EXISTS mention_feed_refs on mention_feed (msg_ref);
+CREATE INDEX IF NOT EXISTS mention_feed_author on mention_feed (feed_id);
 
 -- posts can mention other messages (backlinks)
-CREATE TABLE mention_message (
+CREATE TABLE IF NOT EXISTS mention_message (
 msg_ref              integer not null,
 link_id              integer not null,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
 FOREIGN KEY ( link_id ) REFERENCES messages( "msg_id" )
 );
-CREATE INDEX mention_msg_refs on mention_message (msg_ref);
+CREATE INDEX IF NOT EXISTS mention_msg_refs on mention_message (msg_ref);
 
 -- posts can mention images (backlinks)
-CREATE TABLE mention_image (
+CREATE TABLE IF NOT EXISTS mention_image (
 msg_ref              integer not null,
 image                text, -- blob ID table?
 name                 text, -- filename
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
-CREATE INDEX mention_img_refs on mention_image (msg_ref);
+CREATE INDEX IF NOT EXISTS mention_img_refs on mention_image (msg_ref);
 
 -- posts can contain multiple blobs
-CREATE TABLE post_blobs (
+CREATE TABLE IF NOT EXISTS post_blobs (
 msg_ref                 integer not null,
 identifier              text, -- TODO: blob hash:id table
 name                    text,
@@ -252,11 +252,11 @@ meta_mime_type          text,
 meta_average_color_rgb  integer,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
-CREATE INDEX post_blobs_refs on post_blobs (msg_ref);
+CREATE INDEX IF NOT EXISTS post_blobs_refs on post_blobs (msg_ref);
 
 
 -- somebody dug/liked a thing
-CREATE TABLE votes (
+CREATE TABLE IF NOT EXISTS votes (
 msg_ref              integer not null,
 link_id              integer NOT NULL,
 value                integer,
@@ -264,11 +264,11 @@ expression           text,
 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
 FOREIGN KEY ( link_id ) REFERENCES msgkeys( "id" )
 );
-CREATE INDEX votes_msgrefs on votes (msg_ref);
+CREATE INDEX IF NOT EXISTS votes_msgrefs on votes (msg_ref);
 
 -- describing someone (or thing like gatherings or git-ssb repo names)
 -- about field is _what/who is this about_. author of the message is in the messages table
-CREATE TABLE abouts (
+CREATE TABLE IF NOT EXISTS abouts (
 msg_ref              integer not null,
 about_id             integer NOT NULL UNIQUE,
 name                 text,
@@ -282,7 +282,7 @@ FOREIGN KEY ( about_id ) REFERENCES auhtors( "id" )
 -- friend/block relations
 -- if your mathy: this is like a adjacency matrix for the whole graph
 -- you can ask _all follows by me_ or _who is following me_
-CREATE TABLE contacts (
+CREATE TABLE IF NOT EXISTS contacts (
 msg_ref              integer not null, -- latest message, for timestamps and sequence
 author_id            integer not null,
 contact_id           integer not null,
@@ -297,12 +297,12 @@ FOREIGN KEY ( author_id ) REFERENCES authors( "msg_id" ),
 FOREIGN KEY ( contact_id ) REFERENCES authors( "id" )
 );
 
-CREATE INDEX contacts_state ON contacts (contact_id, state);
-CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+CREATE INDEX IF NOT EXISTS contacts_state ON contacts (contact_id, state);
+CREATE INDEX IF NOT EXISTS contacts_state_with_author ON contacts (author_id, contact_id, state);
 
 -- private recps
 -- TODO: until we have changing groups, it would be enough to save these for the first message
-CREATE TABLE private_recps (
+CREATE TABLE IF NOT EXISTS private_recps (
     msg_ref     integer not null,
     contact_id  integer not null,
     FOREIGN KEY ( contact_id ) REFERENCES authors( "id" ),
@@ -310,21 +310,21 @@ CREATE TABLE private_recps (
 );
 
 -- what channels are there
-CREATE TABLE channels (
+CREATE TABLE IF NOT EXISTS channels (
     id      INTEGER PRIMARY KEY,
     name    text unique,
     legacy  boolean default false -- v1 channel / simple name on object / maybe from mentions?!
 );
 
 -- m:n style table to assign messages to channels
-CREATE TABLE channel_assignments (
+CREATE TABLE IF NOT EXISTS channel_assignments (
     msg_ref  integer not null,
     chan_ref integer not null,
     FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
     FOREIGN KEY ( chan_ref ) REFERENCES channels( "id" )
 );
 
-CREATE TABLE reports (
+CREATE TABLE IF NOT EXISTS reports (
     msg_ref integer not null,
     author_id integer not null,
     type text NOT NULL,
@@ -333,7 +333,7 @@ CREATE TABLE reports (
     FOREIGN KEY ( author_id ) REFERENCES authors( "id" )
 );
 
-CREATE TABLE pubs (
+CREATE TABLE IF NOT EXISTS pubs (
     msg_ref integer not null,
     host text not null,
     port integer not null,

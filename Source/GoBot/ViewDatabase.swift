@@ -232,25 +232,25 @@ class ViewDatabase {
                 db.userVersion = 8
             } else if db.userVersion == 1 {
                 try db.execute("""
-                CREATE INDEX messagekeys_key ON messagekeys(key);
-                CREATE INDEX messagekeys_id ON messagekeys(id);
-                CREATE INDEX posts_msgrefs on posts (msg_ref);
-                CREATE INDEX messages_rxseq on messages (rx_seq);
-                CREATE INDEX tangle_id on tangles (id);
-                CREATE INDEX contacts_state ON contacts (contact_id, state);
-                CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+                CREATE INDEX IF NOT EXISTS messagekeys_key ON messagekeys(key);
+                CREATE INDEX IF NOT EXISTS messagekeys_id ON messagekeys(id);
+                CREATE INDEX IF NOT EXISTS posts_msgrefs on posts (msg_ref);
+                CREATE INDEX IF NOT EXISTS messages_rxseq on messages (rx_seq);
+                CREATE INDEX IF NOT EXISTS tangle_id on tangles (id);
+                CREATE INDEX IF NOT EXISTS contacts_state ON contacts (contact_id, state);
+                CREATE INDEX IF NOT EXISTS contacts_state_with_author ON contacts (author_id, contact_id, state);
                 -- add new column to posts and migrate existing data
                 ALTER TABLE posts ADD is_root boolean default false;
-                CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
+                CREATE INDEX IF NOT EXISTS IF NOT EXISTS posts_roots on posts (is_root);
                 UPDATE posts set is_root=true;
                 UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
                 ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+                CREATE INDEX IF NOT EXISTS messagekeys_hashed ON messagekeys(hashed);
                 ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
+                CREATE INDEX IF NOT EXISTS authors_hashed ON authors(hashed);
+                CREATE TABLE IF NOT EXISTS  blocked_content ( id integer not null, type integer not null );
                 ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
+                CREATE TABLE IF NOT EXISTS  reports (
                 msg_ref integer not null,
                 author_id integer not null,
                 type text NOT NULL,
@@ -258,7 +258,7 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
+                CREATE TABLE IF NOT EXISTS  pubs (
                 msg_ref integer not null,
                 host text not null,
                 port integer not null,
@@ -275,12 +275,12 @@ class ViewDatabase {
                 UPDATE posts set is_root=true;
                 UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
                 ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+                CREATE INDEX IF NOT EXISTS messagekeys_hashed ON messagekeys(hashed);
                 ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
+                CREATE INDEX IF NOT EXISTS authors_hashed ON authors(hashed);
+                CREATE TABLE IF NOT EXISTS  blocked_content ( id integer not null, type integer not null );
                 ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
+                CREATE TABLE IF NOT EXISTS  reports (
                 msg_ref integer not null,
                 author_id integer not null,
                 type text NOT NULL,
@@ -288,7 +288,7 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
+                CREATE TABLE IF NOT EXISTS  pubs (
                 msg_ref integer not null,
                 host text not null,
                 port integer not null,
@@ -300,12 +300,12 @@ class ViewDatabase {
             } else if db.userVersion == 3 {
                 try db.execute("""
                 ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
+                CREATE INDEX IF NOT EXISTS messagekeys_hashed ON messagekeys(hashed);
                 ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
+                CREATE INDEX IF NOT EXISTS authors_hashed ON authors(hashed);
+                CREATE TABLE IF NOT EXISTS  blocked_content ( id integer not null, type integer not null );
                 ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
+                CREATE TABLE IF NOT EXISTS  reports (
                 msg_ref integer not null,
                 author_id integer not null,
                 type text NOT NULL,
@@ -313,7 +313,7 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
+                CREATE TABLE IF NOT EXISTS  pubs (
                 msg_ref integer not null,
                 host text not null,
                 port integer not null,
@@ -325,7 +325,7 @@ class ViewDatabase {
             } else if db.userVersion == 4 {
                 try db.execute("""
                 ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
+                CREATE TABLE IF NOT EXISTS  reports (
                 msg_ref integer not null,
                 author_id integer not null,
                 type text NOT NULL,
@@ -333,7 +333,7 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
+                CREATE TABLE IF NOT EXISTS  pubs (
                 msg_ref integer not null,
                 host text not null,
                 port integer not null,
@@ -343,7 +343,7 @@ class ViewDatabase {
                 db.userVersion = 8
             } else if db.userVersion == 5 {
                 try db.execute("""
-                CREATE TABLE reports (
+                CREATE TABLE IF NOT EXISTS  reports (
                 msg_ref integer not null,
                 author_id integer not null,
                 type text NOT NULL,
@@ -351,7 +351,7 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
                 FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
                 ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
+                CREATE TABLE IF NOT EXISTS  pubs (
                 msg_ref integer not null,
                 host text not null,
                 port integer not null,
@@ -362,7 +362,7 @@ class ViewDatabase {
             } else if db.userVersion == 6 {
                 try db.execute("""
                 ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
+                CREATE TABLE IF NOT EXISTS  pubs (
                 msg_ref integer not null,
                 host text not null,
                 port integer not null,
@@ -372,7 +372,7 @@ class ViewDatabase {
                 db.userVersion = 8
             } else if db.userVersion == 7 {
                 try db.execute("""
-                CREATE TABLE pubs (
+                CREATE TABLE IF NOT EXISTS  pubs (
                 msg_ref integer not null,
                 host text not null,
                 port integer not null,
