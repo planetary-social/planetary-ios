@@ -1,5 +1,3 @@
-// This file is auto-generated at build time and should not be modified by hand
-
 "Text.planetary" = "Planetary";
 "Text.error" = "Ojejku";
 "Text.cancel" = "Anuluj";
@@ -23,7 +21,7 @@
 "Text.reportBug" = "Zgłoś Problem";
 "Text.settings" = "Ustawienia";
 "Text.userDirectory" = "Katalog Użytkowników";
-"Text.communitites" = "Społeczności";
+"Text.communities" = "Społeczności";
 "Text.showMeInDirectory" = "Pokaż mnie w katalogu";
 "Text.showMeInUserDirectory" = "Pokaż mnie w katalogu użytkowników";
 "Text.hideMeFromUserDirectory" = "Nie pokazuj mnie w katalogu użytkowników";
@@ -96,7 +94,9 @@
 "Text.share" = "Udostępnij";
 "Text.bookmark" = "Zachowaj";
 "Text.like" = "Polub";
+
 "Text.debug" = "Debug";
+
 "Text.join" = "Dołącz";
 "Text.redeemInvitation" = "Zrealizuj zaproszenie";
 "Text.pasteAddress" = "Kod";
