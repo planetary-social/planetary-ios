@@ -7,11 +7,42 @@ Check our website [planetary.social](https://planetary.social/) for more info!
 
 ## Developer installation
 
+_Only tested on Intel Macs_
+
+### Setup
+
+Requirements: [Homebrew](https://brew.sh/), and Xcode.
+
 The repo does have some Carthage and Cocoapod dependencies, however all except one have been versioned and checked into the repo.
 
-When running `pod install` (or `pod install --no-repo-update) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
-
 While this project uses [Go](https://golang.org) in parts, the build and unit test target have automated install scripts for the specific versions. See _Go Development_ for more.
+
+1. Install `rbenv` and add it to your shell: 
+
+```
+$ brew install rbenv && rbenv init
+```
+
+2. Install ruby v2.6.6
+
+```
+$ rbenv install 2.6.6
+```
+
+3. Install gems
+
+```
+$ gem install cocoapods cocoapods-keys cocoapods-bugsnag
+```
+
+4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
+
+```
+$ pod install
+```
+
+5. If you entered `nil` for the Bugsnag API Key in the `pod install` step you will need to disable the Upload Bugsnag dSYM Build Phase. To do this, open the project settings (In the File Inspector, select 'Planetary' at the top), Selet the 'Planetary' target on the left, select "Build Phases" at the top, then comment out or remove the Upload Bugsnag dSYM script.
+
 
 ### Running
 
