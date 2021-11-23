@@ -32,19 +32,35 @@ class PeersView: UIView {
         return label
     }()
 
+    private var peerListView: UIView = UIView()
     
     let connectionAnimation = PeerConnectionAnimation(color: .networkAnimation)
 
     convenience init() {
         self.init(frame: CGRect.zero)
 
+        self.addSubview(connectionAnimation)
+
         self.connectionAnimation.useAutoLayout()
-        Layout.fillLeft(of: self, with: self.connectionAnimation)
+        self.connectionAnimation.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        self.connectionAnimation.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+
+//        Layout.fillLeft(of: self, with: self.connectionAnimation)
         self.connectionAnimation.constrainSize(to: self.connectionAnimation.totalDiameter)
         
         
+        peerListView.backgroundColor = .purple
+        self.addSubview(peerListView)
+        peerListView.useAutoLayout()
+
+        peerListView.widthAnchor.constraint(equalTo: self.widthAnchor).isActive = true
+        peerListView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        peerListView.bottomAnchor.constraint(equalTo: self.connectionAnimation.topAnchor).isActive = true
+        self.connectionAnimation.topAnchor.constraint(equalTo: peerListView.bottomAnchor).isActive = true
+
         
         self.addSubview(self.onlineLabel)
+
         self.onlineLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
         self.onlineLabel.bottomAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: -1).isActive = true
 
@@ -55,6 +71,7 @@ class PeersView: UIView {
         self.addSubview(self.syncedLabel)
         self.syncedLabel.constrainLeading(toTrailingOf: self.connectionAnimation, constant: Layout.horizontalSpacing)
         self.syncedLabel.topAnchor.constraint(equalTo: self.connectionAnimation.centerYAnchor, constant: 1).isActive = true
+        
         
         
         self.update(local: 0, online: 0, animated: false)
@@ -143,6 +160,56 @@ class PeersView: UIView {
     private func update(with peers: PeerStatistics, lastSyncDate: Date? = nil, animated: Bool = true) {
         self.update(local: peers.localCount, online: peers.onlineCount, animated: animated)
         self.setSync(lastSyncDate: lastSyncDate)
+        self.updatePeerList(with: peers)
+    }
+    
+    private func updatePeerList(with peers: PeerStatistics) {
+        
+        peerListView.subviews.forEach { $0.removeFromSuperview() }
+
+        var previousCell: UIView?
+        
+        for (address, identity) in peers.identities {
+            
+            
+            let model = DebugTableViewCellModel(title: address,
+                                                cellReuseIdentifier: OnlinePeerCell.className,
+                                                valueClosure:
+               {
+                   cell in
+                   cell.detailTextLabel?.text = identity
+               },
+                                                actionClosure: nil)
+            let cell = OnlinePeerCell(style: .value1, reuseIdentifier: nil)
+            cell.accessoryType = .none
+            cell.detailTextLabel?.text = nil
+            cell.detailTextLabel?.textColor = UIColor.secondaryText
+            cell.textLabel?.textColor = UIColor.mainText
+            cell.textLabel?.text = model.title
+            cell.backgroundColor = UIColor.cardBackground
+            model.valueClosure?(cell)
+            cell.useAutoLayout()
+            cell.constrainHeight(to: 50)
+            cell.peerIdentifier = identity
+            
+            let gesture = UITapGestureRecognizer(target: self, action: #selector(peerCellTapped))
+            cell.addGestureRecognizer(gesture)
+            
+            peerListView.addSubview(cell)
+            
+            if let previousCell = previousCell {
+                cell.topAnchor.constraint(equalTo: previousCell.bottomAnchor).isActive = true
+            } else {
+                // If this is the first cell, constrain it to the peerListView
+                cell.topAnchor.constraint(equalTo: peerListView.topAnchor).isActive = true
+            }
+            cell.widthAnchor.constraint(equalTo: peerListView.widthAnchor).isActive = true
+            previousCell = cell
+        }
+        
+        if previousCell != nil {
+            previousCell!.bottomAnchor.constraint(equalTo: peerListView.bottomAnchor).isActive = true
+        }
     }
 
     private func update(local: Int, online: Int, animated: Bool = true) {
@@ -169,6 +236,10 @@ class PeersView: UIView {
         label.attributedText = attributed
     }
     
+    @objc private func peerCellTapped(sender: Any?) {
+        let peerIdentifier = "@\((((sender as! UITapGestureRecognizer).view as! OnlinePeerCell).peerIdentifier)!).ed25519"
+        AppController.shared.pushViewController(for: .about, with: peerIdentifier)
+    }
     
     @objc func triggerSync(sender : UITapGestureRecognizer) {
         self.connectionAnimation.searchAnimation()
@@ -226,6 +297,33 @@ extension PeerStatistics {
     }
 }
 
+class OnlinePeerCell: UITableViewCell {
+    
+    var peerIdentifier: String?
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .value1, reuseIdentifier: reuseIdentifier)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.textLabel?.text = nil
+        self.detailTextLabel?.text = nil
+        self.accessoryType = .none
+        self.accessoryView = nil
+        self.removeSubviewsFromContentView()
+    }
+
+    private func removeSubviewsFromContentView() {
+        for (_, subview) in self.contentView.subviews.enumerated() {
+            subview.removeFromSuperview()
+        }
+    }
+}
 
 
 /*
