@@ -2331,8 +2331,6 @@
 				5344D82921C4649700704A34 /* Resources */,
 				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				F03FDAAC62494C507A69A807 /* [CP] Embed Pods Frameworks */,
-				530E4CAE2370FBEE0094E138 /* ShellScript */,
-				00E93AC72D991816EFDFC19A /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -2483,27 +2481,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		00E93AC72D991816EFDFC19A /* Upload Bugsnag dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}",
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-			);
-			name = "Upload Bugsnag dSYM";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env ruby";
-			shellScript = "api_key = nil # Insert your key here to use it directly from this script\n\n# Attempt to get the API key from an environment variable\nunless api_key\n  api_key = ENV[\"BUGSNAG_API_KEY\"]\n\n  # If not present, attempt to lookup the value from the Info.plist\n  unless api_key\n    info_plist_path = \"#{ENV[\"BUILT_PRODUCTS_DIR\"]}/#{ENV[\"INFOPLIST_PATH\"]}\"\n    plist_buddy_response = `/usr/libexec/PlistBuddy -c \"print :bugsnag:apiKey\" \"#{info_plist_path}\"`\n    plist_buddy_response = `/usr/libexec/PlistBuddy -c \"print :BugsnagAPIKey\" \"#{info_plist_path}\"` if !$?.success?\n    api_key = plist_buddy_response if $?.success?\n  end\nend\n\nfail(\"No Bugsnag API key detected - add your key to your Info.plist, BUGSNAG_API_KEY environment variable or this Run Script phase\") unless api_key\n\nfork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    curl_command = \"curl --http1.1 -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} \"\n    curl_command += \"-F apiKey=#{Shellwords.escape(api_key)} \"\n    curl_command += \"https://upload.bugsnag.com/\"\n    system(curl_command)\n  end\nend\n";
-			showEnvVarsInLog = 0;
-		};
 		1E66957E1EE019E96375E455 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2562,24 +2539,6 @@
 			shellScript = "# trigger Makefile in go-ssb-bindings\nset -e\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
 			showEnvVarsInLog = 0;
 		};
-		530E4CAE2370FBEE0094E138 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZendeskSDK.framework/strip-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		5392AF0A224BE802009F763B /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
@@ -2595,7 +2554,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n\n# Type a script or drag a script file from your workspace to insert its path.\nif [ ${CONFIGURATION} == \"Release\" ]\nthen\n    set -e\n    ${PROJECT_DIR}/Scripts/increment_build.sh ${PROJECT_DIR}/Resources/Info.plist\nfi\n";
+			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
 		};
 		57BAA8693E4EEF15A30FDE21 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3847,7 +3806,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 254;
+				CURRENT_PROJECT_VERSION = 295;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3863,7 +3822,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.12;
+				MARKETING_VERSION = 1.0.16;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3895,7 +3854,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 254;
+				CURRENT_PROJECT_VERSION = 295;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3911,7 +3870,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.12;
+				MARKETING_VERSION = 1.0.16;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",

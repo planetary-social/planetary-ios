@@ -13,7 +13,7 @@ target 'Planetary' do
     pod 'PhoneNumberKit', '3.2.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'SVProgressHUD', '2.2.5'
-    pod 'ZendeskSDK', '4.0.1'
+    pod 'ZendeskSupportSDK'
     pod 'CocoaLumberjack/Swift', '3.6.1'
     pod 'Bugsnag', '5.23.1'
     #pod 'cocoapods-bugsnag', '2.2.1'

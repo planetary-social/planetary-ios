@@ -1,0 +1,94 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
+// swift-module-flags: -target i386-apple-ios10.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name MessagingSDK
+import CommonUISDK
+import Foundation
+import MessagingAPI
+@_exported import MessagingSDK
+import SDKConfigurations
+import Swift
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(ZDKMessaging) final public class Messaging : ObjectiveC.NSObject {
+  @objc public static var instance: MessagingSDK.Messaging {
+    @objc get
+  }
+  @objc final public var isMessagingPresented: Swift.Bool {
+    @objc get
+  }
+  @objc weak final public var delegate: MessagingSDK.MessagingDelegate?
+  @objc deinit
+  final public func buildUI(engines: [MessagingAPI.Engine], configs: [SDKConfigurations.Configuration] = []) throws -> UIKit.UIViewController
+}
+extension Messaging : CommonUISDK.MessagingCoordinatorDelegate {
+  final public func messagingCoordinator(_ coordinator: CommonUISDK.MessagingCoordinatorProtocol, didPerformAction action: CommonUISDK.MessagingCoordinatorAction)
+}
+extension Messaging : MessagingAPI.MessagingAPIProtocol {
+  final public func getTransferOptions() -> [MessagingAPI.TransferOptionDescription]
+  final public func getConversationLog() -> MessagingAPI.ConversationLogProtocol
+  final public func getConfigurations() -> SDKConfigurations.Configurations
+  final public func getBotAgentDetails() -> MessagingAPI.AgentDetails
+}
+@objc extension Messaging {
+  @objc @available(swift, obsoleted: 1.0)
+  final public func buildUI(engines: [MessagingAPI.ZDKEngine], configs: [SDKConfigurations.Configuration]) throws -> UIKit.UIViewController
+}
+extension TextResponse : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+extension ArticlesResponse : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+@objc(ZDKMessagingUIEvent) public enum MessagingUIEvent : Swift.Int {
+  case viewDidLoad
+  case viewWillAppear
+  case viewDidAppear
+  case viewWillDisappear
+  case viewDidDisappear
+  case viewDidLayoutSubviews
+  case viewControllerDidClose
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc(ZDKMessagingDelegate) public protocol MessagingDelegate : AnyObject {
+  @objc func messaging(_ messaging: MessagingSDK.Messaging, didPerformEvent event: MessagingSDK.MessagingUIEvent, context: Any?)
+  @objc func messaging(_ messaging: MessagingSDK.Messaging, shouldOpenURL url: Foundation.URL) -> Swift.Bool
+}
+extension TransferResponse : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+extension FileQuery : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+extension TextQuery : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+extension ImageQuery : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+extension ImageResponse : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+final public class DispatchTimer {
+  @objc deinit
+  public init(timeInterval: Foundation.TimeInterval)
+  final public func execute(_ block: @escaping () -> Swift.Void)
+  final public func stop()
+}
+@_inheritsConvenienceInitializers @objc(ZDKMessagingConfiguration) final public class MessagingConfiguration : ObjectiveC.NSObject, SDKConfigurations.Configuration {
+  @objc final public var name: Swift.String
+  @objc final public var botAvatar: UIKit.UIImage
+  @objc final public var isMultilineResponseOptionsEnabled: Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension FileResponse : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+extension ActionResponse : MessagingAPI.LoggableMessage {
+  public func messageLog() -> Swift.String
+}
+extension MessagingSDK.MessagingUIEvent : Swift.Equatable {}
+extension MessagingSDK.MessagingUIEvent : Swift.Hashable {}
+extension MessagingSDK.MessagingUIEvent : Swift.RawRepresentable {}
