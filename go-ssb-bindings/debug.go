@@ -6,11 +6,11 @@ import (
 	"net"
 	"syscall"
 
+	refs "go.mindeco.de/ssb-refs"
+
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/netwrap"
-	ssb "go.cryptoscope.co/ssb"
 )
 
 import "C"
@@ -95,23 +95,14 @@ func ssbRepoStats() *C.char {
 
 	counts.Feeds = len(feeds)
 
-	sv, err := sbot.RootLog.Seq().Value()
-	if err != nil {
-		retErr = errors.Wrap(err, "RepoStats: unable to get rootLog sequence")
-		return nil
-	}
+	rootSeq := sbot.ReceiveLog.Seq()
 
-	rootSeq, ok := sv.(margaret.Seq)
-	if !ok {
-		retErr = errors.Errorf("sbot: not a sequence: %T", sv)
-		return nil
-	}
-	counts.Messages = rootSeq.Seq()
+	counts.Messages = rootSeq
 	counts.Messages += 1 // 0-indexed (empty is -1)
 
-	lm, err := sbot.RootLog.Get(rootSeq)
+	lm, err := sbot.ReceiveLog.Get(rootSeq)
 	if err == nil {
-		lastMsg, ok := lm.(ssb.Message)
+		lastMsg, ok := lm.(refs.Message)
 		if ok {
 			counts.LastHash = lastMsg.Key().Ref()
 		} else {
@@ -120,7 +111,7 @@ func ssbRepoStats() *C.char {
 	} else {
 		level.Warn(log).Log("RepoStats", errors.Wrap(err, "RepoStats: could not get the last message hash"))
 	}
-	
+
 	statBytes, err := json.Marshal(counts)
 	if err != nil {
 		retErr = errors.Wrap(err, "RepoStats: failed to get marshal json")

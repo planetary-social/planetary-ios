@@ -3,7 +3,9 @@
 package secretstream
 
 import (
+	"fmt"
 	"net"
+	"time"
 
 	"go.cryptoscope.co/secretstream/boxstream"
 	"go.cryptoscope.co/secretstream/secrethandshake"
@@ -35,9 +37,23 @@ func (s *Server) ConnWrapper() netwrap.ConnWrapper {
 			return nil, err
 		}
 
-		err = secrethandshake.Server(state, conn)
 		if err != nil {
 			return nil, err
+		}
+
+		errc := make(chan error)
+		go func() {
+			errc <- secrethandshake.Server(state, conn)
+			close(errc)
+		}()
+
+		select {
+		case err := <-errc:
+			if err != nil {
+				return nil, err
+			}
+		case <-time.After(2 * time.Minute):
+			return nil, fmt.Errorf("secretstream: handshake timeout")
 		}
 
 		enKey, enNonce := state.GetBoxstreamEncKeys()

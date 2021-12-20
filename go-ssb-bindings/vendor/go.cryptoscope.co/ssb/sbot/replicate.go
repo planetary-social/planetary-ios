@@ -2,46 +2,79 @@ package sbot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
-	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
+	"go.mindeco.de/log"
+	"go.mindeco.de/log/level"
+
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/graph"
+	"go.cryptoscope.co/ssb/internal/statematrix"
+	"go.cryptoscope.co/ssb/internal/storedrefs"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 var _ ssb.Replicator = (*Sbot)(nil)
 
+func (sbot *Sbot) Replicate(r refs.FeedRef) {
+	slog, err := sbot.Users.Get(storedrefs.Feed(r))
+	if err != nil {
+		panic(err)
+	}
+
+	l := slog.Seq()
+
+	sbot.ebtState.Fill(sbot.KeyPair.ID(), []statematrix.ObservedFeed{
+		{Feed: r, Note: ssb.Note{Seq: l, Receive: true, Replicate: true}},
+	})
+
+	sbot.Replicator.Replicate(r)
+}
+
+func (sbot *Sbot) DontReplicate(r refs.FeedRef) {
+	slog, err := sbot.Users.Get(storedrefs.Feed(r))
+	if err != nil {
+		panic(err)
+	}
+
+	l := slog.Seq()
+
+	sbot.ebtState.Fill(sbot.KeyPair.ID(), []statematrix.ObservedFeed{
+		{Feed: r, Note: ssb.Note{Seq: l, Receive: false, Replicate: true}},
+	})
+
+	sbot.Replicator.DontReplicate(r)
+}
+
 type graphReplicator struct {
-	builder graph.Builder
+	bot     *Sbot
 	current *lister
 }
 
 func (s *Sbot) newGraphReplicator() (*graphReplicator, error) {
 	var r graphReplicator
-	r.builder = s.GraphBuilder
+	r.bot = s
 	r.current = newLister()
 
 	replicateEvt := log.With(s.info, "event", "update-replicate")
-	update := r.makeUpdater(replicateEvt, s.KeyPair.Id, int(s.hopCount))
+	update := r.makeUpdater(replicateEvt, s.KeyPair.ID(), int(s.hopCount))
 
-	// update for new messages but only every 15seconds
-	go debounce(s.rootCtx, 15*time.Second, s.RootLog.Seq(), update)
+	// update for new messages but only once they didnt change in a while
+	// meaning, not while sync is busy with new incoming messages
+	go debounce(s.rootCtx, 3*time.Second, s.ReceiveLog.Changes(), update)
 
 	return &r, nil
 }
 
 // makeUpdater returns a func that does the hop-walk and block checks, used together with debounce
-func (r *graphReplicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCount int) func() {
+func (r *graphReplicator) makeUpdater(log log.Logger, self refs.FeedRef, hopCount int) func() {
 	return func() {
 		start := time.Now()
-		newWants := r.builder.Hops(self, hopCount)
-		level.Debug(log).Log("feed-want-count", newWants.Count(), "hops", hopCount, "took", time.Since(start))
+		newWants := r.bot.GraphBuilder.Hops(self, hopCount)
 
 		refs, err := newWants.List()
 		if err != nil {
@@ -52,8 +85,10 @@ func (r *graphReplicator) makeUpdater(log log.Logger, self *ssb.FeedRef, hopCoun
 			r.current.feedWants.AddRef(ref)
 		}
 
+		level.Debug(log).Log("feed-want-count", r.current.feedWants.Count(), "hops", hopCount, "took", time.Since(start))
+
 		// make sure we dont fetch and allow blocked feeds
-		g, err := r.builder.Build()
+		g, err := r.bot.GraphBuilder.Build()
 		if err != nil {
 			level.Error(log).Log("msg", "failed to build blocks", "err", err)
 			return
@@ -79,7 +114,7 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 		if err != nil {
 			return err
 		}
-		newSeq, ok := val.(margaret.BaseSeq)
+		newSeq, ok := val.(int64)
 		if !ok {
 			return fmt.Errorf("graph rebuild debounce: wrong type: %T", val)
 		}
@@ -108,11 +143,11 @@ func debounce(ctx context.Context, interval time.Duration, obs luigi.Observable,
 	}
 }
 
-func (r *graphReplicator) Block(ref *ssb.FeedRef)   { r.current.blocked.AddRef(ref) }
-func (r *graphReplicator) Unblock(ref *ssb.FeedRef) { r.current.blocked.Delete(ref) }
+func (r *graphReplicator) Block(ref refs.FeedRef)   { r.current.blocked.AddRef(ref) }
+func (r *graphReplicator) Unblock(ref refs.FeedRef) { r.current.blocked.Delete(ref) }
 
-func (r *graphReplicator) Replicate(ref *ssb.FeedRef)     { r.current.feedWants.AddRef(ref) }
-func (r *graphReplicator) DontReplicate(ref *ssb.FeedRef) { r.current.feedWants.Delete(ref) }
+func (r *graphReplicator) Replicate(ref refs.FeedRef)     { r.current.feedWants.AddRef(ref) }
+func (r *graphReplicator) DontReplicate(ref refs.FeedRef) { r.current.feedWants.Delete(ref) }
 
 func (r *graphReplicator) Lister() ssb.ReplicationLister { return r.current }
 
@@ -128,9 +163,9 @@ func newLister() *lister {
 	}
 }
 
-func (l lister) Authorize(remote *ssb.FeedRef) error {
+func (l lister) Authorize(remote refs.FeedRef) error {
 	if l.blocked.Has(remote) {
-		return fmt.Errorf("peer blocked")
+		return errors.New("peer blocked")
 	}
 
 	if l.feedWants.Has(remote) {

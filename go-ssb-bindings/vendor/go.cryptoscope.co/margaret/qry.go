@@ -7,13 +7,13 @@ package margaret // import "go.cryptoscope.co/margaret"
 // Query is the interface implemented by the concrete log implementations that collects the constraints of the query.
 type Query interface {
 	// Gt makes the source return only items with sequence numbers > seq.
-	Gt(seq Seq) error
+	Gt(seq int64) error
 	// Gte makes the source return only items with sequence numbers >= seq.
-	Gte(seq Seq) error
+	Gte(seq int64) error
 	// Lt makes the source return only items with sequence numbers < seq.
-	Lt(seq Seq) error
+	Lt(seq int64) error
 	// Lte makes the source return only items with sequence numbers <= seq.
-	Lte(seq Seq) error
+	Lte(seq int64) error
 	// Limit makes the source return only up to n items.
 	Limit(n int) error
 
@@ -54,28 +54,28 @@ func ErrorQuerySpec(err error) QuerySpec {
 }
 
 // Gt makes the source return only items with sequence numbers > seq.
-func Gt(s Seq) QuerySpec {
+func Gt(s int64) QuerySpec {
 	return func(q Query) error {
 		return q.Gt(s)
 	}
 }
 
 // Gte makes the source return only items with sequence numbers >= seq.
-func Gte(s Seq) QuerySpec {
+func Gte(s int64) QuerySpec {
 	return func(q Query) error {
 		return q.Gte(s)
 	}
 }
 
 // Lt makes the source return only items with sequence numbers < seq.
-func Lt(s Seq) QuerySpec {
+func Lt(s int64) QuerySpec {
 	return func(q Query) error {
 		return q.Lt(s)
 	}
 }
 
 // Lte makes the source return only items with sequence numbers <= seq.
-func Lte(s Seq) QuerySpec {
+func Lte(s int64) QuerySpec {
 	return func(q Query) error {
 		return q.Lte(s)
 	}

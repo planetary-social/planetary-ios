@@ -1,108 +1,37 @@
 // SPDX-License-Identifier: MIT
 
+// Package sbot ties together network, repo and plugins like graph and blobs into a large server that offers data-access APIs and background replication.
+// It's name dates back to a time where ssb-server was still called scuttlebot, in short: sbot.
 package sbot
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"net"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strings"
-	"sync"
 
-	"github.com/cryptix/go/logging"
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/metrics"
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/librarian"
-	"go.cryptoscope.co/margaret/multilog"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
 	"go.cryptoscope.co/netwrap"
-	"golang.org/x/sync/errgroup"
+	kitlog "go.mindeco.de/log"
+	"go.mindeco.de/log/level"
+	"go.mindeco.de/logging"
 
 	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/graph"
+	"go.cryptoscope.co/ssb/internal/ctxutils"
 	"go.cryptoscope.co/ssb/internal/netwraputil"
-	"go.cryptoscope.co/ssb/message/multimsg"
-	"go.cryptoscope.co/ssb/network"
 	"go.cryptoscope.co/ssb/repo"
 )
 
+// MuxrpcEndpointWrapper can be used to wrap ever call a endpoint makes
 type MuxrpcEndpointWrapper func(muxrpc.Endpoint) muxrpc.Endpoint
 
-type Sbot struct {
-	info kitlog.Logger
-
-	// TODO: this thing is way to big right now
-	// because it's options and the resulting thing at once
-
-	lateInit []Option
-
-	rootCtx   context.Context
-	Shutdown  context.CancelFunc
-	closers   multiCloser
-	idxDone   errgroup.Group
-	idxInSync sync.WaitGroup
-
-	closed   bool
-	closedMu sync.Mutex
-	closeErr error
-
-	promisc  bool
-	hopCount uint
-
-	// TODO: these should all be options that are applied on the network construction...
-	Network            ssb.Network
-	disableNetwork     bool
-	appKey             []byte
-	listenAddr         net.Addr
-	dialer             netwrap.Dialer
-	edpWrapper         MuxrpcEndpointWrapper
-	networkConnTracker ssb.ConnTracker
-	preSecureWrappers  []netwrap.ConnWrapper
-	postSecureWrappers []netwrap.ConnWrapper
-
-	public ssb.PluginManager
-	master ssb.PluginManager
-
-	authorizer ssb.Authorizer
-
-	enableAdverts   bool
-	enableDiscovery bool
-
-	repoPath string
-	KeyPair  *ssb.KeyPair
-
-	RootLog multimsg.AlterableLog
-
-	PublishLog     ssb.Publisher
-	signHMACsecret []byte
-
-	mlogIndicies map[string]multilog.MultiLog
-	simpleIndex  map[string]librarian.Index
-
-	liveIndexUpdates bool
-	indexStateMu     sync.Mutex
-	indexStates      map[string]string
-
-	GraphBuilder graph.Builder
-
-	BlobStore   ssb.BlobStore
-	WantManager ssb.WantManager
-
-	// TODO: wrap better
-	eventCounter metrics.Counter
-	systemGauge  metrics.Gauge
-	latency      metrics.Histogram
-
-	ssb.Replicator
-}
-
+// Option is a functional option type definition to change sbot behaviour
 type Option func(*Sbot) error
 
+// WithBlobStore can be used to use a different storage backend for blobs.
 func WithBlobStore(bs ssb.BlobStore) Option {
 	return func(s *Sbot) error {
 		s.BlobStore = bs
@@ -119,6 +48,7 @@ func DisableLiveIndexMode() Option {
 	}
 }
 
+// WithRepoPath changes where the replication database and blobs are stored.
 func WithRepoPath(path string) Option {
 	return func(s *Sbot) error {
 		s.repoPath = path
@@ -126,6 +56,7 @@ func WithRepoPath(path string) Option {
 	}
 }
 
+// DisableNetworkNode disables all networking, in turn it only serves the database.
 func DisableNetworkNode() Option {
 	return func(s *Sbot) error {
 		s.disableNetwork = true
@@ -133,14 +64,38 @@ func DisableNetworkNode() Option {
 	}
 }
 
+// DisableEBT disables epidemic broadcast trees. It's a new implementation and might have some bugs.
+func DisableEBT(yes bool) Option {
+	return func(s *Sbot) error {
+		s.disableEBT = yes
+		return nil
+	}
+}
+
+// DisableLegacyLiveReplication controls wether createHistoryStreams are created with live:true flag.
+// This code is functional but might not scale to a lot of feeds. Therefore this flag can be used to force
+// the old non-live polling mode.
+func DisableLegacyLiveReplication(yes bool) Option {
+	return func(s *Sbot) error {
+		s.disableLegacyLiveReplication = yes
+		return nil
+	}
+}
+
+// WithListenAddr changes the muxrpc listener address. By default it listens to ':8008'.
 func WithListenAddr(addr string) Option {
 	return func(s *Sbot) error {
 		var err error
 		s.listenAddr, err = net.ResolveTCPAddr("tcp", addr)
-		return errors.Wrap(err, "failed to parse tcp listen addr")
+		if err != nil {
+			return fmt.Errorf("failed to parse tcp listen addr: %w", err)
+		}
+		return nil
 	}
 }
 
+// WithDialer changes the function that is used to dial remote peers.
+// This could be a sock5 connection builder to support tor proxying to hidden services.
 func WithDialer(dial netwrap.Dialer) Option {
 	return func(s *Sbot) error {
 		s.dialer = dial
@@ -148,6 +103,7 @@ func WithDialer(dial netwrap.Dialer) Option {
 	}
 }
 
+// WithNetworkConnTracker changes the connection tracker. See network.NewLastWinsTracker and network.NewAcceptAllTracker.
 func WithNetworkConnTracker(ct ssb.ConnTracker) Option {
 	return func(s *Sbot) error {
 		s.networkConnTracker = ct
@@ -155,14 +111,12 @@ func WithNetworkConnTracker(ct ssb.ConnTracker) Option {
 	}
 }
 
+// WithUNIXSocket enables listening for muxrpc connections on a unix socket files ($repo/socket).
+// This socket is not encrypted or authenticated since access to it is mediated by filesystem ownership.
 func WithUNIXSocket() Option {
 	return func(s *Sbot) error {
 		// this races because sbot might not be done with init yet
 		// TODO: refactor network peer code and make unixsock implement that (those will be inited late anyway)
-		if s.KeyPair == nil {
-			return errors.Errorf("sbot/unixsock: keypair is nil. please use unixSocket with LateOption")
-		}
-		spoofWrapper := netwraputil.SpoofRemoteAddress(s.KeyPair.Id.ID)
 
 		r := repo.New(s.repoPath)
 		sockPath := r.GetPath("socket")
@@ -171,7 +125,7 @@ func WithUNIXSocket() Option {
 		c, err := net.Dial("unix", sockPath)
 		if err == nil {
 			c.Close()
-			return errors.Errorf("sbot: repo already in use, socket accepted connection")
+			return fmt.Errorf("sbot: repo already in use, socket accepted connection")
 		}
 		os.Remove(sockPath)
 		os.MkdirAll(filepath.Dir(sockPath), 0700)
@@ -180,93 +134,148 @@ func WithUNIXSocket() Option {
 		if err != nil {
 			return err
 		}
-		s.closers.addCloser(uxLis)
+		s.closers.AddCloser(uxLis)
 
-		go func() {
+		var unixsrv = unixSockServer{
+			ctx:    s.rootCtx,
+			logger: s.info,
 
-			for {
-				c, err := uxLis.Accept()
-				if err != nil {
-					if nerr, ok := err.(*net.OpError); ok {
-						if nerr.Err.Error() == "use of closed network connection" {
-							return
-						}
-					}
+			lis: uxLis,
 
-					err = errors.Wrap(err, "unix sock accept failed")
-					s.info.Log("warn", err)
-					logging.CheckFatal(err)
-					continue
-				}
+			connWrappers: s.postSecureWrappers,
 
-				wc, err := spoofWrapper(c)
-				if err != nil {
-					c.Close()
-					continue
-				}
-				go func(conn net.Conn) {
-					defer conn.Close()
+			pubKey: s.KeyPair.ID().PubKey(),
 
-					pkr := muxrpc.NewPacker(conn)
+			handler: s.master,
+		}
+		go unixsrv.accept()
 
-					h, err := s.master.MakeHandler(conn)
-					if err != nil {
-						err = errors.Wrap(err, "unix sock make handler")
-						s.info.Log("warn", err)
-						logging.CheckFatal(err)
-						return
-					}
-
-					edp := muxrpc.HandleWithLogger(pkr, h, s.info)
-
-					ctx, cancel := context.WithCancel(s.rootCtx)
-					srv := edp.(muxrpc.Server)
-					if err := srv.Serve(ctx); err != nil {
-						s.info.Log("conn", "serve exited", "err", err, "peer", conn.RemoteAddr())
-					}
-					edp.Terminate()
-					cancel()
-				}(wc)
-			}
-		}()
 		return nil
 	}
 }
 
+type unixSockServer struct {
+	ctx    context.Context
+	logger kitlog.Logger
+
+	lis          net.Listener
+	connWrappers []netwrap.ConnWrapper
+
+	pubKey []byte
+
+	handler ssb.PluginManager
+}
+
+func (srv unixSockServer) accept() {
+	spoofWrapper := netwraputil.SpoofRemoteAddress(srv.pubKey)
+
+	for {
+		c, err := srv.lis.Accept()
+		if err != nil {
+			if nerr, ok := err.(*net.OpError); ok {
+				if nerr.Err.Error() == "use of closed network connection" {
+					return
+				}
+			}
+
+			err = fmt.Errorf("unix sock accept failed: %w", err)
+			level.Error(srv.logger).Log("warn", err)
+			logging.CheckFatal(err)
+			continue
+		}
+
+		wc, err := spoofWrapper(c)
+		if err != nil {
+			c.Close()
+			continue
+		}
+
+		for _, w := range srv.connWrappers {
+			var err error
+			wc, err = w(wc)
+			if err != nil {
+				level.Warn(srv.logger).Log("err", err)
+				c.Close()
+				continue
+			}
+		}
+
+		go srv.serve(wc)
+	}
+}
+
+func (srv unixSockServer) serve(conn net.Conn) {
+	defer conn.Close()
+
+	pkr := muxrpc.NewPacker(conn)
+
+	h, err := srv.handler.MakeHandler(conn)
+	if err != nil {
+		err = fmt.Errorf("unix sock make handler: %w", err)
+		level.Error(srv.logger).Log("warn", err)
+		logging.CheckFatal(err)
+		return
+	}
+
+	edp := muxrpc.Handle(pkr, h,
+		muxrpc.WithContext(srv.ctx),
+		muxrpc.WithLogger(kitlog.NewNopLogger()),
+	)
+
+	muxSrv := edp.(muxrpc.Server)
+	if err := muxSrv.Serve(); err != nil {
+		level.Error(srv.logger).Log("conn", "serve exited", "err", err, "peer", conn.RemoteAddr())
+	}
+	edp.Terminate()
+}
+
+// WithAppKey changes the appkey (aka secret-handshake network cap).
+// See https://ssbc.github.io/scuttlebutt-protocol-guide/#handshake for more.
 func WithAppKey(k []byte) Option {
 	return func(s *Sbot) error {
 		if n := len(k); n != 32 {
-			return errors.Errorf("appKey: need 32 bytes got %d", n)
+			return fmt.Errorf("appKey: need 32 bytes got %d", n)
 		}
 		s.appKey = k
 		return nil
 	}
 }
 
+// WithNamedKeyPair changes from the default `secret` file, useful for testing.
 func WithNamedKeyPair(name string) Option {
 	return func(s *Sbot) error {
 		r := repo.New(s.repoPath)
 		var err error
 		s.KeyPair, err = repo.LoadKeyPair(r, name)
-		return errors.Wrapf(err, "loading named key-pair %q failed", name)
+		if err != nil {
+			return fmt.Errorf("loading named key-pair %q failed: %w", name, err)
+		}
+		return nil
 	}
 }
 
+// WithJSONKeyPair expectes a JSON-string as blob and calls ssb.ParseKeyPair on it.
+// This is useful if you dont't want to place the keypair on the filesystem.
 func WithJSONKeyPair(blob string) Option {
 	return func(s *Sbot) error {
 		var err error
 		s.KeyPair, err = ssb.ParseKeyPair(strings.NewReader(blob))
-		return errors.Wrap(err, "JSON KeyPair decode failed")
+		if err != nil {
+			return fmt.Errorf("JSON KeyPair decode failed: %w", err)
+		}
+		return nil
 	}
 }
 
-func WithKeyPair(kp *ssb.KeyPair) Option {
+// WithKeyPair exepect a initialized ssb.KeyPair. Useful for testing.
+func WithKeyPair(kp ssb.KeyPair) Option {
 	return func(s *Sbot) error {
 		s.KeyPair = kp
 		return nil
 	}
 }
 
+// WithInfo changes the info/warn/debug loging output.
 func WithInfo(log kitlog.Logger) Option {
 	return func(s *Sbot) error {
 		s.info = log
@@ -274,14 +283,26 @@ func WithInfo(log kitlog.Logger) Option {
 	}
 }
 
+// WithContext changes the context that is context.Background() by default.
+// Handy to setup cancelation against a interup signal like ctrl+c.
+// Canceling the context also shuts down indexing. If no context is passed sbot.Shutdown() can be used.
 func WithContext(ctx context.Context) Option {
 	return func(s *Sbot) error {
-		s.rootCtx = ctx
+		s.rootCtx, s.Shutdown = ShutdownContext(ctx)
 		return nil
 	}
 }
 
+// ShutdownContext returns a context that returns ssb.ErrShuttingDown when canceld.
+// The server internals use this error to cleanly shut down index processing.
+func ShutdownContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	return ctxutils.WithError(ctx, ssb.ErrShuttingDown)
+}
+
 // TODO: remove all this network stuff and make them options on network
+
+// WithPreSecureConnWrapper wrapps the connection after it is encrypted.
+// Usefull for debugging and measuring traffic.
 func WithPreSecureConnWrapper(cw netwrap.ConnWrapper) Option {
 	return func(s *Sbot) error {
 		s.preSecureWrappers = append(s.preSecureWrappers, cw)
@@ -289,7 +310,8 @@ func WithPreSecureConnWrapper(cw netwrap.ConnWrapper) Option {
 	}
 }
 
-// TODO: remove all this network stuff and make them options on network
+// WithPostSecureConnWrapper wrapps the connection before it is encrypted.
+// Usefull to insepct the muxrpc frames before they go into boxstream.
 func WithPostSecureConnWrapper(cw netwrap.ConnWrapper) Option {
 	return func(s *Sbot) error {
 		s.postSecureWrappers = append(s.postSecureWrappers, cw)
@@ -297,6 +319,7 @@ func WithPostSecureConnWrapper(cw netwrap.ConnWrapper) Option {
 	}
 }
 
+// WithEventMetrics sets up latency and counter metrics
 func WithEventMetrics(ctr metrics.Counter, lvls metrics.Gauge, lat metrics.Histogram) Option {
 	return func(s *Sbot) error {
 		s.eventCounter = ctr
@@ -306,6 +329,7 @@ func WithEventMetrics(ctr metrics.Counter, lvls metrics.Gauge, lat metrics.Histo
 	}
 }
 
+// WithEndpointWrapper sets a MuxrpcEndpointWrapper for new connections.
 func WithEndpointWrapper(mw MuxrpcEndpointWrapper) Option {
 	return func(s *Sbot) error {
 		s.edpWrapper = mw
@@ -321,7 +345,7 @@ func EnableAdvertismentBroadcasts(do bool) Option {
 	}
 }
 
-// EnableAdvertismentBroadcasts controls local peer discovery through listening for and connecting to UDP broadcasts
+// EnableAdvertismentDialing controls local peer discovery through listening for and connecting to UDP broadcasts
 func EnableAdvertismentDialing(do bool) Option {
 	return func(s *Sbot) error {
 		s.enableDiscovery = do
@@ -329,12 +353,25 @@ func EnableAdvertismentDialing(do bool) Option {
 	}
 }
 
+// WithHMACSigning sets an HMAC signing key for messages.
+// Useful for testing, see https://github.com/ssb-js/ssb-validate#state--validateappendstate-hmac_key-msg for more.
 func WithHMACSigning(key []byte) Option {
 	return func(s *Sbot) error {
 		if n := len(key); n != 32 {
-			return errors.Errorf("WithHMACSigning: wrong key length (%d)", n)
+			return fmt.Errorf("WithHMACSigning: wrong key length (%d)", n)
 		}
-		s.signHMACsecret = key
+		var k [32]byte
+		copy(k[:], key)
+		s.signHMACsecret = &k
+		return nil
+	}
+}
+
+// WithWebsocketAddress changes the HTTP listener address, by default it's :8989.
+func WithWebsocketAddress(addr string) Option {
+	return func(s *Sbot) error {
+		// TODO: listen here?
+		s.websocketAddr = addr
 		return nil
 	}
 }
@@ -387,70 +424,4 @@ func LateOption(o Option) Option {
 		s.lateInit = append(s.lateInit, o)
 		return nil
 	}
-}
-
-func New(fopts ...Option) (*Sbot, error) {
-	var s Sbot
-	s.liveIndexUpdates = true
-
-	s.public = ssb.NewPluginManager()
-	s.master = ssb.NewPluginManager()
-
-	s.mlogIndicies = make(map[string]multilog.MultiLog)
-	s.simpleIndex = make(map[string]librarian.Index)
-	s.indexStates = make(map[string]string)
-
-	for i, opt := range fopts {
-		err := opt(&s)
-		if err != nil {
-			return nil, errors.Wrapf(err, "error applying option #%d", i)
-		}
-	}
-
-	if s.repoPath == "" {
-		u, err := user.Current()
-		if err != nil {
-			return nil, errors.Wrap(err, "error getting info on current user")
-		}
-
-		s.repoPath = filepath.Join(u.HomeDir, ".ssb-go")
-	}
-
-	if s.appKey == nil {
-		ak, err := base64.StdEncoding.DecodeString("1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s=")
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode default appkey")
-		}
-		s.appKey = ak
-	}
-
-	if s.dialer == nil {
-		s.dialer = netwrap.Dial
-	}
-
-	if s.listenAddr == nil {
-		s.listenAddr = &net.TCPAddr{Port: network.DefaultPort}
-	}
-
-	if s.info == nil {
-		logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stdout))
-		logger = kitlog.With(logger, "ts", kitlog.DefaultTimestampUTC, "caller", kitlog.DefaultCaller)
-		s.info = logger
-	}
-
-	if s.rootCtx == nil {
-		s.rootCtx = context.TODO()
-	}
-
-	r := repo.New(s.repoPath)
-
-	if s.KeyPair == nil {
-		var err error
-		s.KeyPair, err = repo.DefaultKeyPair(r)
-		if err != nil {
-			return nil, errors.Wrap(err, "sbot: failed to get keypair")
-		}
-	}
-
-	return initSbot(&s)
 }

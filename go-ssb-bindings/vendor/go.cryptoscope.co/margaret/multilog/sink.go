@@ -10,17 +10,16 @@ import (
 
 	"github.com/keks/persist"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/librarian"
+	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
 )
 
 // Func is a processing function that consumes a stream and sets values in the multilog.
-type Func func(ctx context.Context, seq margaret.Seq, value interface{}, mlog MultiLog) error
+type Func func(ctx context.Context, seq int64, value interface{}, mlog MultiLog) error
 
 // Sink is both a multilog and a luigi sink. Pouring values into it will append values to the multilog, usually by calling a user-defined processing function.
 type Sink interface {
-	MultiLog
-	Pour(ctx context.Context, v interface{}) error
+	luigi.Sink
 	QuerySpec() margaret.QuerySpec
 }
 
@@ -41,25 +40,6 @@ type sinkLog struct {
 	l    *sync.Mutex
 }
 
-// Get gets the sublog with the given address.
-func (slog *sinkLog) Get(addr librarian.Addr) (margaret.Log, error) {
-	log, err := slog.mlog.Get(addr)
-	if err != nil {
-		return nil, errors.Wrap(err, "error getting log from multilog")
-	}
-
-	return roLog{log}, nil
-}
-
-// List returns the addresses of all sublogs in the multilog
-func (slog *sinkLog) List() ([]librarian.Addr, error) {
-	return slog.mlog.List()
-}
-
-func (slog *sinkLog) Delete(addr librarian.Addr) error {
-	return slog.mlog.Delete(addr)
-}
-
 // Pour calls the processing function to add a value to a sublog.
 func (slog *sinkLog) Pour(ctx context.Context, v interface{}) error {
 	slog.l.Lock()
@@ -75,8 +55,6 @@ func (slog *sinkLog) Pour(ctx context.Context, v interface{}) error {
 	return errors.Wrap(err, "multilog/sink: error in processing function")
 }
 
-func (slog *sinkLog) Flush() error { return slog.mlog.Flush() }
-
 // Close does nothing.
 func (slog *sinkLog) Close() error { return nil }
 
@@ -85,7 +63,7 @@ func (slog *sinkLog) QuerySpec() margaret.QuerySpec {
 	slog.l.Lock()
 	defer slog.l.Unlock()
 
-	var seq margaret.BaseSeq
+	var seq int64
 
 	if err := persist.Load(slog.file, &seq); err != nil {
 		if errors.Cause(err) != io.EOF {
@@ -106,6 +84,6 @@ type roLog struct {
 }
 
 // Append always returns an error that indicates that this log is read only.
-func (roLog) Append(v interface{}) (margaret.Seq, error) {
+func (roLog) Append(v interface{}) (int64, error) {
 	return margaret.SeqEmpty, errors.New("can't append to read-only log")
 }

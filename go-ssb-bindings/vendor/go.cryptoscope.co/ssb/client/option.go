@@ -3,9 +3,9 @@ package client
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 
-	"github.com/go-kit/kit/log"
-	"github.com/pkg/errors"
+	"go.mindeco.de/log"
 )
 
 type Option func(*Client) error
@@ -29,10 +29,10 @@ func WithSHSAppKey(appKey string) Option {
 		var err error
 		c.appKeyBytes, err = base64.StdEncoding.DecodeString(appKey)
 		if err != nil {
-			return errors.Wrap(err, "ssbClient: failed to decode secret-handshake appKey")
+			return fmt.Errorf("ssbClient: failed to decode secret-handshake appKey: %w", err)
 		}
 		if n := len(c.appKeyBytes); n != 32 {
-			return errors.Errorf("ssbClient: invalid length for appKey: %d", n)
+			return fmt.Errorf("ssbClient: invalid length for appKey: %d", n)
 		}
 		return nil
 	}

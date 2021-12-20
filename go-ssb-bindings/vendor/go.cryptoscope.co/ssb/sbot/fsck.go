@@ -1,19 +1,21 @@
 package sbot
 
 import (
-	//"context"
+	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 
 	"github.com/RoaringBitmap/roaring"
-	kitlog "github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
-	//"github.com/machinebox/progress"
-	"github.com/pkg/errors"
-	//"go.cryptoscope.co/luigi"
+	"github.com/machinebox/progress"
+	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/multilog"
+	kitlog "go.mindeco.de/log"
+	"go.mindeco.de/log/level"
+	refs "go.mindeco.de/ssb-refs"
+	"go.mindeco.de/ssb-refs/tfk"
 
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/multilogs"
@@ -72,6 +74,7 @@ func FSCKWithMode(m FSCKMode) FSCKOption {
 		if m != FSCKModeLength && m != FSCKModeSequences {
 			return fmt.Errorf("invalid fsck mode: %d", m)
 		}
+
 		o.mode = m
 		return nil
 	}
@@ -123,10 +126,10 @@ func (s *Sbot) FSCK(opts ...FSCKOption) error {
 
 	switch opt.mode {
 	case FSCKModeLength:
-		return lengthFSCK(opt.feedsIdx, s.RootLog)
+		return lengthFSCK(opt.feedsIdx, s.ReceiveLog)
 
 	case FSCKModeSequences:
-		return sequenceFSCK(s.RootLog, opt.progressFn)
+		return sequenceFSCK(s.ReceiveLog, opt.progressFn)
 
 	default:
 		return errors.New("sbot: unknown fsck mode")
@@ -137,64 +140,63 @@ func (s *Sbot) FSCK(opts ...FSCKOption) error {
 // It expects a multilog as first parameter where each sublog is one feed
 // and each entry maps to another entry in the receiveLog
 func lengthFSCK(authorMlog multilog.MultiLog, receiveLog margaret.Log) error {
+	feeds, err := authorMlog.List()
+	if err != nil {
+		return fmt.Errorf("fsck/length: author listing failed: %w", err)
+	}
 
-	/*
-		feeds, err := authorMlog.List()
+	for _, author := range feeds {
+		var sr tfk.Feed
+		err := sr.UnmarshalBinary([]byte(author))
 		if err != nil {
-			return err
+			return fmt.Errorf("fsck/length: failed to unpack author %q: %w", author, err)
 		}
 
-			for _, author := range feeds {
-				var sr ssb.StorageRef
-				err := sr.Unmarshal([]byte(author))
-				if err != nil {
-					return err
-				}
+		subLog, err := authorMlog.Get(author)
+		if err != nil {
+			return fmt.Errorf("fsck/length: failed to get sublog for %q: %w", author, err)
+		}
 
-				//authorRef, err := sr.FeedRef()
-				//_, err := sr.FeedRef()
-				//if err != nil {
-				//	return err
-				//}
+		currentSeqFromIndex := subLog.Seq()
 
-				subLog, err := authorMlog.Get(author)
-				if err != nil {
-					return err
-				}
+		if currentSeqFromIndex == margaret.SeqEmpty {
+			continue
+		}
 
-				currentSeqV, err := subLog.Seq().Value()
-				if err != nil {
-					return err
-				}
-				currentSeqFromIndex := currentSeqV.(margaret.Seq)
-				rlSeq, err := subLog.Get(currentSeqFromIndex)
-				if err != nil {
-					if margaret.IsErrNulled(err) {
-						continue
-					}
-					return err
-				}
+		rxEntry, err := subLog.Get(currentSeqFromIndex)
+		if err != nil {
+			if margaret.IsErrNulled(err) {
+				continue
+			}
+			return fmt.Errorf("fsck/length: failed to get rxlog entry for index entry %d for author %q: %w", currentSeqFromIndex, author, err)
+		}
 
-				//rv, err := receiveLog.Get(rlSeq.(margaret.BaseSeq))
-				//if err != nil {
-				//	if margaret.IsErrNulled(err) {
-				//		continue
-				//	}
-				//	return err
-				//}
-				//msg := rv.(ssb.Message)
+		rxSeq, ok := rxEntry.(int64)
+		if !ok {
+			return fmt.Errorf("fsck/length: failed to get rxlog entry for index entry %d for author %q: %w", currentSeqFromIndex, author, err)
+		}
+		rv, err := receiveLog.Get(rxSeq)
+		if err != nil {
+			if margaret.IsErrNulled(err) {
+				continue
+			}
+			return fmt.Errorf("fsck/length: failed to load rxlog entry %d for %q: %w", rxSeq, author, err)
+		}
+		msg := rv.(refs.Message)
 
-				// Commented out to prevent fake forked log bug
-				//
-				// margaret indexes are 0-based, therefore +1
-				//if msg.Seq() != currentSeqFromIndex.Seq()+1 {
-				//	return ssb.ErrWrongSequence{
-				//		Ref:     authorRef,
-				//		Stored:  currentSeqFromIndex,
-				//		Logical: msg,
-				//	}
-				//}
-			} */
+		// margaret indexes are 0-based, therefore +1
+		if msg.Seq() != currentSeqFromIndex+1 {
+			fr, err := sr.Feed()
+			if err != nil {
+				return fmt.Errorf("fsck/length: failed to feed reference for author (%q): %w", author, err)
+			}
+			return ssb.ErrWrongSequence{
+				Ref:     fr,
+				Stored:  currentSeqFromIndex,
+				Logical: msg.Seq(),
+			}
+		}
+	}
 
 	return nil
 }
@@ -222,136 +224,125 @@ func (p *processedCounter) Err() error { return nil }
 // sequenceFSCK goes through every message in the receiveLog
 // and checks tha the sequence of a feed is correctly increasing by one each message
 func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
-	/*
-		ctx := context.Background()
+	ctx := context.Background()
 
-		// the last sequence number we saw of that author
-		lastSequence := make(map[string]int64)
+	// the last sequence number we saw of that author
+	lastSequence := make(map[string]int64)
 
-		// we need to keep track of _all_ the messages per feed
-		// since we dont know in advance which ones we have to null
-		allSeqsPerAuthor := make(map[string]*roaring.Bitmap)
+	// we need to keep track of _all_ the messages per feed
+	// since we dont know in advance which ones we have to null
+	allSeqsPerAuthor := make(map[string]*roaring.Bitmap)
 
-		currentSeqV, err := receiveLog.Seq().Value()
+	totalMessages := receiveLog.Seq()
+	var pc processedCounter
+
+	src, err := receiveLog.Query(margaret.SeqWrap(true))
+	if err != nil {
+		return err
+	}
+
+	// which feeds have problems
+	var consistencyErrors []ssb.ErrWrongSequence
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		p := progress.NewTicker(ctx, &pc, int64(totalMessages), 3*time.Second)
+		for remaining := range p {
+			estDone := remaining.Estimated()
+			// how much time until it's done?
+			timeLeft := estDone.Sub(time.Now()).Round(time.Second)
+			progressFn(remaining.Percent(), timeLeft)
+		}
+	}()
+	defer cancel()
+
+	for {
+		v, err := src.Next(ctx)
 		if err != nil {
+			if luigi.IsEOS(err) {
+				break
+			}
 			return err
 		}
 
-		totalMessages := currentSeqV.(margaret.Seq).Seq()
-		var pc processedCounter
-
-		src, err := receiveLog.Query(margaret.SeqWrap(true))
-		if err != nil {
-			return err
+		sw, ok := v.(margaret.SeqWrapper)
+		if !ok {
+			if errv, ok := v.(error); ok && margaret.IsErrNulled(errv) {
+				continue
+			}
+			return fmt.Errorf("fsck/sw: unexpected message type: %T (wanted %T)", v, sw)
 		}
 
-		// which feeds have problems
-		var consistencyErrors []ssb.ErrWrongSequence
-		ctx, cancel := context.WithCancel(context.Background())
+		rxLogSeq := sw.Seq()
+		val := sw.Value()
+		msg, ok := val.(refs.Message)
+		if !ok {
+			return fmt.Errorf("fsck/value: unexpected message type: %T (wanted %T)", val, msg)
+		}
 
-		go func() {
-			p := progress.NewTicker(ctx, &pc, totalMessages, 3*time.Second)
-			for remaining := range p {
-				estDone := remaining.Estimated()
-				// how much time until it's done?
-				timeLeft := estDone.Sub(time.Now()).Round(time.Second)
-				progressFn(remaining.Percent(), timeLeft)
-			}
-		}()
-		defer cancel()
+		msgSeq := msg.Seq()
+		authorRef := msg.Author().Ref()
 
-		for {
-			v, err := src.Next(ctx)
-			if err != nil {
-				if luigi.IsEOS(err) {
-					break
-				}
-				return err
-			}
+		seqMap, ok := allSeqsPerAuthor[authorRef]
+		if !ok {
+			seqMap = roaring.New()
+			allSeqsPerAuthor[authorRef] = seqMap
+		}
+		seqMap.Add(uint32(rxLogSeq))
 
-			sw, ok := v.(margaret.SeqWrapper)
-			if !ok {
-				if errv, ok := v.(error); ok && margaret.IsErrNulled(errv) {
-					continue
-				}
-				return fmt.Errorf("fsck/sw: unexpected message type: %T (wanted %T)", v, sw)
-			}
+		currSeq, has := lastSequence[authorRef]
 
-			rxLogSeq := sw.Seq().Seq()
-			val := sw.Value()
-			msg, ok := val.(ssb.Message)
-			if !ok {
-				return fmt.Errorf("fsck/value: unexpected message type: %T (wanted %T)", val, msg)
-			}
-
-			msgSeq := msg.Seq()
-			authorRef := msg.Author().Ref()
-
-			seqMap, ok := allSeqsPerAuthor[authorRef]
-			if !ok {
-				seqMap = roaring.New()
-				allSeqsPerAuthor[authorRef] = seqMap
-			}
-			seqMap.Add(uint32(rxLogSeq))
-
-			currSeq, has := lastSequence[authorRef]
-
-			if !has {
-				if msgSeq != 1 { // not seen yet, so has to be the first
-					seqErr := ssb.ErrWrongSequence{
-						Ref:     msg.Author(),
-						Stored:  sw.Seq(),
-						Logical: msg,
-					}
-					consistencyErrors = append(consistencyErrors, seqErr)
-					lastSequence[authorRef] = -1
-					continue
-				}
-				lastSequence[authorRef] = 1
-				continue
-			}
-
-			if currSeq < 0 { // feed broken, skipping
-				continue
-			}
-
-
-			if currSeq+1 != msgSeq { // correct next value?
+		if !has {
+			if msgSeq != 1 { // not seen yet, so has to be the first
 				seqErr := ssb.ErrWrongSequence{
 					Ref:     msg.Author(),
-					Stored:  margaret.BaseSeq(currSeq + 1),
-					Logical: msg,
+					Stored:  sw.Seq(),
+					Logical: int64(msg.Seq()),
 				}
 				consistencyErrors = append(consistencyErrors, seqErr)
 				lastSequence[authorRef] = -1
 				continue
 			}
-
-
-			lastSequence[authorRef] = currSeq + 1
-
-			// bench stats
-			pc.Incr()
+			lastSequence[authorRef] = 1
+			continue
 		}
 
-		if len(consistencyErrors) == 0 {
-			return nil
+		if currSeq < 0 { // feed broken, skipping
+			continue
 		}
 
-		nullMap := roaring.New()
-		for _, author := range consistencyErrors {
-			if bmap, has := allSeqsPerAuthor[author.Ref.Ref()]; has {
-				nullMap.Or(bmap)
+		if currSeq+1 != msgSeq { // correct next value?
+			seqErr := ssb.ErrWrongSequence{
+				Ref:     msg.Author(),
+				Stored:  int64(currSeq + 1),
+				Logical: int64(msg.Seq()),
 			}
+			consistencyErrors = append(consistencyErrors, seqErr)
+			lastSequence[authorRef] = -1
+			continue
 		}
+		lastSequence[authorRef] = currSeq + 1
 
-		// error report
-		return ErrConsistencyProblems{
-			Errors:    consistencyErrors,
-			Sequences: nullMap,
+		// bench stats
+		pc.Incr()
+	}
+
+	if len(consistencyErrors) == 0 {
+		return nil
+	}
+
+	nullMap := roaring.New()
+	for _, author := range consistencyErrors {
+		if bmap, has := allSeqsPerAuthor[author.Ref.Ref()]; has {
+			nullMap.Or(bmap)
 		}
-	*/
-	return nil
+	}
+
+	// error report
+	return ErrConsistencyProblems{
+		Errors:    consistencyErrors,
+		Sequences: nullMap,
+	}
 }
 
 // HealRepo just nulls the messages and is a very naive repair but the only one that is feasably implemented right now
@@ -371,18 +362,17 @@ func (s *Sbot) HealRepo(report ErrConsistencyProblems) error {
 	it := report.Sequences.Iterator()
 	for it.HasNext() {
 		seq := it.Next()
-		err := s.RootLog.Null(margaret.BaseSeq(seq))
+		err := s.ReceiveLog.Null(int64(seq))
 		if err != nil {
-			return errors.Wrapf(err, "failed to null message (%d) in receive log", seq)
+			return fmt.Errorf("failed to null message (%d) in receive log: %w", seq, err)
 		}
-		level.Debug(funcLog).Log("msg", seq)
 	}
 
 	// now remove feed metadata from the indexes
 	for i, constErr := range report.Errors {
 		err := s.NullFeed(constErr.Ref)
 		if err != nil {
-			return errors.Wrapf(err, "heal(%d): failed to null broken feed", i)
+			return fmt.Errorf("heal(%d): failed to null broken feed: %w", i, err)
 		}
 		level.Debug(funcLog).Log("feed", constErr.Ref.Ref())
 	}

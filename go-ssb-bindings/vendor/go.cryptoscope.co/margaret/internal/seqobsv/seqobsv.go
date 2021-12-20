@@ -8,8 +8,6 @@ package seqobsv
 import (
 	"math"
 	"sync"
-
-	"go.cryptoscope.co/margaret"
 )
 
 type Observable struct {
@@ -38,14 +36,14 @@ func (seq *Observable) Value() uint64 {
 	return v
 }
 
-func (seq *Observable) Seq() margaret.Seq {
+func (seq *Observable) Seq() int64 {
 	seq.mu.Lock()
 	v := seq.val
 	seq.mu.Unlock()
 	if v > math.MaxInt64 {
 		panic("bigger then int64")
 	}
-	return margaret.BaseSeq(v)
+	return int64(v)
 }
 
 func (seq *Observable) Inc() uint64 {

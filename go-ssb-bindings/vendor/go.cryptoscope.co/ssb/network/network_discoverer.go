@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/libp2p/go-reuseport"
-	"github.com/pkg/errors"
 	"go.cryptoscope.co/netwrap"
 	"go.cryptoscope.co/secretstream"
 	"go.cryptoscope.co/ssb"
@@ -18,7 +17,7 @@ import (
 )
 
 type Discoverer struct {
-	local *ssb.KeyPair // to ignore our own
+	local ssb.KeyPair // to ignore our own
 
 	rx4 net.PacketConn
 	rx6 net.PacketConn
@@ -27,7 +26,7 @@ type Discoverer struct {
 	brodcasts map[int]chan net.Addr
 }
 
-func NewDiscoverer(local *ssb.KeyPair) (*Discoverer, error) {
+func NewDiscoverer(local ssb.KeyPair) (*Discoverer, error) {
 	d := &Discoverer{
 		local:     local,
 		brodcasts: make(map[int]chan net.Addr),
@@ -57,13 +56,13 @@ func (d *Discoverer) start() error {
 func makePktConn(n string) (net.PacketConn, error) {
 	lis, err := reuseport.ListenPacket(n, fmt.Sprintf(":%d", DefaultPort))
 	if err != nil {
-		return nil, errors.Wrap(err, "ssb: adv start failed to listen on v4 broadcast")
+		return nil, fmt.Errorf("ssb: adv start failed to listen on v4 broadcast: %w", err)
 	}
 	switch v := lis.(type) {
 	case *net.UDPConn:
 		return v, nil
 	default:
-		return nil, errors.Errorf("node Advertise: invalid rx listen type: %T", lis)
+		return nil, fmt.Errorf("node Advertise: invalid rx listen type: %T", lis)
 	}
 }
 
@@ -90,7 +89,7 @@ func (d *Discoverer) work(rx net.PacketConn) {
 			continue
 		}
 
-		if na.Ref.Equal(d.local.Id) {
+		if na.Ref.Equal(d.local.ID()) {
 			continue
 		}
 

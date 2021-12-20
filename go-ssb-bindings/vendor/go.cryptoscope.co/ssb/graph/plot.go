@@ -10,8 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/encoding"
 	"gonum.org/v1/gonum/graph/encoding/dot"
@@ -21,7 +20,7 @@ import (
 func (g *Graph) NodeCount() int {
 	g.Mutex.Lock()
 	defer g.Mutex.Unlock()
-	return len(g.lookup)
+	return g.WeightedDirectedGraph.Nodes().Len()
 }
 
 func (g *Graph) RenderSVG(w io.Writer) error {
@@ -29,15 +28,25 @@ func (g *Graph) RenderSVG(w io.Writer) error {
 	defer g.Mutex.Unlock()
 	dotbytes, err := dot.Marshal(g, "trust", "", "")
 	if err != nil {
-		return errors.Wrap(err, "dot marshal failed")
+		return fmt.Errorf("dot marshal failed: %w", err)
 	}
 	dotR := bytes.NewReader(dotbytes)
+
+	dotFile, err := os.OpenFile("dot-dump.xml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0700)
+	if err != nil {
+		return fmt.Errorf("dot dump open failed: %w", err)
+	}
+	defer dotFile.Close()
 
 	dotCmd := exec.Command("dot", "-Tsvg")
 	dotCmd.Stdout = w
 	dotCmd.Stdin = dotR
-	// dotCmd.Stdin = io.TeeReader(dotR, dotFile)
-	return errors.Wrap(dotCmd.Run(), "RenderSVG: dot command failed")
+	dotCmd.Stdin = io.TeeReader(dotR, dotFile)
+
+	if err := dotCmd.Run(); err != nil {
+		return fmt.Errorf("RenderSVG: dot command failed: %w", err)
+	}
+	return nil
 }
 
 func (g *Graph) RenderSVGToFile(path string) error {
@@ -46,7 +55,7 @@ func (g *Graph) RenderSVGToFile(path string) error {
 
 	svgFile, err := os.Create(path)
 	if err != nil {
-		return errors.Wrap(err, "svg file create failed")
+		return fmt.Errorf("svg file create failed: %w", err)
 	}
 	defer svgFile.Close()
 	return g.RenderSVG(svgFile)
@@ -66,7 +75,7 @@ func (g *Graph) Attributes() []encoding.Attribute {
 
 type contactNode struct {
 	graph.Node
-	feed *ssb.FeedRef
+	feed refs.FeedRef
 	name string
 }
 
@@ -97,6 +106,18 @@ func (n contactEdge) Attributes() []encoding.Attribute {
 	if n.W > 1 {
 		c = "firebrick1"
 	}
+	return []encoding.Attribute{
+		{Key: "color", Value: c},
+		// {Key: "label", Value: fmt.Sprintf(`"%f"`, n.W)},
+	}
+}
+
+type metafeedEdge struct {
+	simple.WeightedEdge
+}
+
+func (n metafeedEdge) Attributes() []encoding.Attribute {
+	c := "green"
 	return []encoding.Attribute{
 		{Key: "color", Value: c},
 		// {Key: "label", Value: fmt.Sprintf(`"%f"`, n.W)},

@@ -5,31 +5,30 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/go-kit/kit/log"
-	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/muxrpc"
-	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/muxrpc/v2"
 	"go.cryptoscope.co/ssb/graph"
+	"go.mindeco.de/log"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 type blocksSrc struct {
-	self ssb.FeedRef
+	self refs.FeedRef
 
 	log log.Logger
 
 	builder graph.Builder
 }
 
-func (h blocksSrc) HandleSource(ctx context.Context, req *muxrpc.Request, snk luigi.Sink) error {
+func (h blocksSrc) HandleSource(ctx context.Context, req *muxrpc.Request, snk *muxrpc.ByteSink) error {
 	type argT struct {
-		Who ssb.FeedRef
+		Who refs.FeedRef
 	}
 	var args []argT
 	if err := json.Unmarshal(req.RawArgs, &args); err != nil {
 		return fmt.Errorf("invalid argument on isFollowing call: %w", err)
 	}
 
-	var who ssb.FeedRef
+	var who refs.FeedRef
 	if len(args) != 1 {
 		who = h.self
 	} else {
@@ -41,13 +40,17 @@ func (h blocksSrc) HandleSource(ctx context.Context, req *muxrpc.Request, snk lu
 		return err
 	}
 
-	set := g.BlockedList(&who)
+	set := g.BlockedList(who)
 	lst, err := set.List()
 	if err != nil {
 		return err
 	}
+
+	snk.SetEncoding(muxrpc.TypeJSON)
+	enc := json.NewEncoder(snk)
+
 	for i, v := range lst {
-		if err := snk.Pour(ctx, v); err != nil {
+		if err := enc.Encode(v); err != nil {
 			return fmt.Errorf("blocks: failed to send item %d: %w", i, err)
 		}
 	}
@@ -56,7 +59,7 @@ func (h blocksSrc) HandleSource(ctx context.Context, req *muxrpc.Request, snk lu
 }
 
 type hopsSrc struct {
-	self ssb.FeedRef
+	self refs.FeedRef
 
 	log log.Logger
 
@@ -64,27 +67,27 @@ type hopsSrc struct {
 }
 
 type HopsArgs struct {
-	Start *ssb.FeedRef `json:"start,omitempty"`
-	Max   uint         `json:"max"`
+	Start *refs.FeedRef `json:"start,omitempty"`
+	Max   uint          `json:"max"`
 }
 
-func (h hopsSrc) HandleSource(ctx context.Context, req *muxrpc.Request, snk luigi.Sink) error {
+func (h hopsSrc) HandleSource(ctx context.Context, req *muxrpc.Request, snk *muxrpc.ByteSink) error {
 	var args []HopsArgs
 	if err := json.Unmarshal(req.RawArgs, &args); err != nil {
 		return fmt.Errorf("invalid argument on isFollowing call: %w", err)
 	}
 
 	var (
-		start *ssb.FeedRef
+		start refs.FeedRef
 		dist  uint
 	)
 	if len(args) == 1 {
-		start = args[0].Start
+		if s := args[0].Start; s != nil {
+			start = *s
+		} else {
+			start = h.self
+		}
 		dist = args[0].Max
-	}
-
-	if start == nil {
-		start = &h.self
 	}
 
 	set := h.builder.Hops(start, int(dist))
@@ -93,8 +96,12 @@ func (h hopsSrc) HandleSource(ctx context.Context, req *muxrpc.Request, snk luig
 	if err != nil {
 		return err
 	}
+
+	snk.SetEncoding(muxrpc.TypeJSON)
+	enc := json.NewEncoder(snk)
+
 	for i, v := range lst {
-		if err := snk.Pour(ctx, v); err != nil {
+		if err := enc.Encode(v); err != nil {
 			return fmt.Errorf("hops: failed to send item %d: %w", i, err)
 		}
 	}

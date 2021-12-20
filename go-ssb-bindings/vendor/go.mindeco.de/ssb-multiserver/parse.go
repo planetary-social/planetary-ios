@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/netwrap"
 	"go.cryptoscope.co/secretstream"
-	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 var (
@@ -23,7 +23,7 @@ var (
 
 type NetAddress struct {
 	Addr net.TCPAddr
-	Ref  *ssb.FeedRef
+	Ref  refs.FeedRef
 }
 
 func (na NetAddress) String() string {
@@ -83,12 +83,8 @@ func ParseNetAddress(input []byte) (*NetAddress, error) {
 				return nil, errors.Wrap(ErrNoSHSKey, "multiserver: pubkey not 32bytes long")
 			}
 
-			// implied by ~shs: indicating v1
-			na.Ref = &ssb.FeedRef{
-				ID:   keyBuf[:32],
-				Algo: ssb.RefAlgoFeedSSB1,
-			}
-			return &na, nil
+			na.Ref, err = refs.NewFeedRefFromBytes(keyBuf[:32], refs.RefAlgoFeedSSB1)
+			return &na, err
 		}
 	}
 	return nil, ErrNoNetAddr

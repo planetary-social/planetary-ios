@@ -3,25 +3,19 @@
 package sbot
 
 import (
-	"github.com/pkg/errors"
+	"fmt"
 
-	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/message"
-	"go.cryptoscope.co/ssb/multilogs"
 	"go.cryptoscope.co/ssb/repo"
+	refs "go.mindeco.de/ssb-refs"
 )
 
-func (sbot *Sbot) PublishAs(nick string, val interface{}) (*ssb.MessageRef, error) {
+func (sbot *Sbot) PublishAs(nick string, val interface{}) (refs.MessageRef, error) {
 	r := repo.New(sbot.repoPath)
-
-	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
-	if !ok {
-		return nil, errors.Errorf("requried idx not present: userFeeds")
-	}
 
 	kp, err := repo.LoadKeyPair(r, nick)
 	if err != nil {
-		return nil, err
+		return refs.MessageRef{}, err
 	}
 
 	var pubopts = []message.PublishOption{
@@ -31,9 +25,9 @@ func (sbot *Sbot) PublishAs(nick string, val interface{}) (*ssb.MessageRef, erro
 		pubopts = append(pubopts, message.SetHMACKey(sbot.signHMACsecret))
 	}
 
-	pl, err := message.OpenPublishLog(sbot.RootLog, uf, kp, pubopts...)
+	pl, err := message.OpenPublishLog(sbot.ReceiveLog, sbot.Users, kp, pubopts...)
 	if err != nil {
-		return nil, errors.Wrap(err, "publishAs: failed to create publish log")
+		return refs.MessageRef{}, fmt.Errorf("publishAs: failed to create publish log: %w", err)
 	}
 
 	return pl.Publish(val)

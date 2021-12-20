@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+// Package network implements utilities for dialing and listening to secret-handshake powered muxrpc connections.
 package network
 
 import (

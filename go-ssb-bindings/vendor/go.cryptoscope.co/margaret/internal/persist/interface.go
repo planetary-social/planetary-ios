@@ -19,9 +19,16 @@ var ErrNotFound = errors.New("persist: item not found")
 type Saver interface {
 	io.Closer
 	Put(Key, []byte) error
+	PutMultiple([]KeyValuePair) error
+
 	Get(Key) ([]byte, error)
 
 	List() ([]Key, error)
 
 	Delete(Key) error
+}
+
+type KeyValuePair struct {
+	Key   Key
+	Value []byte
 }

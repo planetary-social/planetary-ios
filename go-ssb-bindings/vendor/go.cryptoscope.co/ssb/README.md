@@ -1,4 +1,10 @@
-# Go-SSB [![GoDoc](https://godoc.org/go.cryptoscope.co/ssb?status.svg)](https://godoc.org/go.cryptoscope.co/ssb)
+<h1 align="center">Go-SSB</h1>
+
+<p align="center">
+  <img height="170px" src="./docs/icon.png" alt="hermit gopher with a shell and crab hands">
+</p>
+
+[![GoDoc](https://godoc.org/go.cryptoscope.co/ssb?status.svg)](https://godoc.org/go.cryptoscope.co/ssb) [![Go Report Card](https://goreportcard.com/badge/go.cryptoscope.co/ssb)](https://goreportcard.com/report/go.cryptoscope.co/ssb) ![Github Actions](https://github.com/cryptoscope/ssb/actions/workflows/go.yml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A full-stack implementation of [secure-scuttlebutt](https://www.scuttlebutt.nz) using the [Go](https://golang.org) programming language.
 
@@ -10,9 +16,10 @@ If you encounter a bug, please refer to our [public issue tracker](https://githu
 
 * [x] Follow-graph implementation (based on [gonum](https://www.gonum.org)) to authorize incoming connections
 * [x] [Blobs](https://ssbc.github.io/scuttlebutt-protocol-guide/#blobs) store and replication
-* [x] _Legacy_ gossip [replication](https://ssbc.github.io/scuttlebutt-protocol-guide/#createHistoryStream) ([ebt](https://github.com/dominictarr/epidemic-broadcast-trees) not implementation yet)
 * [x] Publishing new messages to the log
-* [x] Invite mechanics ([peer-invites](https://github.com/ssbc/ssb-peer-invites) partially done, too. See [Issue 45](https://github.com/cryptoscope/ssb/issues/45)for more.)
+* [x] _Legacy_ feed [replication](https://ssbc.github.io/scuttlebutt-protocol-guide/#createHistoryStream)
+* [x] [Epidemic Broadcast Trees (EBT)](https://github.com/dominictarr/epidemic-broadcast-trees) feed replication in beta (use `go-sbot -enable-ebt`)
+* [x] Invite mechanics ([peer-invites](https://github.com/ssbc/ssb-peer-invites) partially done, too. See [Issue 45](https://github.com/cryptoscope/ssb/issues/45) for more.)
 
 ## Installation
 
@@ -31,7 +38,9 @@ Requirements:
 
 ## Running go-sbot
 
-The tool in `cmd/go-sbot` is similar to [ssb-server](https://github.com/ssbc/ssb-server) (previously called scuttlebot or sbot for short)
+The tool in `cmd/go-sbot` is similar to [ssb-server](https://github.com/ssbc/ssb-server) (previously called scuttlebot or sbot for short).
+
+See the [quick start](./docs/quick-start.md) document for a walkthrough and getting started tour.
 
 ## Bootstrapping from an existing key-pair
 
@@ -95,8 +104,8 @@ package main
 
 import (
 	"log"
+	"fmt"
 
-	"github.com/pkg/errors"
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/multilogs"
 	"go.cryptoscope.co/ssb/sbot"
@@ -106,16 +115,16 @@ func main() {
 	sbot, err := sbot.New()
 	check(err)
 
-	publish, err := multilogs.OpenPublishLog(sbot.RootLog, sbot.UserFeeds, *sbot.KeyPair)
+	publish, err := multilogs.OpenPublishLog(sbot.ReceiveLog, sbot.UserFeeds, *sbot.KeyPair)
 	check(err)
 
-	alice, err := ssb.ParseFeedRef("@alicesKeyInActualBase64Bytes.ed25519")
+	alice, err := refs.ParseFeedRef("@alicesKeyInActualBase64Bytes.ed25519")
 	check(err)
 
 	var someMsgs = []interface{}{
 		map[string]interface{}{
 			"type":  "about",
-			"about": sbot.KeyPair.Id.Ref(),
+			"about": sbot.KeyPair.ID().Ref(),
 			"name":  "my user",
 		},
 		map[string]interface{}{
@@ -135,7 +144,7 @@ func main() {
 	}
 	for i, msg := range someMsgs {
 		newSeq, err := publish.Append(msg)
-		check(errors.Wrapf(err, "failed to publish test message %d", i))
+		check(fmt.Errorf("failed to publish test message %d: %w", i, err))
 		log.Println("new message:", newSeq)
 	}
 
@@ -301,7 +310,7 @@ Either use the _Go Module_ way of building the project, which uses the pinned ve
 We currently use a [very rough state file](https://github.com/keks/persist) to keep track of which messages are indexed already (multilogs and contact graph). When the server crashes while it is being rewritten, this file can get corrupted. We have a fsck-like tool in mind to rebuild the indicies from the static log but it's not done yet.
 
 ```
-time=2019-01-09T21:19:08.73736113Z caller=new.go:47 module=sbot event="component terminated" component=userFeeds error="error querying rootLog for mlog: error decoding value: json: cannot unmarshal number 272954244983260621261341 into Go value of type margaret.BaseSeq"
+time=2019-01-09T21:19:08.73736113Z caller=new.go:47 module=sbot event="component terminated" component=userFeeds error="error querying rootLog for mlog: error decoding value: json: cannot unmarshal number 272954244983260621261341 into Go value of type margaret.Seq"
 ```
 
 Our current workaround is to do a full resync from the network:
@@ -336,4 +345,4 @@ badger failed to open: Mmap value log file. Path=C:\\some\\where\\.ssb-go\\index
 Either post to the #go-ssb channel on the mainnet or mention us individually:
 
 * cryptix: `@p13zSAiOpguI9nsawkGijsnMfWmFd5rlUNpzekEE+vI=.ed25519`
-* keks: `@YXkE3TikkY4GFMX3lzXUllRkNTbj5E+604AkaO1xbz8=.ed2551`
+* keks: `@YXkE3TikkY4GFMX3lzXUllRkNTbj5E+604AkaO1xbz8=.ed25519`

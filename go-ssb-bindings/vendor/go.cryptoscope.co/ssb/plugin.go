@@ -6,7 +6,7 @@ import (
 	"net"
 	"sync"
 
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
 )
 
 type Plugin interface {
@@ -19,10 +19,6 @@ type Plugin interface {
 
 	// Handler returns the muxrpc handler for the plugin
 	Handler() muxrpc.Handler
-
-	// WrapEndpoint wraps the endpoint and returns something that has convenience wrappers.
-	// The caller needs to type-assert the return value to something that is specific to the plugin.
-	//WrapEndpoint(edp muxrpc.Endpoint) interface{}
 }
 
 type PluginManager interface {

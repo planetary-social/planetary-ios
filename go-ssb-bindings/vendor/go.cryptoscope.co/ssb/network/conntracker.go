@@ -94,6 +94,7 @@ func (ct *connTracker) CloseAll() {
 		if err := c.c.Close(); err != nil {
 			log.Printf("failed to close %x: %v\n", k[:5], err)
 		}
+		c.cancel()
 		// seems nice but we are holding the lock
 		// <-c.done
 		// delete(ct.active, k)

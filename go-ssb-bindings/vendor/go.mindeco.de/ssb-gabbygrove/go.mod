@@ -1,13 +1,14 @@
 module go.mindeco.de/ssb-gabbygrove
 
 require (
-	github.com/cryptix/go v1.5.0
-	github.com/pkg/errors v0.8.1
-	github.com/stretchr/testify v1.4.0
+	github.com/kr/pretty v0.1.0 // indirect
+	github.com/pkg/errors v0.9.1
+	github.com/stretchr/testify v1.6.1
 	github.com/ugorji/go/codec v1.1.7
-	go.cryptoscope.co/margaret v0.0.12-0.20190912103626-34323ad497f4
-	go.cryptoscope.co/ssb v0.0.0-20190912121701-f368dd6b09da
-	golang.org/x/crypto v0.0.0-20190829043050-9756ffdc2472
+	go.mindeco.de v1.12.0
+	go.mindeco.de/ssb-refs v0.3.0
+	golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
 
 go 1.13

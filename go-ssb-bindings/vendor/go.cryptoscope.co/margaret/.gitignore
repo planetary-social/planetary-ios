@@ -4,4 +4,6 @@
 c.out
 trace.out
 
-test/all/TestLog*
+/test/all/TestLog*
+indexes/test/all/TestLog*
+testrun

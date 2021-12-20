@@ -4,12 +4,12 @@ package blobs
 
 import (
 	"context"
-
-	"github.com/cryptix/go/logging"
-	"github.com/pkg/errors"
+	"fmt"
 
 	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
+	"go.mindeco.de/logging"
+
 	"go.cryptoscope.co/ssb"
 )
 
@@ -27,5 +27,8 @@ func (h listHandler) HandleCall(ctx context.Context, req *muxrpc.Request, edp mu
 	}
 
 	err := luigi.Pump(ctx, req.Stream, h.bs.List())
-	checkAndLog(h.log, errors.Wrap(err, "error listing blobs"))
+	if err != nil {
+		err = fmt.Errorf("error listing blobs: %w", err)
+		checkAndLog(h.log, err)
+	}
 }

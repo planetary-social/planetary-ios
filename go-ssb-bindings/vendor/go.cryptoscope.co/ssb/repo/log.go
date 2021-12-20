@@ -3,7 +3,8 @@
 package repo
 
 import (
-	"github.com/pkg/errors"
+	"fmt"
+
 	"go.cryptoscope.co/margaret/offset2"
 	"go.cryptoscope.co/ssb/message/multimsg"
 )
@@ -17,5 +18,8 @@ func OpenLog(r Interface, path ...string) (multimsg.AlterableLog, error) {
 
 	// TODO use proper log message type here
 	log, err := offset2.Open(r.GetPath(path...), multimsg.MargaretCodec{})
-	return multimsg.NewWrappedLog(log), errors.Wrap(err, "failed to open log")
+	if err != nil {
+		return nil, fmt.Errorf("failed to open log: %w", err)
+	}
+	return multimsg.NewWrappedLog(log), nil
 }

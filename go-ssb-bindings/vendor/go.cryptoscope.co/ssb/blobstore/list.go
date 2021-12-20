@@ -5,14 +5,14 @@ package blobstore
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
 
-	"github.com/pkg/errors"
+	refs "go.mindeco.de/ssb-refs"
 
 	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/ssb"
 )
 
 type listSource struct {
@@ -26,12 +26,12 @@ type listSource struct {
 func (src *listSource) initialize() error {
 	root, err := os.Open(src.basePath)
 	if err != nil {
-		return errors.Wrap(err, "error opening blobs directory")
+		return fmt.Errorf("error opening blobs directory: %w", err)
 	}
 
 	dirs, err := root.Readdir(0)
 	if err != nil {
-		return errors.Wrap(err, "error reading blobs directory")
+		return fmt.Errorf("error reading blobs directory: %w", err)
 	}
 
 	src.dirs = make([]string, len(dirs))
@@ -48,12 +48,12 @@ func (src *listSource) nextDir() error {
 
 	dir, err := os.Open(filepath.Join(src.basePath, dirPath))
 	if err != nil {
-		return errors.Wrap(err, "error opening subdirectory")
+		return fmt.Errorf("error opening subdirectory: %w", err)
 	}
 
 	blobs, err := dir.Readdir(0)
 	if err != nil {
-		return errors.Wrap(err, "error reading blobs subdirectory")
+		return fmt.Errorf("error reading blobs subdirectory: %w", err)
 	}
 
 	src.files = make([]string, len(blobs))
@@ -71,7 +71,7 @@ func (src *listSource) Next(ctx context.Context) (interface{}, error) {
 	if src.dirs == nil {
 		err := src.initialize()
 		if err != nil {
-			return nil, errors.Wrap(err, "error initializing list source")
+			return nil, fmt.Errorf("error initializing list source: %w", err)
 		}
 	}
 
@@ -82,7 +82,7 @@ func (src *listSource) Next(ctx context.Context) (interface{}, error) {
 
 		err := src.nextDir()
 		if err != nil {
-			return nil, errors.Wrap(err, "error reading next subdirectory")
+			return nil, fmt.Errorf("error reading next subdirectory: %w", err)
 		}
 	}
 
@@ -91,11 +91,8 @@ func (src *listSource) Next(ctx context.Context) (interface{}, error) {
 
 	raw, err := hex.DecodeString(file)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error decoding hex file name %q", file)
+		return nil, fmt.Errorf("error decoding hex file name %q: %w", file, err)
 	}
 
-	return &ssb.BlobRef{
-		Algo: "sha256",
-		Hash: raw,
-	}, nil
+	return refs.NewBlobRefFromBytes(raw, refs.RefAlgoBlobSSB1)
 }

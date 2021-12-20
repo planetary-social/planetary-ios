@@ -4,6 +4,7 @@ package network
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -12,13 +13,14 @@ import (
 	"time"
 
 	"github.com/libp2p/go-reuseport"
-	"github.com/pkg/errors"
+	"golang.org/x/crypto/ed25519"
+
 	"go.cryptoscope.co/ssb"
 	multiserver "go.mindeco.de/ssb-multiserver"
 )
 
 type Advertiser struct {
-	keyPair *ssb.KeyPair
+	keyPair ssb.KeyPair
 
 	local  *net.UDPAddr // Local listening address, may not be needed (auto-detect?).
 	remote *net.UDPAddr // Address being broadcasted to, this should be deduced form 'local'.
@@ -27,26 +29,25 @@ type Advertiser struct {
 	ticker   *time.Ticker
 }
 
-func newPublicKeyString(keyPair *ssb.KeyPair) string {
-	publicKey := keyPair.Pair.Public[:]
+func newPublicKeyString(publicKey ed25519.PublicKey) string {
 	return base64.StdEncoding.EncodeToString(publicKey)
 }
 
-func newAdvertisement(local *net.UDPAddr, keyPair *ssb.KeyPair) (string, error) {
+func newAdvertisement(local *net.UDPAddr, keyPair ssb.KeyPair) (string, error) {
 	if local == nil {
-		return "", errors.Errorf("ssb: passed nil local address")
+		return "", errors.New("ssb: passed nil local address")
 	}
 
 	withoutZone := *local
 	withoutZone.Zone = ""
 
 	// crunchy way of making a https://github.com/ssbc/multiserver/
-	msg := fmt.Sprintf("net:%s~shs:%s", &withoutZone, newPublicKeyString(keyPair))
+	msg := fmt.Sprintf("net:%s~shs:%s", &withoutZone, newPublicKeyString(keyPair.ID().PubKey()))
 	_, err := multiserver.ParseNetAddress([]byte(msg))
 	return msg, err
 }
 
-func NewAdvertiser(local net.Addr, keyPair *ssb.KeyPair) (*Advertiser, error) {
+func NewAdvertiser(local net.Addr, keyPair ssb.KeyPair) (*Advertiser, error) {
 
 	var udpAddr *net.UDPAddr
 	switch nv := local.(type) {
@@ -60,19 +61,19 @@ func NewAdvertiser(local net.Addr, keyPair *ssb.KeyPair) (*Advertiser, error) {
 	case *net.UDPAddr:
 		udpAddr = nv
 	default:
-		return nil, errors.Errorf("node Advertise: invalid local address type: %T", local)
+		return nil, fmt.Errorf("node Advertise: invalid local address type: %T", local)
 	}
 	log.Printf("adverstiser using local address %s", udpAddr)
 
 	remote, err := net.ResolveUDPAddr("udp", fmt.Sprintf("%s:%d", net.IPv4bcast, DefaultPort))
 	if err != nil {
-		return nil, errors.Wrap(err, "ssb/NewAdvertiser: failed to resolve v4 broadcast addr")
+		return nil, fmt.Errorf("ssb/NewAdvertiser: failed to resolve v4 broadcast addr: %w", err)
 	}
 
 	return &Advertiser{
 		local:    udpAddr,
 		remote:   remote,
-		waitTime: time.Second * 45,
+		waitTime: time.Second * 15,
 		keyPair:  keyPair,
 	}, nil
 }
@@ -80,7 +81,7 @@ func NewAdvertiser(local net.Addr, keyPair *ssb.KeyPair) (*Advertiser, error) {
 func (b *Advertiser) advertise() error {
 	localAddresses, err := findSiteLocalNetworkAddresses(b.local)
 	if err != nil {
-		return errors.Wrap(err, "ssb: failed to make new advertisment")
+		return fmt.Errorf("ssb: failed to make new advertisment: %w", err)
 	}
 
 	for _, localAddress := range localAddresses {
@@ -104,17 +105,17 @@ func (b *Advertiser) advertise() error {
 			localUDP.IP = v.IP
 			localUDP.Port = v.Port
 		default:
-			return errors.Errorf("cannot get Port for network type %s", localAddress.Network())
+			return fmt.Errorf("cannot get Port for network type %s", localAddress.Network())
 		}
 
 		broadcastAddress, err := localBroadcastAddress(localAddress)
 		if err != nil {
-			return errors.Wrap(err, "ssb: failed to find site local address broadcast address")
+			return fmt.Errorf("ssb: failed to find site local address broadcast address: %w", err)
 		}
 		dstStr := net.JoinHostPort(broadcastAddress, strconv.Itoa(DefaultPort))
 		remoteUDP, err := net.ResolveUDPAddr("udp", dstStr)
 		if err != nil {
-			return errors.Wrapf(err, "ssb: failed to resolve broadcast dest addr for advertiser: %s", dstStr)
+			return fmt.Errorf("ssb: failed to resolve broadcast dest addr for advertiser: %s: %w", dstStr, err)
 		}
 
 		msg, err := newAdvertisement(
@@ -132,13 +133,13 @@ func (b *Advertiser) advertise() error {
 		}
 		_, err = fmt.Fprint(broadcastConn, msg)
 		if err != nil {
-			// err = errors.Wrapf(err, "adv send of msg failed")
+			// err = fmt.Errorf("adv send of msg failed",err)
 			// log.Println("debug,cont:", err)
 			continue
 		}
 		_ = broadcastConn.Close()
 		if err != nil {
-			// err = errors.Wrapf(err, "close of con failed")
+			// err = fmt.Errorf("close of con failed",err)
 			// log.Println("debug,cont:", err)
 			continue
 		}

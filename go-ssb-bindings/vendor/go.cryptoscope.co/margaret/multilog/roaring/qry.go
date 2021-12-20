@@ -4,9 +4,9 @@ package roaring
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
-	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/margaret"
 )
@@ -14,7 +14,7 @@ import (
 type query struct {
 	log *sublog
 
-	nextSeq, lt margaret.BaseSeq
+	nextSeq, lt int64
 
 	limit   int
 	live    bool
@@ -22,39 +22,39 @@ type query struct {
 	seqWrap bool
 }
 
-func (qry *query) Gt(s margaret.Seq) error {
+func (qry *query) Gt(s int64) error {
 	if qry.nextSeq > margaret.SeqEmpty {
-		return errors.Errorf("lower bound already set")
+		return fmt.Errorf("lower bound already set")
 	}
 
-	qry.nextSeq = margaret.BaseSeq(s.Seq() + 1)
+	qry.nextSeq = s + 1
 	return nil
 }
 
-func (qry *query) Gte(s margaret.Seq) error {
+func (qry *query) Gte(s int64) error {
 	if qry.nextSeq > margaret.SeqEmpty {
-		return errors.Errorf("lower bound already set")
+		return fmt.Errorf("lower bound already set")
 	}
 
-	qry.nextSeq = margaret.BaseSeq(s.Seq())
+	qry.nextSeq = s
 	return nil
 }
 
-func (qry *query) Lt(s margaret.Seq) error {
+func (qry *query) Lt(s int64) error {
 	if qry.lt != margaret.SeqEmpty {
-		return errors.Errorf("upper bound already set")
+		return fmt.Errorf("upper bound already set")
 	}
 
-	qry.lt = margaret.BaseSeq(s.Seq())
+	qry.lt = s
 	return nil
 }
 
-func (qry *query) Lte(s margaret.Seq) error {
+func (qry *query) Lte(s int64) error {
 	if qry.lt != margaret.SeqEmpty {
-		return errors.Errorf("upper bound already set")
+		return fmt.Errorf("upper bound already set")
 	}
 
-	qry.lt = margaret.BaseSeq(s.Seq() + 1)
+	qry.lt = s + 1
 	return nil
 }
 
@@ -76,7 +76,7 @@ func (qry *query) SeqWrap(wrap bool) error {
 func (qry *query) Reverse(rev bool) error {
 	qry.reverse = rev
 	if rev {
-		qry.nextSeq = qry.log.seq.Seq().(margaret.BaseSeq) - 1
+		qry.nextSeq = qry.log.seq.Seq() - 1
 	}
 	return nil
 }
@@ -106,12 +106,12 @@ func (qry *query) Next(ctx context.Context) (interface{}, error) {
 	}
 
 	var v interface{}
-	seqVal, err := qry.log.bmap.Select(uint32(qry.nextSeq.Seq()))
-	v = margaret.BaseSeq(seqVal)
+	seqVal, err := qry.log.bmap.Select(uint64(qry.nextSeq))
+	v = int64(seqVal)
 	if err != nil {
-		if !strings.Contains(err.Error(), "th integer in a bitmap with only ") {
+		if !strings.Contains(err.Error(), " is not less than the cardinality:") {
 			qry.log.mlog.l.Unlock()
-			return nil, errors.Wrapf(err, "roaringfiles/qry: error in read transaction (%T)", err)
+			return nil, fmt.Errorf("roaringfiles/qry: error in read transaction (%T): %w", err, err)
 		}
 
 		// key not found, so we reached the end
@@ -160,11 +160,11 @@ func (qry *query) livequery(ctx context.Context) (interface{}, error) {
 			qry.nextSeq++
 		}
 	case <-ctx.Done():
-		err = errors.Wrap(ctx.Err(), "cancelled while waiting for value to be written")
+		err = fmt.Errorf("cancelled while waiting for value to be written: %w", ctx.Err())
 	}
 
 	if err != nil {
-		return nil, errors.Wrap(err, "livequery failed to retreive value")
+		return nil, fmt.Errorf("livequery failed to retreive value: %w", err)
 	}
 
 	if qry.seqWrap {

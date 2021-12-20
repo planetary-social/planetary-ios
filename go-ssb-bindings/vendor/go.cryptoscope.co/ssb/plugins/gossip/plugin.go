@@ -5,41 +5,57 @@ package gossip
 import (
 	"context"
 	"fmt"
-	"sync"
 
-	"github.com/cryptix/go/logging"
 	"github.com/go-kit/kit/metrics"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/multilog"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/message"
+	"go.cryptoscope.co/ssb/repo"
+	"go.mindeco.de/log/level"
+	"go.mindeco.de/logging"
+	refs "go.mindeco.de/ssb-refs"
 )
+
+// todo: make these proper functional options
 
 type HMACSecret *[32]byte
 
-type HopCount int
-
 type Promisc bool
 
-func New(
+type WithLive bool
+
+// NewFetcher returns a muxrpc handler plugin which requests and verifies feeds, based on the passed replication lister.
+func NewFetcher(
 	ctx context.Context,
 	log logging.Interface,
-	id *ssb.FeedRef,
-	rootLog margaret.Log,
+	r repo.Interface,
+	id refs.FeedRef,
+	rxlog margaret.Log,
 	userFeeds multilog.MultiLog,
+	fm *FeedManager,
 	wantList ssb.ReplicationLister,
+	vr *message.VerificationRouter,
 	opts ...interface{},
 ) *plugin {
-	h := &handler{
-		Id:        id,
-		RootLog:   rootLog,
-		UserFeeds: userFeeds,
-		WantList:  wantList,
-		Info:      log,
-		rootCtx:   ctx,
+	h := &LegacyGossip{
+		repo: r,
 
-		activeLock:  &sync.Mutex{},
-		activeFetch: make(map[string]struct{}),
+		ReceiveLog: rxlog,
+
+		Id: id,
+
+		UserFeeds:   userFeeds,
+		feedManager: fm,
+		WantList:    wantList,
+
+		Info:    log,
+		rootCtx: ctx,
+
+		verifyRouter: vr,
+
+		enableLiveStreaming: true,
 	}
 
 	for i, o := range opts {
@@ -48,52 +64,41 @@ func New(
 			h.sysGauge = v
 		case metrics.Counter:
 			h.sysCtr = v
-		case HopCount:
-			h.hopCount = int(v)
 		case HMACSecret:
 			h.hmacSec = v
 		case Promisc:
 			h.promisc = bool(v)
+		case WithLive:
+			h.enableLiveStreaming = bool(v)
 		default:
-			log.Log("warning", "unhandled option", "i", i, "type", fmt.Sprintf("%T", o))
+			level.Warn(log).Log("event", "unhandled gossip option", "i", i, "type", fmt.Sprintf("%T", o))
 		}
 	}
-	if h.hopCount == 0 {
-		h.hopCount = 1
-	}
-
-	h.feedManager = NewFeedManager(
-		h.rootCtx,
-		h.RootLog,
-		h.UserFeeds,
-		h.Info,
-		h.sysGauge,
-		h.sysCtr,
-	)
 
 	return &plugin{h}
 }
 
-func NewHist(
+// NewServer just handles the "supplying" side of gossip replication.
+func NewServer(
 	ctx context.Context,
 	log logging.Interface,
-	id *ssb.FeedRef,
-	rootLog margaret.Log,
+	id refs.FeedRef,
+	rxlog margaret.Log,
 	userFeeds multilog.MultiLog,
 	wantList ssb.ReplicationLister,
+	fm *FeedManager,
 	opts ...interface{},
 ) histPlugin {
-	h := &handler{
-		Id:        id,
-		RootLog:   rootLog,
-		UserFeeds: userFeeds,
-		WantList:  wantList,
-		Info:      log,
-		rootCtx:   ctx,
+	h := &LegacyGossip{
+		Id: id,
 
-		// not using fetch here
-		activeLock:  nil,
-		activeFetch: nil,
+		ReceiveLog:  rxlog,
+		UserFeeds:   userFeeds,
+		feedManager: fm,
+		WantList:    wantList,
+
+		Info:    log,
+		rootCtx: ctx,
 	}
 
 	for i, o := range opts {
@@ -104,33 +109,20 @@ func NewHist(
 			h.sysCtr = v
 		case Promisc:
 			h.promisc = bool(v)
-		case HopCount:
-			h.hopCount = int(v)
 		case HMACSecret:
 			h.hmacSec = v
+		case WithLive:
+			// no consequence - the outgoing live code is fine
 		default:
-			log.Log("warning", "unhandled hist option", "i", i, "type", fmt.Sprintf("%T", o))
+			level.Warn(log).Log("event", "unhandled gossip option", "i", i, "type", fmt.Sprintf("%T", o))
 		}
 	}
-
-	if h.hopCount == 0 {
-		h.hopCount = 1
-	}
-
-	h.feedManager = NewFeedManager(
-		h.rootCtx,
-		h.RootLog,
-		h.UserFeeds,
-		h.Info,
-		h.sysGauge,
-		h.sysCtr,
-	)
 
 	return histPlugin{h}
 }
 
 type plugin struct {
-	h *handler
+	*LegacyGossip
 }
 
 func (plugin) Name() string { return "gossip" }
@@ -140,11 +132,11 @@ func (plugin) Method() muxrpc.Method {
 }
 
 func (p plugin) Handler() muxrpc.Handler {
-	return p.h
+	return p.LegacyGossip
 }
 
 type histPlugin struct {
-	h *handler
+	*LegacyGossip
 }
 
 func (hp histPlugin) Name() string { return "createHistoryStream" }
@@ -158,5 +150,5 @@ type IgnoreConnectHandler struct{ muxrpc.Handler }
 func (IgnoreConnectHandler) HandleConnect(ctx context.Context, edp muxrpc.Endpoint) {}
 
 func (hp histPlugin) Handler() muxrpc.Handler {
-	return IgnoreConnectHandler{hp.h}
+	return IgnoreConnectHandler{hp.LegacyGossip}
 }

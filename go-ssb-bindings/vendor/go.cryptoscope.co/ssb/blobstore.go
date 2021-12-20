@@ -8,7 +8,9 @@ import (
 	"io"
 
 	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
+
+	refs "go.mindeco.de/ssb-refs"
 )
 
 const (
@@ -23,43 +25,65 @@ const (
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o mock/blobstore.go . BlobStore
 type BlobStore interface {
 	// Get returns a reader of the blob with given ref.
-	Get(ref *BlobRef) (io.Reader, error)
+	Get(ref refs.BlobRef) (io.ReadCloser, error)
 
 	// Put stores the data in the reader in the blob store and returns the address.
-	Put(blob io.Reader) (*BlobRef, error)
+	Put(blob io.Reader) (refs.BlobRef, error)
 
 	// PutExpected makes sure the added blob really is the passedBlobref
-	// helpful for want/get operations which don't want to wast resources
-	// PutExpected(io.Reader, *BlobRef) error
+	// helpful for want/get operations which don't want to waste resources
+	// PutExpected(io.Reader, *refs.BlobRef) error
 
 	// Delete deletes a blob from the blob store.
-	Delete(ref *BlobRef) error
+	Delete(ref refs.BlobRef) error
 
 	// List returns a source of the refs of all stored blobs.
 	List() luigi.Source
 
 	// Size returns the size of the blob with given ref.
-	Size(ref *BlobRef) (int64, error)
+	Size(ref refs.BlobRef) (int64, error)
 
-	// Changes returns a broadcast that emits put and remove notifications.
-	Changes() luigi.Broadcast
+	// Register allows to get notified when the store changes
+	BlobStoreBroadcaster
+}
+
+type BlobStoreEmitter interface {
+	EmitBlob(BlobStoreNotification) error
+	io.Closer
+}
+
+type BlobStoreBroadcaster interface {
+	Register(sink BlobStoreEmitter) CancelFunc
 }
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o mock/wantmanager.go . WantManager
 type WantManager interface {
 	io.Closer
-	luigi.Broadcast
-	Want(ref *BlobRef) error
-	Wants(ref *BlobRef) bool
-	WantWithDist(ref *BlobRef, dist int64) error
-	//Unwant(ref *BlobRef) error
-	CreateWants(context.Context, luigi.Sink, muxrpc.Endpoint) luigi.Sink
+
+	BlobWantsBroadcaster
+
+	Want(ref refs.BlobRef) error
+	Wants(ref refs.BlobRef) bool
+	WantWithDist(ref refs.BlobRef, dist int64) error
+	//Unwant(ref refs.BlobRef) error
+	CreateWants(context.Context, *muxrpc.ByteSink, muxrpc.Endpoint) luigi.Sink
 
 	AllWants() []BlobWant
 }
 
+type CancelFunc func()
+
+type BlobWantsEmitter interface {
+	EmitWant(BlobWant) error
+	io.Closer
+}
+
+type BlobWantsBroadcaster interface {
+	Register(sink BlobWantsEmitter) CancelFunc
+}
+
 type BlobWant struct {
-	Ref *BlobRef
+	Ref refs.BlobRef
 
 	// if Dist is negative, it is the hop count to the original wanter.
 	// if it is positive, it is the size of the blob.
@@ -74,11 +98,17 @@ func (w BlobWant) String() string {
 // Op is either "rm" or "put".
 type BlobStoreNotification struct {
 	Op  BlobStoreOp
-	Ref *BlobRef
+	Ref refs.BlobRef
+
+	Size int64
 }
 
 func (bn BlobStoreNotification) String() string {
-	return bn.Op.String() + ": " + bn.Ref.Ref()
+	s := bn.Op.String() + ": " + bn.Ref.Ref()
+	if bn.Size > 0 {
+		s += fmt.Sprintf(" (size: %d)", bn.Size)
+	}
+	return s
 }
 
 // BlobStoreOp specifies the operation in a blob store notification.

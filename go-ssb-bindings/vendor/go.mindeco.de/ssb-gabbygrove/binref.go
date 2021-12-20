@@ -5,7 +5,9 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/ugorji/go/codec"
-	"go.cryptoscope.co/ssb"
+	"golang.org/x/crypto/ed25519"
+
+	refs "go.mindeco.de/ssb-refs"
 )
 
 type RefType uint
@@ -19,9 +21,7 @@ const (
 
 // BinaryRef defines a binary representation for feed, message, and content references
 type BinaryRef struct {
-	fr *ssb.FeedRef
-	mr *ssb.MessageRef
-	cr *ssb.ContentRef // payload/content ref
+	r refs.Ref
 }
 
 // currently all references are 32bytes long
@@ -29,24 +29,16 @@ type BinaryRef struct {
 const binrefSize = 33
 
 func (ref BinaryRef) valid() (RefType, error) {
-	i := 0
-	var t RefType = RefTypeUndefined
-	if ref.fr != nil {
-		i++
-		t = RefTypeFeed
+	switch tv := ref.r.(type) {
+	case refs.FeedRef:
+		return RefTypeFeed, nil
+	case refs.MessageRef:
+		return RefTypeMessage, nil
+	case ContentRef:
+		return RefTypeContent, nil
+	default:
+		return RefTypeUndefined, fmt.Errorf("unhandled binary ref: %T", tv)
 	}
-	if ref.mr != nil {
-		i++
-		t = RefTypeMessage
-	}
-	if ref.cr != nil {
-		i++
-		t = RefTypeContent
-	}
-	if i > 1 {
-		return RefTypeUndefined, fmt.Errorf("more than one ref in binref")
-	}
-	return t, nil
 }
 
 func (ref BinaryRef) Ref() string {
@@ -64,22 +56,23 @@ func (ref BinaryRef) Ref() string {
 func (ref BinaryRef) MarshalBinary() ([]byte, error) {
 	t, err := ref.valid()
 	if err != nil {
-		return nil, err
+		return nil, nil
 	}
 	switch t {
 	case RefTypeFeed:
-		return append([]byte{0x01}, ref.fr.ID...), nil
+		return append([]byte{0x01}, ref.r.(refs.FeedRef).PubKey()...), nil
 	case RefTypeMessage:
-		return append([]byte{0x02}, ref.mr.Hash...), nil
+		hd := make([]byte, 32)
+		err := ref.r.(refs.MessageRef).CopyHashTo(hd)
+		return append([]byte{0x02}, hd...), err
 	case RefTypeContent:
-		if ref.cr.Algo != ssb.RefAlgoContentGabby {
-			return nil, errors.Errorf("invalid binary content ref for feed: %s", ref.cr.Algo)
+		if ref.r.Algo() != RefAlgoContentGabby {
+			return nil, errors.Errorf("invalid binary content ref for feed: %s", ref.r.Algo())
 		}
-		crBytes, err := ref.cr.MarshalBinary()
+		crBytes, err := ref.r.(ContentRef).MarshalBinary()
 		return append([]byte{0x03}, crBytes[1:]...), err
 	default:
-		// TODO: check if nil!?
-		return nil, nil
+		return nil, fmt.Errorf("unhandled binary ref: %d", t)
 	}
 }
 
@@ -89,24 +82,26 @@ func (ref *BinaryRef) UnmarshalBinary(data []byte) error {
 	}
 	switch data[0] {
 	case 0x01:
-		ref.fr = &ssb.FeedRef{
-			ID:   data[1:],
-			Algo: ssb.RefAlgoFeedGabby,
+		fr, err := refs.NewFeedRefFromBytes(data[1:], refs.RefAlgoFeedGabby)
+		if err != nil {
+			return err
 		}
+		ref.r = fr
 	case 0x02:
-		ref.mr = &ssb.MessageRef{
-			Hash: data[1:],
-			Algo: ssb.RefAlgoMessageGabby,
+		mr, err := refs.NewMessageRefFromBytes(data[1:], refs.RefAlgoMessageGabby)
+		if err != nil {
+			return err
 		}
+		ref.r = mr
 	case 0x03:
-		var newCR ssb.ContentRef
+		var newCR ContentRef
 		if err := newCR.UnmarshalBinary(append([]byte{0x02}, data[1:]...)); err != nil {
 			return err
 		}
-		if newCR.Algo != ssb.RefAlgoContentGabby {
-			return errors.Errorf("unmarshal: invalid binary content ref for feed: %q", newCR.Algo)
+		if newCR.Algo() != RefAlgoContentGabby {
+			return errors.Errorf("unmarshal: invalid binary content ref for feed: %q", newCR.algo)
 		}
-		ref.cr = &newCR
+		ref.r = newCR
 	default:
 		return fmt.Errorf("unmarshal: invalid binref type: %x", data[0])
 	}
@@ -118,28 +113,18 @@ func (ref *BinaryRef) Size() int {
 }
 
 func (ref BinaryRef) MarshalJSON() ([]byte, error) {
-	if ref.fr != nil {
-		return bytestr(ref.fr), nil
-	}
-	if ref.mr != nil {
-		return bytestr(ref.mr), nil
-	}
-	if ref.cr != nil {
-		return bytestr(ref.cr), nil
-	}
-	return nil, fmt.Errorf("should not all be nil")
+	return bytestr(ref.r), nil
 }
 
-func bytestr(r ssb.Ref) []byte {
+func bytestr(r refs.Ref) []byte {
 	return []byte("\"" + r.Ref() + "\"")
 }
 
 func (ref *BinaryRef) UnmarshalJSON(data []byte) error {
-	// spew.Dump(string(data))
 	return errors.Errorf("TODO:json")
 }
 
-func (ref BinaryRef) GetRef(t RefType) (ssb.Ref, error) {
+func (ref BinaryRef) GetRef(t RefType) (refs.Ref, error) {
 	hasT, err := ref.valid()
 	if err != nil {
 		return nil, errors.Wrap(err, "GetRef: invalid reference")
@@ -147,39 +132,36 @@ func (ref BinaryRef) GetRef(t RefType) (ssb.Ref, error) {
 	if hasT != t {
 		return nil, errors.Errorf("GetRef: asked for type differs (has %d)", hasT)
 	}
-	// we could straight up return what is stored
-	// but then we still have to assert afterwards if it really is what we want
-	var ret ssb.Ref
-	switch t {
-	case RefTypeFeed:
-		ret = ref.fr
-	case RefTypeMessage:
-		ret = ref.mr
-	case RefTypeContent:
-		ret = ref.cr
-	default:
-		return nil, fmt.Errorf("GetRef: invalid ref type: %d", t)
-	}
-	return ret, nil
+	return ref.r, nil
 }
 
-func NewBinaryRef(r ssb.Ref) (*BinaryRef, error) {
+func NewBinaryRef(r refs.Ref) (BinaryRef, error) {
 	return fromRef(r)
 }
 
-func fromRef(r ssb.Ref) (*BinaryRef, error) {
+func fromRef(r refs.Ref) (BinaryRef, error) {
 	var br BinaryRef
 	switch tr := r.(type) {
-	case *ssb.FeedRef:
-		br.fr = tr
-	case *ssb.MessageRef:
-		br.mr = tr
-	case *ssb.ContentRef:
-		br.cr = tr
+	case refs.FeedRef:
+		br.r = tr
+	case refs.MessageRef:
+		br.r = tr
+	case ContentRef:
+		br.r = tr
 	default:
-		return nil, fmt.Errorf("fromRef: invalid ref type: %T", r)
+		return BinaryRef{}, fmt.Errorf("fromRef: invalid ref type: %T", r)
 	}
-	return &br, nil
+	return br, nil
+}
+
+func refFromPubKey(pk ed25519.PublicKey) (BinaryRef, error) {
+	if len(pk) != ed25519.PublicKeySize {
+		return BinaryRef{}, fmt.Errorf("invalid public key")
+	}
+	fr, err := refs.NewFeedRefFromBytes(pk, refs.RefAlgoFeedGabby)
+	return BinaryRef{
+		r: fr,
+	}, err
 }
 
 type BinRefExt struct{}

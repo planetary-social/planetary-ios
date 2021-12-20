@@ -4,24 +4,25 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"math"
 	"time"
 
-	"github.com/cryptix/go/encodedTime"
+	"go.mindeco.de/encodedTime"
 
 	"github.com/pkg/errors"
 	"github.com/ugorji/go/codec"
-	"go.cryptoscope.co/margaret"
-	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
+	ssb "go.mindeco.de/ssb-refs"
 	"golang.org/x/crypto/ed25519"
 	"golang.org/x/crypto/nacl/auth"
 )
 
 type Event struct {
 	Previous  *BinaryRef // %... Metadata hashsha
-	Author    *BinaryRef
+	Author    BinaryRef
 	Sequence  uint64
 	Timestamp int64
 	Content   Content
@@ -56,7 +57,7 @@ const (
 )
 
 type Content struct {
-	Hash *BinaryRef
+	Hash BinaryRef
 	Size uint16
 	Type ContentType
 }
@@ -138,7 +139,7 @@ func (tr *Transfer) Verify(hmacKey *[32]byte) bool {
 		return false
 	}
 
-	pubKey := aref.(*ssb.FeedRef).ID
+	pubKey := aref.(refs.FeedRef).PubKey()
 
 	toVerify := tr.Event
 	if hmacKey != nil {
@@ -149,7 +150,7 @@ func (tr *Transfer) Verify(hmacKey *[32]byte) bool {
 	return ed25519.Verify(pubKey, toVerify, tr.Signature)
 }
 
-var _ ssb.Message = (*Transfer)(nil)
+var _ refs.Message = (*Transfer)(nil)
 
 func (tr *Transfer) Seq() int64 {
 	evt, err := tr.getEvent()
@@ -160,7 +161,7 @@ func (tr *Transfer) Seq() int64 {
 	return int64(evt.Sequence)
 }
 
-func (tr *Transfer) Author() *ssb.FeedRef {
+func (tr *Transfer) Author() refs.FeedRef {
 	evt, err := tr.getEvent()
 	if err != nil {
 		panic(err)
@@ -169,10 +170,10 @@ func (tr *Transfer) Author() *ssb.FeedRef {
 	if err != nil {
 		panic(err)
 	}
-	return aref.(*ssb.FeedRef)
+	return aref.(refs.FeedRef)
 }
 
-func (tr *Transfer) Previous() *ssb.MessageRef {
+func (tr *Transfer) Previous() *refs.MessageRef {
 	evt, err := tr.getEvent()
 	if err != nil {
 		panic(err)
@@ -184,7 +185,8 @@ func (tr *Transfer) Previous() *ssb.MessageRef {
 	if err != nil {
 		panic(err)
 	}
-	return mref.(*ssb.MessageRef)
+	prevKey := mref.(refs.MessageRef)
+	return &prevKey
 }
 
 func (tr *Transfer) Received() time.Time {
@@ -218,14 +220,15 @@ func (tr *Transfer) ValueContent() *ssb.Value {
 		if err != nil {
 			panic(err)
 		}
-		msg.Previous = ref.(*ssb.MessageRef)
+		prevMsg := ref.(refs.MessageRef)
+		msg.Previous = &prevMsg
 	}
 	aref, err := evt.Author.GetRef(RefTypeFeed)
 	if err != nil {
 		panic(err)
 	}
-	msg.Author = *aref.(*ssb.FeedRef)
-	msg.Sequence = margaret.BaseSeq(evt.Sequence)
+	msg.Author = aref.(refs.FeedRef)
+	msg.Sequence = int64(evt.Sequence)
 	msg.Hash = "gabbygrove-v1"
 	msg.Signature = base64.StdEncoding.EncodeToString(tr.Signature) + ".cbor.sig.ed25519"
 	msg.Timestamp = encodedTime.Millisecs(tr.Claimed())
@@ -249,4 +252,66 @@ func (tr *Transfer) ValueContentJSON() json.RawMessage {
 	}
 
 	return jsonB
+}
+
+var (
+	RefAlgoContentGabby refs.RefAlgo = "gabby-v1-content"
+)
+
+var _ refs.Ref = ContentRef{}
+
+// ContentRef defines the hashed content of a message
+type ContentRef struct {
+	hash [32]byte
+	algo refs.RefAlgo
+}
+
+func NewContentRefFromBytes(b []byte) (ContentRef, error) {
+	if n := len(b); n != 32 {
+		return ContentRef{}, errors.Errorf("contentRef: invalid len:%d", n)
+	}
+	var newRef ContentRef
+	newRef.algo = RefAlgoContentGabby
+	copy(newRef.hash[:], b)
+	return newRef, nil
+}
+
+func (ref ContentRef) Ref() string {
+	return fmt.Sprintf("!%s.%s", base64.StdEncoding.EncodeToString(ref.hash[:]), ref.algo)
+}
+
+func (ref ContentRef) ShortRef() string {
+	return fmt.Sprintf("<!%s.%s>", base64.StdEncoding.EncodeToString(ref.hash[:3]), ref.algo)
+}
+
+func (ref ContentRef) Algo() refs.RefAlgo {
+	return RefAlgoContentGabby
+}
+
+func (ref ContentRef) MarshalBinary() ([]byte, error) {
+	switch ref.algo {
+	case RefAlgoContentGabby:
+		return append([]byte{0x02}, ref.hash[:]...), nil
+	default:
+		return nil, fmt.Errorf("contentRef/Marshal: invalid binref type: %s", ref.algo)
+	}
+}
+
+func (ref *ContentRef) UnmarshalBinary(data []byte) error {
+	if n := len(data); n != 33 {
+		return errors.Errorf("contentRef: invalid len:%d", n)
+	}
+	var newRef ContentRef
+	switch data[0] {
+	case 0x02:
+		newRef.algo = RefAlgoContentGabby
+	default:
+		return fmt.Errorf("unmarshal: invalid contentRef type: %x", data[0])
+	}
+	n := copy(newRef.hash[:], data[1:])
+	if n != 32 {
+		return fmt.Errorf("unmarshal: invalid contentRef size: %d", n)
+	}
+	*ref = newRef
+	return nil
 }
