@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 import "C"
@@ -30,7 +30,7 @@ func ssbBlobsWant(ref string) bool {
 	}
 	lock.Unlock()
 
-	br, err := ssb.ParseBlobRef(ref)
+	br, err := refs.ParseBlobRef(ref)
 	if err != nil {
 		err = errors.Wrap(err, "want: invalid argument")
 		return false
@@ -64,7 +64,7 @@ func ssbBlobsGet(ref string) int {
 	lock.Unlock()
 	level.Warn(log).Log("deprecated", "ssbBlobsGet", "msg", "this uses os pipe - use direct file system access to get a blob")
 
-	br, err := ssb.ParseBlobRef(ref)
+	br, err := refs.ParseBlobRef(ref)
 	if err != nil {
 		err = errors.Wrap(err, "blobs/get: invalid blob ref")
 		return -1
