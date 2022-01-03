@@ -6,7 +6,7 @@ IPHONEOS_DEPLOYMENT_TARGET ?= 10.4
 
 CFLAGS := $(if $(DEPLOYMENT_TARGET_CLANG_FLAG_NAME),-$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)),) -Wno-unused-command-line-argument
 
-ARCHS_SIM ?= x86_64
+ARCHS_SIM ?= $(shell uname -m)
 PLATFORM_SIM = iPhoneSimulator
 SDKROOT_SIM = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_SIM).platform/Developer/SDKs/$(PLATFORM_SIM)$(IPHONEOS_SDK).sdk
 EXTRA_CFLAGS_SIM += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_SIM)
@@ -19,6 +19,15 @@ SDKROOT_PHONE = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_PHONE).pl
 EXTRA_CFLAGS_PHONE += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_PHONE)
 EXTRA_CFLAGS_PHONE += -miphoneos-version-min=$(IPHONEOS_DEPLOYMENT_TARGET)
 CFLAGS_PHONE = $(CFLAGS) $(EXTRA_CFLAGS_PHONE)
+
+# Only put the active architecture into the fat library. 
+# This avoids the issues caused by trying to put a macOS arm64 lib (for simulator on apple silicon) and iOS arm64 lib into the same fat binary
+# https://stackoverflow.com/a/65118879/982195
+ifeq ($(PLATFORM_NAME),iphonesimulator)
+    ACTIVE_ARCHS = $(ARCHS_SIM)
+else
+    ACTIVE_ARCHS = $(ARCHS_PHONE)
+endif
 
 CONFIGURATION_BUILD_DIR ?= $(CURDIR)/out
 CONFIGURATION_TEMP_DIR ?= $(CURDIR)/.tmp
@@ -85,7 +94,7 @@ endef
 $(foreach ARCH,$(ARCHS_SIM),$(eval $(call libssb-go-sim-a,$(ARCH))))
 
 # link all the archives for all the arches into the .a file
-$(DESTDIR)/libssb-go.a: $(foreach ARCH,$(ARCHS_PHONE),$(BUILDDIR)/libssb-go-$(ARCH).a) $(foreach ARCH,$(ARCHS_SIM),$(BUILDDIR)/libssb-go-sim-$(ARCH).a)
+$(DESTDIR)/libssb-go.a: $(foreach ARCH,$(ACTIVE_ARCHS),$(BUILDDIR)/libssb-go-sim-$(ARCH).a)
 	@mkdir -vp "$(DESTDIR)"
 	$(LIPO) -create -output "$@" $^
 
