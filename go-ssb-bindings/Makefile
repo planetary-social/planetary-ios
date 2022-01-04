@@ -43,13 +43,18 @@ BUILDDIR ?= $(CONFIGURATION_TEMP_DIR)/go-ssb-bridge
 
 # go architecture and platform settings
 GOARCH_arm64 := arm64
-GOARCHSIM_x86_64 := amd64
+ifeq ($(ARCHS_SIM),x86_64)
+    GOARCHSIM_x86_64 := amd64
+else
+    GOARCHSIM_x86_64 := arm64
+endif
 export GOOS := darwin
 export CGO_ENABLED := 1
 
 # main build targets
 build: $(DESTDIR)/libssb-go.a
-	# Force lipo to repackage the slices in the fat binary
+	# Force lipo to rebuild the fat binary every time.
+	# This avoids the case where macOS arm64 and iOS arm64 slices could end up in the same binary.
 	@touch "$(BUILDDIR)/libssb-go-*.a"
 
 GOROOT ?= $(TEMP_ROOT)/.goroot
