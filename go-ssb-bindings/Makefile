@@ -49,6 +49,8 @@ export CGO_ENABLED := 1
 
 # main build targets
 build: $(DESTDIR)/libssb-go.a
+	# Force lipo to repackage the slices in the fat binary
+	@touch "$(BUILDDIR)/libssb-go-*.a"
 
 GOROOT ?= $(TEMP_ROOT)/.goroot
 export GOPATH := $(BUILDDIR)/gopath
@@ -67,7 +69,6 @@ else
 endif
 GOEXTRAFLAGS += -tags "$(GOBUILDTAGS)"
 
-$(shell test "$$(cat "$(BUILDDIR)/.gobuildversion" 2>/dev/null)" = "$(GOBUILDVERSION_CURRENT)" || rm -f "$(DESTDIR)/libssb-go.a")
 
 # this builds multiple lib.a files for different ARCHS_PHONE
 define libssb-go-phone-a
@@ -97,12 +98,11 @@ $(foreach ARCH,$(ARCHS_SIM),$(eval $(call libssb-go-sim-a,$(ARCH))))
 
 # link all the archives for all the arches into the .a file
 $(DESTDIR)/libssb-go.a: $(foreach ARCH,$(ACTIVE_ARCHS),$(BUILDDIR)/libssb-go-$(ACTIVE_PLATFORM)-$(ARCH).a)
-	@echo $(ACTIVE_ARCHS)
 	@mkdir -vp "$(DESTDIR)"
 	$(LIPO) -create -output "$@" $^
 
 clean:
-	rm -rf "$(BUILDDIR)" "$(DESTDIR)/libssb-go.a"
+	rm -rf "$(BUILDDIR)" "$(DESTDIR)/libssb-go.a" 
 
 install: build
 

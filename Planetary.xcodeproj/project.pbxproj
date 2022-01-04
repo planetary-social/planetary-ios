@@ -2325,7 +2325,7 @@
 			buildPhases = (
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
 				8D9143FB230C6B670075BC8A /* Run Script */,
-				5392AF0A224BE802009F763B /* ShellScript */,
+				5392AF0A224BE802009F763B /* Build libssb-go.a */,
 				5344D82721C4649700704A34 /* Sources */,
 				5344D82821C4649700704A34 /* Frameworks */,
 				5344D82921C4649700704A34 /* Resources */,
@@ -2539,7 +2539,7 @@
 			shellScript = "# trigger Makefile in go-ssb-bindings\nset -e\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
 			showEnvVarsInLog = 0;
 		};
-		5392AF0A224BE802009F763B /* ShellScript */ = {
+		5392AF0A224BE802009F763B /* Build libssb-go.a */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
 			files = (
@@ -2548,6 +2548,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Build libssb-go.a";
 			outputFileListPaths = (
 			);
 			outputPaths = (
