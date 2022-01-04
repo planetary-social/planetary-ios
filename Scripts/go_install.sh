@@ -4,8 +4,6 @@ set -e
 
 # source: https://github.com/canha/golang-tools-install-script
 
-# this issue complicates upgrading to 1.14
-# https://github.com/golang/go/issues/11258#issuecomment-465603039
 VERSION="1.14.4"
 
 [ -z "$GOROOT" ] && GOROOT="$HOME/.go"
