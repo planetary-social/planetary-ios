@@ -20,13 +20,15 @@ EXTRA_CFLAGS_PHONE += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_P
 EXTRA_CFLAGS_PHONE += -miphoneos-version-min=$(IPHONEOS_DEPLOYMENT_TARGET)
 CFLAGS_PHONE = $(CFLAGS) $(EXTRA_CFLAGS_PHONE)
 
-# Only put the active architecture into the fat library. 
+# Only put the active architecture into the fat binary. 
 # This avoids the issues caused by trying to put a macOS arm64 lib (for simulator on apple silicon) and iOS arm64 lib into the same fat binary
 # https://stackoverflow.com/a/65118879/982195
 ifeq ($(PLATFORM_NAME),iphonesimulator)
     ACTIVE_ARCHS = $(ARCHS_SIM)
+    ACTIVE_PLATFORM = sim
 else
     ACTIVE_ARCHS = $(ARCHS_PHONE)
+    ACTIVE_PLATFORM = phone
 endif
 
 CONFIGURATION_BUILD_DIR ?= $(CURDIR)/out
@@ -68,17 +70,17 @@ GOEXTRAFLAGS += -tags "$(GOBUILDTAGS)"
 $(shell test "$$(cat "$(BUILDDIR)/.gobuildversion" 2>/dev/null)" = "$(GOBUILDVERSION_CURRENT)" || rm -f "$(DESTDIR)/libssb-go.a")
 
 # this builds multiple lib.a files for different ARCHS_PHONE
-define libssb-go-a
-$(BUILDDIR)/libssb-go-$(1).a: *.go
+define libssb-go-phone-a
+$(BUILDDIR)/libssb-go-phone-$(1).a: *.go
 	CGO_CFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	CGO_LDFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	GOARCH="$(GOARCH_$(1))" \
-	${GO} build $(GOEXTRAFLAGS) -v -o "$(BUILDDIR)/libssb-go-$(1).a" -buildmode c-archive && ${GO} version > "$(BUILDDIR)/.gobuildversion"; \
+	${GO} build $(GOEXTRAFLAGS) -v -o "$(BUILDDIR)/libssb-go-phone-$(1).a" -buildmode c-archive && ${GO} version > "$(BUILDDIR)/.gobuildversion"; \
 	ret=$$$$?; \
-	rm -f "$(BUILDDIR)/libssb-go-$(1).h"; \
+	rm -f "$(BUILDDIR)/libssb-go-phone-$(1).h"; \
 	exit $$$$ret
 endef
-$(foreach ARCH,$(ARCHS_PHONE),$(eval $(call libssb-go-a,$(ARCH))))
+$(foreach ARCH,$(ARCHS_PHONE),$(eval $(call libssb-go-phone-a,$(ARCH))))
 
 # build for sim with correct cflags
 define libssb-go-sim-a
@@ -94,7 +96,8 @@ endef
 $(foreach ARCH,$(ARCHS_SIM),$(eval $(call libssb-go-sim-a,$(ARCH))))
 
 # link all the archives for all the arches into the .a file
-$(DESTDIR)/libssb-go.a: $(foreach ARCH,$(ACTIVE_ARCHS),$(BUILDDIR)/libssb-go-sim-$(ARCH).a)
+$(DESTDIR)/libssb-go.a: $(foreach ARCH,$(ACTIVE_ARCHS),$(BUILDDIR)/libssb-go-$(ACTIVE_PLATFORM)-$(ARCH).a)
+	@echo $(ACTIVE_ARCHS)
 	@mkdir -vp "$(DESTDIR)"
 	$(LIPO) -create -output "$@" $^
 
