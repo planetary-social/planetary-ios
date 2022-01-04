@@ -1,0 +1,11 @@
+framework module SDKConfigurations {
+  umbrella header "SDKConfigurations.h"
+
+  export *
+  module * { export * }
+}
+
+module SDKConfigurations.Swift {
+    header "SDKConfigurations-Swift.h"
+    requires objc
+}

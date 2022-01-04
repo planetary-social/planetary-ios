@@ -187,10 +187,13 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskCoreSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskProviderSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/CommonUISDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/CommonUISDK/CommonUISDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskCoreSDK/ZendeskCoreSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MessagingAPI/MessagingAPI.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MessagingSDK/MessagingSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SDKConfigurations/SDKConfigurations.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SupportProvidersSDK/SupportProvidersSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SupportSDK/SupportSDK.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Keys/Keys.framework"
@@ -205,10 +208,13 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskCoreSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskProviderSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/CommonUISDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/CommonUISDK/CommonUISDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskCoreSDK/ZendeskCoreSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MessagingAPI/MessagingAPI.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MessagingSDK/MessagingSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SDKConfigurations/SDKConfigurations.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SupportProvidersSDK/SupportProvidersSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SupportSDK/SupportSDK.framework"
 fi
 if [[ "$CONFIGURATION" == "Test" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/Keys/Keys.framework"
@@ -223,10 +229,13 @@ if [[ "$CONFIGURATION" == "Test" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskCoreSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskProviderSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/ZendeskSDK.framework"
-  install_framework "${PODS_ROOT}/ZendeskSDK/ZendeskSDK/5.1/CommonUISDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/CommonUISDK/CommonUISDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskCoreSDK/ZendeskCoreSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MessagingAPI/MessagingAPI.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MessagingSDK/MessagingSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SDKConfigurations/SDKConfigurations.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SupportProvidersSDK/SupportProvidersSDK.framework"
+  install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/SupportSDK/SupportSDK.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait
