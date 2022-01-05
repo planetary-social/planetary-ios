@@ -10,6 +10,6 @@
 #define GoBotBridge_h
 
 // ../../ should be replaced with ${PRJECT_DIR}
-#include "../../go-ssb-bindings/go-ssb.h"
+#include "ssb-go/go-ssb.h"
 
 #endif /* GoBotBridge_h */
