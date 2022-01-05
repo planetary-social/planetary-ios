@@ -1,7 +1,0 @@
-*.swp
-*.swo
-
-c.out
-trace.out
-
-test/all/TestLog*

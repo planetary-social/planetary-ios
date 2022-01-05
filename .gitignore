@@ -32,6 +32,10 @@ xcuserdata/
 *.dSYM.zip
 *.dSYM
 
+## Go
+GoSSB/Sources/vendor
+GoSSB/Sources/.goroot
+
 ## Playgrounds
 timeline.xctimeline
 playground.xcworkspace
