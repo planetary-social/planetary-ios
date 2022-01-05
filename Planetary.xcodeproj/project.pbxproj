@@ -731,10 +731,8 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
-		C9570ECF278629200095EFFF /* go-ssb.h in Headers */ = {isa = PBXBuildFile; fileRef = C9570ECE278629200095EFFF /* go-ssb.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9570EDB278639770095EFFF /* ssb-go.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570EDA278639770095EFFF /* ssb-go.xcframework */; };
-		C9570EDC2786397F0095EFFF /* ssb-go.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C9570EDA278639770095EFFF /* ssb-go.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C9570EDD278639880095EFFF /* ssb-go.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570EDA278639770095EFFF /* ssb-go.xcframework */; };
+		C9570F5F278650D40095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F5E278650D40095EFFF /* GoSSB.xcframework */; };
+		C9570F60278650E10095EFFF /* GoSSB.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F5E278650D40095EFFF /* GoSSB.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -768,18 +766,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				C9570EDC2786397F0095EFFF /* ssb-go.xcframework in Embed Frameworks */,
+				C9570F60278650E10095EFFF /* GoSSB.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C95A1310278622CA00FFD52F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1282,9 +1271,7 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
-		C9570ECE278629200095EFFF /* go-ssb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "go-ssb.h"; path = "go-ssb-bindings/go-ssb.h"; sourceTree = SOURCE_ROOT; };
-		C9570EDA278639770095EFFF /* ssb-go.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = "ssb-go.xcframework"; sourceTree = "<group>"; };
-		C95A1312278622CA00FFD52F /* libssb-go.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libssb-go.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9570F5E278650D40095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1329,18 +1316,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9570EDD278639880095EFFF /* ssb-go.xcframework in Frameworks */,
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
+				C9570F5F278650D40095EFFF /* GoSSB.xcframework in Frameworks */,
 				8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C95A130F278622CA00FFD52F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C9570EDB278639770095EFFF /* ssb-go.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1788,7 +1767,6 @@
 				5308169221C46A6E005C48ED /* APITests */,
 				531B92BE22CDA4F9005D5255 /* Deprecated */,
 				0A3880192475BB4500777843 /* UITests */,
-				C95A1313278622CA00FFD52F /* ssb-go */,
 				5355556EBCE069620663A547 /* Frameworks */,
 				60D3F9F6A7FF90C8B89E7A52 /* Pods */,
 				5344D82C21C4649700704A34 /* Products */,
@@ -1807,7 +1785,6 @@
 				5308168521C46A52005C48ED /* UnitTests.xctest */,
 				5308169121C46A6E005C48ED /* APITests.xctest */,
 				0A3880182475BB4500777843 /* UITests.xctest */,
-				C95A1312278622CA00FFD52F /* libssb-go.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1859,7 +1836,7 @@
 		5355556EBCE069620663A547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C9570EDA278639770095EFFF /* ssb-go.xcframework */,
+				C9570F5E278650D40095EFFF /* GoSSB.xcframework */,
 				C95A131F2786279A00FFD52F /* Foundation.framework */,
 				531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */,
 				531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */,
@@ -2285,26 +2262,7 @@
 			path = Buttons;
 			sourceTree = "<group>";
 		};
-		C95A1313278622CA00FFD52F /* ssb-go */ = {
-			isa = PBXGroup;
-			children = (
-				C9570ECE278629200095EFFF /* go-ssb.h */,
-			);
-			path = "ssb-go";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
-
-/* Begin PBXHeadersBuildPhase section */
-		C95A131C2786238E00FFD52F /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C9570ECF278629200095EFFF /* go-ssb.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		0A3880172475BB4500777843 /* UITests */ = {
@@ -2390,25 +2348,6 @@
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C95A1311278622CA00FFD52F /* ssb-go */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C95A131A278622CA00FFD52F /* Build configuration list for PBXNativeTarget "ssb-go" */;
-			buildPhases = (
-				C95A131B2786235800FFD52F /* Build libssb-go.a */,
-				C95A131C2786238E00FFD52F /* Headers */,
-				C95A130F278622CA00FFD52F /* Frameworks */,
-				C95A1310278622CA00FFD52F /* CopyFiles */,
-				C9570ED3278629B10095EFFF /* Build ssb-go.framework */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "ssb-go";
-			productName = "libssb-go";
-			productReference = C95A1312278622CA00FFD52F /* libssb-go.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2441,9 +2380,6 @@
 							};
 						};
 					};
-					C95A1311278622CA00FFD52F = {
-						CreatedOnToolsVersion = 13.2.1;
-					};
 				};
 			};
 			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */;
@@ -2471,7 +2407,6 @@
 				5308169021C46A6E005C48ED /* APITests */,
 				5308168421C46A52005C48ED /* UnitTests */,
 				0A3880172475BB4500777843 /* UITests */,
-				C95A1311278622CA00FFD52F /* ssb-go */,
 			);
 		};
 /* End PBXProject section */
@@ -2723,42 +2658,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UnitTests/Pods-UnitTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		C9570ED3278629B10095EFFF /* Build ssb-go.framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Build ssb-go.framework";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nexit 0\nexport FRAMEWORK_LOCN=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework\"\n\n# Create the path to the real Headers die\nmkdir -p \"${FRAMEWORK_LOCN}/Versions/A/Headers\"\n\n# Create the required symlinks\n/bin/ln -sfh A \"${FRAMEWORK_LOCN}/Versions/Current\"\n/bin/ln -sfh Versions/Current/Headers \"${FRAMEWORK_LOCN}/Headers\"\n/bin/ln -sfh \"Versions/Current/${PRODUCT_NAME}\" \\\n             \"${FRAMEWORK_LOCN}/${PRODUCT_NAME}\"\n\n# Copy the public headers into the framework\n/bin/cp -a \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/\" \\\n           \"${FRAMEWORK_LOCN}/Versions/A/Headers\"\n";
-		};
-		C95A131B2786235800FFD52F /* Build libssb-go.a */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Build libssb-go.a";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
 		};
 		D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3987,43 +3886,6 @@
 			};
 			name = Release;
 		};
-		C95A1318278622CA00FFD52F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = GZCZBKH7MY;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
-				SKIP_INSTALL = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C95A1319278622CA00FFD52F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GZCZBKH7MY;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
-				SKIP_INSTALL = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4068,15 +3930,6 @@
 			buildConfigurations = (
 				5344D83E21C4649A00704A34 /* Debug */,
 				5344D83F21C4649A00704A34 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C95A131A278622CA00FFD52F /* Build configuration list for PBXNativeTarget "ssb-go" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C95A1318278622CA00FFD52F /* Debug */,
-				C95A1319278622CA00FFD52F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
