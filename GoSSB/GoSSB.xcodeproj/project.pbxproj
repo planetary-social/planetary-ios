@@ -153,7 +153,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/GoSSB/.goroot\n${PROJECT_DIR}/../Scripts/go_install.sh\n\n";
+			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/Sources/.goroot\n${PROJECT_DIR}/../Scripts/go_install.sh\n";
 		};
 		C9570F54278641570095EFFF /* Build GoSSB.xcframework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -171,7 +171,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export XCFRAMEWORK=${PROJECT_DIR}/Products/GoSSB.xcframework\nrm -rf $XCFRAMEWORK\nxcodebuild -create-xcframework \\\n    -library ${CONFIGURATION_BUILD_DIR}/iphoneos-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -library ${CONFIGURATION_BUILD_DIR}/iphonesimulator-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -output $XCFRAMEWORK\n";
+			shellScript = "export XCFRAMEWORK=${PROJECT_DIR}/Products/GoSSB.xcframework\nrm -rf $XCFRAMEWORK\n\nxcodebuild -create-xcframework \\\n    -library ${BUILD_DIR}/iphoneos-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -library ${BUILD_DIR}/iphonesimulator-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -output $XCFRAMEWORK\n\n#mkdir ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#cp -r ${XCFRAMEWORK}/ios-x86_64-simulator/Headers ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#rm -r ${XCFRAMEWORK}/ios-x86_64-simulator\n#lipo -create -output ${XCFRAMEWORK}/ios-arm64_x86_64-simulator/libssb-go.a ${BUILD_DIR}/iphonesimulator-x86_64/libssb-go.a ${BUILD_DIR}/iphonesimulator-arm64/libssb-go.a\n \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -294,6 +294,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -308,6 +309,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

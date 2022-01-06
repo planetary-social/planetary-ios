@@ -33,7 +33,6 @@ xcuserdata/
 *.dSYM
 
 ## Go
-GoSSB/Sources/vendor
 GoSSB/Sources/.goroot
 
 ## Playgrounds

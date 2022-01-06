@@ -1,20 +1,20 @@
 # Copyright (C) 2019 Henry Bubert <cryptix@riseup.net>. All Rights Reserved.
 
-IPHONEOS_DEPLOYMENT_TARGET ?= 10.4
+IPHONEOS_DEPLOYMENT_TARGET ?= 13.0
 
 # architecture and SDK paths
 
 CFLAGS := $(if $(DEPLOYMENT_TARGET_CLANG_FLAG_NAME),-$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)),) -Wno-unused-command-line-argument
 
-ARCHS_SIM = arm64 x86_64
-PLATFORM_SIM = iphonesimulator
+ARCHS_SIM = arm64 #x86_64
+PLATFORM_SIM = iPhoneSimulator
 SDKROOT_SIM = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_SIM).platform/Developer/SDKs/$(PLATFORM_SIM)$(IPHONEOS_SDK).sdk
 EXTRA_CFLAGS_SIM += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_SIM)
-EXTRA_CFLAGS_SIM += -D__IPHONE_OS_VERSION_MIN_REQUIRED=20000
+EXTRA_CFLAGS_SIM += -D__IPHONE_OS_VERSION_MIN_REQUIRED=20000 -miphonesimulator-version-min=$(IPHONEOS_DEPLOYMENT_TARGET)
 CFLAGS_SIM = $(CFLAGS) $(EXTRA_CFLAGS_SIM)
 
 ARCHS_PHONE = arm64
-PLATFORM_PHONE = iphoneos
+PLATFORM_PHONE = iPhoneOS
 SDKROOT_PHONE = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_PHONE).platform/Developer/SDKs/$(PLATFORM_PHONE)$(IPHONEOS_SDK).sdk
 EXTRA_CFLAGS_PHONE += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_PHONE)
 EXTRA_CFLAGS_PHONE += -miphoneos-version-min=$(IPHONEOS_DEPLOYMENT_TARGET)
@@ -34,11 +34,13 @@ BUILDDIR ?= $(CONFIGURATION_TEMP_DIR)
 GOARCH_arm64 := arm64
 GOARCHSIM_arm64 := arm64
 GOARCHSIM_x86_64 := amd64
-export GOOS := darwin
+export GOOS_PHONE := ios
+export GOOS_SIM_arm64 := darwin
+export GOOS_SIM_x86_64 := ios
 export CGO_ENABLED := 1
 
 # main build targets
-build: $(BUILD_DIR)/$(PLATFORM_PHONE)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-x86_64/libssb-go.a
+build: $(BUILD_DIR)/$(PLATFORM_PHONE)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-arm64/libssb-go.a #$(BUILD_DIR)/$(PLATFORM_SIM)-x86_64/libssb-go.a
 
 GOROOT ?= $(TEMP_ROOT)/.goroot
 export GOPATH := $(BUILDDIR)/gopath
@@ -47,7 +49,7 @@ export PATH := $(GOROOT)/bin:$(PATH)
 GO := $(GOROOT)/bin/go
 
 GOEXTRAFLAGS=-trimpath -mod=vendor
-GOBUILDTAGS = nommio ios x509omitbundledroots
+GOBUILDTAGS = nommio x509omitbundledroots
 # ifdef DEBUG <  this var is not set when the Build Step script is called  by Xcode
 # ifeq ($(ENABLE_TESTABILITY),YES) < also works, not sure what the difference is
 ifeq ($(CONFIGURATION),Debug)
@@ -55,8 +57,6 @@ ifeq ($(CONFIGURATION),Debug)
 else
     GOEXTRAFLAGS += -ldflags="-s -w"
 endif
-GOEXTRAFLAGS += -tags "$(GOBUILDTAGS)"
-
 
 # this builds multiple lib.a files for different ARCHS_PHONE
 define libssb-go-phone-a
@@ -64,7 +64,8 @@ $(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a: *.go
 	CGO_CFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	CGO_LDFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	GOARCH="$(GOARCH_$(1))" \
-	${GO} build $(GOEXTRAFLAGS) -v -o "$(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a" -buildmode c-archive && ${GO} version > "$(BUILDDIR)/.gobuildversion"; \
+	GOOS="$(GOOS_PHONE)" \
+	${GO} build $(GOEXTRAFLAGS) -tags "$(GOBUILDTAGS) ios" -v -o "$(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a" -buildmode c-archive && ${GO} version > "$(BUILDDIR)/.gobuildversion"; \
 	ret=$$$$?; \
 	rm -f "$(BUILDDIR)/libssb-go-phone-$(1).h"; \
 	exit $$$$ret
@@ -77,7 +78,8 @@ $(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a: *.go
 	CGO_CFLAGS="$(CFLAGS_SIM) -arch $(ARCH)" \
 	CGO_LDFLAGS="$(CFLAGS_SIM) -arch $(ARCH)" \
 	GOARCH="$(GOARCHSIM_$(1))" \
-	${GO} build $(GOEXTRAFLAGS) -v -o "$(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a" -buildmode c-archive && ${GO} version > "$(BUILDDIR)/.gobuildversion"
+	GOOS="$(GOOS_SIM_$(1))" \
+	${GO} build $(GOEXTRAFLAGS) -tags "$(GOBUILDTAGS) iossimulator" -v -o "$(BUILD_DIR)/$(PLATFORM_SIM)-$(ARCH)/libssb-go.a" -buildmode c-archive && ${GO} version > "$(BUILDDIR)/.gobuildversion"
 	ret=$$$$?; \
 	rm -f "$(BUILDDIR)/libssb-go-sim-$(1).h"; \
 	exit $$$$ret
