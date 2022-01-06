@@ -6,7 +6,7 @@ IPHONEOS_DEPLOYMENT_TARGET ?= 13.0
 
 CFLAGS := $(if $(DEPLOYMENT_TARGET_CLANG_FLAG_NAME),-$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)),) -Wno-unused-command-line-argument
 
-ARCHS_SIM = arm64 #x86_64
+ARCHS_SIM = arm64 x86_64
 PLATFORM_SIM = iPhoneSimulator
 SDKROOT_SIM = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_SIM).platform/Developer/SDKs/$(PLATFORM_SIM)$(IPHONEOS_SDK).sdk
 EXTRA_CFLAGS_SIM += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_SIM)
@@ -35,12 +35,17 @@ GOARCH_arm64 := arm64
 GOARCHSIM_arm64 := arm64
 GOARCHSIM_x86_64 := amd64
 export GOOS_PHONE := ios
-export GOOS_SIM_arm64 := darwin
+export GOOS_SIM_arm64 := ios
 export GOOS_SIM_x86_64 := ios
 export CGO_ENABLED := 1
 
 # main build targets
-build: $(BUILD_DIR)/$(PLATFORM_PHONE)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-arm64/libssb-go.a #$(BUILD_DIR)/$(PLATFORM_SIM)-x86_64/libssb-go.a
+build: $(BUILD_DIR)/$(PLATFORM_PHONE)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64/libssb-go.a
+
+$(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64/libssb-go.a: $(foreach ARCH,$(ARCHS_SIM), $(BUILD_DIR)/$(PLATFORM_SIM)-$(ARCH)/libssb-go.a)
+	@mkdir -vp $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64
+	$(LIPO) -create -output "$@" $^
+
 
 GOROOT ?= $(TEMP_ROOT)/.goroot
 export GOPATH := $(BUILDDIR)/gopath

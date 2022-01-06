@@ -731,8 +731,7 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
-		C9570F5F278650D40095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F5E278650D40095EFFF /* GoSSB.xcframework */; };
-		C9570F60278650E10095EFFF /* GoSSB.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F5E278650D40095EFFF /* GoSSB.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -766,7 +765,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				C9570F60278650E10095EFFF /* GoSSB.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1271,7 +1269,7 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
-		C9570F5E278650D40095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
+		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1318,7 +1316,7 @@
 			files = (
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
-				C9570F5F278650D40095EFFF /* GoSSB.xcframework in Frameworks */,
+				C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */,
 				8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1836,7 +1834,7 @@
 		5355556EBCE069620663A547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C9570F5E278650D40095EFFF /* GoSSB.xcframework */,
+				C9570F63278752D30095EFFF /* GoSSB.xcframework */,
 				C95A131F2786279A00FFD52F /* Foundation.framework */,
 				531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */,
 				531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */,

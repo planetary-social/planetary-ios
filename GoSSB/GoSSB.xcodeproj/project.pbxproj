@@ -171,7 +171,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export XCFRAMEWORK=${PROJECT_DIR}/Products/GoSSB.xcframework\nrm -rf $XCFRAMEWORK\n\nxcodebuild -create-xcframework \\\n    -library ${BUILD_DIR}/iphoneos-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -library ${BUILD_DIR}/iphonesimulator-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -output $XCFRAMEWORK\n\n#mkdir ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#cp -r ${XCFRAMEWORK}/ios-x86_64-simulator/Headers ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#rm -r ${XCFRAMEWORK}/ios-x86_64-simulator\n#lipo -create -output ${XCFRAMEWORK}/ios-arm64_x86_64-simulator/libssb-go.a ${BUILD_DIR}/iphonesimulator-x86_64/libssb-go.a ${BUILD_DIR}/iphonesimulator-arm64/libssb-go.a\n \n";
+			shellScript = "export XCFRAMEWORK=${PROJECT_DIR}/Products/GoSSB.xcframework\nrm -rf $XCFRAMEWORK\n\nxcodebuild -create-xcframework \\\n    -library ${BUILD_DIR}/iPhoneOS-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -library ${BUILD_DIR}/iPhoneSimulator-arm64_x86_64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -output $XCFRAMEWORK\n\n#mkdir ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#cp -r ${XCFRAMEWORK}/ios-x86_64-simulator/Headers ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#rm -r ${XCFRAMEWORK}/ios-x86_64-simulator\n#lipo -create -output ${XCFRAMEWORK}/ios-arm64_x86_64-simulator/libssb-go.a ${BUILD_DIR}/iphonesimulator-x86_64/libssb-go.a ${BUILD_DIR}/iphonesimulator-arm64/libssb-go.a\n \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
