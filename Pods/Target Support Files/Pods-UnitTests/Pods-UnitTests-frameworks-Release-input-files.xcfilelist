@@ -2,5 +2,6 @@ ${PODS_ROOT}/Target Support Files/Pods-UnitTests/Pods-UnitTests-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/Keys/Keys.framework
 ${BUILT_PRODUCTS_DIR}/Down/Down.framework
 ${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework
+${BUILT_PRODUCTS_DIR}/PostHog/PostHog.framework
 ${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework
 ${BUILT_PRODUCTS_DIR}/Multipart/Multipart.framework
