@@ -288,7 +288,6 @@
 		2D009BF924550868001351CB /* EveryoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D009BF824550868001351CB /* EveryoneViewController.swift */; };
 		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		2D7FE7E5258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
-		2D7FE7E6258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
 		2DBA7C97263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C92263DB1FA008B646F /* Generated.strings */; };
 		2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
 		2DBA7C9F263DB2F5008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C9D263DB2F5008B646F /* Generated.strings */; };
@@ -2308,7 +2307,6 @@
 			buildConfigurationList = 5308169621C46A6E005C48ED /* Build configuration list for PBXNativeTarget "APITests" */;
 			buildPhases = (
 				79232A0BDB520E7E70C3774E /* [CP] Check Pods Manifest.lock */,
-				23498B3A22FD690E00459AAE /* ShellScript */,
 				5308168D21C46A6E005C48ED /* Sources */,
 				5308168E21C46A6E005C48ED /* Frameworks */,
 				5308168F21C46A6E005C48ED /* Resources */,
@@ -2528,23 +2526,6 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
-		};
-		23498B3A22FD690E00459AAE /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# trigger Makefile in go-ssb-bindings\nset -e\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
 		};
 		57BAA8693E4EEF15A30FDE21 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2999,7 +2980,6 @@
 				0A64A80B24734CD5009A5EBF /* AnalyticsService+Conversions.swift in Sources */,
 				0ABCA8F02435550F00D7F39C /* CrashReportingService.swift in Sources */,
 				5314EF5A22EA298D0065D02A /* Thread+Assert.swift in Sources */,
-				2D7FE7E6258D076400356677 /* PostHogAnalytics.swift in Sources */,
 				0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				536255CF23AAAA30001007D0 /* AnalyticsEnums.swift in Sources */,
 				5314EF7222EA34230065D02A /* Date+OlderThan.swift in Sources */,

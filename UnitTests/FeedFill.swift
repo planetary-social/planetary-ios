@@ -464,35 +464,32 @@ class ViewDatabaseTest: XCTestCase {
         }
     }
 
-    func test42_feed_paginated() {
-        do {
-            let dataProxy = try self.vdb.paginated(feed: testFeeds[4])
-            XCTAssertEqual(dataProxy.count, 3)
-            for idx in 0...dataProxy.count-1 {
-                guard let kv = dataProxy.keyValueBy(index: idx) else {
-                    XCTFail("failed to get KV for index \(idx)")
-                    continue
-                }
-                XCTAssertEqual(kv.value.author, testFeeds[4])
-                XCTAssertEqual(kv.value.content.type, .post)
-                switch idx {
-                    case 0:
-                        XCTAssertEqual(kv.key, "%mGqnXFLLANmscYjQCafniOTbnTC4RoRP8lZNlswaCdc=.sha256")
-                        
-                        XCTAssertEqual(kv.value.content.post?.text, "no one would mention themselves.. right [@privateUser](@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519)???")
-                    case 1:
-                        XCTAssertEqual(kv.key, "%KfVCyfVWiFAS75sSura943LTN/ylGvYBfBtfzZkRO28=.sha256")
-                        XCTAssertEqual(kv.value.content.post?.text, "so.. nobody is following me?! feels right.. i can\'t even follow myself most of the time.")
-                    case 2:
-                        XCTAssertEqual(kv.key, "%7TK9l4TT0yc8PCarcnLZEuxb0FtShl2M8vvbCSjceXY=.sha256")
-                        XCTAssertEqual(kv.value.content.post?.text, "so what?")
-
-                    default:
-                        XCTFail("unhandled reply: \(idx)")
-                }
+    func test42_feed_paginated() throws {
+        let dataProxy = try self.vdb.paginated(feed: testFeeds[4])
+        let prefetchedCount = 2
+        XCTAssertEqual(dataProxy.count, 3)
+        for idx in 0...prefetchedCount-1 {
+            guard let kv = dataProxy.keyValueBy(index: idx) else {
+                XCTFail("failed to get KV for index \(idx)")
+                continue
             }
-        } catch {
-            XCTFail("\(error)")
+            XCTAssertEqual(kv.value.author, testFeeds[4])
+            XCTAssertEqual(kv.value.content.type, .post)
+            switch idx {
+            case 0:
+                XCTAssertEqual(kv.key, "%mGqnXFLLANmscYjQCafniOTbnTC4RoRP8lZNlswaCdc=.sha256")
+                
+                XCTAssertEqual(kv.value.content.post?.text, "no one would mention themselves.. right [@privateUser](@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519)???")
+            case 1:
+                XCTAssertEqual(kv.key, "%KfVCyfVWiFAS75sSura943LTN/ylGvYBfBtfzZkRO28=.sha256")
+                XCTAssertEqual(kv.value.content.post?.text, "so.. nobody is following me?! feels right.. i can\'t even follow myself most of the time.")
+            case 2:
+                XCTAssertEqual(kv.key, "%7TK9l4TT0yc8PCarcnLZEuxb0FtShl2M8vvbCSjceXY=.sha256")
+                XCTAssertEqual(kv.value.content.post?.text, "so what?")
+                
+            default:
+                XCTFail("unhandled reply: \(idx)")
+            }
         }
     }
 
