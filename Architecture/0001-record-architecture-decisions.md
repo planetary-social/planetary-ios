@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-We need to record the architectural decisions made on this project.
+We need to record the architectural decisions made on this project. Recording them will help us communicate to the team when architecture is changing and why, and it helps us re-evaluate past decisions when we want to change them.
 
 ## Decision
 
