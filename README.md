@@ -32,7 +32,7 @@ $ rbenv install 2.6.6
 3. Install gems
 
 ```
-$ gem install cocoapods cocoapods-keys cocoapods-bugsnag
+$ gem install cocoapods cocoapods-keys
 ```
 
 4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
