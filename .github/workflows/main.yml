@@ -9,7 +9,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Install CocoaPods Keys
-      run: gem install cocoapods-keys cocoapods-bugsnag
+      run: gem install cocoapods-keys
     - name: Dependencies
       run: pod install --no-repo-update
       env:
