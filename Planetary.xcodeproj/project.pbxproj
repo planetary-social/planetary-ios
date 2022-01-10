@@ -730,6 +730,7 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
+		C9570F662788E2280095EFFF /* Architecture in Resources */ = {isa = PBXBuildFile; fileRef = C9570F652788E2280095EFFF /* Architecture */; };
 		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
 /* End PBXBuildFile section */
 
@@ -1268,6 +1269,7 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
+		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
@@ -1761,6 +1763,7 @@
 		5344D82221C4649700704A34 = {
 			isa = PBXGroup;
 			children = (
+				C9570F652788E2280095EFFF /* Architecture */,
 				5308169221C46A6E005C48ED /* APITests */,
 				531B92BE22CDA4F9005D5255 /* Deprecated */,
 				0A3880192475BB4500777843 /* UITests */,
@@ -2464,6 +2467,7 @@
 			files = (
 				8D9143F5230C5F4E0075BC8A /* Generated.strings in Resources */,
 				2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */,
+				C9570F662788E2280095EFFF /* Architecture in Resources */,
 				5369D2A6220B970100A65622 /* Feed.json in Resources */,
 				2DBA7C97263DB1FA008B646F /* Generated.strings in Resources */,
 				53B634B8221634B600400403 /* Feed_big.json in Resources */,
