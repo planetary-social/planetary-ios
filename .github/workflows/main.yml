@@ -15,7 +15,7 @@ jobs:
       env:
         MixpanelAnalyticsToken: nil
         AuthyPhoneVerificationAPIToken: nil
-        BugsnagCrashReportingToken: "ci"
+        BugsnagCrashReportingToken: nil
         ZendeskAppID: nil
         ZendeskClientID: nil
         VersePushAPIToken: nil

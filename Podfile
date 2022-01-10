@@ -58,7 +58,7 @@ plugin 'cocoapods-keys', {
     "PostHogHost"
 ]}
 
-plugin 'cocoapods-bugsnag'
+#plugin 'cocoapods-bugsnag'
 
 post_install do | installer |
 
