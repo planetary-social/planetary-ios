@@ -19,6 +19,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0A26524D278A7492008F9EAA /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = include/module.modulemap; sourceTree = "<group>"; };
 		C9570F46278640CA0095EFFF /* libGoSSB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGoSSB.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9570F49278640CA0095EFFF /* GoSSB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GoSSB.h; path = include/GoSSB.h; sourceTree = "<group>"; };
 		C9570F55278641B00095EFFF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -60,6 +61,7 @@
 			children = (
 				C9570F55278641B00095EFFF /* Makefile */,
 				C9570F49278640CA0095EFFF /* GoSSB.h */,
+				0A26524D278A7492008F9EAA /* module.modulemap */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -293,8 +295,10 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MODULEMAP_FILE = "${PROJECT_DIR}/Sources/module.modulemap";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -308,8 +312,10 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MODULEMAP_FILE = "${PROJECT_DIR}/Sources/module.modulemap";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
