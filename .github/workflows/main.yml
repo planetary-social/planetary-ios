@@ -13,6 +13,7 @@ jobs:
     - name: Dependencies
       run: pod install --no-repo-update
       env:
+        DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
         MixpanelAnalyticsToken: nil
         AuthyPhoneVerificationAPIToken: nil
         BugsnagCrashReportingToken: nil
