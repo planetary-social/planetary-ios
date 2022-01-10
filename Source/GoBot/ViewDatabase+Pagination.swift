@@ -7,7 +7,8 @@ import Foundation
 // individual UI elements
 typealias PrefetchCompletion = (Int, KeyValue) -> Void
 
-/// An object that serves `KeyValue`s. This proxy keeps a cache of `KeyValue`s that are sometimes pre-fetched from a slower database.
+/// An object that serves `KeyValue`s. This proxy keeps a cache of `KeyValue`s that are sometimes pre-fetched from a
+/// slower database.
 protocol PaginatedKeyValueDataProxy {
     /// The total number of messages in the view
     /// TODO: needs to be invalidated by insertLoop (maybe through notification center?)
