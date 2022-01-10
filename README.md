@@ -41,9 +41,6 @@ $ gem install cocoapods cocoapods-keys
 $ pod install
 ```
 
-5. If you entered `nil` for the Bugsnag API Key in the `pod install` step you will need to disable the Upload Bugsnag dSYM Build Phase. To do this, open the project settings (In the File Inspector, select 'Planetary' at the top), Selet the 'Planetary' target on the left, select "Build Phases" at the top, then comment out or remove the Upload Bugsnag dSYM script.
-
-
 ### Running
 
 The app can run completely in the iOS simulator. If you want to run it on a device, your Apple ID must be part of the Verse Apple Developer team. Contact contact@verse.app if you need access.

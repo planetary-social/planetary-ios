@@ -15,8 +15,7 @@ target 'Planetary' do
     pod 'SVProgressHUD', '2.2.5'
     pod 'ZendeskSupportSDK'
     pod 'CocoaLumberjack/Swift', '3.6.1'
-    pod 'Bugsnag', '5.23.1'
-    #pod 'cocoapods-bugsnag', '2.2.1'
+    pod 'Bugsnag', '5.23.1' # If you upgrade bugsnag you should also manually upgrade the Upload dSYMs script if necessary. See Architecture/0003-manually-manage-bugsnag-upload-dsyms-script.md
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
     pod "PostHog", "~> 1.1"
@@ -57,8 +56,6 @@ plugin 'cocoapods-keys', {
     "PostHogAPIKey",
     "PostHogHost"
 ]}
-
-#plugin 'cocoapods-bugsnag'
 
 post_install do | installer |
 
