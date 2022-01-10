@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -731,6 +731,7 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
+		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1268,6 +1269,8 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
+		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
+		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1313,6 +1316,7 @@
 			files = (
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
+				C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */,
 				8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1830,6 +1834,8 @@
 		5355556EBCE069620663A547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C9570F63278752D30095EFFF /* GoSSB.xcframework */,
+				C95A131F2786279A00FFD52F /* Foundation.framework */,
 				531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */,
 				531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */,
 				E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */,
@@ -2325,11 +2331,10 @@
 			buildPhases = (
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
 				8D9143FB230C6B670075BC8A /* Run Script */,
-				5392AF0A224BE802009F763B /* ShellScript */,
 				5344D82721C4649700704A34 /* Sources */,
+				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				5344D82821C4649700704A34 /* Frameworks */,
 				5344D82921C4649700704A34 /* Resources */,
-				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				F03FDAAC62494C507A69A807 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -2538,23 +2543,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# trigger Makefile in go-ssb-bindings\nset -e\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
 			showEnvVarsInLog = 0;
-		};
-		5392AF0A224BE802009F763B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
 		};
 		57BAA8693E4EEF15A30FDE21 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3820,6 +3808,7 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 1.0.16;
@@ -3868,6 +3857,7 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 1.0.16;

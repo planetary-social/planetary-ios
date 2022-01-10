@@ -1,0 +1,4 @@
+module GoSSB {
+    umbrella header "GoSSB.h"
+    export *
+}
