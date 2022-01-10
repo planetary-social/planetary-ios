@@ -3,7 +3,8 @@
 import Foundation
 
 
-// the Int index might not be necessary but could be handy if one handler get's all the completions instead of individual UI elements
+// the Int index might not be necessary but could be handy if one handler get's all the completions instead of
+// individual UI elements
 typealias PrefetchCompletion = (Int, KeyValue) -> Void
 
 /// An object that serves `KeyValue`s. This proxy keeps a cache of `KeyValue`s that are sometimes pre-fetched from a slower database.
@@ -14,10 +15,12 @@ protocol PaginatedKeyValueDataProxy {
     
     /// Fetches the `KeyValue` at the given index.
     /// If the `KeyValue` is in the cache, then it is returned immediately and `late` is not called.
-    /// If the `KeyValue` is not in the cache then `nil` is returned and the `late` block will be called later with the `KeyValue`.
+    /// If the `KeyValue` is not in the cache then `nil` is returned and the `late` block will be called later with
+    /// the `KeyValue`.
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue?
     
-    /// Attempts to fetch the `KeyValue` at the given index from this proxy's cache. If the `KeyValue` is not in the cache then `nil` is returned.
+    /// Attempts to fetch the `KeyValue` at the given index from this proxy's cache. If the `KeyValue` is not in the
+    /// cache then `nil` is returned.
     // TODO: i'm unable to make the above late: optional
     func keyValueBy(index: Int) -> KeyValue?
 
