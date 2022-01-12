@@ -503,11 +503,11 @@ class GoBotTests: XCTestCase {
         }
         self.wait(for: [ex1], timeout: 10)
 
-        // check we have the start (default is 10 messages pre-fetched)
+        // check we have the start (default is 2 messages pre-fetched)
         XCTAssertEqual(proxy.count, 102)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
-        XCTAssertNotNil(proxy.keyValueBy(index: 9))
-        XCTAssertNil(proxy.keyValueBy(index: 10))
+        XCTAssertNotNil(proxy.keyValueBy(index: 1))
+        XCTAssertNil(proxy.keyValueBy(index: 2))
 
         // fetch more
         proxy.prefetchUpTo(index: 50)
@@ -547,11 +547,11 @@ class GoBotTests: XCTestCase {
         }
         self.wait(for: [ex1], timeout: 10)
 
-        // check we have the start (default is 10 messages pre-fetched)
+        // check we have the start (default is 2 messages pre-fetched)
         XCTAssertEqual(proxy.count, 100)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
-        XCTAssertNotNil(proxy.keyValueBy(index: 9))
-        XCTAssertNil(proxy.keyValueBy(index: 10))
+        XCTAssertNotNil(proxy.keyValueBy(index: 1))
+        XCTAssertNil(proxy.keyValueBy(index: 2))
         
         // run two prefetches right after another
         proxy.prefetchUpTo(index: 40)
@@ -688,6 +688,10 @@ class GoBotTests: XCTestCase {
     }
     
     func test163_storeBlob() {
+        let options = XCTExpectedFailure.Options()
+        options.isStrict = false
+        XCTExpectFailure("This test is expected to fail intermittently. See #269", options: options)
+        
         let ref = BlobIdentifier("&d2rP8Tcg6K2QR905Rms8iXTlksL6OD1KOWBxTK7wxPI=.sha256")
         
         var ex = self.expectation(description: "Get current blob")

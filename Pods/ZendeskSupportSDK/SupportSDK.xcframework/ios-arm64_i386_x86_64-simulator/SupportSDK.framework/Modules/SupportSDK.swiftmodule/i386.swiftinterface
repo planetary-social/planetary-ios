@@ -1,0 +1,388 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
+// swift-module-flags: -target i386-apple-ios10.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name SupportSDK
+import AVFoundation
+import CommonUISDK
+import Foundation
+import MessagingAPI
+import MessagingSDK
+import MobileCoreServices
+import Photos
+import QuickLook
+import SDKConfigurations
+import SupportProvidersSDK
+@_exported import SupportSDK
+import Swift
+import UIKit
+import ZendeskCoreSDK
+import os
+@_hasMissingDesignatedInitializers @objc(ZDKSupportEngine) final public class SupportEngine : ObjectiveC.NSObject, MessagingAPI.Engine {
+  final public let id: Swift.String
+  final public let transferOptionDescription: MessagingAPI.TransferOptionDescription
+  final public var configs: SDKConfigurations.Configurations
+  final public var onUpdate: ([MessagingAPI.ObservableIdentifier : (MessagingAPI.Update) -> Swift.Void])
+  @available(*, deprecated, message: "Use isConversationOngoing(_ completion: @escaping (Bool) -> Void) instead")
+  final public func isConversationOngoing() -> Swift.Bool
+  @objc final public func isConversationOngoing(_ completion: @escaping (Swift.Bool) -> Swift.Void)
+  @objc public static func engine() throws -> SupportSDK.SupportEngine
+  final public func start(messagingAPI: MessagingAPI.MessagingAPIProtocol)
+  final public func stop()
+  final public func onEvent(_ event: MessagingAPI.Event)
+  @objc deinit
+  @objc override dynamic public init()
+}
+extension SupportEngine : MessagingAPI.Observable {
+  final public func observeUpdates(_ callback: @escaping (MessagingAPI.Update) -> Swift.Void) -> MessagingAPI.ObservationToken
+  public typealias Observable = MessagingAPI.Update
+}
+public struct Subscription<StateType> {
+  public func informWithCurrentState()
+  public func removeListener()
+  public func linkLifeCycleTo(object: ObjectiveC.NSObject)
+}
+public struct ActionSubscription {
+  public func removeListener()
+  public func linkLifeCycleTo(object: ObjectiveC.NSObject)
+}
+public let alwaysFilter: (Any, Any) -> Swift.Bool
+public let EqualsFilter: (Any, Any) -> Swift.Bool
+@objc @_inheritsConvenienceInitializers public class ContainerViewController : UIKit.UIViewController {
+  @objc override dynamic public func viewDidLoad()
+  @objc deinit
+  @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @objc required dynamic public init?(coder: Foundation.NSCoder)
+}
+extension ContainerViewController : SupportSDK.ContainerChildControllerDelegate {
+  @objc dynamic public var navItem: UIKit.UINavigationItem? {
+    @objc get
+  }
+  @objc dynamic public func willDismiss()
+}
+@_hasMissingDesignatedInitializers @available(*, deprecated, renamed: "Support")
+@objc(ZDKSupportUI) public class SupportUI : ObjectiveC.NSObject {
+  @objc public var helpCenterLocaleOverride: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @objc public class func initialize(withZendesk zendesk: ZendeskCoreSDK.Zendesk?)
+  @objc public static var instance: SupportSDK.SupportUI? {
+    @objc get
+  }
+  @objc public func refreshRequest(requestId: Swift.String) -> Swift.Bool
+  @objc deinit
+  @objc override dynamic public init()
+}
+@_inheritsConvenienceInitializers @objc(ZDKHelpCenterUiConfiguration) final public class HelpCenterUiConfiguration : ObjectiveC.NSObject, SDKConfigurations.Configuration {
+  @objc final public var labels: [Swift.String] {
+    @objc get
+    @objc set
+  }
+  @objc final public var groupType: SupportProvidersSDK.ZDKHelpCenterOverviewGroupType {
+    @objc get
+    @objc set
+  }
+  @objc final public var showContactOptions: Swift.Bool
+  @objc final public var showContactOptionsOnEmptySearch: Swift.Bool
+  @objc final public var groupIds: [Foundation.NSNumber] {
+    @objc get
+    @objc set
+  }
+  final public var engines: [MessagingAPI.Engine]
+  @available(swift, obsoleted: 1.0)
+  @objc final public var objcEngines: [MessagingAPI.ZDKEngine] {
+    @objc get
+    @objc set
+  }
+  @objc final public var overviewContentModel: SupportProvidersSDK.ZDKHelpCenterOverviewContentModel {
+    get
+  }
+  @objc override required dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(ZDKDismissUtil) final public class DismissUtil : ObjectiveC.NSObject {
+  @objc public static func remove(_ viewController: UIKit.UIViewController?, from navigationController: UIKit.UINavigationController?)
+  @objc public static func navigationController(_ navigationController: UIKit.UINavigationController?, didPush viewController: UIKit.UIViewController?) -> Swift.Bool
+  @objc public static func barButtonFor(_ viewController: UIKit.UIViewController, embededIn navigationController: UIKit.UINavigationController?, action: ObjectiveC.Selector) -> UIKit.UIBarButtonItem
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc(ZDKHelpCenterContactUsRouter) final public class HelpCenterContactUsRouter : ObjectiveC.NSObject {
+  @objc required public init(withPresentingViewController presentingViewController: UIKit.UIViewController, configurations: [SDKConfigurations.Configuration], engines: [MessagingAPI.ZDKEngine])
+  @objc final public func decideButtonActionForNavBar()
+  @objc final public func decideButtonActionForEmptySearch()
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc(ZDKFileType) public enum FileType : Swift.Int {
+  case png
+  case jpg
+  case pdf
+  case plain
+  case word
+  case excel
+  case powerpoint
+  case powerpointX
+  case keynote
+  case pages
+  case numbers
+  case binary
+  case heic
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public protocol Middleware {
+  func onAction(action: SupportSDK.Action, getState: @escaping SupportSDK.GetStateFunction, dispatch: @escaping SupportSDK.DispatchFunction, next: @escaping SupportSDK.NextFunction)
+}
+final public class BlockMiddleware : SupportSDK.Middleware {
+  public init(actionFunction: @escaping SupportSDK.MiddlewareFunction)
+  final public func onAction(action: SupportSDK.Action, getState: @escaping SupportSDK.GetStateFunction, dispatch: @escaping SupportSDK.DispatchFunction, next: @escaping SupportSDK.NextFunction)
+  @objc deinit
+}
+public func + (lhs: SupportSDK.Middleware, rhs: SupportSDK.Middleware) -> SupportSDK.Middleware
+@_inheritsConvenienceInitializers @objc(ZDKRequestListUiConfiguration) final public class RequestListUIConfiguration : ObjectiveC.NSObject, SDKConfigurations.Configuration {
+  @objc override required dynamic public init()
+  @objc final public var allowRequestCreation: Swift.Bool
+  @objc override final public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @available(*, deprecated, renamed: "CommonTheme")
+@objc(ZDKTheme) public class Theme : ObjectiveC.NSObject {
+  @objc public static let currentTheme: SupportSDK.Theme
+  @objc public var primaryColor: UIKit.UIColor {
+    @objc get
+    @objc set
+  }
+  @objc deinit
+  @objc override dynamic public init()
+}
+@_inheritsConvenienceInitializers @objc(ZDKRequestUi) final public class RequestUi : ObjectiveC.NSObject {
+  @objc public static func buildRequestList() -> UIKit.UIViewController
+  @objc public static func buildRequestList(with configurations: [SDKConfigurations.Configuration]) -> UIKit.UIViewController
+  @objc public static func buildRequestUi() -> UIKit.UIViewController
+  @objc public static func buildRequestUi(with configurations: [SDKConfigurations.Configuration]) -> UIKit.UIViewController
+  @objc public static func buildRequestUi(requestId: Swift.String) -> UIKit.UIViewController
+  @objc public static func buildRequestUi(requestId: Swift.String, configurations: [SDKConfigurations.Configuration]) -> UIKit.UIViewController
+  @objc deinit
+  @objc override dynamic public init()
+}
+public typealias ContainerChildController = UIKit.UIViewController & SupportSDK.ContainerChild
+@objc(ZDKCoordinator) public protocol Coordinator {
+  @objc func start(present: @escaping (SupportSDK.ContainerChildController) -> Swift.Void, with containerDelegate: SupportSDK.ContainerChildControllerDelegate)
+}
+@objc(ZDKHelpCenterCoordinator) final public class HelpCenterCoordinator : ObjectiveC.NSObject, SupportSDK.Coordinator {
+  @objc public init(helpCenterController: UIKit.UIViewController & SupportSDK.ContainerChild, uiConfigurations: [SDKConfigurations.Configuration] = [])
+  @objc final public func start(present: @escaping (SupportSDK.ContainerChildController) -> Swift.Void, with containerDelegate: SupportSDK.ContainerChildControllerDelegate)
+  @objc deinit
+  @objc override dynamic public init()
+}
+@objc @_hasMissingDesignatedInitializers final public class RequestCoordinator : ObjectiveC.NSObject, SupportSDK.Coordinator {
+  @objc final public func start(present: @escaping (SupportSDK.ContainerChildController) -> Swift.Void, with containerDelegate: SupportSDK.ContainerChildControllerDelegate)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class Store {
+  final public var state: SupportSDK.State
+  @objc deinit
+}
+extension Store {
+  final public func dispatch(action: SupportSDK.Action)
+}
+extension Store {
+  final public func addListener<StateType>(forStateType type: StateType.Type, stateKey: SupportSDK.StateKey? = nil, if filterBlock: SupportSDK.FilterFunction<StateType>? = nil, callback: @escaping (StateType) -> Swift.Void) -> SupportSDK.Subscription<StateType>
+  final public func addListener<StateType>(if filterBlock: SupportSDK.FilterFunction<SupportSDK.State>? = nil, stateSelector: @escaping SupportSDK.StateSelector<StateType>, callback: @escaping (StateType) -> Swift.Void) -> SupportSDK.Subscription<StateType>
+  final public func addListener(if filterBlock: SupportSDK.FilterFunction<SupportSDK.State>? = nil, callback: @escaping (SupportSDK.State) -> Swift.Void) -> SupportSDK.Subscription<SupportSDK.State>
+  final public func addActionListener(actionListener: @escaping SupportSDK.ActionListenerFunction) -> SupportSDK.ActionSubscription
+}
+extension Store {
+  final public func reset(state: Any)
+  final public func reset(state: Any, forKey key: SupportSDK.StateKey)
+  final public func resetFullState(_ state: SupportSDK.KeyedState)
+}
+public protocol Action {
+}
+public protocol Window {
+  var windowLevel: UIKit.UIWindow.Level { get set }
+  var layer: QuartzCore.CALayer { get }
+  var bounds: CoreGraphics.CGRect { get }
+  func addSubview(_ view: UIKit.UIView)
+}
+extension UIWindow : SupportSDK.Window {
+}
+public protocol ApplicationType {
+  var topWindow: SupportSDK.Window? { get }
+}
+extension UIApplication : SupportSDK.ApplicationType {
+  public var topWindow: SupportSDK.Window? {
+    get
+  }
+}
+public typealias HelpCenterUi = SupportSDK.ZDKHelpCenterUi
+public typealias HelpCenterDelegate = SupportSDK.ZDKHelpCenterDelegate
+@_inheritsConvenienceInitializers @objc public class ZDKConstants : ObjectiveC.NSObject {
+  @objc public static func colorForToast() -> UIKit.UIColor
+  @objc deinit
+  @objc override dynamic public init()
+}
+@_inheritsConvenienceInitializers @objc(ZDKSuasDebugLogger) final public class SuasDebugLogger : ObjectiveC.NSObject {
+  @objc public static var enabled: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  @objc deinit
+  @objc override dynamic public init()
+}
+public protocol AsyncAction : SupportSDK.Action {
+  func execute(getState: @escaping SupportSDK.GetStateFunction, dispatch: @escaping SupportSDK.DispatchFunction)
+}
+public struct BlockAsyncAction : SupportSDK.AsyncAction {
+  public init(executionBlock: @escaping (@escaping SupportSDK.GetStateFunction, @escaping SupportSDK.DispatchFunction) -> Swift.Void)
+  public func execute(getState: @escaping SupportSDK.GetStateFunction, dispatch: @escaping SupportSDK.DispatchFunction)
+}
+public struct AsyncMiddleware : SupportSDK.Middleware {
+  public init()
+  public func onAction(action: SupportSDK.Action, getState: @escaping SupportSDK.GetStateFunction, dispatch: @escaping SupportSDK.DispatchFunction, next: @escaping SupportSDK.NextFunction)
+}
+@_inheritsConvenienceInitializers @objc(ZDKArticleUiConfiguration) final public class ArticleUiConfiguration : ObjectiveC.NSObject, SDKConfigurations.Configuration {
+  @objc override required dynamic public init()
+  @objc final public var showContactOptions: Swift.Bool
+  final public var engines: [MessagingAPI.Engine]
+  @available(swift, obsoleted: 1.0)
+  @objc final public var objcEngines: [MessagingAPI.ZDKEngine] {
+    @objc get
+    @objc set
+  }
+  @objc override final public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc deinit
+}
+@objc(ZDKRequestAttachment) public class RequestAttachment : ObjectiveC.NSObject {
+  @objc final public let filename: Swift.String
+  @objc final public let data: Foundation.Data
+  @objc final public let fileType: SupportSDK.FileType
+  @objc public init(filename: Swift.String, data: Foundation.Data, fileType: SupportSDK.FileType)
+  @objc deinit
+  @objc override dynamic public init()
+}
+@_hasMissingDesignatedInitializers @objc(ZDKCoordinatingViewController) public class CoordinatingViewController : SupportSDK.ContainerViewController {
+  @objc public init(coordinator: SupportSDK.Coordinator)
+  @objc override dynamic public func viewDidLoad()
+  @objc override dynamic public func viewWillAppear(_ animated: Swift.Bool)
+  @objc override dynamic public func viewDidAppear(_ animated: Swift.Bool)
+  @objc override dynamic public func viewDidDisappear(_ animated: Swift.Bool)
+  @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc(ZDKRequestUiConfiguration) final public class RequestUiConfiguration : ObjectiveC.NSObject, SDKConfigurations.Configuration {
+  @objc final public var subject: Swift.String
+  @objc final public var tags: [Swift.String]
+  @objc final public var customFields: [SupportProvidersSDK.CustomField]
+  @objc final public var ticketFormID: Foundation.NSNumber?
+  @objc final public var fileAttachments: [SupportSDK.RequestAttachment]
+  @objc override required dynamic public init()
+  @objc override final public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc deinit
+}
+public protocol Reducer {
+  associatedtype StateType
+  var initialState: Self.StateType { get }
+  var stateKey: SupportSDK.StateKey { get }
+  func reduce(state: Self.StateType, action: SupportSDK.Action) -> Self.StateType?
+}
+extension Reducer {
+  public var stateKey: SupportSDK.StateKey {
+    get
+  }
+}
+final public class BlockReducer<StateType> : SupportSDK.Reducer {
+  final public let initialState: StateType
+  final public let stateKey: Swift.String
+  convenience public init(initialState: StateType, reduce: @escaping SupportSDK.ReducerFunction<StateType>)
+  public init(initialState: StateType, stateKey: SupportSDK.StateKey, reduce: @escaping SupportSDK.ReducerFunction<StateType>)
+  final public func reduce(state: StateType, action: SupportSDK.Action) -> StateType?
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers final public class CombinedReducer : SupportSDK.Reducer {
+  final public var initialState: Any {
+    get
+  }
+  final public func reduce(state: Any, action: SupportSDK.Action) -> Any?
+  @objc deinit
+  public typealias StateType = Any
+}
+public func + <R1, R2>(lhs: R1, rhs: R2) -> SupportSDK.CombinedReducer where R1 : SupportSDK.Reducer, R2 : SupportSDK.Reducer
+public typealias StateKey = Swift.String
+public typealias ListenerFunction<Type> = (Type) -> Swift.Void
+public typealias ActionListenerFunction = (SupportSDK.Action) -> Swift.Void
+public typealias FilterFunction<StateType> = (StateType, StateType) -> Swift.Bool
+public typealias StateSelector<SelectedType> = (SupportSDK.State) -> (SelectedType?)
+public typealias KeyedState = [SupportSDK.StateKey : Any]
+public typealias ReducerFunction<Type> = (Type, SupportSDK.Action) -> Type?
+public typealias DispatchFunction = (SupportSDK.Action) -> Swift.Void
+public typealias NextFunction = SupportSDK.DispatchFunction
+public typealias MiddlewareFunction = (SupportSDK.Action, () -> SupportSDK.State, (SupportSDK.Action) -> Swift.Void, (SupportSDK.Action) -> Swift.Void) -> Swift.Void
+public typealias GetStateFunction = () -> SupportSDK.State
+extension Suas {
+  public static var enableDebugLogging: Swift.Bool
+}
+@objc(ZDKContainerChildControllerDelegate) public protocol ContainerChildControllerDelegate : ObjectiveC.NSObjectProtocol {
+  @objc func willDismiss()
+  @objc var navItem: UIKit.UINavigationItem? { get }
+}
+@objc(ZDKContainerChild) public protocol ContainerChild : ObjectiveC.NSObjectProtocol {
+  @objc var childDelegate: SupportSDK.ContainerChildControllerDelegate? { get set }
+}
+public struct LoggerMiddleware : SupportSDK.Middleware {
+  public init(showTimestamp: Swift.Bool = true, showDuration: Swift.Bool = false, lineLength: Swift.Int? = nil, predicate: ((SupportSDK.State, SupportSDK.Action) -> Swift.Bool)? = nil, debugOnly: Swift.Bool = true, titleFormatter: ((SupportSDK.Action, Foundation.Date, Swift.UInt64) -> Swift.String)? = nil, stateTransformer: ((SupportSDK.State) -> Any)? = nil, actionTransformer: ((SupportSDK.Action) -> Any)? = nil, logger: @escaping (Swift.String) -> Swift.Void = defaultLogger)
+  public func onAction(action: SupportSDK.Action, getState: @escaping SupportSDK.GetStateFunction, dispatch: @escaping SupportSDK.DispatchFunction, next: @escaping SupportSDK.NextFunction)
+}
+public let defaultLogger: (Swift.String) -> ()
+public protocol SuasDynamicEquatable {
+  func isEqual(to other: Any) -> Swift.Bool
+}
+extension SuasDynamicEquatable where Self : Swift.Equatable {
+  public func isEqual(to other: Any) -> Swift.Bool
+}
+public struct State {
+  public init(dictionary: [SupportSDK.StateKey : Any])
+  public subscript(key: Swift.String) -> Any? {
+    get
+    set
+  }
+  public subscript<Type>(forKey key: Swift.String, ofType type: Type.Type) -> Type? {
+    get
+    set
+  }
+  public subscript<Type>(forKeyOfType type: Type.Type) -> Type? {
+    get
+  }
+  public func value(forKey key: Swift.String) -> Any?
+  public func value<Type>(forKeyOfType type: Type.Type) -> Type?
+  public func value<Type>(forKey key: Swift.String, ofType type: Type.Type) -> Type?
+  public var keys: [SupportSDK.StateKey] {
+    get
+  }
+}
+extension State : Swift.ExpressibleByDictionaryLiteral {
+  public init(dictionaryLiteral elements: (SupportSDK.StateKey, Any)...)
+  public typealias Key = SupportSDK.StateKey
+  public typealias Value = Any
+}
+extension String : SupportSDK.SuasDynamicEquatable {
+}
+@_hasMissingDesignatedInitializers @objc public class HelpCenterArticleVotingHandler : ObjectiveC.NSObject, SupportSDK.ZDKHelpCenterArticleRatingHandlerProtocol {
+  @objc convenience public init(withArticleId articleId: Swift.String, andLocale locale: Swift.String)
+  @objc public func articleRatingVoteSelected(_ ratingState: SupportSDK.ZDKHelpCenterArticleRatingStateProtocol, at index: Swift.Int)
+  @objc public func currentArticleVote() -> Swift.Int
+  @objc deinit
+  @objc override dynamic public init()
+}
+public enum Suas {
+  public static func createStore<R>(reducer: R, state: SupportSDK.KeyedState, middleware: SupportSDK.Middleware? = nil) -> SupportSDK.Store where R : SupportSDK.Reducer
+  public static func createStore<R, StateType>(reducer: R, state: StateType, middleware: SupportSDK.Middleware? = nil) -> SupportSDK.Store where R : SupportSDK.Reducer
+  public static func createStore<R>(reducer: R, middleware: SupportSDK.Middleware? = nil) -> SupportSDK.Store where R : SupportSDK.Reducer
+}
+extension SupportSDK.FileType : Swift.Equatable {}
+extension SupportSDK.FileType : Swift.Hashable {}
+extension SupportSDK.FileType : Swift.RawRepresentable {}

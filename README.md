@@ -1,17 +1,45 @@
 # Planetary
 
-Planetary IOS is an app based on [Secure Scuttlebutt](https://scuttlebutt.nz/) that doesn't keep your data in the cloud and allows you and your friends to come together and connect even when the internet goes out.  
+Planetary iOS is an app based on [Secure Scuttlebutt](https://scuttlebutt.nz/) that doesn't keep your data in the cloud and allows you and your friends to come together and connect even when the internet goes out.  
 Check our website [planetary.social](https://planetary.social/) for more info!
 
 ![](https://github.com/planetary-social/planetary-ios/workflows/CI/badge.svg)
 
 ## Developer installation
 
+_Only tested on Intel Macs_
+
+### Setup
+
+Requirements: [Homebrew](https://brew.sh/), and Xcode.
+
 The repo does have some Carthage and Cocoapod dependencies, however all except one have been versioned and checked into the repo.
 
-When running `pod install` (or `pod install --no-repo-update) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
-
 While this project uses [Go](https://golang.org) in parts, the build and unit test target have automated install scripts for the specific versions. See _Go Development_ for more.
+
+1. Install `rbenv` and add it to your shell: 
+
+```
+$ brew install rbenv && rbenv init
+```
+
+2. Install ruby v2.6.6
+
+```
+$ rbenv install 2.6.6
+```
+
+3. Install gems
+
+```
+$ gem install cocoapods cocoapods-keys
+```
+
+4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
+
+```
+$ pod install
+```
 
 ### Running
 
@@ -36,21 +64,8 @@ Due to the small team size, code reviews are mostly to inform other members what
 
 ## Go Development
 
-Installation in the xcode targers is automated. See `FBTT/Scripts/go_install.sh` for which compiler version is used by XCode.
+Planetary’s underlying SSB protocol implementation is written in Go (see [cryptoscope/ssb](https://github.com/cryptoscope/ssb)). The GoSSB folder contains an Xcode project that packages [cryptoscope/ssb](https://github.com/cryptoscope/ssb) as an XCFramework that works across Apple’s various platforms and architectures. GoSSB.xcframework is included in this repository so that contributors don’t need to install a full Go stack to work on the iOS app. More information about the GoSSB.xcframework can be found in its [README](GoSSB/README.md)
 
-We are using _vendoring_ to keep a copy of the dependencies in this repo. Therefore each module update (`go get github.com/some/import/...@version`) needs to be followed by running `go mod vendor` and commiting the resulting changes.
-
-If you have a seperate Go installation, run the following script to test that everything works as intended run
-
-```bash
-export GOROOT=$(go env GOROOT)
-test -d $GOROOT || exit 1 # the makefile needs GOROOT to be set
-cd FBTT/go-ssb-bindings
-make
-ls out/libssb-go.a`
-```
-
-ps: If you are already using [Homebrew](https://brew.sh/) you can also use `brew install go` instead of the installer from golang.org
 
 ## License
 

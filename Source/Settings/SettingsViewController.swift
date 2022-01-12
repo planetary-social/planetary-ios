@@ -65,7 +65,7 @@ class SettingsViewController: DebugTableViewController {
 
     @objc private func publicWebHostingToggleValueChanged(toggle: UISwitch) {
         let isPublicWebHostingEnabled = toggle.isOn
-        AppController.shared.showProgress()
+        //AppController.shared.showProgress()
         Bots.current.about { [weak self] (about, error) in
             if let error = error {
                 Log.optional(error)

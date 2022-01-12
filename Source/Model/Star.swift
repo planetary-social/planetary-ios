@@ -34,13 +34,21 @@ struct Star {
             self.feed = Identifier.null
             return
         }
-        let match = regex.firstMatch(in: invite, options: [], range: range)!
-        let hostRange = Range(match.range(at: 1), in: invite)!
-        self.host = String(invite[hostRange])
-        let portRange = Range(match.range(at: 2), in: invite)!
-        self.port = UInt(invite[portRange])!
-        let feedRange = Range(match.range(at: 3), in: invite)!
-        self.feed = String(invite[feedRange])
+        do {
+            let match = regex.firstMatch(in: invite, options: [], range: range)!
+            let hostRange = Range(match.range(at: 1), in: invite)!
+            self.host = String(invite[hostRange])
+            let portRange = Range(match.range(at: 2), in: invite)!
+            self.port = UInt(invite[portRange])!
+            let feedRange = Range(match.range(at: 3), in: invite)!
+            self.feed = String(invite[feedRange])
+        }
+        catch {
+            self.host = ""
+            self.port = 0
+            self.feed = Identifier.null
+            return
+        }
     }
     
     static func isValid(invite: String) -> Bool {

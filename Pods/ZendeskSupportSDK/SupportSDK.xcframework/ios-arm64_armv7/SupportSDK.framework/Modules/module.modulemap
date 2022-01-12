@@ -1,0 +1,11 @@
+framework module SupportSDK {
+  umbrella header "SupportSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module SupportSDK.Swift {
+    header "SupportSDK-Swift.h"
+    requires objc
+}

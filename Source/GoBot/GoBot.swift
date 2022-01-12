@@ -895,7 +895,7 @@ class GoBot: Bot {
             DispatchQueue.main.async { completion(abouts, nil) }
         }
     }
-    
+                
     func abouts(queue: DispatchQueue, completion: @escaping AboutsCompletion) {
         self.queue.async {
             do {

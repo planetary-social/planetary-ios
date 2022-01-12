@@ -226,7 +226,7 @@ class PostCellView: KeyValueView {
         if let vote = keyValue.value.content.vote {
             let expression: String
             if vote.vote.value > 0 {
-                expression = "❤️"
+                expression = "💜"
             } else {
                 expression = "💔"
             }

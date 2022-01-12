@@ -877,7 +877,7 @@ class ViewDatabase {
     
     // who is this feed following?
     func getFollows(feed: Identity) throws -> [Identity] {
-        guard let db = self.openDB else {
+       guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
@@ -1134,7 +1134,7 @@ class ViewDatabase {
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
         let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedPrefetchDataProxy(with: src)
+        return try PaginatedPrefetchDataProxy(with: src as! KeyValueSource)
     }
 
     // MARK: recent
@@ -1200,7 +1200,7 @@ class ViewDatabase {
             .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
             .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
-            .filter(colMsgType == "post" || colMsgType == "contact" )           // only posts (no votes or contact messages)
+            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
 
@@ -1670,7 +1670,7 @@ class ViewDatabase {
         }
     }
 
-    func feed(for identity: Identity, limit: Int = 100, offset: Int? = nil) throws -> KeyValues {
+    func feed(for identity: Identity, limit: Int = 5, offset: Int? = nil) throws -> KeyValues {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1687,7 +1687,7 @@ class ViewDatabase {
 
         let postsQry = self.basicRecentPostsQuery(
             limit: limit,
-            wantPrivate: true,
+            wantPrivate: false  ,
             onlyRoots: true,
             offset: offset)
             .filter(colAuthorID == feedAuthorID)
