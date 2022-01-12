@@ -32,7 +32,7 @@ $ rbenv install 2.6.6
 3. Install gems
 
 ```
-$ gem install cocoapods cocoapods-keys cocoapods-bugsnag
+$ gem install cocoapods cocoapods-keys
 ```
 
 4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
@@ -40,9 +40,6 @@ $ gem install cocoapods cocoapods-keys cocoapods-bugsnag
 ```
 $ pod install
 ```
-
-5. If you entered `nil` for the Bugsnag API Key in the `pod install` step you will need to disable the Upload Bugsnag dSYM Build Phase. To do this, open the project settings (In the File Inspector, select 'Planetary' at the top), Selet the 'Planetary' target on the left, select "Build Phases" at the top, then comment out or remove the Upload Bugsnag dSYM script.
-
 
 ### Running
 
