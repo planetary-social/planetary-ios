@@ -1,0 +1,15 @@
+//
+//  UnitTests.release.xcconfig
+//  Planetary
+//
+//  Created by Martin Dutra on 2/17/20.
+//  Copyright © 2020 Verse Communications Inc. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.release.xcconfig"
+#include "Shared.release.xcconfig"
+
+SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h

@@ -1,0 +1,5 @@
+{
+    "type": "channel",
+    "this-should-be-named-channel": "scuttlebot",
+    "this-should-be-named-subscribed": true
+}

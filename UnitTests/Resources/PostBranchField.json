@@ -1,0 +1,16 @@
+{
+    "type": "post",
+    "text": "Hey [@christoph@verse](@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519)!\n\nNext week sounds great. I'd love to help out. I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client on it as well.",
+    "root": "%tuQMMwur24Kkfn9CfQT1IomnkMwLJHM9Vp4umjgOdos=.sha256",
+    "branch": "%K/PXl6aYBBxhkUsOgJwhl+QWxkmv4nCTkaLrU7qqadY=.sha256",
+    "channel": "mobile-ssb-quests",
+    "mentions": [{
+        "link": "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519",
+        "name": "christoph@verse"
+    }],
+    "recps": null,
+    "reply": {
+        "%tuQMMwur24Kkfn9CfQT1IomnkMwLJHM9Vp4umjgOdos=.sha256": "@2RNGJafZtMHzd76gyvqH6EJiK7kBnXeak5mBWzoO/iU=.ed25519",
+        "%K/PXl6aYBBxhkUsOgJwhl+QWxkmv4nCTkaLrU7qqadY=.sha256": "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519"
+    },
+}
