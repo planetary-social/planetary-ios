@@ -8,6 +8,7 @@
 
 import XCTest
 
+/// Tests to measure performance of `ViewDatabase`
 class ViewDatabasePerformanceTests: XCTestCase {
     
     var dbURL: URL!
@@ -39,7 +40,9 @@ class ViewDatabasePerformanceTests: XCTestCase {
         try setUpWithError()
     }
 
-    func testInsertBig() throws {
+    /// Measures the peformance of `fillMessages(msgs:)`. This is the function that is called to copy posts from go-ssb
+    /// to sqlite.
+    func testFillMessages() throws {
         let data = self.data(for: DatabaseFixture.bigFeed.fileName)
 
         var urls: [URL] = []
@@ -94,6 +97,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         }
     }
     
+    /// This test performs a lot of feed loading (reads) while another thread is writing to the SQLite database.
+    /// This test is designed to stress the database and verify that we are optimizing for reading (see ADR #4).
     func testSimultanousReadsAndWrites() throws {
         let data = self.data(for: DatabaseFixture.bigFeed.fileName)
         let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
@@ -113,6 +118,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
                 expectations.append(readFinished)
                 let reader = { [self] in
                     let _ = try! self.vdb.feed(for: self.testFeed.identities[0])
+                    print("Reader \(i) finished")
                     readFinished.fulfill()
                 }
                 

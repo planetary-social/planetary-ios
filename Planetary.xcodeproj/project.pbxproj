@@ -733,7 +733,6 @@
 		C924412E278DDE9200592E5E /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C924412D278DDE9200592E5E /* OnboardingTests.swift */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
-		C98A013A279084F400E29A97 /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A0139279084F400E29A97 /* XCTestCaseExtensions.swift */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
@@ -1279,7 +1278,6 @@
 		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		C98A0139279084F400E29A97 /* XCTestCaseExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestCaseExtensions.swift; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
 		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
 		C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
@@ -2308,7 +2306,6 @@
 		C98A0138279084D400E29A97 /* Test Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				C98A0139279084F400E29A97 /* XCTestCaseExtensions.swift */,
 				C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */,
 			);
 			path = "Test Helpers";
@@ -2903,7 +2900,6 @@
 				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				53211CE622838121007FB785 /* Image+UIImage.swift in Sources */,
 				53362F6F2209F8D5007264CB /* NetworkKey.swift in Sources */,
-				C98A013A279084F400E29A97 /* XCTestCaseExtensions.swift in Sources */,
 				0A64A852247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
 				53E26C5F23045D4C009240B2 /* Person.swift in Sources */,
 				0A3880232475BCE200777843 /* CrashReporting.swift in Sources */,
