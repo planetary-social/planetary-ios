@@ -730,7 +730,6 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
-		C924412E278DDE9200592E5E /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C924412D278DDE9200592E5E /* OnboardingTests.swift */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
@@ -1273,7 +1272,6 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
-		C924412D278DDE9200592E5E /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
@@ -1542,7 +1540,6 @@
 				53362F6D2209F754007264CB /* NetworkKeyTests.swift */,
 				53EE01F52204FFC400DFDF16 /* SecretTests.swift */,
 				0ABCA9092437C22400D7F39C /* MarkdownTests.swift */,
-				C924412D278DDE9200592E5E /* OnboardingTests.swift */,
 			);
 			path = UnitTests;
 			sourceTree = "<group>";
@@ -2796,7 +2793,6 @@
 				53B4F5FD22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
 				5369D2AF220CF39E00A65622 /* Data+JSON.swift in Sources */,
 				C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */,
-				C924412E278DDE9200592E5E /* OnboardingTests.swift in Sources */,
 				530F018822DAD5D8007EBAE2 /* Date+Random.swift in Sources */,
 				0ACE91AC243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */,
 				23EF5A9B249CDCF900469977 /* BlocksAPIService.swift in Sources */,

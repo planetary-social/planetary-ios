@@ -10,6 +10,7 @@ import Foundation
 
 let testNetworkKey = NetworkKey(base64: "5vVhFHLFHeyutypUO952SyFd6jRIVhAyiZV30ftnKSU=")!
 
+/// This struct contains information needed to construct a `ViewDatabase` for testing.
 struct DatabaseFixture {
     
     let fileName: String
