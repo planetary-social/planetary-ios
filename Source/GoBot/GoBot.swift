@@ -547,7 +547,7 @@ class GoBot: Bot {
     func needsViewFill() throws -> (Int64, Int) {
         var lastRxSeq: Int64 = 0
         do {
-            lastRxSeq = try self.database.lastReceivedSeq()
+            lastRxSeq = try self.database.largestSeqFromReceiveLog()
         } catch {
             throw GoBotError.duringProcessing("view query failed", error)
         }

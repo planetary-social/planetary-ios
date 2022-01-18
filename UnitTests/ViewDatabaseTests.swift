@@ -569,6 +569,13 @@ class ViewDatabaseTests: XCTestCase {
         }
     }
     
+    func testLargestSeqFromReceiveLog() throws {
+        XCTAssertEqual(try vdb.largestSeqFromReceiveLog(), 80)
+    }
+    
+    func testLargestSeqFromPublishedLog() throws {
+        XCTAssertEqual(try vdb.largestSeqFromPublishedLog(), 77)
+    }
 }
 
 class ViewDatabasePreloadTest: XCTestCase {
