@@ -60,32 +60,46 @@ class GoBot: Bot {
         }
     }
 
-    private let queue: DispatchQueue
+    /// A queue that will be scheduled at a lower priority than user intiated and UI-type tasks. This queue should be
+    /// used for any operations which the user is not explicitly waiting on, i.e. copying posts from go-ssb to the
+    /// ViewDatabase.
+    private let slowQueue: DispatchQueue
+    
+    /// A queue for operations that the user is waiting on like publishing a post, pull-to-refresh, etc.
+    private let fastQueue: DispatchQueue
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
-    let bot :GoBotInternal
+    let bot: GoBotInternal
     let database = ViewDatabase()
 
     init() {
-        self.queue = DispatchQueue(label: "GoBot",
+        self.slowQueue = DispatchQueue(label: "GoBot-slow",
                               qos: .utility,
-                              attributes: .concurrent,
+                              attributes: [],
                               autoreleaseFrequency: .workItem,
                               target: nil)
-        self.bot = GoBotInternal(self.queue)
+        self.fastQueue = DispatchQueue(label: "GoBot-fast",
+                              qos: .userInitiated,
+                              attributes: [],
+                              autoreleaseFrequency: .workItem,
+                              target: nil)
+        
+        
+        
+        self.bot = GoBotInternal(self.slowQueue)
     }
 
     // MARK: App Lifecycle
 
     func suspend() {
-        self.queue.async {
+        slowQueue.async {
             self.bot.disconnectAll()
         }
     }
 
     func exit() {
-        self.queue.async {
+        slowQueue.async {
             self.bot.disconnectAll()
         }
     }
@@ -139,7 +153,7 @@ class GoBot: Bot {
         }
    
         // spawn go-bot in the background to return early
-        self.queue.async {
+        self.slowQueue.async {
             #if DEBUG
             // used for locating the files in the simulator
             print("===> starting gobot with prefix: \(repoPrefix)")
@@ -205,7 +219,7 @@ class GoBot: Bot {
     // MARK: Sync
     
     func seedPubAddresses(addresses: [PubAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 try addresses.forEach { address throws in
                     try self.database.saveAddress(feed: address.key,
@@ -225,7 +239,7 @@ class GoBot: Bot {
     
     func knownPubs(completion: @escaping KnownPubsCompletion) {
        Thread.assertIsMainThread()
-         self.queue.async {
+         self.slowQueue.async {
             var err: Error? = nil
             var kps: [KnownPub] = []
             defer {
@@ -241,7 +255,7 @@ class GoBot: Bot {
      }
     
     func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let pubs = try self.database.getRedeemedPubs()
                 queue.async {
@@ -280,7 +294,7 @@ class GoBot: Bot {
         self._isSyncing = true
         let elapsed = Date()
 
-        self.queue.async {
+        self.slowQueue.async {
             let before = self.repoNumberOfMessages()
             self.bot.dialSomePeers(from: peers)
             let after = self.repoNumberOfMessages()
@@ -310,7 +324,7 @@ class GoBot: Bot {
         self._isSyncing = true
         let elapsed = Date()
 
-        self.queue.async {
+        self.slowQueue.async {
             let before = self.repoNumberOfMessages()
             self.bot.dialForNotifications(from: peers)
             let after = self.repoNumberOfMessages()
@@ -360,7 +374,7 @@ class GoBot: Bot {
         self._isRefreshing = true
         
         let elapsed = Date()
-        self.queue.async {
+        self.slowQueue.async {
             self.updateReceive(limit: load.rawValue) {
                 [weak self] error in
                 queue.async {
@@ -386,7 +400,7 @@ class GoBot: Bot {
     // MARK: Invites
     
     func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             token.withGoString { goStr in
                 if ssbInviteAccept(goStr) {
                     do {
@@ -412,11 +426,16 @@ class GoBot: Bot {
 
     // MARK: Publish
     private var lastPublishFireTime = DispatchTime.now()
-
-    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
-        self.queue.async {
+    
+    /// Publishes the given content on the logged-in user's feed.
+    /// - Parameters:
+    ///   - content: The content to be published
+    ///   - completionQueue: The queue that `completion` should be called on.
+    ///   - completion: A block that will be called with the result of the operation when it is finished.
+    func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion) {
+        self.fastQueue.async {
             guard let identity = self._identity else {
-                queue.async {
+                completionQueue.async {
                     completion(MessageIdentifier.null, BotError.notLoggedIn)
                 }
                 return
@@ -424,7 +443,7 @@ class GoBot: Bot {
             
             if UserDefaults.standard.bool(forKey: "prevent_feed_from_forks") {
                 guard let numberOfMessagesInRepo = try? self.database.numberOfMessages(for: identity) else {
-                    queue.async {
+                    completionQueue.async {
                         completion(MessageIdentifier.null, GoBotError.unexpectedFault("Failed to access database"))
                     }
                     return
@@ -433,7 +452,7 @@ class GoBot: Bot {
                 let knownNumberOfMessagesInKeychain = AppConfiguration.current?.numberOfPublishedMessages ?? 0
                 
                 guard numberOfMessagesInRepo >= knownNumberOfMessagesInKeychain else {
-                    queue.async {
+                    completionQueue.async {
                         completion(MessageIdentifier.null, BotError.notEnoughMessagesInRepo)
                     }
                     return
@@ -441,37 +460,22 @@ class GoBot: Bot {
             }
             self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
-                    queue.async { completion(MessageIdentifier.null, error) }
+                    completionQueue.async { completion(MessageIdentifier.null, error) }
                     return
                 }
-
-                // debounce refresh calls (at most one every 125ms)
-                let now = DispatchTime.now()
-                self?.lastPublishFireTime = now
-                let refreshTime: DispatchTime = now + refreshDelay
-
-                self?.queue.asyncAfter(deadline: refreshTime) {
-                    guard let lastFireTime = self?.lastPublishFireTime else {
+                
+                // Copy the newly published post into the ViewDatabase immediately.
+                do {
+                    guard let self = self else {
+                        completionQueue.async { completion(MessageIdentifier.null, BotError.notLoggedIn) }
                         return
                     }
-
-                    let when: DispatchTime = lastFireTime + refreshDelay
-                    let now = DispatchTime.now()
-
-                    // the call happend after the given timeout (refreshDelay)
-                    if now.rawValue >= when.rawValue {
-                        self?.internalRefresh(load: .tiny, queue: .global(qos: .userInteractive)) { // do a refresh, then return to the caller
-                            error, _ in
-                            Log.optional(error)
-                            CrashReporting.shared.reportIfNeeded(error: error)
-                            // finally, return back to the UI
-                            queue.async { completion(key, nil) }
-                        }
-                    } else {
-                        // don't do a view refresh, just return to the caller
-                        // Q: is this actually called for each asyncAfter call?
-                        queue.async { completion(key, nil) }
-                    }
+                    let lastPostIndex = try self.database.largestSeqFromPublishedLog()
+                    let publishedPosts = try self.bot.getPublishedLog(after: lastPostIndex)
+                    try self.database.fillMessages(msgs: publishedPosts)
+                    completionQueue.async { completion(key, nil) }
+                } catch {
+                    completionQueue.async { completion(MessageIdentifier.null, error) }
                 }
             }
         }
@@ -626,6 +630,9 @@ class GoBot: Bot {
         
         guard diff > 0 else {
             // still might want to update privates
+            #if DEBUG
+            print("[rx log] viewdb already up to date.")
+            #endif
             self.updatePrivate(completion: completion)
             return
         }
@@ -728,7 +735,7 @@ class GoBot: Bot {
             }
             return
         }
-        self.queue.async {
+        self.slowQueue.async {
             self.bot.blobsAdd(data: data) {
                 identifier, error in
                 DispatchQueue.main.async {
@@ -753,7 +760,7 @@ class GoBot: Bot {
             DispatchQueue.main.async { completion(image, error) }
         }
 
-        self.queue.async {
+        self.slowQueue.async {
 
             // encode image or return failures
             var image: UIImage? = image
@@ -783,7 +790,7 @@ class GoBot: Bot {
             return
         }
 
-        self.queue.async {
+        self.slowQueue.async {
 
             // get non-empty data from blob storage
             do {
@@ -870,7 +877,7 @@ class GoBot: Bot {
     
     
     func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let a = try self.database.getAbout(for: identity)
                 queue.async {
@@ -885,7 +892,7 @@ class GoBot: Bot {
 
     func abouts(identities: [Identity], completion: @escaping AboutsCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             var abouts: [About] = []
             for identity in identities {
                 if let about = try? self.database.getAbout(for: identity) {
@@ -897,7 +904,7 @@ class GoBot: Bot {
     }
                 
     func abouts(queue: DispatchQueue, completion: @escaping AboutsCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let abouts = try self.database.getAbouts()
                 queue.async {
@@ -935,7 +942,7 @@ class GoBot: Bot {
 
     func follows(identity: Identity, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let follows: [Identity] = try self.database.getFollows(feed: identity)
                 DispatchQueue.main.async { completion(follows, nil) }
@@ -947,7 +954,7 @@ class GoBot: Bot {
     
     func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
                 DispatchQueue.main.async { completion(follows, nil) }
@@ -958,7 +965,7 @@ class GoBot: Bot {
     }
 
     func followings(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let follows: [About] = try self.database.getFollows(feed: identity)
                 queue.async {
@@ -973,7 +980,7 @@ class GoBot: Bot {
     }
 
     func followers(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let follows: [About] = try self.database.followedBy(feed: identity)
                 queue.async {
@@ -989,7 +996,7 @@ class GoBot: Bot {
     
     func friends(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let who = try self.database.getBidirectionalFollows(feed: identity)
                 DispatchQueue.main.async { completion(who, nil) }
@@ -1001,7 +1008,7 @@ class GoBot: Bot {
     
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let who = try self.database.getBlocks(feed: identity)
                 DispatchQueue.main.async {
@@ -1017,7 +1024,7 @@ class GoBot: Bot {
     
     func blockedBy(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let who = try self.database.blockedBy(feed: identity)
                 DispatchQueue.main.async {
@@ -1071,7 +1078,7 @@ class GoBot: Bot {
 
     // old recent
     func recent(completion: @escaping PaginatedCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let ds = try self.database.paginated(onlyFollowed: true)
                 DispatchQueue.main.async { completion(ds, nil) }
@@ -1082,7 +1089,7 @@ class GoBot: Bot {
     }
     
     func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let key = try self.database.paginatedTop(onlyFollowed: true)
                 queue.async {
@@ -1098,7 +1105,7 @@ class GoBot: Bot {
     
     // posts from everyone, not just who you follow
     func everyone(completion: @escaping PaginatedCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let msgs = try self.database.paginated(onlyFollowed: false)
                 DispatchQueue.main.async { completion(msgs, nil) }
@@ -1109,7 +1116,7 @@ class GoBot: Bot {
     }
     
     func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let key = try self.database.paginatedTop(onlyFollowed: false)
                 queue.async {
@@ -1126,7 +1133,7 @@ class GoBot: Bot {
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         assert(keyValue.value.content.isPost)
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             if let rootKey = keyValue.value.content.post?.root {
                 do {
                     let root = try self.database.get(key: rootKey)
@@ -1147,7 +1154,7 @@ class GoBot: Bot {
 
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             self.internalThread(rootKey: rootKey, completion: completion)
         }
     }
@@ -1168,7 +1175,7 @@ class GoBot: Bot {
 
     func mentions(completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let messages = try self.database.mentions(limit: 1000)
                 let p = StaticDataProxy(with:messages)
@@ -1181,7 +1188,7 @@ class GoBot: Bot {
 
     // TODO consider a different form that returns a tuple of arrays
     func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let all = try self.database.reports()
                 queue.async {
@@ -1197,7 +1204,7 @@ class GoBot: Bot {
 
     func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let ds = try self.database.paginated(feed: identity)
                 DispatchQueue.main.async { completion(ds, nil) }
@@ -1211,7 +1218,7 @@ class GoBot: Bot {
 
     func hashtags(completion: @escaping HashtagsCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 var hashtags = try self.database.hashtags()
                 hashtags.reverse()
@@ -1224,7 +1231,7 @@ class GoBot: Bot {
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let keyValues = try self.database.messagesForHashtag(name: hashtag.name)
                 let p = StaticDataProxy(with: keyValues)
@@ -1272,7 +1279,7 @@ class GoBot: Bot {
     }
     
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             let counts = try? self.bot.repoStatus()
             let sequence = try? self.database.stats(table: .messagekeys)
 
@@ -1319,7 +1326,7 @@ class GoBot: Bot {
     // MARK: Preloading
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion) {
-        self.queue.async {
+        self.slowQueue.async {
             do {
                 let data = try Data(contentsOf: url, options: .mappedIfSafe)
                 do {

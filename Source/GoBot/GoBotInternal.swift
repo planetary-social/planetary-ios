@@ -599,6 +599,9 @@ class GoBotInternal {
     }
     
     // MARK: Publish
+    
+    /// Publishes the given content to the logged-in user's feed.
+    /// Note: make sure to sync the user's feed from the go-ssb log to the ViewDatabase after calling this.
     func publish(_ content: ContentCodable, completion: @escaping PublishCompletion) {
         var contentStr: String = ""
         do {

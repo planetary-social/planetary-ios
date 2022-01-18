@@ -103,8 +103,8 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
 
-    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
-        queue.async {
+    func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion) {
+        completionQueue.async {
             completion(MessageIdentifier.null, nil)
         }
     }

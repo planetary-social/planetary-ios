@@ -83,7 +83,7 @@ class DoneOnboardingStep: OnboardingStep {
             let semaphore = DispatchSemaphore(value: 0)
             let about = About(about: me, publicWebHosting: true)
             let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
-            Bots.current.publish(queue: queue, content: about) { (msg, error) in
+            Bots.current.publish(content: about, completionQueue: queue) { (msg, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 semaphore.signal()
