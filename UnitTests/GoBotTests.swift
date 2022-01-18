@@ -222,7 +222,7 @@ class GoBotTests: XCTestCase {
 //    }
 
     // MARK: abouts
-    func test100_postAboutSelf() {
+    func test051_postAboutSelf() {
         let ex = self.expectation(description: "\(#function)")
         let a = About(
             about: botTestsKey.identity,
@@ -237,6 +237,26 @@ class GoBotTests: XCTestCase {
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
+    }
+    
+    /// Tests the getPublishedLog function with a -1 index, verifying that it fetches all the user's published messages.
+    func test052_getPublishLogGivenNegativeIndex() throws {
+        let publishedMessages = try GoBotTests.shared.bot.getPublishedLog(after: -1)
+        XCTAssertEqual(publishedMessages.count, 27)
+        XCTAssertEqual(publishedMessages.last?.contentType, .about)
+    }
+    
+    /// Tests that the getPublishedLog function gives only messages after the given index.
+    func test053_getPublishLogGivenLastIndex() throws {
+        let publishedMessages = try GoBotTests.shared.bot.getPublishedLog(after: 25)
+        XCTAssertEqual(publishedMessages.count, 1)
+        XCTAssertEqual(publishedMessages.last?.contentType, .about)
+    }
+    
+    /// Tests that the getPublishedLog function returns nil when we pass an out-of-bounds index.
+    func test054_getPublishLogGivenIndexOOB() throws {
+        let publishedMessages = try GoBotTests.shared.bot.getPublishedLog(after: 99999999)
+        XCTAssertEqual(publishedMessages.count, 0)
     }
 
     func test101_ViewHasAboutSelf() {
@@ -443,7 +463,7 @@ class GoBotTests: XCTestCase {
     }
 
     func test131_recent_post_by_not_followed() {
-        let newRef = GoBotTests.shared.testingPublish(
+        let _ = GoBotTests.shared.testingPublish(
             as: "alice",
             content: Post(text: "hello, world!"))
 

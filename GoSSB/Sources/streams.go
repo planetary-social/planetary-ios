@@ -87,6 +87,136 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 	return C.CString(buf.String())
 }
 
+//export ssbStreamPublishedLog
+// This function should fetch all the currently logged in user's posts aka the "publishedLog"
+// The seq parameter should be the index of the last known message that the user published in the RootLog.
+// Pass -1 to get the entire log.
+func ssbStreamPublishedLog(afterSeq int64) *C.char {
+	// Please don't judge me too hard I don't know much Go - ml
+	var err error
+	defer func() {
+		if err != nil {
+			level.Error(log).Log("ssbStreamPublishLog", err)
+		}
+	}()
+
+	lock.Lock()
+	if sbot == nil {
+		err = ErrNotInitialized
+		lock.Unlock()
+		return nil
+	}
+	lock.Unlock()
+
+	uf, ok := sbot.GetMultiLog("userFeeds")
+	if !ok {
+		err = errors.Wrapf(err, "failed to get user feed")
+		return nil
+	}
+
+	publishedLog, err := uf.Get(sbot.KeyPair.Id.StoredAddr())
+	if err != nil {
+		err = errors.Wrap(err, "userFeeds: could not get log for current user")
+		return nil
+	}
+
+	start := time.Now()
+
+	w := &bytes.Buffer{}
+
+	// This creates a stream of indexes of messages the user has published.
+	src, err := publishedLog.Query(
+		margaret.SeqWrap(true))
+
+	if err != nil {
+		errors.Wrapf(err, "drainLog: failed to open query")
+		return nil
+	}
+
+	keyHasher := sha256.New()
+	i := 0
+	w.WriteString("[")
+	for {
+		v, err := src.Next(longCtx)
+		if err != nil {
+			if luigi.IsEOS(err) {
+				break
+			}
+			if margaret.IsErrNulled(errors.Cause(err)) {
+				continue
+			}
+			errors.Wrapf(err, "drainLog: failed to drain log msg:%d", i)
+			return nil
+		}
+
+		sw, ok := v.(margaret.SeqWrapper)
+		if !ok {
+			errors.Errorf("drainLog: want wrapper type got: %T", v)
+			return nil
+		}
+
+		wrappedVal := sw.Value()
+		indexOfMessageInRootLog, ok := wrappedVal.(margaret.BaseSeq)
+		if !ok {
+			errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
+			return nil
+		}
+
+		// Filter out messages before seq
+		// This is an inefficient way to do this. Really we should be adding a filter to the publishLog.Query, but I'm not sure how to convert an index
+		// in the RootLog to an index in the publishedLog
+		if indexOfMessageInRootLog.Seq() <= afterSeq {
+			continue
+		}
+
+		v, err = sbot.RootLog.Get(indexOfMessageInRootLog)
+		if err != nil {
+			errors.Wrapf(err, "drainLog: could not get message %i from RootLog", indexOfMessageInRootLog)
+			return nil
+		}
+
+		msg, ok := v.(ssb.Message)
+		if !ok {
+			errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
+			return nil
+		}
+
+		if i > 0 {
+			w.WriteString(",")
+		}
+
+		var kv struct {
+			ssb.KeyValueRaw
+			ReceiveLogSeq int64 // the sequence no of the log its stored in
+			HashedKey     string
+		}
+		kv.ReceiveLogSeq = indexOfMessageInRootLog.Seq()
+		kv.Key_ = msg.Key()
+		kv.Value = *msg.ValueContent()
+		kv.Timestamp = encodedTime.Millisecs(msg.Received())
+
+		keyHasher.Write([]byte(kv.Key_.Ref()))
+		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
+
+		if err := json.NewEncoder(w).Encode(kv); err != nil {
+			errors.Wrapf(err, "drainLog: failed to k:v map message %d", i)
+			return nil
+		}
+		keyHasher.Reset()
+
+		i++
+	}
+
+	w.WriteString("]")
+
+	if i > 0 {
+		durr := time.Since(start)
+		level.Info(log).Log("event", "fresh publishLog chunk", "msgs", i, "took", durr)
+	}
+
+	return C.CString(w.String())
+}
+
 func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, error) {
 	start := time.Now()
 
