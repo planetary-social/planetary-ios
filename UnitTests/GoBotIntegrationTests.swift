@@ -41,6 +41,10 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
+        let logoutExpectation = self.expectation(description: "logout")
+        sut.logout { _ in logoutExpectation.fulfill() }
+        waitForExpectations(timeout: 10, handler: nil)
+        sut.exit()
         try fm.removeItem(atPath: workingDirectory)
     }
 

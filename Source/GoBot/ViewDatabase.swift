@@ -509,21 +509,42 @@ class ViewDatabase {
 
     }
     
-    
-    /// Finds the largest sequence number in the messages table. The sequence number is the index of a message in
-    /// go-ssb's RootLog of all messages.
+    /// Finds the largest sequence number in the messages table.
+    ///
+    /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
     func largestSeqFromReceiveLog() throws -> Int64 {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
         let rxMaybe = Expression<Int64?>("rx_seq")
-        if let rx = try db.scalar(self.msgs.select(rxMaybe.max)) {
+        if let rx = try db.scalar(msgs.select(rxMaybe.max)) {
             return rx
         }
         
         return -1
     }
+    
+    
+    /// Finds the largest sequence number in the messages table, excluding posts that the user has published. This is
+    /// useful for comparing messages in the `ViewDatabase` to those in go-ssb's log. The user's posts are synced
+    /// immediately after publish so that's why we ignore them.
+    ///
+    /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
+    func largestSeqNotFromPublishedLog() throws -> Int64 {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let rxMaybe = Expression<Int64?>("rx_seq")
+        if let rx = try db.scalar(self.msgs.select(rxMaybe.max).where(msgs[colAuthorID] != currentUserID)) {
+            return rx
+        }
+        
+        return -1
+    }
+    
+    
     
     /// Finds the largest sequence number of all the posts the logged-in user has published. The sequence number is the
     /// index of a message in go-ssb's RootLog of all messages.
@@ -533,7 +554,7 @@ class ViewDatabase {
         }
         
         let rxMaybe = Expression<Int64?>("rx_seq")
-        if let rx = try db.scalar(self.msgs.select(rxMaybe.max).where(self.msgs[colAuthorID] == currentUserID)) {
+        if let rx = try db.scalar(msgs.select(rxMaybe.max).where(msgs[colAuthorID] == currentUserID)) {
             return rx
         }
         
@@ -757,7 +778,7 @@ class ViewDatabase {
 
         // update %fakemsg if feed is at the end of the receive log
         if let lastMsgRX = try allMessages.last?.get(colRXseq) {
-            let lastReceived = try self.largestSeqFromReceiveLog()
+            let lastReceived = try self.largestSeqNotFromPublishedLog()
             if lastMsgRX == lastReceived {
                 try self.updateFakeMsg(seq: lastMsgRX)
             }
@@ -779,7 +800,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let msgID = try self.msgID(of: message, make: false)
-        let lastRX = try self.largestSeqFromReceiveLog()
+        let lastRX = try self.largestSeqNotFromPublishedLog()
         let rxSeq = try db.scalar(self.msgs.select(colRXseq).filter(colMessageID == msgID))
         if lastRX == rxSeq {
             try self.updateFakeMsg(seq: rxSeq)
@@ -2299,7 +2320,7 @@ class ViewDatabase {
     }
     
     private func isOldMessage(msg: KeyValue) -> Bool {
-        let now = Date(timeIntervalSinceNow: 0)
+        let now = Date()
         let claimed = Date(timeIntervalSince1970: msg.value.timestamp/1000)
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate

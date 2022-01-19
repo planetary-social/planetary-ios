@@ -22,6 +22,14 @@ extension String {
 
 fileprivate let refreshDelay = DispatchTimeInterval.milliseconds(125)
 
+/// This class abstracts the SSB protocol implementation with support for SSB functions like publishing, replicating,
+/// fetching posts & threads, etc.
+///
+/// It has two major components: the GoSSB.xcframework which is a full SSB implementation written in the Go programming
+/// language. The `GoBot` communicates with the GoSSB library via FFI. The second component is a SQLite database which
+/// is used as a cache to speed up fetching of posts (ADR #4). The GoBot acts as a gatekeeper to these two components,
+/// presenting a simpler interface for read and write operations, while internally it manages several threads and
+/// synchronization between GoSSB's internal database and the SQLite layer.
 class GoBot: Bot {
 
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
@@ -569,7 +577,7 @@ class GoBot: Bot {
     func needsViewFill() throws -> (Int64, Int) {
         var lastRxSeq: Int64 = 0
         do {
-            lastRxSeq = try self.database.largestSeqFromReceiveLog()
+            lastRxSeq = try self.database.largestSeqNotFromPublishedLog()
         } catch {
             throw GoBotError.duringProcessing("view query failed", error)
         }

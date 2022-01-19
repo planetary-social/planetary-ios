@@ -734,6 +734,7 @@
 		C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */; };
 		C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */; };
 		C93A4B3C2798B711009F963D /* KeyValueWithReceivedSeq.json in Resources */ = {isa = PBXBuildFile; fileRef = C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */; };
+		C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */; };
 		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
@@ -1278,6 +1279,7 @@
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
 		C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueWithReceivedSeq.json; sourceTree = "<group>"; };
+		C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueFixtures.swift; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
@@ -2313,6 +2315,7 @@
 			children = (
 				C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */,
 				C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */,
+				C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */,
 			);
 			path = "Test Helpers";
 			sourceTree = "<group>";
@@ -2853,6 +2856,7 @@
 				53AD3FEC22776A4C005228F9 /* Date+millisecs.swift in Sources */,
 				23E8806022F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				53631EF623A9A93F009C6999 /* Blob+String.swift in Sources */,
+				C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */,
 				0A387FFC2474E65300777843 /* PhoneVerificationAPI.swift in Sources */,
 				53C2B1352295AC040018D0A8 /* AppConfiguration+Data.swift in Sources */,
 				53E29CCA22D29295008A2CB1 /* Array+SafeSubscript.swift in Sources */,

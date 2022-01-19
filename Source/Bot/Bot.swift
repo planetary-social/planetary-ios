@@ -35,7 +35,8 @@ enum RefreshLoad: Int, CaseIterable {
     case long = 100000
 }
 
-// Abstract interface to any SSB bot implementation.
+/// Abstract interface to any SSB bot implementation.
+/// - SeeAlso: `GoBot`
 protocol Bot {
 
     // MARK: Name
