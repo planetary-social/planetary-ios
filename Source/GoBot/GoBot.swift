@@ -24,9 +24,6 @@ fileprivate let refreshDelay = DispatchTimeInterval.milliseconds(125)
 
 class GoBot: Bot {
 
-
-    
-
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
     private let maxBlobBytes = 1024 * 1024 * 8
@@ -74,9 +71,17 @@ class GoBot: Bot {
     let database = ViewDatabase()
 
     init() {
-        self.utilityQueue = DispatchQueue.global(qos: .utility)
-        self.userInitiatedQueue = DispatchQueue.global(qos: .userInitiated)
-        self.bot = GoBotInternal(self.utilityQueue)
+        self.utilityQueue = DispatchQueue(label: "GoBot-utility",
+                                          qos: .utility,
+                                          attributes: .concurrent,
+                                          autoreleaseFrequency: .workItem,
+                                          target: nil)
+        self.userInitiatedQueue = DispatchQueue(label: "GoBot-userInitiated",
+                                                qos: .userInitiated,
+                                                attributes: .concurrent,
+                                                autoreleaseFrequency: .workItem,
+                                                target: nil)
+        self.bot = GoBotInternal(self.userInitiatedQueue)
     }
 
     // MARK: App Lifecycle
