@@ -576,6 +576,21 @@ class ViewDatabaseTests: XCTestCase {
     func testLargestSeqFromPublishedLog() throws {
         XCTAssertEqual(try vdb.largestSeqFromPublishedLog(), 77)
     }
+    
+    /// Verify that fillMessages deduplicates records.
+    func testFillMessagesGivenDuplicateInsert() throws {
+        // Arrange
+        let messageCount = try vdb.messageCount()
+        let data = self.data(for: "KeyValueWithReceivedSeq.json")
+        let testMessage = try JSONDecoder().decode(KeyValue.self, from: data)
+        
+        // Act
+        try vdb.fillMessages(msgs: [testMessage, testMessage])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), messageCount + 1)
+    }
 }
 
 class ViewDatabasePreloadTest: XCTestCase {

@@ -2600,6 +2600,19 @@ class ViewDatabase {
         }
         return nil
     }
+    
+    /// Returns the total number of messages in the database
+    func messageCount() throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            return try db.scalar(self.msgs.count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("messageCount failed", error))
+            return 0
+        }
+    }
 
     // MARK: insert helper
     
