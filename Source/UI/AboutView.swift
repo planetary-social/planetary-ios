@@ -185,15 +185,13 @@ class AboutView: KeyValueView {
 
         self.descriptionContainerZeroHeightConstraint?.isActive = bio.string.trimmed.isEmpty
         
-        //experiment hide the follow button til we know the status.
-        self.followButton.isHidden = true //identity.isCurrentUser
         self.editButton.isHidden = !identity.isCurrentUser
         self.editPhotoButton.isHidden = self.editButton.isHidden
 
         if identity.isCurrentUser {
             self.followingLabel.text = Text.thisIsYou.text
         } else {
-            createRelationship(identity: identity)
+            loadRelationship(identity: identity)
         }
         
         if let star = Environment.Communities.stars.first(where: { $0.feed == identity}) {
@@ -228,14 +226,17 @@ class AboutView: KeyValueView {
     var relationship: Relationship?
 
     // do this once, so we only have one notification
-    private func createRelationship(identity: Identity) {
+    private func loadRelationship(identity: Identity) {
         guard relationship == nil, let me = Bots.current.identity else { return }
-
+        
+        self.followButton.isHidden = true
+        
         let relationship = Relationship(from: me, to: identity)
 
         relationship.load {
             self.update(with: relationship)
             self.followButton.relationship = relationship
+            self.followButton.isHidden = false
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(relationshipDidChange(notification:)), name: relationship.notificationName, object: nil)
