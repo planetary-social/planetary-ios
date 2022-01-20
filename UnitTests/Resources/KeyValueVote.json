@@ -1,0 +1,20 @@
+{
+    "key": "%PiygZ5GyTLxWFFxgzx/SWKDXjiVYFQp53gw+ATl29AE=.sha256",
+    "value": {
+        "previous": "%lRAHs8Qct/vdMnngslIGc5ywgc/WiCeL9SkfPUJ/6rY=.sha256",
+        "author": "@3r4+IyB5NVl2in6QOZHIu9oSrZud+NuVgl2GX3x2WG8=.ed25519",
+        "sequence": 99,
+        "timestamp": 1501435003976,
+        "hash": "sha256",
+        "content": {
+            "type": "vote",
+            "vote": {
+                "link": "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.sha256",
+                "value": 1,
+                "expression": "Like"
+            }
+        },
+        "signature": "fN8GtvdIVWvYag2A2kbDyo67ttbVZpK7aiDIoOd1AI635xmPofS7eM9EMDLu2URsAB36nDN5P94j7nOUJPqyBw==.sig.ed25519"
+    },
+    "timestamp": 1546962791208.003
+}
