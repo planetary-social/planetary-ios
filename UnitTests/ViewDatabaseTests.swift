@@ -670,7 +670,7 @@ class ViewDatabasePreloadTest: XCTestCase {
         try feedURLs.forEach { url in
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
             let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
-            XCTAssertEqual(msgs.isEmpty, false) 
+            XCTAssertEqual(msgs.isEmpty, false)
         }
     }
 }
