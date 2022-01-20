@@ -10,7 +10,7 @@ import XCTest
 
 /// Tests to measure performance of `ViewDatabase`
 class ViewDatabasePerformanceTests: XCTestCase {
-    
+
     var dbURL: URL!
     var vdb = ViewDatabase()
     let testFeed = DatabaseFixture.bigFeed
@@ -19,7 +19,11 @@ class ViewDatabasePerformanceTests: XCTestCase {
         vdb.close()
         vdb = ViewDatabase()
         let dbDir = NSURL.fileURL(withPathComponents: [NSTemporaryDirectory(), "ViewDatabaseBenchmarkTests"])!
-        dbURL = NSURL.fileURL(withPathComponents: [NSTemporaryDirectory(), "ViewDatabaseBenchmarkTests", "schema-built\(ViewDatabase.schemaVersion).sqlite"])!
+        dbURL = NSURL.fileURL(withPathComponents:[
+            NSTemporaryDirectory(),
+            "ViewDatabaseBenchmarkTests",
+            "schema-built\(ViewDatabase.schemaVersion).sqlite"
+        ])!
         try? FileManager.default.removeItem(at: dbURL)
         try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
         let sqliteURL = Bundle(for: type(of: self)).url(forResource: "Feed_big", withExtension: "sqlite")!
@@ -27,16 +31,17 @@ class ViewDatabasePerformanceTests: XCTestCase {
         
         // open DB
         let dbDirPath = dbDir.absoluteString.replacingOccurrences(of: "file://", with: "")
-        try vdb.open(path: dbDirPath, user: testFeed.owner, maxAge: -60*60*24*30*48) // 48 month (so roughtly until 2023)
+        let maxAge: Double = -60*60*24*30*48  // 48 month (so roughtly until 2023)
+        try vdb.open(path: dbDirPath, user: testFeed.owner, maxAge: maxAge)
     }
     
-    override func tearDown() {
+    override func tearDownWithError() throws {
         vdb.close()
-        try! FileManager.default.removeItem(at: self.dbURL)
+        try FileManager.default.removeItem(at: self.dbURL)
     }
     
     func resetDB() throws {
-        tearDown()
+        try tearDown()
         try setUpWithError()
     }
 
@@ -91,12 +96,12 @@ class ViewDatabasePerformanceTests: XCTestCase {
     func testFeedForIdentity() {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             startMeasuring()
-            let _ = try! self.vdb.feed(for: testFeed.identities[0])
+            _ = try! self.vdb.feed(for: testFeed.identities[0])
             stopMeasuring()
             try! resetDB()
         }
     }
-    
+
     /// This test performs a lot of feed loading (reads) while another thread is writing to the SQLite database.
     /// This test is designed to stress the database and verify that we are optimizing for reading (see ADR #4).
     func testSimultanousReadsAndWrites() throws {
@@ -117,7 +122,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
                 let readFinished = self.expectation(description: "Read \(i) finished")
                 expectations.append(readFinished)
                 let reader = { [self] in
-                    let _ = try! self.vdb.feed(for: self.testFeed.identities[0])
+                    _ = try! self.vdb.feed(for: self.testFeed.identities[0])
                     print("Reader \(i) finished")
                     readFinished.fulfill()
                 }

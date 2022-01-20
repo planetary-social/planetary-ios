@@ -3,7 +3,7 @@ import XCTest
 
 
 class ViewDatabaseTests: XCTestCase {
-    
+
     var tmpURL :URL = URL(string: "unset")!
     var vdb = ViewDatabase()
     let expMsgCount = 81
@@ -725,7 +725,7 @@ class ViewDatabasePreloadTest: XCTestCase {
     /// they are not empty.
     func testPreloadedFeedsAreParseable() throws {
         let testingBundle = try XCTUnwrap(Bundle(for: type(of: self)))
-        let preloadURL = try XCTUnwrap(testingBundle.url(forResource:"Preload", withExtension:"bundle"))
+        let preloadURL = try XCTUnwrap(testingBundle.url(forResource: "Preload", withExtension: "bundle"))
         let preloadBundle = try XCTUnwrap(Bundle(url: preloadURL))
         let feedURLs = try XCTUnwrap(preloadBundle.urls(forResourcesWithExtension: "json", subdirectory: "Feeds"))
         XCTAssertEqual(feedURLs.count, 2)
