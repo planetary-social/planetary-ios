@@ -190,6 +190,7 @@ class AboutView: KeyValueView {
 
         if identity.isCurrentUser {
             self.followingLabel.text = Text.thisIsYou.text
+            self.followButton.isHidden = true
         } else {
             loadRelationship(identity: identity)
         }
@@ -235,8 +236,10 @@ class AboutView: KeyValueView {
 
         relationship.load {
             self.update(with: relationship)
-            self.followButton.relationship = relationship
             self.followButton.isHidden = false
+            // The follow button may re-hide itself when the relationship is set. i.e. if the relationship is
+            // to oneself.
+            self.followButton.relationship = relationship
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(relationshipDidChange(notification:)), name: relationship.notificationName, object: nil)
