@@ -1181,7 +1181,7 @@ class ViewDatabase {
         }
         
         var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
-            .order(colMessageID.desc)
+            .order(colClaimedAt.desc)
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
