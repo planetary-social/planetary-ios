@@ -34,6 +34,9 @@ xcuserdata/
 
 ## Go
 GoSSB/Sources/.goroot
+ 
+## Test artifacts
+UnitTests/Resources/Feed_big.sqlite-*
 
 ## Playgrounds
 timeline.xctimeline

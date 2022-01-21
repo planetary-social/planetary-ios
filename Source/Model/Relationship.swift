@@ -8,6 +8,8 @@
 
 import UIKit
 
+/// Represents a relationship between two identities. To query the relationship between `identity` and `other`
+/// instantiate a `Relationship` with them and call `load(reload:completion)`.
 class Relationship {
 
     let identity: Identity
@@ -64,7 +66,7 @@ class Relationship {
     }
 
     var notificationName: NSNotification.Name {
-        return NSNotification.Name(rawValue: "Relationship-\(other)")
+        return NSNotification.Name(rawValue: "Relationship-\(identity)-\(other)")
     }
 
     static var infoKey: String {

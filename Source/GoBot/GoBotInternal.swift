@@ -551,7 +551,8 @@ class GoBotInternal {
     
     // MARK: message streams
     
-    // aka createLogStream
+    /// This fetches posts from go-ssb's RootLog - the log containing all posts from all users. The Go code will filter
+    /// out some messages, such as those from blocked users and old messages.
     func getReceiveLog(startSeq: Int64, limit: Int) throws -> KeyValues {
         guard let rawBytes = ssbStreamRootLog(UInt64(startSeq), Int32(limit)) else {
             throw GoBotError.unexpectedFault("rxLog pre-processing error")
@@ -563,6 +564,21 @@ class GoBotInternal {
             return try decoder.decode([KeyValue].self, from: data)
         } catch {
             throw GoBotError.duringProcessing("rxLog json decoding error:", error)
+        }
+    }
+    
+    /// Fetches all the posts that the current user has published after the post with sequence number `startSeq`.
+    func getPublishedLog(after index: Int64) throws -> KeyValues {
+        guard let rawBytes = ssbStreamPublishedLog(index) else {
+            throw GoBotError.unexpectedFault("publishedLog pre-processing error")
+        }
+        let data = String(cString: rawBytes).data(using: .utf8)!
+        free(rawBytes)
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode([KeyValue].self, from: data)
+        } catch {
+            throw GoBotError.duringProcessing("publishedLog json decoding error:", error)
         }
     }
     
@@ -583,6 +599,9 @@ class GoBotInternal {
     }
     
     // MARK: Publish
+    
+    /// Publishes the given content to the logged-in user's feed.
+    /// Note: make sure to sync the user's feed from the go-ssb log to the ViewDatabase after calling this.
     func publish(_ content: ContentCodable, completion: @escaping PublishCompletion) {
         var contentStr: String = ""
         do {

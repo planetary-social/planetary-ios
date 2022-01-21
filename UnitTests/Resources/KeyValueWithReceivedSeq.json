@@ -1,0 +1,29 @@
+{
+    "key": "%DHPwEDFukvF1+yYikjnTaxqb+NR8a1GoBuJxbokbXg4=.sha256",
+    "value": {
+        "previous": "%QMXLqkiwWzPjH45YTlh7xI8i/MXyItz5RQdtp/dmzy4=.sha256",
+        "author": "@2RNGJafZtMHzd76gyvqH6EJiK7kBnXeak5mBWzoO/iU=.ed25519",
+        "sequence": 3186,
+        "timestamp": 1547718267798.001,
+        "hash": "sha256",
+        "signature": "Anox2bBthxEleU1S9EvDbNs6SHWscGsvP7jgYr0N1Wj/JQ4yXxTzFeAdTZ0vg0Es1WYto4gpJBag0exBFvhkAg==.sig.ed25519",
+        "content": {
+            "type": "post",
+            "root": "%tuQMMwur24Kkfn9CfQT1IomnkMwLJHM9Vp4umjgOdos=.sha256",
+            "branch": "%K/PXl6aYBBxhkUsOgJwhl+QWxkmv4nCTkaLrU7qqadY=.sha256",
+            "reply": {
+                "%tuQMMwur24Kkfn9CfQT1IomnkMwLJHM9Vp4umjgOdos=.sha256": "@2RNGJafZtMHzd76gyvqH6EJiK7kBnXeak5mBWzoO/iU=.ed25519",
+                "%K/PXl6aYBBxhkUsOgJwhl+QWxkmv4nCTkaLrU7qqadY=.sha256": "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519"
+            },
+            "channel": "mobile-ssb-quests",
+            "recps": null,
+            "text": "Hey [@christoph@verse](@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519)!\n\nNext week sounds great. I'd love to help out. I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client on it as well.",
+            "mentions": [{
+                "link": "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519",
+                "name": "christoph@verse"
+            }]
+        },
+    },
+    "timestamp": 23,
+    "ReceiveLogSeq": 9999999
+}

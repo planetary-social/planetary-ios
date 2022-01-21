@@ -445,7 +445,7 @@ class ViewDatabase {
             case .addresses: cnt = try db.scalar(self.addresses.count)
             case .authors:  cnt = try db.scalar(self.authors.count)
             case .messages: cnt = try db.scalar(self.msgs.count)
-            case .messagekeys: cnt = Int(try self.lastReceivedSeq())
+            case .messagekeys: cnt = Int(try self.largestSeqFromReceiveLog())
             case .abouts:   cnt = try db.scalar(self.abouts.count)
             case .contacts: cnt = try db.scalar(self.contacts.count)
             case .privates: cnt = try db.scalar(self.msgs.filter(colDecrypted==true).count)
@@ -509,15 +509,52 @@ class ViewDatabase {
 
     }
     
-    
-    
-    func lastReceivedSeq() throws -> Int64 {
+    /// Finds the largest sequence number in the messages table.
+    ///
+    /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
+    func largestSeqFromReceiveLog() throws -> Int64 {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
         let rxMaybe = Expression<Int64?>("rx_seq")
-        if let rx = try db.scalar(self.msgs.select(rxMaybe.max)) {
+        if let rx = try db.scalar(msgs.select(rxMaybe.max)) {
+            return rx
+        }
+        
+        return -1
+    }
+    
+    
+    /// Finds the largest sequence number in the messages table, excluding posts that the user has published. This is
+    /// useful for comparing messages in the `ViewDatabase` to those in go-ssb's log. The user's posts are synced
+    /// immediately after publish so that's why we ignore them.
+    ///
+    /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
+    func largestSeqNotFromPublishedLog() throws -> Int64 {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let rxMaybe = Expression<Int64?>("rx_seq")
+        if let rx = try db.scalar(self.msgs.select(rxMaybe.max).where(msgs[colAuthorID] != currentUserID)) {
+            return rx
+        }
+        
+        return -1
+    }
+    
+    
+    
+    /// Finds the largest sequence number of all the posts the logged-in user has published. The sequence number is the
+    /// index of a message in go-ssb's RootLog of all messages.
+    func largestSeqFromPublishedLog() throws -> Int64 {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let rxMaybe = Expression<Int64?>("rx_seq")
+        if let rx = try db.scalar(msgs.select(rxMaybe.max).where(msgs[colAuthorID] == currentUserID)) {
             return rx
         }
         
@@ -741,7 +778,7 @@ class ViewDatabase {
 
         // update %fakemsg if feed is at the end of the receive log
         if let lastMsgRX = try allMessages.last?.get(colRXseq) {
-            let lastReceived = try self.lastReceivedSeq()
+            let lastReceived = try self.largestSeqNotFromPublishedLog()
             if lastMsgRX == lastReceived {
                 try self.updateFakeMsg(seq: lastMsgRX)
             }
@@ -763,7 +800,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let msgID = try self.msgID(of: message, make: false)
-        let lastRX = try self.lastReceivedSeq()
+        let lastRX = try self.largestSeqNotFromPublishedLog()
         let rxSeq = try db.scalar(self.msgs.select(colRXseq).filter(colMessageID == msgID))
         if lastRX == rxSeq {
             try self.updateFakeMsg(seq: rxSeq)
@@ -1134,7 +1171,7 @@ class ViewDatabase {
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
         let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedPrefetchDataProxy(with: src as! KeyValueSource)
+        return try PaginatedPrefetchDataProxy(with: src!)
     }
 
     // MARK: recent
@@ -2283,7 +2320,7 @@ class ViewDatabase {
     }
     
     private func isOldMessage(msg: KeyValue) -> Bool {
-        let now = Date(timeIntervalSinceNow: 0)
+        let now = Date()
         let claimed = Date(timeIntervalSince1970: msg.value.timestamp/1000)
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
@@ -2307,8 +2344,7 @@ class ViewDatabase {
             var lastRxSeq: Int64 = -1
             
             let loopStart = Date().timeIntervalSince1970*1000
-            let msgCount = msgs.count
-            for (msgIndex, msg) in msgs.enumerated() {
+            for msg in msgs {
                 if let msgRxSeq = msg.receivedSeq {
                     lastRxSeq = msgRxSeq
                 } else {
@@ -2584,6 +2620,19 @@ class ViewDatabase {
             }
         }
         return nil
+    }
+    
+    /// Returns the total number of messages in the database
+    func messageCount() throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            return try db.scalar(self.msgs.count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("messageCount failed", error))
+            return 0
+        }
     }
 
     // MARK: insert helper

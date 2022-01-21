@@ -569,6 +569,68 @@ class ViewDatabaseTests: XCTestCase {
         }
     }
     
+    /// Verifies that `testLargestSeqFromReceiveLog()` excludes posts published by the current user.
+    func testLargestSeqFromReceiveLog() throws {
+        // Arrange
+        let testMessage = KeyValueFixtures.keyValue(author: fixture.owner)
+        let largestSeqInDbAtStart: Int64 = 80
+        
+        // Assert
+        XCTAssertEqual(try vdb.largestSeqFromReceiveLog(), largestSeqInDbAtStart)
+        
+        // Rearrange
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Reassert
+        XCTAssertEqual(try vdb.largestSeqFromReceiveLog(), testMessage.receivedSeq)
+
+    }
+    
+    /// Verifies that `largestSeqNotFromPublishedLog()` excludes posts published by the current user.
+    func testLargestSeqNotFromPublishedLog() throws {
+        // Arrange
+        let testMessage = KeyValueFixtures.keyValue(author: fixture.owner)
+        let largestSeqInDbAtStart: Int64 = 80
+
+        // Assert
+        XCTAssertEqual(try vdb.largestSeqNotFromPublishedLog(), largestSeqInDbAtStart)
+        
+        // Rearrange
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Reassert
+        XCTAssertEqual(try vdb.largestSeqNotFromPublishedLog(), largestSeqInDbAtStart)
+    }
+    
+    /// Verifies that `largestSeqFromPublishedLog()` only looks at posts published by the current user.
+    func testLargestSeqFromPublishedLog() throws {
+        // Arrange
+        let testMessage = KeyValueFixtures.keyValue(author: fixture.owner)
+        let largestPublishedSeqInDbAtStart: Int64 = 77
+        
+        // Assert
+        XCTAssertEqual(try vdb.largestSeqFromPublishedLog(), largestPublishedSeqInDbAtStart)
+        
+        // Rearrange
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Reassert
+        XCTAssertEqual(try vdb.largestSeqFromPublishedLog(), testMessage.receivedSeq)
+    }
+    
+    /// Verify that fillMessages deduplicates records.
+    func testFillMessagesGivenDuplicateInsert() throws {
+        // Arrange
+        let messageCount = try vdb.messageCount()
+        let testMessage = KeyValueFixtures.keyValueWithReceivedSeq
+        
+        // Act
+        try vdb.fillMessages(msgs: [testMessage, testMessage])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), messageCount + 1)
+    }
 }
 
 class ViewDatabasePreloadTest: XCTestCase {

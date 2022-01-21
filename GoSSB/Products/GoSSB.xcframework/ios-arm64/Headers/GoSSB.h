@@ -57,6 +57,7 @@ extern int ssbReplicateUpTo(void);
 
 extern char* ssbStreamRootLog(uint64_t seq, int limit);
 extern char* ssbStreamPrivateLog(uint64_t seq, int limit);
+extern char* ssbStreamPublishedLog(int64_t seq);
 
 // returns true if the connection was successfull
 extern bool ssbConnectPeers(uint32_t count);
