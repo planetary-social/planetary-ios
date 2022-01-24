@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Network
 
 struct Star {
     let invite: String
@@ -34,21 +35,14 @@ struct Star {
             self.feed = Identifier.null
             return
         }
-        do {
-            let match = regex.firstMatch(in: invite, options: [], range: range)!
-            let hostRange = Range(match.range(at: 1), in: invite)!
-            self.host = String(invite[hostRange])
-            let portRange = Range(match.range(at: 2), in: invite)!
-            self.port = UInt(invite[portRange])!
-            let feedRange = Range(match.range(at: 3), in: invite)!
-            self.feed = String(invite[feedRange])
-        }
-        catch {
-            self.host = ""
-            self.port = 0
-            self.feed = Identifier.null
-            return
-        }
+        
+        let match = regex.firstMatch(in: invite, options: [], range: range)!
+        let hostRange = Range(match.range(at: 1), in: invite)!
+        self.host = String(invite[hostRange])
+        let portRange = Range(match.range(at: 2), in: invite)!
+        self.port = UInt(invite[portRange])!
+        let feedRange = Range(match.range(at: 3), in: invite)!
+        self.feed = String(invite[feedRange])
     }
     
     static func isValid(invite: String) -> Bool {
@@ -65,6 +59,32 @@ struct Star {
     
     func toPub() -> Pub {
         return Pub(type: .pub, address: self.address)
+    }
+    
+    func testConnection(completion: @escaping (Bool) -> Void) {
+        guard let port = NWEndpoint.Port(rawValue: UInt16(port)) else {
+            completion(false)
+            return
+        }
+        
+        let tcpConnection = NWConnection(host: NWEndpoint.Host(host), port: port, using: NWParameters.tls)
+        tcpConnection.stateUpdateHandler = { state in
+            print(state)
+            switch state {
+            case .ready:
+                completion(true)
+                tcpConnection.cancel()
+            case .setup, .preparing, .cancelled:
+                return
+            case .failed, .waiting:
+                completion(false)
+                tcpConnection.cancel()
+            @unknown default:
+                completion(true)
+                tcpConnection.cancel()
+            }
+        }
+        tcpConnection.start(queue: DispatchQueue.global(qos: .utility))
     }
 }
 

@@ -37,7 +37,7 @@ class RedeemInviteOperation: AsynchronousOperation {
         }
         Log.debug("Redeeming invite to star \(self.star.feed)...")
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        Bots.current.inviteRedeem(queue: queue, token: self.star.invite) { [weak self, star, shouldFollow] (error) in
+        Bots.current.redeemInvitation(to: star, completionQueue: queue) { [weak self, star, shouldFollow] (error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {

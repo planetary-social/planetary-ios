@@ -94,7 +94,7 @@ protocol Bot {
 
     // Redeem uses the invite information and accepts it.
     // It adds the pub behind the address to the connection sheduling table and follows it.
-    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion)
+    func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion)
 
     // MARK: Publish
 
@@ -246,8 +246,8 @@ extension Bot {
         self.about(queue: .main, identity: identity, completion: completion)
     }
     
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        self.inviteRedeem(queue: .main, token: token, completion: completion)
+    func redeemInvitation(to star: Star, completion: @escaping ErrorCompletion) {
+        self.redeemInvitation(to: star, completionQueue: .main, completion: completion)
     }
     
     func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
