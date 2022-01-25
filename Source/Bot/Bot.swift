@@ -29,10 +29,10 @@ typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
 enum RefreshLoad: Int, CaseIterable {
-    case tiny = 500
-    case short = 15000
-    case medium = 45000
-    case long = 100000
+    case tiny = 500 // about 1 second on modern hardware
+    case short = 15000 // about 10 seconds
+    case medium = 45000 // about 30 seconds
+    case long = 100000 // about 60 seconds
 }
 
 /// Abstract interface to any SSB bot implementation.
