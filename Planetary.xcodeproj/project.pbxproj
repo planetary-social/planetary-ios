@@ -565,7 +565,7 @@
 		5396A6232244356600C57A4B /* Layout+ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6222244356600C57A4B /* Layout+ContentView.swift */; };
 		5396A6252244358A00C57A4B /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6242244358A00C57A4B /* UIView+Layout.swift */; };
 		5396A62722444A1500C57A4B /* BotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62622444A1500C57A4B /* BotViewController.swift */; };
-		5396A62922444D9D00C57A4B /* UIViewController+Confirm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62822444D9D00C57A4B /* UIViewController+Confirm.swift */; };
+		5396A62922444D9D00C57A4B /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62822444D9D00C57A4B /* UIViewController+Alert.swift */; };
 		5396A62B22445BE900C57A4B /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62A22445BE900C57A4B /* AppConfiguration.swift */; };
 		5396A62F2245A50300C57A4B /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62E2245A50300C57A4B /* LaunchViewController.swift */; };
 		5396A631224823DD00C57A4B /* FeatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A630224823DD00C57A4B /* FeatureViewController.swift */; };
@@ -1135,7 +1135,7 @@
 		5396A6222244356600C57A4B /* Layout+ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Layout+ContentView.swift"; sourceTree = "<group>"; };
 		5396A6242244358A00C57A4B /* UIView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		5396A62622444A1500C57A4B /* BotViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotViewController.swift; sourceTree = "<group>"; };
-		5396A62822444D9D00C57A4B /* UIViewController+Confirm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Confirm.swift"; sourceTree = "<group>"; };
+		5396A62822444D9D00C57A4B /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		5396A62A22445BE900C57A4B /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		5396A62E2245A50300C57A4B /* LaunchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
 		5396A630224823DD00C57A4B /* FeatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureViewController.swift; sourceTree = "<group>"; };
@@ -2105,7 +2105,7 @@
 				531749962370EED800F4C381 /* UIView+Superview.swift */,
 				531749942370EC7700F4C381 /* UIView+UIImage.swift */,
 				539208B3235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift */,
-				5396A62822444D9D00C57A4B /* UIViewController+Confirm.swift */,
+				5396A62822444D9D00C57A4B /* UIViewController+Alert.swift */,
 				53E341FF225000D4002BB5F4 /* UIViewController+Keyboard.swift */,
 				8D74DE002335601F003C284B /* UIViewController+NavigationItems.swift */,
 				535B6A092372360F008C248E /* UIViewController+TopViewController.swift */,
@@ -3434,7 +3434,7 @@
 				531EC40C230F6B9E001A25AD /* DebugPostsViewController.swift in Sources */,
 				0A65A62E244DEB65004C48C8 /* SupportService.swift in Sources */,
 				530F01AE22DEAE86007EBAE2 /* DoneOnboardingStep.swift in Sources */,
-				5396A62922444D9D00C57A4B /* UIViewController+Confirm.swift in Sources */,
+				5396A62922444D9D00C57A4B /* UIViewController+Alert.swift in Sources */,
 				8DE093DC234651E1009E505D /* FollowButton.swift in Sources */,
 				539246E022A9CCBF00D01EEC /* Person.swift in Sources */,
 				53C422B721C476B000A314AD /* DebugTableViewController.swift in Sources */,

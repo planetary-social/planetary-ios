@@ -242,6 +242,7 @@ extension Bot {
         self.reports(queue: .main, completion: completion)
     }
     
+    // TODO: add function to get about for a given feed
     func about(identity: Identity, completion:  @escaping AboutCompletion) {
         self.about(queue: .main, identity: identity, completion: completion)
     }

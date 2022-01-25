@@ -91,8 +91,6 @@ extension AppController {
                         self?.hideProgress()
                     }
                 case .failure(let error):
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
                     DispatchQueue.main.async {
                         self?.hideProgress()
                         self?.alert(error: error)

@@ -1,5 +1,5 @@
 //
-//  UIViewController+Confirm.swift
+//  UIViewController+Alert.swift
 //  FBTT
 //
 //  Created by Christoph on 3/21/19.

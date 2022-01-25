@@ -864,6 +864,7 @@ class ViewDatabase {
         return nil
     }
     
+    /// The `id` parameter appears to be treated as a message ID. This won't work if you pass in a feed/author ID.
     func getAbout(for id: Identifier) throws -> About? {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
