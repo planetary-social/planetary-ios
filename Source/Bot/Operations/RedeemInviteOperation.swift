@@ -41,8 +41,8 @@ class RedeemInviteOperation: AsynchronousOperation {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 // Construct a better error message before returning
-                Bots.current.about(identity: self.star.feed.id) { about, error in
-                    let starName = about?.nameOrIdentity ?? self.star.feed.id
+                Bots.current.about(identity: self.star.feed) { about, error in
+                    let starName = about?.name ?? self.star.feed
                     let localizedMessage = Text.Error.invitationRedemptionFailed.text(["starName": starName])
                     let userError = NSError(
                         domain: String(describing: type(of: self)),

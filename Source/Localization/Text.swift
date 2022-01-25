@@ -371,7 +371,7 @@ extension Text {
         case login = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device."
         case unexpected = "Something unexpected happened."
         case supportNotConfigured = "Support is not configured."
-        case invitationRedemptionFailed = "Could not join community: {{ starName }}. Please try again or contact support."
+        case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
     }
 }
 
