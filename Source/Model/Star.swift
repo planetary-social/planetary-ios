@@ -61,6 +61,8 @@ struct Star {
         return Pub(type: .pub, address: self.address)
     }
     
+    /// Checks whether we can establish a TCP connection to the star. This is only necessary to work around a bug
+    /// in go-ssb and can probably go away after #301 is solved.
     func testConnection(completion: @escaping (Bool) -> Void) {
         guard let port = NWEndpoint.Port(rawValue: UInt16(port)) else {
             completion(false)
