@@ -1,5 +1,5 @@
 //
-//  UIViewController+Confirm.swift
+//  UIViewController+Alert.swift
 //  FBTT
 //
 //  Created by Christoph on 3/21/19.
@@ -16,7 +16,7 @@ extension UIViewController {
                                            message: error.localizedDescription,
                                            preferredStyle: .alert)
         controller.view.tintColor = UIColor.tint.system
-        
+
         let cancelAction = UIAlertAction(title: Text.cancel.text,
                                          style: .cancel) { _ in
                                             controller.dismiss(animated: true)
@@ -30,10 +30,9 @@ extension UIViewController {
                title: String? = nil,
                message: String,
                cancelTitle: String = Text.cancel.text,
-               cancelClosure: (() -> Void)? = nil)
-    {
-        let cancel = UIAlertAction(title: cancelTitle, style: .cancel) {
-            _ in
+               cancelClosure: (() -> Void)? = nil) {
+        
+        let cancel = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
             cancelClosure?()
         }
 
@@ -47,17 +46,14 @@ extension UIViewController {
                  cancelTitle: String = Text.cancel.text,
                  cancelClosure: (() -> Void)? = nil,
                  confirmTitle: String = Text.ok.text,
-                 confirmClosure: @escaping (() -> Void))
-    {
+                 confirmClosure: @escaping (() -> Void)) {
+        
         let confirm = UIAlertAction(title: confirmTitle,
-                                    style: isDestructive ? .destructive : .default)
-        {
-            _ in
+                                    style: isDestructive ? .destructive : .default) { _ in
             confirmClosure()
         }
 
-        let cancel = UIAlertAction(title: cancelTitle, style: .cancel) {
-            _ in
+        let cancel = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
             cancelClosure?()
         }
 

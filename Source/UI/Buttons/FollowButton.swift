@@ -74,8 +74,6 @@ class FollowButton: PillButton {
                             self.onUpdate?(shouldFollow)
                         }
                     case .failure(let error):
-                        Log.optional(error)
-                        CrashReporting.shared.reportIfNeeded(error: error)
                         DispatchQueue.main.async {
                             AppController.shared.hideProgress()
                             self.isEnabled = true

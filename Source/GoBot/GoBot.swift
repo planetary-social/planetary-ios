@@ -423,31 +423,41 @@ class GoBot: Bot {
     
     // MARK: Invites
     
-    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
+    func redeemInvitation(to star: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion) {
         self.utilityQueue.async {
-            token.withGoString { goStr in
-                if ssbInviteAccept(goStr) {
-                    do {
-                        let star = Star(invite: token)
-                        let feed = star.feed
-                        let address = star.address.multipeer
-                        let redeemed = Date().timeIntervalSince1970 * 1000
-                        try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
-                    } catch {
-                        CrashReporting.shared.reportIfNeeded(error: error)
-                    }
-                    queue.async {
-                        completion(nil)
-                    }
-                } else {
-                    queue.async {
-                        completion(GoBotError.unexpectedFault("invite did not work. Maybe try again?"))
+                        
+            // Verify that we can connect to the pub, because go-ssb locks up while redeeming an invitation.
+            // https://github.com/planetary-social/planetary-ios/issues/272
+            star.testConnection { connectionSuccessful in
+                guard connectionSuccessful else {
+                    // TODO: make better error message
+                    completion(GoBotError.unexpectedFault("Could not connect to Star."))
+                    return
+                }
+                
+                star.invite.withGoString { goStr in
+                    if ssbInviteAccept(goStr) {
+                        do {
+                            let feed = star.feed
+                            let address = star.address.multipeer
+                            let redeemed = Date().timeIntervalSince1970 * 1000
+                            try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
+                        } catch {
+                            CrashReporting.shared.reportIfNeeded(error: error)
+                        }
+                        completionQueue.async {
+                            completion(nil)
+                        }
+                    } else {
+                        completionQueue.async {
+                            completion(GoBotError.unexpectedFault("invite did not work. Maybe try again?"))
+                        }
                     }
                 }
             }
         }
     }
-
+    
     // MARK: Publish
     private var lastPublishFireTime = DispatchTime.now()
     

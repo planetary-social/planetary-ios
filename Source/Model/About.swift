@@ -13,7 +13,7 @@ import Foundation
 /// Identifier.  A good example is the hashtag feature.  A Tag model is
 /// published to generate a Identifier, but without a name.  So, an About
 /// is published referencing the tag identifier and supplying a name.
-struct About: ContentCodable {
+struct About: ContentCodable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case about

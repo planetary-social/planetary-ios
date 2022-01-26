@@ -631,6 +631,21 @@ class ViewDatabaseTests: XCTestCase {
         // Assert
         XCTAssertEqual(try vdb.messageCount(), messageCount + 1)
     }
+    
+    func testGetAboutForIDGivenUserID() throws {
+        // Arrange
+        let id = try XCTUnwrap(fixture.identities.first) // userOne
+        let expectedAbout = About(about: id, name: "userOne", description: nil, imageLink: nil, publicWebHosting: nil)
+        
+        // Act
+        let about = try vdb.getAbout(for: id)
+        
+        // Assert
+        XCTAssertEqual(about?.identity, expectedAbout.identity)
+        XCTAssertEqual(about?.name, expectedAbout.name)
+        XCTAssertEqual(about?.description, expectedAbout.description)
+        XCTAssertEqual(about?.publicWebHosting, expectedAbout.publicWebHosting)
+    }
 }
 
 class ViewDatabasePreloadTest: XCTestCase {
