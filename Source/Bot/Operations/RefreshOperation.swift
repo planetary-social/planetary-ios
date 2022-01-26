@@ -10,11 +10,10 @@ import Foundation
 
 class RefreshOperation: AsynchronousOperation {
 
-    var refreshLoad: RefreshLoad = .short
+    private var refreshLoad: RefreshLoad = .medium
     private(set) var error: Error?
     
-    convenience init(refreshLoad: RefreshLoad) {
-        self.init()
+    init(refreshLoad: RefreshLoad) {
         self.refreshLoad = refreshLoad
     }
     
