@@ -3636,6 +3636,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TREAT_MISSING_BASELINES_AS_TEST_FAILURES = YES;
 			};
 			name = Debug;
 		};
@@ -3669,6 +3670,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TREAT_MISSING_BASELINES_AS_TEST_FAILURES = YES;
 			};
 			name = Release;
 		};
