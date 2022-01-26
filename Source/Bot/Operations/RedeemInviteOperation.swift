@@ -29,7 +29,7 @@ class RedeemInviteOperation: AsynchronousOperation {
     override func main() {
         Log.info("RedeemInviteOperation started.")
         
-        redeemInvitation() { result in
+        redeemInvitation { result in
             
             switch result {
             case .success:
@@ -41,7 +41,7 @@ class RedeemInviteOperation: AsynchronousOperation {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 // Construct a better error message before returning
-                Bots.current.about(identity: self.star.feed) { about, error in
+                Bots.current.about(identity: self.star.feed) { about, _ in
                     let starName = about?.name ?? self.star.feed
                     let localizedMessage = Text.Error.invitationRedemptionFailed.text(["starName": starName])
                     let userError = NSError(
@@ -57,7 +57,7 @@ class RedeemInviteOperation: AsynchronousOperation {
         }
     }
         
-    private func redeemInvitation(completion: @escaping (Result<Void, Error>) -> ()) {
+    private func redeemInvitation(completion: @escaping (Result<Void, Error>) -> Void) {
         
         let configuredIdentity = AppConfiguration.current?.identity
         let loggedInIdentity = Bots.current.identity

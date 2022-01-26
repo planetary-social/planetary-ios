@@ -50,7 +50,7 @@ class FakeBot: Bot {
         }
     }
     func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion) {
-        completionQueue.async{ completion(nil) }
+        completionQueue.async { completion(nil) }
     }
     
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
