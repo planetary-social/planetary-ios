@@ -220,6 +220,7 @@
 "Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
 "Error.unexpected" = "Something unexpected happened.";
 "Error.supportNotConfigured" = "Support is not configured.";
+"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";
