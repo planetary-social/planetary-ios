@@ -6,7 +6,7 @@
 Pods/CocoaPodsKeys
 
 ## Configuration files with secrets
-Source/Controller/Configs
+Source/Controller/Configs/*
 
 ## Build generated
 build/
