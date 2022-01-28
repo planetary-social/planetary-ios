@@ -85,9 +85,9 @@ class AboutsMenu: UIView {
 
     func show(animated: Bool = true) {
         guard self.isShown == false else { return }
-        //self.isShown = true
-        //self.tableView.contentOffset = .zero
-        //self.isHidden = false
+        self.isShown = true
+        self.tableView.contentOffset = .zero
+        self.isHidden = false
     }
 
     func hide(animated: Bool = true) {
