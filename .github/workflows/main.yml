@@ -26,6 +26,6 @@ jobs:
         PostHogAPIKey: nil
         PostHogHost: nil
     - name: Build
-      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.0" | xcpretty
+      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty
     - name: Test
-      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.0" | xcpretty
+      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty

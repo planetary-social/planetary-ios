@@ -509,7 +509,7 @@ class GoBotOrderedTests: XCTestCase {
     
     func test135_recent_paginated_feed() {
         // publish more so we have some to work with
-        for i in 0...100 {
+        for i in 0...200 {
             let data = try! Post(text: "lots of spam posts \(i)").encodeToData()
             _ = GoBotOrderedTests.shared.testingPublish(as: "alice", raw: data)
         }
@@ -526,26 +526,26 @@ class GoBotOrderedTests: XCTestCase {
         }
         self.wait(for: [ex1], timeout: 10)
 
-        // check we have the start (default is 2 messages pre-fetched)
-        XCTAssertEqual(proxy.count, 102)
+        // check we have the start (default is 100 messages pre-fetched)
+        XCTAssertEqual(proxy.count, 202)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
         XCTAssertNotNil(proxy.keyValueBy(index: 1))
-        XCTAssertNil(proxy.keyValueBy(index: 2))
+        XCTAssertNil(proxy.keyValueBy(index: 100))
 
         // fetch more
-        proxy.prefetchUpTo(index: 50)
+        proxy.prefetchUpTo(index: 110)
         sleep(1)
-        XCTAssertNotNil(proxy.keyValueBy(index: 23))
-        XCTAssertNotNil(proxy.keyValueBy(index: 50))
-        XCTAssertNil(proxy.keyValueBy(index: 51))
+        XCTAssertNotNil(proxy.keyValueBy(index: 105))
+        XCTAssertNotNil(proxy.keyValueBy(index: 110))
+        XCTAssertNil(proxy.keyValueBy(index: 111))
         
         // simulate bunch of calls (de-bounce)
-        proxy.prefetchUpTo(index: 60)
-        proxy.prefetchUpTo(index: 70)
-        proxy.prefetchUpTo(index: 80)
+        proxy.prefetchUpTo(index: 160)
+        proxy.prefetchUpTo(index: 170)
+        proxy.prefetchUpTo(index: 180)
         sleep(1)
-        XCTAssertNotNil(proxy.keyValueBy(index: 80))
-        XCTAssertNil(proxy.keyValueBy(index: 81))
+        XCTAssertNotNil(proxy.keyValueBy(index: 180))
+        XCTAssertNil(proxy.keyValueBy(index: 181))
     }
     
     // fire another prefetch while one is in-flight and check for duplicates
@@ -573,8 +573,8 @@ class GoBotOrderedTests: XCTestCase {
         // check we have the start (default is 2 messages pre-fetched)
         XCTAssertEqual(proxy.count, 100)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
-        XCTAssertNotNil(proxy.keyValueBy(index: 1))
-        XCTAssertNil(proxy.keyValueBy(index: 2))
+        XCTAssertNotNil(proxy.keyValueBy(index: 99))
+        XCTAssertNil(proxy.keyValueBy(index: 100))
         
         // run two prefetches right after another
         proxy.prefetchUpTo(index: 40)
