@@ -2340,157 +2340,155 @@ class ViewDatabase {
         
         var reports = [Report]()
         var skipped: UInt = 0
-        try db.transaction { // also batches writes! helps a lot with perf
-            var lastRxSeq: Int64 = -1
+        var lastRxSeq: Int64 = -1
+        
+        let loopStart = Date().timeIntervalSince1970*1000
+        for msg in msgs {
+            if let msgRxSeq = msg.receivedSeq {
+                lastRxSeq = msgRxSeq
+            } else {
+                if !pms {
+                    throw GoBotError.unexpectedFault("ViewDB: no receive sequence number on message")
+                }
+            }
             
-            let loopStart = Date().timeIntervalSince1970*1000
-            for msg in msgs {
-                if let msgRxSeq = msg.receivedSeq {
-                    lastRxSeq = msgRxSeq
-                } else {
-                    if !pms {
-                        throw GoBotError.unexpectedFault("ViewDB: no receive sequence number on message")
-                    }
-                }
-                
-                /* This is the don't put older than 6 months in the db. */
-                if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about)  {
-                    // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
-                    skipped += 1
-                    print("Skipped(\(msg.value.content.type) \(msg.key)%)")
-                    Analytics.shared.track(event: .did,
-                               element: .bot,
-                               name: AnalyticsEnums.Name.sync.rawValue,
-                               params: ["Skipped": msg.key, "Reason": "Old Message"])
-                    continue
-                }
-                
-                
-                if !pms && !msg.value.content.isValid {
-                    // cant ignore PMs right now. they need to be there to be replaced with unboxed content.
-                    #if SSB_MSGDEBUG
-                    let cnt = (unsupported[msg.value.content.typeString] ?? 0) + 1
-                    unsupported[msg.value.content.typeString] = cnt
-                    #endif
-                    skipped += 1
-                    continue
-                }
-
-                /* don't hammer progress with every message
-                if msgIndex%100 == 0 {
-                    let done = Float64(msgIndex)/Float64(msgCount)
-                    let prog = Notification.didUpdateDatabaseProgress(perc: done,
-                                                                      status: "Processing new messages")
-                    NotificationCenter.default.post(prog)
-                }*/
-
-                // make sure we dont have messages from the future
-                // and force them to the _received_ timestamp so that they are not pinned to the top of the views
-                var claimed = msg.value.timestamp
-                if claimed > loopStart {
-                    claimed = msg.timestamp
-                }
-
-                // can only insert PMs when the unencrypted was inserted before
-                let msgKeyID = try self.msgID(of: msg.key, make: !pms)
-                let authorID = try self.authorID(of: msg.value.author, make: true)
-                
-                // insert core message
-                if pms {
-                    let pm = self.msgs
-                        .filter(colMessageID == msgKeyID)
-                        .filter(colAuthorID == authorID)
-                        .filter(colSequence == msg.value.sequence)
-                    try db.run(pm.update(
-                        colDecrypted <- true,
+            /* This is the don't put older than 6 months in the db. */
+            if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about)  {
+                // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
+                skipped += 1
+                print("Skipped(\(msg.value.content.type) \(msg.key)%)")
+                Analytics.shared.track(event: .did,
+                                       element: .bot,
+                                       name: AnalyticsEnums.Name.sync.rawValue,
+                                       params: ["Skipped": msg.key, "Reason": "Old Message"])
+                continue
+            }
+            
+            
+            if !pms && !msg.value.content.isValid {
+                // cant ignore PMs right now. they need to be there to be replaced with unboxed content.
+#if SSB_MSGDEBUG
+                let cnt = (unsupported[msg.value.content.typeString] ?? 0) + 1
+                unsupported[msg.value.content.typeString] = cnt
+#endif
+                skipped += 1
+                continue
+            }
+            
+            /* don't hammer progress with every message
+             if msgIndex%100 == 0 {
+             let done = Float64(msgIndex)/Float64(msgCount)
+             let prog = Notification.didUpdateDatabaseProgress(perc: done,
+             status: "Processing new messages")
+             NotificationCenter.default.post(prog)
+             }*/
+            
+            // make sure we dont have messages from the future
+            // and force them to the _received_ timestamp so that they are not pinned to the top of the views
+            var claimed = msg.value.timestamp
+            if claimed > loopStart {
+                claimed = msg.timestamp
+            }
+            
+            // can only insert PMs when the unencrypted was inserted before
+            let msgKeyID = try self.msgID(of: msg.key, make: !pms)
+            let authorID = try self.authorID(of: msg.value.author, make: true)
+            
+            // insert core message
+            if pms {
+                let pm = self.msgs
+                    .filter(colMessageID == msgKeyID)
+                    .filter(colAuthorID == authorID)
+                    .filter(colSequence == msg.value.sequence)
+                try db.run(pm.update(
+                    colDecrypted <- true,
+                    colMsgType <- msg.value.content.type.rawValue,
+                    colReceivedAt <- msg.timestamp,
+                    colClaimedAt <- claimed
+                ))
+            } else {
+                do {
+                    try db.run(self.msgs.insert(
+                        colRXseq <- lastRxSeq,
+                        colMessageID <- msgKeyID,
+                        colAuthorID <- authorID,
+                        colSequence <- msg.value.sequence,
                         colMsgType <- msg.value.content.type.rawValue,
                         colReceivedAt <- msg.timestamp,
                         colClaimedAt <- claimed
                     ))
-                } else {
-                    do {
-                        try db.run(self.msgs.insert(
-                            colRXseq <- lastRxSeq,
-                            colMessageID <- msgKeyID,
-                            colAuthorID <- authorID,
-                            colSequence <- msg.value.sequence,
-                            colMsgType <- msg.value.content.type.rawValue,
-                            colReceivedAt <- msg.timestamp,
-                            colClaimedAt <- claimed
-                        ))
-                    } catch Result.error(let errMsg, let errCode, _) {
-                        // this is _just_ hear because of a fetch-duplication bug in go-ssb
-                        // the constraints on the table are for uniquness:
-                        // 1) message key/id
-                        // 2) (author,sequence no)
-                        // while (1) always means duplicate message (2) can also mean fork
-                        // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
-                        if errCode == SQLITE_CONSTRAINT {
-                            continue // ignore this message and go to the next
-                        }
-                        throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
-                    } catch {
-                        throw error
+                } catch Result.error(let errMsg, let errCode, _) {
+                    // this is _just_ hear because of a fetch-duplication bug in go-ssb
+                    // the constraints on the table are for uniquness:
+                    // 1) message key/id
+                    // 2) (author,sequence no)
+                    // while (1) always means duplicate message (2) can also mean fork
+                    // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
+                    if errCode == SQLITE_CONSTRAINT {
+                        continue // ignore this message and go to the next
                     }
-                }
-          
-                do { // identifies which message failed
-                    switch msg.value.content.type { // insert individual message types
-
-                    case .address:
-                         try self.fillAddress(msgID: msgKeyID, msg: msg)
-                        
-                    case .about:
-                        try self.fillAbout(msgID: msgKeyID, msg: msg)
-                        
-                    case .contact:
-                        try self.fillContact(msgID: msgKeyID, msg: msg)
-
-                    case .dropContentRequest:
-                        try self.checkAndExecuteDCR(msgID: msgKeyID, msg: msg)
-
-                    case .pub:
-                         try self.fillPub(msgID: msgKeyID, msg: msg)
-
-                    case .post:
-                        try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)
-                
-                    case .vote:
-                        try self.fillVote(msgID: msgKeyID, msg: msg, pms: pms)
-
-                    case .unknown: // ignore encrypted
-                        continue
-
-                    case .unsupported:
-                        // counted above
-                        continue
-                    }
+                    throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
                 } catch {
-                    throw GoBotError.duringProcessing("fillMessages threw on msg(\(msg.key)", error)
+                    throw error
                 }
-                
-                do {
-                    let reportsFilled = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
-                    reports.append(contentsOf: reportsFilled)
-                } catch {
-                    // Don't throw an error here, because we can live without a report
-                    // Just send it to the Crash Reporting service
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                }
-            } // for msgs
-            
-            reports.forEach { report in
-                NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
-                                                object: report.authorIdentity,
-                                                userInfo: ["report": report])
             }
             
-            // if we skipped all messages because they are unsupported,
-            // update %fakemsg to that sequence so that we don't iterate over them again
-            if skipped > 0 && skipped == msgs.count && lastRxSeq > 0 {
-                try self.updateFakeMsg(seq: lastRxSeq)
+            do { // identifies which message failed
+                switch msg.value.content.type { // insert individual message types
+                    
+                case .address:
+                    try self.fillAddress(msgID: msgKeyID, msg: msg)
+                    
+                case .about:
+                    try self.fillAbout(msgID: msgKeyID, msg: msg)
+                    
+                case .contact:
+                    try self.fillContact(msgID: msgKeyID, msg: msg)
+                    
+                case .dropContentRequest:
+                    try self.checkAndExecuteDCR(msgID: msgKeyID, msg: msg)
+                    
+                case .pub:
+                    try self.fillPub(msgID: msgKeyID, msg: msg)
+                    
+                case .post:
+                    try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)
+                    
+                case .vote:
+                    try self.fillVote(msgID: msgKeyID, msg: msg, pms: pms)
+                    
+                case .unknown: // ignore encrypted
+                    continue
+                    
+                case .unsupported:
+                    // counted above
+                    continue
+                }
+            } catch {
+                throw GoBotError.duringProcessing("fillMessages threw on msg(\(msg.key)", error)
             }
-        } // transact
+            
+            do {
+                let reportsFilled = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
+                reports.append(contentsOf: reportsFilled)
+            } catch {
+                // Don't throw an error here, because we can live without a report
+                // Just send it to the Crash Reporting service
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
+        } // for msgs
+        
+        reports.forEach { report in
+            NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
+                                            object: report.authorIdentity,
+                                            userInfo: ["report": report])
+        }
+        
+        // if we skipped all messages because they are unsupported,
+        // update %fakemsg to that sequence so that we don't iterate over them again
+        if skipped > 0 && skipped == msgs.count && lastRxSeq > 0 {
+            try self.updateFakeMsg(seq: lastRxSeq)
+        }
 
         // debug statistics about unhandled message types
         #if SSB_MSGDEBUG
