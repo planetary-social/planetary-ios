@@ -73,7 +73,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     init(with src: KeyValueSource) throws {
         self.source = src
         self.count = self.source.total
-        self.msgs = try self.source.retreive(limit: 2, offset: 0)
+        self.msgs = try self.source.retreive(limit: 100, offset: 0)
         self.lastPrefetch = self.msgs.count
     }
 
@@ -89,6 +89,9 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
         if index > self.msgs.count-1 {
             self.inflightSema.wait()
             var forIdx = self.inflight[index] ?? []
+            if forIdx.isEmpty {
+                prefetchUpTo(index: index)
+            }
             forIdx.append(late)
             self.inflight[index] = forIdx // ?? needed?
             self.inflightSema.signal()

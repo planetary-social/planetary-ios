@@ -41,7 +41,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func resetDB() throws {
-        try tearDown()
+        try tearDownWithError()
         try setUpWithError()
     }
 
@@ -102,49 +102,53 @@ class ViewDatabasePerformanceTests: XCTestCase {
         }
     }
 
-    /// This test performs a lot of feed loading (reads) while another thread is writing to the SQLite database.
-    /// This test is designed to stress the database and verify that we are optimizing for reading (see ADR #4).
+    /// This test performs a lot of feed loading (reads) while another thread is writing to the SQLite database. The
+    /// reader threads are expected to finish before the long write does, verifying that we are optimizing for
+    /// reading (see ADR #4).
     func testSimultanousReadsAndWrites() throws {
         let data = self.data(for: DatabaseFixture.bigFeed.fileName)
         let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
         
         measure {
-
+            var writerIsFinished = false
             let writesFinished = self.expectation(description: "Writes finished")
-            var expectations = [writesFinished]
             let writer = {
                 try! self.vdb.fillMessages(msgs: msgs)
+                
+                // Synchronize the writerIsFinished property because readers may be using it from other threads.
+                objc_sync_enter(self)
+                writerIsFinished = true
+                objc_sync_exit(self)
                 writesFinished.fulfill()
             }
             
             var readers = [() -> Void]()
             for i in 0..<100 {
                 let readFinished = self.expectation(description: "Read \(i) finished")
-                expectations.append(readFinished)
                 let reader = { [self] in
                     _ = try! self.vdb.feed(for: self.testFeed.identities[0])
-                    print("Reader \(i) finished")
+                    
+                    // Verify that we weren't blocked by the writer.
+                    objc_sync_enter(self)
+                    XCTAssertEqual(writerIsFinished, false)
+                    objc_sync_exit(self)
                     readFinished.fulfill()
                 }
                 
                 readers.append(reader)
             }
             
-            let writeQueue = DispatchQueue(label: "write")
-
-            writeQueue.async {
+            DispatchQueue(label: "write").async {
                 writer()
             }
             
             for (i, reader) in readers.enumerated() {
-                let readQueue = DispatchQueue(label: "readQueue \(i)")
-
-                readQueue.async {
+                DispatchQueue(label: "readQueue \(i)").async {
                     reader()
                 }
             }
             
-            self.wait(for: expectations, timeout: 10)
+            waitForExpectations(timeout: 10)
         }
     }
 }
