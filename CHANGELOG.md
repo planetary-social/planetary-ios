@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a case where the app could become unresponsive while trying to redeem an invitation to a pub. #302
 - Fixed an issue where the SQLite database could get significantly behind the go-ssb log, resulting in new data not being shown in the UI. #304
 - Fixed an issue where placeholder cells would be shown after posts had finished loading. #316  
+- Fixed a bug where the mentions autocomplete drawer would not go away. #320
 
 ## [1.0.17] = 2021-01-24
 ## Fixed
