@@ -7,8 +7,6 @@ Check our website [planetary.social](https://planetary.social/) for more info!
 
 ## Developer installation
 
-_Only tested on Intel Macs_
-
 ### Setup
 
 Requirements: [Homebrew](https://brew.sh/), and Xcode.
