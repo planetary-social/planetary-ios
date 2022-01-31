@@ -13,10 +13,6 @@ _Only tested on Intel Macs_
 
 Requirements: [Homebrew](https://brew.sh/), and Xcode.
 
-The repo does have some Carthage and Cocoapod dependencies, however all except one have been versioned and checked into the repo.
-
-While this project uses [Go](https://golang.org) in parts, the build and unit test target have automated install scripts for the specific versions. See _Go Development_ for more.
-
 1. Install `rbenv` and add it to your shell: 
 
 ```
@@ -35,15 +31,17 @@ $ rbenv install 2.6.6
 $ gem install cocoapods cocoapods-keys
 ```
 
-4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
+4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them. The app is still functional without these keys, it just won't submit support tickets, analytics, or crash reports to us.
 
 ```
 $ pod install
 ```
 
+5. You should now be able to Build and Run in Xcode.
+
 ### Running
 
-The app can run completely in the iOS simulator. If you want to run it on a device, your Apple ID must be part of the Verse Apple Developer team. Contact contact@verse.app if you need access.
+The app is fully functional in the iOS simulator. If you want to run it on a device you will need to change the Bundle Identifier and Code Signing settings to use your personal team.
 
 ## Contributing
 
