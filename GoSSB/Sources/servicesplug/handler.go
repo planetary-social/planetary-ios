@@ -8,7 +8,7 @@ import (
 
 	"go.cryptoscope.co/ssb"
 
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
 )
 
 type Token struct {
@@ -36,17 +36,14 @@ func (p *Plugin) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 		return
 	}
 
-	if _, ok := p.trusted[refAsArray(*remoteRef)]; !ok {
+	if _, ok := p.trusted[refAsArray(remoteRef)]; !ok {
 		return
 	}
 
-	v, err := e.Async(ctx, Token{}, muxrpc.Method{"planetary", "getToken"})
+	var tok Token
+
+	err = e.Async(ctx, &tok, muxrpc.TypeBinary, muxrpc.Method{"planetary", "getToken"})
 	if err != nil {
-		return
-	}
-
-	tok, ok := v.(Token)
-	if !ok {
 		return
 	}
 
@@ -54,4 +51,8 @@ func (p *Plugin) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {
 	p.notify(tok)
 }
 
-func (p *Plugin) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc.Endpoint) {}
+func (p *Plugin) HandleCall(ctx context.Context, req *muxrpc.Request) {}
+
+func (p Plugin) Handled(method muxrpc.Method) bool {
+	return true
+}

@@ -1,4 +1,5 @@
-// +build linux freebsd
+// +build !darwin
+// +build !windows
 
 package ssb
 

@@ -4,14 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	refs "go.mindeco.de/ssb-refs"
 	"math"
 	"runtime"
+	"strings"
 	"time"
-    "strings"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/invite"
 	"go.cryptoscope.co/ssb/repo"
 	mksbot "go.cryptoscope.co/ssb/sbot"
@@ -258,7 +258,7 @@ func ssbFeedReplicate(ref string, yes bool) {
 		}
 	}()
 
-	fr, err := ssb.ParseFeedRef(ref)
+	fr, err := refs.ParseFeedRef(ref)
 	if err != nil {
 		err = errors.Wrapf(err, "replicate: invalid feed reference")
 		return
@@ -287,7 +287,7 @@ func ssbFeedBlock(ref string, yes bool) {
 		}
 	}()
 
-	fr, err := ssb.ParseFeedRef(ref)
+	fr, err := refs.ParseFeedRef(ref)
 	if err != nil {
 		err = errors.Wrapf(err, "block: invalid feed reference")
 		return
@@ -316,7 +316,7 @@ func ssbNullContent(author string, sequence uint64) int {
 		return -1
 	}
 
-	ref, err := ssb.ParseFeedRef(author)
+	ref, err := refs.ParseFeedRef(author)
 	if err != nil {
 		level.Error(log).Log("event", "null content failed", "err", err)
 		return -1
@@ -344,7 +344,7 @@ func ssbNullFeed(ref string) int {
 		}
 	}()
 
-	fr, err := ssb.ParseFeedRef(ref)
+	fr, err := refs.ParseFeedRef(ref)
 	if err != nil {
 		err = errors.Wrapf(err, "NullFeed: invalid feed reference")
 		return -1
@@ -412,29 +412,29 @@ func ssbInviteAccept(token string) bool {
 	}
 
 	ctx, cancel := context.WithCancel(longCtx)
-	err = invite.Redeem(ctx, tok, sbot.KeyPair.Id)
+	err = invite.Redeem(ctx, tok, sbot.KeyPair.ID())
 	defer cancel()
-    
-    if err == nil {
-        return true
-    }
-    
-    // don't throw error if pub is already following user
-    if strings.Contains(err.Error(), "already following") {
-        return true
-    }
-    
-    // don't throw error if token was already redeemed by user
-    if strings.Contains(err.Error(), "method:invite,use is not in list of allowed methods") {
-        return true
-    }
-    
-    retErr = err
-    return false
+
+	if err == nil {
+		return true
+	}
+
+	// don't throw error if pub is already following user
+	if strings.Contains(err.Error(), "already following") {
+		return true
+	}
+
+	// don't throw error if token was already redeemed by user
+	if strings.Contains(err.Error(), "method:invite,use is not in list of allowed methods") {
+		return true
+	}
+
+	retErr = err
+	return false
 }
 
 // todo: add make:bool parameter
-func getAuthorID(ref ssb.FeedRef) (int64, error) {
+func getAuthorID(ref refs.FeedRef) (int64, error) {
 	strRef := ref.Ref()
 
 	var peerID int64

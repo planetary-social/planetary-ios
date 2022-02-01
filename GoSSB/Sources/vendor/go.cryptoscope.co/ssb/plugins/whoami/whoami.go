@@ -6,9 +6,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cryptix/go/logging"
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
+	"go.mindeco.de/logging"
+	refs "go.mindeco.de/ssb-refs"
 
 	"go.cryptoscope.co/ssb"
 )
@@ -26,7 +26,7 @@ func checkAndLog(log logging.Interface, err error) {
 	}
 }
 
-func New(log logging.Interface, id *ssb.FeedRef) ssb.Plugin {
+func New(log logging.Interface, id refs.FeedRef) ssb.Plugin {
 	return plugin{handler{
 		log: log,
 		id:  id,
@@ -49,20 +49,14 @@ func (plugin) WrapEndpoint(edp muxrpc.Endpoint) interface{} {
 
 type handler struct {
 	log logging.Interface
-	id  *ssb.FeedRef
+	id  refs.FeedRef
 }
+
+func (handler) Handled(m muxrpc.Method) bool { return m.String() == "whoami" }
 
 func (handler) HandleConnect(ctx context.Context, edp muxrpc.Endpoint) {}
 
-func (h handler) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc.Endpoint) {
-	// TODO: push manifest check into muxrpc
-	if req.Type == "" {
-		req.Type = "async"
-	}
-	if req.Method.String() != "whoami" {
-		req.CloseWithError(fmt.Errorf("wrong method"))
-		return
-	}
+func (h handler) HandleCall(ctx context.Context, req *muxrpc.Request) {
 	type ret struct {
 		ID string `json:"id"`
 	}
@@ -75,17 +69,15 @@ type endpoint struct {
 	edp muxrpc.Endpoint
 }
 
-func (edp endpoint) WhoAmI(ctx context.Context) (ssb.FeedRef, error) {
-	type respType struct {
-		ID ssb.FeedRef `json:"id"`
+func (edp endpoint) WhoAmI(ctx context.Context) (refs.FeedRef, error) {
+	var resp struct {
+		ID refs.FeedRef `json:"id"`
 	}
 
-	var tResp respType
-
-	resp, err := edp.edp.Async(ctx, tResp, method)
+	err := edp.edp.Async(ctx, &resp, muxrpc.TypeJSON, method)
 	if err != nil {
-		return ssb.FeedRef{}, errors.Wrap(err, "error making async call")
+		return refs.FeedRef{}, fmt.Errorf("error making async call: %w", err)
 	}
 
-	return resp.(respType).ID, nil
+	return resp.ID, nil
 }

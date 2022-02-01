@@ -4,19 +4,18 @@ package margaret
 
 // SeqWrapper wraps a value to attach a sequence number to it.
 type SeqWrapper interface {
-	// Seq returns the sequence number of the item.
-	Seq() Seq
+	Seqer
 
 	// Value returns the item itself.
 	Value() interface{}
 }
 
 type seqWrapper struct {
-	seq Seq
+	seq int64
 	v   interface{}
 }
 
-func (sw *seqWrapper) Seq() Seq {
+func (sw *seqWrapper) Seq() int64 {
 	return sw.seq
 }
 
@@ -25,7 +24,7 @@ func (sw *seqWrapper) Value() interface{} {
 }
 
 // WrapWithSeq wraps the value v to attach a sequence number to it.
-func WrapWithSeq(v interface{}, seq Seq) SeqWrapper {
+func WrapWithSeq(v interface{}, seq int64) SeqWrapper {
 	return &seqWrapper{
 		seq: seq,
 		v:   v,

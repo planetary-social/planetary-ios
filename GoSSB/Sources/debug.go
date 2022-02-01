@@ -3,14 +3,14 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"go.cryptoscope.co/ssb/multilogs"
+	refs "go.mindeco.de/ssb-refs"
 	"net"
 	"syscall"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/netwrap"
-	ssb "go.cryptoscope.co/ssb"
 )
 
 import "C"
@@ -81,7 +81,7 @@ func ssbRepoStats() *C.char {
 
 	var counts repoCounts
 
-	uf, ok := sbot.GetMultiLog("userFeeds")
+	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
 	if !ok {
 		retErr = errors.Errorf("sbot: missing userFeeds index")
 		return nil
@@ -95,23 +95,13 @@ func ssbRepoStats() *C.char {
 
 	counts.Feeds = len(feeds)
 
-	sv, err := sbot.RootLog.Seq().Value()
-	if err != nil {
-		retErr = errors.Wrap(err, "RepoStats: unable to get rootLog sequence")
-		return nil
-	}
-
-	rootSeq, ok := sv.(margaret.Seq)
-	if !ok {
-		retErr = errors.Errorf("sbot: not a sequence: %T", sv)
-		return nil
-	}
-	counts.Messages = rootSeq.Seq()
+	sv := sbot.ReceiveLog.Seq()
+	counts.Messages = sv
 	counts.Messages += 1 // 0-indexed (empty is -1)
 
-	lm, err := sbot.RootLog.Get(rootSeq)
+	lm, err := sbot.ReceiveLog.Get(sv)
 	if err == nil {
-		lastMsg, ok := lm.(ssb.Message)
+		lastMsg, ok := lm.(refs.Message)
 		if ok {
 			counts.LastHash = lastMsg.Key().Ref()
 		} else {
@@ -120,7 +110,7 @@ func ssbRepoStats() *C.char {
 	} else {
 		level.Warn(log).Log("RepoStats", errors.Wrap(err, "RepoStats: could not get the last message hash"))
 	}
-	
+
 	statBytes, err := json.Marshal(counts)
 	if err != nil {
 		retErr = errors.Wrap(err, "RepoStats: failed to get marshal json")

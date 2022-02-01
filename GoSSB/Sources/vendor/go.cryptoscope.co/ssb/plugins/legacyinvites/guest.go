@@ -5,32 +5,28 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/muxrpc"
+	"github.com/dgraph-io/badger/v3"
+	"go.cryptoscope.co/muxrpc/v2"
 
 	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 type acceptHandler struct {
 	service *Service
 }
 
+func (acceptHandler) Handled(m muxrpc.Method) bool { return m.String() == "invite.use" }
+
 func (h acceptHandler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {}
 
-func (h acceptHandler) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc.Endpoint) {
-	h.service.mu.Lock()
-	defer h.service.mu.Unlock()
-	if req.Method.String() != "invite.use" {
-		req.CloseWithError(fmt.Errorf("unknown method"))
-		return
-	}
-
+// TODO: re-write as typemux.AsyncFunc
+func (h acceptHandler) HandleCall(ctx context.Context, req *muxrpc.Request) {
 	// parse passed arguments
 	var args []struct {
-		Feed *ssb.FeedRef `json:"feed"`
+		Feed refs.FeedRef `json:"feed"`
 	}
 	if err := json.Unmarshal(req.RawArgs, &args); err != nil {
-		fmt.Println("accept:", string(req.RawArgs))
 		req.CloseWithError(fmt.Errorf("invalid arguments (%w)", err))
 		return
 	}
@@ -40,84 +36,62 @@ func (h acceptHandler) HandleCall(ctx context.Context, req *muxrpc.Request, edp 
 	}
 	arg := args[0]
 
+	guestRef, err := ssb.GetFeedRefFromAddr(req.RemoteAddr())
+	if err != nil {
+		req.CloseWithError(fmt.Errorf("no guest ref!?: %w", err))
+		return
+	}
+
 	// lookup guest key
-	if err := h.service.kv.BeginTransaction(); err != nil {
-		req.CloseWithError(err)
-		return
-	}
-
-	guestRef, err := ssb.GetFeedRefFromAddr(edp.Remote())
-	if err != nil {
-		req.CloseWithError(errors.Wrap(err, "no guest ref!?"))
-		return
-	}
-
-	kvKey := []byte(guestRef.StoredAddr())
-
-	has, err := h.service.kv.Get(nil, kvKey)
-	if err != nil {
-		h.service.kv.Rollback()
-		err = fmt.Errorf("invite/kv: failed get guest remote from KV (%w)", err)
-		req.CloseWithError(err)
-		return
-	}
-	if has == nil {
-		h.service.kv.Rollback()
-		err = errors.New("not for us")
-		req.CloseWithError(err)
-		return
-	}
-
 	var st inviteState
-	if err := json.Unmarshal(has, &st); err != nil {
-		h.service.kv.Rollback()
-		err = fmt.Errorf("invite/kv: failed to probe new key (%w)", err)
-		req.CloseWithError(err)
-		return
-	}
+	kvKey := append(dbKeyPrefix, guestRef.PubKey()...)
+	err = h.service.kv.Update(func(txn *badger.Txn) error {
+		has, err := txn.Get(kvKey)
+		if err != nil {
+			return fmt.Errorf("invite/kv: failed get guest remote from KV (%w)", err)
+		}
 
-	if st.Used >= st.Uses {
-		h.service.kv.Delete(kvKey)
-		h.service.kv.Commit()
-		err = fmt.Errorf("invite/kv: invite depleeted")
-		req.CloseWithError(err)
-		return
-	}
+		err = has.Value(func(val []byte) error {
+			return json.Unmarshal(val, &st)
+		})
+		if err != nil {
+			return fmt.Errorf("invite/kv: failed to probe new key (%w)", err)
+		}
 
-	// count uses
-	st.Used++
+		if st.Used >= st.Uses {
+			txn.Delete(kvKey)
+			return fmt.Errorf("invite/kv: invite depleted")
+		}
 
-	updatedState, err := json.Marshal(st)
+		// count uses
+		st.Used++
+
+		updatedState, err := json.Marshal(st)
+		if err != nil {
+			return fmt.Errorf("invite/kv: failed marshal updated state data (%w)", err)
+		}
+
+		err = txn.Set(kvKey, updatedState)
+		if err != nil {
+			return fmt.Errorf("invite/kv: failed save updated state data (%w)", err)
+		}
+
+		return nil
+	})
 	if err != nil {
-		h.service.kv.Rollback()
-		err = fmt.Errorf("invite/kv: failed marshal updated state data (%w)", err)
-		req.CloseWithError(err)
-		return
-	}
-	err = h.service.kv.Set(kvKey, updatedState)
-	if err != nil {
-		h.service.kv.Rollback()
-		err = fmt.Errorf("invite/kv: failed save updated state data (%w)", err)
-		req.CloseWithError(err)
-		return
-	}
-	err = h.service.kv.Commit()
-	if err != nil {
-		h.service.kv.Rollback()
-		err = fmt.Errorf("invite/kv: failed to commit kv transaction (%w)", err)
 		req.CloseWithError(err)
 		return
 	}
 
 	// publish follow for requested Feed
 	var contactWithNote struct {
-		*ssb.Contact
+		refs.Contact
 		Note string `json:"note,omitempty"`
 		Pub  bool   `json:"pub"`
 	}
 	contactWithNote.Pub = true
 	contactWithNote.Note = st.Note
-	contactWithNote.Contact = ssb.NewContactFollow(arg.Feed)
+	contactWithNote.Contact = refs.NewContactFollow(arg.Feed)
 
 	seq, err := h.service.publish.Append(contactWithNote)
 	if err != nil {
@@ -130,6 +104,9 @@ func (h acceptHandler) HandleCall(ctx context.Context, req *muxrpc.Request, edp 
 		req.CloseWithError(fmt.Errorf("invite/accept: failed to publish invite accept (%w)", err))
 		return
 	}
+
+	h.service.replicator.Replicate(arg.Feed)
+
 	req.Return(ctx, msgv)
 
 	h.service.logger.Log("invite", "used")

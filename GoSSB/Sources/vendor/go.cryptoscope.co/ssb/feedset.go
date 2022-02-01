@@ -3,10 +3,14 @@
 package ssb
 
 import (
+	"fmt"
 	"sync"
 
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/librarian"
+	librarian "go.cryptoscope.co/margaret/indexes"
+
+	"go.cryptoscope.co/ssb/internal/storedrefs"
+	refs "go.mindeco.de/ssb-refs"
+	"go.mindeco.de/ssb-refs/tfk"
 )
 
 type strFeedMap map[librarian.Addr]struct{}
@@ -23,33 +27,18 @@ func NewFeedSet(size int) *StrFeedSet {
 	}
 }
 
-func (fs *StrFeedSet) AddStored(r *StorageRef) error {
+func (fs *StrFeedSet) AddRef(ref refs.FeedRef) error {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 
-	b, err := r.Marshal()
-	if err != nil {
-		return errors.Wrap(err, "failed to marshal stored ref")
-	}
-
-	fs.set[librarian.Addr(b)] = struct{}{}
+	fs.set[storedrefs.Feed(ref)] = struct{}{}
 	return nil
 }
 
-func (fs *StrFeedSet) AddRef(ref *FeedRef) error {
+func (fs *StrFeedSet) Delete(ref refs.FeedRef) error {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
-
-	copied := ref.Copy()
-
-	fs.set[copied.StoredAddr()] = struct{}{}
-	return nil
-}
-
-func (fs *StrFeedSet) Delete(ref *FeedRef) error {
-	fs.mu.Lock()
-	defer fs.mu.Unlock()
-	delete(fs.set, ref.StoredAddr())
+	delete(fs.set, storedrefs.Feed(ref))
 	return nil
 }
 
@@ -59,33 +48,32 @@ func (fs *StrFeedSet) Count() int {
 	return len(fs.set)
 }
 
-func (fs StrFeedSet) List() ([]*FeedRef, error) {
+func (fs StrFeedSet) List() ([]refs.FeedRef, error) {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
-	var lst = make([]*FeedRef, len(fs.set))
+	var lst = make([]refs.FeedRef, len(fs.set))
 
 	i := 0
 
 	for feed := range fs.set {
-		var sr StorageRef
-		err := sr.Unmarshal([]byte(feed))
+		var sr tfk.Feed
+		err := sr.UnmarshalBinary([]byte(feed))
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to decode map entry")
-		}
-		got, err := sr.FeedRef()
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to make ref from map entry")
+			return nil, fmt.Errorf("failed to decode map entry: %w", err)
 		}
 		// log.Printf("dbg List(%d) %s", i, ref.Ref())
-		lst[i] = got.Copy()
+		lst[i], err = sr.Feed()
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode map entry: %w", err)
+		}
 		i++
 	}
 	return lst, nil
 }
 
-func (fs StrFeedSet) Has(ref *FeedRef) bool {
+func (fs StrFeedSet) Has(ref refs.FeedRef) bool {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
-	_, has := fs.set[ref.StoredAddr()]
+	_, has := fs.set[storedrefs.Feed(ref)]
 	return has
 }

@@ -4,21 +4,24 @@ package graph
 
 import (
 	"bytes"
-	"context"
+	"fmt"
 	"math"
+	"net/http"
 	"sync"
 
-	"github.com/dgraph-io/badger"
-	kitlog "github.com/go-kit/kit/log"
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/librarian"
-	libbadger "go.cryptoscope.co/librarian/badger"
-	"go.cryptoscope.co/margaret"
+	"github.com/dgraph-io/badger/v3"
+	librarian "go.cryptoscope.co/margaret/indexes"
+	libbadger "go.cryptoscope.co/margaret/indexes/badger"
+	"go.mindeco.de/log"
+	"go.mindeco.de/log/level"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/path"
 	"gonum.org/v1/gonum/graph/simple"
 
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/internal/storedrefs"
+	refs "go.mindeco.de/ssb-refs"
+	"go.mindeco.de/ssb-refs/tfk"
 )
 
 // Builder can build a trust graph and answer other questions
@@ -28,13 +31,14 @@ type Builder interface {
 	Build() (*Graph, error)
 
 	// Follows returns a set of all people ref follows
-	Follows(*ssb.FeedRef) (*ssb.StrFeedSet, error)
+	Follows(refs.FeedRef) (*ssb.StrFeedSet, error)
 
-	Hops(*ssb.FeedRef, int) *ssb.StrFeedSet
+	// TODO: move this into the graph
+	Hops(refs.FeedRef, int) *ssb.StrFeedSet
 
-	Authorizer(from *ssb.FeedRef, maxHops int) ssb.Authorizer
+	Authorizer(from refs.FeedRef, maxHops int) ssb.Authorizer
 
-	DeleteAuthor(who *ssb.FeedRef) error
+	DeleteAuthor(who refs.FeedRef) error
 }
 
 type IndexingBuilder interface {
@@ -43,85 +47,42 @@ type IndexingBuilder interface {
 	OpenIndex() (librarian.SeqSetterIndex, librarian.SinkIndex)
 }
 
-type builder struct {
+// BadgerBuilder can construct a graph from the badger key-value database it was initialized with.
+type BadgerBuilder struct {
 	kv *badger.DB
 
-	idx     librarian.SeqSetterIndex
-	idxSink librarian.SinkIndex
+	idx librarian.SeqSetterIndex
 
-	log kitlog.Logger
+	idxSinkContacts  librarian.SinkIndex
+	idxSinkMetaFeeds librarian.SinkIndex
+
+	log log.Logger
 
 	cacheLock   sync.Mutex
 	cachedGraph *Graph
+
+	hmacSecret *[32]byte
 }
 
+var (
+	dbKeyPrefix    = []byte("trust-graph")
+	dbKeyPrefixLen = len(dbKeyPrefix)
+)
+
 // NewBuilder creates a Builder that is backed by a badger database
-func NewBuilder(log kitlog.Logger, db *badger.DB) *builder {
-	b := &builder{
+func NewBuilder(log log.Logger, db *badger.DB, hmacSecret *[32]byte) *BadgerBuilder {
+	b := &BadgerBuilder{
 		kv:  db,
-		idx: libbadger.NewIndex(db, 0),
 		log: log,
+
+		idx: libbadger.NewIndexWithKeyPrefix(db, 0, dbKeyPrefix),
+
+		hmacSecret: hmacSecret,
 	}
 	return b
 }
 
-func (b *builder) indexUpdateFunc(ctx context.Context, seq margaret.Seq, val interface{}, idx librarian.SetterIndex) error {
-	b.cacheLock.Lock()
-	defer b.cacheLock.Unlock()
-
-	if nulled, ok := val.(error); ok {
-		if margaret.IsErrNulled(nulled) {
-			return nil
-		}
-		return nulled
-	}
-
-	abs, ok := val.(ssb.Message)
-	if !ok {
-		err := errors.Errorf("graph/idx: invalid msg value %T", val)
-		b.log.Log("msg", "contact eval failed", "reason", err)
-		return err
-	}
-
-	var c ssb.Contact
-	err := c.UnmarshalJSON(abs.ContentBytes())
-	if err != nil {
-		// just ignore invalid messages, nothing to do with them (unless you are debugging something)
-		//level.Warn(b.log).Log("msg", "skipped contact message", "reason", err)
-		return nil
-	}
-
-	addr := abs.Author().StoredAddr()
-	addr += c.Contact.StoredAddr()
-	switch {
-	case c.Following:
-		err = idx.Set(ctx, addr, 1)
-	case c.Blocking:
-		err = idx.Set(ctx, addr, 2)
-	default:
-		err = idx.Set(ctx, addr, 0)
-		// cryptix: not sure why this doesn't work
-		// it also removes the node if this is the only follow from that peer
-		// 3 state handling seems saner
-		// err = idx.Delete(ctx, librarian.Addr(addr))
-	}
-	if err != nil {
-		return errors.Wrapf(err, "db/idx contacts: failed to update index. %+v", c)
-	}
-
-	b.cachedGraph = nil
-	// TODO: patch existing graph instead of invalidating
-	return nil
-}
-
-func (b *builder) OpenIndex() (librarian.SeqSetterIndex, librarian.SinkIndex) {
-	if b.idxSink == nil {
-		b.idxSink = librarian.NewSinkIndex(b.indexUpdateFunc, b.idx)
-	}
-	return b.idx, b.idxSink
-}
-
-func (b *builder) DeleteAuthor(who *ssb.FeedRef) error {
+func (b *BadgerBuilder) DeleteAuthor(who refs.FeedRef) error {
 	b.cacheLock.Lock()
 	defer b.cacheLock.Unlock()
 	b.cachedGraph = nil
@@ -129,20 +90,20 @@ func (b *builder) DeleteAuthor(who *ssb.FeedRef) error {
 		iter := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer iter.Close()
 
-		prefix := []byte(who.StoredAddr())
+		prefix := append(dbKeyPrefix, []byte(storedrefs.Feed(who))...)
 		for iter.Seek(prefix); iter.ValidForPrefix(prefix); iter.Next() {
 			it := iter.Item()
 
 			k := it.Key()
 			if err := txn.Delete(k); err != nil {
-				return errors.Wrapf(err, "DeleteAuthor: failed to drop record %x", k)
+				return fmt.Errorf("DeleteAuthor: failed to drop record %x: %w", k, err)
 			}
 		}
 		return nil
 	})
 }
 
-func (b *builder) Authorizer(from *ssb.FeedRef, maxHops int) ssb.Authorizer {
+func (b *BadgerBuilder) Authorizer(from refs.FeedRef, maxHops int) ssb.Authorizer {
 	return &authorizer{
 		b:       b,
 		from:    from,
@@ -151,7 +112,7 @@ func (b *builder) Authorizer(from *ssb.FeedRef, maxHops int) ssb.Authorizer {
 	}
 }
 
-func (b *builder) Build() (*Graph, error) {
+func (b *BadgerBuilder) Build() (*Graph, error) {
 	dg := NewGraph()
 
 	b.cacheLock.Lock()
@@ -165,38 +126,38 @@ func (b *builder) Build() (*Graph, error) {
 		iter := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer iter.Close()
 
-		for iter.Rewind(); iter.Valid(); iter.Next() {
+		for iter.Seek(dbKeyPrefix); iter.ValidForPrefix(dbKeyPrefix); iter.Next() {
 			it := iter.Item()
 			k := it.Key()
-			if len(k) != 66 {
+			if len(k) != 68+dbKeyPrefixLen {
 				continue
 			}
 
-			rawFrom := k[:33]
-			rawTo := k[33:]
+			rawFrom := k[dbKeyPrefixLen : 34+dbKeyPrefixLen]
+			rawTo := k[34+dbKeyPrefixLen:]
 
 			if bytes.Equal(rawFrom, rawTo) {
 				// contact self?!
 				continue
 			}
 
-			var to, from ssb.StorageRef
-			if err := from.Unmarshal(rawFrom); err != nil {
-				return errors.Wrapf(err, "builder: couldnt idx key value (from)")
+			var to, from tfk.Feed
+			if err := from.UnmarshalBinary(rawFrom); err != nil {
+				return fmt.Errorf("builder: couldnt idx key value (from): %w", err)
 			}
-			if err := to.Unmarshal(rawTo); err != nil {
-				return errors.Wrap(err, "builder: couldnt idx key value (to)")
+			if err := to.UnmarshalBinary(rawTo); err != nil {
+				return fmt.Errorf("builder: couldnt idx key value (to): %w", err)
 			}
 
 			bfrom := librarian.Addr(rawFrom)
 			nFrom, has := dg.lookup[bfrom]
 			if !has {
-				fromRef, err := from.FeedRef()
+				fromRef, err := from.Feed()
 				if err != nil {
 					return err
 				}
 
-				nFrom = &contactNode{dg.NewNode(), fromRef.Copy(), ""}
+				nFrom = &contactNode{dg.NewNode(), fromRef, ""}
 				dg.AddNode(nFrom)
 				dg.lookup[bfrom] = nFrom
 			}
@@ -204,11 +165,11 @@ func (b *builder) Build() (*Graph, error) {
 			bto := librarian.Addr(rawTo)
 			nTo, has := dg.lookup[bto]
 			if !has {
-				toRef, err := to.FeedRef()
+				toRef, err := to.Feed()
 				if err != nil {
 					return err
 				}
-				nTo = &contactNode{dg.NewNode(), toRef.Copy(), ""}
+				nTo = &contactNode{dg.NewNode(), toRef, ""}
 				dg.AddNode(nTo)
 				dg.lookup[bto] = nTo
 			}
@@ -217,34 +178,46 @@ func (b *builder) Build() (*Graph, error) {
 				continue
 			}
 
-			w := math.Inf(-1)
+			var edg graph.WeightedEdge
+
 			err := it.Value(func(v []byte) error {
 				if len(v) >= 1 {
 					switch v[0] {
 					case '0': // not following
-					case '1':
-						w = 1
-					case '2':
-						w = math.Inf(1)
+						edg = contactEdge{
+							WeightedEdge: simple.WeightedEdge{F: nFrom, T: nTo, W: math.Inf(-1)},
+							isBlock:      false,
+						}
+					case '1': // following
+						edg = contactEdge{
+							WeightedEdge: simple.WeightedEdge{F: nFrom, T: nTo, W: 1},
+							isBlock:      false,
+						}
+					case '2': // blocking
+						edg = contactEdge{
+							WeightedEdge: simple.WeightedEdge{F: nFrom, T: nTo, W: math.Inf(1)},
+							isBlock:      true,
+						}
+					case '3': // metafeed
+						edg = metafeedEdge{
+							WeightedEdge: simple.WeightedEdge{F: nFrom, T: nTo, W: 0.1},
+						}
 					default:
-						return errors.Errorf("barbage value in graph strore")
+						return fmt.Errorf("barbage value in graph strore %q", string(v))
 					}
 				}
 				return nil
 			})
 			if err != nil {
-				return errors.Wrapf(err, "failed to get value from item:%q", string(k))
+				return fmt.Errorf("failed to get value from item:%q: %w", string(k), err)
 			}
 
-			if math.IsInf(w, -1) {
+			if math.IsInf(edg.Weight(), -1) {
 				//dg.RemoveEdge(nFrom.ID(), nTo.ID())
 				continue
 			}
 
-			dg.SetWeightedEdge(contactEdge{
-				WeightedEdge: simple.WeightedEdge{F: nFrom, T: nTo, W: w},
-				isBlock:      math.IsInf(w, 1),
-			})
+			dg.SetWeightedEdge(edg)
 		}
 		return nil
 	})
@@ -258,8 +231,8 @@ type Lookup struct {
 	lookup key2node
 }
 
-func (l Lookup) Dist(to *ssb.FeedRef) ([]graph.Node, float64) {
-	bto := to.StoredAddr()
+func (l Lookup) Dist(to refs.FeedRef) ([]graph.Node, float64) {
+	bto := storedrefs.Feed(to)
 	nTo, has := l.lookup[bto]
 	if !has {
 		return nil, math.Inf(-1)
@@ -267,16 +240,13 @@ func (l Lookup) Dist(to *ssb.FeedRef) ([]graph.Node, float64) {
 	return l.dijk.To(nTo.ID())
 }
 
-func (b *builder) Follows(forRef *ssb.FeedRef) (*ssb.StrFeedSet, error) {
-	if forRef == nil {
-		panic("nil feed ref")
-	}
+func (b *BadgerBuilder) Follows(forRef refs.FeedRef) (*ssb.StrFeedSet, error) {
 	fs := ssb.NewFeedSet(50)
 	err := b.kv.View(func(txn *badger.Txn) error {
 		iter := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer iter.Close()
 
-		prefix := []byte(forRef.StoredAddr())
+		prefix := append(dbKeyPrefix, storedrefs.Feed(forRef)...)
 		for iter.Seek(prefix); iter.ValidForPrefix(prefix); iter.Next() {
 			it := iter.Item()
 			k := it.Key()
@@ -284,20 +254,61 @@ func (b *builder) Follows(forRef *ssb.FeedRef) (*ssb.StrFeedSet, error) {
 			err := it.Value(func(v []byte) error {
 				if len(v) >= 1 && v[0] == '1' {
 					// extract 2nd feed ref out of db key
-					// TODO: use compact StoredAddr
-					var sr ssb.StorageRef
-					err := sr.Unmarshal(k[33:])
+					var sr tfk.Feed
+					err := sr.UnmarshalBinary(k[dbKeyPrefixLen+34:])
 					if err != nil {
-						return errors.Wrapf(err, "follows(%s): invalid ref entry in db for feed", forRef.Ref())
+						return fmt.Errorf("follows(%s): invalid ref entry in db for feed: %w", forRef.Ref(), err)
 					}
-					if err := fs.AddStored(&sr); err != nil {
-						return errors.Wrapf(err, "follows(%s): couldn't add parsed ref feed", forRef.Ref())
+					fr, err := sr.Feed()
+					if err != nil {
+						return err
+					}
+					if err := fs.AddRef(fr); err != nil {
+						return fmt.Errorf("follows(%s): couldn't add parsed ref feed: %w", forRef.Ref(), err)
 					}
 				}
 				return nil
 			})
 			if err != nil {
-				return errors.Wrap(err, "failed to get value from iter")
+				return fmt.Errorf("failed to get value from iter: %w", err)
+			}
+		}
+		return nil
+	})
+	return fs, err
+}
+
+func (b *BadgerBuilder) Subfeeds(forRef refs.FeedRef) (*ssb.StrFeedSet, error) {
+	fs := ssb.NewFeedSet(50)
+	err := b.kv.View(func(txn *badger.Txn) error {
+		iter := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer iter.Close()
+
+		prefix := append(dbKeyPrefix, storedrefs.Feed(forRef)...)
+		for iter.Seek(prefix); iter.ValidForPrefix(prefix); iter.Next() {
+			it := iter.Item()
+			k := it.Key()
+
+			err := it.Value(func(v []byte) error {
+				if len(v) >= 1 && v[0] == '3' {
+					// extract 2nd feed ref out of db key
+					var sr tfk.Feed
+					err := sr.UnmarshalBinary(k[dbKeyPrefixLen+34:])
+					if err != nil {
+						return fmt.Errorf("follows(%s): invalid ref entry in db for feed: %w", forRef.Ref(), err)
+					}
+					fr, err := sr.Feed()
+					if err != nil {
+						return err
+					}
+					if err := fs.AddRef(fr); err != nil {
+						return fmt.Errorf("follows(%s): couldn't add parsed ref feed: %w", forRef.Ref(), err)
+					}
+				}
+				return nil
+			})
+			if err != nil {
+				return fmt.Errorf("failed to get value from iter: %w", err)
 			}
 		}
 		return nil
@@ -309,7 +320,7 @@ func (b *builder) Follows(forRef *ssb.FeedRef) (*ssb.StrFeedSet, error) {
 // max == 0: only direct follows of from
 // max == 1: max:0 + follows of friends of from
 // max == 2: max:1 + follows of their friends
-func (b *builder) Hops(from *ssb.FeedRef, max int) *ssb.StrFeedSet {
+func (b *BadgerBuilder) Hops(from refs.FeedRef, max int) *ssb.StrFeedSet {
 	max++
 	walked := ssb.NewFeedSet(0)
 	visited := make(map[string]struct{}) // tracks the nodes we already recursed from (so we don't do them multiple times on common friends)
@@ -322,46 +333,213 @@ func (b *builder) Hops(from *ssb.FeedRef, max int) *ssb.StrFeedSet {
 	return walked
 }
 
-func (b *builder) recurseHops(walked *ssb.StrFeedSet, vis map[string]struct{}, from *ssb.FeedRef, depth int) error {
+func (b *BadgerBuilder) recurseHops(walked *ssb.StrFeedSet, vis map[string]struct{}, who refs.FeedRef, depth int) error {
 	if depth == 0 {
 		return nil
 	}
 
-	if _, ok := vis[from.Ref()]; ok {
+	// skip if we already visited this peer
+	if _, ok := vis[who.Ref()]; ok {
 		return nil
 	}
 
-	fromFollows, err := b.Follows(from)
+	// find all their subfeeds
+	subfeeds, err := b.Subfeeds(who)
 	if err != nil {
-		return errors.Wrapf(err, "recurseHops(%d): from follow listing failed", depth)
+		return fmt.Errorf("recurseHops(%d): couldnt estblish subfeeds for %s: %w", depth, who.Ref(), err)
 	}
 
-	followLst, err := fromFollows.List()
+	// TODO: add iteration to reduce memory overhead of creating a bunch of slices all the time
+	// ie. feedset.Each(func(f refs.FeedRef) { ... })
+	subfeedList, err := subfeeds.List()
 	if err != nil {
-		return errors.Wrapf(err, "recurseHops(%d): invalid entry in feed set", depth)
+		return fmt.Errorf("recurseHops(%d): couldnt list subfeeds for list for %s: %w", depth, who.Ref(), err)
 	}
 
-	for i, followedByFrom := range followLst {
-		err := walked.AddRef(followedByFrom)
+	// add them to the set and recurse their follows
+	for j, subfeed := range subfeedList {
+		err = walked.AddRef(subfeed)
 		if err != nil {
-			return errors.Wrapf(err, "recurseHops(%d): add list entry(%d) failed", depth, i)
+			return fmt.Errorf("recurseHops(%d): add subfeed entry(%d) of %s failed: %w", depth, j, who.Ref(), err)
 		}
 
-		dstFollows, err := b.Follows(followedByFrom)
+		// also iterate their follows. same depth because they count as the same identity as the metafeed that linked them
+		if err := b.recurseHops(walked, vis, subfeed, depth); err != nil {
+			return err
+		}
+	}
+
+	whosFollows, err := b.Follows(who)
+	if err != nil {
+		return fmt.Errorf("recurseHops(%d): follow listing for target failed: %w", depth, err)
+	}
+
+	theirFollowList, err := whosFollows.List()
+	if err != nil {
+		return fmt.Errorf("recurseHops(%d): invalid entry in feed set: %w", depth, err)
+	}
+
+	for i, followedByWho := range theirFollowList {
+		err := walked.AddRef(followedByWho)
 		if err != nil {
-			return errors.Wrapf(err, "recurseHops(%d): follows from entry(%d) failed", depth, i)
+			return fmt.Errorf("recurseHops(%d): add list entry(%d) failed: %w", depth, i, err)
 		}
 
-		isF := dstFollows.Has(from)
-		if isF { // found a friend, recurse
-			if err := b.recurseHops(walked, vis, followedByFrom, depth-1); err != nil {
+		subfeeds, err := b.Subfeeds(followedByWho)
+		if err != nil {
+			return fmt.Errorf("recurseHops(%d): couldnt estblish subfeeds for list entry(%d): %w", depth, i, err)
+		}
+
+		subfeedList, err := subfeeds.List()
+		if err != nil {
+			return fmt.Errorf("recurseHops(%d): couldnt list subfeeds for list entry(%d): %w", depth, i, err)
+		}
+
+		for j, subfeed := range subfeedList {
+			err = walked.AddRef(subfeed)
+			if err != nil {
+				return fmt.Errorf("recurseHops(%d): add subfeed entry(%d) of %s failed: %w", depth, j, followedByWho.Ref(), err)
+			}
+
+			// also iterate their follows. same depth because they count as the same identity as the metafeed that linked them
+			if err := b.recurseHops(walked, vis, subfeed, depth); err != nil {
 				return err
 			}
 		}
-		// b.log.Log("depth", depth, "from", from.ShortRef(), "follows", followedByFrom.ShortRef(), "friend", isF, "cnt", dstFollows.Count())
+
+		// TODO: use from follows followedByWho
+		dstFollows, err := b.Follows(followedByWho)
+		if err != nil {
+			return fmt.Errorf("recurseHops(%d): follows from entry(%d) failed: %w", depth, i, err)
+		}
+
+		isF := dstFollows.Has(who)
+		if isF { // found a friend, recurse
+			if err := b.recurseHops(walked, vis, followedByWho, depth-1); err != nil {
+				return err
+			}
+		}
+		// b.log.Log("depth", depth, "from", from.ShortRef(), "follows", followedByWho.ShortRef(), "friend", isF, "cnt", dstFollows.Count())
 	}
 
-	vis[from.Ref()] = struct{}{}
+	// mark them as visited
+	vis[who.Ref()] = struct{}{}
 
 	return nil
+}
+
+func (b *BadgerBuilder) DumpXMLOverHTTP(self refs.FeedRef, w http.ResponseWriter, req *http.Request) {
+	hlog := log.With(b.log, "http-handler", req.URL.Path)
+	g, err := b.Build()
+	if err != nil {
+		level.Error(hlog).Log("http-err", err.Error())
+		http.Error(w, "graph build failure", http.StatusInternalServerError)
+		return
+	}
+
+	// initialze new reducer
+	var rg graphReducer
+	rg.wanted = make(wantedMap)
+	rg.graph = simple.NewWeightedDirectedGraph(0, math.Inf(1))
+
+	// find the nodes we are interested in
+
+	selfNode, has := g.getNode(self)
+	if !has {
+		level.Error(hlog).Log("http-err", "no self node in graph")
+		http.Error(w, "graph build failure", http.StatusInternalServerError)
+		return
+	}
+	rg.wanted[selfNode.ID()] = struct{}{}
+
+	hopsSet := b.Hops(self, 1) // TODO: parametize
+	hopsList, err := hopsSet.List()
+	if err != nil {
+		level.Error(hlog).Log("http-err", err.Error())
+		http.Error(w, "graph build failure", http.StatusInternalServerError)
+		return
+	}
+
+	for _, feed := range hopsList {
+		node, has := g.getNode(feed)
+		if !has {
+			continue
+		}
+		rg.wanted[node.ID()] = struct{}{}
+	}
+
+	graph.CopyWeighted(rg, g)
+
+	var smallerGraph = new(Graph)
+	smallerGraph.lookup = g.lookup
+	smallerGraph.WeightedDirectedGraph = rg.graph
+
+	n := smallerGraph.NodeCount()
+	if n > 100 {
+		level.Error(hlog).Log("http-err", "too many nodes", "count", n)
+		http.Error(w, "too many nodes", http.StatusInternalServerError)
+		return
+	}
+
+	wh := w.Header()
+	wh.Set("Content-Type", "image/svg+xml")
+	w.WriteHeader(http.StatusOK)
+	err = smallerGraph.RenderSVG(w)
+	if err != nil {
+		level.Error(hlog).Log("http-err", err.Error())
+	}
+
+	level.Info(hlog).Log("graph", "dumped", "nodes", n)
+}
+
+type wantedMap map[int64]struct{}
+
+type graphReducer struct {
+	graph *simple.WeightedDirectedGraph
+
+	wanted wantedMap
+}
+
+// NewNode returns a new Node with a unique
+// arbitrary ID.
+func (gs graphReducer) NewNode() graph.Node {
+	panic("NewNode not supported")
+}
+
+// AddNode adds a node to the graph. AddNode panics if
+// the added node ID matches an existing node ID.
+func (gs graphReducer) AddNode(a graph.Node) {
+	if _, has := gs.wanted[a.ID()]; !has {
+		return
+	}
+	gs.graph.AddNode(a)
+}
+
+// NewWeightedEdge returns a new WeightedEdge from
+// the source to the destination node.
+func (gs graphReducer) NewWeightedEdge(from graph.Node, to graph.Node, weight float64) graph.WeightedEdge {
+	panic("not implemented") // TODO: Implement
+}
+
+// SetWeightedEdge adds an edge from one node to
+// another. If the graph supports node addition
+// the nodes will be added if they do not exist,
+// otherwise SetWeightedEdge will panic.
+// The behavior of a WeightedEdgeAdder when the IDs
+// returned by e.From() and e.To() are equal is
+// implementation-dependent.
+// Whether e, e.From() and e.To() are stored
+// within the graph is implementation dependent.
+func (gs graphReducer) SetWeightedEdge(e graph.WeightedEdge) {
+	if _, has := gs.wanted[e.From().ID()]; !has {
+		// fmt.Println("ignoring from", e.From().(*contactNode).feed.Ref())
+		return
+	}
+
+	if _, has := gs.wanted[e.To().ID()]; !has {
+		// fmt.Println("ignoring to", e.From().(*contactNode).feed.Ref())
+		return
+	}
+
+	gs.graph.SetWeightedEdge(e)
 }

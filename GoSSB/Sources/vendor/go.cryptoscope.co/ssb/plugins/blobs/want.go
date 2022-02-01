@@ -4,11 +4,12 @@ package blobs
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
-	"github.com/cryptix/go/logging"
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
+	"go.mindeco.de/logging"
+	refs "go.mindeco.de/ssb-refs"
 
 	"go.cryptoscope.co/ssb"
 )
@@ -20,29 +21,32 @@ type wantHandler struct {
 
 func (wantHandler) HandleConnect(context.Context, muxrpc.Endpoint) {}
 
-func (h wantHandler) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc.Endpoint) {
+func (h wantHandler) HandleAsync(ctx context.Context, req *muxrpc.Request) (interface{}, error) {
 	//h.log.Log("event", "onCall", "handler", "want", "args", fmt.Sprintf("%v", req.Args), "method", req.Method)
 	// TODO: push manifest check into muxrpc
 	if req.Type == "" {
 		req.Type = "async"
 	}
 
-	args := req.Args()
-	if len(args) != 1 {
+	var wants []refs.BlobRef
+	err := json.Unmarshal(req.RawArgs, &wants)
+	if err != nil {
+		err = fmt.Errorf("error parsing blob reference: %w", err)
+		return nil, err
+	}
+
+	if len(wants) < 1 {
 		// TODO: change from generic handlers to typed once (source, sink, async..)
 		// async then would have to return a value or an error and not fall into this trap of not closing a stream
-		req.Stream.CloseWithError(fmt.Errorf("bad request - wrong args (%d)", len(args)))
-		return
+		return nil, fmt.Errorf("bad request - no args %d", len(wants))
+	}
+	for _, want := range wants {
+		err = h.wm.Want(want)
+		if err != nil {
+			err = fmt.Errorf("error wanting blob reference: %w", err)
+			return nil, err
+		}
 	}
 
-	br, err := ssb.ParseBlobRef(args[0].(string))
-	if err != nil {
-		err = errors.Wrap(err, "error parsing blob reference")
-		checkAndLog(h.log, errors.Wrap(req.CloseWithError(err), "error returning error"))
-		return
-	}
-
-	err = h.wm.Want(br)
-	err = errors.Wrap(err, "error wanting blob reference")
-	checkAndLog(h.log, errors.Wrap(req.Return(ctx, err), "error returning error"))
+	return true, nil
 }

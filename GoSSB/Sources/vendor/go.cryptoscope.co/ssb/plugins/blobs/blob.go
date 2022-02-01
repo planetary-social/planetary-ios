@@ -1,18 +1,21 @@
 // SPDX-License-Identifier: MIT
 
+// Package blobs implements the muxrpc handlers for npm:ssb-blobs.
+// The storage and want-managment is found in the blobstore package.
 package blobs
 
 import (
 	"context"
+	"errors"
 
-	"github.com/cryptix/go/logging"
-	"github.com/go-kit/kit/log/level"
-	"github.com/pkg/errors"
+	"go.cryptoscope.co/muxrpc/v2/typemux"
 
-	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
+	"go.mindeco.de/log/level"
+	"go.mindeco.de/logging"
 
 	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 /*
@@ -43,48 +46,53 @@ func checkAndLog(log logging.Interface, err error) {
 	}
 }
 
-func New(log logging.Interface, self ssb.FeedRef, bs ssb.BlobStore, wm ssb.WantManager) ssb.Plugin {
-	rootHdlr := muxrpc.HandlerMux{}
+func New(log logging.Interface, self refs.FeedRef, bs ssb.BlobStore, wm ssb.WantManager) ssb.Plugin {
+	mux := typemux.New(log)
 
-	// TODO: needs priv checks
-	// rootHdlr.Register(muxrpc.Method{"blobs", "add"}, addHandler{
+	mux.RegisterSink(muxrpc.Method{"blobs", "add"}, addHandler{
+		self: self,
+		log:  log,
+		bs:   bs,
+	})
+	// mux.Register(muxrpc.Method{"blobs", "list"}, listHandler{
 	// 	log: log,
 	// 	bs:  bs,
 	// })
-	// rootHdlr.Register(muxrpc.Method{"blobs", "list"}, listHandler{
-	// 	log: log,
-	// 	bs:  bs,
-	// })
-	// rootHdlr.Register(muxrpc.Method{"blobs", "rm"}, rmHandler{
+	// mux.Register(muxrpc.Method{"blobs", "rm"}, rmHandler{
 	// 	log: log,
 	// 	bs:  bs,
 	// })
 
-	var hs = []muxrpc.NamedHandler{
-		{muxrpc.Method{"blobs", "get"}, getHandler{
-			log: log,
-			bs:  bs,
-		}},
-		{muxrpc.Method{"blobs", "has"}, hasHandler{
-			log: log,
-			bs:  bs,
-		}},
-		{muxrpc.Method{"blobs", "want"}, wantHandler{
-			log: log,
-			wm:  wm,
-		}},
-		{muxrpc.Method{"blobs", "createWants"}, &createWantsHandler{
-			log:     log,
-			self:    self,
-			bs:      bs,
-			wm:      wm,
-			sources: make(map[string]luigi.Source),
-		}},
-	}
-	rootHdlr.RegisterAll(hs...)
+	mux.RegisterSource(muxrpc.Method{"blobs", "get"}, getHandler{
+		log: log,
+		bs:  bs,
+	})
+
+	mux.RegisterAsync(muxrpc.Method{"blobs", "has"}, hasHandler{
+		log: log,
+		bs:  bs,
+	})
+
+	mux.RegisterAsync(muxrpc.Method{"blobs", "size"}, sizeHandler{
+		log: log,
+		bs:  bs,
+	})
+
+	mux.RegisterAsync(muxrpc.Method{"blobs", "want"}, wantHandler{
+		log: log,
+		wm:  wm,
+	})
+
+	mux.RegisterSource(muxrpc.Method{"blobs", "createWants"}, &createWantsHandler{
+		log:     log,
+		self:    self,
+		bs:      bs,
+		wm:      wm,
+		sources: make(map[string]*muxrpc.ByteSource),
+	})
 
 	return plugin{
-		h:   &rootHdlr,
+		h:   &mux,
 		log: log,
 	}
 }
@@ -112,6 +120,6 @@ type endpoint struct {
 	edp muxrpc.Endpoint
 }
 
-func (edp endpoint) Add(ctx context.Context) (ssb.MessageRef, error) {
-	return ssb.MessageRef{}, errors.New("not implemented yet")
+func (edp endpoint) Add(ctx context.Context) (refs.MessageRef, error) {
+	return refs.MessageRef{}, errors.New("not implemented yet")
 }

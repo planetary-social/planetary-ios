@@ -1,100 +1,105 @@
 // SPDX-License-Identifier: MIT
 
+// Package get is just a muxrpc wrapper around sbot.Get
 package get
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/margaret"
+	"go.cryptoscope.co/muxrpc/v2"
 	"go.cryptoscope.co/ssb"
+	"go.cryptoscope.co/ssb/private"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 type plugin struct {
 	h muxrpc.Handler
 }
 
-func (p plugin) Name() string {
-	return "get"
-}
+func (p plugin) Name() string            { return "get" }
+func (p plugin) Method() muxrpc.Method   { return muxrpc.Method{"get"} }
+func (p plugin) Handler() muxrpc.Handler { return p.h }
 
-func (p plugin) Method() muxrpc.Method {
-	return muxrpc.Method{"get"}
-}
-
-func (p plugin) Handler() muxrpc.Handler {
-	return p.h
-}
-
-func New(g ssb.Getter) ssb.Plugin {
+func New(g ssb.Getter, rxlog margaret.Log, unboxer *private.Manager) ssb.Plugin {
 	return plugin{
-		h: handler{g: g},
+		h: handler{
+			get:     g,
+			rxlog:   rxlog,
+			unboxer: unboxer,
+		},
 	}
 }
 
 type handler struct {
-	g ssb.Getter
+	get     ssb.Getter
+	rxlog   margaret.Log
+	unboxer *private.Manager
 }
+
+func (handler) Handled(m muxrpc.Method) bool { return m.String() == "get" }
 
 func (h handler) HandleConnect(ctx context.Context, e muxrpc.Endpoint) {}
 
-func (h handler) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc.Endpoint) {
-	if len(req.Args()) < 1 {
-		req.CloseWithError(errors.Errorf("invalid arguments"))
+type Option struct {
+	ID      refs.MessageRef `json:"id"`
+	Private bool            `json:"private"`
+}
+
+func (h handler) HandleCall(ctx context.Context, req *muxrpc.Request) {
+	var args []json.RawMessage
+	err := json.Unmarshal(req.RawArgs, &args)
+	if err != nil {
+		req.CloseWithError(err)
 		return
 	}
-	var (
-		ref *ssb.MessageRef
-		err error
-	)
-	switch v := req.Args()[0].(type) {
-	case string:
-		ref, err = ssb.ParseMessageRef(v)
-	case map[string]interface{}:
-		refV, ok := v["key"]
-		if !ok {
-			req.CloseWithError(errors.Errorf("invalid argument - missing 'key' in map"))
+
+	if n := len(args); n < 1 {
+		req.CloseWithError(fmt.Errorf("invalid argument count. Wanted 1 got %d", n))
+		return
+	}
+
+	var o Option
+	optErr := json.Unmarshal(args[0], &o)
+	if optErr != nil {
+
+		var asString refs.MessageRef
+		strErr := json.Unmarshal(args[0], &asString)
+		if strErr != nil {
+			req.CloseWithError(fmt.Errorf("failed to parse argument as object (%s) and as string(%s)", optErr, strErr))
 			return
 		}
-		ref, err = ssb.ParseMessageRef(refV.(string))
-	default:
-		req.CloseWithError(errors.Errorf("invalid argument type %T", req.Args()[0]))
+
+		o.ID = asString
+	}
+
+	msg, err := h.get.Get(o.ID)
+	if err != nil {
+		req.CloseWithError(fmt.Errorf("failed to load message: %w", err))
 		return
 	}
+	var kv refs.KeyValueRaw
+	kv.Key_ = msg.Key()
+	kv.Value = *msg.ValueContent()
 
-	if err != nil {
-		req.CloseWithError(errors.Wrap(err, "failed to parse arguments"))
-		return
+	if o.Private {
+		cleartext, err := h.unboxer.DecryptMessage(msg)
+		if err == nil {
+			kv.Value.Meta = make(map[string]interface{}, 1)
+			kv.Value.Meta["private"] = true
+
+			kv.Value.Content = cleartext
+		} else if err != private.ErrNotBoxed {
+			req.CloseWithError(fmt.Errorf("failed to decrypt message: %w", err))
+			return
+		}
 	}
 
-	msg, err := h.g.Get(*ref)
+	err = req.Return(ctx, kv)
 	if err != nil {
-		req.CloseWithError(errors.Wrap(err, "failed to load message"))
-		return
+		log.Printf("get(%s): failed? to return message: %s", o.ID.Ref(), err)
 	}
-
-	// var retMsg json.RawMessage
-	// if msg.Author.Offchain {
-	// 	var tmpMsg message.DeserializedMessage
-	// 	tmpMsg.Previous = *msg.Previous
-	// 	tmpMsg.Author = *msg.Author
-	// 	tmpMsg.Sequence = msg.Sequence
-	// 	// tmpMsg.Timestamp = msg. TODO: meh.. need to get the user-timestamp from the raw field
-	// 	tmpMsg.Hash = msg.Key.Algo
-	// 	tmpMsg.Content = msg.Offchain
-
-	// 	retMsg, err = json.Marshal(tmpMsg)
-	// 	if err != nil {
-	// 		req.CloseWithError(errors.Wrap(err, "failed to re-wrap offchain message"))
-	// 		return
-	// 	}
-	// } else {
-	// retMsg = msg.Raw
-	// }
-	err = req.Return(ctx, msg.ValueContentJSON())
-	if err != nil {
-	}
-	fmt.Println("get: failed? to return message:", err)
-
 }

@@ -5,38 +5,41 @@ package gossip
 import (
 	"bytes"
 	"context"
-	"encoding/json"
-	"runtime"
+	"errors"
+	"fmt"
+	"io"
 	"time"
 
-	"github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/librarian"
-	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/luigi/mfr"
-	"go.cryptoscope.co/margaret"
-	"go.cryptoscope.co/muxrpc"
-	"go.cryptoscope.co/muxrpc/codec"
+	"go.cryptoscope.co/muxrpc/v2"
+	"go.mindeco.de/log"
+	"go.mindeco.de/log/level"
 	"golang.org/x/sync/errgroup"
 
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/internal/neterr"
 	"go.cryptoscope.co/ssb/message"
+	refs "go.mindeco.de/ssb-refs"
 )
 
-func (h *handler) fetchAll(
+func (h *LegacyGossip) FetchAll(
 	ctx context.Context,
 	e muxrpc.Endpoint,
 	set *ssb.StrFeedSet,
+	withLive bool,
 ) error {
 	lst, err := set.List()
 	if err != nil {
 		return err
 	}
-	// we don't just want them all parallel right nw
-	// this kind of concurrency is way to harsh on the runtime
-	// we need some kind of FeedManager, similar to Blobs
+
+	// TODO: warning unbound parallellism ahead.
+	// since we don't have a way yet to handoff a feed
+	// all feeds will be stuck in the pool.
+	//
+	// this is very bad if you have a lot of them.
+	//
+	// ebt will make this better
+	// we need some kind of pull feed manager, similar to Blobs
 	// which we can ask for which feeds aren't in transit,
 	// due for a (probabilistic) update
 	// and manage live feeds more granularly across open connections
@@ -44,199 +47,121 @@ func (h *handler) fetchAll(
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	fetchGroup, ctx := errgroup.WithContext(ctx)
-	work := make(chan *ssb.FeedRef)
-
-	n := 1 + (len(lst) / 10)
-	// this doesnt pipeline super well
-	// we can do more then one feed per core
-	maxWorker := runtime.NumCPU() * 4
-	if n > maxWorker { // n = max(n,maxWorker)
-		n = maxWorker
-	}
-	for i := n; i > 0; i-- {
-		fetchGroup.Go(h.makeWorker(work, ctx, e))
-	}
 
 	for _, r := range lst {
-		select {
-		case <-ctx.Done():
-			close(work)
-			fetchGroup.Wait()
-			return ctx.Err()
-		case work <- r:
-		}
+		fetchGroup.Go(h.workFeed(ctx, e, r, withLive))
 	}
-	close(work)
-	level.Debug(h.Info).Log("event", "feed fetch workers filled", "n", n)
+
 	err = fetchGroup.Wait()
-	level.Debug(h.Info).Log("event", "workers done", "err", err)
 	return err
 }
 
-func (h *handler) makeWorker(work <-chan *ssb.FeedRef, ctx context.Context, edp muxrpc.Endpoint) func() error {
-	started := time.Now()
+func (h *LegacyGossip) workFeed(ctx context.Context, edp muxrpc.Endpoint, ref refs.FeedRef, withLive bool) func() error {
 	return func() error {
-		for ref := range work {
-			err := h.fetchFeed(ctx, ref, edp, started)
-			causeErr := errors.Cause(err)
-			if muxrpc.IsSinkClosed(err) || causeErr == context.Canceled || causeErr == muxrpc.ErrSessionTerminated || neterr.IsConnBrokenErr(causeErr) {
-				return err
-			} else if err != nil {
-				// just logging the error assuming forked feed for instance
-				level.Warn(h.Info).Log("event", "skipped updating of stored feed", "err", err, "fr", ref.ShortRef())
-			}
+		err := h.fetchFeed(ctx, ref, edp, time.Now(), withLive)
+		var callErr *muxrpc.CallError
+		var noSuchMethodErr muxrpc.ErrNoSuchMethod
+		if muxrpc.IsSinkClosed(err) ||
+			errors.As(err, &noSuchMethodErr) ||
+			errors.As(err, &callErr) ||
+			errors.Is(err, context.Canceled) ||
+			errors.Is(err, muxrpc.ErrSessionTerminated) ||
+			neterr.IsConnBrokenErr(err) {
+			return err
+		} else if err != nil {
+			// just logging the error assuming forked feed for instance
+			level.Warn(h.Info).Log("event", "skipped updating of stored feed", "err", err, "fr", ref.ShortRef())
 		}
+
 		return nil
 	}
 }
 
-func isIn(list []librarian.Addr, a *ssb.FeedRef) bool {
-	for _, el := range list {
-		if bytes.Equal([]byte(a.StoredAddr()), []byte(el)) {
-			return true
-		}
-	}
-	return false
-}
-
 // fetchFeed requests the feed fr from endpoint e into the repo of the handler
-func (g *handler) fetchFeed(
+func (h *LegacyGossip) fetchFeed(
 	ctx context.Context,
-	fr *ssb.FeedRef,
+	fr refs.FeedRef,
 	edp muxrpc.Endpoint,
 	started time.Time,
+	withLive bool,
 ) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
 	default:
 	}
-	// check our latest
-	frAddr := fr.StoredAddr()
-	addr := string(frAddr)
-	g.activeLock.Lock()
-	_, ok := g.activeFetch[addr]
-	if ok {
-		//level.Debug(g.logger).Log("fetchFeed", "crawl active", "addr", fr.ShortRef())
-		g.activeLock.Unlock()
-		return nil
-	}
-	if g.sysGauge != nil {
-		g.sysGauge.With("part", "fetches").Add(1)
-	}
 
-	g.activeFetch[addr] = struct{}{}
-	g.activeLock.Unlock()
-	defer func() {
-		g.activeLock.Lock()
-		delete(g.activeFetch, addr)
-		g.activeLock.Unlock()
-		if g.sysGauge != nil {
-			g.sysGauge.With("part", "fetches").Add(-1)
-		}
-	}()
-	userLog, err := g.UserFeeds.Get(frAddr)
+	// wether to fetch this feed in full (TODO: should be passed in)
+	completeFeed := true
+	var err error
+	snk, err := h.verifyRouter.GetSink(fr, completeFeed)
 	if err != nil {
-		return errors.Wrapf(err, "failed to open sublog for user")
-	}
-	latest, err := userLog.Seq().Value()
-	if err != nil {
-		return errors.Wrapf(err, "failed to observe latest")
-	}
-	var (
-		latestSeq margaret.BaseSeq
-		latestMsg ssb.Message
-	)
-	switch v := latest.(type) {
-	case librarian.UnsetValue:
-		// nothing stored, fetch from zero
-	case margaret.BaseSeq:
-		latestSeq = v + 1 // sublog is 0-init while ssb chains start at 1
-		if v >= 0 {
-			rootLogValue, err := userLog.Get(v)
-			if err != nil {
-				return errors.Wrapf(err, "failed to look up root seq for latest user sublog")
-			}
-			msgV, err := g.RootLog.Get(rootLogValue.(margaret.Seq))
-			if err != nil {
-				return errors.Wrapf(err, "failed retreive stored message")
-			}
-
-			var ok bool
-			latestMsg, ok = msgV.(ssb.Message)
-			if !ok {
-				return errors.Errorf("fetch: wrong message type. expected %T - got %T", latestMsg, msgV)
-			}
-
-			// commented out to prevent bug with pulling feedsd.
-			//
-			// make sure our house is in order
-			//if hasSeq := latestMsg.Seq(); hasSeq != latestSeq.Seq() {
-			//	return ssb.ErrWrongSequence{Ref: fr, Stored: latestMsg, Logical: latestSeq}
-			//}
-		}
+		return fmt.Errorf("failed to get verify sink for feed: %w", err)
 	}
 
+	var latestSeq = int(snk.Seq())
 	startSeq := latestSeq
-	info := log.With(g.Info, "event", "gossiprx",
+	info := log.With(h.Info, "event", "gossiprx",
 		"fr", fr.ShortRef(),
-		"latest", startSeq) // , "me", g.Id.ShortRef())
+		"starting", latestSeq) // , "me", g.Id.ShortRef())
 
-	var q = message.CreateHistArgs{
-		ID:         fr,
-		Seq:        int64(latestSeq + 1),
-		StreamArgs: message.StreamArgs{Limit: -1},
-	}
+	var q = message.NewCreateHistoryStreamArgs()
+	q.ID = fr
+	q.Seq = int64(latestSeq + 1)
+	q.Live = withLive
 
-	toLong, cancel := context.WithTimeout(ctx, 10*time.Minute)
 	defer func() {
-		cancel()
 		if n := latestSeq - startSeq; n > 0 {
-			if g.sysGauge != nil {
-				g.sysGauge.With("part", "msgs").Add(float64(n))
+			if h.sysGauge != nil {
+				h.sysGauge.With("part", "msgs").Add(float64(n))
 			}
-			if g.sysCtr != nil {
-				g.sysCtr.With("event", "gossiprx").Add(float64(n))
+			if h.sysCtr != nil {
+				h.sysCtr.With("event", "gossiprx").Add(float64(n))
 			}
 			level.Debug(info).Log("received", n, "took", time.Since(started))
 		}
 	}()
 
+	// level.Info(info).Log("starting", "fetch")
 	method := muxrpc.Method{"createHistoryStream"}
 
-	store := luigi.FuncSink(func(ctx context.Context, val interface{}, err error) error {
-		if err != nil {
-			if luigi.IsEOS(err) {
-				return nil
-			}
-			return err
-		}
-		_, err = g.RootLog.Append(val)
-		return errors.Wrap(err, "failed to append verified message to rootLog")
-	})
-
-	var (
-		src luigi.Source
-		snk luigi.Sink = message.NewVerifySink(fr, latestSeq, latestMsg, store, g.hmacSec)
-	)
-
-	switch fr.Algo {
-	case ssb.RefAlgoFeedSSB1:
-		src, err = edp.Source(toLong, json.RawMessage{}, method, q)
-	case ssb.RefAlgoFeedGabby:
-		src, err = edp.Source(toLong, codec.Body{}, method, q)
+	var src *muxrpc.ByteSource
+	switch fr.Algo() {
+	case refs.RefAlgoFeedSSB1:
+		src, err = edp.Source(ctx, muxrpc.TypeJSON, method, q)
+	case refs.RefAlgoFeedBendyButt:
+		fallthrough
+	case refs.RefAlgoFeedGabby:
+		src, err = edp.Source(ctx, muxrpc.TypeBinary, method, q)
+	default:
+		return fmt.Errorf("fetchFeed(%s): unhandled feed format", fr.Ref())
 	}
 	if err != nil {
-		return errors.Wrapf(err, "fetchFeed(%s:%d) failed to create source", fr.Ref(), latestSeq)
+		return fmt.Errorf("fetchFeed(%s:%d) failed to create source: %w", fr.Ref(), latestSeq, err)
 	}
 
-	// count the received messages
-	snk = mfr.SinkMap(snk, func(_ context.Context, val interface{}) (interface{}, error) {
-		latestSeq++
-		return val, nil
-	})
+	var buf = &bytes.Buffer{}
+	for src.Next(ctx) {
 
-	// info.Log("starting", "fetch")
-	err = luigi.Pump(toLong, snk, src)
-	return errors.Wrap(err, "gossip pump failed")
+		err = src.Reader(func(r io.Reader) error {
+			_, err = buf.ReadFrom(r)
+			return err
+		})
+		if err != nil {
+			return err
+		}
+
+		err = snk.Verify(buf.Bytes())
+		if err != nil {
+			return err
+		}
+		buf.Reset()
+		latestSeq++
+	}
+
+	if err := src.Err(); err != nil {
+		return fmt.Errorf("fetchFeed(%s:%d) gossip pump failed: %w", fr.Ref(), latestSeq, err)
+	}
+
+	return nil
 }

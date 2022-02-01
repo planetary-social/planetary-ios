@@ -4,14 +4,15 @@ package blobs
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
-	"github.com/cryptix/go/logging"
-	"github.com/pkg/errors"
+	"go.cryptoscope.co/muxrpc/v2"
+	"go.mindeco.de/logging"
 
-	"go.cryptoscope.co/muxrpc"
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/blobstore"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 type hasHandler struct {
@@ -19,83 +20,46 @@ type hasHandler struct {
 	log logging.Interface
 }
 
-func (hasHandler) HandleConnect(context.Context, muxrpc.Endpoint) {}
+func (h hasHandler) HandleAsync(ctx context.Context, req *muxrpc.Request) (interface{}, error) {
+	var blobRef refs.BlobRef
 
-func (h hasHandler) HandleCall(ctx context.Context, req *muxrpc.Request, edp muxrpc.Endpoint) {
-	// TODO: push manifest check into muxrpc
-	if req.Type == "" {
-		req.Type = "async"
-	}
+	err := json.Unmarshal(req.RawArgs, &blobRef)
 
-	if len(req.Args()) != 1 {
-		// TODO: change from generic handlers to typed once (source, sink, async..)
-		// async then would have to return a value or an error and not fall into this trap of not closing a stream
-		req.Stream.CloseWithError(fmt.Errorf("bad request - wrong args"))
-		return
-	}
-
-	switch v := req.Args()[0].(type) {
-	case string:
-
-		ref, err := ssb.ParseBlobRef(v)
+	if err != nil { // assume list of refs
+		var blobRefs []refs.BlobRef
+		err := json.Unmarshal(req.RawArgs, &blobRefs)
 		if err != nil {
-			req.Stream.CloseWithError(errors.Wrap(err, "error parsing blob reference"))
-			return
+			return nil, fmt.Errorf("bad request - unhandled type %s", err)
 		}
+		var has = make([]bool, len(blobRefs))
 
-		_, err = h.bs.Get(ref)
-
-		has := true
-
-		if err == blobstore.ErrNoSuchBlob {
-			has = false
-		} else if err != nil {
-			err = errors.Wrap(err, "error looking up blob")
-			err = req.Stream.CloseWithError(err)
-			checkAndLog(h.log, err)
-			return
-		}
-
-		err = req.Return(ctx, has)
-		checkAndLog(h.log, errors.Wrap(err, "error returning value"))
-
-	case []interface{}:
-		var has = make([]bool, len(v))
-
-		for k, blobRef := range v {
-
-			blobStr, ok := blobRef.(string)
-			if !ok {
-				req.Stream.CloseWithError(fmt.Errorf("bad request - unhandled type"))
-				return
-			}
-			ref, err := ssb.ParseBlobRef(blobStr)
-			checkAndLog(h.log, errors.Wrap(err, "error parsing blob reference"))
-			if err != nil {
-				return
-			}
-
-			_, err = h.bs.Get(ref)
+		for k, blobRef := range blobRefs {
+			_, err = h.bs.Size(blobRef)
 
 			has[k] = true
 
 			if err == blobstore.ErrNoSuchBlob {
 				has[k] = false
 			} else if err != nil {
-				err = errors.Wrap(err, "error looking up blob")
-				err = req.Stream.CloseWithError(err)
-				checkAndLog(h.log, err)
-				return
+				err = fmt.Errorf("error looking up blob: %w", err)
+				return nil, err
+
 			}
 
 		}
+		return has, nil
 
-		err := req.Return(ctx, has)
-		checkAndLog(h.log, errors.Wrap(err, "error returning value"))
-
-	default:
-		req.Stream.CloseWithError(fmt.Errorf("bad request - unhandled type"))
-		return
 	}
 
+	_, err = h.bs.Size(blobRef)
+
+	has := true
+
+	if err == blobstore.ErrNoSuchBlob {
+		has = false
+	} else if err != nil {
+		err = fmt.Errorf("error looking up blob: %w", err)
+		return nil, err
+	}
+	return has, nil
 }

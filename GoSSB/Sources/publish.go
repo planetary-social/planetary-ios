@@ -2,15 +2,15 @@ package main
 
 import "C"
 import (
+	"crypto/rand"
 	"encoding/json"
+	"go.cryptoscope.co/ssb/private/box"
+	refs "go.mindeco.de/ssb-refs"
 	"strings"
 	"sync"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-
-	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/private"
 )
 
 var publishLock sync.Mutex
@@ -66,9 +66,9 @@ func ssbPublishPrivate(content, recps string) *C.char {
 	defer publishLock.Unlock()
 	lock.Unlock()
 
-	var rcpsRefs []*ssb.FeedRef
+	var rcpsRefs []refs.FeedRef
 	for i, rstr := range strings.Split(recps, ";") {
-		ref, err := ssb.ParseFeedRef(rstr)
+		ref, err := refs.ParseFeedRef(rstr)
 		if err != nil {
 			err = errors.Wrapf(err, "private/publish: failed to parse recipient %d", i)
 			return nil
@@ -76,7 +76,9 @@ func ssbPublishPrivate(content, recps string) *C.char {
 		rcpsRefs = append(rcpsRefs, ref)
 	}
 
-	boxedMsg, err := private.Box(json.RawMessage(content), rcpsRefs...)
+	boxer := box.NewBoxer(rand.Reader)
+
+	boxedMsg, err := boxer.Encrypt(json.RawMessage(content), rcpsRefs...)
 	if err != nil {
 		err = errors.Wrap(err, "private/publish: failed to box message")
 		return nil

@@ -11,7 +11,8 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/ugorji/go/codec"
-	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
+	ssb "go.mindeco.de/ssb-refs"
 	"golang.org/x/crypto/ed25519"
 	"golang.org/x/crypto/nacl/auth"
 )
@@ -36,14 +37,14 @@ func GetCBORHandle() (h *codec.CborHandle) {
 	return h
 }
 
-func NewEncoder(author *ssb.KeyPair) *Encoder {
+func NewEncoder(author ed25519.PrivateKey) *Encoder {
 	pe := &Encoder{}
-	pe.kp = author
+	pe.privKey = author
 	return pe
 }
 
 type Encoder struct {
-	kp *ssb.KeyPair
+	privKey ed25519.PrivateKey
 
 	hmacSecret   *[32]byte
 	setTimestamp bool
@@ -65,7 +66,7 @@ func (e *Encoder) WithHMAC(in []byte) error {
 
 var now = time.Now
 
-func (e *Encoder) Encode(sequence uint64, prev *BinaryRef, val interface{}) (*Transfer, *ssb.MessageRef, error) {
+func (e *Encoder) Encode(sequence uint64, prev BinaryRef, val interface{}) (*Transfer, refs.MessageRef, error) {
 	contentHash := sha256.New()
 	contentBuf := &bytes.Buffer{}
 	w := io.MultiWriter(contentHash, contentBuf)
@@ -81,15 +82,12 @@ func (e *Encoder) Encode(sequence uint64, prev *BinaryRef, val interface{}) (*Tr
 		evt.Content.Type = ContentTypeJSON
 		err := json.NewEncoder(w).Encode(val)
 		if err != nil {
-			return nil, nil, errors.Wrap(err, "json content encoding failed")
+			return nil, refs.MessageRef{}, errors.Wrap(err, "json content encoding failed")
 		}
 	}
 
 	if sequence > 1 {
-		if prev == nil {
-			return nil, nil, errors.Errorf("encode: previous can only be nil on the first message")
-		}
-		evt.Previous = prev
+		evt.Previous = &prev
 	}
 	evt.Sequence = sequence
 	if e.setTimestamp {
@@ -97,29 +95,31 @@ func (e *Encoder) Encode(sequence uint64, prev *BinaryRef, val interface{}) (*Tr
 	}
 
 	var err error
-	evt.Author, err = fromRef(e.kp.Id)
+	evt.Author, err = refFromPubKey(e.privKey.Public().(ed25519.PublicKey))
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "invalid author ref")
+		return nil, refs.MessageRef{}, errors.Wrap(err, "invalid author ref")
 	}
 
-	evt.Content.Hash, err = fromRef(&ssb.ContentRef{
-		Hash: contentHash.Sum(nil),
-		Algo: ssb.RefAlgoContentGabby,
-	})
+	cr := ContentRef{
+		algo: RefAlgoContentGabby,
+	}
+	copy(cr.hash[:], contentHash.Sum(nil))
+
+	evt.Content.Hash, err = fromRef(cr)
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to construct content reference")
+		return nil, refs.MessageRef{}, errors.Wrap(err, "failed to construct content reference")
 	}
 
 	n := contentBuf.Len()
 	if n > math.MaxUint16 {
-		return nil, nil, errors.Errorf("gabbygrove: content size too large (got %d bytes)", n)
+		return nil, refs.MessageRef{}, errors.Errorf("gabbygrove: content size too large (got %d bytes)", n)
 	}
 	evt.Content.Size = uint16(n)
 	contentBytes := contentBuf.Bytes()
 
 	evtBytes, err := evt.MarshalCBOR()
 	if err != nil {
-		return nil, nil, errors.Wrap(err, "failed to encode event")
+		return nil, refs.MessageRef{}, errors.Wrap(err, "failed to encode event")
 	}
 
 	toSign := evtBytes
@@ -130,18 +130,19 @@ func (e *Encoder) Encode(sequence uint64, prev *BinaryRef, val interface{}) (*Tr
 
 	var tr Transfer
 	tr.Event = evtBytes
-	tr.Signature = ed25519.Sign(e.kp.Pair.Secret[:], toSign)
+	tr.Signature = ed25519.Sign(e.privKey, toSign)
 	tr.Content = contentBytes
 	return &tr, tr.Key(), nil
 }
 
-func (tr Transfer) Key() *ssb.MessageRef {
+func (tr Transfer) Key() refs.MessageRef {
 	signedEvtHash := sha256.New()
 	io.Copy(signedEvtHash, bytes.NewReader(tr.Event))
 	io.Copy(signedEvtHash, bytes.NewReader(tr.Signature))
 
-	return &ssb.MessageRef{
-		Hash: signedEvtHash.Sum(nil),
-		Algo: ssb.RefAlgoMessageGabby,
+	mr, err := refs.NewMessageRefFromBytes(signedEvtHash.Sum(nil), ssb.RefAlgoMessageGabby)
+	if err != nil {
+		panic(err)
 	}
+	return mr
 }

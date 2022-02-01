@@ -4,22 +4,17 @@ package multilogs
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/librarian"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/multilog"
-	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/repo"
+	"go.cryptoscope.co/ssb/internal/storedrefs"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 const IndexNameFeeds = "userFeeds"
 
-func OpenUserFeeds(r repo.Interface) (multilog.MultiLog, librarian.SinkIndex, error) {
-	return repo.OpenMultiLog(r, IndexNameFeeds, UserFeedsUpdate)
-}
-
-func UserFeedsUpdate(ctx context.Context, seq margaret.Seq, value interface{}, mlog multilog.MultiLog) error {
+func UserFeedsUpdate(ctx context.Context, seq int64, value interface{}, mlog multilog.MultiLog) error {
 	if nulled, ok := value.(error); ok {
 		if margaret.IsErrNulled(nulled) {
 			return nil
@@ -27,25 +22,21 @@ func UserFeedsUpdate(ctx context.Context, seq margaret.Seq, value interface{}, m
 		return nulled
 	}
 
-	abstractMsg, ok := value.(ssb.Message)
+	abstractMsg, ok := value.(refs.Message)
 	if !ok {
-		return errors.Errorf("error casting message. got type %T", value)
+		return fmt.Errorf("error casting message. got type %T", value)
 	}
 
 	author := abstractMsg.Author()
-	if author == nil {
-		return errors.Errorf("nil author on message?! %v (%d)", value, seq.Seq())
-	}
 
-	if mlog == nil {
-		panic("passed nil mlog")
-	}
-
-	authorLog, err := mlog.Get(author.StoredAddr())
+	authorLog, err := mlog.Get(storedrefs.Feed(author))
 	if err != nil {
-		return errors.Wrap(err, "error opening sublog")
+		return fmt.Errorf("error opening sublog: %w", err)
 	}
 
 	_, err = authorLog.Append(seq)
-	return errors.Wrap(err, "error appending new author message")
+	if err != nil {
+		return fmt.Errorf("error appending new author message: %w", err)
+	}
+	return nil
 }

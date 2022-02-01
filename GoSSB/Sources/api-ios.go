@@ -39,14 +39,13 @@ import (
 	"github.com/go-kit/kit/log/level"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/luigi"
-
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/plugins2"
 	"go.cryptoscope.co/ssb/repo"
-	"go.cryptoscope.co/ssb/repo/migrations"
 	mksbot "go.cryptoscope.co/ssb/sbot"
+	refs "go.mindeco.de/ssb-refs"
 
+	"verseproj/scuttlegobridge/migrations"
 	"verseproj/scuttlegobridge/servicesplug"
 )
 
@@ -145,7 +144,7 @@ type botConfig struct {
 	Testing    bool
 
 	// Pubs that host planetary specific muxrpc calls
-	ServicePubs []ssb.FeedRef
+	ServicePubs []refs.FeedRef
 
 	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
 }
@@ -333,37 +332,10 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 		return false
 	}
 
-	sbot.BlobStore.Changes().Register(luigi.FuncSink(func(ctx context.Context, v interface{}, err error) error {
-		if err != nil {
-			if luigi.IsEOS(err) {
-				return nil
-			}
-			return err
-		}
-
-		n, ok := v.(ssb.BlobStoreNotification)
-		if !ok {
-			return errors.Errorf("blob change: unhandled notification type: %T", v)
-		}
-
-		if n.Op != ssb.BlobStoreOpPut {
-			return nil
-		}
-
-		sz, err := sbot.BlobStore.Size(n.Ref)
-		if err != nil {
-			return err
-		}
-
-		testRef := C.CString(n.Ref.Ref())
-		ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(sz), testRef)
-		C.free(unsafe.Pointer(testRef))
-		log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.Ref())
-		return nil
-	}))
+	sbot.BlobStore.Register(newEmitter())
 
 	sbot.WaitUntilIndexesAreSynced()
-	log.Log("event", "serving", "self", sbot.KeyPair.Id.Ref()[1:5], "addr", listenAddr)
+	log.Log("event", "serving", "self", sbot.KeyPair.ID().Ref()[1:5], "addr", listenAddr)
 	go func() {
 		srvErr := sbot.Network.Serve(longCtx)
 		log.Log("event", "sbot node.Serve returned", "srvErr", srvErr)
@@ -373,3 +345,31 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 
 // needed for buildmode c-archive
 func main() {}
+
+type emitter struct {
+}
+
+func newEmitter() *emitter {
+	return &emitter{}
+}
+
+func (e emitter) EmitBlob(n ssb.BlobStoreNotification) error {
+	if n.Op != ssb.BlobStoreOpPut {
+		return nil
+	}
+
+	sz, err := sbot.BlobStore.Size(n.Ref)
+	if err != nil {
+		return err
+	}
+
+	testRef := C.CString(n.Ref.Ref())
+	ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(sz), testRef)
+	C.free(unsafe.Pointer(testRef))
+	log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.Ref())
+	return nil
+}
+
+func (e emitter) Close() error {
+	return nil
+}

@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"go.cryptoscope.co/ssb/multilogs"
 	"os"
 	"strconv"
 	"time"
@@ -11,9 +12,10 @@ import (
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/ssb"
 	mksbot "go.cryptoscope.co/ssb/sbot"
+	refs "go.mindeco.de/ssb-refs"
+	"golang.org/x/crypto/ed25519"
 )
 
 // #include <stdlib.h>
@@ -35,7 +37,7 @@ func ssbGenKey() *C.char {
 		}
 	}()
 
-	kp, err := ssb.NewKeyPair(nil)
+	kp, err := ssb.NewKeyPair(nil, refs.RefAlgoFeedSSB1)
 	if err != nil {
 		err = errors.Wrap(err, "GenerateKeyPair: keygen failed")
 		return nil
@@ -43,9 +45,9 @@ func ssbGenKey() *C.char {
 
 	var sec = jsonSecret{
 		Curve:   "ed25519",
-		ID:      kp.Id,
-		Private: base64.StdEncoding.EncodeToString(kp.Pair.Secret[:]) + ".ed25519",
-		Public:  base64.StdEncoding.EncodeToString(kp.Pair.Public[:]) + ".ed25519",
+		ID:      kp.ID(),
+		Private: base64.StdEncoding.EncodeToString(kp.Secret()) + ".ed25519",
+		Public:  base64.StdEncoding.EncodeToString(kp.Secret().Public().(ed25519.PublicKey)) + ".ed25519", // todo why save it it is in private key
 	}
 
 	bytes, err := json.Marshal(sec)
@@ -59,7 +61,7 @@ func ssbGenKey() *C.char {
 // todo: deduplicate
 type jsonSecret struct {
 	Curve   string       `json:"curve"`
-	ID      *ssb.FeedRef `json:"id"`
+	ID      refs.FeedRef `json:"id"`
 	Private string       `json:"private"`
 	Public  string       `json:"public"`
 }
@@ -73,7 +75,7 @@ func ssbReplicateUpTo() int {
 		}
 	}()
 
-	uf, ok := sbot.GetMultiLog("userFeeds")
+	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
 	if !ok {
 		err = errors.Errorf("sbot: missing userFeeds index")
 		return -1
@@ -93,15 +95,15 @@ func ssbReplicateUpTo() int {
 			return -1
 		}
 
-		ms, err := subLog.Seq().Value()
+		ms := subLog.Seq()
+
+		fr, err := refs.NewLegacyFeedRefFromBytes([]byte(addr)) // todo is this correct?
 		if err != nil {
 			err = errors.Wrapf(err, "feeds: log(%d) failed to get current seq", i)
 			return -1
 		}
-		var fr ssb.FeedRef
-		fr.Algo = "ed25519"
-		fr.ID = []byte(addr)
-		feedCnt[fr.Ref()] = ms.(margaret.Seq).Seq()
+
+		feedCnt[fr.Ref()] = ms
 	}
 
 	r, w, err := os.Pipe()
@@ -212,7 +214,7 @@ func ssbHealRepo() *C.char {
 }
 
 type healReport struct {
-	Authors  []*ssb.FeedRef
+	Authors  []refs.FeedRef
 	Messages uint64
 }
 

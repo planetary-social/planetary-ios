@@ -5,10 +5,10 @@ package offset2
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"io"
 	"os"
 
-	"github.com/pkg/errors"
 	"go.cryptoscope.co/margaret"
 )
 
@@ -22,7 +22,7 @@ func (d *data) frameReader(ofst int64) (io.Reader, error) {
 	var sz int64
 	err := binary.Read(io.NewSectionReader(d, ofst, 8), binary.BigEndian, &sz)
 	if err != nil {
-		return nil, errors.Wrap(err, "error reading payload length")
+		return nil, fmt.Errorf("error reading payload length: %w", err)
 	}
 
 	if sz < 0 {
@@ -38,7 +38,7 @@ func (d *data) readFrame(data []byte, ofst int64) (int, error) {
 	var sz int64
 	err := binary.Read(sr, binary.BigEndian, &sz)
 	if err != nil {
-		return 0, errors.Wrap(err, "error reading payload length")
+		return 0, fmt.Errorf("error reading payload length: %w", err)
 	}
 
 	return d.ReadAt(data, ofst+8)
@@ -47,38 +47,48 @@ func (d *data) readFrame(data []byte, ofst int64) (int, error) {
 func (d *data) getFrameSize(ofst int64) (int64, error) {
 	_, err := d.ReadAt(d.buf[:], ofst)
 	if err != nil {
-		return 0, errors.Wrap(err, "error reading payload length")
+		return -1, fmt.Errorf("error reading payload length: %w", err)
 	}
 
 	buf := bytes.NewBuffer(d.buf[:])
 
 	var sz int64
 	err = binary.Read(buf, binary.BigEndian, &sz)
-	return sz, errors.Wrap(err, "error parsing payload length")
+	if err != nil {
+		return -1, fmt.Errorf("error parsing payload length: %w", err)
+	}
+
+	return sz, nil
 }
 
 func (d *data) getFrame(ofst int64) ([]byte, error) {
 	sz, err := d.getFrameSize(ofst)
 	if err != nil {
-		return nil, errors.Wrap(err, "error getting frame size")
+		return nil, fmt.Errorf("error getting frame size: %w", err)
 	}
 
 	data := make([]byte, sz)
 	_, err = d.readFrame(data, ofst)
-	return data, errors.Wrap(err, "error reading frame")
+	if err != nil {
+		return nil, fmt.Errorf("error reading frame: %w", err)
+	}
+	return data, nil
 }
 
 func (d *data) append(data []byte) (int64, error) {
 	ofst, err := d.Seek(0, io.SeekEnd)
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to seek to end of file")
+		return -1, fmt.Errorf("failed to seek to end of file: %w", err)
 	}
 
 	err = binary.Write(d, binary.BigEndian, int64(len(data)))
 	if err != nil {
-		return 0, errors.Wrap(err, "writing length prefix failed")
+		return -1, fmt.Errorf("writing length prefix failed: %w", err)
 	}
 
 	_, err = d.Write(data)
-	return ofst, errors.Wrap(err, "error writing data")
+	if err != nil {
+		return -1, fmt.Errorf("error writing data: %w", err)
+	}
+	return ofst, nil
 }

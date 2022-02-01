@@ -4,10 +4,10 @@ package multimsg
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 
-	"github.com/pkg/errors"
 	"go.cryptoscope.co/margaret"
 )
 
@@ -19,7 +19,7 @@ func (c MargaretCodec) NewDecoder(r io.Reader) margaret.Decoder { return decoder
 func (c MargaretCodec) Marshal(v interface{}) ([]byte, error) {
 	mm, ok := v.(MultiMessage)
 	if !ok {
-		return nil, errors.Errorf("mmCodec: wrong type: %T", v)
+		return nil, fmt.Errorf("mmCodec: wrong type: %T", v)
 	}
 	return mm.MarshalBinary()
 }
@@ -35,7 +35,7 @@ type encoder struct{ w io.Writer }
 func (enc encoder) Encode(v interface{}) error {
 	mm, ok := v.(MultiMessage)
 	if !ok {
-		return errors.Errorf("mmCodec: wrong type: %T", v)
+		return fmt.Errorf("mmCodec: wrong type: %T", v)
 	}
 	bin, err := mm.MarshalBinary()
 	if err != nil {

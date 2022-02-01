@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"unicode/utf8"
 
-	"github.com/pkg/errors"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 )
@@ -45,12 +44,12 @@ func InternalV8Binary(in []byte) ([]byte, error) {
 	enc := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder()
 	trans := transform.NewWriter(&u16, enc)
 	if _, err := io.Copy(trans, bytes.NewReader(in)); err != nil {
-		return nil, errors.Wrap(err, "internalV8bin: failed to transform input to u16")
+		return nil, fmt.Errorf("internalV8bin: failed to transform input to u16: %w", err)
 	}
 	// now drop every 2nd byte
 	u16b := u16.Bytes()
 	if len(u16b)%2 != 0 {
-		return nil, errors.Errorf("internalV8bin: assumed even number of bytes in u16")
+		return nil, fmt.Errorf("internalV8bin: assumed even number of bytes in u16")
 	}
 	j := 0
 	z := make([]byte, len(u16b)/2)

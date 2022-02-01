@@ -3,7 +3,8 @@
 package repo
 
 import (
-	"go.cryptoscope.co/librarian"
+	"github.com/dgraph-io/badger/v3"
+	librarian "go.cryptoscope.co/margaret/indexes"
 	"go.cryptoscope.co/margaret/multilog"
 )
 
@@ -12,12 +13,12 @@ type Interface interface {
 }
 
 type SimpleIndexMaker interface {
-	MakeSimpleIndex(r Interface) (librarian.Index, librarian.SinkIndex, error)
+	MakeSimpleIndex(db *badger.DB) (librarian.Index, librarian.SinkIndex, error)
 }
 
 type MultiLogMaker interface {
-	MakeMultiLog(r Interface) (multilog.MultiLog, librarian.SinkIndex, error)
+	MakeMultiLog(db *badger.DB) (multilog.MultiLog, librarian.SinkIndex, error)
 }
 
-type MakeMultiLog func(r Interface) (multilog.MultiLog, librarian.SinkIndex, error)
-type MakeSimpleIndex func(r Interface) (librarian.Index, librarian.SinkIndex, error)
+type MakeMultiLog func(db *badger.DB) (multilog.MultiLog, librarian.SinkIndex, error)
+type MakeSimpleIndex func(db *badger.DB) (librarian.Index, librarian.SinkIndex, error)

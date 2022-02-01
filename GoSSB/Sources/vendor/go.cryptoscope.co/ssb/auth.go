@@ -2,6 +2,8 @@
 
 package ssb
 
+import refs "go.mindeco.de/ssb-refs"
+
 type Authorizer interface {
-	Authorize(remote *FeedRef) error
+	Authorize(remote refs.FeedRef) error
 }

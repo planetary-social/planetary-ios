@@ -10,13 +10,13 @@ import (
 
 	"go.cryptoscope.co/netwrap"
 	"go.cryptoscope.co/secretstream"
-	"go.cryptoscope.co/ssb"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 var ErrInvalidToken = errors.New("invite: invalid token")
 
 type Token struct {
-	Peer    ssb.FeedRef
+	Peer    refs.FeedRef
 	Address net.Addr
 
 	Seed [32]byte
@@ -42,7 +42,7 @@ func (c Token) String() string {
 	return s.String()
 }
 
-func NewPubMessageFromToken(tok Token) (*ssb.OldPubMessage, error) {
+func NewPubMessageFromToken(tok Token) (*refs.OldPubMessage, error) {
 	addr := netwrap.GetAddr(tok.Address, "tcp")
 	if addr == nil {
 		return nil, errors.New("invalid invite token - no tcp address")
@@ -53,9 +53,9 @@ func NewPubMessageFromToken(tok Token) (*ssb.OldPubMessage, error) {
 		return nil, fmt.Errorf("invalid invite token - wrong address type: %T", addr)
 	}
 
-	return &ssb.OldPubMessage{
+	return &refs.OldPubMessage{
 		Type: "pub",
-		Address: ssb.OldAddress{
+		Address: refs.OldAddress{
 			Key:  tok.Peer,
 			Host: tcpAddr.IP.String(),
 			Port: tcpAddr.Port,
@@ -107,11 +107,11 @@ func ParseLegacyToken(input string) (Token, error) {
 	}
 
 	var err error
-	ref, err := ssb.ParseFeedRef(refAndSeed[0])
+	ref, err := refs.ParseFeedRef(refAndSeed[0])
 	if err != nil {
 		return Token{}, err
 	}
-	c.Peer = *ref
+	c.Peer = ref
 
 	seed, err := base64.StdEncoding.DecodeString(refAndSeed[1])
 	if err != nil {
@@ -137,7 +137,7 @@ func ParseLegacyToken(input string) (Token, error) {
 		return Token{}, err
 	}
 
-	c.Address = netwrap.WrapAddr(&tcpAddr, secretstream.Addr{ref.ID[:]})
+	c.Address = netwrap.WrapAddr(&tcpAddr, secretstream.Addr{PubKey: ref.PubKey()})
 
 	return c, nil
 }
