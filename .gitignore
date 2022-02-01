@@ -5,6 +5,9 @@
 ## CocoaPods Keys
 Pods/CocoaPodsKeys
 
+## Configuration files with secrets
+Source/Controller/Configs/*
+
 ## Build generated
 build/
 DerivedData/
