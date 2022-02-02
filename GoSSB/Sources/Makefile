@@ -8,14 +8,14 @@ CFLAGS := $(if $(DEPLOYMENT_TARGET_CLANG_FLAG_NAME),-$(DEPLOYMENT_TARGET_CLANG_F
 
 ARCHS_SIM = arm64 x86_64
 PLATFORM_SIM = iPhoneSimulator
-#SDKROOT_SIM = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_SIM).platform/Developer/SDKs/$(PLATFORM_SIM)$(IPHONEOS_SDK).sdk
+SDKROOT_SIM = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_SIM).platform/Developer/SDKs/$(PLATFORM_SIM)$(IPHONEOS_SDK).sdk
 EXTRA_CFLAGS_SIM += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_SIM)
 EXTRA_CFLAGS_SIM += -D__IPHONE_OS_VERSION_MIN_REQUIRED=20000 -miphonesimulator-version-min=$(IPHONEOS_DEPLOYMENT_TARGET)
 CFLAGS_SIM = $(CFLAGS) $(EXTRA_CFLAGS_SIM)
 
 ARCHS_PHONE = arm64
 PLATFORM_PHONE = iPhoneOS
-#SDKROOT_PHONE = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_PHONE).platform/Developer/SDKs/$(PLATFORM_PHONE)$(IPHONEOS_SDK).sdk
+SDKROOT_PHONE = $(shell xcode-select -print-path)/Platforms/$(PLATFORM_PHONE).platform/Developer/SDKs/$(PLATFORM_PHONE)$(IPHONEOS_SDK).sdk
 EXTRA_CFLAGS_PHONE += -pipe -fvisibility=hidden $(INCLUDE) -isysroot $(SDKROOT_PHONE)
 EXTRA_CFLAGS_PHONE += -miphoneos-version-min=$(IPHONEOS_DEPLOYMENT_TARGET)
 CFLAGS_PHONE = $(CFLAGS) $(EXTRA_CFLAGS_PHONE)
@@ -51,7 +51,7 @@ GOROOT ?= $(TEMP_ROOT)/.goroot
 export GOPATH := $(BUILDDIR)/gopath
 export PATH := $(GOROOT)/bin:$(PATH)
 
-GO := /bin/go
+GO := $(GOROOT)/bin/go
 
 GOEXTRAFLAGS=-trimpath -mod=vendor
 GOBUILDTAGS = nommio x509omitbundledroots
