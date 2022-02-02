@@ -38,6 +38,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This app allows you to take photos to share with friends or use as your profile image.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Planetary can download new posts from your friends directly if they are on your local network.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app allows you to select photos to share with friends or use as your profile image.</string>
 	<key>PLCommunities</key>
