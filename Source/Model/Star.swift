@@ -9,6 +9,24 @@
 import Foundation
 import Network
 
+func createTLSParameters(allowInsecure: Bool, queue: DispatchQueue) -> NWParameters {
+    let options = NWProtocolTLS.Options()
+    sec_protocol_options_set_verify_block(options.securityProtocolOptions, { (sec_protocol_metadata, sec_trust, sec_protocol_verify_complete) in
+        let trust = sec_trust_copy_ref(sec_trust).takeRetainedValue()
+        var error: CFError?
+        if SecTrustEvaluateWithError(trust, &error) {
+            sec_protocol_verify_complete(true)
+        } else {
+            if allowInsecure == true {
+                sec_protocol_verify_complete(true)
+            } else {
+                sec_protocol_verify_complete(false)
+            }
+        }
+    }, queue)
+    return NWParameters(tls: options)
+}
+
 struct Star {
     let invite: String
     
@@ -69,7 +87,7 @@ struct Star {
             return
         }
         
-        let tcpConnection = NWConnection(host: NWEndpoint.Host(host), port: port, using: NWParameters.tls)
+        let tcpConnection = NWConnection(host: NWEndpoint.Host(host), port: port, using: createTLSParameters(allowInsecure: true, queue: DispatchQueue(label: "verifyQueue")))
         tcpConnection.stateUpdateHandler = { state in
             print(state)
             switch state {
