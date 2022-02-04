@@ -9,7 +9,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Build
-      run: set -o pipefail && xcodebuild build -project GoSSB/GoSSB.xcodeproj -scheme GoSSB -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty
+      run: set -o pipefail && xcodebuild build -project GoSSB/GoSSB.xcodeproj -scheme GoSSB -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2"
   unit_test:
     name : Unit Tests
     runs-on: macOS-latest
