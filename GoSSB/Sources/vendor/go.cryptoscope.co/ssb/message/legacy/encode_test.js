@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 // creates a testdata.zip with two files per message on a feed
 // $seq.encoded contains the bytes of the message using ssb-feed/utils impl
 // $seq.orig contains the json stringifyed full message (containing .key and the msg under .value) for testing purposes

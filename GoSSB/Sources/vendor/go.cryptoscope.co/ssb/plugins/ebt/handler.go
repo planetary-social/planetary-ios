@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package ebt
@@ -110,7 +112,7 @@ func (h *MUXRPCHandler) sendState(ctx context.Context, tx *muxrpc.ByteSink, remo
 		return fmt.Errorf("failed to get changed frontier: %w", err)
 	}
 
-	selfRef := h.self.Ref()
+	selfRef := h.self.String()
 
 	// don't receive your own feed
 	if myNote, has := currState[selfRef]; has {
@@ -137,7 +139,7 @@ func (h *MUXRPCHandler) Loop(ctx context.Context, tx *muxrpc.ByteSink, rx *muxrp
 		return
 	}
 
-	peerLogger := log.With(h.info, "r", peer.ShortRef())
+	peerLogger := log.With(h.info, "r", peer.ShortSigil())
 
 	defer func() {
 		h.Sessions.Ended(remoteAddr)

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+#
+# SPDX-License-Identifier: MIT
+
 set -x
 
 dest=$1

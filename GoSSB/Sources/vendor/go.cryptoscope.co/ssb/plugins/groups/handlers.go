@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package groups
 
 import (
@@ -37,7 +41,7 @@ func (h create) HandleAsync(ctx context.Context, req *muxrpc.Request) (interface
 		return nil, err
 	}
 
-	level.Info(h.log).Log("event", "group created", "cloaked", cloaked.Ref())
+	level.Info(h.log).Log("event", "group created", "cloaked", cloaked.String())
 
 	return struct {
 		Group refs.MessageRef `json:"group_id"`
@@ -75,7 +79,7 @@ func (h publishTo) HandleAsync(ctx context.Context, req *muxrpc.Request) (interf
 		return nil, fmt.Errorf("failed to publish message to group")
 	}
 
-	return newMsg.Ref(), nil
+	return newMsg.String(), nil
 }
 
 type invite struct {
@@ -114,5 +118,5 @@ func (h invite) HandleAsync(ctx context.Context, req *muxrpc.Request) (interface
 		return nil, fmt.Errorf("failed to publish invite to group")
 	}
 
-	return newMsg.Ref(), nil
+	return newMsg.String(), nil
 }

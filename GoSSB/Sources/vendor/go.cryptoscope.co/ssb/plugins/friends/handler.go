@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package friends supplies some of npm:ssb-friends, namly isFollowing, isBlocking and hops but not hopStream, onEdge or createLayer.

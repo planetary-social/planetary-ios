@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"golang.org/x/crypto/ed25519"
@@ -16,10 +17,19 @@ import (
 
 // Ref is the abstract interface all reference types should implement.
 type Ref interface {
-	Ref() string      // returns the full reference
-	ShortRef() string // returns a shortend prefix
-
 	Algo() RefAlgo
+
+	// Sigil returns the pre-URI string ala @foo=.ed25519, %msgkey=.sha256 or &blob=.sha256.
+	Sigil() string
+
+	// ShortSigil returns a truncated version of Sigil()
+	ShortSigil() string
+
+	// URI prints the reference as a ssb-uri, following https://github.com/ssb-ngi-pointer/ssb-uri-spec
+	URI() string
+
+	fmt.Stringer
+	encoding.TextMarshaler
 }
 
 type RefAlgo string
@@ -31,15 +41,15 @@ const (
 	RefAlgoBlobSSB1    RefAlgo = RefAlgoMessageSSB1
 
 	RefAlgoFeedBamboo    RefAlgo = "bamboo"
-	RefAlgoMessageBamboo RefAlgo = "bamboo"
+	RefAlgoMessageBamboo RefAlgo = RefAlgoFeedBamboo
 
-	RefAlgoFeedBendyButt    RefAlgo = "bbfeed-v1"
-	RefAlgoMessageBendyButt RefAlgo = "bbmsg-v1"
+	RefAlgoFeedBendyButt    RefAlgo = "bendybutt-v1"
+	RefAlgoMessageBendyButt RefAlgo = RefAlgoFeedBendyButt
 
 	RefAlgoCloakedGroup RefAlgo = "cloaked"
 
-	RefAlgoFeedGabby    RefAlgo = "ggfeed-v1" // cbor based chain
-	RefAlgoMessageGabby RefAlgo = "ggmsg-v1"
+	RefAlgoFeedGabby    RefAlgo = "gabbygrove-v1" // cbor based chain
+	RefAlgoMessageGabby RefAlgo = RefAlgoFeedGabby
 )
 
 func ParseRef(str string) (Ref, error) {
@@ -55,7 +65,15 @@ func ParseRef(str string) (Ref, error) {
 	case "&":
 		return ParseBlobRef(str)
 	default:
-		return nil, ErrInvalidRefType
+		asURL, err := url.Parse(str)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse as URL: %s: %w", err, ErrInvalidRefType)
+		}
+		if asURL.Scheme != "ssb" {
+			return nil, fmt.Errorf("expected ssb protocl scheme on URL: %q: %w", str, ErrInvalidRefType)
+		}
+		asSSBURI, err := parseCaononicalURI(asURL.Opaque)
+		return asSSBURI.ref, err
 	}
 }
 
@@ -76,24 +94,6 @@ func NewMessageRefFromBytes(b []byte, algo RefAlgo) (MessageRef, error) {
 	return fr, nil
 }
 
-func (ref MessageRef) CopyHashTo(b []byte) error {
-	if len(b) != len(ref.hash) {
-		return ErrRefLen{algo: ref.algo, n: len(b)}
-	}
-	copy(b, ref.hash[:])
-	return nil
-}
-
-// Ref prints the full identifieir
-func (ref MessageRef) Ref() string {
-	return fmt.Sprintf("%%%s.%s", base64.StdEncoding.EncodeToString(ref.hash[:]), ref.algo)
-}
-
-// ShortRef prints a shortend version
-func (ref MessageRef) ShortRef() string {
-	return fmt.Sprintf("<%%%s.%s>", base64.StdEncoding.EncodeToString(ref.hash[:3]), ref.algo)
-}
-
 func (ref MessageRef) Algo() RefAlgo {
 	return ref.algo
 }
@@ -106,73 +106,57 @@ func (ref MessageRef) Equal(other MessageRef) bool {
 	return bytes.Equal(ref.hash[:], other.hash[:])
 }
 
+func (ref MessageRef) CopyHashTo(b []byte) error {
+	if len(b) != len(ref.hash) {
+		return ErrRefLen{algo: ref.algo, n: len(b)}
+	}
+	copy(b, ref.hash[:])
+	return nil
+}
+
+// Sigil returns the MessageRef with the sigil %, it's base64 encoded hash and the used algo (currently only sha256)
+func (ref MessageRef) Sigil() string {
+	return fmt.Sprintf("%%%s.%s", base64.StdEncoding.EncodeToString(ref.hash[:]), ref.algo)
+}
+
+// ShortSigil prints a shortend version of Sigil()
+func (ref MessageRef) ShortSigil() string {
+	return fmt.Sprintf("<%%%s.%s>", base64.StdEncoding.EncodeToString(ref.hash[:3]), ref.algo)
+}
+
+func (ref MessageRef) URI() string {
+	return CanonicalURI{ref}.String()
+}
+
+func (ref MessageRef) String() string {
+	if ref.algo == RefAlgoMessageSSB1 || ref.algo == RefAlgoCloakedGroup {
+		return ref.Sigil()
+	}
+	return ref.URI()
+}
+
 var (
 	_ encoding.TextMarshaler   = (*MessageRef)(nil)
 	_ encoding.TextUnmarshaler = (*MessageRef)(nil)
 )
 
 func (mr MessageRef) MarshalText() ([]byte, error) {
-	if len(mr.hash) == 0 {
-		return []byte{}, nil
+	if mr.algo == RefAlgoMessageSSB1 || mr.algo == RefAlgoCloakedGroup {
+		return []byte(mr.Sigil()), nil
 	}
-	return []byte(mr.Ref()), nil
+	asURI := CanonicalURI{mr}
+	return []byte(asURI.String()), nil
 }
 
-func (mr *MessageRef) UnmarshalText(text []byte) error {
-	if len(text) == 0 {
-		*mr = MessageRef{}
-		return nil
-	}
-	newRef, err := ParseMessageRef(string(text))
+func (mr *MessageRef) UnmarshalText(input []byte) error {
+	txt := string(input)
+
+	newRef, err := ParseMessageRef(txt)
 	if err != nil {
-		return fmt.Errorf("message(%s): unmarshal failed: %w", string(text), err)
+		return err
 	}
+
 	*mr = newRef
-	return nil
-}
-
-var (
-	_ encoding.BinaryMarshaler   = (*MessageRef)(nil)
-	_ encoding.BinaryUnmarshaler = (*MessageRef)(nil)
-)
-
-func (mr MessageRef) MarshalBinary() ([]byte, error) {
-	if len(mr.hash) == 0 {
-		return []byte{}, nil
-	}
-	return []byte(mr.Ref()), nil
-}
-
-func (mr *MessageRef) UnmarshalBinary(text []byte) error {
-	if len(text) == 0 {
-		*mr = MessageRef{}
-		return nil
-	}
-	newRef, err := ParseMessageRef(string(text))
-	if err != nil {
-		return fmt.Errorf("message(%s): unmarshal failed: %w", string(text), err)
-	}
-	*mr = newRef
-	return nil
-}
-
-func (r *MessageRef) Scan(raw interface{}) error {
-	switch v := raw.(type) {
-	case []byte:
-		if len(v) != 32 {
-			return fmt.Errorf("msgRef/Scan: wrong length: %d", len(v))
-		}
-		copy(r.hash[:], v)
-		r.algo = RefAlgoMessageSSB1
-	case string:
-		mr, err := ParseMessageRef(v)
-		if err != nil {
-			return fmt.Errorf("msgRef/Scan: failed to serialze from string: %w", err)
-		}
-		*r = mr
-	default:
-		return fmt.Errorf("msgRef/Scan: unhandled type %T", raw)
-	}
 	return nil
 }
 
@@ -183,6 +167,15 @@ func ParseMessageRef(str string) (MessageRef, error) {
 
 	split := strings.Split(str[1:], ".")
 	if len(split) < 2 {
+		asURI, err := parseCaononicalURI(str)
+		if err != nil {
+			return emptyMsgRef, err
+		}
+
+		newRef, ok := asURI.Message()
+		if ok {
+			return newRef, nil
+		}
 		return emptyMsgRef, ErrInvalidRef
 	}
 
@@ -219,7 +212,7 @@ type MessageRefs []MessageRef
 func (mr *MessageRefs) String() string {
 	var s []string
 	for _, r := range *mr {
-		s = append(s, r.Ref())
+		s = append(s, r.String())
 	}
 	return strings.Join(s, ", ")
 }
@@ -258,7 +251,6 @@ func (mr *MessageRefs) UnmarshalJSON(text []byte) error {
 		var err error
 		newArr[0], err = ParseMessageRef(string(text[1 : len(text)-1]))
 		if err != nil {
-			fmt.Println(string(text))
 			return fmt.Errorf("messageRefs single unmarshal failed: %w", err)
 		}
 
@@ -292,24 +284,34 @@ func (ref FeedRef) PubKey() ed25519.PublicKey {
 	return ref.id[:]
 }
 
-func (ref FeedRef) Ref() string {
-	return fmt.Sprintf("@%s.%s", base64.StdEncoding.EncodeToString(ref.id[:]), ref.algo)
-}
-
-func (ref FeedRef) ShortRef() string {
-	return fmt.Sprintf("<@%s.%s>", base64.StdEncoding.EncodeToString(ref.id[:3]), ref.algo)
-}
-
 func (ref FeedRef) Algo() RefAlgo {
 	return ref.algo
 }
 
 func (ref FeedRef) Equal(b FeedRef) bool {
-	// TODO: invset time in shs1.1 to signal the format correctly
-	// if ref.Algo != b.Algo {
-	// 	return false
-	// }
+	if ref.algo != b.algo {
+		return false
+	}
 	return bytes.Equal(ref.id[:], b.id[:])
+}
+
+func (ref FeedRef) Sigil() string {
+	return fmt.Sprintf("@%s.%s", base64.StdEncoding.EncodeToString(ref.id[:]), ref.algo)
+}
+
+func (ref FeedRef) ShortSigil() string {
+	return fmt.Sprintf("<@%s.%s>", base64.StdEncoding.EncodeToString(ref.id[:3]), ref.algo)
+}
+
+func (ref FeedRef) URI() string {
+	return CanonicalURI{ref}.String()
+}
+
+func (ref FeedRef) String() string {
+	if ref.algo == RefAlgoFeedSSB1 {
+		return ref.Sigil()
+	}
+	return ref.URI()
 }
 
 var (
@@ -318,67 +320,33 @@ var (
 )
 
 func (fr FeedRef) MarshalText() ([]byte, error) {
-	return []byte(fr.Ref()), nil
+	if fr.algo == RefAlgoFeedSSB1 {
+		return []byte(fr.Sigil()), nil
+	}
+	asURI := CanonicalURI{fr}
+	return []byte(asURI.String()), nil
 }
 
-func (fr *FeedRef) UnmarshalText(text []byte) error {
-	if len(text) == 0 {
-		*fr = FeedRef{}
+func (fr *FeedRef) UnmarshalText(input []byte) error {
+	txt := string(input)
+
+	newRef, err := ParseFeedRef(txt)
+	if err == nil {
+		*fr = newRef
 		return nil
 	}
-	newRef, err := ParseFeedRef(string(text))
+
+	asURI, err := parseCaononicalURI(txt)
 	if err != nil {
 		return err
 	}
-	*fr = newRef
-	return nil
-}
 
-var (
-	_ encoding.BinaryMarshaler   = (*FeedRef)(nil)
-	_ encoding.BinaryUnmarshaler = (*FeedRef)(nil)
-)
-
-func (mr FeedRef) MarshalBinary() ([]byte, error) {
-	if len(mr.id) == 0 {
-		return []byte{}, nil
+	newFeedRef, ok := asURI.Feed()
+	if !ok {
+		return fmt.Errorf("ssb uri is not a feed ref: %s", asURI.Kind())
 	}
-	return []byte(mr.Ref()), nil
-}
 
-func (mr *FeedRef) UnmarshalBinary(text []byte) error {
-	if len(text) == 0 {
-		*mr = FeedRef{}
-		return nil
-	}
-	newRef, err := ParseFeedRef(string(text))
-	if err != nil {
-		return fmt.Errorf("feed(%s): unmarshal failed: %w", string(text), err)
-	}
-	*mr = newRef
-	return nil
-}
-
-func (r *FeedRef) Scan(raw interface{}) error {
-	switch v := raw.(type) {
-	// TODO: add an extra byte/flag bits to denote algo and types
-
-	// case []byte:
-	// 	if len(v) != 32 {
-	// 		return fmt.Errorf("feedRef/Scan: wrong length: %d", len(v))
-	// 	}
-	// 	(*r).ID = v
-	// 	(*r).Algo = "ed25519"
-
-	case string:
-		fr, err := ParseFeedRef(v)
-		if err != nil {
-			return fmt.Errorf("feedRef/Scan: failed to serialize from string: %w", err)
-		}
-		*r = fr
-	default:
-		return fmt.Errorf("feedRef/Scan: unhandled type %T (see TODO)", raw)
-	}
+	*fr = newFeedRef
 	return nil
 }
 
@@ -395,7 +363,22 @@ func ParseFeedRef(str string) (FeedRef, error) {
 
 	split := strings.Split(str[1:], ".")
 	if len(split) < 2 {
-		return emptyFeedRef, ErrInvalidRef
+		asURL, err := url.Parse(str)
+		if err != nil {
+			return emptyFeedRef, fmt.Errorf("failed to parse as URL: %s: %w", err, ErrInvalidRef)
+		}
+		if asURL.Scheme != "ssb" {
+			return emptyFeedRef, fmt.Errorf("expected ssb protocol scheme on URL: %q: %w", str, ErrInvalidRef)
+		}
+		asSSBURI, err := parseCaononicalURI(asURL.Opaque)
+		if err != nil {
+			return emptyFeedRef, err
+		}
+		feedRef, ok := asSSBURI.Feed()
+		if !ok {
+			return emptyFeedRef, fmt.Errorf("ssbURI is not a feed ref")
+		}
+		return feedRef, nil
 	}
 
 	raw, err := base64.StdEncoding.DecodeString(split[0])
@@ -446,15 +429,6 @@ func NewBlobRefFromBytes(b []byte, algo RefAlgo) (BlobRef, error) {
 	return ref, nil
 }
 
-// Ref returns the BlobRef with the sigil &, it's base64 encoded hash and the used algo (currently only sha256)
-func (ref BlobRef) Ref() string {
-	return fmt.Sprintf("&%s.%s", base64.StdEncoding.EncodeToString(ref.hash[:]), ref.algo)
-}
-
-func (ref BlobRef) ShortRef() string {
-	return fmt.Sprintf("<&%s.%s>", base64.StdEncoding.EncodeToString(ref.hash[:3]), ref.algo)
-}
-
 func (ref BlobRef) Algo() RefAlgo {
 	return ref.algo
 }
@@ -465,6 +439,26 @@ func (ref BlobRef) CopyHashTo(b []byte) error {
 	}
 	copy(b, ref.hash[:])
 	return nil
+}
+
+// Sigil returns the BlobRef with the sigil &, it's base64 encoded hash and the used algo (currently only sha256)
+func (ref BlobRef) Sigil() string {
+	return fmt.Sprintf("&%s.%s", base64.StdEncoding.EncodeToString(ref.hash[:]), ref.algo)
+}
+
+func (ref BlobRef) ShortSigil() string {
+	return fmt.Sprintf("<&%s.%s>", base64.StdEncoding.EncodeToString(ref.hash[:3]), ref.algo)
+}
+
+func (ref BlobRef) URI() string {
+	return CanonicalURI{ref}.String()
+}
+
+func (ref BlobRef) String() string {
+	if ref.algo == RefAlgoBlobSSB1 {
+		return ref.Sigil()
+	}
+	return ref.URI()
 }
 
 var emptyBlobRef = BlobRef{}
@@ -524,7 +518,7 @@ func (br BlobRef) IsValid() error {
 
 // MarshalText encodes the BlobRef using Ref()
 func (br BlobRef) MarshalText() ([]byte, error) {
-	return []byte(br.Ref()), nil
+	return []byte(br.String()), nil
 }
 
 // UnmarshalText uses ParseBlobRef
@@ -547,18 +541,26 @@ type AnyRef struct {
 	channel string
 }
 
-func (ar AnyRef) ShortRef() string {
+func (ar AnyRef) ShortSigil() string {
 	if ar.r == nil {
 		panic("empty ref")
 	}
-	return ar.r.ShortRef()
+	return ar.r.ShortSigil()
 }
 
-func (ar AnyRef) Ref() string {
+func (ar AnyRef) Sigil() string {
 	if ar.r == nil {
 		panic("empty ref")
 	}
-	return ar.r.Ref()
+	return ar.r.Sigil()
+}
+
+func (ar AnyRef) URI() string {
+	return CanonicalURI{ar}.String()
+}
+
+func (ref AnyRef) String() string {
+	return ref.r.String()
 }
 
 func (ar AnyRef) Algo() RefAlgo {
@@ -585,15 +587,21 @@ func (ar AnyRef) IsChannel() (string, bool) {
 	return ar.channel, ok
 }
 
-func (ar *AnyRef) MarshalJSON() ([]byte, error) {
+func (ar AnyRef) MarshalJSON() ([]byte, error) {
 	if ar.r == nil {
 		if ar.channel != "" {
 			return []byte(`"` + ar.channel + `"`), nil
 		}
 		return nil, fmt.Errorf("anyRef: not a channel and not a ref")
 	}
-	refStr := ar.Ref()
-	return []byte(`"` + refStr + `"`), nil
+	refStr, err := ar.r.MarshalText()
+	out := append([]byte(`"`), refStr...)
+	out = append(out, []byte(`"`)...)
+	return out, err
+}
+
+func (ar AnyRef) MarshalText() ([]byte, error) {
+	return ar.r.MarshalText()
 }
 
 func (ar *AnyRef) UnmarshalJSON(b []byte) error {
@@ -613,11 +621,22 @@ func (ar *AnyRef) UnmarshalJSON(b []byte) error {
 	}
 
 	newRef, err := ParseRef(refStr)
-	if err != nil {
-		return fmt.Errorf("ssb/anyRef: parsing (%q) failed: %w", refStr, err)
+	if err == nil {
+		ar.r = newRef
+		return nil
 	}
 
-	ar.r = newRef
+	parsedURL, err := url.Parse(refStr)
+	if err != nil {
+		return fmt.Errorf("ssb/anyRef: parsing (%q) as URL failed: %w", refStr, err)
+	}
+
+	asURI, err := parseCaononicalURI(parsedURL.Opaque)
+	if err != nil {
+		return fmt.Errorf("ssb/anyRef: parsing (%q) as ssb-uri failed: %w", parsedURL.Opaque, err)
+	}
+
+	ar.r = asURI.ref
 	return nil
 }
 

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 module go.cryptoscope.co/ssb
 
 go 1.13
@@ -25,7 +29,7 @@ require (
 	github.com/rs/cors v1.7.0
 	github.com/shurcooL/go v0.0.0-20200502201357-93f07166e636 // indirect
 	github.com/shurcooL/go-goon v0.0.0-20170922171312-37c2f522c041
-	github.com/ssb-ngi-pointer/go-metafeed v0.0.0-20210727102809-98707678965d
+	github.com/ssb-ngi-pointer/go-metafeed v1.1.1
 	github.com/stretchr/testify v1.7.0
 	github.com/ugorji/go/codec v1.2.6
 	github.com/zeebo/bencode v1.0.0
@@ -36,10 +40,10 @@ require (
 	go.cryptoscope.co/nocomment v0.0.0-20210520094614-fb744e81f810
 	go.cryptoscope.co/secretstream v1.2.9
 	go.mindeco.de v1.12.0
-	go.mindeco.de/ssb-gabbygrove v0.2.0
-	go.mindeco.de/ssb-multiserver v0.1.3
-	go.mindeco.de/ssb-refs v0.4.1
-	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
+	go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd
+	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
+	go.mindeco.de/ssb-refs v0.4.2-0.20210908123826-f7ca13c14896
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 	golang.org/x/exp v0.0.0-20190411193353-0480eff6dd7c // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/text v0.3.6

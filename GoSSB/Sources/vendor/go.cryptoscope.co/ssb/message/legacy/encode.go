@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package legacy
@@ -197,13 +199,49 @@ func WithStrictOrderChecking(yes bool) PrettyPrinterOption {
 	}
 }
 
-var acceptedFieldOrders = []string{
-	strings.Join([]string{"previous", "author", "sequence", "timestamp", "hash", "content", "signature"}, ":"),
-	strings.Join([]string{"previous", "sequence", "author", "timestamp", "hash", "content", "signature"}, ":"),
+// some constants for field order checking
+const acceptedFieldOrderDelimiter = ":"
+
+// (slices can't be const, though)
+var (
+	acceptedFieldOrderList = [][]string{
+		{"previous", "author", "sequence", "timestamp", "hash", "content", "signature"},
+		{"previous", "sequence", "author", "timestamp", "hash", "content", "signature"},
+	}
+
+	acceptedFieldOrderLength int
+
+	acceptedFieldOrders = make([]string, len(acceptedFieldOrderList))
+)
+
+// init the strings.Joined version of acceptedFieldOrderList for checkFieldOrder()
+// also assert that all values in acceptedFieldOrderList have the same length
+func init() {
+	fieldListLen := -1
+	for i, order := range acceptedFieldOrderList {
+
+		// length assertion
+		sliceLen := len(order)
+		if i == 0 {
+			fieldListLen = sliceLen
+			acceptedFieldOrderLength = sliceLen
+		} else {
+			if fieldListLen != sliceLen {
+				panic("inconsistent length of acceptedFieldOrderList")
+				// TODO: change checkFieldOrder length check
+			}
+		}
+
+		acceptedFieldOrders[i] = strings.Join(order, acceptedFieldOrderDelimiter)
+	}
 }
 
 func checkFieldOrder(fields []string) error {
-	gotFields := strings.Join(fields, ":")
+	if n := len(fields); n != acceptedFieldOrderLength {
+		return fmt.Errorf("ssb/verify: invalid field order length (%d)", n)
+	}
+
+	gotFields := strings.Join(fields, acceptedFieldOrderDelimiter)
 
 	for _, accepted := range acceptedFieldOrders {
 		if accepted == gotFields {

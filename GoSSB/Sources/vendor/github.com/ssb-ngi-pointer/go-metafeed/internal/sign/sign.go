@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The go-metafeed Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package sign implements the signature creation and verification used in bendybutt powered metafeeds.

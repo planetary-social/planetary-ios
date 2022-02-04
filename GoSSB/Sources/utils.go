@@ -103,7 +103,7 @@ func ssbReplicateUpTo() int {
 			return -1
 		}
 
-		feedCnt[fr.Ref()] = ms
+		feedCnt[fr.String()] = ms
 	}
 
 	r, w, err := os.Pipe()

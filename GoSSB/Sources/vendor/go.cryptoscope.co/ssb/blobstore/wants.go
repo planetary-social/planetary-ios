@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package blobstore
@@ -86,7 +88,7 @@ func NewWantManager(bs ssb.BlobStore, opts ...WantManagerOption) *WantManager {
 					continue workChan
 				}
 			}
-			delete(wmgr.wants, has.want.Ref.Ref())
+			delete(wmgr.wants, has.want.Ref.Sigil())
 			level.Warn(wmgr.info).Log("event", "blob retreive failed", "n", len(wmgr.procs))
 			wmgr.l.Unlock()
 		}
@@ -131,8 +133,8 @@ func (wmgr *WantManager) EmitBlob(n ssb.BlobStoreNotification) error {
 
 	// remove wanted blobs on update
 	if n.Op == ssb.BlobStoreOpPut {
-		if _, ok := wmgr.wants[n.Ref.Ref()]; ok {
-			delete(wmgr.wants, n.Ref.Ref())
+		if _, ok := wmgr.wants[n.Ref.Sigil()]; ok {
+			delete(wmgr.wants, n.Ref.Sigil())
 
 			wmgr.promGaugeSet("nwants", len(wmgr.wants))
 		}
@@ -148,7 +150,7 @@ type hasBlob struct {
 }
 
 func (wmgr *WantManager) getBlob(ctx context.Context, edp muxrpc.Endpoint, ref refs.BlobRef) error {
-	log := log.With(wmgr.info, "event", "blobs.get", "ref", ref.ShortRef())
+	log := log.With(wmgr.info, "event", "blobs.get", "ref", ref.ShortSigil())
 
 	arg := GetWithSize{ref, wmgr.maxSize}
 	src, err := edp.Source(ctx, 0, muxrpc.Method{"blobs", "get"}, arg)
@@ -170,11 +172,11 @@ func (wmgr *WantManager) getBlob(ctx context.Context, edp muxrpc.Endpoint, ref r
 	if !newBr.Equal(ref) {
 		// TODO: make this a type of error?
 		wmgr.bs.Delete(newBr)
-		level.Warn(log).Log("msg", "removed after missmatch", "want", ref.ShortRef())
+		level.Warn(log).Log("msg", "removed after missmatch", "want", ref.ShortSigil())
 		return errors.New("blobs: inconsitency(or size limit)")
 	}
 	sz, _ := wmgr.bs.Size(newBr)
-	level.Info(log).Log("msg", "stored", "ref", ref.ShortRef(), "sz", sz)
+	level.Info(log).Log("msg", "stored", "ref", ref.ShortSigil(), "sz", sz)
 	return nil
 }
 
@@ -227,7 +229,7 @@ func (wmgr *WantManager) Wants(ref refs.BlobRef) bool {
 	wmgr.l.Lock()
 	defer wmgr.l.Unlock()
 
-	_, ok := wmgr.wants[ref.Ref()]
+	_, ok := wmgr.wants[ref.Sigil()]
 	return ok
 }
 
@@ -244,16 +246,16 @@ func (wmgr *WantManager) WantWithDist(ref refs.BlobRef, dist int64) error {
 	wmgr.l.Lock()
 	defer wmgr.l.Unlock()
 
-	if _, blocked := wmgr.blocked[ref.Ref()]; blocked {
+	if _, blocked := wmgr.blocked[ref.Sigil()]; blocked {
 		return ErrBlobBlocked
 	}
 
-	if wanteDist, wanted := wmgr.wants[ref.Ref()]; wanted && wanteDist > dist {
+	if wanteDist, wanted := wmgr.wants[ref.Sigil()]; wanted && wanteDist > dist {
 		// already wanted higher
 		return nil
 	}
 
-	wmgr.wants[ref.Ref()] = dist
+	wmgr.wants[ref.Sigil()] = dist
 	wmgr.promGaugeSet("nwants", len(wmgr.wants))
 
 	wmgr.wantsEmitter.EmitWant(ssb.BlobWant{Ref: ref, Dist: dist})
@@ -286,7 +288,7 @@ func (wmgr *WantManager) CreateWants(ctx context.Context, sink *muxrpc.ByteSink,
 
 	var remote = "unknown"
 	if r, err := ssb.GetFeedRefFromAddr(proc.edp.Remote()); err == nil {
-		remote = r.ShortRef()
+		remote = r.ShortSigil()
 	}
 	proc.info = log.With(proc.wmgr.info, "remote", remote)
 
@@ -340,16 +342,16 @@ func (proc *wantProc) EmitBlob(notif ssb.BlobStoreNotification) error {
 	proc.l.Lock()
 	defer proc.l.Unlock()
 
-	dbg = log.With(dbg, "op", notif.Op.String(), "ref", notif.Ref.ShortRef())
+	dbg = log.With(dbg, "op", notif.Op.String(), "ref", notif.Ref.ShortSigil())
 	proc.wmgr.promEvent(notif.Op.String(), 1)
 
-	if _, wants := proc.remoteWants[notif.Ref.Ref()]; !wants {
+	if _, wants := proc.remoteWants[notif.Ref.Sigil()]; !wants {
 		return nil
 	}
 
 	sz := notif.Size
 
-	m := map[string]int64{notif.Ref.Ref(): sz}
+	m := map[string]int64{notif.Ref.Sigil(): sz}
 	err := proc.out.Encode(m)
 	if err != nil {
 		return fmt.Errorf("errors pouring into sink: %w", err)
@@ -366,14 +368,14 @@ func (proc *wantProc) EmitWant(w ssb.BlobWant) error {
 	proc.l.Lock()
 	defer proc.l.Unlock()
 
-	dbg = log.With(dbg, "event", "wantBroadcast", "ref", w.Ref.ShortRef(), "dist", w.Dist)
+	dbg = log.With(dbg, "event", "wantBroadcast", "ref", w.Ref.ShortSigil(), "dist", w.Dist)
 
-	if _, blocked := proc.wmgr.blocked[w.Ref.Ref()]; blocked {
+	if _, blocked := proc.wmgr.blocked[w.Ref.Sigil()]; blocked {
 		return nil
 	}
 
 	if w.Dist < 0 {
-		_, wants := proc.remoteWants[w.Ref.Ref()]
+		_, wants := proc.remoteWants[w.Ref.Sigil()]
 		if wants {
 			return nil
 		}
@@ -416,7 +418,7 @@ func (proc *wantProc) Pour(ctx context.Context, v interface{}) error {
 	mOut := make(map[string]int64)
 
 	for _, w := range mIn {
-		if _, blocked := proc.wmgr.blocked[w.Ref.Ref()]; blocked {
+		if _, blocked := proc.wmgr.blocked[w.Ref.Sigil()]; blocked {
 			continue
 		}
 
@@ -428,7 +430,7 @@ func (proc *wantProc) Pour(ctx context.Context, v interface{}) error {
 			if err != nil {
 				if err == ErrNoSuchBlob {
 					proc.l.Lock()
-					proc.remoteWants[w.Ref.Ref()] = w.Dist
+					proc.remoteWants[w.Ref.Sigil()] = w.Dist
 					proc.l.Unlock()
 
 					wErr := proc.wmgr.WantWithDist(w.Ref, w.Dist-1)
@@ -442,14 +444,14 @@ func (proc *wantProc) Pour(ctx context.Context, v interface{}) error {
 			}
 
 			proc.l.Lock()
-			delete(proc.remoteWants, w.Ref.Ref())
+			delete(proc.remoteWants, w.Ref.Sigil())
 			proc.l.Unlock()
-			mOut[w.Ref.Ref()] = s
+			mOut[w.Ref.Sigil()] = s
 		} else {
 			if proc.wmgr.Wants(w.Ref) {
 				if uint(w.Dist) > proc.wmgr.maxSize {
 					proc.wmgr.l.Lock()
-					delete(proc.wmgr.wants, w.Ref.Ref())
+					delete(proc.wmgr.wants, w.Ref.Sigil())
 					proc.wmgr.l.Unlock()
 					continue
 				}
@@ -483,7 +485,7 @@ type WantMsg []ssb.BlobWant
 func (msg WantMsg) MarshalJSON() ([]byte, error) {
 	wantsMap := make(map[string]int64, len(msg))
 	for _, want := range msg {
-		wantsMap[want.Ref.Ref()] = want.Dist
+		wantsMap[want.Ref.Sigil()] = want.Dist
 	}
 	data, err := json.Marshal(wantsMap)
 	if err != nil {

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package network implements utilities for dialing and listening to secret-handshake powered muxrpc connections.

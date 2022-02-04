@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 // Package legacyinvites supplies the follow-back sub protocol for new users. Translates to npm:ssb-invite.
 package legacyinvites
 

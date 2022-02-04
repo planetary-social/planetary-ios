@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package blobstore implements the filesystem storage and simpathy/want managment for ssb-blobs.

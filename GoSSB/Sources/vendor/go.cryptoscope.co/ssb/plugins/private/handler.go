@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package private
@@ -42,7 +44,7 @@ func (h handler) handlePublish(ctx context.Context, req *muxrpc.Request) (interf
 	if len(args) != 2 {
 		return nil, fmt.Errorf("private/publish: expected [content, [recps,..]]: %w", err)
 	}
-	msg := args[0]
+	content := args[0]
 
 	var recps []refs.AnyRef
 	err = json.Unmarshal(args[1], &recps)
@@ -71,25 +73,25 @@ func (h handler) handlePublish(ctx context.Context, req *muxrpc.Request) (interf
 
 	var ctxt []byte
 	if box2mode {
-		ctxt, err = h.privatePublishBox2(msg, filtered)
+		ctxt, err = h.privatePublishBox2(content, filtered)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		ctxt, err = h.privatePublishBox1(msg, filtered)
+		ctxt, err = h.privatePublishBox1(content, filtered)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	ref, err := h.publish.Publish(ctxt)
+	msg, err := h.publish.Publish(ctxt)
 	if err != nil {
 		return refs.MessageRef{}, fmt.Errorf("private/publish: pour failed: %w", err)
 	}
 
-	level.Info(h.info).Log("new-private", ref.Ref())
+	level.Info(h.info).Log("new-private", msg.Key().ShortSigil())
 
-	return ref, nil
+	return msg.Key().String(), nil
 }
 
 func (h handler) privatePublishBox1(msg []byte, recps []refs.Ref) ([]byte, error) {

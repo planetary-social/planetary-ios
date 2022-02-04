@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package ssb
@@ -69,7 +71,7 @@ type ErrWrongSequence struct {
 
 func (e ErrWrongSequence) Error() string {
 	return fmt.Sprintf("ssb/consistency error: message sequence missmatch for feed %s Stored:%d Logical:%d",
-		e.Ref.Ref(),
+		e.Ref.String(),
 		e.Stored,
 		e.Logical)
 }

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package sbot
 
 import (
@@ -117,7 +121,7 @@ func (cdr *dropContentTrigger) consume() {
 			continue
 		}
 
-		level.Info(evtLog).Log("msg", "nulled successfully", "author", evt.author.ShortRef(), "seq", evt.dcr.Sequence)
+		level.Info(evtLog).Log("msg", "nulled successfully", "author", evt.author.ShortSigil(), "seq", evt.dcr.Sequence)
 	}
 }
 

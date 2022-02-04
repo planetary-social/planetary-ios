@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package sbot
@@ -10,12 +12,12 @@ import (
 	refs "go.mindeco.de/ssb-refs"
 )
 
-func (sbot *Sbot) PublishAs(nick string, val interface{}) (refs.MessageRef, error) {
+func (sbot *Sbot) PublishAs(nick string, val interface{}) (refs.Message, error) {
 	r := repo.New(sbot.repoPath)
 
 	kp, err := repo.LoadKeyPair(r, nick)
 	if err != nil {
-		return refs.MessageRef{}, err
+		return nil, err
 	}
 
 	var pubopts = []message.PublishOption{
@@ -27,7 +29,7 @@ func (sbot *Sbot) PublishAs(nick string, val interface{}) (refs.MessageRef, erro
 
 	pl, err := message.OpenPublishLog(sbot.ReceiveLog, sbot.Users, kp, pubopts...)
 	if err != nil {
-		return refs.MessageRef{}, fmt.Errorf("publishAs: failed to create publish log: %w", err)
+		return nil, fmt.Errorf("publishAs: failed to create publish log: %w", err)
 	}
 
 	return pl.Publish(val)

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package ssb
@@ -182,8 +184,13 @@ func LoadKeyPair(fname string) (KeyPair, error) {
 		return nil, fmt.Errorf("ssb.LoadKeyPair: could not stat key file %s: %w", fname, err)
 	}
 
+	// secret key permissions are not what they should be
 	if perms := info.Mode().Perm(); perms != SecretPerms {
-		return nil, fmt.Errorf("ssb.LoadKeyPair: expected key file permissions %s, but got %s", SecretPerms, perms)
+		// try to correct permissions on secret
+		err = os.Chmod(fname, SecretPerms)
+		if err != nil {
+			return nil, fmt.Errorf("ssb.LoadKeyPair: failed to correct permissions from %s to %s (%w)", perms, SecretPerms, err)
+		}
 	}
 
 	kp, err := ParseKeyPair(nocomment.NewReader(f))

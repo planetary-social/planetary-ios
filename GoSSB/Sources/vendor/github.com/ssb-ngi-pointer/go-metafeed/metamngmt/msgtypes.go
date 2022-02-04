@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The go-metafeed Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package metamngmt contains all the managment types that one needs to have in order to work with metafeeds.
@@ -10,6 +12,8 @@
 package metamngmt
 
 import (
+	"fmt"
+
 	"github.com/zeebo/bencode"
 	refs "go.mindeco.de/ssb-refs"
 )
@@ -18,30 +22,13 @@ type Typed struct {
 	Type string `json:"type"`
 }
 
-// Seed is used to encrypt the seed as a private message to the main feed.
-// By doing this we allow the main feed to reconstruct the meta feed and all sub feeds from this seed.
-type Seed struct {
-	Type     string       `json:"type"`
-	MetaFeed refs.FeedRef `json:"metafeed"`
-	Seed     Base64String `json:"seed"`
-}
-
-// NewSeedMessage returns a new Seed with the type: alread set
-func NewSeedMessage(meta refs.FeedRef, seed []byte) Seed {
-	return Seed{
-		Type:     "metafeed/seed",
-		MetaFeed: meta,
-		Seed:     seed,
-	}
-}
-
-var (
-	_ bencode.Marshaler   = (*Seed)(nil)
-	_ bencode.Unmarshaler = (*Seed)(nil)
+const (
+	typeAddExisting = "metafeed/add/existing"
+	typeAddDerived  = "metafeed/add/derived"
 )
 
-// Add links the new sub feed with the main (meta)feed using a new message on the meta feed signed by both the main feed and the meta feed.
-type Add struct {
+// AddDerived links the new sub feed with the main (meta)feed using a new message on the meta feed signed by both the main feed and the meta feed.
+type AddDerived struct {
 	Type string `json:"type"`
 
 	FeedPurpose string `json:"feedpurpose"`
@@ -49,16 +36,19 @@ type Add struct {
 	SubFeed  refs.FeedRef `json:"subfeed"`
 	MetaFeed refs.FeedRef `json:"metafeed"`
 
-	Nonce Base64String `json:"nonce"`
+	Nonce []byte `json:"nonce"`
 
 	Tangles refs.Tangles `json:"tangles"`
+
+	metadata map[string]string
 }
 
-// NewAddMessage just initializes type and the passed fields.
-// Callers need to set the right tangle point themselves afterwards.
-func NewAddMessage(meta, sub refs.FeedRef, purpose string, nonce []byte) Add {
-	return Add{
-		Type: "metafeed/add",
+// NewAddDerivedMessage just initializes type and the passed fields.
+// Callers need to set the right tangle point themselves afterwards. If the message has metadata that needs to be added,
+// function AddDerived.InsertMetadata should be used.
+func NewAddDerivedMessage(meta, sub refs.FeedRef, purpose string, nonce []byte) AddDerived {
+	return AddDerived{
+		Type: typeAddDerived,
 
 		SubFeed:  sub,
 		MetaFeed: meta,
@@ -68,12 +58,85 @@ func NewAddMessage(meta, sub refs.FeedRef, purpose string, nonce []byte) Add {
 		Nonce: nonce,
 
 		Tangles: make(refs.Tangles),
+
+		metadata: make(map[string]string),
+	}
+}
+
+// InsertMetadata enhances an existing AddDerived message with metadata, returning an error if the passed metadata
+// contains an unsupported key.
+func (derived *AddDerived) InsertMetadata(metadata map[string]string) error {
+	if derived.metadata == nil {
+		derived.metadata = make(map[string]string)
+	}
+	// attach any metadata (e.g. query info used in for index feeds), if any
+	for key, value := range metadata {
+		switch key {
+		case "querylang", "query":
+			// copy key + value from passed in map
+			derived.metadata[key] = value
+		default:
+			return fmt.Errorf("AddDerived does not support metadata key: %s", key)
+		}
+	}
+	return nil
+}
+
+func (derived *AddDerived) GetMetadata(key string) (string, bool) {
+	if derived.metadata == nil {
+		return "", false
+	}
+	val, has := derived.metadata[key]
+	return val, has
+}
+
+var (
+	_ bencode.Marshaler   = (*AddDerived)(nil)
+	_ bencode.Unmarshaler = (*AddDerived)(nil)
+)
+
+// AddExisting links the new sub feed with the main (meta)feed using a new message on the meta feed signed by both the main feed and the meta feed.
+type AddExisting struct {
+	Type string `json:"type"`
+
+	FeedPurpose string `json:"feedpurpose"`
+
+	SubFeed  refs.FeedRef `json:"subfeed"`
+	MetaFeed refs.FeedRef `json:"metafeed"`
+
+	Tangles refs.Tangles `json:"tangles"`
+}
+
+// NewAddExistingMessage just initializes type and the passed fields.
+// Callers need to set the right tangle point themselves afterwards.
+//
+// Format of the message (in Bendy Butt binary notation, see https://github.com/ssb-ngi-pointer/bendy-butt-spec):
+//  "type" => "metafeed/add/existing",
+//  "feedpurpose" => "main",
+//  "subfeed" => (BFE-encoded feed ID for the 'main' feed),
+//  "metafeed" => (BFE-encoded Bendy Butt feed ID for the meta feed),
+//  "tangles" => {
+//    "metafeed" => {
+//      "root" => (BFE nil),
+//      "previous" => (BFE nil)
+//    }
+//  }
+func NewAddExistingMessage(meta, sub refs.FeedRef, purpose string) AddExisting {
+	return AddExisting{
+		Type: typeAddExisting,
+
+		SubFeed:  sub,
+		MetaFeed: meta,
+
+		FeedPurpose: purpose,
+
+		Tangles: make(refs.Tangles),
 	}
 }
 
 var (
-	_ bencode.Marshaler   = (*Add)(nil)
-	_ bencode.Unmarshaler = (*Add)(nil)
+	_ bencode.Marshaler   = (*AddExisting)(nil)
+	_ bencode.Unmarshaler = (*AddExisting)(nil)
 )
 
 // Announce is used in order for existing applications to know that a feed supports meta feeds.
@@ -83,22 +146,6 @@ type Announce struct {
 	MetaFeed refs.FeedRef `json:"metafeed"`
 	Tangles  refs.Tangles `json:"tangles"`
 }
-
-// NewAnnounceMessage returns a new Announce message.
-// Callers need to set the right tangle point themselves afterwards.
-func NewAnnounceMessage(f refs.FeedRef) Announce {
-	return Announce{
-		Type:     "metafeed/announce",
-		MetaFeed: f,
-
-		Tangles: make(refs.Tangles),
-	}
-}
-
-var (
-	_ bencode.Marshaler   = (*Announce)(nil)
-	_ bencode.Unmarshaler = (*Announce)(nil)
-)
 
 // Tombstone is used to end the lifetime of a subfeed
 type Tombstone struct {

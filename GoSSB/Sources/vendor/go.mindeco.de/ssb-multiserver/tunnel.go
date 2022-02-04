@@ -18,9 +18,9 @@ type TunnelAddress struct {
 func (ta TunnelAddress) String() string {
 	var sb strings.Builder
 	sb.WriteString("tunnel:")
-	sb.WriteString(ta.Intermediary.Ref())
+	sb.WriteString(ta.Intermediary.Sigil())
 	sb.WriteString(":")
-	sb.WriteString(ta.Target.Ref())
+	sb.WriteString(ta.Target.Sigil())
 	sb.WriteString("~shs:")
 	sb.WriteString(base64.StdEncoding.EncodeToString(ta.Target.PubKey()))
 	return sb.String()

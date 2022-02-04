@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package keys
 
 import (
@@ -43,8 +47,8 @@ func (is Infos) Encode(out []byte) int {
 
 // should be either or but differently typed enums are hard in go :-/
 type Metadata struct {
-	GroupRoot refs.MessageRef
-	ForFeed   refs.FeedRef
+	GroupRoot *refs.MessageRef
+	ForFeed   *refs.FeedRef
 }
 
 // Recipient combines key data with a scheme

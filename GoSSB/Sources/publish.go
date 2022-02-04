@@ -45,7 +45,7 @@ func ssbPublish(content string) *C.char {
 		return nil
 	}
 
-	return C.CString(newMsgRef.Ref())
+	return C.CString(newMsgRef.Key().String())
 }
 
 //export ssbPublishPrivate
@@ -96,5 +96,5 @@ func ssbPublishPrivate(content, recps string) *C.char {
 		return nil
 	}
 
-	return C.CString(newMsgRef.Ref())
+	return C.CString(newMsgRef.Key().String())
 }

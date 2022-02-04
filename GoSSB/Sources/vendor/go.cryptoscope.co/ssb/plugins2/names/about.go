@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package names
@@ -39,9 +41,9 @@ func (ab aboutStore) ImageFor(ref *refs.FeedRef) (*refs.BlobRef, error) {
 
 	err := ab.kv.View(func(txn *badger.Txn) error {
 
-		addr := ref.Ref()
+		addr := ref.Sigil()
 		addr += ":"
-		addr += ref.Ref()
+		addr += ref.Sigil()
 		addr += ":image"
 		it, err := txn.Get(append(idxKeyPrefix, []byte(addr)...))
 		if err != nil {
@@ -120,7 +122,7 @@ func (ab aboutStore) All() (client.NamesGetResult, error) {
 }
 
 func (ab aboutStore) CollectedFor(ref refs.FeedRef) (*AboutInfo, error) {
-	addr := append(idxKeyPrefix, []byte(ref.Ref()+":")...)
+	addr := append(idxKeyPrefix, []byte(ref.Sigil()+":")...)
 
 	// direct badger magic
 	// most of this feels like to direct k:v magic to be honest
@@ -159,7 +161,7 @@ func (ab aboutStore) CollectedFor(ref refs.FeedRef) (*AboutInfo, error) {
 				case bytes.HasSuffix(k, []byte(":image")):
 					fieldPtr = &reduced.Image
 				default:
-					log.Printf("about debug: %s ", c.Ref())
+					log.Printf("about debug: %s ", c.Sigil())
 					log.Printf("no field for: %q", string(k))
 					return nil
 				}
@@ -227,9 +229,9 @@ func updateAboutMessage(ctx context.Context, seq int64, msgv interface{}, idx li
 	}
 
 	// about:from:field
-	addr := aboutMSG.About.Ref()
+	addr := aboutMSG.About.Sigil()
 	addr += ":"
-	addr += msg.Author().Ref()
+	addr += msg.Author().Sigil()
 	addr += ":"
 
 	var val string
@@ -246,7 +248,7 @@ func updateAboutMessage(ctx context.Context, seq int64, msgv interface{}, idx li
 		}
 	}
 	if aboutMSG.Image != nil {
-		val = aboutMSG.Image.Ref()
+		val = aboutMSG.Image.Sigil()
 		if err := idx.Set(ctx, librarian.Addr(addr+"image"), val); err != nil {
 			return fmt.Errorf("db/idx about: failed to update image: %w", err)
 		}

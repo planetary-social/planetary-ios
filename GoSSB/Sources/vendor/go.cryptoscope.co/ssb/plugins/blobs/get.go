@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package blobs
@@ -64,7 +66,7 @@ func (h getHandler) HandleSource(ctx context.Context, req *muxrpc.Request, snk *
 		return errors.New("blob larger than you wanted")
 	}
 
-	logger = log.With(logger, "blob", wantedRef.ShortRef())
+	logger = log.With(logger, "blob", wantedRef.ShortSigil())
 
 	r, err := h.bs.Get(wantedRef)
 	if err != nil {

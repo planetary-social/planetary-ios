@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package network
@@ -22,7 +24,7 @@ func (ta tunnelHost) Network() string {
 }
 
 func (ta tunnelHost) String() string {
-	return ta.Network() + ":" + ta.Host.Ref()
+	return ta.Network() + ":" + ta.Host.String()
 }
 
 var _ net.Addr = tunnelHost{}

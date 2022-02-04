@@ -19,7 +19,7 @@ type OldStoredMessage struct {
 }
 
 func (sm OldStoredMessage) String() string {
-	s := fmt.Sprintf("msg(%s:%d) %s", sm.Author.Ref(), sm.Sequence, sm.Key.Ref())
+	s := fmt.Sprintf("msg(%s:%d) %s", sm.Author, sm.Sequence, sm.Key)
 	b, _ := EncodePreserveOrder(sm.Raw)
 	s += "\n"
 	s += string(b)

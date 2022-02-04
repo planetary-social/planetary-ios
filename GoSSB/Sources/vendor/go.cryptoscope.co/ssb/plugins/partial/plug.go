@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package partial is a helper module for ssb-browser-core, enabling to fetch subsets of feeds.

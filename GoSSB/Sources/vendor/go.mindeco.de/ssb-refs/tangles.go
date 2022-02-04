@@ -28,8 +28,8 @@ type ByPrevious struct {
 }
 
 func (m pointsToMap) add(k, msg MessageRef) {
-	refs := m[k.Ref()]
-	m[k.Ref()] = append(refs, msg.Ref())
+	refs := m[k.String()]
+	m[k.String()] = append(refs, msg.String())
 }
 
 // Heads on a sorted slice of messages returns a slice of message refs which are not referenced by any other.
@@ -39,7 +39,7 @@ func (by *ByPrevious) Heads() MessageRefs {
 
 	var r MessageRefs
 	for _, i := range by.Items {
-		if _, has := by.backl[i.Key().Ref()]; !has {
+		if _, has := by.backl[i.Key().String()]; !has {
 			r = append(r, i.Key())
 		}
 	}
@@ -60,18 +60,18 @@ func (by *ByPrevious) fillLookup() {
 			if by.root != "" {
 				panic("root already set")
 			}
-			by.root = m.Key().Ref()
+			by.root = m.Key().String()
 			continue
 		}
 
 		var refs = make([]string, len(prev))
 		for j, br := range prev {
-			refs[j] = br.Ref()
+			refs[j] = br.String()
 
 			// backlink
 			backl.add(br, m.Key())
 		}
-		after[m.Key().Ref()] = refs
+		after[m.Key().String()] = refs
 	}
 
 	by.after = after
@@ -86,7 +86,7 @@ func (by *ByPrevious) Len() int {
 
 func (by ByPrevious) currentIndex(key string) int {
 	for idxBr, findBr := range by.Items {
-		if findBr.Key().Ref() == key {
+		if findBr.Key().String() == key {
 			return idxBr
 		}
 	}
@@ -144,7 +144,7 @@ func (by ByPrevious) hopsToRoot(key string, hop int) int {
 // TODO: tiebraker
 func (by *ByPrevious) Less(i int, j int) bool {
 	msgI, msgJ := by.Items[i], by.Items[j]
-	keyI, keyJ := msgI.Key().Ref(), msgJ.Key().Ref()
+	keyI, keyJ := msgI.Key().String(), msgJ.Key().String()
 
 	if by.pointsTo(keyI, keyJ) {
 		return false

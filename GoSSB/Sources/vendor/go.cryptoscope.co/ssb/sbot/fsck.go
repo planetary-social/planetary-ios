@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package sbot
 
 import (
@@ -281,7 +285,7 @@ func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 		}
 
 		msgSeq := msg.Seq()
-		authorRef := msg.Author().Ref()
+		authorRef := msg.Author().String()
 
 		seqMap, ok := allSeqsPerAuthor[authorRef]
 		if !ok {
@@ -333,7 +337,7 @@ func sequenceFSCK(receiveLog margaret.Log, progressFn FSCKUpdateFunc) error {
 
 	nullMap := roaring.New()
 	for _, author := range consistencyErrors {
-		if bmap, has := allSeqsPerAuthor[author.Ref.Ref()]; has {
+		if bmap, has := allSeqsPerAuthor[author.Ref.String()]; has {
 			nullMap.Or(bmap)
 		}
 	}
@@ -374,7 +378,7 @@ func (s *Sbot) HealRepo(report ErrConsistencyProblems) error {
 		if err != nil {
 			return fmt.Errorf("heal(%d): failed to null broken feed: %w", i, err)
 		}
-		level.Debug(funcLog).Log("feed", constErr.Ref.Ref())
+		level.Debug(funcLog).Log("feed", constErr.Ref.String())
 	}
 
 	return nil

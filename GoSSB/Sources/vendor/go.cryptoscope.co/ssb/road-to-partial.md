@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+
+SPDX-License-Identifier: MIT
+-->
+
 # go-ssb partial replication support
 
 This document outlines the needed work to implement metafeeds and partial replication features in go-ssb

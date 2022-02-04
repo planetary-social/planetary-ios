@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package gossip
@@ -70,7 +72,7 @@ func (h *LegacyGossip) workFeed(ctx context.Context, edp muxrpc.Endpoint, ref re
 			return err
 		} else if err != nil {
 			// just logging the error assuming forked feed for instance
-			level.Warn(h.Info).Log("event", "skipped updating of stored feed", "err", err, "fr", ref.ShortRef())
+			level.Warn(h.Info).Log("event", "skipped updating of stored feed", "err", err, "fr", ref.ShortSigil())
 		}
 
 		return nil
@@ -102,7 +104,7 @@ func (h *LegacyGossip) fetchFeed(
 	var latestSeq = int(snk.Seq())
 	startSeq := latestSeq
 	info := log.With(h.Info, "event", "gossiprx",
-		"fr", fr.ShortRef(),
+		"fr", fr.ShortSigil(),
 		"starting", latestSeq) // , "me", g.Id.ShortRef())
 
 	var q = message.NewCreateHistoryStreamArgs()
@@ -134,10 +136,10 @@ func (h *LegacyGossip) fetchFeed(
 	case refs.RefAlgoFeedGabby:
 		src, err = edp.Source(ctx, muxrpc.TypeBinary, method, q)
 	default:
-		return fmt.Errorf("fetchFeed(%s): unhandled feed format", fr.Ref())
+		return fmt.Errorf("fetchFeed(%s): unhandled feed format", fr.String())
 	}
 	if err != nil {
-		return fmt.Errorf("fetchFeed(%s:%d) failed to create source: %w", fr.Ref(), latestSeq, err)
+		return fmt.Errorf("fetchFeed(%s:%d) failed to create source: %w", fr.String(), latestSeq, err)
 	}
 
 	var buf = &bytes.Buffer{}
@@ -160,7 +162,7 @@ func (h *LegacyGossip) fetchFeed(
 	}
 
 	if err := src.Err(); err != nil {
-		return fmt.Errorf("fetchFeed(%s:%d) gossip pump failed: %w", fr.Ref(), latestSeq, err)
+		return fmt.Errorf("fetchFeed(%s:%d) gossip pump failed: %w", fr.String(), latestSeq, err)
 	}
 
 	return nil

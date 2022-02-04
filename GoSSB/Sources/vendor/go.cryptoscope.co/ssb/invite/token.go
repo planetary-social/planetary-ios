@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package invite
 
 import (
@@ -36,7 +40,7 @@ func (c Token) String() string {
 	var s strings.Builder
 	s.WriteString(addr.String())
 	s.WriteString(":")
-	s.WriteString(c.Peer.Ref())
+	s.WriteString(c.Peer.String())
 	s.WriteString("~")
 	s.WriteString(base64.StdEncoding.EncodeToString(c.Seed[:]))
 	return s.String()

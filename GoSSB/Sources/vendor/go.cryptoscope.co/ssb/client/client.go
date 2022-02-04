@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package client is a a simple muxrpc interface to common ssb methods, similar to npm:ssb-client
@@ -200,21 +202,21 @@ func (c Client) ReplicateUpTo() (*muxrpc.ByteSource, error) {
 
 func (c Client) BlobsWant(ref refs.BlobRef) error {
 	var v interface{}
-	err := c.Async(c.rootCtx, &v, muxrpc.TypeJSON, muxrpc.Method{"blobs", "want"}, ref.Ref())
+	err := c.Async(c.rootCtx, &v, muxrpc.TypeJSON, muxrpc.Method{"blobs", "want"}, ref.Sigil())
 	if err != nil {
 		return fmt.Errorf("ssbClient: blobs.want failed: %w", err)
 	}
-	level.Debug(c.logger).Log("blob", "wanted", "v", v, "ref", ref.Ref())
+	level.Debug(c.logger).Log("blob", "wanted", "v", v, "ref", ref.Sigil())
 	return nil
 }
 
 func (c Client) BlobsHas(ref refs.BlobRef) (bool, error) {
 	var has bool
-	err := c.Async(c.rootCtx, &has, muxrpc.TypeJSON, muxrpc.Method{"blobs", "want"}, ref.Ref())
+	err := c.Async(c.rootCtx, &has, muxrpc.TypeJSON, muxrpc.Method{"blobs", "want"}, ref.Sigil())
 	if err != nil {
 		return false, fmt.Errorf("ssbClient: whoami failed: %w", err)
 	}
-	level.Debug(c.logger).Log("blob", "has", "has", has, "ref", ref.Ref())
+	level.Debug(c.logger).Log("blob", "has", "has", has, "ref", ref.Sigil())
 	return has, nil
 
 }
@@ -225,7 +227,7 @@ func (c Client) BlobsGet(ref refs.BlobRef) (io.Reader, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ssbClient: blobs.get failed: %w", err)
 	}
-	level.Debug(c.logger).Log("blob", "got", "ref", ref.Ref())
+	level.Debug(c.logger).Log("blob", "got", "ref", ref.Sigil())
 
 	return muxrpc.NewSourceReader(v), nil
 }
@@ -233,11 +235,11 @@ func (c Client) BlobsGet(ref refs.BlobRef) (io.Reader, error) {
 type NamesGetResult map[string]map[string]string
 
 func (ngr NamesGetResult) GetCommonName(feed refs.FeedRef) (string, bool) {
-	namesFor, ok := ngr[feed.Ref()]
+	namesFor, ok := ngr[feed.Sigil()]
 	if !ok {
 		return "", false
 	}
-	selfChosen, ok := namesFor[feed.Ref()]
+	selfChosen, ok := namesFor[feed.Sigil()]
 	if !ok {
 		for about, mapv := range ngr {
 			_ = about
@@ -265,21 +267,21 @@ func (c Client) NamesGet() (NamesGetResult, error) {
 
 func (c Client) NamesSignifier(ref refs.FeedRef) (string, error) {
 	var name string
-	err := c.Async(c.rootCtx, &name, muxrpc.TypeString, muxrpc.Method{"names", "getSignifier"}, ref.Ref())
+	err := c.Async(c.rootCtx, &name, muxrpc.TypeString, muxrpc.Method{"names", "getSignifier"}, ref.String())
 	if err != nil {
 		return "", fmt.Errorf("ssbClient: names.getSignifier failed: %w", err)
 	}
-	level.Debug(c.logger).Log("names", "getSignifier", "name", name, "ref", ref.Ref())
+	level.Debug(c.logger).Log("names", "getSignifier", "name", name, "ref", ref.String())
 	return name, nil
 }
 
 func (c Client) NamesImageFor(ref refs.FeedRef) (refs.BlobRef, error) {
 	var blobRef string
-	err := c.Async(c.rootCtx, &blobRef, muxrpc.TypeString, muxrpc.Method{"names", "getImageFor"}, ref.Ref())
+	err := c.Async(c.rootCtx, &blobRef, muxrpc.TypeString, muxrpc.Method{"names", "getImageFor"}, ref.String())
 	if err != nil {
 		return refs.BlobRef{}, fmt.Errorf("ssbClient: names.getImageFor failed: %w", err)
 	}
-	level.Debug(c.logger).Log("names", "getImageFor", "image-blob", blobRef, "feed", ref.Ref())
+	level.Debug(c.logger).Log("names", "getImageFor", "image-blob", blobRef, "feed", ref.String())
 	return refs.ParseBlobRef(blobRef)
 }
 
@@ -299,7 +301,7 @@ func (c Client) Publish(v interface{}) (refs.MessageRef, error) {
 func (c Client) PrivatePublish(v interface{}, recps ...refs.FeedRef) (refs.MessageRef, error) {
 	var recpRefs = make([]string, len(recps))
 	for i, ref := range recps {
-		recpRefs[i] = ref.Ref()
+		recpRefs[i] = ref.String()
 	}
 	var resp refs.MessageRef
 	err := c.Async(c.rootCtx, &resp, muxrpc.TypeJSON, muxrpc.Method{"private", "publish"}, v, recpRefs)

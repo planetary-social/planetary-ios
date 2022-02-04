@@ -103,7 +103,7 @@ func ssbRepoStats() *C.char {
 	if err == nil {
 		lastMsg, ok := lm.(refs.Message)
 		if ok {
-			counts.LastHash = lastMsg.Key().Ref()
+			counts.LastHash = lastMsg.Key().String()
 		} else {
 			level.Warn(log).Log("RepoStats", errors.Wrap(err, "RepoStats: latest message is not ok"))
 		}

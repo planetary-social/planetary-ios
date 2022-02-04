@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The go-metafeed Authors
+//
 // SPDX-License-Identifier: MIT
 
 package metafeed
@@ -19,7 +21,8 @@ var (
 
 // SubSignContent uses the passed private key to sign the passed content after it was encoded.
 // It then packs both fields as an array [content, signature].
-func SubSignContent(pk ed25519.PrivateKey, content bencode.Marshaler, hmacSecret *[32]byte) (bencode.RawMessage, error) {
+// TODO: add hmac signing
+func SubSignContent(pk ed25519.PrivateKey, content bencode.Marshaler) (bencode.RawMessage, error) {
 	contentBytes, err := content.MarshalBencode()
 	if err != nil {
 		return nil, fmt.Errorf("SubSignContent: failed to encode content for signing: %w", err)
@@ -29,7 +32,7 @@ func SubSignContent(pk ed25519.PrivateKey, content bencode.Marshaler, hmacSecret
 
 	signedValue := []interface{}{
 		bencode.RawMessage(contentBytes),
-		sign.Create(messageToSign, pk, hmacSecret),
+		sign.Create(messageToSign, pk, nil), // TODO: pass hmac secret
 	}
 
 	contentAndSig, err := bencode.EncodeBytes(signedValue)
@@ -42,7 +45,8 @@ func SubSignContent(pk ed25519.PrivateKey, content bencode.Marshaler, hmacSecret
 
 // VerifySubSignedContent expects an array of [content, signature] where 'content' needs to contain
 // a 'subfeed' field which contains the tfk encoded publickey to verify the signature.
-func VerifySubSignedContent(rawMessage []byte, content bencode.Unmarshaler, hmacSecret *[32]byte) error {
+// TODO: add hmac signing
+func VerifySubSignedContent(rawMessage []byte, content bencode.Unmarshaler) error {
 	// make sure it's an array
 	var arr []bencode.RawMessage
 	err := bencode.DecodeBytes(rawMessage, &arr)
@@ -84,7 +88,7 @@ func VerifySubSignedContent(rawMessage []byte, content bencode.Unmarshaler, hmac
 
 	messageToVerify := append(inputPrefix, arr[0]...)
 
-	verified := sign.Verify(messageToVerify, sigBytes, pubKey, hmacSecret)
+	verified := sign.Verify(messageToVerify, sigBytes, pubKey, nil) // TODO: pass hmac secret
 	if !verified {
 		return fmt.Errorf("VerifySubSignedContent: signature failed")
 	}

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package ssb
@@ -91,7 +93,7 @@ type BlobWant struct {
 }
 
 func (w BlobWant) String() string {
-	return fmt.Sprintf("%s:%d", w.Ref.ShortRef(), w.Dist)
+	return fmt.Sprintf("%s:%d", w.Ref.ShortSigil(), w.Dist)
 }
 
 // BlobStoreNotification contains info on a single change of the blob store.
@@ -104,7 +106,7 @@ type BlobStoreNotification struct {
 }
 
 func (bn BlobStoreNotification) String() string {
-	s := bn.Op.String() + ": " + bn.Ref.Ref()
+	s := bn.Op.String() + ": " + bn.Ref.Sigil()
 	if bn.Size > 0 {
 		s += fmt.Sprintf(" (size: %d)", bn.Size)
 	}

@@ -201,7 +201,7 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 		kv.Value = *msg.ValueContent()
 		kv.Timestamp = encodedTime.Millisecs(msg.Received())
 
-		keyHasher.Write([]byte(kv.Key_.Ref()))
+		keyHasher.Write([]byte(kv.Key_.String()))
 		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
 
 		if err := json.NewEncoder(w).Encode(kv); err != nil {
@@ -331,7 +331,7 @@ func newLogDrain(sourceLog margaret.Log, seq int64, limit int) (*bytes.Buffer, e
 		kv.Value = *msg.ValueContent()
 		kv.Timestamp = encodedTime.Millisecs(msg.Received())
 
-		keyHasher.Write([]byte(kv.Key_.Ref()))
+		keyHasher.Write([]byte(kv.Key_.String()))
 		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
 
 		if err := json.NewEncoder(w).Encode(kv); err != nil {

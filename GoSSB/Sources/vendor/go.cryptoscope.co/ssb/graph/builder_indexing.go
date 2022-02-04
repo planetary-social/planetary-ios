@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package graph
@@ -11,10 +13,12 @@ import (
 	librarian "go.cryptoscope.co/margaret/indexes"
 	"go.mindeco.de/log"
 	"go.mindeco.de/log/level"
+	"go.mindeco.de/ssb-refs/tfk"
 
 	"github.com/ssb-ngi-pointer/go-metafeed"
 	"github.com/ssb-ngi-pointer/go-metafeed/metamngmt"
 	"go.cryptoscope.co/ssb/internal/storedrefs"
+	"go.cryptoscope.co/ssb/message/legacy"
 	refs "go.mindeco.de/ssb-refs"
 )
 
@@ -26,6 +30,53 @@ const (
 	idxRelValueBlocking
 	idxRelValueMetafeed
 )
+
+func (b *BadgerBuilder) updateAnnouncement(ctx context.Context, seq int64, val interface{}, idx librarian.SetterIndex) error {
+	b.cacheLock.Lock()
+	defer b.cacheLock.Unlock()
+
+	if nulled, ok := val.(error); ok {
+		if margaret.IsErrNulled(nulled) {
+			return nil
+		}
+		return nulled
+	}
+
+	msg, ok := val.(refs.Message)
+	if !ok {
+		err := fmt.Errorf("graph/idx: invalid msg value %T", val)
+		level.Warn(b.log).Log("msg", "announcement eval failed", "reason", err)
+		return err
+	}
+
+	announceMsg, ok := legacy.VerifyMetafeedAnnounce(msg.ContentBytes(), msg.Author(), nil) // TODO: hmac support
+	if !ok {
+		return nil // skip invalid messages
+	}
+
+	addr := storedrefs.Feed(msg.Author())
+
+	tfkRef, err := tfk.FeedFromRef(announceMsg.Metafeed)
+	if err != nil {
+		return fmt.Errorf("db/idx announcements: failed to turn metafeed value into binary: %w", err)
+	}
+
+	err = idx.Set(ctx, addr, tfkRef)
+	if err != nil {
+		return fmt.Errorf("db/idx announcements: failed to update index %+v: %w", announceMsg, err)
+	}
+
+	b.cachedGraph = nil
+	// TODO: patch existing graph instead of invalidating
+	return nil
+}
+
+func (b *BadgerBuilder) OpenAnnouncementIndex() (librarian.SeqSetterIndex, librarian.SinkIndex) {
+	if b.idxSinkAnnouncements == nil {
+		b.idxSinkAnnouncements = librarian.NewSinkIndex(b.updateAnnouncement, b.idx)
+	}
+	return b.idx, b.idxSinkAnnouncements
+}
 
 func (b *BadgerBuilder) updateContacts(ctx context.Context, seq int64, val interface{}, idx librarian.SetterIndex) error {
 	b.cacheLock.Lock()
@@ -109,10 +160,11 @@ func (b *BadgerBuilder) updateMetafeeds(ctx context.Context, seq int64, val inte
 	}
 
 	msgLogger := log.With(b.log,
-		"msg-key", msg.Key().ShortRef(),
+		"event", "metafeed update",
+		"msg-key", msg.Key().ShortSigil(),
 
 		// debugging
-		"author", msg.Author().Ref(),
+		"author", msg.Author().String(),
 		"seq", msg.Seq(),
 	)
 
@@ -140,40 +192,58 @@ func (b *BadgerBuilder) updateMetafeeds(ctx context.Context, seq int64, val inte
 	addr := storedrefs.Feed(msg.Author())
 
 	switch justTheType.Type {
-	case "metafeed/add":
-		var addMsg metamngmt.Add
-		err = metafeed.VerifySubSignedContent(msg.ContentBytes(), &addMsg, b.hmacSecret)
+	case "metafeed/add/existing":
+		var addMsg metamngmt.AddExisting
+		err = metafeed.VerifySubSignedContent(msg.ContentBytes(), &addMsg)
 		if err != nil {
 			level.Warn(msgLogger).Log("warning", "sub-signature is invalid", "err", err)
 			return nil
 		}
 
 		if !addMsg.MetaFeed.Equal(msg.Author()) {
-			level.Warn(msgLogger).Log("warning", "content is not about the author of the metafeed", "content feed", addMsg.MetaFeed.ShortRef(), "meta author", msg.Author().ShortRef())
+			level.Warn(msgLogger).Log("warning", "content is not about the author of the metafeed", "content feed", addMsg.MetaFeed.ShortSigil(), "meta author", msg.Author().ShortSigil())
 			// skip invalid add message
 			return nil
 		}
 		addr += storedrefs.Feed(addMsg.SubFeed)
 
-		level.Info(msgLogger).Log("adding", addMsg.SubFeed.Ref())
+		level.Info(msgLogger).Log("adding", addMsg.SubFeed.String())
+		err = idx.Set(ctx, addr, idxRelValueMetafeed)
+
+	case "metafeed/add/derived":
+		var addMsg metamngmt.AddDerived
+		err = metafeed.VerifySubSignedContent(msg.ContentBytes(), &addMsg)
+		if err != nil {
+			level.Warn(msgLogger).Log("warning", "sub-signature is invalid", "err", err)
+			return nil
+		}
+
+		if !addMsg.MetaFeed.Equal(msg.Author()) {
+			level.Warn(msgLogger).Log("warning", "content is not about the author of the metafeed", "content feed", addMsg.MetaFeed.ShortSigil(), "meta author", msg.Author().ShortSigil())
+			// skip invalid add message
+			return nil
+		}
+		addr += storedrefs.Feed(addMsg.SubFeed)
+
+		level.Info(msgLogger).Log("adding", addMsg.SubFeed.ShortSigil())
 		err = idx.Set(ctx, addr, idxRelValueMetafeed)
 
 	case "metafeed/tombstone":
 		var tMsg metamngmt.Tombstone
-		err = metafeed.VerifySubSignedContent(msg.ContentBytes(), &tMsg, b.hmacSecret)
+		err = metafeed.VerifySubSignedContent(msg.ContentBytes(), &tMsg)
 		if err != nil {
 			level.Warn(msgLogger).Log("warning", "sub-signature is invalid", "err", err)
 			return nil
 		}
 
 		if !tMsg.MetaFeed.Equal(msg.Author()) {
-			level.Warn(msgLogger).Log("warning", "content is not about the author of the metafeed", "content feed", tMsg.MetaFeed.ShortRef(), "meta author", msg.Author().ShortRef())
+			level.Warn(msgLogger).Log("warning", "content is not about the author of the metafeed", "content feed", tMsg.MetaFeed.ShortSigil(), "meta author", msg.Author().ShortSigil())
 			// skip invalid add message
 			return nil
 		}
 		addr += storedrefs.Feed(tMsg.SubFeed)
 
-		level.Info(msgLogger).Log("removing", tMsg.SubFeed.Ref())
+		level.Info(msgLogger).Log("removing", tMsg.SubFeed.ShortSigil())
 		err = idx.Set(ctx, addr, idxRelValueNone)
 
 	default:
@@ -181,7 +251,7 @@ func (b *BadgerBuilder) updateMetafeeds(ctx context.Context, seq int64, val inte
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to update metafeed index with message %s: %w", msg.Key().Ref(), err)
+		return fmt.Errorf("failed to update metafeed index with message %s: %w", msg.Key().String(), err)
 	}
 
 	return nil

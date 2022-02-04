@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package sbot
 
 import (
@@ -49,7 +53,7 @@ func (rn replicateNegotiator) HandleConnect(ctx context.Context, e muxrpc.Endpoi
 		return
 	}
 
-	level.Debug(rn.logger).Log("event", "triggering ebt.replicate", "r", remote.ShortRef())
+	level.Debug(rn.logger).Log("event", "triggering ebt.replicate", "r", remote.ShortSigil())
 
 	var opt = map[string]interface{}{"version": 3}
 

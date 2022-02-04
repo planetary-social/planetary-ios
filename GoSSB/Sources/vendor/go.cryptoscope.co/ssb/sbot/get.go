@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package sbot
@@ -53,7 +55,7 @@ func (s Sbot) Get(ref refs.MessageRef) (refs.Message, error) {
 func (s *Sbot) CurrentSequence(feed refs.FeedRef) (ssb.Note, error) {
 	l, err := s.Users.Get(storedrefs.Feed(feed))
 	if err != nil {
-		return ssb.Note{}, fmt.Errorf("failed to get user log for %s: %w", feed.ShortRef(), err)
+		return ssb.Note{}, fmt.Errorf("failed to get user log for %s: %w", feed.ShortSigil(), err)
 	}
 
 	currSeq := l.Seq()

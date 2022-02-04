@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package multimsg implements a margaret codec to encode multiple kinds of messages to disk.
@@ -14,6 +16,7 @@ import (
 	"github.com/ugorji/go/codec"
 	gabbygrove "go.mindeco.de/ssb-gabbygrove"
 
+	"go.cryptoscope.co/ssb/internal/storedrefs"
 	"go.cryptoscope.co/ssb/message/legacy"
 	refs "go.mindeco.de/ssb-refs"
 )
@@ -113,7 +116,7 @@ func (mm *MultiMessage) UnmarshalBinary(data []byte) error {
 		}
 		mm.received = msg.Timestamp_
 		mm.Message = &msg
-		mm.key = msg.Key_
+		mm.key = msg.Key_.MessageRef
 
 	case Gabby:
 		var msg ggWithMetadata
@@ -181,7 +184,7 @@ func (mm MultiMessage) AsMetaFeed() (*metafeed.Message, bool) {
 func NewMultiMessageFromLegacy(msg *legacy.StoredMessage) *MultiMessage {
 	var mm MultiMessage
 	mm.tipe = Legacy
-	mm.key = msg.Key_
+	mm.key = msg.Key_.MessageRef
 	mm.Message = msg
 	return &mm
 }
@@ -190,13 +193,18 @@ func NewMultiMessageFromKeyValRaw(msg refs.KeyValueRaw, raw json.RawMessage) Mul
 	var mm MultiMessage
 	mm.tipe = Legacy
 	mm.key = msg.Key_
-	mm.Message = &legacy.StoredMessage{
-		Author_:    msg.Author(),
-		Previous_:  msg.Previous(),
-		Key_:       msg.Key_,
+	sm := &legacy.StoredMessage{
+		Author_:    storedrefs.SerialzedFeed{FeedRef: msg.Author()},
+		Key_:       storedrefs.SerialzedMessage{MessageRef: msg.Key_},
 		Sequence_:  msg.Value.Sequence,
 		Timestamp_: msg.Claimed(),
 		Raw_:       raw,
 	}
+	if p := msg.Previous(); p != nil {
+		sm.Previous_ = &storedrefs.SerialzedMessage{
+			MessageRef: *p,
+		}
+	}
+	mm.Message = sm
 	return mm
 }

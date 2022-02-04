@@ -125,5 +125,5 @@ func ssbBlobsAdd(fd int32) *C.char {
 	}
 	f.Close()
 
-	return C.CString(br.Ref())
+	return C.CString(br.String())
 }

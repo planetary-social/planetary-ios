@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The go-metafeed Authors
+//
 // SPDX-License-Identifier: MIT
 
 package bencodeext
@@ -33,28 +35,36 @@ func (s String) MarshalBencode() ([]byte, error) {
 	return []byte(sb.String()), nil
 }
 
+var utf8StringPrefix = []byte{0x06, 0x00}
+
 // UnmarshalBencode decodes the length before the : then checks if the prefix of the string is 0x0600
 // if so, it updates the receiver with the slice after the prefix marker
 func (s *String) UnmarshalBencode(input []byte) error {
-	// split the first ':' off (length:value)
+	// split the first ':' off
 	slices := bytes.SplitN(input, []byte{':'}, 2)
 	if len(slices) != 2 {
 		return fmt.Errorf("bencodeext: expected a length marker")
 	}
 
-	strLen, err := strconv.Atoi(string(slices[0]))
+	// indexes in slices
+	const (
+		idxLen   = 0
+		idxValue = 1
+	)
+
+	strLen, err := strconv.Atoi(string(slices[idxLen]))
 	if err != nil {
 		return fmt.Errorf("bencodeext: expected integer for length annotation: %w", err)
 	}
 
-	if claimed, rest := strLen, len(slices[1]); claimed != rest {
+	if claimed, rest := strLen, len(slices[idxValue]); claimed != rest {
 		return fmt.Errorf("bencodeext: expected integer for length annotation (calimed:%d, rest:%d)", claimed, rest)
 	}
 
-	if !bytes.HasPrefix(slices[1], []byte{0x06, 0x00}) {
+	if !bytes.HasPrefix(slices[idxValue], utf8StringPrefix) {
 		return fmt.Errorf("bencodeext: value does not have the correct marker")
 	}
 
-	*s = String(slices[1][2:])
+	*s = String(bytes.TrimPrefix(slices[idxValue], utf8StringPrefix))
 	return nil
 }

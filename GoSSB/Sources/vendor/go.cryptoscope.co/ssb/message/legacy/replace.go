@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package legacy
@@ -6,14 +8,11 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"regexp"
 	"unicode/utf8"
 
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 )
-
-var signatureRegexp = regexp.MustCompile(",\n  \"signature\": \"([A-Za-z0-9/+=.]+)\"")
 
 func unicodeEscapeSome(s string) string {
 	var b bytes.Buffer

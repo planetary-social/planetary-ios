@@ -435,7 +435,7 @@ func ssbInviteAccept(token string) bool {
 
 // todo: add make:bool parameter
 func getAuthorID(ref refs.FeedRef) (int64, error) {
-	strRef := ref.Ref()
+	strRef := ref.String()
 
 	var peerID int64
 	err := viewDB.QueryRow(`SELECT id FROM authors where author = ?`, strRef).Scan(&peerID)

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The go-metafeed Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package bencodeext defines some extenstions for bencode to work better with the existing JavaScript type system.

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package message
@@ -31,23 +33,23 @@ type publishLog struct {
 	create creater
 }
 
-func (pl *publishLog) Publish(content interface{}) (refs.MessageRef, error) {
+func (pl *publishLog) Publish(content interface{}) (refs.Message, error) {
 	seq, err := pl.Append(content)
 	if err != nil {
-		return refs.MessageRef{}, err
+		return nil, err
 	}
 
 	val, err := pl.receiveLog.Get(seq)
 	if err != nil {
-		return refs.MessageRef{}, fmt.Errorf("publish: failed to get new stored message: %w", err)
+		return nil, fmt.Errorf("publish: failed to get new stored message: %w", err)
 	}
 
 	kv, ok := val.(refs.Message)
 	if !ok {
-		return refs.MessageRef{}, fmt.Errorf("publish: unsupported keyer %T", val)
+		return nil, fmt.Errorf("publish: unsupported keyer %T", val)
 	}
 
-	return kv.Key(), nil
+	return kv, nil
 }
 
 func (pl publishLog) Changes() luigi.Observable {
@@ -215,12 +217,12 @@ func (lc legacyCreate) Create(val interface{}, prev refs.MessageRef, seq int64) 
 	// prepare persisted message
 	var stored legacy.StoredMessage
 	stored.Timestamp_ = time.Now() // "rx"
-	stored.Author_ = lc.key.ID()
+	stored.Author_ = storedrefs.SerialzedFeed{FeedRef: lc.key.ID()}
 
 	// set metadata
 	var newMsg legacy.LegacyMessage
 	newMsg.Hash = "sha256"
-	newMsg.Author = lc.key.ID().Ref()
+	newMsg.Author = lc.key.ID().String()
 	if seq > 1 {
 		newMsg.Previous = &prev
 	}
@@ -242,9 +244,17 @@ func (lc legacyCreate) Create(val interface{}, prev refs.MessageRef, seq int64) 
 		return nil, err
 	}
 
-	stored.Previous_ = newMsg.Previous
+	// make sure the message we created verifies correctly (type check)
+	_, _, err = legacy.Verify(signedMessage, lc.hmac)
+	if err != nil {
+		return nil, fmt.Errorf("failed to verify newly created message: %w", err)
+	}
+
+	stored.Key_ = storedrefs.SerialzedMessage{MessageRef: mr}
 	stored.Sequence_ = seq
-	stored.Key_ = mr
+	if prev := newMsg.Previous; prev != nil {
+		stored.Previous_ = &storedrefs.SerialzedMessage{MessageRef: *prev}
+	}
 	stored.Raw_ = signedMessage
 	return &stored, nil
 }

@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"math"
+	"net/url"
 	"time"
 
 	"go.mindeco.de/encodedTime"
@@ -276,16 +277,36 @@ func NewContentRefFromBytes(b []byte) (ContentRef, error) {
 	return newRef, nil
 }
 
-func (ref ContentRef) Ref() string {
+func (ref ContentRef) Sigil() string {
 	return fmt.Sprintf("!%s.%s", base64.StdEncoding.EncodeToString(ref.hash[:]), ref.algo)
 }
 
-func (ref ContentRef) ShortRef() string {
+func (ref ContentRef) ShortSigil() string {
 	return fmt.Sprintf("<!%s.%s>", base64.StdEncoding.EncodeToString(ref.hash[:3]), ref.algo)
+}
+
+func (ref ContentRef) ShortRef() string {
+	return ref.ShortSigil()
+}
+
+func (ref ContentRef) URI() string {
+	var ssbURI url.URL
+	ssbURI.Scheme = "ssb"
+	ssbURI.Opaque = "content/gabbygrove-v1/"
+	ssbURI.Opaque += base64.URLEncoding.EncodeToString(ref.hash[:])
+	return ssbURI.String()
+}
+
+func (ref ContentRef) String() string {
+	return ref.URI()
 }
 
 func (ref ContentRef) Algo() refs.RefAlgo {
 	return RefAlgoContentGabby
+}
+
+func (ref ContentRef) MarshalText() ([]byte, error) {
+	return []byte(ref.URI()), nil
 }
 
 func (ref ContentRef) MarshalBinary() ([]byte, error) {

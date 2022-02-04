@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package graph
@@ -25,7 +27,7 @@ type ErrNoSuchFrom struct {
 }
 
 func (nsf ErrNoSuchFrom) Error() string {
-	return fmt.Sprintf("ssb/graph: no such from: %s", nsf.Who.Ref())
+	return fmt.Sprintf("ssb/graph: no such from: %s", nsf.Who.String())
 }
 
 func (a *authorizer) Authorize(to refs.FeedRef) error {

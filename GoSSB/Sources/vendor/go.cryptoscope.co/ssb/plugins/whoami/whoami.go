@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package whoami
@@ -61,7 +63,7 @@ func (h handler) HandleCall(ctx context.Context, req *muxrpc.Request) {
 		ID string `json:"id"`
 	}
 
-	err := req.Return(ctx, ret{h.id.Ref()})
+	err := req.Return(ctx, ret{h.id.String()})
 	checkAndLog(h.log, err)
 }
 

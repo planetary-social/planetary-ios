@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package message
 
 import (
@@ -55,7 +59,7 @@ func (vs *VerificationRouter) GetSink(ref refs.FeedRef, complete bool) (Sequence
 	defer vs.mu.Unlock()
 
 	// do we have an open sink for this feed already?
-	snk, has := vs.sinks[ref.Ref()]
+	snk, has := vs.sinks[ref.String()]
 	if has {
 		return snk, nil
 	}
@@ -72,14 +76,14 @@ func (vs *VerificationRouter) GetSink(ref refs.FeedRef, complete bool) (Sequence
 		return nil, err
 	}
 
-	vs.sinks[ref.Ref()] = snk
+	vs.sinks[ref.String()] = snk
 	return snk, nil
 }
 
 func (vs *VerificationRouter) CloseSink(ref refs.FeedRef) {
 	vs.mu.Lock()
 	defer vs.mu.Unlock()
-	delete(vs.sinks, ref.Ref())
+	delete(vs.sinks, ref.String())
 }
 
 func firstMessage(author refs.FeedRef) refs.KeyValueRaw {

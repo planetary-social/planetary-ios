@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package network
@@ -199,7 +201,7 @@ func (n *Node) GetEndpointFor(ref refs.FeedRef) (muxrpc.Endpoint, bool) {
 	n.remotesLock.Lock()
 	defer n.remotesLock.Unlock()
 
-	edp, has := n.remotes[ref.Ref()]
+	edp, has := n.remotes[ref.String()]
 	return edp, has
 }
 
@@ -246,7 +248,7 @@ func (n *Node) addRemote(edp muxrpc.Endpoint) {
 	// }
 	// }
 	// replace with new
-	n.remotes[r.Ref()] = edp
+	n.remotes[r.String()] = edp
 }
 
 // TODO: merge with conntracker
@@ -257,7 +259,7 @@ func (n *Node) removeRemote(edp muxrpc.Endpoint) {
 	if err != nil {
 		panic(err)
 	}
-	delete(n.remotes, r.Ref())
+	delete(n.remotes, r.String())
 }
 
 func (n *Node) handleConnection(ctx context.Context, origConn net.Conn, isServer bool, hws ...muxrpc.HandlerWrapper) {
@@ -276,7 +278,7 @@ func (n *Node) handleConnection(ctx context.Context, origConn net.Conn, isServer
 		level.Error(n.log).Log("conn", "not shs authorized", "err", err)
 		return
 	}
-	rLogger := log.With(n.log, "peer", remoteRef.ShortRef())
+	rLogger := log.With(n.log, "peer", remoteRef.ShortSigil())
 
 	ok, ctx := n.connTracker.OnAccept(ctx, conn)
 	if !ok {

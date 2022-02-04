@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package sbot
@@ -158,7 +160,8 @@ type Sbot struct {
 	latency      metrics.Histogram
 
 	enableMetafeeds bool
-	MetaFeeds       MetaFeeds
+	MetaFeeds       ssb.MetaFeeds
+	IndexFeeds      ssb.IndexFeedManager
 
 	ssb.Replicator
 }
@@ -220,7 +223,7 @@ func New(fopts ...Option) (*Sbot, error) {
 	}
 	ctx := s.rootCtx
 
-	r := repo.New(s.repoPath)
+	storageRepo := repo.New(s.repoPath)
 
 	var err error
 	if s.KeyPair == nil {
@@ -228,14 +231,14 @@ func New(fopts ...Option) (*Sbot, error) {
 		if s.enableMetafeeds {
 			algo = refs.RefAlgoFeedBendyButt
 		}
-		s.KeyPair, err = repo.DefaultKeyPair(r, algo)
+		s.KeyPair, err = repo.DefaultKeyPair(storageRepo, algo)
 		if err != nil {
 			return nil, fmt.Errorf("sbot: failed to get keypair: %w", err)
 		}
 	}
 
 	// TODO: optionize
-	s.ReceiveLog, err = repo.OpenLog(r)
+	s.ReceiveLog, err = repo.OpenLog(storageRepo)
 	if err != nil {
 		return nil, fmt.Errorf("sbot: failed to open rootlog: %w", err)
 	}
@@ -244,7 +247,7 @@ func New(fopts ...Option) (*Sbot, error) {
 	// if not configured
 	if s.BlobStore == nil {
 		// load default, local file blob store
-		s.BlobStore, err = repo.OpenBlobStore(r)
+		s.BlobStore, err = repo.OpenBlobStore(storageRepo)
 		if err != nil {
 			return nil, fmt.Errorf("sbot: failed to open blob store: %w", err)
 		}
@@ -267,7 +270,7 @@ func New(fopts ...Option) (*Sbot, error) {
 	}
 
 	sm, err := statematrix.New(
-		r.GetPath("ebt-state-matrix"),
+		storageRepo.GetPath("ebt-state-matrix"),
 		s.KeyPair.ID(),
 	)
 	if err != nil {
@@ -277,7 +280,7 @@ func New(fopts ...Option) (*Sbot, error) {
 	s.ebtState = sm
 
 	// open timestamp and sequence resovlers
-	s.SeqResolver, err = repo.NewSequenceResolver(r)
+	s.SeqResolver, err = repo.NewSequenceResolver(storageRepo)
 	if err != nil {
 		return nil, fmt.Errorf("error opening sequence resolver: %w", err)
 	}
@@ -285,7 +288,7 @@ func New(fopts ...Option) (*Sbot, error) {
 	s.closers.AddCloser(idxTimestamps)
 	s.serveIndex("timestamps", idxTimestamps)
 
-	s.indexStore, err = repo.OpenBadgerDB(r.GetPath(repo.PrefixMultiLog, "shared-badger"))
+	s.indexStore, err = repo.OpenBadgerDB(storageRepo.GetPath(repo.PrefixMultiLog, "shared-badger"))
 	if err != nil {
 		return nil, err
 	}
@@ -440,14 +443,15 @@ func New(fopts ...Option) (*Sbot, error) {
 		}
 	}
 
-	selfNf, err := s.ebtState.Inspect(s.KeyPair.ID())
+	// load our network frontier
+	ownFrontier, err := s.ebtState.Inspect(s.KeyPair.ID())
 	if err != nil {
 		return nil, err
 	}
 
-	// no ebt state yet
-	if len(selfNf) == 0 {
-		// use the replication lister and determin the stored feeds lenghts
+	// this peer has no ebt state yet
+	if len(ownFrontier) == 0 {
+		// use the replication lister and determine the stored feeds lenghts
 		lister := s.Replicator.Lister().ReplicationList()
 
 		feeds, err := lister.List()
@@ -456,24 +460,20 @@ func New(fopts ...Option) (*Sbot, error) {
 		}
 
 		for i, feed := range feeds {
-			if feed.Algo() != refs.RefAlgoFeedSSB1 {
-				// skip other formats (TODO: gg support)
-				continue
-			}
-
 			seq, err := s.CurrentSequence(feed)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get sequence for entry %d: %w", i, err)
 			}
-			selfNf[feed.Ref()] = seq
+			ownFrontier[feed.String()] = seq
 		}
 
-		selfNf[s.KeyPair.ID().Ref()], err = s.CurrentSequence(s.KeyPair.ID())
+		// also update our own
+		ownFrontier[s.KeyPair.ID().String()], err = s.CurrentSequence(s.KeyPair.ID())
 		if err != nil {
 			return nil, fmt.Errorf("failed to get our sequence: %w", err)
 		}
 
-		_, err = s.ebtState.Update(s.KeyPair.ID(), selfNf)
+		_, err = s.ebtState.Update(s.KeyPair.ID(), ownFrontier)
 		if err != nil {
 			return nil, err
 		}
@@ -481,16 +481,22 @@ func New(fopts ...Option) (*Sbot, error) {
 
 	s.MetaFeeds = disabledMetaFeeds{}
 	if s.enableMetafeeds {
-
 		// a user might want to be able to read/replicate metafeeds without using bendybutt themselves
 		if s.KeyPair.ID().Algo() == refs.RefAlgoFeedBendyButt {
-			s.MetaFeeds, err = newMetaFeedService(s.ReceiveLog, s.Users, keysStore, s.KeyPair, s.signHMACsecret)
+			s.IndexFeeds, err = newIndexFeedManager(storageRepo.GetPath("indexfeeds"))
+			if err != nil {
+				return nil, fmt.Errorf("failed to initialize index feed manager: %w", err)
+			}
+
+			s.MetaFeeds, err = newMetaFeedService(s.ReceiveLog, s.IndexFeeds, s.Users, keysStore, s.KeyPair, s.signHMACsecret)
 			if err != nil {
 				return nil, fmt.Errorf("failed to initialize metafeed service: %w", err)
 			}
 		}
 
 		// setup indexing
+
+		// 1) all metafeed/* messages in bendybutt format
 		justMetafeedMessages := repo.NewFilteredLog(s.ReceiveLog, func(msg refs.Message) bool {
 			content := msg.ContentBytes()
 			// the relevant messages will be in the form of [{content,...}, signature]
@@ -515,26 +521,25 @@ func New(fopts ...Option) (*Sbot, error) {
 		})
 
 		_, mfSink := gb.OpenMetafeedsIndex()
-
 		s.serveIndexFrom("metafeed", mfSink, justMetafeedMessages)
+
+		// 2) metafeed/announce on normal format
+		byTypeAnnouncementSeqs, err := s.ByType.Get(librarian.Addr("string:metafeed/announce"))
+		if err != nil {
+			return nil, fmt.Errorf("sbot: failed to open by type 'metafeed/announce' sublog: %w", err)
+		}
+
+		// convert sequences only to their actual messages using mutil.Indirect
+		byTypeAnnouncements := mutil.Indirect(s.ReceiveLog, byTypeAnnouncementSeqs)
+
+		_, announcementSink := gb.OpenAnnouncementIndex()
+		s.serveIndexFrom("metafeed announcements", announcementSink, byTypeAnnouncements)
 	}
 
 	// from here on just network related stuff
 	if s.disableNetwork {
 		return s, nil
 	}
-
-	// TODO: make plugabble
-	// var peerPlug *peerinvites.Plugin
-	// if mt, ok := s.mlogIndicies[multilogs.IndexNameFeeds]; ok {
-	// 	peerPlug = peerinvites.New(log.With(s.info, "plugin", "peerInvites"), s, mt, s.ReceiveLog, s.PublishLog)
-	// 	s.public.Register(peerPlug)
-	// 	_, peerServ, err := peerPlug.OpenIndex(r)
-	// 	if err != nil {
-	// 		return nil, errors.Wrap(err, "sbot: failed to open about idx")
-	// 	}
-	// 	s.serveIndex(ctx, "contacts", peerServ)
-	// }
 
 	var inviteService *legacyinvites.Service
 
@@ -548,15 +553,12 @@ func New(fopts ...Option) (*Sbot, error) {
 		if err != nil {
 			return nil, fmt.Errorf("sbot: expected an address containing an shs-bs addr: %w", err)
 		}
-		if s.KeyPair.ID().Equal(remote) {
+
+		// TODO: we still can't see the feed format type from this
+
+		if s.KeyPair.ID().PubKey().Equal(remote.PubKey()) {
 			return s.master.MakeHandler(conn)
 		}
-
-		// if peerPlug != nil {
-		// 	if err := peerPlug.Authorize(remote); err == nil {
-		// 		return peerPlug.Handler(), nil
-		// 	}
-		// }
 
 		if inviteService != nil {
 			err := inviteService.Authorize(remote)
@@ -680,7 +682,7 @@ func New(fopts ...Option) (*Sbot, error) {
 
 	gossipPlug := gossip.NewFetcher(ctx,
 		log.With(s.info, "plugin", "gossip"),
-		r,
+		storageRepo,
 		s.KeyPair.ID(),
 		s.ReceiveLog, s.Users,
 		fm, s.Replicator.Lister(),
@@ -755,7 +757,7 @@ func New(fopts ...Option) (*Sbot, error) {
 	s.master.Register(rawread.NewSortedStream(s.info, s.ReceiveLog, s.SeqResolver))
 	s.master.Register(hist) // createHistoryStream
 
-	s.master.Register(replicate.NewPlug(s.Users))
+	s.master.Register(replicate.NewPlug(s.Users, s.KeyPair.ID(), s.Lister()))
 
 	s.master.Register(friends.New(s.info, s.KeyPair.ID(), s.GraphBuilder))
 
@@ -848,7 +850,7 @@ func New(fopts ...Option) (*Sbot, error) {
 
 	inviteService, err = legacyinvites.New(
 		log.With(s.info, "unit", "legacyInvites"),
-		r,
+		storageRepo,
 		s.KeyPair.ID(),
 		networkNode,
 		s.PublishLog,

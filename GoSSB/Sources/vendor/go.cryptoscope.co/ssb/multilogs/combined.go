@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package multilogs
 
 import (
@@ -99,19 +103,19 @@ type CombinedIndex struct {
 
 // Box2Reindex takes advantage of the other bitmap indexes to reindex just the messages from the passed author that are box2 but not yet readable by us.
 //	1) taking private:meta:box2
-//	2) ANDing it with the one of the author (intersection)
-//	3) subtracting all the messages we _can_ read (private:box2:$ourFeed)
+//	3) ANDing it with the one of the author (intersection)
+//	5) subtracting all the messages we _can_ read (private:box2:$ourFeed)
 func (idx *CombinedIndex) Box2Reindex(author refs.FeedRef) error {
 	idx.l.Lock()
 	defer idx.l.Unlock()
 
-	// 1) all messages in boxed2 format
+	// (1) all messages in boxed2 format
 	allBox2, err := idx.private.LoadInternalBitmap(indexes.Addr("meta:box2"))
 	if err != nil {
 		return fmt.Errorf("error getting all box2 messages: %w", err)
 	}
 
-	// 2) all messages by the author we should re-index
+	// (2) all messages by the author we should re-index
 	fromAuthor, err := idx.users.LoadInternalBitmap(storedrefs.Feed(author))
 	if err != nil {
 		if !errors.Is(err, multilog.ErrSublogNotFound) {
@@ -120,27 +124,33 @@ func (idx *CombinedIndex) Box2Reindex(author refs.FeedRef) error {
 		fromAuthor = sroar.NewBitmap()
 	}
 
-	// 2) intersection between the two
+	// (3) intersection between the two
 	fromAuthor.And(allBox2)
 
 	if fromAuthor.GetCardinality() == 0 {
-		fmt.Println("skipping empty set", allBox2.GetCardinality(), author.Ref())
+		fmt.Println("skipping empty set", allBox2.GetCardinality(), author.String())
 		return nil
 	}
 
-	// 3) all messages we can already decrypt
+	// (4) all messages we can already decrypt
 	myReadableAddr := indexes.Addr("box2:") + storedrefs.Feed(idx.self)
 	myReadable, err := idx.private.LoadInternalBitmap(myReadableAddr)
 	if err != nil {
 		return fmt.Errorf("error getting my readable: %w", err)
 	}
 
-	// 3) subtract those from 2)
-	fromAuthor.AndNot(myReadable)
+	// (5) subtract those (4) from (3)
+	readableIt := myReadable.NewIterator()
+	for readableIt.HasNext() {
+		readableIt.Next()
+		v := readableIt.Val()
+		if fromAuthor.Contains(v) {
+			fromAuthor.Remove(v)
+		}
+	}
 
+	// (6) iterate over those and reindex them
 	it := fromAuthor.NewIterator()
-
-	// iterate over those and reindex them
 	for it.HasNext() {
 		rxSeq := int64(it.Next())
 
@@ -500,7 +510,7 @@ func getBoxedContent(msg refs.Message) ([]byte, []byte, error) {
 		case bytes.HasPrefix(tr.Content, prefixBox2):
 			return nil, tr.Content[5:], nil
 		default:
-			return nil, nil, fmt.Errorf("private/ssb1: unknown content type: %s", msg.Key().ShortRef())
+			return nil, nil, fmt.Errorf("private/ssb1: unknown content type: %s", msg.Key().ShortSigil())
 		}
 
 	case refs.RefAlgoFeedBendyButt:

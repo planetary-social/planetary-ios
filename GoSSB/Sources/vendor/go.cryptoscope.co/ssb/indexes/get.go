@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package indexes contains functions to create indexing for 'get(%ref) -> message'.
@@ -36,7 +38,7 @@ func updateGetFn(ctx context.Context, seq int64, val interface{}, idx librarian.
 
 	err := idx.Set(ctx, storedrefs.Message(msg.Key()), seq)
 	if err != nil {
-		return fmt.Errorf("index/get: failed to update message %s (seq: %d): %w", msg.Key().Ref(), seq, err)
+		return fmt.Errorf("index/get: failed to update message %s (seq: %d): %w", msg.Key().String(), seq, err)
 	}
 	return nil
 }

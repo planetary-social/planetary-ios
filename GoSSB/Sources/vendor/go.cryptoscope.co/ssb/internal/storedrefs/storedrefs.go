@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 // Package storedrefs provides methods to encode certain types as bytes, as used by the internal storage system.
 package storedrefs
 

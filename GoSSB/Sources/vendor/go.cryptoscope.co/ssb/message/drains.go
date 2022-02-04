@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package message contains abstract verification and publish helpers.
@@ -13,6 +15,7 @@ import (
 	"github.com/ssb-ngi-pointer/go-metafeed"
 	"go.cryptoscope.co/margaret"
 
+	"go.cryptoscope.co/ssb/internal/storedrefs"
 	"go.cryptoscope.co/ssb/message/legacy"
 	gabbygrove "go.mindeco.de/ssb-gabbygrove"
 	refs "go.mindeco.de/ssb-refs"
@@ -77,15 +80,17 @@ func (lv legacyVerify) Verify(rmsg []byte) (refs.Message, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	return &legacy.StoredMessage{
-		Author_:    dmsg.Author,
-		Previous_:  dmsg.Previous,
-		Key_:       ref,
+	sm := &legacy.StoredMessage{
+		Key_:       storedrefs.SerialzedMessage{ref},
+		Author_:    storedrefs.SerialzedFeed{dmsg.Author},
 		Sequence_:  int64(dmsg.Sequence),
 		Timestamp_: time.Now(),
 		Raw_:       rmsg,
-	}, nil
+	}
+	if prev := dmsg.Previous; prev != nil {
+		sm.Previous_ = &storedrefs.SerialzedMessage{*prev}
+	}
+	return sm, nil
 }
 
 type gabbyVerify struct {
@@ -162,7 +167,7 @@ func (ld *generalVerifyDrain) Verify(msg []byte) error {
 
 	next, err := ld.verify.Verify(msg)
 	if err != nil {
-		return fmt.Errorf("message(%s:%d) verify failed: %w", ld.who.ShortRef(), ld.latestSeq, err)
+		return fmt.Errorf("message(%s:%d) verify failed: %w", ld.who.ShortSigil(), ld.latestSeq, err)
 	}
 
 	err = ValidateNext(ld.latestMsg, next)
@@ -175,7 +180,7 @@ func (ld *generalVerifyDrain) Verify(msg []byte) error {
 
 	err = ld.storage.Save(next)
 	if err != nil {
-		return fmt.Errorf("message(%s): failed to append message(%s:%d): %w", ld.who.ShortRef(), next.Key().Ref(), next.Seq(), err)
+		return fmt.Errorf("message(%s): failed to append message(%s:%d): %w", ld.who.ShortSigil(), next.Key().String(), next.Seq(), err)
 	}
 
 	ld.latestSeq = int64(next.Seq())
@@ -193,7 +198,7 @@ func ValidateNext(current, next refs.Message) error {
 
 	if current == nil || current.Seq() == 0 {
 		if nextSeq != 1 {
-			return fmt.Errorf("ValidateNext(%s:%d): first message has to have sequence 1, got %d", next.Author().ShortRef(), 0, nextSeq)
+			return fmt.Errorf("ValidateNext(%s:%d): first message has to have sequence 1, got %d", next.Author().ShortSigil(), 0, nextSeq)
 		}
 		return nil
 	}
@@ -201,7 +206,7 @@ func ValidateNext(current, next refs.Message) error {
 
 	author := current.Author()
 	if !author.Equal(next.Author()) {
-		return fmt.Errorf("ValidateNext(%s:%d): wrong author: %s", author.ShortRef(), current.Seq(), next.Author().ShortRef())
+		return fmt.Errorf("ValidateNext(%s:%d): wrong author: %s", author.ShortSigil(), current.Seq(), next.Author().ShortSigil())
 	}
 
 	if currSeq+1 != nextSeq {
@@ -209,24 +214,24 @@ func ValidateNext(current, next refs.Message) error {
 		if shouldSkip {
 			return errSkip
 		}
-		return fmt.Errorf("ValidateNext(%s:%d): next.seq(%d) != curr.seq+1 (skip: %v)", author.ShortRef(), currSeq, nextSeq, shouldSkip)
+		return fmt.Errorf("ValidateNext(%s:%d): next.seq(%d) != curr.seq+1 (skip: %v)", author.ShortSigil(), currSeq, nextSeq, shouldSkip)
 	}
 
 	currKey := current.Key()
 	prev := next.Previous()
 	if prev == nil {
 		return fmt.Errorf("ValidateNext(%s:%d): previous compare failed expected:%s got nil",
-			author.Ref(),
+			author.String(),
 			currSeq,
-			current.Key().Ref(),
+			current.Key().String(),
 		)
 	}
 	if !currKey.Equal(*prev) {
 		return fmt.Errorf("ValidateNext(%s:%d): previous compare failed expected:%s incoming:%s",
-			author.Ref(),
+			author.String(),
 			currSeq,
-			current.Key().Ref(),
-			next.Previous().Ref(),
+			current.Key().String(),
+			next.Previous().String(),
 		)
 	}
 

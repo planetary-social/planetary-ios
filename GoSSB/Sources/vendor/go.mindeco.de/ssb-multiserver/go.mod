@@ -7,5 +7,5 @@ require (
 	github.com/stretchr/testify v1.6.1
 	go.cryptoscope.co/netwrap v0.1.1
 	go.cryptoscope.co/secretstream v1.2.9
-	go.mindeco.de/ssb-refs v0.3.0
+	go.mindeco.de/ssb-refs v0.4.2-0.20210907140047-ad70b6f7072f
 )

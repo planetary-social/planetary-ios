@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 // Package slp implements "shallow length prefixed" data. Each element in a slice is prefixed by a uint16 for it's length.
 package slp
 

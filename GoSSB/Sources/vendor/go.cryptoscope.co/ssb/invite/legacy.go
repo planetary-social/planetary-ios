@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 // Package invite contains functions for parsing invite codes and dialing a pub as a guest to redeem a token.
 // The muxrpc handlers and storage are found in plugins/legacyinvite.
 package invite
@@ -32,7 +36,7 @@ func Redeem(ctx context.Context, tok Token, longTerm refs.FeedRef) error {
 	var ret refs.KeyValueRaw
 	var param = struct {
 		Feed string `json:"feed"`
-	}{longTerm.Ref()}
+	}{longTerm.String()}
 
 	err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"invite", "use"}, param)
 	if err != nil {

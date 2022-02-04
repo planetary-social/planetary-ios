@@ -335,7 +335,7 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 	sbot.BlobStore.Register(newEmitter())
 
 	sbot.WaitUntilIndexesAreSynced()
-	log.Log("event", "serving", "self", sbot.KeyPair.ID().Ref()[1:5], "addr", listenAddr)
+	log.Log("event", "serving", "self", sbot.KeyPair.ID().ShortSigil(), "addr", listenAddr)
 	go func() {
 		srvErr := sbot.Network.Serve(longCtx)
 		log.Log("event", "sbot node.Serve returned", "srvErr", srvErr)
@@ -363,10 +363,10 @@ func (e emitter) EmitBlob(n ssb.BlobStoreNotification) error {
 		return err
 	}
 
-	testRef := C.CString(n.Ref.Ref())
+	testRef := C.CString(n.Ref.String())
 	ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(sz), testRef)
 	C.free(unsafe.Pointer(testRef))
-	log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.Ref())
+	log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.String())
 	return nil
 }
 

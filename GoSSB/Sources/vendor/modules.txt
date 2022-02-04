@@ -75,7 +75,7 @@ github.com/pkg/errors
 github.com/pmezard/go-difflib/difflib
 # github.com/rs/cors v1.7.0
 github.com/rs/cors
-# github.com/ssb-ngi-pointer/go-metafeed v0.0.0-20210727102809-98707678965d
+# github.com/ssb-ngi-pointer/go-metafeed v1.1.1
 github.com/ssb-ngi-pointer/go-metafeed
 github.com/ssb-ngi-pointer/go-metafeed/internal/bencodeext
 github.com/ssb-ngi-pointer/go-metafeed/internal/sign
@@ -125,7 +125,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.2.1
+# go.cryptoscope.co/ssb v0.2.2-0.20220120085157-a846f1659c87
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -183,12 +183,12 @@ go.mindeco.de/encodedTime
 go.mindeco.de/log
 go.mindeco.de/log/level
 go.mindeco.de/logging
-# go.mindeco.de/ssb-gabbygrove v0.2.0
+# go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd
 go.mindeco.de/ssb-gabbygrove
-# go.mindeco.de/ssb-multiserver v0.1.3
+# go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
 ## explicit
 go.mindeco.de/ssb-multiserver
-# go.mindeco.de/ssb-refs v0.4.1
+# go.mindeco.de/ssb-refs v0.4.2-0.20210908123826-f7ca13c14896
 ## explicit
 go.mindeco.de/ssb-refs
 go.mindeco.de/ssb-refs/tfk
@@ -198,7 +198,7 @@ go.opencensus.io/internal
 go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/tracestate
-# golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+# golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
 ## explicit
 golang.org/x/crypto/blake2b
 golang.org/x/crypto/curve25519

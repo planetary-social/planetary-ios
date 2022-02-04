@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package ebt
@@ -35,7 +37,7 @@ func (s *session) Subscribed(feed refs.FeedRef, cancelFn context.CancelFunc) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fr := feed.Ref()
+	fr := feed.String()
 	if fn, has := s.subscribed[fr]; has {
 		fn()
 		delete(s.subscribed, fr)
@@ -49,7 +51,7 @@ func (s *session) Unubscribe(feed refs.FeedRef) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fr := feed.Ref()
+	fr := feed.String()
 	if fn, has := s.subscribed[fr]; has {
 		fn()
 		delete(s.subscribed, fr)

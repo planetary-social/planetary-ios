@@ -41,7 +41,7 @@ func (ref BinaryRef) valid() (RefType, error) {
 	}
 }
 
-func (ref BinaryRef) Ref() string {
+func (ref BinaryRef) Sigil() string {
 	t, err := ref.valid()
 	if err != nil {
 		panic(err)
@@ -50,7 +50,11 @@ func (ref BinaryRef) Ref() string {
 	if err != nil {
 		panic(err)
 	}
-	return r.Ref()
+	return r.Sigil()
+}
+
+func (ref BinaryRef) URI() string {
+	return ref.r.URI()
 }
 
 func (ref BinaryRef) MarshalBinary() ([]byte, error) {
@@ -112,12 +116,20 @@ func (ref *BinaryRef) Size() int {
 	return binrefSize
 }
 
+func (ref BinaryRef) MarshalText() ([]byte, error) {
+	return ref.r.MarshalText()
+}
+
 func (ref BinaryRef) MarshalJSON() ([]byte, error) {
 	return bytestr(ref.r), nil
 }
 
 func bytestr(r refs.Ref) []byte {
-	return []byte("\"" + r.Ref() + "\"")
+	return []byte("\"" + r.URI() + "\"")
+}
+
+func (ref *BinaryRef) UnmarshalText(data []byte) error {
+	return errors.Errorf("TODO:text")
 }
 
 func (ref *BinaryRef) UnmarshalJSON(data []byte) error {

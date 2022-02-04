@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package private
 
 import (
@@ -132,7 +136,7 @@ func (mgr *Manager) GetOrDeriveKeyFor(other refs.FeedRef) (keys.Recipients, erro
 			Scheme: scheme,
 			Key:    messageShared,
 			Metadata: keys.Metadata{
-				ForFeed: other,
+				ForFeed: &other,
 			},
 		}
 

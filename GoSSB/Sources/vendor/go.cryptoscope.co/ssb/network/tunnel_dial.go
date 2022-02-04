@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package network
@@ -20,7 +22,7 @@ type connectArg struct {
 }
 
 func (n *Node) DialViaRoom(portal, target refs.FeedRef) error {
-	portalLogger := kitlog.With(n.log, "portal", portal.ShortRef())
+	portalLogger := kitlog.With(n.log, "portal", portal.ShortSigil())
 
 	edp, has := n.GetEndpointFor(portal)
 	if !has {
@@ -67,7 +69,7 @@ func (n *Node) DialViaRoom(portal, target refs.FeedRef) error {
 		return err
 	}
 
-	level.Info(portalLogger).Log("event", "tunnel.connect established", "origin", origin.ShortRef())
+	level.Info(portalLogger).Log("event", "tunnel.connect established", "origin", origin.ShortSigil())
 
 	// start serving the connection
 	go n.handleConnection(ctx, conn, false)

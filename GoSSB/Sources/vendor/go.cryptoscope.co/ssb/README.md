@@ -1,16 +1,25 @@
+<!--
+SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+
+SPDX-License-Identifier: MIT
+-->
+
 <h1 align="center">Go-SSB</h1>
 
 <p align="center">
   <img height="170px" src="./docs/icon.png" alt="hermit gopher with a shell and crab hands">
 </p>
 
-[![GoDoc](https://godoc.org/go.cryptoscope.co/ssb?status.svg)](https://godoc.org/go.cryptoscope.co/ssb) [![Go Report Card](https://goreportcard.com/badge/go.cryptoscope.co/ssb)](https://goreportcard.com/report/go.cryptoscope.co/ssb) ![Github Actions](https://github.com/cryptoscope/ssb/actions/workflows/go.yml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GoDoc](https://godoc.org/go.cryptoscope.co/ssb?status.svg)](https://godoc.org/go.cryptoscope.co/ssb) [![Go Report Card](https://goreportcard.com/badge/go.cryptoscope.co/ssb)](https://goreportcard.com/report/go.cryptoscope.co/ssb) ![Github Actions](https://github.com/cryptoscope/ssb/actions/workflows/go.yml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![REUSE status](https://api.reuse.software/badge/github.com/cryptoscope/ssb)](https://api.reuse.software/info/github.com/cryptoscope/ssb)
 
 A full-stack implementation of [secure-scuttlebutt](https://www.scuttlebutt.nz) using the [Go](https://golang.org) programming language.
 
 WARNING: Project is still in alpha, backwards incompatible changes will be made.  We suggest vendoring for a stable experience.
 
 If you encounter a bug, please refer to our [public issue tracker](https://github.com/cryptoscope/ssb/issues).
+
+### Developing
+Want to contribute patches to go-ssb? Read the [developer documentation](https://dev.scuttlebutt.nz/#/golang/) hosted at [dev.scuttlebutt.nz](https://dev.scuttlebutt.nz/#/golang/). If you have a large change you want to make, reach out to [@cryptix](https://github.com/cryptix) first and we'll together make sure that the resulting PR will be accepted :black_heart:
 
 ## Server Features
 
@@ -34,7 +43,7 @@ go install ./cmd/sbotcli
 
 Requirements:
 
-  - [Golang](https://www.golang.org) version 1.13 or higher
+  - [Golang](https://www.golang.org) version 1.17 or higher
 
 ## Running go-sbot
 

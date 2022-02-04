@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package sbot
 
 import (
@@ -20,6 +24,7 @@ import (
 
 var _ ssb.Replicator = (*Sbot)(nil)
 
+// Replicate mark a feed for replication and connection acceptance
 func (sbot *Sbot) Replicate(r refs.FeedRef) {
 	slog, err := sbot.Users.Get(storedrefs.Feed(r))
 	if err != nil {

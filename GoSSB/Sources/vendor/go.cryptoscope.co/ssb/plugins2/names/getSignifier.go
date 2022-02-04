@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package names
@@ -23,7 +25,7 @@ func (h hGetSignifier) HandleAsync(ctx context.Context, req *muxrpc.Request) (in
 
 	ai, err := h.as.CollectedFor(ref)
 	if err != nil {
-		return nil, fmt.Errorf("do not have about for: %s: %w", ref.Ref(), err)
+		return nil, fmt.Errorf("do not have about for: %s: %w", ref.String(), err)
 
 	}
 	var name = ai.Name.Chosen
@@ -33,7 +35,7 @@ func (h hGetSignifier) HandleAsync(ctx context.Context, req *muxrpc.Request) (in
 			break
 		}
 		if name == "" {
-			name = ref.Ref()
+			name = ref.String()
 		}
 	}
 

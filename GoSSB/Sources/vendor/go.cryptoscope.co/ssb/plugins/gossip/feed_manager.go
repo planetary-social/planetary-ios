@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package gossip
@@ -84,7 +86,7 @@ func (m *FeedManager) pour(ctx context.Context, val interface{}, err error) erro
 
 	msg := val.(refs.Message)
 	author := msg.Author()
-	sink, ok := m.liveFeeds[author.Ref()]
+	sink, ok := m.liveFeeds[author.String()]
 	if !ok {
 		return nil
 	}
@@ -183,7 +185,7 @@ func (m *FeedManager) CreateStreamHistory(
 	sink *muxrpc.ByteSink,
 	arg message.CreateHistArgs,
 ) error {
-	feedLogger := log.With(m.logger, "fr", arg.ID.ShortRef())
+	feedLogger := log.With(m.logger, "fr", arg.ID.ShortSigil())
 
 	// check what we got
 	userLog, err := m.UserFeeds.Get(storedrefs.Feed(arg.ID))
@@ -199,7 +201,7 @@ func (m *FeedManager) CreateStreamHistory(
 			if arg.Live {
 				return m.addLiveFeed(
 					ctx, sink,
-					arg.ID.Ref(),
+					arg.ID.String(),
 					latest,
 					liveLimit(arg, latest),
 				)
@@ -289,7 +291,7 @@ func (m *FeedManager) CreateStreamHistory(
 	if arg.Live {
 		return m.addLiveFeed(
 			ctx, sink,
-			arg.ID.Ref(),
+			arg.ID.String(),
 			latest,
 			liveLimit(arg, latest),
 		)

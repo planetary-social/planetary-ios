@@ -10,11 +10,11 @@ require (
 	go.cryptoscope.co/margaret v0.4.0
 	go.cryptoscope.co/muxrpc/v2 v2.0.10
 	go.cryptoscope.co/netwrap v0.1.1
-	go.cryptoscope.co/ssb v0.2.1
+	go.cryptoscope.co/ssb v0.2.2-0.20220120085157-a846f1659c87
 	go.mindeco.de v1.12.0
-	go.mindeco.de/ssb-multiserver v0.1.3
-	go.mindeco.de/ssb-refs v0.4.1
-	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
+	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
+	go.mindeco.de/ssb-refs v0.4.2-0.20210908123826-f7ca13c14896
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	gonum.org/v1/gonum v0.0.0-20190911200027-40d3308efe80 // indirect

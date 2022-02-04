@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
+// SPDX-License-Identifier: MIT
+
 package keys
 
 import (
@@ -142,17 +146,17 @@ func (mgr *Store) getKeys(ks KeyScheme, id ID) (Recipients, error) {
 
 	idxkBs, err := idxk.MarshalBinary()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("key store: failed to marshal index key: %w", err)
 	}
 
 	data, err := mgr.Index.Get(todoCtx, librarian.Addr(idxkBs))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("key store: failed to get data from index: %w", err)
 	}
 
 	ksIface, err := data.Value()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("key store: failed to unpack index data: %w", err)
 	}
 
 	switch tv := ksIface.(type) {
@@ -165,7 +169,7 @@ func (mgr *Store) getKeys(ks KeyScheme, id ID) (Recipients, error) {
 			ID:     id,
 		}
 	default:
-		return nil, fmt.Errorf("keys manager: expected type %T, got %T", Recipients{}, ksIface)
+		return nil, fmt.Errorf("keys store: expected type %T, got %T", Recipients{}, ksIface)
 	}
 
 }

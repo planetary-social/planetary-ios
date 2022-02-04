@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package tangles
@@ -129,7 +131,7 @@ func (g repliesHandler) HandleSource(ctx context.Context, req *muxrpc.Request, s
 		return fmt.Errorf("not authroized")
 	}
 
-	logger = log.With(logger, "root", qry.Root.ShortRef())
+	logger = log.With(logger, "root", qry.Root.ShortSigil())
 
 	// create toJSON sink
 	lsnk := transform.NewKeyValueWrapper(snk, qry.Keys)
@@ -227,7 +229,7 @@ func (g repliesHandler) HandleSource(ctx context.Context, req *muxrpc.Request, s
 			tps = append(tps, tp)
 		} else {
 			if qry.Private {
-				return fmt.Errorf("failed to unpack root message %s: %w", root.Key().Ref(), err)
+				return fmt.Errorf("failed to unpack root message %s: %w", root.Key().String(), err)
 			}
 		}
 	}
@@ -266,7 +268,7 @@ func (g repliesHandler) HandleSource(ctx context.Context, req *muxrpc.Request, s
 		var tp tangledPost
 		err = json.Unmarshal(content, &tp.Value.Content)
 		if err != nil {
-			return fmt.Errorf("failed to unpack message %s: %w", msg.Key().Ref(), err)
+			return fmt.Errorf("failed to unpack message %s: %w", msg.Key().String(), err)
 		}
 		tp.TheKey = msg.Key()
 		tp.Value.Author = msg.Author()

@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 package graph
@@ -83,7 +85,7 @@ func (n contactNode) String() string {
 	if n.name != "" {
 		return n.name
 	}
-	return n.feed.ShortRef()
+	return n.feed.ShortSigil()
 }
 
 func (n contactNode) Attributes() []encoding.Attribute {

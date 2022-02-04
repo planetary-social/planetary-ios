@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
+//
 // SPDX-License-Identifier: MIT
 
 // Package sbot ties together network, repo and plugins like graph and blobs into a large server that offers data-access APIs and background replication.
