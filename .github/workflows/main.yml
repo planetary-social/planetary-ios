@@ -2,6 +2,14 @@ name: CI
 on:
   pull_request
 jobs:
+  compile_go_ssb:
+    name: Build GoSSB.xcframework
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Build
+      run: set -o pipefail && xcodebuild build -project GoSSB/GoSSB.xcodeproj -scheme GoSSB -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty
   unit_test:
     name : Unit Tests
     runs-on: macOS-latest
