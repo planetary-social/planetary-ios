@@ -325,7 +325,7 @@ class ThreadViewController: ContentViewController {
         let text = self.replyTextView.attributedText
         guard text.length > 0 else { return }
         Analytics.shared.trackDidTapButton(buttonName: "reply")
-        self.buttonsView.postButton.isHidden = true
+        self.buttonsView.postButton.isEnabled = false
         
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
@@ -346,6 +346,7 @@ class ThreadViewController: ContentViewController {
                 self?.onNextUpdateScrollToPostWithKeyValueKey = key
                 self?.load()
             }
+            self?.buttonsView.postButton.isEnabled = true
         }
     }
     

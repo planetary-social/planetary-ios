@@ -69,7 +69,7 @@ struct Star {
             return
         }
         
-        let tcpConnection = NWConnection(host: NWEndpoint.Host(host), port: port, using: NWParameters.tls)
+        let tcpConnection = NWConnection(host: NWEndpoint.Host(host), port: port, using: NWParameters.tcp)
         tcpConnection.stateUpdateHandler = { state in
             print(state)
             switch state {
