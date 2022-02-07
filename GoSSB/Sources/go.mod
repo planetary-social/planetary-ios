@@ -24,3 +24,5 @@ require (
 go 1.14
 
 replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+
+replace go.cryptoscope.co/ssb => github.com/boreq/ssb v0.2.2-0.20220207174120-fb1e3a0845c6

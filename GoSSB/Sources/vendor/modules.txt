@@ -125,7 +125,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.2.2-0.20220120085157-a846f1659c87
+# go.cryptoscope.co/ssb v0.2.2-0.20220120085157-a846f1659c87 => github.com/boreq/ssb v0.2.2-0.20220207174120-fb1e3a0845c6
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -301,3 +301,4 @@ google.golang.org/protobuf/types/descriptorpb
 # gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 gopkg.in/yaml.v3
 # golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
+# go.cryptoscope.co/ssb => github.com/boreq/ssb v0.2.2-0.20220207174120-fb1e3a0845c6
