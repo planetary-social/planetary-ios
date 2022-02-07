@@ -3,6 +3,76 @@
 Planetary iOS is an app based on [Secure Scuttlebutt](https://scuttlebutt.nz/) that doesn't keep your data in the cloud and allows you and your friends to come together and connect even when the internet goes out.  
 Check our website [planetary.social](https://planetary.social/) for more info!
 
+## Current Planetary Functionality:
+* Create a user
+* Follow users
+* Unfollow users
+* Block users
+* Reply to posts
+* Mention other users
+* Publish your profile with image, name, and description in rich text markdown.
+* Join community servers (pubs) to connect to communities of users for default list
+* Join community servers (pubs) using an invite link
+* Create new community servers that users can use
+* Defining initial network and pre-loaded content. 
+* Publish content with rich text markdown (up to 8k)
+* Publish content with images attached
+* Discover new users who are in your extended network
+* View feeds of content from people you’re following
+* Background sync to trigger the app finding new content 
+* Publish content with hashtags and discover content through hashtags
+* Share content with people off network through a link to planetary.link
+* Sync content between devices on the same local network
+* View and post content while offline without any internet connection
+* Strong cryptographic verification of who published what.
+* Direct mesh networking between devices in physical proximity
+* Nothing can be deleted
+* Users can report encrypted and unencrypted content to Planetary for TOS violations
+* Planetary can ban users from company run pubs
+* Planetary can block users from using their identity in the app
+* Planetary can prevent users from seeing banned messages or accounts
+* Planetary can define who is in the initial directory and content upon installing the app
+* Users can migrate their identity off of Planetary to access blacklisted content in other ssb apps
+
+## Functionality Implemented in Planetary with only debug or api interface:
+* Private Messaging up to 8 people
+* Running multiple identities on a single instance of the app
+* Running multiple distinct scuttlebutt networks.
+* Backup and restore your keys to move identities (accounts) between apps
+* User can manage local storage
+* User should be informed about the data storage model for scuttlebutt
+* User given an option to not connect to automatic pubs
+* User can onboard from an invite to a specific user or community
+* User can see what peers they’re connected to
+* User can see most recent update time from each person network
+
+
+## Functionality in Libraries but not in the app
+* Private groups
+* Editing content
+* Tombstoning content
+* Partial feed replication
+* Routing traffic over tor / anonymizing networks
+* TrustNet transitive abuse moderation algorithm
+* Suggest new people to follow
+* Room Support (tunneling connections)
+* Direct serverless DHT Invite generation and redemption. 
+* Log in to web services using scuttlebutt identity through QR code.
+* Metafeeds (single identity key writer for multiple feeds for a single user)
+
+## Functionality in a prototyping and spec stage
+* Partial feed replication
+* Multiple device for a single user (fusion identities) 
+* Feed fork detection and recovery
+* Serverless Messaging Layer Security (MLS) for group messaging. 
+* Known Bugs
+* A current list of known bugs in Planetary’s iOS app is in github issues. 
+* Database on device occasionally gets corrupted
+* New installs fail to initialize correctly rarely
+* Connection information is only displayed on debug screens
+* Sometimes users need to pull to refresh to see new content
+
+
 ![](https://github.com/planetary-social/planetary-ios/workflows/CI/badge.svg)
 
 ## Developer installation
