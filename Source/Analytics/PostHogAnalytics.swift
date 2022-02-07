@@ -28,8 +28,6 @@ class PostHogAnalytics: AnalyticsService {
 
         PHGPostHog.setup(with: configuration)
         self.posthog = PHGPostHog.shared()!
-        
-        //Mixpanel.sharedInstance(withToken: keys.mixpanelAnalyticsToken)
     }
     
     func identify(about: About?, network: NetworkKey) {
@@ -37,12 +35,6 @@ class PostHogAnalytics: AnalyticsService {
             let posthog = self.posthog
             posthog!.identify(about.identity,
                       properties: ["Network": network.name, "$name": about.name ?? ""])
-            
-            
-            //Mixpanel.sharedInstance()?.identify(about.identity)
-            //let properties = ["Network": network.name,
-            //                  "$name": about.name ?? ""]
-            //Mixpanel.sharedInstance()?.people.set(properties)
         }
     }
 
@@ -70,8 +62,6 @@ class PostHogAnalytics: AnalyticsService {
                 params["Message Diff"] = diff
             }
         }
-        
-        //Mixpanel.sharedInstance()?.people.set(params)
     }
     
     func updatePushToken(pushToken: Data?) {
@@ -97,13 +87,7 @@ class PostHogAnalytics: AnalyticsService {
     func track(event eventEnum: AnalyticsEnums.Event,
                element elementEnum: AnalyticsEnums.Element,
                name: AnalyticsEnums.Name.RawValue,
-               params:  AnalyticsEnums.Params? = nil)
-    {
-        //let event = self.eventName(event: event, element: element, name: name)
-        //let params = self.compatibleParams(params: params)
-        //Mixpanel.sharedInstance()?.track(event, properties: params)
-        //String(event.rawValue)
-        //element
+               params:  AnalyticsEnums.Params? = nil) {
         
         let event = String(eventEnum.rawValue)
         let element = String(elementEnum.rawValue)

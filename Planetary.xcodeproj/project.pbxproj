@@ -638,7 +638,6 @@
 		53CF2A4B220268CF00F0A2CC /* Abouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 53CF2A4A220268CF00F0A2CC /* Abouts.json */; };
 		53CF2A4D22026B1700F0A2CC /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CF2A4C22026B1700F0A2CC /* Image.swift */; };
 		53D66627222A55640001D9BB /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D66626222A55640001D9BB /* AnalyticsService.swift */; };
-		53D66629222A55D20001D9BB /* MixpanelAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D66628222A55D20001D9BB /* MixpanelAnalytics.swift */; };
 		53D8FF95236946D300EF986F /* PeersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D8FF94236946D300EF986F /* PeersView.swift */; };
 		53DF334E239F2A720017566D /* Log+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF334D239F2A720017566D /* Log+API.swift */; };
 		53DF335023A069FF0017566D /* AnalyticsService+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF334F23A069FF0017566D /* AnalyticsService+Bot.swift */; };
@@ -1197,7 +1196,6 @@
 		53CF2A4A220268CF00F0A2CC /* Abouts.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Abouts.json; sourceTree = "<group>"; };
 		53CF2A4C22026B1700F0A2CC /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		53D66626222A55640001D9BB /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
-		53D66628222A55D20001D9BB /* MixpanelAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelAnalytics.swift; sourceTree = "<group>"; };
 		53D8FF94236946D300EF986F /* PeersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeersView.swift; sourceTree = "<group>"; };
 		53DF334D239F2A720017566D /* Log+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Log+API.swift"; sourceTree = "<group>"; };
 		53DF334F23A069FF0017566D /* AnalyticsService+Bot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsService+Bot.swift"; sourceTree = "<group>"; };
@@ -2141,7 +2139,6 @@
 				0A387FF32474E09200777843 /* Analytics.swift */,
 				53D66626222A55640001D9BB /* AnalyticsService.swift */,
 				5306F775228F07D00058D67A /* AnalyticsEnums.swift */,
-				53D66628222A55D20001D9BB /* MixpanelAnalytics.swift */,
 				2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */,
 				5357BD7C23CFD0B9005665AB /* UserDefaults+AnalyticsService.swift */,
 				53C2B12E2295A95A0018D0A8 /* NullAnalytics.swift */,
@@ -3153,7 +3150,6 @@
 				0ABCA8F92436769400D7F39C /* APIError.swift in Sources */,
 				535CD37F2267F2C60039BCF2 /* ContentCodable.swift in Sources */,
 				539FD4CB22C586CC005A4DF2 /* ReplyTextView.swift in Sources */,
-				53D66629222A55D20001D9BB /* MixpanelAnalytics.swift in Sources */,
 				536255D123AAC5F0001007D0 /* AppDelegate+Background.swift in Sources */,
 				531EC40A230EF2DA001A25AD /* PreviewSettingsViewController.swift in Sources */,
 				5349E4AE23514CC000E21053 /* UINavigationBar+Verse.swift in Sources */,
@@ -3886,20 +3882,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 1.0.20;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"KeychainSwift\"",
-					"-framework",
-					"\"Mixpanel\"",
-					"-framework",
-					"\"PhoneNumberKit\"",
-					"-framework",
-					"\"SQLite\"",
-					"-framework",
-					"\"SVProgressHUD\"",
-					"-lssb-go",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -3935,20 +3918,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 1.0.20;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"KeychainSwift\"",
-					"-framework",
-					"\"Mixpanel\"",
-					"-framework",
-					"\"PhoneNumberKit\"",
-					"-framework",
-					"\"SQLite\"",
-					"-framework",
-					"\"SVProgressHUD\"",
-					"-lssb-go",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
