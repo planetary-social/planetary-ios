@@ -12,11 +12,7 @@ import (
 )
 
 func badgerOpts(dbPath string) badger.Options {
-	opts := badger.DefaultOptions(dbPath)
-	opts.ValueLogFileSize = 1 << 21
-	opts.Logger = nil
-	// runtime throws MMIO can't allocate errors without this
-	// => badger failed to open: Invalid ValueLogLoadingMode, must be FileIO or MemoryMap
-	//opts.ValueLogLoadingMode = options.FileIO
-	return opts
+	return badger.DefaultOptions(dbPath).
+		WithValueLogFileSize(1 << 21).
+		WithLogger(nil)
 }
