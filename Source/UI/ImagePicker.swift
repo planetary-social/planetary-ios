@@ -22,14 +22,15 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
 
     // MARK: Presentation
 
-    func present(from controller: UIViewController? = nil,
+    func present(from view: AnyObject,
+                 controller: UIViewController? = nil,
                  openCameraInSelfieMode: Bool = false,
                  completion: @escaping ((UIImage?) -> Void))
     {
         if let controller = controller { self.presentingViewController = controller }
         self.selfieMode = openCameraInSelfieMode
         self.completion = completion
-        self.promptForPhotoLibraryOrCamera()
+        self.promptForPhotoLibraryOrCamera(from: view)
     }
 
     func dismiss() {
@@ -38,7 +39,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
 
     // MARK: Prompting for source or to open Settings
 
-    private func promptForPhotoLibraryOrCamera() {
+    private func promptForPhotoLibraryOrCamera(from sourceView: AnyObject) {
 
         let library = UIAlertAction(title: Text.ImagePicker.selectFrom.text, style: .default) {
             [weak self] action in
@@ -56,16 +57,17 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
             Analytics.shared.trackDidSelectAction(actionName: "cancel")
         }
 
-        self.presentingViewController?.choose(from: [library, camera, cancel])
+        self.presentingViewController?.choose(from: [library, camera, cancel], sourceView: sourceView)
     }
 
     private func promptToOpenSettings(for title: String) {
-        self.presentingViewController?.confirm(style: .alert,
-                                               title: Text.ImagePicker.permissionsRequired.text(["title": title]),
-                                               message: Text.ImagePicker.openSettingsMessage.text,
-                                               isDestructive: false,
-                                               confirmTitle: Text.settings.text,
-                                               confirmClosure: AppController.shared.openOSSettings)
+        self.presentingViewController?.confirm(
+            title: Text.ImagePicker.permissionsRequired.text(["title": title]),
+            message: Text.ImagePicker.openSettingsMessage.text,
+            isDestructive: false,
+            confirmTitle: Text.settings.text,
+            confirmClosure: AppController.shared.openOSSettings
+        )
     }
 
     // MARK: Presenting the UIImagePickerController

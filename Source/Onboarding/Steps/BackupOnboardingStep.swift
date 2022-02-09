@@ -21,11 +21,11 @@ class BackupOnboardingStep: OnboardingStep {
         self.view.primaryButton.setText(.backUp)
     }
 
-    override func secondary() {
+    override func performSecondaryAction(sender button: UIButton) {
         self.next()
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
         self.data.allowedBackup = true
         self.next()
     }

@@ -35,7 +35,7 @@ class DoneOnboardingStep: OnboardingStep {
     }
     
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
         self.data.publicWebHosting = self.publicWebHostingToggle.toggle.isOn
         let data = self.data
         

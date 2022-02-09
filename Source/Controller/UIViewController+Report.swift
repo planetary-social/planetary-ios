@@ -36,10 +36,11 @@ extension UIViewController {
                         from reporter: Identity)
     {
         guard let controller = Support.shared.newTicketViewController(from: reporter, reporting: post, reason: reason, view: view) else {
-            AppController.shared.alert(style: .alert,
-            title: Text.error.text,
-            message: Text.Error.supportNotConfigured.text,
-            cancelTitle: Text.ok.text)
+            AppController.shared.alert(
+                title: Text.error.text,
+                message: Text.Error.supportNotConfigured.text,
+                cancelTitle: Text.ok.text
+            )
             return
         }
         AppController.shared.push(controller)

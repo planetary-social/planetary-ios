@@ -51,7 +51,6 @@ class PhoneVerifyOnboardingStep: OnboardingStep {
         let title = Text.Onboarding.youEnteredNumber.text(["phone": phone])
 
         AppController.shared.choose(from: [reenter, retry],
-                                    style: .alert,
                                     title: title,
                                     message: Text.Onboarding.confirmNumber.text)
     }
@@ -73,7 +72,7 @@ class PhoneVerifyOnboardingStep: OnboardingStep {
         self.data.code = textField.text
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
 
         guard let number = self.data.phone?.phoneNumber() else { return }
         guard let code = self.data.code, code.isValidVerificationCode else { return }

@@ -37,11 +37,11 @@ class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
         self.data.bio = textView.text
     }
 
-    override func secondary() {
+    override func performSecondaryAction(sender button: UIButton) {
         self.next()
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
 
         // not requiring any bio right now
         guard let bio = self.data.bio else {

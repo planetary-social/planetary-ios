@@ -52,9 +52,9 @@ class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerView
         select(index: 0)
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
         self.data.birthdate = birthdate
-        super.primary()
+        super.performPrimaryAction(sender: button)
     }
     
     private func select(index: Int) {

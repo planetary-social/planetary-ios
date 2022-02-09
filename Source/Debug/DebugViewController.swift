@@ -356,7 +356,7 @@ class DebugViewController: DebugTableViewController {
                 self.shareLogs(shouldZip: true, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            self.present(alertController: alertController)
+            self.present(alertController: alertController, sourceView: cell)
         })]
         
         settings += [

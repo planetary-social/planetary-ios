@@ -69,10 +69,11 @@ extension StartOnboardingStep: UITextViewDelegate {
     {
         guard let article = Support.shared.article(for: URL.absoluteString) else { return false }
         guard let controller = Support.shared.articleViewController(article) else {
-            AppController.shared.alert(style: .alert,
-                                       title: Text.error.text,
-                                       message: Text.Error.supportNotConfigured.text,
-                                       cancelTitle: Text.ok.text)
+            AppController.shared.alert(
+                title: Text.error.text,
+                message: Text.Error.supportNotConfigured.text,
+                cancelTitle: Text.ok.text
+            )
             return false
         }
         let nc = UINavigationController(rootViewController: controller)
