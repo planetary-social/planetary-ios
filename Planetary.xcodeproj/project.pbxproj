@@ -474,7 +474,6 @@
 		5336611422D9669E00100707 /* UIColor+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5336611022D965B300100707 /* UIColor+Random.swift */; };
 		5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5336611222D965C700100707 /* UIColor+UIImage.swift */; };
 		5336611622D96AD500100707 /* Dictionary+JSONSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E29CD522D542B5008A2CB1 /* Dictionary+JSONSerialization.swift */; };
-		53375F7F231F12E400610932 /* UIViewController+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53375F7E231F12E400610932 /* UIViewController+UIAlertController.swift */; };
 		53375F812321757C00610932 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53375F802321757C00610932 /* GalleryView.swift */; };
 		53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53375F82232178DB00610932 /* UIPageControl+Verse.swift */; };
 		533D0A692389BEE400E5A374 /* ColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533D0A682389BEE400E5A374 /* ColorTests.swift */; };
@@ -1059,7 +1058,6 @@
 		53362F6D2209F754007264CB /* NetworkKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeyTests.swift; sourceTree = "<group>"; };
 		5336611022D965B300100707 /* UIColor+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Random.swift"; sourceTree = "<group>"; };
 		5336611222D965C700100707 /* UIColor+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+UIImage.swift"; sourceTree = "<group>"; };
-		53375F7E231F12E400610932 /* UIViewController+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+UIAlertController.swift"; sourceTree = "<group>"; };
 		53375F802321757C00610932 /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		53375F82232178DB00610932 /* UIPageControl+Verse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageControl+Verse.swift"; sourceTree = "<group>"; };
 		533D0A682389BEE400E5A374 /* ColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTests.swift; sourceTree = "<group>"; };
@@ -2109,7 +2107,6 @@
 				53E341FF225000D4002BB5F4 /* UIViewController+Keyboard.swift */,
 				8D74DE002335601F003C284B /* UIViewController+NavigationItems.swift */,
 				535B6A092372360F008C248E /* UIViewController+TopViewController.swift */,
-				53375F7E231F12E400610932 /* UIViewController+UIAlertController.swift */,
 				533DAFA4223AD2D600229EB3 /* XCTest+Test.swift */,
 				53EE01FA2205035800DFDF16 /* XCTestCase+JSON.swift */,
 			);
@@ -3175,7 +3172,6 @@
 				53B4F5FC22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
 				531B92B522CBDDAD005D5255 /* UIView+NSLayoutConstraint.swift in Sources */,
 				53C422AD21C4769900A314AD /* DebugViewController.swift in Sources */,
-				53375F7F231F12E400610932 /* UIViewController+UIAlertController.swift in Sources */,
 				5396A62B22445BE900C57A4B /* AppConfiguration.swift in Sources */,
 				5357BD7F23D15471005665AB /* AppDelegate+Repair.swift in Sources */,
 				5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */,

@@ -346,7 +346,9 @@ class AboutViewController: ContentViewController {
                 let activityController = UIActivityViewController(activityItems: [text],
                                                                   applicationActivities: nil)
                 self.present(activityController, animated: true)
-                activityController.popoverPresentationController?.presentingViewController.configurePopover(from: sender)
+                activityController.popoverPresentationController?.presentingViewController.configurePopover(
+                    from: sender
+                )
             }
             actions.append(sharePublicLink)
         }
