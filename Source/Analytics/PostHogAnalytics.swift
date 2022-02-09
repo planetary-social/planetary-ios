@@ -87,7 +87,7 @@ class PostHogAnalytics: AnalyticsService {
     func track(event eventEnum: AnalyticsEnums.Event,
                element elementEnum: AnalyticsEnums.Element,
                name: AnalyticsEnums.Name.RawValue,
-               params:  AnalyticsEnums.Params? = nil) {
+               params: AnalyticsEnums.Params? = nil) {
         
         let event = String(eventEnum.rawValue)
         let element = String(elementEnum.rawValue)
