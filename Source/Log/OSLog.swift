@@ -44,6 +44,12 @@ class OSLog: LogService {
         DDLogError(string)
         return true
     }
+    
+    static func error(_ message: String) {
+        let string = "LOG:ERROR:\(message)"
+        os_log("%@", type: OSLogType.error, string)
+        DDLogError(string)
+    }
 
     static func info(_ string: String) {
         DDLogInfo(string)

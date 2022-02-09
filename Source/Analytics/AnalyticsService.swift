@@ -39,7 +39,7 @@ extension AnalyticsService {
 extension AnalyticsService {
     
     /// Returns an alphabetically sorted list of composited event names.  This is useful to list
-    /// the potential event names that could be used in Mixpanel.
+    /// the potential event names that could be used in Posthog.
     func lexicon() -> [String] {
         var strings: [String] = []
         for event in AnalyticsEnums.Event.allCases {

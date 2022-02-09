@@ -46,7 +46,7 @@ class PhoneOnboardingStep: OnboardingStep {
         self.view.primaryButton.isEnabled = self.phoneNumberField.isValidNumber
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender: UIButton) {
 
         guard let string = self.phoneNumberField.text else { return }
         guard let number = string.phoneNumber() else { return }
