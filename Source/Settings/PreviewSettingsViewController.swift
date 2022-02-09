@@ -79,23 +79,23 @@ class PreviewSettingsViewController: DebugTableViewController {
     }
 
     private func confirmOffboard() {
-        self.confirm(style: .alert,
-                     title: Text.Offboarding.resetConfirmTitle.text,
-                     message: Text.Offboarding.resetConfirmMessage.text,
-                     isDestructive: true,
-                     confirmTitle: Text.Offboarding.reset.text)
-        {
+        self.confirm(
+            title: Text.Offboarding.resetConfirmTitle.text,
+            message: Text.Offboarding.resetConfirmMessage.text,
+            isDestructive: true,
+            confirmTitle: Text.Offboarding.reset.text
+        ) {
             self.confirmOffboardAgain()
         }
     }
 
     private func confirmOffboardAgain() {
-        self.confirm(style: .alert,
-                     title: Text.Offboarding.resetConfirmAgainTitle.text,
-                     message: Text.Offboarding.resetConfirmAgainMessage.text,
-                     isDestructive: true,
-                     confirmTitle: Text.Offboarding.reset.text)
-        {
+        self.confirm(
+            title: Text.Offboarding.resetConfirmAgainTitle.text,
+            message: Text.Offboarding.resetConfirmAgainMessage.text,
+            isDestructive: true,
+            confirmTitle: Text.Offboarding.reset.text
+        ) {
             self.offboard()
         }
     }
@@ -126,12 +126,12 @@ class PreviewSettingsViewController: DebugTableViewController {
     }
 
     private func confirmTryAgain(message: String) {
-        self.confirm(style: .alert,
-                     title: Text.Onboarding.somethingWentWrong.text,
-                     message: message,
-                     isDestructive: true,
-                     confirmTitle: Text.tryAgain.text)
-        {
+        self.confirm(
+            title: Text.Onboarding.somethingWentWrong.text,
+            message: message,
+            isDestructive: true,
+            confirmTitle: Text.tryAgain.text
+        ) {
             self.offboard()
         }
     }

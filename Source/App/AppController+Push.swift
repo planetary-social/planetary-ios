@@ -68,13 +68,14 @@ extension AppController {
                                       completion: ((UNAuthorizationStatus) -> Void)? = nil)
     {
         let controller = viewController ?? self
-        controller.confirm(style: .alert,
-                           title: Text.Push.title.text,
-                           message: Text.Push.prompt.text,
-                           isDestructive: false,
-                           cancelClosure: { completion?(status) },
-                           confirmTitle: Text.settings.text,
-                           confirmClosure: AppController.shared.openOSSettings)
+        controller.confirm(
+            title: Text.Push.title.text,
+            message: Text.Push.prompt.text,
+            isDestructive: false,
+            cancelClosure: { completion?(status) },
+            confirmTitle: Text.settings.text,
+            confirmClosure: AppController.shared.openOSSettings
+        )
     }
 
     /// Queries the OS push notification settings, and if authorized or denied, updates the PushAPI.

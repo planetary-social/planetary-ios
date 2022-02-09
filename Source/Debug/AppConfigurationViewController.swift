@@ -100,13 +100,14 @@ class AppConfigurationViewController: DebugTableViewController {
                                              actionClosure:
             {
                 [unowned self] cell in
-                self.confirm(message: "Are you sure you want to delete this secret and configuration?  Unless you have copied the secret somewhere you will not be able to restore this identity.",
-                             confirmTitle: "Delete",
-                             confirmClosure:
-                    {
-                        AppConfigurations.delete(self.configuration)
-                        self.navigationController?.popToRootViewController(animated: true)
-                    })
+                self.confirm(
+                    from: cell,
+                    message: "Are you sure you want to delete this secret and configuration?  Unless you have copied the secret somewhere you will not be able to restore this identity.",
+                    confirmTitle: "Delete"
+                ) {
+                    AppConfigurations.delete(self.configuration)
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
             })]
         }
 

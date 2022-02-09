@@ -30,7 +30,7 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
         view.backgroundColor = .appBackground
         view.setImage(UIImage.verse.cameraLarge, for: .normal)
         view.imageEdgeInsets = UIEdgeInsets(top: -60, left: 0, bottom: 0, right: 0)
-        view.addTarget(self, action: #selector(primary), for: .touchUpInside)
+        view.addTarget(self, action: #selector(performPrimaryAction), for: .touchUpInside)
         return view
     }()
 
@@ -58,12 +58,12 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
         Layout.center(self.circleLabel, atTopOf: self.circleView, inset: 94)
     }
 
-    override func secondary() {
+    override func performSecondaryAction(sender button: UIButton) {
         self.next(.bio)
     }
 
-    @objc override func primary() {
-        self.imagePicker.present(openCameraInSelfieMode: true) {
+    @objc override func performPrimaryAction(sender button: UIButton) {
+        self.imagePicker.present(from: button, openCameraInSelfieMode: true) {
             [unowned self] image in
             guard let image = image else { return }
             self.data.image = image

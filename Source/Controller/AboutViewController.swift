@@ -36,6 +36,8 @@ class AboutViewController: ContentViewController {
         view.backgroundColor = .appBackground
         return view
     }()
+    
+    private var optionsIcon: UIBarButtonItem?
 
     // TODO https://app.asana.com/0/914798787098068/1146899678085073/f
     // TODO improve init delegation
@@ -172,9 +174,10 @@ class AboutViewController: ContentViewController {
         }
     }
 
-    @objc private func editPhotoButtonTouchUpInside() {
+    @objc private func editPhotoButtonTouchUpInside(sender: AnyObject) {
+        
         Analytics.shared.trackDidTapButton(buttonName: "update_avatar")
-        self.imagePicker.present(openCameraInSelfieMode: true) {
+        self.imagePicker.present(from: sender, openCameraInSelfieMode: true) {
             [unowned self] image in
             guard let uiimage = image else {
                 return
@@ -185,7 +188,7 @@ class AboutViewController: ContentViewController {
         }
     }
 
-    @objc private func didPressOptionsIcon() {
+    @objc private func didPressOptionsIcon(sender: AnyObject) {
         Analytics.shared.trackDidTapButton(buttonName: "options")
         
         var actions = [UIAlertAction]()
@@ -235,7 +238,7 @@ class AboutViewController: ContentViewController {
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
-        AppController.shared.choose(from: actions)
+        AppController.shared.choose(from: actions, sourceView: sender)
     }
 
     private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping () -> Void) {
@@ -284,7 +287,7 @@ class AboutViewController: ContentViewController {
         }
     }
 
-    private func didPressEdit() {
+    private func didPressEdit(sender: AnyObject) {
         Analytics.shared.trackDidTapButton(buttonName: "update_profile")
         
         guard let about = self.about else { return }
@@ -317,7 +320,7 @@ class AboutViewController: ContentViewController {
         self.navigationController?.present(feature, animated: true, completion: nil)
     }
 
-    private func didPressShare() {
+    private func didPressShare(sender: AnyObject) {
         Analytics.shared.trackDidTapButton(buttonName: "share")
 
         var actions = [UIAlertAction]()
@@ -328,9 +331,7 @@ class AboutViewController: ContentViewController {
             let activityController = UIActivityViewController(activityItems: [self.identity],
                                                               applicationActivities: nil)
             self.present(activityController, animated: true)
-            if let popOver = activityController.popoverPresentationController {
-                popOver.barButtonItem = self.navigationItem.rightBarButtonItem
-            }
+            activityController.popoverPresentationController?.presentingViewController.configurePopover(from: sender)
         }
         actions.append(sharePublicIdentifier)
 
@@ -345,9 +346,7 @@ class AboutViewController: ContentViewController {
                 let activityController = UIActivityViewController(activityItems: [text],
                                                                   applicationActivities: nil)
                 self.present(activityController, animated: true)
-                if let popOver = activityController.popoverPresentationController {
-                    popOver.barButtonItem = self.navigationItem.rightBarButtonItem
-                }
+                activityController.popoverPresentationController?.presentingViewController.configurePopover(from: sender)
             }
             actions.append(sharePublicLink)
         }
@@ -355,7 +354,7 @@ class AboutViewController: ContentViewController {
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
-        AppController.shared.choose(from: actions)
+        AppController.shared.choose(from: actions, sourceView: sender)
     }
 
     private func didTapFollowing() {
@@ -383,10 +382,11 @@ class AboutViewController: ContentViewController {
         guard let controller = Support.shared.newTicketViewController(from: me,
                                                                       reporting: about.identity,
                                                                       name: name) else {
-            AppController.shared.alert(style: .alert,
-                                       title: Text.error.text,
-                                       message: Text.Error.supportNotConfigured.text,
-                                       cancelTitle: Text.ok.text)
+            AppController.shared.alert(
+                title: Text.error.text,
+                message: Text.Error.supportNotConfigured.text,
+                cancelTitle: Text.ok.text
+            )
             return
         }
         AppController.shared.push(controller)

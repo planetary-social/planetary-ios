@@ -49,11 +49,11 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
 
 
 
-    @objc func didPressNext() {
-        self.primary()
+    @objc func didPressNext(sender button: UIButton) {
+        self.performPrimaryAction(sender: button)
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
 
         var identities = self.selected.map { $0.identity }
         self.data.following = identities
@@ -103,7 +103,7 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
         let person = self.people[indexPath.row]
         cell.aboutView.update(with: person, useRelationship: false)
         cell.aboutView.followButton.isSelected = self.selected.contains(person)
-        cell.aboutView.followButton.action = {
+        cell.aboutView.followButton.action = { _ in
             self.tableView(tableView, didSelectRowAt: indexPath)
         }
         return cell
