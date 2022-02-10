@@ -721,6 +721,7 @@
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
+		C928DAF227B5AC850007C5FC /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = C928DAF127B5AC850007C5FC /* Logger */; };
 		C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */; };
 		C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */; };
 		C93A4B3C2798B711009F963D /* KeyValueWithReceivedSeq.json in Resources */ = {isa = PBXBuildFile; fileRef = C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */; };
@@ -1306,6 +1307,7 @@
 			files = (
 				5396A617223D467200C57A4B /* libsqlite3.0.tbd in Frameworks */,
 				5396A618223D467200C57A4B /* libsqlite3.tbd in Frameworks */,
+				C928DAF227B5AC850007C5FC /* Logger in Frameworks */,
 				8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2349,6 +2351,9 @@
 				0AD00E7223FC5C66006BF017 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
+			packageProductDependencies = (
+				C928DAF127B5AC850007C5FC /* Logger */,
+			);
 			productName = FBTTUnitTests;
 			productReference = 5308168521C46A52005C48ED /* UnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -3947,6 +3952,10 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		5BFFCE8F27B56D300088F6D6 /* Logger */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Logger;
+		};
+		C928DAF127B5AC850007C5FC /* Logger */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Logger;
 		};
