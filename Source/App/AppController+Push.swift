@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import UserNotifications
+import Logger
 
 extension AppController {
 

@@ -3,8 +3,8 @@
 
 @protocol PHGApplicationProtocol <NSObject>
 @property (nullable, nonatomic, assign) id<UIApplicationDelegate> delegate;
-- (UIBackgroundTaskIdentifier)phg_beginBackgroundTaskWithName:(nullable NSString *)taskName expirationHandler:(void (^__nullable)(void))handler;
-- (void)phg_endBackgroundTask:(UIBackgroundTaskIdentifier)identifier;
+- (NSUInteger)phg_beginBackgroundTaskWithName:(nullable NSString *)taskName expirationHandler:(void (^__nullable)(void))handler;
+- (void)phg_endBackgroundTask:(NSUInteger)identifier;
 @end
 
 
@@ -68,23 +68,6 @@ typedef NSMutableURLRequest *_Nonnull (^PHGRequestFactory)(NSURL *_Nonnull);
 @property (nonatomic, assign) BOOL shouldUseLocationServices;
 
 /**
- * Whether the posthog client should capture advertisting info. `YES` by default.
- */
-@property (nonatomic, assign) BOOL enableAdvertisingCapturing;
-
-/**
- * Sets a block to be called when IDFA / AdSupport identifier is created.
- * This is to allow for apps that do not want ad tracking to pass App Store guidelines in certain categories while
- * still allowing apps that do ad tracking to continue to function.
- *
- * Example:
- *      configuration.adSupportBlock = ^{
- *          return [[ASIdentifierManager sharedManager] advertisingIdentifier];
- *      }
- */
-@property (nonatomic, copy, nullable) NSString * _Nonnull (^adSupportBlock)(void);
-
-/**
  * The number of queued events that the posthog client should flush at. Setting this to `1` will not queue any events and will use more battery. `20` by default.
  */
 @property (nonatomic, assign) NSUInteger flushAt;
@@ -132,6 +115,13 @@ typedef NSMutableURLRequest *_Nonnull (^PHGRequestFactory)(NSURL *_Nonnull);
  * Whether the posthog client should automatically capture deep links. You'll still need to call the continueUserActivity and openURL methods on the posthog client.
  */
 @property (nonatomic, assign) BOOL captureDeepLinks;
+
+/**
+ * Whether the posthog client should include the `$device_id` property when sending events. When enabled, `UIDevice`'s `identifierForVendor` property is used.
+ * Changing the value of this property after initializing the client will have no effect.
+ * The default value is `YES`.
+ */
+@property (nonatomic, assign) BOOL shouldSendDeviceID;
 
 /**
  * Dictionary indicating the options the app was launched with.

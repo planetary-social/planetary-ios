@@ -1,0 +1,20 @@
+
+# 5. Add Logger module
+
+Date: 2022-02-10
+
+## Status
+
+Accepted
+
+## Context
+
+The idea is to modularize the source code of Planetary in different modules to keep the code more organized and prevent dependencies from permeate different parts of the code.
+
+## Decision
+
+The following guide was followed: https://developer.apple.com/documentation/swift_packages/organizing_your_code_with_local_packages. Swift packages will be used to create modules.
+
+## Consequences
+
+- No impact in performance is expected.

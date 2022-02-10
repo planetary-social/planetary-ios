@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 
 /// An in-memory cache of `NSAttributedString` generated from
 /// the entire `Post.text` markdown string.  This is suitable for use when

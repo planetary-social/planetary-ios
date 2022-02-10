@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 /// Manages sending missions to nearby stars
 class MissionControlCenter {

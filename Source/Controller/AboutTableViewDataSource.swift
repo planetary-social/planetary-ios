@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Logger
 
 protocol AboutTableViewDelegate {
     func reload()
