@@ -37,7 +37,7 @@ final class CocoaLumberjackServiceTests: XCTestCase {
     }
 
     func readLastLine() -> String? {
-        guard let url = service.fileUrls.last else {
+        guard let url = service.fileUrls.first else {
             return nil
         }
         do {
