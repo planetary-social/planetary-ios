@@ -52,32 +52,32 @@ public class Log {
 }
 
 public extension Log {
-    
+
     static var fileUrls: [URL] {
         return shared.fileUrls
     }
-    
+
     @discardableResult
     static func optional(_ error: Error?, _ detail: String? = nil) -> Bool {
         shared.optional(error, detail)
     }
-    
+
     static func info(_ string: String) {
         shared.info(string)
     }
-    
+
     static func debug(_ string: String) {
         shared.debug(string)
     }
-    
+
     static func unexpected(_ reason: Reason, _ detail: String?) {
         shared.unexpected(reason, detail)
     }
-    
+
     static func fatal(_ reason: Reason, _ detail: String?) {
         shared.fatal(reason, detail)
     }
-    
+
     static func optional(_ error: Error?, from response: URLResponse?) {
         guard let error = error else { return }
         guard let response = response else { return }
@@ -85,9 +85,9 @@ public extension Log {
         let detail = "\(path) \(error)"
         shared.unexpected(.apiError, detail)
     }
-    
+
     static func error(_ message: String) {
         shared.service.unexpected(message, nil)
     }
-    
+
 }

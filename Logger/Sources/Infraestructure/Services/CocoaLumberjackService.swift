@@ -30,7 +30,7 @@ class CocoaLumberjackService: FileLoggerService {
     func info(_ string: String) {
         DDLogInfo(string)
     }
-    
+
     func error(_ string: String) {
         DDLogError(string)
     }
