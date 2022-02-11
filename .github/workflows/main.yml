@@ -29,3 +29,13 @@ jobs:
       run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty
     - name: Test
       run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty
+  logger:
+    name: Logger
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Build for iOS
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme Logger -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13.5" | xcpretty
+    - name: Run iOS tests
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme Logger -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13.5" | xcpretty
