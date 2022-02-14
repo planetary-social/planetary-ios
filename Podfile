@@ -56,10 +56,6 @@ plugin 'cocoapods-keys', {
 
 post_install do | installer |
 
-    # copy Acknowledgements into Settings bundle
-    require 'fileutils'
-    FileUtils.cp_r('Pods/Target Support Files/Pods-Planetary/Pods-Planetary-acknowledgements.plist', 'Resources/Settings.bundle/Acknowledgements.plist', :remove_destination => true)
-
     # force pods project to Build Libraries for Distribution build setting
     # this is required for Swift 5.1 module compatibility
     installer.pods_project.targets.each do |target|

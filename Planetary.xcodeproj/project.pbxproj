@@ -2384,6 +2384,7 @@
 			buildPhases = (
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
 				8D9143FB230C6B670075BC8A /* Run Script */,
+				5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */,
 				5344D82721C4649700704A34 /* Sources */,
 				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				5344D82821C4649700704A34 /* Frameworks */,
@@ -2605,6 +2606,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UITests/Pods-UITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Make Acknowledgments.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ $CONFIGURATION = \"Release\" ]; then\n/opt/homebrew/bin/license-plist --output-path Resources/Settings.bundle\nfi\n";
 		};
 		7723EA9C2D57EFC61D5051B3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
