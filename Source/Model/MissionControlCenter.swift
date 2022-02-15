@@ -99,7 +99,7 @@ class MissionControlCenter {
     func sendMission() {
         Log.info("Mission Control Center is sending adhoc missions")
         let sendMissionOperation = SendMissionOperation(quality: .high)
-        let refreshOperation = RefreshOperation(refreshLoad: .tiny)
+        let refreshOperation = RefreshOperation(refreshLoad: .medium)
         refreshOperation.addDependency(sendMissionOperation)
         self.operationQueue.addOperations([sendMissionOperation, refreshOperation],
                                           waitUntilFinished: false)
@@ -139,9 +139,8 @@ class MissionControlCenter {
             return
         }
         
-        Log.info("Mission Control Center is doing a tiny refresh")
-        let refreshOperation = RefreshOperation()
-        refreshOperation.refreshLoad = .tiny
+        Log.info("Mission Control Center is doing a short refresh")
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
         
         let taskName = "RefreshBackgroundTask"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {

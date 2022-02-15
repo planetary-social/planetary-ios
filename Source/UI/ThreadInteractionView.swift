@@ -157,7 +157,7 @@ class ThreadInteractionView: UIView {
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
-        AppController.shared.choose(from: actions)
+        AppController.shared.choose(from: actions, sourceView: sender)
         
 
         print(#function)

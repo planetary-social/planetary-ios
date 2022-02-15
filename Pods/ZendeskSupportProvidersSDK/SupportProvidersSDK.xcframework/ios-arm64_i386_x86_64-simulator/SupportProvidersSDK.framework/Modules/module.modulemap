@@ -1,0 +1,11 @@
+framework module SupportProvidersSDK {
+  umbrella header "SupportProvidersSDK.h"
+
+  export *
+  module * { export * }
+}
+
+module SupportProvidersSDK.Swift {
+    header "SupportProvidersSDK-Swift.h"
+    requires objc
+}

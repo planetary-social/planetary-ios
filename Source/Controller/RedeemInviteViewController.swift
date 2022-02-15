@@ -106,8 +106,6 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
                     }
                 }
             case .failure(let error):
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
                 DispatchQueue.main.async {
                     AppController.shared.hideProgress()
                     self?.alert(error: error)

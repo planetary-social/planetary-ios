@@ -86,9 +86,8 @@ class ChannelsViewController: ContentViewController {
             UIApplication.shared.endBackgroundTask(ChannelsViewController.refreshBackgroundTaskIdentifier)
         }
         
-        Log.info("Pull down to refresh triggering a medium refresh")
-        let refreshOperation = RefreshOperation()
-        refreshOperation.refreshLoad = .medium
+        Log.info("Pull down to refresh triggering a short refresh")
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
         
         let taskName = "ChannelsPullDownToRefresh"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {

@@ -1,8 +1,10 @@
+// This file is auto-generated at build time and should not be modified by hand
+
 "Text.planetary" = "Planetary";
 "Text.error" = "Ups";
 "Text.cancel" = "Cancelar";
 "Text.skip" = "Saltear";
-"Text.ok" = "Ok";
+"Text.ok" = "OK";
 "Text.next" = "Siguiente";
 "Text.done" = "Hecho";
 "Text.save" = "Guardar";
@@ -19,32 +21,33 @@
 "Text.yourProfile" = "Tu Perfil";
 "Text.helpAndSupport" = "Ayuda y Soporte";
 "Text.reportBug" = "Reportar una falla";
-"Text.settings" = "Configuración";
+"Text.settings" = "Configuración";
 "Text.userDirectory" = "Directorio de Usuarios";
-"Text.communities" = "Comunidades";
+"Text.communitites" = "Comunidades";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "No mostrarme en el directorio de usuarios";
-"Text.analyticsAndCrash" = "Analíticas y Reportes de Fallos";
-"Text.usageData" = "Datos de uso";
-"Text.userDirectoryMessage" = "Estar en el directorio de usuarios significa que la gente puede encontrarte si ya saben tu nombre, código corto o número de teléfono.";
-"Text.sendAnalytics" = "Enviar analíticas a Planeta";
-"Text.dontSendAnalytics" = "No enviar analiticas";
-"Text.analyticsMessage" = "Nos gustaría capturar datos anónimos sobre tu uso de la app –y reportes de fallos cuando algo sale mal– así podemos mejorar la aplicación.";
+"Text.analyticsAndCrash" = "Analíticas y Reportes de Fallos";
+"Text.usageData" = "Datos de Uso";
+"Text.userDirectoryMessage" = "Estar en el directorio de usuarios significa que la gente puede encontrarte si ya saben tu nombre, código corto o número de teléfono.";
+"Text.sendAnalytics" = "Enviar analíticas a Planetary";
+"Text.dontSendAnalytics" = "No enviar analíticas";
+"Text.analyticsMessage" = "Nos gustaría capturar datos anónimos sobre tu uso de la app –y reportes de fallos cuando algo sale mal– así podemos mejorar la aplicación.";
 "Text.loadingUpdates" = "Planetary está buscando actualizaciones\nen la red par-a-par descentralizada.";
 "Text.post" = "Publicar";
-"Text.newPost" = "Nueva Publicación";
-"Text.deletePost" = "Eliminar esta publicación";
-"Text.editPost" = "Editar esta publicación";
-"Text.confirmDeletePost" = "¿Estás seguro que deseas eliminar esta publicación?";
+"Text.preview" = "Vista previa";
+"Text.newPost" = "Nueva Publicación";
+"Text.deletePost" = "Eliminar esta publicación";
+"Text.editPost" = "Editar esta publicación";
+"Text.confirmDeletePost" = "¿Estás seguro que deseas eliminar esta publicación?";
 "Text.postReply" = "Publicar Respuesta";
 "Text.postAReply" = "Publicar una respuesta";
 "Text.createProfile" = "Crear Perfil";
 "Text.editProfile" = "Editar Perfil";
-"Text.thisIsYou" = "¡Este eres tú!";
+"Text.thisIsYou" = "¡Este eres tú!";
 "Text.name" = "Nombre";
 "Text.bio" = "Bio";
-"Text.seeMore" = "Ver más";
+"Text.seeMore" = "Ver más";
 "Text.block" = "Bloquear";
 "Text.blocked" = "Bloqueado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
@@ -61,8 +64,9 @@
 "Text.copyMessageIdentifier" = "Copiar Identificador de Mensaje";
 "Text.copyPublicIdentifier" = "Copiar Identificador de Perfil";
 "Text.sharePublicIdentifier" = "Compartir Identificador de Perfil";
-"Text.shareThisProfile" = "Compartir Este Perfil";
 "Text.shareThisProfile" = "Compartir Este Mensaje";
+"Text.shareThisMessage" = "Compartir mensaje";
+"Text.shareThisProfileText" = "Encuentra {{ who }} en el planetary a las {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar de amigos";
@@ -108,28 +112,28 @@
 
 "ImagePicker.camera" = "Cámara";
 "ImagePicker.cameraNotAvailable" = "La cámara no está disponible en este dispositivo";
-"ImagePicker.openSettingsMessage" = "Puedes permitir el acceso a la cámara abriendo la apliicación de Preferencias.";
+"ImagePicker.openSettingsMessage" = "Puedes permitir el acceso a la cámara abriendo la apliicación de Preferencias.";
 "ImagePicker.permissionsRequired" = "Permisos requeridos para {{ title }}";
 "ImagePicker.photoLibrary" = "Librería de Fotos";
-"ImagePicker.selectFrom" = "Seleccionar de la Librería de Fotos";
-"ImagePicker.takePhoto" = "Tomar foto con la cámara";
+"ImagePicker.selectFrom" = "Seleccionar de la Librería de Fotos";
+"ImagePicker.takePhoto" = "Tomar foto con la cámara";
 
-"NewPost.confirmRemove" = "¿Eliminar esta imagen de la publicación? Podrás volver a añadirla si te arrepientes.";
+"NewPost.confirmRemove" = "¿Eliminar esta imagen de la publicación? Podrás volver a añadirla si te arrepientes.";
 "NewPost.remove" = "Quitar";
 
 "Offboarding.reset" = "Resetear";
-"Offboarding.resetApplicationAndIdentity" = "Resetear aplicación e identidad";
+"Offboarding.resetApplicationAndIdentity" = "Resetear aplicación e identidad";
 "Offboarding.resetConfirmTitle" = "Cuidado";
-"Offboarding.resetConfirmMessage" = "¿Estás seguro de que quieres resetear tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
-"Offboarding.resetConfirmAgainTitle" = "¿Está́́s seguro?";
-"Offboarding.resetConfirmAgainMessage" = "¿De verdad estás seguro de que quieres reiniciar tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
-"Offboarding.resetFooter" = "Resetear la aplicación Planetary te quitará del directorio de usuarios, dejarás de seguir a todos, y destruirá tu identidad en tu dispositivo. No te será posible recuperar tu identidad, pero podrás crear una nueva.";
+"Offboarding.resetConfirmMessage" = "¿Estás seguro de que quieres resetear tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
+"Offboarding.resetConfirmAgainTitle" = "¿Estás seguro?";
+"Offboarding.resetConfirmAgainMessage" = "¿De verdad estás seguro de que quieres reiniciar tu aplicación Planetary? Perderás esta identidad y todo su contenido. Esto no puede deshacerse.";
+"Offboarding.resetFooter" = "Resetear la aplicación Planetary te quitará del directorio de usuarios, dejarás de seguir a todos, y destruirá tu identidad en tu dispositivo. No te será posible recuperar tu identidad, pero podrás crear una nueva.";
 "Offboarding.resetApiErrorTryAgain" = "No hemos podido contectarnos al directorio para quitarte. Por favor intenta de nuevo.";
-"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió pero no te preocupes, creamos una nota para arreglarlo. Por favor intenta de nuevo.";
+"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió pero no te preocupes, creamos una nota para arreglarlo. Por favor intenta de nuevo.";
 
 "Onboarding.getStartedButton" = "Empecemos";
 "Onboarding.photoButtonAdd" = "Añade una foto";
-"Onboarding.photoButtonLater" = "Lo haré después";
+"Onboarding.photoButtonLater" = "Lo haré después";
 "Onboarding.useRealName" = "Si puedes, usa tu nombre real para ayudar a tus amigos a encontrarte.";
 "Onboarding.phoneNumber" = "Número de teléfono";
 "Onboarding.phoneNumberConfirmationMessage" = "Usamos esto para confirmar tu identidad y para enviarte alertas del servicio.";
@@ -137,11 +141,11 @@
 "Onboarding.reenter" = "Reingresar";
 "Onboarding.resendSMS" = "Reenviar SMS";
 "Onboarding.youEnteredNumber" = "Ingresaste el número {{ phone }}";
-"Onboarding.confirmNumber" = "Si ese número es correcto, toca 'Reenviar SMS'. Si es incorrecto, toca 'Reingresar'.";
-"Onboarding.ageLimit" = "Por razones legales, necesitarás ser mayor de dieciséis para usar Planetary.";
+"Onboarding.confirmNumber" = "Si ese número es correcto, toca 'Reenviar SMS'. Si es incorrecto, toca 'Reingresar'.";
+"Onboarding.ageLimit" = "Por razones legales, necesitarás ser mayor de dieciséis para usar Planetary.";
 "Onboarding.chooseProfileImage" = "Elige una\nimagen de perfil";
 "Onboarding.changePhoto" = "Cambiar foto";
-"Onboarding.confirmPhoto" = "Sí, ¡está bien!";
+"Onboarding.confirmPhoto" = "Sí, ¡está bien!";
 "Onboarding.startOver" = "Empezar de nuevo";
 "Onboarding.contactsHint" = "Encriptamos estos datos en un solo sentido así nunca podremos acceder a ellos directamente.";
 "Onboarding.connect" = "¡Conectar ya!";
@@ -216,6 +220,7 @@
 "Error.login" = "El motor de par-a-par falló en el inicio. Por favor prueba cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
 "Error.unexpected" = "Algo inesperado ocurrió.";
 "Error.supportNotConfigured" = "Soporte no está configurado.";
+"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";

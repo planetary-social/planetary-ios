@@ -262,11 +262,14 @@ class DebugOnboardingViewController: DebugTableViewController {
             {
                 [unowned self] cell in
                 guard self.validateUserInput() else { return }
-                self.confirm(title: "Warning!",
-                             message: "Starting a new onboarding session will log out your current identity and create a new identity.  Are you sure you want to do this?",
-                             isDestructive: true,
-                             confirmTitle: "Continue",
-                             confirmClosure: { self.startOnboarding(from: cell) })
+                self.confirm(
+                    from: cell,
+                    title: "Warning!",
+                    message: "Starting a new onboarding session will log out your current identity and create a new identity.  Are you sure you want to do this?",
+                    isDestructive: true,
+                    confirmTitle: "Continue",
+                    confirmClosure: { self.startOnboarding(from: cell) }
+                )
             })]
 
         settings += [DebugTableViewCellModel(title: "",

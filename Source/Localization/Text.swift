@@ -22,7 +22,7 @@ extension Text {
     }
 }
 
-// MARK:- Generic
+// MARK: - Generic
 
 enum Text: String, Localizable, CaseIterable {
 
@@ -157,7 +157,7 @@ enum Text: String, Localizable, CaseIterable {
     case markdownSupported = "Markdown preview"
 }
 
-// MARK:- ImagePicker
+// MARK: - ImagePicker
 
 extension Text {
 
@@ -172,7 +172,7 @@ extension Text {
     }
 }
 
-// MARK:- New post
+// MARK: - New post
 
 extension Text {
 
@@ -182,7 +182,7 @@ extension Text {
     }
 }
 
-// MARK:- Offboarding
+// MARK: - Offboarding
 
 extension Text {
 
@@ -199,7 +199,7 @@ extension Text {
     }
 }
 
-// MARK:- Onboarding
+// MARK: - Onboarding
 
 extension Text {
 
@@ -281,7 +281,7 @@ extension Text {
     }
 }
 
-// MARK:- Manage Pubs
+// MARK: - Manage Pubs
 
 extension Text {
 
@@ -296,7 +296,7 @@ extension Text {
     }
 }
 
-// MARK:- Preview
+// MARK: - Preview
 
 extension Text {
 
@@ -306,7 +306,7 @@ extension Text {
     }
 }
 
-// MARK:- Public Web Hosting
+// MARK: - Public Web Hosting
 
 extension Text {
 
@@ -317,7 +317,7 @@ extension Text {
     }
 }
 
-// MARK:- Push
+// MARK: - Push
 
 extension Text {
 
@@ -329,7 +329,7 @@ extension Text {
     }
 }
 
-// MARK:- Report
+// MARK: - Report
 
 extension Text {
 
@@ -342,7 +342,7 @@ extension Text {
     }
 }
 
-// MARK:- Block
+// MARK: - Block
 
 extension Text {
 
@@ -371,6 +371,7 @@ extension Text {
         case login = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device."
         case unexpected = "Something unexpected happened."
         case supportNotConfigured = "Support is not configured."
+        case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
     }
 }
 

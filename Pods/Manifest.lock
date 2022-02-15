@@ -9,7 +9,6 @@ PODS:
   - ImageSlideshow/Core (1.8.3)
   - KeychainSwift (19.0.0)
   - Keys (1.0.1)
-  - Mixpanel (3.6.1)
   - Multipart (0.1.0)
   - PhoneNumberKit (3.2.0):
     - PhoneNumberKit/PhoneNumberKitCore (= 3.2.0)
@@ -23,15 +22,19 @@ PODS:
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
   - SVProgressHUD (2.2.5)
-  - ZendeskSDK (4.0.1):
-    - ZendeskSDK/Providers (= 4.0.1)
-    - ZendeskSDK/UI (= 4.0.1)
-  - ZendeskSDK/Core (4.0.1)
-  - ZendeskSDK/Providers (4.0.1):
-    - ZendeskSDK/Core
-  - ZendeskSDK/UI (4.0.1):
-    - ZendeskSDK/Core
-    - ZendeskSDK/Providers
+  - ZendeskCommonUISDK (6.1.1)
+  - ZendeskCoreSDK (2.5.1)
+  - ZendeskMessagingAPISDK (3.8.2):
+    - ZendeskSDKConfigurationsSDK (~> 1.1.8)
+  - ZendeskMessagingSDK (3.8.2):
+    - ZendeskCommonUISDK (~> 6.1.1)
+    - ZendeskMessagingAPISDK (~> 3.8.2)
+  - ZendeskSDKConfigurationsSDK (1.1.8)
+  - ZendeskSupportProvidersSDK (5.3.0):
+    - ZendeskCoreSDK (~> 2.5.1)
+  - ZendeskSupportSDK (5.3.0):
+    - ZendeskMessagingSDK (~> 3.8.2)
+    - ZendeskSupportProvidersSDK (~> 5.3.0)
 
 DEPENDENCIES:
   - Bugsnag (= 5.23.1)
@@ -40,14 +43,13 @@ DEPENDENCIES:
   - ImageSlideshow (= 1.8.3)
   - KeychainSwift (= 19.0.0)
   - Keys (from `Pods/CocoaPodsKeys`)
-  - Mixpanel (= 3.6.1)
   - Multipart (= 0.1.0)
   - PhoneNumberKit (= 3.2.0)
   - PostHog (~> 1.1)
   - SkeletonView (= 1.8.7)
   - SQLite.swift (= 0.12.2)
   - SVProgressHUD (= 2.2.5)
-  - ZendeskSDK (= 4.0.1)
+  - ZendeskSupportSDK
 
 SPEC REPOS:
   trunk:
@@ -56,14 +58,19 @@ SPEC REPOS:
     - Down
     - ImageSlideshow
     - KeychainSwift
-    - Mixpanel
     - Multipart
     - PhoneNumberKit
     - PostHog
     - SkeletonView
     - SQLite.swift
     - SVProgressHUD
-    - ZendeskSDK
+    - ZendeskCommonUISDK
+    - ZendeskCoreSDK
+    - ZendeskMessagingAPISDK
+    - ZendeskMessagingSDK
+    - ZendeskSDKConfigurationsSDK
+    - ZendeskSupportProvidersSDK
+    - ZendeskSupportSDK
 
 EXTERNAL SOURCES:
   Keys:
@@ -76,15 +83,20 @@ SPEC CHECKSUMS:
   ImageSlideshow: 4694d7d699a1549582e7cc631fb392d8f91630f3
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Keys: a576f4c9c1c641ca913a959a9c62ed3f215a8de9
-  Mixpanel: 61e6d8c0717c8e94ccc6d3a1ae8677b9a78f64c5
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
   PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
   PostHog: 6dff77246fcc4bc77a066a93853ee8b57a623060
   SkeletonView: ba5370f41280b2f0a76918bb143c1294232bb4f4
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  ZendeskSDK: a5d4a6b1f117ed3177d72bbcc09b51d7600dd299
+  ZendeskCommonUISDK: 5808802951ad2bb424f0bed4259dc3c0ce9b52ec
+  ZendeskCoreSDK: 19a18e5ef2edcb18f4dbc0ea0d12bd31f515712a
+  ZendeskMessagingAPISDK: 144e0fb0e633a3c4e73149b781ab65338938d5a8
+  ZendeskMessagingSDK: 500e83d9413481e95180c37ddca0d4ef9d515600
+  ZendeskSDKConfigurationsSDK: 8371b468db0d09e9198f6c5a97818826943ee1ee
+  ZendeskSupportProvidersSDK: 2bdf8544f7cd0fd4c002546f5704b813845beb2a
+  ZendeskSupportSDK: 3a8e508ab1d9dd22dc038df6c694466414e037ba
 
-PODFILE CHECKSUM: e8d87874422930f4e2de3fbb6d63083ef6cf526e
+PODFILE CHECKSUM: 8fe67bf22b3831f8c3657c6417d61ac149a073cd
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

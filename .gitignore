@@ -5,6 +5,9 @@
 ## CocoaPods Keys
 Pods/CocoaPodsKeys
 
+## Configuration files with secrets
+Source/Controller/Configs/*
+
 ## Build generated
 build/
 DerivedData/
@@ -31,6 +34,12 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+## Go
+GoSSB/Sources/.goroot
+ 
+## Test artifacts
+UnitTests/Resources/Feed_big.sqlite-*
 
 ## Playgrounds
 timeline.xctimeline

@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.19] = 2022
+## Fixed
+- Fixed a bug that prevented pub invitations from being redeemed. #333 (@kode54)
+
+## [1.0.18] = 2022-02-01
+## Fixed
+- Fixed a case where the app could become unresponsive while writing to the database. #310
+- Fixed a case where the app could become unresponsive while trying to redeem an invitation to a pub. #302
+- Fixed an issue where the SQLite database could get significantly behind the go-ssb log, resulting in new data not being shown in the UI. #304
+- Fixed an issue where placeholder cells would be shown after posts had finished loading. #316  
+- Fixed a bug where the mentions autocomplete drawer would not go away. #320
+
+## [1.0.17] = 2022-01-24
+## Fixed
+- Fixed an issue where the Follow button could be unresponsive #252
+
+## Changed
+- Changed sorting of the posts in the For You tab to prioritize new content. Instead of sorting by the time the post was received we sort by the time the post was posted. #293
+- Updated translations
+
+## [1.0.16] = 2022-01-11
+## Changed
+- Updated preloaded feed
+- Updated translations #242
+- Updated Zendesk SDK
+
 ## [0.9.30] = 2020-08-21
 ## Fixed
 - Changes in the way the app connects to peers in the network fixes major bug in the app which makes the performance of the feel slow.

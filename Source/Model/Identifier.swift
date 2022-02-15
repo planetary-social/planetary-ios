@@ -63,7 +63,7 @@ extension Identifier {
         else                                                { return .unsupported }
     }
 
-    // the base64 number between the sigil, marker, and algorithm
+    /// the base64 number between the sigil, marker, and algorithm
     var id: String {
         let components = self.components(separatedBy: ".")
         guard components.count == 2 else { return Identifier.unsupported }

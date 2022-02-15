@@ -29,13 +29,14 @@ typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
 enum RefreshLoad: Int, CaseIterable {
-    case tiny = 500
-    case short = 15000
-    case medium = 45000
-    case long = 100000
+    case tiny = 500 // about 1 second on modern hardware
+    case short = 15000 // about 10 seconds
+    case medium = 45000 // about 30 seconds
+    case long = 100000 // about 60 seconds
 }
 
-// Abstract interface to any SSB bot implementation.
+/// Abstract interface to any SSB bot implementation.
+/// - SeeAlso: `GoBot`
 protocol Bot {
 
     // MARK: Name
@@ -93,7 +94,7 @@ protocol Bot {
 
     // Redeem uses the invite information and accepts it.
     // It adds the pub behind the address to the connection sheduling table and follows it.
-    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion)
+    func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion)
 
     // MARK: Publish
 
@@ -103,7 +104,7 @@ protocol Bot {
     // The `content` argument label is required to avoid conflicts when specialized
     // forms of `publish` are created.  For example, `publish(post)` will publish a
     // `Post` model, but then also the embedded `Hashtag` models.
-    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion)
+    func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion)
 
     // MARK: Post Management
 
@@ -245,8 +246,8 @@ extension Bot {
         self.about(queue: .main, identity: identity, completion: completion)
     }
     
-    func inviteRedeem(token: String, completion: @escaping ErrorCompletion) {
-        self.inviteRedeem(queue: .main, token: token, completion: completion)
+    func redeemInvitation(to star: Star, completion: @escaping ErrorCompletion) {
+        self.redeemInvitation(to: star, completionQueue: .main, completion: completion)
     }
     
     func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
@@ -254,7 +255,7 @@ extension Bot {
     }
     
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
-        self.publish(queue: .main, content: content, completion: completion)
+        self.publish(content: content, completionQueue: .main, completion: completion)
     }
     
     func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {

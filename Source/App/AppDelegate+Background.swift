@@ -52,8 +52,7 @@ extension AppDelegate {
         Analytics.shared.trackBackgroundFetch()
         let sendMissionOperation = SendMissionOperation(quality: .low)
         
-        let refreshOperation = RefreshOperation()
-        refreshOperation.refreshLoad = .short
+        let refreshOperation = RefreshOperation(refreshLoad: .medium)
 
         let statisticsOperation = StatisticsOperation()
         
@@ -138,8 +137,7 @@ extension AppDelegate {
         
         let sendMissionOperation = SendMissionOperation(quality: .high)
 
-        let refreshOperation = RefreshOperation()
-        refreshOperation.refreshLoad = .short
+        let refreshOperation = RefreshOperation(refreshLoad: .medium)
 
         let statisticsOperation = StatisticsOperation()
         
@@ -167,8 +165,7 @@ extension AppDelegate {
         // Schedule a new sync task
         self.scheduleRefreshTask()
         
-        let refreshOperation = RefreshOperation()
-        refreshOperation.refreshLoad = .long
+        let refreshOperation = RefreshOperation(refreshLoad: .medium)
         
         task.expirationHandler = {
             Log.info("Task \(AppDelegate.refreshBackgroundTaskIdentifier) expired")

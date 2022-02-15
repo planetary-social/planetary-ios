@@ -3,17 +3,25 @@
 import Foundation
 
 
-// the Int index might not be nescessary but could be handy if one handler get's all the completions instead of individual UI elements
+// the Int index might not be necessary but could be handy if one handler get's all the completions instead of
+// individual UI elements
 typealias PrefetchCompletion = (Int, KeyValue) -> Void
 
+/// An object that serves `KeyValue`s. This proxy keeps a cache of `KeyValue`s that are sometimes pre-fetched from a
+/// slower database.
 protocol PaginatedKeyValueDataProxy {
-    // the total number of messages in the view
-    // TODO: needs to be invalidated by insertLoop (maybe through notification center?)
+    /// The total number of messages in the view
+    /// TODO: needs to be invalidated by insertLoop (maybe through notification center?)
     var count: Int { get }
     
-    // late get's called with the KeyValue if prefetch didn't finish in time
+    /// Fetches the `KeyValue` at the given index.
+    /// If the `KeyValue` is in the cache, then it is returned immediately and `late` is not called.
+    /// If the `KeyValue` is not in the cache then `nil` is returned and the `late` block will be called later with
+    /// the `KeyValue`.
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue?
     
+    /// Attempts to fetch the `KeyValue` at the given index from this proxy's cache. If the `KeyValue` is not in the
+    /// cache then `nil` is returned.
     // TODO: i'm unable to make the above late: optional
     func keyValueBy(index: Int) -> KeyValue?
 
@@ -65,7 +73,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     init(with src: KeyValueSource) throws {
         self.source = src
         self.count = self.source.total
-        self.msgs = try self.source.retreive(limit: 2, offset: 0)
+        self.msgs = try self.source.retreive(limit: 100, offset: 0)
         self.lastPrefetch = self.msgs.count
     }
 
@@ -81,6 +89,9 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
         if index > self.msgs.count-1 {
             self.inflightSema.wait()
             var forIdx = self.inflight[index] ?? []
+            if forIdx.isEmpty {
+                prefetchUpTo(index: index)
+            }
             forIdx.append(late)
             self.inflight[index] = forIdx // ?? needed?
             self.inflightSema.signal()

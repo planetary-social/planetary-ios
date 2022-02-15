@@ -11,16 +11,15 @@ import Foundation
 struct Analytics {
     
     static var shared: AnalyticsService = {
-        //#if DEBUG
-        //return NullAnalytics()
-        //#else
+        #if DEBUG
+        return NullAnalytics()
+        #else
         if CommandLine.arguments.contains("mock-analytics") {
             return NullAnalytics()
         } else {
-            //return MixpanelAnalytics()
             return PostHogAnalytics()
         }
-        //#endif
+        #endif
     }()
     
 }

@@ -33,9 +33,9 @@ class NameOnboardingStep: OnboardingStep {
         self.data.name = textField.text
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
         guard let name = self.data.name else { return }
         guard name.isValidName else { return }
-        super.primary()
+        super.performPrimaryAction(sender: button)
     }
 }

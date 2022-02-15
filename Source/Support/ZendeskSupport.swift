@@ -8,7 +8,7 @@
 
 import Foundation
 import ZendeskCoreSDK
-import ZendeskSDK
+import SupportSDK
 import Keys
 
 class ZendeskSupport: SupportService {
@@ -22,7 +22,7 @@ class ZendeskSupport: SupportService {
         Zendesk.initialize(appId: keys.zendeskAppID,
                            clientId: keys.zendeskClientID,
                            zendeskUrl: zendeskURL)
-        SupportUI.initialize(withZendesk: Zendesk.instance)
+        SupportSDK.Support.initialize(withZendesk: Zendesk.instance)
         Zendesk.instance?.setIdentity(ZendeskCoreSDK.Identity.createAnonymous())
         Theme.currentTheme.primaryColor = UIColor.tint.default
     }

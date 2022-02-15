@@ -220,7 +220,7 @@ class ViewDatabase {
         
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
-        try db.execute("PRAGMA synchronous = OFF;")
+        try db.execute("PRAGMA synchronous = FULL;") // Full is best for read performance
 
         
         //db.trace { print("\tSQL: \($0)") } // print all the statements
@@ -445,7 +445,7 @@ class ViewDatabase {
             case .addresses: cnt = try db.scalar(self.addresses.count)
             case .authors:  cnt = try db.scalar(self.authors.count)
             case .messages: cnt = try db.scalar(self.msgs.count)
-            case .messagekeys: cnt = Int(try self.lastReceivedSeq())
+            case .messagekeys: cnt = Int(try self.largestSeqFromReceiveLog())
             case .abouts:   cnt = try db.scalar(self.abouts.count)
             case .contacts: cnt = try db.scalar(self.contacts.count)
             case .privates: cnt = try db.scalar(self.msgs.filter(colDecrypted==true).count)
@@ -509,15 +509,52 @@ class ViewDatabase {
 
     }
     
-    
-    
-    func lastReceivedSeq() throws -> Int64 {
+    /// Finds the largest sequence number in the messages table.
+    ///
+    /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
+    func largestSeqFromReceiveLog() throws -> Int64 {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
         let rxMaybe = Expression<Int64?>("rx_seq")
-        if let rx = try db.scalar(self.msgs.select(rxMaybe.max)) {
+        if let rx = try db.scalar(msgs.select(rxMaybe.max)) {
+            return rx
+        }
+        
+        return -1
+    }
+    
+    
+    /// Finds the largest sequence number in the messages table, excluding posts that the user has published. This is
+    /// useful for comparing messages in the `ViewDatabase` to those in go-ssb's log. The user's posts are synced
+    /// immediately after publish so that's why we ignore them.
+    ///
+    /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
+    func largestSeqNotFromPublishedLog() throws -> Int64 {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let rxMaybe = Expression<Int64?>("rx_seq")
+        if let rx = try db.scalar(self.msgs.select(rxMaybe.max).where(msgs[colAuthorID] != currentUserID)) {
+            return rx
+        }
+        
+        return -1
+    }
+    
+    
+    
+    /// Finds the largest sequence number of all the posts the logged-in user has published. The sequence number is the
+    /// index of a message in go-ssb's RootLog of all messages.
+    func largestSeqFromPublishedLog() throws -> Int64 {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let rxMaybe = Expression<Int64?>("rx_seq")
+        if let rx = try db.scalar(msgs.select(rxMaybe.max).where(msgs[colAuthorID] == currentUserID)) {
             return rx
         }
         
@@ -741,7 +778,7 @@ class ViewDatabase {
 
         // update %fakemsg if feed is at the end of the receive log
         if let lastMsgRX = try allMessages.last?.get(colRXseq) {
-            let lastReceived = try self.lastReceivedSeq()
+            let lastReceived = try self.largestSeqNotFromPublishedLog()
             if lastMsgRX == lastReceived {
                 try self.updateFakeMsg(seq: lastMsgRX)
             }
@@ -763,7 +800,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let msgID = try self.msgID(of: message, make: false)
-        let lastRX = try self.lastReceivedSeq()
+        let lastRX = try self.largestSeqNotFromPublishedLog()
         let rxSeq = try db.scalar(self.msgs.select(colRXseq).filter(colMessageID == msgID))
         if lastRX == rxSeq {
             try self.updateFakeMsg(seq: rxSeq)
@@ -1134,7 +1171,7 @@ class ViewDatabase {
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
         let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedPrefetchDataProxy(with: src as! KeyValueSource)
+        return try PaginatedPrefetchDataProxy(with: src!)
     }
 
     // MARK: recent
@@ -1144,7 +1181,7 @@ class ViewDatabase {
         }
         
         var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
-            .order(colMessageID.desc)
+            .order(colClaimedAt.desc)
         
         if onlyFollowed {
             qry = try self.filterOnlyFollowedPeople(qry: qry)
@@ -2283,7 +2320,7 @@ class ViewDatabase {
     }
     
     private func isOldMessage(msg: KeyValue) -> Bool {
-        let now = Date(timeIntervalSinceNow: 0)
+        let now = Date()
         let claimed = Date(timeIntervalSince1970: msg.value.timestamp/1000)
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
@@ -2303,158 +2340,155 @@ class ViewDatabase {
         
         var reports = [Report]()
         var skipped: UInt = 0
-        try db.transaction { // also batches writes! helps a lot with perf
-            var lastRxSeq: Int64 = -1
+        var lastRxSeq: Int64 = -1
+        
+        let loopStart = Date().timeIntervalSince1970*1000
+        for msg in msgs {
+            if let msgRxSeq = msg.receivedSeq {
+                lastRxSeq = msgRxSeq
+            } else {
+                if !pms {
+                    throw GoBotError.unexpectedFault("ViewDB: no receive sequence number on message")
+                }
+            }
             
-            let loopStart = Date().timeIntervalSince1970*1000
-            let msgCount = msgs.count
-            for (msgIndex, msg) in msgs.enumerated() {
-                if let msgRxSeq = msg.receivedSeq {
-                    lastRxSeq = msgRxSeq
-                } else {
-                    if !pms {
-                        throw GoBotError.unexpectedFault("ViewDB: no receive sequence number on message")
-                    }
-                }
-                
-                /* This is the don't put older than 6 months in the db. */
-                if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about)  {
-                    // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
-                    skipped += 1
-                    print("Skipped(\(msg.value.content.type) \(msg.key)%)")
-                    Analytics.shared.track(event: .did,
-                               element: .bot,
-                               name: AnalyticsEnums.Name.sync.rawValue,
-                               params: ["Skipped": msg.key, "Reason": "Old Message"])
-                    continue
-                }
-                
-                
-                if !pms && !msg.value.content.isValid {
-                    // cant ignore PMs right now. they need to be there to be replaced with unboxed content.
-                    #if SSB_MSGDEBUG
-                    let cnt = (unsupported[msg.value.content.typeString] ?? 0) + 1
-                    unsupported[msg.value.content.typeString] = cnt
-                    #endif
-                    skipped += 1
-                    continue
-                }
-
-                /* don't hammer progress with every message
-                if msgIndex%100 == 0 {
-                    let done = Float64(msgIndex)/Float64(msgCount)
-                    let prog = Notification.didUpdateDatabaseProgress(perc: done,
-                                                                      status: "Processing new messages")
-                    NotificationCenter.default.post(prog)
-                }*/
-
-                // make sure we dont have messages from the future
-                // and force them to the _received_ timestamp so that they are not pinned to the top of the views
-                var claimed = msg.value.timestamp
-                if claimed > loopStart {
-                    claimed = msg.timestamp
-                }
-
-                // can only insert PMs when the unencrypted was inserted before
-                let msgKeyID = try self.msgID(of: msg.key, make: !pms)
-                let authorID = try self.authorID(of: msg.value.author, make: true)
-                
-                // insert core message
-                if pms {
-                    let pm = self.msgs
-                        .filter(colMessageID == msgKeyID)
-                        .filter(colAuthorID == authorID)
-                        .filter(colSequence == msg.value.sequence)
-                    try db.run(pm.update(
-                        colDecrypted <- true,
+            /* This is the don't put older than 6 months in the db. */
+            if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about)  {
+                // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
+                skipped += 1
+                print("Skipped(\(msg.value.content.type) \(msg.key)%)")
+                Analytics.shared.track(event: .did,
+                                       element: .bot,
+                                       name: AnalyticsEnums.Name.sync.rawValue,
+                                       params: ["Skipped": msg.key, "Reason": "Old Message"])
+                continue
+            }
+            
+            
+            if !pms && !msg.value.content.isValid {
+                // cant ignore PMs right now. they need to be there to be replaced with unboxed content.
+#if SSB_MSGDEBUG
+                let cnt = (unsupported[msg.value.content.typeString] ?? 0) + 1
+                unsupported[msg.value.content.typeString] = cnt
+#endif
+                skipped += 1
+                continue
+            }
+            
+            /* don't hammer progress with every message
+             if msgIndex%100 == 0 {
+             let done = Float64(msgIndex)/Float64(msgCount)
+             let prog = Notification.didUpdateDatabaseProgress(perc: done,
+             status: "Processing new messages")
+             NotificationCenter.default.post(prog)
+             }*/
+            
+            // make sure we dont have messages from the future
+            // and force them to the _received_ timestamp so that they are not pinned to the top of the views
+            var claimed = msg.value.timestamp
+            if claimed > loopStart {
+                claimed = msg.timestamp
+            }
+            
+            // can only insert PMs when the unencrypted was inserted before
+            let msgKeyID = try self.msgID(of: msg.key, make: !pms)
+            let authorID = try self.authorID(of: msg.value.author, make: true)
+            
+            // insert core message
+            if pms {
+                let pm = self.msgs
+                    .filter(colMessageID == msgKeyID)
+                    .filter(colAuthorID == authorID)
+                    .filter(colSequence == msg.value.sequence)
+                try db.run(pm.update(
+                    colDecrypted <- true,
+                    colMsgType <- msg.value.content.type.rawValue,
+                    colReceivedAt <- msg.timestamp,
+                    colClaimedAt <- claimed
+                ))
+            } else {
+                do {
+                    try db.run(self.msgs.insert(
+                        colRXseq <- lastRxSeq,
+                        colMessageID <- msgKeyID,
+                        colAuthorID <- authorID,
+                        colSequence <- msg.value.sequence,
                         colMsgType <- msg.value.content.type.rawValue,
                         colReceivedAt <- msg.timestamp,
                         colClaimedAt <- claimed
                     ))
-                } else {
-                    do {
-                        try db.run(self.msgs.insert(
-                            colRXseq <- lastRxSeq,
-                            colMessageID <- msgKeyID,
-                            colAuthorID <- authorID,
-                            colSequence <- msg.value.sequence,
-                            colMsgType <- msg.value.content.type.rawValue,
-                            colReceivedAt <- msg.timestamp,
-                            colClaimedAt <- claimed
-                        ))
-                    } catch Result.error(let errMsg, let errCode, _) {
-                        // this is _just_ hear because of a fetch-duplication bug in go-ssb
-                        // the constraints on the table are for uniquness:
-                        // 1) message key/id
-                        // 2) (author,sequence no)
-                        // while (1) always means duplicate message (2) can also mean fork
-                        // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
-                        if errCode == SQLITE_CONSTRAINT {
-                            continue // ignore this message and go to the next
-                        }
-                        throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
-                    } catch {
-                        throw error
+                } catch Result.error(let errMsg, let errCode, _) {
+                    // this is _just_ hear because of a fetch-duplication bug in go-ssb
+                    // the constraints on the table are for uniquness:
+                    // 1) message key/id
+                    // 2) (author,sequence no)
+                    // while (1) always means duplicate message (2) can also mean fork
+                    // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
+                    if errCode == SQLITE_CONSTRAINT {
+                        continue // ignore this message and go to the next
                     }
-                }
-          
-                do { // identifies which message failed
-                    switch msg.value.content.type { // insert individual message types
-
-                    case .address:
-                         try self.fillAddress(msgID: msgKeyID, msg: msg)
-                        
-                    case .about:
-                        try self.fillAbout(msgID: msgKeyID, msg: msg)
-                        
-                    case .contact:
-                        try self.fillContact(msgID: msgKeyID, msg: msg)
-
-                    case .dropContentRequest:
-                        try self.checkAndExecuteDCR(msgID: msgKeyID, msg: msg)
-
-                    case .pub:
-                         try self.fillPub(msgID: msgKeyID, msg: msg)
-
-                    case .post:
-                        try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)
-                
-                    case .vote:
-                        try self.fillVote(msgID: msgKeyID, msg: msg, pms: pms)
-
-                    case .unknown: // ignore encrypted
-                        continue
-
-                    case .unsupported:
-                        // counted above
-                        continue
-                    }
+                    throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
                 } catch {
-                    throw GoBotError.duringProcessing("fillMessages threw on msg(\(msg.key)", error)
+                    throw error
                 }
-                
-                do {
-                    let reportsFilled = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
-                    reports.append(contentsOf: reportsFilled)
-                } catch {
-                    // Don't throw an error here, because we can live without a report
-                    // Just send it to the Crash Reporting service
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                }
-            } // for msgs
-            
-            reports.forEach { report in
-                NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
-                                                object: report.authorIdentity,
-                                                userInfo: ["report": report])
             }
             
-            // if we skipped all messages because they are unsupported,
-            // update %fakemsg to that sequence so that we don't iterate over them again
-            if skipped > 0 && skipped == msgs.count && lastRxSeq > 0 {
-                try self.updateFakeMsg(seq: lastRxSeq)
+            do { // identifies which message failed
+                switch msg.value.content.type { // insert individual message types
+                    
+                case .address:
+                    try self.fillAddress(msgID: msgKeyID, msg: msg)
+                    
+                case .about:
+                    try self.fillAbout(msgID: msgKeyID, msg: msg)
+                    
+                case .contact:
+                    try self.fillContact(msgID: msgKeyID, msg: msg)
+                    
+                case .dropContentRequest:
+                    try self.checkAndExecuteDCR(msgID: msgKeyID, msg: msg)
+                    
+                case .pub:
+                    try self.fillPub(msgID: msgKeyID, msg: msg)
+                    
+                case .post:
+                    try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)
+                    
+                case .vote:
+                    try self.fillVote(msgID: msgKeyID, msg: msg, pms: pms)
+                    
+                case .unknown: // ignore encrypted
+                    continue
+                    
+                case .unsupported:
+                    // counted above
+                    continue
+                }
+            } catch {
+                throw GoBotError.duringProcessing("fillMessages threw on msg(\(msg.key)", error)
             }
-        } // transact
+            
+            do {
+                let reportsFilled = try self.fillReportIfNeeded(msgID: msgKeyID, msg: msg, pms: pms)
+                reports.append(contentsOf: reportsFilled)
+            } catch {
+                // Don't throw an error here, because we can live without a report
+                // Just send it to the Crash Reporting service
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
+        } // for msgs
+        
+        reports.forEach { report in
+            NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
+                                            object: report.authorIdentity,
+                                            userInfo: ["report": report])
+        }
+        
+        // if we skipped all messages because they are unsupported,
+        // update %fakemsg to that sequence so that we don't iterate over them again
+        if skipped > 0 && skipped == msgs.count && lastRxSeq > 0 {
+            try self.updateFakeMsg(seq: lastRxSeq)
+        }
 
         // debug statistics about unhandled message types
         #if SSB_MSGDEBUG
@@ -2584,6 +2618,19 @@ class ViewDatabase {
             }
         }
         return nil
+    }
+    
+    /// Returns the total number of messages in the database
+    func messageCount() throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            return try db.scalar(self.msgs.count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("messageCount failed", error))
+            return 0
+        }
     }
 
     // MARK: insert helper

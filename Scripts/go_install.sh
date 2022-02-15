@@ -4,9 +4,7 @@ set -e
 
 # source: https://github.com/canha/golang-tools-install-script
 
-# this issue complicates upgrading to 1.14
-# https://github.com/golang/go/issues/11258#issuecomment-465603039
-VERSION="1.14.4"
+VERSION="1.16.3"
 
 [ -z "$GOROOT" ] && GOROOT="$HOME/.go"
 [ -z "$GOPATH" ] && GOPATH="$HOME/go"
@@ -33,7 +31,14 @@ case $OS in
         PLATFORM="linux-$ARCH"
     ;;
     "Darwin")
-        PLATFORM="darwin-amd64"
+        case $ARCH in
+        "x86_64")
+            PLATFORM="darwin-amd64"
+            ;;
+        "arm64")
+            PLATFORM="darwin-arm64"
+            ;;
+        esac
     ;;
 esac
 

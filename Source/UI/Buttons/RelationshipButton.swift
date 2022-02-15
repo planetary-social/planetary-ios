@@ -87,7 +87,7 @@ class RelationshipButton: IconButton {
                 return alertAction
             }
 
-            AppController.shared.choose(from: actions)
+            AppController.shared.choose(from: actions, sourceView: self)
         }
     }
 
@@ -184,10 +184,11 @@ class RelationshipButton: IconButton {
     func reportUser() {
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
         guard let controller = Support.shared.newTicketViewController(from: self.relationship.identity, reporting: self.relationship.other, name: self.otherUserName) else {
-            AppController.shared.alert(style: .alert,
-                                       title: Text.error.text,
-                                       message: Text.Error.supportNotConfigured.text,
-                                       cancelTitle: Text.ok.text)
+            AppController.shared.alert(
+                title: Text.error.text,
+                message: Text.Error.supportNotConfigured.text,
+                cancelTitle: Text.ok.text
+            )
             return
         }
         AppController.shared.push(controller)

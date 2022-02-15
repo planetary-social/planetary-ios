@@ -1,0 +1,453 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
+// swift-module-flags: -target i386-apple-ios10.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name MessagingAPI
+import Foundation
+@_exported import MessagingAPI
+import SDKConfigurations
+import Swift
+import UIKit
+public struct SystemMessage : MessagingAPI.SeparatorItem, Swift.Hashable {
+  public var status: MessagingAPI.ItemDeliveryStatus {
+    get
+  }
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let text: Swift.String
+  public let pinsToBottom: Swift.Bool
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), text: Swift.String, pinsToBottom: Swift.Bool)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.SystemMessage, b: MessagingAPI.SystemMessage) -> Swift.Bool
+}
+public struct FileQuery : MessagingAPI.Query, MessagingAPI.AttachmentItem, Swift.Hashable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public var status: MessagingAPI.ItemDeliveryStatus {
+    get
+  }
+  public let attachment: MessagingAPI.Attachment
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), status: MessagingAPI.ItemDeliveryStatus, attachment: MessagingAPI.Attachment)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.FileQuery, b: MessagingAPI.FileQuery) -> Swift.Bool
+}
+public protocol ConversationLogProtocol {
+  func getLog() -> Swift.String
+}
+public struct ArticleSuggestion : Swift.Hashable {
+  public let title: Swift.String
+  public let snippet: Swift.String
+  public let articleId: Swift.Int64
+  public let url: Swift.String
+  public init(title: Swift.String, snippet: Swift.String = "", articleId: Swift.Int64, url: Swift.String)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.ArticleSuggestion, b: MessagingAPI.ArticleSuggestion) -> Swift.Bool
+}
+public struct Option : Swift.Hashable {
+  public let id: Swift.String
+  public let optionId: Swift.String
+  public let text: Swift.String
+  public let furtherOptions: [MessagingAPI.Option]?
+  public let actionType: Swift.Int?
+  public init(id: Swift.String = UUID().uuidString, optionId: Swift.String, text: Swift.String, furtherOptions: [MessagingAPI.Option]?, actionType: Swift.Int?)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.Option, b: MessagingAPI.Option) -> Swift.Bool
+}
+public struct TextQuery : MessagingAPI.Query, MessagingAPI.TextItem, Swift.Hashable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let message: Swift.String
+  public var status: MessagingAPI.ItemDeliveryStatus {
+    get
+  }
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), message: Swift.String, status: MessagingAPI.ItemDeliveryStatus)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.TextQuery, b: MessagingAPI.TextQuery) -> Swift.Bool
+}
+final public class BotMessageDispatcher {
+  final public var isInteractionInProcess: Swift.Bool
+  public init(typingDelay: Swift.Int = 1200, botDetails: @escaping () -> MessagingAPI.AgentDetails, onUpdate: @escaping (MessagingAPI.Update) -> Swift.Void, onDequeue: @escaping (MessagingAPI.MessagingItem) -> Swift.Void)
+  final public func append(_ messagingItems: [MessagingAPI.MessagingItem], onPostSend: (() -> Swift.Void)? = nil)
+  @objc deinit
+}
+@objc public protocol ZDKEngine {
+}
+public protocol Engine : MessagingAPI.ZDKEngine {
+  var id: Swift.String { get }
+  var transferOptionDescription: MessagingAPI.TransferOptionDescription { get }
+  @available(*, deprecated, message: "Use isConversationOngoing(_ completion: @escaping (Bool) -> Void) instead")
+  func isConversationOngoing() -> Swift.Bool
+  func isConversationOngoing(_ completion: @escaping (Swift.Bool) -> Swift.Void)
+  func start(messagingAPI: MessagingAPI.MessagingAPIProtocol)
+  func stop()
+  func onEvent(_ event: MessagingAPI.Event)
+  func observeUpdates(_ callback: @escaping (MessagingAPI.Update) -> Swift.Void) -> MessagingAPI.ObservationToken
+}
+@objc(ZDKTransferOptionDescription) final public class TransferOptionDescription : ObjectiveC.NSObject {
+  @objc final public let engineId: Swift.String
+  @objc final public let displayName: Swift.String
+  @objc public init(engineId: Swift.String, displayName: Swift.String)
+  @objc override final public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc deinit
+  @objc override dynamic public init()
+}
+public struct Attachment : Swift.Hashable {
+  public let name: Swift.String
+  public let size: Swift.Int
+  public let url: Foundation.URL
+  public init(name: Swift.String, size: Swift.Int, url: Foundation.URL)
+  public static func == (a: MessagingAPI.Attachment, b: MessagingAPI.Attachment) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct TransferResponse : MessagingAPI.Response, Swift.Hashable {
+  public let id: Swift.String
+  public let titleText: Swift.String
+  public let timestamp: Foundation.Date
+  public let agentName: Swift.String
+  public let isBot: Swift.Bool
+  public let transferOptions: [MessagingAPI.TransferOptionDescription]
+  public init(id: Swift.String, titleText: Swift.String, timestamp: Foundation.Date = Date(), agentName: Swift.String, isBot: Swift.Bool, transferOptions: [MessagingAPI.TransferOptionDescription])
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.TransferResponse, b: MessagingAPI.TransferResponse) -> Swift.Bool
+}
+public protocol Identifier {
+  static var staticIdentifier: Swift.String { get }
+  var identifier: Swift.String { get }
+}
+extension Identifier {
+  public static var staticIdentifier: Swift.String {
+    get
+  }
+  public var identifier: Swift.String {
+    get
+  }
+}
+public protocol TextItem {
+  var message: Swift.String { get }
+}
+public struct TextResponse : MessagingAPI.Response, MessagingAPI.TextItem, Swift.Hashable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let message: Swift.String
+  public let agentName: Swift.String
+  public let isBot: Swift.Bool
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), message: Swift.String, agentName: Swift.String, isBot: Swift.Bool)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.TextResponse, b: MessagingAPI.TextResponse) -> Swift.Bool
+}
+public struct InputFieldState : Swift.Equatable {
+  public var enabled: Swift.Bool
+  public var shouldShowAttachmentIcon: Swift.Bool
+  public var endUserHint: Swift.String?
+  public var keyboardType: UIKit.UIKeyboardType
+  public init(enabled: Swift.Bool, shouldShowAttachmentIcon: Swift.Bool, endUserHint: Swift.String? = nil, keyboardType: UIKit.UIKeyboardType = .default)
+  public static func == (a: MessagingAPI.InputFieldState, b: MessagingAPI.InputFieldState) -> Swift.Bool
+}
+public struct Banner : Swift.Equatable {
+  public let text: Swift.String
+  public init(text: Swift.String)
+  public static func == (a: MessagingAPI.Banner, b: MessagingAPI.Banner) -> Swift.Bool
+}
+public protocol LoggableItem {
+  var timestamp: Foundation.Date { get }
+  func messageLog() -> Swift.String
+}
+public protocol LoggableEvent : MessagingAPI.LoggableItem {
+}
+public protocol LoggableMessage : MessagingAPI.LoggableItem {
+}
+public struct Action : Swift.Hashable {
+  public let description: Swift.String
+  public let iconImage: UIKit.UIImage?
+  public let localizedLabelText: Swift.String
+  public let action: (([Swift.String : Any]) -> Swift.Void)
+  public init(description: Swift.String, iconImage: UIKit.UIImage? = nil, localisedLabelText: Swift.String, action: @escaping (([Swift.String : Any]) -> Swift.Void))
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Action {
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (lhs: MessagingAPI.Action, rhs: MessagingAPI.Action) -> Swift.Bool
+}
+public protocol MessagingAPIProtocol : AnyObject {
+  func getTransferOptions() -> [MessagingAPI.TransferOptionDescription]
+  func getConversationLog() -> MessagingAPI.ConversationLogProtocol
+  func getConfigurations() -> SDKConfigurations.Configurations
+  func getBotAgentDetails() -> MessagingAPI.AgentDetails
+}
+@frozen public struct AgentDetails : Swift.Equatable {
+  public static let initialBot: MessagingAPI.AgentDetails
+  public let name: Swift.String
+  public let isBot: Swift.Bool
+  public let avatar: UIKit.UIImage?
+  public init(name: Swift.String, isBot: Swift.Bool, avatar: UIKit.UIImage?)
+  public static func == (a: MessagingAPI.AgentDetails, b: MessagingAPI.AgentDetails) -> Swift.Bool
+}
+public struct EquatableMessagingItem {
+  public let messagingItem: MessagingAPI.MessagingItem
+  public init(_ messagingItem: MessagingAPI.MessagingItem)
+}
+extension EquatableMessagingItem : Swift.Equatable {
+  public static func == (lhs: MessagingAPI.EquatableMessagingItem, rhs: MessagingAPI.EquatableMessagingItem) -> Swift.Bool
+}
+public enum ObservableIdentifier : Swift.Hashable {
+  case uuid(_: Foundation.UUID = UUID())
+  case identifier(Swift.String)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.ObservableIdentifier, b: MessagingAPI.ObservableIdentifier) -> Swift.Bool
+}
+public protocol Observable : AnyObject {
+  associatedtype Observable
+  var onUpdate: ([MessagingAPI.ObservableIdentifier : (Self.Observable) -> Swift.Void]) { get set }
+  func addObserver<T>(_ observer: T, identifier: MessagingAPI.ObservableIdentifier, eagerObserver: Self.Observable?, onRemove: ((MessagingAPI.ObservableIdentifier) -> Swift.Void)?, _ closure: @escaping (T?, MessagingAPI.ObservableIdentifier, Self.Observable) -> Swift.Void) -> MessagingAPI.ObservationToken where T : AnyObject
+  func notifyObservers(_ observable: Self.Observable)
+}
+extension Observable {
+  public func addObserver<T>(_ observer: T, identifier: MessagingAPI.ObservableIdentifier = .uuid(), eagerObserver: Self.Observable? = nil, onRemove: ((MessagingAPI.ObservableIdentifier) -> Swift.Void)? = nil, _ closure: @escaping (T?, MessagingAPI.ObservableIdentifier, Self.Observable) -> Swift.Void) -> MessagingAPI.ObservationToken where T : AnyObject
+  public func notifyObservers(_ observable: Self.Observable)
+}
+@objc(ZDKObservationToken) final public class ObservationToken : ObjectiveC.NSObject, Swift.Identifiable {
+  final public let id: MessagingAPI.ObservableIdentifier
+  @objc deinit
+  public init(id: MessagingAPI.ObservableIdentifier, cancellationClosure: @escaping () -> Swift.Void)
+  @objc final public func cancel()
+  @objc override final public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc override dynamic public init()
+  public typealias ID = MessagingAPI.ObservableIdentifier
+}
+public struct OptionsResponse : MessagingAPI.Response, Swift.Hashable {
+  public let agentName: Swift.String
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let isBot: Swift.Bool
+  public let responseOptionItems: [MessagingAPI.Option]
+  public init(id: Swift.String, agentName: Swift.String, timestamp: Foundation.Date = Date(), isBot: Swift.Bool, responseOptionItems: [MessagingAPI.Option])
+  public static func == (a: MessagingAPI.OptionsResponse, b: MessagingAPI.OptionsResponse) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct ImageResponse : MessagingAPI.Response, MessagingAPI.ImageItem, MessagingAPI.AttachmentItem, Swift.Hashable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let agentName: Swift.String
+  public let isBot: Swift.Bool
+  public let attachment: MessagingAPI.Attachment
+  public var url: Foundation.URL {
+    get
+  }
+  public let cachedURL: Foundation.URL?
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), agentName: Swift.String, isBot: Swift.Bool, attachment: MessagingAPI.Attachment, cachedURL: Foundation.URL? = nil)
+  public static func == (a: MessagingAPI.ImageResponse, b: MessagingAPI.ImageResponse) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum ConnectionStatus : Swift.String {
+  case connecting
+  case connected
+  case disconnected
+  case reconnecting
+  case failed
+  case unreachable
+  public var isConnected: Swift.Bool {
+    get
+  }
+  public typealias RawValue = Swift.String
+  public init?(rawValue: Swift.String)
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension ConnectionStatus : Swift.CustomStringConvertible, Swift.CustomDebugStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+public enum Event : Swift.Equatable {
+  case typingStarted
+  case typingStopped
+  case messageSubmitted(_: Swift.String)
+  case fileSelected(Foundation.URL)
+  case messageDeleted(messageId: Swift.String)
+  case messageResent(messageId: Swift.String, message: Swift.String? = nil)
+  case articleSuggestionClicked(articleId: Swift.Int64, articleUrl: Swift.String, deflectionId: Swift.Int64, interactionAccessToken: Swift.String, navigationController: UIKit.UINavigationController?)
+  case actionOptionClicked(description: Swift.String, action: (([Swift.String : Any]) -> Swift.Void), navigationController: UIKit.UINavigationController? = nil)
+  case onMenuTap(action: ([UIKit.UIAlertAction]) -> Swift.Void)
+  case transferOptionClicked(transferOption: MessagingAPI.TransferOptionDescription)
+  case responseOptionClicked(optionViewModelId: Swift.String, responseCellViewModelId: Swift.String)
+  case reconnectButtonClicked
+  case applicationEventRaised(MessagingAPI.ApplicationEvent)
+}
+extension Event {
+  public static func == (lhs: MessagingAPI.Event, rhs: MessagingAPI.Event) -> Swift.Bool
+}
+public struct ImageQuery : MessagingAPI.Query, MessagingAPI.ImageItem, MessagingAPI.AttachmentItem, Swift.Hashable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public var status: MessagingAPI.ItemDeliveryStatus {
+    get
+  }
+  public let attachment: MessagingAPI.Attachment
+  public var url: Foundation.URL {
+    get
+  }
+  public let cachedURL: Foundation.URL?
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), status: MessagingAPI.ItemDeliveryStatus, attachment: MessagingAPI.Attachment, cachedURL: Foundation.URL? = nil)
+  public static func == (a: MessagingAPI.ImageQuery, b: MessagingAPI.ImageQuery) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct FileResponse : MessagingAPI.Response, MessagingAPI.AttachmentItem, Swift.Hashable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let agentName: Swift.String
+  public let isBot: Swift.Bool
+  public let attachment: MessagingAPI.Attachment
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), agentName: Swift.String, isBot: Swift.Bool, attachment: MessagingAPI.Attachment)
+  public static func == (a: MessagingAPI.FileResponse, b: MessagingAPI.FileResponse) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum Update : Swift.Equatable {
+  case showTyping(agent: MessagingAPI.AgentDetails)
+  case hideTyping
+  case applyMessagingItems(items: [MessagingAPI.MessagingItem], animated: Swift.Bool)
+  case updateMessagingItem(item: MessagingAPI.MessagingItem, animated: Swift.Bool)
+  case removeMessagingItem(id: Swift.String, animated: Swift.Bool)
+  case appendMessagingItems(items: [MessagingAPI.MessagingItem], animated: Swift.Bool)
+  case updateActiveAgent(agent: MessagingAPI.AgentDetails)
+  case updateConnectionStatus(_: MessagingAPI.ConnectionStatus)
+  case updateInputFieldState(_: MessagingAPI.InputFieldState)
+  case showBanner(MessagingAPI.Banner)
+  case showMenu(Swift.Bool)
+  case presentAlertController(UIKit.UIAlertController)
+}
+extension Update {
+  public static func == (lhs: MessagingAPI.Update, rhs: MessagingAPI.Update) -> Swift.Bool
+}
+public struct ActionResponse : MessagingAPI.Response, Swift.Hashable {
+  public let id: Swift.String
+  public let titleText: Swift.String
+  public let timestamp: Foundation.Date
+  public let agentName: Swift.String
+  public let isBot: Swift.Bool
+  public let actionOptions: [MessagingAPI.Action]
+  public init(id: Swift.String, titleText: Swift.String, timestamp: Foundation.Date = Date(), agentName: Swift.String, isBot: Swift.Bool, actionOptions: [MessagingAPI.Action])
+  public static func == (a: MessagingAPI.ActionResponse, b: MessagingAPI.ActionResponse) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public struct ArticlesResponse : MessagingAPI.Response, Swift.Hashable {
+  public let id: Swift.String
+  public let timestamp: Foundation.Date
+  public let agentName: Swift.String
+  public let isBot: Swift.Bool
+  public let deflectionId: Swift.Int64
+  public let interactionAccessToken: Swift.String
+  public let suggestedArticles: [MessagingAPI.ArticleSuggestion]
+  public init(id: Swift.String, timestamp: Foundation.Date = Date(), agentName: Swift.String, isBot: Swift.Bool, deflectionId: Swift.Int64, interactionAccessToken: Swift.String, suggestedArticles: [MessagingAPI.ArticleSuggestion])
+  public static func == (a: MessagingAPI.ArticlesResponse, b: MessagingAPI.ArticlesResponse) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum ItemDeliveryStatus : Swift.Hashable {
+  case sent
+  case pending
+  case errored(errorMessage: MessagingAPI.ItemDeliveryStatusError)
+  case received
+  public static func == (a: MessagingAPI.ItemDeliveryStatus, b: MessagingAPI.ItemDeliveryStatus) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum ItemDeliveryStatusError : Swift.Hashable {
+  case unsupportedFileType
+  case tapToRetry
+  case fileSizeLimit(Swift.String)
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: MessagingAPI.ItemDeliveryStatusError, b: MessagingAPI.ItemDeliveryStatusError) -> Swift.Bool
+}
+public protocol MessagingItem {
+  var id: Swift.String { get }
+  var timestamp: Foundation.Date { get }
+  var status: MessagingAPI.ItemDeliveryStatus { get }
+}
+public protocol Query : MessagingAPI.MessagingItem {
+}
+public protocol Response : MessagingAPI.MessagingItem {
+  var agentName: Swift.String { get }
+  var isBot: Swift.Bool { get }
+}
+extension Response {
+  public var status: MessagingAPI.ItemDeliveryStatus {
+    get
+  }
+}
+public protocol AttachmentItem : MessagingAPI.MessagingItem {
+  var attachment: MessagingAPI.Attachment { get }
+}
+public protocol ImageItem : MessagingAPI.AttachmentItem {
+  var url: Foundation.URL { get }
+}
+public protocol SeparatorItem : MessagingAPI.MessagingItem {
+  var text: Swift.String { get }
+  var pinsToBottom: Swift.Bool { get }
+}
+@objc(ZDKApplicationEvent) public enum ApplicationEvent : Swift.Int, Swift.Equatable {
+  case applicationWillEnterForeground
+  case applicationDidEnterBackground
+  public typealias RawValue = Swift.Int
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+extension MessagingAPI.ConnectionStatus : Swift.Equatable {}
+extension MessagingAPI.ConnectionStatus : Swift.Hashable {}
+extension MessagingAPI.ConnectionStatus : Swift.RawRepresentable {}
+extension MessagingAPI.ApplicationEvent : Swift.Hashable {}
+extension MessagingAPI.ApplicationEvent : Swift.RawRepresentable {}

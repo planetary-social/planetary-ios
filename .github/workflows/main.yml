@@ -13,6 +13,7 @@ jobs:
     - name: Dependencies
       run: pod install --no-repo-update
       env:
+        DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
         MixpanelAnalyticsToken: nil
         AuthyPhoneVerificationAPIToken: nil
         BugsnagCrashReportingToken: nil
@@ -22,7 +23,9 @@ jobs:
         VersePubAPIToken: nil
         VerseDirectoryAPIToken: nil
         VerseBlobToken: nil
+        PostHogAPIKey: nil
+        PostHogHost: nil
     - name: Build
-      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=14.2" | xcpretty
+      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty
     - name: Test
-      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 11,OS=14.2" | xcpretty
+      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty

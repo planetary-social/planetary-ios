@@ -13,7 +13,7 @@ class AppButton: UIButton {
 
     // an assignable action that a user of the button can use to customize behavior
     // if not assigned, the defaultAction provided by the class will be called instead.
-    var action: (() -> Void)?
+    var action: ((AnyObject) -> Void)?
 
     init() {
         super.init(frame: .zero)
@@ -28,9 +28,9 @@ class AppButton: UIButton {
         assertionFailure("Default action was not implemented.")
     }
 
-    @objc func didPress() {
+    @objc func didPress(sender: AnyObject) {
         if let action = self.action {
-            action()
+            action(sender)
         } else {
             self.defaultAction()
         }

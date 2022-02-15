@@ -1,0 +1,46 @@
+/*
+ *
+ *  SupportProvidersSDK-Prefix.pch
+ *  SupportProvidersSDK
+ *
+ *  Created by Zendesk on 03/10/2014.  
+ *
+ *  Copyright (c) 2014 Zendesk. All rights reserved.
+ *
+ *  By downloading or using the Zendesk Mobile SDK, You agree to the Zendesk Master
+ *  Subscription Agreement https://www.zendesk.com/company/customers-partners/#master-subscription-agreement and Application Developer and API License
+ *  Agreement https://www.zendesk.com/company/customers-partners/#application-developer-api-license-agreement and
+ *  acknowledge that such terms govern Your use of and access to the Mobile SDK.
+ *
+ */
+
+#ifndef SupportProvidersSDK_SupportProvidersSDK_Prefix_pch
+#define SupportProvidersSDK_SupportProvidersSDK_Prefix_pch
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+#ifndef SYSTEM_VERSION_GREATER_THAN_SEVEN
+#define SYSTEM_VERSION_GREATER_THAN_SEVEN ([[[UIDevice currentDevice] systemVersion] compare:@"7" options:NSNumericSearch] != NSOrderedAscending)
+#endif
+
+#ifndef ZD_IS_IPAD
+#define ZD_IS_IPAD UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad
+#endif
+#ifndef ZD_IS_IPHONE
+#define ZD_IS_IPHONE UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone
+#endif
+
+#ifndef ZDLog
+#ifdef DEBUG
+#define ZDLog(...) NSLog(@"%s(%p) %@", __PRETTY_FUNCTION__, self, [NSString stringWithFormat:__VA_ARGS__])
+#else
+#define ZDLog(...) ;
+#endif
+#endif
+
+#endif
+
+
+#endif

@@ -75,7 +75,6 @@ class JoinOnboardingStep: OnboardingStep {
         }
 
         AppController.shared.choose(from: [tryAgain, startOver],
-                                    style: .alert,
                                     title: Text.Onboarding.somethingWentWrong.text,
                                     message: error?.localizedDescription ?? Text.Onboarding.errorRetryMessage.text)
     }

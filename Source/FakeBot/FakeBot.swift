@@ -49,8 +49,8 @@ class FakeBot: Bot {
             completion([], nil)
         }
     }
-    func inviteRedeem(queue: DispatchQueue, token: String, completion: @escaping ErrorCompletion) {
-        queue.async{ completion(nil) }
+    func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion) {
+        completionQueue.async { completion(nil) }
     }
     
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
@@ -103,8 +103,8 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
 
-    func publish(queue: DispatchQueue, content: ContentCodable, completion: @escaping PublishCompletion) {
-        queue.async {
+    func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion) {
+        completionQueue.async {
             completion(MessageIdentifier.null, nil)
         }
     }

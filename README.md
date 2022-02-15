@@ -1,21 +1,85 @@
 # Planetary
 
-Planetary IOS is an app based on [Secure Scuttlebutt](https://scuttlebutt.nz/) that doesn't keep your data in the cloud and allows you and your friends to come together and connect even when the internet goes out.  
+Planetary iOS is an app based on [Secure Scuttlebutt](https://scuttlebutt.nz/) that doesn't keep your data in the cloud and allows you and your friends to come together and connect even when the internet goes out.  
 Check our website [planetary.social](https://planetary.social/) for more info!
+
+## Current Planetary Functionality:
+* Create a user
+* Follow users
+* Unfollow users
+* Block users
+* Reply to posts
+* Mention other users
+* Publish your profile with image, name, and description in rich text markdown.
+* Join community servers (pubs) to connect to communities of users for default list
+* Join community servers (pubs) using an invite link
+* Create new community servers that users can use
+* Defining initial network and pre-loaded content. 
+* Publish content with rich text markdown (up to 8k)
+* Publish content with images attached
+* Discover new users who are in your extended network
+* View feeds of content from people you’re following
+* Background sync to trigger the app finding new content 
+* Publish content with hashtags and discover content through hashtags
+* Share content with people off network through a link to planetary.link
+* Sync content between devices on the same local network
+* View and post content while offline without any internet connection
+* Strong cryptographic verification of who published what.
+* Direct mesh networking between devices in physical proximity
+* Nothing can be deleted
+* Users can report encrypted and unencrypted content to Planetary for TOS violations
+* Planetary can ban users from company run pubs
+* Planetary can block users from using their identity in the app
+* Planetary can prevent users from seeing banned messages or accounts
+* Planetary can define who is in the initial directory and content upon installing the app
+* Users can migrate their identity off of Planetary to access blacklisted content in other ssb apps
+
+## Functionality Implemented in Planetary with only debug or api interface:
+* Private Messaging up to 8 people
+* Running multiple identities on a single instance of the app
+* Running multiple distinct scuttlebutt networks.
+* Backup and restore your keys to move identities (accounts) between apps
+* User can manage local storage
+* User should be informed about the data storage model for scuttlebutt
+* User given an option to not connect to automatic pubs
+* User can onboard from an invite to a specific user or community
+* User can see what peers they’re connected to
+* User can see most recent update time from each person network
+
+
+## Functionality in Libraries but not in the app
+* Private groups
+* Editing content
+* Tombstoning content
+* Partial feed replication
+* Routing traffic over tor / anonymizing networks
+* TrustNet transitive abuse moderation algorithm
+* Suggest new people to follow
+* Room Support (tunneling connections)
+* Direct serverless DHT Invite generation and redemption. 
+* Log in to web services using scuttlebutt identity through QR code.
+* Metafeeds (single identity key writer for multiple feeds for a single user)
+
+## Functionality in a prototyping and spec stage
+* Partial feed replication
+* Multiple device for a single user (fusion identities) 
+* Feed fork detection and recovery
+* Serverless Messaging Layer Security (MLS) for group messaging. 
+* Known Bugs
+* A current list of known bugs in Planetary’s iOS app is in github issues. 
+* Database on device occasionally gets corrupted
+* New installs fail to initialize correctly rarely
+* Connection information is only displayed on debug screens
+* Sometimes users need to pull to refresh to see new content
+
 
 ![](https://github.com/planetary-social/planetary-ios/workflows/CI/badge.svg)
 
 ## Developer installation
 
-_Only tested on Intel Macs_
-
 ### Setup
 
 Requirements: [Homebrew](https://brew.sh/), and Xcode.
-
-The repo does have some Carthage and Cocoapod dependencies, however all except one have been versioned and checked into the repo.
-
-While this project uses [Go](https://golang.org) in parts, the build and unit test target have automated install scripts for the specific versions. See _Go Development_ for more.
 
 1. Install `rbenv` and add it to your shell: 
 
@@ -32,21 +96,20 @@ $ rbenv install 2.6.6
 3. Install gems
 
 ```
-$ gem install cocoapods cocoapods-keys cocoapods-bugsnag
+$ gem install cocoapods cocoapods-keys
 ```
 
-4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them or request current values at: https://planetarysupport.zendesk.com/hc/en-us/requests/new.
+4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them. The app is still functional without these keys, it just won't submit support tickets, analytics, or crash reports to us.
 
 ```
 $ pod install
 ```
 
-5. If you entered `nil` for the Bugsnag API Key in the `pod install` step you will need to disable the Upload Bugsnag dSYM Build Phase. To do this, open the project settings (In the File Inspector, select 'Planetary' at the top), Selet the 'Planetary' target on the left, select "Build Phases" at the top, then comment out or remove the Upload Bugsnag dSYM script.
-
+5. You should now be able to Build and Run in Xcode.
 
 ### Running
 
-The app can run completely in the iOS simulator. If you want to run it on a device, your Apple ID must be part of the Verse Apple Developer team. Contact contact@verse.app if you need access.
+The app is fully functional in the iOS simulator. If you want to run it on a device you will need to change the Bundle Identifier and Code Signing settings to use your personal team.
 
 ## Contributing
 
@@ -67,21 +130,8 @@ Due to the small team size, code reviews are mostly to inform other members what
 
 ## Go Development
 
-Installation in the xcode targers is automated. See `FBTT/Scripts/go_install.sh` for which compiler version is used by XCode.
+Planetary’s underlying SSB protocol implementation is written in Go (see [cryptoscope/ssb](https://github.com/cryptoscope/ssb)). The GoSSB folder contains an Xcode project that packages [cryptoscope/ssb](https://github.com/cryptoscope/ssb) as an XCFramework that works across Apple’s various platforms and architectures. GoSSB.xcframework is included in this repository so that contributors don’t need to install a full Go stack to work on the iOS app. More information about the GoSSB.xcframework can be found in its [README](GoSSB/README.md)
 
-We are using _vendoring_ to keep a copy of the dependencies in this repo. Therefore each module update (`go get github.com/some/import/...@version`) needs to be followed by running `go mod vendor` and commiting the resulting changes.
-
-If you have a seperate Go installation, run the following script to test that everything works as intended run
-
-```bash
-export GOROOT=$(go env GOROOT)
-test -d $GOROOT || exit 1 # the makefile needs GOROOT to be set
-cd FBTT/go-ssb-bindings
-make
-ls out/libssb-go.a`
-```
-
-ps: If you are already using [Homebrew](https://brew.sh/) you can also use `brew install go` instead of the installer from golang.org
 
 ## License
 

@@ -332,7 +332,7 @@ class DebugViewController: DebugTableViewController {
 
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: "Download logs",
+        settings += [DebugTableViewCellModel(title: "Export logs",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
                                          valueClosure: nil,
                                          actionClosure:
@@ -356,8 +356,17 @@ class DebugViewController: DebugTableViewController {
                 self.shareLogs(shouldZip: true, allFiles: false, cell: cell)
             }))
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-            self.present(alertController: alertController)
+            self.present(alertController: alertController, sourceView: cell)
         })]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: "Export database",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: nil,
+                actionClosure: self.shareDatabase(cell:)
+            )
+        ]
         
         settings += [DebugTableViewCellModel(title: "Simulate onboarding",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
@@ -442,9 +451,15 @@ class DebugViewController: DebugTableViewController {
         if appFileUrls.isEmpty, botFileURLs.isEmpty {
             self.alert(message: "There aren't logs yet.")
         } else if shouldZip {
+            cell.showActivityIndicator()
             let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
             let url = temporaryDirectory.appendingPathComponent(UUID().uuidString)
             DispatchQueue.global(qos: .background).async {
+                defer {
+                    DispatchQueue.main.sync {
+                        cell.hideActivityIndicator()
+                    }
+                }
                 do {
                     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
                     let zipFileURL = temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
@@ -500,6 +515,57 @@ class DebugViewController: DebugTableViewController {
                 share([firstBotFileURL])
             } else {
                 self.alert(message: "There aren't logs yet.")
+            }
+        }
+    }
+    
+    /// Allows the user to export the go-ssb log and SQLite database in a zip file. This function will zip up the files
+    /// and present a share sheet as a popover on the given cell.
+    private func shareDatabase(cell: UITableViewCell) {
+        cell.showActivityIndicator()
+
+        let presentShareSheet = { [weak self] (activityItems: [Any]) in
+            let activityController = UIActivityViewController(activityItems: activityItems,
+                                                              applicationActivities: nil)
+            self?.present(activityController, animated: true)
+            if let popOver = activityController.popoverPresentationController {
+                popOver.sourceView = cell
+            }
+        }
+        
+        let databaseDirectory = URL(fileURLWithPath: Bots.current.statistics.repo.path).deletingLastPathComponent()
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+        let url = temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            defer {
+                DispatchQueue.main.sync {
+                    cell.hideActivityIndicator()
+                }
+            }
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+                let zipFileURL = temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
+                let destFileURL = url.appendingPathComponent(databaseDirectory.lastPathComponent)
+                try FileManager.default.copyItem(at: databaseDirectory, to: destFileURL)
+                
+                let coord = NSFileCoordinator()
+                var readError: NSError?
+                coord.coordinate(readingItemAt: url, options: .forUploading, error: &readError) { (zippedURL: URL) -> Void in
+                    do {
+                        try FileManager.default.copyItem(at: zippedURL, to: zipFileURL)
+                    } catch let error {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.alert(error: error)
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        presentShareSheet([zipFileURL])
+                    }
+                }
+            } catch let error {
+                DispatchQueue.main.async { [weak self] in
+                    self?.alert(error: error)
+                }
             }
         }
     }

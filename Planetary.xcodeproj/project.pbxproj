@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -188,7 +188,7 @@
 		2343F1CC245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */; };
 		2343F1CD245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */; };
 		2344892824195F1B00C65DE2 /* PostMentionsBlob.json in Resources */ = {isa = PBXBuildFile; fileRef = 2344892724195F1B00C65DE2 /* PostMentionsBlob.json */; };
-		23448C20235F07ED00F6E484 /* GoBotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23448C1F235F07ED00F6E484 /* GoBotTests.swift */; };
+		23448C20235F07ED00F6E484 /* GoBotOrderedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */; };
 		2346ECB422141D9E009A94CB /* Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A2C21F18BF400D5C8C0 /* Bot.swift */; };
 		2346ECB522141DAD009A94CB /* KeyValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5369D2A9220BAFC600A65622 /* KeyValues.swift */; };
 		2346ECB7221420E1009A94CB /* GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2346ECB6221420E1009A94CB /* GoBot.swift */; };
@@ -227,7 +227,7 @@
 		2383DDA822F0FA5100D9E47C /* Onboarding+Follow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B822A0CDFB0004E2B1 /* Onboarding+Follow.swift */; };
 		238793E4246EC34D00C9AD36 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F76F228E65240058D67A /* RepeatingTimer.swift */; };
 		238793E5246EC34F00C9AD36 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306F76F228E65240058D67A /* RepeatingTimer.swift */; };
-		23888979220867DB0030CB92 /* FeedFill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23888978220867DB0030CB92 /* FeedFill.swift */; };
+		23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23888978220867DB0030CB92 /* ViewDatabaseTests.swift */; };
 		2388897B220867F00030CB92 /* Feed_example.json in Resources */ = {isa = PBXBuildFile; fileRef = 2388897A220867F00030CB92 /* Feed_example.json */; };
 		2388897C220868B70030CB92 /* ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233A8F89220138F600CE01CE /* ViewDatabase.swift */; };
 		2388897D22086A650030CB92 /* GoBotInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2334D04421F7786600AB28E2 /* GoBotInternal.swift */; };
@@ -288,7 +288,6 @@
 		2D009BF924550868001351CB /* EveryoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D009BF824550868001351CB /* EveryoneViewController.swift */; };
 		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		2D7FE7E5258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
-		2D7FE7E6258D076400356677 /* PostHogAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */; };
 		2DBA7C97263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C92263DB1FA008B646F /* Generated.strings */; };
 		2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
 		2DBA7C9F263DB2F5008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C9D263DB2F5008B646F /* Generated.strings */; };
@@ -475,7 +474,6 @@
 		5336611422D9669E00100707 /* UIColor+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5336611022D965B300100707 /* UIColor+Random.swift */; };
 		5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5336611222D965C700100707 /* UIColor+UIImage.swift */; };
 		5336611622D96AD500100707 /* Dictionary+JSONSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E29CD522D542B5008A2CB1 /* Dictionary+JSONSerialization.swift */; };
-		53375F7F231F12E400610932 /* UIViewController+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53375F7E231F12E400610932 /* UIViewController+UIAlertController.swift */; };
 		53375F812321757C00610932 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53375F802321757C00610932 /* GalleryView.swift */; };
 		53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53375F82232178DB00610932 /* UIPageControl+Verse.swift */; };
 		533D0A692389BEE400E5A374 /* ColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533D0A682389BEE400E5A374 /* ColorTests.swift */; };
@@ -566,7 +564,7 @@
 		5396A6232244356600C57A4B /* Layout+ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6222244356600C57A4B /* Layout+ContentView.swift */; };
 		5396A6252244358A00C57A4B /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6242244358A00C57A4B /* UIView+Layout.swift */; };
 		5396A62722444A1500C57A4B /* BotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62622444A1500C57A4B /* BotViewController.swift */; };
-		5396A62922444D9D00C57A4B /* UIViewController+Confirm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62822444D9D00C57A4B /* UIViewController+Confirm.swift */; };
+		5396A62922444D9D00C57A4B /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62822444D9D00C57A4B /* UIViewController+Alert.swift */; };
 		5396A62B22445BE900C57A4B /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62A22445BE900C57A4B /* AppConfiguration.swift */; };
 		5396A62F2245A50300C57A4B /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62E2245A50300C57A4B /* LaunchViewController.swift */; };
 		5396A631224823DD00C57A4B /* FeatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A630224823DD00C57A4B /* FeatureViewController.swift */; };
@@ -639,7 +637,6 @@
 		53CF2A4B220268CF00F0A2CC /* Abouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 53CF2A4A220268CF00F0A2CC /* Abouts.json */; };
 		53CF2A4D22026B1700F0A2CC /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CF2A4C22026B1700F0A2CC /* Image.swift */; };
 		53D66627222A55640001D9BB /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D66626222A55640001D9BB /* AnalyticsService.swift */; };
-		53D66629222A55D20001D9BB /* MixpanelAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D66628222A55D20001D9BB /* MixpanelAnalytics.swift */; };
 		53D8FF95236946D300EF986F /* PeersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D8FF94236946D300EF986F /* PeersView.swift */; };
 		53DF334E239F2A720017566D /* Log+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF334D239F2A720017566D /* Log+API.swift */; };
 		53DF335023A069FF0017566D /* AnalyticsService+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF334F23A069FF0017566D /* AnalyticsService+Bot.swift */; };
@@ -731,6 +728,15 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
+		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
+		C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */; };
+		C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */; };
+		C93A4B3C2798B711009F963D /* KeyValueWithReceivedSeq.json in Resources */ = {isa = PBXBuildFile; fileRef = C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */; };
+		C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */; };
+		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
+		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
+		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
+		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -887,7 +893,7 @@
 		233A8F89220138F600CE01CE /* ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabase.swift; sourceTree = "<group>"; };
 		2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Deduped.swift"; sourceTree = "<group>"; };
 		2344892724195F1B00C65DE2 /* PostMentionsBlob.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostMentionsBlob.json; sourceTree = "<group>"; };
-		23448C1F235F07ED00F6E484 /* GoBotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTests.swift; sourceTree = "<group>"; };
+		23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotOrderedTests.swift; sourceTree = "<group>"; };
 		2346ECB6221420E1009A94CB /* GoBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBot.swift; sourceTree = "<group>"; };
 		2346ECB922144D61009A94CB /* SimplePublishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePublishView.swift; sourceTree = "<group>"; };
 		2356500A2369C6CB00C3DBC0 /* DropContentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropContentRequest.swift; sourceTree = "<group>"; };
@@ -897,7 +903,7 @@
 		2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoBotReproductionHelper.swift; sourceTree = "<group>"; };
 		237D057F23351F5B00973D63 /* PostWithHashtags.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PostWithHashtags.json; sourceTree = "<group>"; };
 		2380CE90238D32A700E9D3F7 /* BlockedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedTests.swift; sourceTree = "<group>"; };
-		23888978220867DB0030CB92 /* FeedFill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedFill.swift; sourceTree = "<group>"; };
+		23888978220867DB0030CB92 /* ViewDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabaseTests.swift; sourceTree = "<group>"; };
 		2388897A220867F00030CB92 /* Feed_example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Feed_example.json; sourceTree = "<group>"; };
 		23888981220908110030CB92 /* Feed_big.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Feed_big.json; sourceTree = "<group>"; };
 		238E39DA22030E39002677AC /* Feed_cryptix2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Feed_cryptix2.json; sourceTree = "<group>"; };
@@ -1051,7 +1057,6 @@
 		53362F6D2209F754007264CB /* NetworkKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeyTests.swift; sourceTree = "<group>"; };
 		5336611022D965B300100707 /* UIColor+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Random.swift"; sourceTree = "<group>"; };
 		5336611222D965C700100707 /* UIColor+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+UIImage.swift"; sourceTree = "<group>"; };
-		53375F7E231F12E400610932 /* UIViewController+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+UIAlertController.swift"; sourceTree = "<group>"; };
 		53375F802321757C00610932 /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		53375F82232178DB00610932 /* UIPageControl+Verse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageControl+Verse.swift"; sourceTree = "<group>"; };
 		533D0A682389BEE400E5A374 /* ColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTests.swift; sourceTree = "<group>"; };
@@ -1127,7 +1132,7 @@
 		5396A6222244356600C57A4B /* Layout+ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Layout+ContentView.swift"; sourceTree = "<group>"; };
 		5396A6242244358A00C57A4B /* UIView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		5396A62622444A1500C57A4B /* BotViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotViewController.swift; sourceTree = "<group>"; };
-		5396A62822444D9D00C57A4B /* UIViewController+Confirm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Confirm.swift"; sourceTree = "<group>"; };
+		5396A62822444D9D00C57A4B /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		5396A62A22445BE900C57A4B /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		5396A62E2245A50300C57A4B /* LaunchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
 		5396A630224823DD00C57A4B /* FeatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureViewController.swift; sourceTree = "<group>"; };
@@ -1189,7 +1194,6 @@
 		53CF2A4A220268CF00F0A2CC /* Abouts.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Abouts.json; sourceTree = "<group>"; };
 		53CF2A4C22026B1700F0A2CC /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		53D66626222A55640001D9BB /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
-		53D66628222A55D20001D9BB /* MixpanelAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelAnalytics.swift; sourceTree = "<group>"; };
 		53D8FF94236946D300EF986F /* PeersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeersView.swift; sourceTree = "<group>"; };
 		53DF334D239F2A720017566D /* Log+API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Log+API.swift"; sourceTree = "<group>"; };
 		53DF334F23A069FF0017566D /* AnalyticsService+Bot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsService+Bot.swift"; sourceTree = "<group>"; };
@@ -1268,6 +1272,28 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
+		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
+		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
+		C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueWithReceivedSeq.json; sourceTree = "<group>"; };
+		C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueFixtures.swift; sourceTree = "<group>"; };
+		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
+		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
+		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
+		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
+		C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
+		C98A01412790B9ED00E29A97 /* UITests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UITests.debug.xcconfig; sourceTree = "<group>"; };
+		C98A01422790B9EE00E29A97 /* Planetary.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.debug.xcconfig; sourceTree = "<group>"; };
+		C98A01432790B9EF00E29A97 /* APITests.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APITests.release.xcconfig; sourceTree = "<group>"; };
+		C98A01442790B9F000E29A97 /* APITests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = APITests.debug.xcconfig; sourceTree = "<group>"; };
+		C98A01452790B9F100E29A97 /* UnitTests.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UnitTests.release.xcconfig; sourceTree = "<group>"; };
+		C98A01462790B9F100E29A97 /* Planetary.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Planetary.release.xcconfig; sourceTree = "<group>"; };
+		C98A01472790B9F200E29A97 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
+		C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UnitTests.debug.xcconfig; sourceTree = "<group>"; };
+		C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
+		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feed_big.sqlite; sourceTree = "<group>"; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1313,6 +1339,7 @@
 			files = (
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
+				C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */,
 				8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1501,46 +1528,23 @@
 		5308168621C46A53005C48ED /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				C98A0138279084D400E29A97 /* Test Helpers */,
+				C98A013727907FF600E29A97 /* Resources */,
+				C98A013627907F9200E29A97 /* Performance */,
 				533D0A682389BEE400E5A374 /* ColorTests.swift */,
 				533EDBE72385F7CD008B3565 /* CacheTests.swift */,
 				530F018422DACDC3007EBAE2 /* DateTests.swift */,
 				53E29CE322D8E423008A2CB1 /* AttributedStringTests.swift */,
-				53CF2A4A220268CF00F0A2CC /* Abouts.json */,
 				53211CEC22852216007FB785 /* AppConfigurationTests.swift */,
-				531A8A5221FB78A900D5C8C0 /* Channel.json */,
-				23C7445D2200B20500FB554A /* Contacts.json */,
-				23A0A3B322490B1C00CAC295 /* ContentPrivate.json */,
 				531A8A4621FA36A600D5C8C0 /* ContentTests.swift */,
-				53CF2A48220262B700F0A2CC /* ContentVote.json */,
 				23E880B422857F8700486AD0 /* EnocdeJSONtest.swift */,
-				23888981220908110030CB92 /* Feed_big.json */,
-				238E39DA22030E39002677AC /* Feed_cryptix2.json */,
-				0A41F577248F1637005BB1DE /* Feed_example_preload.json */,
-				2388897A220867F00030CB92 /* Feed_example.json */,
-				23888978220867DB0030CB92 /* FeedFill.swift */,
-				235FC914220096300083420F /* FirstAndEncrypted.json */,
-				23448C1F235F07ED00F6E484 /* GoBotTests.swift */,
+				23888978220867DB0030CB92 /* ViewDatabaseTests.swift */,
+				23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */,
+				C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */,
 				2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */,
 				5308168721C46A53005C48ED /* IdentifierTests.swift */,
-				5308168921C46A53005C48ED /* Info.plist */,
-				5316E95821FFD19F0053832E /* Invalid.json */,
-				5316E95A21FFD4980053832E /* InvalidChannel.json */,
-				53EE01FD2205099100DFDF16 /* InvalidSecretMissingPrivate.json */,
-				23CF345622099E5D00F46A54 /* InvalidVoteMissingIdentifier.json */,
-				531A8A4D21FA619A00D5C8C0 /* KeyValue.json */,
-				23C7445B2200B1EF00FB554A /* KeyValueVote.json */,
 				53362F6D2209F754007264CB /* NetworkKeyTests.swift */,
-				5316E95421FFC7FB0053832E /* PostBranchArray.json */,
-				531A8A4B21FA5E4700D5C8C0 /* PostBranchField.json */,
-				23CA4B8F23228A5F005B35E8 /* PostWithAltText.json */,
-				53EE01F72205003500DFDF16 /* Secret.json */,
 				53EE01F52204FFC400DFDF16 /* SecretTests.swift */,
-				531A8A5421FB87A600D5C8C0 /* UnsupportedBlob.json */,
-				5316E95621FFCDFF0053832E /* UnsupportedType.json */,
-				2344892724195F1B00C65DE2 /* PostMentionsBlob.json */,
-				237D057F23351F5B00973D63 /* PostWithHashtags.json */,
-				23237A112423CE0300FE112C /* PostsWithMentions.json */,
-				23E76A5523F2F0F70074F424 /* ValueTimestamp.json */,
 				0ABCA9092437C22400D7F39C /* MarkdownTests.swift */,
 			);
 			path = UnitTests;
@@ -1758,6 +1762,9 @@
 		5344D82221C4649700704A34 = {
 			isa = PBXGroup;
 			children = (
+				C9489999278CCC3A009BE021 /* README.md */,
+				C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */,
+				C9570F652788E2280095EFFF /* Architecture */,
 				5308169221C46A6E005C48ED /* APITests */,
 				531B92BE22CDA4F9005D5255 /* Deprecated */,
 				0A3880192475BB4500777843 /* UITests */,
@@ -1791,6 +1798,7 @@
 				5312143B21CD60A600F3FCEB /* App */,
 				531A8A2B21F18BE000D5C8C0 /* Bot */,
 				533EDBDE2385F3B1008B3565 /* Cache */,
+				C98A013F2790B9EB00E29A97 /* Configs */,
 				531A8A4521F96F3500D5C8C0 /* Controller */,
 				0A07AB1A2425226E00EFD47F /* CrashReporting */,
 				53C422AB21C4769900A314AD /* Debug */,
@@ -1830,6 +1838,8 @@
 		5355556EBCE069620663A547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C9570F63278752D30095EFFF /* GoSSB.xcframework */,
+				C95A131F2786279A00FFD52F /* Foundation.framework */,
 				531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */,
 				531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */,
 				E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */,
@@ -2091,11 +2101,10 @@
 				531749962370EED800F4C381 /* UIView+Superview.swift */,
 				531749942370EC7700F4C381 /* UIView+UIImage.swift */,
 				539208B3235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift */,
-				5396A62822444D9D00C57A4B /* UIViewController+Confirm.swift */,
+				5396A62822444D9D00C57A4B /* UIViewController+Alert.swift */,
 				53E341FF225000D4002BB5F4 /* UIViewController+Keyboard.swift */,
 				8D74DE002335601F003C284B /* UIViewController+NavigationItems.swift */,
 				535B6A092372360F008C248E /* UIViewController+TopViewController.swift */,
-				53375F7E231F12E400610932 /* UIViewController+UIAlertController.swift */,
 				533DAFA4223AD2D600229EB3 /* XCTest+Test.swift */,
 				53EE01FA2205035800DFDF16 /* XCTestCase+JSON.swift */,
 			);
@@ -2127,7 +2136,6 @@
 				0A387FF32474E09200777843 /* Analytics.swift */,
 				53D66626222A55640001D9BB /* AnalyticsService.swift */,
 				5306F775228F07D00058D67A /* AnalyticsEnums.swift */,
-				53D66628222A55D20001D9BB /* MixpanelAnalytics.swift */,
 				2D7FE7E4258D076400356677 /* PostHogAnalytics.swift */,
 				5357BD7C23CFD0B9005665AB /* UserDefaults+AnalyticsService.swift */,
 				53C2B12E2295A95A0018D0A8 /* NullAnalytics.swift */,
@@ -2254,6 +2262,77 @@
 			path = Buttons;
 			sourceTree = "<group>";
 		};
+		C98A013627907F9200E29A97 /* Performance */ = {
+			isa = PBXGroup;
+			children = (
+				C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */,
+			);
+			path = Performance;
+			sourceTree = "<group>";
+		};
+		C98A013727907FF600E29A97 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C98A014A2790C5A800E29A97 /* Feed_big.sqlite */,
+				5308168921C46A53005C48ED /* Info.plist */,
+				53CF2A4A220268CF00F0A2CC /* Abouts.json */,
+				531A8A5221FB78A900D5C8C0 /* Channel.json */,
+				23C7445D2200B20500FB554A /* Contacts.json */,
+				23A0A3B322490B1C00CAC295 /* ContentPrivate.json */,
+				53CF2A48220262B700F0A2CC /* ContentVote.json */,
+				23888981220908110030CB92 /* Feed_big.json */,
+				238E39DA22030E39002677AC /* Feed_cryptix2.json */,
+				0A41F577248F1637005BB1DE /* Feed_example_preload.json */,
+				2388897A220867F00030CB92 /* Feed_example.json */,
+				235FC914220096300083420F /* FirstAndEncrypted.json */,
+				5316E95821FFD19F0053832E /* Invalid.json */,
+				5316E95A21FFD4980053832E /* InvalidChannel.json */,
+				53EE01FD2205099100DFDF16 /* InvalidSecretMissingPrivate.json */,
+				23CF345622099E5D00F46A54 /* InvalidVoteMissingIdentifier.json */,
+				531A8A4D21FA619A00D5C8C0 /* KeyValue.json */,
+				23C7445B2200B1EF00FB554A /* KeyValueVote.json */,
+				C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */,
+				5316E95421FFC7FB0053832E /* PostBranchArray.json */,
+				531A8A4B21FA5E4700D5C8C0 /* PostBranchField.json */,
+				23CA4B8F23228A5F005B35E8 /* PostWithAltText.json */,
+				53EE01F72205003500DFDF16 /* Secret.json */,
+				531A8A5421FB87A600D5C8C0 /* UnsupportedBlob.json */,
+				5316E95621FFCDFF0053832E /* UnsupportedType.json */,
+				2344892724195F1B00C65DE2 /* PostMentionsBlob.json */,
+				237D057F23351F5B00973D63 /* PostWithHashtags.json */,
+				23237A112423CE0300FE112C /* PostsWithMentions.json */,
+				23E76A5523F2F0F70074F424 /* ValueTimestamp.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C98A0138279084D400E29A97 /* Test Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */,
+				C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */,
+				C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */,
+			);
+			path = "Test Helpers";
+			sourceTree = "<group>";
+		};
+		C98A013F2790B9EB00E29A97 /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				C98A01422790B9EE00E29A97 /* Planetary.debug.xcconfig */,
+				C98A01462790B9F100E29A97 /* Planetary.release.xcconfig */,
+				C98A01442790B9F000E29A97 /* APITests.debug.xcconfig */,
+				C98A01432790B9EF00E29A97 /* APITests.release.xcconfig */,
+				C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */,
+				C98A01452790B9F100E29A97 /* UnitTests.release.xcconfig */,
+				C98A01472790B9F200E29A97 /* Environment.swift */,
+				C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */,
+				C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */,
+				C98A01412790B9ED00E29A97 /* UITests.debug.xcconfig */,
+			);
+			path = Configs;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2282,7 +2361,6 @@
 			buildConfigurationList = 5308168A21C46A53005C48ED /* Build configuration list for PBXNativeTarget "UnitTests" */;
 			buildPhases = (
 				1E66957E1EE019E96375E455 /* [CP] Check Pods Manifest.lock */,
-				2391BF6E22FC68E3005DE311 /* Run Script */,
 				5308168121C46A52005C48ED /* Sources */,
 				5308168221C46A52005C48ED /* Frameworks */,
 				5308168321C46A52005C48ED /* Resources */,
@@ -2303,7 +2381,6 @@
 			buildConfigurationList = 5308169621C46A6E005C48ED /* Build configuration list for PBXNativeTarget "APITests" */;
 			buildPhases = (
 				79232A0BDB520E7E70C3774E /* [CP] Check Pods Manifest.lock */,
-				23498B3A22FD690E00459AAE /* ShellScript */,
 				5308168D21C46A6E005C48ED /* Sources */,
 				5308168E21C46A6E005C48ED /* Frameworks */,
 				5308168F21C46A6E005C48ED /* Resources */,
@@ -2325,13 +2402,12 @@
 			buildPhases = (
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
 				8D9143FB230C6B670075BC8A /* Generate Localized Strings */,
-				5392AF0A224BE802009F763B /* Build libssb-go.a */,
 				5344D82721C4649700704A34 /* Sources */,
+				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				5344D82821C4649700704A34 /* Frameworks */,
 				5344D82921C4649700704A34 /* Resources */,
-				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				F03FDAAC62494C507A69A807 /* [CP] Embed Pods Frameworks */,
-				530E4CAE2370FBEE0094E138 /* Run Zendesk Script */,
+				1CB03AF84C66F1D3D7DBE245 /* Upload Bugsnag dSYM */,
 			);
 			buildRules = (
 			);
@@ -2349,7 +2425,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "Verse Communications Inc";
 				TargetAttributes = {
 					0A3880172475BB4500777843 = {
@@ -2377,7 +2453,7 @@
 				};
 			};
 			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */;
-			compatibilityVersion = "Xcode 10.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -2417,6 +2493,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C93A4B3C2798B711009F963D /* KeyValueWithReceivedSeq.json in Resources */,
 				238E39DB22030E39002677AC /* Feed_cryptix2.json in Resources */,
 				531A8A5321FB78A900D5C8C0 /* Channel.json in Resources */,
 				23237A122423CE0300FE112C /* PostsWithMentions.json in Resources */,
@@ -2434,9 +2511,11 @@
 				53EE01F82205003500DFDF16 /* Secret.json in Resources */,
 				53EE01FE2205099100DFDF16 /* InvalidSecretMissingPrivate.json in Resources */,
 				5316E95B21FFD4980053832E /* InvalidChannel.json in Resources */,
+				C924412F278DDECE00592E5E /* Preload.bundle in Resources */,
 				5316E95721FFCDFF0053832E /* UnsupportedType.json in Resources */,
 				23D8E2C022033D31004776EA /* (null) in Resources */,
 				5316E95921FFD19F0053832E /* Invalid.json in Resources */,
+				C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */,
 				23C7445C2200B1EF00FB554A /* KeyValueVote.json in Resources */,
 				237D058023351F5B00973D63 /* PostWithHashtags.json in Resources */,
 				0A41F578248F1638005BB1DE /* Feed_example_preload.json in Resources */,
@@ -2482,6 +2561,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1CB03AF84C66F1D3D7DBE245 /* Upload Bugsnag dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+			);
+			name = "Upload Bugsnag dSYM";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env ruby";
+			shellScript = "api_key = nil # Insert your key here to use it directly from this script\n\n# Attempt to get the API key from an environment variable\nunless api_key\n  api_key = ENV[\"BUGSNAG_API_KEY\"]\n\n  # If not present, attempt to lookup the value from the Info.plist\n  unless api_key\n    info_plist_path = \"#{ENV[\"BUILT_PRODUCTS_DIR\"]}/#{ENV[\"INFOPLIST_PATH\"]}\"\n    plist_buddy_response = `/usr/libexec/PlistBuddy -c \"print :bugsnag:apiKey\" \"#{info_plist_path}\"`\n    plist_buddy_response = `/usr/libexec/PlistBuddy -c \"print :BugsnagAPIKey\" \"#{info_plist_path}\"` if !$?.success?\n    api_key = plist_buddy_response if $?.success?\n  end\nend\n\nputs api_key\n\nunless api_key\n    warn \"warning: No Bugsnag API key detected - skipping dSYM upload. Add your key to your Info.plist, BUGSNAG_API_KEY environment variable or this Run Script phase\"\n    exit 0\nend\n\nfork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    curl_command = \"curl --http1.1 -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} \"\n    curl_command += \"-F apiKey=#{Shellwords.escape(api_key)} \"\n    curl_command += \"https://upload.bugsnag.com/\"\n    system(curl_command)\n  end\nend\n";
+			showEnvVarsInLog = 0;
+		};
 		1E66957E1EE019E96375E455 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2503,79 +2603,6 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
-		};
-		23498B3A22FD690E00459AAE /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# trigger Makefile in go-ssb-bindings\nset -e\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
-		};
-		2391BF6E22FC68E3005DE311 /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# trigger Makefile in go-ssb-bindings\nset -e\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n";
-			showEnvVarsInLog = 0;
-		};
-		530E4CAE2370FBEE0094E138 /* Run Zendesk Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Zendesk Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZendeskSDK.framework/strip-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5392AF0A224BE802009F763B /* Build libssb-go.a */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Build libssb-go.a";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/go-ssb-bindings/.goroot\n${PROJECT_DIR}/Scripts/go_install.sh\n\npushd ${PROJECT_DIR}/go-ssb-bindings\nmake\npopd\n\n# Type a script or drag a script file from your workspace to insert its path.\nif [ ${CONFIGURATION} == \"Release\" ]\nthen\n    set -e\n    ${PROJECT_DIR}/Scripts/increment_build.sh ${PROJECT_DIR}/Resources/Info.plist\nfi\n";
 		};
 		57BAA8693E4EEF15A30FDE21 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2774,10 +2801,12 @@
 				53AD3FEA227769F2005228F9 /* Thread+Assert.swift in Sources */,
 				53B4F5FD22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
 				5369D2AF220CF39E00A65622 /* Data+JSON.swift in Sources */,
+				C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */,
 				530F018822DAD5D8007EBAE2 /* Date+Random.swift in Sources */,
 				0ACE91AC243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */,
 				23EF5A9B249CDCF900469977 /* BlocksAPIService.swift in Sources */,
 				53211CF0228522B2007FB785 /* FakeBot.swift in Sources */,
+				C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */,
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
 				0A64A83924735392009A5EBF /* PushAPIService.swift in Sources */,
 				53C2B13C2295BC940018D0A8 /* Keychain.swift in Sources */,
@@ -2803,6 +2832,7 @@
 				2358696224A0FB9100F4FC1D /* URLRequest+APIHeaders.swift in Sources */,
 				53211CEF228522A0007FB785 /* Bots.swift in Sources */,
 				53E29CCB22D292A3008A2CB1 /* String+Whitespace.swift in Sources */,
+				C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */,
 				533EDBF62389BDD4008B3565 /* UIImage+AverageColor.swift in Sources */,
 				533DAFA5223AD2D600229EB3 /* XCTest+Test.swift in Sources */,
 				535CD3802267F5F90039BCF2 /* ContentCodable.swift in Sources */,
@@ -2811,7 +2841,7 @@
 				23EF5AAA249D177F00469977 /* BlockedAPI.swift in Sources */,
 				53E26C5E23045D34009240B2 /* Data+Person.swift in Sources */,
 				23C7A47922748E8700F02311 /* URL+Identifier.swift in Sources */,
-				23448C20235F07ED00F6E484 /* GoBotTests.swift in Sources */,
+				23448C20235F07ED00F6E484 /* GoBotOrderedTests.swift in Sources */,
 				53B4F5FA22B8602F00027C6A /* Mention+NSAttributedString.swift in Sources */,
 				0A64A843247355ED009A5EBF /* Log+API.swift in Sources */,
 				0A64A84824735717009A5EBF /* PhoneVerificationAPIService.swift in Sources */,
@@ -2822,6 +2852,7 @@
 				53AD3FEC22776A4C005228F9 /* Date+millisecs.swift in Sources */,
 				23E8806022F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				53631EF623A9A93F009C6999 /* Blob+String.swift in Sources */,
+				C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */,
 				0A387FFC2474E65300777843 /* PhoneVerificationAPI.swift in Sources */,
 				53C2B1352295AC040018D0A8 /* AppConfiguration+Data.swift in Sources */,
 				53E29CCA22D29295008A2CB1 /* Array+SafeSubscript.swift in Sources */,
@@ -2830,6 +2861,7 @@
 				23C744552200B12200FB554A /* Profile.swift in Sources */,
 				237D057C2335149100973D63 /* Blob+UIImage.swift in Sources */,
 				2358695B24A0FB1100F4FC1D /* URLResponse+APIError.swift in Sources */,
+				C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */,
 				53CF2A4D22026B1700F0A2CC /* Image.swift in Sources */,
 				0A38800F2475ACF000777843 /* PubAPI.swift in Sources */,
 				533EDBE92385F7E7008B3565 /* Cache.swift in Sources */,
@@ -2873,7 +2905,7 @@
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				23E880B522857F8700486AD0 /* EnocdeJSONtest.swift in Sources */,
 				53211CE522838107007FB785 /* UIImage+Resize.swift in Sources */,
-				23888979220867DB0030CB92 /* FeedFill.swift in Sources */,
+				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				53211CE622838121007FB785 /* Image+UIImage.swift in Sources */,
 				53362F6F2209F8D5007264CB /* NetworkKey.swift in Sources */,
 				0A64A852247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
@@ -3030,7 +3062,6 @@
 				0A64A80B24734CD5009A5EBF /* AnalyticsService+Conversions.swift in Sources */,
 				0ABCA8F02435550F00D7F39C /* CrashReportingService.swift in Sources */,
 				5314EF5A22EA298D0065D02A /* Thread+Assert.swift in Sources */,
-				2D7FE7E6258D076400356677 /* PostHogAnalytics.swift in Sources */,
 				0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				536255CF23AAAA30001007D0 /* AnalyticsEnums.swift in Sources */,
 				5314EF7222EA34230065D02A /* Date+OlderThan.swift in Sources */,
@@ -3116,7 +3147,6 @@
 				0ABCA8F92436769400D7F39C /* APIError.swift in Sources */,
 				535CD37F2267F2C60039BCF2 /* ContentCodable.swift in Sources */,
 				539FD4CB22C586CC005A4DF2 /* ReplyTextView.swift in Sources */,
-				53D66629222A55D20001D9BB /* MixpanelAnalytics.swift in Sources */,
 				536255D123AAC5F0001007D0 /* AppDelegate+Background.swift in Sources */,
 				531EC40A230EF2DA001A25AD /* PreviewSettingsViewController.swift in Sources */,
 				5349E4AE23514CC000E21053 /* UINavigationBar+Verse.swift in Sources */,
@@ -3138,7 +3168,6 @@
 				53B4F5FC22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
 				531B92B522CBDDAD005D5255 /* UIView+NSLayoutConstraint.swift in Sources */,
 				53C422AD21C4769900A314AD /* DebugViewController.swift in Sources */,
-				53375F7F231F12E400610932 /* UIViewController+UIAlertController.swift in Sources */,
 				5396A62B22445BE900C57A4B /* AppConfiguration.swift in Sources */,
 				5357BD7F23D15471005665AB /* AppDelegate+Repair.swift in Sources */,
 				5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */,
@@ -3397,7 +3426,7 @@
 				531EC40C230F6B9E001A25AD /* DebugPostsViewController.swift in Sources */,
 				0A65A62E244DEB65004C48C8 /* SupportService.swift in Sources */,
 				530F01AE22DEAE86007EBAE2 /* DoneOnboardingStep.swift in Sources */,
-				5396A62922444D9D00C57A4B /* UIViewController+Confirm.swift in Sources */,
+				5396A62922444D9D00C57A4B /* UIViewController+Alert.swift in Sources */,
 				8DE093DC234651E1009E505D /* FollowButton.swift in Sources */,
 				539246E022A9CCBF00D01EEC /* Person.swift in Sources */,
 				53C422B721C476B000A314AD /* DebugTableViewController.swift in Sources */,
@@ -3579,7 +3608,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Resources/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3611,7 +3641,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Resources/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3727,6 +3758,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -3789,6 +3821,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -3827,7 +3860,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 254;
+				CURRENT_PROJECT_VERSION = 307;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3841,23 +3874,11 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.12;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"KeychainSwift\"",
-					"-framework",
-					"\"Mixpanel\"",
-					"-framework",
-					"\"PhoneNumberKit\"",
-					"-framework",
-					"\"SQLite\"",
-					"-framework",
-					"\"SVProgressHUD\"",
-					"-lssb-go",
-				);
+				MARKETING_VERSION = 1.0.20;
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -3875,7 +3896,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 254;
+				CURRENT_PROJECT_VERSION = 307;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3889,23 +3910,11 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.12;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					"\"KeychainSwift\"",
-					"-framework",
-					"\"Mixpanel\"",
-					"-framework",
-					"\"PhoneNumberKit\"",
-					"-framework",
-					"\"SQLite\"",
-					"-framework",
-					"\"SVProgressHUD\"",
-					"-lssb-go",
-				);
+				MARKETING_VERSION = 1.0.20;
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";

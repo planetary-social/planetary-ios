@@ -48,8 +48,8 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
         self.imageView.image = self.data.image
     }
 
-    override func secondary() {
-        self.imagePicker.present() {
+    override func performSecondaryAction(sender button: UIButton) {
+        self.imagePicker.present(from: button) {
             [unowned self] image in
             self.imageView.image = image
             self.data.image = image
@@ -58,7 +58,7 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
         }
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
 
         // SIMULATE ONBOARDING
         if self.data.simulated { self.next(); return }
