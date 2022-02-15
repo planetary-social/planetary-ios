@@ -13,7 +13,7 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.2.0)
   - PhoneNumberKit/UIKit (3.2.0):
     - PhoneNumberKit/PhoneNumberKitCore
-  - PostHog (1.4.4)
+  - PostHog (1.1.0)
   - SkeletonView (1.8.7)
   - SQLite.swift (0.12.2):
     - SQLite.swift/standard (= 0.12.2)
@@ -79,7 +79,7 @@ SPEC CHECKSUMS:
   Keys: a576f4c9c1c641ca913a959a9c62ed3f215a8de9
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
   PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
-  PostHog: 4b6321b521569092d4ef3a02238d9435dbaeb99f
+  PostHog: 6dff77246fcc4bc77a066a93853ee8b57a623060
   SkeletonView: ba5370f41280b2f0a76918bb143c1294232bb4f4
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
@@ -91,6 +91,6 @@ SPEC CHECKSUMS:
   ZendeskSupportProvidersSDK: 2bdf8544f7cd0fd4c002546f5704b813845beb2a
   ZendeskSupportSDK: 3a8e508ab1d9dd22dc038df6c694466414e037ba
 
-PODFILE CHECKSUM: d71a84ae05fe4d68ab6f48b57a2205ea1532169d
+PODFILE CHECKSUM: 9d252b47f2017321157598df76b9eb4e4a3fc370
 
 COCOAPODS: 1.11.2

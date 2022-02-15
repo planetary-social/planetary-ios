@@ -100,7 +100,7 @@ static NSString *const kPHGAnonymousIdFilename = @"posthog.anonymousId";
 
 - (void)identify:(NSString *)distinctId properties:(NSDictionary *)properties options:(NSDictionary *)options
 {
-    NSCAssert1(distinctId.length > 0, @"distinctId (%@) must not be empty.", distinctId);
+    NSCAssert2(distinctId.length > 0 || properties.count > 0, @"either distinctId (%@) or properties (%@) must be provided.", distinctId, properties);
 
     NSString *anonymousId = [options objectForKey:@"$anon_distinct_id"];
     if (anonymousId) {
@@ -217,7 +217,7 @@ static NSString *const kPHGAnonymousIdFilename = @"posthog.anonymousId";
         // We've chosen to generate a UUID rather than use the UDID (deprecated in iOS 5),
         // identifierForVendor (iOS6 and later, can't be changed on logout),
         // or MAC address (blocked in iOS 7).
-        anonymousId = createUUIDString();
+        anonymousId = GenerateUUIDString();
         PHGLog(@"New anonymousId: %@", anonymousId);
 #if TARGET_OS_TV
         [self.userDefaultsStorage setString:anonymousId forKey:PHGAnonymousIdKey];

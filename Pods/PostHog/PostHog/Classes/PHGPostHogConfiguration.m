@@ -1,4 +1,5 @@
 #import "PHGPostHogConfiguration.h"
+#import "PHGCrypto.h"
 #import "PHGPostHog.h"
 
 
@@ -50,8 +51,9 @@
 {
     if (self = [super init]) {
         self.shouldUseLocationServices = NO;
+        self.enableAdvertisingCapturing = YES;
+        self.adSupportBlock = nil;
         self.shouldUseBluetooth = NO;
-        self.shouldSendDeviceID = YES;
         self.flushAt = 20;
         self.flushInterval = 30;
         self.maxQueueSize = 1000;

@@ -1,17 +1,17 @@
 #import <Foundation/Foundation.h>
-#import "PHGSerializableValue.h"
+#import <PostHog/PHGSerializableValue.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString *createUUIDString(void);
+NSString *GenerateUUIDString(void);
 
 // Validation Utils
 BOOL serializableDictionaryTypes(NSDictionary *dict);
 
 // Date Utils
-NSString *createISO8601FormattedString(NSDate *date);
+NSString *iso8601FormattedString(NSDate *date);
 
-void trimQueueItems(NSMutableArray *array, NSUInteger size);
+void trimQueue(NSMutableArray *array, NSUInteger size);
 
 // Async Utils
 dispatch_queue_t phg_dispatch_queue_create_specific(const char *label,

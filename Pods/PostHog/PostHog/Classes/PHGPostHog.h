@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
+#import "PHGCrypto.h"
 #import "PHGPostHogConfiguration.h"
 #import "PHGSerializableValue.h"
-#import "PHGCrypto.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,11 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface PHGPostHog : NSObject
-
-/**
- * Whether or not the posthog client is currently enabled.
- */
-@property (nonatomic, assign, readonly) BOOL enabled;
 
 /**
  * Used by the posthog client to configure various options.
@@ -68,9 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
  When you learn more about who your user is, you can record that information with identify.
 
  */
-- (void)identify:(NSString *)distinctId properties:(SERIALIZABLE_DICT _Nullable)properties options:(SERIALIZABLE_DICT _Nullable)options;
-- (void)identify:(NSString *)distinctId properties:(SERIALIZABLE_DICT _Nullable)properties;
-- (void)identify:(NSString *)distinctId;
+- (void)identify:(NSString *_Nullable)distinctId properties:(SERIALIZABLE_DICT _Nullable)properties options:(SERIALIZABLE_DICT _Nullable)options;
+- (void)identify:(NSString *_Nullable)distinctId properties:(SERIALIZABLE_DICT _Nullable)properties;
+- (void)identify:(NSString *_Nullable)distinctId;
 
 
 /*!

@@ -4,10 +4,14 @@
 #import "PHGPostHog.h"
 #import "UIViewController+PHGScreen.h"
 #import "PHGStoreKitCapturer.h"
+#import "PHGHTTPClient.h"
 #import "PHGStorage.h"
+#import "PHGFileStorage.h"
+#import "PHGUserDefaultsStorage.h"
 #import "PHGMiddleware.h"
+#import "PHGContext.h"
 #import "PHGPayloadManager.h"
-#import "PHGUtils.h"
+#import "Internal/PHGUtils.h"
 #import "PHGPayload.h"
 #import "PHGIdentifyPayload.h"
 #import "PHGCapturePayload.h"
@@ -379,7 +383,7 @@ NSString *const PHGBuildKeyV2 = @"PHGBuildKeyV2";
 {
     // this has to match the actual version, NOT what's in info.plist
     // because Apple only accepts X.X.X as versions in the review process.
-    return @"1.3.0";
+    return @"1.0.5";
 }
 
 #pragma mark - Helpers

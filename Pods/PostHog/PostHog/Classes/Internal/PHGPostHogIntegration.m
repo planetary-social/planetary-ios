@@ -22,6 +22,7 @@ NSString *const PHGPostHogDidSendRequestNotification = @"PostHogDidSendRequest";
 NSString *const PHGPostHogRequestDidSucceedNotification = @"PostHogRequestDidSucceed";
 NSString *const PHGPostHogRequestDidFailNotification = @"PostHogRequestDidFail";
 
+NSString *const PHGAdvertisingClassIdentifier = @"ASIdentifierManager";
 NSString *const PHGADClientClass = @"ADClient";
 
 NSString *const PHGDistinctIdKey = @"PHGDistinctId";
@@ -39,6 +40,18 @@ static NSString *GetDeviceModel()
     NSString *results = [NSString stringWithCString:result encoding:NSUTF8StringEncoding];
     return results;
 }
+
+static BOOL GetAdCapturingEnabled()
+{
+    BOOL result = NO;
+    Class advertisingManager = NSClassFromString(PHGAdvertisingClassIdentifier);
+    SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
+    id sharedManager = ((id (*)(id, SEL))[advertisingManager methodForSelector:sharedManagerSelector])(advertisingManager, sharedManagerSelector);
+    SEL adTrackingEnabledSEL = NSSelectorFromString(@"isAdvertisingTrackingEnabled");
+    result = ((BOOL (*)(id, SEL))[sharedManager methodForSelector:adTrackingEnabledSEL])(sharedManager, adTrackingEnabledSEL);
+    return result;
+}
+
 
 @interface PHGPostHogIntegration ()
 
@@ -136,8 +149,15 @@ static CTTelephonyNetworkInfo *_telephonyNetworkInfo;
     dict[@"$device_manufacturer"] = @"Apple";
     dict[@"$device_type"] = @"ios";
     dict[@"$device_model"] = GetDeviceModel();
-    dict[@"$device_id"] = self.configuration.shouldSendDeviceID ? [[device identifierForVendor] UUIDString] : nil;
+    dict[@"$device_id"] = [[device identifierForVendor] UUIDString];
     dict[@"$device_name"] = [device model];
+    if (NSClassFromString(PHGAdvertisingClassIdentifier)) {
+        dict[@"$device_adCapturingEnabled"] = @(GetAdCapturingEnabled());
+    }
+    if (self.configuration.enableAdvertisingCapturing && self.configuration.adSupportBlock != nil) {
+        NSString *idfa = self.configuration.adSupportBlock();
+        if (idfa.length) dict[@"$device_advertisingId"] = idfa;
+    }
 
     dict[@"$os_name"] = device.systemName;
     dict[@"$os_version"] = device.systemVersion;
@@ -391,8 +411,8 @@ static CTTelephonyNetworkInfo *_telephonyNetworkInfo;
 {
     // attach these parts of the payload outside since they are all synchronous
     // and the timestamp will be more accurate.
-    payload[@"timestamp"] = createISO8601FormattedString([NSDate date]);
-    payload[@"message_id"] = createUUIDString();
+    payload[@"timestamp"] = iso8601FormattedString([NSDate date]);
+    payload[@"message_id"] = GenerateUUIDString();
 
     [self dispatchBackground:^{
         // attach distinctId and anonymousId inside the dispatch_async in case
@@ -415,7 +435,7 @@ static CTTelephonyNetworkInfo *_telephonyNetworkInfo;
 {
     @try {
         // Trim the queue to maxQueueSize - 1 before we add a new element.
-        trimQueueItems(self.queue, self.posthog.configuration.maxQueueSize - 1);
+        trimQueue(self.queue, self.posthog.configuration.maxQueueSize - 1);
         [self.queue addObject:payload];
         [self persistQueue];
         [self flushQueueByLength];
@@ -488,7 +508,7 @@ static CTTelephonyNetworkInfo *_telephonyNetworkInfo;
 - (void)sendData:(NSArray *)batch
 {
     NSMutableDictionary *payload = [[NSMutableDictionary alloc] init];
-    [payload setObject:createISO8601FormattedString([NSDate date]) forKey:@"sent_at"];
+    [payload setObject:iso8601FormattedString([NSDate date]) forKey:@"sent_at"];
     [payload setObject:batch forKey:@"batch"];
     [payload setObject:self.configuration.apiKey forKey:@"api_key"];
 
