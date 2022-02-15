@@ -146,7 +146,7 @@ class PeersView: UIView {
             switch operation.result {
             case .success(let statistics):
                 DispatchQueue.main.async {
-                    self.update(with: statistics.peer, lastSyncDate: statistics.lastSyncDate, animated: animated)
+                    self.update(with: statistics, lastSyncDate: statistics.lastSyncDate, animated: animated)
                 }
             case .failure:
                 break
@@ -157,9 +157,10 @@ class PeersView: UIView {
 
     // MARK: Update
 
-    private func update(with peers: PeerStatistics, lastSyncDate: Date? = nil, animated: Bool = true) {
+    private func update(with statistics: BotStatistics, lastSyncDate: Date? = nil, animated: Bool = true) {
+        let peers = statistics.peer
         self.update(local: peers.localCount, online: peers.onlineCount, animated: animated)
-        self.setSync(lastSyncDate: lastSyncDate)
+        setNumberOfPostsDownloaded(for: statistics)
         self.updatePeerList(with: peers)
     }
     
@@ -244,6 +245,22 @@ class PeersView: UIView {
     @objc func triggerSync(sender : UITapGestureRecognizer) {
         self.connectionAnimation.searchAnimation()
         AppController.shared.missionControlCenter.sendMission()
+    }
+    
+    private func setNumberOfPostsDownloaded(for statistics: BotStatistics) {
+        guard let launchStatistics = AppController.shared.statisticsAtLaunch else {
+            return
+        }
+        
+        let label = self.syncedLabel
+        let downloadedMessageCount = statistics.db.lastReceivedMessage - launchStatistics.db.lastReceivedMessage
+        let string = "Downloaded \(downloadedMessageCount) posts this session"
+        let attributed = NSMutableAttributedString(string: string)
+        attributed.addFontAttribute(UIFont.verse.peerCount)
+        //let range = (string as NSString).range(of: count)
+        //attributed.addAttribute(.font, value: UIFont.verse.peerCountBold, range: range)
+        attributed.addColorAttribute(UIColor.text.detail)
+        label.attributedText = attributed
     }
     
     private func setSync(lastSyncDate: Date?) {
