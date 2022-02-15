@@ -198,10 +198,8 @@ class AboutViewController: ContentViewController {
 
             let activityController = UIActivityViewController(activityItems: [self.identity],
                                                               applicationActivities: nil)
+            activityController.configurePopover(from: sender)
             self.present(activityController, animated: true)
-            if let popOver = activityController.popoverPresentationController {
-                popOver.barButtonItem = self.navigationItem.rightBarButtonItem
-            }
         }
         actions.append(sharePublicIdentifier)
 
@@ -215,10 +213,8 @@ class AboutViewController: ContentViewController {
                 
                 let activityController = UIActivityViewController(activityItems: [text],
                                                                   applicationActivities: nil)
+                activityController.configurePopover(from: sender)
                 self.present(activityController, animated: true)
-                if let popOver = activityController.popoverPresentationController {
-                    popOver.barButtonItem = self.navigationItem.rightBarButtonItem
-                }
             }
             actions.append(share)
         }
@@ -330,8 +326,8 @@ class AboutViewController: ContentViewController {
 
             let activityController = UIActivityViewController(activityItems: [self.identity],
                                                               applicationActivities: nil)
+            activityController.configurePopover(from: sender)
             self.present(activityController, animated: true)
-            activityController.popoverPresentationController?.presentingViewController.configurePopover(from: sender)
         }
         actions.append(sharePublicIdentifier)
 
@@ -345,10 +341,8 @@ class AboutViewController: ContentViewController {
 
                 let activityController = UIActivityViewController(activityItems: [text],
                                                                   applicationActivities: nil)
+                activityController.configurePopover(from: sender)
                 self.present(activityController, animated: true)
-                activityController.popoverPresentationController?.presentingViewController.configurePopover(
-                    from: sender
-                )
             }
             actions.append(sharePublicLink)
         }
