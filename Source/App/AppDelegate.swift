@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // then
         self.configureAppearance()
-        self.configureBackground()
+        self.configureBackgroundAppRefresh()
         self.configureNotifications()
         AppController.shared.launch()
 

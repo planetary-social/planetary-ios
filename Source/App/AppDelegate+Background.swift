@@ -13,11 +13,8 @@ import UIKit
 extension AppDelegate {
 
     /// This must be called during `AppDelegate.application(didFinishLaunchingWithOptions)`.
-    func configureBackground() {
-        self.configureBackgroundFetch()
-        if #available(iOS 13, *) {
-            self.registerBackgroundTasks()
-        }
+    func configureBackgroundAppRefresh() {
+        registerBackgroundTasks()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -28,44 +25,35 @@ extension AppDelegate {
         }
         Analytics.shared.trackAppBackground()
     }
-
-    /// Sometimes this is called during launch, and will error with `BotError.notLoggedIn`.  Leaving this in to learn from analytics how
-    /// often this is called.
-    func application(_ application: UIApplication,
-                     performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
-    {
-        self.handleBackgroundFetch(completionHandler: completionHandler)
-    }
-    
 }
 
 extension AppDelegate {
     
-    /// Configures background fetch internal to be an hour, however this is not a guarantee as the OS
-    /// will give time depending on how often new data is returned.
-    func configureBackgroundFetch() {
-        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
-    }
-    
     func handleBackgroundFetch(notificationsOnly: Bool = false, completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         Log.info("Handling background fetch")
         Analytics.shared.trackBackgroundFetch()
-        let sendMissionOperation = SendMissionOperation(quality: .low)
+        let sendMissionOperation = SendMissionOperation(quality: .high)
         
-        let refreshOperation = RefreshOperation(refreshLoad: .medium)
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
 
         let statisticsOperation = StatisticsOperation()
         
         let operationQueue = OperationQueue()
-        DispatchQueue.global(qos: .background).async {
-            operationQueue.addOperations([sendMissionOperation, refreshOperation, statisticsOperation],
-                                         waitUntilFinished: true)
+        operationQueue.name = "Background Sync Queue"
+        operationQueue.maxConcurrentOperationCount = 1
+        operationQueue.qualityOfService = .background
+        operationQueue.addOperations(
+            [sendMissionOperation, refreshOperation, statisticsOperation],
+            waitUntilFinished: false
+        )
+        operationQueue.addOperation {
             Log.info("Completed background fetch")
             Analytics.shared.trackDidBackgroundFetch()
-            switch sendMissionOperation.result {
-            case .success:
+            
+            switch (sendMissionOperation.result, !refreshOperation.isCancelled) {
+            case (.success, true):
                 completionHandler(.newData)
-            case .failure:
+            default:
                 completionHandler(.failed)
             }
         }
@@ -73,7 +61,6 @@ extension AppDelegate {
     
 }
 
-@available(iOS 13.0, *)
 extension AppDelegate {
     
     static let syncBackgroundTaskIdentifier = "com.planetary.sync"
@@ -86,10 +73,6 @@ extension AppDelegate {
                                         using: nil) { task in
                                             self.handleSyncTask(task: task)
         }
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: AppDelegate.refreshBackgroundTaskIdentifier,
-                                        using: nil) { task in
-                                            self.handleRefreshTask(task: task)
-        }
     }
     
     // MARK: Scheduling
@@ -97,24 +80,18 @@ extension AppDelegate {
     private func scheduleBackgroundTasks() {
         BGTaskScheduler.shared.cancelAllTaskRequests()
         self.scheduleSyncTask()
-        self.scheduleRefreshTask()
+//        self.scheduleRefreshTask()
     }
     
     private func scheduleSyncTask() {
-        let syncTaskRequest = BGAppRefreshTaskRequest(identifier: AppDelegate.syncBackgroundTaskIdentifier)
-        syncTaskRequest.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+        let syncTaskRequest = BGProcessingTaskRequest(identifier: AppDelegate.syncBackgroundTaskIdentifier)
+        syncTaskRequest.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60) // 1 hour
         scheduleBackgroundTask(taskRequest: syncTaskRequest)
-    }
-    
-    private func scheduleRefreshTask() {
-        let refreshTaskRequest = BGProcessingTaskRequest(identifier: AppDelegate.refreshBackgroundTaskIdentifier)
-        refreshTaskRequest.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
-        scheduleBackgroundTask(taskRequest: refreshTaskRequest)
     }
     
     private func scheduleBackgroundTask(taskRequest: BGTaskRequest) {
         do {
-            Log.info("Scheduling task \(taskRequest.identifier)")
+            Log.info("Scheduling backgound task \(taskRequest.identifier) for \(taskRequest.earliestBeginDate?.description ?? "nil")")
             try BGTaskScheduler.shared.submit(taskRequest)
         } catch BGTaskScheduler.Error.unavailable {
             // User could have just disabled background refresh in settings
@@ -127,17 +104,16 @@ extension AppDelegate {
     
     // MARK: Handling
     
-    @available(iOS 13.0, *)
     private func handleSyncTask(task: BGTask) {
         Log.info("Handling task \(AppDelegate.syncBackgroundTaskIdentifier)")
-        Analytics.shared.trackBackgroundTask()
+        Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.syncBackgroundTaskIdentifier)
         
         // Schedule a new sync task
         self.scheduleSyncTask()
         
         let sendMissionOperation = SendMissionOperation(quality: .high)
 
-        let refreshOperation = RefreshOperation(refreshLoad: .medium)
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
 
         let statisticsOperation = StatisticsOperation()
         
@@ -145,40 +121,26 @@ extension AppDelegate {
             Log.info("Task \(AppDelegate.syncBackgroundTaskIdentifier) expired")
             sendMissionOperation.cancel()
             refreshOperation.cancel()
+            task.setTaskCompleted(success: false)
         }
         
         let operationQueue = OperationQueue()
-        DispatchQueue.global(qos: .background).async {
-            operationQueue.addOperations([sendMissionOperation, refreshOperation, statisticsOperation],
-                                         waitUntilFinished: true)
+        operationQueue.name = "Background Sync Queue"
+        operationQueue.maxConcurrentOperationCount = 1
+        operationQueue.qualityOfService = .background
+        operationQueue.addOperations(
+            [sendMissionOperation, refreshOperation, statisticsOperation],
+            waitUntilFinished: false
+        )
+        operationQueue.addOperation {
             Log.info("Completed task \(AppDelegate.syncBackgroundTaskIdentifier)")
-            Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.syncBackgroundTaskIdentifier)
-            task.setTaskCompleted(success: !sendMissionOperation.isCancelled)
+
+            switch (sendMissionOperation.result, !refreshOperation.isCancelled) {
+            case (.success, true):
+                task.setTaskCompleted(success: true)
+            default:
+                task.setTaskCompleted(success: false)
+            }
         }
     }
-    
-    @available(iOS 13.0, *)
-    private func handleRefreshTask(task: BGTask) {
-        Log.info("Handling task \(AppDelegate.refreshBackgroundTaskIdentifier)")
-        Analytics.shared.trackBackgroundTask()
-        
-        // Schedule a new sync task
-        self.scheduleRefreshTask()
-        
-        let refreshOperation = RefreshOperation(refreshLoad: .medium)
-        
-        task.expirationHandler = {
-            Log.info("Task \(AppDelegate.refreshBackgroundTaskIdentifier) expired")
-            refreshOperation.cancel()
-        }
-        
-        refreshOperation.completionBlock = {
-            Log.info("Completed task \(AppDelegate.refreshBackgroundTaskIdentifier)")
-            Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.refreshBackgroundTaskIdentifier)
-            task.setTaskCompleted(success: !refreshOperation.isCancelled)
-        }
-        let operationQueue = OperationQueue()
-        operationQueue.addOperation(refreshOperation)
-    }
-    
 }
