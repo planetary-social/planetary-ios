@@ -10,7 +10,7 @@ import Foundation
 protocol LoggerService {
 
     var fileUrls: [URL] { get }
-
+    
     func debug(_ string: String)
 
     func info(_ string: String)

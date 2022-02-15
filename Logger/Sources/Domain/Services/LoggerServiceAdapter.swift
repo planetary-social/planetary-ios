@@ -8,6 +8,10 @@
 import Foundation
 import os.log
 
+/// The LoggerServiceAdapter class can be used to output logs to files in the device's filesystem
+/// and to the Console (in real-time) when debugging
+///
+/// It implements LoggerService so it is meant to be used by Log as a plug-in that actually outputs to logs somewhere.
 class LoggerServiceAdapter: LoggerService {
 
     var fileLoggerService: FileLoggerService
