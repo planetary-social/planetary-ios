@@ -124,12 +124,12 @@ class OnboardingStep: NSObject {
 
         self.view.secondaryButtonTouchUpInside = {
             [unowned self] button in
-            self.secondary()
+            self.performSecondaryAction(sender: button)
         }
 
         self.view.primaryButtonTouchUpInside = {
             [unowned self] button in
-            self.primary()
+            self.performPrimaryAction(sender: button)
         }
     }
 
@@ -159,11 +159,11 @@ class OnboardingStep: NSObject {
         // or to validate input and change button state
     }
 
-    func secondary() {
+    func performSecondaryAction(sender button: UIButton) {
         // subclasses should override as there is no default implementation
     }
 
-    func primary() {
+    func performPrimaryAction(sender button: UIButton) {
         self.delegate?.step(self, next: nil)
     }
 

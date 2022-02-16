@@ -9,7 +9,6 @@ inhibit_all_warnings!
 target 'Planetary' do
     pod 'ImageSlideshow', '1.8.3'
     pod 'KeychainSwift', '19.0.0'
-    pod 'Mixpanel', '3.6.1'
     pod 'PhoneNumberKit', '3.2.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'SVProgressHUD', '2.2.5'
@@ -45,7 +44,6 @@ end
 plugin 'cocoapods-keys', {
   :project => "Planetary",
   :keys => [
-    "MixpanelAnalyticsToken",
     "AuthyPhoneVerificationAPIToken",
     "BugsnagCrashReportingToken",
     "ZendeskAppID",

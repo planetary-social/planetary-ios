@@ -13,7 +13,7 @@ extension CharacterSet {
 }
 
 extension Identity {
-
+    
     var publicLink: URL? {
         let host = "https://planetary.link/"
         let msgPath = self.addingPercentEncoding(withAllowedCharacters:.rfc3986Unreserved)!
@@ -21,10 +21,20 @@ extension Identity {
     }
 
     static func parse(publicLink: URL) -> Identifier? {
-        let identifier = Identifier(publicLink.path.dropFirst())
+        guard publicLink.host == "planetary.link" else {
+            return nil
+        }
+
+        let oldIdentifier = Identifier(publicLink.path.dropFirst())
+        if oldIdentifier.isValidIdentifier {
+            return oldIdentifier
+        }
+        
+        let identifier = Identifier(publicLink.path)
         if identifier.isValidIdentifier {
             return identifier
         }
+        
         return nil
     }
 

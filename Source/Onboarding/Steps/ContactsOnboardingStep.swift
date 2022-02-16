@@ -21,15 +21,16 @@ class ContactsOnboardingStep: OnboardingStep {
         self.view.primaryButton.setText(.connect)
     }
 
-    override func secondary() {
+    override func performSecondaryAction(sender button: UIButton) {
         self.next()
     }
 
-    override func primary() {
+    override func performPrimaryAction(sender button: UIButton) {
         self.data.allowedContacts = true
-        AppController.shared.alert(style: .alert,
-                                   title: Text.ok.text,
-                                   message: Text.Onboarding.contactsWIP.text)
+        AppController.shared.alert(
+            title: Text.ok.text,
+            message: Text.Onboarding.contactsWIP.text
+        )
         {
             [unowned self] in
             self.next()

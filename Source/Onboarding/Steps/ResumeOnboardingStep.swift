@@ -69,7 +69,6 @@ class ResumeOnboardingStep: OnboardingStep {
         }
 
         AppController.shared.choose(from: [tryAgain, reset],
-                                    style: .alert,
                                     title: Text.Onboarding.somethingWentWrong.text,
                                     message: Text.Onboarding.resumeRetryMessage.text)
     }

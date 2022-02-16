@@ -49,10 +49,11 @@ class EditPostButton: IconButton {
         let delete = UIAlertAction(title: Text.deletePost.text, style: .destructive) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "delete_post")
             guard let controller = Support.shared.articleViewController(.editPost) else {
-                AppController.shared.alert(style: .alert,
-                                           title: Text.error.text,
-                                           message: Text.Error.supportNotConfigured.text,
-                                           cancelTitle: Text.ok.text)
+                AppController.shared.alert(
+                    title: Text.error.text,
+                    message: Text.Error.supportNotConfigured.text,
+                    cancelTitle: Text.ok.text
+                )
                 return
             }
             let nc = UINavigationController(rootViewController: controller)
@@ -66,7 +67,7 @@ class EditPostButton: IconButton {
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
 
-        AppController.shared.choose(from: [copy, share, delete, cancel])
+        AppController.shared.choose(from: [copy, share, delete, cancel], sourceView: self)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -321,7 +321,7 @@ class ThreadViewController: ContentViewController {
         self.replyTextView.resignFirstResponder()
     }
 
-    func didPressPostButton() {
+    func didPressPostButton(sender: AnyObject) {
         let text = self.replyTextView.attributedText
         guard text.length > 0 else { return }
         Analytics.shared.trackDidTapButton(buttonName: "reply")
@@ -358,9 +358,10 @@ class ThreadViewController: ContentViewController {
     
     // MARK: Attaching photos
     
-    @objc private func photoButtonTouchUpInside() {
+    @objc private func photoButtonTouchUpInside(sender: AnyObject) {
+        
         Analytics.shared.trackDidTapButton(buttonName: "attach_photo")
-        self.imagePicker.present(from: self) { [weak self] image in
+        self.imagePicker.present(from: sender, controller: self) { [weak self] image in
             if let image = image { self?.galleryView.add(image) }
             self?.imagePicker.dismiss()
         }
@@ -461,10 +462,11 @@ extension ThreadViewController: ImageGalleryViewDelegate {
     }
 
     func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {
-        self.confirm(style: .alert,
-                     message: Text.NewPost.confirmRemove.text,
-                     isDestructive: true,
-                     confirmTitle: Text.NewPost.remove.text,
-                     confirmClosure: { view.remove(at: indexPath) })
+        self.confirm(
+            message: Text.NewPost.confirmRemove.text,
+            isDestructive: true,
+            confirmTitle: Text.NewPost.remove.text,
+            confirmClosure: { view.remove(at: indexPath) }
+        )
     }
 }

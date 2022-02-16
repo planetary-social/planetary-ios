@@ -172,8 +172,8 @@ class GoBotViewController: DebugTableViewController {
             },
                                       actionClosure:
             {
-                cel in
-                self.promptPurge()
+                cell in
+                self.promptPurge(from: cell)
             }
         )]
         
@@ -235,7 +235,7 @@ class GoBotViewController: DebugTableViewController {
 
 extension GoBotViewController {
     
-    func promptPurge() {
+    func promptPurge(from view: UIView) {
         
         let controller = UIAlertController(title: "Remove stored data?",
                                            message: "You may need to restart bots and services to keep using the app.",
@@ -289,6 +289,6 @@ extension GoBotViewController {
             controller.dismiss(animated: true, completion: nil)
         })
 
-        self.present(alertController: controller)
+        self.present(alertController: controller, sourceView: view)
     }
 }

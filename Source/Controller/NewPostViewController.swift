@@ -89,9 +89,10 @@ class NewPostViewController: ContentViewController {
         self.buttonsView.postButton.action = didPressPostButton
     }
 
-    @objc private func photoButtonTouchUpInside() {
+    @objc private func photoButtonTouchUpInside(sender: AnyObject) {
+        
         Analytics.shared.trackDidTapButton(buttonName: "attach_photo")
-        self.imagePicker.present(from: self) {
+        self.imagePicker.present(from: sender, controller: self) {
             [weak self] image in
             if let image = image { self?.galleryView.add(image) }
             self?.imagePicker.dismiss()
@@ -103,7 +104,7 @@ class NewPostViewController: ContentViewController {
         self.textView.previewActive = self.buttonsView.previewToggle.isOn
     }
 
-    func didPressPostButton() {
+    func didPressPostButton(sender: AnyObject) {
         Analytics.shared.trackDidTapButton(buttonName: "post")
         self.buttonsView.postButton.isHidden = true
         
@@ -175,11 +176,12 @@ extension NewPostViewController: ImageGalleryViewDelegate {
                           didSelect image: UIImage,
                           at indexPath: IndexPath)
     {
-        self.confirm(style: .alert,
-                     message: Text.NewPost.confirmRemove.text,
-                     isDestructive: true,
-                     confirmTitle: Text.NewPost.remove.text,
-                     confirmClosure: { view.remove(at: indexPath) })
+        self.confirm(
+            message: Text.NewPost.confirmRemove.text,
+            isDestructive: true,
+            confirmTitle: Text.NewPost.remove.text,
+            confirmClosure: { view.remove(at: indexPath) }
+        )
     }
 }
 
