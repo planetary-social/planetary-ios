@@ -1,14 +1,17 @@
 # Logger
 
-** This library is part of [`Planetary`](https://github.com/planetary-social/planetary-ios) app. It is not intended to be used standalone.**
+** This package is part of [`Planetary`](https://github.com/planetary-social/planetary-ios). It is not intended to be used standalone.**
 
 ----
 
-The `Logger` component encapsulates the logging requirements of `Planetary`, it logs everything to the filesystem and displays them in the console as well. 
+`Logger` is a simple logging utility to output messages with the following features:
+
+- Print messages to different levels such as info and error
+- Auto-rolling of log files
 
 ## Usage
 
-Just import the module and start using the logging functions in `Log`. Just some examples:
+Import the `Logger` module and use any functions declared in the `Log` class. Just some examples:
 
 ```swift
 import Logger
@@ -20,5 +23,3 @@ Log.unexpected(.apiError)
 Log.fatal(.missingValue)
 Log.error("Something bad happened")
 ```
-
-

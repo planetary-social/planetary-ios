@@ -102,7 +102,6 @@ public extension Log {
     ///
     /// Convenience function that unwraps an error and a response from a network call
     static func optional(_ error: Error?, from response: URLResponse?) {
-        // TODO: Check if we can deprecate this function because it is almost not used
         guard let error = error else { return }
         guard let response = response else { return }
         let path = response.url?.path ?? "unknown path"
