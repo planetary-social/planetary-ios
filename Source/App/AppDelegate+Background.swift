@@ -43,9 +43,15 @@ extension AppDelegate {
         operationQueue.maxConcurrentOperationCount = 1
         operationQueue.qualityOfService = .background
         operationQueue.addOperations(
-            [sendMissionOperation, refreshOperation, statisticsOperation],
+            [sendMissionOperation],
             waitUntilFinished: false
         )
+        operationQueue.addOperation {
+            Log.info("Sleeping 30 seconds so SendMissionOperation can run.")
+            sleep(30)
+            Log.info("Done sleeping")
+        }
+        operationQueue.addOperations([refreshOperation, statisticsOperation], waitUntilFinished: false)
         operationQueue.addOperation {
             Log.info("Completed background fetch")
             Analytics.shared.trackDidBackgroundFetch()

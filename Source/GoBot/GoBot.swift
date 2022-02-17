@@ -498,6 +498,8 @@ class GoBot: Bot {
                     return
                 }
                 
+                Log.info("Published message with key \(key ?? "nil")")
+                
                 // Copy the newly published post into the ViewDatabase immediately.
                 do {
                     guard let self = self else {
@@ -685,11 +687,7 @@ class GoBot: Bot {
             
             do {
                 try self.database.fillMessages(msgs: msgs)
-                
-                #if DEBUG
-                print("[rx log] viewdb filled with \(msgs.count) messages.")
-                #endif
-                
+                                
                 let params = [
                     "msg.count": msgs.count,
                     "first.timestamp": msgs[0].timestamp,

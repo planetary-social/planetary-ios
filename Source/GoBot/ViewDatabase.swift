@@ -2425,6 +2425,7 @@ class ViewDatabase {
                     // while (1) always means duplicate message (2) can also mean fork
                     // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
                     if errCode == SQLITE_CONSTRAINT {
+                        skipped += 1
                         continue // ignore this message and go to the next
                     }
                     throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
@@ -2521,6 +2522,8 @@ class ViewDatabase {
         if skipped > 0 {
             print("skipped \(skipped) messages")
         }
+        
+        Log.info("[rx log] viewdb filled with \(msgs.count - Int(skipped)) messages.")
     }
     
     // MARK: utilities
