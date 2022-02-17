@@ -8,6 +8,7 @@
 
 import Foundation
 import Down
+import Logger
 
 extension String {
     

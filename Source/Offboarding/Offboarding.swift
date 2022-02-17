@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 
 enum OffboardingError: Error {
     case apiError(Error)

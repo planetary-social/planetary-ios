@@ -10,6 +10,7 @@ import Foundation
 import ZendeskCoreSDK
 import SupportSDK
 import Keys
+import Logger
 
 class ZendeskSupport: SupportService {
     

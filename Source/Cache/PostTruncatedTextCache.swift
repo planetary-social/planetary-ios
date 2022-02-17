@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 
 /// An in-memory cache of `NSAttributedString` generated from truncated
 /// `Post.text` markdown.  This different than `PostTextCache` which is

@@ -9,6 +9,7 @@
 import Foundation
 import PhoneNumberKit
 import UIKit
+import Logger
 
 class PhoneVerifyOnboardingStep: OnboardingStep {
 
