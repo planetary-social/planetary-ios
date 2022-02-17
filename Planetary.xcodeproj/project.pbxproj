@@ -689,6 +689,8 @@
 		53F1E56721E3C59C007EF3AD /* UIDevice+Localhost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F1E56621E3C59C007EF3AD /* UIDevice+Localhost.swift */; };
 		53F24FB422C70B5200CFCBAA /* AvatarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F24FB322C70B5200CFCBAA /* AvatarButton.swift */; };
 		53FCAFDC22051C44009E9E82 /* Bundle+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B021C476AF00A314AD /* Bundle+Version.swift */; };
+		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
+		5B0D585227BEAE9E002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Secrets */; };
 		5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = 5BFFCE8F27B56D300088F6D6 /* Logger */; };
 		664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76846E865BB285CC1D52D05B /* Pods_APITests.framework */; };
 		7CADD3FD394F8FD67E295D85 /* Pods_UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CA171A11489B333F8AB5B2 /* Pods_UITests.framework */; };
@@ -1309,6 +1311,7 @@
 				5396A618223D467200C57A4B /* libsqlite3.tbd in Frameworks */,
 				C928DAF227B5AC850007C5FC /* Logger in Frameworks */,
 				8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */,
+				5B0D585227BEAE9E002F927D /* Secrets in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1327,6 +1330,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B0D585027BEAE93002F927D /* Secrets in Frameworks */,
 				5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */,
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
@@ -2353,6 +2357,7 @@
 			name = UnitTests;
 			packageProductDependencies = (
 				C928DAF127B5AC850007C5FC /* Logger */,
+				5B0D585127BEAE9E002F927D /* Secrets */,
 			);
 			productName = FBTTUnitTests;
 			productReference = 5308168521C46A52005C48ED /* UnitTests.xctest */;
@@ -2399,6 +2404,7 @@
 			name = Planetary;
 			packageProductDependencies = (
 				5BFFCE8F27B56D300088F6D6 /* Logger */,
+				5B0D584F27BEAE93002F927D /* Secrets */,
 			);
 			productName = FBTT;
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
@@ -3970,6 +3976,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5B0D584F27BEAE93002F927D /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
+		};
+		5B0D585127BEAE9E002F927D /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
+		};
 		5BFFCE8F27B56D300088F6D6 /* Logger */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Logger;
