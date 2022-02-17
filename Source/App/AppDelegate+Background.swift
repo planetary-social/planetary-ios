@@ -76,7 +76,8 @@ extension AppDelegate {
     
     private func scheduleBackgroundTask(taskRequest: BGTaskRequest) {
         do {
-            Log.info("Scheduling backgound task \(taskRequest.identifier) for \(taskRequest.earliestBeginDate?.description ?? "nil")")
+            Log.info("Scheduling backgound task \(taskRequest.identifier) for " +
+                     "\(taskRequest.earliestBeginDate?.description ?? "nil")")
             try BGTaskScheduler.shared.submit(taskRequest)
         } catch BGTaskScheduler.Error.unavailable {
             // User could have just disabled background refresh in settings

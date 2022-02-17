@@ -9,7 +9,7 @@
 import Foundation
 
 extension OperationQueue {
-    
+
     /// Allows you to await the completion of all operations currently in a serial queue. Behavior is undefined for
     /// concurrent queues.
     func drainQueue() async {
