@@ -5,13 +5,6 @@
       location = "group:Planetary.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Logger">
-   </FileRef>
-   <Group
-      location = "group:Performance Tests"
-      name = "Performance Tests">
-   </Group>
-   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

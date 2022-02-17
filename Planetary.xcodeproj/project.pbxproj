@@ -1268,6 +1268,7 @@
 		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		C978D35027BF018600842458 /* OperationQueue+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Async.swift"; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
 		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
 		C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
@@ -2044,6 +2045,7 @@
 				539FD4BC22C2DACB005A4DF2 /* NSAttributedString+NSRange.swift */,
 				531B92BA22CD1383005D5255 /* NSMutableAttributedString+Attributes.swift */,
 				53C422BB21C477EC00A314AD /* NSObject+Classname.swift */,
+				C978D35027BF018600842458 /* OperationQueue+Async.swift */,
 				53E29CCC22D296BA008A2CB1 /* String+HashtagSubstrings.swift */,
 				53B5D99F233534AD0024CF7A /* String+NSRange.swift */,
 				539FD4C422C3D6CC005A4DF2 /* String+Whitespace.swift */,
