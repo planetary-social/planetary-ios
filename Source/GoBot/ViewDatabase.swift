@@ -1240,6 +1240,7 @@ class ViewDatabase {
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
+            .filter(colClaimedAt <= Date().millisecondsSince1970)
 
         if let offset = offset {
             qry = qry.limit(limit, offset: offset)
@@ -1728,7 +1729,8 @@ class ViewDatabase {
             onlyRoots: true,
             offset: offset)
             .filter(colAuthorID == feedAuthorID)
-            .order(colMessageID.desc)
+            .order(colClaimedAt.desc)
+            .filter(colClaimedAt <= Date().millisecondsSince1970)
             .filter(colHidden == false)
 
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
