@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Logger
 
 class RelationshipButton: IconButton {
 

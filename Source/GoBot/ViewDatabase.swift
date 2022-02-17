@@ -10,8 +10,8 @@
 
 import Foundation
 import SQLite
-
 import CryptoKit
+import Logger
 
 // schema migration handling
 extension Connection {

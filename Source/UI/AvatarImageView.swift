@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Keys
+import Logger
 
 class AvatarImageView: ImageView {
 

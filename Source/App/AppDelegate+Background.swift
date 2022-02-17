@@ -9,6 +9,7 @@
 import BackgroundTasks
 import Foundation
 import UIKit
+import Logger
 
 extension AppDelegate {
 

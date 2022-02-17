@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import UserNotifications
 import UserNotificationsUI
+import Logger
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
 

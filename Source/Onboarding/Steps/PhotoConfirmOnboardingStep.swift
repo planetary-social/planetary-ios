@@ -9,6 +9,7 @@
 import Foundation
 import Photos
 import UIKit
+import Logger
 
 class PhotoConfirmOnboardingStep: OnboardingStep {
 

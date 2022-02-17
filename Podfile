@@ -13,7 +13,6 @@ target 'Planetary' do
     pod 'SQLite.swift', '0.12.2'
     pod 'SVProgressHUD', '2.2.5'
     pod 'ZendeskSupportSDK'
-    pod 'CocoaLumberjack/Swift', '3.6.1'
     pod 'Bugsnag', '5.23.1' # If you upgrade bugsnag you should also manually upgrade the Upload dSYMs script if necessary. See Architecture/0003-manually-manage-bugsnag-upload-dsyms-script.md
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
@@ -56,10 +55,6 @@ plugin 'cocoapods-keys', {
 ]}
 
 post_install do | installer |
-
-    # copy Acknowledgements into Settings bundle
-    require 'fileutils'
-    FileUtils.cp_r('Pods/Target Support Files/Pods-Planetary/Pods-Planetary-acknowledgements.plist', 'Resources/Settings.bundle/Acknowledgements.plist', :remove_destination => true)
 
     # force pods project to Build Libraries for Distribution build setting
     # this is required for Swift 5.1 module compatibility

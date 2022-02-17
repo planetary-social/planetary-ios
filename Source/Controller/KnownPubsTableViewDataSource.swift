@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 protocol KnownPubsTableViewDataSourceDelegate: class {
     func reload()

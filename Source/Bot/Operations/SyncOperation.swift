@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 
 /// Pokes the bot into doing a sync. Don't use this SyncOperation directly, use
 /// SendMissionOperation instead.
