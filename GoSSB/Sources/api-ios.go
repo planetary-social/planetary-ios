@@ -358,15 +358,10 @@ func (e emitter) EmitBlob(n ssb.BlobStoreNotification) error {
 		return nil
 	}
 
-	sz, err := sbot.BlobStore.Size(n.Ref)
-	if err != nil {
-		return err
-	}
-
 	testRef := C.CString(n.Ref.String())
-	ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(sz), testRef)
+	ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(n.Size), testRef)
 	C.free(unsafe.Pointer(testRef))
-	log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.String())
+	log.Log("event", "swift side notified of stored blob", "ret", ret, "blob", n.Ref.String())
 	return nil
 }
 
