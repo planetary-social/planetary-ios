@@ -775,14 +775,6 @@ class ViewDatabase {
 
         // delete the base messages
         try db.run(self.msgs.filter(msgIDs.contains(colMessageID)).delete())
-
-        // update %fakemsg if feed is at the end of the receive log
-        if let lastMsgRX = try allMessages.last?.get(colRXseq) {
-            let lastReceived = try self.largestSeqNotFromPublishedLog()
-            if lastMsgRX == lastReceived {
-                try self.updateFakeMsg(seq: lastMsgRX)
-            }
-        }
     }
 
     func delete(message: MessageIdentifier) throws {
@@ -800,11 +792,6 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let msgID = try self.msgID(of: message, make: false)
-        let lastRX = try self.largestSeqNotFromPublishedLog()
-        let rxSeq = try db.scalar(self.msgs.select(colRXseq).filter(colMessageID == msgID))
-        if lastRX == rxSeq {
-            try self.updateFakeMsg(seq: rxSeq)
-        }
         // delete message from all specialized tables
         let messageTables = [
             self.posts,
@@ -820,21 +807,6 @@ class ViewDatabase {
         }
         try db.run(self.branches.filter(colBranch == msgID).delete())
         try db.run(self.msgs.filter(colMessageID == msgID).delete())
-    }
-
-    // copy RX log sequence to %fakemsg so that it isn't re-fetched if it is at the end
-    private func updateFakeMsg(seq: Int64) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        try db.run(self.msgs.insert(or: .replace,
-            colRXseq <- seq,
-            colMessageID <- try self.msgID(of: "%fakemsg.wrong", make: true),
-            colAuthorID <- try self.authorID(of: "@fakeauthor.wrong", make: true),
-            colSequence <- 0,
-            colMsgType <- .unsupported,
-            colReceivedAt <- 0,
-            colClaimedAt <- 0))
     }
 
     // MARK: abouts
@@ -2483,12 +2455,6 @@ class ViewDatabase {
             NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
                                             object: report.authorIdentity,
                                             userInfo: ["report": report])
-        }
-        
-        // if we skipped all messages because they are unsupported,
-        // update %fakemsg to that sequence so that we don't iterate over them again
-        if skipped > 0 && skipped == msgs.count && lastRxSeq > 0 {
-            try self.updateFakeMsg(seq: lastRxSeq)
         }
 
         // debug statistics about unhandled message types
