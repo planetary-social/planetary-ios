@@ -130,10 +130,11 @@ extension AppDelegate {
             operationQueue.addOperations([sendMissionOperation], waitUntilFinished: false)
             await operationQueue.drainQueue()
                 
-            var sleepNanoseconds = 25_000_000_000
-            Log.info("Sleeping \(sleepNanoseconds / 1_000_000_000) seconds so SendMissionOperation can run.")
+            let sleepStartTime = Date().timeIntervalSince1970
+            let sleepSeconds: TimeInterval = 25
+            Log.info("Sleeping \(sleepSeconds) seconds so SendMissionOperation can run.")
             
-            while sleepNanoseconds > 0 {
+            while Date().timeIntervalSince1970 - sleepStartTime < sleepSeconds {
                 do {
                     try await Task.sleep(nanoseconds: 100_000_000)
                 } catch {
@@ -147,7 +148,6 @@ extension AppDelegate {
                     Log.info("Background sync task canceled")
                     return false
                 }
-                sleepNanoseconds -= 100_000_000
             }
             Log.info("Done sleeping")
             
