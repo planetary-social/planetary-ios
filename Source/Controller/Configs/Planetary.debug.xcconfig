@@ -1,0 +1,41 @@
+//
+//  Planetary.debug.xcconfig
+//  Planetary
+//
+//  Created by Martin Dutra on 2/17/20.
+//  Copyright © 2020 Verse Communications Inc. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.debug.xcconfig"
+#include "Shared.debug.xcconfig"
+
+PRODUCT_NAME = Planetary
+PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios
+
+SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
+
+TEST_PUB = test.planetary.pub:8008:@5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=.ed25519~rgN/kisrLrVXWunD7+jlDDrXbbybBd9WvSoA0Bed/4o=
+PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~KVvak/aZeQJQUrn1imLIvwU+EVTkCzGW8TJWTmK8lOk=
+PUB_TWO = two.planetary.pub:8008:@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519~8pETEamsgecH32ry4bj7sr7ofXtUbeOCG1qq4C7szHY=
+PUB_THREE = three.planetary.pub::8008:@LQ8HBiEinU5FiXGaZH9JYFGBGdsB99mepBdh/Smq3VI=.ed25519~mbE30XJrmWZ5yPL4dC1ZQUlkjZOL5EGybbGCc7rxtzg=
+PUB_FOUR = four.planetary.pub:8008:@5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=.ed25519~e9ZRXEw0RSTE6FX8jOwWV7yfMRDsAZkzlhCRbVMBUEc=
+
+BETELGEUSE = 35.226.200.168:8008:@MhYSofIkk+oig3gb86ufnZ/KSX2K+2KDPVIxf4HppMM=.ed25519~ZOcCXy7q7a0AiSWdrg0s/S91vCmclIpjnr2JqM3NwA0=
+ANTARES = 35.222.87.248:8008:@yFdlC9nYGgBNoPeMl2kC/zimoNnuSp/YFSmYda2SJBY=.ed25519~psZMLk1SPUa1YxLq07N3aVXFECpsOfmXQqXNPaaDMwo=
+RIGEL = 35.222.71.220:8008:@6OK6Z0x5hIVR4yHKFjqwMejlfQUDQUTBW513pn4INIM=.ed25519~EiEvpAlZYg05NYVoZ7QzCY6fgp6xaLWcWT2/56yecrA=
+PLEIADES = 34.68.66.228:8008:@CCX4V0cOscQU4mMz0PbbB7IIJQDcZc1XFCQaQMHUDsI=.ed25519~92RD5VdmAjthKYK0yXfSpE2yJMwp0JUjeBSLtxiIzn0=
+CONSTELLATION = ${PUB_ONE} ${PUB_TWO} ${PUB_THREE} ${PUB_FOUR}
+
+CRYPTO = crypto.planetary.pub:8008:@CBaNGA3MPZHPKo4gvrZsTCCV3DUgydmPnwK0UDRRbqQ=.ed25519~ZxTzJfeVrffCJG7A9byZpD4pOlhCo5E68vB/qcmjyF8=
+FLOSS = floss.planetary.pub:8008:@uHqyTLo/JwapDh+ryXKe0VyBMS7eqt0YEKwvUathiS8=.ed25519~l8EciukRuVREcV4hvQLlnIu3tBJtAYV2mbjxzBXEkBQ=
+NOISEBRIDGE = gossip.noisebridge.info:8008:@2NANnQVdsoqk0XPiJG2oMZqaEpTeoGrxOHJkLIqs7eY=.ed25519~JWTC6+rPYPW5b5zCion0gqjcJs35h6JKpUrQoAKWgJ4=
+SCUTTLEUS = scuttle.us:8008:@WqcuCOIpLtXFRw/9vOAQJti8avTZ9vxT9rKrPo8qG6o=.ed25519~/ZUi9Chpl0g1kuWSrmehq2EwMQeV0Pd+8xw8XhWuhLE=
+SCUTTLEBUTTDE = scuttlebutt.de:8008:@yeh/GKxlfhlYXSdgU7CRLxm58GC42za3tDuC4NJld/k=.ed25519~iyaCpZ0co863K9aF+b7j8BnnHfwY65dGeX6Dh2nXs3c=
+MONERO = xmr-pub.net:8008:@5hTpvduvbDyMLN2IdzDKa7nx7PSem9co3RsOmZoyyCM=.ed25519~vQU+r2HUd6JxPENSinUWdfqrJLlOqXiCbzHoML9iVN4=
+COMMUNITIES = ${CRYPTO} ${FLOSS} ${NOISEBRIDGE} ${SCUTTLEUS} ${SCUTTLEBUTTDE} ${MONERO}
+
+PLANETARY = @oeNoy1RIArVdMdk8ndeoKbAKuU8b56VgxlYP5y8b9Ic=.ed25519
+PLANETARY_SYSTEM = ${PLANETARY}
