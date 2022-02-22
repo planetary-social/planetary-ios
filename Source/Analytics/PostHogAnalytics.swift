@@ -9,6 +9,7 @@
 import Foundation
 import Keys
 import PostHog
+import Logger
 
 class PostHogAnalytics: AnalyticsService {
     

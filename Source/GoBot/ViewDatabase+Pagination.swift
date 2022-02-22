@@ -1,7 +1,7 @@
 // Pagination for the ViewDatabase
 
 import Foundation
-
+import Logger
 
 // the Int index might not be necessary but could be handy if one handler get's all the completions instead of
 // individual UI elements

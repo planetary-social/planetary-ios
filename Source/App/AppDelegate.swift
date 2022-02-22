@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Logger
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,7 +23,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         self.window = window
         
-        Log.configure()
         CrashReporting.shared.record("Launch")
         
         // reset configurations if user enabled switch in settings
@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // then
         self.configureAppearance()
-        self.configureBackground()
+        self.configureBackgroundAppRefresh()
         self.configureNotifications()
         AppController.shared.launch()
 

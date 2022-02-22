@@ -1,0 +1,165 @@
+name: Bugsnag, nameSpecified: 
+body: Copyright (c) 2012 B…
+version: 5.23.1
+
+name: Down, nameSpecified: 
+body: The MIT License (MIT…
+version: 0.9.2
+
+name: Down, nameSpecified: 
+body: The MIT License (MIT…
+version: 0.9.2
+
+name: Down, nameSpecified: 
+body: The MIT License (MIT…
+version: 0.9.2
+
+name: Down, nameSpecified: 
+body: The MIT License (MIT…
+version: 0.9.2
+
+name: ImageSlideshow, nameSpecified: 
+body: Copyright (c) 2015 P…
+version: 1.8.3
+
+name: KeychainSwift, nameSpecified: 
+body: The MIT License
+
+Cop…
+version: 19.0.0
+
+name: KeychainSwift, nameSpecified: 
+body: The MIT License
+
+Cop…
+version: 19.0.0
+
+name: KeychainSwift, nameSpecified: 
+body: The MIT License
+
+Cop…
+version: 19.0.0
+
+name: KeychainSwift, nameSpecified: 
+body: The MIT License
+
+Cop…
+version: 19.0.0
+
+name: Keys, nameSpecified: 
+body: MIT LICENSE Found in…
+version: 1.0.1
+
+name: Keys, nameSpecified: 
+body: MIT LICENSE Found in…
+version: 1.0.1
+
+name: Keys, nameSpecified: 
+body: MIT LICENSE Found in…
+version: 1.0.1
+
+name: Keys, nameSpecified: 
+body: MIT LICENSE Found in…
+version: 1.0.1
+
+name: Multipart, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 0.1.0
+
+name: PhoneNumberKit, nameSpecified: 
+body: The MIT License (MIT…
+version: 3.2.0
+
+name: PhoneNumberKit, nameSpecified: 
+body: The MIT License (MIT…
+version: 3.2.0
+
+name: PhoneNumberKit, nameSpecified: 
+body: The MIT License (MIT…
+version: 3.2.0
+
+name: PostHog, nameSpecified: 
+body: The MIT License (MIT…
+version: 1.1.0
+
+name: SkeletonView, nameSpecified: 
+body: The MIT License (MIT…
+version: 1.8.7
+
+name: SQLite.swift, nameSpecified: 
+body: (The MIT License)
+
+C…
+version: 0.12.2
+
+name: SQLite.swift, nameSpecified: 
+body: (The MIT License)
+
+C…
+version: 0.12.2
+
+name: SQLite.swift, nameSpecified: 
+body: (The MIT License)
+
+C…
+version: 0.12.2
+
+name: SQLite.swift, nameSpecified: 
+body: (The MIT License)
+
+C…
+version: 0.12.2
+
+name: SVProgressHUD, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 2.2.5
+
+name: ZendeskCommonUISDK, nameSpecified: 
+body: ZendeskSDKs
+Created …
+version: 6.1.1
+
+name: ZendeskCoreSDK, nameSpecified: 
+body: ZendeskSDKs
+Created …
+version: 2.5.1
+
+name: ZendeskMessagingAPISDK, nameSpecified: 
+body: ZendeskSDKs
+Created …
+version: 3.8.2
+
+name: ZendeskMessagingSDK, nameSpecified: 
+body: ZendeskSDKs
+Created …
+version: 3.8.2
+
+name: ZendeskSDKConfigurationsSDK, nameSpecified: 
+body: ZendeskSDKs
+Created …
+version: 1.1.8
+
+name: ZendeskSupportProvidersSDK, nameSpecified: 
+body: ZendeskSDKs
+Created …
+version: 5.3.0
+
+name: ZendeskSupportSDK, nameSpecified: 
+body: ZendeskSDKs
+Created …
+version: 5.3.0
+
+name: CocoaLumberjack, nameSpecified: CocoaLumberjack, owner: CocoaLumberjack, version: 3.7.4
+
+name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.4.2
+
+name: Go-SSB, nameSpecified: , version: 
+body: The MIT License (MIT…
+
+add-version-numbers: false
+
+LicensePlist Version: 3.17.0

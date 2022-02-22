@@ -10,7 +10,9 @@ import Foundation
 import UIKit
 import UserNotifications
 import UserNotificationsUI
+import Logger
 
+// https://github.com/planetary-social/infrastructure/wiki/Apple-Push-Notification-Infrastructure
 extension AppDelegate: UNUserNotificationCenterDelegate {
 
     func configureNotifications() {
@@ -41,9 +43,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
         
-        Log.info("Handling Remote notification")
+        Log.info("Triggering background sync from silent push notification")
         Analytics.shared.trackDidReceiveRemoteNotification()
-        self.handleBackgroundFetch(notificationsOnly: true, completionHandler: completionHandler)
+        handleBackgroundFetch(completionHandler: completionHandler)
     }
 
     // MARK: Local notification

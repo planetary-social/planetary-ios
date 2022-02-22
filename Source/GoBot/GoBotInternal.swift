@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-
+import Logger
 
 // get's called with the size and the hash (might return a bool just as a demo of passing data back)
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool

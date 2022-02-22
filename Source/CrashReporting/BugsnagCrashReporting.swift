@@ -9,6 +9,7 @@
 import Foundation
 import Bugsnag
 import Keys
+import Logger
 
 class BugsnagCrashReporting: CrashReportingService {
     

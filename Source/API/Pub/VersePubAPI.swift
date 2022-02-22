@@ -8,6 +8,7 @@
 
 import Foundation
 import Keys
+import Logger
 
 class VersePubAPI: PubAPIService {
     

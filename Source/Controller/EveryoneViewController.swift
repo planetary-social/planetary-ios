@@ -7,8 +7,8 @@
 //
 
 import Foundation
-
 import UIKit
+import Logger
 
 class EveryoneViewController: ContentViewController {
     
