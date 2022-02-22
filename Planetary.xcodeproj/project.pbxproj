@@ -723,6 +723,7 @@
 		C93A4B3C2798B711009F963D /* KeyValueWithReceivedSeq.json in Resources */ = {isa = PBXBuildFile; fileRef = C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */; };
 		C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */; };
 		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
+		C9604C2927C547FB003D1A6D /* ConnectedPeersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9604C2827C547FB003D1A6D /* ConnectedPeersView.swift */; };
 		C978D35127BF051700842458 /* OperationQueue+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C978D35027BF018600842458 /* OperationQueue+Async.swift */; };
 		C978D35327BF053B00842458 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
@@ -1259,6 +1260,7 @@
 		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		C9604C2827C547FB003D1A6D /* ConnectedPeersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeersView.swift; sourceTree = "<group>"; };
 		C978D35027BF018600842458 /* OperationQueue+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Async.swift"; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
 		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
@@ -1945,6 +1947,7 @@
 				0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */,
 				1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */,
 				0AAF8C4225C6444B00FD8D0F /* CommunityCellView.swift */,
+				C9604C2827C547FB003D1A6D /* ConnectedPeersView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -2667,6 +2670,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Source/Localization/*",
 			);
 			name = "Generate Localized Strings";
 			outputFileListPaths = (
@@ -3089,6 +3093,7 @@
 				0A64A82824734F00009A5EBF /* VersePubAPI.swift in Sources */,
 				539FD4AF22C19B9F005A4DF2 /* AboutsMenu.swift in Sources */,
 				53C9FA2F22FCF64700EAC35F /* SettingsViewController.swift in Sources */,
+				C9604C2927C547FB003D1A6D /* ConnectedPeersView.swift in Sources */,
 				5396A633224836E800C57A4B /* UIColor+Hex.swift in Sources */,
 				1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */,
 				1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */,
@@ -3830,11 +3835,7 @@
 				CURRENT_PROJECT_VERSION = 309;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3866,11 +3867,7 @@
 				CURRENT_PROJECT_VERSION = 309;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
