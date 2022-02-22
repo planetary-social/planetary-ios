@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2021 The margaret Authors
+//
 // SPDX-License-Identifier: MIT
 
 /*Package offset2 implements a margaret log as persisted sequence of data across multiple files.
@@ -40,7 +42,7 @@ import (
 	"go.cryptoscope.co/margaret"
 )
 
-type offsetLog struct {
+type OffsetLog struct {
 	l    sync.Mutex
 	name string
 
@@ -57,7 +59,7 @@ type offsetLog struct {
 	bcSink luigi.Sink
 }
 
-func (log *offsetLog) Close() error {
+func (log *OffsetLog) Close() error {
 	// TODO: close open querys?
 	// log.l.Lock()
 	// defer log.l.Unlock()
@@ -81,12 +83,12 @@ func (log *offsetLog) Close() error {
 	return nil
 }
 
-var _ margaret.Alterer = (*offsetLog)(nil)
+var _ margaret.Alterer = (*OffsetLog)(nil)
 
 // Null overwrites the entry at seq with zeros
 // updating is kinda odd in append-only
 // but in some cases you still might want to redact entries
-func (log *offsetLog) Null(seq int64) error {
+func (log *OffsetLog) Null(seq int64) error {
 
 	log.l.Lock()
 	defer log.l.Unlock()
@@ -127,7 +129,7 @@ func (log *offsetLog) Null(seq int64) error {
 
 // Replace overwrites the seq entry with data.
 // data has to be smaller then the current entry.
-func (log *offsetLog) Replace(seq int64, data []byte) error {
+func (log *OffsetLog) Replace(seq int64, data []byte) error {
 	log.l.Lock()
 	defer log.l.Unlock()
 
@@ -159,7 +161,7 @@ func (log *offsetLog) Replace(seq int64, data []byte) error {
 
 // Open returns a the offset log in the directory at `name`.
 // If it is empty or does not exist, a new log will be created.
-func Open(name string, cdc margaret.Codec) (*offsetLog, error) {
+func Open(name string, cdc margaret.Codec) (*OffsetLog, error) {
 	err := os.MkdirAll(name, 0700)
 	if err != nil {
 		return nil, fmt.Errorf("offset2: error making log directory at %q: %w", name, err)
@@ -183,7 +185,7 @@ func Open(name string, cdc margaret.Codec) (*offsetLog, error) {
 		return nil, fmt.Errorf("offset2: error opening log journal file at %q: %w", pJrnl, err)
 	}
 
-	log := &offsetLog{
+	log := &OffsetLog{
 		name: name,
 
 		jrnl: &journal{fJrnl},
@@ -218,7 +220,7 @@ func Open(name string, cdc margaret.Codec) (*offsetLog, error) {
 //  - read frame size from data file at previously read offset
 //  - check that the end of the frame is also end of file
 //  - check that number of entries in offset file equals value in journal
-func (log *offsetLog) checkJournal() (int64, error) {
+func (log *OffsetLog) checkJournal() (int64, error) {
 	seqJrnl, err := log.jrnl.readSeq()
 	if err != nil {
 		return margaret.SeqErrored, fmt.Errorf("error reading seq: %w", err)
@@ -300,7 +302,7 @@ func (log *offsetLog) checkJournal() (int64, error) {
 }
 
 // CheckConsistency is an fsck for the offset log.
-func (log *offsetLog) CheckConsistency() error {
+func (log *OffsetLog) CheckConsistency() error {
 	_, err := log.checkJournal()
 	if err != nil {
 		return fmt.Errorf("offset2: journal inconsistent: %w", err)
@@ -341,17 +343,17 @@ func (log *offsetLog) CheckConsistency() error {
 	}
 }
 
-func (log *offsetLog) Seq() int64 {
+func (log *OffsetLog) Seq() int64 {
 	log.l.Lock()
 	defer log.l.Unlock()
 	return log.seqCurrent
 }
 
-func (log *offsetLog) Changes() luigi.Observable {
+func (log *OffsetLog) Changes() luigi.Observable {
 	return log.seqChanges
 }
 
-func (log *offsetLog) Get(seq int64) (interface{}, error) {
+func (log *OffsetLog) Get(seq int64) (interface{}, error) {
 	log.l.Lock()
 	defer log.l.Unlock()
 
@@ -369,7 +371,7 @@ func (log *offsetLog) Get(seq int64) (interface{}, error) {
 }
 
 // readFrame reads and parses a frame.
-func (log *offsetLog) readFrame(seq int64) (interface{}, error) {
+func (log *OffsetLog) readFrame(seq int64) (interface{}, error) {
 	ofst, err := log.ofst.readOffset(seq)
 	if err != nil {
 		return nil, fmt.Errorf("error read offset of seq(%d): %w", seq, err)
@@ -391,7 +393,7 @@ func (log *offsetLog) readFrame(seq int64) (interface{}, error) {
 	return v, nil
 }
 
-func (log *offsetLog) Query(specs ...margaret.QuerySpec) (luigi.Source, error) {
+func (log *OffsetLog) Query(specs ...margaret.QuerySpec) (luigi.Source, error) {
 	log.l.Lock()
 	defer log.l.Unlock()
 
@@ -420,7 +422,7 @@ func (log *offsetLog) Query(specs ...margaret.QuerySpec) (luigi.Source, error) {
 	return qry, nil
 }
 
-func (log *offsetLog) Append(v interface{}) (int64, error) {
+func (log *OffsetLog) Append(v interface{}) (int64, error) {
 	data, err := log.codec.Marshal(v)
 	if err != nil {
 		return margaret.SeqEmpty, fmt.Errorf("offset2: error marshaling value: %w", err)
@@ -459,6 +461,6 @@ func (log *offsetLog) Append(v interface{}) (int64, error) {
 	return seq, nil
 }
 
-func (log *offsetLog) FileName() string {
+func (log *OffsetLog) FileName() string {
 	return log.name
 }

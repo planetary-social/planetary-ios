@@ -7,10 +7,10 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8
-	go.cryptoscope.co/margaret v0.4.0
+	go.cryptoscope.co/margaret v0.4.3
 	go.cryptoscope.co/muxrpc/v2 v2.0.10
 	go.cryptoscope.co/netwrap v0.1.1
-	go.cryptoscope.co/ssb v0.2.2-0.20220120085157-a846f1659c87
+	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
 	go.mindeco.de v1.12.0
 	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
 	go.mindeco.de/ssb-refs v0.4.2-0.20210908123826-f7ca13c14896
@@ -25,4 +25,4 @@ go 1.14
 
 replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
 
-replace go.cryptoscope.co/ssb => github.com/boreq/ssb v0.2.2-0.20220208190006-cc0c5bd3f324
+replace go.cryptoscope.co/ssb => github.com/boreq/ssb v0.2.2-0.20220222121209-4941b724fa23

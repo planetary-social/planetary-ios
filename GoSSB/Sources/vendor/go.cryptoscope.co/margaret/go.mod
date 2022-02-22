@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The margaret Authors
+//
+// SPDX-License-Identifier: MIT
+
 module go.cryptoscope.co/margaret
 
 go 1.16

@@ -396,8 +396,8 @@ github.com/zeebo/bencode v1.0.0/go.mod h1:Ct7CkrWIQuLWAy9M3atFHYq4kG9Ao/SsY5cdtC
 go.cryptoscope.co/luigi v0.3.5/go.mod h1:vJZOaxKWLWTC5oRWBOGVVW9X+o6nikLZSYUF9bvPd2w=
 go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8 h1:83xMhOCA4LJdbvdS9btSWTpD+vJk6VJyoW8gV0kWzcc=
 go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8/go.mod h1:vJZOaxKWLWTC5oRWBOGVVW9X+o6nikLZSYUF9bvPd2w=
-go.cryptoscope.co/margaret v0.4.0 h1:tQhIwhvO4R1sVq+usv7VTLINJZ8A2EZECyAYFHeewNQ=
-go.cryptoscope.co/margaret v0.4.0/go.mod h1:iTn7xcBu0ggNLuaXlbttgPNQkgwuamU/i+1wxHC5eLc=
+go.cryptoscope.co/margaret v0.4.3 h1:k/t11PPUJM0oum19Xv4wWR9N2jZw/dK/xMAfGhrLBpE=
+go.cryptoscope.co/margaret v0.4.3/go.mod h1:CTgXq3MQtEeWtLjaCFGw063+w8nE2hhuQKwrfXwHbz0=
 go.cryptoscope.co/muxrpc/v2 v2.0.10 h1:H4MhLrdzMfW1vs5SwYYFUHKNkXO0mkhVM4ZRPsVh5Yk=
 go.cryptoscope.co/muxrpc/v2 v2.0.10/go.mod h1:og3Wr0CWnJBVp3aiRa9MmmTUQh901wWNjI96+o3NZag=
 go.cryptoscope.co/netwrap v0.1.0/go.mod h1:7zcYswCa4CT+ct54e9uH9+IIbYYETEMHKDNpzl8Ukew=

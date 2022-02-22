@@ -94,7 +94,7 @@ github.com/zeebo/bencode
 ## explicit
 go.cryptoscope.co/luigi
 go.cryptoscope.co/luigi/mfr
-# go.cryptoscope.co/margaret v0.4.0
+# go.cryptoscope.co/margaret v0.4.3
 ## explicit
 go.cryptoscope.co/margaret
 go.cryptoscope.co/margaret/codec/msgpack
@@ -125,7 +125,7 @@ go.cryptoscope.co/secretstream/boxstream
 go.cryptoscope.co/secretstream/internal/lo25519
 go.cryptoscope.co/secretstream/secrethandshake
 go.cryptoscope.co/secretstream/secrethandshake/internal/extra25519
-# go.cryptoscope.co/ssb v0.2.2-0.20220120085157-a846f1659c87 => github.com/boreq/ssb v0.2.2-0.20220208190006-cc0c5bd3f324
+# go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e => github.com/boreq/ssb v0.2.2-0.20220222121209-4941b724fa23
 ## explicit
 go.cryptoscope.co/ssb
 go.cryptoscope.co/ssb/blobstore
@@ -301,4 +301,4 @@ google.golang.org/protobuf/types/descriptorpb
 # gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 gopkg.in/yaml.v3
 # golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
-# go.cryptoscope.co/ssb => github.com/boreq/ssb v0.2.2-0.20220208190006-cc0c5bd3f324
+# go.cryptoscope.co/ssb => github.com/boreq/ssb v0.2.2-0.20220222121209-4941b724fa23

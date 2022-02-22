@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 The margaret Authors
+//
+// SPDX-License-Identifier: MIT
+
 // Package seqobsv wants to supply an observable value sepcialized for sequence numbers in append-only logs.
 // It should be fine for access from multiple goroutines.
 //
