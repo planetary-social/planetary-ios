@@ -2670,12 +2670,13 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Source/Localization/*",
+				"$(SRCROOT)/Source/Localization/*.swift",
 			);
 			name = "Generate Localized Strings";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Source/Localization/en.lproj/Generated.strings",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
