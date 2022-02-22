@@ -82,7 +82,7 @@ version: 3.2.0
 
 name: PostHog, nameSpecified: 
 body: The MIT License (MIT…
-version: 1.4.4
+version: 1.1.0
 
 name: SkeletonView, nameSpecified: 
 body: The MIT License (MIT…
