@@ -8,14 +8,143 @@
 
 import SwiftUI
 
-struct ConnectedPeersView: View {
+struct PeerConnectionInfo: Identifiable {
+    var id: Identity
+    var name: String
+    var imageID: BlobIdentifier?
+    var currentlyActive: Bool
+}
+
+protocol ConnectedPeersViewModel: ObservableObject {
+    var peers: [PeerConnectionInfo] { get }
+    var recentlyDownloadedPostCount: Int { get }
+    var recentlyDownloadedDuration: String { get }
+    var onlinePeersCount: Int { get set }
+}
+
+
+struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewModel {
+    
+    @ObservedObject var viewModel: ViewModel
+    
     var body: some View {
-        SwiftUI.Text("Online Peers")
+        VStack {
+            HStack {
+                PeerConnectionAnimationView(peerCount: $viewModel.onlinePeersCount)
+                SwiftUI.Text("Online Peers")
+                    .font(.body)
+                    .foregroundColor(Color("menuUnselectedItemText"))
+                
+                SwiftUI.Text(String(viewModel.onlinePeersCount))
+                    .font(.body)
+                    .foregroundColor(Color("defaultTint"))
+
+                Spacer()
+            }
+            .padding(.top, 11)
+            .padding(.bottom, 0)
+            .padding(.horizontal, 14)
+            
+            Color.white.frame(height: 1)
+
+            ScrollView {
+                ForEach(viewModel.peers) { peer in
+                    HStack {
+                        Circle().frame(width: 26, height: 26)
+                        SwiftUI.Text(peer.name)
+                            .font(.callout)
+                            .foregroundColor(Color("menuUnselectedItemText"))
+                        Spacer()
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 0)
+                }
+                Spacer()
+            }
+            
+            VStack(spacing: 2) {
+                HStack {
+                    SwiftUI.Text("Syncing Messages...")
+                        .font(.caption)
+                        .foregroundColor(Color("menuUnselectedItemText"))
+                    Spacer()
+                }
+                
+                HStack {
+                    SwiftUI.Text("Downloaded \(viewModel.recentlyDownloadedPostCount) in the last " + viewModel.recentlyDownloadedDuration)
+                        .font(.caption)
+                        .foregroundColor(Color("secondaryText"))
+                        .scaledToFit()
+                        .minimumScaleFactor(0.5)
+                }
+            }
+            .padding(.horizontal, 15)
+            .padding(.bottom, 14)
+            .padding(.top, 1)
+        }
+        .background(Color("appBackground"))
+        .cornerRadius(10)
+        .padding(14)
+    }
+}
+
+fileprivate class PreviewViewModel: ConnectedPeersViewModel {
+    
+    var peers = [
+        PeerConnectionInfo(
+            id: "0",
+            name: "Amanda Bee 🐝",
+            imageID: nil,
+            currentlyActive: true
+        ),
+        PeerConnectionInfo(
+            id: "1",
+            name: "Sebastian Heit",
+            imageID: nil,
+            currentlyActive: true
+        ),
+        PeerConnectionInfo(
+            id: "2",
+            name: "Rossina Simonelli",
+            imageID: nil,
+            currentlyActive: true
+        ),
+        PeerConnectionInfo(
+            id: "3",
+            name: "Craig Nicholls",
+            imageID: nil,
+            currentlyActive: true
+        ),
+        PeerConnectionInfo(
+            id: "4",
+            name: "Jordan Wilson",
+            imageID: nil,
+            currentlyActive: false
+        ),
+        PeerConnectionInfo(
+            id: "5",
+            name: "Arun Ramachandaran",
+            imageID: nil,
+            currentlyActive: false
+        ),
+    ]
+                
+    var recentlyDownloadedPostCount: Int = 62
+    var recentlyDownloadedDuration: String = "15 mins"
+    var onlinePeersCount: Int {
+        get {
+            peers.filter({ $0.currentlyActive }).count
+        }
+        set {
+            // We just need this to use `Binding`
+            return
+        }
     }
 }
 
 struct ConnectedPeersView_Previews: PreviewProvider {
     static var previews: some View {
-        ConnectedPeersView()
+        ConnectedPeersView(viewModel: PreviewViewModel())
+            .previewLayout(.fixed(width: 254, height: 345))
     }
 }

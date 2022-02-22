@@ -729,6 +729,7 @@
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
+		C9C3787627C5956200238B58 /* PeerConnectionAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */; };
 		C9EDA3D727BC16E8001A6CD8 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
 /* End PBXBuildFile section */
 
@@ -1275,6 +1276,7 @@
 		C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UnitTests.debug.xcconfig; sourceTree = "<group>"; };
 		C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
 		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feed_big.sqlite; sourceTree = "<group>"; };
+		C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnectionAnimationView.swift; sourceTree = "<group>"; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1948,6 +1950,7 @@
 				1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */,
 				0AAF8C4225C6444B00FD8D0F /* CommunityCellView.swift */,
 				C9604C2827C547FB003D1A6D /* ConnectedPeersView.swift */,
+				C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3221,6 +3224,7 @@
 				23C744572200B13F00FB554A /* Contact.swift in Sources */,
 				8DDA836F237CBE5A00B2A52C /* PostReplyDelegate+DataSource.swift in Sources */,
 				8D18035D234F5E77004E30AA /* PillButton.swift in Sources */,
+				C9C3787627C5956200238B58 /* PeerConnectionAnimationView.swift in Sources */,
 				530F019A22DE8F57007EBAE2 /* ImagePicker.swift in Sources */,
 				5396A62722444A1500C57A4B /* BotViewController.swift in Sources */,
 				532751D1222497A70026500F /* Bots.swift in Sources */,

@@ -10,16 +10,16 @@ import UIKit
 
 class PeerConnectionAnimation: UIView {
 
-    // this was used for easier debugging at a larger size, could be refactored out.
-    var multiplier:      CGFloat = 1.0
+    /// A multiplier applied to the size of all elements.
+    var multiplier:      CGFloat
 
-    lazy var lineWidth:       CGFloat = { 1 * self.multiplier }()
+    lazy var lineWidth:       CGFloat = { 1.7 * self.multiplier }()
 
-    lazy var centerDotSize:   CGFloat = { 7 * self.multiplier }()
+    lazy var centerDotSize:   CGFloat = { 5 * self.multiplier }()
     lazy var dotSize:         CGFloat = { 5 * self.multiplier }()
 
-    lazy var insideDiameter:  CGFloat = { 23 * self.multiplier }()
-    lazy var outsideDiameter: CGFloat = { 38 * self.multiplier }()
+    lazy var insideDiameter:  CGFloat = { 16 * self.multiplier }()
+    lazy var outsideDiameter: CGFloat = { 29 * self.multiplier }()
 
     let insideMax = 11
     let outsideMax = 18
@@ -34,6 +34,10 @@ class PeerConnectionAnimation: UIView {
     }
     var totalRadius: CGFloat {
         return totalDiameter / 2
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(square: totalDiameter)
     }
 
     private var insideDots = 0 {
@@ -59,7 +63,9 @@ class PeerConnectionAnimation: UIView {
     var disabledColor = #colorLiteral(red: 0.6195520163, green: 0.619643569, blue: 0.6195320487, alpha: 1)
     var searchColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
 
-    init(color: UIColor) {
+    init(color: UIColor, sizeMultiplier: CGFloat = 1.0) {
+        self.multiplier = sizeMultiplier
+
         super.init(frame: .zero)
         
         self.inColor = color

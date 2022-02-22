@@ -294,7 +294,8 @@ fileprivate class MenuButton: UIButton {
         self.setTitle(title.text, for: .normal)
         self.setTitleColor(UIColor.menuUnselectedItemText, for: .normal)
         self.setTitleColor(UIColor.menuSelectedItemText, for: .highlighted)
-        self.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+        
+        self.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
 
         self.setImage(image, for: .normal)
 
