@@ -87,19 +87,13 @@ Requirements: [Homebrew](https://brew.sh/), and Xcode.
 $ brew install rbenv && rbenv init
 ```
 
-2. Install ruby v2.6.6
+2. Install ruby v2.7.5
 
 ```
-$ rbenv install 2.6.6
+$ rbenv install 2.7.5
 ```
 
-3. Install gems
-
-```
-$ gem install cocoapods cocoapods-keys
-```
-
-4. Install cocoapods. When running `pod install` (or `pod install --no-repo-update`) you will be prompted to enter some secrets. Enter `nil` for all of them. The app is still functional without these keys, it just won't submit support tickets, analytics, or crash reports to us.
+3. Install cocoapods
 
 ```
 $ pod install
