@@ -36,7 +36,7 @@ class CommunityCellView: UIView {
     let followButton = FollowButton()
     let blockButton = BlockButton()
 
-    private var image: Image?
+    private var image: ImageMetadata?
 
     init() {
         super.init(frame: CGRect.zero)

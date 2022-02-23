@@ -9,7 +9,7 @@ import UIKit
 // Convenience types to simplify writing completion closures.
 typealias AboutCompletion = ((About?, Error?) -> Void)
 typealias AboutsCompletion = (([About], Error?) -> Void)
-typealias AddImageCompletion = ((Image?, Error?) -> Void)
+typealias AddImageCompletion = ((ImageMetadata?, Error?) -> Void)
 typealias BlobsAddCompletion = ((BlobIdentifier, Error?) -> Void)
 typealias BlobsStoreCompletion = ((URL?, Error?) -> Void)
 typealias ContactCompletion = ((Contact?, Error?) -> Void)
@@ -244,6 +244,18 @@ extension Bot {
     
     func about(identity: Identity, completion:  @escaping AboutCompletion) {
         self.about(queue: .main, identity: identity, completion: completion)
+    }
+    
+    func about(identity: Identity) async throws -> About? {
+        return try await withCheckedThrowingContinuation { continuation in
+            about(identity: identity) { about, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: about)
+            }
+        }
     }
     
     func redeemInvitation(to star: Star, completion: @escaping ErrorCompletion) {

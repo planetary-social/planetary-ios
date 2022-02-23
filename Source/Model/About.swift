@@ -27,7 +27,7 @@ struct About: ContentCodable, Equatable {
 
     let about: Identity
     let description: String?
-    let image: Image?
+    let image: ImageMetadata?
     let name: String?
     let shortcode: String?
     let type: ContentType
@@ -92,7 +92,7 @@ struct About: ContentCodable, Equatable {
         self.type = .about
         self.about = about
         self.description = nil
-        self.image = Image(link: image)
+        self.image = ImageMetadata(link: image)
         self.name = nil
         self.shortcode = nil
         self.publicWebHosting = nil
@@ -102,13 +102,13 @@ struct About: ContentCodable, Equatable {
         self.type = .about
         self.about = about
         self.description = description
-        self.image = Image(link: imageLink)
+        self.image = ImageMetadata(link: imageLink)
         self.name = name
         self.shortcode = nil
         self.publicWebHosting = publicWebHosting
     }
 
-    init(identity: Identity, name: String?, description: String?, image: Image?, publicWebHosting: Bool?) {
+    init(identity: Identity, name: String?, description: String?, image: ImageMetadata?, publicWebHosting: Bool?) {
         self.type = .about
         self.about = identity
         self.description = description
@@ -118,18 +118,18 @@ struct About: ContentCodable, Equatable {
         self.publicWebHosting = publicWebHosting
     }
 
-    private static func decodeImage(from values: KeyedDecodingContainer<About.CodingKeys>) -> Image? {
+    private static func decodeImage(from values: KeyedDecodingContainer<About.CodingKeys>) -> ImageMetadata? {
         if let identifier = try? values.decode(Identifier.self, forKey: .image) {
-            return Image(link: identifier)
+            return ImageMetadata(link: identifier)
         } else {
-            return try? values.decode(Image.self, forKey: .image)
+            return try? values.decode(ImageMetadata.self, forKey: .image)
         }
     }
 
     func mutatedCopy(identity: Identity? = nil,
                      name: String? = nil,
                      description: String? = nil,
-                     image: Image? = nil,
+                     image: ImageMetadata? = nil,
                      publicWebHosting: Bool? = nil) -> About
     {
         return About(identity: identity ?? self.identity,

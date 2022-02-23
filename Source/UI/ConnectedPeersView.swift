@@ -8,19 +8,7 @@
 
 import SwiftUI
 
-struct PeerConnectionInfo: Identifiable {
-    var id: Identity
-    var name: String
-    var imageID: BlobIdentifier?
-    var currentlyActive: Bool
-}
 
-protocol ConnectedPeersViewModel: ObservableObject {
-    var peers: [PeerConnectionInfo] { get }
-    var recentlyDownloadedPostCount: Int { get }
-    var recentlyDownloadedDuration: String { get }
-    var onlinePeersCount: Int { get set }
-}
 
 
 struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewModel {
@@ -50,7 +38,9 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
             ScrollView {
                 ForEach(viewModel.peers) { peer in
                     HStack {
-                        Circle().frame(width: 26, height: 26)
+                        Circle()
+                            .frame(width: 26, height: 26)
+                            .foregroundColor(Color("menuUnselectedItemText"))
                         SwiftUI.Text(peer.name)
                             .font(.callout)
                             .foregroundColor(Color("menuUnselectedItemText"))

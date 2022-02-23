@@ -7,20 +7,7 @@ import Foundation
 
 // MARK:- API statistics
 
-protocol BotStatistics {
-
-    var lastSyncDate: Date? { get }
-    var lastSyncDuration: TimeInterval { get }
-
-    var lastRefreshDate: Date? { get }
-    var lastRefreshDuration: TimeInterval { get }
-
-    var repo: RepoStatistics { get }
-    var peer: PeerStatistics { get }
-    var db: DatabaseStatistics { get }
-}
-
-struct MutableBotStatistics: BotStatistics {
+struct BotStatistics: Equatable {
 
     var lastSyncDate: Date?
     var lastSyncDuration: TimeInterval = 0
@@ -33,7 +20,7 @@ struct MutableBotStatistics: BotStatistics {
     var db = DatabaseStatistics()
 }
 
-struct RepoStatistics {
+struct RepoStatistics: Equatable {
 
     /// Path to the repo
     let path: String
@@ -63,7 +50,7 @@ struct RepoStatistics {
     }
 }
 
-struct DatabaseStatistics {
+struct DatabaseStatistics: Equatable {
 
     let lastReceivedMessage: Int
 
@@ -73,16 +60,16 @@ struct DatabaseStatistics {
 
 }
 
-struct PeerStatistics {
-
+struct PeerStatistics: Equatable {
+    
     let count: Int
     let connectionCount: UInt
 
     // name, identifier
-    let identities: [(String, String)]
+    let identities: [(name: String, identifier: Identifier)]
 
     // IP, Identifier
-    let currentOpen: [(String, String)]
+    let currentOpen: [(name: String, identifier: Identifier)]
 
     init(count: Int? = 0,
          connectionCount: UInt? = 0,
@@ -93,5 +80,14 @@ struct PeerStatistics {
         self.connectionCount = connectionCount ?? 0
         self.identities = identities ?? []
         self.currentOpen = open ?? []
+    }
+    
+    static func == (lhs: PeerStatistics, rhs: PeerStatistics) -> Bool {
+        return lhs.count == rhs.count &&
+        lhs.connectionCount == rhs.connectionCount &&
+        lhs.identities.map { $0.0 } == rhs.identities.map { $0.0 } &&
+        lhs.identities.map { $0.1 } == rhs.identities.map { $0.1 } &&
+        lhs.currentOpen.map { $0.0 } == rhs.currentOpen.map { $0.0 } &&
+        lhs.currentOpen.map { $0.1 } == rhs.currentOpen.map { $0.1 }
     }
 }

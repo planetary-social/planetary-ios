@@ -29,7 +29,7 @@ class ImageButton: UIButton {
     /// If the cached image is not ready, then the image is set when
     /// the cache returns a response.  Note that this means whatever
     /// image is currently set will remain until the cache returns.
-    func set(image: Image?,
+    func set(image: ImageMetadata?,
              for state: UIControl.State = .normal)
     {
         // always forget any pending completion
