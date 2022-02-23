@@ -21,12 +21,12 @@ final class SecretsServiceAdapterTests: XCTestCase {
     func testGet() {
         let expectedValue = "tests"
         bundleSecretsService.value = expectedValue
-        XCTAssertEqual(service.get(key: .posthog), expectedValue)
+        XCTAssertEqual(service.get(key: "posthog"), expectedValue)
     }
 
     func testGetWhenKeyIsNotFound() {
         bundleSecretsService.value = nil
-        XCTAssertNil(service.get(key: .posthog))
+        XCTAssertNil(service.get(key: "posthog"))
     }
 
 

@@ -11,11 +11,11 @@ import XCTest
 final class SecretsTests: XCTestCase {
 
     private var service: SecretsServiceMock!
-    private var secrets: Secrets!
+    private var secrets: Keys!
 
     override func setUp() {
         service = SecretsServiceMock()
-        secrets = Secrets(service: service)
+        secrets = Keys(service: service)
     }
 
     func testGet() {

@@ -16,12 +16,12 @@ class SecretsServiceAdapter: SecretsService {
         self.bundleSecretsService = bundleSecretsService
     }
 
-    func get(key: Key) -> String? {
-        if let result = bundleSecretsService.get(key: key.rawValue) {
+    func get(key: String) -> String? {
+        if let result = bundleSecretsService.get(key: key), !result.isEmpty {
             Log.debug("Key \(key) found.")
             return result
         } else {
-            Log.info("Key \(key) not found.")
+            Log.error("Key \(key) not found.")
             return nil
         }
     }

@@ -1228,6 +1228,8 @@
 		53F1E56621E3C59C007EF3AD /* UIDevice+Localhost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Localhost.swift"; sourceTree = "<group>"; };
 		53F24FB322C70B5200CFCBAA /* AvatarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarButton.swift; sourceTree = "<group>"; };
 		53FCAFDD22051C88009E9E82 /* SecretViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretViewController.swift; sourceTree = "<group>"; };
+		5B0D585327BEE1F1002F927D /* Config.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Config.release.plist; sourceTree = "<group>"; };
+		5B0D585827BEE4FC002F927D /* Config.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Config.debug.plist; sourceTree = "<group>"; };
 		5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		606DCE79703F49AE5AB530BD /* Pods-APITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.release.xcconfig"; sourceTree = "<group>"; };
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1809,6 +1811,8 @@
 				0A41F56C2488078F005BB1DE /* Preload.bundle */,
 				5344D83521C4649A00704A34 /* Assets.xcassets */,
 				53E26C4A23022098009240B2 /* FBTT.entitlements */,
+				5B0D585827BEE4FC002F927D /* Config.debug.plist */,
+				5B0D585327BEE1F1002F927D /* Config.release.plist */,
 				2DFBECE325E1542A00803075 /* development.entitlements */,
 				2DFBECE425E1545000803075 /* production.entitlements */,
 				5344D83A21C4649A00704A34 /* Info.plist */,
@@ -2390,6 +2394,7 @@
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
 				8D9143FB230C6B670075BC8A /* Run Script */,
 				5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */,
+				5B0D585727BEE41D002F927D /* Copy Config.plist */,
 				5344D82721C4649700704A34 /* Sources */,
 				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				5344D82821C4649700704A34 /* Frameworks */,
@@ -2630,6 +2635,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ $CONFIGURATION = \"Release\" ]; then\n/opt/homebrew/bin/license-plist --output-path Resources/Settings.bundle\nfi\n";
+		};
+		5B0D585727BEE41D002F927D /* Copy Config.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Config.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ $CONFIGURATION = \"Debug\" ]; then\ncp $SRCROOT/Resources/Config.debug.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Config.plist\nelse\ncp $SRCROOT/Resources/Config.release.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Config.plist\nfi\n";
 		};
 		7723EA9C2D57EFC61D5051B3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

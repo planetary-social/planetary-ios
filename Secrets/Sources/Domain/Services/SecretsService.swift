@@ -8,5 +8,5 @@
 import Foundation
 
 protocol SecretsService {
-    func get(key: Key) -> String?
+    func get(key: String) -> String?
 }
