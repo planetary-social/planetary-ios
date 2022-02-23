@@ -2,6 +2,10 @@
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
+## Release Config.plist
+
+Resources/Config.release.plist
+
 ## CocoaPods Keys
 Pods/CocoaPodsKeys
 
