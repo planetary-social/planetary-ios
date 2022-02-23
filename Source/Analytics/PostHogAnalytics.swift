@@ -18,7 +18,7 @@ class PostHogAnalytics: AnalyticsService {
     }
     
     //var posthog: PHGPostHog
-    var posthog: PHGPostHog? = nil
+    var posthog: PHGPostHog?
     
     init() {
         Log.info("Configuring PostHog...")

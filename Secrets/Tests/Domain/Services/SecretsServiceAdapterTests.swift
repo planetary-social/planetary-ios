@@ -29,5 +29,4 @@ final class SecretsServiceAdapterTests: XCTestCase {
         XCTAssertNil(service.get(key: "posthog"))
     }
 
-
 }

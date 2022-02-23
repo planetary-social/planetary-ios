@@ -10,7 +10,7 @@ import Logger
 /// The Keys class perovides a simple key-value storage (in a .plist file) utility that
 /// can be used to retrieve secrets in a secure way
 public class Keys {
-    
+
     public static let shared = Keys(service: SecretsServiceAdapter(bundleSecretsService: PlistService()))
 
     var service: SecretsService?
