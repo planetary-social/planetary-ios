@@ -4,7 +4,7 @@
 
 ## Release Config.plist
 
-Resources/Config.release.plist
+Resources/Secrets.release.plist
 
 ## CocoaPods Keys
 Pods/CocoaPodsKeys

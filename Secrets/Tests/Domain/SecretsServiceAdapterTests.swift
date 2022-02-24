@@ -10,23 +10,23 @@ import XCTest
 
 final class SecretsServiceAdapterTests: XCTestCase {
 
-    private var bundleSecretsService: BundleSecretsServiceMock!
     private var service: SecretsServiceAdapter!
 
     override func setUp() {
-        bundleSecretsService = BundleSecretsServiceMock()
-        service = SecretsServiceAdapter(bundleSecretsService: bundleSecretsService)
+        service = SecretsServiceAdapter(bundle: .module)
     }
 
     func testGet() {
-        let expectedValue = "tests"
-        bundleSecretsService.value = expectedValue
+        let expectedValue = "posthog-key"
         XCTAssertEqual(service.get(key: "posthog"), expectedValue)
     }
 
     func testGetWhenKeyIsNotFound() {
-        bundleSecretsService.value = nil
-        XCTAssertNil(service.get(key: "posthog"))
+        XCTAssertNil(service.get(key: "unknownkey"))
+    }
+
+    func testGetWhenKeyIsFoundButEmpty() {
+        XCTAssertNil(service.get(key: "bugsnag"))
     }
 
 }

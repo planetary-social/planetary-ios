@@ -11,10 +11,10 @@ import Logger
 /// can be used to retrieve secrets in a secure way
 public class Keys {
 
-    public static let shared = Keys(service: SecretsServiceAdapter(bundleSecretsService: PlistService()))
+    public static let shared = Keys(service: SecretsServiceAdapter())
 
     var service: SecretsService?
-    
+
     init(service: SecretsService) {
         self.service = service
     }

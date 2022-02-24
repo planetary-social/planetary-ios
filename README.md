@@ -79,27 +79,21 @@ Check our website [planetary.social](https://planetary.social/) for more info!
 
 ### Setup
 
-Requirements: [Homebrew](https://brew.sh/), and Xcode.
+You should be able to Build and Run in Xcode without installing any external tools other than Xcode.
 
-1. Install `rbenv` and add it to your shell: 
+If you need to change a dependency, install the `cocoapods` dependency manager first:
 
-```
-$ brew install rbenv && rbenv init
-```
-
-2. Install ruby v2.7.5
+1. Install gem
 
 ```
-$ rbenv install 2.7.5
+$ gem install cocoapods
 ```
 
-3. Install cocoapods
+2. Install cocoapods
 
 ```
 $ pod install
 ```
-
-5. You should now be able to Build and Run in Xcode.
 
 ### Running
 

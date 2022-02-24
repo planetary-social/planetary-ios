@@ -10,14 +10,17 @@ import Logger
 
 class SecretsServiceAdapter: SecretsService {
 
-    var bundleSecretsService: BundleSecretsService
+    var dictionary: NSDictionary?
 
-    init(bundleSecretsService: BundleSecretsService) {
-        self.bundleSecretsService = bundleSecretsService
+    init(bundle: Bundle = .main) {
+        if let path = bundle.path(forResource: "Secrets", ofType: "plist") {
+            dictionary = NSDictionary(contentsOfFile: path)
+        }
     }
 
     func get(key: String) -> String? {
-        if let result = bundleSecretsService.get(key: key), !result.isEmpty {
+        let value = dictionary?[key] as? String
+        if let result = value, !result.isEmpty {
             Log.debug("Key \(key) found.")
             return result
         } else {

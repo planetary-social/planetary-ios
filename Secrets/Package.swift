@@ -30,6 +30,6 @@ let package = Package(
             name: "SecretsTests",
             dependencies: ["Secrets"],
             path: "Tests",
-            resources: [.copy("Samples/Config.plist")]),
+            resources: [.copy("Samples/Secrets.plist")]),
     ]
 )
