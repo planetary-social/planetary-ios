@@ -11,14 +11,14 @@ import Combine
 
 actor MockBotStatisticsService: BotStatisticsService {
         
-    var statisticsPasthrough: PassthroughSubject<BotStatistics?, Never>
+    var statisticsPasthrough: PassthroughSubject<BotStatistics, Never>
     
-    func subscribe() async -> AnyPublisher<BotStatistics?, Never> {
+    func subscribe() async -> AnyPublisher<BotStatistics, Never> {
         return statisticsPasthrough.print().eraseToAnyPublisher()
     }
 
     init(refreshInterval: DispatchTimeInterval = .seconds(1)) {
-        statisticsPasthrough = PassthroughSubject<BotStatistics?, Never>()
+        statisticsPasthrough = PassthroughSubject<BotStatistics, Never>()
     }
 }
 

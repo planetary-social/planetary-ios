@@ -346,7 +346,7 @@ class FakeBot: Bot {
     var statistics: BotStatistics { return mockStatistics.popLast() ?? _statistics }
     
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
-        let statistics = _statistics
+        let statistics = mockStatistics.popLast() ?? _statistics
         queue.async {
             completion(statistics)
         }

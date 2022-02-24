@@ -8,13 +8,24 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 class MenuViewController: UIViewController {
 
-    private let menuView: MenuView = {
-        let view = MenuView.forAutoLayout()
+    private lazy var menuView: MenuView = {
+        let view = MenuView(frame: CGRect.zero, connectedPeersView: connectedPeersView)
+        view.useAutoLayout()
         view.transform = CGAffineTransform(translationX: -300, y: 0)
         return view
+    }()
+    
+    private var connectedPeersView: UIView {
+        return connectedPeersViewController.view
+    }
+    
+    private lazy var connectedPeersViewController: UIViewController = {
+        let viewModel = ConnectedPeersViewCoordinator(bot: GoBot.shared, statisticsService: BotStatisticsServiceAdaptor.shared)
+        return UIHostingController(rootView: ConnectedPeersView(viewModel: viewModel))
     }()
 
     private lazy var closeButton: UIButton = {
@@ -56,6 +67,10 @@ class MenuViewController: UIViewController {
 //            menuBorder.bottomAnchor.constraint(equalTo: self.menuView.bottomAnchor, constant: 0),
 //            menuBorder.widthAnchor.constraint(equalToConstant: 1)
 //        ])
+        
+        addChild(connectedPeersViewController)
+        connectedPeersViewController.didMove(toParent: self)
+        
         self.load()
     }
     
@@ -188,9 +203,7 @@ fileprivate class MenuView: UIView {
     let helpButton = MenuButton(title: .helpAndSupport, image: UIImage.verse.help)
     let reportBugButton = MenuButton(title: .reportBug, image: UIImage.verse.reportBug)
 
-    let peersView = PeersView()
-
-    override init(frame: CGRect) {
+    init(frame: CGRect, connectedPeersView: UIView) {
 
         super.init(frame: frame)
         self.backgroundColor = UIColor.menuBackgroundColor
@@ -230,11 +243,16 @@ fileprivate class MenuView: UIView {
         
         separator = Layout.separatorView(color: UIColor.menuBorderColor)
         Layout.fillSouth(of: self.reportBugButton, with: separator)
+        
+        connectedPeersView.useAutoLayout()
+        addSubview(connectedPeersView)
+        connectedPeersView.constrainHeight(to: 310).priority = .defaultLow
+        connectedPeersView.pinTop(toBottomOf: reportBugButton).priority = UILayoutPriority(249)
+        connectedPeersView.pinLeftToSuperview()
+        connectedPeersView.pinRightToSuperview()
+        connectedPeersView.pinBottomToSuperviewBottom(respectSafeArea: false)?.priority = .defaultHigh
+        connectedPeersView.isHidden = !UserDefaults.standard.showPeerToPeerWidget
 
-        let insets = UIEdgeInsets(top: 0, left: self.profileButton.contentEdgeInsets.left + 8, bottom: -36, right: -Layout.horizontalSpacing)
-        Layout.fillBottom(of: self, with: self.peersView, insets: insets)
-        self.peersView.isHidden = !UserDefaults.standard.showPeerToPeerWidget
-        self.peersView.layoutSubviews()
 
         if Date.todayIsAHoliday() {
             Layout.fill(view: self, with: SnowView(), respectSafeArea: false)

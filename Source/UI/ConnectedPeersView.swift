@@ -8,9 +8,6 @@
 
 import SwiftUI
 
-
-
-
 struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewModel {
     
     @ObservedObject var viewModel: ViewModel
@@ -41,22 +38,25 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
                         Circle()
                             .frame(width: 26, height: 26)
                             .foregroundColor(Color("menuUnselectedItemText"))
-                        SwiftUI.Text(peer.name)
+                        SwiftUI.Text(peer.name ?? peer.id)
                             .font(.callout)
                             .foregroundColor(Color("menuUnselectedItemText"))
+                            .lineLimit(1)
                         Spacer()
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 0)
                 }
-                Spacer()
             }
+            
+            Spacer()
             
             VStack(spacing: 2) {
                 HStack {
                     SwiftUI.Text("Syncing Messages...")
                         .font(.caption)
                         .foregroundColor(Color("menuUnselectedItemText"))
+                        .minimumScaleFactor(0.5)
                     Spacer()
                 }
                 
@@ -66,8 +66,10 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
                         .foregroundColor(Color("secondaryText"))
                         .scaledToFit()
                         .minimumScaleFactor(0.5)
+                    Spacer()
                 }
             }
+            .frame(minHeight: 32)
             .padding(.horizontal, 15)
             .padding(.bottom, 14)
             .padding(.top, 1)
@@ -135,6 +137,10 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
 struct ConnectedPeersView_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedPeersView(viewModel: PreviewViewModel())
-            .previewLayout(.fixed(width: 254, height: 345))
+            .previewLayout(.fixed(width: 254, height: 310))
+        
+        // iPhone SE Size
+        ConnectedPeersView(viewModel: PreviewViewModel())
+            .previewLayout(.fixed(width: 254, height: 175))
     }
 }

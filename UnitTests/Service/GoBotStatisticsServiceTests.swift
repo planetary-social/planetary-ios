@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 
-class GoBotStatisticsServiceTests: XCTestCase {
+class BotStatisticsServiceTests: XCTestCase {
     
     var sut: BotStatisticsServiceAdaptor!
     
@@ -17,7 +17,7 @@ class GoBotStatisticsServiceTests: XCTestCase {
 
     override func setUpWithError() throws {
         mockBot = FakeBot()
-        sut = BotStatisticsServiceAdaptor(bot: mockBot, refreshInterval: .microseconds(10))
+        sut = BotStatisticsServiceAdaptor(bot: mockBot, refreshInterval: 0.001)
         
     }
 
@@ -63,7 +63,7 @@ class GoBotStatisticsServiceTests: XCTestCase {
             ),
             db: DatabaseStatistics(lastReceivedMessage: 2)
         )
-        mockBot.mockStatistics = [secondStatistics, firstStatistics]
+        mockBot.mockStatistics = [secondStatistics, firstStatistics, BotStatistics()]
         
         // Act
         let statisticsPublisher = await sut.subscribe().collectNext(2)

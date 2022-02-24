@@ -10,21 +10,43 @@ import Foundation
 import Combine
 
 protocol BotStatisticsService {
-    func subscribe() async -> AnyPublisher<BotStatistics?, Never>
+    func subscribe() async -> AnyPublisher<BotStatistics, Never>
 }
 
 actor BotStatisticsServiceAdaptor: BotStatisticsService {
     
     static let shared = BotStatisticsServiceAdaptor(bot: GoBot.shared)
     
-    private var statisticsPublisher: AnyPublisher<BotStatistics?, Never>
+    private var statisticsPublisher: AnyPublisher<BotStatistics, Never>?
     
-    func subscribe() async -> AnyPublisher<BotStatistics?, Never> {
+    private var refreshInterval: TimeInterval
+    
+    private var bot: Bot
+    
+    func subscribe() async -> AnyPublisher<BotStatistics, Never> {
+        if let statisticsPublisher = statisticsPublisher {
+            return statisticsPublisher
+        }
+        
+    let statisticsPublisher: AnyPublisher<BotStatistics, Never> = Timer.publish(every: refreshInterval, on: .main, in: .default)
+            .autoconnect()
+            .flatMap { (_: Date) -> AnyPublisher<BotStatistics, Never> in
+                print("Timer fired")
+
+                return Future<BotStatistics, Never> { promise in
+                    self.bot.statistics(completion: { statistics in
+                        promise(.success(statistics))
+                    })
+                }.eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher() 
+        
         return statisticsPublisher
     }
 
     
-    init(bot: Bot, refreshInterval: DispatchTimeInterval = .seconds(1)) {
-        statisticsPublisher = PassthroughSubject<BotStatistics?, Never>().eraseToAnyPublisher()
+    init(bot: Bot, refreshInterval: TimeInterval = 1) {
+        self.bot = bot
+        self.refreshInterval = refreshInterval
     }
 }

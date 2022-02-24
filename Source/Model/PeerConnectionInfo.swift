@@ -10,7 +10,7 @@ import Foundation
 
 struct PeerConnectionInfo: Identifiable, Equatable {
     var id: Identity
-    var name: String
+    var name: String?
     var imageID: BlobIdentifier?
     var currentlyActive: Bool
 }

@@ -43,8 +43,7 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
         self.bot = bot
         Task {
              await statisticsService.subscribe()
-            
-                .compactMap { $0?.peer }
+                .map { $0.peer }
                 .flatMap { peerStatistics in
                     return Future { promise in
                         Task.detached {
@@ -53,6 +52,7 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
                         }
                     }
                 }
+                .receive(on: RunLoop.main)
                 .sink { [weak self] in
                     self?.peers = $0
                 }
@@ -63,9 +63,9 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
     private func peerConnectionInfo(from peerStatistics: PeerStatistics) async -> [PeerConnectionInfo] {
         var peerConnectionInfo = [PeerConnectionInfo]()
         
-        for (_, identity) in peerStatistics.currentOpen {
+        for (ipAddress, identity) in peerStatistics.currentOpen {
             do {
-                let about = try await bot.about(identity: identity)
+                let about = try await bot.about(identity: "@\(identity).ed25519") // TODO: support other feed formats
                 
                 peerConnectionInfo.append(
                     PeerConnectionInfo(
@@ -76,6 +76,14 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
                     )
                 )
             } catch {
+                peerConnectionInfo.append(
+                    PeerConnectionInfo(
+                        id: identity,
+                        name: nil,
+                        imageID: nil,
+                        currentlyActive: true
+                    )
+                )
                 Log.optional(error)
                 continue
             }
