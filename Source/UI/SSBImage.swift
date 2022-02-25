@@ -14,8 +14,8 @@ struct SSBImage: UIViewRepresentable {
     
     var animated = false
 
-    func makeUIView(context: Context) -> ImageView {
-        let view = ImageView()
+    func makeUIView(context: Context) -> AvatarImageView {
+        let view = AvatarImageView()
         view.set(image: metadata, animated: animated)
         view.contentMode = .scaleAspectFit
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -23,5 +23,5 @@ struct SSBImage: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: ImageView, context: Context) {}
+    func updateUIView(_ uiView: AvatarImageView, context: Context) {}
 }
