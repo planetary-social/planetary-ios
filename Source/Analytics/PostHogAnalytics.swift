@@ -7,9 +7,9 @@
 //
 
 import Foundation
-import Keys
 import PostHog
 import Logger
+import Secrets
 
 class PostHogAnalytics: AnalyticsService {
     
@@ -18,12 +18,15 @@ class PostHogAnalytics: AnalyticsService {
     }
     
     //var posthog: PHGPostHog
-    var posthog: PHGPostHog! = nil
+    var posthog: PHGPostHog?
     
     init() {
-        let keys = PlanetaryKeys()
         Log.info("Configuring PostHog...")
-        let configuration = PHGPostHogConfiguration(apiKey: keys.postHogAPIKey, host: keys.postHogHost)
+        guard let apiKey = Keys.shared.get(key: .posthog) else {
+            return
+        }
+        let host = "https://app.posthog.com"
+        let configuration = PHGPostHogConfiguration(apiKey: apiKey, host: host)
         configuration.captureApplicationLifecycleEvents = true; // Record certain application events automatically!
         configuration.recordScreenViews = true; // Record screen views automatically!
 
@@ -33,8 +36,7 @@ class PostHogAnalytics: AnalyticsService {
     
     func identify(about: About?, network: NetworkKey) {
         if let about = about {
-            let posthog = self.posthog
-            posthog!.identify(about.identity,
+            posthog?.identify(about.identity,
                       properties: ["Network": network.name, "$name": about.name ?? ""])
         }
     }
@@ -74,7 +76,7 @@ class PostHogAnalytics: AnalyticsService {
     }
     
     func forget() {
-        self.posthog.reset()
+        posthog?.reset()
     }
 
     func optIn() {
@@ -94,7 +96,7 @@ class PostHogAnalytics: AnalyticsService {
         let element = String(elementEnum.rawValue)
         //let name = String(name.rawValue)
         
-        self.posthog.capture("did", properties: ["element": element, "name": name, "params": params])
+        posthog?.capture("did", properties: ["element": element, "name": name, "params": params])
         UserDefaults.standard.didTrack(event)
         //self.posthog.flush()
     }
