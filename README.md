@@ -81,15 +81,28 @@ Check our website [planetary.social](https://planetary.social/) for more info!
 
 You should be able to Build and Run in Xcode without installing any external tools other than Xcode.
 
-If you need to change a dependency, install the `cocoapods` dependency manager first:
+If you need to change a dependency, install the `cocoapods` dependency manager first[^1]:
+[^1]: Requirements: [Homebrew](https://brew.sh/)
 
-1. Install gem
+1. Install `rbenv` and add it to your shell: 
+
+```
+$ brew install rbenv && rbenv init
+```
+
+2. Install ruby v2.7.5
+
+```
+$ rbenv install 2.7.5
+```
+
+3. Install gem
 
 ```
 $ gem install cocoapods
 ```
 
-2. Install cocoapods
+4. Install dependencies
 
 ```
 $ pod install
@@ -120,8 +133,6 @@ Due to the small team size, code reviews are mostly to inform other members what
 
 Planetary’s underlying SSB protocol implementation is written in Go (see [cryptoscope/ssb](https://github.com/cryptoscope/ssb)). The GoSSB folder contains an Xcode project that packages [cryptoscope/ssb](https://github.com/cryptoscope/ssb) as an XCFramework that works across Apple’s various platforms and architectures. GoSSB.xcframework is included in this repository so that contributors don’t need to install a full Go stack to work on the iOS app. More information about the GoSSB.xcframework can be found in its [README](GoSSB/README.md)
 
-
 ## License
 
 [MPL-2.0](LICENSE)
-
