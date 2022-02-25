@@ -7,6 +7,9 @@
    <FileRef
       location = "group:Logger">
    </FileRef>
+   <FileRef
+      location = "group:Secrets">
+   </FileRef>
    <Group
       location = "group:Performance Tests"
       name = "Performance Tests">

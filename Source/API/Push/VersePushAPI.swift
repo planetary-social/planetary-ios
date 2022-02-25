@@ -7,23 +7,22 @@
 //
 
 import Foundation
-import Keys
 import Logger
+import Secrets
 
 class VersePushAPI: PushAPIService {
     
     private var scheme: String
     private var host: String
     private var port: Int
-    private var token: String
+    private var token: String?
     private var environment: String
     
     init() {
-        let keys = PlanetaryKeys()
         self.scheme = "https"
         self.host = "us-central1-pub-verse-app.cloudfunctions.net"
         self.port = 443
-        self.token = keys.versePushAPIToken
+        self.token = Keys.shared.get(key: .push)
         #if DEBUG
         self.environment = "development"
         #else
@@ -49,7 +48,11 @@ class VersePushAPI: PushAPIService {
 extension VersePushAPI: API {
     
     var headers: APIHeaders {
-        return ["planetary-push-authorize": self.token]
+        if let token = self.token {
+            return ["planetary-push-authorize": token]
+        } else {
+            return [:]
+        }
     }
     
     func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {

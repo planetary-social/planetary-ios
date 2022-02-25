@@ -5,7 +5,6 @@ PODS:
     - ImageSlideshow/Core (= 1.8.3)
   - ImageSlideshow/Core (1.8.3)
   - KeychainSwift (19.0.0)
-  - Keys (1.0.1)
   - Multipart (0.1.0)
   - PhoneNumberKit (3.2.0):
     - PhoneNumberKit/PhoneNumberKitCore (= 3.2.0)
@@ -38,7 +37,6 @@ DEPENDENCIES:
   - Down (= 0.9.2)
   - ImageSlideshow (= 1.8.3)
   - KeychainSwift (= 19.0.0)
-  - Keys (from `Pods/CocoaPodsKeys`)
   - Multipart (= 0.1.0)
   - PhoneNumberKit (= 3.2.0)
   - PostHog (~> 1.1)
@@ -67,16 +65,11 @@ SPEC REPOS:
     - ZendeskSupportProvidersSDK
     - ZendeskSupportSDK
 
-EXTERNAL SOURCES:
-  Keys:
-    :path: Pods/CocoaPodsKeys
-
 SPEC CHECKSUMS:
   Bugsnag: caa15cf2a5d9278f04e1dda70c0cc6d42d3c9625
   Down: 1f6a14846dff45ae8e7e4334b4e386a5fd3b2412
   ImageSlideshow: 4694d7d699a1549582e7cc631fb392d8f91630f3
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  Keys: a576f4c9c1c641ca913a959a9c62ed3f215a8de9
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
   PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
   PostHog: 6dff77246fcc4bc77a066a93853ee8b57a623060
@@ -91,6 +84,6 @@ SPEC CHECKSUMS:
   ZendeskSupportProvidersSDK: 2bdf8544f7cd0fd4c002546f5704b813845beb2a
   ZendeskSupportSDK: 3a8e508ab1d9dd22dc038df6c694466414e037ba
 
-PODFILE CHECKSUM: 9d252b47f2017321157598df76b9eb4e4a3fc370
+PODFILE CHECKSUM: ad1a7d899ee1da4e5cfc483a069b459c64e8c06d
 
 COCOAPODS: 1.11.2
