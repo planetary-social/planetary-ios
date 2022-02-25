@@ -61,7 +61,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
                 }
                 
                 HStack {
-                    SwiftUI.Text("Downloaded \(viewModel.recentlyDownloadedPostCount) in the last " + viewModel.recentlyDownloadedDuration)
+                    SwiftUI.Text("Downloaded \(viewModel.recentlyDownloadedPostCount) in the last " + viewModel.recentlyDownloadedPostDuration)
                         .font(.caption)
                         .foregroundColor(Color("secondaryText"))
                         .scaledToFit()
@@ -122,7 +122,7 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
     ]
                 
     var recentlyDownloadedPostCount: Int = 62
-    var recentlyDownloadedDuration: String = "15 mins"
+    var recentlyDownloadedPostDuration: String = "15 mins"
     var onlinePeersCount: Int {
         get {
             peers.filter({ $0.currentlyActive }).count

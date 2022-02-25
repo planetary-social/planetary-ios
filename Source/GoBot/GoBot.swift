@@ -1337,6 +1337,15 @@ class GoBot: Bot {
                                                    connectionCount: connectionCount,
                                                    identities: openConnections,
                                                    open: openConnections)
+            
+            self._statistics.recentlyDownloadedPostDuration = 15 // minutes
+            do {
+                self._statistics.recentlyDownloadedPostCount = try self.database.messageReceivedCount(
+                    since: Date(timeIntervalSinceNow: Double(self._statistics.recentlyDownloadedPostDuration) * -60)
+                )
+            } catch {
+                Log.optional(error)
+            }
 
             self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
             

@@ -10,8 +10,8 @@ import XCTest
 import Combine
 
 extension XCTestCase {
-    func publisherCompletion<T: Publisher>(
-        _ publisher: T,
+    func makeAwaitable<T: Publisher>(
+        publisher: T,
         timeout: TimeInterval = 10,
         file: StaticString = #file,
         line: UInt = #line

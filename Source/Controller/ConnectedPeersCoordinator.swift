@@ -13,7 +13,7 @@ import Logger
 protocol ConnectedPeersViewModel: ObservableObject {
     var peers: [PeerConnectionInfo] { get }
     var recentlyDownloadedPostCount: Int { get }
-    var recentlyDownloadedDuration: String { get }
+    var recentlyDownloadedPostDuration: String { get }
     var onlinePeersCount: Int { get set }
 }
 
@@ -21,9 +21,9 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
     
     @Published var peers = [PeerConnectionInfo]()
     
-    var recentlyDownloadedPostCount: Int = 0
+    @Published var recentlyDownloadedPostCount: Int = 0
     
-    var recentlyDownloadedDuration: String = "15 mins"
+    @Published var recentlyDownloadedPostDuration: String = ""
     
     var onlinePeersCount: Int {
         get {
@@ -41,8 +41,12 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
         
     init(bot: Bot, statisticsService: BotStatisticsService) {
         self.bot = bot
+        
         Task {
-             await statisticsService.subscribe()
+             let statisticsPublisher = await statisticsService.subscribe()
+            
+            // Wire up peers array to the statisticsService
+            statisticsPublisher
                 .map { $0.peer }
                 .flatMap { peerStatistics in
                     return Future { promise in
@@ -57,36 +61,49 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
                     self?.peers = $0
                 }
                 .store(in: &self.cancellables)
+            
+            // Wire up recentlyDownloadedPostCount and recentlyDownloadedDuration to the statistics 
+            statisticsPublisher
+                .sink(receiveValue: { statistics in
+                    self.recentlyDownloadedPostCount = statistics.recentlyDownloadedPostCount
+                    self.recentlyDownloadedPostDuration = Text.minutesAbbreviated.text([
+                        "numberOfMinutes": String(statistics.recentlyDownloadedPostDuration)
+                    ])
+                })
+                .store(in: &cancellables)
         }
     }
     
     private func peerConnectionInfo(from peerStatistics: PeerStatistics) async -> [PeerConnectionInfo] {
         var peerConnectionInfo = [PeerConnectionInfo]()
         
-        for (ipAddress, identity) in peerStatistics.currentOpen {
+        for (_, publicKey) in peerStatistics.currentOpen {
             do {
-                let about = try await bot.about(identity: "@\(identity).ed25519") // TODO: support other feed formats
-                
-                peerConnectionInfo.append(
-                    PeerConnectionInfo(
-                        id: identity,
-                        name: about?.name ?? identity,
-                        imageID: about?.image?.link,
-                        currentlyActive: true
+                // TODO: support other feed formats
+                let identity = "@\(publicKey).ed25519"
+                if let about = try await bot.about(identity: identity)  {
+                    peerConnectionInfo.append(
+                        PeerConnectionInfo(
+                            id: publicKey,
+                            name: about.name ?? identity,
+                            imageID: about.image?.link,
+                            currentlyActive: true
+                        )
                     )
-                )
+                    continue
+                }
             } catch {
-                peerConnectionInfo.append(
-                    PeerConnectionInfo(
-                        id: identity,
-                        name: nil,
-                        imageID: nil,
-                        currentlyActive: true
-                    )
-                )
                 Log.optional(error)
-                continue
             }
+            
+            peerConnectionInfo.append(
+                PeerConnectionInfo(
+                    id: publicKey,
+                    name: publicKey,
+                    imageID: nil,
+                    currentlyActive: true
+                )
+            )
         }
         
         return peerConnectionInfo

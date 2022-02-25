@@ -46,6 +46,7 @@ enum Text: String, Localizable, CaseIterable {
     case future = "In the future"
     case daysAgo = "{{ days }} days ago"
     case atDayTime = "{{ day }} at {{ time }}"
+    case minutesAbbreviated = "{{ numberOfMinutes }} mins"
 
     case yourProfile = "Your Profile"
     case helpAndSupport = "Help and Support"

@@ -15,6 +15,13 @@ struct BotStatistics: Equatable {
     var lastRefreshDate: Date?
     var lastRefreshDuration: TimeInterval = 0
 
+    /// The number of new posts that have been downloaded in the `recentlyDownloadedPostDuration`.
+    var recentlyDownloadedPostCount = 0
+
+    /// The number of minutes we consider "recent" for the `recentlyDownloadedPostCount`. So if this value is 15, then
+    /// `recentlyDownloadedPostCount` will contain all posts 
+    var recentlyDownloadedPostDuration = 15
+
     var repo = RepoStatistics()
     var peer = PeerStatistics()
     var db = DatabaseStatistics()

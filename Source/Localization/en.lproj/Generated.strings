@@ -18,6 +18,7 @@
 "Text.future" = "In the future";
 "Text.daysAgo" = "{{ days }} days ago";
 "Text.atDayTime" = "{{ day }} at {{ time }}";
+"Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
 "Text.yourProfile" = "Your Profile";
 "Text.helpAndSupport" = "Help and Support";
 "Text.reportBug" = "Report a Bug";

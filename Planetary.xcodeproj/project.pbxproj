@@ -743,6 +743,16 @@
 		C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */; };
 		C9C3789127C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */; };
 		C9EDA3D727BC16E8001A6CD8 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
+		C9F1C84827C9283A005A3228 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EF230C5F4E0075BC8A /* Text.swift */; };
+		C9F1C84927C92842005A3228 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EE230C5F4E0075BC8A /* Localizable.swift */; };
+		C9F1C84A27C93018005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D9143EC230C5F4E0075BC8A /* Generated.strings */; };
+		C9F1C84B27C932A8005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0AC10DD9246C43DC00CCA22A /* Generated.strings */; };
+		C9F1C84C27C932AF005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A04D8B62477220F00DD37B7 /* Generated.strings */; };
+		C9F1C84D27C932B3005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A04D8BA2477260F00DD37B7 /* Generated.strings */; };
+		C9F1C84E27C932B8005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A30F86D2589253E002B281D /* Generated.strings */; };
+		C9F1C84F27C932BD005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
+		C9F1C85027C932C1005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C92263DB1FA008B646F /* Generated.strings */; };
+		C9F1C85127C932C4005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C9D263DB2F5008B646F /* Generated.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2520,12 +2530,18 @@
 				23E76A5623F2F0F70074F424 /* ValueTimestamp.json in Resources */,
 				23CF345722099E5D00F46A54 /* InvalidVoteMissingIdentifier.json in Resources */,
 				2388897B220867F00030CB92 /* Feed_example.json in Resources */,
+				C9F1C85127C932C4005A3228 /* Generated.strings in Resources */,
+				C9F1C84B27C932A8005A3228 /* Generated.strings in Resources */,
 				5316E95521FFC7FB0053832E /* PostBranchArray.json in Resources */,
+				C9F1C84C27C932AF005A3228 /* Generated.strings in Resources */,
 				235FC915220096300083420F /* FirstAndEncrypted.json in Resources */,
 				531A8A5521FB87A600D5C8C0 /* UnsupportedBlob.json in Resources */,
 				23CA4B9023228A5F005B35E8 /* PostWithAltText.json in Resources */,
+				C9F1C84E27C932B8005A3228 /* Generated.strings in Resources */,
+				C9F1C84D27C932B3005A3228 /* Generated.strings in Resources */,
 				231314CD2237ACDC0000C989 /* ViewDatabaseSchema.sql in Resources */,
 				53EE01F82205003500DFDF16 /* Secret.json in Resources */,
+				C9F1C85027C932C1005A3228 /* Generated.strings in Resources */,
 				53EE01FE2205099100DFDF16 /* InvalidSecretMissingPrivate.json in Resources */,
 				5316E95B21FFD4980053832E /* InvalidChannel.json in Resources */,
 				C924412F278DDECE00592E5E /* Preload.bundle in Resources */,
@@ -2534,12 +2550,14 @@
 				5316E95921FFD19F0053832E /* Invalid.json in Resources */,
 				C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */,
 				23C7445C2200B1EF00FB554A /* KeyValueVote.json in Resources */,
+				C9F1C84A27C93018005A3228 /* Generated.strings in Resources */,
 				237D058023351F5B00973D63 /* PostWithHashtags.json in Resources */,
 				0A41F578248F1638005BB1DE /* Feed_example_preload.json in Resources */,
 				531A8A4C21FA5E4700D5C8C0 /* PostBranchField.json in Resources */,
 				53CF2A4B220268CF00F0A2CC /* Abouts.json in Resources */,
 				23A0A3B422490B1C00CAC295 /* ContentPrivate.json in Resources */,
 				23888982220908120030CB92 /* Feed_big.json in Resources */,
+				C9F1C84F27C932BD005A3228 /* Generated.strings in Resources */,
 				531A8A4E21FA619A00D5C8C0 /* KeyValue.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2857,6 +2875,7 @@
 				53B4F5F422B73FD000027C6A /* About+NSMutableAttributedString.swift in Sources */,
 				C978D35327BF053B00842458 /* Environment.swift in Sources */,
 				8DB041FD234FA994006AC35B /* Identity+Bot.swift in Sources */,
+				C9F1C84827C9283A005A3228 /* Text.swift in Sources */,
 				53BD748D233191000060E47E /* DateTests.swift in Sources */,
 				53C2B1322295A9CB0018D0A8 /* AnalyticsEnums.swift in Sources */,
 				23EF5AAF249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
@@ -2890,6 +2909,7 @@
 				23E8806022F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				C9C3788C27C6CC6900238B58 /* Publisher+collectNext.swift in Sources */,
 				53631EF623A9A93F009C6999 /* Blob+String.swift in Sources */,
+				C9F1C84927C92842005A3228 /* Localizable.swift in Sources */,
 				C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */,
 				0A387FFC2474E65300777843 /* PhoneVerificationAPI.swift in Sources */,
 				53C2B1352295AC040018D0A8 /* AppConfiguration+Data.swift in Sources */,

@@ -11,6 +11,11 @@
     },
     {
         "type": "about",
+        "about": "@124312414112323t29091209eisntniaoe+=.ed25519",
+        "description": "An identity with an about message but no name set"
+    },
+    {
+        "type": "about",
         "about": "@WidzxlRBJEK6Tnz9S1n008BjvjLBFSQzKKuATgqMl94=.ed25519",
         "name": "cryptix-verse"
     },

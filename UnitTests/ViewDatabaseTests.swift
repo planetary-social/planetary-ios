@@ -618,6 +618,40 @@ class ViewDatabaseTests: XCTestCase {
         XCTAssertEqual(try vdb.largestSeqFromPublishedLog(), testMessage.receivedSeq)
     }
     
+    /// Verifies that `largestSeqFromPublishedLog()` only looks at posts published by the current user.
+    func testMessageCount() throws {
+        // Arrange
+        let sinceTime = Date(timeIntervalSinceNow: -1)
+        let postTime = Date().millisecondsSince1970
+        let ownerMessage = KeyValueFixtures.keyValue(
+            key: "1",
+            receivedTimestamp: postTime,
+            receivedSeq: 778,
+            author: fixture.owner
+        )
+        let friendMessageOne = KeyValueFixtures.keyValue(
+            key: "2",
+            receivedTimestamp: postTime,
+            receivedSeq: 779,
+            author: fixture.identities[0]
+        )
+        let friendMessageTwo = KeyValueFixtures.keyValue(
+            key: "3",
+            receivedTimestamp: postTime,
+            receivedSeq: 780,
+            author: fixture.identities[1]
+        )
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageReceivedCount(since: sinceTime), 0)
+        
+        // Rearrange
+        try vdb.fillMessages(msgs: [ownerMessage, friendMessageOne, friendMessageTwo])
+        
+        // Reassert
+        XCTAssertEqual(try vdb.messageReceivedCount(since: sinceTime), 2)
+    }
+    
     /// Verify that fillMessages deduplicates records.
     func testFillMessagesGivenDuplicateInsert() throws {
         // Arrange

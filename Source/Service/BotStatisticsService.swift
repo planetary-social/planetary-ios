@@ -16,7 +16,7 @@ protocol BotStatisticsService {
 actor BotStatisticsServiceAdaptor: BotStatisticsService {
     
     static let shared = BotStatisticsServiceAdaptor(bot: GoBot.shared)
-    
+        
     private var statisticsPublisher: AnyPublisher<BotStatistics, Never>?
     
     private var refreshInterval: TimeInterval

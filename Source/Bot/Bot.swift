@@ -222,6 +222,14 @@ extension Bot {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
+    func refresh(load: RefreshLoad, queue: DispatchQueue = .main) async -> (Error?, TimeInterval){
+        return await withCheckedContinuation { continuation in
+            refresh(load: load, queue: queue) { result1, result2 in
+                continuation.resume(returning: (result1, result2))
+            }
+        }
+    }
+    
     func abouts(completion:  @escaping AboutsCompletion) {
         self.abouts(queue: .main, completion: completion)
     }
@@ -236,6 +244,14 @@ extension Bot {
 
     func statistics(completion: @escaping StatisticsCompletion) {
         self.statistics(queue: .main, completion: completion)
+    }
+    
+    func statistics() async -> BotStatistics {
+        return await withCheckedContinuation { continuation in
+            statistics() { result in
+                continuation.resume(returning: result)
+            }
+        }
     }
     
     func reports(completion: @escaping (([Report], Error?) -> Void)) {
@@ -268,6 +284,18 @@ extension Bot {
     
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
         self.publish(content: content, completionQueue: .main, completion: completion)
+    }
+    
+    func publish(content: ContentCodable) async throws -> MessageIdentifier {
+        return try await withCheckedThrowingContinuation { continuation in
+            publish(content: content) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result)
+            }
+        }
     }
     
     func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {

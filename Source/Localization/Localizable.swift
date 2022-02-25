@@ -39,10 +39,13 @@ protocol Localizable {
 //            return NSLocalizedString(key, comment: "")
 //        }
 //
+class BundleClass {}
 extension Localizable {
+    
     // You can modify this to perform localization, or overrides based on server or other config
     var text: String {
-        return NSLocalizedString(key, tableName: "Generated", comment: "")
+        let bundle = Bundle(for: BundleClass.self)
+        return NSLocalizedString(key, tableName: "Generated", bundle: bundle, comment: "")
     }
 
 

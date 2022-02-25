@@ -11,6 +11,7 @@ import XCTest
 
 class BotStatisticsServiceTests: XCTestCase {
     
+    /// The system under test
     var sut: BotStatisticsServiceAdaptor!
     
     var mockBot: FakeBot!
@@ -67,7 +68,7 @@ class BotStatisticsServiceTests: XCTestCase {
         
         // Act
         let statisticsPublisher = await sut.subscribe().collectNext(2)
-        let nextTwoStatistics = try await publisherCompletion(statisticsPublisher).result.get()
+        let nextTwoStatistics = try await makeAwaitable(publisher: statisticsPublisher).result.get()
 
         // Assert
         XCTAssertEqual(nextTwoStatistics.first, firstStatistics)
