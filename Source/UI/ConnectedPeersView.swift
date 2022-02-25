@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+
 struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewModel {
     
     @ObservedObject var viewModel: ViewModel
@@ -36,8 +37,22 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
                 ForEach(viewModel.peers) { peer in
                     HStack {
                         Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: "#FF264E"), Color(hex: "#8474EA")],
+                                    startPoint: .bottomLeading,
+                                    endPoint: .topTrailing
+                                )
+                            )
                             .frame(width: 26, height: 26)
-                            .foregroundColor(Color("menuUnselectedItemText"))
+                            .overlay(
+                                SSBImage(
+                                    metadata: peer.imageMetadata,
+                                    animated: true
+                                )
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                            )
                         SwiftUI.Text(peer.name ?? peer.id)
                             .font(.callout)
                             .foregroundColor(Color("menuUnselectedItemText"))
@@ -86,37 +101,37 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
         PeerConnectionInfo(
             id: "0",
             name: "Amanda Bee 🐝",
-            imageID: nil,
+            imageMetadata: nil,
             currentlyActive: true
         ),
         PeerConnectionInfo(
             id: "1",
             name: "Sebastian Heit",
-            imageID: nil,
+            imageMetadata: nil,
             currentlyActive: true
         ),
         PeerConnectionInfo(
             id: "2",
             name: "Rossina Simonelli",
-            imageID: nil,
+            imageMetadata: nil,
             currentlyActive: true
         ),
         PeerConnectionInfo(
             id: "3",
             name: "Craig Nicholls",
-            imageID: nil,
+            imageMetadata: nil,
             currentlyActive: true
         ),
         PeerConnectionInfo(
             id: "4",
             name: "Jordan Wilson",
-            imageID: nil,
+            imageMetadata: nil,
             currentlyActive: false
         ),
         PeerConnectionInfo(
             id: "5",
             name: "Arun Ramachandaran",
-            imageID: nil,
+            imageMetadata: nil,
             currentlyActive: false
         ),
     ]

@@ -86,7 +86,7 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
                         PeerConnectionInfo(
                             id: publicKey,
                             name: about.name ?? identity,
-                            imageID: about.image?.link,
+                            imageMetadata: about.image,
                             currentlyActive: true
                         )
                     )
@@ -100,7 +100,7 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
                 PeerConnectionInfo(
                     id: publicKey,
                     name: publicKey,
-                    imageID: nil,
+                    imageMetadata: nil,
                     currentlyActive: true
                 )
             )

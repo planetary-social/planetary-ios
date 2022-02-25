@@ -753,6 +753,8 @@
 		C9F1C84F27C932BD005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
 		C9F1C85027C932C1005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C92263DB1FA008B646F /* Generated.strings */; };
 		C9F1C85127C932C4005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C9D263DB2F5008B646F /* Generated.strings */; };
+		C9F1C85327C980A6005A3228 /* SSBImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C85227C980A6005A3228 /* SSBImage.swift */; };
+		C9F1C85527C9875A005A3228 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C85427C9875A005A3228 /* Color+Hex.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1307,6 +1309,8 @@
 		C9C3788B27C6CC6900238B58 /* Publisher+collectNext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+collectNext.swift"; sourceTree = "<group>"; };
 		C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotStatisticsService.swift; sourceTree = "<group>"; };
 		C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotStatisticsServiceTests.swift; sourceTree = "<group>"; };
+		C9F1C85227C980A6005A3228 /* SSBImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSBImage.swift; sourceTree = "<group>"; };
+		C9F1C85427C9875A005A3228 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1923,6 +1927,7 @@
 				53631EF223A99CF0009C6999 /* NSAttributedString+Flatten.swift */,
 				2343F1CA245851E5008D7ECE /* DispatchQueue+Deduped.swift */,
 				0AE5EDBA25826FD7008BDA0C /* String+Emoji.swift */,
+				C9F1C85427C9875A005A3228 /* Color+Hex.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1964,6 +1969,7 @@
 				53BD748923289B3F0060E47E /* ImageGalleryView.swift */,
 				530F019922DE8F57007EBAE2 /* ImagePicker.swift */,
 				53211CCB227BB653007FB785 /* ImageView.swift */,
+				C9F1C85227C980A6005A3228 /* SSBImage.swift */,
 				53631EEB23A87169009C6999 /* KeyValue */,
 				531B92B622CD0E65005D5255 /* MentionTextViewDelegate.swift */,
 				5319257F22F3A09C00B44FA3 /* NotificationCellView.swift */,
@@ -3318,12 +3324,14 @@
 				533EDBF023861169008B3565 /* Caches.swift in Sources */,
 				5357BD7B23CEB798005665AB /* DebugAnalyticsViewController.swift in Sources */,
 				5336611122D965B300100707 /* UIColor+Random.swift in Sources */,
+				C9F1C85527C9875A005A3228 /* Color+Hex.swift in Sources */,
 				8DA9567D230DA46C00A334EB /* UIButton+Text.swift in Sources */,
 				53B4F5F122B7123900027C6A /* NotificationsViewController.swift in Sources */,
 				C9C3787827C6881000238B58 /* ConnectedPeersCoordinator.swift in Sources */,
 				53E29CD622D542B5008A2CB1 /* Dictionary+JSONSerialization.swift in Sources */,
 				533EDBF22389B587008B3565 /* UIImage+AverageColor.swift in Sources */,
 				0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */,
+				C9F1C85327C980A6005A3228 /* SSBImage.swift in Sources */,
 				53375F812321757C00610932 /* GalleryView.swift in Sources */,
 				531EC4102310C274001A25AD /* Blob+NSAttributedString.swift in Sources */,
 				0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */,
