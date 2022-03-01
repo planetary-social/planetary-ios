@@ -13,6 +13,7 @@ class AnalyticsServiceMock: AnalyticsService {
     var identified = false
     var forgot = false
     var tracked = false
+    var optedIn = true
 
     var isEnabled: Bool = true
 
@@ -20,8 +21,12 @@ class AnalyticsServiceMock: AnalyticsService {
         identified = true
     }
 
-    func identify(statistics: Statistics) {
-        identified = true
+    func optIn() {
+        optedIn = true
+    }
+
+    func optOut() {
+        optedIn = false
     }
     
     func forget() {

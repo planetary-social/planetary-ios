@@ -25,8 +25,7 @@ class PostHogService: APIService {
             return
         }
 
-        let configuration = PHGPostHogConfiguration(apiKey: apiKey,
-                                                    host: "https://app.posthog.com")
+        let configuration = PHGPostHogConfiguration(apiKey: apiKey)
 
         // Record certain application events automatically!
         configuration.captureApplicationLifecycleEvents = true
@@ -36,9 +35,7 @@ class PostHogService: APIService {
 
         configuration.middlewares = middlewares
         
-        PHGPostHog.setup(with: configuration)
-        
-        posthog = PHGPostHog.shared()
+        posthog = PHGPostHog(configuration: configuration)
     }
 
     func identify(identity: Identity) {

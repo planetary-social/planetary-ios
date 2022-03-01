@@ -19,9 +19,9 @@ import Secrets
 let value = Secrets.shared.get(.posthog)
 ```
 
-### The Config.plist file
+### The Secrets.plist file
 
-The target must have a `Config.plist` file in the bundle resources. It can be empty, or can contain any of the keys listed in the `Key` enum. For example:
+The target must have a `Secrets.plist` file in the bundle resources. It can be empty, or can contain any of the keys listed in the `Key` enum. For example:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

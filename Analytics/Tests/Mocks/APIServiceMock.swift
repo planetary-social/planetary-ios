@@ -13,6 +13,7 @@ class APIServiceMock: APIService {
     var identified = false
     var forgot = false
     var tracked = false
+    var optedIn = true
     var lastTrackedEvent = ""
 
     var isEnabled: Bool {
@@ -23,8 +24,12 @@ class APIServiceMock: APIService {
         identified = true
     }
 
-    func identify(statistics: Statistics) {
-        identified = true
+    func optIn() {
+        optedIn = true
+    }
+
+    func optOut() {
+        optedIn = false
     }
 
     func forget() {

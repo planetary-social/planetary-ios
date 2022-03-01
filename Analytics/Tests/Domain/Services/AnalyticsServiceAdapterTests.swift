@@ -9,7 +9,7 @@ import Foundation
 @testable import Analytics
 import XCTest
 
-class AnalyticsServiceAdapterTests: XCTest {
+class AnalyticsServiceAdapterTests: XCTestCase {
 
     private var apiService: APIServiceMock!
     private var service: AnalyticsServiceAdapter!
@@ -24,9 +24,13 @@ class AnalyticsServiceAdapterTests: XCTest {
         XCTAssertTrue(apiService.identified)
     }
 
-    func testIdentifyStatistics() {
-        service.identify(statistics: Statistics())
-        XCTAssertTrue(apiService.identified)
+    func testOptIn() {
+        service.optIn()
+        XCTAssertTrue(apiService.optedIn)
+        service.optOut()
+        XCTAssertFalse(apiService.optedIn)
+        service.optIn()
+        XCTAssertTrue(apiService.optedIn)
     }
 
     func testForget() {

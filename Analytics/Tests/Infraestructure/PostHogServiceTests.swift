@@ -25,14 +25,24 @@ final class PosthogServiceTests: XCTestCase {
         XCTAssertTrue(service.isEnabled)
     }
 
-    func testFunctions() {
+    func testIdentify() {
+        XCTAssertNotNil(service.posthog)
+        XCTAssertTrue(service.posthog!.enabled)
         let identity = Identity(identifier: "user-hash", name: "John Doe", network: "network-hash")
         service.identify(identity: identity)
         XCTAssertEqual(middleware.lastContext?.eventType, .identify)
+    }
 
+    func testTrack() {
+        XCTAssertNotNil(service.posthog)
+        XCTAssertTrue(service.posthog!.enabled)
         service.track(event: "test", params: nil)
         XCTAssertEqual(middleware.lastContext?.eventType, .capture)
+    }
 
+    func testForget() {
+        XCTAssertNotNil(service.posthog)
+        XCTAssertTrue(service.posthog!.enabled)
         service.forget()
         XCTAssertEqual(middleware.lastContext?.eventType, .reset)
     }
