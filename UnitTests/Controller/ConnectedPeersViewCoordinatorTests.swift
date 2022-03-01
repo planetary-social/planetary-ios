@@ -69,19 +69,19 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
             PeerConnectionInfo(
                 id: IdentityFixture.alice.id,
                 name: "Alice",
-                imageID: nil,
+                imageMetadata: nil,
                 currentlyActive: true
             ),
             PeerConnectionInfo(
                 id: IdentityFixture.noAbout.id,
                 name: IdentityFixture.noAbout.id,
-                imageID: nil,
+                imageMetadata: nil,
                 currentlyActive: true
             ),
             PeerConnectionInfo(
                 id: IdentityFixture.noName.id,
                 name: IdentityFixture.noName,
-                imageID: nil,
+                imageMetadata: nil,
                 currentlyActive: true
             )
         ]

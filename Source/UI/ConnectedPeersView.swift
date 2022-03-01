@@ -17,6 +17,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
         VStack {
             HStack {
                 PeerConnectionAnimationView(peerCount: $viewModel.onlinePeersCount)
+                    .padding(.trailing, 2)
                 SwiftUI.Text("Online Peers")
                     .font(.body)
                     .foregroundColor(Color("menuUnselectedItemText"))
@@ -31,7 +32,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
             .padding(.bottom, 0)
             .padding(.horizontal, 14)
             
-            Color.white.frame(height: 1)
+            Color("menuBackgroundColor").frame(height: 1)
 
             ScrollView {
                 ForEach(viewModel.peers) { peer in
@@ -157,5 +158,6 @@ struct ConnectedPeersView_Previews: PreviewProvider {
         // iPhone SE Size
         ConnectedPeersView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 175))
+            .preferredColorScheme(.dark)
     }
 }
