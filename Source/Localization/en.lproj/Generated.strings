@@ -84,7 +84,7 @@
 "Text.andCountOthers" = " and {{ count }} others";
 "Text.countOthers" = "{{ count }} others";
 "Text.andOneOther" = " and 1 other";
-"Text.onlinePeers" = "Online Peers";
+"Text.connectedPeers" = "Connected Peers";
 "Text.countOnlinePeers" = "{{ count }} ONLINE PEERS";
 "Text.countLocalPeers" = "{{ count }} LOCAL PEERS";
 "Text.lastSynced" = "SYNCED: {{ when }}";

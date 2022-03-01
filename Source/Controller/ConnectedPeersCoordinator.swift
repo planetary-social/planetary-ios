@@ -14,7 +14,7 @@ protocol ConnectedPeersViewModel: ObservableObject {
     var peers: [PeerConnectionInfo] { get }
     var recentlyDownloadedPostCount: Int { get }
     var recentlyDownloadedPostDuration: Int { get }
-    var onlinePeersCount: Int { get set }
+    var connectedPeersCount: Int { get set }
     func viewDidAppear()
     func viewDidDisappear()
 }
@@ -27,7 +27,7 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
     
     @Published var recentlyDownloadedPostDuration: Int = 0
     
-    var onlinePeersCount: Int {
+    var connectedPeersCount: Int {
         get {
             peers.filter({ $0.currentlyActive }).count
         }

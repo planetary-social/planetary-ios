@@ -15,16 +15,20 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
     var body: some View {
         VStack {
             HStack {
-                PeerConnectionAnimationView(peerCount: $viewModel.onlinePeersCount)
+                PeerConnectionAnimationView(peerCount: $viewModel.connectedPeersCount)
                     .padding(.trailing, 2)
-                Text.onlinePeers.view
+                Text.connectedPeers.view
                     .font(.body)
                     .foregroundColor(Color("menuUnselectedItemText"))
+                    .lineLimit(1)
+                    .scaledToFit()
+                    .minimumScaleFactor(0.5)
                 
-                SwiftUI.Text(String(viewModel.onlinePeersCount))
+                SwiftUI.Text(String(viewModel.connectedPeersCount))
                     .font(.body)
                     .foregroundColor(Color("defaultTint"))
-
+                    .scaledToFit()
+                    .minimumScaleFactor(0.5)
                 Spacer()
             }
             .padding(.top, 11)
@@ -145,7 +149,7 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
                 
     var recentlyDownloadedPostCount: Int = 62
     var recentlyDownloadedPostDuration: Int = 15
-    var onlinePeersCount: Int {
+    var connectedPeersCount: Int {
         get {
             peers.filter({ $0.currentlyActive }).count
         }
