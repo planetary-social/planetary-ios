@@ -94,6 +94,8 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
             .padding(.bottom, 14)
             .padding(.top, 1)
         }
+        .onAppear(perform: viewModel.viewDidAppear)
+        .onDisappear(perform: viewModel.viewDidDisappear)
         .background(Color("appBackground"))
         .cornerRadius(10)
         .padding(14)
@@ -152,6 +154,8 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
             return
         }
     }
+    func viewDidAppear() {}
+    func viewDidDisappear() {}
 }
 
 struct ConnectedPeersView_Previews: PreviewProvider {

@@ -15,6 +15,8 @@ protocol ConnectedPeersViewModel: ObservableObject {
     var recentlyDownloadedPostCount: Int { get }
     var recentlyDownloadedPostDuration: Int { get }
     var onlinePeersCount: Int { get set }
+    func viewDidAppear()
+    func viewDidDisappear()
 }
 
 class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
@@ -35,44 +37,60 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
         }
     }
     
-    private var cancellables = [AnyCancellable]()
+    private var statisticsService: BotStatisticsService
     
+    private var cancellables = [AnyCancellable]()
+        
     private var bot: Bot
         
     init(bot: Bot, statisticsService: BotStatisticsService) {
         self.bot = bot
-        
+        self.statisticsService = statisticsService
+    }
+    
+    func viewDidAppear() {
         Task {
-             let statisticsPublisher = await statisticsService.subscribe()
-            
-            // Wire up peers array to the statisticsService
-            statisticsPublisher
-                .map { $0.peer }
-                .flatMap { peerStatistics in
-                    return Future { promise in
-                        Task.detached {
-                            let connectionInfo = await self.peerConnectionInfo(from: peerStatistics)
-                            promise(.success(connectionInfo))
-                        }
-                    }
-                }
-                .receive(on: RunLoop.main)
-                .sink { [weak self] in
-                    self?.peers = $0
-                }
-                .store(in: &self.cancellables)
-            
-            // Wire up recentlyDownloadedPostCount and recentlyDownloadedDuration to the statistics 
-            statisticsPublisher
-                .sink(receiveValue: { statistics in
-                    self.recentlyDownloadedPostCount = statistics.recentlyDownloadedPostCount
-                    self.recentlyDownloadedPostDuration = statistics.recentlyDownloadedPostDuration
-                })
-                .store(in: &cancellables)
+            await subscribeToBotStatistics()
         }
     }
     
-    var previousPeerConnectionInfo = [PeerConnectionInfo]()
+    func viewDidDisappear() {
+        unsubscribeFromBotStatistics()
+    }
+        
+    private func subscribeToBotStatistics() async {
+        let statisticsPublisher = await statisticsService.subscribe()
+        
+        // Wire up peers array to the statisticsService
+        statisticsPublisher
+            .map { $0.peer }
+            .flatMap { peerStatistics in
+                return Future { promise in
+                    Task.detached {
+                        let connectionInfo = await self.peerConnectionInfo(from: peerStatistics)
+                        promise(.success(connectionInfo))
+                    }
+                }
+            }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] in
+                self?.peers = $0
+            }
+            .store(in: &self.cancellables)
+        
+        // Wire up recentlyDownloadedPostCount and recentlyDownloadedDuration to the statistics
+        statisticsPublisher
+            .sink(receiveValue: { statistics in
+                self.recentlyDownloadedPostCount = statistics.recentlyDownloadedPostCount
+                self.recentlyDownloadedPostDuration = statistics.recentlyDownloadedPostDuration
+            })
+            .store(in: &cancellables)
+        
+    }
+    
+    private func unsubscribeFromBotStatistics() {
+        cancellables.forEach { $0.cancel() }
+    }
     
     private func peerConnectionInfo(from peerStatistics: PeerStatistics) async -> [PeerConnectionInfo] {
         // Map old peers in as inactive

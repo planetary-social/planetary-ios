@@ -14,9 +14,7 @@ protocol BotStatisticsService {
 }
 
 actor BotStatisticsServiceAdaptor: BotStatisticsService {
-    
-    static let shared = BotStatisticsServiceAdaptor(bot: GoBot.shared)
-        
+            
     private var statisticsPublisher: AnyPublisher<BotStatistics, Never>?
     
     private var refreshInterval: TimeInterval
@@ -28,18 +26,20 @@ actor BotStatisticsServiceAdaptor: BotStatisticsService {
             return statisticsPublisher
         }
         
-    let statisticsPublisher: AnyPublisher<BotStatistics, Never> = Timer.publish(every: refreshInterval, on: .main, in: .default)
+        let statisticsPublisher: AnyPublisher<BotStatistics, Never> = Timer.publish(
+            every: refreshInterval,
+            on: .main,
+            in: .default
+        )
             .autoconnect()
             .flatMap { (_: Date) -> AnyPublisher<BotStatistics, Never> in
-                print("Timer fired")
-
                 return Future<BotStatistics, Never> { promise in
                     self.bot.statistics(completion: { statistics in
                         promise(.success(statistics))
                     })
                 }.eraseToAnyPublisher()
             }
-            .eraseToAnyPublisher() 
+            .eraseToAnyPublisher()
         
         return statisticsPublisher
     }

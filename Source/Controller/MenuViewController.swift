@@ -24,7 +24,8 @@ class MenuViewController: UIViewController {
     }
     
     private lazy var connectedPeersViewController: UIViewController = {
-        let viewModel = ConnectedPeersViewCoordinator(bot: GoBot.shared, statisticsService: BotStatisticsServiceAdaptor.shared)
+        let bot = Bots.current
+        let viewModel = ConnectedPeersViewCoordinator(bot: bot, statisticsService: BotStatisticsServiceAdaptor(bot: bot))
         return UIHostingController(rootView: ConnectedPeersView(viewModel: viewModel))
     }()
 
