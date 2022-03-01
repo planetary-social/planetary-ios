@@ -23,10 +23,10 @@ actor MockBotStatisticsService: BotStatisticsService {
 }
 
 
-class ConnectedPeersViewCoordinatorTests: XCTestCase {
+class ConnectedPeersCoordinatorTests: XCTestCase {
     
     /// The system under test
-    var sut: ConnectedPeersViewCoordinator!
+    var sut: ConnectedPeersCoordinator!
     
     var mockStatistics: MockBotStatisticsService!
     
@@ -77,7 +77,7 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
     override func setUpWithError() throws {
         mockBot = FakeBot()
         mockStatistics = MockBotStatisticsService()
-        sut = ConnectedPeersViewCoordinator(bot: mockBot, statisticsService: mockStatistics)
+        sut = ConnectedPeersCoordinator(bot: mockBot, statisticsService: mockStatistics)
         sut.viewDidAppear()
     }
 
@@ -260,7 +260,7 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
     
     func testPeersDoNotUpdateWhenViewNotVisible() async throws {
         // Arrange
-        sut = ConnectedPeersViewCoordinator(bot: mockBot, statisticsService: mockStatistics)
+        sut = ConnectedPeersCoordinator(bot: mockBot, statisticsService: mockStatistics)
         var publishedPeers = [[PeerConnectionInfo]]()
         
         // Act

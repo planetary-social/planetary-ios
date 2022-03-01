@@ -19,7 +19,7 @@ protocol ConnectedPeersViewModel: ObservableObject {
     func viewDidDisappear()
 }
 
-class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
+class ConnectedPeersCoordinator: ConnectedPeersViewModel {
     
     @Published var peers = [PeerConnectionInfo]()
     

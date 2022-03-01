@@ -731,7 +731,7 @@
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
 		C9C3787627C5956200238B58 /* PeerConnectionAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */; };
 		C9C3787827C6881000238B58 /* ConnectedPeersCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787727C6881000238B58 /* ConnectedPeersCoordinator.swift */; };
-		C9C3787C27C68DE900238B58 /* ConnectedPeersViewCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787B27C68DE800238B58 /* ConnectedPeersViewCoordinatorTests.swift */; };
+		C9C3787C27C68DE900238B58 /* ConnectedPeersCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787B27C68DE800238B58 /* ConnectedPeersCoordinatorTests.swift */; };
 		C9C3787F27C691EA00238B58 /* PeerConnectionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */; };
 		C9C3788027C691EA00238B58 /* PeerConnectionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */; };
 		C9C3788227C692F800238B58 /* ConnectedPeersCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787727C6881000238B58 /* ConnectedPeersCoordinator.swift */; };
@@ -1302,7 +1302,7 @@
 		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feed_big.sqlite; sourceTree = "<group>"; };
 		C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnectionAnimationView.swift; sourceTree = "<group>"; };
 		C9C3787727C6881000238B58 /* ConnectedPeersCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeersCoordinator.swift; sourceTree = "<group>"; };
-		C9C3787B27C68DE800238B58 /* ConnectedPeersViewCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeersViewCoordinatorTests.swift; sourceTree = "<group>"; };
+		C9C3787B27C68DE800238B58 /* ConnectedPeersCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeersCoordinatorTests.swift; sourceTree = "<group>"; };
 		C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnectionInfo.swift; sourceTree = "<group>"; };
 		C9C3788327C6940C00238B58 /* IdentityFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityFixtures.swift; sourceTree = "<group>"; };
 		C9C3788927C6CC3200238B58 /* XCTestCase+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Combine.swift"; sourceTree = "<group>"; };
@@ -2347,7 +2347,7 @@
 		C9C3787A27C68DD200238B58 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				C9C3787B27C68DE800238B58 /* ConnectedPeersViewCoordinatorTests.swift */,
+				C9C3787B27C68DE800238B58 /* ConnectedPeersCoordinatorTests.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2874,7 +2874,7 @@
 				533EDBF52389BDD4008B3565 /* UIColor+Hex.swift in Sources */,
 				530F018B22DADCF7007EBAE2 /* Date+OlderThan.swift in Sources */,
 				2394616123A25A9A008F552C /* AnalyticsService+Bot.swift in Sources */,
-				C9C3787C27C68DE900238B58 /* ConnectedPeersViewCoordinatorTests.swift in Sources */,
+				C9C3787C27C68DE900238B58 /* ConnectedPeersCoordinatorTests.swift in Sources */,
 				5316E96721FFED620053832E /* About.swift in Sources */,
 				0A65A636244DEFFB004C48C8 /* NullSupport.swift in Sources */,
 				53EE01F62204FFC400DFDF16 /* SecretTests.swift in Sources */,
