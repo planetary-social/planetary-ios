@@ -72,10 +72,19 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
         }
     }
     
+    var previousPeerConnectionInfo = [PeerConnectionInfo]()
+    
     private func peerConnectionInfo(from peerStatistics: PeerStatistics) async -> [PeerConnectionInfo] {
-        var peerConnectionInfo = [PeerConnectionInfo]()
+        // Map old peers in as inactive
+        var peerConnectionInfo = peers.map { (oldPeer: PeerConnectionInfo) -> PeerConnectionInfo in
+            var newPeer = oldPeer
+            newPeer.currentlyActive = false
+            return newPeer
+        }
         
+        // Walk through peer statistics and create new connection info
         for (_, publicKey) in peerStatistics.currentOpen {
+            peerConnectionInfo.removeAll(where: { $0.id == publicKey })
             do {
                 // TODO: support other feed formats
                 let identity = "@\(publicKey).ed25519"
@@ -104,6 +113,12 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
             )
         }
         
-        return peerConnectionInfo
+        return peerConnectionInfo.sorted { lhs, rhs in
+            guard lhs.currentlyActive == rhs.currentlyActive else {
+                return lhs.currentlyActive ? true : false
+            }
+            
+            return lhs.name ?? "" < rhs.name ?? ""
+        }
     }
 }

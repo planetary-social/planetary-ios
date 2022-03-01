@@ -31,6 +31,48 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
     var mockStatistics: MockBotStatisticsService!
     
     var mockBot: FakeBot!
+    
+    let baseStatistics = BotStatistics(
+        lastSyncDate: Date(),
+        lastSyncDuration: 1,
+        lastRefreshDate: Date(),
+        lastRefreshDuration: 2,
+        repo: RepoStatistics(
+            path: nil,
+            feedCount: 3,
+            messageCount: 4,
+            numberOfPublishedMessages: 5,
+            lastHash: "hash"
+        ),
+        peer: PeerStatistics(
+            count: 3,
+            connectionCount: 2,
+            identities: [],
+            open: []
+        ),
+        db: DatabaseStatistics(lastReceivedMessage: 10)
+    )
+    
+    let alicePeerConnectionInfo = PeerConnectionInfo(
+        id: IdentityFixture.alice.id,
+        name: "Alice",
+        imageMetadata: nil,
+        currentlyActive: true
+    )
+    
+    let noAboutPeerConnectionInfo = PeerConnectionInfo(
+        id: IdentityFixture.noAbout.id,
+        name: IdentityFixture.noAbout.id,
+        imageMetadata: nil,
+        currentlyActive: true
+    )
+    
+    let noNamePeerConnectionInfo = PeerConnectionInfo(
+        id: IdentityFixture.noName.id,
+        name: IdentityFixture.noName,
+        imageMetadata: nil,
+        currentlyActive: true
+    )
 
     override func setUpWithError() throws {
         mockBot = FakeBot()
@@ -66,24 +108,9 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
             db: DatabaseStatistics(lastReceivedMessage: 10)
         )
         let expectedPeers = [
-            PeerConnectionInfo(
-                id: IdentityFixture.alice.id,
-                name: "Alice",
-                imageMetadata: nil,
-                currentlyActive: true
-            ),
-            PeerConnectionInfo(
-                id: IdentityFixture.noAbout.id,
-                name: IdentityFixture.noAbout.id,
-                imageMetadata: nil,
-                currentlyActive: true
-            ),
-            PeerConnectionInfo(
-                id: IdentityFixture.noName.id,
-                name: IdentityFixture.noName,
-                imageMetadata: nil,
-                currentlyActive: true
-            )
+            noAboutPeerConnectionInfo,
+            noNamePeerConnectionInfo,
+            alicePeerConnectionInfo
         ]
         
         let publisherCompletion = await makeAwaitable(publisher: sut.$peers.collectNext())
@@ -94,6 +121,63 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(publishedPeers.first, expectedPeers)
+    }
+    
+    func testPublishingNewStatisticsUpdatesCurrentlyActiveProperty() async throws {
+        // Arrange
+        XCTAssertEqual(sut.peers, [])
+        let firstPeerStatistics = PeerStatistics(
+            count: 0,
+            connectionCount: 0,
+            identities: [],
+            open: [
+                ("1.1.1.1", IdentityFixture.alice.id),
+                ("2.2.2.2", IdentityFixture.noAbout.id),
+            ]
+        )
+        let firstExpectedPeers = [
+            noAboutPeerConnectionInfo,
+            alicePeerConnectionInfo
+        ]
+        var firstBotStatistics = baseStatistics
+        firstBotStatistics.peer = firstPeerStatistics
+
+        // Act
+        var publisherCompletion = await makeAwaitable(publisher: sut.$peers.collectNext())
+        await mockStatistics.statisticsPasthrough.send(firstBotStatistics)
+        var publishedPeers = try await publisherCompletion.result.get()
+        
+        // Assert
+        XCTAssertEqual(publishedPeers.first, firstExpectedPeers)
+        
+        // Rearrange
+        
+        // Add noName, remove Alice
+        let secondPeerStatistics = PeerStatistics(
+            count: 3,
+            connectionCount: 2,
+            identities: [],
+            open: [
+                ("2.2.2.2", IdentityFixture.noAbout.id),
+                ("3.3.3.3", IdentityFixture.noName.id),
+            ]
+        )
+        var inactiveAlice = alicePeerConnectionInfo
+        inactiveAlice.currentlyActive = false
+        let secondExpectedPeers = [
+            noAboutPeerConnectionInfo,
+            noNamePeerConnectionInfo,
+            inactiveAlice
+        ]
+        var secondBotStatistics = baseStatistics
+        secondBotStatistics.peer = secondPeerStatistics
+        
+        // React
+        publisherCompletion = await makeAwaitable(publisher: sut.$peers.collectNext())
+        await mockStatistics.statisticsPasthrough.send(secondBotStatistics)
+        publishedPeers = try await publisherCompletion.result.get()
+        
+        XCTAssertEqual(publishedPeers.first, secondExpectedPeers)
     }
     
     /// Verifies that the coordinator publishes the latest recentPostCount from its BotStatisticsService
@@ -170,6 +254,6 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
         let recentlyDownloadedPostDuration = try await recentlyDownloadedPostDurationPublisher.result.get().first
         
         // Assert
-        XCTAssertEqual(recentlyDownloadedPostDuration, "999 mins")
+        XCTAssertEqual(recentlyDownloadedPostDuration, 999)
     }
 }

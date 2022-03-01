@@ -59,6 +59,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
                             .lineLimit(1)
                         Spacer()
                     }
+                    .opacity(peer.currentlyActive ? 1 : 0.4)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 0)
                 }

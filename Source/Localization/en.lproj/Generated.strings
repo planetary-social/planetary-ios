@@ -89,7 +89,7 @@
 "Text.countLocalPeers" = "{{ count }} LOCAL PEERS";
 "Text.lastSynced" = "SYNCED: {{ when }}";
 "Text.syncingMessages" = "Syncing Messages...";
-"Text.recentlyDownloaded" = "Downloaded DownloadedDownloadedDownloadedDownloaded{{ postCount }} in the last {{ duration }} mins";
+"Text.recentlyDownloaded" = "Downloaded {{ postCount }} in the last {{ duration }} mins";
 "Text.channels" = "Hashtags";
 "Text.select" = "Select";
 "Text.home" = "For You";
