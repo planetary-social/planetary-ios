@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Analytics
 
 protocol OnboardingStepDelegate: class {
 
@@ -30,6 +31,19 @@ class OnboardingStepData {
     var name: String? = nil
     var phone: String? = nil
     var simulated = false
+
+    var analyticsData: Analytics.OnboardingStepData {
+        return Analytics.OnboardingStepData(allowedBackup: allowedBackup,
+                                            allowedContacts: allowedContacts,
+                                            bio: bio,
+                                            followingCount: following.count,
+                                            hasImage: image != nil,
+                                            joinedDirectory: joinedDirectory,
+                                            publicWebHosting: publicWebHosting,
+                                            nameLength: name?.count ?? 0,
+                                            phone: phone,
+                                            simulated: simulated)
+    }
 }
 
 class OnboardingStep: NSObject {
@@ -69,6 +83,43 @@ class OnboardingStep: NSObject {
                 case .photoConfirm: return .photoConfirm
                 case .resume: return .resume
                 case .start: return .start
+            }
+        }
+
+        var analyticsStep: Analytics.OnboardingStep {
+            switch self {
+            case .name:
+                return .name
+            case .backup:
+                return .backup
+            case .benefits:
+                return .benefits
+            case .bio:
+                return .bio
+            case .birthday:
+                return .birthday
+            case .contacts:
+                return .contacts
+            case .directory:
+                return .directory
+            case .phone:
+                return .phone
+            case .start:
+                return .start
+            case .resume:
+                return .resume
+            case .photo:
+                return .photo
+            case .photoConfirm:
+                return .photoConfirm
+            case .phoneVerify:
+                return .phoneVerify
+            case .join:
+                return .join
+            case .earlyAccess:
+                return .earlyAccess
+            case .done:
+                return .done
             }
         }
     }
@@ -138,7 +189,7 @@ class OnboardingStep: NSObject {
     /// This is explicitly final because there should be no
     /// changes to when the step is tracked by Analytics.shared.
     final func track() {
-        Analytics.shared.trackOnboarding(self.name)
+        Analytics.shared.trackOnboarding(self.name.analyticsStep)
     }
 
     func willStart() {

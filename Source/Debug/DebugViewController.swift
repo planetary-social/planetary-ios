@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import Logger
+import Analytics
 
 class DebugViewController: DebugTableViewController {
 
@@ -213,7 +214,7 @@ class DebugViewController: DebugTableViewController {
             {
                 cell in
                 cell.accessoryType = .disclosureIndicator
-                cell.detailTextLabel?.text = "\(UserDefaults.standard.trackedEvents().count) / \(Analytics.shared.lexicon().count)"
+                cell.detailTextLabel?.text = "\(Analytics.shared.trackedEvents().count) / \(Analytics.shared.lexicon().count)"
             },
                                              actionClosure:
             {
@@ -225,12 +226,10 @@ class DebugViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to clear tracked events",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
                                          valueClosure: nil,
-                                         actionClosure:
-            {
-                [unowned self] cell in
-                UserDefaults.standard.clearTrackedEvents()
-                self.updateSettings()
-            })]
+                                         actionClosure: { [unowned self] cell in
+            Analytics.shared.clearTrackedEvents()
+            self.updateSettings()
+        })]
 
         return ("Analytics", settings, "The lexicon shows all possible EVENT_ELEMENT_NAME strings that Mixpanel will show.  Events that have been sent to Mixpanel will appear highlighted.  This is useful to verify that the expected events are being sent.")
     }

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import Analytics
 
 class DoneOnboardingStep: OnboardingStep {
     
@@ -42,14 +43,14 @@ class DoneOnboardingStep: OnboardingStep {
         
         // SIMULATE ONBOARDING
         if data.simulated {
-            Analytics.shared.trackOnboardingComplete(self.data)
+            Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
             self.next()
             return
         }
 
         guard let me = data.context?.identity else {
             Log.unexpected(.missingValue, "Was expecting self.data.context.person.identity, skipping step")
-            Analytics.shared.trackOnboardingComplete(self.data)
+            Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
             self.next()
             return
         }
@@ -103,7 +104,7 @@ class DoneOnboardingStep: OnboardingStep {
         let completionOperation = BlockOperation { [weak self] in
             DispatchQueue.main.async { [weak self] in
                 self?.view.lookReady()
-                Analytics.shared.trackOnboardingComplete(data)
+                Analytics.shared.trackOnboardingComplete(data.analyticsData)
                 self?.next()
             }
         }

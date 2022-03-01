@@ -13,7 +13,7 @@ import Secrets
 class PostHogService: APIService {
 
     var isEnabled: Bool {
-        return posthog != nil
+        return posthog?.enabled ?? false
     }
 
     var posthog: PHGPostHog?
@@ -44,22 +44,23 @@ class PostHogService: APIService {
     func identify(identity: Identity) {
         posthog?.identify(identity.identifier,
                           properties: ["Network": identity.network,
-                                       "$name": identity.name ?? ""])
+                                       "Name": identity.name ?? ""])
+    }
+
+    func optIn() {
         posthog?.enable()
     }
 
-    func identify(statistics: Statistics) {
-        // TODO: Fill
+    func optOut() {
+        posthog?.disable()
     }
 
     func forget() {
         posthog?.reset()
-        posthog?.disable()
     }
 
     func track(event: String, params: [String : Any]?) {
         posthog?.capture(event, properties: params)
-        UserDefaults.standard.didTrack(event)
     }
 
 }
