@@ -78,6 +78,7 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
         mockBot = FakeBot()
         mockStatistics = MockBotStatisticsService()
         sut = ConnectedPeersViewCoordinator(bot: mockBot, statisticsService: mockStatistics)
+        sut.viewDidAppear()
     }
 
     func testPublishingNewStatisticsUpdatesPeers() async throws {
@@ -255,5 +256,27 @@ class ConnectedPeersViewCoordinatorTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(recentlyDownloadedPostDuration, 999)
+    }
+    
+    func testPeersDoNotUpdateWhenViewNotVisible() async throws {
+        // Arrange
+        sut = ConnectedPeersViewCoordinator(bot: mockBot, statisticsService: mockStatistics)
+        var publishedPeers = [[PeerConnectionInfo]]()
+        
+        // Act
+        let cancellable = sut.$peers.sink { newPeers in
+            publishedPeers.append(newPeers)
+        }
+        
+        await mockStatistics.statisticsPasthrough.send(baseStatistics)
+        sut.viewDidAppear()
+        await mockStatistics.statisticsPasthrough.send(baseStatistics)
+        sut.viewDidDisappear()
+        await mockStatistics.statisticsPasthrough.send(baseStatistics)
+                 
+        // Assert
+        withExtendedLifetime(cancellable) { _ in
+            XCTAssertEqual(publishedPeers.count, 1)
+        }
     }
 }
