@@ -8,7 +8,6 @@
 
 import SwiftUI
 
-
 struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewModel {
     
     @ObservedObject var viewModel: ViewModel
@@ -18,7 +17,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
             HStack {
                 PeerConnectionAnimationView(peerCount: $viewModel.onlinePeersCount)
                     .padding(.trailing, 2)
-                SwiftUI.Text("Online Peers")
+                Text.onlinePeers.view
                     .font(.body)
                     .foregroundColor(Color("menuUnselectedItemText"))
                 
@@ -69,7 +68,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
             
             VStack(spacing: 2) {
                 HStack {
-                    SwiftUI.Text("Syncing Messages...")
+                    Text.syncingMessages.view
                         .font(.caption)
                         .foregroundColor(Color("menuUnselectedItemText"))
                         .minimumScaleFactor(0.5)
@@ -77,11 +76,15 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
                 }
                 
                 HStack {
-                    SwiftUI.Text("Downloaded \(viewModel.recentlyDownloadedPostCount) in the last " + viewModel.recentlyDownloadedPostDuration)
+                    Text.recentlyDownloaded.view([
+                        "postCount": String(viewModel.recentlyDownloadedPostCount),
+                        "duration": String(viewModel.recentlyDownloadedPostDuration)
+                    ])
                         .font(.caption)
                         .foregroundColor(Color("secondaryText"))
                         .scaledToFit()
                         .minimumScaleFactor(0.5)
+                    
                     Spacer()
                 }
             }
@@ -113,7 +116,7 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
         ),
         PeerConnectionInfo(
             id: "2",
-            name: "Rossina Simonelli",
+            name: "Rossina Simonellililililililililili",
             imageMetadata: nil,
             currentlyActive: true
         ),
@@ -138,7 +141,7 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
     ]
                 
     var recentlyDownloadedPostCount: Int = 62
-    var recentlyDownloadedPostDuration: String = "15 mins"
+    var recentlyDownloadedPostDuration: Int = 15
     var onlinePeersCount: Int {
         get {
             peers.filter({ $0.currentlyActive }).count
@@ -159,5 +162,10 @@ struct ConnectedPeersView_Previews: PreviewProvider {
         ConnectedPeersView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 175))
             .preferredColorScheme(.dark)
+        
+        // Accessibility
+        ConnectedPeersView(viewModel: PreviewViewModel())
+            .previewLayout(.fixed(width: 254, height: 310))
+            .environment(\.sizeCategory, .extraExtraLarge)
     }
 }

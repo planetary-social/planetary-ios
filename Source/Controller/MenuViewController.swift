@@ -247,6 +247,7 @@ fileprivate class MenuView: UIView {
         connectedPeersView.useAutoLayout()
         addSubview(connectedPeersView)
         connectedPeersView.constrainHeight(to: 310).priority = .defaultLow
+        connectedPeersView.constrainWidth(to: self)
         connectedPeersView.pinTop(toBottomOf: reportBugButton).priority = UILayoutPriority(249)
         connectedPeersView.pinLeftToSuperview()
         connectedPeersView.pinRightToSuperview()

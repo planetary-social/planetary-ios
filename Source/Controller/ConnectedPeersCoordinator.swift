@@ -13,7 +13,7 @@ import Logger
 protocol ConnectedPeersViewModel: ObservableObject {
     var peers: [PeerConnectionInfo] { get }
     var recentlyDownloadedPostCount: Int { get }
-    var recentlyDownloadedPostDuration: String { get }
+    var recentlyDownloadedPostDuration: Int { get }
     var onlinePeersCount: Int { get set }
 }
 
@@ -23,7 +23,7 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
     
     @Published var recentlyDownloadedPostCount: Int = 0
     
-    @Published var recentlyDownloadedPostDuration: String = ""
+    @Published var recentlyDownloadedPostDuration: Int = 0
     
     var onlinePeersCount: Int {
         get {
@@ -66,9 +66,7 @@ class ConnectedPeersViewCoordinator: ConnectedPeersViewModel {
             statisticsPublisher
                 .sink(receiveValue: { statistics in
                     self.recentlyDownloadedPostCount = statistics.recentlyDownloadedPostCount
-                    self.recentlyDownloadedPostDuration = Text.minutesAbbreviated.text([
-                        "numberOfMinutes": String(statistics.recentlyDownloadedPostDuration)
-                    ])
+                    self.recentlyDownloadedPostDuration = statistics.recentlyDownloadedPostDuration
                 })
                 .store(in: &cancellables)
         }

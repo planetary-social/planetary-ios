@@ -84,9 +84,12 @@
 "Text.andCountOthers" = " and {{ count }} others";
 "Text.countOthers" = "{{ count }} others";
 "Text.andOneOther" = " and 1 other";
+"Text.onlinePeers" = "Online Peers";
 "Text.countOnlinePeers" = "{{ count }} ONLINE PEERS";
 "Text.countLocalPeers" = "{{ count }} LOCAL PEERS";
 "Text.lastSynced" = "SYNCED: {{ when }}";
+"Text.syncingMessages" = "Syncing Messages...";
+"Text.recentlyDownloaded" = "Downloaded DownloadedDownloadedDownloadedDownloaded{{ postCount }} in the last {{ duration }} mins";
 "Text.channels" = "Hashtags";
 "Text.select" = "Select";
 "Text.home" = "For You";

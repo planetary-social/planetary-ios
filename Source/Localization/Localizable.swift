@@ -1,16 +1,21 @@
 import Foundation
+import SwiftUI
 
 protocol Localizable {
     var template: String { get }
 
-    // optionally override this to provide your own key
+    /// optionally override this to provide your own key
     var key: String { get }
 
-    // optionally override this to provide your own namespace key
-    // defaults to the type name of the enum
+    /// optionally override this to provide your own namespace key
+    /// defaults to the type name of the enum
     static var namespace: String { get }
+    
+    /// Creates a SwiftUI Text view for this text.
+    var view: SwiftUI.Text { get }
 
     static func exportForStringsFile() -> String
+    
 }
 
 //    Use as follows:
@@ -75,6 +80,15 @@ extension Localizable {
     static var namespace: String {
         return String(describing: self)
     }
+    
+    var view: SwiftUI.Text {
+        return SwiftUI.Text(text)
+    }
+    
+    func view(_ arguments: [String: String]) -> SwiftUI.Text {
+        return SwiftUI.Text(text(arguments))
+    }
+
 
     var key: String {
         return "\(Self.namespace).\(String(describing: self))"
