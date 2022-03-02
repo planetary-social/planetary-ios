@@ -63,7 +63,14 @@ class PeerConnectionAnimation: UIView {
     var disabledColor = #colorLiteral(red: 0.6195520163, green: 0.619643569, blue: 0.6195320487, alpha: 1)
     var searchColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
 
-    init(color: UIColor, sizeMultiplier: CGFloat = 1.0) {
+    init(color: UIColor,
+         sizeMultiplier: CGFloat = 1.0,
+         lineWidth: CGFloat = 1,
+         centerDotSize: CGFloat = 7,
+         dotSize: CGFloat = 5,
+         insideDiameter: CGFloat = 23,
+         outsideDiameter: CGFloat = 38
+    ) {
         self.multiplier = sizeMultiplier
 
         super.init(frame: .zero)
@@ -72,6 +79,13 @@ class PeerConnectionAnimation: UIView {
         self.outColor = color
         self.disabledColor = color
         self.searchColor = color
+        
+        self.multiplier = sizeMultiplier
+        self.lineWidth = lineWidth
+        self.centerDotSize = centerDotSize
+        self.dotSize = dotSize
+        self.insideDiameter = insideDiameter
+        self.outsideDiameter = outsideDiameter
 
         self.insideCircle = addCircle(size: self.insideDiameter)
         self.outsideCircle = addCircle(size: self.outsideDiameter)

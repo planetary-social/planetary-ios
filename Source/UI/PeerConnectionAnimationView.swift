@@ -14,12 +14,22 @@ struct PeerConnectionAnimationView: UIViewRepresentable {
     /// The number of peers that are connected. Will correspond to the number of dots in the graphic.
     @Binding var peerCount: Int
     
-    var sizeMultiplier: CGFloat = 1
+    let sizeMultiplier:  CGFloat = 1
+    let lineWidth:       CGFloat = 1.7
+    let centerDotSize:   CGFloat = 5
+    let dotSize:         CGFloat = 5
+    let insideDiameter:  CGFloat = 16
+    let outsideDiameter: CGFloat = 29
 
     func makeUIView(context: Context) -> PeerConnectionAnimation {
         let animationView = PeerConnectionAnimation(
             color: UIColor(named: "defaultTint")!,
-            sizeMultiplier: sizeMultiplier
+            sizeMultiplier: sizeMultiplier,
+            lineWidth: lineWidth,
+            centerDotSize: centerDotSize,
+            dotSize: dotSize,
+            insideDiameter: insideDiameter,
+            outsideDiameter: outsideDiameter
         )
         animationView.searchAnimation()
         return animationView
