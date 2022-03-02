@@ -64,13 +64,8 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
         // Wire up peers array to the statisticsService
         statisticsPublisher
             .map { $0.peer }
-            .flatMap { peerStatistics in
-                return Future { promise in
-                    Task.detached {
-                        let connectionInfo = await self.peerConnectionInfo(from: peerStatistics)
-                        promise(.success(connectionInfo))
-                    }
-                }
+            .asyncFlatMap { peerStatistics in
+                await self.peerConnectionInfo(from: peerStatistics)
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] in

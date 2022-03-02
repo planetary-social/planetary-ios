@@ -32,12 +32,8 @@ actor BotStatisticsServiceAdaptor: BotStatisticsService {
             in: .default
         )
             .autoconnect()
-            .flatMap { (_: Date) -> AnyPublisher<BotStatistics, Never> in
-                return Future<BotStatistics, Never> { promise in
-                    self.bot.statistics(completion: { statistics in
-                        promise(.success(statistics))
-                    })
-                }.eraseToAnyPublisher()
+            .asyncFlatMap { _ in
+                await self.bot.statistics()
             }
             .eraseToAnyPublisher()
         
