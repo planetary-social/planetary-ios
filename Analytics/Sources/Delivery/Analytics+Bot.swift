@@ -9,6 +9,20 @@ import Foundation
 
 public extension Analytics {
 
+    struct BotRepair {
+        public var function: String
+        public var numberOfMessagesInDB: Int64
+        public var numberOfMessagesInRepo: Int
+        public var reportedAuthors: Int?
+        public var reportedMessages: UInt32?
+
+        public init(function: String, numberOfMessagesInDB: Int64, numberOfMessagesInRepo: Int) {
+            self.function = function
+            self.numberOfMessagesInDB = numberOfMessagesInDB
+            self.numberOfMessagesInRepo = numberOfMessagesInRepo
+        }
+    }
+
     func trackBotDidSkipMessage(key: String, reason: String) {
         service.track(event: .did, element: .bot, name: "sync", params: ["Skipped": key,
                                                                          "Reason": reason])
@@ -26,19 +40,19 @@ public extension Analytics {
         service.track(event: .did, element: .bot, name: "db_update", params: params)
     }
 
-    func trackBotDidRepair(databaseError: String, error: String?, numberOfMessagesInDB: Int64, numberOfMessagesInRepo: UInt, reportedAuthors: Int?, reportedMessages: UInt32?) {
+    func trackBotDidRepair(databaseError: String, error: String?, repair: BotRepair) {
         var params: [String: Any] = ["sql_error": databaseError,
                                      "function": "ViewConstraints21012020",
-                                     "viewdb_current": numberOfMessagesInDB,
-                                     "repo_messages_count": numberOfMessagesInRepo] as [String: Any]
+                                     "viewdb_current": repair.numberOfMessagesInDB,
+                                     "repo_messages_count": repair.numberOfMessagesInRepo] as [String: Any]
         if let error = error {
             params["repair_failed"] = error
         }
-        if let reportedAuthors = reportedAuthors {
+        if let reportedAuthors = repair.reportedAuthors {
             params["reported_authors"] = reportedAuthors
         }
 
-        if let reportedMessages = reportedMessages {
+        if let reportedMessages = repair.reportedMessages {
             params["reported_messages"] = reportedMessages
         }
         service.track(event: .did, element: .bot, name: "repair", params: params)

@@ -12,7 +12,8 @@ protocol AnalyticsService {
     var isEnabled: Bool { get }
 
     func identify(identity: Identity)
-    func identify(statistics: Statistics)
+    func optIn()
+    func optOut()
     func forget()
     func track(event: Event, element: Element, name: String, params: [String: Any]?)
 

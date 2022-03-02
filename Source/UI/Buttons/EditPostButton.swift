@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Analytics
 
 class EditPostButton: IconButton {
     let post: KeyValue

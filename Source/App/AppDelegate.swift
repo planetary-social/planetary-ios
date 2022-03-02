@@ -8,6 +8,7 @@
 
 import UIKit
 import Logger
+import Analytics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

@@ -28,6 +28,15 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.forgot)
     }
 
+    func testOptIn() {
+        analytics.optIn()
+        XCTAssertTrue(service.optedIn)
+        analytics.optOut()
+        XCTAssertFalse(service.optedIn)
+        analytics.optIn()
+        XCTAssertTrue(service.optedIn)
+    }
+
     // MARK: AppDelegate
 
     func testTrackTapAppNotification() {
@@ -205,6 +214,21 @@ final class AnalyticsTests: XCTestCase {
 
     func testTrackDidShowScreen() {
         analytics.trackDidShowScreen(screenName: "test")
+        XCTAssertTrue(service.tracked)
+    }
+
+    // MARK: Repair
+
+    func testTrackDidRepair() {
+        analytics.trackDidRepair(function: "myfunction")
+        XCTAssertTrue(service.tracked)
+    }
+
+    // MARK: Statistics
+
+    func trackStatistics() {
+        let statistics = Analytics.Statistics(lastSyncDate: nil, lastRefreshDate: nil)
+        analytics.trackStatistics(statistics)
         XCTAssertTrue(service.tracked)
     }
 

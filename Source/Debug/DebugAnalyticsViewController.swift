@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Analytics
 
 class DebugAnalyticsViewController: UIViewController {
 
@@ -89,7 +90,7 @@ fileprivate class LexiconTableViewController: UITableViewController, UISearchRes
 
     private func namesToFilter() -> [String] {
         if self.filterByTracked {
-            let names = Array(Set(self.names).intersection(UserDefaults.standard.trackedEvents()))
+            let names = Array(Set(self.names).intersection(Analytics.shared.trackedEvents()))
             return names.sorted()
         } else {
             return self.names
@@ -131,7 +132,7 @@ fileprivate class LexiconTableViewController: UITableViewController, UISearchRes
 
     private func nameHasBeenTracked(for indexPath: IndexPath) -> Bool {
         let name = self.filteredNames[indexPath.row]
-        return UserDefaults.standard.trackedEvents().contains(name)
+        return Analytics.shared.trackedEvents().contains(name)
     }
 
     // MARK: UITableViewDelegate

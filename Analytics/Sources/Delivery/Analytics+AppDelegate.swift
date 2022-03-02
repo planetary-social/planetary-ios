@@ -9,9 +9,6 @@ import Foundation
 
 public extension Analytics {
 
-    // TODO trackAppStartNotificationRefresh
-    // TODO trackAppDidNotificationRefresh
-
     func trackTapAppNotification() {
         service.track(event: .tap, element: .app, name: "notification")
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Logger
 
 class AnalyticsServiceAdapter: AnalyticsService {
 
@@ -20,11 +21,16 @@ class AnalyticsServiceAdapter: AnalyticsService {
     }
 
     func identify(identity: Identity) {
+        Log.debug("Identified \(identity.identifier)")
         apiService.identify(identity: identity)
     }
 
-    func identify(statistics: Statistics) {
-        apiService.identify(statistics: statistics)
+    func optIn() {
+        apiService.optIn()
+    }
+
+    func optOut() {
+        apiService.optOut()
     }
 
     func forget() {
@@ -32,7 +38,10 @@ class AnalyticsServiceAdapter: AnalyticsService {
     }
 
     func track(event: Event, element: Element, name: String, params: [String: Any]?) {
-        apiService.track(event: eventName(event: event, element: element, name: name), params: params)
+        let eventName = eventName(event: event, element: element, name: name)
+        Log.debug("Tracked \(eventName)")
+        apiService.track(event: eventName, params: params)
+        UserDefaults.standard.didTrack(eventName)
     }
 
 }
