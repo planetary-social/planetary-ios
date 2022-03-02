@@ -88,6 +88,11 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
         cancellables.forEach { $0.cancel() }
     }
     
+    /// This function cross references the raw `PeerStatistics` data with `About` messages in the `ViewDatabase` to
+    /// produce `[PeerConnectionInfo]`.
+    ///
+    /// Note: This function will only discover `About` messages for ed25519 feeds right now. Adding support for
+    /// other feed formats is tracked in https://github.com/planetary-social/planetary-ios/issues/400
     private func peerConnectionInfo(from peerStatistics: PeerStatistics) async -> [PeerConnectionInfo] {
         // Map old peers in as inactive
         var peerConnectionInfo = peers.map { (oldPeer: PeerConnectionInfo) -> PeerConnectionInfo in
@@ -100,7 +105,6 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
         for (_, publicKey) in peerStatistics.currentOpen {
             peerConnectionInfo.removeAll(where: { $0.id == publicKey })
             do {
-                // TODO: support other feed formats
                 let identity = "@\(publicKey).ed25519"
                 if let about = try await bot.about(identity: identity)  {
                     peerConnectionInfo.append(
