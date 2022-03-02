@@ -75,6 +75,7 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
         
         // Wire up recentlyDownloadedPostCount and recentlyDownloadedDuration to the statistics
         statisticsPublisher
+            .receive(on: RunLoop.main)
             .sink(receiveValue: { statistics in
                 self.recentlyDownloadedPostCount = statistics.recentlyDownloadedPostCount
                 self.recentlyDownloadedPostDuration = statistics.recentlyDownloadedPostDuration
