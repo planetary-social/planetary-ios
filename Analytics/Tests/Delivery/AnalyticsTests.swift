@@ -174,7 +174,7 @@ final class AnalyticsTests: XCTestCase {
         analytics.trackOnboardingComplete(data)
         XCTAssertTrue(service.tracked)
     }
-    
+
     func testTrackOnboardingStart() {
         analytics.trackOnboardingStart()
         XCTAssertTrue(service.tracked)

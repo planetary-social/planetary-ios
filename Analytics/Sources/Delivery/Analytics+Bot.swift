@@ -33,10 +33,10 @@ public extension Analytics {
     }
 
     func trackBodDidUpdateDatabase(count: Int, firstTimestamp: Float64, lastTimestamp: Float64, lastHash: String) {
-        let params = ["msg.count": count,
-                      "first.timestamp": firstTimestamp,
-                      "last.timestamp": lastTimestamp,
-                      "last.hash": lastHash] as [String : Any]
+        let params: [String : Any] = ["msg.count": count,
+                                      "first.timestamp": firstTimestamp,
+                                      "last.timestamp": lastTimestamp,
+                                      "last.hash": lastHash]
         service.track(event: .did, element: .bot, name: "db_update", params: params)
     }
 

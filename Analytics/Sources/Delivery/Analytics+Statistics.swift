@@ -13,7 +13,7 @@ public extension Analytics {
         public var lastSyncDate: Date?
         public var lastRefreshDate: Date?
         public var repo: RepoStatistics?
-        public var db: DatabaseStatistics?
+        public var database: DatabaseStatistics?
         public var peer: PeerStatistics?
 
         public init(lastSyncDate: Date?, lastRefreshDate: Date?) {
@@ -21,36 +21,37 @@ public extension Analytics {
             self.lastRefreshDate = lastRefreshDate
         }
 
-        public struct RepoStatistics {
-            public var feedCount: Int
-            public var messageCount: Int
-            public var numberOfPublishedMessages: Int
-            public var lastHash: String
+    }
 
-            public init(feedCount: Int, messageCount: Int, numberOfPublishedMessages: Int, lastHash: String) {
-                self.feedCount = feedCount
-                self.messageCount = messageCount
-                self.numberOfPublishedMessages = numberOfPublishedMessages
-                self.lastHash = lastHash
-            }
+    struct RepoStatistics {
+        public var feedCount: Int
+        public var messageCount: Int
+        public var numberOfPublishedMessages: Int
+        public var lastHash: String
+
+        public init(feedCount: Int, messageCount: Int, numberOfPublishedMessages: Int, lastHash: String) {
+            self.feedCount = feedCount
+            self.messageCount = messageCount
+            self.numberOfPublishedMessages = numberOfPublishedMessages
+            self.lastHash = lastHash
         }
+    }
 
-        public struct DatabaseStatistics {
-            public var lastReceivedMessage: Int
+    struct DatabaseStatistics {
+        public var lastReceivedMessage: Int
 
-            public init(lastReceivedMessage: Int) {
-                self.lastReceivedMessage = lastReceivedMessage
-            }
+        public init(lastReceivedMessage: Int) {
+            self.lastReceivedMessage = lastReceivedMessage
         }
+    }
 
-        public struct PeerStatistics {
-            public var peers: Int
-            public var connectedPeers: UInt
+    struct PeerStatistics {
+        public var peers: Int
+        public var connectedPeers: UInt
 
-            public init(peers: Int, connectedPeers: UInt) {
-                self.peers = peers
-                self.connectedPeers = connectedPeers
-            }
+        public init(peers: Int, connectedPeers: UInt) {
+            self.peers = peers
+            self.connectedPeers = connectedPeers
         }
     }
 
@@ -72,8 +73,8 @@ public extension Analytics {
             params["Last Hash"] = repo.lastHash
         }
 
-        if let db = statistics.db {
-            let lastRxSeq = db.lastReceivedMessage
+        if let database = statistics.database {
+            let lastRxSeq = database.lastReceivedMessage
             params["Last Received Message"] = lastRxSeq
 
             if let repo = statistics.repo {
@@ -86,7 +87,7 @@ public extension Analytics {
             params["Peers"] = peer.peers
             params["Connected Peers"] = peer.connectedPeers
         }
-        
+
         service.track(event: .did, element: .bot, name: "stats", params: params)
     }
 }

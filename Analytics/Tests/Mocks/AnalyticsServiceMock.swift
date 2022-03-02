@@ -28,14 +28,13 @@ class AnalyticsServiceMock: AnalyticsService {
     func optOut() {
         optedIn = false
     }
-    
+
     func forget() {
         forgot = true
     }
 
-    func track(event: Event, element: Element, name: String, params: [String : Any]?) {
+    func track(event: Event, element: Element, name: String, params: [String: Any]?) {
         tracked = true
     }
-
 
 }

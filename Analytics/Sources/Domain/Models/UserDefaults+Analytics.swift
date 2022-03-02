@@ -23,5 +23,5 @@ extension UserDefaults {
     func clearTrackedEvents() {
         self.removeObject(forKey: "trackedEvents")
     }
-    
+
 }

@@ -28,20 +28,29 @@ public extension Analytics {
         case resume
         case start
     }
-    
+
     class OnboardingStepData {
         var allowedBackup = false
         var allowedContacts = false
-        var bio: String? = nil
+        var bio: String?
         var followingCount = 0
         var hasImage = false
         var joinedDirectory = false
         var publicWebHosting = false
         var nameLength = 0
-        var phone: String? = nil
+        var phone: String?
         var simulated = false
 
-        public init(allowedBackup: Bool = false, allowedContacts: Bool = false, bio: String? = nil, followingCount: Int = 0, hasImage: Bool = false, joinedDirectory: Bool = false, publicWebHosting: Bool = false, nameLength: Int = 0, phone: String? = nil, simulated: Bool = false) {
+        public init(allowedBackup: Bool = false,
+                    allowedContacts: Bool = false,
+                    bio: String? = nil,
+                    followingCount: Int = 0,
+                    hasImage: Bool = false,
+                    joinedDirectory: Bool = false,
+                    publicWebHosting: Bool = false,
+                    nameLength: Int = 0,
+                    phone: String? = nil,
+                    simulated: Bool = false) {
             self.allowedBackup = allowedBackup
             self.allowedContacts = allowedContacts
             self.bio = bio
@@ -61,15 +70,15 @@ public extension Analytics {
     }
 
     func trackOnboardingComplete(_ data: OnboardingStepData) {
-        let params = ["allowed_backup":      data.allowedBackup,
-                      "allowed_contacts":    data.allowedContacts,
-                      "bio_length":          data.bio?.count ?? 0,
-                      "following_count":     data.followingCount,
-                      "image_set":           data.hasImage,
-                      "joined_directory":    data.joinedDirectory,
-                      "public_web_hosting":  data.publicWebHosting,
-                      "name_length":         data.nameLength,
-                      "simulated":           data.simulated] as [String : Any]
+        let params: [String : Any] = ["allowed_backup": data.allowedBackup,
+                                      "allowed_contacts": data.allowedContacts,
+                                      "bio_length": data.bio?.count ?? 0,
+                                      "following_count": data.followingCount,
+                                      "image_set": data.hasImage,
+                                      "joined_directory": data.joinedDirectory,
+                                      "public_web_hosting": data.publicWebHosting,
+                                      "name_length": data.nameLength,
+                                      "simulated": data.simulated]
         service.track(event: .view, element: .screen, name: "onboarding", params: params)
     }
 

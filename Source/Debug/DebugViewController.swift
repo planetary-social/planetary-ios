@@ -214,7 +214,8 @@ class DebugViewController: DebugTableViewController {
             {
                 cell in
                 cell.accessoryType = .disclosureIndicator
-                cell.detailTextLabel?.text = "\(Analytics.shared.trackedEvents().count) / \(Analytics.shared.lexicon().count)"
+                let text = "\(Analytics.shared.trackedEvents().count) / \(Analytics.shared.lexicon().count)"
+                cell.detailTextLabel?.text = text
             },
                                              actionClosure:
             {
@@ -226,7 +227,7 @@ class DebugViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to clear tracked events",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
                                          valueClosure: nil,
-                                         actionClosure: { [unowned self] cell in
+                                         actionClosure: { [unowned self] _ in
             Analytics.shared.clearTrackedEvents()
             self.updateSettings()
         })]

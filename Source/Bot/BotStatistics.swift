@@ -27,20 +27,20 @@ extension BotStatistics {
     var analyticsStatistics: Analytics.Statistics {
         var statistics = Analytics.Statistics(lastSyncDate: lastSyncDate,
                                               lastRefreshDate: lastRefreshDate)
-        
+
         if repo.feedCount != -1 {
-            statistics.repo = Analytics.Statistics.RepoStatistics(feedCount: repo.feedCount,
-                                                                  messageCount: repo.messageCount,
-                                                                  numberOfPublishedMessages: repo.numberOfPublishedMessages,
-                                                                  lastHash: repo.lastHash)
+            statistics.repo = Analytics.RepoStatistics(feedCount: repo.feedCount,
+                                                       messageCount: repo.messageCount,
+                                                       numberOfPublishedMessages: repo.numberOfPublishedMessages,
+                                                       lastHash: repo.lastHash)
         }
 
         if db.lastReceivedMessage != -3 {
-            statistics.db = Analytics.Statistics.DatabaseStatistics(lastReceivedMessage: db.lastReceivedMessage)
+            statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: db.lastReceivedMessage)
         }
 
-        statistics.peer = Analytics.Statistics.PeerStatistics(peers: peer.count,
-                                                              connectedPeers: peer.connectionCount)
+        statistics.peer = Analytics.PeerStatistics(peers: peer.count,
+                                                   connectedPeers: peer.connectionCount)
 
         return statistics
     }

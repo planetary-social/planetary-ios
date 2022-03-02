@@ -55,5 +55,5 @@ public class Analytics {
     public func trackedEvents() -> Set<String> {
         return UserDefaults.standard.trackedEvents()
     }
-    
+
 }

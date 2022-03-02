@@ -134,10 +134,12 @@ class Onboarding {
                         return
                     }
 
-                    CrashReporting.shared.identify(about: about, network: configuration.network!)
-                    Analytics.shared.identify(identifier: about.identity,
-                                              name: about.name,
-                                              network: configuration.network!.string)
+                    if let network = configuration.network {
+                        CrashReporting.shared.identify(about: about, network: network)
+                        Analytics.shared.identify(identifier: about.identity,
+                                                  name: about.name,
+                                                  network: network.string)
+                    }
                     
                     // done
                     context.about = about

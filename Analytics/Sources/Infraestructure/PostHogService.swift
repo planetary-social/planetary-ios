@@ -34,7 +34,7 @@ class PostHogService: APIService {
         configuration.recordScreenViews = true
 
         configuration.middlewares = middlewares
-        
+
         posthog = PHGPostHog(configuration: configuration)
     }
 
@@ -56,7 +56,7 @@ class PostHogService: APIService {
         posthog?.reset()
     }
 
-    func track(event: String, params: [String : Any]?) {
+    func track(event: String, params: [String: Any]?) {
         posthog?.capture(event, properties: params)
     }
 
