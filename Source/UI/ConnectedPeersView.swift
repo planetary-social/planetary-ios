@@ -8,12 +8,15 @@
 
 import SwiftUI
 
+
+
 struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewModel {
     
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         VStack {
+            // Header
             HStack {
                 PeerConnectionAnimationView(peerCount: $viewModel.connectedPeersCount)
                     .padding(.trailing, 2)
@@ -37,40 +40,16 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
             
             Color("menuBackgroundColor").frame(height: 1)
 
+            // Peer List
             ScrollView {
                 ForEach(viewModel.peers) { peer in
-                    HStack {
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(hex: "#FF264E"), Color(hex: "#8474EA")],
-                                    startPoint: .bottomLeading,
-                                    endPoint: .topTrailing
-                                )
-                            )
-                            .frame(width: 26, height: 26)
-                            .overlay(
-                                SSBImage(
-                                    metadata: peer.imageMetadata,
-                                    animated: true
-                                )
-                                .scaledToFit()
-                                .frame(width: 24, height: 24)
-                            )
-                        SwiftUI.Text(peer.name ?? peer.id)
-                            .font(.callout)
-                            .foregroundColor(Color("menuUnselectedItemText"))
-                            .lineLimit(1)
-                        Spacer()
-                    }
-                    .opacity(peer.currentlyActive ? 1 : 0.4)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 0)
+                    ConnectedPeerCell(peer: peer)
                 }
             }
             
             Spacer()
             
+            // Footer
             VStack(spacing: 2) {
                 HStack {
                     Text.syncingMessages.view
@@ -108,44 +87,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
 
 fileprivate class PreviewViewModel: ConnectedPeersViewModel {
     
-    var peers = [
-        PeerConnectionInfo(
-            id: "0",
-            name: "Amanda Bee 🐝",
-            imageMetadata: nil,
-            currentlyActive: true
-        ),
-        PeerConnectionInfo(
-            id: "1",
-            name: "Sebastian Heit",
-            imageMetadata: nil,
-            currentlyActive: true
-        ),
-        PeerConnectionInfo(
-            id: "2",
-            name: "Rossina Simonellililililililililili",
-            imageMetadata: nil,
-            currentlyActive: true
-        ),
-        PeerConnectionInfo(
-            id: "3",
-            name: "Craig Nicholls",
-            imageMetadata: nil,
-            currentlyActive: true
-        ),
-        PeerConnectionInfo(
-            id: "4",
-            name: "Jordan Wilson",
-            imageMetadata: nil,
-            currentlyActive: false
-        ),
-        PeerConnectionInfo(
-            id: "5",
-            name: "Arun Ramachandaran",
-            imageMetadata: nil,
-            currentlyActive: false
-        ),
-    ]
+    var peers = PeerConnectionInfo.uiPreviewData
                 
     var recentlyDownloadedPostCount: Int = 62
     var recentlyDownloadedPostDuration: Int = 15

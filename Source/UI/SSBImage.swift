@@ -8,7 +8,8 @@
 
 import SwiftUI
 
-struct SSBImage: UIViewRepresentable {
+/// A SwiftUI wrapper around the UIKit `AvatarImageView`.
+struct AvatarImageViewRepresentable: UIViewRepresentable {
     
     var metadata: ImageMetadata?
     
