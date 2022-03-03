@@ -625,7 +625,6 @@
 		53CF2A4B220268CF00F0A2CC /* Abouts.json in Resources */ = {isa = PBXBuildFile; fileRef = 53CF2A4A220268CF00F0A2CC /* Abouts.json */; };
 		53CF2A4D22026B1700F0A2CC /* ImageMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CF2A4C22026B1700F0A2CC /* ImageMetadata.swift */; };
 		53D66627222A55640001D9BB /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D66626222A55640001D9BB /* AnalyticsService.swift */; };
-		53D8FF95236946D300EF986F /* PeersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D8FF94236946D300EF986F /* PeersView.swift */; };
 		53DF335023A069FF0017566D /* AnalyticsService+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF334F23A069FF0017566D /* AnalyticsService+Bot.swift */; };
 		53E26C4C230223F8009240B2 /* AppController+Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E26C4B230223F8009240B2 /* AppController+Push.swift */; };
 		53E26C4E23022482009240B2 /* AppDelegate+Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E26C4D23022482009240B2 /* AppDelegate+Push.swift */; };
@@ -1209,7 +1208,6 @@
 		53CF2A4A220268CF00F0A2CC /* Abouts.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Abouts.json; sourceTree = "<group>"; };
 		53CF2A4C22026B1700F0A2CC /* ImageMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMetadata.swift; sourceTree = "<group>"; };
 		53D66626222A55640001D9BB /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
-		53D8FF94236946D300EF986F /* PeersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeersView.swift; sourceTree = "<group>"; };
 		53DF334F23A069FF0017566D /* AnalyticsService+Bot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticsService+Bot.swift"; sourceTree = "<group>"; };
 		53E26C4A23022098009240B2 /* FBTT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FBTT.entitlements; sourceTree = "<group>"; };
 		53E26C4B230223F8009240B2 /* AppController+Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppController+Push.swift"; sourceTree = "<group>"; };
@@ -1989,7 +1987,6 @@
 				531B92B622CD0E65005D5255 /* MentionTextViewDelegate.swift */,
 				5319257F22F3A09C00B44FA3 /* NotificationCellView.swift */,
 				8DC4238E236CA68100BA7769 /* PeerConnectionAnimation.swift */,
-				53D8FF94236946D300EF986F /* PeersView.swift */,
 				531B92B022CAC203005D5255 /* PostButtonsView.swift */,
 				535754FC22694A4C002A6989 /* PostCellView.swift */,
 				8D8A7B18231995670087895B /* PostHeaderView.swift */,
@@ -3230,7 +3227,6 @@
 				0ACE91A2243D740C00EFB4E9 /* GoBotError.swift in Sources */,
 				539FD4C822C43FC8005A4DF2 /* ImageButton.swift in Sources */,
 				5314EF8122EA54540065D02A /* AnalyticsService+Onboarding.swift in Sources */,
-				53D8FF95236946D300EF986F /* PeersView.swift in Sources */,
 				0AF9E0AC246B23F900910575 /* ExitOperation.swift in Sources */,
 				0ABCA9062437C12C00D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				0A3880072475AAE000777843 /* PushAPI.swift in Sources */,
