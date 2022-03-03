@@ -18,7 +18,8 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
         VStack {
             // Header
             HStack {
-                PeerConnectionAnimationView(peerCount: $viewModel.connectedPeersCount)
+                
+                PeerConnectionAnimationView(peerCount: viewModel.connectedPeersCount ?? 1)
                     .padding(.trailing, 2)
                 Text.connectedPeers.view
                     .font(.body)
@@ -27,13 +28,15 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     .scaledToFit()
                     .minimumScaleFactor(0.5)
                 
-                SwiftUI.Text(String(viewModel.connectedPeersCount))
+                Spacer()
+                
+                let count = viewModel.connectedPeersCount.map { String($0) } ?? "~"
+                SwiftUI.Text(count)
                     .font(.body)
                     .foregroundColor(Color("defaultTint"))
                     .scaledToFit()
                     .minimumScaleFactor(0.5)
                     .animation(.default)
-                Spacer()
             }
             .padding(.top, 11)
             .padding(.bottom, 0)
@@ -43,7 +46,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
 
             // Peer List
             ScrollView {
-                ForEach(viewModel.peers) { peer in
+                ForEach(viewModel.peers ?? []) { peer in
                     Button {
                         viewModel.peerTapped(peer)
                     } label: {
@@ -58,25 +61,41 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
             
             // Footer
             VStack(spacing: 2) {
-                HStack {
-                    Text.syncingMessages.view
-                        .font(.caption)
-                        .foregroundColor(Color("menuUnselectedItemText"))
-                        .minimumScaleFactor(0.5)
-                    Spacer()
-                }
                 
-                HStack {
-                    Text.recentlyDownloaded.view([
-                        "postCount": String(viewModel.recentlyDownloadedPostCount),
-                        "duration": String(viewModel.recentlyDownloadedPostDuration)
-                    ])
-                        .font(.caption)
-                        .foregroundColor(Color("secondaryText"))
-                        .scaledToFit()
-                        .minimumScaleFactor(0.5)
+                if let postCount = viewModel.recentlyDownloadedPostCount,
+                   let duration = viewModel.recentlyDownloadedPostDuration {
+
+                    HStack {
+                        Text.syncingMessages.view
+                            .font(.caption)
+                            .foregroundColor(Color("menuUnselectedItemText"))
+                            .minimumScaleFactor(0.5)
+                        Spacer()
+                    }
                     
-                    Spacer()
+                    
+                    
+                    HStack {
+                        Text.recentlyDownloaded.view([
+                            "postCount": String(postCount),
+                            "duration": String(duration)
+                        ])
+                            .font(.caption)
+                            .foregroundColor(Color("secondaryText"))
+                            .scaledToFit()
+                            .minimumScaleFactor(0.5)
+                        
+                        Spacer()
+                    }
+                } else {
+                    // Loading message
+                    HStack {
+                        Text.loading.view
+                            .font(.caption)
+                            .foregroundColor(Color("menuUnselectedItemText"))
+                            .minimumScaleFactor(0.5)
+                        Spacer()
+                    }
                 }
             }
             .frame(minHeight: 32)
@@ -96,19 +115,19 @@ fileprivate class PreviewViewModel: ConnectedPeerListViewModel {
     
     static var emptyModel: PreviewViewModel {
         let vm = PreviewViewModel()
-        vm.peers = []
-        vm.recentlyDownloadedPostCount = 0
-        vm.recentlyDownloadedPostDuration = 0
+        vm.peers = nil
+        vm.recentlyDownloadedPostCount = nil
+        vm.recentlyDownloadedPostDuration = nil
         return vm
     }
     
-    var peers = PeerConnectionInfo.uiPreviewData
+    var peers: [PeerConnectionInfo]? = PeerConnectionInfo.uiPreviewData
                 
-    var recentlyDownloadedPostCount: Int = 62
-    var recentlyDownloadedPostDuration: Int = 15
-    var connectedPeersCount: Int {
+    var recentlyDownloadedPostCount: Int? = 62
+    var recentlyDownloadedPostDuration: Int? = 15
+    var connectedPeersCount: Int? {
         get {
-            peers.filter({ $0.isActive }).count
+            peers?.filter({ $0.isActive }).count
         }
         set {
             // We just need this to use `Binding`

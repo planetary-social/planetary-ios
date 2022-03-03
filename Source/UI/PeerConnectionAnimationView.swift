@@ -12,7 +12,7 @@ import SwiftUI
 struct PeerConnectionAnimationView: UIViewRepresentable {
     
     /// The number of peers that are connected. Will correspond to the number of dots in the graphic.
-    @Binding var peerCount: Int
+    var peerCount: Int
     
     let sizeMultiplier:  CGFloat = 1
     let lineWidth:       CGFloat = 1.7
@@ -49,13 +49,13 @@ struct PeerConnectionAnimationView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             VStack(spacing: 16) {
-                PeerConnectionAnimationView(peerCount: .constant(0))
-                PeerConnectionAnimationView(peerCount: .constant(1))
-                PeerConnectionAnimationView(peerCount: .constant(2))
-                PeerConnectionAnimationView(peerCount: .constant(3))
-                PeerConnectionAnimationView(peerCount: .constant(5))
-                PeerConnectionAnimationView(peerCount: .constant(9))
-                PeerConnectionAnimationView(peerCount: .constant(99))
+                PeerConnectionAnimationView(peerCount: 0)
+                PeerConnectionAnimationView(peerCount: 1)
+                PeerConnectionAnimationView(peerCount: 2)
+                PeerConnectionAnimationView(peerCount: 3)
+                PeerConnectionAnimationView(peerCount: 5)
+                PeerConnectionAnimationView(peerCount: 9)
+                PeerConnectionAnimationView(peerCount: 99)
             }
             .padding(16)
         }

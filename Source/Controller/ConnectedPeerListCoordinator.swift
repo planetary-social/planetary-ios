@@ -11,10 +11,10 @@ import Combine
 import Logger
 
 protocol ConnectedPeerListViewModel: ObservableObject {
-    var peers: [PeerConnectionInfo] { get }
-    var recentlyDownloadedPostCount: Int { get }
-    var recentlyDownloadedPostDuration: Int { get }
-    var connectedPeersCount: Int { get set }
+    var peers: [PeerConnectionInfo]? { get }
+    var recentlyDownloadedPostCount: Int? { get }
+    var recentlyDownloadedPostDuration: Int? { get }
+    var connectedPeersCount: Int? { get set }
     func peerTapped(_: PeerConnectionInfo)
     func viewDidAppear()
     func viewDidDisappear()
@@ -37,15 +37,15 @@ enum ConnectedPeerListError: LocalizedError {
 
 class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
     
-    @Published var peers = [PeerConnectionInfo]()
+    @Published var peers: [PeerConnectionInfo]?
     
-    @Published var recentlyDownloadedPostCount: Int = 0
+    @Published var recentlyDownloadedPostCount: Int?
     
-    @Published var recentlyDownloadedPostDuration: Int = 0
+    @Published var recentlyDownloadedPostDuration: Int?
     
-    var connectedPeersCount: Int {
+    var connectedPeersCount: Int? {
         get {
-            peers.filter({ $0.isActive }).count
+            peers?.filter({ $0.isActive }).count
         }
         set {
             // We just need this to use `Binding`
@@ -123,11 +123,17 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
     /// Note: This function will only discover `About` messages for ed25519 feeds right now. Adding support for
     /// other feed formats is tracked in https://github.com/planetary-social/planetary-ios/issues/400
     private func peerConnectionInfo(from peerStatistics: PeerStatistics) async -> [PeerConnectionInfo] {
+        var peerConnectionInfo: [PeerConnectionInfo]
+        
         // Map old peers in as inactive
-        var peerConnectionInfo = peers.map { (oldPeer: PeerConnectionInfo) -> PeerConnectionInfo in
-            var newPeer = oldPeer
-            newPeer.isActive = false
-            return newPeer
+        if let peers = peers {
+            peerConnectionInfo = peers.map { (oldPeer: PeerConnectionInfo) -> PeerConnectionInfo in
+                var newPeer = oldPeer
+                newPeer.isActive = false
+                return newPeer
+            }
+        } else {
+            peerConnectionInfo = []
         }
         
         // Walk through peer statistics and create new connection info
