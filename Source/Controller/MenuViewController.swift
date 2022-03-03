@@ -15,9 +15,8 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     var menuWidth: CGFloat = 300
 
     private lazy var menuView: MenuView = {
-        let view = MenuView(frame: CGRect.zero)
+        let view = MenuView(frame: CGRect.zero, connectedPeersView: connectedPeersView)
         view.useAutoLayout()
-        view.transform = CGAffineTransform(translationX: -menuWidth, y: 0)
         return view
     }()
     
@@ -64,16 +63,11 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         Layout.fill(view: self.view, with: self.backgroundView, respectSafeArea: false)
 
         view.addSubview(menuView)
-        view.addSubview(connectedPeersView)
         menuView.constrainTop(toTopOf: view)
         menuView.constrainLeading(to: view)
         menuView.constrainWidth(to: menuWidth)
-        menuView.bottomAnchor.constraint(equalTo: connectedPeersView.topAnchor).isActive = true
-        
-        connectedPeersView.constrainWidth(to: menuView)
-        connectedPeersView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        connectedPeersView.constrainLeading(to: view)
-        connectedPeersView.constrainHeight(to: 310).priority = .defaultLow
+        menuView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
         addChild(connectedPeersViewController)
         connectedPeersViewController.didMove(toParent: self)
 
@@ -167,18 +161,16 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     // MARK: Animations
 
     func open(animated: Bool = true) {
-        
-        // Transform messes up the SwiftUI buttons for some reason, so we edit the connectedPeersView's frame.
-        connectedPeersView.frame.origin.x = connectedPeersView.frame.origin.x - menuWidth
-
+        self.view.layoutSubviews()
+        // For some reason using `.transform` here breaks touches in the SwiftUI view so I'm using `.frame` instead.
+        menuView.frame.origin.x = menuView.frame.origin.x - menuWidth
         UIView.animate(withDuration: animated ? 0.2 : 0,
                        delay: 0,
                        options: .curveEaseOut,
                        animations:
             {
                 self.backgroundView.alpha = 1
-                self.menuView.transform = CGAffineTransform.identity
-                self.connectedPeersView.frame.origin.x = self.connectedPeersView.frame.origin.x + self.menuWidth
+                self.menuView.frame.origin.x = 0
             },
                        completion: nil)
     }
@@ -192,7 +184,6 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
             {
                 self.backgroundView.alpha = 0
                 self.menuView.transform = CGAffineTransform(translationX: -self.menuWidth, y: 0)
-                self.connectedPeersView.transform = CGAffineTransform(translationX: -self.menuWidth, y: 0)
             },
                        completion:
             {
@@ -226,20 +217,59 @@ fileprivate class MenuView: UIView {
     let helpButton = MenuButton(title: .helpAndSupport, image: UIImage.verse.help)
     let reportBugButton = MenuButton(title: .reportBug, image: UIImage.verse.reportBug)
 
-    override init(frame: CGRect) {
+    init(frame: CGRect, connectedPeersView: UIView) {
 
         super.init(frame: frame)
         self.backgroundColor = UIColor.menuBackgroundColor
 
-        self.addSubview(self.profileView)
-        self.profileView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        self.profileView.constrainSize(to: CGSize(width: 96, height: 96))
-        self.profileView.pinTopToSuperview(constant: 70)
+        let stackView = UIStackView().useAutoLayout()
+        stackView.axis = .vertical
+        stackView.distribution = .equalSpacing
+        self.addSubview(stackView)
+        stackView.constrain(to: self)
+        
+        stackView.addArrangedSubview(buildProfileContainerView())
+        stackView.addArrangedSubview(buildMenuButtonsContainerView())
+        
+        connectedPeersView.useAutoLayout()
+        stackView.addArrangedSubview(connectedPeersView)
+        let maxHeightConstraint = connectedPeersView.heightAnchor.constraint(equalToConstant: 310)
+        maxHeightConstraint.priority = UILayoutPriority(501)
+        maxHeightConstraint.isActive = true
 
-        Layout.fillSouth(of: self.profileView, with: self.label, insets: UIEdgeInsets(top: 20, left: Layout.horizontalSpacing, bottom: 0, right: -Layout.horizontalSpacing))
+        if Date.todayIsAHoliday() {
+            Layout.fill(view: self, with: SnowView(), respectSafeArea: false)
+        }
+    }
 
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    /// Builds the view that holds the user's profile pic and name. Not idempotent.
+    private func buildProfileContainerView() -> UIView {
+        let profileContainer = UIView.forAutoLayout()
+        profileContainer.addSubview(profileView)
+        profileContainer.heightAnchor.constraint(lessThanOrEqualToConstant: 300).isActive = true
+        profileView.centerXAnchor.constraint(equalTo: profileContainer.centerXAnchor).isActive = true
+        profileView.constrainSize(to: CGSize(width: 96, height: 96))
+        profileView.pinTopToSuperview(constant: 30)
+
+        Layout.fillSouth(of: profileView, with: label, insets: UIEdgeInsets(top: 20, left: Layout.horizontalSpacing, bottom: 0, right: -Layout.horizontalSpacing))
+        label.constrainBottom(toBottomOf: profileContainer, constant: -20)
+        
+        return profileContainer
+    }
+    
+    /// Builds the view that holds the menu buttons. Not idempotent.
+    private func buildMenuButtonsContainerView() -> UIView {
+        let menuButtonContainer = UIView.forAutoLayout()
+        
         var separator = Layout.separatorView(color: UIColor.menuBorderColor)
-        Layout.fillSouth(of: self.label, with: separator, insets: .top(60))
+        menuButtonContainer.addSubview(separator)
+        separator.constrainTop(toTopOf: menuButtonContainer)
+        separator.constrainLeadingToSuperview()
+        separator.constrainTrailingToSuperview()
 
         Layout.fillSouth(of: separator, with: self.profileButton)
         self.profileButton.constrainHeight(to: 50)
@@ -266,14 +296,13 @@ fileprivate class MenuView: UIView {
         
         separator = Layout.separatorView(color: UIColor.menuBorderColor)
         Layout.fillSouth(of: self.reportBugButton, with: separator)
+        
+        separator = Layout.separatorView(color: UIColor.menuBorderColor)
+        Layout.fillSouth(of: reportBugButton, with: separator)
 
-        if Date.todayIsAHoliday() {
-            Layout.fill(view: self, with: SnowView(), respectSafeArea: false)
-        }
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        separator.bottomAnchor.constraint(equalTo: menuButtonContainer.bottomAnchor).isActive = true
+        
+        return menuButtonContainer
     }
 }
 
