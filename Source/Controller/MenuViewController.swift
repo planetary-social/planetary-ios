@@ -10,12 +10,14 @@ import Foundation
 import UIKit
 import SwiftUI
 
-class MenuViewController: UIViewController {
+class MenuViewController: UIViewController, ConnectedPeerListRouter {
+    
+    var menuWidth: CGFloat = 300
 
     private lazy var menuView: MenuView = {
-        let view = MenuView(frame: CGRect.zero, connectedPeersView: connectedPeersView)
+        let view = MenuView(frame: CGRect.zero)
         view.useAutoLayout()
-        view.transform = CGAffineTransform(translationX: -300, y: 0)
+        view.transform = CGAffineTransform(translationX: -menuWidth, y: 0)
         return view
     }()
     
@@ -25,8 +27,12 @@ class MenuViewController: UIViewController {
     
     private lazy var connectedPeersViewController: UIViewController = {
         let bot = Bots.current
-        let viewModel = ConnectedPeersCoordinator(bot: bot, statisticsService: BotStatisticsServiceAdaptor(bot: bot))
-        return UIHostingController(rootView: ConnectedPeersView(viewModel: viewModel))
+        let viewModel = ConnectedPeerListCoordinator(
+            bot: bot,
+            statisticsService: BotStatisticsServiceAdaptor(bot: bot),
+            router: self
+        )
+        return UIHostingController(rootView: ConnectedPeerListView(viewModel: viewModel))
     }()
 
     private lazy var closeButton: UIButton = {
@@ -56,21 +62,26 @@ class MenuViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.backgroundView, respectSafeArea: false)
-        Layout.fill(view: self.view, with: self.closeButton, respectSafeArea: false)
-        Layout.fillLeft(of: self.view, with: self.menuView, respectSafeArea: false)
-        self.menuView.constrainWidth(to: 300)
-//        let menuBorder = UIView()
-//        menuBorder.backgroundColor = UIColor.menuBorderColor
-//        self.view.addSubview(menuBorder)
-//        NSLayoutConstraint.activate([
-//            menuBorder.topAnchor.constraint(equalTo: self.menuView.topAnchor),
-//            menuBorder.leftAnchor.constraint(equalTo: self.menuView.rightAnchor, constant: 0),
-//            menuBorder.bottomAnchor.constraint(equalTo: self.menuView.bottomAnchor, constant: 0),
-//            menuBorder.widthAnchor.constraint(equalToConstant: 1)
-//        ])
+
+        view.addSubview(menuView)
+        view.addSubview(connectedPeersView)
+        menuView.constrainTop(toTopOf: view)
+        menuView.constrainLeading(to: view)
+        menuView.constrainWidth(to: menuWidth)
+        menuView.bottomAnchor.constraint(equalTo: connectedPeersView.topAnchor).isActive = true
         
+        connectedPeersView.constrainWidth(to: menuView)
+        connectedPeersView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        connectedPeersView.constrainLeading(to: view)
+        connectedPeersView.constrainHeight(to: 310).priority = .defaultLow
         addChild(connectedPeersViewController)
         connectedPeersViewController.didMove(toParent: self)
+
+        view.addSubview(closeButton)
+        closeButton.constrainTop(toTopOf: view)
+        closeButton.constrainBottom(toBottomOf: view)
+        closeButton.constrainTrailing(toTrailingOf: view)
+        closeButton.constrainLeading(toTrailingOf: menuView, constant: 0)
         
         self.load()
     }
@@ -156,6 +167,9 @@ class MenuViewController: UIViewController {
     // MARK: Animations
 
     func open(animated: Bool = true) {
+        
+        // Transform messes up the SwiftUI buttons for some reason, so we edit the connectedPeersView's frame.
+        connectedPeersView.frame.origin.x = connectedPeersView.frame.origin.x - menuWidth
 
         UIView.animate(withDuration: animated ? 0.2 : 0,
                        delay: 0,
@@ -164,6 +178,7 @@ class MenuViewController: UIViewController {
             {
                 self.backgroundView.alpha = 1
                 self.menuView.transform = CGAffineTransform.identity
+                self.connectedPeersView.frame.origin.x = self.connectedPeersView.frame.origin.x + self.menuWidth
             },
                        completion: nil)
     }
@@ -176,13 +191,20 @@ class MenuViewController: UIViewController {
                        animations:
             {
                 self.backgroundView.alpha = 0
-                self.menuView.transform = CGAffineTransform(translationX: -300, y: 0)
+                self.menuView.transform = CGAffineTransform(translationX: -self.menuWidth, y: 0)
+                self.connectedPeersView.transform = CGAffineTransform(translationX: -self.menuWidth, y: 0)
             },
                        completion:
             {
                 finished in
                 self.dismiss(animated: false) { completion?() }
             })
+    }
+    
+    // MARK: - ConnectedPeerListRouter
+    func showProfile(for identity: Identity) {
+        AppController.shared.pushViewController(for: .about, with: identity)
+        close()
     }
 }
 
@@ -204,7 +226,7 @@ fileprivate class MenuView: UIView {
     let helpButton = MenuButton(title: .helpAndSupport, image: UIImage.verse.help)
     let reportBugButton = MenuButton(title: .reportBug, image: UIImage.verse.reportBug)
 
-    init(frame: CGRect, connectedPeersView: UIView) {
+    override init(frame: CGRect) {
 
         super.init(frame: frame)
         self.backgroundColor = UIColor.menuBackgroundColor
@@ -244,17 +266,6 @@ fileprivate class MenuView: UIView {
         
         separator = Layout.separatorView(color: UIColor.menuBorderColor)
         Layout.fillSouth(of: self.reportBugButton, with: separator)
-        
-        connectedPeersView.useAutoLayout()
-        addSubview(connectedPeersView)
-        connectedPeersView.constrainHeight(to: 310).priority = .defaultLow
-        connectedPeersView.constrainWidth(to: self)
-        connectedPeersView.pinTop(toBottomOf: reportBugButton).priority = UILayoutPriority(249)
-        connectedPeersView.pinLeftToSuperview()
-        connectedPeersView.pinRightToSuperview()
-        connectedPeersView.pinBottomToSuperviewBottom(respectSafeArea: false)?.priority = .defaultHigh
-        connectedPeersView.isHidden = !UserDefaults.standard.showPeerToPeerWidget
-
 
         if Date.todayIsAHoliday() {
             Layout.fill(view: self, with: SnowView(), respectSafeArea: false)

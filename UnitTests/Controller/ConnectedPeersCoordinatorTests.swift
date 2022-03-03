@@ -9,7 +9,7 @@
 import XCTest
 import Combine
 
-actor MockBotStatisticsService: BotStatisticsService {
+actor BotStatisticsServiceMock: BotStatisticsService {
         
     var statisticsPasthrough: PassthroughSubject<BotStatistics, Never>
 
@@ -22,15 +22,35 @@ actor MockBotStatisticsService: BotStatisticsService {
     }
 }
 
+class ConnectedPeerListRouterMock: ConnectedPeerListRouter {
+    
+    var showProfileCallCount = 0
+    var showProfileIdentityParameter: Identity?
+    
+    func showProfile(for identity: Identity) {
+        showProfileCallCount += 1
+        showProfileIdentityParameter = identity
+    }
+    
+    var alertCallCount = 0
+    var alertErrorParameter: Error?
+    
+    func alert(error: Error) {
+        alertCallCount += 1
+        alertErrorParameter = error
+    }
+}
 
-class ConnectedPeersCoordinatorTests: XCTestCase {
+class ConnectedPeerListCoordinatorTests: XCTestCase {
     
     /// The system under test
-    var sut: ConnectedPeersCoordinator!
+    var sut: ConnectedPeerListCoordinator!
     
-    var mockStatistics: MockBotStatisticsService!
+    var mockStatistics: BotStatisticsServiceMock!
     
     var mockBot: FakeBot!
+    
+    var mockRouter: ConnectedPeerListRouterMock!
     
     let baseStatistics = BotStatistics(
         lastSyncDate: Date(),
@@ -55,6 +75,7 @@ class ConnectedPeersCoordinatorTests: XCTestCase {
     
     let alicePeerConnectionInfo = PeerConnectionInfo(
         id: IdentityFixture.alice.id,
+        identity: IdentityFixture.alice,
         name: "Alice",
         imageMetadata: nil,
         currentlyActive: true
@@ -62,6 +83,7 @@ class ConnectedPeersCoordinatorTests: XCTestCase {
     
     let noAboutPeerConnectionInfo = PeerConnectionInfo(
         id: IdentityFixture.noAbout.id,
+        identity: nil,
         name: IdentityFixture.noAbout.id,
         imageMetadata: nil,
         currentlyActive: true
@@ -69,15 +91,17 @@ class ConnectedPeersCoordinatorTests: XCTestCase {
     
     let noNamePeerConnectionInfo = PeerConnectionInfo(
         id: IdentityFixture.noName.id,
-        name: IdentityFixture.noName,
+        identity: IdentityFixture.noName,
+        name: IdentityFixture.noName.id,
         imageMetadata: nil,
         currentlyActive: true
     )
 
     override func setUpWithError() throws {
         mockBot = FakeBot()
-        mockStatistics = MockBotStatisticsService()
-        sut = ConnectedPeersCoordinator(bot: mockBot, statisticsService: mockStatistics)
+        mockStatistics = BotStatisticsServiceMock()
+        mockRouter = ConnectedPeerListRouterMock()
+        sut = ConnectedPeerListCoordinator(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
         sut.viewDidAppear()
     }
 
@@ -109,8 +133,8 @@ class ConnectedPeersCoordinatorTests: XCTestCase {
             db: DatabaseStatistics(lastReceivedMessage: 10)
         )
         let expectedPeers = [
-            noAboutPeerConnectionInfo,
             noNamePeerConnectionInfo,
+            noAboutPeerConnectionInfo,
             alicePeerConnectionInfo
         ]
         
@@ -166,8 +190,8 @@ class ConnectedPeersCoordinatorTests: XCTestCase {
         var inactiveAlice = alicePeerConnectionInfo
         inactiveAlice.currentlyActive = false
         let secondExpectedPeers = [
-            noAboutPeerConnectionInfo,
             noNamePeerConnectionInfo,
+            noAboutPeerConnectionInfo,
             inactiveAlice
         ]
         var secondBotStatistics = baseStatistics
@@ -260,7 +284,7 @@ class ConnectedPeersCoordinatorTests: XCTestCase {
     
     func testPeersDoNotUpdateWhenViewNotVisible() async throws {
         // Arrange
-        sut = ConnectedPeersCoordinator(bot: mockBot, statisticsService: mockStatistics)
+        sut = ConnectedPeerListCoordinator(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
         var publishedPeers = [[PeerConnectionInfo]]()
         
         // Act
@@ -278,5 +302,29 @@ class ConnectedPeersCoordinatorTests: XCTestCase {
         withExtendedLifetime(cancellable) { _ in
             XCTAssertEqual(publishedPeers.count, 1)
         }
+    }
+    
+    func testTappingPeerCellShowsProfile() {
+        // Act
+        sut.peerTapped(alicePeerConnectionInfo)
+        
+        // Assert
+        XCTAssertEqual(mockRouter.showProfileCallCount, 1)
+        XCTAssertEqual(mockRouter.showProfileIdentityParameter, IdentityFixture.alice)
+    }
+    
+    func testTappingPeerCellWithoutIdentityShowsError() {
+        // Act
+        sut.peerTapped(PeerConnectionInfo(
+            id: "foo",
+            identity: nil,
+            name: nil,
+            imageMetadata: nil,
+            currentlyActive: true
+        ))
+        
+        // Assert
+        XCTAssertEqual(mockRouter.showProfileCallCount, 0)
+        XCTAssertEqual(mockRouter.alertCallCount, 1)
     }
 }

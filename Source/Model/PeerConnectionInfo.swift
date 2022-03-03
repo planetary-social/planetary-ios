@@ -10,7 +10,8 @@ import Foundation
 
 struct PeerConnectionInfo: Identifiable, Equatable {
     var id: String
+    var identity: Identity?
     var name: String?
     var imageMetadata: ImageMetadata?
-    var currentlyActive: Bool
+    var isActive: Bool
 }

@@ -58,7 +58,7 @@ class CommunityCellView: UIView {
 
         self.addSubview(self.identityLabel)
         self.identityLabel.constrainLeading(to: self.label)
-        self.identityLabel.constrainTrailing(to: self.label)
+        self.identityLabel.constrainTrailing(toTrailingOf: self.label)
         self.identityLabel.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 1).isActive = true
         self.identityLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         self.identityLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)

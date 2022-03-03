@@ -10,7 +10,7 @@ import SwiftUI
 
 
 
-struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewModel {
+struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerListViewModel {
     
     @ObservedObject var viewModel: ViewModel
     
@@ -32,6 +32,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
                     .foregroundColor(Color("defaultTint"))
                     .scaledToFit()
                     .minimumScaleFactor(0.5)
+                    .animation(.default)
                 Spacer()
             }
             .padding(.top, 11)
@@ -43,7 +44,14 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
             // Peer List
             ScrollView {
                 ForEach(viewModel.peers) { peer in
-                    ConnectedPeerCell(peer: peer)
+                    Button {
+                        viewModel.peerTapped(peer)
+                    } label: {
+                        ConnectedPeerCell(peer: peer)
+                    }
+                    .disabled(!peer.isActive)
+                    .animation(.spring())
+                    .transition(.move(edge: .top))
                 }
             }
             
@@ -85,7 +93,7 @@ struct ConnectedPeersView<ViewModel>: View where ViewModel: ConnectedPeersViewMo
     }
 }
 
-fileprivate class PreviewViewModel: ConnectedPeersViewModel {
+fileprivate class PreviewViewModel: ConnectedPeerListViewModel {
     
     var peers = PeerConnectionInfo.uiPreviewData
                 
@@ -93,29 +101,30 @@ fileprivate class PreviewViewModel: ConnectedPeersViewModel {
     var recentlyDownloadedPostDuration: Int = 15
     var connectedPeersCount: Int {
         get {
-            peers.filter({ $0.currentlyActive }).count
+            peers.filter({ $0.isActive }).count
         }
         set {
             // We just need this to use `Binding`
             return
         }
     }
+    func peerTapped(_: PeerConnectionInfo) {}
     func viewDidAppear() {}
     func viewDidDisappear() {}
 }
 
 struct ConnectedPeersView_Previews: PreviewProvider {
     static var previews: some View {
-        ConnectedPeersView(viewModel: PreviewViewModel())
+        ConnectedPeerListView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 310))
         
         // iPhone SE Size
-        ConnectedPeersView(viewModel: PreviewViewModel())
+        ConnectedPeerListView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 175))
             .preferredColorScheme(.dark)
         
         // Accessibility
-        ConnectedPeersView(viewModel: PreviewViewModel())
+        ConnectedPeerListView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 310))
             .environment(\.sizeCategory, .extraExtraLarge)
     }

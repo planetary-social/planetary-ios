@@ -10,16 +10,32 @@ import Foundation
 import Combine
 import Logger
 
-protocol ConnectedPeersViewModel: ObservableObject {
+protocol ConnectedPeerListViewModel: ObservableObject {
     var peers: [PeerConnectionInfo] { get }
     var recentlyDownloadedPostCount: Int { get }
     var recentlyDownloadedPostDuration: Int { get }
     var connectedPeersCount: Int { get set }
+    func peerTapped(_: PeerConnectionInfo)
     func viewDidAppear()
     func viewDidDisappear()
 }
 
-class ConnectedPeersCoordinator: ConnectedPeersViewModel {
+protocol ConnectedPeerListRouter: AlertRouter {
+    func showProfile(for identity: Identity)
+}
+
+enum ConnectedPeerListError: LocalizedError {
+    case identityNotFound
+    
+    var errorDescription: String? {
+        switch (self) {
+        case .identityNotFound:
+            return Text.identityNotFound.text
+        }
+    }
+}
+
+class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
     
     @Published var peers = [PeerConnectionInfo]()
     
@@ -29,7 +45,7 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
     
     var connectedPeersCount: Int {
         get {
-            peers.filter({ $0.currentlyActive }).count
+            peers.filter({ $0.isActive }).count
         }
         set {
             // We just need this to use `Binding`
@@ -37,15 +53,28 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
         }
     }
     
+    var router: ConnectedPeerListRouter
+    
     private var statisticsService: BotStatisticsService
     
     private var cancellables = [AnyCancellable]()
         
     private var bot: Bot
         
-    init(bot: Bot, statisticsService: BotStatisticsService) {
+    init(bot: Bot, statisticsService: BotStatisticsService, router: ConnectedPeerListRouter) {
         self.bot = bot
         self.statisticsService = statisticsService
+        self.router = router
+    }
+    
+    
+    func peerTapped(_ connectionInfo: PeerConnectionInfo) {
+        guard let identity = connectionInfo.identity else {
+            router.alert(error: ConnectedPeerListError.identityNotFound)
+            return
+        }
+        
+        router.showProfile(for: identity)
     }
     
     func viewDidAppear() {
@@ -97,7 +126,7 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
         // Map old peers in as inactive
         var peerConnectionInfo = peers.map { (oldPeer: PeerConnectionInfo) -> PeerConnectionInfo in
             var newPeer = oldPeer
-            newPeer.currentlyActive = false
+            newPeer.isActive = false
             return newPeer
         }
         
@@ -110,9 +139,10 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
                     peerConnectionInfo.append(
                         PeerConnectionInfo(
                             id: publicKey,
-                            name: about.name ?? identity,
+                            identity: identity,
+                            name: about.name ?? publicKey,
                             imageMetadata: about.image,
-                            currentlyActive: true
+                            isActive: true
                         )
                     )
                     continue
@@ -124,16 +154,17 @@ class ConnectedPeersCoordinator: ConnectedPeersViewModel {
             peerConnectionInfo.append(
                 PeerConnectionInfo(
                     id: publicKey,
+                    identity: nil,
                     name: publicKey,
                     imageMetadata: nil,
-                    currentlyActive: true
+                    isActive: true
                 )
             )
         }
         
         return peerConnectionInfo.sorted { lhs, rhs in
-            guard lhs.currentlyActive == rhs.currentlyActive else {
-                return lhs.currentlyActive ? true : false
+            guard lhs.isActive == rhs.isActive else {
+                return lhs.isActive ? true : false
             }
             
             return lhs.name ?? "" < rhs.name ?? ""

@@ -12,39 +12,45 @@ extension PeerConnectionInfo {
     static var uiPreviewData: [PeerConnectionInfo] = [
         PeerConnectionInfo(
             id: "0",
+            identity: nil,
             name: "Amanda Bee 🐝",
             imageMetadata: nil,
-            currentlyActive: true
+            isActive: true
         ),
         PeerConnectionInfo(
             id: "1",
+            identity: nil,
             name: "Sebastian Heit",
             imageMetadata: nil,
-            currentlyActive: true
+            isActive: true
         ),
         PeerConnectionInfo(
             id: "2",
+            identity: nil,
             name: "Rossina Simonellililililililililili",
             imageMetadata: nil,
-            currentlyActive: true
+            isActive: true
         ),
         PeerConnectionInfo(
             id: "3",
+            identity: nil,
             name: "Craig Nicholls",
             imageMetadata: nil,
-            currentlyActive: true
+            isActive: true
         ),
         PeerConnectionInfo(
             id: "4",
+            identity: nil,
             name: "Jordan Wilson",
             imageMetadata: nil,
-            currentlyActive: false
+            isActive: false
         ),
         PeerConnectionInfo(
             id: "5",
+            identity: nil,
             name: "Arun Ramachandaran",
             imageMetadata: nil,
-            currentlyActive: false
+            isActive: false
         ),
     ]
 }

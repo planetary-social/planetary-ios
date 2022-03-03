@@ -38,7 +38,7 @@ struct ConnectedPeerCell: View {
                 .lineLimit(1)
             Spacer()
         }
-        .opacity(peer.currentlyActive ? 1 : 0.4)
+        .opacity(peer.isActive ? 1 : 0.4)
         .padding(.horizontal, 14)
         .padding(.vertical, 0)
     }

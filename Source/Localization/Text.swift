@@ -138,6 +138,7 @@ enum Text: String, Localizable, CaseIterable {
     case lastSynced = "SYNCED: {{ when }}"
     case syncingMessages = "Syncing Messages..."
     case recentlyDownloaded = "Downloaded {{ postCount }} in the last {{ duration }} mins"
+    case identityNotFound = "We don't know enough about this peer to show their profile."
     
     case channels = "Hashtags"
     case select = "Select"
