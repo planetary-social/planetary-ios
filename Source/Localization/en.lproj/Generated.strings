@@ -90,7 +90,7 @@
 "Text.lastSynced" = "SYNCED: {{ when }}";
 "Text.syncingMessages" = "Syncing Messages...";
 "Text.recentlyDownloaded" = "Downloaded {{ postCount }} in the last {{ duration }} mins";
-"Text.identityNotFound" = "We don't have enough information to show the profile for this peer.";
+"Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Hashtags";
 "Text.select" = "Select";
 "Text.home" = "For You";

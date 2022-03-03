@@ -49,7 +49,6 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     } label: {
                         ConnectedPeerCell(peer: peer)
                     }
-                    .disabled(!peer.isActive)
                     .animation(.spring())
                     .transition(.move(edge: .top))
                 }
