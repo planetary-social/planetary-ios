@@ -32,7 +32,9 @@ actor BotStatisticsServiceAdaptor: BotStatisticsService {
             in: .default
         )
             .autoconnect()
-            .asyncFlatMap { _ in
+            // Fire timer once immediately
+            .merge(with: Just(Date()))
+            .asyncFlatMap(maxPublishers: .max(1)) { _ in
                 await self.bot.statistics()
             }
             .eraseToAnyPublisher()
