@@ -94,6 +94,14 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
 
 fileprivate class PreviewViewModel: ConnectedPeerListViewModel {
     
+    static var emptyModel: PreviewViewModel {
+        let vm = PreviewViewModel()
+        vm.peers = []
+        vm.recentlyDownloadedPostCount = 0
+        vm.recentlyDownloadedPostDuration = 0
+        return vm
+    }
+    
     var peers = PeerConnectionInfo.uiPreviewData
                 
     var recentlyDownloadedPostCount: Int = 62
@@ -126,5 +134,9 @@ struct ConnectedPeersView_Previews: PreviewProvider {
         ConnectedPeerListView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 310))
             .environment(\.sizeCategory, .extraExtraLarge)
+        
+        // Empty
+        ConnectedPeerListView(viewModel: PreviewViewModel.emptyModel)
+            .previewLayout(.fixed(width: 254, height: 310))
     }
 }
