@@ -7,16 +7,15 @@
 //
 
 import Foundation
-import Keys
 import Logger
+import Secrets
 
 class AuthyPhoneVerificationAPI: PhoneVerificationAPIService {
     
-    private var token: String
+    private var token: String?
     
     init() {
-        let keys = PlanetaryKeys()
-        self.token = keys.authyPhoneVerificationAPIToken
+        self.token = Keys.shared.get(key: .authy)
     }
     
     func requestCode(country: String, phone: String, completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void)) {
@@ -47,7 +46,11 @@ class AuthyPhoneVerificationAPI: PhoneVerificationAPIService {
 extension AuthyPhoneVerificationAPI: API {
     
     var headers: APIHeaders {
-        return ["X-Authy-API-Key": self.token]
+        if let token = self.token {
+            return ["X-Authy-API-Key": token]
+        } else {
+            return [:]
+        }
     }
     
     func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {

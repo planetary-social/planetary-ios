@@ -8,15 +8,17 @@
 
 import Foundation
 import Bugsnag
-import Keys
 import Logger
+import Secrets
 
 class BugsnagCrashReporting: CrashReportingService {
     
     init() {
         Log.info("Configuring Bugsnag...")
-        let keys = PlanetaryKeys()
-        Bugsnag.start(withApiKey: keys.bugsnagCrashReportingToken)
+        guard let apiKey = Keys.shared.get(key: .bugsnag) else {
+            return
+        }
+        Bugsnag.start(withApiKey: apiKey)
     }
     
     func identify(about: About?, network: NetworkKey) {

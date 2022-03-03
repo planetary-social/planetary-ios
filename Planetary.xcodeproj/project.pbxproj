@@ -684,6 +684,8 @@
 		53F1E56721E3C59C007EF3AD /* UIDevice+Localhost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F1E56621E3C59C007EF3AD /* UIDevice+Localhost.swift */; };
 		53F24FB422C70B5200CFCBAA /* AvatarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F24FB322C70B5200CFCBAA /* AvatarButton.swift */; };
 		53FCAFDC22051C44009E9E82 /* Bundle+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B021C476AF00A314AD /* Bundle+Version.swift */; };
+		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
+		5B0D585227BEAE9E002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Secrets */; };
 		5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = 5BFFCE8F27B56D300088F6D6 /* Logger */; };
 		664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76846E865BB285CC1D52D05B /* Pods_APITests.framework */; };
 		7CADD3FD394F8FD67E295D85 /* Pods_UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CA171A11489B333F8AB5B2 /* Pods_UITests.framework */; };
@@ -1250,6 +1252,8 @@
 		53F1E56621E3C59C007EF3AD /* UIDevice+Localhost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Localhost.swift"; sourceTree = "<group>"; };
 		53F24FB322C70B5200CFCBAA /* AvatarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarButton.swift; sourceTree = "<group>"; };
 		53FCAFDD22051C88009E9E82 /* SecretViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretViewController.swift; sourceTree = "<group>"; };
+		5B0D585327BEE1F1002F927D /* Secrets.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.release.plist; sourceTree = "<group>"; };
+		5B0D585827BEE4FC002F927D /* Secrets.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.debug.plist; sourceTree = "<group>"; };
 		5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		606DCE79703F49AE5AB530BD /* Pods-APITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.release.xcconfig"; sourceTree = "<group>"; };
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1351,6 +1355,7 @@
 				5396A618223D467200C57A4B /* libsqlite3.tbd in Frameworks */,
 				C928DAF227B5AC850007C5FC /* Logger in Frameworks */,
 				8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */,
+				5B0D585227BEAE9E002F927D /* Secrets in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1369,6 +1374,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B0D585027BEAE93002F927D /* Secrets in Frameworks */,
 				5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */,
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
@@ -1833,6 +1839,8 @@
 				0A41F56C2488078F005BB1DE /* Preload.bundle */,
 				5344D83521C4649A00704A34 /* Assets.xcassets */,
 				53E26C4A23022098009240B2 /* FBTT.entitlements */,
+				5B0D585827BEE4FC002F927D /* Secrets.debug.plist */,
+				5B0D585327BEE1F1002F927D /* Secrets.release.plist */,
 				2DFBECE325E1542A00803075 /* development.entitlements */,
 				2DFBECE425E1545000803075 /* production.entitlements */,
 				5344D83A21C4649A00704A34 /* Info.plist */,
@@ -2426,6 +2434,7 @@
 			name = UnitTests;
 			packageProductDependencies = (
 				C928DAF127B5AC850007C5FC /* Logger */,
+				5B0D585127BEAE9E002F927D /* Secrets */,
 			);
 			productName = FBTTUnitTests;
 			productReference = 5308168521C46A52005C48ED /* UnitTests.xctest */;
@@ -2458,6 +2467,7 @@
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
 				8D9143FB230C6B670075BC8A /* Generate Localized Strings */,
 				5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */,
+				5B0D585727BEE41D002F927D /* Copy Secrets.plist */,
 				5344D82721C4649700704A34 /* Sources */,
 				5312143F21CD617400F3FCEB /* Embed Frameworks */,
 				5344D82821C4649700704A34 /* Frameworks */,
@@ -2472,6 +2482,7 @@
 			name = Planetary;
 			packageProductDependencies = (
 				5BFFCE8F27B56D300088F6D6 /* Logger */,
+				5B0D584F27BEAE93002F927D /* Secrets */,
 			);
 			productName = FBTT;
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
@@ -2705,6 +2716,24 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [ $CONFIGURATION = \"Release\" ]; then\n/opt/homebrew/bin/license-plist --output-path Resources/Settings.bundle\nfi\n";
+		};
+		5B0D585727BEE41D002F927D /* Copy Secrets.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Secrets.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ $CONFIGURATION = \"Debug\" ]; then\ncp $SRCROOT/Resources/Secrets.debug.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nelse\ncp $SRCROOT/Resources/Secrets.release.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nfi\n";
 		};
 		7723EA9C2D57EFC61D5051B3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4072,6 +4101,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5B0D584F27BEAE93002F927D /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
+		};
+		5B0D585127BEAE9E002F927D /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
+		};
 		5BFFCE8F27B56D300088F6D6 /* Logger */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Logger;

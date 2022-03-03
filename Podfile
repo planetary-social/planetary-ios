@@ -40,20 +40,6 @@ target 'UITests' do
     pod 'Down', '0.9.2'
 end
 
-plugin 'cocoapods-keys', {
-  :project => "Planetary",
-  :keys => [
-    "AuthyPhoneVerificationAPIToken",
-    "BugsnagCrashReportingToken",
-    "ZendeskAppID",
-    "ZendeskClientID",
-    "VersePushAPIToken",
-    "VersePubAPIToken",
-    "VerseBlobToken",
-    "PostHogAPIKey",
-    "PostHogHost"
-]}
-
 post_install do | installer |
 
     # force pods project to Build Libraries for Distribution build setting
