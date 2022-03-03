@@ -27,6 +27,9 @@ public extension Analytics {
         case photoConfirm
         case resume
         case start
+
+        /// Used for safewarding. Each onboarding step should be identified accordingly
+        case unknown
     }
 
     class OnboardingStepData {
@@ -70,15 +73,15 @@ public extension Analytics {
     }
 
     func trackOnboardingComplete(_ data: OnboardingStepData) {
-        let params: [String : Any] = ["allowed_backup": data.allowedBackup,
-                                      "allowed_contacts": data.allowedContacts,
-                                      "bio_length": data.bio?.count ?? 0,
-                                      "following_count": data.followingCount,
-                                      "image_set": data.hasImage,
-                                      "joined_directory": data.joinedDirectory,
-                                      "public_web_hosting": data.publicWebHosting,
-                                      "name_length": data.nameLength,
-                                      "simulated": data.simulated]
+        let params: [String: Any] = ["allowed_backup": data.allowedBackup,
+                                     "allowed_contacts": data.allowedContacts,
+                                     "bio_length": data.bio?.count ?? 0,
+                                     "following_count": data.followingCount,
+                                     "image_set": data.hasImage,
+                                     "joined_directory": data.joinedDirectory,
+                                     "public_web_hosting": data.publicWebHosting,
+                                     "name_length": data.nameLength,
+                                     "simulated": data.simulated]
         service.track(event: .view, element: .screen, name: "onboarding", params: params)
     }
 

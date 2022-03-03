@@ -27,9 +27,11 @@ class AnalyticsServiceAdapter: AnalyticsService {
 
     func optIn() {
         apiService.optIn()
+        apiService.track(event: "did_outin", params: nil)
     }
 
     func optOut() {
+        apiService.track(event: "did_outout", params: nil)
         apiService.optOut()
     }
 
@@ -41,7 +43,6 @@ class AnalyticsServiceAdapter: AnalyticsService {
         let eventName = eventName(event: event, element: element, name: name)
         Log.debug("Tracked \(eventName)")
         apiService.track(event: eventName, params: params)
-        UserDefaults.standard.didTrack(eventName)
     }
 
 }

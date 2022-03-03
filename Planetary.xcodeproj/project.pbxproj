@@ -481,7 +481,6 @@
 		5357550722694D8C002A6989 /* KeyValueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5357550622694D8C002A6989 /* KeyValueView.swift */; };
 		53575509226A3113002A6989 /* KeyValueTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53575508226A3113002A6989 /* KeyValueTableViewDataSource.swift */; };
 		5357550B226A3523002A6989 /* UITableView+KeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5357550A226A3523002A6989 /* UITableView+KeyValue.swift */; };
-		5357BD7B23CEB798005665AB /* DebugAnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5357BD7A23CEB798005665AB /* DebugAnalyticsViewController.swift */; };
 		5357BD7F23D15471005665AB /* AppDelegate+Repair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */; };
 		535B6A0623712D79008C248E /* UIViewController+Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A0523712D79008C248E /* UIViewController+Block.swift */; };
 		535B6A0A2372360F008C248E /* UIViewController+TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535B6A092372360F008C248E /* UIViewController+TopViewController.swift */; };
@@ -1035,7 +1034,6 @@
 		5357550622694D8C002A6989 /* KeyValueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueView.swift; sourceTree = "<group>"; };
 		53575508226A3113002A6989 /* KeyValueTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueTableViewDataSource.swift; sourceTree = "<group>"; };
 		5357550A226A3523002A6989 /* UITableView+KeyValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableView+KeyValue.swift"; sourceTree = "<group>"; };
-		5357BD7A23CEB798005665AB /* DebugAnalyticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAnalyticsViewController.swift; sourceTree = "<group>"; };
 		5357BD7E23D15471005665AB /* AppDelegate+Repair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Repair.swift"; sourceTree = "<group>"; };
 		535B6A0523712D79008C248E /* UIViewController+Block.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Block.swift"; sourceTree = "<group>"; };
 		535B6A092372360F008C248E /* UIViewController+TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+TopViewController.swift"; sourceTree = "<group>"; };
@@ -1939,7 +1937,6 @@
 				53211CE82284B9F5007FB785 /* AppConfigurationViewController.swift */,
 				5396A62622444A1500C57A4B /* BotViewController.swift */,
 				53EAB399239B106900DF5530 /* CachesViewController.swift */,
-				5357BD7A23CEB798005665AB /* DebugAnalyticsViewController.swift */,
 				531587B1229F33F00004E2B1 /* DebugOnboardingViewController.swift */,
 				531EC40B230F6B9E001A25AD /* DebugPostsViewController.swift */,
 				533F4050225E9E010060B4B9 /* DebugUIViewController.swift */,
@@ -3166,7 +3163,6 @@
 				0A1CA4C524E5D714006CAC43 /* FollowOperation.swift in Sources */,
 				53631EF123A95E7B009C6999 /* NSAttributedString+Empty.swift in Sources */,
 				533EDBF023861169008B3565 /* Caches.swift in Sources */,
-				5357BD7B23CEB798005665AB /* DebugAnalyticsViewController.swift in Sources */,
 				5336611122D965B300100707 /* UIColor+Random.swift in Sources */,
 				8DA9567D230DA46C00A334EB /* UIButton+Text.swift in Sources */,
 				53B4F5F122B7123900027C6A /* NotificationsViewController.swift in Sources */,

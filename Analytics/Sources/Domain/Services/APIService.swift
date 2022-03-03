@@ -7,6 +7,11 @@
 
 import Foundation
 
+// This protocol specifies the functions that an Analytics provider should implement
+// If we plan to change from Posthog to another analytics service, it's just a matter of
+// implementing APIService and switching to that class in Delivery/Analytics.swift
+
+/// APIService provides functions to connect and send events to an Analytics service
 protocol APIService {
 
     /// If true the service is collecting events and sending them to the server

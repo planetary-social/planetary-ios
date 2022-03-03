@@ -87,40 +87,7 @@ class OnboardingStep: NSObject {
         }
 
         var analyticsStep: Analytics.OnboardingStep {
-            switch self {
-            case .name:
-                return .name
-            case .backup:
-                return .backup
-            case .benefits:
-                return .benefits
-            case .bio:
-                return .bio
-            case .birthday:
-                return .birthday
-            case .contacts:
-                return .contacts
-            case .directory:
-                return .directory
-            case .phone:
-                return .phone
-            case .start:
-                return .start
-            case .resume:
-                return .resume
-            case .photo:
-                return .photo
-            case .photoConfirm:
-                return .photoConfirm
-            case .phoneVerify:
-                return .phoneVerify
-            case .join:
-                return .join
-            case .earlyAccess:
-                return .earlyAccess
-            case .done:
-                return .done
-            }
+            return Analytics.OnboardingStep(rawValue: rawValue) ?? .unknown
         }
     }
 

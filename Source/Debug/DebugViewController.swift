@@ -33,7 +33,6 @@ class DebugViewController: DebugTableViewController {
     internal override func updateSettings() {
         self.settings = [self.application(),
                          self.features(),
-                         self.analytics(),
                          self.configurations(),
                          self.bots(),
                          self.operations()]
@@ -202,37 +201,6 @@ class DebugViewController: DebugTableViewController {
 
     @objc private func peerToPeerToggleValueChanged(toggle: UISwitch) {
         UserDefaults.standard.showPeerToPeerWidget = toggle.isOn
-    }
-
-    private func analytics() -> DebugTableViewController.Settings {
-
-        var settings: [DebugTableViewCellModel] = []
-
-        settings += [DebugTableViewCellModel(title: "Events (tracked / all)",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                cell.accessoryType = .disclosureIndicator
-                let text = "\(Analytics.shared.trackedEvents().count) / \(Analytics.shared.lexicon().count)"
-                cell.detailTextLabel?.text = text
-            },
-                                             actionClosure:
-            {
-                [weak self] cell in
-                let controller = DebugAnalyticsViewController()
-                self?.navigationController?.pushViewController(controller, animated: true)
-            })]
-
-        settings += [DebugTableViewCellModel(title: "Tap to clear tracked events",
-                                         cellReuseIdentifier: DebugValueTableViewCell.className,
-                                         valueClosure: nil,
-                                         actionClosure: { [unowned self] _ in
-            Analytics.shared.clearTrackedEvents()
-            self.updateSettings()
-        })]
-
-        return ("Analytics", settings, "The lexicon shows all possible EVENT_ELEMENT_NAME strings that Mixpanel will show.  Events that have been sent to Mixpanel will appear highlighted.  This is useful to verify that the expected events are being sent.")
     }
 
     private func configurations() -> DebugTableViewController.Settings {

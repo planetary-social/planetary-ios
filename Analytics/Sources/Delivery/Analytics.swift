@@ -37,23 +37,4 @@ public class Analytics {
         service.optOut()
     }
 
-    public func lexicon() -> [String] {
-        // TODO: Implement
-        return []
-    }
-
-    /// Clear tracked events in UserDefaults
-    ///
-    /// Mean to be used for debugging only. It doesn't clear events in the actual analytics service
-    public func clearTrackedEvents() {
-        UserDefaults.standard.clearTrackedEvents()
-    }
-
-    /// Return the list of events tracked so far
-    ///
-    /// Mean to be used for debugging only. It doesn't necessarily match the actual analytics service
-    public func trackedEvents() -> Set<String> {
-        return UserDefaults.standard.trackedEvents()
-    }
-
 }

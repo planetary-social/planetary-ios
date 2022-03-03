@@ -27,11 +27,14 @@ class PostHogService: APIService {
 
         let configuration = PHGPostHogConfiguration(apiKey: apiKey)
 
-        // Record certain application events automatically!
-        configuration.captureApplicationLifecycleEvents = true
-
-        // Record screen views automatically!
-        configuration.recordScreenViews = true
+        // Disable tracking events automatically as we track them manually
+        // In addition, PostHog doesn't work well with these swizzle functions
+        // and an instance of PHGPosthog because they use the sharedInstance
+        configuration.captureApplicationLifecycleEvents = false
+        configuration.recordScreenViews = false
+        configuration.capturePushNotifications = false
+        configuration.captureInAppPurchases = false
+        configuration.captureDeepLinks = false
 
         configuration.middlewares = middlewares
 
@@ -46,9 +49,11 @@ class PostHogService: APIService {
 
     func optIn() {
         posthog?.enable()
+        posthog?.flush()
     }
 
     func optOut() {
+        posthog?.flush()
         posthog?.disable()
     }
 
