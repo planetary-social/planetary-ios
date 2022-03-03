@@ -78,7 +78,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         identity: IdentityFixture.alice,
         name: "Alice",
         imageMetadata: nil,
-        currentlyActive: true
+        isActive: true
     )
     
     let noAboutPeerConnectionInfo = PeerConnectionInfo(
@@ -86,7 +86,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         identity: nil,
         name: IdentityFixture.noAbout.id,
         imageMetadata: nil,
-        currentlyActive: true
+        isActive: true
     )
     
     let noNamePeerConnectionInfo = PeerConnectionInfo(
@@ -94,7 +94,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         identity: IdentityFixture.noName,
         name: IdentityFixture.noName.id,
         imageMetadata: nil,
-        currentlyActive: true
+        isActive: true
     )
 
     override func setUpWithError() throws {
@@ -107,7 +107,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
 
     func testPublishingNewStatisticsUpdatesPeers() async throws {
         // Arrange
-        XCTAssertEqual(sut.peers, [])
+        XCTAssertEqual(sut.peers, nil)
         let newStatistics = BotStatistics(
             lastSyncDate: Date(),
             lastSyncDuration: 1,
@@ -150,7 +150,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
     
     func testPublishingNewStatisticsUpdatesCurrentlyActiveProperty() async throws {
         // Arrange
-        XCTAssertEqual(sut.peers, [])
+        XCTAssertEqual(sut.peers, nil)
         let firstPeerStatistics = PeerStatistics(
             count: 0,
             connectionCount: 0,
@@ -188,7 +188,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
             ]
         )
         var inactiveAlice = alicePeerConnectionInfo
-        inactiveAlice.currentlyActive = false
+        inactiveAlice.isActive = false
         let secondExpectedPeers = [
             noNamePeerConnectionInfo,
             noAboutPeerConnectionInfo,
@@ -285,7 +285,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
     func testPeersDoNotUpdateWhenViewNotVisible() async throws {
         // Arrange
         sut = ConnectedPeerListCoordinator(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
-        var publishedPeers = [[PeerConnectionInfo]]()
+        var publishedPeers = [[PeerConnectionInfo]?]()
         
         // Act
         let cancellable = sut.$peers.sink { newPeers in
@@ -320,7 +320,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
             identity: nil,
             name: nil,
             imageMetadata: nil,
-            currentlyActive: true
+            isActive: true
         ))
         
         // Assert
