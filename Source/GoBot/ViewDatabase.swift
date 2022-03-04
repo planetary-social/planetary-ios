@@ -12,6 +12,7 @@ import Foundation
 import SQLite
 import CryptoKit
 import Logger
+import Analytics
 
 // schema migration handling
 extension Connection {
@@ -2331,10 +2332,8 @@ class ViewDatabase {
                 // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                 skipped += 1
                 print("Skipped(\(msg.value.content.type) \(msg.key)%)")
-                Analytics.shared.track(event: .did,
-                                       element: .bot,
-                                       name: AnalyticsEnums.Name.sync.rawValue,
-                                       params: ["Skipped": msg.key, "Reason": "Old Message"])
+                Analytics.shared.trackBotDidSkipMessage(key: msg.key,
+                                                        reason: "Old Message")
                 continue
             }
             
@@ -2473,20 +2472,9 @@ class ViewDatabase {
             print("unsupported types encountered: \(total) (\(total*100/msgs.count)%)")
         }
         #endif
-        
-        
-         let params = [
-             "inserted": msgs.count
 
-         ]
+        Analytics.shared.trackBotDidUpdateMessages(count: msgs.count)
 
-        
-        Analytics.shared.track(event: .did,
-                         element: .bot,
-                         name: AnalyticsEnums.Name.db_update.rawValue,
-                         params: params)
-        
-        
         if skipped > 0 {
             print("skipped \(skipped) messages")
         }

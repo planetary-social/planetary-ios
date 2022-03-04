@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import Analytics
 
 enum OffboardingError: Error {
     case apiError(Error)

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import Analytics
 
 class LaunchViewController: UIViewController {
 
@@ -147,7 +148,11 @@ class LaunchViewController: UIViewController {
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: aboutErr)
                 CrashReporting.shared.identify(about: about, network: network)
-                Analytics.shared.identify(about: about, network: network)
+                if let about = about {
+                    Analytics.shared.identify(identifier: about.identity,
+                                              name: about.name,
+                                              network: network.name)
+                }
             }
         }
     }

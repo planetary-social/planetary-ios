@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import Analytics
 
 class HomeViewController: ContentViewController {
 

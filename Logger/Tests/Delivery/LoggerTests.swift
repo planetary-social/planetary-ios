@@ -16,6 +16,7 @@ final class LoggerTests: XCTestCase {
     override func setUp() {
         service = LoggerServiceMock()
         logger = Log(service: service)
+        Log.shared.service = service
     }
 
     func testOptional() {
@@ -46,6 +47,54 @@ final class LoggerTests: XCTestCase {
 
     func testFileUrls() {
         XCTAssertEqual(logger.fileUrls, service.fileUrls)
+    }
+
+    // MARK: Static functions
+
+    func testStaticOptional() {
+        let error = NSError(domain: "domain", code: 1, userInfo: nil)
+        _ = Log.optional(error, "test")
+        XCTAssert(service.invokedOptional)
+    }
+
+    func testStaticOptionalFromResponse() throws {
+        let error = NSError(domain: "domain", code: 1, userInfo: nil)
+        let url = try XCTUnwrap(URL(string: "planetary.social"))
+        let response = URLResponse(url: url,
+                                   mimeType: nil,
+                                   expectedContentLength: 2,
+                                   textEncodingName: nil)
+        Log.optional(error, from: response)
+        XCTAssert(service.invokedUnexpected)
+    }
+
+    func testStaticDebug() {
+        Log.debug("test")
+        XCTAssert(service.invokedDebug)
+    }
+
+    func testStaticInfo() {
+        Log.info("test")
+        XCTAssert(service.invokedInfo)
+    }
+
+    func testStaticFatal() {
+        Log.fatal(.apiError, "test")
+        XCTAssert(service.invokedFatal)
+    }
+
+    func testStaticUnexpected() {
+        Log.unexpected(.incorrectValue, "test")
+        XCTAssert(service.invokedUnexpected)
+    }
+
+    func testStaticError() {
+        Log.error("test")
+        XCTAssert(service.invokedUnexpected)
+    }
+
+    func testStaticFileUrls() {
+        XCTAssertEqual(Log.fileUrls, service.fileUrls)
     }
 
 }
