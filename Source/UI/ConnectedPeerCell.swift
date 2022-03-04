@@ -34,7 +34,7 @@ struct ConnectedPeerCell: View {
                 )
             SwiftUI.Text(peer.name ?? peer.id)
                 .font(.callout)
-                .foregroundColor(Color("menuUnselectedItemText"))
+                .foregroundColor(Color("mainText"))
                 .lineLimit(1)
             Spacer()
         }

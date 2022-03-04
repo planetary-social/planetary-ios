@@ -70,7 +70,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     HStack {
                         Text.syncingMessages.view
                             .font(.caption)
-                            .foregroundColor(Color("menuUnselectedItemText"))
+                            .foregroundColor(Color("mainText"))
                             .minimumScaleFactor(0.5)
                         Spacer()
                     }
@@ -94,7 +94,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     HStack {
                         Text.loading.view
                             .font(.caption)
-                            .foregroundColor(Color("menuUnselectedItemText"))
+                            .foregroundColor(Color("mainText"))
                             .minimumScaleFactor(0.5)
                         Spacer()
                     }
@@ -107,7 +107,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
         }
         .onAppear(perform: viewModel.viewDidAppear)
         .onDisappear(perform: viewModel.viewDidDisappear)
-        .background(Color("appBackground"))
+        .background(Color("menuBorderColor"))
         .cornerRadius(10, corners: [.topLeft, .topRight, .bottomRight])
         .cornerRadius(20, corners: [.bottomLeft])
         .padding(14)
@@ -146,9 +146,11 @@ struct ConnectedPeersView_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedPeerListView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 310))
+            .background(Color("menuBackgroundColor"))
         
         // iPhone SE Size
         ConnectedPeerListView(viewModel: PreviewViewModel())
+            .background(Color("menuBackgroundColor"))
             .previewLayout(.fixed(width: 254, height: 175))
             .preferredColorScheme(.dark)
         

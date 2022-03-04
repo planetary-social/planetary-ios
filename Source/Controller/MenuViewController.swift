@@ -232,6 +232,7 @@ fileprivate class MenuView: UIView {
         stackView.addArrangedSubview(buildMenuButtonsContainerView())
         
         connectedPeersView.useAutoLayout()
+        connectedPeersView.backgroundColor = .clear
         stackView.addArrangedSubview(connectedPeersView)
         let maxHeightConstraint = connectedPeersView.heightAnchor.constraint(equalToConstant: 310)
         maxHeightConstraint.priority = UILayoutPriority(501)
