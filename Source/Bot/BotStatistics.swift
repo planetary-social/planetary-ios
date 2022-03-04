@@ -4,8 +4,48 @@
 //
 
 import Foundation
+import Analytics
 
 // MARK:- API statistics
+
+protocol BotStatistics {
+
+    var lastSyncDate: Date? { get }
+    var lastSyncDuration: TimeInterval { get }
+
+    var lastRefreshDate: Date? { get }
+    var lastRefreshDuration: TimeInterval { get }
+
+    var repo: RepoStatistics { get }
+    var peer: PeerStatistics { get }
+    var db: DatabaseStatistics { get }
+
+}
+
+extension BotStatistics {
+
+    var analyticsStatistics: Analytics.Statistics {
+        var statistics = Analytics.Statistics(lastSyncDate: lastSyncDate,
+                                              lastRefreshDate: lastRefreshDate)
+
+        if repo.feedCount != -1 {
+            statistics.repo = Analytics.RepoStatistics(feedCount: repo.feedCount,
+                                                       messageCount: repo.messageCount,
+                                                       numberOfPublishedMessages: repo.numberOfPublishedMessages,
+                                                       lastHash: repo.lastHash)
+        }
+
+        if db.lastReceivedMessage != -3 {
+            statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: db.lastReceivedMessage)
+        }
+
+        statistics.peer = Analytics.PeerStatistics(peers: peer.count,
+                                                   connectedPeers: peer.connectionCount)
+
+        return statistics
+    }
+
+}
 
 struct BotStatistics: Equatable {
 

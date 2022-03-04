@@ -10,6 +10,7 @@ import BackgroundTasks
 import Foundation
 import UIKit
 import Logger
+import Analytics
 
 extension AppDelegate {
 
@@ -31,8 +32,6 @@ extension AppDelegate {
 extension AppDelegate {
     
     func handleBackgroundFetch(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        Analytics.shared.trackBackgroundFetch()
-        
         let backgroundSyncTask = startBackgroundSyncTask()
         
         Task.detached(priority: .background) {

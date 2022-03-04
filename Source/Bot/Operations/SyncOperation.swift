@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import Analytics
 
 /// Pokes the bot into doing a sync. Don't use this SyncOperation directly, use
 /// SendMissionOperation instead.
@@ -44,11 +45,9 @@ class SyncOperation: AsynchronousOperation {
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
         if self.notificationsOnly {
-            Analytics.shared.trackBotSync()
             Bots.current.syncNotifications(queue: queue, peers: peers) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
-                                          numberOfMessages: newMessages,
-                                          error: error)
+                                          numberOfMessages: newMessages)
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 Log.info("SyncOperation finished with \(newMessages) new messages. Took \(timeInterval) seconds to sync.")
@@ -59,11 +58,9 @@ class SyncOperation: AsynchronousOperation {
                 self?.finish()
             }
         } else {
-            Analytics.shared.trackBotSync()
             Bots.current.sync(queue: queue, peers: peers) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
-                                          numberOfMessages: newMessages,
-                                          error: error)
+                                          numberOfMessages: newMessages)
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 Log.info("SyncOperation finished with \(newMessages) new messages. Took \(timeInterval) seconds to sync.")

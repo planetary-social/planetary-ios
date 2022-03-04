@@ -10,6 +10,7 @@ import AVKit
 import Foundation
 import Photos
 import UIKit
+import Analytics
 
 class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 

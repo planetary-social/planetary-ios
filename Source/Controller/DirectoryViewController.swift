@@ -8,6 +8,7 @@
 
 import UIKit
 import Logger
+import Analytics
 
 class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
 

@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "PostHog",
+        "repositoryURL": "https://github.com/PostHog/posthog-ios",
+        "state": {
+          "branch": null,
+          "revision": "d3177a24686ead147f5e4ff4d7e284ca4be33870",
+          "version": "1.4.4"
+        }
+      },
+      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {

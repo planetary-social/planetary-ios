@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import SwiftUI
+import Analytics
 
 class MenuViewController: UIViewController, ConnectedPeerListRouter {
     

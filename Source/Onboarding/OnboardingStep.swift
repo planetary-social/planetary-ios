@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Analytics
 
 protocol OnboardingStepDelegate: class {
 
@@ -30,6 +31,19 @@ class OnboardingStepData {
     var name: String? = nil
     var phone: String? = nil
     var simulated = false
+
+    var analyticsData: Analytics.OnboardingStepData {
+        return Analytics.OnboardingStepData(allowedBackup: allowedBackup,
+                                            allowedContacts: allowedContacts,
+                                            bio: bio,
+                                            followingCount: following.count,
+                                            hasImage: image != nil,
+                                            joinedDirectory: joinedDirectory,
+                                            publicWebHosting: publicWebHosting,
+                                            nameLength: name?.count ?? 0,
+                                            phone: phone,
+                                            simulated: simulated)
+    }
 }
 
 class OnboardingStep: NSObject {
@@ -70,6 +84,10 @@ class OnboardingStep: NSObject {
                 case .resume: return .resume
                 case .start: return .start
             }
+        }
+
+        var analyticsStep: Analytics.OnboardingStep {
+            return Analytics.OnboardingStep(rawValue: rawValue) ?? .unknown
         }
     }
 
@@ -138,7 +156,7 @@ class OnboardingStep: NSObject {
     /// This is explicitly final because there should be no
     /// changes to when the step is tracked by Analytics.shared.
     final func track() {
-        Analytics.shared.trackOnboarding(self.name)
+        Analytics.shared.trackOnboarding(self.name.analyticsStep)
     }
 
     func willStart() {

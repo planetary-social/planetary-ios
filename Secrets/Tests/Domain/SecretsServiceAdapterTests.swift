@@ -29,4 +29,9 @@ final class SecretsServiceAdapterTests: XCTestCase {
         XCTAssertNil(service.get(key: "bugsnag"))
     }
 
+    func testGetWhenPlistDoesntExist() {
+        service = SecretsServiceAdapter(bundle: .main)
+        XCTAssertNil(service.get(key: "posthog"))
+    }
+
 }
