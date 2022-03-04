@@ -28,11 +28,11 @@ protocol ConnectedPeerListRouter: AlertRouter {
 
 /// An enumeration of the errors produced by `ConnectedPeerListCoordinator`
 enum ConnectedPeerListError: LocalizedError {
-    
+
     case identityNotFound
     
     var errorDescription: String? {
-        switch (self) {
+        switch self {
         case .identityNotFound:
             return Text.identityNotFound.text
         }
@@ -132,8 +132,7 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
         }
         
         router.showProfile(for: identity)
-    }
-    
+    }    
     
     // MARK: - Helpers
     

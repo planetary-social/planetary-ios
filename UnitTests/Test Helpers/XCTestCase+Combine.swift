@@ -77,9 +77,6 @@ extension XCTestCase {
                         }
                     )
                     .store(in: &cancellables)
-                
-                
-
             }
             
             cancellables.forEach { $0.cancel() }

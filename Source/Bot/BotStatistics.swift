@@ -68,7 +68,7 @@ struct DatabaseStatistics: Equatable {
 }
 
 struct PeerStatistics: Equatable {
-    
+
     let count: Int
     let connectionCount: UInt
 

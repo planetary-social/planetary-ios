@@ -222,7 +222,7 @@ extension Bot {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
-    func refresh(load: RefreshLoad, queue: DispatchQueue = .main) async -> (Error?, TimeInterval){
+    func refresh(load: RefreshLoad, queue: DispatchQueue = .main) async -> (Error?, TimeInterval) {
         return await withCheckedContinuation { continuation in
             refresh(load: load, queue: queue) { result1, result2 in
                 continuation.resume(returning: (result1, result2))

@@ -163,7 +163,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     func open(animated: Bool = true) {
         self.view.layoutSubviews()
         // For some reason using `.transform` here breaks touches in the SwiftUI view so I'm using `.frame` instead.
-        menuView.frame.origin.x = menuView.frame.origin.x - menuWidth
+        menuView.frame.origin.x -= menuWidth
         UIView.animate(withDuration: animated ? 0.2 : 0,
                        delay: 0,
                        options: .curveEaseOut,
@@ -256,7 +256,11 @@ fileprivate class MenuView: UIView {
         profileView.constrainSize(to: CGSize(width: 96, height: 96))
         profileView.pinTopToSuperview(constant: 30)
 
-        Layout.fillSouth(of: profileView, with: label, insets: UIEdgeInsets(top: 20, left: Layout.horizontalSpacing, bottom: 0, right: -Layout.horizontalSpacing))
+        Layout.fillSouth(
+            of: profileView,
+            with: label,
+            insets: UIEdgeInsets(top: 20, left: Layout.horizontalSpacing, bottom: 0, right: -Layout.horizontalSpacing)
+        )
         label.constrainBottom(toBottomOf: profileContainer, constant: -20)
         
         return profileContainer

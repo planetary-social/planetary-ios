@@ -14,7 +14,7 @@ extension Publisher {
         maxPublishers: Subscribers.Demand = .unlimited,
         _ transform: @escaping (Self.Output) async -> T
     ) -> Publishers.FlatMap<Future<T, Self.Failure>, Self> where Self.Failure == Never {
-            
+
         return flatMap(maxPublishers: maxPublishers) { (input: Self.Output) -> Future<T, Self.Failure> in
             return Future<T, Self.Failure> { promise in
                 Task.detached {

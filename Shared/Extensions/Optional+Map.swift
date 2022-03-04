@@ -10,7 +10,7 @@ import Foundation
 
 extension Optional {
     /// Allows mapping over optional values, applying the transform or returning nil if this Optional is nil.
-    func map<T>(_ transform: (WrappedType) -> T) -> Optional<T> {
+    func map<T>(_ transform: (WrappedType) -> T) -> T? {
         switch self {
         case .some(let value):
             return transform(value)
