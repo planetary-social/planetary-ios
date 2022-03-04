@@ -23,9 +23,6 @@ class AppController: UIViewController {
     private var didStartDatabaseProcessingObserver: NSObjectProtocol?
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
     private var didUpdateDatabaseProgressObserver: NSObjectProtocol?
-    
-    /// Some stats of what the database was like when the app launched, so we can see what has happened this session.
-    var statisticsAtLaunch: BotStatistics?
 
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -167,20 +164,5 @@ class AppController: UIViewController {
         if let progress = self.didUpdateDatabaseProgressObserver {
             notificationCenter.removeObserver(progress)
         }
-    }
-    
-    // MARK: - Helpers
-    
-    func recordLaunchStatistics() {
-        let operation = StatisticsOperation()
-        operation.completionBlock = {
-            switch operation.result {
-            case .success(let statistics):
-                self.statisticsAtLaunch = statistics
-            case .failure:
-                break
-            }
-        }
-        operationQueue.addOperation(operation)
     }
 }

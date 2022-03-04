@@ -10,6 +10,23 @@ import XCTest
 import Combine
 
 extension XCTestCase {
+    
+    /// This function can be used to `await` results from a `Publisher` in an XCTest.
+    ///
+    /// This is useful when you want to  assert that a publisher publishes specific values. This function is async
+    /// itself so that it can subscribe to the publisher on a background thread. Then the returned Task will wait for
+    /// the publisher to complete before returning.
+    ///
+    /// Example usage:
+    /// ```
+    /// let observer = await makeAwaitable(publisher: sut.$publisher.collectNext())
+    /// functionThatCausesValuesToBePublished()
+    /// let publishedResults = try await observer.result.get()
+    /// ```
+    ///
+    /// - Parameter publisher: the publisher you want to wait on.
+    /// - Parameter timeout: the number of seconds the function will wait for the publisher before failing the test.
+    /// - Returns: A task that will return with the published object or an error.
     func makeAwaitable<T: Publisher>(
         publisher: T,
         timeout: TimeInterval = 10,
@@ -75,43 +92,4 @@ extension XCTestCase {
     }
 }
 
-// https://github.com/alexito4/Baggins/blob/main/Sources/Baggins/Concurrency.swift
-
-public func withTimeout<R>(
-    _ seconds: UInt64,
-    _ work: @escaping () async throws -> R
-) async throws -> R {
-    try await firstOf {
-        try await work()
-    } or: {
-        try? await Task.sleep(seconds)
-        throw TimeoutError()
-    }
-}
-
 public struct TimeoutError: Error {}
-
-public func firstOf<R>(
-    _ f1: @escaping () async throws -> R,
-    or f2: @escaping () async throws -> R
-) async throws -> R {
-    // All the cancellation checks I feel they shouldn't be necessary.
-    // But I haven't been able to write a unit test that triggers the guard of
-    // `addTaskUnlessCancelled`...
-    try Task.checkCancellation()
-    return try await withThrowingTaskGroup(of: R.self) { group in
-        try Task.checkCancellation()
-        guard group.addTaskUnlessCancelled(operation: { try await f1() }) else {
-            throw CancellationError()
-        }
-        guard group.addTaskUnlessCancelled(operation: { try await f2() }) else {
-            group.cancelAll()
-            throw CancellationError()
-        }
-        guard let first = try await group.next() else {
-            fatalError()
-        }
-        group.cancelAll()
-        return first
-    }
-}

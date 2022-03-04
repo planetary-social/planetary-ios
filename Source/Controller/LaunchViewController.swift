@@ -140,7 +140,6 @@ class LaunchViewController: UIViewController {
                 return
             }
             
-            AppController.shared.recordLaunchStatistics()
             self.launchIntoMain()
             
             bot.about { (about, aboutErr) in

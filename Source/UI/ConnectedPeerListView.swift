@@ -8,15 +8,18 @@
 
 import SwiftUI
 
+/// A view that shows currently connected scuttlebutt peers and metadata about the connections.
 struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerListViewModel {
     
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         VStack {
+            
             // Header
             HStack {
                 
+                // Animation
                 PeerConnectionAnimationView(peerCount: viewModel.connectedPeersCount ?? 1)
                     .padding(.trailing, 2)
                 Text.connectedPeers.view
@@ -28,6 +31,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                 
                 Spacer()
                 
+                // Online Peers count
                 let count = viewModel.connectedPeersCount.map { String($0) } ?? "~"
                 SwiftUI.Text(count)
                     .font(.body)

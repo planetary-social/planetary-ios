@@ -9,38 +9,6 @@
 import XCTest
 import Combine
 
-actor BotStatisticsServiceMock: BotStatisticsService {
-        
-    var statisticsPasthrough: PassthroughSubject<BotStatistics, Never>
-
-    init(refreshInterval: DispatchTimeInterval = .seconds(1)) {
-        statisticsPasthrough = PassthroughSubject<BotStatistics, Never>()
-    }
-    
-    func subscribe() async -> AnyPublisher<BotStatistics, Never> {
-        return statisticsPasthrough.print().eraseToAnyPublisher()
-    }
-}
-
-class ConnectedPeerListRouterMock: ConnectedPeerListRouter {
-    
-    var showProfileCallCount = 0
-    var showProfileIdentityParameter: Identity?
-    
-    func showProfile(for identity: Identity) {
-        showProfileCallCount += 1
-        showProfileIdentityParameter = identity
-    }
-    
-    var alertCallCount = 0
-    var alertErrorParameter: Error?
-    
-    func alert(error: Error) {
-        alertCallCount += 1
-        alertErrorParameter = error
-    }
-}
-
 class ConnectedPeerListCoordinatorTests: XCTestCase {
     
     /// The system under test
@@ -51,6 +19,8 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
     var mockBot: FakeBot!
     
     var mockRouter: ConnectedPeerListRouterMock!
+    
+    // MARK: - Test Data
     
     let baseStatistics = BotStatistics(
         lastSyncDate: Date(),
@@ -96,6 +66,8 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         imageMetadata: nil,
         isActive: true
     )
+    
+    // MARK: - Tests
 
     override func setUpWithError() throws {
         mockBot = FakeBot()
@@ -105,6 +77,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         sut.viewDidAppear()
     }
 
+    /// Verifies that when the statistics service publishes the coordinator also publishes peer.
     func testPublishingNewStatisticsUpdatesPeers() async throws {
         // Arrange
         XCTAssertEqual(sut.peers, nil)
@@ -148,6 +121,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(publishedPeers.first, expectedPeers)
     }
     
+    /// Verifies that when a peer disappears from the statistics it is markedd as not active.
     func testPublishingNewStatisticsUpdatesCurrentlyActiveProperty() async throws {
         // Arrange
         XCTAssertEqual(sut.peers, nil)
@@ -282,6 +256,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(recentlyDownloadedPostDuration, 999)
     }
     
+    /// Tests that the coordinator stops publishing peers when the view is not visible.
     func testPeersDoNotUpdateWhenViewNotVisible() async throws {
         // Arrange
         sut = ConnectedPeerListCoordinator(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
@@ -304,6 +279,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         }
     }
     
+    /// Verifies that tapping on a peer cell opens their profile
     func testTappingPeerCellShowsProfile() {
         // Act
         sut.peerTapped(alicePeerConnectionInfo)
@@ -326,5 +302,37 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         // Assert
         XCTAssertEqual(mockRouter.showProfileCallCount, 0)
         XCTAssertEqual(mockRouter.alertCallCount, 1)
+    }
+}
+
+actor BotStatisticsServiceMock: BotStatisticsService {
+        
+    var statisticsPasthrough: PassthroughSubject<BotStatistics, Never>
+
+    init(refreshInterval: DispatchTimeInterval = .seconds(1)) {
+        statisticsPasthrough = PassthroughSubject<BotStatistics, Never>()
+    }
+    
+    func subscribe() async -> AnyPublisher<BotStatistics, Never> {
+        return statisticsPasthrough.print().eraseToAnyPublisher()
+    }
+}
+
+class ConnectedPeerListRouterMock: ConnectedPeerListRouter {
+    
+    var showProfileCallCount = 0
+    var showProfileIdentityParameter: Identity?
+    
+    func showProfile(for identity: Identity) {
+        showProfileCallCount += 1
+        showProfileIdentityParameter = identity
+    }
+    
+    var alertCallCount = 0
+    var alertErrorParameter: Error?
+    
+    func alert(error: Error) {
+        alertCallCount += 1
+        alertErrorParameter = error
     }
 }

@@ -9,6 +9,7 @@
 import Foundation
 import XCTest
 
+/// Tests for `BotStatisticsService`.
 class BotStatisticsServiceTests: XCTestCase {
     
     /// The system under test
@@ -22,6 +23,7 @@ class BotStatisticsServiceTests: XCTestCase {
         
     }
 
+    /// Verifies that statistics are published after subscribe is called.
     func testSubscribingEmitsStatistics() async throws {
         // Arrange
         let firstStatistics = BotStatistics(

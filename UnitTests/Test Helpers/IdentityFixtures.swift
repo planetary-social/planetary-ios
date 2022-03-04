@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Identities that can be used for testing and SwiftUI previews.
 struct IdentityFixture {
     static let alice: Identity = "@pEq+oDSFsYZfSow78WQcPzAAKnxCYEMZJlzTUoOAq9U=.ed25519"
     static let bob: Identity = "@ar0OcuproJ8kODB9fn4iYhxQeR1gSJLtJiup2s2nAiI=.ed25519"

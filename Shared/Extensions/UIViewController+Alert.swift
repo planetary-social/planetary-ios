@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 
+/// Describes an object capable of presenting alerts.
 protocol AlertRouter {
     
     /// Presents an error message to the user in an alert box.

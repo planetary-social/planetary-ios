@@ -44,15 +44,13 @@ protocol Localizable {
 //            return NSLocalizedString(key, comment: "")
 //        }
 //
-class BundleClass {}
 extension Localizable {
     
     // You can modify this to perform localization, or overrides based on server or other config
     var text: String {
-        let bundle = Bundle(for: BundleClass.self)
+        let bundle = Bundle(for: CurrentBundle.self)
         return NSLocalizedString(key, tableName: "Generated", bundle: bundle, comment: "")
     }
-
 
     // replaces keys in the string with values from the dictionary passed
     // case greeting = "Hello {{ name }}."
@@ -120,3 +118,5 @@ extension Localizable where Self: CaseIterable {
         return list.joined(separator: "\n")
     }
 }
+
+fileprivate class CurrentBundle {}

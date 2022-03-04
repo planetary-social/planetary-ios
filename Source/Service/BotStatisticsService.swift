@@ -9,10 +9,13 @@
 import Foundation
 import Combine
 
+/// A service class that will publish `BotStatistics` regularly when subscribed to.
 protocol BotStatisticsService {
     func subscribe() async -> AnyPublisher<BotStatistics, Never>
 }
 
+/// A concrete implementation of `BotStatisticsService` that queries any `Bot`. This service polls the bot for new
+/// statistics when subscribed to, and stops publishing when there are no more subscribers as an optimization.
 actor BotStatisticsServiceAdaptor: BotStatisticsService {
             
     private var statisticsPublisher: AnyPublisher<BotStatistics, Never>?
@@ -21,6 +24,12 @@ actor BotStatisticsServiceAdaptor: BotStatisticsService {
     
     private var bot: Bot
     
+    init(bot: Bot, refreshInterval: TimeInterval = 1) {
+        self.bot = bot
+        self.refreshInterval = refreshInterval
+    }
+    
+    /// Call this function to get an observable stream of `BotStatistics`, published regularly.
     func subscribe() async -> AnyPublisher<BotStatistics, Never> {
         if let statisticsPublisher = statisticsPublisher {
             return statisticsPublisher
@@ -40,11 +49,5 @@ actor BotStatisticsServiceAdaptor: BotStatisticsService {
             .eraseToAnyPublisher()
         
         return statisticsPublisher
-    }
-
-    
-    init(bot: Bot, refreshInterval: TimeInterval = 1) {
-        self.bot = bot
-        self.refreshInterval = refreshInterval
     }
 }

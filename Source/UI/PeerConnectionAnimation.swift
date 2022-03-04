@@ -13,13 +13,13 @@ class PeerConnectionAnimation: UIView {
     /// A multiplier applied to the size of all elements.
     var multiplier:      CGFloat
 
-    lazy var lineWidth:       CGFloat = { 1.7 * self.multiplier }()
+    lazy var lineWidth:       CGFloat = { 1 * self.multiplier }()
 
-    lazy var centerDotSize:   CGFloat = { 5 * self.multiplier }()
+    lazy var centerDotSize:   CGFloat = { 7 * self.multiplier }()
     lazy var dotSize:         CGFloat = { 5 * self.multiplier }()
 
-    lazy var insideDiameter:  CGFloat = { 16 * self.multiplier }()
-    lazy var outsideDiameter: CGFloat = { 29 * self.multiplier }()
+    lazy var insideDiameter:  CGFloat = { 23 * self.multiplier }()
+    lazy var outsideDiameter: CGFloat = { 38 * self.multiplier }()
 
     let insideMax = 11
     let outsideMax = 18

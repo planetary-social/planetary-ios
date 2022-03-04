@@ -1,5 +1,5 @@
 //
-//  SSBImage.swift
+//  AvatarImageViewRepresentable.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 2/25/22.
