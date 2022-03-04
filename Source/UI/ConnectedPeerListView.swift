@@ -74,9 +74,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                             .minimumScaleFactor(0.5)
                         Spacer()
                     }
-                    
-                    
-                    
+                                        
                     HStack {
                         Text.recentlyDownloaded.view([
                             "postCount": String(postCount),
