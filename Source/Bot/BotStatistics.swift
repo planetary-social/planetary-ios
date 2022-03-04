@@ -8,18 +8,24 @@ import Analytics
 
 // MARK:- API statistics
 
-protocol BotStatistics {
+struct BotStatistics: Equatable {
 
-    var lastSyncDate: Date? { get }
-    var lastSyncDuration: TimeInterval { get }
+    var lastSyncDate: Date?
+    var lastSyncDuration: TimeInterval = 0
 
-    var lastRefreshDate: Date? { get }
-    var lastRefreshDuration: TimeInterval { get }
+    var lastRefreshDate: Date?
+    var lastRefreshDuration: TimeInterval = 0
 
-    var repo: RepoStatistics { get }
-    var peer: PeerStatistics { get }
-    var db: DatabaseStatistics { get }
+    /// The number of new posts that have been downloaded in the `recentlyDownloadedPostDuration`.
+    var recentlyDownloadedPostCount = 0
 
+    /// The number of minutes we consider "recent" for the `recentlyDownloadedPostCount`. So if this value is 15, then
+    /// `recentlyDownloadedPostCount` will contain all posts 
+    var recentlyDownloadedPostDuration = 15
+
+    var repo = RepoStatistics()
+    var peer = PeerStatistics()
+    var db = DatabaseStatistics()
 }
 
 extension BotStatistics {
@@ -45,26 +51,6 @@ extension BotStatistics {
         return statistics
     }
 
-}
-
-struct BotStatistics: Equatable {
-
-    var lastSyncDate: Date?
-    var lastSyncDuration: TimeInterval = 0
-
-    var lastRefreshDate: Date?
-    var lastRefreshDuration: TimeInterval = 0
-
-    /// The number of new posts that have been downloaded in the `recentlyDownloadedPostDuration`.
-    var recentlyDownloadedPostCount = 0
-
-    /// The number of minutes we consider "recent" for the `recentlyDownloadedPostCount`. So if this value is 15, then
-    /// `recentlyDownloadedPostCount` will contain all posts 
-    var recentlyDownloadedPostDuration = 15
-
-    var repo = RepoStatistics()
-    var peer = PeerStatistics()
-    var db = DatabaseStatistics()
 }
 
 struct RepoStatistics: Equatable {
