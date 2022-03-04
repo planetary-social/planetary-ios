@@ -32,7 +32,7 @@ public extension Analytics {
         service.track(event: .did, element: .bot, name: "db_update", param: "inserted", value: "\(count)")
     }
 
-    func trackBodDidUpdateDatabase(count: Int, firstTimestamp: Float64, lastTimestamp: Float64, lastHash: String) {
+    func trackBotDidUpdateDatabase(count: Int, firstTimestamp: Float64, lastTimestamp: Float64, lastHash: String) {
         let params: [String: Any] = ["msg.count": count,
                                      "first.timestamp": firstTimestamp,
                                      "last.timestamp": lastTimestamp,

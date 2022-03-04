@@ -19,6 +19,12 @@ class AnalyticsServiceAdapterTests: XCTestCase {
         service = AnalyticsServiceAdapter(apiService: apiService)
     }
 
+    func testIsEnabled() {
+        XCTAssertTrue(service.isEnabled)
+        apiService.enabled = false
+        XCTAssertFalse(service.isEnabled)
+    }
+
     func testIdentify() {
         service.identify(identity: Identity(identifier: "identifier", name: nil, network: "network"))
         XCTAssertTrue(apiService.identified)

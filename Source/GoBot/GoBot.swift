@@ -695,7 +695,7 @@ class GoBot: Bot {
                     "last.hash":msgs[msgs.count-1].key
                     ] as [String : Any]
 
-                Analytics.shared.trackBodDidUpdateDatabase(count: msgs.count,
+                Analytics.shared.trackBotDidUpdateDatabase(count: msgs.count,
                                                            firstTimestamp: msgs[0].timestamp,
                                                            lastTimestamp: msgs[msgs.count-1].timestamp,
                                                            lastHash: msgs[msgs.count-1].key)

@@ -28,6 +28,12 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.forgot)
     }
 
+    func testIsEnabled() {
+        XCTAssertTrue(analytics.isEnabled)
+        service.isEnabled = false
+        XCTAssertFalse(analytics.isEnabled)
+    }
+
     func testOptIn() {
         analytics.optIn()
         XCTAssertTrue(service.optedIn)
@@ -69,7 +75,7 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.tracked)
     }
 
-    func testTrackDidBackgroundTask(taskIdentifier: String) {
+    func testTrackDidBackgroundTask() {
         analytics.trackDidBackgroundTask(taskIdentifier: "test")
         XCTAssertTrue(service.tracked)
     }
@@ -88,6 +94,27 @@ final class AnalyticsTests: XCTestCase {
 
     func testTrackBotDidSync() {
         analytics.trackBotDidSkipMessage(key: "noop", reason: "unknown")
+        XCTAssertTrue(service.tracked)
+    }
+
+    func testTrackBodDidUpdateDatabase() {
+        analytics.trackBotDidUpdateDatabase(count: 1,
+                                            firstTimestamp: 2,
+                                            lastTimestamp: 3,
+                                            lastHash: "")
+        XCTAssertTrue(service.tracked)
+    }
+
+    func testTrackBotDidRepair() {
+        let repair = Analytics.BotRepair(function: #function,
+                                         numberOfMessagesInDB: 2,
+                                         numberOfMessagesInRepo: 1)
+        analytics.trackBotDidRepair(databaseError: "", error: nil, repair: repair)
+        XCTAssertTrue(service.tracked)
+    }
+
+    func testTrackBotDidRefresh() {
+        analytics.trackBotDidRefresh(load: 1, duration: 2, error: nil)
         XCTAssertTrue(service.tracked)
     }
 
@@ -212,6 +239,11 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.tracked)
     }
 
+    func testTrackDidSelectItemWithParams() {
+        analytics.trackDidSelectItem(kindName: "test", param: "param", value: "value")
+        XCTAssertTrue(service.tracked)
+    }
+
     func testTrackDidShowScreen() {
         analytics.trackDidShowScreen(screenName: "test")
         XCTAssertTrue(service.tracked)
@@ -226,8 +258,15 @@ final class AnalyticsTests: XCTestCase {
 
     // MARK: Statistics
 
-    func trackStatistics() {
-        let statistics = Analytics.Statistics(lastSyncDate: nil, lastRefreshDate: nil)
+    func testTrackStatistics() {
+        let now = Date.init(timeIntervalSinceNow: 0)
+        var statistics = Analytics.Statistics(lastSyncDate: now, lastRefreshDate: now)
+        statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: 1)
+        statistics.repo = Analytics.RepoStatistics(feedCount: 1,
+                                                   messageCount: 2,
+                                                   numberOfPublishedMessages: 3,
+                                                   lastHash: "")
+        statistics.peer = Analytics.PeerStatistics(peers: 1, connectedPeers: 2)
         analytics.trackStatistics(statistics)
         XCTAssertTrue(service.tracked)
     }

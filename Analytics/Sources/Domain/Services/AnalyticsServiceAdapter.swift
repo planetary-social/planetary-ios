@@ -27,11 +27,11 @@ class AnalyticsServiceAdapter: AnalyticsService {
 
     func optIn() {
         apiService.optIn()
-        apiService.track(event: "did_outin", params: nil)
+        apiService.track(event: "did_opt_in", params: nil)
     }
 
     func optOut() {
-        apiService.track(event: "did_outout", params: nil)
+        apiService.track(event: "did_opt_out", params: nil)
         apiService.optOut()
     }
 

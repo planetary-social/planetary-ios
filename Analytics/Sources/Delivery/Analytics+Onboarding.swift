@@ -28,7 +28,7 @@ public extension Analytics {
         case resume
         case start
 
-        /// Used for safewarding. Each onboarding step should be identified accordingly
+        /// Used for safeguarding. Each onboarding step should be identified accordingly
         case unknown
     }
 
