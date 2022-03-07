@@ -27,6 +27,12 @@ class Post: ContentCodable {
     let root: MessageIdentifier?
     let text: String
     let type: ContentType
+    
+    /// Returns blobs extracted from the post's markdown.
+    /// This is expensive to calculate so we lazy load it as an optimiation
+    fileprivate(set) lazy var inlineBlobs: Blobs = {
+        return self.text.blobs()
+    }()
 
     // MARK: Calculated temporal unserialized properties
 
