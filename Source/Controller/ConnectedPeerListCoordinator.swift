@@ -132,7 +132,7 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             return
         }
         
-        Analytics.shared.trackDidTapButton("show_connected_peer_profile")
+        Analytics.shared.trackDidTapButton(buttonName: "show_connected_peer_profile")
         router.showProfile(for: identity)
     }    
     
