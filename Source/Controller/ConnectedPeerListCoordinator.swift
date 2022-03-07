@@ -9,6 +9,7 @@
 import Foundation
 import Combine
 import Logger
+import Analytics
 
 /// A model for `ConnectedPeerListView`
 protocol ConnectedPeerListViewModel: ObservableObject {
@@ -131,6 +132,7 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             return
         }
         
+        Analytics.shared.trackDidTapButton("show_connected_peer_profile")
         router.showProfile(for: identity)
     }    
     
@@ -173,7 +175,7 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
         
         return peerConnectionInfo.sorted { lhs, rhs in
             guard lhs.isActive == rhs.isActive else {
-                return lhs.isActive ? true : false
+                return lhs.isActive
             }
             
             return lhs.name ?? "" < rhs.name ?? ""
