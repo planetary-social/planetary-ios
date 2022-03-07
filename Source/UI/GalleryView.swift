@@ -105,17 +105,7 @@ fileprivate class BlobInputSource: InputSource {
         }
 
         // request for image blob
-        let uuid = Caches.blobs.image(for: self.blob.identifier) { [weak self] result in
-            
-            var image: UIImage
-            switch result {
-            case .success((_, let loadedImage)):
-                image = loadedImage
-            case .failure(let error):
-                Log.optional(error)
-                image = UIImage.verse.unsupportedBlobPlaceholder
-            }
-            
+        let uuid = Caches.blobs.imageOrPlaceholder(for: self.blob.identifier) { [weak self] image in
             imageView.fade(to: image, duration: 0.2)
             callback(image)
             self?.completionUUID = nil

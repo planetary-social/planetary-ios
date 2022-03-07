@@ -52,9 +52,7 @@ class BlobCache: DictionaryCache {
     /// is useful for views that are re-used, like table view cells, to manage how many
     /// elements are waiting for a particular blob.
     @discardableResult
-    func image(for identifier: BlobIdentifier,
-               completion: @escaping UIImageCompletion) -> UIImageCompletionHandle?
-    {
+    func image(for identifier: BlobIdentifier, completion: @escaping UIImageCompletion) -> UIImageCompletionHandle? {
         Thread.assertIsMainThread()
 
         // returns the cached image immediately
@@ -76,6 +74,21 @@ class BlobCache: DictionaryCache {
 
         // wait for load
         return uuid
+    }
+    
+    /// Same as `image(for identifier:completion:)` except in returns a placeholder image if the blob type is
+    /// unsupported.
+    @discardableResult
+    func imageOrPlaceholder(for identifier: BlobIdentifier, completion: @escaping (UIImage) -> Void) -> UIImageCompletionHandle? {
+        return image(for: identifier) { result in
+            switch result {
+            case .success((_, let loadedImage)):
+                completion(loadedImage)
+            case .failure(let error):
+                Log.optional(error)
+                completion(UIImage.verse.unsupportedBlobPlaceholder)
+            }
+        }
     }
 
     private func loadImage(for identifier: BlobIdentifier) {

@@ -43,17 +43,7 @@ class BlobViewController: ContentViewController {
     }
 
     private func update() {
-        Caches.blobs.image(for: self.blob) { [weak self] result in
-            
-            var image: UIImage
-            switch result {
-            case .success((_, let loadedImage)):
-                image = loadedImage
-            case .failure(let error):
-                Log.optional(error)
-                image = UIImage.verse.unsupportedBlobPlaceholder
-            }
-            
+        Caches.blobs.imageOrPlaceholder(for: self.blob) { [weak self] image in
             self?.imageView.image = image
         }
     }
