@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Analytics
+import Logger
 
 class BlobViewController: ContentViewController {
 
@@ -42,8 +43,17 @@ class BlobViewController: ContentViewController {
     }
 
     private func update() {
-        Caches.blobs.image(for: self.blob) {
-            [weak self] _, image in
+        Caches.blobs.image(for: self.blob) { [weak self] result in
+            
+            var image: UIImage
+            switch result {
+            case .success((_, let loadedImage)):
+                image = loadedImage
+            case .failure(let error):
+                Log.optional(error)
+                image = UIImage.verse.unsupportedBlobPlaceholder
+            }
+            
             self?.imageView.image = image
         }
     }

@@ -55,7 +55,16 @@ class AvatarImageView: ImageView {
             }
 
             // request image
-            let uuid = Caches.blobs.image(for: person.image!) { [weak self] _, image in
+            let uuid = Caches.blobs.image(for: person.image!) { [weak self] result in
+                
+                var image: UIImage?
+                switch result {
+                case .success((_, let loadedImage)):
+                    image = loadedImage
+                case .failure(let error):
+                    Log.optional(error)
+                }
+                
                 DispatchQueue.main.async {
                     if animate {
                         self?.fade(to: image)

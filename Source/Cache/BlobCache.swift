@@ -10,6 +10,11 @@ import Foundation
 import UIKit
 import Logger
 
+enum BlobCacheError: Error {
+    case unsupported
+    case network(Error?)
+}
+
 class BlobCache: DictionaryCache {
 
     // MARK: Lifecycle
@@ -27,7 +32,7 @@ class BlobCache: DictionaryCache {
 
     // TODO https://app.asana.com/0/0/1152660926488309/f
     // TODO make UIImageCompletionHandle opaque for image(for:completion)
-    typealias UIImageCompletion = ((BlobIdentifier, UIImage) -> Void)
+    typealias UIImageCompletion = ((Result<(BlobIdentifier, UIImage), Error>) -> Void)
     typealias UIImageCompletionHandle = UUID
 
     /// Immediately returns the cached image for the identifier.  This will
@@ -53,9 +58,12 @@ class BlobCache: DictionaryCache {
         Thread.assertIsMainThread()
 
         // returns the cached image immediately
-        if let image = self.item(for: identifier) as? UIImage {
-            completion(identifier, image)
-            return nil
+        if let anyItem = self.item(for: identifier) {
+            if let image = anyItem as? UIImage {
+                completion(.success((identifier, image)))
+            } else {
+                completion(.failure(BlobCacheError.unsupported))
+            }
         }
 
         // otherwise schedule the completion
@@ -72,37 +80,39 @@ class BlobCache: DictionaryCache {
 
     private func loadImage(for identifier: BlobIdentifier) {
         
-        Bots.current.data(for: identifier) {
-            [weak self] identifier, data, error in
-            guard let me = self else { return }
+        Bots.current.data(for: identifier) { [weak self] identifier, data, error in
+            guard let self = self else { return }
 
-            // wait if blob unavailable
-            if me.blobUnavailable(error, for: identifier) {
-                self?.loadBlobFromCloud(for: identifier)
+            // If we don't have the blob downloaded yet ask the Planetary API for it as an optimization.
+            if self.isBlobUnavailableError(error) {
+                self.loadBlobFromCloud(for: identifier) { result in
+                    if let image = try? result.get() {
+                        self.didLoad(identifier, result: .success(image))
+                    }
+                    // If we failed to load from the Planetary API we don't fail so the Bot can keep trying to
+                    // fetch images.
+                }
                 return
             }
-            // forget if blob is still unavailable
-            // will be requested again if necessary
+            
             guard let data = data, data.isEmpty == false else {
-                me.forgetCompletions(for: identifier)
+                // We don't have the image but we don't fail so the Bot can keep trying to fetch the image in the
+                // background.
                 return
             }
 
-            // forget if blob is not an image
             guard let image = UIImage(data: data) else {
-                me.forgetCompletions(for: identifier)
+                self.didLoad(identifier, result: .failure(BlobCacheError.unsupported))
                 return
             }
 
             // only complete if valid image
-            me.update(image, for: identifier)
-            me.didLoad(image, for: identifier)
-            me.purge()
+            self.didLoad(identifier, result: .success(image))
         }
     }
     
-    private func  loadBlobFromCloud(for ref: BlobIdentifier)
-    {
+    /// Attempt to load a blob from Planetary's cloud services.
+    private func loadBlobFromCloud(for ref: BlobIdentifier, completion: @escaping (Result<UIImage, BlobCacheError>) -> Void) {
         let hexRef = ref.hexEncodedString()
         
         // first 2 chars are directory
@@ -127,27 +137,22 @@ class BlobCache: DictionaryCache {
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200,
                 let data = data else {
-                // Cannot use these because the servers are not reliable
-                //let mimeType = httpResponse.mimeType,
-                // mimeType.hasPrefix("image") else {
-                self?.removeDataTask(for: ref)
+                    completion(.failure(.network(error)))
                 return
             }
             
             guard let image = UIImage(data: data) else {
-                self?.removeDataTask(for: ref)
+                completion(.failure(.unsupported))
                 return
             }
             
-            Bots.current.store(data: data, for: ref) { [weak self] (url, error) in
+            Bots.current.store(data: data, for: ref) { (url, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if error == nil {
                     DispatchQueue.main.async {
-                        self?.update(image, for: ref)
-                        self?.didLoad(image, for: ref)
-                        self?.purge()
+                        completion(.success(image))
                     }
                 }
                 
@@ -165,9 +170,8 @@ class BlobCache: DictionaryCache {
         dataTask.resume()
     }
 
-    /// Returns true if the specified Error is a blob unavailablee error.
-    private func blobUnavailable(_ error: Error?,
-                                 for identifier: BlobIdentifier) -> Bool
+    /// Returns true if the specified Error is a blob unavailable error.
+    private func isBlobUnavailableError(_ error: Error?) -> Bool
     {
         // check that error is blob unavailable
         if let error = error as? BotError, error == .blobUnavailable {
@@ -178,17 +182,20 @@ class BlobCache: DictionaryCache {
         return false
     }
 
-    private func didLoad(_ image: UIImage,
-                         for identifier: BlobIdentifier)
-    {
-        let completions = self.completions(for: identifier)
-        self.forgetCompletions(for: identifier)
-        self.cancelDataTask(for: identifier)
-
-        completions.forEach {
-            (uuid, completion) in
-            completion(identifier, image)
+    private func didLoad(_ identifier: BlobIdentifier, result: Result<UIImage, Error>) {
+        if let image = try? result.get() {
+            store(image, for: identifier)
         }
+
+        let completions = completions(for: identifier)
+        forgetCompletions(for: identifier)
+        cancelDataTask(for: identifier)
+        
+        completions.forEach { (uuid, completion) in
+            completion(result.map { (identifier, $0) })
+        }
+        
+        purge()
     }
 
     // MARK: UIImage completions
@@ -301,8 +308,8 @@ class BlobCache: DictionaryCache {
     // tracks the total bytes in use
     private var bytes: Int = 0
 
-    /// Increments the number of bytes used by the cache.
-    private func update(_ image: UIImage, for identifier: Identifier) {
+    /// Inserts the image into the cache and updates the number of bytes used by the cache.
+    private func store(_ image: UIImage, for identifier: Identifier) {
         self.bytes += self.bytes(for: image)
         super.update(image, for: identifier)
     }

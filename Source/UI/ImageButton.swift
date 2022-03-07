@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 class ImageButton: UIButton {
 
@@ -48,8 +49,17 @@ class ImageButton: UIButton {
         }
 
         // request image
-        let uuid = Caches.blobs.image(for: image.identifier) {
-            [weak self] _, image in
+        let uuid = Caches.blobs.image(for: image.identifier) { [weak self] result in
+            
+            var image: UIImage
+            switch result {
+            case .success((_, let loadedImage)):
+                image = loadedImage
+            case .failure(let error):
+                Log.optional(error)
+                image = UIImage.verse.unsupportedBlobPlaceholder
+            }
+            
             self?.setImage(image, for: state)
         }
 

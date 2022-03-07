@@ -28,7 +28,7 @@ extension UIPageControl {
         view.isUserInteractionEnabled = false
         self.addSubview(view)
         view.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-        view.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -3.5).isActive = true
+        view.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
         view.constrainHeight(to: 13)
         view.widthAnchor.constraint(equalTo: self.widthAnchor, constant: 7).isActive = true
         view.roundedCorners(radius: 6.5)
