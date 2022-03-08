@@ -18,7 +18,7 @@ class BlobTests: XCTestCase {
         let expectedSubstringsAndRanges = [
             ("![image](&wXkgLeyJZVLUCb5D0TOty9kuTZ7ZTyZj1lIWoYeenxo=.sha256)", NSRange(location: 0, length: 62))
         ]
-        
+
         // Act
         let substringsAndRanges = inlineBlob.blobSubstringsAndRanges()
         
