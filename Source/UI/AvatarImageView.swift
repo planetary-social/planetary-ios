@@ -44,7 +44,7 @@ class AvatarImageView: ImageView {
         if person.image_url == nil, let imageIdentifier = person.image {
             
             // cached image
-            if let image = Caches.blobs.image(for: person.image!) {
+            if let image = Caches.blobs.image(for: imageIdentifier) {
                  DispatchQueue.main.async {
                     if animate {
                         self.fade(to: image)
@@ -56,7 +56,7 @@ class AvatarImageView: ImageView {
             }
 
             // request image
-            Caches.blobs.image(for: person.image!) { [weak self] result in
+            Caches.blobs.image(for: imageIdentifier) { [weak self] result in
                 
                 let image = try? result.get().1
                 

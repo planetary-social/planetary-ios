@@ -8,8 +8,8 @@
 
 import Foundation
 import ImageSlideshow
-import UIKit
 import Logger
+import UIKit
 
 class GalleryView: UIView, KeyValueUpdateable {
 

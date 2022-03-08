@@ -79,8 +79,12 @@ class BlobCache: DictionaryCache {
     /// Same as `image(for identifier:completion:)` except in returns a placeholder image if the blob type is
     /// unsupported.
     @discardableResult
-    func imageOrPlaceholder(for identifier: BlobIdentifier, completion: @escaping (UIImage) -> Void) -> UIImageCompletionHandle? {
-        return image(for: identifier) { result in
+    func imageOrPlaceholder(
+        for identifier: BlobIdentifier,
+        completion: @escaping (UIImage) -> Void
+    ) -> UIImageCompletionHandle? {
+        
+        image(for: identifier) { result in
             switch result {
             case .success((_, let loadedImage)):
                 completion(loadedImage)
@@ -125,8 +129,11 @@ class BlobCache: DictionaryCache {
     }
     
     /// Attempt to load a blob from Planetary's cloud services.
-    private func loadBlobFromCloud(for ref: BlobIdentifier, completion: @escaping (Result<UIImage, BlobCacheError>) -> Void) {
-        let hexRef = ref.hexEncodedString()
+    private func loadBlobFromCloud(
+        for blobRef: BlobIdentifier,
+        completion: @escaping (Result<UIImage, BlobCacheError>) -> Void
+    ) {
+        let hexRef = blobRef.hexEncodedString()
         
         // first 2 chars are directory
         let dir = String(hexRef.prefix(2))
@@ -159,7 +166,7 @@ class BlobCache: DictionaryCache {
                 return
             }
             
-            Bots.current.store(data: data, for: ref) { (url, error) in
+            Bots.current.store(data: data, for: ref) { (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
@@ -174,10 +181,10 @@ class BlobCache: DictionaryCache {
         }
         
         self.dataTasksQueue.async { [weak self] in
-            if let dataTask = self?.dataTasks[ref] {
+            if let dataTask = self?.dataTasks[blobRef] {
                 dataTask.cancel()
             }
-            self?.dataTasks[ref] = dataTask
+            self?.dataTasks[blobRef] = dataTask
         }
         
         dataTask.resume()
@@ -204,7 +211,7 @@ class BlobCache: DictionaryCache {
         forgetCompletions(for: identifier)
         cancelDataTask(for: identifier)
         
-        completions.forEach { (uuid, completion) in
+        completions.forEach { (_, completion) in
             completion(result.map { (identifier, $0) })
         }
         

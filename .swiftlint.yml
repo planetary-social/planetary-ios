@@ -114,4 +114,6 @@ identifier_name:
     - k
     - id
     - url
+    - lhs
+    - rhs
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, codeclimate, junit, html, emoji, sonarqube, markdown, github-actions-logging)

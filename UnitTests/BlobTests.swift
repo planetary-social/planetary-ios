@@ -10,7 +10,7 @@ import XCTest
 
 /// Some integration tests for our Blob-handling code.
 class BlobTests: XCTestCase {
-    
+
     /// Verifies that we parse markdown image links in a post.
     func testMarkdownImageLink() throws {
         // Arrange
@@ -24,7 +24,6 @@ class BlobTests: XCTestCase {
         
         // Assert
         assertEqualSubstringsAndRanges(substringsAndRanges, expectedSubstringsAndRanges)
-
     }
 
     /// Verifies that we parse a markdown image link where the name of the image is empty.
