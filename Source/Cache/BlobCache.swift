@@ -166,7 +166,7 @@ class BlobCache: DictionaryCache {
                 return
             }
             
-            Bots.current.store(data: data, for: ref) { (_, error) in
+            Bots.current.store(data: data, for: blobRef) { (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
@@ -176,7 +176,7 @@ class BlobCache: DictionaryCache {
                     }
                 }
                 
-                self?.removeDataTask(for: ref)
+                self?.removeDataTask(for: blobRef)
             }
         }
         
