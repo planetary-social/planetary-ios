@@ -14,6 +14,7 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
+
     func lastReceivedTimestam() throws -> Double {
         fatalError("TODO:\(#function)")
     }
@@ -99,7 +100,7 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
     
-    func uiimage(for image: Image, completion: @escaping UIImageCompletion) {
+    func uiimage(for image: ImageMetadata, completion: @escaping UIImageCompletion) {
         fatalError("TODO")
     }
 
@@ -162,7 +163,7 @@ class FakeBot: Bot {
     }
     
 
-    private init() {}
+    init() {}
     static let shared = FakeBot()
 
     // MARK: Name
@@ -340,11 +341,12 @@ class FakeBot: Bot {
     
     // MARK: Statistics
 
-    private var _statistics = MutableBotStatistics()
-    var statistics: BotStatistics { return self._statistics }
+    private var _statistics = BotStatistics()
+    var mockStatistics = [BotStatistics]()
+    var statistics: BotStatistics { return mockStatistics.popLast() ?? _statistics }
     
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
-        let statistics = _statistics
+        let statistics = mockStatistics.popLast() ?? _statistics
         queue.async {
             completion(statistics)
         }

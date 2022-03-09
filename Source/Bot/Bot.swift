@@ -9,7 +9,7 @@ import UIKit
 // Convenience types to simplify writing completion closures.
 typealias AboutCompletion = ((About?, Error?) -> Void)
 typealias AboutsCompletion = (([About], Error?) -> Void)
-typealias AddImageCompletion = ((Image?, Error?) -> Void)
+typealias AddImageCompletion = ((ImageMetadata?, Error?) -> Void)
 typealias BlobsAddCompletion = ((BlobIdentifier, Error?) -> Void)
 typealias BlobsStoreCompletion = ((URL?, Error?) -> Void)
 typealias ContactCompletion = ((Contact?, Error?) -> Void)
@@ -234,6 +234,14 @@ extension Bot {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
+    func refresh(load: RefreshLoad, queue: DispatchQueue = .main) async -> (Error?, TimeInterval) {
+        return await withCheckedContinuation { continuation in
+            refresh(load: load, queue: queue) { result1, result2 in
+                continuation.resume(returning: (result1, result2))
+            }
+        }
+    }
+    
     func abouts(completion:  @escaping AboutsCompletion) {
         self.abouts(queue: .main, completion: completion)
     }
@@ -250,12 +258,32 @@ extension Bot {
         self.statistics(queue: .main, completion: completion)
     }
     
+    func statistics() async -> BotStatistics {
+        return await withCheckedContinuation { continuation in
+            statistics() { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
     func reports(completion: @escaping (([Report], Error?) -> Void)) {
         self.reports(queue: .main, completion: completion)
     }
     
     func about(identity: Identity, completion:  @escaping AboutCompletion) {
         self.about(queue: .main, identity: identity, completion: completion)
+    }
+    
+    func about(identity: Identity) async throws -> About? {
+        return try await withCheckedThrowingContinuation { continuation in
+            about(identity: identity) { about, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: about)
+            }
+        }
     }
     
     func redeemInvitation(to star: Star, completion: @escaping ErrorCompletion) {
@@ -268,6 +296,18 @@ extension Bot {
     
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
         self.publish(content: content, completionQueue: .main, completion: completion)
+    }
+    
+    func publish(content: ContentCodable) async throws -> MessageIdentifier {
+        return try await withCheckedThrowingContinuation { continuation in
+            publish(content: content) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result)
+            }
+        }
     }
     
     func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {

@@ -14,7 +14,7 @@ class BotViewController: DebugTableViewController {
 
     var bot: Bot
     let configuration: AppConfiguration?
-    var statistics: BotStatistics = MutableBotStatistics()
+    var statistics: BotStatistics = BotStatistics()
 
     // MARK: Lifecycle
 

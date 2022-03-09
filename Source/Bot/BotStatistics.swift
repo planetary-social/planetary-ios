@@ -8,18 +8,24 @@ import Analytics
 
 // MARK:- API statistics
 
-protocol BotStatistics {
+struct BotStatistics: Equatable {
 
-    var lastSyncDate: Date? { get }
-    var lastSyncDuration: TimeInterval { get }
+    var lastSyncDate: Date?
+    var lastSyncDuration: TimeInterval = 0
 
-    var lastRefreshDate: Date? { get }
-    var lastRefreshDuration: TimeInterval { get }
+    var lastRefreshDate: Date?
+    var lastRefreshDuration: TimeInterval = 0
 
-    var repo: RepoStatistics { get }
-    var peer: PeerStatistics { get }
-    var db: DatabaseStatistics { get }
+    /// The number of new posts that have been downloaded in the `recentlyDownloadedPostDuration`.
+    var recentlyDownloadedPostCount = 0
 
+    /// The number of minutes we consider "recent" for the `recentlyDownloadedPostCount`. So if this value is 15, then
+    /// `recentlyDownloadedPostCount` will contain all posts 
+    var recentlyDownloadedPostDuration = 15
+
+    var repo = RepoStatistics()
+    var peer = PeerStatistics()
+    var db = DatabaseStatistics()
 }
 
 extension BotStatistics {
@@ -47,20 +53,7 @@ extension BotStatistics {
 
 }
 
-struct MutableBotStatistics: BotStatistics {
-
-    var lastSyncDate: Date?
-    var lastSyncDuration: TimeInterval = 0
-
-    var lastRefreshDate: Date?
-    var lastRefreshDuration: TimeInterval = 0
-
-    var repo = RepoStatistics()
-    var peer = PeerStatistics()
-    var db = DatabaseStatistics()
-}
-
-struct RepoStatistics {
+struct RepoStatistics: Equatable {
 
     /// Path to the repo
     let path: String
@@ -90,7 +83,7 @@ struct RepoStatistics {
     }
 }
 
-struct DatabaseStatistics {
+struct DatabaseStatistics: Equatable {
 
     let lastReceivedMessage: Int
 
@@ -100,16 +93,16 @@ struct DatabaseStatistics {
 
 }
 
-struct PeerStatistics {
+struct PeerStatistics: Equatable {
 
     let count: Int
     let connectionCount: UInt
 
     // name, identifier
-    let identities: [(String, String)]
+    let identities: [(name: String, identifier: Identifier)]
 
     // IP, Identifier
-    let currentOpen: [(String, String)]
+    let currentOpen: [(name: String, identifier: Identifier)]
 
     init(count: Int? = 0,
          connectionCount: UInt? = 0,
@@ -120,5 +113,14 @@ struct PeerStatistics {
         self.connectionCount = connectionCount ?? 0
         self.identities = identities ?? []
         self.currentOpen = open ?? []
+    }
+    
+    static func == (lhs: PeerStatistics, rhs: PeerStatistics) -> Bool {
+        return lhs.count == rhs.count &&
+        lhs.connectionCount == rhs.connectionCount &&
+        lhs.identities.map { $0.0 } == rhs.identities.map { $0.0 } &&
+        lhs.identities.map { $0.1 } == rhs.identities.map { $0.1 } &&
+        lhs.currentOpen.map { $0.0 } == rhs.currentOpen.map { $0.0 } &&
+        lhs.currentOpen.map { $0.1 } == rhs.currentOpen.map { $0.1 }
     }
 }

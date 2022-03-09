@@ -20,7 +20,7 @@ struct KeyValue: Codable {
 
     let key: Identifier
     let value: Value
-    let timestamp: Float64 // received time
+    let timestamp: Float64 // received time in milliseconds since the unix epoch
     // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
     let receivedSeq: Int64?
     let hashedKey: String?
