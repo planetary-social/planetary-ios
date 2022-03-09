@@ -289,10 +289,13 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.showProfileIdentityParameter, IdentityFixture.alice)
     }
     
-    func testTappingPeerCellWithoutIdentityShowsError() {
+    /// Verifies that if we can't find an about message for a peer we just assume they are using an ed25519 key
+    /// and show their profile page.
+    /// - See https://github.com/planetary-social/planetary-ios/issues/400
+    func testTappingPeerCellWithoutIdentityAssumesED25519() {
         // Act
         sut.peerTapped(PeerConnectionInfo(
-            id: "foo",
+            id: "foo=",
             identity: nil,
             name: nil,
             imageMetadata: nil,
@@ -300,8 +303,10 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         ))
         
         // Assert
-        XCTAssertEqual(mockRouter.showProfileCallCount, 0)
-        XCTAssertEqual(mockRouter.alertCallCount, 1)
+        XCTAssertEqual(mockRouter.showProfileCallCount, 1)
+        XCTAssertEqual(mockRouter.showProfileIdentityParameter, "@foo=.ed25519")
+        XCTAssertEqual(mockRouter.alertCallCount, 0)
+
     }
 }
 

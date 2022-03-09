@@ -127,6 +127,8 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
     // MARK: - User Actions
     
     func peerTapped(_ connectionInfo: PeerConnectionInfo) {
+        // Only supporting ed25519 keys for now.
+        // See https://github.com/planetary-social/planetary-ios/issues/400
         let identity = connectionInfo.identity ?? "@\(connectionInfo.id).ed25519"
         Analytics.shared.trackDidTapButton(buttonName: "show_connected_peer_profile")
         router.showProfile(for: identity)
@@ -155,18 +157,15 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             // See https://github.com/planetary-social/planetary-ios/issues/400
             let identity = "@\(publicKey).ed25519"
             
-            do {
-                let about = try? await bot.about(identity: identity)
-                
-                guard let about = about else {
-                    peerConnectionInfo.append(PeerConnectionInfo(id: publicKey, name: publicKey))
-                    continue
-                }
-                
-                peerConnectionInfo.append(PeerConnectionInfo(about: about))
-            } catch {
-                Log.optional(error)
+            let about = try? await bot.about(identity: identity)
+            
+            guard let about = about else {
+                peerConnectionInfo.append(PeerConnectionInfo(id: publicKey, name: publicKey))
+                continue
             }
+            
+            peerConnectionInfo.append(PeerConnectionInfo(about: about))
+
         }
         
         return peerConnectionInfo.sorted { lhs, rhs in
