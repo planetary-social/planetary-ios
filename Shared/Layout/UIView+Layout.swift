@@ -138,7 +138,6 @@ extension UIView {
 
 
     func constrain(to view: UIView) {
-        assert(self.superview == view.superview)
         self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         self.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         self.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
@@ -154,13 +153,11 @@ extension UIView {
     }
 
     func constrainLeading(to view: UIView, constant: CGFloat = 0) {
-        assert(self.superview == view.superview)
         self.leadingAnchor.constraint(equalTo: view.leadingAnchor,
                                       constant: constant).isActive = true
     }
 
     func constrainLeading(toTrailingOf view: UIView, constant: CGFloat = 8) {
-        assert(self.superview == view.superview)
         self.leadingAnchor.constraint(equalTo: view.trailingAnchor,
                                       constant: constant).isActive = true
     }
@@ -171,22 +168,23 @@ extension UIView {
                                       constant: constant).isActive = true
     }
 
-    func constrainTrailing(to view: UIView, constant: CGFloat = 0) {
-        assert(self.superview == view.superview)
+    func constrainTrailing(toTrailingOf view: UIView, constant: CGFloat = 0) {
         self.trailingAnchor.constraint(equalTo: view.trailingAnchor,
                                        constant: constant).isActive = true
     }
 
     func constrainTrailing(toLeadingOf view: UIView, constant: CGFloat = -8) {
-        assert(self.superview == view.superview)
         self.trailingAnchor.constraint(equalTo: view.leadingAnchor,
                                        constant: constant).isActive = true
     }
 
     func constrainTop(toTopOf view: UIView, constant: CGFloat = 0) {
-        assert(self.superview == view.superview)
         self.topAnchor.constraint(equalTo: view.topAnchor,
                                   constant: constant).isActive = true
     }
     
+    func constrainBottom(toBottomOf view: UIView, constant: CGFloat = 0) {
+        self.bottomAnchor.constraint(equalTo: view.bottomAnchor,
+                                  constant: constant).isActive = true
+    }
 }
