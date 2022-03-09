@@ -802,7 +802,7 @@ class GoBot: Bot {
                 identifier, error in
                 CrashReporting.shared.reportIfNeeded(error: error)
                 if Log.optional(error) { completionOnMain(nil, error); return }
-                let image = Image(link: identifier, jpegImage: uiimage, data: data)
+                let image = ImageMetadata(link: identifier, jpegImage: uiimage, data: data)
                 completionOnMain(image, nil)
             }
         }
@@ -1270,7 +1270,7 @@ class GoBot: Bot {
 
     // MARK: Statistics
 
-    private var _statistics = MutableBotStatistics()
+    private var _statistics = BotStatistics()
     
     var statistics: BotStatistics {
         let counts = try? self.bot.repoStatus()
@@ -1331,6 +1331,15 @@ class GoBot: Bot {
                                                    connectionCount: connectionCount,
                                                    identities: openConnections,
                                                    open: openConnections)
+            
+            self._statistics.recentlyDownloadedPostDuration = 15 // minutes
+            do {
+                self._statistics.recentlyDownloadedPostCount = try self.database.messageReceivedCount(
+                    since: Date(timeIntervalSinceNow: Double(self._statistics.recentlyDownloadedPostDuration) * -60)
+                )
+            } catch {
+                Log.optional(error)
+            }
 
             self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
             

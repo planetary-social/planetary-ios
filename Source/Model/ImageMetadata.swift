@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Image: Codable {
+struct ImageMetadata: Codable, Equatable {
 
     let height: Int?
     let link: BlobIdentifier
@@ -21,7 +21,7 @@ struct Image: Codable {
     }
 }
 
-extension Image {
+extension ImageMetadata {
 
     init(link: BlobIdentifier) {
         self.height = nil

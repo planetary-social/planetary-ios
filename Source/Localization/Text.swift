@@ -46,6 +46,7 @@ enum Text: String, Localizable, CaseIterable {
     case future = "In the future"
     case daysAgo = "{{ days }} days ago"
     case atDayTime = "{{ day }} at {{ time }}"
+    case minutesAbbreviated = "{{ numberOfMinutes }} mins"
 
     case yourProfile = "Your Profile"
     case helpAndSupport = "Help and Support"
@@ -131,9 +132,13 @@ enum Text: String, Localizable, CaseIterable {
     case countOthers = "{{ count }} others"
     case andOneOther = " and 1 other"
 
+    case connectedPeers = "Connected Peers"
     case countOnlinePeers = "{{ count }} ONLINE PEERS"
     case countLocalPeers = "{{ count }} LOCAL PEERS"
     case lastSynced = "SYNCED: {{ when }}"
+    case syncingMessages = "Syncing Messages..."
+    case recentlyDownloaded = "Downloaded {{ postCount }} posts in the last {{ duration }} mins"
+    case identityNotFound = "We don't know enough about this peer to show their profile."
     
     case channels = "Hashtags"
     case select = "Select"

@@ -65,7 +65,7 @@ class PostHeaderView: UIView {
         self.addSubview(self.dateLabel)
         self.dateLabel.pinTop(toBottomOf: self.nameButton)
         self.dateLabel.constrainLeading(to: self.nameButton)
-        self.dateLabel.constrainTrailing(to: self.nameButton)
+        self.dateLabel.constrainTrailing(toTrailingOf: self.nameButton)
 
         self.nameButton.constrainHeight(to: 19)
         self.dateLabel.constrainHeight(to: 19)

@@ -111,10 +111,10 @@ extension AppController {
     // TODO this is incorrectly scoped, push to the app controller should
     // reset the root controller, not push into a child feature controller
     func pushViewController(for contentType: ContentType,
-                            with identifier: Identifier)
+                            with identity: Identity)
     {
         guard contentType == .about else { return }
-        let controller = AboutViewController(with: identifier)
+        let controller = AboutViewController(with: identity)
         self.push(controller, animated: true)
     }
     

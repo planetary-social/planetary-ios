@@ -79,6 +79,7 @@ class ViewDatabase {
     private let colAuthorID = Expression<Int64>("author_id")
     private let colSequence = Expression<Int>("sequence")
     private let colMsgType = Expression<String>("type")
+    // received time in milliseconds since the unix epoch
     private let colReceivedAt = Expression<Double>("received_at")
     private let colClaimedAt = Expression<Double>("claimed_at")
     private let colDecrypted = Expression<Bool>("is_decrypted")
@@ -2586,6 +2587,25 @@ class ViewDatabase {
         }
         do {
             return try db.scalar(self.msgs.count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("messageCount failed", error))
+            return 0
+        }
+    }
+    
+    /// - Parameter since: the date we want to check against.
+    /// - Returns: The number of messages received since the given date.
+    func messageReceivedCount(since: Date) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            return try db.scalar(
+                self.msgs
+                    .count
+                    .filter(colReceivedAt > since.millisecondsSince1970)
+                    .where(msgs[colAuthorID] != currentUserID)
+            )
         } catch {
             Log.optional(GoBotError.duringProcessing("messageCount failed", error))
             return 0

@@ -10,10 +10,16 @@ import Foundation
 import UIKit
 import Logger
 
-extension UIViewController {
+/// Describes an object capable of presenting alerts.
+protocol AlertRouter {
     
     /// Presents an error message to the user in an alert box.
     /// - Parameter error: The error to present to the user. The `localizedDescription` is used for the error message.
+    func alert(error: Error)
+}
+
+extension UIViewController: AlertRouter {
+    
     func alert(error: Error) {
         let controller = UIAlertController(title: Text.error.text,
                                            message: error.localizedDescription,
