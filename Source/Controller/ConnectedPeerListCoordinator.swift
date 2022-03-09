@@ -127,11 +127,7 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
     // MARK: - User Actions
     
     func peerTapped(_ connectionInfo: PeerConnectionInfo) {
-        guard let identity = connectionInfo.identity else {
-            router.alert(error: ConnectedPeerListError.identityNotFound)
-            return
-        }
-        
+        let identity = connectionInfo.identity ?? "@\(connectionInfo.id).ed25519"
         Analytics.shared.trackDidTapButton(buttonName: "show_connected_peer_profile")
         router.showProfile(for: identity)
     }    
@@ -160,7 +156,7 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             let identity = "@\(publicKey).ed25519"
             
             do {
-                let about = try await bot.about(identity: identity)
+                let about = try? await bot.about(identity: identity)
                 
                 guard let about = about else {
                     peerConnectionInfo.append(PeerConnectionInfo(id: publicKey, name: publicKey))
