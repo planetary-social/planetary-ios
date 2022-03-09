@@ -43,8 +43,8 @@ import Logger
     }
 
     private func update() {
-        Caches.blobs.imageOrPlaceholder(for: self.blob) { [weak self] image in
-            self?.imageView.image = image
+        Task {
+            imageView.image = await Caches.blobs.imageOrPlaceholder(for: blob)
         }
     }
 }

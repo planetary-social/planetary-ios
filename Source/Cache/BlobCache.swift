@@ -94,6 +94,15 @@ class BlobCache: DictionaryCache {
             }
         }
     }
+    
+    /// An async version of `imageOrPlaceholder(for:completion:)`. Does not support cancellation.
+    func imageOrPlaceholder(for identifier: BlobIdentifier) async -> UIImage {
+        await withCheckedContinuation { continuation in
+            self.imageOrPlaceholder(for: identifier) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
 
     private func loadImage(for identifier: BlobIdentifier) {
         
