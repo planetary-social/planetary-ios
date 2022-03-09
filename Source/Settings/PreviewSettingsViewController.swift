@@ -140,7 +140,9 @@ class PreviewSettingsViewController: DebugTableViewController {
 
     private func relaunch() {
         self.dismiss(animated: true) {
-            AppController.shared.relaunch()
+            Task {
+                await AppController.shared.relaunch()
+            }
         }
     }
     

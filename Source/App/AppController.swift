@@ -121,6 +121,10 @@ class AppController: UIViewController {
         self.mainViewController?.present(nc, animated: true)
     }
     
+    func dismissSettingsViewController(completion: (() -> Void)? = nil) {
+        mainViewController?.dismiss(animated: true, completion: completion)
+    }
+    
     // MARK: Observers
     
     func addObservers() {

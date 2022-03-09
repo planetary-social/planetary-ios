@@ -76,6 +76,8 @@ class NetworkKey: DataKey {
     
     // Planetary develpoment network for the new format
     static let planetary = NetworkKey(base64: Environment.PlanetaryNetwork.key)!
+    
+    static let planetaryTest = NetworkKey(base64: Environment.TestingNetwork.key)!
 
     var name: String {
         if self == NetworkKey.ssb { return Environment.DefaultNetwork.name }
@@ -98,4 +100,6 @@ class HMACKey: DataKey {
 
     // Next HMAC key
     static let planetary = HMACKey(base64: Environment.PlanetaryNetwork.hmac)!
+    
+    static let planetaryTest = HMACKey(base64: Environment.TestingNetwork.hmac)!
 }

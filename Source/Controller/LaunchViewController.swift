@@ -113,7 +113,9 @@ class LaunchViewController: UIViewController {
                         Analytics.shared.forget()
                         CrashReporting.shared.forget()
                         
-                        AppController.shared.relaunch()
+                        Task {
+                            await AppController.shared.relaunch()
+                        }
                     }
                 }
                 controller.addAction(action)
@@ -131,7 +133,9 @@ class LaunchViewController: UIViewController {
                         Analytics.shared.forget()
                         CrashReporting.shared.forget()
                         
-                        AppController.shared.relaunch()
+                        Task {
+                            await AppController.shared.relaunch()
+                        }
                     }
                 }
                 controller.addAction(reset)
