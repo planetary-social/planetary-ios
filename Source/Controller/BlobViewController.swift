@@ -11,7 +11,7 @@ import UIKit
 import Analytics
 import Logger
 
-class BlobViewController: ContentViewController {
+@MainActor class BlobViewController: ContentViewController {
 
     private let blob: BlobIdentifier
 
@@ -44,7 +44,11 @@ class BlobViewController: ContentViewController {
 
     private func update() {
         Caches.blobs.imageOrPlaceholder(for: self.blob) { [weak self] image in
-            self?.imageView.image = image
+            Task { [self] in
+                await MainActor.run {
+                    self?.imageView.image = image
+                }
+            }
         }
     }
 }
