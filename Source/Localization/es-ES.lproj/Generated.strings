@@ -18,6 +18,7 @@
 "Text.future" = "En el futuro";
 "Text.daysAgo" = "hace {{ days }} días";
 "Text.atDayTime" = "{{ day }} a las {{ time }}";
+"Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
 "Text.yourProfile" = "Tu Perfil";
 "Text.helpAndSupport" = "Ayuda y Soporte";
 "Text.reportBug" = "Reportar una falla";
@@ -83,9 +84,13 @@
 "Text.andCountOthers" = " y {{ count }} más";
 "Text.countOthers" = "{{ count }} más";
 "Text.andOneOther" = " y 1 más";
+"Text.connectedPeers" = "Connected Peers";
 "Text.countOnlinePeers" = "{{ count }} PARES EN LÍNEA";
 "Text.countLocalPeers" = "{{ count }} PARES LOCALES";
 "Text.lastSynced" = "ULTIMA: {{ when }}";
+"Text.syncingMessages" = "Syncing Messages...";
+"Text.recentlyDownloaded" = "Downloaded {{ postCount }} posts in the last {{ duration }} mins";
+"Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
 "Text.home" = "Para tí";
