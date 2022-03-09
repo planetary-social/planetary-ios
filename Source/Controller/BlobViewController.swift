@@ -44,11 +44,7 @@ import Logger
 
     private func update() {
         Caches.blobs.imageOrPlaceholder(for: self.blob) { [weak self] image in
-            Task { [self] in
-                await MainActor.run {
-                    self?.imageView.image = image
-                }
-            }
+            self?.imageView.image = image
         }
     }
 }
