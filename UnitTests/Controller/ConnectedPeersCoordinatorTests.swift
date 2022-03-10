@@ -306,7 +306,6 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockRouter.showProfileCallCount, 1)
         XCTAssertEqual(mockRouter.showProfileIdentityParameter, "@foo=.ed25519")
         XCTAssertEqual(mockRouter.alertCallCount, 0)
-
     }
 }
 

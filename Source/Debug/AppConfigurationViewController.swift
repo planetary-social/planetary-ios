@@ -255,26 +255,26 @@ class AppConfigurationViewController: DebugTableViewController {
         )]
         
         #if DEBUG
-        settings += [DebugTableViewCellModel(title: "Planetary Test Network",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
-                cell in
-                cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
-                cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                cell.detailTextLabel?.text = NetworkKey.planetaryTest.string
-                let selected = self.configuration.network == NetworkKey.planetaryTest
-                cell.accessoryType = selected ? .checkmark : .none
-                cell.textLabel?.isEnabled = self.canEditConfiguration
-                cell.isUserInteractionEnabled = self.canEditConfiguration
-        },
-                                             actionClosure:
-            {
-                [unowned self] cell in
-                self.configuration.network = NetworkKey.planetaryTest
-                self.refresh()
-            }
-        )]
+        settings += [
+            DebugTableViewCellModel(
+                title: "Planetary Test Network",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: {
+                    cell in
+                    cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
+                    cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
+                    cell.detailTextLabel?.text = NetworkKey.planetaryTest.string
+                    let selected = self.configuration.network == NetworkKey.planetaryTest
+                    cell.accessoryType = selected ? .checkmark : .none
+                    cell.textLabel?.isEnabled = self.canEditConfiguration
+                    cell.isUserInteractionEnabled = self.canEditConfiguration
+                }, actionClosure: {
+                    [unowned self] cell in
+                    self.configuration.network = NetworkKey.planetaryTest
+                    self.refresh()
+                }
+            )
+        ]
         #endif
         
         return ("Networks", settings, nil)
