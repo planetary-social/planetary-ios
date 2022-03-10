@@ -12,6 +12,7 @@ import Foundation
 import SQLite
 import CryptoKit
 import Logger
+import Analytics
 
 // schema migration handling
 extension Connection {
@@ -78,6 +79,7 @@ class ViewDatabase {
     private let colAuthorID = Expression<Int64>("author_id")
     private let colSequence = Expression<Int>("sequence")
     private let colMsgType = Expression<String>("type")
+    // received time in milliseconds since the unix epoch
     private let colReceivedAt = Expression<Double>("received_at")
     private let colClaimedAt = Expression<Double>("claimed_at")
     private let colDecrypted = Expression<Bool>("is_decrypted")
@@ -2331,10 +2333,8 @@ class ViewDatabase {
                 // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                 skipped += 1
                 print("Skipped(\(msg.value.content.type) \(msg.key)%)")
-                Analytics.shared.track(event: .did,
-                                       element: .bot,
-                                       name: AnalyticsEnums.Name.sync.rawValue,
-                                       params: ["Skipped": msg.key, "Reason": "Old Message"])
+                Analytics.shared.trackBotDidSkipMessage(key: msg.key,
+                                                        reason: "Old Message")
                 continue
             }
             
@@ -2473,20 +2473,9 @@ class ViewDatabase {
             print("unsupported types encountered: \(total) (\(total*100/msgs.count)%)")
         }
         #endif
-        
-        
-         let params = [
-             "inserted": msgs.count
 
-         ]
+        Analytics.shared.trackBotDidUpdateMessages(count: msgs.count)
 
-        
-        Analytics.shared.track(event: .did,
-                         element: .bot,
-                         name: AnalyticsEnums.Name.db_update.rawValue,
-                         params: params)
-        
-        
         if skipped > 0 {
             print("skipped \(skipped) messages")
         }
@@ -2598,6 +2587,25 @@ class ViewDatabase {
         }
         do {
             return try db.scalar(self.msgs.count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("messageCount failed", error))
+            return 0
+        }
+    }
+    
+    /// - Parameter since: the date we want to check against.
+    /// - Returns: The number of messages received since the given date.
+    func messageReceivedCount(since: Date) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            return try db.scalar(
+                self.msgs
+                    .count
+                    .filter(colReceivedAt > since.millisecondsSince1970)
+                    .where(msgs[colAuthorID] != currentUserID)
+            )
         } catch {
             Log.optional(GoBotError.duringProcessing("messageCount failed", error))
             return 0

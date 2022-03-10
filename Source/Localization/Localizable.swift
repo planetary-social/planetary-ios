@@ -1,16 +1,21 @@
 import Foundation
+import SwiftUI
 
 protocol Localizable {
     var template: String { get }
 
-    // optionally override this to provide your own key
+    /// optionally override this to provide your own key
     var key: String { get }
 
-    // optionally override this to provide your own namespace key
-    // defaults to the type name of the enum
+    /// optionally override this to provide your own namespace key
+    /// defaults to the type name of the enum
     static var namespace: String { get }
+    
+    /// Creates a SwiftUI Text view for this text.
+    var view: SwiftUI.Text { get }
 
     static func exportForStringsFile() -> String
+    
 }
 
 //    Use as follows:
@@ -40,11 +45,12 @@ protocol Localizable {
 //        }
 //
 extension Localizable {
+    
     // You can modify this to perform localization, or overrides based on server or other config
     var text: String {
-        return NSLocalizedString(key, tableName: "Generated", comment: "")
+        let bundle = Bundle(for: CurrentBundle.self)
+        return NSLocalizedString(key, tableName: "Generated", bundle: bundle, comment: "")
     }
-
 
     // replaces keys in the string with values from the dictionary passed
     // case greeting = "Hello {{ name }}."
@@ -72,6 +78,15 @@ extension Localizable {
     static var namespace: String {
         return String(describing: self)
     }
+    
+    var view: SwiftUI.Text {
+        return SwiftUI.Text(text)
+    }
+    
+    func view(_ arguments: [String: String]) -> SwiftUI.Text {
+        return SwiftUI.Text(text(arguments))
+    }
+
 
     var key: String {
         return "\(Self.namespace).\(String(describing: self))"
@@ -103,3 +118,5 @@ extension Localizable where Self: CaseIterable {
         return list.joined(separator: "\n")
     }
 }
+
+fileprivate class CurrentBundle {}

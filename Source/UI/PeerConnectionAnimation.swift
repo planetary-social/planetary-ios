@@ -10,8 +10,8 @@ import UIKit
 
 class PeerConnectionAnimation: UIView {
 
-    // this was used for easier debugging at a larger size, could be refactored out.
-    var multiplier:      CGFloat = 1.0
+    /// A multiplier applied to the size of all elements.
+    var multiplier:      CGFloat
 
     lazy var lineWidth:       CGFloat = { 1 * self.multiplier }()
 
@@ -34,6 +34,10 @@ class PeerConnectionAnimation: UIView {
     }
     var totalRadius: CGFloat {
         return totalDiameter / 2
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        return CGSize(square: totalDiameter)
     }
 
     private var insideDots = 0 {
@@ -59,13 +63,29 @@ class PeerConnectionAnimation: UIView {
     var disabledColor = #colorLiteral(red: 0.6195520163, green: 0.619643569, blue: 0.6195320487, alpha: 1)
     var searchColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
 
-    init(color: UIColor) {
+    init(color: UIColor,
+         sizeMultiplier: CGFloat = 1.0,
+         lineWidth: CGFloat = 1,
+         centerDotSize: CGFloat = 7,
+         dotSize: CGFloat = 5,
+         insideDiameter: CGFloat = 23,
+         outsideDiameter: CGFloat = 38
+    ) {
+        self.multiplier = sizeMultiplier
+
         super.init(frame: .zero)
         
         self.inColor = color
         self.outColor = color
         self.disabledColor = color
         self.searchColor = color
+        
+        self.multiplier = sizeMultiplier
+        self.lineWidth = lineWidth
+        self.centerDotSize = centerDotSize
+        self.dotSize = dotSize
+        self.insideDiameter = insideDiameter
+        self.outsideDiameter = outsideDiameter
 
         self.insideCircle = addCircle(size: self.insideDiameter)
         self.outsideCircle = addCircle(size: self.outsideDiameter)

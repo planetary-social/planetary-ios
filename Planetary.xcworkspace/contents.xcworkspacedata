@@ -5,6 +5,9 @@
       location = "group:Planetary.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Analytics">
+   </FileRef>
+   <FileRef
       location = "group:Logger">
    </FileRef>
    <FileRef

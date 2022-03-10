@@ -1,6 +1,21 @@
 [
     {
         "type": "about",
+        "about": "@pEq+oDSFsYZfSow78WQcPzAAKnxCYEMZJlzTUoOAq9U=.ed25519",
+        "name": "Alice"
+    },
+    {
+        "type": "about",
+        "about": "@ar0OcuproJ8kODB9fn4iYhxQeR1gSJLtJiup2s2nAiI=.ed25519",
+        "name": "Bob"
+    },
+    {
+        "type": "about",
+        "about": "@124312414112323t29091209eisntniaoe+=.ed25519",
+        "description": "An identity with an about message but no name set"
+    },
+    {
+        "type": "about",
         "about": "@WidzxlRBJEK6Tnz9S1n008BjvjLBFSQzKKuATgqMl94=.ed25519",
         "name": "cryptix-verse"
     },

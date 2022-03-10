@@ -24,4 +24,11 @@ final class SecretsTests: XCTestCase {
         XCTAssertEqual(secrets.get(key: .posthog), expectedValue)
     }
 
+    func testInit() {
+        secrets = Keys(bundle: .module)
+        let expectedValue = "posthog-key"
+        service.value = expectedValue
+        XCTAssertEqual(secrets.get(key: .posthog), expectedValue)
+    }
+
 }

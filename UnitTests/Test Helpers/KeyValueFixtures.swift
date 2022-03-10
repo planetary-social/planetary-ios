@@ -12,9 +12,13 @@ import Foundation
 struct KeyValueFixtures {
     static let keyValueWithReceivedSeq = keyValue(fromFixture: "KeyValueWithReceivedSeq.json")
     
-    static func keyValue(author: Identity) -> KeyValue {
+    static func keyValue(
+        key: MessageIdentifier = "TestPostId=.ed25519",
+        receivedTimestamp: Float64 = 2684029486000, // 2055
+        receivedSeq: Int64 = 0, // largest in example feed is 77
+        author: Identity) -> KeyValue {
         return KeyValue(
-            key: Identifier("TestPostId=.ed25519"),
+            key: key,
             value: Value(
                 author: author,
                 content: Content(from: Post(text: "post")),
@@ -24,8 +28,8 @@ struct KeyValueFixtures {
                 signature: Identifier("signature"),
                 timestamp: 2684029486000 // 2055
             ),
-            timestamp: 2684029486000, // 2055
-            receivedSeq: 55555,
+            timestamp: receivedTimestamp,
+            receivedSeq: receivedSeq,
             hashedKey: "hashedKey"
         )
     }

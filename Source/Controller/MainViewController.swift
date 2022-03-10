@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Analytics
 
 class MainViewController: UITabBarController {
 

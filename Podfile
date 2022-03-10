@@ -16,7 +16,6 @@ target 'Planetary' do
     pod 'Bugsnag', '5.23.1' # If you upgrade bugsnag you should also manually upgrade the Upload dSYMs script if necessary. See Architecture/0003-manually-manage-bugsnag-upload-dsyms-script.md
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
-    pod "PostHog", "~> 1.1"
 end
 
 target 'APITests' do
@@ -55,6 +54,13 @@ post_install do | installer |
         target.build_configurations.each do |config|
             config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
             config.build_settings['ENABLE_BITCODE'] = 'NO'
+        end
+    end
+
+    # Silence deployment target warnings.
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
         end
     end
 end
