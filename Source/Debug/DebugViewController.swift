@@ -549,8 +549,10 @@ class DebugViewController: DebugTableViewController {
             Analytics.shared.forget()
             CrashReporting.shared.forget()
             
-            AppController.shared.relaunch()
-            self?.dismiss(animated: true, completion: nil)
+            Task { [weak self] in
+                await AppController.shared.relaunch()
+                self?.dismiss(animated: true, completion: nil)
+            }
         }
     }
 

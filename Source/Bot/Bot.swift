@@ -218,6 +218,18 @@ extension Bot {
                    secret: secret,
                    completion: completion)
     }
+    
+    func logout() async throws {
+        let error: Error? = await withCheckedContinuation { continuation in
+            self.logout { error in
+                continuation.resume(with: .success(error))
+            }
+        }
+        if let error = error {
+            throw error
+        }
+    }
+    
     func sync(peers: [Peer], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
