@@ -22,6 +22,16 @@ typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, 
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
+    
+    init(tcpAddr: String, pubKey: Identity) {
+        self.tcpAddr = tcpAddr
+        self.pubKey = pubKey
+    }
+    
+    init(pubAddress: PubAddress) {
+        self.tcpAddr = "\(pubAddress.host):\(pubAddress.port)"
+        self.pubKey = pubAddress.key
+    }
 }
 
 // used to drain a single user feed
