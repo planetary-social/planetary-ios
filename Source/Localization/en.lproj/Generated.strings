@@ -48,6 +48,8 @@
 "Text.name" = "Name";
 "Text.bio" = "Bio";
 "Text.seeMore" = "See more";
+"Text.likesThis" = "Likes this";
+"Text.dislikesThis" = "Dislikes this";
 "Text.block" = "Block";
 "Text.blocked" = "Blocked";
 "Text.deleteSecretAndIdentity" = "Delete this secret and identity";
