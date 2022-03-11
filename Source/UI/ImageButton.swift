@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 import UIKit
 
 class ImageButton: UIButton {
@@ -48,9 +49,8 @@ class ImageButton: UIButton {
         }
 
         // request image
-        let uuid = Caches.blobs.image(for: image.identifier) {
-            [weak self] _, image in
-            self?.setImage(image, for: state)
+        let uuid = Caches.blobs.image(for: image.identifier) { [weak self] result in
+            self?.setImage(try? result.get().1, for: state)
         }
 
         // wait for completion

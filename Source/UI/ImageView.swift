@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 import UIKit
 
 class ImageView: UIImageView {
@@ -46,10 +47,12 @@ class ImageView: UIImageView {
         }
 
         // request image
-        let uuid = Caches.blobs.image(for: image.identifier) {
-            [weak self] _, image in
-            if animated { self?.fade(to: image) }
-            else        { self?.image = image }
+        let uuid = Caches.blobs.imageOrPlaceholder(for: image.identifier) { [weak self] image in
+            if animated {
+                self?.fade(to: image)
+            } else {
+                self?.image = image
+            }
         }
 
         // wait for completion

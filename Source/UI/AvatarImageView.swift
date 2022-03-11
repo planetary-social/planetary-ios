@@ -13,7 +13,8 @@ import Secrets
 
 class AvatarImageView: ImageView {
 
-    override var image: UIImage? {
+    
+    @MainActor override var image: UIImage? {
         get {
             return super.image
         }
@@ -40,10 +41,10 @@ class AvatarImageView: ImageView {
         
         
         //TODO: This convert 
-        if (person.image_url == nil && person.image != nil) {
+        if person.image_url == nil, let imageIdentifier = person.image {
             
             // cached image
-            if let image = Caches.blobs.image(for: person.image!) {
+            if let image = Caches.blobs.image(for: imageIdentifier) {
                  DispatchQueue.main.async {
                     if animate {
                         self.fade(to: image)
@@ -55,7 +56,10 @@ class AvatarImageView: ImageView {
             }
 
             // request image
-            let uuid = Caches.blobs.image(for: person.image!) { [weak self] _, image in
+            Caches.blobs.image(for: imageIdentifier) { [weak self] result in
+                
+                let image = try? result.get().1
+                
                 DispatchQueue.main.async {
                     if animate {
                         self?.fade(to: image)
