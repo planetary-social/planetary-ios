@@ -1,5 +1,5 @@
 //
-//  MonitorServiceAdapterTests.swift
+//  CrashReportingServiceAdapterTests.swift
 //  
 //
 //  Created by Martin Dutra on 9/12/21.
@@ -8,14 +8,14 @@
 import XCTest
 @testable import CrashReporting
 
-final class MonitorServiceAdapterTests: XCTestCase {
+final class CrashReportingServiceAdapterTests: XCTestCase {
 
     private var apiService: APIServiceMock!
-    private var service: MonitorServiceAdapter!
+    private var service: CrashReportingServiceAdapter!
 
     override func setUp() {
         apiService = APIServiceMock()
-        service = MonitorServiceAdapter(apiService: apiService)
+        service = CrashReportingServiceAdapter(api: apiService)
     }
 
     func testIdentify() {

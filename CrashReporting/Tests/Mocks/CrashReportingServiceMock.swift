@@ -8,7 +8,7 @@
 import Foundation
 @testable import CrashReporting
 
-class MonitorServiceMock: MonitorService {
+class CrashReportingServiceMock: CrashReportingService {
 
     var identified: Bool = false
     var crashed: Bool = false

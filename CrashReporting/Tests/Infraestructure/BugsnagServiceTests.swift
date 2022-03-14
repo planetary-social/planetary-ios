@@ -19,12 +19,7 @@ final class BugsnagServiceTests: XCTestCase {
     }
 
     func testInit() {
-        XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "Bugsnag loaded")
-    }
-
-    func testInitWithoutKey() {
-        service = BugsnagService(keys: Keys(bundle: .main))
-        XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "Bugsnag loaded")
+        XCTAssertEqual(Bugsnag.breadcrumbs().first?.message, "Bugsnag loaded")
     }
 
     func testIdentify() {
@@ -76,6 +71,5 @@ final class BugsnagServiceTests: XCTestCase {
         service.report(error: error, metadata: ["key": "value"])
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
     }
-
 
 }

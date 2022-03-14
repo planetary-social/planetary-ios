@@ -1,5 +1,5 @@
 //
-//  MonitorService.swift
+//  CrashReportingService.swift
 //  
 //
 //  Created by Martin Dutra on 24/11/21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol MonitorService {
+protocol CrashReportingService {
 
     func identify(identity: Identity)
 
