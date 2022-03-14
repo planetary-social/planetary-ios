@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import CrashReporting
 
 class FollowOperation: AsynchronousOperation {
 

@@ -13,7 +13,6 @@ target 'Planetary' do
     pod 'SQLite.swift', '0.12.2'
     pod 'SVProgressHUD', '2.2.5'
     pod 'ZendeskSupportSDK'
-    pod 'Bugsnag', '5.23.1' # If you upgrade bugsnag you should also manually upgrade the Upload dSYMs script if necessary. See Architecture/0003-manually-manage-bugsnag-upload-dsyms-script.md
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
 end

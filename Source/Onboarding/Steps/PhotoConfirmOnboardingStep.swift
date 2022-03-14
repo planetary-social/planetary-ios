@@ -10,6 +10,7 @@ import Foundation
 import Photos
 import UIKit
 import Logger
+import CrashReporting
 
 class PhotoConfirmOnboardingStep: OnboardingStep {
 

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Analytics
 import Logger
+import CrashReporting
 
 @MainActor class BlobViewController: ContentViewController {
 
