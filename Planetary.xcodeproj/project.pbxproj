@@ -680,8 +680,8 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
-		C90EBE7327E0D5C900EAE560 /* PreloadedPubRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubRepository.swift */; };
-		C90EBE7427E0D5C900EAE560 /* PreloadedPubRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubRepository.swift */; };
+		C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
+		C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C90EBE7627E0DBE000EAE560 /* pubFeed.json in Resources */ = {isa = PBXBuildFile; fileRef = C90EBE7527E0DBE000EAE560 /* pubFeed.json */; };
 		C90EBE7727E0DBE000EAE560 /* pubFeed.json in Resources */ = {isa = PBXBuildFile; fileRef = C90EBE7527E0DBE000EAE560 /* pubFeed.json */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
@@ -1247,7 +1247,7 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
-		C90EBE7227E0D5C900EAE560 /* PreloadedPubRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubRepository.swift; sourceTree = "<group>"; };
+		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
 		C90EBE7527E0DBE000EAE560 /* pubFeed.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = pubFeed.json; sourceTree = "<group>"; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
@@ -1708,6 +1708,7 @@
 				0ACE91A5243D742700EFB4E9 /* GoBotError+LocalizedError.swift */,
 				0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */,
 				0ACE91AD243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift */,
+				C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */,
 			);
 			path = GoBot;
 			sourceTree = "<group>";
@@ -2162,7 +2163,6 @@
 				0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */,
 				0A674A28253F3C4400698CF7 /* Draft.swift */,
 				C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */,
-				C90EBE7227E0D5C900EAE560 /* PreloadedPubRepository.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2887,7 +2887,7 @@
 				23EF5AAF249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
 				0ACE91A0243D73DC00EFB4E9 /* BotError+LocalizedError.swift in Sources */,
 				53E26C5B23039631009240B2 /* Dictionary+Transform.swift in Sources */,
-				C90EBE7427E0D5C900EAE560 /* PreloadedPubRepository.swift in Sources */,
+				C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */,
 				0A3880092475AAE000777843 /* PushAPI.swift in Sources */,
 				C9C3788A27C6CC3200238B58 /* XCTestCase+Combine.swift in Sources */,
 				0ACE91A8243D748700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
@@ -3373,7 +3373,7 @@
 				53BD748623232FB70060E47E /* Blob+UIImage.swift in Sources */,
 				0A4870FF249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift in Sources */,
 				53BD748A23289B3F0060E47E /* ImageGalleryView.swift in Sources */,
-				C90EBE7327E0D5C900EAE560 /* PreloadedPubRepository.swift in Sources */,
+				C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */,
 				8D9143F6230C5F4E0075BC8A /* Localizable.swift in Sources */,
 				533F4053225FAD740060B4B9 /* UIScrollView+Default.swift in Sources */,
 				8DB04200235539F5006AC35B /* DirectoryViewController.swift in Sources */,

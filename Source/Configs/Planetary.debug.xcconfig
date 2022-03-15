@@ -17,6 +17,7 @@ PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios
 
 SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
 
+// If you change any invitations here you should track them here too: https://github.com/planetary-social/infrastructure/wiki/Pub-Invitation-Tracking
 
 PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~KVvak/aZeQJQUrn1imLIvwU+EVTkCzGW8TJWTmK8lOk=
 PUB_TWO = two.planetary.pub:8008:@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519~8pETEamsgecH32ry4bj7sr7ofXtUbeOCG1qq4C7szHY=

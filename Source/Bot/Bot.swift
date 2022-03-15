@@ -28,7 +28,7 @@ typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
-enum RefreshLoad: Int, CaseIterable {
+enum RefreshLoad: Int32, CaseIterable {
     case tiny = 500 // about 1 second on modern hardware
     case short = 15000 // about 10 seconds
     case medium = 45000 // about 30 seconds
@@ -44,6 +44,7 @@ protocol Bot {
     var version: String { get }
 
     // MARK: AppLifecycle
+    init(preloadedPubService: PreloadedPubService.Type?)
     func suspend()
     func exit()
     

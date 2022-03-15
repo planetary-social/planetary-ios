@@ -26,7 +26,7 @@ class GoBotIntegrationTests: XCTestCase {
         // start fresh
         do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
 
-        sut = GoBot()
+        sut = GoBot(preloadedPubService: nil)
         let loginExpectation = self.expectation(description: "login")
         sut.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
             error in
@@ -106,5 +106,34 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertNil(error)
         XCTAssertEqual(statistics.recentlyDownloadedPostCount, 10)
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
+    }
+    
+    func testPubsArePreloaded() throws {
+        // Arrange
+        try tearDownWithError()
+        do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
+
+        sut = GoBot(preloadedPubService: MockPreloadedPubService.self)
+        let loginExpectation = self.expectation(description: "login")
+        
+        // Act
+        sut.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
+            error in
+            defer { loginExpectation.fulfill() }
+            XCTAssertNil(error)
+        }
+        self.wait(for: [loginExpectation], timeout: 10)
+        
+        // Assert
+        XCTAssertEqual(MockPreloadedPubService.preloadPubsCallCount, 1)
+    }
+}
+
+class MockPreloadedPubService: PreloadedPubService {
+    static var preloadPubsCallCount = 0
+    static var preloadPubsBotParameter: Bot?
+    static func preloadPubs(in bot: Bot, from bundle: Bundle? = nil) {
+        preloadPubsCallCount += 1
+        preloadPubsBotParameter = bot
     }
 }

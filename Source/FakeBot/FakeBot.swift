@@ -14,6 +14,8 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
+    
+    required init(preloadedPubService: PreloadedPubService.Type? = nil) {}
 
     func lastReceivedTimestam() throws -> Double {
         fatalError("TODO:\(#function)")
