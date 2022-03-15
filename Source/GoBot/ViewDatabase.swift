@@ -10,8 +10,9 @@
 
 import Foundation
 import SQLite
-
 import CryptoKit
+import Logger
+import Analytics
 
 // schema migration handling
 extension Connection {
@@ -78,6 +79,7 @@ class ViewDatabase {
     private let colAuthorID = Expression<Int64>("author_id")
     private let colSequence = Expression<Int>("sequence")
     private let colMsgType = Expression<String>("type")
+    // received time in milliseconds since the unix epoch
     private let colReceivedAt = Expression<Double>("received_at")
     private let colClaimedAt = Expression<Double>("claimed_at")
     private let colDecrypted = Expression<Bool>("is_decrypted")
@@ -775,14 +777,6 @@ class ViewDatabase {
 
         // delete the base messages
         try db.run(self.msgs.filter(msgIDs.contains(colMessageID)).delete())
-
-        // update %fakemsg if feed is at the end of the receive log
-        if let lastMsgRX = try allMessages.last?.get(colRXseq) {
-            let lastReceived = try self.largestSeqNotFromPublishedLog()
-            if lastMsgRX == lastReceived {
-                try self.updateFakeMsg(seq: lastMsgRX)
-            }
-        }
     }
 
     func delete(message: MessageIdentifier) throws {
@@ -800,11 +794,6 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let msgID = try self.msgID(of: message, make: false)
-        let lastRX = try self.largestSeqNotFromPublishedLog()
-        let rxSeq = try db.scalar(self.msgs.select(colRXseq).filter(colMessageID == msgID))
-        if lastRX == rxSeq {
-            try self.updateFakeMsg(seq: rxSeq)
-        }
         // delete message from all specialized tables
         let messageTables = [
             self.posts,
@@ -820,21 +809,6 @@ class ViewDatabase {
         }
         try db.run(self.branches.filter(colBranch == msgID).delete())
         try db.run(self.msgs.filter(colMessageID == msgID).delete())
-    }
-
-    // copy RX log sequence to %fakemsg so that it isn't re-fetched if it is at the end
-    private func updateFakeMsg(seq: Int64) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        try db.run(self.msgs.insert(or: .replace,
-            colRXseq <- seq,
-            colMessageID <- try self.msgID(of: "%fakemsg.wrong", make: true),
-            colAuthorID <- try self.authorID(of: "@fakeauthor.wrong", make: true),
-            colSequence <- 0,
-            colMsgType <- .unsupported,
-            colReceivedAt <- 0,
-            colClaimedAt <- 0))
     }
 
     // MARK: abouts
@@ -1240,6 +1214,7 @@ class ViewDatabase {
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
+            .filter(colClaimedAt <= Date().millisecondsSince1970)
 
         if let offset = offset {
             qry = qry.limit(limit, offset: offset)
@@ -1728,7 +1703,8 @@ class ViewDatabase {
             onlyRoots: true,
             offset: offset)
             .filter(colAuthorID == feedAuthorID)
-            .order(colMessageID.desc)
+            .order(colClaimedAt.desc)
+            .filter(colClaimedAt <= Date().millisecondsSince1970)
             .filter(colHidden == false)
 
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
@@ -2357,10 +2333,8 @@ class ViewDatabase {
                 // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                 skipped += 1
                 print("Skipped(\(msg.value.content.type) \(msg.key)%)")
-                Analytics.shared.track(event: .did,
-                                       element: .bot,
-                                       name: AnalyticsEnums.Name.sync.rawValue,
-                                       params: ["Skipped": msg.key, "Reason": "Old Message"])
+                Analytics.shared.trackBotDidSkipMessage(key: msg.key,
+                                                        reason: "Old Message")
                 continue
             }
             
@@ -2425,6 +2399,7 @@ class ViewDatabase {
                     // while (1) always means duplicate message (2) can also mean fork
                     // the problem is, SQLITE can throw (1) or (2) and we cant keep them apart here...
                     if errCode == SQLITE_CONSTRAINT {
+                        skipped += 1
                         continue // ignore this message and go to the next
                     }
                     throw GoBotError.unexpectedFault("ViewDB/INSERT message error \(errCode): \(errMsg)")
@@ -2483,12 +2458,6 @@ class ViewDatabase {
                                             object: report.authorIdentity,
                                             userInfo: ["report": report])
         }
-        
-        // if we skipped all messages because they are unsupported,
-        // update %fakemsg to that sequence so that we don't iterate over them again
-        if skipped > 0 && skipped == msgs.count && lastRxSeq > 0 {
-            try self.updateFakeMsg(seq: lastRxSeq)
-        }
 
         // debug statistics about unhandled message types
         #if SSB_MSGDEBUG
@@ -2504,23 +2473,14 @@ class ViewDatabase {
             print("unsupported types encountered: \(total) (\(total*100/msgs.count)%)")
         }
         #endif
-        
-        
-         let params = [
-             "inserted": msgs.count
 
-         ]
+        Analytics.shared.trackBotDidUpdateMessages(count: msgs.count)
 
-        
-        Analytics.shared.track(event: .did,
-                         element: .bot,
-                         name: AnalyticsEnums.Name.db_update.rawValue,
-                         params: params)
-        
-        
         if skipped > 0 {
             print("skipped \(skipped) messages")
         }
+        
+        Log.info("[rx log] viewdb filled with \(msgs.count - Int(skipped)) messages.")
     }
     
     // MARK: utilities
@@ -2627,6 +2587,25 @@ class ViewDatabase {
         }
         do {
             return try db.scalar(self.msgs.count)
+        } catch {
+            Log.optional(GoBotError.duringProcessing("messageCount failed", error))
+            return 0
+        }
+    }
+    
+    /// - Parameter since: the date we want to check against.
+    /// - Returns: The number of messages received since the given date.
+    func messageReceivedCount(since: Date) throws -> Int {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        do {
+            return try db.scalar(
+                self.msgs
+                    .count
+                    .filter(colReceivedAt > since.millisecondsSince1970)
+                    .where(msgs[colAuthorID] != currentUserID)
+            )
         } catch {
             Log.optional(GoBotError.duringProcessing("messageCount failed", error))
             return 0

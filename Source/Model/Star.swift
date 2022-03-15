@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 import Network
 
 struct Star {
@@ -71,14 +72,14 @@ struct Star {
         
         let tcpConnection = NWConnection(host: NWEndpoint.Host(host), port: port, using: NWParameters.tcp)
         tcpConnection.stateUpdateHandler = { state in
-            print(state)
             switch state {
             case .ready:
                 completion(true)
                 tcpConnection.cancel()
             case .setup, .preparing, .cancelled:
                 return
-            case .failed, .waiting:
+            case .failed(let error), .waiting(let error):
+                Log.optional(error)
                 completion(false)
                 tcpConnection.cancel()
             @unknown default:

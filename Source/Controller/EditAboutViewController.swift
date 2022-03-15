@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Analytics
 
 class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate {
 

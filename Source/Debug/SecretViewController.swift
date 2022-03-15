@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-
+import Analytics
 class SecretViewController: UIViewController {
 
     private var secret: Secret?

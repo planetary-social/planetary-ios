@@ -13,11 +13,9 @@ target 'Planetary' do
     pod 'SQLite.swift', '0.12.2'
     pod 'SVProgressHUD', '2.2.5'
     pod 'ZendeskSupportSDK'
-    pod 'CocoaLumberjack/Swift', '3.6.1'
     pod 'Bugsnag', '5.23.1' # If you upgrade bugsnag you should also manually upgrade the Upload dSYMs script if necessary. See Architecture/0003-manually-manage-bugsnag-upload-dsyms-script.md
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
-    pod "PostHog", "~> 1.1"
 end
 
 target 'APITests' do
@@ -41,25 +39,7 @@ target 'UITests' do
     pod 'Down', '0.9.2'
 end
 
-plugin 'cocoapods-keys', {
-  :project => "Planetary",
-  :keys => [
-    "AuthyPhoneVerificationAPIToken",
-    "BugsnagCrashReportingToken",
-    "ZendeskAppID",
-    "ZendeskClientID",
-    "VersePushAPIToken",
-    "VersePubAPIToken",
-    "VerseBlobToken",
-    "PostHogAPIKey",
-    "PostHogHost"
-]}
-
 post_install do | installer |
-
-    # copy Acknowledgements into Settings bundle
-    require 'fileutils'
-    FileUtils.cp_r('Pods/Target Support Files/Pods-Planetary/Pods-Planetary-acknowledgements.plist', 'Resources/Settings.bundle/Acknowledgements.plist', :remove_destination => true)
 
     # force pods project to Build Libraries for Distribution build setting
     # this is required for Swift 5.1 module compatibility
@@ -74,6 +54,13 @@ post_install do | installer |
         target.build_configurations.each do |config|
             config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
             config.build_settings['ENABLE_BITCODE'] = 'NO'
+        end
+    end
+
+    # Silence deployment target warnings.
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
         end
     end
 end

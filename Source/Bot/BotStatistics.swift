@@ -4,23 +4,11 @@
 //
 
 import Foundation
+import Analytics
 
 // MARK:- API statistics
 
-protocol BotStatistics {
-
-    var lastSyncDate: Date? { get }
-    var lastSyncDuration: TimeInterval { get }
-
-    var lastRefreshDate: Date? { get }
-    var lastRefreshDuration: TimeInterval { get }
-
-    var repo: RepoStatistics { get }
-    var peer: PeerStatistics { get }
-    var db: DatabaseStatistics { get }
-}
-
-struct MutableBotStatistics: BotStatistics {
+struct BotStatistics: Equatable {
 
     var lastSyncDate: Date?
     var lastSyncDuration: TimeInterval = 0
@@ -28,12 +16,44 @@ struct MutableBotStatistics: BotStatistics {
     var lastRefreshDate: Date?
     var lastRefreshDuration: TimeInterval = 0
 
+    /// The number of new posts that have been downloaded in the `recentlyDownloadedPostDuration`.
+    var recentlyDownloadedPostCount = 0
+
+    /// The number of minutes we consider "recent" for the `recentlyDownloadedPostCount`. So if this value is 15, then
+    /// `recentlyDownloadedPostCount` will contain all posts 
+    var recentlyDownloadedPostDuration = 15
+
     var repo = RepoStatistics()
     var peer = PeerStatistics()
     var db = DatabaseStatistics()
 }
 
-struct RepoStatistics {
+extension BotStatistics {
+
+    var analyticsStatistics: Analytics.Statistics {
+        var statistics = Analytics.Statistics(lastSyncDate: lastSyncDate,
+                                              lastRefreshDate: lastRefreshDate)
+
+        if repo.feedCount != -1 {
+            statistics.repo = Analytics.RepoStatistics(feedCount: repo.feedCount,
+                                                       messageCount: repo.messageCount,
+                                                       numberOfPublishedMessages: repo.numberOfPublishedMessages,
+                                                       lastHash: repo.lastHash)
+        }
+
+        if db.lastReceivedMessage != -3 {
+            statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: db.lastReceivedMessage)
+        }
+
+        statistics.peer = Analytics.PeerStatistics(peers: peer.count,
+                                                   connectedPeers: peer.connectionCount)
+
+        return statistics
+    }
+
+}
+
+struct RepoStatistics: Equatable {
 
     /// Path to the repo
     let path: String
@@ -63,7 +83,7 @@ struct RepoStatistics {
     }
 }
 
-struct DatabaseStatistics {
+struct DatabaseStatistics: Equatable {
 
     let lastReceivedMessage: Int
 
@@ -73,16 +93,16 @@ struct DatabaseStatistics {
 
 }
 
-struct PeerStatistics {
+struct PeerStatistics: Equatable {
 
     let count: Int
     let connectionCount: UInt
 
     // name, identifier
-    let identities: [(String, String)]
+    let identities: [(name: String, identifier: Identifier)]
 
     // IP, Identifier
-    let currentOpen: [(String, String)]
+    let currentOpen: [(name: String, identifier: Identifier)]
 
     init(count: Int? = 0,
          connectionCount: UInt? = 0,
@@ -93,5 +113,14 @@ struct PeerStatistics {
         self.connectionCount = connectionCount ?? 0
         self.identities = identities ?? []
         self.currentOpen = open ?? []
+    }
+    
+    static func == (lhs: PeerStatistics, rhs: PeerStatistics) -> Bool {
+        return lhs.count == rhs.count &&
+        lhs.connectionCount == rhs.connectionCount &&
+        lhs.identities.map { $0.0 } == rhs.identities.map { $0.0 } &&
+        lhs.identities.map { $0.1 } == rhs.identities.map { $0.1 } &&
+        lhs.currentOpen.map { $0.0 } == rhs.currentOpen.map { $0.0 } &&
+        lhs.currentOpen.map { $0.1 } == rhs.currentOpen.map { $0.1 }
     }
 }

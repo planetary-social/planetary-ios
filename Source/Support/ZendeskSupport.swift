@@ -9,7 +9,8 @@
 import Foundation
 import ZendeskCoreSDK
 import SupportSDK
-import Keys
+import Logger
+import Secrets
 
 class ZendeskSupport: SupportService {
     
@@ -18,9 +19,12 @@ class ZendeskSupport: SupportService {
     
     init() {
         Log.info("Configuring Zendesk...")
-        let keys = PlanetaryKeys()
-        Zendesk.initialize(appId: keys.zendeskAppID,
-                           clientId: keys.zendeskClientID,
+        let keys = Keys.shared
+        guard let appID = keys.get(key: .zendeskAppID), let clientID = keys.get(key: .zendeskClientID) else {
+            return
+        }
+        Zendesk.initialize(appId: appID,
+                           clientId: clientID,
                            zendeskUrl: zendeskURL)
         SupportSDK.Support.initialize(withZendesk: Zendesk.instance)
         Zendesk.instance?.setIdentity(ZendeskCoreSDK.Identity.createAnonymous())

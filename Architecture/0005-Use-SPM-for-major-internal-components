@@ -1,0 +1,23 @@
+
+# 5. Use SPM for major internal components
+
+Date: 2022-02-10
+
+## Status
+
+Accepted
+
+## Context
+
+The idea is to modularize the source code of Planetary in different components to keep the code more organized and prevent dependencies from permeating different parts of the code.
+
+## Decision
+
+The following guide was followed: https://developer.apple.com/documentation/swift_packages/organizing_your_code_with_local_packages.
+Local Swift packages will be used to create major internal components.
+
+## Consequences
+
+- Developing code for an internal component will be a bit harder to do. Public classes, structs and functions will be placed in a Delivery folder of the component, and everything
+else should be internal or lower, this will privent ourselves from breaking abstractions because the outside world wont't use internal functions from a component, but designing the
+what is going to be public has to be done carefully.

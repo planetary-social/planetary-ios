@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Analytics
 
 extension AppDelegate {
 
@@ -30,10 +31,6 @@ extension AppDelegate {
             Onboarding.set(status: status, for: identity)
         }
 
-        Analytics.shared.track(event: .did,
-                        element: .app,
-                        name: AnalyticsEnums.Name.repair.rawValue,
-                        param: "function",
-                        value: #function)
+        Analytics.shared.trackDidRepair(function: #function)
     }
 }

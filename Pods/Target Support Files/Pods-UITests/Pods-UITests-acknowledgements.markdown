@@ -1,10 +1,6 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
-## Keys
-
-MIT LICENSE Found in the repo
-
 ## Down
 
 The MIT License (MIT)
