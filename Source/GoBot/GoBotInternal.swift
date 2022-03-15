@@ -498,6 +498,8 @@ class GoBotInternal {
         return u
     }
 
+    /// Tries to fetch a blob from the filesystem. If the blob cannot be found, we indicate to go-ssb that we want
+    /// it to download the blob from a peer.
     func blobGet(ref: BlobIdentifier) throws -> Data {
         let u = try blobFileURL(ref: ref)
         do {

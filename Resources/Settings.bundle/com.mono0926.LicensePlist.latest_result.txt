@@ -64,10 +64,6 @@ name: PhoneNumberKit, nameSpecified:
 body: The MIT License (MIT…
 version: 3.2.0
 
-name: PostHog, nameSpecified: 
-body: The MIT License (MIT…
-version: 1.1.0
-
 name: SkeletonView, nameSpecified: 
 body: The MIT License (MIT…
 version: 1.8.7
@@ -138,6 +134,8 @@ Created …
 version: 5.3.0
 
 name: CocoaLumberjack, nameSpecified: CocoaLumberjack, owner: CocoaLumberjack, version: 3.7.4
+
+name: posthog-ios, nameSpecified: PostHog, owner: PostHog, version: 1.4.4
 
 name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.4.2
 

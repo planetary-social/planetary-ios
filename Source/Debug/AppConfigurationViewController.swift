@@ -254,6 +254,29 @@ class AppConfigurationViewController: DebugTableViewController {
             }
         )]
         
+        #if DEBUG
+        settings += [
+            DebugTableViewCellModel(
+                title: "Planetary Test Network",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: {
+                    cell in
+                    cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
+                    cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
+                    cell.detailTextLabel?.text = NetworkKey.planetaryTest.string
+                    let selected = self.configuration.network == NetworkKey.planetaryTest
+                    cell.accessoryType = selected ? .checkmark : .none
+                    cell.textLabel?.isEnabled = self.canEditConfiguration
+                    cell.isUserInteractionEnabled = self.canEditConfiguration
+                }, actionClosure: {
+                    [unowned self] cell in
+                    self.configuration.network = NetworkKey.planetaryTest
+                    self.refresh()
+                }
+            )
+        ]
+        #endif
+        
         return ("Networks", settings, nil)
     }
 
@@ -304,6 +327,23 @@ class AppConfigurationViewController: DebugTableViewController {
                 cell.textLabel?.isEnabled = false
             },
                                              actionClosure: nil)]
+        
+        #if DEBUG
+        settings += [DebugTableViewCellModel(title: "Planetary Test Network",
+                                             cellReuseIdentifier: DebugValueTableViewCell.className,
+                                             valueClosure:
+            {
+                cell in
+                cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
+                cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
+                cell.detailTextLabel?.text = HMACKey.planetaryTest.string
+                let selected = self.configuration.hmacKey == HMACKey.planetaryTest
+                cell.accessoryType = selected ? .checkmark : .none
+                cell.isUserInteractionEnabled = false
+                cell.textLabel?.isEnabled = false
+            },
+                                             actionClosure: nil)]
+        #endif
 
         return ("HMAC Signing Key", settings, nil)
     }
@@ -359,7 +399,11 @@ class AppConfigurationViewController: DebugTableViewController {
         self.configuration.name = name
         self.configuration.apply()
         AppConfigurations.add(self.configuration)
-        self.navigationController?.popToRootViewController(animated: true)
+        AppController.shared.dismissSettingsViewController() {
+            Task {
+                await AppController.shared.relaunch()
+            }
+        }
     }
 
     @objc private func textFieldDidChange(textField: UITextField) {

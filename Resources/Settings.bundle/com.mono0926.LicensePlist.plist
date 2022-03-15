@@ -76,7 +76,7 @@
 		</dict>
 		<dict>
 			<key>File</key>
-			<string>com.mono0926.LicensePlist/PostHog</string>
+			<string>com.mono0926.LicensePlist/posthog-ios</string>
 			<key>Title</key>
 			<string>PostHog</string>
 			<key>Type</key>

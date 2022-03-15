@@ -8,6 +8,7 @@
 
 import Foundation
 import ImageSlideshow
+import Logger
 import UIKit
 
 class GalleryView: UIView, KeyValueUpdateable {
@@ -104,8 +105,7 @@ fileprivate class BlobInputSource: InputSource {
         }
 
         // request for image blob
-        let uuid = Caches.blobs.image(for: self.blob.identifier) {
-            [weak self] _, image in
+        let uuid = Caches.blobs.imageOrPlaceholder(for: self.blob.identifier) { [weak self] image in
             imageView.fade(to: image, duration: 0.2)
             callback(image)
             self?.completionUUID = nil
