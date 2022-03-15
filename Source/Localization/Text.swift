@@ -53,7 +53,7 @@ enum Text: String, Localizable, CaseIterable {
     case reportBug = "Report a Bug"
     case settings = "Settings"
     case userDirectory = "User Directory"
-    case communitites = "Communities"
+    case pubs = "Pubs"
     case showMeInDirectory = "Show me in the directory"
     case showMeInUserDirectory = "Show me in the user directory"
     case hideMeFromUserDirectory = "Hide me from the user directory"

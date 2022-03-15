@@ -106,5 +106,23 @@
         "signature": "1CtyQbQr6lGJKxvYHyDVlbgoPXt0jZCLJ7/mu2+bTPyssoln5n39vd6LvRradtLNOtXC0BhoWmrH7JgLk7YICw==.sig.ed25519"
       },
       "timestamp": 1647355974508
+    },
+    {
+      "key": "%KNcCcjpYSBxcFViTdtJ+k6+FVTscvAgOb0HjnbHgDBM=.sha256",
+      "value": {
+        "previous": null,
+        "sequence": 1,
+        "author": "@KpZ49dSM+wr73t8peJQWBLjAlENLG9yLdVBNv7PgatI=.ed25519",
+        "timestamp": 1647379284361,
+        "hash": "sha256",
+        "content": {
+          "type": "about",
+          "about": "@KpZ49dSM+wr73t8peJQWBLjAlENLG9yLdVBNv7PgatI=.ed25519",
+          "name": "Español Pub",
+          "description": "Un pub para usuarios que hablan español.\n\n**Para unirte:** si estás usando la app de Planetary, hacé tap en el botón Join. Si estás en otro cliente puedes usar esta invitación:\n```\nespanol.planetary.pub:8008:@KpZ49dSM+wr73t8peJQWBLjAlENLG9yLdVBNv7PgatI=.ed25519~s7GLx7uJSllwh4HVB0v7DOY4f9YO1kPw7RvjGDnXe7I=\n```\n\n_Hosted by https://planetary.social_"
+        },
+        "signature": "Sq69KPfdFm4ABWcU9zF4KUpm7MRqCF8rTUrGDLQty8BNzs0PXeRRKyCN5VSioPTuIdpB4hq6ydklzqJQyP2PBQ==.sig.ed25519"
+      },
+      "timestamp": 1647379284362
     }
 ]
