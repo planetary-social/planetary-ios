@@ -176,6 +176,8 @@ class GoBot: Bot {
             
             self._identity = secret.identity
             
+            PreloadedPubService(bot: self).updatePreloadedPubs()
+            
             BlockedAPI.shared.retreiveBlockedList() {
                 blocks, err in
                 guard err == nil else {
