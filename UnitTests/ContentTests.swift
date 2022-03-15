@@ -126,7 +126,7 @@ class ContentTests: XCTestCase {
         do {
             let contents = try JSONDecoder().decode([Content].self, from: data)
             XCTAssertNotNil(contents)
-            XCTAssertTrue(contents.count == 6)
+            XCTAssertEqual(contents.count, 9)
             for content in contents {
                 XCTAssertTrue(content.type == .about)
                 XCTAssertTrue(content.isValid)

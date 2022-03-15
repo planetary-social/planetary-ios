@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import Logger
+import Analytics
 
 class RefreshOperation: AsynchronousOperation {
 
@@ -29,10 +31,11 @@ class RefreshOperation: AsynchronousOperation {
             return
         }
         
-        Analytics.shared.trackBotRefresh()
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
         Bots.current.refresh(load: refreshLoad, queue: queue) { [weak self, refreshLoad] (error, timeInterval) in
-            Analytics.shared.trackBotDidRefresh(load: refreshLoad, duration: timeInterval, error: error)
+            Analytics.shared.trackBotDidRefresh(load: refreshLoad.rawValue,
+                                                duration: timeInterval,
+                                                error: error)
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             

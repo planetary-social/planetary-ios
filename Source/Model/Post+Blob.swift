@@ -10,11 +10,6 @@ import Foundation
 
 extension Post {
 
-    /// Returns blobs extracted from the post's markdown.
-    var inlineBlobs: Blobs {
-        return self.text.blobs()
-    }
-
     // Returns the serialized blobs or inline blobs, in order.
     var anyBlobs: Blobs {
         guard let blobs = self.mentions?.asBlobs(), !blobs.isEmpty else { return self.inlineBlobs }

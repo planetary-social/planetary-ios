@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 typealias PublishBlobsCompletion = ((Blobs, Error?) -> Void)
 

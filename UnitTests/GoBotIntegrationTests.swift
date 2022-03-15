@@ -11,6 +11,7 @@ import XCTest
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotIntegrationTests: XCTestCase {
     
+    /// The system under test
     var sut: GoBot!
     var workingDirectory: String!
     let fm = FileManager.default
@@ -82,4 +83,28 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(try sut.database.messageCount(), 11)
     }
     
+    func testRecentlyDownloadedPostCountGivenNoRecentlyDownloadedPosts() async throws {
+        // Act
+        let statistics = await sut.statistics()
+        
+        // Assert
+        XCTAssertEqual(statistics.recentlyDownloadedPostCount, 0)
+        XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
+    }
+    
+    func testRecentlyDownloadedPostCountGivenTwoRecentlyDownloadedPosts() async throws {
+        // Arrange
+        for i in 0..<10 {
+            _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
+        }
+        let (error, _) = await sut.refresh(load: .long)
+        
+        // Act
+        let statistics = await sut.statistics()
+
+        // Assert
+        XCTAssertNil(error)
+        XCTAssertEqual(statistics.recentlyDownloadedPostCount, 10)
+        XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
+    }
 }

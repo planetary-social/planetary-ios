@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import Logger
+import Analytics
 
 enum OnboardingError: Error {
 
@@ -132,8 +134,12 @@ class Onboarding {
                         return
                     }
 
-                    CrashReporting.shared.identify(about: about, network: configuration.network!)
-                    Analytics.shared.identify(about: about, network: configuration.network!)
+                    if let network = configuration.network {
+                        CrashReporting.shared.identify(about: about, network: network)
+                        Analytics.shared.identify(identifier: about.identity,
+                                                  name: about.name,
+                                                  network: network.string)
+                    }
                     
                     // done
                     context.about = about
@@ -210,7 +216,9 @@ class Onboarding {
                 context.about = about
                 
                 CrashReporting.shared.identify(about: about, network: context.network)
-                Analytics.shared.identify(about: about, network: context.network)
+                Analytics.shared.identify(identifier: about.identity,
+                                          name: about.name,
+                                          network: context.network.name)
 
                 completion(context, nil)
             }

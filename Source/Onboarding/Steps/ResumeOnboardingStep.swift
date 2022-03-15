@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 class ResumeOnboardingStep: OnboardingStep {
 
@@ -56,16 +57,23 @@ class ResumeOnboardingStep: OnboardingStep {
             self?.didStart()
         }
         
-        let reset = UIAlertAction(title: Text.Onboarding.startOver.text,
-                                  style: .destructive) { _ in
-                                    let configuration = AppConfiguration.current
-                                    Bots.current.logout { _ in
-                                        configuration?.unapply()
-                                        if let configuration = configuration {
-                                            AppConfigurations.delete(configuration)
-                                        }
-                                        AppController.shared.relaunch()
-                                    }
+        let reset = UIAlertAction(
+            title: Text.Onboarding.startOver.text,
+            style: .destructive
+        ) { _ in
+            Task(priority: .userInitiated) {
+                let configuration = AppConfiguration.current
+                do {
+                    try await Bots.current.logout()
+                } catch {
+                    Log.optional(error)
+                }
+                configuration?.unapply()
+                if let configuration = configuration {
+                    AppConfigurations.delete(configuration)
+                }
+                await AppController.shared.relaunch()
+            }
         }
 
         AppController.shared.choose(from: [tryAgain, reset],

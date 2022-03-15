@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import UserNotifications
+import Logger
 
 extension AppController {
 
@@ -131,7 +132,6 @@ extension AppController {
                 
             }
         }
-        Analytics.shared.updatePushToken(pushToken: token)
     }
 
     /// Asks the main view controller to update the notification tab icon.

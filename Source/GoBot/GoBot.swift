@@ -8,7 +8,8 @@
 
 import Foundation
 import UIKit
-
+import Logger
+import Analytics
 
 extension String {
     func withGoString<R>(_ call: (gostring_t) -> R) -> R {
@@ -498,6 +499,8 @@ class GoBot: Bot {
                     return
                 }
                 
+                Log.info("Published message with key \(key ?? "nil")")
+                
                 // Copy the newly published post into the ViewDatabase immediately.
                 do {
                     guard let self = self else {
@@ -608,25 +611,24 @@ class GoBot: Bot {
         }
     }
     
-    private func repairViewConstraints21012020(with author: Identity, current: Int64) -> (AnalyticsEnums.Params, Error?) {
+    private func repairViewConstraints21012020(with author: Identity, current: Int64) -> (Analytics.BotRepair, Error?) {
         // fields we want to include in the tracked event
-        var params: AnalyticsEnums.Params = [
-            "function": "ViewConstraints21012020",
-            "viewdb_current": current,
-            "repo_messages_count": self._statistics.repo.messageCount,
-        ]
+        var repair = Analytics.BotRepair(function: "ViewConstraints21012020",
+                                         numberOfMessagesInDB: current,
+                                         numberOfMessagesInRepo: self._statistics.repo.messageCount)
+
         // TODO: maybe make an enum for all these errors?
         let (worked, maybeReport) = self.bot.fsckAndRepair()
         guard worked else {
-            return (params, GoBotError.unexpectedFault("[constraint violation] failed to heal gobot repository"))
+            return (repair, GoBotError.unexpectedFault("[constraint violation] failed to heal gobot repository"))
         }
 
         guard let report = maybeReport else { // there was nothing to repair?
-            return (params, GoBotError.unexpectedFault("[constraint violation] viewdb error but nothing to repair"))
+            return (repair, GoBotError.unexpectedFault("[constraint violation] viewdb error but nothing to repair"))
         }
 
-        params["reported_authors"] = report.Authors.count
-        params["reported_messages"] = report.Messages
+        repair.reportedAuthors = report.Authors.count
+        repair.reportedMessages = report.Messages
 
         if !report.Authors.contains(author) {
             Log.unexpected(.botError, "ViewConstraints21012020 warning: affected author not in heal report")
@@ -641,15 +643,15 @@ class GoBot: Bot {
                 // only have it in the gobot after the update
                 // therefore we can skip this if the viewdb is filling for the first time
                 guard current == -1 else {
-                    return (params, GoBotError.unexpectedFault("[constraint violation] expected author from fsck report in viewdb"))
+                    return (repair, GoBotError.unexpectedFault("[constraint violation] expected author from fsck report in viewdb"))
                 }
                 continue
             } catch {
-                return (params, GoBotError.duringProcessing("[constraint violation] unable to drop affected feed from viewdb", error))
+                return (repair, GoBotError.duringProcessing("[constraint violation] unable to drop affected feed from viewdb", error))
             }
         }
 
-        return (params, nil)
+        return (repair, nil)
     }
     
     // should only be called by refresh() (which does the proper completion on mainthread)
@@ -685,22 +687,18 @@ class GoBot: Bot {
             
             do {
                 try self.database.fillMessages(msgs: msgs)
-                
-                #if DEBUG
-                print("[rx log] viewdb filled with \(msgs.count) messages.")
-                #endif
-                
+                                
                 let params = [
                     "msg.count": msgs.count,
                     "first.timestamp": msgs[0].timestamp,
                     "last.timestamp": msgs[msgs.count-1].timestamp,
                     "last.hash":msgs[msgs.count-1].key
                     ] as [String : Any]
-                
-                Analytics.shared.track(event: .did,
-                                 element: .bot,
-                                 name: AnalyticsEnums.Name.db_update.rawValue,
-                                 params: params)
+
+                Analytics.shared.trackBotDidUpdateDatabase(count: msgs.count,
+                                                           firstTimestamp: msgs[0].timestamp,
+                                                           lastTimestamp: msgs[msgs.count-1].timestamp,
+                                                           lastHash: msgs[msgs.count-1].key)
                 
                 if diff < limit { // view is up2date now
                     completion(nil)
@@ -713,17 +711,11 @@ class GoBot: Bot {
                     completion(nil)
                 }
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
-                var (params, err) = self.repairViewConstraints21012020(with: author, current: current)
-                // add original SQL error
-                params["sql_error"] = sqlErr
-                if let e = err {
-                    params["repair_failed"] = e.localizedDescription
-                }
+                let (repair, err) = self.repairViewConstraints21012020(with: author, current: current)
 
-                Analytics.shared.track(event: .did,
-                                 element: .bot,
-                                 name: AnalyticsEnums.Name.repair.rawValue,
-                                 params: params)
+                Analytics.shared.trackBotDidRepair(databaseError: sqlErr,
+                                                   error: err?.localizedDescription,
+                                                   repair: repair)
 
                 #if DEBUG
                 print("[rx log] viewdb fill of aborted and repaired.")
@@ -810,7 +802,7 @@ class GoBot: Bot {
                 identifier, error in
                 CrashReporting.shared.reportIfNeeded(error: error)
                 if Log.optional(error) { completionOnMain(nil, error); return }
-                let image = Image(link: identifier, jpegImage: uiimage, data: data)
+                let image = ImageMetadata(link: identifier, jpegImage: uiimage, data: data)
                 completionOnMain(image, nil)
             }
         }
@@ -1278,7 +1270,7 @@ class GoBot: Bot {
 
     // MARK: Statistics
 
-    private var _statistics = MutableBotStatistics()
+    private var _statistics = BotStatistics()
     
     var statistics: BotStatistics {
         let counts = try? self.bot.repoStatus()
@@ -1339,6 +1331,15 @@ class GoBot: Bot {
                                                    connectionCount: connectionCount,
                                                    identities: openConnections,
                                                    open: openConnections)
+            
+            self._statistics.recentlyDownloadedPostDuration = 15 // minutes
+            do {
+                self._statistics.recentlyDownloadedPostCount = try self.database.messageReceivedCount(
+                    since: Date(timeIntervalSinceNow: Double(self._statistics.recentlyDownloadedPostDuration) * -60)
+                )
+            } catch {
+                Log.optional(error)
+            }
 
             self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
             

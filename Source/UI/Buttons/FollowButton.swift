@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Logger
+import Analytics
 
 class FollowButton: PillButton {
 

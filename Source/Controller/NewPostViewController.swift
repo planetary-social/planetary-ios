@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import Logger
+import Analytics
 
 class NewPostViewController: ContentViewController {
 

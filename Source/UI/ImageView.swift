@@ -1,5 +1,5 @@
 //
-//  UIImageView+Image.swift
+//  UIImageView+ImageMetadata.swift
 //  FBTT
 //
 //  Created by Christoph on 5/2/19.
@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 import UIKit
 
 class ImageView: UIImageView {
@@ -26,7 +27,7 @@ class ImageView: UIImageView {
         Caches.blobs.cancelDataTask(for: identifier)
     }
 
-    func set(image: Image?, animated: Bool = false) {
+    func set(image: ImageMetadata?, animated: Bool = false) {
 
         // always forget any pending completion
         self.forgetBlobCompletion()
@@ -46,10 +47,12 @@ class ImageView: UIImageView {
         }
 
         // request image
-        let uuid = Caches.blobs.image(for: image.identifier) {
-            [weak self] _, image in
-            if animated { self?.fade(to: image) }
-            else        { self?.image = image }
+        let uuid = Caches.blobs.imageOrPlaceholder(for: image.identifier) { [weak self] image in
+            if animated {
+                self?.fade(to: image)
+            } else {
+                self?.image = image
+            }
         }
 
         // wait for completion

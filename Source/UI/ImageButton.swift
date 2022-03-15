@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logger
 import UIKit
 
 class ImageButton: UIButton {
@@ -29,7 +30,7 @@ class ImageButton: UIButton {
     /// If the cached image is not ready, then the image is set when
     /// the cache returns a response.  Note that this means whatever
     /// image is currently set will remain until the cache returns.
-    func set(image: Image?,
+    func set(image: ImageMetadata?,
              for state: UIControl.State = .normal)
     {
         // always forget any pending completion
@@ -48,9 +49,8 @@ class ImageButton: UIButton {
         }
 
         // request image
-        let uuid = Caches.blobs.image(for: image.identifier) {
-            [weak self] _, image in
-            self?.setImage(image, for: state)
+        let uuid = Caches.blobs.image(for: image.identifier) { [weak self] result in
+            self?.setImage(try? result.get().1, for: state)
         }
 
         // wait for completion

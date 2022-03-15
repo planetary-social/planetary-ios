@@ -8,6 +8,7 @@
 
 import Foundation
 import Network
+import Logger
 
 class RedeemInviteOperation: AsynchronousOperation {
 

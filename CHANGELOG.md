@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.19] = 2022
+## [1.0.20] = 2022-02-22
+## Fixed
+- Allow Planetary to sync data for longer periods of time (up to 30 seconds) when the app is in the backgound. #381
+- Fix new posts not showing at the top of user Profile pages. #377
+- Fixed a crash when tapping the share button on the Profile page. #378
+- Fixed popover menus on iPads in landscape orientation. Popover menus were pointing to the wrong places in portrait, and crashing the app in landscape. #350 (@kode54)
+
+## Added
+- Added an option to export your database in the Debug menu. #338
+- Added support for the new planetary.link URL format. #352
+
+## [1.0.19] = 2022-02-03
 ## Fixed
 - Fixed a bug that prevented pub invitations from being redeemed. #333 (@kode54)
 

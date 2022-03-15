@@ -7,18 +7,18 @@
 //
 
 import Foundation
-import Keys
+import Logger
+import Secrets
 
 class VersePubAPI: PubAPIService {
     
     private var scheme: String
     private var host: String
     private var port: Int
-    private var token: String
+    private var token: String?
     private var pathPrefix: String
     
     init() {
-        let keys = PlanetaryKeys()
         if CommandLine.arguments.contains("use-ci-network") {
             self.scheme = "https"
             self.host = "pub.verse.app"
@@ -29,7 +29,7 @@ class VersePubAPI: PubAPIService {
             self.scheme = "https"
             self.host = "us-central1-pub-verse-app.cloudfunctions.net"
             self.port = 443
-            self.token = keys.versePubAPIToken
+            self.token = Keys.shared.get(key: .pub)
             self.pathPrefix = "/FollowbackAfterOnboardingTest"
         }
     }
@@ -53,7 +53,11 @@ class VersePubAPI: PubAPIService {
 extension VersePubAPI: API {
     
     var headers: APIHeaders {
-        return ["Verse-Authorize-Pub": self.token]
+        if let token = self.token {
+            return ["Verse-Authorize-Pub": token]
+        } else {
+            return [:]
+        }
     }
 
     func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {

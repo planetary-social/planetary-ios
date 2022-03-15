@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 extension AppController {
 
@@ -22,8 +23,15 @@ extension AppController {
         self.syncPushNotificationsSettings()
     }
 
-    func relaunch() {
+    @MainActor func relaunch() async {
         Caches.blobs.invalidate()
+        
+        do {
+            try await Bots.current.logout()
+        } catch {
+            Log.optional(error)
+        }
+        
         self.launch()
     }
 

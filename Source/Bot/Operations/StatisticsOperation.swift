@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import Logger
+import Analytics
 
 class StatisticsOperation: AsynchronousOperation {
 
@@ -48,8 +50,7 @@ class StatisticsOperation: AsynchronousOperation {
             }
             Log.debug("Peers: \(statistics.peer.count)")
             Log.debug("Connected peers: \(statistics.peer.connectionCount)")
-            Analytics.shared.identify(statistics: statistics)
-            Analytics.shared.trackBotDidStats(statistics: statistics)
+            Analytics.shared.trackStatistics(statistics.analyticsStatistics)
             let currentNumberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
             if let configuration = AppConfiguration.current,
                 let botIdentity = Bots.current.identity,
