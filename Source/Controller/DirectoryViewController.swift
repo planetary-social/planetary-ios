@@ -170,9 +170,9 @@ extension DirectoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return Text.pubs.text
+            return Text.pubServers.text
         } else {
-            return nil
+            return Text.usersInYourNetwork.text
         }
     }
     
