@@ -1,3 +1,6 @@
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
+
 "Text.planetary" = "Planetary";
 "Text.error" = "Ojejku";
 "Text.cancel" = "Anuluj";
@@ -16,12 +19,13 @@
 "Text.future" = "W przyszłości";
 "Text.daysAgo" = "{{ days }} dni temu";
 "Text.atDayTime" = "{{ day }} o {{ time }}";
+"Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
 "Text.yourProfile" = "Twój Profil";
 "Text.helpAndSupport" = "Pomoc";
 "Text.reportBug" = "Zgłoś Problem";
 "Text.settings" = "Ustawienia";
 "Text.userDirectory" = "Katalog Użytkowników";
-"Text.communities" = "Społeczności";
+"Text.communitites" = "Communities";
 "Text.showMeInDirectory" = "Pokaż mnie w katalogu";
 "Text.showMeInUserDirectory" = "Pokaż mnie w katalogu użytkowników";
 "Text.hideMeFromUserDirectory" = "Nie pokazuj mnie w katalogu użytkowników";
@@ -81,9 +85,13 @@
 "Text.andCountOthers" = " i {{ count }} innych";
 "Text.countOthers" = "{{ count }} innych";
 "Text.andOneOther" = " i 1 inna";
+"Text.connectedPeers" = "Connected Peers";
 "Text.countOnlinePeers" = "{{ count }} OSÓB ON-LINE";
 "Text.countLocalPeers" = "{{ count }} OSÓB LOKALNIE";
 "Text.lastSynced" = "POBRANO: {{ when }}";
+"Text.syncingMessages" = "Syncing Messages...";
+"Text.recentlyDownloaded" = "Downloaded {{ postCount }} posts in the last {{ duration }} mins";
+"Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Kanały";
 "Text.select" = "Wybierz";
 "Text.home" = "Twoja Strona";
@@ -94,9 +102,7 @@
 "Text.share" = "Udostępnij";
 "Text.bookmark" = "Zachowaj";
 "Text.like" = "Polub";
-
 "Text.debug" = "Debug";
-
 "Text.join" = "Dołącz";
 "Text.redeemInvitation" = "Zrealizuj zaproszenie";
 "Text.pasteAddress" = "Kod";
@@ -220,6 +226,7 @@
 "Error.login" = "Nie udało się uruchomić połączenia z siecią. Uruchom ponownie, aby spróbować naprawić tą sytuację, lub użyj opcji Ignoruj, aby przeglądać zawartość, która została już pobrana na Twoje urządzenie.";
 "Error.unexpected" = "Stało się coś nieoczekiwanego.";
 "Error.supportNotConfigured" = "Wsparcie techniczne nie jest dostępne.";
+"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 
 "Channel.one" = "kanał";
 "Channel.many" = "kanały";
