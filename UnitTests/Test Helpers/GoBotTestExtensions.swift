@@ -91,7 +91,7 @@ extension GoBot {
         }
         let id = identifier!
         XCTAssertTrue(id.hasPrefix("%"))
-        XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
+        XCTAssertTrue(id.hasSuffix("gabbygrove-v1"))
         print(c)
         return id
     }
