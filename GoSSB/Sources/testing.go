@@ -23,7 +23,7 @@ func ssbTestingMakeNamedKey(name string) int {
 	testRepo := repo.New(repoDir)
 	h := sha256.New()
 	fmt.Fprint(h, name)
-	_, err := repo.NewKeyPairFromSeed(testRepo, name, refs.RefAlgoFeedGabby, bytes.NewReader(h.Sum(nil)))
+	_, err := repo.NewKeyPairFromSeed(testRepo, name, refs.RefAlgoFeedSSB1, bytes.NewReader(h.Sum(nil)))
 	if err != nil {
 		return -1
 	}
