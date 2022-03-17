@@ -177,7 +177,7 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 
 		v, err = sbot.ReceiveLog.Get(indexOfMessageInRootLog)
 		if err != nil {
-			errors.Wrapf(err, "drainLog: could not get message %i from RootLog", indexOfMessageInRootLog)
+			errors.Wrapf(err, "drainLog: could not get message %d from RootLog", indexOfMessageInRootLog)
 			return nil
 		}
 

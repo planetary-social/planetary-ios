@@ -499,7 +499,7 @@ class GoBot: Bot {
                     return
                 }
                 
-                Log.info("Published message with key \(key ?? "nil")")
+                Log.info("Published message with key \(key)")
                 
                 // Copy the newly published post into the ViewDatabase immediately.
                 do {
