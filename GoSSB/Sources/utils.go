@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/base64"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"go.cryptoscope.co/ssb/multilogs"
@@ -15,7 +15,6 @@ import (
 	"go.cryptoscope.co/ssb"
 	mksbot "go.cryptoscope.co/ssb/sbot"
 	refs "go.mindeco.de/ssb-refs"
-	"golang.org/x/crypto/ed25519"
 )
 
 // #include <stdlib.h>
@@ -43,27 +42,15 @@ func ssbGenKey() *C.char {
 		return nil
 	}
 
-	var sec = jsonSecret{
-		Curve:   "ed25519",
-		ID:      kp.ID(),
-		Private: base64.StdEncoding.EncodeToString(kp.Secret()) + ".ed25519",
-		Public:  base64.StdEncoding.EncodeToString(kp.Secret().Public().(ed25519.PublicKey)) + ".ed25519", // todo why save it it is in private key
-	}
+	buf := &bytes.Buffer{}
 
-	bytes, err := json.Marshal(sec)
+	err = ssb.EncodeKeyPairAsJSON(kp, buf)
 	if err != nil {
-		err = errors.Wrap(err, "GenerateKeyPair: json encoding failed")
+		err = errors.Wrap(err, "GenerateKeyPair: failed to encode key pair as JSON")
 		return nil
 	}
-	return C.CString(string(bytes))
-}
 
-// todo: deduplicate
-type jsonSecret struct {
-	Curve   string       `json:"curve"`
-	ID      refs.FeedRef `json:"id"`
-	Private string       `json:"private"`
-	Public  string       `json:"public"`
+	return C.CString(string(buf.Bytes()))
 }
 
 //export ssbReplicateUpTo
