@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum BotError: Error {
+enum BotError: Error, LocalizedError {
     case alreadyLoggedIn
     case blobInvalidIdentifier
     case blobUnsupportedFormat
@@ -14,5 +14,35 @@ enum BotError: Error {
     case encodeFailure
     case invalidIdentity
     case notLoggedIn
-    case notEnoughMessagesInRepo
+    case forkProtection
+    case invalidAppConfiguration
+
+    // MARK: - LocalizedError
+    
+    var errorDescription: String? {
+        switch self {
+        case .alreadyLoggedIn:
+            return "Already logged in"
+        case .blobInvalidIdentifier:
+            return "Blob invalid identifier"
+        case .blobUnsupportedFormat:
+            return "Blob unsupported format"
+        case .blobUnavailable:
+            return "Blob unavailable"
+        case .blobMaximumSizeExceeded:
+            return "Blob maximum size exceeded"
+        case .encodeFailure:
+            return "Encode failure"
+        case .invalidIdentity:
+            return "Invalid identity"
+        case .notLoggedIn:
+            return "Not logged in"
+        case .forkProtection:
+            return Text.Errors.cannotPublishBecauseRestoring.text
+        case .invalidAppConfiguration:
+            return Text.Errors.invalidAppConfiguration.text
+        }
+    }
 }
+
+

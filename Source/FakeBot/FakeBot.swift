@@ -181,14 +181,9 @@ class FakeBot: Bot {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
     }
 
-    func login(queue: DispatchQueue,
-               network: NetworkKey,
-               hmacKey: HMACKey?,
-               secret: Secret,
-               completion: @escaping ErrorCompletion)
-    {
-        self._network = network.string
-        self._identity = secret.identity
+    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
+        self._network = config.network?.string
+        self._identity = config.secret?.identity
         queue.async {
             completion(nil)
         }

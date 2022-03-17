@@ -240,3 +240,8 @@
 "Report.postReplied" = "%@ antwortete auf deinen Beitrag";
 "Report.feedMentioned" = "%@ hat dich in einem Beitrag erwähnt";
 "Report.messageLiked" = "%@ gefällt dein Beitrag";
+
+"Error.login" = "Die Peer-to-Peer-Engine konnte nicht gestartet werden. Bitte verwenden Sie Neustart, um zu reparieren und neu zu starten, oder verwenden Sie Ignore, um die Inhalte zu durchsuchen, die bereits auf Ihrem Gerät abgerufen werden.";
+"Error.unexpected" = "Etwas Unerwartetes ist passiert.";
+"Error.supportNotConfigured" = "Support ist nicht konfiguriert.";
+"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";

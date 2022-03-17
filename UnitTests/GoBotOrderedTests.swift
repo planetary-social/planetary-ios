@@ -15,6 +15,13 @@ let botTestsKey = Secret(from: """
 """)!
 let botTestNetwork = NetworkKey(base64: "4vVhFHLFHeyutypUO842SyFd5jRIVhAyiZV29ftnKSU=")!
 let botTestHMAC = HMACKey(base64: "1MQuQUGsRDyMyrFQQRdj8VVsBwn/t0bX7QQRQisMWjY=")!
+let botTestConfiguration = { () -> AppConfiguration in
+    let config = AppConfiguration(with: botTestsKey)
+    config.network = botTestNetwork
+    config.hmacKey = botTestHMAC
+    config.bot = GoBotOrderedTests.shared
+    return config
+}()
 
 fileprivate let publishManyCount = 25
 
@@ -23,7 +30,13 @@ fileprivate let publishManyCount = 25
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotOrderedTests: XCTestCase {
 
-    static var shared = GoBot()
+    static var shared = GoBot(userDefaults: userDefaults)
+    
+    static var userDefaults = { () -> UserDefaults in
+        let defaults = UserDefaults()
+        userDefaults.set(false, forKey: "prevent_feed_from_forks")
+        return defaults
+    }()
 
     // filled by testingGetNamedKeypairs
     static var pubkeys: [String: Identity] = [:]
@@ -46,7 +59,7 @@ class GoBotOrderedTests: XCTestCase {
         }
 
         var ex = self.expectation(description: "login")
-        GoBotOrderedTests.shared.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
+        GoBotOrderedTests.shared.login(config: botTestConfiguration) {
             error in
             defer { ex.fulfill() }
             XCTAssertNil(error)
@@ -64,7 +77,7 @@ class GoBotOrderedTests: XCTestCase {
 
         // calling login twice works too
         ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
+        GoBotOrderedTests.shared.login(config: botTestConfiguration) {
             loginErr in
             defer { ex.fulfill() }
             XCTAssertNil(loginErr)
@@ -109,7 +122,7 @@ class GoBotOrderedTests: XCTestCase {
 
         // finally log in again
         let exAgain = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
+        GoBotOrderedTests.shared.login(config: botTestConfiguration) {
             loginErr in
             XCTAssertNil(loginErr)
             exAgain.fulfill()

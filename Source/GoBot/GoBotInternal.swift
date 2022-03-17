@@ -68,7 +68,7 @@ struct ScuttlegobotHealReport: Decodable {
     let Messages: UInt32
 }
 
-fileprivate struct BotConfig: Encodable {
+fileprivate struct GoBotConfig: Encodable {
     let AppKey: String
     let HMACKey: String
     let KeyBlob: String
@@ -134,7 +134,7 @@ class GoBotInternal {
 
         let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
 
-        let cfg = BotConfig(
+        let cfg = GoBotConfig(
             AppKey: network.string,
             HMACKey: hmacKey == nil ? "" : hmacKey!.string,
             KeyBlob: secret.jsonString()!,

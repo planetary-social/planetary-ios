@@ -240,3 +240,8 @@
 "Report.postReplied" = "%@ odpowiedział na Twój post";
 "Report.feedMentioned" = "%@ wspomniał o Tobie w poście";
 "Report.messageLiked" = "%@ polubił twój post";
+
+"Error.login" = "Nie udało się uruchomić połączenia z siecią. Uruchom ponownie, aby spróbować naprawić tą sytuację, lub użyj opcji Ignoruj, aby przeglądać zawartość, która została już pobrana na Twoje urządzenie.";
+"Error.unexpected" = "Stało się coś nieoczekiwanego.";
+"Error.supportNotConfigured" = "Wsparcie techniczne nie jest dostępne.";
+"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";

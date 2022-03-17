@@ -89,7 +89,7 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         
-        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { error in
+        bot.login(config: configuration) { error in
             
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error,
