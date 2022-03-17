@@ -1,4 +1,5 @@
-// This file should be the same as es-uy/Generated.strings
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Opa";
@@ -18,12 +19,13 @@
 "Text.future" = "En el futuro";
 "Text.daysAgo" = "hace {{ days }} días";
 "Text.atDayTime" = "{{ day }} a las {{ time }}";
+"Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
 "Text.yourProfile" = "Tu Perfil";
 "Text.helpAndSupport" = "Ayuda y soporte";
 "Text.reportBug" = "Reportá un bug";
 "Text.settings" = "Configuración";
 "Text.userDirectory" = "Directorio de usuarios";
-"Text.communities" = "Comunidades";
+"Text.communitites" = "Communities";
 "Text.showMeInDirectory" = "Mostrame en el directorio";
 "Text.showMeInUserDirectory" = "Mostrame en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultame en el directorio de usuarios";
@@ -35,6 +37,7 @@
 "Text.analyticsMessage" = "Nos gustaría capturar datos anónimos sobre tu uso de la app –y reportes de bugs cuando algo sale mal– así podemos mejorar la aplicación.";
 "Text.loadingUpdates" = "Planetary está buscando actualizaciones\nen la red par-a-par descentralizada.";
 "Text.post" = "Post";
+"Text.preview" = "Preview";
 "Text.newPost" = "Nuevo post";
 "Text.deletePost" = "Eliminar este post";
 "Text.editPost" = "Editar este post";
@@ -65,6 +68,7 @@
 "Text.sharePublicIdentifier" = "Compartir Identificador de Perfil";
 "Text.shareThisProfile" = "Compartir Este Perfil";
 "Text.shareThisMessage" = "Compartir Este Mensaje";
+"Text.shareThisProfileText" = "Find {{ who }} on Planetary at {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar amigos";
@@ -81,9 +85,13 @@
 "Text.andCountOthers" = " y {{ count }} más";
 "Text.countOthers" = "{{ count }} más";
 "Text.andOneOther" = " y 1 más";
+"Text.connectedPeers" = "Connected Peers";
 "Text.countOnlinePeers" = "{{ count }} PARES EN LÍNEA";
 "Text.countLocalPeers" = "{{ count }} PARES LOCALES";
 "Text.lastSynced" = "ULTIMA: {{ when }}";
+"Text.syncingMessages" = "Syncing Messages...";
+"Text.recentlyDownloaded" = "Downloaded {{ postCount }} posts in the last {{ duration }} mins";
+"Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Hashtags";
 "Text.select" = "Seleccionar";
 "Text.home" = "Para vos";
@@ -218,6 +226,7 @@
 "Error.login" = "El motor de par-a-par falló al arrancar. Por favor probá cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
 "Error.unexpected" = "Algo inesperado ocurrió.";
 "Error.supportNotConfigured" = "Soporte no está configurado.";
+"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 
 "Channel.one" = "hashtag";
 "Channel.many" = "hashtags";

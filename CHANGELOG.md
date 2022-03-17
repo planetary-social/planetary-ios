@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.21] = 2022-03-14
+
+## Added
+- Added a section showing connected peers and number of synced messages in the side menu. #405
+- Added a placeholder image for unsupported blob types. #412
+
+## Fixed
+- Fixed blob loading (in most cases). #412
+- Fixed analytic event formats. #397
+
 ## [1.0.20] = 2022-02-22
 ## Fixed
 - Allow Planetary to sync data for longer periods of time (up to 30 seconds) when the app is in the backgound. #381
