@@ -4,33 +4,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.22] = 2022-03-17
+
+### Fixed
+- Fixed translations being in the wrong language. #427
+
 ## [1.0.21] = 2022-03-14
 
-## Added
+### Added
 - Added a section showing connected peers and number of synced messages in the side menu. #405
 - Added a placeholder image for unsupported blob types. #412
 
-## Fixed
+### Fixed
 - Fixed blob loading (in most cases). #412
 - Fixed analytic event formats. #397
 
 ## [1.0.20] = 2022-02-22
-## Fixed
+### Fixed
 - Allow Planetary to sync data for longer periods of time (up to 30 seconds) when the app is in the backgound. #381
 - Fix new posts not showing at the top of user Profile pages. #377
 - Fixed a crash when tapping the share button on the Profile page. #378
 - Fixed popover menus on iPads in landscape orientation. Popover menus were pointing to the wrong places in portrait, and crashing the app in landscape. #350 (@kode54)
 
-## Added
+### Added
 - Added an option to export your database in the Debug menu. #338
 - Added support for the new planetary.link URL format. #352
 
 ## [1.0.19] = 2022-02-03
-## Fixed
+### Fixed
 - Fixed a bug that prevented pub invitations from being redeemed. #333 (@kode54)
 
 ## [1.0.18] = 2022-02-01
-## Fixed
+### Fixed
 - Fixed a case where the app could become unresponsive while writing to the database. #310
 - Fixed a case where the app could become unresponsive while trying to redeem an invitation to a pub. #302
 - Fixed an issue where the SQLite database could get significantly behind the go-ssb log, resulting in new data not being shown in the UI. #304
@@ -38,15 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a bug where the mentions autocomplete drawer would not go away. #320
 
 ## [1.0.17] = 2022-01-24
-## Fixed
+### Fixed
 - Fixed an issue where the Follow button could be unresponsive #252
 
-## Changed
+### Changed
 - Changed sorting of the posts in the For You tab to prioritize new content. Instead of sorting by the time the post was received we sort by the time the post was posted. #293
 - Updated translations
 
 ## [1.0.16] = 2022-01-11
-## Changed
+### Changed
 - Updated preloaded feed
 - Updated translations #242
 - Updated Zendesk SDK
