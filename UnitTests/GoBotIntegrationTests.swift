@@ -37,7 +37,7 @@ class GoBotIntegrationTests: XCTestCase {
         appConfig = AppConfiguration(with: botTestsKey)
         appConfig.network = botTestNetwork
         appConfig.hmacKey = botTestHMAC
-        appConfig.bot = GoBotOrderedTests.shared
+        appConfig.bot = sut
         
         let loginExpectation = self.expectation(description: "login")
         sut.login(config: appConfig) {
@@ -49,7 +49,7 @@ class GoBotIntegrationTests: XCTestCase {
 
         let nicks = ["alice"]
         for n in nicks {
-            try GoBotOrderedTests.shared.testingCreateKeypair(nick: n)
+            try sut.testingCreateKeypair(nick: n)
         }
     }
 

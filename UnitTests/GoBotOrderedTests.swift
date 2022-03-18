@@ -30,11 +30,12 @@ fileprivate let publishManyCount = 25
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotOrderedTests: XCTestCase {
 
-    static var shared = GoBot(userDefaults: userDefaults)
+    static let shared = GoBot(userDefaults: userDefaults)
     
-    static var userDefaults = { () -> UserDefaults in
+    static let userDefaults = { () -> UserDefaults in
         let defaults = UserDefaults()
         defaults.set(false, forKey: "prevent_feed_from_forks")
+        defaults.synchronize()
         return defaults
     }()
 
