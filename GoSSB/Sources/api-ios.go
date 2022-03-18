@@ -308,6 +308,7 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 			return countconn.WrapConn(level.Debug(log), c), nil
 		}),
 		mksbot.DisableEBT(true),
+		mksbot.WithPublicAuthorizer(newAcceptAllAuthorizer()),
 	}
 
 	if hmacSignKey != "" {
@@ -367,5 +368,16 @@ func (e emitter) EmitBlob(n ssb.BlobStoreNotification) error {
 }
 
 func (e emitter) Close() error {
+	return nil
+}
+
+type acceptAllAuthorizer struct {
+}
+
+func newAcceptAllAuthorizer() *acceptAllAuthorizer {
+	return &acceptAllAuthorizer{}
+}
+
+func (a acceptAllAuthorizer) Authorize(remote refs.FeedRef) error {
 	return nil
 }
