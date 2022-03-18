@@ -4,7 +4,7 @@
 
 ----
 
-`CrashReporting` is a simple crash reporting utility to handled or unhandled errors:
+`CrashReporting` is a simple crash reporting utility to report handled or unhandled errors:
 
 - Track events in [Bugsnag](https://bugsnag.com)
 - Let user opt-in or opt-out from using CrashReporting
