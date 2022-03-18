@@ -34,7 +34,7 @@ class GoBotOrderedTests: XCTestCase {
     
     static var userDefaults = { () -> UserDefaults in
         let defaults = UserDefaults()
-        userDefaults.set(false, forKey: "prevent_feed_from_forks")
+        defaults.set(false, forKey: "prevent_feed_from_forks")
         return defaults
     }()
 

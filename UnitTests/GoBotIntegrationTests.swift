@@ -117,6 +117,8 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
     }
     
+    // MARK: - Forked Feed Protection
+    
     /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number
     /// of published messages is higher than the number of messages in go-ssb.
     func testForkedFeedProtectionWhenEnabled() async throws {
@@ -149,6 +151,24 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Assert
         XCTAssertNotNil(ref)
+    }
+    
+    /// Verifies that the GoBot assumes the `"prevent_feed_from_forks"` setting is `true` when it hasn't been set.
+    func testForkedFeedProtectionWhenNotSet() async throws {
+        // Arrange
+        let testPost = Post(text: "\(#function)")
+        appConfig.numberOfPublishedMessages = 9999999999999
+        userDefaults.set(nil, forKey: "prevent_feed_from_forks")
+        
+        // Act
+        do {
+            let ref = try await sut.publish(content: testPost)
+            
+        // Assert
+            XCTAssertNil(ref)
+        } catch {
+            XCTAssertNotNil(error)
+        }
     }
     
     /// Verifies that the GoBot increments the published message count in the app config when publishing a message.

@@ -493,24 +493,22 @@ class GoBot: Bot {
                 return
             }
             
-            if self.userDefaults.bool(forKey: "prevent_feed_from_forks") {
-                guard let numberOfMessagesInRepo = try? self.database.numberOfMessages(for: identity) else {
-                    completionQueue.async {
-                        completion(MessageIdentifier.null, GoBotError.unexpectedFault("Failed to access database"))
+            // Forked feed protection
+            do {
+                let preventForks = self.userDefaults.object(forKey: "prevent_feed_from_forks") as? Bool
+                if preventForks == true || preventForks == nil {
+                    guard try self.publishingWouldFork(feed: identity) == false else {
+                        completionQueue.async {
+                            completion(MessageIdentifier.null, BotError.forkProtection)
+                        }
+                        return
                     }
-                    return
                 }
-                
-                let knownNumberOfMessagesInKeychain = self.config?.numberOfPublishedMessages ?? 0
-                self.config?.apply()
-                
-                guard numberOfMessagesInRepo >= knownNumberOfMessagesInKeychain else {
-                    completionQueue.async {
-                        completion(MessageIdentifier.null, BotError.forkProtection)
-                    }
-                    return
-                }
+            } catch {
+                completion(MessageIdentifier.null, error)
             }
+
+            
             self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
                     completionQueue.async { completion(MessageIdentifier.null, error) }
@@ -518,6 +516,7 @@ class GoBot: Bot {
                 }
                 
                 self?.config?.numberOfPublishedMessages += 1
+                self?.config?.apply()
                 Log.info("Published message with key \(key)")
                 
                 // Copy the newly published post into the ViewDatabase immediately.
@@ -535,6 +534,14 @@ class GoBot: Bot {
                 }
             }
         }
+    }
+    
+    /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
+    /// a message before the user's feed has resynced from the network during a restore.
+    private func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
+        let numberOfMessagesInRepo = try self.database.numberOfMessages(for: feed)
+        let knownNumberOfMessagesInKeychain = self.config?.numberOfPublishedMessages ?? 0
+        return numberOfMessagesInRepo < knownNumberOfMessagesInKeychain
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
