@@ -6,24 +6,28 @@
 	objectVersion = 54;
 	objects = {
 
-/* Begin PBXCopyFilesBuildPhase section */
-		C9570F44278640CA0095EFFF /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		0A26524D278A7492008F9EAA /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = include/module.modulemap; sourceTree = "<group>"; };
+		C93DE35627E8C9E700C0E93D /* go.sum */ = {isa = PBXFileReference; lastKnownFileType = text; path = go.sum; sourceTree = "<group>"; };
+		C93DE35727E8C9E700C0E93D /* api-ios.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = "api-ios.go"; sourceTree = "<group>"; };
+		C93DE35A27E8C9E700C0E93D /* encode.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = encode.go; sourceTree = "<group>"; };
+		C93DE35B27E8C9E700C0E93D /* stored.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = stored.go; sourceTree = "<group>"; };
+		C93DE35C27E8C9E700C0E93D /* migrations.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = migrations.go; sourceTree = "<group>"; };
+		C93DE35D27E8C9E700C0E93D /* testing.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = testing.go; sourceTree = "<group>"; };
+		C93DE35E27E8C9E700C0E93D /* blobs.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = blobs.go; sourceTree = "<group>"; };
+		C93DE36127E8C9E700C0E93D /* handler.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = handler.go; sourceTree = "<group>"; };
+		C93DE36227E8C9E700C0E93D /* token_test.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = token_test.go; sourceTree = "<group>"; };
+		C93DE36327E8C9E700C0E93D /* plug.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = plug.go; sourceTree = "<group>"; };
+		C93DE36427E8C9E700C0E93D /* publish.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = publish.go; sourceTree = "<group>"; };
+		C93DE36527E8C9E700C0E93D /* ctrl.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = ctrl.go; sourceTree = "<group>"; };
+		C93DE36627E8C9E700C0E93D /* streams.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = streams.go; sourceTree = "<group>"; };
+		C93DE36727E8C9E700C0E93D /* debug.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = debug.go; sourceTree = "<group>"; };
+		C93DE36827E8C9E700C0E93D /* utils.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = utils.go; sourceTree = "<group>"; };
+		C93DE36A27E8C9E700C0E93D /* GoSSB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoSSB.h; sourceTree = "<group>"; };
+		C93DE36B27E8C9E700C0E93D /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		C9570F46278640CA0095EFFF /* libGoSSB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGoSSB.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9570F49278640CA0095EFFF /* GoSSB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GoSSB.h; path = include/GoSSB.h; sourceTree = "<group>"; };
 		C9570F55278641B00095EFFF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		C9570F5C27864D680095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9570F5D27864D850095EFFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -38,11 +42,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C93DE35827E8C9E700C0E93D /* migrations */ = {
+			isa = PBXGroup;
+			children = (
+				C93DE35927E8C9E700C0E93D /* legacy */,
+				C93DE35C27E8C9E700C0E93D /* migrations.go */,
+			);
+			path = migrations;
+			sourceTree = "<group>";
+		};
+		C93DE35927E8C9E700C0E93D /* legacy */ = {
+			isa = PBXGroup;
+			children = (
+				C93DE35A27E8C9E700C0E93D /* encode.go */,
+				C93DE35B27E8C9E700C0E93D /* stored.go */,
+			);
+			path = legacy;
+			sourceTree = "<group>";
+		};
+		C93DE36027E8C9E700C0E93D /* servicesplug */ = {
+			isa = PBXGroup;
+			children = (
+				C93DE36127E8C9E700C0E93D /* handler.go */,
+				C93DE36227E8C9E700C0E93D /* token_test.go */,
+				C93DE36327E8C9E700C0E93D /* plug.go */,
+			);
+			path = servicesplug;
+			sourceTree = "<group>";
+		};
+		C93DE36927E8C9E700C0E93D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				C93DE36A27E8C9E700C0E93D /* GoSSB.h */,
+				C93DE36B27E8C9E700C0E93D /* module.modulemap */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 		C9570F3D278640CA0095EFFF = {
 			isa = PBXGroup;
 			children = (
 				C9570F5D27864D850095EFFF /* README.md */,
-				C9570F5C27864D680095EFFF /* GoSSB.xcframework */,
 				C9570F48278640CA0095EFFF /* Sources */,
 				C9570F47278640CA0095EFFF /* Products */,
 			);
@@ -60,8 +100,20 @@
 			isa = PBXGroup;
 			children = (
 				C9570F55278641B00095EFFF /* Makefile */,
+				C93DE35727E8C9E700C0E93D /* api-ios.go */,
+				C93DE35E27E8C9E700C0E93D /* blobs.go */,
+				C93DE36527E8C9E700C0E93D /* ctrl.go */,
+				C93DE36727E8C9E700C0E93D /* debug.go */,
+				C93DE36427E8C9E700C0E93D /* publish.go */,
+				C93DE36627E8C9E700C0E93D /* streams.go */,
+				C93DE35D27E8C9E700C0E93D /* testing.go */,
+				C93DE36827E8C9E700C0E93D /* utils.go */,
 				C9570F49278640CA0095EFFF /* GoSSB.h */,
 				0A26524D278A7492008F9EAA /* module.modulemap */,
+				C93DE35627E8C9E700C0E93D /* go.sum */,
+				C93DE36927E8C9E700C0E93D /* include */,
+				C93DE35827E8C9E700C0E93D /* migrations */,
+				C93DE36027E8C9E700C0E93D /* servicesplug */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -77,7 +129,6 @@
 				C9570F52278641280095EFFF /* Build libssb-go.a for all architectures */,
 				C9570F54278641570095EFFF /* Build GoSSB.xcframework */,
 				C9570F43278640CA0095EFFF /* Frameworks */,
-				C9570F44278640CA0095EFFF /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -123,6 +174,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		C9570F52278641280095EFFF /* Build libssb-go.a for all architectures */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -137,7 +189,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export GOROOT=${PROJECT_DIR}/Sources/.goroot\ncd ${PROJECT_DIR}/Sources\nmake --debug=\"v\"\n";
+			shellScript = "export GOROOT=${PROJECT_DIR}/Sources/.goroot\ncd ${PROJECT_DIR}/Sources\nmake #--debug=\"v\"\n";
+			showEnvVarsInLog = 0;
 		};
 		C9570F532786414B0095EFFF /* Install Go */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -165,15 +218,20 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${BUILD_DIR}/iPhoneOS-arm64/libssb-go.a",
+				"${PROJECT_DIR}/Sources/include",
+				"${BUILD_DIR}/iPhoneSimulator-arm64_x86_64/libssb-go.a",
 			);
 			name = "Build GoSSB.xcframework";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${PROJECT_DIR}/Products/GoSSB.xcframework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export XCFRAMEWORK=${PROJECT_DIR}/Products/GoSSB.xcframework\nrm -rf $XCFRAMEWORK\n\nxcodebuild -create-xcframework \\\n    -library ${BUILD_DIR}/iPhoneOS-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -library ${BUILD_DIR}/iPhoneSimulator-arm64_x86_64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -output $XCFRAMEWORK\n\n#mkdir ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#cp -r ${XCFRAMEWORK}/ios-x86_64-simulator/Headers ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#rm -r ${XCFRAMEWORK}/ios-x86_64-simulator\n#lipo -create -output ${XCFRAMEWORK}/ios-arm64_x86_64-simulator/libssb-go.a ${BUILD_DIR}/iphonesimulator-x86_64/libssb-go.a ${BUILD_DIR}/iphonesimulator-arm64/libssb-go.a\n \n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -182,6 +240,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -241,6 +300,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
