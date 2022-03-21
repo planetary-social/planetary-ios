@@ -219,10 +219,12 @@ class Onboarding {
                 }
                 context.about = about
                 
-                CrashReporting.shared.identify(identifier: about.identity,
-                                               name: about.name,
-                                               networkKey: context.network.string,
-                                               networkName: context.network.name)
+                CrashReporting.shared.identify(
+                    identifier: about.identity,
+                    name: about.name,
+                    networkKey: context.network.string,
+                    networkName: context.network.name
+                )
                 Analytics.shared.identify(identifier: about.identity,
                                           name: about.name,
                                           network: context.network.name)

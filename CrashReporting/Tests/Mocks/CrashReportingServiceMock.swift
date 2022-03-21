@@ -10,10 +10,10 @@ import Foundation
 
 class CrashReportingServiceMock: CrashReportingService {
 
-    var identified: Bool = false
-    var crashed: Bool = false
-    var forgot: Bool = false
-    var recorded: Bool = false
+    var identified = false
+    var crashed = false
+    var forgot = false
+    var recorded = false
 
     func identify(identity: Identity) {
         identified = true
@@ -30,5 +30,4 @@ class CrashReportingServiceMock: CrashReportingService {
     func report(error: Error, metadata: [AnyHashable: Any]?) {
         crashed = true
     }
-
 }

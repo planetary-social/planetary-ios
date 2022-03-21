@@ -28,5 +28,4 @@ protocol APIService {
 
     /// Sends an error to the Crash Reporting service
     func report(error: Error, metadata: [AnyHashable: Any]?)
-    
 }

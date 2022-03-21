@@ -22,9 +22,11 @@ class BugsnagService: APIService {
     }
 
     func identify(identity: Identity) {
-        Bugsnag.setUser(identity.identifier,
-                        withEmail: nil,
-                        andName: identity.name)
+        Bugsnag.setUser(
+            identity.identifier,
+            withEmail: nil,
+            andName: identity.name
+        )
         Bugsnag.addMetadata(identity.networkKey, key: "key", section: "network")
         Bugsnag.addMetadata(identity.networkName, key: "name", section: "network")
     }
@@ -38,17 +40,22 @@ class BugsnagService: APIService {
         Bugsnag.leaveBreadcrumb(withMessage: message)
     }
 
-    func report(error: Error, metadata: [AnyHashable : Any]?) {
+    func report(error: Error, metadata: [AnyHashable: Any]?) {
         Bugsnag.notifyError(error) { event in
             if let metadata = metadata {
                 event.addMetadata(metadata, section: "metadata")
             }
-            if let log = Log.fileUrls.first, let data = try? Data(contentsOf: log), let string = String(data: data, encoding: .utf8) {
-                event.addMetadata(string, key: "app", section: "logs")
+            if let logUrls = Log.fileUrls.first {
+                do {
+                    let data = try Data(contentsOf: logUrls)
+                    let string = String(data: data, encoding: .utf8)
+                    event.addMetadata(string, key: "app", section: "logs")
+                } catch {
+                    Log.optional(error)
+                }
             }
             // TODO: Send bot metadata
             return true
         }
     }
-
 }

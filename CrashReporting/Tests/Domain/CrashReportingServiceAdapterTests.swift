@@ -10,36 +10,48 @@ import XCTest
 
 final class CrashReportingServiceAdapterTests: XCTestCase {
 
-    private var apiService: APIServiceMock!
-    private var service: CrashReportingServiceAdapter!
+    private var apiService: APIServiceMock?
+    private var service: CrashReportingServiceAdapter?
 
     override func setUp() {
-        apiService = APIServiceMock()
-        service = CrashReportingServiceAdapter(api: apiService)
+        super.setUp()
+        let apiService = APIServiceMock()
+        service = CrashReportingServiceAdapter(apiService)
+        self.apiService = apiService
     }
 
-    func testIdentify() {
-        service.identify(identity: Identity(identifier: "user hash",
-                                            name: "user name",
-                                            networkKey: "network key",
-                                            networkName: "network name"))
+    func testIdentify() throws {
+        let identity = Identity(
+            identifier: "user hash",
+            name: "user name",
+            networkKey: "network key",
+            networkName: "network name"
+        )
+        let service = try XCTUnwrap(service)
+        service.identify(identity: identity)
+        let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.identified)
     }
 
-    func testForget() {
+    func testForget() throws {
+        let service = try XCTUnwrap(service)
         service.forget()
+        let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.forgot)
     }
 
-    func testRecord() {
+    func testRecord() throws {
+        let service = try XCTUnwrap(service)
         service.record("message")
+        let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.recorded)
     }
 
-    func testReport() {
+    func testReport() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
+        let service = try XCTUnwrap(service)
         service.report(error: error, metadata: nil)
+        let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.crashed)
     }
-
 }

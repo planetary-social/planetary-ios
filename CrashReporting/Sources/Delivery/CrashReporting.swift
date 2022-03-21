@@ -9,7 +9,7 @@ import Foundation
 
 public class CrashReporting {
 
-    public static let shared = CrashReporting(service: CrashReportingServiceAdapter(api: BugsnagService()))
+    public static let shared = CrashReporting(service: CrashReportingServiceAdapter(BugsnagService()))
 
     var service: CrashReportingService
 
@@ -19,10 +19,12 @@ public class CrashReporting {
 
     /// Identifies user information on this session
     public func identify(identifier: String, name: String?, networkKey: String, networkName: String) {
-        let identity = Identity(identifier: identifier,
-                                name: name,
-                                networkKey: networkKey,
-                                networkName: networkName)
+        let identity = Identity(
+            identifier: identifier,
+            name: name,
+            networkKey: networkKey,
+            networkName: networkName
+        )
         service.identify(identity: identity)
     }
 
@@ -50,5 +52,4 @@ public class CrashReporting {
             service.report(error: error, metadata: metadata)
         }
     }
-
 }

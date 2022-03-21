@@ -10,28 +10,28 @@ import Logger
 
 class CrashReportingServiceAdapter: CrashReportingService {
 
-    var api: APIService
+    var apiService: APIService
 
-    init(api: APIService) {
-        self.api = api
+    init(_ apiService: APIService) {
+        self.apiService = apiService
     }
 
     func identify(identity: Identity) {
-        api.identify(identity: identity)
+        apiService.identify(identity: identity)
     }
 
     func forget() {
-        api.forget()
+        apiService.forget()
     }
 
     func record(_ message: String) {
         Log.debug(message)
-        api.record(message)
+        apiService.record(message)
     }
 
     func report(error: Error, metadata: [AnyHashable: Any]? = nil) {
         Log.error(error.localizedDescription)
-        api.report(error: error, metadata: metadata)
+        apiService.report(error: error, metadata: metadata)
     }
 
 }

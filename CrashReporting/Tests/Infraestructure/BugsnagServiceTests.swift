@@ -12,9 +12,10 @@ import Secrets
 
 final class BugsnagServiceTests: XCTestCase {
 
-    private var service: BugsnagService!
+    private var service: BugsnagService?
 
     override func setUp() {
+        super.setUp()
         service = BugsnagService(keys: Keys(bundle: .module))
     }
 
@@ -22,15 +23,18 @@ final class BugsnagServiceTests: XCTestCase {
         XCTAssertEqual(Bugsnag.breadcrumbs().first?.message, "Bugsnag loaded")
     }
 
-    func testIdentify() {
+    func testIdentify() throws {
         let expectedIdentifier = "user hash"
         let expectedName = "John Doe"
         let expectedNetworkKey = "network hash"
         let expectedNetworkName = "a test network"
-        let identity = Identity(identifier: expectedIdentifier,
-                                name: expectedName,
-                                networkKey: expectedNetworkKey,
-                                networkName: expectedNetworkName)
+        let identity = Identity(
+            identifier: expectedIdentifier,
+            name: expectedName,
+            networkKey: expectedNetworkKey,
+            networkName: expectedNetworkName
+        )
+        let service = try XCTUnwrap(service)
         service.identify(identity: identity)
         let user = Bugsnag.user()
         let metadata = Bugsnag.getMetadata(section: "network")
@@ -40,11 +44,12 @@ final class BugsnagServiceTests: XCTestCase {
         XCTAssertEqual(metadata?.value(forKey: "name") as? String, expectedNetworkName)
     }
 
-    func testForget() {
+    func testForget() throws {
         let identity = Identity(identifier: "user hash",
                                 name: "John Doe",
                                 networkKey: "network hash",
                                 networkName: "a test network")
+        let service = try XCTUnwrap(service)
         service.identify(identity: identity)
         service.forget()
         let user = Bugsnag.user()
@@ -54,22 +59,24 @@ final class BugsnagServiceTests: XCTestCase {
         XCTAssertNil(metadata)
     }
 
-    func testRecord() {
+    func testRecord() throws {
         let expectedBreadcrumb = "test"
+        let service = try XCTUnwrap(service)
         service.record(expectedBreadcrumb)
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, expectedBreadcrumb)
     }
 
-    func testReport() {
+    func testReport() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
+        let service = try XCTUnwrap(service)
         service.report(error: error, metadata: nil)
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
     }
 
-    func testReportWithMetadata() {
+    func testReportWithMetadata() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
+        let service = try XCTUnwrap(service)
         service.report(error: error, metadata: ["key": "value"])
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
     }
-
 }
