@@ -45,10 +45,12 @@ final class BugsnagServiceTests: XCTestCase {
     }
 
     func testForget() throws {
-        let identity = Identity(identifier: "user hash",
-                                name: "John Doe",
-                                networkKey: "network hash",
-                                networkName: "a test network")
+        let identity = Identity(
+            identifier: "user hash",
+            name: "John Doe",
+            networkKey: "network hash",
+            networkName: "a test network"
+        )
         let service = try XCTUnwrap(service)
         service.identify(identity: identity)
         service.forget()

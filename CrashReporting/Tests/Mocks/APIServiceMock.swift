@@ -26,7 +26,7 @@ class APIServiceMock: APIService {
     func record(_ message: String) {
         recorded = true
     }
-    
+
     func report(error: Error, metadata: [AnyHashable: Any]?, appLog: String?, botLog: String?) {
         crashed = true
     }

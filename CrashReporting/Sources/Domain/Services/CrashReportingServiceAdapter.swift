@@ -42,5 +42,4 @@ class CrashReportingServiceAdapter: CrashReportingService {
         }
         apiService.report(error: error, metadata: metadata, appLog: appLog, botLog: botLog)
     }
-
 }
