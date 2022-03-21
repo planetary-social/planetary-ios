@@ -1,0 +1,4 @@
+[submodule "secrethandshake/shs1-testsuite"]
+  path = secrethandshake/shs1-testsuite
+  #url = http://localhost:7718/%25riikqU1Zc%2Fdgjc80vABMA3DkTzTHzlxEYxGU5NYwje8%3D.sha256
+  url = https://github.com/AljoschaMeyer/shs1-testsuite.git

@@ -1,0 +1,146 @@
+{
+  "Description": "A bunch of metafeed related messages with double signed posts. Two feeds get added and one of them gets revoked/tombstoned",
+  "Metadata": [
+    {
+      "Name": "Seed for Metafeed KeyPair",
+      "HexString": "7365633073656330736563307365633073656330736563307365633073656330"
+    },
+    {
+      "Name": "subfeed1 nonce",
+      "HexString": "2323232323232323232323232323232323232323232323232323232323232323"
+    },
+    {
+      "Name": "subfeed1 author",
+      "Feed": "@Oo6OYCGsjLP3n+cep4FiHJJZGHyqKWztnhDk7vJhi3A=.ed25519"
+    },
+    {
+      "Name": "subfeed2 nonce",
+      "HexString": "4242424242424242424242424242424242424242424242424242424242424242"
+    },
+    {
+      "Name": "subfeed2 author",
+      "Feed": "ssb:feed/gabbygrove-v1/FY5OG311W4j_KPh8H9B2MZt4WSziy_p-ABkKERJdujQ="
+    },
+    {
+      "Name": "existing subfeed author",
+      "Feed": "ssb:feed/gabbygrove-v1/4x4183TbjTA46ROc5Uj9FmtE-H2bFVVeGjQzGwdlZCw="
+    },
+    {
+      "Name": "existing subfeed nonce",
+      "HexString": "6f6861696f6861696f6861696f6861696f6861696f6861696f6861696f686169"
+    }
+  ],
+  "Entries": [
+    {
+      "EncodedData": "6c6c33343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f77693165323a06026930656c6431313a66656564707572706f736531343a06006d61696e2064656661756c74383a6d6574616665656433343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f77353a6e6f6e636533343a06032323232323232323232323232323232323232323232323232323232323232323373a7375626665656433343a00003a8e8e6021ac8cb3f79fe71ea781621c9259187caa296ced9e10e4eef2618b70373a74616e676c657364383a6d6574616665656464383a70726576696f7573323a0602343a726f6f74323a06026565343a7479706532323a06006d657461666565642f6164642f646572697665646536363a0400ae77b432db19144721e39440a9a29a42db9bf35341a01fe8d2f1d3cab7b33a67c0d9ac12cd16de5b255e280eec383c0d7ea907dd583cbae1ebb78df51bd3160a656536363a0400e7dcf2a8e968315354fc598bfa62dee7a68580236c9877ed969e62a7de4e353201fc6dcd902e373c8a057b4cabe34f6c54ee07ef7ca9a5d3abcacc5256709f0765",
+      "Key": "ssb:message/bendybutt-v1/rIqfhMR7cpwQCemll4cE48gzdYdWqDCxkQdLq4Yprxc=",
+      "Author": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+      "Sequence": 1,
+      "Previous": null,
+      "Timestamp": 0,
+      "HighlevelContent": [
+        {
+          "type": "metafeed/add/derived",
+          "feedpurpose": "main default",
+          "subfeed": "@Oo6OYCGsjLP3n+cep4FiHJJZGHyqKWztnhDk7vJhi3A=.ed25519",
+          "metafeed": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+          "nonce": "IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyM=",
+          "tangles": {
+            "metafeed": {
+              "root": null,
+              "previous": null
+            }
+          }
+        },
+        {
+          "Name": "subfeed signature",
+          "HexString": "0400ae77b432db19144721e39440a9a29a42db9bf35341a01fe8d2f1d3cab7b33a67c0d9ac12cd16de5b255e280eec383c0d7ea907dd583cbae1ebb78df51bd3160a"
+        }
+      ],
+      "Signature": "0400e7dcf2a8e968315354fc598bfa62dee7a68580236c9877ed969e62a7de4e353201fc6dcd902e373c8a057b4cabe34f6c54ee07ef7ca9a5d3abcacc5256709f07"
+    },
+    {
+      "EncodedData": "6c6c33343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f7769326533343a0104ac8a9f84c47b729c1009e9a5978704e3c833758756a830b191074bab8629af176930656c6431313a66656564707572706f736531343a06006578706572696d656e74616c383a6d6574616665656433343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f77353a6e6f6e636533343a06034242424242424242424242424242424242424242424242424242424242424242373a7375626665656433343a0001158e4e1b7d755b88ff28f87c1fd076319b78592ce2cbfa7e00190a11125dba34373a74616e676c657364383a6d6574616665656464383a70726576696f7573323a0602343a726f6f74323a06026565343a7479706532323a06006d657461666565642f6164642f646572697665646536363a040050c069c15d12c5538be595aaaf633d4c6a26f623430a95085fed99b7b6f9c085518515fdcadbf5c4bba498684c74f8846fbe1152f9c2d64d0c965fc2d3737d06656536363a04000d528aefb07b0504afbc728cbc46e5fb7b4f209aa60245f871a3f5a69462603141094238ddcf360b109fb99024ca5478c3566bd41ad1123da59abd81f26bc10d65",
+      "Key": "ssb:message/bendybutt-v1/igh9DQn0vIYEbF9VwLVrBaRryprQI_8kO_Yj-TIzAc0=",
+      "Author": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+      "Sequence": 2,
+      "Previous": "ssb:message/bendybutt-v1/rIqfhMR7cpwQCemll4cE48gzdYdWqDCxkQdLq4Yprxc=",
+      "Timestamp": 0,
+      "HighlevelContent": [
+        {
+          "type": "metafeed/add/derived",
+          "feedpurpose": "experimental",
+          "subfeed": "ssb:feed/gabbygrove-v1/FY5OG311W4j_KPh8H9B2MZt4WSziy_p-ABkKERJdujQ=",
+          "metafeed": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+          "nonce": "QkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkI=",
+          "tangles": {
+            "metafeed": {
+              "root": null,
+              "previous": null
+            }
+          }
+        },
+        {
+          "Name": "subfeed2 signature",
+          "HexString": "040050c069c15d12c5538be595aaaf633d4c6a26f623430a95085fed99b7b6f9c085518515fdcadbf5c4bba498684c74f8846fbe1152f9c2d64d0c965fc2d3737d06"
+        }
+      ],
+      "Signature": "04000d528aefb07b0504afbc728cbc46e5fb7b4f209aa60245f871a3f5a69462603141094238ddcf360b109fb99024ca5478c3566bd41ad1123da59abd81f26bc10d"
+    },
+    {
+      "EncodedData": "6c6c33343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f7769336533343a01048a087d0d09f4bc86046c5f55c0b56b05a46bca9ad023ff243bf623f9323301cd6930656c64383a6d6574616665656433343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f77373a7375626665656433343a00003a8e8e6021ac8cb3f79fe71ea781621c9259187caa296ced9e10e4eef2618b70373a74616e676c657364383a6d6574616665656464383a70726576696f75736c33343a0104ac8a9f84c47b729c1009e9a5978704e3c833758756a830b191074bab8629af1765343a726f6f7433343a0104ac8a9f84c47b729c1009e9a5978704e3c833758756a830b191074bab8629af176565343a7479706532303a06006d657461666565642f746f6d6273746f6e656536363a0400d81ad19e1e794037f47047b84549dea7c182bd2a68d87e163a1ee32e9630ccdc0d8b4551848809c594871c60e407de7835c80debb04c030e4168e6a27257e909656536363a0400e408d0d4d4e97845a22d9f802b34c27519d40dbeb2e1b5d8f96380b0b2b38449d6180ea7f294a6da6ba46d18107fb8397692963c03e64d940beeae5db68ae90f65",
+      "Key": "ssb:message/bendybutt-v1/Tlrg3wT8VX9w7wdqCM8dBRV0eMXOiQZynWrUgIL88v8=",
+      "Author": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+      "Sequence": 3,
+      "Previous": "ssb:message/bendybutt-v1/igh9DQn0vIYEbF9VwLVrBaRryprQI_8kO_Yj-TIzAc0=",
+      "Timestamp": 0,
+      "HighlevelContent": [
+        {
+          "type": "metafeed/tombstone",
+          "subfeed": "@Oo6OYCGsjLP3n+cep4FiHJJZGHyqKWztnhDk7vJhi3A=.ed25519",
+          "metafeed": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+          "tangles": {
+            "metafeed": {
+              "root": "ssb:message/bendybutt-v1/rIqfhMR7cpwQCemll4cE48gzdYdWqDCxkQdLq4Yprxc=",
+              "previous": [
+                "ssb:message/bendybutt-v1/rIqfhMR7cpwQCemll4cE48gzdYdWqDCxkQdLq4Yprxc="
+              ]
+            }
+          }
+        },
+        {
+          "Name": "subfeed1 signature",
+          "HexString": "0400d81ad19e1e794037f47047b84549dea7c182bd2a68d87e163a1ee32e9630ccdc0d8b4551848809c594871c60e407de7835c80debb04c030e4168e6a27257e909"
+        }
+      ],
+      "Signature": "0400e408d0d4d4e97845a22d9f802b34c27519d40dbeb2e1b5d8f96380b0b2b38449d6180ea7f294a6da6ba46d18107fb8397692963c03e64d940beeae5db68ae90f"
+    },
+    {
+      "EncodedData": "6c6c33343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f7769346533343a01044e5ae0df04fc557f70ef076a08cf1d05157478c5ce8906729d6ad48082fcf2ff6930656c6431313a66656564707572706f736533303a06006d657461666565642075706772616465206f66206578697374696e67383a6d6574616665656433343a00036fdf51d9eee58fc87b345a8684ebba9421b2f202f1595f89e0e45dd57eeb3f77373a7375626665656433343a0001e31e35f374db8d3038e9139ce548fd166b44f87d9b15555e1a34331b0765642c373a74616e676c657364383a6d6574616665656464383a70726576696f7573323a0602343a726f6f74323a06026565343a7479706532333a06006d657461666565642f6164642f6578697374696e676536363a0400f043cb9c2c92278d99a6507cf2f37b8e0dc449d46202baf813858ddbe239bbaf832e8e6abfcb888d511f848c57a64fc963b9aeb1ae0a585cdfc68f106d028808656536363a0400506a6b40f610f98792313d064c2103b5d0b2e104e732a191afcfce4d04cadd485fa93b9c26325be34745adb7b47d85dce5302157e091ff4b50a7c33b13633a0165",
+      "Key": "ssb:message/bendybutt-v1/ojQYoOHk-JbyHgZDBpR9gMYkEsnnxv-I4sx93c1kc1A=",
+      "Author": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+      "Sequence": 4,
+      "Previous": "ssb:message/bendybutt-v1/Tlrg3wT8VX9w7wdqCM8dBRV0eMXOiQZynWrUgIL88v8=",
+      "Timestamp": 0,
+      "HighlevelContent": [
+        {
+          "type": "metafeed/add/existing",
+          "feedpurpose": "metafeed upgrade of existing",
+          "subfeed": "ssb:feed/gabbygrove-v1/4x4183TbjTA46ROc5Uj9FmtE-H2bFVVeGjQzGwdlZCw=",
+          "metafeed": "ssb:feed/bendybutt-v1/b99R2e7lj8h7NFqGhOu6lCGy8gLxWV-J4ORd1X7rP3c=",
+          "tangles": {
+            "metafeed": {
+              "root": null,
+              "previous": null
+            }
+          }
+        },
+        {
+          "Name": "subfeed signature",
+          "HexString": "0400f043cb9c2c92278d99a6507cf2f37b8e0dc449d46202baf813858ddbe239bbaf832e8e6abfcb888d511f848c57a64fc963b9aeb1ae0a585cdfc68f106d028808"
+        }
+      ],
+      "Signature": "0400506a6b40f610f98792313d064c2103b5d0b2e104e732a191afcfce4d04cadd485fa93b9c26325be34745adb7b47d85dce5302157e091ff4b50a7c33b13633a01"
+    }
+  ]
+}
