@@ -638,6 +638,7 @@
 		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
 		5B0D585227BEAE9E002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Secrets */; };
 		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
+		5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
 		5BAA0BB627DF9CEC00C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */; };
 		5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE28DFC27CD7BA1004D7D27 /* Analytics */; };
@@ -3369,6 +3370,7 @@
 				237D057E23351E4600973D63 /* Hashtag.swift in Sources */,
 				53211CED22852216007FB785 /* AppConfigurationTests.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
+				5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */,
 				0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */,
 				0AF9966E24D8A232001113BE /* Report.swift in Sources */,
 				2346ECB522141DAD009A94CB /* KeyValues.swift in Sources */,
