@@ -38,7 +38,7 @@ public class CrashReporting {
     /// This function is useful for testing if the crash reporting tool is actually working
     public func crash() {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
-        service.report(error: error, metadata: nil)
+        service.report(error: error, metadata: nil, botLog: nil)
     }
 
     /// Records a message useful for debugging
@@ -47,9 +47,14 @@ public class CrashReporting {
     }
 
     /// Send an error, if it exists, to the Crash Reporting service
-    public func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]? = nil) {
+    /// - parameter error: The error to report
+    /// - parameter metadata: Additional info to better describe the error or the status of the app
+    /// - parameter botLog: Log of the go bot if available
+    ///
+    /// If GoBot is moved to a swift package of its own, we can remove this parameter and grab the log from that package
+    public func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]? = nil, botLog: String?) {
         if let error = error {
-            service.report(error: error, metadata: metadata)
+            service.report(error: error, metadata: metadata, botLog: botLog)
         }
     }
 }

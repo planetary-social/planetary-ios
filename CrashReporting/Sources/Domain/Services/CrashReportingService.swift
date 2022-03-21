@@ -15,5 +15,5 @@ protocol CrashReportingService {
 
     func record(_ message: String)
 
-    func report(error: Error, metadata: [AnyHashable: Any]?)
+    func report(error: Error, metadata: [AnyHashable: Any]?, botLog: String?)
 }

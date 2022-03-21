@@ -29,9 +29,18 @@ class CrashReportingServiceAdapter: CrashReportingService {
         apiService.record(message)
     }
 
-    func report(error: Error, metadata: [AnyHashable: Any]? = nil) {
+    func report(error: Error, metadata: [AnyHashable: Any]? = nil, botLog: String?) {
         Log.error(error.localizedDescription)
-        apiService.report(error: error, metadata: metadata)
+        var appLog: String?
+        if let logUrls = Log.fileUrls.first {
+            do {
+                let data = try Data(contentsOf: logUrls)
+                appLog = String(data: data, encoding: .utf8)
+            } catch {
+                Log.optional(error)
+            }
+        }
+        apiService.report(error: error, metadata: metadata, appLog: appLog, botLog: botLog)
     }
 
 }

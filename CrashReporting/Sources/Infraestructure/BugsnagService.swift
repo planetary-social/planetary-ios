@@ -40,21 +40,17 @@ class BugsnagService: APIService {
         Bugsnag.leaveBreadcrumb(withMessage: message)
     }
 
-    func report(error: Error, metadata: [AnyHashable: Any]?) {
+    func report(error: Error, metadata: [AnyHashable: Any]?, appLog: String?, botLog: String?) {
         Bugsnag.notifyError(error) { event in
             if let metadata = metadata {
                 event.addMetadata(metadata, section: "metadata")
             }
-            if let logUrls = Log.fileUrls.first {
-                do {
-                    let data = try Data(contentsOf: logUrls)
-                    let string = String(data: data, encoding: .utf8)
-                    event.addMetadata(string, key: "app", section: "logs")
-                } catch {
-                    Log.optional(error)
-                }
+            if let string = appLog {
+                event.addMetadata(string, key: "app", section: "logs")
             }
-            // TODO: Send bot metadata
+            if let string = botLog {
+                event.addMetadata(string, key: "bot", section: "logs")
+            }
             return true
         }
     }

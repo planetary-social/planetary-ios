@@ -27,5 +27,5 @@ protocol APIService {
     func record(_ message: String)
 
     /// Sends an error to the Crash Reporting service
-    func report(error: Error, metadata: [AnyHashable: Any]?)
+    func report(error: Error, metadata: [AnyHashable: Any]?, appLog: String?, botLog: String?)
 }

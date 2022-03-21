@@ -1,5 +1,5 @@
 //
-//  MonitorTests.swift
+//  CrashReportingTests.swift
 //
 //
 //  Created by Martin Dutra on 24/11/21.
@@ -56,7 +56,7 @@ final class CrashReportingTests: XCTestCase {
     func testReport() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
         let crashReporting = try XCTUnwrap(crashReporting)
-        crashReporting.reportIfNeeded(error: error)
+        crashReporting.reportIfNeeded(error: error, botLog: nil)
         let service = try XCTUnwrap(service)
         XCTAssertTrue(service.crashed)
     }

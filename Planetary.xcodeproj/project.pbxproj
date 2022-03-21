@@ -637,6 +637,7 @@
 		53FCAFDC22051C44009E9E82 /* Bundle+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B021C476AF00A314AD /* Bundle+Version.swift */; };
 		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
 		5B0D585227BEAE9E002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Secrets */; };
+		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
 		5BAA0BB627DF9CEC00C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */; };
 		5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE28DFC27CD7BA1004D7D27 /* Analytics */; };
@@ -1270,6 +1271,7 @@
 		53FCAFDD22051C88009E9E82 /* SecretViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretViewController.swift; sourceTree = "<group>"; };
 		5B0D585327BEE1F1002F927D /* Secrets.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.release.plist; sourceTree = "<group>"; };
 		5B0D585827BEE4FC002F927D /* Secrets.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.debug.plist; sourceTree = "<group>"; };
+		5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrashReporting+GoBot.swift"; sourceTree = "<group>"; };
 		5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		606DCE79703F49AE5AB530BD /* Pods-APITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.release.xcconfig"; sourceTree = "<group>"; };
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1998,6 +2000,7 @@
 				0AE5EDBA25826FD7008BDA0C /* String+Emoji.swift */,
 				C9F1C85427C9875A005A3228 /* Color+Hex.swift */,
 				C9EADA8827D178D5002066D9 /* View+RoundedCorner.swift */,
+				5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -3734,6 +3737,7 @@
 				0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */,
 				53EE01F12204C16800DFDF16 /* Post.swift in Sources */,
 				53E341F6224D9FC7002BB5F4 /* AppController+URL.swift in Sources */,
+				5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */,
 				530F019122DCEC4E007EBAE2 /* OnboardingStep.swift in Sources */,
 				2346ECB7221420E1009A94CB /* GoBot.swift in Sources */,
 				530F01B622E0D930007EBAE2 /* JoinOnboardingStep.swift in Sources */,

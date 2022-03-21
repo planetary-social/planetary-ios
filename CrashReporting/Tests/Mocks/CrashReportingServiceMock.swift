@@ -27,7 +27,7 @@ class CrashReportingServiceMock: CrashReportingService {
         recorded = true
     }
 
-    func report(error: Error, metadata: [AnyHashable: Any]?) {
+    func report(error: Error, metadata: [AnyHashable: Any]?, botLog: String?) {
         crashed = true
     }
 }
