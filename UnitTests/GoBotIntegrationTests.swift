@@ -8,7 +8,7 @@
 
 import XCTest
 
-//swiftlint:disable force_unwrap
+// swiftlint:disable force_unwrapping
 
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotIntegrationTests: XCTestCase {
@@ -124,7 +124,7 @@ class GoBotIntegrationTests: XCTestCase {
     func testForkedFeedProtectionWhenEnabled() async throws {
         // Arrange
         let testPost = Post(text: "\(#function)")
-        appConfig.numberOfPublishedMessages = 9999999999999
+        appConfig.numberOfPublishedMessages = 999
         userDefaults.set(true, forKey: "prevent_feed_from_forks")
         
         // Act
@@ -143,7 +143,7 @@ class GoBotIntegrationTests: XCTestCase {
     func testForkedFeedProtectionWhenDisabled() async throws {
         // Arrange
         let testPost = Post(text: "\(#function)")
-        AppConfiguration.current?.numberOfPublishedMessages = 9999999999999
+        AppConfiguration.current?.numberOfPublishedMessages = 999
         userDefaults.set(false, forKey: "prevent_feed_from_forks")
         
         // Act
@@ -157,7 +157,7 @@ class GoBotIntegrationTests: XCTestCase {
     func testForkedFeedProtectionWhenNotSet() async throws {
         // Arrange
         let testPost = Post(text: "\(#function)")
-        appConfig.numberOfPublishedMessages = 9999999999999
+        appConfig.numberOfPublishedMessages = 999
         userDefaults.set(nil, forKey: "prevent_feed_from_forks")
         
         // Act

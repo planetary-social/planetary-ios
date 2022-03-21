@@ -81,7 +81,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let settingsPlist = try? PropertyListSerialization.propertyList(
                 from: settingsData,
                 options: [],
-                format: nil) as? [String: Any],
+                format: nil
+            ) as? [String: Any],
             let settingsPreferences = settingsPlist[settingsPreferencesItems] as? [[String: Any]] else {
                 return
         }

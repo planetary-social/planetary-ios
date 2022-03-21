@@ -44,5 +44,3 @@ enum BotError: Error, LocalizedError {
         }
     }
 }
-
-
