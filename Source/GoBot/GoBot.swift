@@ -131,7 +131,7 @@ class GoBot: Bot {
         completion: @escaping ErrorCompletion
     ) {
         guard let secret = config.secret,
-              let network = config.network else {
+            let network = config.network else {
                   queue.async { completion(BotError.invalidAppConfiguration) }
                   return
               }
@@ -1384,8 +1384,8 @@ class GoBot: Bot {
     private func saveNumberOfPublishedMessages(from statistics: RepoStatistics) {
         let currentNumberOfPublishedMessages = statistics.numberOfPublishedMessages
         if let configuration = config,
-           currentNumberOfPublishedMessages > -1,
-           configuration.numberOfPublishedMessages <= currentNumberOfPublishedMessages {
+            currentNumberOfPublishedMessages > -1,
+            configuration.numberOfPublishedMessages <= currentNumberOfPublishedMessages {
             configuration.numberOfPublishedMessages = currentNumberOfPublishedMessages
             configuration.apply()
         }

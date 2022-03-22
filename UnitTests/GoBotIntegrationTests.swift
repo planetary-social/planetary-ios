@@ -8,7 +8,7 @@
 
 import XCTest
 
-// swiftlint:disable force_unwrapping
+// swiftlint:disable force_unwrapping implicitly_unwrapped_optional
 
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotIntegrationTests: XCTestCase {
