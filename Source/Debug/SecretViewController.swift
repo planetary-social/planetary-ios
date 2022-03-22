@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 import Analytics
+import CrashReporting
+
 class SecretViewController: UIViewController {
 
     private var secret: Secret?

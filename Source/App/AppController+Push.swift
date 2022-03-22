@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import UserNotifications
 import Logger
+import CrashReporting
 
 extension AppController {
 

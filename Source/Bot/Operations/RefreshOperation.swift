@@ -9,6 +9,7 @@
 import Foundation
 import Logger
 import Analytics
+import CrashReporting
 
 class RefreshOperation: AsynchronousOperation {
 

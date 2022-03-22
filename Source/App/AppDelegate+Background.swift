@@ -11,6 +11,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 extension AppDelegate {
 

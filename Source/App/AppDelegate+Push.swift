@@ -12,6 +12,7 @@ import UserNotifications
 import UserNotificationsUI
 import Logger
 import Analytics
+import CrashReporting
 
 // https://github.com/planetary-social/infrastructure/wiki/Apple-Push-Notification-Infrastructure
 extension AppDelegate: UNUserNotificationCenterDelegate {

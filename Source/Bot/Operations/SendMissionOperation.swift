@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import CrashReporting
 
 /// Attempts connection to a Planetary's pub. It redeems invitation to these pubs if the user
 /// didn't do it previously.

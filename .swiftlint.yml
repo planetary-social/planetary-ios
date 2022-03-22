@@ -2,6 +2,7 @@
 disabled_rules: # rule identifiers turned on by default to exclude from running
   - trailing_comma
   - trailing_whitespace
+  - sorted_imports
 opt_in_rules: # some rules are turned off by default, so you need to opt-in
   - attributes
   - capture_variable
@@ -54,7 +55,6 @@ opt_in_rules: # some rules are turned off by default, so you need to opt-in
   - redundant_nil_coalescing
   - redundant_type_annotation
   - sorted_first_last
-  - sorted_imports
   - unavailable_function
   - unowned_variable_capture
   - untyped_error_in_catch

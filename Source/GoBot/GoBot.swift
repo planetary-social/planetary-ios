@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 extension String {
     func withGoString<R>(_ call: (gostring_t) -> R) -> R {

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import CrashReporting
 
 class JoinOnboardingStep: OnboardingStep {
 

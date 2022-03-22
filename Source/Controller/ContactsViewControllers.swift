@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Analytics
+import CrashReporting
 
 class ContactsViewController: ContentViewController, AboutTableViewDelegate {
 
