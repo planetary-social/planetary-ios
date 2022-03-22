@@ -8,6 +8,9 @@
       location = "group:Analytics">
    </FileRef>
    <FileRef
+      location = "group:CrashReporting">
+   </FileRef>
+   <FileRef
       location = "group:Logger">
    </FileRef>
    <FileRef

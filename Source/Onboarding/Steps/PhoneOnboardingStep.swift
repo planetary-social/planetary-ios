@@ -10,6 +10,7 @@ import Foundation
 import PhoneNumberKit
 import UIKit
 import Logger
+import CrashReporting
 
 class PhoneOnboardingStep: OnboardingStep {
 

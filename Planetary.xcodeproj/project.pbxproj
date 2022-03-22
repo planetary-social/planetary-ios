@@ -9,15 +9,12 @@
 /* Begin PBXBuildFile section */
 		0A04D8B82477220F00DD37B7 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A04D8B62477220F00DD37B7 /* Generated.strings */; };
 		0A04D8BC2477260F00DD37B7 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A04D8BA2477260F00DD37B7 /* Generated.strings */; };
-		0A07AB1E242522CE00EFD47F /* CrashReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB1D242522CE00EFD47F /* CrashReportingService.swift */; };
 		0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB21242AC66D00EFD47F /* Notification+About.swift */; };
 		0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A143A7A242E6714008745C6 /* AppDelegate+UniversalLink.swift */; };
 		0A1CA4C524E5D714006CAC43 /* FollowOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */; };
 		0A1CA4C724EB097B006CAC43 /* PubArray+Constellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */; };
 		0A1CA4CA24EB2353006CAC43 /* SendMissionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CA4C924EB2353006CAC43 /* SendMissionOperation.swift */; };
 		0A30F86F2589253E002B281D /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A30F86D2589253E002B281D /* Generated.strings */; };
-		0A387FF72474E45A00777843 /* CrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF62474E45A00777843 /* CrashReporting.swift */; };
-		0A387FF82474E4D800777843 /* NullCrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */; };
 		0A387FFA2474E65300777843 /* PhoneVerificationAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF92474E65300777843 /* PhoneVerificationAPI.swift */; };
 		0A387FFB2474E65300777843 /* PhoneVerificationAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF92474E65300777843 /* PhoneVerificationAPI.swift */; };
 		0A387FFC2474E65300777843 /* PhoneVerificationAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF92474E65300777843 /* PhoneVerificationAPI.swift */; };
@@ -35,8 +32,6 @@
 		0A38800E2475ACF000777843 /* PubAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38800C2475ACF000777843 /* PubAPI.swift */; };
 		0A38800F2475ACF000777843 /* PubAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38800C2475ACF000777843 /* PubAPI.swift */; };
 		0A38801B2475BB4500777843 /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A38801A2475BB4500777843 /* UITests.swift */; };
-		0A3880222475BCE200777843 /* CrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF62474E45A00777843 /* CrashReporting.swift */; };
-		0A3880232475BCE200777843 /* CrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A387FF62474E45A00777843 /* CrashReporting.swift */; };
 		0A3880292475BD8F00777843 /* OnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F019022DCEC4E007EBAE2 /* OnboardingStep.swift */; };
 		0A3880342475CD3E00777843 /* VersePubAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A82724734F00009A5EBF /* VersePubAPI.swift */; };
 		0A3880392475D18E00777843 /* PubAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64A82224734EC2009A5EBF /* PubAPIService.swift */; };
@@ -91,11 +86,6 @@
 		0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */; };
 		0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BD2457772B000190F8 /* SyncOperation.swift */; };
 		0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BF24577CB4000190F8 /* LoginOperation.swift */; };
-		0ABCA8ED243553CF00D7F39C /* BugsnagCrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8EC243553CF00D7F39C /* BugsnagCrashReporting.swift */; };
-		0ABCA8EE243554D000D7F39C /* NullCrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */; };
-		0ABCA8EF243554D000D7F39C /* NullCrashReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */; };
-		0ABCA8F02435550F00D7F39C /* CrashReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB1D242522CE00EFD47F /* CrashReportingService.swift */; };
-		0ABCA8F12435551000D7F39C /* CrashReportingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A07AB1D242522CE00EFD47F /* CrashReportingService.swift */; };
 		0ABCA8F524366B9700D7F39C /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8F424366B9700D7F39C /* AppError.swift */; };
 		0ABCA8F624366CC800D7F39C /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8F424366B9700D7F39C /* AppError.swift */; };
 		0ABCA8F724366CC900D7F39C /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8F424366B9700D7F39C /* AppError.swift */; };
@@ -647,6 +637,10 @@
 		53FCAFDC22051C44009E9E82 /* Bundle+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B021C476AF00A314AD /* Bundle+Version.swift */; };
 		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
 		5B0D585227BEAE9E002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Secrets */; };
+		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
+		5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
+		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
+		5BAA0BB627DF9CEC00C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */; };
 		5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE28DFC27CD7BA1004D7D27 /* Analytics */; };
 		5BE69B0D27CEA1B70013D51D /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE69B0C27CEA1B70013D51D /* Analytics */; };
 		5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = 5BFFCE8F27B56D300088F6D6 /* Logger */; };
@@ -853,14 +847,12 @@
 		03CA171A11489B333F8AB5B2 /* Pods_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A04D8B72477220F00DD37B7 /* es-uy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-uy"; path = Generated.strings; sourceTree = "<group>"; };
 		0A04D8BB2477260F00DD37B7 /* es-ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-ar"; path = Generated.strings; sourceTree = "<group>"; };
-		0A07AB1D242522CE00EFD47F /* CrashReportingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReportingService.swift; sourceTree = "<group>"; };
 		0A07AB21242AC66D00EFD47F /* Notification+About.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+About.swift"; sourceTree = "<group>"; };
 		0A143A7A242E6714008745C6 /* AppDelegate+UniversalLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+UniversalLink.swift"; sourceTree = "<group>"; };
 		0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowOperation.swift; sourceTree = "<group>"; };
 		0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PubArray+Constellation.swift"; sourceTree = "<group>"; };
 		0A1CA4C924EB2353006CAC43 /* SendMissionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMissionOperation.swift; sourceTree = "<group>"; };
 		0A30F86E2589253E002B281D /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = Generated.strings; sourceTree = "<group>"; };
-		0A387FF62474E45A00777843 /* CrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashReporting.swift; sourceTree = "<group>"; };
 		0A387FF92474E65300777843 /* PhoneVerificationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneVerificationAPI.swift; sourceTree = "<group>"; };
 		0A387FFF24759F4A00777843 /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		0A3880062475AAE000777843 /* PushAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushAPI.swift; sourceTree = "<group>"; };
@@ -902,8 +894,6 @@
 		0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
 		0AB736BD2457772B000190F8 /* SyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
 		0AB736BF24577CB4000190F8 /* LoginOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginOperation.swift; sourceTree = "<group>"; };
-		0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullCrashReporting.swift; sourceTree = "<group>"; };
-		0ABCA8EC243553CF00D7F39C /* BugsnagCrashReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugsnagCrashReporting.swift; sourceTree = "<group>"; };
 		0ABCA8F424366B9700D7F39C /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
 		0ABCA8F82436769400D7F39C /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		0ABCA8FC2436B41300D7F39C /* APIError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIError+LocalizedError.swift"; sourceTree = "<group>"; };
@@ -1282,6 +1272,7 @@
 		53FCAFDD22051C88009E9E82 /* SecretViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretViewController.swift; sourceTree = "<group>"; };
 		5B0D585327BEE1F1002F927D /* Secrets.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.release.plist; sourceTree = "<group>"; };
 		5B0D585827BEE4FC002F927D /* Secrets.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.debug.plist; sourceTree = "<group>"; };
+		5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrashReporting+GoBot.swift"; sourceTree = "<group>"; };
 		5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		606DCE79703F49AE5AB530BD /* Pods-APITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.release.xcconfig"; sourceTree = "<group>"; };
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1420,6 +1411,7 @@
 			files = (
 				5396A617223D467200C57A4B /* libsqlite3.0.tbd in Frameworks */,
 				5396A618223D467200C57A4B /* libsqlite3.tbd in Frameworks */,
+				5BAA0BB627DF9CEC00C7BE63 /* CrashReporting in Frameworks */,
 				C928DAF227B5AC850007C5FC /* Logger in Frameworks */,
 				5BE69B0D27CEA1B70013D51D /* Analytics in Frameworks */,
 				8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */,
@@ -1443,6 +1435,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B0D585027BEAE93002F927D /* Secrets in Frameworks */,
+				5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */,
 				5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */,
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */,
@@ -1469,17 +1462,6 @@
 				0A04D8BA2477260F00DD37B7 /* Generated.strings */,
 			);
 			path = "es-ar.lproj";
-			sourceTree = "<group>";
-		};
-		0A07AB1A2425226E00EFD47F /* CrashReporting */ = {
-			isa = PBXGroup;
-			children = (
-				0A387FF62474E45A00777843 /* CrashReporting.swift */,
-				0A07AB1D242522CE00EFD47F /* CrashReportingService.swift */,
-				0ABCA8EA2435534F00D7F39C /* NullCrashReporting.swift */,
-				0ABCA8EC243553CF00D7F39C /* BugsnagCrashReporting.swift */,
-			);
-			path = CrashReporting;
 			sourceTree = "<group>";
 		};
 		0A1CA4C824EB233C006CAC43 /* Operations */ = {
@@ -1883,7 +1865,6 @@
 				533EDBDE2385F3B1008B3565 /* Cache */,
 				C98A013F2790B9EB00E29A97 /* Configs */,
 				531A8A4521F96F3500D5C8C0 /* Controller */,
-				0A07AB1A2425226E00EFD47F /* CrashReporting */,
 				53C422AB21C4769900A314AD /* Debug */,
 				5376FAE0228D001E00411F5B /* Extension */,
 				5369D2A0220B55DA00A65622 /* FakeBot */,
@@ -2020,6 +2001,7 @@
 				0AE5EDBA25826FD7008BDA0C /* String+Emoji.swift */,
 				C9F1C85427C9875A005A3228 /* Color+Hex.swift */,
 				C9EADA8827D178D5002066D9 /* View+RoundedCorner.swift */,
+				5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -2810,6 +2792,7 @@
 				C928DAF127B5AC850007C5FC /* Logger */,
 				5B0D585127BEAE9E002F927D /* Secrets */,
 				5BE69B0C27CEA1B70013D51D /* Analytics */,
+				5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */,
 			);
 			productName = FBTTUnitTests;
 			productReference = 5308168521C46A52005C48ED /* UnitTests.xctest */;
@@ -2859,6 +2842,7 @@
 				5BFFCE8F27B56D300088F6D6 /* Logger */,
 				5B0D584F27BEAE93002F927D /* Secrets */,
 				5BE28DFC27CD7BA1004D7D27 /* Analytics */,
+				5BAA0BB327DF9CE200C7BE63 /* CrashReporting */,
 			);
 			productName = FBTT;
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
@@ -3135,7 +3119,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = "/usr/bin/env ruby";
-			shellScript = "if ENV[\"CONFIGURATION\"] != \"Release\"\n    exit 0\nend\n\napi_key = nil # Insert your key here to use it directly from this script\n\n# Attempt to get the API key from an environment variable\nunless api_key\n  api_key = ENV[\"BUGSNAG_API_KEY\"]\n\n  # If not present, attempt to lookup the value from the Info.plist\n  unless api_key\n    info_plist_path = \"#{ENV[\"BUILT_PRODUCTS_DIR\"]}/#{ENV[\"INFOPLIST_PATH\"]}\"\n    plist_buddy_response = `/usr/libexec/PlistBuddy -c \"print :bugsnag:apiKey\" \"#{info_plist_path}\"`\n    plist_buddy_response = `/usr/libexec/PlistBuddy -c \"print :BugsnagAPIKey\" \"#{info_plist_path}\"` if !$?.success?\n    api_key = plist_buddy_response if $?.success?\n  end\nend\n\nputs api_key\n\nunless api_key\n    warn \"warning: No Bugsnag API key detected - skipping dSYM upload. Add your key to your Info.plist, BUGSNAG_API_KEY environment variable or this Run Script phase\"\n    exit 0\nend\n\nfork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    curl_command = \"curl --http1.1 -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} \"\n    curl_command += \"-F apiKey=#{Shellwords.escape(api_key)} \"\n    curl_command += \"https://upload.bugsnag.com/\"\n    system(curl_command)\n  end\nend\n";
+			shellScript = "if ENV[\"CONFIGURATION\"] != \"Release\"\n    exit 0\nend\n\n#info_plist_path = \"#{ENV[\"BUILT_PRODUCTS_DIR\"]}/Secrets.plist\"\ninfo_plist_path = \"#{ENV[\"CONFIGURATION_BUILD_DIR\"]}/#{ENV[\"CONTENTS_FOLDER_PATH\"]}/Secrets.plist\"\nplist_buddy_response = `/usr/libexec/PlistBuddy -c \"print :bugsnag\" \"#{info_plist_path}\"`\napi_key = plist_buddy_response if $?.success?\n\nputs api_key\n\nunless api_key\n    warn \"warning: No Bugsnag API key detected - skipping dSYM upload. Add your key to your Info.plist, BUGSNAG_API_KEY environment variable or this Run Script phase\"\n    exit 0\nend\n\nfork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    curl_command = \"curl --http1.1 -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} \"\n    curl_command += \"-F apiKey=#{Shellwords.escape(api_key)} \"\n    curl_command += \"https://upload.bugsnag.com/\"\n    system(curl_command)\n  end\nend\n";
 			showEnvVarsInLog = 0;
 		};
 		1E66957E1EE019E96375E455 /* [CP] Check Pods Manifest.lock */ = {
@@ -3386,6 +3370,7 @@
 				237D057E23351E4600973D63 /* Hashtag.swift in Sources */,
 				53211CED22852216007FB785 /* AppConfigurationTests.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
+				5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */,
 				0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */,
 				0AF9966E24D8A232001113BE /* Report.swift in Sources */,
 				2346ECB522141DAD009A94CB /* KeyValues.swift in Sources */,
@@ -3464,7 +3449,6 @@
 				5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */,
 				2388897D22086A650030CB92 /* GoBotInternal.swift in Sources */,
 				53E29CE422D8E423008A2CB1 /* AttributedStringTests.swift in Sources */,
-				0ABCA8F12435551000D7F39C /* CrashReportingService.swift in Sources */,
 				C9C3788027C691EA00238B58 /* PeerConnectionInfo.swift in Sources */,
 				2358695724A0FAA200F4FC1D /* API.swift in Sources */,
 				53362F6E2209F754007264CB /* NetworkKeyTests.swift in Sources */,
@@ -3509,13 +3493,11 @@
 				53362F6F2209F8D5007264CB /* NetworkKey.swift in Sources */,
 				0A64A852247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
 				53E26C5F23045D4C009240B2 /* Person.swift in Sources */,
-				0A3880232475BCE200777843 /* CrashReporting.swift in Sources */,
 				0A4870F92492C06400BCD063 /* AsynchronousOperation.swift in Sources */,
 				531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */,
 				0A64A84D24735766009A5EBF /* PhoneVerificationResponse.swift in Sources */,
 				C9A2DE3627D003EF00EAFA73 /* UIColor+Verse.swift in Sources */,
 				0A38800224759F4A00777843 /* Support.swift in Sources */,
-				0ABCA8EF243554D000D7F39C /* NullCrashReporting.swift in Sources */,
 				2343F1CD245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */,
 				2343E7802326953F00E0B6F5 /* Post+Blob.swift in Sources */,
 				535754F622692B4B002A6989 /* BotStatistics.swift in Sources */,
@@ -3583,7 +3565,6 @@
 				5314EF5022EA28D00065D02A /* Bots.swift in Sources */,
 				0A64A82F2473516C009A5EBF /* NullPubAPI.swift in Sources */,
 				0ACE91A7243D748600EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
-				0ABCA8EE243554D000D7F39C /* NullCrashReporting.swift in Sources */,
 				53EAB396239AC1D400DF5530 /* UIColor+Hex.swift in Sources */,
 				0A64A851247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
 				23EF5AAE249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
@@ -3628,7 +3609,6 @@
 				5314EF4A22EA28980065D02A /* Hashtag.swift in Sources */,
 				5314EF6822EA2B380065D02A /* UIImage+Resize.swift in Sources */,
 				5314EF4022EA27C50065D02A /* ContentCodable.swift in Sources */,
-				0A3880222475BCE200777843 /* CrashReporting.swift in Sources */,
 				5314EF7722EA34F90065D02A /* Person.swift in Sources */,
 				53E26C62230461D2009240B2 /* Data+Person.swift in Sources */,
 				C9A2DE2A27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */,
@@ -3645,7 +3625,6 @@
 				5314EF6C22EA2B9B0065D02A /* String+HashtagSubstrings.swift in Sources */,
 				0A3880292475BD8F00777843 /* OnboardingStep.swift in Sources */,
 				230F4FD222F8729700F93B14 /* TestAPI.swift in Sources */,
-				0ABCA8F02435550F00D7F39C /* CrashReportingService.swift in Sources */,
 				5314EF5A22EA298D0065D02A /* Thread+Assert.swift in Sources */,
 				0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				5314EF7222EA34230065D02A /* Date+OlderThan.swift in Sources */,
@@ -3694,7 +3673,6 @@
 				53C966E4236D074700E70689 /* Bot+Blobs.swift in Sources */,
 				0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */,
 				C9A2DE3227CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift in Sources */,
-				0A07AB1E242522CE00EFD47F /* CrashReportingService.swift in Sources */,
 				8DC4238F236CA68100BA7769 /* PeerConnectionAnimation.swift in Sources */,
 				0ABCA8FF2436B48E00D7F39C /* AppError+LocalizedError.swift in Sources */,
 				5319258222F3B13600B44FA3 /* AvatarImageView.swift in Sources */,
@@ -3708,7 +3686,6 @@
 				5396A633224836E800C57A4B /* UIColor+Hex.swift in Sources */,
 				1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */,
 				1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */,
-				0ABCA8ED243553CF00D7F39C /* BugsnagCrashReporting.swift in Sources */,
 				53E341FC224FF87D002BB5F4 /* NewPostViewController.swift in Sources */,
 				0A38800424759F8100777843 /* NullSupport.swift in Sources */,
 				5319257E22F286FC00B44FA3 /* URL+Verse.swift in Sources */,
@@ -3754,7 +3731,6 @@
 				5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */,
 				23C744412200B12000FB554A /* Vote.swift in Sources */,
 				530F019822DE87EB007EBAE2 /* PhotoConfirmOnboardingStep.swift in Sources */,
-				0A387FF72474E45A00777843 /* CrashReporting.swift in Sources */,
 				53EE01FF22051A1700DFDF16 /* ImageMetadata.swift in Sources */,
 				53631EEF23A941A7009C6999 /* NSAttributedString+Mutable.swift in Sources */,
 				53E341FE224FF9EE002BB5F4 /* UIImage+Verse.swift in Sources */,
@@ -3763,6 +3739,7 @@
 				0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */,
 				53EE01F12204C16800DFDF16 /* Post.swift in Sources */,
 				53E341F6224D9FC7002BB5F4 /* AppController+URL.swift in Sources */,
+				5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */,
 				530F019122DCEC4E007EBAE2 /* OnboardingStep.swift in Sources */,
 				2346ECB7221420E1009A94CB /* GoBot.swift in Sources */,
 				530F01B622E0D930007EBAE2 /* JoinOnboardingStep.swift in Sources */,
@@ -3952,7 +3929,6 @@
 				530F01A822DEAE3F007EBAE2 /* ContactsOnboardingStep.swift in Sources */,
 				530F01A022DEADB5007EBAE2 /* NameOnboardingStep.swift in Sources */,
 				531D0A0D21EAADFB008E40A8 /* Layout.swift in Sources */,
-				0A387FF82474E4D800777843 /* NullCrashReporting.swift in Sources */,
 				5319258422F9E5EB00B44FA3 /* Date+Elapsed.swift in Sources */,
 				531587B2229F33F00004E2B1 /* DebugOnboardingViewController.swift in Sources */,
 				53E34202225008FE002BB5F4 /* Notification+Keyboard.swift in Sources */,
@@ -4842,6 +4818,14 @@
 		5B0D585127BEAE9E002F927D /* Secrets */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Secrets;
+		};
+		5BAA0BB327DF9CE200C7BE63 /* CrashReporting */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CrashReporting;
+		};
+		5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CrashReporting;
 		};
 		5BE28DFC27CD7BA1004D7D27 /* Analytics */ = {
 			isa = XCSwiftPackageProductDependency;

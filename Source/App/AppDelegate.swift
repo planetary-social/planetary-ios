@@ -9,6 +9,7 @@
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

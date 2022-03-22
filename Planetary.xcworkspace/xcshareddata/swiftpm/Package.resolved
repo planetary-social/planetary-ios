@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Bugsnag",
+        "repositoryURL": "https://github.com/bugsnag/bugsnag-cocoa",
+        "state": {
+          "branch": null,
+          "revision": "b4758ce9dfead9178c90fa620041aaa337f1cdb2",
+          "version": "6.16.4"
+        }
+      },
+      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
         "state": {

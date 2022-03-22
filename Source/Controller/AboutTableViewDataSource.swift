@@ -9,6 +9,7 @@
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 protocol AboutTableViewDelegate {
     func reload()
