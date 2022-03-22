@@ -1,3 +1,5 @@
+// swiftlint:disable line_length
+
 // provide the types of any new Localizable enums
 // in order to automatically export their strings to the localization files
 extension Text {
@@ -413,8 +415,7 @@ extension Text {
 extension Text {
     // There should be a better way to do this for enum errors
     enum Errors: String, Localizable, CaseIterable {
-        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and " +
-            "cannot publish new posts at this time."
+        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
         case invalidAppConfiguration = "Invalid app configuration"
     }
 }
