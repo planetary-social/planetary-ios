@@ -2096,6 +2096,7 @@ class ViewDatabase {
         
         if let b = p.mentions?.asBlobs() {
             try self.insertBlobs(msgID: msgID, blobs: b)
+            try self.requestBlobs(msgID: msgID, mentions: p.mentions!)
         }
 
         if let htags = p.mentions?.asHashtags() {
@@ -2451,6 +2452,9 @@ class ViewDatabase {
                 // Just send it to the Crash Reporting service
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
+            
+            
+            
         } // for msgs
         
         reports.forEach { report in
@@ -2687,6 +2691,34 @@ class ViewDatabase {
         }
     }
     
+    private func requestBlobs(msgID: Int64, mentions: [Mention]) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        // this is a bit of messing with layers, since we're triggering the request
+        // of the blob from the view db, ideally we'd request it from gobot
+        // but this is a hack for now to trigger earlier loading of blobs. 
+        let GoBot = GoBot().self
+        let bot = GoBot.bot
+        
+        let blobs = mentions.filter { return $0.link.isBlob }
+        for m in blobs {
+            if !m.link.isValidIdentifier {
+                continue
+            }
+
+            // trigger gobot to request the blob
+            do {
+                try bot.blobsWant(ref: m.link)
+            }
+            // it failed... ooops....
+            catch {
+            }
+        }
+    }
+    
+
     private func loadMentions(for msgID: Int64) throws -> [Mention] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
