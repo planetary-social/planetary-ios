@@ -189,7 +189,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export GOROOT=${PROJECT_DIR}/Sources/.goroot\ncd ${PROJECT_DIR}/Sources\nmake #--debug=\"v\"\n";
+			shellScript = "export GOROOT=${PROJECT_DIR}/Sources/.goroot\ncd ${PROJECT_DIR}/Sources\nmake --debug=\"v\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C9570F532786414B0095EFFF /* Install Go */ = {

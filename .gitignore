@@ -42,7 +42,7 @@ xcuserdata/
 ## Go
 GoSSB/Sources/.goroot
 GoSSB/Sources/vendor
-GoSSB/Product/*.a
+GoSSB/Products/**/*.a
  
 ## Test artifacts
 UnitTests/Resources/Feed_big.sqlite-*
