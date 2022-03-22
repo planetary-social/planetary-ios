@@ -1,5 +1,0 @@
-// SPDX-FileCopyrightText: 2021 The Go-SSB Authors
-//
-// SPDX-License-Identifier: MIT
-
-package gossip
