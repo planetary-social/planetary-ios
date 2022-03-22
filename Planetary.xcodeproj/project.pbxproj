@@ -693,7 +693,6 @@
 		C955CAB827D18368005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CAB927D18369005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CABB27D272F3005146F2 /* ExitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0AB246B23F900910575 /* ExitOperation.swift */; };
-		C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9570F63278752D30095EFFF /* GoSSB.xcframework */; };
 		C9604C2927C547FB003D1A6D /* ConnectedPeerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */; };
 		C978D35127BF051700842458 /* OperationQueue+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C978D35027BF018600842458 /* OperationQueue+Async.swift */; };
 		C978D35327BF053B00842458 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
@@ -722,6 +721,8 @@
 		C9C3788E27C6CCD400238B58 /* BotStatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */; };
 		C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */; };
 		C9C3789127C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */; };
+		C9C8F0F827E8ECBC00F78ABC /* GoSSB.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C9C8F0F727E8ECB600F78ABC /* GoSSB.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C9C8F0F927E8ECD000F78ABC /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C8F0F727E8ECB600F78ABC /* GoSSB.xcframework */; };
 		C9EADA8727D162F3002066D9 /* Optional+Map.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EADA8627D162F3002066D9 /* Optional+Map.swift */; };
 		C9EADA8927D178D5002066D9 /* View+RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EADA8827D178D5002066D9 /* View+RoundedCorner.swift */; };
 		C9EDA3D727BC16E8001A6CD8 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
@@ -833,15 +834,30 @@
 			remoteGlobalIDString = 5344D82A21C4649700704A34;
 			remoteInfo = Planetary;
 		};
+		C9C8F0EF27E8EC3400F78ABC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C9570F46278640CA0095EFFF;
+			remoteInfo = GoSSB;
+		};
+		C9C8F0F327E8ECAC00F78ABC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C9570F45278640CA0095EFFF;
+			remoteInfo = GoSSB;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5312143F21CD617400F3FCEB /* Embed Frameworks */ = {
+		C93DE37227E8D42C00C0E93D /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				C9C8F0F827E8ECBC00F78ABC /* GoSSB.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1324,7 +1340,6 @@
 		C93FE9B927D663220013D4CF /* BlobTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobTests.swift; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
-		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListView.swift; sourceTree = "<group>"; };
@@ -1354,6 +1369,8 @@
 		C9C3788B27C6CC6900238B58 /* Publisher+collectNext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+collectNext.swift"; sourceTree = "<group>"; };
 		C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotStatisticsService.swift; sourceTree = "<group>"; };
 		C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotStatisticsServiceTests.swift; sourceTree = "<group>"; };
+		C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GoSSB.xcodeproj; path = GoSSB/GoSSB.xcodeproj; sourceTree = "<group>"; };
+		C9C8F0F727E8ECB600F78ABC /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
 		C9EADA8627D162F3002066D9 /* Optional+Map.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+Map.swift"; sourceTree = "<group>"; };
 		C9EADA8827D178D5002066D9 /* View+RoundedCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+RoundedCorner.swift"; sourceTree = "<group>"; };
 		C9F0B60D27E2728500BE2F0E /* hu-HU */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "hu-HU"; path = Generated.strings; sourceTree = "<group>"; };
@@ -1442,12 +1459,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9C8F0F927E8ECD000F78ABC /* GoSSB.xcframework in Frameworks */,
 				5B0D585027BEAE93002F927D /* Secrets in Frameworks */,
 				5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */,
 				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */,
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
-				C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */,
 				8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1922,8 +1939,9 @@
 		5355556EBCE069620663A547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C9570F63278752D30095EFFF /* GoSSB.xcframework */,
+				C9C8F0F727E8ECB600F78ABC /* GoSSB.xcframework */,
 				C95A131F2786279A00FFD52F /* Foundation.framework */,
+				C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */,
 				531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */,
 				531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */,
 				E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */,
@@ -2479,6 +2497,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		C9C8F0EC27E8EC3400F78ABC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C9C8F0F027E8EC3400F78ABC /* libGoSSB.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C9F0B60B27E2728500BE2F0E /* hu-HU.lproj */ = {
 			isa = PBXGroup;
 			children = (
@@ -2844,7 +2870,7 @@
 				5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */,
 				5B0D585727BEE41D002F927D /* Copy Secrets.plist */,
 				5344D82721C4649700704A34 /* Sources */,
-				5312143F21CD617400F3FCEB /* Embed Frameworks */,
+				C93DE37227E8D42C00C0E93D /* Embed Frameworks */,
 				5344D82821C4649700704A34 /* Frameworks */,
 				5344D82921C4649700704A34 /* Resources */,
 				F03FDAAC62494C507A69A807 /* [CP] Embed Pods Frameworks */,
@@ -2853,6 +2879,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C9C8F0F427E8ECAC00F78ABC /* PBXTargetDependency */,
 			);
 			name = Planetary;
 			packageProductDependencies = (
@@ -2947,6 +2974,12 @@
 			mainGroup = 5344D82221C4649700704A34;
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = C9C8F0EC27E8EC3400F78ABC /* Products */;
+					ProjectRef = C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				5344D82A21C4649700704A34 /* Planetary */,
@@ -2956,6 +2989,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		C9C8F0F027E8EC3400F78ABC /* libGoSSB.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGoSSB.a;
+			remoteRef = C9C8F0EF27E8EC3400F78ABC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		0A3880162475BB4500777843 /* Resources */ = {
@@ -4054,6 +4097,11 @@
 			isa = PBXTargetDependency;
 			target = 5344D82A21C4649700704A34 /* Planetary */;
 			targetProxy = 0AD00E7323FC5C71006BF017 /* PBXContainerItemProxy */;
+		};
+		C9C8F0F427E8ECAC00F78ABC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = GoSSB;
+			targetProxy = C9C8F0F327E8ECAC00F78ABC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

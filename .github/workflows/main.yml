@@ -25,8 +25,6 @@ jobs:
         VerseBlobToken: nil
         PostHogAPIKey: nil
         PostHogHost: nil
-    - name: Build GoSSB.xcframework
-      run: set -o pipefail && xcodebuild build -project GoSSB/GoSSB.xcodeproj -scheme GoSSB -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2"
     - name: Build Planetary
       run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.2" | xcpretty
     - name: Run Tests
