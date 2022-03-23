@@ -8,12 +8,16 @@
 
 import XCTest
 
+// swiftlint:disable force_unwrapping implicitly_unwrapped_optional
+
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotIntegrationTests: XCTestCase {
     
     /// The system under test
     var sut: GoBot!
     var workingDirectory: String!
+    var userDefaults: UserDefaults!
+    var appConfig: AppConfiguration!
     let fm = FileManager.default
 
     override func setUpWithError() throws {
@@ -25,10 +29,18 @@ class GoBotIntegrationTests: XCTestCase {
 
         // start fresh
         do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
-
-        sut = GoBot()
+        
+        userDefaults = UserDefaults()
+        
+        sut = GoBot(userDefaults: userDefaults)
+        
+        appConfig = AppConfiguration(with: botTestsKey)
+        appConfig.network = botTestNetwork
+        appConfig.hmacKey = botTestHMAC
+        appConfig.bot = sut
+        
         let loginExpectation = self.expectation(description: "login")
-        sut.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
+        sut.login(config: appConfig) {
             error in
             defer { loginExpectation.fulfill() }
             XCTAssertNil(error)
@@ -37,7 +49,7 @@ class GoBotIntegrationTests: XCTestCase {
 
         let nicks = ["alice"]
         for n in nicks {
-            try GoBotOrderedTests.shared.testingCreateKeypair(nick: n)
+            try sut.testingCreateKeypair(nick: n)
         }
     }
 
@@ -59,10 +71,7 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Act
         let postExpectation = self.expectation(description: "post published")
-        let bobPost = Post(
-            branches: nil,
-            root: nil,
-            text: "Bob 0")
+        let bobPost = Post(text: "Bob 0")
         sut.publish(content: bobPost, completionQueue: .main) { messageID, error in
             XCTAssertNotNil(messageID)
             XCTAssertNil(error)
@@ -106,5 +115,106 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertNil(error)
         XCTAssertEqual(statistics.recentlyDownloadedPostCount, 10)
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
+    }
+    
+    // MARK: - Forked Feed Protection
+    
+    /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number
+    /// of published messages is higher than the number of messages in go-ssb.
+    func testForkedFeedProtectionWhenEnabled() async throws {
+        // Arrange
+        let testPost = Post(text: "\(#function)")
+        appConfig.numberOfPublishedMessages = 999
+        userDefaults.set(true, forKey: "prevent_feed_from_forks")
+        
+        // Act
+        do {
+            let ref = try await sut.publish(content: testPost)
+            
+        // Assert
+            XCTAssertNil(ref)
+        } catch {
+            XCTAssertNotNil(error)
+        }
+    }
+    
+    /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and disables fork protection when it
+    /// is false
+    func testForkedFeedProtectionWhenDisabled() async throws {
+        // Arrange
+        let testPost = Post(text: "\(#function)")
+        AppConfiguration.current?.numberOfPublishedMessages = 999
+        userDefaults.set(false, forKey: "prevent_feed_from_forks")
+        
+        // Act
+        let ref = try await sut.publish(content: testPost)
+        
+        // Assert
+        XCTAssertNotNil(ref)
+    }
+    
+    /// Verifies that the GoBot assumes the `"prevent_feed_from_forks"` setting is `true` when it hasn't been set.
+    func testForkedFeedProtectionWhenNotSet() async throws {
+        // Arrange
+        let testPost = Post(text: "\(#function)")
+        appConfig.numberOfPublishedMessages = 999
+        userDefaults.set(nil, forKey: "prevent_feed_from_forks")
+        
+        // Act
+        do {
+            let ref = try await sut.publish(content: testPost)
+            
+        // Assert
+            XCTAssertNil(ref)
+        } catch {
+            XCTAssertNotNil(error)
+        }
+    }
+    
+    /// Verifies that the GoBot increments the published message count in the app config when publishing a message.
+    func testPublishIncrementsPublishedMessageCount() async throws {
+        // Arrange
+        let testPost = Post(text: "\(#function)")
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+        
+        // Act
+        let ref = try await sut.publish(content: testPost)
+        
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
+        XCTAssertNotNil(ref)
+    }
+    
+    /// Verifies that the statitistics() function updates the number of published messages in the AppConfiguration.
+    func testStatisticsFunctionSetsNumberOfPublishedMessages() async throws {
+        // Arrange
+        for _ in 0..<5 {
+            let testPost = Post(text: "\(#function)")
+            _ = try await sut.publish(content: testPost)
+        }
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+        
+        // Act
+        _ = await sut.statistics()
+        
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 5)
+    }
+    
+    /// Verifies that reading the statitistics property updates the number of published messages in
+    /// the AppConfiguration.
+    func testStatisticsPropertySetsNumberOfPublishedMessages() async throws {
+        // Arrange
+        for _ in 0..<5 {
+            let testPost = Post(text: "\(#function)")
+            _ = try await sut.publish(content: testPost)
+        }
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+        
+        // Act
+        _ = sut.statistics
+        
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 5)
     }
 }

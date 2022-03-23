@@ -51,21 +51,6 @@ class StatisticsOperation: AsynchronousOperation {
             Log.debug("Peers: \(statistics.peer.count)")
             Log.debug("Connected peers: \(statistics.peer.connectionCount)")
             Analytics.shared.trackStatistics(statistics.analyticsStatistics)
-            let currentNumberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
-            if let configuration = AppConfiguration.current,
-                let botIdentity = Bots.current.identity,
-                let configIdentity = configuration.identity,
-                botIdentity == configIdentity,
-                currentNumberOfPublishedMessages > -1,
-                configuration.numberOfPublishedMessages <= currentNumberOfPublishedMessages {
-                configuration.numberOfPublishedMessages = currentNumberOfPublishedMessages
-                configuration.apply()
-                var appConfigurations = AppConfigurations.current
-                if let index = appConfigurations.firstIndex(of: configuration) {
-                    appConfigurations[index] = configuration
-                }
-                appConfigurations.save()
-            }
             self?.result = .success(statistics)
             self?.finish()
         }

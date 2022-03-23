@@ -8,12 +8,23 @@
 
 import Foundation
 
+/// Represents the set of high-level properties governing the app, like the user's identity, network key, etc.
+/// These configurations can be switched out at runtime much like logging in/out of an account.
+///
+/// The AppConfiguration is stored in the keychain, protecting the user's secret key in case of database corruption.
+/// A single device can have many AppConfigurations (see the extensions to the `AppConfigurations` typealias) but only
+/// one can be in use at a time.
+///
+/// The AppConfiguration is also used to prevent feed forks in some cases by storing the number of published messages.
 class AppConfiguration: NSObject, NSCoding {
 
     // MARK: Editable properties
 
     var name: String = "New configuration"
     
+    /// The number of messages this user has published. This number is used to prevent the user from publishing before
+    /// their feed has fully synced, which "forks" or breaks it forever.
+    /// Should be kept up-to-date by the `Bot`.
     var numberOfPublishedMessages: Int = 0
 
     private var networkDidChange = false
@@ -42,12 +53,18 @@ class AppConfiguration: NSObject, NSCoding {
     // Note that this is based on the configured network key.
     // Any non-SSB network must have a non-nil value.
     var hmacKey: HMACKey? {
-        if self.network == NetworkKey.ssb { return nil }
-        else if self.network == NetworkKey.integrationTests { return HMACKey.integrationTests }
-        else if self.network == NetworkKey.verse { return HMACKey.verse }
-        else if self.network == NetworkKey.planetary { return HMACKey.planetary }
-        else { return nil }
+        get {
+            if self.network == NetworkKey.ssb { return nil }
+            else if self.network == NetworkKey.integrationTests { return HMACKey.integrationTests }
+            else if self.network == NetworkKey.verse { return HMACKey.verse }
+            else if self.network == NetworkKey.planetary { return HMACKey.planetary }
+            else { return _hmacKey }
+        }
+        set {
+            _hmacKey = newValue
+        }
     }
+    private var _hmacKey: HMACKey?
 
     // Alias property for `hmacKey`
     var signingKey: HMACKey? {

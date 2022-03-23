@@ -1,6 +1,7 @@
 # By default, SwiftLint uses a set of sensible default rules you can adjust:
 disabled_rules: # rule identifiers turned on by default to exclude from running
   - trailing_comma
+  - trailing_whitespace
   - sorted_imports
 opt_in_rules: # some rules are turned off by default, so you need to opt-in
   - attributes
@@ -117,4 +118,5 @@ identifier_name:
     - url
     - lhs
     - rhs
+    - key
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, codeclimate, junit, html, emoji, sonarqube, markdown, github-actions-logging)

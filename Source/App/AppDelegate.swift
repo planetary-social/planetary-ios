@@ -27,6 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         CrashReporting.shared.record("Launch")
         
+        registerDefaultsFromSettingsBundle()
+        
         // reset configurations if user enabled switch in settings
         self.resetIfNeeded()
         
@@ -63,5 +65,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         CrashReporting.shared.record("App will terminate")
         AppController.shared.exit()
         Analytics.shared.trackAppExit()
+    }
+    
+    /// Loads the default values for the Planetary settings in Settings.app into UserDefaults. Idempotent.
+    /// From https://stackoverflow.com/a/61409298/982195
+    func registerDefaultsFromSettingsBundle() {
+        let settingsName                    = "Settings"
+        let settingsExtension               = "bundle"
+        let settingsRootPlist               = "Root.plist"
+        let settingsPreferencesItems        = "PreferenceSpecifiers"
+        let settingsPreferenceKey           = "Key"
+        let settingsPreferenceDefaultValue  = "DefaultValue"
+
+        guard let settingsBundleURL = Bundle.main.url(forResource: settingsName, withExtension: settingsExtension),
+            let settingsData = try? Data(contentsOf: settingsBundleURL.appendingPathComponent(settingsRootPlist)),
+            let settingsPlist = try? PropertyListSerialization.propertyList(
+                from: settingsData,
+                options: [],
+                format: nil
+            ) as? [String: Any],
+            let settingsPreferences = settingsPlist[settingsPreferencesItems] as? [[String: Any]] else {
+                return
+        }
+
+        var defaultsToRegister = [String: Any]()
+
+        settingsPreferences.forEach { preference in
+            if let key = preference[settingsPreferenceKey] as? String {
+                defaultsToRegister[key] = preference[settingsPreferenceDefaultValue]
+            }
+        }
+
+        UserDefaults.standard.register(defaults: defaultsToRegister)
     }
 }

@@ -74,13 +74,17 @@ class GoBot: Bot {
     
     /// A queue for operations that the user is waiting on like publishing a post, pull-to-refresh, etc.
     private let userInitiatedQueue: DispatchQueue
+    
+    private let userDefaults: UserDefaults
+    private var config: AppConfiguration?
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
     let bot: GoBotInternal
     let database = ViewDatabase()
 
-    init() {
+    init(userDefaults: UserDefaults = UserDefaults.standard) {
+        self.userDefaults = userDefaults
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
                                           qos: .utility,
                                           attributes: .concurrent,
@@ -122,7 +126,16 @@ class GoBot: Bot {
         completion(sec, nil)
     }
     
-    func login(queue: DispatchQueue, network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
+    func login(
+        queue: DispatchQueue,
+        config: AppConfiguration,
+        completion: @escaping ErrorCompletion
+    ) {
+        guard let secret = config.secret,
+            let network = config.network else {
+                  queue.async { completion(BotError.invalidAppConfiguration) }
+                  return
+              }
 
         guard self._identity == nil else {
             if secret.identity == self._identity {
@@ -132,6 +145,9 @@ class GoBot: Bot {
             }
             return
         }
+        
+        self.config = config
+        let hmacKey = config.hmacKey
 
         // lookup Application Support folder for bot and database
         let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory,
@@ -217,6 +233,7 @@ class GoBot: Bot {
         }
         database.close()
         self._identity = nil
+        self.config = nil
         DispatchQueue.main.async { completion(nil) }
     }
 
@@ -477,30 +494,31 @@ class GoBot: Bot {
                 return
             }
             
-            if UserDefaults.standard.bool(forKey: "prevent_feed_from_forks") {
-                guard let numberOfMessagesInRepo = try? self.database.numberOfMessages(for: identity) else {
-                    completionQueue.async {
-                        completion(MessageIdentifier.null, GoBotError.unexpectedFault("Failed to access database"))
+            // Forked feed protection
+            do {
+                let preventForks = self.userDefaults.object(forKey: "prevent_feed_from_forks") as? Bool
+                if preventForks == true || preventForks == nil {
+                    guard try self.publishingWouldFork(feed: identity) == false else {
+                        completionQueue.async {
+                            completion(MessageIdentifier.null, BotError.forkProtection)
+                        }
+                        return
                     }
-                    return
                 }
-                
-                let knownNumberOfMessagesInKeychain = AppConfiguration.current?.numberOfPublishedMessages ?? 0
-                
-                guard numberOfMessagesInRepo >= knownNumberOfMessagesInKeychain else {
-                    completionQueue.async {
-                        completion(MessageIdentifier.null, BotError.notEnoughMessagesInRepo)
-                    }
-                    return
-                }
+            } catch {
+                completion(MessageIdentifier.null, error)
             }
+
+            
             self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
                     completionQueue.async { completion(MessageIdentifier.null, error) }
                     return
                 }
                 
-                Log.info("Published message with key \(key ?? "nil")")
+                self?.config?.numberOfPublishedMessages += 1
+                self?.config?.apply()
+                Log.info("Published message with key \(key)")
                 
                 // Copy the newly published post into the ViewDatabase immediately.
                 do {
@@ -517,6 +535,14 @@ class GoBot: Bot {
                 }
             }
         }
+    }
+    
+    /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
+    /// a message before the user's feed has resynced from the network during a restore.
+    private func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
+        let numberOfMessagesInRepo = try self.database.numberOfMessages(for: feed)
+        let knownNumberOfMessagesInKeychain = self.config?.numberOfPublishedMessages ?? 0
+        return numberOfMessagesInRepo < knownNumberOfMessagesInKeychain
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
@@ -1292,6 +1318,8 @@ class GoBot: Bot {
                                                numberOfPublishedMessages: ownMessages,
                                                lastHash: counts?.lastHash ?? "")
         
+        self.saveNumberOfPublishedMessages(from: self._statistics.repo)
+        
         let connectionCount = self.bot.openConnections()
         let openConnections = self.bot.openConnectionList()
         
@@ -1325,6 +1353,8 @@ class GoBot: Bot {
                                                    numberOfPublishedMessages: ownMessages,
                                                    lastHash: counts?.lastHash ?? "")
             
+            self.saveNumberOfPublishedMessages(from: self._statistics.repo)
+            
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()
             
@@ -1348,6 +1378,17 @@ class GoBot: Bot {
             queue.async {
                 completion(statistics)
             }
+        }
+    }
+    
+    /// Saves the number of published messages to the AppConfiguration. Used for forked feed protection.
+    private func saveNumberOfPublishedMessages(from statistics: RepoStatistics) {
+        let currentNumberOfPublishedMessages = statistics.numberOfPublishedMessages
+        if let configuration = config,
+            currentNumberOfPublishedMessages > -1,
+            configuration.numberOfPublishedMessages <= currentNumberOfPublishedMessages {
+            configuration.numberOfPublishedMessages = currentNumberOfPublishedMessages
+            configuration.apply()
         }
     }
     

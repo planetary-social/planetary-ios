@@ -116,7 +116,7 @@ class Onboarding {
             // Safe to unwrap as configuration has secret, network and bot
             var context = Context(from: configuration)!
             
-            context.bot.login(network: configuration.network!, hmacKey: configuration.hmacKey, secret: secret) { error in
+            context.bot.login(config: configuration) { error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
@@ -197,18 +197,12 @@ class Onboarding {
     static func resume(completion: @escaping StartCompletion) {
 
         guard let configuration = AppConfiguration.current,
-            let secret = configuration.secret,
-            var context = Context(from: configuration) else
-        {
+            var context = Context(from: configuration) else {
             completion(nil, .configurationFailed)
             return
         }
 
-        Bots.current.login(network: context.network,
-                           hmacKey: context.signingKey,
-                           secret: secret)
-        {
-            error in
+        Bots.current.login(config: configuration) { error in
             if let error = error { completion(context, .botError(error)) }
 
             // get About for context identity

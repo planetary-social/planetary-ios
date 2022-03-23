@@ -1,24 +1,29 @@
+// swiftlint:disable line_length
+
 // provide the types of any new Localizable enums
 // in order to automatically export their strings to the localization files
 extension Text {
     static var localizableTypes: [Localizable.Type] {
-        return [Text.self,
-                Text.Blocking.self,
-                Text.ImagePicker.self,
-                Text.NewPost.self,
-                Text.Offboarding.self,
-                Text.Onboarding.self,
-                Text.Onboarding.StepTitle.self,
-                Text.ManagePubs.self,
-                Text.Preview.self,
-                Text.PublicWebHosting.self,
-                Text.Push.self,
-                Text.Reporting.self,
-                Text.Debug.self,
-                Text.Error.self,
-                Text.Channel.self,
-                Text.Post.self,
-                Text.Report.self]
+        [
+            Text.self,
+            Text.Blocking.self,
+            Text.ImagePicker.self,
+            Text.NewPost.self,
+            Text.Offboarding.self,
+            Text.Onboarding.self,
+            Text.Onboarding.StepTitle.self,
+            Text.ManagePubs.self,
+            Text.Preview.self,
+            Text.PublicWebHosting.self,
+            Text.Push.self,
+            Text.Reporting.self,
+            Text.Debug.self,
+            Text.Error.self,
+            Text.Channel.self,
+            Text.Post.self,
+            Text.Report.self,
+            Text.Error.self
+        ]
     }
 }
 
@@ -402,5 +407,15 @@ extension Text {
         case postReplied = "%@ replied to your post"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
+    }
+}
+
+// MARK: - Errors
+
+extension Text {
+    // There should be a better way to do this for enum errors
+    enum Errors: String, Localizable, CaseIterable {
+        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
+        case invalidAppConfiguration = "Invalid app configuration"
     }
 }
