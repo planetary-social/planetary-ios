@@ -23,6 +23,12 @@ let reproKey = Secret(from: """
 
 let reproNetwork = NetworkKey.planetary
 let reproHMAC = HMACKey.planetary
+let reproConfiguration = { () -> AppConfiguration in
+    let config = AppConfiguration(with: reproKey)
+    config.network = reproNetwork
+    config.hmacKey = reproHMAC
+    return config
+}()
 
 import XCTest
 
@@ -64,7 +70,7 @@ class API_GoBot: XCTestCase {
             return
         }
         
-        API_GoBot.bot.login(network: reproNetwork, hmacKey: reproHMAC, secret: reproKey) {
+        API_GoBot.bot.login(config: reproConfiguration) {
             error in
             XCTAssertNil(error)
         }

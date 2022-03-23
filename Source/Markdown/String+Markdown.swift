@@ -9,6 +9,7 @@
 import Foundation
 import Down
 import Logger
+import CrashReporting
 
 extension String {
     

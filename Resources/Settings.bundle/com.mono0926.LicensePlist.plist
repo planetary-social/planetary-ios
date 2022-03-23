@@ -12,7 +12,7 @@
 		</dict>
 		<dict>
 			<key>File</key>
-			<string>com.mono0926.LicensePlist/Bugsnag</string>
+			<string>com.mono0926.LicensePlist/bugsnag-cocoa</string>
 			<key>Title</key>
 			<string>Bugsnag</string>
 			<key>Type</key>

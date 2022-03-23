@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import CrashReporting
 
 // get's called with the size and the hash (might return a bool just as a demo of passing data back)
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool
@@ -78,7 +79,7 @@ struct ScuttlegobotHealReport: Decodable {
     let Messages: UInt32
 }
 
-fileprivate struct BotConfig: Encodable {
+fileprivate struct GoBotConfig: Encodable {
     let AppKey: String
     let HMACKey: String
     let KeyBlob: String
@@ -144,7 +145,7 @@ class GoBotInternal {
 
         let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
 
-        let cfg = BotConfig(
+        let cfg = GoBotConfig(
             AppKey: network.string,
             HMACKey: hmacKey == nil ? "" : hmacKey!.string,
             KeyBlob: secret.jsonString()!,

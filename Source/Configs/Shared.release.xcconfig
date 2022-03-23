@@ -9,23 +9,29 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-AUTHY_TOKEN =
+AUTHY_TOKEN = XMxnJoZc1aBN9E826r6zmDe91GePaBYE
+
+// Optionally add this key if you want to use MixpanelAnalytics implementation
+MIXPANEL_TOKEN = 9c7b37011f780b2392ed9212677cc8f6
+
+// Optionally add this key if you want to use BugsnagCrashReporting implementation
+BUGSNAG_TOKEN = df09df868ab485eb4f3c35fd811d62d8
 
 // Optionally add these keys if you want to use ZendeskSupport implementation
-// ZENDESK_APP_ID =
-// ZENDESK_CLIENT_ID =
+ZENDESK_APP_ID = ab2e2b9c16b36e27ac3d3ce8ad8d825a456beb796b2db7ae
+ZENDESK_CLIENT_ID = mobile_sdk_client_fafbcc88f50d3ff0ba82
 
-PUSH_HOST =
-PUSH_TOKEN =
+PUSH_HOST = us-central1-pub-verse-app.cloudfunctions.net
+PUSH_TOKEN = N6lMAHd8XlGt/E2wkfOXVB4lZobcg9KkAppoSF6WlAzWtdEqZtFja0xekUMp6Mo/xRq7/KFIjb7JlvrrD1cJxMkyeOH5xRf/4zYPu6OYeyyCR9gBcksSRDtjq72IKhK4e9pXoJrp+Dzq9+jnkiJg5FYbM6mQIPVdKzxxJtfUIjY=
 PUSH_ENVIRONMENT = production
 
-PUB_HOST =
-PUB_TOKEN =
+PUB_HOST = us-central1-pub-verse-app.cloudfunctions.net
+PUB_TOKEN = UGD7p4u8FHlBmItPSyLNiy5gQy7gfFHd3mXIhmky3aa4z4rqpv2/0nGbqGLwYLpHm2g7S6vPNv7dVPXl2ktkVXICmr9oVvhp80aK+fI9LWnLHuyCBusTf20xBY/hVYDQ96
 
-VERSE_HOST =
-VERSE_TOKEN =
+VERSE_HOST = us-central1-pub-verse-app.cloudfunctions.net
+VERSE_TOKEN = CM9KvxE5HLYx3kHTJMMZGTT747E/dNUVXiltIvOj6sUI46jHlbPWnoXfzTp3DpmqnUVbztCURsDHjFW+3hi9gPQaqfzwUkLtwuy0wIF67XS5dYPJgxwe18uVPRKeVn3nVrwKrBFDnMaokXPVWjKHU3qTv9La4D6mlTjBgQcqQ4Q=
 VERSE_DIRECTORY_PATH = mainnet-directory
-VERSE_BLOB_TOKEN =
+VERSE_BLOB_TOKEN = c237b77b6e2a3d7b972e4c25e6a8ba46a43568c547ebb949677f5283f60ecb65
 
 DEFAULT_NETWORK_NAME = SSB
 DEFAULT_NETWORK_KEY = 1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s=

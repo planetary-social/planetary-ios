@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Analytics
+import CrashReporting
 
 class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate {
 

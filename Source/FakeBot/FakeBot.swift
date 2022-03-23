@@ -15,8 +15,8 @@ enum FakeBotError: Error {
 
 class FakeBot: Bot {
     
-    required init(preloadedPubService: PreloadedPubService.Type? = nil) {}
-
+    required init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService.Type?) {}
+    
     func lastReceivedTimestam() throws -> Double {
         fatalError("TODO:\(#function)")
     }
@@ -165,7 +165,7 @@ class FakeBot: Bot {
     }
     
 
-    init() {}
+    required init() {}
     static let shared = FakeBot()
 
     // MARK: Name
@@ -183,14 +183,9 @@ class FakeBot: Bot {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
     }
 
-    func login(queue: DispatchQueue,
-               network: NetworkKey,
-               hmacKey: HMACKey?,
-               secret: Secret,
-               completion: @escaping ErrorCompletion)
-    {
-        self._network = network.string
-        self._identity = secret.identity
+    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
+        self._network = config.network?.string
+        self._identity = config.secret?.identity
         queue.async {
             completion(nil)
         }

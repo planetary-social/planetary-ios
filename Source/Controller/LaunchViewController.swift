@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class LaunchViewController: UIViewController {
 
@@ -89,7 +90,7 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         
-        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { error in
+        bot.login(config: configuration) { error in
             
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error,
@@ -151,8 +152,14 @@ class LaunchViewController: UIViewController {
                 Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: aboutErr)
-                CrashReporting.shared.identify(about: about, network: network)
+                
                 if let about = about {
+                    CrashReporting.shared.identify(
+                        identifier: about.identity,
+                        name: about.name,
+                        networkKey: network.string,
+                        networkName: network.name
+                    )
                     Analytics.shared.identify(identifier: about.identity,
                                               name: about.name,
                                               network: network.name)

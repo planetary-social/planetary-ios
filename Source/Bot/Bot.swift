@@ -44,7 +44,7 @@ protocol Bot {
     var version: String { get }
 
     // MARK: AppLifecycle
-    init(preloadedPubService: PreloadedPubService.Type?)
+    init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService.Type?)
     func suspend()
     func exit()
     
@@ -88,7 +88,12 @@ protocol Bot {
 
     // MARK: Login
 
-    func login(queue: DispatchQueue, network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion)
+    /// Initializes the bot with the given `config`. This instructs the `Bot` to assume the identity of the user
+    /// whose data is contained in `AppConfiguration`.
+    /// - Parameter queue: The queue that `completion` will be called on.
+    /// - Parameter config: An object containing high-level parameters like the user's keys and the network key.
+    /// - Parameter completion: A handler that will be called with the result of the operation.
+    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion)
     func logout(completion: @escaping ErrorCompletion)
 
     // MARK: Invites
@@ -212,12 +217,8 @@ protocol Bot {
 
 extension Bot {
     
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
-        self.login(queue: .main,
-                   network: network,
-                   hmacKey: hmacKey,
-                   secret: secret,
-                   completion: completion)
+    func login(config: AppConfiguration, completion: @escaping ErrorCompletion) {
+        self.login(queue: .main, config: config, completion: completion)
     }
     
     func logout() async throws {

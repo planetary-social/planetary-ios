@@ -9,6 +9,7 @@
 import Foundation
 import Logger
 import Analytics
+import CrashReporting
 
 /// Pokes the bot into doing a sync. Don't use this SyncOperation directly, use
 /// SendMissionOperation instead.

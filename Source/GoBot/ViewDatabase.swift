@@ -13,6 +13,7 @@ import SQLite
 import CryptoKit
 import Logger
 import Analytics
+import CrashReporting
 
 // schema migration handling
 extension Connection {

@@ -8,6 +8,7 @@
 
 import UIKit
 import Logger
+import CrashReporting
 
 class FollowerTableViewController: AboutTableViewController {
 
