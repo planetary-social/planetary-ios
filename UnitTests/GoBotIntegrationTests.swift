@@ -32,7 +32,7 @@ class GoBotIntegrationTests: XCTestCase {
         
         userDefaults = UserDefaults()
         
-        sut = GoBot(userDefaults: userDefaults)
+        sut = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
         
         appConfig = AppConfiguration(with: botTestsKey)
         appConfig.network = botTestNetwork
