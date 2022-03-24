@@ -24,7 +24,7 @@
 "Text.helpAndSupport" = "Hilfe und Support";
 "Text.reportBug" = "Fehler melden";
 "Text.settings" = "Einstellungen";
-"Text.userDirectory" = "Benutzerverzeichnis";
+"Text.yourNetwork" = "Your Network";
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.showMeInDirectory" = "Zeige mich im Verzeichnis";

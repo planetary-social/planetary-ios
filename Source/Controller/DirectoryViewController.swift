@@ -68,7 +68,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     private var searchEditBeginDate = Date()
 
     init() {
-        super.init(scrollable: false, title: .userDirectory)
+        super.init(scrollable: false, title: .yourNetwork)
     }
 
     override func viewDidLoad() {

@@ -57,7 +57,7 @@ enum Text: String, Localizable, CaseIterable {
     case helpAndSupport = "Help and Support"
     case reportBug = "Report a Bug"
     case settings = "Settings"
-    case userDirectory = "User Directory"
+    case yourNetwork = "Your Network"
     case pubServers = "Pub Servers"
     case usersInYourNetwork = "Users in your network"
     case showMeInDirectory = "Show me in the directory"
