@@ -17,7 +17,8 @@
           "description": "Planetary.social Relay Pub - This pub exists to provide additional connectivity between scuttlebutt users. Planetary users are automatically followed by this pub to help their content reach others."
         },
         "signature": "LLNBdeR74GQFurXmv8L+lmtKcXTLtdavy3l+q1thMy9pAzG2Po24mAJX4OfbHITk2Xk1ylKNeOZ7b6Gayp6DBw==.sig.ed25519"
-      }
+      },
+      "timestamp": 1645829345418
     },
     {
       "source": "@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519",
@@ -42,7 +43,8 @@
           }
         },
         "signature": "3klfOYEHMR9NlTrbm1hM+EuCMeJniSv3PEZrs9x0mnSf6Og3khD68LVbWpsTcMccg4ZMMQyPu09DdFhA2l01Aw==.sig.ed25519"
-      }
+      },
+      "timestamp": 1648070741814
     },
     {
       "source": "@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519",
@@ -62,7 +64,8 @@
           "description": "Planetary.social Relay Pub - This pub exists to provide additional connectivity between scuttlebutt users. Planetary users are automatically followed by this pub to help their content reach others."
         },
         "signature": "mowhRjDgX5xYtlni+et7MFy/lf+FggWKB0AKhfQuEWgceSvhbLIrQtlKJyLw1VDRagpGfRLWqx8szJVTl9HaCg==.sig.ed25519"
-      }
+      },
+      "timestamp": 1645829487143
     },
     {
       "source": "@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519",
@@ -87,7 +90,8 @@
           }
         },
         "signature": "eaOlwSmvITpdeUynFCyg/hK/2bApJ8bf/dlOGUyK3qjMlrY0kztPvuD32cPJuPKpMcGCz9cPbRA7dDD4mdcOBw==.sig.ed25519"
-      }
+      },
+      "timestamp": 1648070841445
     },
     {
       "source": "@LQ8HBiEinU5FiXGaZH9JYFGBGdsB99mepBdh/Smq3VI=.ed25519",
@@ -107,7 +111,8 @@
           "description": "Planetary.social Relay Pub - This pub exists to provide additional connectivity between scuttlebutt users. Planetary users are automatically followed by this pub to help their content reach others."
         },
         "signature": "pmYjUJSdoYjI4PABqK/PIivO59DBJ1edwbwRn8xyRmA1NrIYXNeypTHKmD9J7gK19oAtQ81buQ2qtFuFaM+KAA==.sig.ed25519"
-      }
+      },
+      "timestamp": 1645829578522
     },
     {
       "source": "@LQ8HBiEinU5FiXGaZH9JYFGBGdsB99mepBdh/Smq3VI=.ed25519",
@@ -132,7 +137,8 @@
           }
         },
         "signature": "Alqsc9smknE5ht0RyycNlxPTweq/tqj0nDOebjZbA9z5qynK3miecgt+xZfSCfLn+tqRdjYppi1ANjS2y2ckBQ==.sig.ed25519"
-      }
+      },
+      "timestamp": 1648070878922
     },
     {
       "source": "@5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=.ed25519",
@@ -152,7 +158,8 @@
           "description": "Planetary.social Relay Pub - This pub exists to provide additional connectivity between scuttlebutt users. Planetary users are automatically followed by this pub to help their content reach others."
         },
         "signature": "kTqhhX+g/tfZUif4sSeESl1yVy6XnegyHpULk/pXjo+qbXHRbxLs7BfabLhgDsiQSZnScxpaiTFtNBVAVmOeDQ==.sig.ed25519"
-      }
+      },
+      "timestamp": 1645829216476
     },
     {
       "source": "@5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=.ed25519",
@@ -177,7 +184,8 @@
           }
         },
         "signature": "8WoPsJdxQtKwuLWrzZQbE785oHT4nKT8OxVs5e4eyh8vy0iPt4t72yYt7dqFUoz3gs/4TZFg3Bh2+YYjKQfRCA==.sig.ed25519"
-      }
+      },
+      "timestamp": 1648070907496
     },
     {
       "key": "%Yd2j8qOgH7qS0a+COY6Fu27b7CgzD566D/Z+4bBkHhc=.sha256",
