@@ -16,23 +16,26 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     // unfiltered collection
     private var allPeople = [About]() {
         didSet {
-            self.applyFilter()
+            applySearchFilter()
         }
     }
 
     // filtered collection for display
     private var people = [About]() {
         didSet {
-            self.tableView.reloadData()
+            tableView.reloadData()
         }
     }
 
     // text on which to filter results
-    private var filter = "" {
+    private var searchFilter = "" {
         didSet {
-            self.applyFilter()
+            applySearchFilter()
         }
     }
+    
+    private var communityPubs = Environment.Communities.stars
+    private var communityPubIdentities = Set(Environment.Communities.stars.map { $0.feed })
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
@@ -104,12 +107,14 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         self.tableView.reloadData()
     }
 
-    func applyFilter() {
-        if self.filter.isEmpty {
-            self.people = self.allPeople
+    func applySearchFilter() {
+        if self.searchFilter.isEmpty {
+            self.people = allPeople.filter { person in
+                !self.communityPubIdentities.contains(person.identity)
+            }
         } else {
-            let filter = self.filter.lowercased()
-            self.people = self.allPeople.filter { about in
+            let filter = searchFilter.lowercased()
+            people = allPeople.filter { about in
                 let containsName = about.name?.lowercased().contains(filter) ?? false
                 let containsIdentity = about.identity.lowercased().contains(filter)
                 return containsName || containsIdentity
@@ -134,7 +139,7 @@ extension DirectoryViewController: UISearchResultsUpdating, UISearchBarDelegate 
 
     func updateSearchResults(for searchController: UISearchController) {
         Analytics.shared.trackDidTapSearchbar(searchBarName: "directory")
-        self.filter = searchController.searchBar.text ?? ""
+        self.searchFilter = searchController.searchBar.text ?? ""
     }
 
     // These two functions are implemented to avoid a bug where the initial
@@ -166,11 +171,11 @@ extension DirectoryViewController: TopScrollable {
 extension DirectoryViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return searchFilter.isEmpty ? 2 : 1
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 {
+        if section == 0 && searchFilter.isEmpty {
             return Text.pubServers.text
         } else {
             return Text.usersInYourNetwork.text
@@ -178,7 +183,7 @@ extension DirectoryViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+        if section == 0 && searchFilter.isEmpty {
             return Environment.Communities.stars.count
         } else {
             return self.people.count
@@ -186,9 +191,9 @@ extension DirectoryViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
+        if indexPath.section == 0 && searchFilter.isEmpty {
             let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
-            let star = Environment.Communities.stars[indexPath.row]
+            let star = communityPubs[indexPath.row]
             if let about = self.allPeople.first(where: { $0.identity == star.feed }) {
                 cell.communityView.update(with: star, about: about)
             } else {
@@ -196,10 +201,20 @@ extension DirectoryViewController: UITableViewDataSource {
             }
             return cell
         } else {
-            let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
             let about = self.people[indexPath.row]
-            cell.aboutView.update(with: about.identity, about: about)
-            return cell
+            let isCommunity = communityPubIdentities.contains(about.identity)
+            if isCommunity {
+                let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
+                if let star = communityPubs.first(where: { $0.feed == about.identity }) {
+                    cell.communityView.update(with: star, about: about)
+                }
+                return cell
+            } else {
+                let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+                let about = self.people[indexPath.row]
+                cell.aboutView.update(with: about.identity, about: about)
+                return cell
+            }
         }
     }
 }
@@ -207,7 +222,7 @@ extension DirectoryViewController: UITableViewDataSource {
 extension DirectoryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
+        if indexPath.section == 0 && searchFilter.isEmpty {
             let star = Environment.Communities.stars[indexPath.row]
             let controller = AboutViewController(with: star.feed)
             self.navigationController?.pushViewController(controller, animated: true)
