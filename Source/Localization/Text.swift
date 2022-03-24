@@ -60,6 +60,8 @@ enum Text: String, Localizable, CaseIterable {
     case yourNetwork = "Your Network"
     case pubServers = "Pub Servers"
     case usersInYourNetwork = "Users in your network"
+    case goToYourNetwork = "Go to Your Network"
+    case emptyHomeFeedMessage = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab."
     case showMeInDirectory = "Show me in the directory"
     case showMeInUserDirectory = "Show me in the user directory"
     case hideMeFromUserDirectory = "Hide me from the user directory"
