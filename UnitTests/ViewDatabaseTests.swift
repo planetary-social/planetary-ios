@@ -776,9 +776,19 @@ class ViewDatabasePreloadTest: XCTestCase {
         let testingBundle = try XCTUnwrap(Bundle(for: type(of: self)))
         let preloadURL = try XCTUnwrap(testingBundle.url(forResource: "Preload", withExtension: "bundle"))
         let preloadBundle = try XCTUnwrap(Bundle(url: preloadURL))
+        
         let feedURLs = try XCTUnwrap(preloadBundle.urls(forResourcesWithExtension: "json", subdirectory: "Feeds"))
-        XCTAssertEqual(feedURLs.count, 2)
-        try feedURLs.forEach { url in
+        let preloadedPubURL = try XCTUnwrap(
+            preloadBundle.url(
+                forResource: "preloadedPubs",
+                withExtension: "json",
+                subdirectory: "Pubs"
+            )
+        )
+        
+        let allJSONURLs = feedURLs + [preloadedPubURL]
+        XCTAssertEqual(allJSONURLs.count, 3)
+        try allJSONURLs.forEach { url in
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
             let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
             XCTAssertEqual(msgs.isEmpty, false)
