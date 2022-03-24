@@ -18,8 +18,8 @@ protocol PreloadedBlobsService {
 
 class PreloadedBlobsServiceAdapter: PreloadedBlobsService {
     
+    // This function was refactored out of `LoadBundleOperation.swift`.
     class func preloadBlobs(into bot: Bot, from path: String, in bundle: Bundle, completion: (() -> Void)? = nil) {
-
         let group = DispatchGroup()
 
         var format = PropertyListSerialization.PropertyListFormat.xml
