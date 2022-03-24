@@ -241,7 +241,7 @@
 "Report.feedMentioned" = "%@ 提到你的评论";
 "Report.messageLiked" = "%@ X点赞了你";
 
-"Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
-"Error.unexpected" = "Something unexpected happened.";
-"Error.supportNotConfigured" = "Support is not configured.";
+"Error.login" = "对等点引擎的对等点启动失败。 请使用重启来修复并重新启动它，或使用忽略来浏览已经获取到您设备的内容。";
+"Error.unexpected" = "发生了一些意外事件。";
+"Error.supportNotConfigured" = "支持未配置。";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
