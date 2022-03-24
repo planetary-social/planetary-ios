@@ -225,7 +225,8 @@ class GoBotIntegrationTests: XCTestCase {
         try tearDownWithError()
         do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
 
-        sut = GoBot(preloadedPubService: MockPreloadedPubService.self)
+        let mockPreloader = MockPreloadedPubService()
+        sut = GoBot(preloadedPubService: mockPreloader)
         let loginExpectation = self.expectation(description: "login")
         
         // Act
@@ -237,14 +238,15 @@ class GoBotIntegrationTests: XCTestCase {
         self.wait(for: [loginExpectation], timeout: 10)
         
         // Assert
-        XCTAssertEqual(MockPreloadedPubService.preloadPubsCallCount, 1)
+        XCTAssertEqual(mockPreloader.preloadPubsCallCount, 1)
     }
 }
 
 class MockPreloadedPubService: PreloadedPubService {
-    static var preloadPubsCallCount = 0
-    static var preloadPubsBotParameter: Bot?
-    static func preloadPubs(in bot: Bot, from bundle: Bundle? = nil) {
+    required init(blobService: PreloadedBlobsService.Type = PreloadedBlobsServiceAdapter.self) {}
+    var preloadPubsCallCount = 0
+    var preloadPubsBotParameter: Bot?
+    func preloadPubs(in bot: Bot, from bundle: Bundle? = nil) {
         preloadPubsCallCount += 1
         preloadPubsBotParameter = bot
     }

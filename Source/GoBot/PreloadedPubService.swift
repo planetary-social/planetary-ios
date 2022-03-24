@@ -12,14 +12,25 @@ import Logger
 /// A service class that helps manage the pubs that are loaded into Planetary even if they aren't in your social graph
 /// (aka community pubs).
 protocol PreloadedPubService {
+    
+    /// Initializes the service with the `PreloadedBlobsService` that will be used to preload profile images for the
+    /// pubs.
+    init(blobService: PreloadedBlobsService.Type)
+    
     /// Inserts the preloaded pubs into the Bot's database, loading data from a file named `preloadedPubs.json` in the given
     /// bundle.
-    static func preloadPubs(in bot: Bot, from bundle: Bundle?)
+    func preloadPubs(in bot: Bot, from bundle: Bundle?)
 }
 
 class PreloadedPubServiceAdapter: PreloadedPubService {
     
-    class func preloadPubs(in bot: Bot, from bundle: Bundle? = nil) {
+    private var preloadedBlobsService: PreloadedBlobsService.Type
+    
+    required init(blobService: PreloadedBlobsService.Type = PreloadedBlobsServiceAdapter.self) {
+        self.preloadedBlobsService = blobService
+    }
+    
+    func preloadPubs(in bot: Bot, from bundle: Bundle? = nil) {
         var bundle = bundle
         if bundle == nil,
             let preloadBundlePath = Bundle(for: Self.self).path(forResource: "Preload", ofType: "bundle"),
@@ -46,6 +57,6 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
         }
         
         // This service should be made an explicit dependency
-        PreloadedBlobsServiceAdapter.preloadBlobs(into: bot, from: "Pubs", in: bundle, completion: nil)
+        preloadedBlobsService.preloadBlobs(into: bot, from: "Pubs", in: bundle, completion: nil)
     }
 }

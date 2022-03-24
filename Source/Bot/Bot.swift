@@ -44,7 +44,7 @@ protocol Bot {
     var version: String { get }
 
     // MARK: AppLifecycle
-    init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService.Type?)
+    init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
     func suspend()
     func exit()
     

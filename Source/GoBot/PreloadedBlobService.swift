@@ -11,11 +11,12 @@ import Logger
 
 /// A service class that copies blobs from a `Bundle` into a `Bot`.
 protocol PreloadedBlobsService {
-    /// Copies blobs into the Bot's database. The Bundle
+    /// Copies blobs into the Bot's database. The Bundle needs to have a certain structure, in practice it's the
+    /// structure of Preload.bundle in this repository.
     static func preloadBlobs(into bot: Bot, from path: String, in bundle: Bundle, completion: (() -> Void)?)
 }
 
-class PreloadedBlobsServiceAdapter {
+class PreloadedBlobsServiceAdapter: PreloadedBlobsService {
     
     class func preloadBlobs(into bot: Bot, from path: String, in bundle: Bundle, completion: (() -> Void)? = nil) {
 

@@ -78,14 +78,14 @@ class GoBot: Bot {
     private let userDefaults: UserDefaults
     private var config: AppConfiguration?
 
-    private var preloadedPubService: PreloadedPubService.Type?
+    private var preloadedPubService: PreloadedPubService?
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
     let bot: GoBotInternal
     let database = ViewDatabase()
 
-    required init(userDefaults: UserDefaults = UserDefaults.standard, preloadedPubService: PreloadedPubService.Type? = PreloadedPubServiceAdapter.self) {
+    required init(userDefaults: UserDefaults = UserDefaults.standard, preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter()) {
         self.userDefaults = userDefaults
         self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
