@@ -49,31 +49,12 @@ class LoadBundleOperation: AsynchronousOperation {
             }
         }
         
-        let blobIdentifiersPath = bundle.path(forResource: "BlobIdentifiers", ofType: "plist")!
-        let xml = FileManager.default.contents(atPath: blobIdentifiersPath)!
-        var format = PropertyListSerialization.PropertyListFormat.xml
-        let blobIdentifiers = try! PropertyListSerialization.propertyList(from: xml,
-                                                                          options: .mutableContainersAndLeaves,
-                                                                          format: &format) as! [String: String]
-        
-        let blobPaths  = bundle.paths(forResourcesOfType: nil, inDirectory: "Blobs")
-        blobPaths.forEach { path in
-            group.enter()
-            let url = URL(fileURLWithPath: path)
-            let identifier = blobIdentifiers[url.lastPathComponent]!
-            Log.info("Preloading blob \(identifier)...")
-            Bots.current.store(url: url, for: identifier) { (_, error) in
-                if let error = error {
-                    Log.info("Preloading blob \(identifier) failed with error: \(error.localizedDescription).")
-                } else {
-                    Log.info("Blob \(identifier) was preloaded successfully.")
-                }
-                group.leave()
-            }
+        group.enter()
+        PreloadedBlobsServiceAdapter.preloadBlobs(into: Bots.current, from: ".", in: bundle) {
+            group.leave()
         }
         
         group.wait()
-        
         self.finish()
     }
     

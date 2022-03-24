@@ -672,8 +672,6 @@
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
 		C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
-		C90EBE7627E0DBE000EAE560 /* pubFeed.json in Resources */ = {isa = PBXBuildFile; fileRef = C90EBE7527E0DBE000EAE560 /* pubFeed.json */; };
-		C90EBE7727E0DBE000EAE560 /* pubFeed.json in Resources */ = {isa = PBXBuildFile; fileRef = C90EBE7527E0DBE000EAE560 /* pubFeed.json */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		C928DAF227B5AC850007C5FC /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = C928DAF127B5AC850007C5FC /* Logger */; };
 		C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */; };
@@ -682,6 +680,8 @@
 		C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */; };
 		C93FE9BA27D663220013D4CF /* BlobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93FE9B927D663220013D4CF /* BlobTests.swift */; };
 		C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E341FD224FF9EE002BB5F4 /* UIImage+Verse.swift */; };
+		C941A6E427ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
+		C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C955CAB627D18367005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CAB727D18368005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CAB827D18368005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
@@ -1309,12 +1309,12 @@
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
 		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
-		C90EBE7527E0DBE000EAE560 /* pubFeed.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = pubFeed.json; sourceTree = "<group>"; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
 		C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueWithReceivedSeq.json; sourceTree = "<group>"; };
 		C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueFixtures.swift; sourceTree = "<group>"; };
 		C93FE9B927D663220013D4CF /* BlobTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobTests.swift; sourceTree = "<group>"; };
+		C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedBlobService.swift; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		C9570F63278752D30095EFFF /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = GoSSB/Products/GoSSB.xcframework; sourceTree = "<group>"; };
@@ -1800,6 +1800,7 @@
 				0ACE91A9243D74A900EFB4E9 /* ViewDatabaseError.swift */,
 				0ACE91AD243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift */,
 				C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */,
+				C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */,
 			);
 			path = GoBot;
 			sourceTree = "<group>";
@@ -1890,7 +1891,6 @@
 			children = (
 				0A41F56C2488078F005BB1DE /* Preload.bundle */,
 				5344D83521C4649A00704A34 /* Assets.xcassets */,
-				C90EBE7527E0DBE000EAE560 /* pubFeed.json */,
 				53E26C4A23022098009240B2 /* FBTT.entitlements */,
 				5B0D585827BEE4FC002F927D /* Secrets.debug.plist */,
 				5B0D585327BEE1F1002F927D /* Secrets.release.plist */,
@@ -3008,7 +3008,6 @@
 				C9F1C85027C932C1005A3228 /* Generated.strings in Resources */,
 				C9F0B68A27E2728800BE2F0E /* Generated.strings in Resources */,
 				53EE01FE2205099100DFDF16 /* InvalidSecretMissingPrivate.json in Resources */,
-				C90EBE7727E0DBE000EAE560 /* pubFeed.json in Resources */,
 				5316E95B21FFD4980053832E /* InvalidChannel.json in Resources */,
 				C924412F278DDECE00592E5E /* Preload.bundle in Resources */,
 				5316E95721FFCDFF0053832E /* UnsupportedType.json in Resources */,
@@ -3078,7 +3077,6 @@
 				C9F0B6B727E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B6A527E2728800BE2F0E /* Generated.strings in Resources */,
 				0A04D8B82477220F00DD37B7 /* Generated.strings in Resources */,
-				C90EBE7627E0DBE000EAE560 /* pubFeed.json in Resources */,
 				C9F0B69527E2728800BE2F0E /* Generated.strings in Resources */,
 				5344D83921C4649A00704A34 /* LaunchScreen.storyboard in Resources */,
 				C9F0B69127E2728800BE2F0E /* Generated.strings in Resources */,
@@ -3452,6 +3450,7 @@
 				5336611422D9669E00100707 /* UIColor+Random.swift in Sources */,
 				0A4870F82492C05D00BCD063 /* AsynchronousBlockOperation.swift in Sources */,
 				5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */,
+				C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */,
 				2388897D22086A650030CB92 /* GoBotInternal.swift in Sources */,
 				53E29CE422D8E423008A2CB1 /* AttributedStringTests.swift in Sources */,
 				C9C3788027C691EA00238B58 /* PeerConnectionInfo.swift in Sources */,
@@ -3936,6 +3935,7 @@
 				531D0A0D21EAADFB008E40A8 /* Layout.swift in Sources */,
 				5319258422F9E5EB00B44FA3 /* Date+Elapsed.swift in Sources */,
 				531587B2229F33F00004E2B1 /* DebugOnboardingViewController.swift in Sources */,
+				C941A6E427ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */,
 				53E34202225008FE002BB5F4 /* Notification+Keyboard.swift in Sources */,
 				531587B4229F35340004E2B1 /* UITableViewCell+UIActivityIndicator.swift in Sources */,
 				53AD3FE122721CAE005228F9 /* KeyValueUpdateable.swift in Sources */,
