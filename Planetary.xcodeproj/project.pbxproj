@@ -670,7 +670,6 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
-		C91D9E5F27EDE56B00C79009 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91D9E5E27EDE56B00C79009 /* main.swift */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		C928DAF227B5AC850007C5FC /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = C928DAF127B5AC850007C5FC /* Logger */; };
 		C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */; };
@@ -837,15 +836,6 @@
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C91D9E5A27EDE56B00C79009 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -1315,7 +1305,6 @@
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
 		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
-		C91D9E5E27EDE56B00C79009 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
 		C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueWithReceivedSeq.json; sourceTree = "<group>"; };
@@ -1450,13 +1439,6 @@
 				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
 				C9570F64278752D30095EFFF /* GoSSB.xcframework in Frameworks */,
 				8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C91D9E5927EDE56B00C79009 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1819,7 +1801,6 @@
 		532751D4222A3EF60026500F /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				C91D9E5D27EDE56B00C79009 /* swiftlint */,
 				0AD8D62D2408627000D87A95 /* go_install.sh */,
 				532751D5222A3EF60026500F /* increment_build.sh */,
 			);
@@ -2372,14 +2353,6 @@
 			path = Buttons;
 			sourceTree = "<group>";
 		};
-		C91D9E5D27EDE56B00C79009 /* swiftlint */ = {
-			isa = PBXGroup;
-			children = (
-				C91D9E5E27EDE56B00C79009 /* main.swift */,
-			);
-			path = swiftlint;
-			sourceTree = "<group>";
-		};
 		C98A013627907F9200E29A97 /* Performance */ = {
 			isa = PBXGroup;
 			children = (
@@ -2876,9 +2849,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C91D9E6027EDE56B00C79009 /* Build configuration list for PBXNativeTarget "swiftlint" */;
 			buildPhases = (
-				C91D9E5827EDE56B00C79009 /* Sources */,
-				C91D9E5927EDE56B00C79009 /* Frameworks */,
-				C91D9E5A27EDE56B00C79009 /* CopyFiles */,
 				C91D9E6327EDE58500C79009 /* ShellScript */,
 			);
 			buildRules = (
@@ -4072,14 +4042,6 @@
 				531B92BD22CD65ED005D5255 /* UIFont+Verse.swift in Sources */,
 				5357550B226A3523002A6989 /* UITableView+KeyValue.swift in Sources */,
 				530F018A22DADCE7007EBAE2 /* Date+OlderThan.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C91D9E5827EDE56B00C79009 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C91D9E5F27EDE56B00C79009 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
