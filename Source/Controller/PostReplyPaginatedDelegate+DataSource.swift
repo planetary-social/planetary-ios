@@ -11,7 +11,6 @@ import UIKit
 protocol PostReplyPaginatedDataSourceDelegate: class {
     
     func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue)
-    
 }
 
 class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
@@ -50,7 +49,6 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
         super.loadKeyValue(keyValue, in: cell)
         self.delegate?.postReplyView(view: postReplyView, didLoad: keyValue)
     }
-    
 }
 
 class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
@@ -66,7 +64,6 @@ class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
     }
     
     override func viewController(for keyValue: KeyValue) -> UIViewController? {
-        return ThreadViewController(with: keyValue, startReplying: false)
+        ThreadViewController(with: keyValue, startReplying: false)
     }
-    
 }

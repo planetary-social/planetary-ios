@@ -93,7 +93,7 @@ class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
     // MARK: - UITableViewDataSource functions
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.filteredAbouts.count
+        self.filteredAbouts.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -121,7 +121,6 @@ class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
         Analytics.shared.trackDidTapSearchbar(searchBarName: "about_table")
         self.filter = searchController.searchBar.text ?? ""
     }
-
 }
 
 // MARK: - UISearchBarDelegate functions
@@ -145,5 +144,4 @@ extension AboutTableViewController: UISearchBarDelegate {
         let timeSinceStart = Date().timeIntervalSince(self.searchEditBeginDate)
         return timeSinceStart > 0.4
     }
-    
 }

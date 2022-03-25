@@ -49,7 +49,7 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
         self.tableView.reloadData()
     }
     
-    // MARK:- UITableViewDelegate
+    // MARK: - UITableViewDelegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)

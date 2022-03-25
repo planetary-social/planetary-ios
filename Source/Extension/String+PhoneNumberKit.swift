@@ -11,13 +11,13 @@ import PhoneNumberKit
 
 extension String {
 
-    static private let phoneNumberKit = PhoneNumberKit()
+    private static let phoneNumberKit = PhoneNumberKit()
 
     func phoneNumber() -> PhoneNumber? {
-        return try? String.phoneNumberKit.parse(self)
+        try? String.phoneNumberKit.parse(self)
     }
 
     var isValidPhoneNumber: Bool {
-        return self.phoneNumber() != nil
+        self.phoneNumber() != nil
     }
 }

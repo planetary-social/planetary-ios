@@ -20,7 +20,7 @@ extension NSMutableAttributedString {
 extension Channel {
 
     var attributedString: NSMutableAttributedString {
-        return NSMutableAttributedString(from: self)
+        NSMutableAttributedString(from: self)
     }
 }
 
@@ -59,8 +59,7 @@ extension NSAttributedString {
         let range = NSRange(location: 0, length: self.length)
         self.enumerateAttribute(NSAttributedString.Key.link,
                                 in: range,
-                                options: [])
-        {
+                                options: []) {
             attribute, range, _ in
             guard attribute != nil else { return }
             let name = self.attributedSubstring(from: range).string

@@ -38,7 +38,6 @@ public class Keys {
     /// - parameter key: The key whose value is going to be retrieved
     /// - returns: The value of the key. Returns nil if it doesn't exist or the .plist file couldn't be found
     public func get(key: Key) -> String? {
-        return service?.get(key: key.rawValue)
+        service?.get(key: key.rawValue)
     }
-
 }

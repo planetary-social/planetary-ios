@@ -27,7 +27,7 @@ class GoBotViewController: DebugTableViewController {
         }
     }
     
-    internal override func updateSettings() {
+    override internal func updateSettings() {
         self.settings = [
             self.status(),
             self.actions(),
@@ -49,11 +49,9 @@ class GoBotViewController: DebugTableViewController {
         
         var settings: [DebugTableViewCellModel] = []
         
-        
         settings += [DebugTableViewCellModel(title: "Version",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = GoBot.shared.version
             },
@@ -62,8 +60,7 @@ class GoBotViewController: DebugTableViewController {
         
         settings += [DebugTableViewCellModel(title: "Running",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 let toggle = UISwitch()
                 toggle.isOn = GoBot.shared.bot.isRunning
@@ -76,8 +73,7 @@ class GoBotViewController: DebugTableViewController {
         if cnt > 0 {
             settings += [DebugTableViewCellModel(title: "#Connections",
                                                  cellReuseIdentifier: DebugValueTableViewCell.className,
-                                                 valueClosure:
-                {
+                                                 valueClosure: {
                     cell in
                     cell.detailTextLabel?.text = String(cnt)
                 },
@@ -86,20 +82,17 @@ class GoBotViewController: DebugTableViewController {
             
             settings += [DebugTableViewCellModel(title: "Disconnect all",
                                                  cellReuseIdentifier: DebugValueTableViewCell.className,
-                                                 valueClosure:
-                {
+                                                 valueClosure: {
                     cell in
                     cell.accessoryType = .detailButton
                 },
-                                                 actionClosure:
-                {
-                    cell in
+                                                 actionClosure: {
+                    _ in
                     DispatchQueue.global(qos: .utility).async {
                         GoBot.shared.bot.disconnectAll()
                     }
                 }
             )]
-            
         }
         
         return ("Status", settings, nil)
@@ -112,14 +105,12 @@ class GoBotViewController: DebugTableViewController {
             
             a += [DebugTableViewCellModel(title: "Publish",
                                      cellReuseIdentifier: DebugValueTableViewCell.className,
-                                     valueClosure:
-                {
+                                     valueClosure: {
                     cell in
                     cell.accessoryType = .detailButton
                 },
-                                     actionClosure:
-                {
-                    cell in
+                                     actionClosure: {
+                    _ in
                     let publishCtrl = SimplePublishViewController()
                     self.navigationController?.pushViewController(publishCtrl, animated: true)
                 }
@@ -131,8 +122,7 @@ class GoBotViewController: DebugTableViewController {
                     // TODO: add complete Fill trigger
                     a += [DebugTableViewCellModel(title: "TODO: add complete Fill trigger",
                                                   cellReuseIdentifier: DebugValueTableViewCell.className,
-                                                  valueClosure:
-                        {
+                                                  valueClosure: {
                             cell in
                             cell.accessoryType = .detailDisclosureButton
                         },
@@ -146,14 +136,12 @@ class GoBotViewController: DebugTableViewController {
         
         a += [DebugTableViewCellModel(title: "Full FSCK and Repair",
                                         cellReuseIdentifier: DebugValueTableViewCell.className,
-                                        valueClosure:
-              {
+                                        valueClosure: {
                   cell in
                   cell.detailTextLabel?.text = "Run"
               },
-                                        actionClosure:
-              {
-                cel in
+                                        actionClosure: {
+                _ in
                 DispatchQueue.global(qos: .background).async {
                     let (worked, _) = GoBot.shared.bot.fsckAndRepair()
                     guard worked else {
@@ -166,13 +154,11 @@ class GoBotViewController: DebugTableViewController {
 
         a += [DebugTableViewCellModel(title: "Delete Repo",
                                       cellReuseIdentifier: DebugValueTableViewCell.className,
-                                      valueClosure:
-            {
+                                      valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = "Do it!"
             },
-                                      actionClosure:
-            {
+                                      actionClosure: {
                 cell in
                 self.promptPurge(from: cell)
             }
@@ -189,14 +175,12 @@ class GoBotViewController: DebugTableViewController {
             
             cells += [DebugTableViewCellModel(title: "Last RX Seq",
                                               cellReuseIdentifier: DebugValueTableViewCell.className,
-                                              valueClosure:
-                {
+                                              valueClosure: {
                     cell in
                     cell.detailTextLabel?.text = String(lastRx)
                 },
                                               actionClosure: nil
                 )]
-        
         } catch {
             Log.unexpected(.apiError, "view db stats failed")
             Log.optional(error)
@@ -216,23 +200,19 @@ class GoBotViewController: DebugTableViewController {
             return ("Repo Stats Error: \(error.localizedDescription)", [], nil)
         }
         
-        
         var settings: [DebugTableViewCellModel] = []
 
         settings += [DebugTableViewCellModel(title: "Messages",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = String(stats.messages)
             },
                                              actionClosure: nil // TODO: view rootLog
         )]
         return ("Repo Information", settings, nil)
-
     }
 }
-
 
 extension GoBotViewController {
     
@@ -243,7 +223,7 @@ extension GoBotViewController {
                                            preferredStyle: .actionSheet)
         
         let delRepo = UIAlertAction(title: "Repo and View", style: .destructive) {
-            action in
+            _ in
             do {
                 if GoBot.shared.bot.isRunning {
                     GoBot.shared.bot.logout()
@@ -267,7 +247,7 @@ extension GoBotViewController {
         controller.addAction(delRepo)
         
         let delView = UIAlertAction(title: "Just view DB", style: .destructive) {
-            action in
+            _ in
             do {
                 if GoBot.shared.bot.isRunning {
                     _ = GoBot.shared.bot.logout()
@@ -283,10 +263,9 @@ extension GoBotViewController {
         }
         controller.addAction(delView)
         
-        
         // cancel
         controller.addAction(UIAlertAction(title: "Cancel", style: .cancel) {
-            action in
+            _ in
             controller.dismiss(animated: true, completion: nil)
         })
 

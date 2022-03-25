@@ -21,8 +21,7 @@ extension UIView {
     @discardableResult
     func pinTop(toBottomOf view: UIView,
                 constant: CGFloat = 0,
-                activate: Bool = true) -> NSLayoutConstraint
-    {
+                activate: Bool = true) -> NSLayoutConstraint {
         let constraint = self.topAnchor.constraint(equalTo: view.bottomAnchor, constant: constant)
         constraint.isActive = activate
         return constraint
@@ -67,8 +66,7 @@ extension UIView {
     @discardableResult
     func pinBottom(toTopOf view: UIView,
                    constant: CGFloat = 0,
-                   activate: Bool = true) -> NSLayoutConstraint
-    {
+                   activate: Bool = true) -> NSLayoutConstraint {
         let constraint = self.bottomAnchor.constraint(equalTo: view.topAnchor, constant: constant)
         constraint.isActive = activate
         return constraint
@@ -135,7 +133,6 @@ extension UIView {
         constraint.isActive = true
         return constraint
     }
-
 
     func constrain(to view: UIView) {
         self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true

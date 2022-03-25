@@ -56,11 +56,7 @@ extension Identifier {
     // the first character of the identifier indicating
     // what kind of identifier this is
     var sigil: Sigil {
-        if      self.hasPrefix(Sigil.blob.rawValue)         { return .blob }
-        else if self.hasPrefix(Sigil.feed.rawValue)         { return .feed }
-        else if self.hasPrefix(Sigil.message.rawValue)      { return .message }
-        
-        else                                                { return .unsupported }
+        if      self.hasPrefix(Sigil.blob.rawValue) { return .blob } else if self.hasPrefix(Sigil.feed.rawValue) { return .feed } else if self.hasPrefix(Sigil.message.rawValue) { return .message } else { return .unsupported }
     }
 
     /// the base64 number between the sigil, marker, and algorithm
@@ -106,20 +102,17 @@ extension Identifier {
 
     // the trailing suffix indicating how the id is encoded
     var algorithm: Algorithm {
-        if      self.hasSuffix(Algorithm.sha256.rawValue)   { return .sha256 }
-        else if self.hasSuffix(Algorithm.ed25519.rawValue)  { return .ed25519 }
-        else if self.hasSuffix(Algorithm.ggfeed.rawValue)   { return .ggfeed }
-        else                                                { return .unsupported }
+        if      self.hasSuffix(Algorithm.sha256.rawValue) { return .sha256 } else if self.hasSuffix(Algorithm.ed25519.rawValue) { return .ed25519 } else if self.hasSuffix(Algorithm.ggfeed.rawValue) { return .ggfeed } else { return .unsupported }
     }
 
     var isValidIdentifier: Bool {
-        return self.sigil != .unsupported &&
+        self.sigil != .unsupported &&
             self.id != Identifier.unsupported &&
             self.algorithm != .unsupported
     }
 
     var isBlob: Bool {
-        return self.sigil == .blob
+        self.sigil == .blob
     }
 
     // TODO: this is a iOS13 specific way to do sha25 hashing....

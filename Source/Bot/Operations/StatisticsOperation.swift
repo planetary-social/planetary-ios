@@ -55,5 +55,4 @@ class StatisticsOperation: AsynchronousOperation {
             self?.finish()
         }
     }
-
 }

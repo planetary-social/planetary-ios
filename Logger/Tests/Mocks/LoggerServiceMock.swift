@@ -17,7 +17,7 @@ class LoggerServiceMock: LoggerService {
     var invokedFatal = false
 
     var fileUrls: [URL] {
-        return []
+        []
     }
 
     func debug(_ string: String) {
@@ -40,5 +40,4 @@ class LoggerServiceMock: LoggerService {
     func fatal(_ reason: String, _ detail: String?) {
         invokedFatal = true
     }
-
 }

@@ -13,7 +13,7 @@ extension Dictionary {
     func data() -> Data? {
         let dictionary = self.copyByTransformingValues(of: Date.self) {
             date in
-            return date.iso8601String
+            date.iso8601String
         }
         return try? JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
     }

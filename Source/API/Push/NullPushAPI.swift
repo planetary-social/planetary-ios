@@ -16,5 +16,4 @@ class NullPushAPI: PushAPIService {
         self.token = token
         completion(true, nil)
     }
-    
 }

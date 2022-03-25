@@ -16,5 +16,4 @@ protocol FileLoggerService {
     func info(_ string: String)
 
     func error(_ string: String)
-
 }

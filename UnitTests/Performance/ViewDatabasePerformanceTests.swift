@@ -19,7 +19,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         vdb.close()
         vdb = ViewDatabase()
         let dbDir = NSURL.fileURL(withPathComponents: [NSTemporaryDirectory(), "ViewDatabaseBenchmarkTests"])!
-        dbURL = NSURL.fileURL(withPathComponents:[
+        dbURL = NSURL.fileURL(withPathComponents: [
             NSTemporaryDirectory(),
             "ViewDatabaseBenchmarkTests",
             "schema-built\(ViewDatabase.schemaVersion).sqlite"
@@ -31,7 +31,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         
         // open DB
         let dbDirPath = dbDir.absoluteString.replacingOccurrences(of: "file://", with: "")
-        let maxAge: Double = -60*60*24*30*48  // 48 month (so roughtly until 2023)
+        let maxAge: Double = -60 * 60 * 24 * 30 * 48  // 48 month (so roughtly until 2023)
         try vdb.open(path: dbDirPath, user: testFeed.owner, maxAge: maxAge)
     }
     
@@ -54,7 +54,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         // get test messages from JSON
         let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
         XCTAssertNotNil(msgs)
-        XCTAssertEqual(msgs.count, 2500)
+        XCTAssertEqual(msgs.count, 2_500)
         
         self.measure {
             let vdb = ViewDatabase()
@@ -91,7 +91,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
             try! resetDB()
         }
     }
-    
     
     func testFeedForIdentity() {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {

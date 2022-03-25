@@ -13,10 +13,9 @@ extension Array where Element == Pub {
     func filterInConstellation() -> [Pub] {
         let stars = Environment.Constellation.stars
         return self.filter { (pub) -> Bool in
-            return stars.contains { (star) -> Bool in
-                return star.feed == pub.address.key
+            stars.contains { (star) -> Bool in
+                star.feed == pub.address.key
             }
         }
     }
-    
 }

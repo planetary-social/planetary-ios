@@ -12,6 +12,6 @@ import UIKit
 extension UIViewController {
 
     var isTopViewController: Bool {
-        return self.navigationController?.topViewController == self
+        self.navigationController?.topViewController == self
     }
 }

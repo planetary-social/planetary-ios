@@ -10,6 +10,6 @@ import Foundation
 
 extension Bool {
     var yesOrNo: String {
-        return self ? Text.yes.text : Text.no.text
+        self ? Text.yes.text : Text.no.text
     }
 }

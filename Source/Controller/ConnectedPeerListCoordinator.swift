@@ -117,7 +117,6 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
                 self.recentlyDownloadedPostDuration = statistics.recentlyDownloadedPostDuration
             })
             .store(in: &cancellables)
-        
     }
     
     private func unsubscribeFromBotStatistics() {
@@ -165,7 +164,6 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             }
             
             peerConnectionInfo.append(PeerConnectionInfo(about: about))
-
         }
         
         return peerConnectionInfo.sorted { lhs, rhs in

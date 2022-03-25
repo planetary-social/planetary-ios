@@ -12,11 +12,10 @@ import Logger
 import Secrets
 
 class AvatarImageView: ImageView {
-
     
     @MainActor override var image: UIImage? {
         get {
-            return super.image
+            super.image
         }
         set {
             super.image = newValue ?? UIImage.verse.missingAbout
@@ -39,8 +38,7 @@ class AvatarImageView: ImageView {
     @discardableResult
     func load(for person: Person, animate: Bool = false) -> URLSessionDataTask? {
         
-        
-        //TODO: This convert 
+        // TODO: This convert 
         if person.image_url == nil, let imageIdentifier = person.image {
             
             // cached image
@@ -51,8 +49,8 @@ class AvatarImageView: ImageView {
                     } else {
                         self.image = image
                     }
-                }
-                //return(nil)
+                 }
+                // return(nil)
             }
 
             // request image
@@ -82,7 +80,7 @@ class AvatarImageView: ImageView {
         Log.info("url: \(url)")
 
         let task = URLSession.shared.dataTask(with: request) {
-            data, response, error in
+            data, response, _ in
             guard response?.httpStatusCodeError == nil else { return }
             guard let data = data else { return }
             guard let image = UIImage(data: data) else {

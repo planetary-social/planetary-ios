@@ -66,14 +66,14 @@ extension UIColor {
         var r = Int(0), g = Int(0), b = Int(0)
 
         // monochrome to rgb
-        if (space.model == .monochrome) {
+        if space.model == .monochrome {
             r = Int(components[0] * 255)
             g = Int(components[0] * 255)
             b = Int(components[0] * 255)
         }
 
         // rgb
-        else if (space.model == .rgb) {
+        else if space.model == .rgb {
             r = Int(components[0] * 255)
             g = Int(components[1] * 255)
             b = Int(components[2] * 255)

@@ -49,7 +49,7 @@ class ContentTests: XCTestCase {
         let data = self.data(for: "ContentPrivate.json")
         do {
             let contents = try JSONDecoder().decode([Content].self, from: data)
-            for (i,c) in contents.enumerated() {
+            for (i, c) in contents.enumerated() {
                 switch i {
                 case 0:
                     XCTAssertTrue(c.type == .vote)
@@ -147,7 +147,7 @@ class ContentTests: XCTestCase {
             for content in try JSONDecoder().decode([Content].self, from: data) {
                 XCTAssertFalse(content.isValid)
                 XCTAssertNotNil(content.contentException)
-                i+=1
+                i += 1
             }
         } catch {
             XCTFail("\(error)")
@@ -211,9 +211,9 @@ class ContentTests: XCTestCase {
             
             XCTAssertEqual(b.identifier, "&JWofdARjh61uDtdUl5ivwYEPJ4T9TWMyztpgPlgkgek=.sha256")
             XCTAssertEqual(b.name, "1614434_10206454331651096_887999461891506870_o.jpg")
-            XCTAssertEqual(b.metadata?.numberOfBytes, 67654)
+            XCTAssertEqual(b.metadata?.numberOfBytes, 67_654)
             XCTAssertEqual(b.metadata?.dimensions?.height, 440)
-            XCTAssertEqual(b.metadata?.dimensions?.width, 1024)
+            XCTAssertEqual(b.metadata?.dimensions?.width, 1_024)
             XCTAssertEqual(b.metadata?.mimeType, "image/jpeg")
         } catch {
             XCTFail("\(error)")
@@ -226,7 +226,7 @@ class ContentTests: XCTestCase {
             let posts = try JSONDecoder().decode([Post].self, from: data)
             guard posts.count == 2 else { XCTFail(); return }
 
-            for (i,p) in posts.enumerated() {
+            for (i, p) in posts.enumerated() {
                 guard let m = p.mentions else { XCTFail(); return }
 
                 guard m.count == 1 else { XCTFail(); return }
@@ -243,7 +243,6 @@ class ContentTests: XCTestCase {
             XCTFail("\(error)")
         }
     }
-    
 
     // TODO need to confirm string content to ensure everything was captured
     // prefix ![
@@ -328,7 +327,7 @@ class ContentTests: XCTestCase {
             root: nil,
             text: "test post with hashtags")
         let d = try! p.encodeToData()
-        let s = String(data:d, encoding: .utf8)!
+        let s = String(data: d, encoding: .utf8)!
         XCTAssertTrue(s.contains("{\"link\":\"#helloWorld\"}"))
     }
 
@@ -336,7 +335,7 @@ class ContentTests: XCTestCase {
         let p = Post(
             attributedText: NSAttributedString(string: "test post with hashtags #helloWorld"))
         let d = try! p.encodeToData()
-        let s = String(data:d, encoding: .utf8)!
+        let s = String(data: d, encoding: .utf8)!
         XCTAssertTrue(s.contains("{\"link\":\"#helloWorld\"}"))
     }
     
@@ -354,15 +353,14 @@ class ContentTests: XCTestCase {
         }
     }
     
-    
     func test_ValueTimestamp() {
         let data = self.data(for: "ValueTimestamp.json")
         do {
             let val = try JSONDecoder().decode(Value.self, from: data)
             XCTAssertTrue(val.content.type == .vote)
-            XCTAssertEqual(val.timestamp, 1573673656588.0159)
+            XCTAssertEqual(val.timestamp, 1_573_673_656_588.015_9)
             let kv = KeyValue(key: "%test.msg", value: val, timestamp: 0)
-            XCTAssertEqual(kv.userDate, Date(timeIntervalSince1970: 1573673656.5880159))
+            XCTAssertEqual(kv.userDate, Date(timeIntervalSince1970: 1_573_673_656.588_015_9))
         } catch {
             XCTFail("\(error)")
         }
@@ -371,7 +369,7 @@ class ContentTests: XCTestCase {
     func test_invalidJSON() {
         let data = self.data(for: "Invalid.json")
         do {
-            let _ = try JSONDecoder().decode(Content.self, from: data)
+            _ = try JSONDecoder().decode(Content.self, from: data)
             XCTFail("data is not valid JSON")
         } catch {
             XCTAssertNotNil(error)

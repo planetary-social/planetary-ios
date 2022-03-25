@@ -15,7 +15,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
         case verticalStack, horizontalStack
 
         var stackAxis: NSLayoutConstraint.Axis {
-            return self == .verticalStack ? .vertical : .horizontal
+            self == .verticalStack ? .vertical : .horizontal
         }
 
         var spacing: CGFloat {
@@ -27,7 +27,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
         }
 
         var requiresSpacer: Bool {
-            return self == .horizontalStack
+            self == .horizontalStack
         }
 
         var buttonHeight: CGFloat {
@@ -158,7 +158,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
     // steps will need to actively call lookReady() to re-enable
     // the button.
     var primaryButton: UIButton {
-        return self._primaryButton
+        self._primaryButton
     }
 
     lazy var buttonStack: UIStackView = {
@@ -273,7 +273,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
     func lookBusy(after: TimeInterval = 1, disable button: UIButton? = nil) {
         self.isUserInteractionEnabled = false
         button?.isEnabled = false
-        //AppController.shared.showProgress(after: after)
+        // AppController.shared.showProgress(after: after)
     }
 
     func lookReady() {

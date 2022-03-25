@@ -112,7 +112,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
     }
 }
 
-fileprivate class PreviewViewModel: ConnectedPeerListViewModel {
+private class PreviewViewModel: ConnectedPeerListViewModel {
     
     static var emptyModel: PreviewViewModel {
         let vm = PreviewViewModel()

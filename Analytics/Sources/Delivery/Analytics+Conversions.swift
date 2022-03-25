@@ -40,5 +40,4 @@ public extension Analytics {
     func trackDidReply() {
         service.track(event: .publish, element: .post, name: "reply")
     }
-
 }

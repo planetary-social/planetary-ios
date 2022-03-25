@@ -20,7 +20,7 @@ extension AppConfiguration {
     static func from(_ data: Data) -> AppConfiguration? {
         guard let object = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) else { return nil }
         let configuration = object as? AppConfiguration
-        if configuration == nil { Log.unexpected(.missingValue, "Configuration could not be unarchived")}
+        if configuration == nil { Log.unexpected(.missingValue, "Configuration could not be unarchived") }
         return configuration
     }
 }

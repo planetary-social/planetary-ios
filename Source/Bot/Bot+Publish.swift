@@ -16,8 +16,7 @@ extension Bot {
 
     func publish(_ post: Post,
                  with images: [UIImage] = [],
-                 completion: @escaping PublishCompletion)
-    {
+                 completion: @escaping PublishCompletion) {
         Thread.assertIsMainThread()
 
         // publish all images first
@@ -42,8 +41,7 @@ extension Bot {
     // if some of the images were published and later ones fail well
     // then doing this again will duplicate already published images
     func prepare(_ images: [UIImage],
-                 completion: @escaping PublishBlobsCompletion)
-    {
+                 completion: @escaping PublishBlobsCompletion) {
         Thread.assertIsMainThread()
         if images.isEmpty { completion([], nil); return }
 
@@ -64,8 +62,8 @@ extension Bot {
                 let blob = Blob(identifier: identifier, metadata: metadata)
                 blobs[index] = blob
                 if blobs.count == images.count {
-                    let sortedBlobs = blobs.sorted(by: {$0.0 < $1.0})
-                    completion(sortedBlobs.map{ $1 }, nil)
+                    let sortedBlobs = blobs.sorted(by: { $0.0 < $1.0 })
+                    completion(sortedBlobs.map { $1 }, nil)
                 }
             }
         }
@@ -79,7 +77,7 @@ fileprivate extension UIImage {
     /// a max size and compression ratio that fits within
     /// the SSB blob max bytes.
     func blobData() -> Data? {
-        guard let image = self.resized(toLargestDimension: 1000) else { return nil }
+        guard let image = self.resized(toLargestDimension: 1_000) else { return nil }
         guard let data = image.jpegData(compressionQuality: 0.5) else { return nil }
         return data
     }

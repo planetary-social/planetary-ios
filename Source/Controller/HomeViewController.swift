@@ -32,7 +32,6 @@ class HomeViewController: ContentViewController {
         let dataSource = PostReplyPaginatedDataSource()
         dataSource.delegate = self
         return dataSource
-        
     }()
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
@@ -147,7 +146,7 @@ class HomeViewController: ContentViewController {
     // MARK: Load and refresh
     
     func load(animated: Bool = false) {
-        Bots.current.recent() { [weak self] proxy, error in
+        Bots.current.recent { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
@@ -229,7 +228,7 @@ class HomeViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
         let controller = NewPostViewController()
         controller.didPublish = {
-            [weak self] post in
+            [weak self] _ in
             self?.load()
         }
         let navController = UINavigationController(rootViewController: controller)
@@ -261,7 +260,7 @@ class HomeViewController: ContentViewController {
                 self?.load(animated: true)
             } else {
                 let shouldAnimate = self?.navigationController?.topViewController == self
-                //self?.floatingRefreshButton.show(animated: shouldAnimate)
+                // self?.floatingRefreshButton.show(animated: shouldAnimate)
             }
         }
     }
@@ -299,5 +298,4 @@ extension HomeViewController: PostReplyPaginatedDataSourceDelegate {
         let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    
 }

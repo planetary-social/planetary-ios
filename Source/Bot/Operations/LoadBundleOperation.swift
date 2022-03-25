@@ -18,7 +18,6 @@ class LoadBundleOperation: AsynchronousOperation {
         self.bundle = bundle
         super.init()
     }
-    
 
     override func main() {
         Log.info("LoadBundleOperation started.")
@@ -56,7 +55,7 @@ class LoadBundleOperation: AsynchronousOperation {
                                                                           options: .mutableContainersAndLeaves,
                                                                           format: &format) as! [String: String]
         
-        let blobPaths  = bundle.paths(forResourcesOfType: nil, inDirectory: "Blobs")
+        let blobPaths = bundle.paths(forResourcesOfType: nil, inDirectory: "Blobs")
         blobPaths.forEach { path in
             group.enter()
             let url = URL(fileURLWithPath: path)
@@ -76,5 +75,4 @@ class LoadBundleOperation: AsynchronousOperation {
         
         self.finish()
     }
-    
 }

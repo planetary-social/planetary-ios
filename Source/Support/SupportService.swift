@@ -16,7 +16,6 @@ enum SupportArticle {
     case termsOfService
     case whatIsPlanetary
     case editPost
-    
 }
 
 enum SupportReason: String, CaseIterable {
@@ -49,5 +48,4 @@ protocol SupportService {
     func id(for article: SupportArticle) -> String
     
     func article(for id: String) -> SupportArticle?
-    
 }

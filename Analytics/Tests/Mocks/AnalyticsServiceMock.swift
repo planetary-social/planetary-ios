@@ -15,7 +15,7 @@ class AnalyticsServiceMock: AnalyticsService {
     var tracked = false
     var optedIn = true
 
-    var isEnabled: Bool = true
+    var isEnabled = true
 
     func identify(identity: Identity) {
         identified = true
@@ -36,5 +36,4 @@ class AnalyticsServiceMock: AnalyticsService {
     func track(event: Event, element: Element, name: String, params: [String: Any]?) {
         tracked = true
     }
-
 }

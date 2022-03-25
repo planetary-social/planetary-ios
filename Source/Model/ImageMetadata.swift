@@ -17,7 +17,7 @@ struct ImageMetadata: Codable, Equatable {
     let width: Int?
 
     var identifier: BlobIdentifier {
-        return self.link
+        self.link
     }
 }
 

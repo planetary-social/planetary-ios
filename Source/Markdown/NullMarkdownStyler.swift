@@ -15,5 +15,4 @@ typealias MarkdownStyler = NullMarkdownStyler
 class NullMarkdownStyler: DownStyler {
     
     init(small: Bool = false) {}
-    
 }

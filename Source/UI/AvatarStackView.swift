@@ -29,7 +29,7 @@ class AvatarStackView: UIView {
     func loadAvatars() {
         self.subviews.forEach { $0.removeFromSuperview() }
 
-        var previousView: AvatarImageView? = nil
+        var previousView: AvatarImageView?
         let max = min(self.abouts.count, self.maxCount)
 
         let abouts = self.abouts.sorted(by: { $0.image != nil && $1.image == nil }).prefix(upTo: max)
@@ -48,7 +48,6 @@ class AvatarStackView: UIView {
                 self.addSubview(view)
                 view.constrainTop(toTopOf: previousView)
                 view.constrainLeading(toTrailingOf: previousView, constant: -self.overlap)
-
             } else {
                 Layout.fillLeft(of: self, with: view)
             }

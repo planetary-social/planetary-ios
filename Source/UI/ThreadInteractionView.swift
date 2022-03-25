@@ -12,7 +12,6 @@ import Analytics
 protocol ThreadInteractionViewDelegate: class {
     
     func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue)
-    
 }
 
 class ThreadInteractionView: UIView {
@@ -31,9 +30,9 @@ class ThreadInteractionView: UIView {
     
     weak var delegate: ThreadInteractionViewDelegate?
     
-    var post: KeyValue? = nil
+    var post: KeyValue?
     var replies: StaticDataProxy?
-    var userLikes: Bool = false
+    var userLikes = false
     
     private lazy var stack: UIStackView = {
         let view = UIStackView.forAutoLayout()
@@ -91,11 +90,11 @@ class ThreadInteractionView: UIView {
     }
     
     func update() {
-        //check to see if we're currently linking this post
+        // check to see if we're currently linking this post
         let me = Bots.current.identity
-        if self.replies!.count-1 >= 0 {
-            for index in 0...self.replies!.count-1 {
-                if self.replies!.keyValueBy(index: index)?.value.content.type ==  Planetary.ContentType.vote {
+        if self.replies!.count - 1 >= 0 {
+            for index in 0...self.replies!.count - 1 {
+                if self.replies!.keyValueBy(index: index)?.value.content.type == Planetary.ContentType.vote {
                     let likeIdentity = self.replies!.keyValueBy(index: index)?.metadata.author.about?.about
                     if me == likeIdentity {
                         self.userLikes = true
@@ -111,7 +110,6 @@ class ThreadInteractionView: UIView {
         }
         self.likeButton.isHidden = false
     }
-    
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -159,7 +157,6 @@ class ThreadInteractionView: UIView {
         actions.append(cancel)
 
         AppController.shared.choose(from: actions, sourceView: sender)
-        
 
         print(#function)
     }

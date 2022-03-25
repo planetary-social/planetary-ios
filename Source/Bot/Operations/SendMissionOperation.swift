@@ -87,7 +87,7 @@ class SendMissionOperation: AsynchronousOperation {
                     let missingStars = knownStars.subtracting(availableStars)
                     let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
                     redeemInviteOperations = randomSampleOfStars.map {
-                        return RedeemInviteOperation(star: $0, shouldFollow: false)
+                        RedeemInviteOperation(star: $0, shouldFollow: false)
                     }
                     
                     // Lets sync to available stars and newly redeemed stars

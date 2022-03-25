@@ -23,18 +23,15 @@ class CachesViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Post truncated text",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
-                                         valueClosure:
-            {
+                                         valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = "\(Caches.truncatedText.count)"
             },
                                          actionClosure: nil)]
 
-
         settings += [DebugTableViewCellModel(title: "Post truncated text prefills",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
-                                         valueClosure:
-            {
+                                         valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = "\(Caches.truncatedText.prefillCount)"
             },
@@ -42,8 +39,7 @@ class CachesViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Post text",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = "\(Caches.text.count)"
             },
@@ -52,9 +48,8 @@ class CachesViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to invalidate",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
                                          valueClosure: nil,
-                                         actionClosure:
-            {
-                [unowned self] cell in
+                                         actionClosure: {
+                [unowned self] _ in
                 Caches.truncatedText.invalidate()
                 Caches.text.invalidate()
                 self.updateSettings()
@@ -63,17 +58,15 @@ class CachesViewController: DebugTableViewController {
         return ("Attributed Strings", settings, nil)
     }
 
-
     private func blobs() -> DebugTableViewController.Settings {
 
         var settings: [DebugTableViewCellModel] = []
 
         settings += [DebugTableViewCellModel(title: "Datas / Usage",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
-                let mb = Caches.blobs.estimatedBytes / 1024 / 1024
+                let mb = Caches.blobs.estimatedBytes / 1_024 / 1_024
                 let string = mb == 0 ? "< 1" : "\(mb)"
                 cell.detailTextLabel?.text = "\(Caches.blobs.count) / \(string) MB"
             },
@@ -82,17 +75,15 @@ class CachesViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to invalidate",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
                                          valueClosure: nil,
-                                         actionClosure:
-            {
-                [unowned self] cell in
+                                         actionClosure: {
+                [unowned self] _ in
                 Caches.blobs.invalidate()
                 self.updateSettings()
             })]
 
         settings += [DebugTableViewCellModel(title: "Identifiers / Completions",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
-                                         valueClosure:
-            {
+                                         valueClosure: {
                 cell in
                 let text = "\(Caches.blobs.numberOfBlobIdentifiers) / \(Caches.blobs.numberOfBlobCompletions)"
                 cell.detailTextLabel?.text = text
@@ -102,9 +93,8 @@ class CachesViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to forget completions",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
                                          valueClosure: nil,
-                                         actionClosure:
-            {
-                cell in
+                                         actionClosure: {
+                _ in
                 Caches.blobs.forgetCompletions()
                 self.updateSettings()
             })]

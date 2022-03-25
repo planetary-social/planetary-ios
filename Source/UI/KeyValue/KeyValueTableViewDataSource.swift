@@ -14,7 +14,7 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     var keyValues: KeyValues = []
 
     func keyValue(at indexPath: IndexPath) -> KeyValue {
-        return self.keyValues[indexPath.row]
+        self.keyValues[indexPath.row]
     }
 
     func keyValues(at indexPaths: [IndexPath]) -> KeyValues {
@@ -24,21 +24,20 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     /// Returns the number of items in the `keyValues` store.  Subclasses can
     /// override to allow for multiple sections.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.keyValues.count
+        self.keyValues.count
     }
 
     /// The typical `UITableViewCell` factory function, tied to the `keyValues` store.
     /// Subclasses should not need to override this unless they need to do specific
     /// things with the returned instance related to the `indexPath`.
     func tableView(_ tableView: UITableView,
-                   cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let keyValue = self.keyValue(at: indexPath)
         let cell = self.dequeueReusuableCell(in: tableView, at: indexPath, for: keyValue)
         cell.update(with: keyValue)
@@ -50,8 +49,7 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     /// override `cell(for: type)` instead.
     private func dequeueReusuableCell(in tableView: UITableView,
                                       at indexPath: IndexPath,
-                                      for keyValue: KeyValue) -> KeyValueTableViewCell
-    {
+                                      for keyValue: KeyValue) -> KeyValueTableViewCell {
         let type = keyValue.value.content.type
         let cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? KeyValueTableViewCell
         return cell ?? self.cell(at: indexPath, for: type, tableView: tableView)
@@ -62,8 +60,7 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     /// if a dfferent cell is required for their use case.
     func cell(at indexPath: IndexPath,
               for type: ContentType,
-              tableView: UITableView) -> KeyValueTableViewCell
-    {
+              tableView: UITableView) -> KeyValueTableViewCell {
         switch type {
             case .post:     return KeyValueTableViewCell(for: type, height: 300)
             default:        return KeyValueTableViewCell(for: type)
@@ -78,15 +75,15 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     }
 }
 
-// MARK:- ContentType to be used as a UITableViewCell reuse identifier
+// MARK: - ContentType to be used as a UITableViewCell reuse identifier
 
 extension ContentType {
     var reuseIdentifier: String {
-        return self.rawValue
+        self.rawValue
     }
 }
 
-// MARK:- UITableView support for KeyValueTableViewDataSource
+// MARK: - UITableView support for KeyValueTableViewDataSource
 
 /// Convenience functions to transform between KeyValues and index paths.
 /// This works for single-dimension KeyValue arrays, but if that is changed
@@ -94,7 +91,7 @@ extension ContentType {
 extension UITableView {
 
     var keyValueDataSource: KeyValueTableViewDataSource? {
-        return self.dataSource as? KeyValueTableViewDataSource
+        self.dataSource as? KeyValueTableViewDataSource
     }
 
     func keyValue(for indexPath: IndexPath) -> KeyValue? {
@@ -124,7 +121,7 @@ extension UITableView {
     }
 }
 
-// MARK:- Deleting rows and KeyValues
+// MARK: - Deleting rows and KeyValues
 
 extension UITableView {
 

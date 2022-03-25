@@ -25,8 +25,7 @@ struct AboutService {
     }
 
     static func matching(_ string: String? = nil,
-                         completion: @escaping AboutsCompletion)
-    {
+                         completion: @escaping AboutsCompletion) {
         // return abouts for recent mentions
         let useRecent = (string?.isEmpty ?? true) && self.identities.count > 0
         if useRecent {
@@ -34,11 +33,11 @@ struct AboutService {
                 abouts, _ in
                 completion(abouts, nil)
             }
-            return;
+            return
         }
 
         // otherwise return abouts for my network
-        self.network() {
+        self.network {
             identities, _ in
             self.sortedAbouts(for: identities, filteredBy: string) {
                 abouts, _ in
@@ -52,8 +51,7 @@ struct AboutService {
     /// identities array is very large this could be a bottleneck.
     private static func sortedAbouts(for identities: [Identity],
                                      filteredBy string: String?,
-                                     completion: @escaping AboutsCompletion)
-    {
+                                     completion: @escaping AboutsCompletion) {
         Bots.current.abouts(identities: identities) {
             abouts, error in
             guard let string = string else { completion(abouts.sorted(), error); return }

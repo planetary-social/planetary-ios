@@ -148,7 +148,7 @@ class BlobCache: DictionaryCache {
         // first 2 chars are directory
         let dir = String(hexRef.prefix(2))
         // rest ist filename
-        let restIdx = hexRef.index(hexRef.startIndex, offsetBy:2)
+        let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
         let rest = String(hexRef[restIdx...])
         
         var gsUrl = URL(string: "https://blobs.planetary.social/")!
@@ -201,8 +201,7 @@ class BlobCache: DictionaryCache {
     }
 
     /// Returns true if the specified Error is a blob unavailable error.
-    private func isBlobUnavailableError(_ error: Error?) -> Bool
-    {
+    private func isBlobUnavailableError(_ error: Error?) -> Bool {
         // check that error is blob unavailable
         if let error = error as? BotError, error == .blobUnavailable {
             return true
@@ -232,7 +231,7 @@ class BlobCache: DictionaryCache {
 
     // the number of pending blob identifiers to be loaded
     var numberOfBlobIdentifiers: Int {
-        return self.completions.count
+        self.completions.count
     }
 
     // the TOTAL number of completions for all blob identifiers
@@ -252,13 +251,12 @@ class BlobCache: DictionaryCache {
     // for each blob identifier, there should be one data task
     // use dataTasksQueue to read/write this property
     private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
-    private var dataTasksQueue: DispatchQueue = DispatchQueue(label: "com.planetary.blobcache")
+    private var dataTasksQueue = DispatchQueue(label: "com.planetary.blobcache")
 
     /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
     /// be used to forget a pending completion later.
     private func add(_ completion: @escaping UIImageCompletion,
-                     for identifier: BlobIdentifier) -> UUID
-    {
+                     for identifier: BlobIdentifier) -> UUID {
         var completions = self.completions(for: identifier)
         let uuid = UUID()
         completions[uuid] = completion
@@ -267,7 +265,7 @@ class BlobCache: DictionaryCache {
     }
 
     private func completions(for identifier: BlobIdentifier) -> [UUID: UIImageCompletion] {
-        return self.completions[identifier] ?? [:]
+        self.completions[identifier] ?? [:]
     }
 
     /// Forgets all completions for all blob identifiers.
@@ -277,12 +275,12 @@ class BlobCache: DictionaryCache {
 
     /// Forgets the all the completions for the specified blob identifier.
     func forgetCompletions(for identifier: BlobIdentifier) {
-        let _ = self.completions.removeValue(forKey: identifier)
+        _ = self.completions.removeValue(forKey: identifier)
     }
     
     func cancelAllDataTasks() {
         self.dataTasksQueue.async { [weak self] in
-            self?.dataTasks.forEach { (ref, dataTask) in
+            self?.dataTasks.forEach { (_, dataTask) in
                 dataTask.cancel()
             }
             self?.dataTasks.removeAll()
@@ -306,8 +304,7 @@ class BlobCache: DictionaryCache {
     /// Forgets a specific UUID tagged completion for a blob identifier.  This will
     /// remove a single completion at a time.
     func forgetCompletions(with uuid: UUID,
-                           for identifier: BlobIdentifier)
-    {
+                           for identifier: BlobIdentifier) {
         // remove completions per UUID
         var completions = self.completions(for: identifier)
         completions.removeValue(forKey: uuid)
@@ -332,8 +329,8 @@ class BlobCache: DictionaryCache {
 
     // the max number of bytes that will trigger a purge
     // the min number of bytes that will remain after a purge
-    private let maxNumberOfBytes: Int = (1024 * 1024 * 100)
-    private let minNumberOfBytes: Int = (1024 * 1024 * 50)
+    private let maxNumberOfBytes: Int = (1_024 * 1_024 * 100)
+    private let minNumberOfBytes: Int = (1_024 * 1_024 * 50)
 
     // tracks the total bytes in use
     private var bytes: Int = 0
@@ -395,8 +392,7 @@ class BlobCache: DictionaryCache {
     private func registerNotifications() {
         NotificationCenter.default.addObserver(forName: .didLoadBlob,
                                                object: nil,
-                                               queue: OperationQueue.main)
-        {
+                                               queue: OperationQueue.main) {
             [weak self] notification in
             self?.didLoadBlob(notification)
         }

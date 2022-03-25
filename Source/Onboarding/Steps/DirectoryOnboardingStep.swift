@@ -48,8 +48,6 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
         controller.navigationItem.hidesBackButton = true
     }
 
-
-
     @objc func didPressNext(sender button: UIButton) {
         self.performPrimaryAction(sender: button)
     }
@@ -96,7 +94,7 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
     // MARK: table stuff
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.people.count
+        self.people.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

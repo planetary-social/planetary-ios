@@ -98,5 +98,4 @@ class AttributedStringTests: XCTestCase {
         attributedString.append(Hashtag.named("test").attributedString)
         XCTAssertTrue(attributedString.encodeMarkdown() == "test [identity](identity) #test")
     }
-    
 }

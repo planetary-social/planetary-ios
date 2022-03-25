@@ -117,7 +117,6 @@ class CommunityCellView: UIView {
         self.imageLoadingTask?.cancel()
         self.imageView.image = UIImage.verse.missingAbout
     }
-
 }
 
 class CommunityTableViewCell: UITableViewCell {

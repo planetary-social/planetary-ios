@@ -21,5 +21,4 @@ struct Support {
         }
         #endif
     }()
-    
 }

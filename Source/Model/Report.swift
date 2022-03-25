@@ -28,7 +28,6 @@ struct Report {
     
     /// Message that generated this report
     var keyValue: KeyValue
-    
 }
 
 enum ReportType: String {

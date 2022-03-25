@@ -13,6 +13,6 @@ extension NSObject {
     /// have an instance of the class, then downcast it for the desired
     /// name.
     static var className: String {
-        return String(describing: self)
+        String(describing: self)
     }
 }

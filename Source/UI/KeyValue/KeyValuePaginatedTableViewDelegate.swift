@@ -36,7 +36,7 @@ class KeyValuePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 10
+        10
     }
     
     // MARK: Navigating with controller
@@ -54,5 +54,4 @@ class KeyValuePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
             default: return nil
         }
     }
-    
 }
