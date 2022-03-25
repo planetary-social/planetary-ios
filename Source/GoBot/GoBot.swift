@@ -469,6 +469,7 @@ class GoBot: Bot {
                             let address = star.address.multipeer
                             let redeemed = Date().timeIntervalSince1970 * 1000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
+                            Analytics.shared.trackDidJoinPub(at: star.address.multipeer)
                         } catch {
                             CrashReporting.shared.reportIfNeeded(error: error)
                         }
