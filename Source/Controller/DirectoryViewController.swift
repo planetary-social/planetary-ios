@@ -171,7 +171,7 @@ extension DirectoryViewController: TopScrollable {
 extension DirectoryViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return searchFilter.isEmpty ? 2 : 1
+        searchFilter.isEmpty ? 2 : 1
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

@@ -24,13 +24,13 @@ class PreloadedBlobsServiceAdapter: PreloadedBlobsService {
 
         var format = PropertyListSerialization.PropertyListFormat.xml
         guard let blobIdentifiersPath = bundle.path(
-                forResource: "BlobIdentifiers",
-                ofType: "plist",
-                inDirectory: "Pubs"
-            ),
-            let xml = FileManager.default.contents(atPath: blobIdentifiersPath),
+            forResource: "BlobIdentifiers",
+            ofType: "plist",
+            inDirectory: "Pubs"
+        ),
+            let rawblobIdendifiers = FileManager.default.contents(atPath: blobIdentifiersPath),
             let blobIdentifiers = try? PropertyListSerialization.propertyList(
-                from: xml,
+                from: rawblobIdendifiers,
                 options: .mutableContainersAndLeaves,
                 format: &format
             ) as? [String: String] else {
@@ -39,7 +39,7 @@ class PreloadedBlobsServiceAdapter: PreloadedBlobsService {
                 return
         }
         
-        let blobPaths  = bundle.paths(forResourcesOfType: nil, inDirectory: "Pubs/Blobs")
+        let blobPaths = bundle.paths(forResourcesOfType: nil, inDirectory: "Pubs/Blobs")
         blobPaths.forEach { path in
             group.enter()
             let url = URL(fileURLWithPath: path)
@@ -55,7 +55,7 @@ class PreloadedBlobsServiceAdapter: PreloadedBlobsService {
                 
                 if let error = error as NSError? {
                     if error.domain == NSCocoaErrorDomain,
-                       error.code == 516 {
+                        error.code == 516 {
                         // The blob is already there, this is expected to happen most of the time.
                         return
                     }

@@ -24,7 +24,7 @@ struct Pub: ContentCodable {
     let address: PubAddress
     
     func toPeer() -> Peer {
-        return Peer(pubAddress: address)
+        Peer(pubAddress: address)
     }
 }
 

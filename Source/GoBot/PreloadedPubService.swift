@@ -17,8 +17,8 @@ protocol PreloadedPubService {
     /// pubs.
     init(blobService: PreloadedBlobsService.Type)
     
-    /// Inserts the preloaded pubs into the Bot's database, loading data from a file named `preloadedPubs.json` in the given
-    /// bundle.
+    /// Inserts the preloaded pubs into the Bot's database, loading data from a file named `preloadedPubs.json` in the
+    /// given bundle.
     func preloadPubs(in bot: Bot, from bundle: Bundle?)
 }
 
@@ -43,7 +43,6 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
             return
         }
 
-        
         guard let url = bundle.url(forResource: "preloadedPubs", withExtension: "json", subdirectory: "Pubs") else {
             Log.error("Could not find data for preloaded pubs.")
             return

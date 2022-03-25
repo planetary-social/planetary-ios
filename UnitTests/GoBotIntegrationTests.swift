@@ -172,7 +172,7 @@ class GoBotIntegrationTests: XCTestCase {
     }
     
     /// Verifies that the GoBot increments the published message count in the app config when publishing a message.
- func testPublishIncrementsPublishedMessageCount() async throws {
+    func testPublishIncrementsPublishedMessageCount() async throws {
         // Arrange
         let testPost = Post(text: "\(#function)")
         AppConfiguration.current?.numberOfPublishedMessages = 0
@@ -250,5 +250,4 @@ class MockPreloadedPubService: PreloadedPubService {
         preloadPubsCallCount += 1
         preloadPubsBotParameter = bot
     }
-
 }
