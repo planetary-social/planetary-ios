@@ -85,7 +85,7 @@ fileprivate struct GoBotConfig: Encodable {
     let KeyBlob: String
     let Repo: String
     let ListenAddr: String
-    let Hops: UInt
+    let Hops: UInt // setting this value to 0 means "a person that you follow" (1 hop away), therefore this value should be understood slightly differently than in the case of some other clients
     let SchemaVersion: UInt
 
     let ServicePubs: [Identity]? // identities of services which supply planetary specific services
