@@ -85,7 +85,10 @@ class GoBot: Bot {
     let bot: GoBotInternal
     let database = ViewDatabase()
 
-    required init(userDefaults: UserDefaults = UserDefaults.standard, preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter()) {
+    required init(
+        userDefaults: UserDefaults = UserDefaults.standard,
+        preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter()
+    ) {
         self.userDefaults = userDefaults
         self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
@@ -201,7 +204,7 @@ class GoBot: Bot {
             BlockedAPI.shared.retreiveBlockedList() {
                 blocks, err in
                 guard err == nil else {
-                    Log.unexpected(.botError, "failed to get blocks: \(String(describing: err))");
+                    Log.unexpected(.botError, "failed to get blocks: \(String(describing: err))")
                     return
                 } // Analitcis error instead?
 
@@ -687,7 +690,7 @@ class GoBot: Bot {
     }
     
     // should only be called by refresh() (which does the proper completion on mainthread)
-    private func updateReceive(limit: Int32 = 15000, completion: @escaping ErrorCompletion) {
+    private func updateReceive(limit: Int32 = 15_000, completion: @escaping ErrorCompletion) {
         var current: Int64 = 0
         var diff: Int = 0
 
@@ -709,7 +712,7 @@ class GoBot: Bot {
         
         // TOOD: redo until diff==0
         do {
-            let msgs = try self.bot.getReceiveLog(startSeq: UInt64(max(0, current+1)), limit: limit)
+            let msgs = try self.bot.getReceiveLog(startSeq: UInt64(max(0, current + 1)), limit: limit)
             
             guard msgs.count > 0 else {
                 print("warning: triggered update but got no messages from receive log")
@@ -731,7 +734,7 @@ class GoBot: Bot {
                     //self.updatePrivate(completion: completion)
                 } else {
                     #if DEBUG
-                    print("#rx log# \(diff-Int(limit)) messages left in go-ssb offset log")
+                    print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
                     #endif
                     completion(nil)
                 }
