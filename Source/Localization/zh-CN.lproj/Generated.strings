@@ -53,6 +53,8 @@
 "Text.name" = "输入标题";
 "Text.bio" = "个性签名";
 "Text.seeMore" = "查看更多";
+"Text.likesThis" = "Likes this";
+"Text.dislikesThis" = "Dislikes this";
 "Text.block" = "区块";
 "Text.blocked" = "屏蔽";
 "Text.deleteSecretAndIdentity" = "Delete this secret and identity";
