@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SupportArticle {
+public enum SupportArticle: String {
     case faq
     case privacyPolicy
     case termsOfService

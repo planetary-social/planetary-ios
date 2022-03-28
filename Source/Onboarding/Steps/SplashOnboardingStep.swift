@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Support
 
 class StartOnboardingStep: OnboardingStep {
 
@@ -19,9 +20,9 @@ class StartOnboardingStep: OnboardingStep {
         let text = NSMutableAttributedString(Text.Onboarding.policyStatement.text,
                                              font: UIFont.systemFont(ofSize: 13, weight: .medium),
                                              color: UIColor.text.detail)
-        text.addLinkAttribute(value: Support.shared.id(for: SupportArticle.termsOfService),
+        text.addLinkAttribute(value: SupportArticle.termsOfService.rawValue,
                               to: Text.Onboarding.termsOfService.text)
-        text.addLinkAttribute(value: Support.shared.id(for: SupportArticle.privacyPolicy),
+        text.addLinkAttribute(value: SupportArticle.privacyPolicy.rawValue,
                               to: Text.Onboarding.privacyPolicy.text)
         view.attributedText = text
         return view
@@ -66,7 +67,7 @@ extension StartOnboardingStep: UITextViewDelegate {
                   shouldInteractWith URL: URL,
                   in characterRange: NSRange,
                   interaction: UITextItemInteraction) -> Bool {
-        guard let article = Support.shared.article(for: URL.absoluteString) else { return false }
+        guard let article = SupportArticle(rawValue: URL.absoluteString) else { return false }
         guard let controller = Support.shared.articleViewController(article) else {
             AppController.shared.alert(
                 title: Text.error.text,

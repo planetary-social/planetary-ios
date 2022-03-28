@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SupportReason: String, CaseIterable {
+public enum SupportReason: String, CaseIterable {
     case abusive
     case copyright
     case offensive

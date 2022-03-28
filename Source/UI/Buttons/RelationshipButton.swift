@@ -10,6 +10,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Support
 
 class RelationshipButton: IconButton {
 

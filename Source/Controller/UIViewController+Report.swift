@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Support
 
 extension UIViewController {
 
@@ -33,7 +34,15 @@ extension UIViewController {
                         in view: UIView? = nil,
                         reason: SupportReason,
                         from reporter: Identity) {
-        guard let controller = Support.shared.newTicketViewController(from: reporter, reporting: post, reason: reason, view: view) else {
+        let controller = Support.shared.newTicketViewController(
+            from: reporter,
+            reporting: post.key,
+            authorRef: post.metadata.author.about?.identity,
+            authorName: post.metadata.author.about?.name,
+            reason: reason,
+            view: view
+        )
+        guard let controller = controller else {
             AppController.shared.alert(
                 title: Text.error.text,
                 message: Text.Error.supportNotConfigured.text,
