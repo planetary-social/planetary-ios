@@ -15,7 +15,7 @@ import Secrets
 class ZendeskSupport: SupportService {
     
     private let zendeskURL = "https://planetarysupport.zendesk.com"
-    private let tags = [Bundle.current.versionAndBuild, UIDevice.current.model, UIDevice.current.systemName, UIDevice.current.systemVersion]
+    private let tags = [Bundle.main.versionAndBuild, UIDevice.current.model, UIDevice.current.systemName, UIDevice.current.systemVersion]
     
     init() {
         Log.info("Configuring Zendesk...")

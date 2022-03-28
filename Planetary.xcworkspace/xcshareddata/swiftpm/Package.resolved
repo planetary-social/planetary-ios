@@ -20,12 +20,75 @@
         }
       },
       {
+        "package": "ZendeskCommonUISDK",
+        "repositoryURL": "https://github.com/zendesk/commonui_sdk_ios",
+        "state": {
+          "branch": null,
+          "revision": "45ef3ab2bbf2efbe73735f67723643495c424ffb",
+          "version": "6.1.2"
+        }
+      },
+      {
+        "package": "ZendeskCoreSDK",
+        "repositoryURL": "https://github.com/zendesk/core_sdk_ios",
+        "state": {
+          "branch": null,
+          "revision": "6add05d17a9cbba32b69863c1df9c3a2149fa138",
+          "version": "2.6.0"
+        }
+      },
+      {
+        "package": "ZendeskMessagingSDK",
+        "repositoryURL": "https://github.com/zendesk/messaging_sdk_ios",
+        "state": {
+          "branch": null,
+          "revision": "11121b6dc3e9b3065faa1b6ab2d775b3e3a4ea1e",
+          "version": "3.8.3"
+        }
+      },
+      {
+        "package": "ZendeskMessagingAPISDK",
+        "repositoryURL": "https://github.com/zendesk/messagingapi_sdk_ios",
+        "state": {
+          "branch": null,
+          "revision": "75a4bb9d81bf15de1d4f98f52a4523ce2aacdceb",
+          "version": "3.8.3"
+        }
+      },
+      {
         "package": "PostHog",
         "repositoryURL": "https://github.com/PostHog/posthog-ios",
         "state": {
           "branch": null,
           "revision": "d3177a24686ead147f5e4ff4d7e284ca4be33870",
           "version": "1.4.4"
+        }
+      },
+      {
+        "package": "ZendeskSDKConfigurationsSDK",
+        "repositoryURL": "https://github.com/zendesk/sdkconfigurations_sdk_ios",
+        "state": {
+          "branch": null,
+          "revision": "dd8365d28c4885cd916c772db05222acc12c7edf",
+          "version": "1.1.9"
+        }
+      },
+      {
+        "package": "ZendeskSupportProvidersSDK",
+        "repositoryURL": "https://github.com/zendesk/support_providers_sdk_ios",
+        "state": {
+          "branch": null,
+          "revision": "24b27a6b9e3b07705a85e6d22c60067462151b9b",
+          "version": "5.4.0"
+        }
+      },
+      {
+        "package": "ZendeskSupportSDK",
+        "repositoryURL": "https://github.com/zendesk/support_sdk_ios.git",
+        "state": {
+          "branch": null,
+          "revision": "565168ec6ef687ec0ca00163fa1401cc3284fca2",
+          "version": "5.4.0"
         }
       },
       {
