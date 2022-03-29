@@ -283,7 +283,7 @@ class GoBot: Bot {
          }
      }
     
-    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+    func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         userInitiatedQueue.async {
             do {
                 let pubs = try self.database.getRedeemedPubs()

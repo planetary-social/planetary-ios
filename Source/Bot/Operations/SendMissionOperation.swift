@@ -51,7 +51,7 @@ class SendMissionOperation: AsynchronousOperation {
         let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
         
         Log.info("Retreiving all joined pubs from database.")
-        Bots.current.pubs(queue: queue) { (allJoinedPubs, error) in
+        Bots.current.joinedPubs(queue: queue) { (allJoinedPubs, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
