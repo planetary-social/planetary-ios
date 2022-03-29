@@ -333,6 +333,7 @@ class GoBot: Bot {
 
         utilityQueue.async {
             let before = self.repoNumberOfMessages()
+            self.bot.disconnectAll()
             self.bot.dialSomePeers(from: peers)
             let after = self.repoNumberOfMessages()
             let new = after - before

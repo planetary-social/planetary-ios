@@ -60,13 +60,14 @@ protocol Bot {
 
     // MARK: Sync
     
-    // Ensure that these list of addresses are taken into consideration when establishing connections
+    /// Ensure that these list of addresses are taken into consideration when establishing connections
     func seedPubAddresses(addresses: [PubAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void)
     
     func knownPubs(completion: @escaping KnownPubsCompletion)
     
+    /// Retrieves a list of all pubs the current user has joined.
     func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
 
     // Sync is the bot reaching out to remote peers and gathering the latest
