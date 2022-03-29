@@ -247,10 +247,10 @@ class BlobCache: DictionaryCache {
     // MARK: UIImage completions
 
     /// An object that manages in-flight requests for blobs.
-    private var requestManager = CompletionsManager()
+    private var requestManager = RequestManager()
     
     /// An object that manages in-flight requests for blobs. Structured as an actor to prevent data races.
-    actor CompletionsManager {
+    actor RequestManager {
         
         /// A map of completion handlers along with their unique IDs and the identifiers of the blobs they are
         /// waiting on.
