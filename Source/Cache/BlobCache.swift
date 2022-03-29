@@ -63,6 +63,7 @@ class BlobCache: DictionaryCache {
             } else {
                 completion(.failure(BlobCacheError.unsupported))
             }
+            return nil
         }
         
         let requestUUID = UUID()
