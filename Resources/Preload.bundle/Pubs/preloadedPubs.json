@@ -574,5 +574,41 @@
         "signature": "JjQCwSa9EkfajijRNpG6foXndbwGHQwTd3LeEPfF24PvZ3lS2hHtClqX1mS8wFZPpDYvZYOFWOZaJOw7KZX7Bg==.sig.ed25519"
       },
       "timestamp": 1609210243787
+    },
+    {
+      "key": "%wEAVrB64QYXq6UAdB+LXYjOFidBuYErikG8cJBNo0Fg=.sha256",
+      "value": {
+        "previous": null,
+        "sequence": 1,
+        "author": "@EmJzXv/EZrAuGS1UNpH07AVz908sGckRaX38BxVgA+0=.ed25519",
+        "timestamp": 1648565044872,
+        "hash": "sha256",
+        "content": {
+          "type": "about",
+          "about": "@EmJzXv/EZrAuGS1UNpH07AVz908sGckRaX38BxVgA+0=.ed25519",
+          "name": "Паб-сервер для говорящих на русском языке",
+          "description": "Паб-сервер для говорящих на русском языке.\n\nЕсли вы используете Planetary, нажмите Join, чтобы присоединиться.\n\nВ других приложениях используйте этот инвайт:\n```\nrussian-language.planetary.pub:8008:@EmJzXv/EZrAuGS1UNpH07AVz908sGckRaX38BxVgA+0=.ed25519~Sq5cxugjyL3r2VdV2uoT4nG6fqMiws5f9xivqu12oQI=\n```\n\n_Hosted by \\[planetary.social\\](https://planetary.social)_"
+        },
+        "signature": "qVn7f00tO6jGY8tkQ8/y+i8Y9R7WJvE8RU4TXCsIaGpEaA463gr80c+ZSenysTBr1WH90HiyU/eCkWFr0zyBAw==.sig.ed25519"
+      },
+      "timestamp": 1648565044874
+    },
+    {
+      "key": "%e1KB+Djb8z+dnfwZxLr28wg7daupqRu+NvoMBUYYjcU=.sha256",
+      "value": {
+        "previous": null,
+        "sequence": 1,
+        "author": "@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519",
+        "timestamp": 1648565804979,
+        "hash": "sha256",
+        "content": {
+          "type": "about",
+          "about": "@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519",
+          "name": "Паб-сервер для української мови",
+          "description": "Паб-сервер для носіїв української мови.\n\n**Щоб приєднатися:** якщо ви використовуєте програму Planetary, натисніть кнопку Приєднатися.\n\nЯкщо ви користуєтеся іншою програмою, ви можете скористатися цим запрошенням:\n```\nukrainian-language.planetary.pub:8008:@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519~g4Yt3Br+1rUE8xMnjGFKCehbrXJ89NkRJ6CCAibLpJU=\n```\n\n_Hosted by \\[planetary.social\\](https://planetary.social)_"
+        },
+        "signature": "9OaWMiLgzJHpnH4oz4EvDTmh2CZkkYqKX/gWXYl+2D08weIeb+mHcCR0xCOJUuXbT6dVvKJsTZodD3/EIuJkCg==.sig.ed25519"
+      },
+      "timestamp": 1648565804980
     }
 ]
