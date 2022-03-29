@@ -89,26 +89,6 @@ class CachesViewController: DebugTableViewController {
                 self.updateSettings()
             })]
 
-        settings += [DebugTableViewCellModel(title: "Identifiers / Completions",
-                                         cellReuseIdentifier: DebugValueTableViewCell.className,
-                                         valueClosure:
-            {
-                cell in
-                let text = "\(Caches.blobs.numberOfBlobIdentifiers) / \(Caches.blobs.numberOfBlobCompletions)"
-                cell.detailTextLabel?.text = text
-            },
-                                             actionClosure: nil)]
-
-        settings += [DebugTableViewCellModel(title: "Tap to forget completions",
-                                         cellReuseIdentifier: DebugValueTableViewCell.className,
-                                         valueClosure: nil,
-                                         actionClosure:
-            {
-                cell in
-                Caches.blobs.forgetCompletions()
-                self.updateSettings()
-            })]
-
         return ("Blobs", settings, nil)
     }
 }

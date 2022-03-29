@@ -23,7 +23,6 @@ class ImageButton: UIButton {
         guard let identifier = self.identifier else { return }
         guard let uuid = self.completion else { return }
         Caches.blobs.forgetCompletions(with: uuid, for: identifier)
-        Caches.blobs.cancelDataTask(for: identifier)
     }
 
     /// Sets the image for the specified state from the `BlobCache`.
