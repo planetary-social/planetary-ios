@@ -246,24 +246,27 @@ class BlobCache: DictionaryCache {
 
     // MARK: UIImage completions
 
-    // for each blob identifier, there are one or more UUID tagged UIImage completion blocks
+    /// An object that manages in-flight requests for blobs.
     private var requestManager = CompletionsManager()
     
+    /// An object that manages in-flight requests for blobs. Structured as an actor to prevent data races.
     actor CompletionsManager {
+        
+        /// A map of completion handlers along with their unique IDs and the identifiers of the blobs they are
+        /// waiting on.
         private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
         
-        // for each blob identifier, there should be one data task
-        // use dataTasksQueue to read/write this property
+        /// A dictionary of HTTP requests to load blobs and the identifiers of the blobs they have requested.
         private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
 
-        // the number of pending blob identifiers to be loaded
+        /// The number of pending blob identifiers currently being loaded
         var numberOfBlobIdentifiers: Int {
             return self.completions.count
         }
 
-        // the TOTAL number of completions for all blob identifiers
+        // The total number of requests for all blob identifiers
         // if this is larger than `numberOfBlobIdentifiers` then that
-        // means there are multiple requests for the same blob
+        // means there are multiple requests for at least one blob.
         var numberOfBlobCompletions: Int {
             var count: Int = 0
             for element in self.completions {
@@ -284,6 +287,8 @@ class BlobCache: DictionaryCache {
             self.completions[identifier] = completions
         }
         
+        /// Removes the completion handlers for the given blob from storage and returns them.
+        /// Completions can only be accessed this way externally to prevent handlers from being called twice.
         func popCompletions(for identifier: BlobIdentifier) -> [UUID: UIImageCompletion] {
             let completionsForIdentifier = completions[identifier] ?? [:]
             forgetCompletions(for: identifier)
