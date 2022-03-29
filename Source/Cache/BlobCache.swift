@@ -312,7 +312,7 @@ class BlobCache: DictionaryCache {
         }
         
         func cancelAllDataTasks() {
-            dataTasks.forEach { (ref, dataTask) in
+            dataTasks.forEach { (_, dataTask) in
                 dataTask.cancel()
             }
             dataTasks.removeAll()
