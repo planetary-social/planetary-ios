@@ -300,7 +300,7 @@ class GoBotInternal {
             Log.error("Failed to connect to healthy peers")
         }
         
-        // Also conncet to two random peers
+        // Also connect to two random peers
         let connectToRandom = self.dial(from: peers, atLeast: 2, tries: 10)
         if !connectToRandom {
             Log.error("Failed to connect to random peers")
