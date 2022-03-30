@@ -50,8 +50,6 @@
 "Text.name" = "Nombre";
 "Text.bio" = "Bio";
 "Text.seeMore" = "Ver más";
-"Text.likesThis" = "Likes this";
-"Text.dislikesThis" = "Dislikes this";
 "Text.block" = "Bloquear";
 "Text.blocked" = "Bloqueado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
