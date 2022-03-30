@@ -60,19 +60,24 @@ protocol Bot {
 
     // MARK: Sync
     
-    // Ensure that these list of addresses are taken into consideration when establishing connections
+    /// Ensure that these list of addresses are taken into consideration when establishing connections
     func seedPubAddresses(addresses: [PubAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void)
     
     func knownPubs(completion: @escaping KnownPubsCompletion)
     
-    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
+    /// Retrieves a list of all pubs the current user is currently a member of.
+    func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
 
-    // Sync is the bot reaching out to remote peers and gathering the latest
-    // data from the network.  This only updates the local log and requires
-    // calling `refresh` to ensure the view database is updated.
     var isSyncing: Bool { get }
+    
+    /// Sync is the bot reaching out to remote peers and gathering the latest gossip from the network. This only
+    /// updates the local log and requires calling `refresh` to ensure the view database is updated.
+    /// - Parameters:
+    ///   - queue: the queue that `completion` will be called on.
+    ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
+    ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
@@ -293,7 +298,7 @@ extension Bot {
     }
     
     func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
-        self.pubs(queue: .main, completion: completion)
+        self.joinedPubs(queue: .main, completion: completion)
     }
     
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {

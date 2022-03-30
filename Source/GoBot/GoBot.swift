@@ -283,7 +283,7 @@ class GoBot: Bot {
          }
      }
     
-    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+    func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         userInitiatedQueue.async {
             do {
                 let pubs = try self.database.getRedeemedPubs()
@@ -333,6 +333,7 @@ class GoBot: Bot {
 
         utilityQueue.async {
             let before = self.repoNumberOfMessages()
+            self.bot.disconnectAll()
             self.bot.dialSomePeers(from: peers)
             let after = self.repoNumberOfMessages()
             let new = after - before

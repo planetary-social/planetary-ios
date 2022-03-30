@@ -279,14 +279,34 @@ class GoBotInternal {
     
     @discardableResult
     func dialSomePeers(from peers: [Peer]) -> Bool {
-        guard self.openConnections() < 3 else { return true } // only make connections if we dont have any
-        ssbConnectPeers(2)
         guard peers.count > 0 else {
-            Log.debug("User doesn't have redeemed pubs")
+            Log.debug("User doesn't have any redeemed pubs")
+            return false
+        }
+        
+        // only make connections if we dont have enough
+        guard self.openConnections() < 4 else {
             return true
         }
-        self.dial(from: peers, atLeast: 1, tries: 10)
-        return true
+        
+        // connect to two peers based on go-ssb's internal logic (reliability)
+        let disconnectSuccess = ssbDisconnectAllPeers()
+        if !disconnectSuccess {
+            Log.error("Failed to disconnect peers")
+        }
+        
+        let connectToHealthy = ssbConnectPeers(2)
+        if !connectToHealthy {
+            Log.error("Failed to connect to healthy peers")
+        }
+        
+        // Also connect to two random peers
+        let connectToRandom = self.dial(from: peers, atLeast: 2, tries: 10)
+        if !connectToRandom {
+            Log.error("Failed to connect to random peers")
+        }
+        
+        return disconnectSuccess && connectToHealthy && connectToRandom
     }
     
     func dialOne(peer: Peer) -> Bool {

@@ -47,7 +47,7 @@ class FakeBot: Bot {
         fatalError("TODO:knownPubs")
     }
     
-    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
+    func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         queue.async {
             completion([], nil)
         }
