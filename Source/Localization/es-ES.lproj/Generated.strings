@@ -28,7 +28,7 @@
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
-"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "No mostrarme en el directorio de usuarios";
@@ -99,7 +99,7 @@
 "Text.identityNotFound" = "No sabemos lo suficiente sobre este par para mostrar su perfil.";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
-"Text.home" = "Para tí";
+"Text.home" = "Home Feed";
 "Text.explore" = "Descubre";
 "Text.messages" = "Mensajes";
 "Text.notifications" = "Notificaciones";
