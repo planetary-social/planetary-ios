@@ -75,9 +75,6 @@ Check our website [planetary.social](https://planetary.social/) for more info!
 * Connection information is only displayed on debug screens
 * Sometimes users need to pull to refresh to see new content
 
-
-![](https://github.com/planetary-social/planetary-ios/workflows/CI/badge.svg)
-
 ## Developer installation
 
 ### Setup
