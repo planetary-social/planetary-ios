@@ -31,6 +31,6 @@ end
 # from: https://benscheirman.com/2020/10/managing-version-numbers-with-fastlane/
 %w{major minor patch}.each do |part|
   lane "bump_#{part}".to_sym do
-    increment_version_number(bump_type: part)
+    increment_version_number_in_xcodeproj(bump_type: part, target: "Planetary")
   end
 end
