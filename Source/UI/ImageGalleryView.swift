@@ -21,7 +21,7 @@ class ImageGalleryView: UIView {
 
     fileprivate var _images: [UIImage] = []
     var images: [UIImage] {
-        return self._images
+        self._images
     }
 
     private lazy var collectionView: UICollectionView = {
@@ -100,14 +100,12 @@ class ImageGalleryView: UIView {
 extension ImageGalleryView: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView,
-                        numberOfItemsInSection section: Int) -> Int
-    {
-        return self._images.count
+                        numberOfItemsInSection section: Int) -> Int {
+        self._images.count
     }
 
     func collectionView(_ collectionView: UICollectionView,
-                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageGalleryCell.identifier,
                                                       for: indexPath) as! ImageGalleryCell
         cell.imageView.image = self._images[indexPath.row]
@@ -122,7 +120,7 @@ extension ImageGalleryView: UICollectionViewDelegate {
     }
 }
 
-fileprivate class ImageGalleryCell: UICollectionViewCell {
+private class ImageGalleryCell: UICollectionViewCell {
 
     static let identifier = ImageGalleryCell.className
 

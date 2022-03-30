@@ -24,14 +24,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Not scrollable, small content",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: false, title: nil)
                 let label = self.label()
                 label.text = self.text()
@@ -41,14 +39,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Not scrollable, large content",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: false, title: nil)
                 let label = self.label()
                 label.text = "\(self.text())\n\(self.text())\n\(self.text())\n\(self.text())\n"
@@ -60,14 +56,12 @@ class DebugUIViewController: DebugTableViewController {
         // TODO not sure why this does not animate the label resize correctly
         settings += [DebugTableViewCellModel(title: "Not scrollable, keyboard, large content",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: false, title: nil)
                 controller.isKeyboardHandlingEnabled = true
                 let field = self.textField()
@@ -81,14 +75,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Not scrollable, keyboard, top + bottom",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: false, title: nil)
                 controller.isKeyboardHandlingEnabled = true
                 Layout.fillTop(of: controller.contentView, with: self.textField())
@@ -98,14 +90,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Scrollable, small content (no scrolling)",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: true, title: nil)
                 let label = self.label()
                 label.text = self.text()
@@ -115,14 +105,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Scrollable, keyboard, medium content",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: true, title: nil)
                 controller.isKeyboardHandlingEnabled = true
                 let field = self.textField()
@@ -136,14 +124,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Scrollable, large content",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: true, title: nil)
                 let label = self.label()
                 label.text = "\(self.text())\n\(self.text())\n\(self.text())\n\(self.text())\n"
@@ -153,14 +139,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Scrollable, keyboard",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: true, title: nil)
                 controller.isKeyboardHandlingEnabled = true
                 let field = self.textField()
@@ -181,14 +165,12 @@ class DebugUIViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "JSON crashes Markdown",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = ContentViewController(scrollable: false, title: nil)
                 let label = self.label()
                 let text = "[**\\!bang**](https://duckduckgo.com/bang)"
@@ -228,6 +210,6 @@ class DebugUIViewController: DebugTableViewController {
     }
 
     private func text() -> String {
-        return "A bunch of text to fill the screen and hopefully demonstrate how the ContentViewController's internal scrollView and contentView correctly handle a variety of different sized content."
+        "A bunch of text to fill the screen and hopefully demonstrate how the ContentViewController's internal scrollView and contentView correctly handle a variety of different sized content."
     }
 }

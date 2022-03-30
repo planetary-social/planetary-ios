@@ -14,17 +14,12 @@ extension Bot {
     /// this will return `true`, even if not the same identity.  It is unlikely that the current
     /// configuration will be different than the bot's logged in identity, so hopefully not an issue.
     func login(with configuration: AppConfiguration,
-               completion: @escaping ((Bool) -> Void))
-    {
+               completion: @escaping ((Bool) -> Void)) {
         guard configuration.canLaunch else { completion(false); return }
         guard let network = configuration.network else { completion(false); return }
         guard let secret = configuration.secret else { completion(false); return }
 
-        Bots.current.login(network: network,
-                           hmacKey: configuration.hmacKey,
-                           secret: secret)
-        {
-            error in
+        Bots.current.login(config: configuration) { error in
             let loggedIn = ((error as? BotError) == .alreadyLoggedIn) || error == nil
             completion(loggedIn)
         }

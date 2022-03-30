@@ -42,7 +42,7 @@ class SecretTests: XCTestCase {
         let data = self.data(for: "Secret.json")
         guard let secret = try? JSONDecoder().decode(Secret.self, from: data) else { XCTFail(); return }
         do {
-            let _ = try JSONEncoder().encode(secret)
+            _ = try JSONEncoder().encode(secret)
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -51,7 +51,7 @@ class SecretTests: XCTestCase {
     func test_invalid() {
         let data = self.data(for: "InvalidSecretMissingPrivate.json")
         do {
-            let _ = try JSONDecoder().decode(Secret.self, from: data)
+            _ = try JSONDecoder().decode(Secret.self, from: data)
             XCTFail("if this far, then Secret was decoded and should not be")
         } catch {
             XCTAssertNotNil(error)

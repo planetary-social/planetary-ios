@@ -15,7 +15,9 @@ extension UserDefaults {
     #if DEBUG
         var secret: Secret? {
             get {
-                guard let data = self.data(forKey: #function) else { return nil }
+                guard let data = self.data(forKey: #function) else {
+                    return nil
+                }
                 return try? JSONDecoder().decode(Secret.self, from: data)
             }
             set {
@@ -25,26 +27,29 @@ extension UserDefaults {
         }
     #else
         var secret: Secret? {
-            get { return nil }
+            get { nil }
             set {}
         }
     #endif
 
-
     #if DEBUG
         var networkKey: NetworkKey? {
             get {
-                guard let data = (self.value(forKey: #function) as? Data) else { return NetworkKey.ssb }
+                guard let data = (self.value(forKey: #function) as? Data) else {
+                    return NetworkKey.ssb
+                }
                 return NetworkKey(base64: data)
             }
             set {
-                guard let root = newValue else { return }
+                guard let root = newValue else {
+                    return
+                }
                 self.set(root.data, forKey: #function)
             }
         }
     #else
         var networkKey: NetworkKey? {
-            get { return NetworkKey.ssb }
+            get { NetworkKey.ssb }
             set {}
         }
     #endif
@@ -71,7 +76,7 @@ extension UserDefaults {
 
     var showPeerToPeerWidget: Bool {
         get {
-            return true
+            true
             // for now this is always turned on
 //            return self.bool(forKey: #function)
         }

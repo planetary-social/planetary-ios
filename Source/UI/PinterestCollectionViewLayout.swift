@@ -30,7 +30,7 @@ class PinterestCollectionViewLayout: UICollectionViewLayout {
     }
 
     override var collectionViewContentSize: CGSize {
-      return CGSize(width: contentWidth, height: contentHeight)
+      CGSize(width: contentWidth, height: contentHeight)
     }
     
     override func prepare() {
@@ -88,6 +88,4 @@ class PinterestCollectionViewLayout: UICollectionViewLayout {
         }
         return visibleLayoutAttributes
     }
-    
-
 }

@@ -9,6 +9,7 @@
 import Foundation
 import Down
 import Logger
+import CrashReporting
 
 extension String {
     
@@ -23,7 +24,7 @@ extension String {
             addUnformattedLinks(in: mutableAttributedString, styler: styler)
             addUnformattedMentions(in: mutableAttributedString, styler: styler)
             return mutableAttributedString
-        } catch let error {
+        } catch {
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             return NSAttributedString(string: self)
@@ -95,5 +96,4 @@ extension String {
             mutableAttributedString.replaceCharacters(in: range, with: mutableAttributedLink)
         }
     }
-    
 }

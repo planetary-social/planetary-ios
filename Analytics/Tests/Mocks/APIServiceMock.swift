@@ -18,7 +18,7 @@ class APIServiceMock: APIService {
     var enabled = true
 
     var isEnabled: Bool {
-        return enabled
+        enabled
     }
 
     func identify(identity: Identity) {
@@ -41,5 +41,4 @@ class APIServiceMock: APIService {
         tracked = true
         lastTrackedEvent = event
     }
-
 }

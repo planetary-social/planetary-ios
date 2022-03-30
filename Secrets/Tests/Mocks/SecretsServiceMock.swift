@@ -13,7 +13,6 @@ class SecretsServiceMock: SecretsService {
     var value: String?
 
     func get(key: String) -> String? {
-        return value
+        value
     }
-
 }

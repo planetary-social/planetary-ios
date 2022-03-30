@@ -24,8 +24,11 @@
 "Text.helpAndSupport" = "Ayuda y Soporte";
 "Text.reportBug" = "Reportar una falla";
 "Text.settings" = "Configuración";
-"Text.userDirectory" = "Directorio de Usuarios";
-"Text.communitites" = "Comunidades";
+"Text.yourNetwork" = "Your Network";
+"Text.pubServers" = "Pub Servers";
+"Text.usersInYourNetwork" = "Users in your network";
+"Text.goToYourNetwork" = "Go to Your Network";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "No mostrarme en el directorio de usuarios";
@@ -50,6 +53,8 @@
 "Text.name" = "Nombre";
 "Text.bio" = "Bio";
 "Text.seeMore" = "Ver más";
+"Text.likesThis" = "Likes this";
+"Text.dislikesThis" = "Dislikes this";
 "Text.block" = "Bloquear";
 "Text.blocked" = "Bloqueado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
@@ -85,13 +90,13 @@
 "Text.andCountOthers" = " y {{ count }} más";
 "Text.countOthers" = "{{ count }} más";
 "Text.andOneOther" = " y 1 más";
-"Text.connectedPeers" = "Connected Peers";
+"Text.connectedPeers" = "Pares conectados";
 "Text.countOnlinePeers" = "{{ count }} PARES EN LÍNEA";
 "Text.countLocalPeers" = "{{ count }} PARES LOCALES";
 "Text.lastSynced" = "ULTIMA: {{ when }}";
-"Text.syncingMessages" = "Syncing Messages...";
-"Text.recentlyDownloaded" = "Downloaded {{ postCount }} posts in the last {{ duration }} mins";
-"Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
+"Text.syncingMessages" = "Sincronizando mensajes...";
+"Text.recentlyDownloaded" = "{{ postCount }} publicaciones descargadas en los últimos {{ duration }} mins";
+"Text.identityNotFound" = "No sabemos lo suficiente sobre este par para mostrar su perfil.";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
 "Text.home" = "Para tí";
@@ -226,7 +231,7 @@
 "Error.login" = "El motor de par-a-par falló en el inicio. Por favor prueba cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
 "Error.unexpected" = "Algo inesperado ocurrió.";
 "Error.supportNotConfigured" = "Soporte no está configurado.";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
@@ -240,3 +245,8 @@
 "Report.postReplied" = "%@ respondió";
 "Report.feedMentioned" = "%@ te mencionó en una publicación";
 "Report.messageLiked" = "A %@ le gustó tu publicación";
+
+"Error.login" = "El motor de par-a-par falló en el inicio. Por favor prueba cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
+"Error.unexpected" = "Algo inesperado ocurrió.";
+"Error.supportNotConfigured" = "Soporte no está configurado.";
+"Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";

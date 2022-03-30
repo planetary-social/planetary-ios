@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class HomeViewController: ContentViewController {
 
@@ -31,7 +32,6 @@ class HomeViewController: ContentViewController {
         let dataSource = PostReplyPaginatedDataSource()
         dataSource.delegate = self
         return dataSource
-        
     }()
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
@@ -80,7 +80,7 @@ class HomeViewController: ContentViewController {
         let detailLabel = UILabel.forAutoLayout()
         detailLabel.numberOfLines = 0
         detailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        detailLabel.text = "And it is rather bare! Have you considered following a few users or topics?\n\nSearch the directory for existing users or invite the people you want to follow. "
+        detailLabel.text = Text.emptyHomeFeedMessage.text
         detailLabel.textColor = UIColor.text.default
         detailLabel.textAlignment = .center
         view.addSubview(detailLabel)
@@ -94,7 +94,7 @@ class HomeViewController: ContentViewController {
         button.addTarget(self, action: #selector(directoryButtonTouchUpInside), for: .touchUpInside)
         let image = UIColor.tint.default.image().resizableImage(withCapInsets: .zero)
         button.setBackgroundImage(image, for: .normal)
-        button.setTitle("Go to Directory", for: .normal)
+        button.setTitle(Text.goToYourNetwork.text, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         button.contentEdgeInsets = .pillButton
@@ -146,7 +146,7 @@ class HomeViewController: ContentViewController {
     // MARK: Load and refresh
     
     func load(animated: Bool = false) {
-        Bots.current.recent() { [weak self] proxy, error in
+        Bots.current.recent { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
@@ -228,7 +228,7 @@ class HomeViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
         let controller = NewPostViewController()
         controller.didPublish = {
-            [weak self] post in
+            [weak self] _ in
             self?.load()
         }
         let navController = UINavigationController(rootViewController: controller)
@@ -260,7 +260,7 @@ class HomeViewController: ContentViewController {
                 self?.load(animated: true)
             } else {
                 let shouldAnimate = self?.navigationController?.topViewController == self
-                //self?.floatingRefreshButton.show(animated: shouldAnimate)
+                // self?.floatingRefreshButton.show(animated: shouldAnimate)
             }
         }
     }
@@ -298,5 +298,4 @@ extension HomeViewController: PostReplyPaginatedDataSourceDelegate {
         let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    
 }

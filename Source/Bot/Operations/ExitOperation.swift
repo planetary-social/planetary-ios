@@ -30,5 +30,4 @@ class ExitOperation: AsynchronousOperation {
         Log.info("ExitOperation finished.")
         self.finish()
     }
-    
 }

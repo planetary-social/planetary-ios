@@ -24,8 +24,11 @@
 "Text.helpAndSupport" = "Ayuda y soporte";
 "Text.reportBug" = "Reportá un bug";
 "Text.settings" = "Configuración";
-"Text.userDirectory" = "Directorio de usuarios";
-"Text.communitites" = "Communities";
+"Text.yourNetwork" = "Your Network";
+"Text.pubServers" = "Pub Servers";
+"Text.usersInYourNetwork" = "Users in your network";
+"Text.goToYourNetwork" = "Go to Your Network";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
 "Text.showMeInDirectory" = "Mostrame en el directorio";
 "Text.showMeInUserDirectory" = "Mostrame en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultame en el directorio de usuarios";
@@ -50,6 +53,8 @@
 "Text.name" = "Nombre";
 "Text.bio" = "Bio";
 "Text.seeMore" = "Ver más";
+"Text.likesThis" = "Le gusta";
+"Text.dislikesThis" = "No le gusta";
 "Text.block" = "Bloquear";
 "Text.blocked" = "Bloqueado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
@@ -240,3 +245,8 @@
 "Report.postReplied" = "%@ respondió";
 "Report.feedMentioned" = "%@ te mencionó en un un post";
 "Report.messageLiked" = "A %@ le gustó tu post";
+
+"Error.login" = "El motor de par-a-par falló al arrancar. Por favor probá cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
+"Error.unexpected" = "Algo inesperado ocurrió.";
+"Error.supportNotConfigured" = "Soporte no está configurado.";
+"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";

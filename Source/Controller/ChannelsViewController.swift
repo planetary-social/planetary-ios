@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class ChannelsViewController: ContentViewController {
     
@@ -68,7 +69,7 @@ class ChannelsViewController: ContentViewController {
     // MARK: Load and refresh
 
     private func load(animated: Bool = false) {
-        Bots.current.hashtags() {
+        Bots.current.hashtags {
             [weak self] hashtags, error in
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
@@ -162,12 +163,12 @@ extension ChannelsViewController: TopScrollable {
     }
 }
 
-fileprivate class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
+private class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
 
     var hashtags: [Hashtag] = []
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.hashtags.count
+        self.hashtags.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -188,7 +189,7 @@ fileprivate class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
     }
 }
 
-//"\(f[0]!)"
+// "\(f[0]!)"
 
 extension ChannelsViewController: UITableViewDelegate {
 

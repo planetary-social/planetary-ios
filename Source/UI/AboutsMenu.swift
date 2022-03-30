@@ -100,7 +100,7 @@ class AboutsMenu: UIView {
 extension AboutsMenu: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.abouts.count
+        self.abouts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

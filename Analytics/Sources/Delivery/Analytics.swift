@@ -26,7 +26,7 @@ public class Analytics {
     }
 
     public var isEnabled: Bool {
-        return service.isEnabled
+        service.isEnabled
     }
 
     public func optIn() {
@@ -36,5 +36,4 @@ public class Analytics {
     public func optOut() {
         service.optOut()
     }
-
 }

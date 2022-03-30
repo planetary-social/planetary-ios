@@ -14,7 +14,7 @@ struct Mention: Codable {
     let name: String?
 
     var identity: Identifier {
-        return self.link
+        self.link
     }
     
     // optional
@@ -22,7 +22,6 @@ struct Mention: Codable {
     let width: Int?
     let height: Int?
     let type: String?
-    
     
     // just for hashtags
 //    init(link: String) {
@@ -36,7 +35,7 @@ struct Mention: Codable {
 //        self.type = nil
 //    }
     
-    init(link: Identifier, name: String? = nil , metadata: Blob.Metadata? = nil) {
+    init(link: Identifier, name: String? = nil, metadata: Blob.Metadata? = nil) {
         self.link = link
         self.name = name
 
@@ -67,20 +66,20 @@ typealias Mentions = [Mention]
 extension Mentions {
 
     func identities() -> [Identity] {
-        return self.map { $0.identity }
+        self.map { $0.identity }
     }
 
     func markdowns() -> [String] {
-        return self.map { $0.markdown }
+        self.map { $0.markdown }
     }
 }
 
 extension Mentions {
     func asBlobs() -> Blobs {
-        return self.filter {
-            return $0.link.isBlob
+        self.filter {
+            $0.link.isBlob
         }.map {
-            var dims:Blob.Metadata.Dimensions? = nil
+            var dims: Blob.Metadata.Dimensions?
             let w = $0.width ?? 0
             let h = $0.height ?? 0
             if w != 0 && h != 0 {
@@ -91,4 +90,3 @@ extension Mentions {
         }
     }
 }
-

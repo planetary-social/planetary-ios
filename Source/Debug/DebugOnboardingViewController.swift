@@ -17,7 +17,7 @@ class DebugOnboardingViewController: DebugTableViewController {
         self.navigationItem.title = "Onboarding"
     }
 
-    internal override func updateSettings() {
+    override internal func updateSettings() {
         self.settings = [self.userInput(),
                          self.verification(),
                          self.start(),
@@ -49,7 +49,7 @@ class DebugOnboardingViewController: DebugTableViewController {
         return view
     }()
 
-    private var birthdate = Date.random(in: 1975)
+    private var birthdate = Date.random(in: 1_975)
 
     private lazy var birthdateTextField: UITextField = {
         let view = UITextField()
@@ -64,8 +64,7 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.countryTextField, insets: .debugTableViewCell)
             },
@@ -73,8 +72,7 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.phoneTextField, insets: .debugTableViewCell)
             },
@@ -82,8 +80,7 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.nameTextField, insets: .debugTableViewCell)
             },
@@ -91,14 +88,12 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.birthdateTextField, insets: .debugTableViewCell)
             },
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 let years = Int((arc4random() % 50) + 10)
                 self.birthdate = Date.random(yearsFromNow: -years)
                 self.birthdateTextField.text = self.birthdate.shortDateString
@@ -158,15 +153,13 @@ class DebugOnboardingViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to request code",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
-                                             actionClosure:
-            {
+                                             actionClosure: {
                 [unowned self] cell in
                 guard self.validateUserInput() else { return }
                 cell.isUserInteractionEnabled = false
                 cell.showActivityIndicator()
                 Onboarding.requestCode(country: self.countryTextField.text ?? "",
-                                       phone: self.phoneTextField.text ?? "")
-                {
+                                       phone: self.phoneTextField.text ?? "") {
                     [unowned self] result, error in
                     cell.isUserInteractionEnabled = true
                     cell.hideActivityIndicator()
@@ -178,8 +171,7 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.codeTextField, insets: .debugTableViewCell)
             },
@@ -188,16 +180,14 @@ class DebugOnboardingViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to verify code",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
-                                             actionClosure:
-            {
+                                             actionClosure: {
                 [unowned self] cell in
                 self.codeTextField.resignFirstResponder()
                 cell.isUserInteractionEnabled = false
                 cell.showActivityIndicator()
                 Onboarding.verifyCode(self.codeTextField.text ?? "",
                                       country: self.countryTextField.text ?? "",
-                                      phone: self.phoneTextField.text ?? "")
-                {
+                                      phone: self.phoneTextField.text ?? "") {
                     [unowned self] result, error in
                     cell.isUserInteractionEnabled = true
                     cell.hideActivityIndicator()
@@ -209,8 +199,7 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.verificationErrorTextView)
             },
@@ -236,13 +225,12 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         AppController.shared.showProgress()
         cell.showActivityIndicator()
-        Bots.current.logout() {
+        Bots.current.logout {
             error in
             let number = "\(self.countryTextField.text ?? "")\(self.phoneTextField.text ?? "")"
             Onboarding.start(birthdate: self.birthdate,
                              phone: number,
-                             name: self.nameTextField.text!)
-            {
+                             name: self.nameTextField.text!) {
                 context, error in
                 self.context = context
                 cell.hideActivityIndicator()
@@ -259,8 +247,7 @@ class DebugOnboardingViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to create secret and join",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
-                                             actionClosure:
-            {
+                                             actionClosure: {
                 [unowned self] cell in
                 guard self.validateUserInput() else { return }
                 self.confirm(
@@ -275,8 +262,7 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.startErrorTextView)
             },
@@ -309,11 +295,10 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Verse pubs are reachable",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.showActivityIndicator()
-                PubAPI.shared.pubsAreOnline() { online, error in
+                PubAPI.shared.pubsAreOnline { online, error in
                     Log.optional(error)
                     DispatchQueue.main.async {
                         cell.hideActivityIndicator()
@@ -326,8 +311,7 @@ class DebugOnboardingViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Tap to be followed by Verse pubs",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
-                                             actionClosure:
-            {
+                                             actionClosure: {
                 [unowned self] cell in
                 guard let identity = AppConfiguration.current?.identity else { return }
                 cell.isUserInteractionEnabled = false
@@ -344,8 +328,7 @@ class DebugOnboardingViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 Layout.fill(view: cell.contentView, with: self.followBackErrorTextView)
             },
@@ -372,6 +355,6 @@ extension DebugTableViewController {
 extension Bool {
 
     var successOrFailed: String {
-        return self ? "success" : "failed"
+        self ? "success" : "failed"
     }
 }

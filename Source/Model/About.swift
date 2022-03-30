@@ -130,9 +130,8 @@ struct About: ContentCodable, Equatable {
                      name: String? = nil,
                      description: String? = nil,
                      image: ImageMetadata? = nil,
-                     publicWebHosting: Bool? = nil) -> About
-    {
-        return About(identity: identity ?? self.identity,
+                     publicWebHosting: Bool? = nil) -> About {
+        About(identity: identity ?? self.identity,
                      name: name ?? self.name,
                      description: description ?? self.description,
                      image: image ?? self.image,
@@ -143,16 +142,16 @@ struct About: ContentCodable, Equatable {
 extension About {
 
     var identity: Identity {
-        return self.about
+        self.about
     }
 
     var nameOrIdentity: String {
-        return self.name?.trimmedForSingleLine ?? self.identity
+        self.name?.trimmedForSingleLine ?? self.identity
     }
 
     // TODO this is not performant, need to cache md results
     var attributedDescription: NSMutableAttributedString {
-        return NSMutableAttributedString(attributedString: self.description?.decodeMarkdown() ?? NSAttributedString())
+        NSMutableAttributedString(attributedString: self.description?.decodeMarkdown() ?? NSAttributedString())
     }
 
     var mention: Mention {

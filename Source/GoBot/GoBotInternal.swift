@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import CrashReporting
 
 // get's called with the size and the hash (might return a bool just as a demo of passing data back)
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool
@@ -22,10 +23,20 @@ typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, 
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
+    
+    init(tcpAddr: String, pubKey: Identity) {
+        self.tcpAddr = tcpAddr
+        self.pubKey = pubKey
+    }
+    
+    init(pubAddress: PubAddress) {
+        self.tcpAddr = "\(pubAddress.host):\(pubAddress.port)"
+        self.pubKey = pubAddress.key
+    }
 }
 
 // used to drain a single user feed
-fileprivate struct FeedLogRequest: Codable {
+private struct FeedLogRequest: Codable {
     let feed: Identity
     let sequence: Int
     let limit: Int
@@ -68,28 +79,27 @@ struct ScuttlegobotHealReport: Decodable {
     let Messages: UInt32
 }
 
-fileprivate struct BotConfig: Encodable {
+private struct GoBotConfig: Encodable {
     let AppKey: String
     let HMACKey: String
     let KeyBlob: String
     let Repo: String
     let ListenAddr: String
-    let Hops: UInt
+    let Hops: UInt // setting this value to 0 means "a person that you follow" (1 hop away), therefore this value should be understood slightly differently than in the case of some other clients
     let SchemaVersion: UInt
 
     let ServicePubs: [Identity]? // identities of services which supply planetary specific services
 
     #if DEBUG
-    let Testing: Bool = true
+    let Testing = true
     #else
-    let Testing: Bool = false
+    let Testing = false
     #endif
-    
 }
 
 class GoBotInternal {
 
-    var currentRepoPath: String { return self.repoPath }
+    var currentRepoPath: String { self.repoPath }
     private var repoPath: String = "/tmp/FBTT/unset"
     
     let name = "GoBot"
@@ -108,13 +118,13 @@ class GoBotInternal {
     }
 
     var isRunning: Bool {
-        return ssbBotIsRunning()
+        ssbBotIsRunning()
     }
 
-    private var currentNetwork: NetworkKey = NetworkKey.ssb
+    private var currentNetwork = NetworkKey.ssb
 
     var getNetworkKey: NetworkKey {
-        return self.currentNetwork
+        self.currentNetwork
     }
 
     // MARK: login / logout
@@ -134,7 +144,7 @@ class GoBotInternal {
 
         let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
 
-        let cfg = BotConfig(
+        let cfg = GoBotConfig(
             AppKey: network.string,
             HMACKey: hmacKey == nil ? "" : hmacKey!.string,
             KeyBlob: secret.jsonString()!,
@@ -153,7 +163,7 @@ class GoBotInternal {
             return GoBotError.duringProcessing("config prep failed", error)
         }
 
-        var worked: Bool = false
+        var worked = false
         cfgStr.withGoString {
             cfgGoStr in
             worked = ssbBotInit(cfgGoStr, self.notifyBlobReceived, self.notifyNewBearerToken)
@@ -203,7 +213,7 @@ class GoBotInternal {
     // MARK: connections
 
     func openConnections() -> UInt {
-        return UInt(ssbOpenConnections())
+        UInt(ssbOpenConnections())
     }
     
     // extracts the current open connections from  bot status
@@ -233,7 +243,7 @@ class GoBotInternal {
     }
     
     func disconnectAll() {
-        if !ssbDisconnectAllPeers(){
+        if !ssbDisconnectAllPeers() {
             let error = GoBotError.unexpectedFault("failed to disconnect all peers")
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -243,7 +253,7 @@ class GoBotInternal {
     @discardableResult
     func dial(from peers: [Peer], atLeast: Int, tries: Int = 10) -> Bool {
         let wanted = min(peers.count, atLeast) // how many connections are we shooting for?
-        var hasWorked :Int = 0
+        var hasWorked: Int = 0
         var tried: Int = tries
         while hasWorked < wanted && tried > 0 {
             if self.dialAnyone(from: peers) {
@@ -281,7 +291,7 @@ class GoBotInternal {
     func dialOne(peer: Peer) -> Bool {
         Log.debug("Dialing \(peer.pubKey)")
         let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
-        var worked: Bool = false
+        var worked = false
         multiServ.withGoString {
             worked = ssbConnectPeer($0)
         }
@@ -317,7 +327,7 @@ class GoBotInternal {
         percDone, remaining in
         guard let remStr = remaining else { return }
         let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateFSCKRepair(perc: percDone/100, status: status)
+        let notification = Notification.didUpdateFSCKRepair(perc: percDone / 100, status: status)
         NotificationCenter.default.post(notification)
     }
     
@@ -441,7 +451,7 @@ class GoBotInternal {
     // MARK: blobs
 
     private lazy var notifyBlobReceived: CBlobsNotifyCallback = {
-        numberOfBytes, ref in
+        _, ref in
         guard let ref = ref else { return false }
         let identifier = BlobIdentifier(cString: ref)
         let notification = Notification.didLoadBlob(identifier)
@@ -476,7 +486,7 @@ class GoBotInternal {
          // first 2 chars are directory
         let dir = String(hexRef.prefix(2))
         // rest ist filename
-        let restIdx = hexRef.index(hexRef.startIndex, offsetBy:2)
+        let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
         let rest = String(hexRef[restIdx...])
 
         var u = URL(fileURLWithPath: self.repoPath)
@@ -505,7 +515,7 @@ class GoBotInternal {
     }
     
     func blobsWant(ref: BlobIdentifier) throws {
-        var worked: Bool = false
+        var worked = false
         ref.withGoString {
             worked = ssbBlobsWant($0)
         }
@@ -515,9 +525,9 @@ class GoBotInternal {
     }
     
     // retreive a list of stored feeds and their current sequence number
-    func getFeedList(completion: @escaping (([Identity : Int], Error?)->Void)) {
-        var err: Error? = nil
-        var feeds = [Identity : Int]()
+    func getFeedList(completion: @escaping (([Identity: Int], Error?) -> Void)) {
+        var err: Error?
+        var feeds = [Identity: Int]()
         defer {
             completion(feeds, err)
         }
@@ -555,8 +565,8 @@ class GoBotInternal {
     
     /// This fetches posts from go-ssb's RootLog - the log containing all posts from all users. The Go code will filter
     /// out some messages, such as those from blocked users and old messages.
-    func getReceiveLog(startSeq: Int64, limit: Int) throws -> KeyValues {
-        guard let rawBytes = ssbStreamRootLog(UInt64(startSeq), Int32(limit)) else {
+    func getReceiveLog(startSeq: UInt64, limit: Int32) throws -> KeyValues {
+        guard let rawBytes = ssbStreamRootLog(startSeq, limit) else {
             throw GoBotError.unexpectedFault("rxLog pre-processing error")
         }
         let data = String(cString: rawBytes).data(using: .utf8)!

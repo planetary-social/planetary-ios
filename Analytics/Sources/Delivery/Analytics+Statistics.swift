@@ -20,7 +20,6 @@ public extension Analytics {
             self.lastSyncDate = lastSyncDate
             self.lastRefreshDate = lastRefreshDate
         }
-
     }
 
     struct RepoStatistics {

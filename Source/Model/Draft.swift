@@ -15,5 +15,4 @@ struct Draft {
 
     var attributedText: NSAttributedString
     var images: [UIImage]
-
 }

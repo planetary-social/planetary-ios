@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class BlockButton: PillButton {
 
@@ -60,7 +61,7 @@ class BlockButton: PillButton {
             self.onUpdate?(shouldBlock)
         }
 
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
         self.isEnabled = false
 
         if shouldBlock {

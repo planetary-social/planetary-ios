@@ -10,18 +10,18 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 extension String {
     func withGoString<R>(_ call: (gostring_t) -> R) -> R {
         func helper(_ pointer: UnsafePointer<Int8>?, _ call: (gostring_t) -> R) -> R {
-            return call(gostring_t(p: pointer, n: utf8.count))
+            call(gostring_t(p: pointer, n: utf8.count))
         }
         return helper(self, call)
     }
 }
 
-
-fileprivate let refreshDelay = DispatchTimeInterval.milliseconds(125)
+private let refreshDelay = DispatchTimeInterval.milliseconds(125)
 
 /// This class abstracts the SSB protocol implementation with support for SSB functions like publishing, replicating,
 /// fetching posts & threads, etc.
@@ -32,18 +32,18 @@ fileprivate let refreshDelay = DispatchTimeInterval.milliseconds(125)
 /// presenting a simpler interface for read and write operations, while internally it manages several threads and
 /// synchronization between GoSSB's internal database and the SQLite layer.
 class GoBot: Bot {
-
+    
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
-    private let maxBlobBytes = 1024 * 1024 * 8
+    private let maxBlobBytes = 1_024 * 1_024 * 8
     
     let name = "GoBot"
-    var version: String { return self.bot.version }
+    var version: String { self.bot.version }
     
     static let shared = GoBot()
 
-    private var _identity: Identity? = nil
-    var identity: Identity? { return self._identity }
+    private var _identity: Identity?
+    var identity: Identity? { self._identity }
     
     var logFileUrls: [URL] {
         let url = URL(fileURLWithPath: self.bot.currentRepoPath.appending("/debug"))
@@ -73,13 +73,23 @@ class GoBot: Bot {
     
     /// A queue for operations that the user is waiting on like publishing a post, pull-to-refresh, etc.
     private let userInitiatedQueue: DispatchQueue
+ 
+    private let userDefaults: UserDefaults
+    private var config: AppConfiguration?
+
+    private var preloadedPubService: PreloadedPubService?
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
     let bot: GoBotInternal
     let database = ViewDatabase()
 
-    init() {
+    required init(
+        userDefaults: UserDefaults = UserDefaults.standard,
+        preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter()
+    ) {
+        self.userDefaults = userDefaults
+        self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
                                           qos: .utility,
                                           attributes: .concurrent,
@@ -121,7 +131,16 @@ class GoBot: Bot {
         completion(sec, nil)
     }
     
-    func login(queue: DispatchQueue, network: NetworkKey, hmacKey: HMACKey?, secret: Secret, completion: @escaping ErrorCompletion) {
+    func login(
+        queue: DispatchQueue,
+        config: AppConfiguration,
+        completion: @escaping ErrorCompletion
+    ) {
+        guard let secret = config.secret,
+            let network = config.network else {
+                  queue.async { completion(BotError.invalidAppConfiguration) }
+                  return
+              }
 
         guard self._identity == nil else {
             if secret.identity == self._identity {
@@ -131,6 +150,9 @@ class GoBot: Bot {
             }
             return
         }
+        
+        self.config = config
+        let hmacKey = config.hmacKey
 
         // lookup Application Support folder for bot and database
         let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory,
@@ -176,10 +198,12 @@ class GoBot: Bot {
             
             self._identity = secret.identity
             
-            BlockedAPI.shared.retreiveBlockedList() {
+            self.preloadedPubService?.preloadPubs(in: self, from: nil)
+            
+            BlockedAPI.shared.retreiveBlockedList {
                 blocks, err in
                 guard err == nil else {
-                    Log.unexpected(.botError, "failed to get blocks: \(err)");
+                    Log.unexpected(.botError, "failed to get blocks: \(String(describing: err))")
                     return
                 } // Analitcis error instead?
 
@@ -216,6 +240,7 @@ class GoBot: Bot {
         }
         database.close()
         self._identity = nil
+        self.config = nil
         DispatchQueue.main.async { completion(nil) }
     }
 
@@ -243,7 +268,7 @@ class GoBot: Bot {
     func knownPubs(completion: @escaping KnownPubsCompletion) {
        Thread.assertIsMainThread()
        userInitiatedQueue.async {
-            var err: Error? = nil
+            var err: Error?
             var kps: [KnownPub] = []
             defer {
                    DispatchQueue.main.async { completion(kps, err) }
@@ -254,7 +279,7 @@ class GoBot: Bot {
             } catch {
                 err = error
             }
-         }
+       }
      }
     
     func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
@@ -273,8 +298,7 @@ class GoBot: Bot {
     }
 
     private var _isSyncing = false
-    var isSyncing: Bool { return self._isSyncing }
-
+    var isSyncing: Bool { self._isSyncing }
 
     /// Instructs the bot to attempt to connect to the given peers and gossip with them.
     ///
@@ -291,13 +315,13 @@ class GoBot: Bot {
     func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
-                completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
+                completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
             }
             return
         }
         guard self._isSyncing == false else {
             queue.async {
-                completion(nil, 0, 0);
+                completion(nil, 0, 0)
             }
             return
         }
@@ -329,13 +353,13 @@ class GoBot: Bot {
     func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
-                completion(GoBotError.unexpectedFault("bot not started"), 0, 0);
+                completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
             }
             return
         }
         guard self._isSyncing == false else {
             queue.async {
-                completion(nil, 0, 0);
+                completion(nil, 0, 0)
             }
             return
         }
@@ -359,13 +383,11 @@ class GoBot: Bot {
     private func repoNumberOfMessages() -> Int {
         guard let counts = try? self.bot.repoStatus() else { return -1 }
         return Int(counts.messages)
-        
     }
 
     private func notifySyncComplete(in elapsed: TimeInterval,
                                     numberOfMessages: Int,
-                                    completion: @escaping SyncCompletion)
-    {
+                                    completion: @escaping SyncCompletion) {
         self._isSyncing = false
         self._statistics.lastSyncDate = Date()
         self._statistics.lastSyncDuration = elapsed
@@ -376,7 +398,7 @@ class GoBot: Bot {
     // MARK: Refresh
 
     private var _isRefreshing = false
-    var isRefreshing: Bool { return self._isRefreshing }
+    var isRefreshing: Bool { self._isRefreshing }
     
     /// Copies some new data from the go-ssb log into `ViewDatabase`.
     ///
@@ -413,8 +435,7 @@ class GoBot: Bot {
 
     private func notifyRefreshComplete(in elapsed: TimeInterval,
                                        error: Error?,
-                                       completion: @escaping RefreshCompletion)
-    {
+                                       completion: @escaping RefreshCompletion) {
         self._isRefreshing = false
         self._statistics.lastRefreshDate = Date()
         self._statistics.lastRefreshDuration = elapsed
@@ -441,8 +462,9 @@ class GoBot: Bot {
                         do {
                             let feed = star.feed
                             let address = star.address.multipeer
-                            let redeemed = Date().timeIntervalSince1970 * 1000
+                            let redeemed = Date().timeIntervalSince1970 * 1_000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
+                            Analytics.shared.trackDidJoinPub(at: star.address.multipeer)
                         } catch {
                             CrashReporting.shared.reportIfNeeded(error: error)
                         }
@@ -476,29 +498,29 @@ class GoBot: Bot {
                 return
             }
             
-            if UserDefaults.standard.bool(forKey: "prevent_feed_from_forks") {
-                guard let numberOfMessagesInRepo = try? self.database.numberOfMessages(for: identity) else {
-                    completionQueue.async {
-                        completion(MessageIdentifier.null, GoBotError.unexpectedFault("Failed to access database"))
+            // Forked feed protection
+            do {
+                let preventForks = self.userDefaults.object(forKey: "prevent_feed_from_forks") as? Bool
+                if preventForks == true || preventForks == nil {
+                    guard try self.publishingWouldFork(feed: identity) == false else {
+                        completionQueue.async {
+                            completion(MessageIdentifier.null, BotError.forkProtection)
+                        }
+                        return
                     }
-                    return
                 }
-                
-                let knownNumberOfMessagesInKeychain = AppConfiguration.current?.numberOfPublishedMessages ?? 0
-                
-                guard numberOfMessagesInRepo >= knownNumberOfMessagesInKeychain else {
-                    completionQueue.async {
-                        completion(MessageIdentifier.null, BotError.notEnoughMessagesInRepo)
-                    }
-                    return
-                }
+            } catch {
+                completion(MessageIdentifier.null, error)
             }
+            
             self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
                     completionQueue.async { completion(MessageIdentifier.null, error) }
                     return
                 }
                 
+                self?.config?.numberOfPublishedMessages += 1
+                self?.config?.apply()
                 Log.info("Published message with key \(key)")
                 
                 // Copy the newly published post into the ViewDatabase immediately.
@@ -517,9 +539,17 @@ class GoBot: Bot {
             }
         }
     }
+    
+    /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
+    /// a message before the user's feed has resynced from the network during a restore.
+    private func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
+        let numberOfMessagesInRepo = try self.database.numberOfMessages(for: feed)
+        let knownNumberOfMessagesInKeychain = self.config?.numberOfPublishedMessages ?? 0
+        return numberOfMessagesInRepo < knownNumberOfMessagesInKeychain
+    }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
-        var targetMessage: KeyValue? = nil
+        var targetMessage: KeyValue?
         do {
             targetMessage = try self.database.get(key: message)
         } catch {
@@ -573,7 +603,7 @@ class GoBot: Bot {
             hash: message)
 
         self.publish(content: dcr) {
-            ref, err in
+            _, err in
             // fillMessages will make it go away from the view
             completion(err)
         }
@@ -582,7 +612,6 @@ class GoBot: Bot {
     func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) {
         print("TODO: Implement post update in Bot.")
     }
-
 
     /// Computes how many messages are in go-ssb's log but not `ViewDatabase`.
     /// - Returns: A tuple containing the index of the last received message in the go-ssb log and the number of
@@ -600,7 +629,7 @@ class GoBot: Bot {
             if repoStats.messages == 0 {
                 return (lastRxSeq, 0)
             }
-            let diff = Int(Int64(repoStats.messages)-1-lastRxSeq)
+            let diff = Int(Int64(repoStats.messages) - 1 - lastRxSeq)
             if diff < 0 {
                 throw GoBotError.unexpectedFault("needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))")
             }
@@ -655,7 +684,7 @@ class GoBot: Bot {
     }
     
     // should only be called by refresh() (which does the proper completion on mainthread)
-    private func updateReceive(limit: Int = 15000, completion: @escaping ErrorCompletion) {
+    private func updateReceive(limit: Int32 = 15_000, completion: @escaping ErrorCompletion) {
         var current: Int64 = 0
         var diff: Int = 0
 
@@ -677,7 +706,7 @@ class GoBot: Bot {
         
         // TOOD: redo until diff==0
         do {
-            let msgs = try self.bot.getReceiveLog(startSeq: current+1, limit: limit)
+            let msgs = try self.bot.getReceiveLog(startSeq: UInt64(max(0, current + 1)), limit: limit)
             
             guard msgs.count > 0 else {
                 print("warning: triggered update but got no messages from receive log")
@@ -687,26 +716,19 @@ class GoBot: Bot {
             
             do {
                 try self.database.fillMessages(msgs: msgs)
-                                
-                let params = [
-                    "msg.count": msgs.count,
-                    "first.timestamp": msgs[0].timestamp,
-                    "last.timestamp": msgs[msgs.count-1].timestamp,
-                    "last.hash":msgs[msgs.count-1].key
-                    ] as [String : Any]
 
                 Analytics.shared.trackBotDidUpdateDatabase(count: msgs.count,
                                                            firstTimestamp: msgs[0].timestamp,
-                                                           lastTimestamp: msgs[msgs.count-1].timestamp,
-                                                           lastHash: msgs[msgs.count-1].key)
+                                                           lastTimestamp: msgs[msgs.count - 1].timestamp,
+                                                           lastHash: msgs[msgs.count - 1].key)
                 
                 if diff < limit { // view is up2date now
                     completion(nil)
                     // disable private messages until there is UI for it AND ADD SQLCYPHER!!!111
-                    //self.updatePrivate(completion: completion)
+                    // self.updatePrivate(completion: completion)
                 } else {
                     #if DEBUG
-                    print("#rx log# \(diff-limit) messages left in go-ssb offset log")
+                    print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
                     #endif
                     completion(nil)
                 }
@@ -739,7 +761,7 @@ class GoBot: Bot {
             count = Int64(c)
             
             // TOOD: redo until diff==0
-            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
+            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1_000)
             
             if msgs.count > 0 {
                 try self.database.fillMessages(msgs: msgs, pms: true)
@@ -778,8 +800,7 @@ class GoBot: Bot {
     @available(*, deprecated)
     func addBlob(jpegOf image: UIImage,
                  largestDimension: UInt? = nil,
-                 completion: @escaping AddImageCompletion)
-    {
+                 completion: @escaping AddImageCompletion) {
         Thread.assertIsMainThread()
 
         // convenience closure to keep code cleaner
@@ -792,10 +813,10 @@ class GoBot: Bot {
 
             // encode image or return failures
             var image: UIImage? = image
-            if let dimension = largestDimension                             { image = image?.resized(toLargestDimension: CGFloat(dimension)) }
-            guard let uiimage = image else                                  { completionOnMain(nil, BotError.blobUnsupportedFormat); return }
+            if let dimension = largestDimension { image = image?.resized(toLargestDimension: CGFloat(dimension)) }
+            guard let uiimage = image else { completionOnMain(nil, BotError.blobUnsupportedFormat); return }
             guard let data = uiimage.jpegData(compressionQuality: 0.5) else { completionOnMain(nil, BotError.blobUnsupportedFormat); return }
-            guard data.count <= self.maxBlobBytes else                      { completionOnMain(nil, BotError.blobMaximumSizeExceeded); return }
+            guard data.count <= self.maxBlobBytes else { completionOnMain(nil, BotError.blobMaximumSizeExceeded); return }
 
             // add to log and return Image if successful
             self.bot.blobsAdd(data: data) {
@@ -809,8 +830,7 @@ class GoBot: Bot {
     }
 
     func data(for identifier: BlobIdentifier,
-              completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
-    {
+              completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) {
         Thread.assertIsMainThread()
 
         guard identifier.isValidIdentifier else {
@@ -824,8 +844,7 @@ class GoBot: Bot {
             do {
                 let data = try self.bot.blobGet(ref: identifier)
                 DispatchQueue.main.async {
-                    if data.isEmpty { completion(identifier, nil, BotError.blobUnavailable) }
-                    else            { completion(identifier, data, nil) }
+                    if data.isEmpty { completion(identifier, nil, BotError.blobUnavailable) } else { completion(identifier, data, nil) }
                 }
             }
 
@@ -847,7 +866,7 @@ class GoBot: Bot {
                                                     attributes: nil)
             try FileManager.default.copyItem(at: url, to: repoURL)
             completion(repoURL, nil)
-        } catch let error {
+        } catch {
             completion(nil, error)
         }
     }
@@ -856,7 +875,7 @@ class GoBot: Bot {
         let url: URL
         do {
             url = try self.bot.blobFileURL(ref: identifier)
-        } catch let error {
+        } catch {
             completion(nil, error)
             return
         }
@@ -868,7 +887,7 @@ class GoBot: Bot {
                                                         attributes: nil)
                 try data.write(to: url, options: .atomic)
                 completion(url, nil)
-            } catch let error {
+            } catch {
                 completion(nil, error)
             }
         }
@@ -900,7 +919,6 @@ class GoBot: Bot {
         }
         self.about(identity: user, completion: completion)
     }
-    
     
     func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
         userInitiatedQueue.async {
@@ -1093,8 +1111,8 @@ class GoBot: Bot {
         self.publish(content: Contact(contact: identity, blocking: false)) {
             ref, err in
             if let e = err {
-                completion("", e);
-                return;
+                completion("", e)
+                return
             }
             completion(ref, nil)
         }
@@ -1136,7 +1154,7 @@ class GoBot: Bot {
                 let msgs = try self.database.paginated(onlyFollowed: false)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
-                DispatchQueue.main.async { completion(StaticDataProxy(), error)  }
+                DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
     }
@@ -1165,7 +1183,7 @@ class GoBot: Bot {
                     let root = try self.database.get(key: rootKey)
                     let replies = try self.database.getRepliesTo(thread: root.key)
                     DispatchQueue.main.async {
-                        completion(root, StaticDataProxy(with:replies), nil)
+                        completion(root, StaticDataProxy(with: replies), nil)
                     }
                 } catch {
                     DispatchQueue.main.async {
@@ -1190,7 +1208,7 @@ class GoBot: Bot {
             let root = try self.database.get(key: rootKey)
             let replies = try self.database.getRepliesTo(thread: rootKey)
             DispatchQueue.main.async {
-                completion(root, StaticDataProxy(with:replies), nil)
+                completion(root, StaticDataProxy(with: replies), nil)
             }
         } catch {
             DispatchQueue.main.async {
@@ -1203,8 +1221,8 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
-                let messages = try self.database.mentions(limit: 1000)
-                let p = StaticDataProxy(with:messages)
+                let messages = try self.database.mentions(limit: 1_000)
+                let p = StaticDataProxy(with: messages)
                 DispatchQueue.main.async { completion(p, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
@@ -1222,7 +1240,7 @@ class GoBot: Bot {
                 }
             } catch {
                 queue.async {
-                    completion([],error)
+                    completion([], error)
                 }
             }
         }
@@ -1291,6 +1309,8 @@ class GoBot: Bot {
                                                numberOfPublishedMessages: ownMessages,
                                                lastHash: counts?.lastHash ?? "")
         
+        self.saveNumberOfPublishedMessages(from: self._statistics.repo)
+        
         let connectionCount = self.bot.openConnections()
         let openConnections = self.bot.openConnectionList()
         
@@ -1324,6 +1344,8 @@ class GoBot: Bot {
                                                    numberOfPublishedMessages: ownMessages,
                                                    lastHash: counts?.lastHash ?? "")
             
+            self.saveNumberOfPublishedMessages(from: self._statistics.repo)
+            
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()
             
@@ -1350,13 +1372,20 @@ class GoBot: Bot {
         }
     }
     
-    func lastReceivedTimestam() throws -> Double {
-        return Double(try self.database.lastReceivedTimestamp())
+    /// Saves the number of published messages to the AppConfiguration. Used for forked feed protection.
+    private func saveNumberOfPublishedMessages(from statistics: RepoStatistics) {
+        let currentNumberOfPublishedMessages = statistics.numberOfPublishedMessages
+        if let configuration = config,
+            currentNumberOfPublishedMessages > -1,
+            configuration.numberOfPublishedMessages <= currentNumberOfPublishedMessages {
+            configuration.numberOfPublishedMessages = currentNumberOfPublishedMessages
+            configuration.apply()
+        }
     }
     
-
-    
-  
+    func lastReceivedTimestam() throws -> Double {
+        Double(try self.database.lastReceivedTimestamp())
+    }
     
     // MARK: Preloading
     
@@ -1394,5 +1423,4 @@ class GoBot: Bot {
             }
         }
     }
-    
 }

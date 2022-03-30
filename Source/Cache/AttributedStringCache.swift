@@ -15,8 +15,7 @@ class AttributedStringCache: DictionaryCache {
 
     @discardableResult
     func attributedString(for key: String,
-                          markdown: String) -> NSAttributedString
-    {
+                          markdown: String) -> NSAttributedString {
         Thread.assertIsMainThread()
 
         // cached value if possible
@@ -35,7 +34,7 @@ class AttributedStringCache: DictionaryCache {
     /// It's more because I can't figure out a good way to estimated the number of
     /// bytes used in an `NSAttributedString` so...
     override var estimatedBytes: Int {
-        return -1
+        -1
     }
 
     /// Invalidates the oldest items beyond the `maxNumberOfItems`.

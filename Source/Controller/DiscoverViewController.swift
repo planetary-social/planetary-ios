@@ -9,6 +9,7 @@
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class DiscoverViewController: ContentViewController {
     
@@ -29,7 +30,6 @@ class DiscoverViewController: ContentViewController {
     private lazy var dataSource: KeyValuePaginatedCollectionViewDataSource = {
         let dataSource = KeyValuePaginatedCollectionViewDataSource()
         return dataSource
-        
     }()
     
     private lazy var delegate = KeyValuePaginatedCollectionViewDelegate(on: self)
@@ -61,7 +61,7 @@ class DiscoverViewController: ContentViewController {
     }()
     
     private lazy var numberOfColumns: Int = {
-        return Int(UIScreen.main.bounds.width) / 180
+        Int(UIScreen.main.bounds.width) / 180
     }()
      
      private lazy var emptyView: UIView = {
@@ -127,7 +127,6 @@ class DiscoverViewController: ContentViewController {
         self.registerDidRefresh()
     }
 
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Discover")
@@ -137,7 +136,7 @@ class DiscoverViewController: ContentViewController {
     // MARK: Load and refresh
     
     func load(animated: Bool = false) {
-        Bots.current.everyone() { [weak self] proxy, error in
+        Bots.current.everyone { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
@@ -186,7 +185,6 @@ class DiscoverViewController: ContentViewController {
         AppController.shared.operationQueue.addOperation(refreshOperation)
     }
     
-    
     func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.collectionView.backgroundView = self.emptyView
@@ -216,7 +214,7 @@ class DiscoverViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
          let controller = NewPostViewController()
          controller.didPublish = {
-             [weak self] post in
+             [weak self] _ in
              self?.load()
          }
          let navController = UINavigationController(rootViewController: controller)
@@ -275,5 +273,4 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
             return columnWidth
         }
     }
-    
 }

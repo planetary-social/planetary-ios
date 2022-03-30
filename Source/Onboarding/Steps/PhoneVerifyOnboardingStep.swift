@@ -10,6 +10,7 @@ import Foundation
 import PhoneNumberKit
 import UIKit
 import Logger
+import CrashReporting
 
 class PhoneVerifyOnboardingStep: OnboardingStep {
 
@@ -39,12 +40,12 @@ class PhoneVerifyOnboardingStep: OnboardingStep {
     @objc private func retryButtonTouchUpInside() {
 
         let reenter = UIAlertAction(title: Text.Onboarding.reenter.text, style: .default) {
-            [unowned self] action in
+            [unowned self] _ in
             self.back()
         }
 
         let retry = UIAlertAction(title: Text.Onboarding.resendSMS.text, style: .cancel) {
-            [unowned self] action in
+            [unowned self] _ in
             self.resend()
         }
 
@@ -63,7 +64,7 @@ class PhoneVerifyOnboardingStep: OnboardingStep {
         self.view.lookBusy()
 
         Onboarding.requestCode(country: "\(number.countryCode)", phone: "\(number.nationalNumber)") {
-            [weak self] success, error in
+            [weak self] _, _ in
             self?.view.lookReady()
         }
     }
@@ -93,8 +94,7 @@ class PhoneVerifyOnboardingStep: OnboardingStep {
             self?.view.lookReady()
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            if success { self?.next() }
-            else { self?.view.textField.shake() }
+            if success { self?.next() } else { self?.view.textField.shake() }
         }
     }
 }

@@ -11,6 +11,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 extension AppDelegate {
 
@@ -81,7 +82,7 @@ extension AppDelegate {
         } catch BGTaskScheduler.Error.unavailable {
             // User could have just disabled background refresh in settings
             Log.info("Could not schedule task \(taskRequest.identifier). Background refresh is not permitted or running in simulator.")
-        } catch let error {
+        } catch {
             Log.optional(error, "Could not schedule task \(taskRequest.identifier)")
             CrashReporting.shared.reportIfNeeded(error: error)
         }
@@ -117,7 +118,7 @@ extension AppDelegate {
     /// Starts a background Task that will give the GoBot some time to sync with peers. Intended to be used when the
     /// app is not in the foreground.
     private func startBackgroundSyncTask() -> Task<Bool, Error> {
-        return Task(priority: .background) { () -> Bool in
+        Task(priority: .background) { () -> Bool in
             let sendMissionOperation = SendMissionOperation(quality: .high)
             let refreshOperation = RefreshOperation(refreshLoad: .short)
             let statisticsOperation = StatisticsOperation()

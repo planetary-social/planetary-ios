@@ -9,6 +9,7 @@
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class RelationshipButton: IconButton {
 
@@ -43,7 +44,7 @@ class RelationshipButton: IconButton {
         Analytics.shared.trackDidTapButton(buttonName: "options")
         self.relationship.load {
             let actionData: [ActionData] = [
-                (.follow,   .default, self.follow),
+                (.follow, .default, self.follow),
                 (.unfollow, .default, self.unfollow),
                 (.copyMessageIdentifier, .default, self.copyMessageIdentifier),
                 (.shareThisMessage, .default, self.shareMessage),
@@ -51,13 +52,13 @@ class RelationshipButton: IconButton {
 //                (.addFriend,    .default,     self.follow),
 //                (.removeFriend, .destructive, self.unfollow),
 
-                (.blockUser,   .destructive, self.blockUser),
+                (.blockUser, .destructive, self.blockUser),
 //                (.unblockUser, .default,     self.unblockUser),
 
                 (.reportPost, .destructive, self.reportPost),
                 (.reportUser, .destructive, self.reportUser),
 
-                (.cancel,     .cancel, {})
+                (.cancel, .cancel, {})
             ]
 
             let actions: [UIAlertAction] = actionData.compactMap {
@@ -103,7 +104,7 @@ class RelationshipButton: IconButton {
         self.relationship.isFollowing = true
         self.relationship.notifyUpdate()
 
-        Bots.current.follow(self.relationship.other) { (contact, error) in
+        Bots.current.follow(self.relationship.other) { (_, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if error != nil {
@@ -124,7 +125,7 @@ class RelationshipButton: IconButton {
         self.relationship.isFollowing = false
         self.relationship.notifyUpdate()
 
-        Bots.current.unfollow(self.relationship.other) { (contact, error) in
+        Bots.current.unfollow(self.relationship.other) { (_, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if error != nil {
@@ -233,9 +234,8 @@ extension SupportReason {
 extension UIAlertAction {
 
     static func cancel() -> UIAlertAction {
-        return UIAlertAction(title: Text.cancel.text,
+        UIAlertAction(title: Text.cancel.text,
                              style: .cancel,
                              handler: nil)
     }
 }
-

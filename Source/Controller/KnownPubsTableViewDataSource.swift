@@ -9,11 +9,11 @@
 import Foundation
 import UIKit
 import Logger
+import CrashReporting
 
 protocol KnownPubsTableViewDataSourceDelegate: class {
     func reload()
 }
-
 
 class KnownPubsTableViewDataSource: NSObject {
 
@@ -34,7 +34,7 @@ class KnownPubsTableViewDataSource: NSObject {
     }
 
     private func load() {
-        let identities = Array(self.pubs.prefix(10)).map{ $0.address.key }
+        let identities = Array(self.pubs.prefix(10)).map { $0.address.key }
         self.loadAbouts(for: identities) {
             [weak self] in
             self?.delegate?.reload()
@@ -96,16 +96,15 @@ extension KnownPubsTableViewDataSource: UITableViewDataSource {
         }
         return Text.ManagePubs.yourPubs.text
     }
-    
 }
 
-// MARK:- Data source to prefetch About while scrolling
+// MARK: - Data source to prefetch About while scrolling
 
 extension KnownPubsTableViewDataSource: UITableViewDataSourcePrefetching {
 
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         let indexes = indexPaths.map { $0.row }
-        let identities = Set(self.pubs.elements(at: indexes).map{$0.address.key})
+        let identities = Set(self.pubs.elements(at: indexes).map { $0.address.key })
         let unfetchedIdentities = identities.subtracting(Set(self.abouts.keys))
         self.loadAbouts(for: Array(unfetchedIdentities))
     }

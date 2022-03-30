@@ -21,13 +21,13 @@ extension Bot {
         assert(Thread.isMainThread)
         guard let _ = self.identity else { completion?(-1, BotError.notLoggedIn); return }
 
-        self.sync() {
+        self.sync {
             error, _, numberOfMessages in
             if let error = error {
                 Log.unexpected(.botError, "failed to sync with pubs")
                 Log.optional(error)
             }
-            self.refresh() {
+            self.refresh {
                 error, _ in
                 completion?(numberOfMessages, error)
                 NotificationCenter.default.post(name: .didSyncAndRefresh, object: nil)

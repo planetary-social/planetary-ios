@@ -11,7 +11,7 @@ import Foundation
 extension Hashtag {
 
     var publicLink: URL? {
-        return URL(string: "https://planetary.link/\(self.string)")
+        URL(string: "https://planetary.link/\(self.string)")
     }
 
     static func parse(publicLink: URL) -> Hashtag? {
@@ -20,5 +20,4 @@ extension Hashtag {
         }
         return nil
     }
-
 }

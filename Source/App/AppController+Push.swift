@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import UserNotifications
 import Logger
+import CrashReporting
 
 extension AppController {
 
@@ -19,7 +20,7 @@ extension AppController {
     /// If the authorization status has not been determined, the value will be false.  This
     /// will allow UI, like a toggle, to show the state as disabled.
     func arePushNotificationsEnabled(completion: @escaping ((Bool) -> Void)) {
-        UNUserNotificationCenter.current().getNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings {
             settings in
             let enabled = settings.authorizationStatus == .authorized
             DispatchQueue.main.async { completion(enabled) }
@@ -29,7 +30,7 @@ extension AppController {
     /// Queries the OS notification settings and if the authorization status has not been determined,
     /// prompts via the usual OS prompt.  However, if it has been determined, nothing else is done.
     func promptForPushNotificationsIfNotDetermined(in viewController: UIViewController? = nil) {
-        UNUserNotificationCenter.current().getNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings {
             settings in
             DispatchQueue.main.async {
                 if settings.authorizationStatus == .notDetermined {
@@ -45,9 +46,8 @@ extension AppController {
     /// authorization status (which can happen when the OS is updated).  The authorization
     /// status will be returned once the user has interacted with any prompts.
     func promptForPushNotifications(in viewController: UIViewController? = nil,
-                                    completion: ((UNAuthorizationStatus) -> Void)? = nil)
-    {
-        UNUserNotificationCenter.current().getNotificationSettings() {
+                                    completion: ((UNAuthorizationStatus) -> Void)? = nil) {
+        UNUserNotificationCenter.current().getNotificationSettings {
             settings in
             DispatchQueue.main.async {
                 switch settings.authorizationStatus {
@@ -66,8 +66,7 @@ extension AppController {
     /// authorization status has been determined previously.
     private func promptToOpenSettings(in viewController: UIViewController? = nil,
                                       status: UNAuthorizationStatus,
-                                      completion: ((UNAuthorizationStatus) -> Void)? = nil)
-    {
+                                      completion: ((UNAuthorizationStatus) -> Void)? = nil) {
         let controller = viewController ?? self
         controller.confirm(
             title: Text.Push.title.text,
@@ -81,7 +80,7 @@ extension AppController {
 
     /// Queries the OS push notification settings, and if authorized or denied, updates the PushAPI.
     func syncPushNotificationsSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings {
             settings in
             DispatchQueue.main.async {
                 switch settings.authorizationStatus {
@@ -129,7 +128,6 @@ extension AppController {
         let identities = AppConfigurations.current.compactMap { $0.identity }
         for identity in identities {
             PushAPI.shared.update(token, for: identity) { _, _ in
-                
             }
         }
     }
@@ -151,6 +149,6 @@ extension AppController {
 fileprivate extension Data {
 
     func pushTokenString() -> String {
-        return self.map { String(format: "%02.2hhx", $0) }.joined()
+        self.map { String(format: "%02.2hhx", $0) }.joined()
     }
 }

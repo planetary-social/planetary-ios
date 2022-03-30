@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 extension UIViewController {
 
@@ -23,7 +24,7 @@ extension UIViewController {
 
         var actions: [UIAlertAction] = []
         let action = UIAlertAction(title: buttonTitle, style: .destructive) {
-            [weak self] action in
+            [weak self] _ in
             self?._block(identity)
         }
         actions += [action]
@@ -33,8 +34,8 @@ extension UIViewController {
     }
 
     private func _block(_ identity: Identity) {
-        //AppController.shared.showProgress()
-        Bots.current.block(identity) { [weak self] (message, error) in
+        // AppController.shared.showProgress()
+        Bots.current.block(identity) { [weak self] (_, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             AppController.shared.hideProgress()

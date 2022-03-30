@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class LaunchViewController: UIViewController {
 
@@ -56,8 +57,7 @@ class LaunchViewController: UIViewController {
         // if configuration and is required then onboard
         if let configuration = AppConfiguration.current,
             let identity = configuration.identity,
-            Onboarding.status(for: identity) == .started
-        {
+            Onboarding.status(for: identity) == .started {
             self.launchIntoOnboarding(status: .started)
             return
         }
@@ -65,8 +65,7 @@ class LaunchViewController: UIViewController {
         // if configuration and not started then already onboarded
         if let configuration = AppConfiguration.current,
             let identity = configuration.identity,
-            Onboarding.status(for: identity) == .notStarted
-        {
+            Onboarding.status(for: identity) == .notStarted {
             Onboarding.set(status: .completed, for: identity)
         }
 
@@ -89,7 +88,7 @@ class LaunchViewController: UIViewController {
         guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         
-        bot.login(network: network, hmacKey: configuration.hmacKey, secret: secret) { error in
+        bot.login(config: configuration) { error in
             
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error,
@@ -151,8 +150,14 @@ class LaunchViewController: UIViewController {
                 Log.optional(aboutErr)
                 // No need to show an alert to the user as we can fetch the current about later
                 CrashReporting.shared.reportIfNeeded(error: aboutErr)
-                CrashReporting.shared.identify(about: about, network: network)
+                
                 if let about = about {
+                    CrashReporting.shared.identify(
+                        identifier: about.identity,
+                        name: about.name,
+                        networkKey: network.string,
+                        networkName: network.name
+                    )
                     Analytics.shared.identify(identifier: about.identity,
                                               name: about.name,
                                               network: network.name)
@@ -162,15 +167,13 @@ class LaunchViewController: UIViewController {
     }
 
     private func launchIntoOnboarding(status: Onboarding.Status = .notStarted,
-                                      simulate: Bool = false)
-    {
+                                      simulate: Bool = false) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             AppController.shared.showOnboardingViewController(status, simulate)
         }
     }
 
     private func launchIntoMain() {
-
 
         // no need to start a sync here, we can do it later
         // also, user is already logged in

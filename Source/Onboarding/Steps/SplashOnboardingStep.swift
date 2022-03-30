@@ -65,8 +65,7 @@ extension StartOnboardingStep: UITextViewDelegate {
     func textView(_ textView: UITextView,
                   shouldInteractWith URL: URL,
                   in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool
-    {
+                  interaction: UITextItemInteraction) -> Bool {
         guard let article = Support.shared.article(for: URL.absoluteString) else { return false }
         guard let controller = Support.shared.articleViewController(article) else {
             AppController.shared.alert(

@@ -32,8 +32,7 @@ class UIViewTapGesture: Tappable {
         guard let view = gesture.view else { return }
         guard gesture.state == .ended else { return }
         let location = gesture.location(in: view)
-        if let textView = view as? UITextView { self.tapped(textView, at: location) }
-        else { self.tapped(view, at: location) }
+        if let textView = view as? UITextView { self.tapped(textView, at: location) } else { self.tapped(view, at: location) }
     }
 
     // MARK: Base class UIView support
@@ -65,8 +64,6 @@ class UIViewTapGesture: Tappable {
     }
 
     private func linkToURL(_ link: Any?) -> URL? {
-        if let link = link as? String   { return URL(string: link) }
-        else if let link = link as? URL { return link }
-        else                            { return nil }
+        if let link = link as? String { return URL(string: link) } else if let link = link as? URL { return link } else { return nil }
     }
 }

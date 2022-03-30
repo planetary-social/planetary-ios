@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 // It turns out that DebugTableViewController works really well
 // for the design of the settings, so we're just gonna use it for now.
@@ -27,7 +28,7 @@ class SettingsViewController: DebugTableViewController {
         Analytics.shared.trackDidShowScreen(screenName: "settings")
     }
 
-    internal override func updateSettings() {
+    override internal func updateSettings() {
         self.settings = [self.publicWebHosting(),
                          self.push(),
                          self.usage(),
@@ -49,7 +50,7 @@ class SettingsViewController: DebugTableViewController {
     private func publicWebHosting() -> DebugTableViewController.Settings {
         let valueClosure = { (_ cell: UITableViewCell) -> Void in
             cell.showActivityIndicator()
-            Bots.current.about { [weak self] (about, error) in
+            Bots.current.about { [weak self] (about, _) in
                 cell.hideActivityIndicator()
                 let isPublicWebHostingEnabled = about?.publicWebHosting ?? false
                 self?.publicWebHostingToggle.isOn = isPublicWebHostingEnabled
@@ -67,7 +68,7 @@ class SettingsViewController: DebugTableViewController {
 
     @objc private func publicWebHostingToggleValueChanged(toggle: UISwitch) {
         let isPublicWebHostingEnabled = toggle.isOn
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
         Bots.current.about { [weak self] (about, error) in
             if let error = error {
                 Log.optional(error)
@@ -112,11 +113,10 @@ class SettingsViewController: DebugTableViewController {
         var settings: [DebugTableViewCellModel] = []
 
         settings += [DebugTableViewCellModel(title: Text.Push.enabled.text,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 [unowned self] cell in
                 cell.showActivityIndicator()
-                AppController.shared.arePushNotificationsEnabled() {
+                AppController.shared.arePushNotificationsEnabled {
                     [weak self] enabled in
                     cell.hideActivityIndicator()
                     guard let toggle = self?.pushToggle else { return }
@@ -146,15 +146,13 @@ class SettingsViewController: DebugTableViewController {
         var settings: [DebugTableViewCellModel] = []
 
         settings += [DebugTableViewCellModel(title: Text.analyticsAndCrash.text,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
                 cell.detailTextLabel?.text = Analytics.shared.isEnabled.yesOrNo
             },
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 let controller = DataUsageSettingsViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
@@ -168,14 +166,12 @@ class SettingsViewController: DebugTableViewController {
         var settings: [DebugTableViewCellModel] = []
         
         settings += [DebugTableViewCellModel(title: Text.ManagePubs.title.text,
-                                         valueClosure:
-        {
+                                         valueClosure: {
             cell in
             cell.accessoryType = .disclosureIndicator
         },
-                                         actionClosure:
-        {
-            [unowned self] cell in
+                                         actionClosure: {
+            [unowned self] _ in
             let controller = ManagePubsViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         })]
@@ -189,14 +185,12 @@ class SettingsViewController: DebugTableViewController {
         var settings: [DebugTableViewCellModel] = []
 
         settings += [DebugTableViewCellModel(title: Text.Preview.title.text,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 let controller = PreviewSettingsViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             })]

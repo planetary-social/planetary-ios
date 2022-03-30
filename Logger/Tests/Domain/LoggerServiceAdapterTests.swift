@@ -55,5 +55,4 @@ final class LoggerServiceAdapterTests: XCTestCase {
     func testFileUrls() {
         XCTAssertEqual(fileLoggerService.fileUrls, loggerService.fileUrls)
     }
-
 }

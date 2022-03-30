@@ -9,9 +9,9 @@
 import Foundation
 import UIKit
 import Logger
+import CrashReporting
 
 extension AppDelegate {
-    
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
@@ -42,4 +42,3 @@ extension AppDelegate {
         return false
     }
 }
-

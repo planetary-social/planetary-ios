@@ -20,6 +20,6 @@ extension UIView {
     }
 
     func jpegData() -> Data? {
-        return self.image()?.jpegData(compressionQuality: 0.5)
+        self.image()?.jpegData(compressionQuality: 0.5)
     }
 }

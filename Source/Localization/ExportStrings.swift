@@ -43,8 +43,8 @@ extension Text {
             }
 
             var translatedText = "// This file is auto-generated at build time\n"
-            translatedText    += "// Existing translations are left in place, and new keys are added as needed\n\n"
-            translatedText    += translatedStrings
+            translatedText += "// Existing translations are left in place, and new keys are added as needed\n\n"
+            translatedText += translatedStrings
             write(text: translatedText, file: translationFile)
         }
     }

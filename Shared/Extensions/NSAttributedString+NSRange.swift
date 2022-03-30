@@ -11,6 +11,6 @@ import Foundation
 extension NSAttributedString {
 
     var range: NSRange {
-        return NSRange(location: 0, length: self.length)
+        NSRange(location: 0, length: self.length)
     }
 }

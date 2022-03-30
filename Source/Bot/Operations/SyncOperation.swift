@@ -9,6 +9,7 @@
 import Foundation
 import Logger
 import Analytics
+import CrashReporting
 
 /// Pokes the bot into doing a sync. Don't use this SyncOperation directly, use
 /// SendMissionOperation instead.
@@ -18,7 +19,7 @@ class SyncOperation: AsynchronousOperation {
     var peers: [Peer]
     
     /// If true, only will sync to one peer with no retries
-    var notificationsOnly: Bool = false
+    var notificationsOnly = false
     
     /// Number of new messages available in the repo after the sync
     private(set) var newMessages: Int = 0
@@ -72,6 +73,4 @@ class SyncOperation: AsynchronousOperation {
             }
         }
     }
-     
-    
 }

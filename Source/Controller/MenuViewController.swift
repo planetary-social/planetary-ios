@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SwiftUI
 import Analytics
+import CrashReporting
 
 class MenuViewController: UIViewController, ConnectedPeerListRouter {
     
@@ -22,7 +23,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     }()
     
     private var connectedPeersView: UIView {
-        return connectedPeersViewController.view
+        connectedPeersViewController.view
     }
     
     private lazy var connectedPeersViewController: UIViewController = {
@@ -124,7 +125,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
 
     @objc private func settingsButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "settings")
-        self.close() {
+        self.close {
             AppController.shared.showSettingsViewController()
         }
     }
@@ -139,7 +140,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
             )
             return
         }
-        self.close() {
+        self.close {
             AppController.shared.push(controller)
         }
     }
@@ -154,7 +155,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
             )
             return
         }
-        self.close() {
+        self.close {
             AppController.shared.push(controller)
         }
     }
@@ -168,8 +169,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         UIView.animate(withDuration: animated ? 0.2 : 0,
                        delay: 0,
                        options: .curveEaseOut,
-                       animations:
-            {
+                       animations: {
                 self.backgroundView.alpha = 1
                 self.menuView.frame.origin.x = 0
             },
@@ -181,14 +181,12 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         UIView.animate(withDuration: animated ? 0.2 : 0,
                        delay: 0,
                        options: .curveEaseIn,
-                       animations:
-            {
+                       animations: {
                 self.backgroundView.alpha = 0
                 self.menuView.transform = CGAffineTransform(translationX: -self.menuWidth, y: 0)
             },
-                       completion:
-            {
-                finished in
+                       completion: {
+                _ in
                 self.dismiss(animated: false) { completion?() }
             })
     }
@@ -200,7 +198,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     }
 }
 
-fileprivate class MenuView: UIView {
+private class MenuView: UIView {
 
     let profileView = ProfileImageView()
 
@@ -312,7 +310,7 @@ fileprivate class MenuView: UIView {
     }
 }
 
-fileprivate class ProfileImageView: UIView {
+private class ProfileImageView: UIView {
 
     let circleView: UIView = {
         let view = UIView.forAutoLayout()
@@ -348,7 +346,7 @@ fileprivate class ProfileImageView: UIView {
     }
 }
 
-fileprivate class MenuButton: UIButton {
+private class MenuButton: UIButton {
 
     init(title: Text, image: UIImage? = nil) {
 

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Analytics
+import CrashReporting
 
 class ContactsViewController: ContentViewController, AboutTableViewDelegate {
 
@@ -51,4 +52,3 @@ class ContactsViewController: ContentViewController, AboutTableViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 }
-

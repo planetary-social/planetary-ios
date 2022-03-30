@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
@@ -36,9 +37,9 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
     private let resumeSteps = [
         ResumeOnboardingStep(),
-        //DirectoryOnboardingStep(),      // Bot and API calls
-        //PhotoOnboardingStep(),
-        //PhotoConfirmOnboardingStep(),   // Bot and API calls
+        // DirectoryOnboardingStep(),      // Bot and API calls
+        // PhotoOnboardingStep(),
+        // PhotoConfirmOnboardingStep(),   // Bot and API calls
         BioOnboardingStep(),            // Bot and API calls
         DoneOnboardingStep(),           // Bot and API calls
     ]
@@ -47,7 +48,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     private var steps: [OnboardingStep] = []
 
     private var currentStep: OnboardingStep {
-            return self.steps[self.stepIndex]
+            self.steps[self.stepIndex]
     }
 
     private var stepData = OnboardingStepData()
@@ -133,15 +134,14 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     }
 
     private func done() {
-        //AppController.shared.showDirectoryViewController()
+        // AppController.shared.showDirectoryViewController()
         AppController.shared.showMainViewController()
     }
 
     // MARK: OnboardingStepDelegate
 
     func step(_ step: OnboardingStep, next: OnboardingStep.Name?) {
-        if let next = next { self.next(to: next) }
-        else { self.nextStep() }
+        if let next = next { self.next(to: next) } else { self.nextStep() }
     }
 
     func step(_ step: OnboardingStep, back: OnboardingStep.Name?) {
@@ -164,16 +164,14 @@ extension OnboardingViewController: UINavigationControllerDelegate {
 
     func navigationController(_ navigationController: UINavigationController,
                               willShow viewController: UIViewController,
-                              animated: Bool)
-    {
+                              animated: Bool) {
         self.setNavigationBarHidden(!currentStep.showsNavigationBar, animated: false)
         self.currentStep.willStart()
     }
 
     func navigationController(_ navigationController: UINavigationController,
                               didShow viewController: UIViewController,
-                              animated: Bool)
-    {
+                              animated: Bool) {
         self.currentStep.didStart()
         self.currentStep.track()
     }

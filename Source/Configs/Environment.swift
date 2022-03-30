@@ -17,13 +17,13 @@ enum Environment {
             static let hmac = "PLDefaultNetworkHMAC"
         }
         static let name: String = {
-            return Environment.value(for: Keys.name)
+            Environment.value(for: Keys.name)
         }()
         static let key: String = {
-            return Environment.value(for: Keys.key)
+            Environment.value(for: Keys.key)
         }()
         static let hmac: String? = {
-            return Environment.valueIfPresent(for: Keys.hmac)
+            Environment.valueIfPresent(for: Keys.hmac)
         }()
     }
     
@@ -34,13 +34,13 @@ enum Environment {
             static let hmac = "PLDevelopmentNetworkHMAC"
         }
         static let name: String = {
-            return Environment.value(for: Keys.name)
+            Environment.value(for: Keys.name)
         }()
         static let key: String = {
-            return Environment.value(for: Keys.key)
+            Environment.value(for: Keys.key)
         }()
         static let hmac: String = {
-            return Environment.value(for: Keys.hmac)
+            Environment.value(for: Keys.hmac)
         }()
     }
     
@@ -51,13 +51,13 @@ enum Environment {
             static let hmac = "PLTestingNetworkHMAC"
         }
         static let name: String = {
-            return Environment.value(for: Keys.name)
+            Environment.value(for: Keys.name)
         }()
         static let key: String = {
-            return Environment.value(for: Keys.key)
+            Environment.value(for: Keys.key)
         }()
         static let hmac: String = {
-            return Environment.value(for: Keys.hmac)
+            Environment.value(for: Keys.hmac)
         }()
     }
     
@@ -68,13 +68,13 @@ enum Environment {
             static let hmac = "PLPlanetaryNetworkHMAC"
         }
         static let name: String = {
-            return Environment.value(for: Keys.name)
+            Environment.value(for: Keys.name)
         }()
         static let key: String = {
-            return Environment.value(for: Keys.key)
+            Environment.value(for: Keys.key)
         }()
         static let hmac: String = {
-            return Environment.value(for: Keys.hmac)
+            Environment.value(for: Keys.hmac)
         }()
     }
     
@@ -83,7 +83,7 @@ enum Environment {
             static let communities = "PLCommunities"
         }
         static let stars: [Star] = {
-            return Environment.value(for: Keys.communities).split(separator: " ").map{Star(invite: String($0))}
+            Environment.value(for: Keys.communities).split(separator: " ").map { Star(invite: String($0)) }
         }()
     }
     
@@ -92,7 +92,7 @@ enum Environment {
             static let constellation = "PLConstellation"
         }
         static let stars: [Star] = {
-            return Environment.value(for: Keys.constellation).split(separator: " ").map{Star(invite: String($0))}
+            Environment.value(for: Keys.constellation).split(separator: " ").map { Star(invite: String($0)) }
         }()
     }
     
@@ -101,7 +101,7 @@ enum Environment {
             static let planetarySystem = "PLPlanetarySystem"
         }
         static let planets: [Identity] = {
-            return Environment.value(for: Keys.planetarySystem).split(separator: " ").map { String($0) }
+            Environment.value(for: Keys.planetarySystem).split(separator: " ").map { String($0) }
         }()
     }
     
@@ -125,5 +125,4 @@ enum Environment {
         }
         return dict
     }()
-    
 }

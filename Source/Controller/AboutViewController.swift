@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class AboutViewController: ContentViewController {
 
@@ -22,7 +23,6 @@ class AboutViewController: ContentViewController {
         let dataSource = PostReplyPaginatedDataSource()
         dataSource.delegate = self
         return dataSource
-        
     }()
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
@@ -69,7 +69,6 @@ class AboutViewController: ContentViewController {
                                                                  target: self,
                                                                  action: #selector(didPressOptionsIcon))
         self.navigationItem.rightBarButtonItem?.tintColor = .secondaryAction
-
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -164,9 +163,8 @@ class AboutViewController: ContentViewController {
                                                  action: #selector(editPhotoButtonTouchUpInside),
                                                  for: .touchUpInside)
 
-
         self.aboutView.followButton.onUpdate = {
-            following in
+            _ in
 
             self.loadFollowedBy()
 
@@ -240,9 +238,9 @@ class AboutViewController: ContentViewController {
     }
 
     private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping () -> Void) {
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
 
-        Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) { [weak self] image, error in
+        Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1_000) { [weak self] image, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
@@ -292,7 +290,7 @@ class AboutViewController: ContentViewController {
         let controller = EditAboutViewController(with: about)
         controller.saveCompletion = {
             [weak self] _ in
-            //AppController.shared.showProgress()
+            // AppController.shared.showProgress()
             Bots.current.publish(content: controller.about) { [weak self] (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
@@ -399,7 +397,7 @@ class AboutViewController: ContentViewController {
     }
 }
 
-fileprivate class AboutPostView: KeyValueView {
+private class AboutPostView: KeyValueView {
 
     lazy var view = PostCellView()
 
@@ -446,5 +444,4 @@ extension AboutViewController: PostReplyPaginatedDataSourceDelegate {
         let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    
 }

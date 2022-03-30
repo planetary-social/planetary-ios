@@ -17,5 +17,4 @@ class NullPhoneVerificationAPI: PhoneVerificationAPIService {
     func verifyCode(_ code: String, country: String, phone: String, completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void)) {
         completion(PhoneVerificationResponse(message: "", success: true, uuid: nil), nil)
     }
-    
 }

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class NewPostViewController: ContentViewController {
 
@@ -123,7 +124,7 @@ class NewPostViewController: ContentViewController {
 
         self.lookBusy()
         Bots.current.publish(post, with: images) {
-            [weak self] identifier, error in
+            [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
@@ -150,7 +151,7 @@ class NewPostViewController: ContentViewController {
     // MARK: Animations
 
     private func lookBusy() {
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
         self.buttonsView.photoButton.isEnabled = false
         self.buttonsView.postButton.isEnabled = false
         self.buttonsView.previewToggle.isEnabled = false
@@ -176,8 +177,7 @@ extension NewPostViewController: ImageGalleryViewDelegate {
 
     func imageGalleryView(_ view: ImageGalleryView,
                           didSelect image: UIImage,
-                          at indexPath: IndexPath)
-    {
+                          at indexPath: IndexPath) {
         self.confirm(
             message: Text.NewPost.confirmRemove.text,
             isDestructive: true,

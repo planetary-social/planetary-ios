@@ -58,7 +58,7 @@ struct KeyValue: Codable {
 
         var replies = Replies()
 
-        var isPrivate: Bool = false
+        var isPrivate = false
     }
 
     var metadata = Metadata()
@@ -67,7 +67,7 @@ struct KeyValue: Codable {
 extension KeyValue: Equatable {
 
     static func == (lhs: KeyValue, rhs: KeyValue) -> Bool {
-        return lhs.key == rhs.key
+        lhs.key == rhs.key
     }
 }
 
@@ -81,32 +81,32 @@ extension KeyValue {
 
     // Convenience var to return the embedded content's type
     var contentType: ContentType {
-        return self.value.content.type
+        self.value.content.type
     }
 
     // Convenience var for received time as Date
     var receivedDate: Date {
-        return Date(timeIntervalSince1970: self.timestamp)
+        Date(timeIntervalSince1970: self.timestamp)
     }
 
     var receivedDateString: String {
-        return DateFormatter.localizedString(from: self.receivedDate,
+        DateFormatter.localizedString(from: self.receivedDate,
                                              dateStyle: .short,
                                              timeStyle: .short)
     }
     
     // Convenience var for user time as Date
     var userDate: Date {
-        let ud = Date(timeIntervalSince1970: self.value.timestamp/1000)
+        let ud = Date(timeIntervalSince1970: self.value.timestamp / 1_000)
         let now = Date(timeIntervalSinceNow: 0)
         if ud > now {
-            return Date(timeIntervalSince1970: self.timestamp/1000)
+            return Date(timeIntervalSince1970: self.timestamp / 1_000)
         }
         return ud
     }
 
     var userDateString: String {
-        return DateFormatter.localizedString(from: self.userDate,
+        DateFormatter.localizedString(from: self.userDate,
                                              dateStyle: .short,
                                              timeStyle: .short)
     }

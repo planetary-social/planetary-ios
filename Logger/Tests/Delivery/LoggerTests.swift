@@ -96,5 +96,4 @@ final class LoggerTests: XCTestCase {
     func testStaticFileUrls() {
         XCTAssertEqual(Log.fileUrls, service.fileUrls)
     }
-
 }

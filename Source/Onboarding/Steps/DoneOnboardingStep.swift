@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class DoneOnboardingStep: OnboardingStep {
     
@@ -35,7 +36,6 @@ class DoneOnboardingStep: OnboardingStep {
 
         self.view.primaryButton.setText(.doneOnboarding)
     }
-    
 
     override func performPrimaryAction(sender button: UIButton) {
         self.data.publicWebHosting = self.publicWebHostingToggle.toggle.isOn
@@ -67,10 +67,10 @@ class DoneOnboardingStep: OnboardingStep {
         
         let followOperation = BlockOperation {
             let identities = Environment.PlanetarySystem.planets
-            let semaphore = DispatchSemaphore(value: identities.count-1)
+            let semaphore = DispatchSemaphore(value: identities.count - 1)
             for identity in identities {
                 Bots.current.follow(identity) {
-                    contact, error in
+                    _, _ in
                     semaphore.signal()
                 }
             }
@@ -85,7 +85,7 @@ class DoneOnboardingStep: OnboardingStep {
             let semaphore = DispatchSemaphore(value: 0)
             let about = About(about: me, publicWebHosting: true)
             let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
-            Bots.current.publish(content: about, completionQueue: queue) { (msg, error) in
+            Bots.current.publish(content: about, completionQueue: queue) { (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 semaphore.signal()

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class ThreadViewController: ContentViewController {
 
@@ -28,11 +29,11 @@ class ThreadViewController: ContentViewController {
                                                           placeholderColor: UIColor.text.placeholder)
 
     private var branchKey: Identifier {
-        return self.rootKey
+        self.rootKey
     }
 
     private var rootKey: Identifier {
-        return self.root?.key ?? self.post.key
+        self.root?.key ?? self.post.key
     }
 
     private lazy var tableView: UITableView = {
@@ -129,7 +130,7 @@ class ThreadViewController: ContentViewController {
         assert(keyValue.value.content.isPost)
         self.post = keyValue
         self.onNextUpdateScrollToPostWithKeyValueKey = keyValue.key
-        //self.interactionView.postIdentifier = Identity
+        // self.interactionView.postIdentifier = Identity
         super.init(scrollable: false)
         self.isKeyboardHandlingEnabled = true
         self.showsTabBarBorder = false
@@ -225,7 +226,6 @@ class ThreadViewController: ContentViewController {
         self.interactionView.update()
     }
 
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         sizeHeaderToFit()
@@ -240,7 +240,6 @@ class ThreadViewController: ContentViewController {
             self.tableHeaderWidthConstraint?.isActive = true
         }
     }
-
 
     private func addNavigationHeaderViewIfNeeded() {
         guard headerView.superview == nil, let navBar = self.navigationController?.navigationBar else { return }
@@ -262,8 +261,7 @@ class ThreadViewController: ContentViewController {
     /// useful to stagger animations, just in case there is too much going
     /// on at one time.
     private func scrollToLastVisibleIndexPath(delay: TimeInterval = 0.25,
-                                              animated: Bool = true)
-    {
+                                              animated: Bool = true) {
         guard let indexPath = self.indexPathToScrollToOnKeyboardDidShow else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
@@ -331,7 +329,7 @@ class ThreadViewController: ContentViewController {
         
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
         Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -422,8 +420,8 @@ extension ThreadViewController: ThreadInteractionViewDelegate {
                                value: 1,
                                root: self.rootKey,
                                branches: [self.branchKey])
-        //AppController.shared.showProgress()
-        Bots.current.publish(content: vote) { [weak self] key, error in
+        // AppController.shared.showProgress()
+        Bots.current.publish(content: vote) { [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             DispatchQueue.main.async { [weak self] in
@@ -440,8 +438,7 @@ extension ThreadViewController: ThreadInteractionViewDelegate {
     }
 }
 
-
-fileprivate class ThreadTextViewDelegate: MentionTextViewDelegate {
+private class ThreadTextViewDelegate: MentionTextViewDelegate {
 
     // On each keystroke, checks if the text biew needs to be scrollable.
     // By default it is not so that it grows taller with each line.  But

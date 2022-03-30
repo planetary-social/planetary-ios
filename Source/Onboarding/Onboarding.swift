@@ -9,6 +9,7 @@
 import Foundation
 import Logger
 import Analytics
+import CrashReporting
 
 enum OnboardingError: Error {
 
@@ -76,8 +77,7 @@ class Onboarding {
     static func start(birthdate: Date,
                       phone: String,
                       name: String,
-                      completion: @escaping StartCompletion)
-    {
+                      completion: @escaping StartCompletion) {
         guard birthdate.olderThan(yearsAgo: 16) else { completion(nil, .invalidBirthdate); return }
         
         // Phone verification is not used anymore
@@ -89,7 +89,7 @@ class Onboarding {
         Analytics.shared.trackOnboardingStart()
 
         // create secret
-        GoBot.shared.createSecret() { secret, error in
+        GoBot.shared.createSecret { secret, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
@@ -115,12 +115,12 @@ class Onboarding {
             // Safe to unwrap as configuration has secret, network and bot
             var context = Context(from: configuration)!
             
-            context.bot.login(network: configuration.network!, hmacKey: configuration.hmacKey, secret: secret) { error in
+            context.bot.login(config: configuration) { error in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if let error = error {
-                    completion(nil, .botError(error));
+                    completion(nil, .botError(error))
                     return
                 }
 
@@ -130,12 +130,17 @@ class Onboarding {
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     if let error = error {
-                        completion(nil, .botError(error));
+                        completion(nil, .botError(error))
                         return
                     }
 
                     if let network = configuration.network {
-                        CrashReporting.shared.identify(about: about, network: network)
+                        CrashReporting.shared.identify(
+                            identifier: about.identity,
+                            name: about.name,
+                            networkKey: network.string,
+                            networkName: network.name
+                        )
                         Analytics.shared.identify(identifier: about.identity,
                                                   name: about.name,
                                                   network: network.string)
@@ -153,8 +158,7 @@ class Onboarding {
     /// Assuming the very last of `Onboarding.start()` completes successfully, this should
     /// be called to set the `Onboarding.status` for the created identity.
     private static func didStart(configuration: AppConfiguration,
-                                 secret: Secret)
-    {
+                                 secret: Secret) {
         // TODO should be one command to do all this
         // TODO doing this here makes it hard to revert if something fails
         configuration.apply()
@@ -171,7 +175,7 @@ class Onboarding {
     /// should not have been set.  Check out `Onboarding.start()` to see all the work that is
     /// done, and to use a template to know what work to undo.
     static func reset(completion: @escaping ResetCompletion) {
-        Bots.current.logout() { error in
+        Bots.current.logout { error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
@@ -191,18 +195,12 @@ class Onboarding {
     static func resume(completion: @escaping StartCompletion) {
 
         guard let configuration = AppConfiguration.current,
-            let secret = configuration.secret,
-            var context = Context(from: configuration) else
-        {
+            var context = Context(from: configuration) else {
             completion(nil, .configurationFailed)
             return
         }
 
-        Bots.current.login(network: context.network,
-                           hmacKey: context.signingKey,
-                           secret: secret)
-        {
-            error in
+        Bots.current.login(config: configuration) { error in
             if let error = error { completion(context, .botError(error)) }
 
             // get About for context identity
@@ -215,7 +213,12 @@ class Onboarding {
                 }
                 context.about = about
                 
-                CrashReporting.shared.identify(about: about, network: context.network)
+                CrashReporting.shared.identify(
+                    identifier: about.identity,
+                    name: about.name,
+                    networkKey: context.network.string,
+                    networkName: context.network.name
+                )
                 Analytics.shared.identify(identifier: about.identity,
                                           name: about.name,
                                           network: context.network.name)

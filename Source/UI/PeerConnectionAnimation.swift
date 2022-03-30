@@ -11,14 +11,14 @@ import UIKit
 class PeerConnectionAnimation: UIView {
 
     /// A multiplier applied to the size of all elements.
-    var multiplier:      CGFloat
+    var multiplier: CGFloat
 
-    lazy var lineWidth:       CGFloat = { 1 * self.multiplier }()
+    lazy var lineWidth: CGFloat = { 1 * self.multiplier }()
 
-    lazy var centerDotSize:   CGFloat = { 7 * self.multiplier }()
-    lazy var dotSize:         CGFloat = { 5 * self.multiplier }()
+    lazy var centerDotSize: CGFloat = { 7 * self.multiplier }()
+    lazy var dotSize: CGFloat = { 5 * self.multiplier }()
 
-    lazy var insideDiameter:  CGFloat = { 23 * self.multiplier }()
+    lazy var insideDiameter: CGFloat = { 23 * self.multiplier }()
     lazy var outsideDiameter: CGFloat = { 38 * self.multiplier }()
 
     let insideMax = 11
@@ -30,14 +30,14 @@ class PeerConnectionAnimation: UIView {
     let outsideAnimationSpeed: TimeInterval = 4.1
 
     var totalDiameter: CGFloat {
-        return outsideDiameter + (dotSize / 2)
+        outsideDiameter + (dotSize / 2)
     }
     var totalRadius: CGFloat {
-        return totalDiameter / 2
+        totalDiameter / 2
     }
     
     override var intrinsicContentSize: CGSize {
-        return CGSize(square: totalDiameter)
+        CGSize(square: totalDiameter)
     }
 
     private var insideDots = 0 {
@@ -144,7 +144,6 @@ class PeerConnectionAnimation: UIView {
         replicatorLayer.position = CGPoint(x: self.totalRadius, y: self.totalRadius)
         replicatorLayer.bounds = CGRect(x: 0, y: 0, width: size, height: size)
 
-
         let circle = CALayer()
         circle.frame = CGRect(x: 0, y: 0, width: self.dotSize, height: self.dotSize)
         circle.cornerRadius = self.dotSize / 2
@@ -207,7 +206,6 @@ class PeerConnectionAnimation: UIView {
         insideCircle.strokeColor = self.searchColor.cgColor
         outsideCircle.strokeColor = self.searchColor.cgColor
     }
-    
 
     required init?(coder: NSCoder) {
         fatalError("Not implemented.")

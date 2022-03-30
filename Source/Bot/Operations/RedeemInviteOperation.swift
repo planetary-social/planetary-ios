@@ -9,6 +9,7 @@
 import Foundation
 import Network
 import Logger
+import CrashReporting
 
 class RedeemInviteOperation: AsynchronousOperation {
 
@@ -99,9 +100,7 @@ class RedeemInviteOperation: AsynchronousOperation {
                 } else {
                     completion(.success(()))
                 }
-                
             }
         }
     }
-    
 }

@@ -22,5 +22,4 @@ struct PhoneVerificationAPI {
         }
         #endif
     }()
-    
 }

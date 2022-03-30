@@ -28,5 +28,4 @@ extension APIError: LocalizedError {
             return error.localizedDescription
         }
     }
-    
 }

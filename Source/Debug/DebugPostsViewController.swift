@@ -70,12 +70,11 @@ fileprivate extension KeyValue {
     }
 }
 
-fileprivate class DebugPostsTableViewDataSource: KeyValueTableViewDataSource {
+private class DebugPostsTableViewDataSource: KeyValueTableViewDataSource {
 
     override func cell(at indexPath: IndexPath,
                        for type: ContentType,
-                       tableView: UITableView) -> KeyValueTableViewCell
-    {
+                       tableView: UITableView) -> KeyValueTableViewCell {
         let view = PostReplyView()
         let cell = KeyValueTableViewCell(for: .post, with: view)
         return cell

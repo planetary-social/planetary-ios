@@ -13,7 +13,7 @@ class CocoaLumberjackService: FileLoggerService {
     private var fileLogger: DDFileLogger
 
     var fileUrls: [URL] {
-        return fileLogger.logFileManager.sortedLogFilePaths.map { URL(fileURLWithPath: $0) }
+        fileLogger.logFileManager.sortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
     init() {
@@ -34,5 +34,4 @@ class CocoaLumberjackService: FileLoggerService {
     func error(_ string: String) {
         DDLogError(string)
     }
-
 }

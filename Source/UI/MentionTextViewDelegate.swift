@@ -21,7 +21,7 @@ class MentionTextViewDelegate: NSObject, UITextViewDelegate {
     var placeholder: String?
 
     var fontAttributes: [NSAttributedString.Key: Any] {
-        return [
+        [
             NSAttributedString.Key.font: self.font,
             NSAttributedString.Key.foregroundColor: self.color
         ]
@@ -59,8 +59,7 @@ class MentionTextViewDelegate: NSObject, UITextViewDelegate {
     /// whatever attributes are adjacent to the specified NSRange.
     private func textView(_ textView: UITextView,
                           replaceTextIn range: NSRange,
-                          with text: String)
-    {
+                          with text: String) {
         self.ignoreTextViewDelegateWhileReplacingText = true
         let text = NSMutableAttributedString(string: text, attributes: self.fontAttributes)
         textView.replaceText(in: range, with: text)
@@ -74,8 +73,7 @@ class MentionTextViewDelegate: NSObject, UITextViewDelegate {
     /// BE VERY CAREFUL WHEN CHANGING THIS CODE.
     func textView(_ textView: UITextView,
                   shouldChangeTextIn range: NSRange,
-                  replacementText text: String) -> Bool
-    {
+                  replacementText text: String) -> Bool {
         // textView(replaceTextIn: range) sets this flag to prevent
         // the eventual UITextView.attributedText = mutableText from
         // causing the delegate to insert the same text twice.  It is

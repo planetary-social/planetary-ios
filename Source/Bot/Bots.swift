@@ -8,7 +8,7 @@ import Foundation
 class Bots {
 
     static var all: [Bot] {
-        return [FakeBot.shared, GoBot.shared]
+        [FakeBot.shared, GoBot.shared]
     }
 
     static func bot(named name: String) -> Bot? {
@@ -17,7 +17,7 @@ class Bots {
     }
 
     static var current: Bot {
-        return self._bot
+        self._bot
     }
 
     static func select(_ bot: Bot) {
@@ -25,7 +25,7 @@ class Bots {
     }
 
     static func isSelected(_ bot: Bot) -> Bool {
-        return self._bot.name == bot.name
+        self._bot.name == bot.name
     }
 
     // TODO might need NullBot?

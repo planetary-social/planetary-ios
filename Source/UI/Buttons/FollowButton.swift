@@ -9,6 +9,7 @@
 import UIKit
 import Logger
 import Analytics
+import CrashReporting
 
 class FollowButton: PillButton {
 
@@ -61,7 +62,7 @@ class FollowButton: PillButton {
         
         let shouldFollow = self.isSelected
 
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
         self.isEnabled = false
         if shouldFollow {
             if let star = self.star {

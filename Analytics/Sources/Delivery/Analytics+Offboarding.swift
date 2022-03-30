@@ -16,5 +16,4 @@ public extension Analytics {
     func trackOffboardingEnd() {
         service.track(event: .did, element: .app, name: "offboarding_end")
     }
-
 }

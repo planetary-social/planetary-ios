@@ -13,11 +13,12 @@ import SQLite
 import CryptoKit
 import Logger
 import Analytics
+import CrashReporting
 
 // schema migration handling
 extension Connection {
     public var userVersion: Int32 {
-        get { return Int32(try! scalar("PRAGMA user_version;") as! Int64)}
+        get { Int32(try! scalar("PRAGMA user_version;") as! Int64) }
         set { try! run("PRAGMA user_version = \(newValue);") }
     }
 }
@@ -47,7 +48,7 @@ enum ViewDatabaseTableNames: String {
 }
 
 class ViewDatabase {
-    var currentPath: String { get { return self.dbPath }}
+    var currentPath: String { get { self.dbPath } }
     private var dbPath: String = "/tmp/unset"
     private var openDB: Connection?
 
@@ -60,7 +61,7 @@ class ViewDatabase {
 
     // skip messages older than this (6 month)
     // this should be removed once the database was refactored
-    private var temporaryMessageExpireDate: Double = -60*60*24*30*6
+    private var temporaryMessageExpireDate: Double = -60 * 60 * 24 * 30 * 6
 
     // MARK: Tables and fields
     private let colID = Expression<Int64>("id")
@@ -217,15 +218,14 @@ class ViewDatabase {
         
         db.busyTimeout = 1
         db.busyHandler { (tries) -> Bool in
-            return tries < 4
+            tries < 4
         }
         
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = FULL;") // Full is best for read performance
-
         
-        //db.trace { print("\tSQL: \($0)") } // print all the statements
+        // db.trace { print("\tSQL: \($0)") } // print all the statements
         
         try db.transaction {
             if db.userVersion == 0 {
@@ -266,7 +266,7 @@ class ViewDatabase {
                 port integer not null,
                 key text not null,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """);
+                """)
                 try self.migrateHashAllMessageKeys()
                 db.userVersion = 8
             } else if db.userVersion == 2 {
@@ -296,7 +296,7 @@ class ViewDatabase {
                 port integer not null,
                 key text not null,
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """);
+                """)
                 try self.migrateHashAllMessageKeys()
                 db.userVersion = 8
             } else if db.userVersion == 3 {
@@ -382,7 +382,6 @@ class ViewDatabase {
                 FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
                 """)
                 db.userVersion = 8
-
             }
         }
 
@@ -403,10 +402,9 @@ class ViewDatabase {
         self.temporaryMessageExpireDate = maxAge
     }
     #endif
-
     
     func isOpen() -> Bool {
-        return self.openDB != nil
+        self.openDB != nil
     }
     
     func close() {
@@ -420,20 +418,20 @@ class ViewDatabase {
     }
     
     // returns the number of rows for the respective tables
-    func stats() throws -> [ViewDatabaseTableNames:Int] {
+    func stats() throws -> [ViewDatabaseTableNames: Int] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
         return [
             .addresses: try db.scalar(self.addresses.count),
-            .authors:  try db.scalar(self.authors.count),
-            .messages:  try db.scalar(self.msgs.count),
-            .abouts:    try db.scalar(self.abouts.count),
-            .contacts:  try db.scalar(self.contacts.count),
-            .privates: try db.scalar(self.msgs.filter(colDecrypted==true).count),
-            .posts:     try db.scalar(self.posts.count),
-            .votes:     try db.scalar(self.votes.count)
+            .authors: try db.scalar(self.authors.count),
+            .messages: try db.scalar(self.msgs.count),
+            .abouts: try db.scalar(self.abouts.count),
+            .contacts: try db.scalar(self.contacts.count),
+            .privates: try db.scalar(self.msgs.filter(colDecrypted == true).count),
+            .posts: try db.scalar(self.posts.count),
+            .votes: try db.scalar(self.votes.count)
         ]
     }
     
@@ -450,7 +448,7 @@ class ViewDatabase {
             case .messagekeys: cnt = Int(try self.largestSeqFromReceiveLog())
             case .abouts:   cnt = try db.scalar(self.abouts.count)
             case .contacts: cnt = try db.scalar(self.contacts.count)
-            case .privates: cnt = try db.scalar(self.msgs.filter(colDecrypted==true).count)
+            case .privates: cnt = try db.scalar(self.msgs.filter(colDecrypted == true).count)
             case .posts:    cnt = try db.scalar(self.posts.count)
             case .votes:    cnt = try db.scalar(self.votes.count)
             default: throw ViewDatabaseError.unknownTable(table)
@@ -508,7 +506,6 @@ class ViewDatabase {
         }
         
         return -1
-
     }
     
     /// Finds the largest sequence number in the messages table.
@@ -527,7 +524,6 @@ class ViewDatabase {
         return -1
     }
     
-    
     /// Finds the largest sequence number in the messages table, excluding posts that the user has published. This is
     /// useful for comparing messages in the `ViewDatabase` to those in go-ssb's log. The user's posts are synced
     /// immediately after publish so that's why we ignore them.
@@ -545,8 +541,6 @@ class ViewDatabase {
         
         return -1
     }
-    
-    
     
     /// Finds the largest sequence number of all the posts the logged-in user has published. The sequence number is the
     /// index of a message in go-ssb's RootLog of all messages.
@@ -596,7 +590,7 @@ class ViewDatabase {
 
             var redeemedDate: Date?
             if let redeemedTimestamp = try row.get(colRedeemed) {
-                redeemedDate = Date(timeIntervalSince1970: redeemedTimestamp / 1000)
+                redeemedDate = Date(timeIntervalSince1970: redeemedTimestamp / 1_000)
             }
             
             return KnownPub(
@@ -671,7 +665,7 @@ class ViewDatabase {
 
             // keep ids for next unhide
             let matchedMsgIDs = try db.prepare(matchedMsgsQry.select(colID)).map { row in
-                return row[colID]
+                row[colID]
             }
 
             // insert in current blocked for next unhide
@@ -687,7 +681,7 @@ class ViewDatabase {
                 return (row[colAuthor], row[colID])
             }
 
-            matchedAuthorRefs = matchedAuthors.map { return $0.0 }
+            matchedAuthorRefs = matchedAuthors.map { $0.0 }
 
             // insert in current blocked for next unhide
             for (_, id) in matchedAuthors {
@@ -763,7 +757,7 @@ class ViewDatabase {
 
         // convert rows to [Int64] for (msg_id IN [x1,...,xN]) below
         let msgIDs = try allMessages.map { row in
-            return try row.get(colMessageID)
+            try row.get(colMessageID)
         }
         for tbl in messageTables {
             let qry = tbl.filter(msgIDs.contains(colMessageRef)).delete()
@@ -850,7 +844,7 @@ class ViewDatabase {
             .filter(colAboutID == aboutID)
         
         let msgs: [About] = try db.prepare(qry).map { row in
-            return About(about: id,
+            About(about: id,
                      name: try row.get(colName),
                      description: try row.get(colDescr),
                      imageLink: try row.get(colImage),
@@ -1024,7 +1018,6 @@ class ViewDatabase {
             let msgAuthor = try row.get(colAuthor)
             let c = Contact(contact: feed, following: true)
 
-
             let v = Value(
                 author: msgAuthor,
                 content: Content(from: c),
@@ -1140,7 +1133,7 @@ class ViewDatabase {
     }
     
     func paginatedTop(onlyFollowed: Bool) throws -> MessageIdentifier? {
-        return try RecentViewKeyValueSource.top(with: self, onlyFollowed: onlyFollowed)
+        try RecentViewKeyValueSource.top(with: self, onlyFollowed: onlyFollowed)
     }
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
@@ -1198,7 +1191,7 @@ class ViewDatabase {
         }
         
         return try db.prepare(qry).compactMap { row in
-            return try row.get(colKey)
+            try row.get(colKey)
         }
     }
     
@@ -1265,7 +1258,6 @@ class ViewDatabase {
         return qry.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
     }
     
-    
     private func filterNotFollowingPeople(qry: Table) throws -> Table {
         // get the list of people that the active user follows
         let myFollowsQry = self.contacts
@@ -1278,7 +1270,7 @@ class ViewDatabase {
         }
         return qry.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
     }
-    //table.filter(!(array.contains(id)))
+    // table.filter(!(array.contains(id)))
 
     private func mapQueryToKeyValue(qry: Table) throws -> [KeyValue] {
         guard let db = self.openDB else {
@@ -1310,7 +1302,7 @@ class ViewDatabase {
                 }
                 
                 let p = Post(
-                    blobs: try self.loadBlobs(for:msgID),
+                    blobs: try self.loadBlobs(for: msgID),
                     mentions: try self.loadMentions(for: msgID),
                     root: rootKey,
                     text: try row.get(colText)
@@ -1325,7 +1317,6 @@ class ViewDatabase {
                 
                 let rootID = try row.get(colRoot)
                 let rootKey = try self.msgKey(id: rootID)
-                
                 
                 let cv = ContentVote(
                     link: lnkKey,
@@ -1433,7 +1424,7 @@ class ViewDatabase {
         
         // making this a two-pass query until i can figure out how to dynamlicly join based on type
 
-        let msgs :[KeyValue] = try db.prepare(qry).map { row in
+        let msgs: [KeyValue] = try db.prepare(qry).map { row in
             // tried 'return try row.decode()'
             // but failed - see https://github.com/VerseApp/ios/issues/29
             
@@ -1451,7 +1442,7 @@ class ViewDatabase {
                 let rootKey = try self.msgKey(id: rootID)
                 
                 let p = Post(
-                    blobs: try self.loadBlobs(for:msgID),
+                    blobs: try self.loadBlobs(for: msgID),
                     mentions: try self.loadMentions(for: msgID),
                     root: rootKey,
                     text: try row.get(colText)
@@ -1466,7 +1457,6 @@ class ViewDatabase {
                 
                 let rootID = try row.get(colRoot)
                 let rootKey = try self.msgKey(id: rootID)
-                
 
                 let cv = ContentVote(
                     link: lnkKey,
@@ -1480,7 +1470,6 @@ class ViewDatabase {
             default:
                 throw ViewDatabaseError.unexpectedContentType(tipe)
             }
-            
          
             let v = Value(
                 author: msgAuthor,
@@ -1558,8 +1547,6 @@ class ViewDatabase {
             .order(colMessageID.desc)
             .limit(limit)
         
-        
-        
         return try self.mapQueryToKeyValue(qry: qry)
     }
     
@@ -1605,7 +1592,7 @@ class ViewDatabase {
                 }
                 
                 let p = Post(
-                    blobs: try self.loadBlobs(for:msgID),
+                    blobs: try self.loadBlobs(for: msgID),
                     mentions: try self.loadMentions(for: msgID),
                     root: rootKey,
                     text: try row.get(colText)
@@ -1620,7 +1607,6 @@ class ViewDatabase {
                 
                 let rootID = try row.get(colRoot)
                 let rootKey = try self.msgKey(id: rootID)
-                
                 
                 let cv = ContentVote(
                     link: lnkKey,
@@ -1671,7 +1657,7 @@ class ViewDatabase {
             let reportType = ReportType(rawValue: rawReportType)!
             
             let createdAtTimestamp = try row.get(colCreatedAt)
-            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1000)
+            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1_000)
             
             let report = Report(authorIdentity: "undefined",
                                 messageIdentifier: msgKey,
@@ -1710,7 +1696,7 @@ class ViewDatabase {
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
         let msgs = try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
         let timeDone = CFAbsoluteTimeGetCurrent()
-        print("\(#function) took \(timeDone-timeStart)")
+        print("\(#function) took \(timeDone - timeStart)")
         return msgs
     }
 
@@ -1844,7 +1830,7 @@ class ViewDatabase {
                     colName <- name
                 ))
             } else {
-                throw ViewDatabaseError.unknownAuthor(name)
+                throw ViewDatabaseError.unknownHashtag(name)
             }
         }
         return channelID
@@ -1868,13 +1854,11 @@ class ViewDatabase {
         } else {
             throw ViewDatabaseError.unknownReferenceID(id)
         }
-
     }
 
     // MARK: fill new messages
     
     private func fillAddress(msgID: Int64, msg: KeyValue) throws {
-        
         
         guard let a = msg.value.content.address else {
             Log.info("[viewdb/fill] broken addr message: \(msg.key)")
@@ -2028,7 +2012,7 @@ class ViewDatabase {
             throw ViewDatabaseError.unhandledContentType(msg.value.content.type)
         }
 
-        var claimedMsg: KeyValue? = nil
+        var claimedMsg: KeyValue?
         do {
             claimedMsg = try self.get(key: dcr.hash)
         } catch ViewDatabaseError.unknownMessage(_) {
@@ -2137,7 +2121,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
-        let createdAt = Date().timeIntervalSince1970 * 1000
+        let createdAt = Date().timeIntervalSince1970 * 1_000
         
         switch msg.value.content.type { // insert individual message types
         case .contact:
@@ -2159,7 +2143,7 @@ class ViewDatabase {
                 let report = Report(authorIdentity: c.contact,
                                     messageIdentifier: msg.key,
                                     reportType: .feedFollowed,
-                                    createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                    createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
                                     keyValue: msg)
                 return [report]
             }
@@ -2185,11 +2169,10 @@ class ViewDatabase {
                             colCreatedAt <- createdAt
                         ))
                         
-                        
                         let report = Report(authorIdentity: repliedIdentity,
                                             messageIdentifier: msg.key,
                                             reportType: .postReplied,
-                                            createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                            createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
                                             keyValue: msg)
                         reports.append(report)
                         reportsIdentities.append(repliedIdentity)
@@ -2209,7 +2192,7 @@ class ViewDatabase {
                             let report = Report(authorIdentity: replyAuthorIdentity,
                                                 messageIdentifier: msg.key,
                                                 reportType: .postReplied,
-                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
                                                 keyValue: msg)
                             reports.append(report)
                             reportsIdentities.append(replyAuthorIdentity)
@@ -2234,7 +2217,7 @@ class ViewDatabase {
                             let report = Report(authorIdentity: identifier,
                                                 messageIdentifier: msg.key,
                                                 reportType: .feedMentioned,
-                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
                                                 keyValue: msg)
                             reports.append(report)
                             reportsIdentities.append(identifier)
@@ -2270,7 +2253,7 @@ class ViewDatabase {
                     let report = Report(authorIdentity: likedMsgIdentity,
                                         messageIdentifier: msg.key,
                                         reportType: .messageLiked,
-                                        createdAt: Date(timeIntervalSince1970: createdAt / 1000),
+                                        createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
                                         keyValue: msg)
                     return [report]
                 }
@@ -2297,7 +2280,7 @@ class ViewDatabase {
     
     private func isOldMessage(msg: KeyValue) -> Bool {
         let now = Date()
-        let claimed = Date(timeIntervalSince1970: msg.value.timestamp/1000)
+        let claimed = Date(timeIntervalSince1970: msg.value.timestamp / 1_000)
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
     }
@@ -2311,14 +2294,14 @@ class ViewDatabase {
         // google claimed this is the tool to use to measure block execution time
         let start = CFAbsoluteTimeGetCurrent()
         // get an idea how many unsupported messages there are
-        var unsupported: [String:Int] = [:]
+        var unsupported: [String: Int] = [:]
         #endif
         
         var reports = [Report]()
         var skipped: UInt = 0
         var lastRxSeq: Int64 = -1
         
-        let loopStart = Date().timeIntervalSince1970*1000
+        let loopStart = Date().timeIntervalSince1970 * 1_000
         for msg in msgs {
             if let msgRxSeq = msg.receivedSeq {
                 lastRxSeq = msgRxSeq
@@ -2329,7 +2312,7 @@ class ViewDatabase {
             }
             
             /* This is the don't put older than 6 months in the db. */
-            if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about)  {
+            if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about) {
                 // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                 skipped += 1
                 print("Skipped(\(msg.value.content.type) \(msg.key)%)")
@@ -2337,7 +2320,6 @@ class ViewDatabase {
                                                         reason: "Old Message")
                 continue
             }
-            
             
             if !pms && !msg.value.content.isValid {
                 // cant ignore PMs right now. they need to be there to be replaced with unboxed content.
@@ -2470,7 +2452,7 @@ class ViewDatabase {
                     Log.info("\(tipe): \(cnt)")
                 }
             }
-            print("unsupported types encountered: \(total) (\(total*100/msgs.count)%)")
+            print("unsupported types encountered: \(total) (\(total * 100 / msgs.count)%)")
         }
         #endif
 
@@ -2545,7 +2527,6 @@ class ViewDatabase {
             colHashedKey <- author.sha256hash
         ))
     }
-    
     
     private func author(from id: Int64) throws -> Identity {
         guard let db = self.openDB else {
@@ -2653,7 +2634,7 @@ class ViewDatabase {
         for branch in br {
             try db.run(self.branches.insert(
                 colTangleID <- tangleID,
-                colBranch <-  try self.msgID(of: branch, make: true)
+                colBranch <- try self.msgID(of: branch, make: true)
             ))
         }
     }
@@ -2663,7 +2644,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
 
-        let notBlobs = mentions.filter { return !$0.link.isBlob }
+        let notBlobs = mentions.filter { !$0.link.isBlob }
         for m in notBlobs {
             if !m.link.isValidIdentifier {
                 continue
@@ -2673,12 +2654,12 @@ class ViewDatabase {
             case .message:
                 try db.run(self.mentions_msg.insert(
                     colMessageRef <- msgID,
-                    colLinkID <-  try self.msgID(of: m.link, make: true)
+                    colLinkID <- try self.msgID(of: m.link, make: true)
                 ))
             case .feed:
                 try db.run(self.mentions_feed.insert(
                     colMessageRef <- msgID,
-                    colFeedID <-  try self.authorID(of: m.link, make: true),
+                    colFeedID <- try self.authorID(of: m.link, make: true),
                     colName <- m.name
                 ))
             default:
@@ -2762,7 +2743,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
-        //let supportedMimeTypes = [MIMEType.jpeg, MIMEType.png]
+        // let supportedMimeTypes = [MIMEType.jpeg, MIMEType.png]
         
         let qry = self.post_blobs.where(colMessageRef == msgID)
             .filter(colMetaMimeType == "image/jpeg" || colMetaMimeType == "image/png" )
@@ -2819,5 +2800,4 @@ class ViewDatabase {
             return 0
         }
     }
-    
 } // end class

@@ -10,7 +10,7 @@ import XCTest
 
 // testing only functions on the Go side
 extension GoBot {
-    func testRefresh(_ tc: XCTestCase) -> Void {
+    func testRefresh(_ tc: XCTestCase) {
         // No test pubs are set up right now, no need to try to sync with them.
 //        let syncExpectation = tc.expectation(description: "Sync")
 //        let peers = Environment.Constellation.stars.map { $0.toPeer() }
@@ -31,7 +31,7 @@ extension GoBot {
     }
     
     func testingCreateKeypair(nick: String) throws {
-        var err: Error? = nil
+        var err: Error?
         nick.withGoString {
             let ok = ssbTestingMakeNamedKey($0)
             if ok != 0 {
@@ -61,7 +61,7 @@ extension GoBot {
 
     func testingPublish(as nick: String, recipients: [Identity]? = nil, content: ContentCodable) -> MessageIdentifier {
         let c = try! content.encodeToData().string()!
-        var identifier: MessageIdentifier? = nil
+        var identifier: MessageIdentifier?
         nick.withGoString { goStrNick in
             c.withGoString { goStrContent in
 
@@ -98,7 +98,7 @@ extension GoBot {
 
     func testingPublish(as nick: String, raw: Data) -> MessageIdentifier {
         let content = raw.string()!
-        var identifier: MessageIdentifier? = nil
+        var identifier: MessageIdentifier?
         nick.withGoString { goStrNick in
             content.withGoString { goStrContent in
 
