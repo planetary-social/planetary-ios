@@ -23,7 +23,6 @@ class ImageButton: UIButton {
         guard let identifier = self.identifier else { return }
         guard let uuid = self.completion else { return }
         Caches.blobs.forgetCompletions(with: uuid, for: identifier)
-        Caches.blobs.cancelDataTask(for: identifier)
     }
 
     /// Sets the image for the specified state from the `BlobCache`.
@@ -31,8 +30,7 @@ class ImageButton: UIButton {
     /// the cache returns a response.  Note that this means whatever
     /// image is currently set will remain until the cache returns.
     func set(image: ImageMetadata?,
-             for state: UIControl.State = .normal)
-    {
+             for state: UIControl.State = .normal) {
         // always forget any pending completion
         self.forgetBlobCompletion()
 

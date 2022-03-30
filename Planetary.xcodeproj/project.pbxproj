@@ -1308,6 +1308,7 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
+		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
 		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
@@ -1855,6 +1856,7 @@
 				5308168521C46A52005C48ED /* UnitTests.xctest */,
 				5308169121C46A6E005C48ED /* APITests.xctest */,
 				0A3880182475BB4500777843 /* UITests.xctest */,
+				C91D9E5C27EDE56B00C79009 /* swiftlint */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2851,13 +2853,28 @@
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C91D9E5B27EDE56B00C79009 /* swiftlint */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C91D9E6027EDE56B00C79009 /* Build configuration list for PBXNativeTarget "swiftlint" */;
+			buildPhases = (
+				C91D9E6327EDE58500C79009 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = swiftlint;
+			productName = swiftlint;
+			productReference = C91D9E5C27EDE56B00C79009 /* swiftlint */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		5344D82321C4649700704A34 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1140;
+				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "Verse Communications Inc";
 				TargetAttributes = {
@@ -2882,6 +2899,9 @@
 								enabled = 1;
 							};
 						};
+					};
+					C91D9E5B27EDE56B00C79009 = {
+						CreatedOnToolsVersion = 13.2.1;
 					};
 				};
 			};
@@ -2940,6 +2960,7 @@
 				5308169021C46A6E005C48ED /* APITests */,
 				5308168421C46A52005C48ED /* UnitTests */,
 				0A3880172475BB4500777843 /* UITests */,
+				C91D9E5B27EDE56B00C79009 /* swiftlint */,
 			);
 		};
 /* End PBXProject section */
@@ -3297,6 +3318,25 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UnitTests/Pods-UnitTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		C91D9E6327EDE58500C79009 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint lint --lenient\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4764,6 +4804,37 @@
 			};
 			name = Release;
 		};
+		C91D9E6127EDE56B00C79009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C91D9E6227EDE56B00C79009 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4808,6 +4879,15 @@
 			buildConfigurations = (
 				5344D83E21C4649A00704A34 /* Debug */,
 				5344D83F21C4649A00704A34 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C91D9E6027EDE56B00C79009 /* Build configuration list for PBXNativeTarget "swiftlint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C91D9E6127EDE56B00C79009 /* Debug */,
+				C91D9E6227EDE56B00C79009 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

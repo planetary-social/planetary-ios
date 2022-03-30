@@ -20,11 +20,11 @@ struct Person: Codable, Equatable {
     let shortcode: String?
 
     var attributedBio: NSAttributedString {
-        return self.bio?.decodeMarkdown() ?? NSAttributedString()
+        self.bio?.decodeMarkdown() ?? NSAttributedString()
     }
 
     static func == (lhs: Person, rhs: Person) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 }
 

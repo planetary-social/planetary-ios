@@ -13,7 +13,7 @@ import Secrets
 class PostHogService: APIService {
 
     var isEnabled: Bool {
-        return posthog?.enabled ?? false
+        posthog?.enabled ?? false
     }
 
     var posthog: PHGPostHog?
@@ -64,5 +64,4 @@ class PostHogService: APIService {
     func track(event: String, params: [String: Any]?) {
         posthog?.capture(event, properties: params)
     }
-
 }

@@ -22,5 +22,4 @@ struct PushAPI {
         }
         #endif
     }()
-    
 }

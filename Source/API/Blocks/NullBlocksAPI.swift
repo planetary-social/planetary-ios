@@ -11,5 +11,4 @@ class NullBlockedAPI: BlockedAPIService {
     func retreiveBlockedList(completion: @escaping BlockedListCompletion) {
         completion([], nil)
     }
-
 }

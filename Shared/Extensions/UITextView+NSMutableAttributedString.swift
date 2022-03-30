@@ -12,7 +12,7 @@ import UIKit
 extension UITextView {
 
     var mutableAttributedText: NSMutableAttributedString {
-        return NSMutableAttributedString(attributedString: self.attributedText)
+        NSMutableAttributedString(attributedString: self.attributedText)
     }
 
     func replaceText(in range: NSRange, with text: NSAttributedString) {

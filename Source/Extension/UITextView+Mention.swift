@@ -13,8 +13,7 @@ extension UITextView {
 
     func replaceText(in range: NSRange,
                      with mention: Mention,
-                     attributes: [NSAttributedString.Key: Any]? = nil)
-    {
+                     attributes: [NSAttributedString.Key: Any]? = nil) {
         let attributes = attributes ?? [:]
         let text = NSMutableAttributedString(attributedString: mention.attributedString)
         text.addAttributes(attributes)

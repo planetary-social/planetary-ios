@@ -270,5 +270,4 @@ final class AnalyticsTests: XCTestCase {
         analytics.trackStatistics(statistics)
         XCTAssertTrue(service.tracked)
     }
-
 }

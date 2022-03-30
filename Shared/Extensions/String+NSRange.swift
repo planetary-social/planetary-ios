@@ -10,7 +10,7 @@ import Foundation
 
 extension String {
 
-    func rangeFromNSRange(nsRange : NSRange) -> Range<String.Index>? {
-        return Range(nsRange, in: self)
+    func rangeFromNSRange(nsRange: NSRange) -> Range<String.Index>? {
+        Range(nsRange, in: self)
     }
 }

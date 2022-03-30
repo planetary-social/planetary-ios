@@ -47,5 +47,4 @@ class RefreshOperation: AsynchronousOperation {
             self?.finish()
         }
     }
-    
 }

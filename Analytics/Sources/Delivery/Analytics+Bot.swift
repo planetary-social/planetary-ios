@@ -72,5 +72,4 @@ public extension Analytics {
         }
         service.track(event: .did, element: .bot, name: "refresh", params: params)
     }
-
 }

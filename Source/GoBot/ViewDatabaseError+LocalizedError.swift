@@ -34,5 +34,4 @@ extension ViewDatabaseError: LocalizedError {
             return "Message constraint violation: \(identity)"
         }
     }
-    
 }

@@ -11,7 +11,7 @@ import Logger
 class AnalyticsServiceAdapter: AnalyticsService {
 
     var isEnabled: Bool {
-        return apiService.isEnabled
+        apiService.isEnabled
     }
 
     var apiService: APIService
@@ -44,7 +44,6 @@ class AnalyticsServiceAdapter: AnalyticsService {
         Log.debug("Tracked \(eventName)")
         apiService.track(event: eventName, params: params)
     }
-
 }
 
 // MARK: Lexicon
@@ -56,5 +55,4 @@ extension AnalyticsService {
         let merged = strings.joined(separator: "_")
         return merged
     }
-
 }

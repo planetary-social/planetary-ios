@@ -52,4 +52,3 @@ class ContactsViewController: ContentViewController, AboutTableViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 }
-

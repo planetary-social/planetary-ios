@@ -32,7 +32,7 @@ class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
 
     // Limit the number of characters in the bio.
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        return textView.text.count + (text.count - range.length) <= 140
+        textView.text.count + (text.count - range.length) <= 140
     }
 
     func textViewDidChange(_ textView: UITextView) {

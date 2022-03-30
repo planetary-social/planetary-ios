@@ -70,7 +70,7 @@ struct Content: Codable {
         var values: KeyedDecodingContainer<Content.CodingKeys>
         var typeString = Content.invalidJSON
         var type = ContentType.unsupported
-        var exception: String? = nil
+        var exception: String?
 
         // the decoder order is important here
         // values must be done first, and non-JSON will throw it
@@ -86,7 +86,7 @@ struct Content: Codable {
             self.typeString = "xxx-encrypted"
             self.typeException = ctx.debugDescription
             return
-        } catch DecodingError.dataCorrupted(let ctx){
+        } catch DecodingError.dataCorrupted(let ctx) {
             exception = ctx.debugDescription
         } catch {
             // most likely unhandled type (like git-update or npm-packages)
@@ -128,17 +128,16 @@ struct Content: Codable {
     /// useful in identifying content that we should be able to
     /// display, but cannot for some reason.
     var isValid: Bool {
-        return self.type != .unsupported && self.contentException == nil
+        self.type != .unsupported && self.contentException == nil
     }
 
     /// Various validators useful to assert an expected type.
-    var isAbout: Bool   { return self.isValid && self.type == .about && self.about != nil }
-    var isAddress: Bool { return self.isValid && self.type == .address && self.address != nil }
-    var isContact: Bool { return self.isValid && self.type == .contact && self.contact != nil }
-    var isPost: Bool    { return self.isValid && self.type == .post && self.post != nil }
-    var isVote: Bool    { return self.isValid && self.type == .vote && self.vote != nil }
+    var isAbout: Bool { self.isValid && self.type == .about && self.about != nil }
+    var isAddress: Bool { self.isValid && self.type == .address && self.address != nil }
+    var isContact: Bool { self.isValid && self.type == .contact && self.contact != nil }
+    var isPost: Bool { self.isValid && self.type == .post && self.post != nil }
+    var isVote: Bool { self.isValid && self.type == .vote && self.vote != nil }
 }
 
 // TODO it seems valuable to perform operations on [Content]
 // that returns bunches of object like [About] or [Vote]
-

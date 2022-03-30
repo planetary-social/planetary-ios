@@ -76,7 +76,7 @@ fileprivate extension Post {
     }
 }
 
-fileprivate class BlobInputSource: InputSource {
+private class BlobInputSource: InputSource {
 
     private let blob: Blob
     private var completionUUID: UUID?
@@ -88,12 +88,10 @@ fileprivate class BlobInputSource: InputSource {
     deinit {
         guard let uuid = self.completionUUID else { return }
         Caches.blobs.forgetCompletions(with: uuid, for: self.blob.identifier)
-        Caches.blobs.cancelDataTask(for: self.blob.identifier)
     }
 
     func load(to imageView: UIImageView,
-              with callback: @escaping (UIImage?) -> Void)
-    {
+              with callback: @escaping (UIImage?) -> Void) {
         // set background color first
         imageView.backgroundColor = self.blob.metadata?.averageColor
 

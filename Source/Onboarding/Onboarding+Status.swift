@@ -20,7 +20,7 @@ extension Onboarding {
         /// Convenience indicating if onboarding needs to be started or resumed.
         /// Will be false if the status is `.completed`.
         var isRequired: Bool {
-            return self != .completed
+            self != .completed
         }
 
         static let key = "onboarding.statuses"
@@ -29,7 +29,7 @@ extension Onboarding {
     /// Returns a dictionary of raw String Identity to String Onboarding.Status, inddicating
     /// the onboarding status for a particular identity.  The raw String values must be used
     /// to allow use of NSKeyedArchiver.
-    static private func statuses() -> [String: String] {
+    private static func statuses() -> [String: String] {
         guard let data = Keychain.data(for: Status.key) else { return [:] }
         guard let object = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) else { return [:] }
         guard let dictionary = object as? [String: String] else { return [:] }

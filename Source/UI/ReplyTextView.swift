@@ -21,7 +21,7 @@ class ReplyTextView: KeyValueView {
     
     var attributedText: NSAttributedString {
         get {
-            return sourceTextView.attributedText
+            sourceTextView.attributedText
         }
 
         set {
@@ -38,7 +38,7 @@ class ReplyTextView: KeyValueView {
 
     var previewActive: Bool {
         get {
-            return renderedTextView.alpha > 0.9
+            renderedTextView.alpha > 0.9
         }
 
         set {
@@ -81,7 +81,7 @@ class ReplyTextView: KeyValueView {
     }()
 
     var isEmpty: Bool {
-        return self.sourceTextView.text?.isEmpty ?? true
+        self.sourceTextView.text?.isEmpty ?? true
     }
 
     var textViewHeightConstraint: NSLayoutConstraint?
@@ -103,7 +103,6 @@ class ReplyTextView: KeyValueView {
                               insets: UIEdgeInsets(top: 0, left: Layout.horizontalSpacing, bottom: -bottomSpacing, right: 0),
                               respectSafeArea: false)
         self.button.constrainSize(to: textViewHeight)
-
 
         let left: CGFloat = Layout.horizontalSpacing + textViewHeight + 7
         let insets = UIEdgeInsets(top: topSpacing, left: left, bottom: -bottomSpacing, right: -Layout.horizontalSpacing)
@@ -155,7 +154,7 @@ class ReplyTextView: KeyValueView {
 
     @discardableResult
     override func becomeFirstResponder() -> Bool {
-        return self.sourceTextView.becomeFirstResponder()
+        self.sourceTextView.becomeFirstResponder()
     }
     
     @discardableResult
@@ -166,7 +165,7 @@ class ReplyTextView: KeyValueView {
     
     override var isUserInteractionEnabled: Bool {
         get {
-            return self.sourceTextView.isUserInteractionEnabled
+            self.sourceTextView.isUserInteractionEnabled
         }
         set {
             self.sourceTextView.isUserInteractionEnabled = newValue

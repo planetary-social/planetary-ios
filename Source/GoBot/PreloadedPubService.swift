@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import CrashReporting
 
 /// A service class that helps manage the pubs that are loaded into Planetary even if they aren't in your social graph
 /// (aka community pubs).
@@ -51,6 +52,7 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
         Log.info("Preloading pub data")
         
         bot.preloadFeed(at: url) { error in
+            CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             Log.info("Finished preloading pub data")
         }

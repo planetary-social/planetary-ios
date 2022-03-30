@@ -20,5 +20,4 @@ protocol LoggerService {
     func unexpected(_ reason: String, _ detail: String?)
 
     func fatal(_ reason: String, _ detail: String?)
-
 }

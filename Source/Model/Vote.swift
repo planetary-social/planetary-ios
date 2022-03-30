@@ -94,7 +94,6 @@ struct ContentVote: ContentCodable {
         self.recps = nil
     }
     
-    
     init(value: Int, root: MessageIdentifier) {
         self.type = .vote
         
@@ -105,7 +104,7 @@ struct ContentVote: ContentCodable {
             exp = "💔"
         }
         self.vote = Vote(link: LinkIdentifier.null, value: value, expression: exp)
-        //self.link = Identity.null
+        // self.link = Identity.null
         
         self.root = root
         self.branch = nil
@@ -113,5 +112,4 @@ struct ContentVote: ContentCodable {
         // TODO: constructor for PMs (should maybe also live in Content.init
         self.recps = nil
     }
-
 }

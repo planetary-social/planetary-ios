@@ -12,5 +12,4 @@ public extension Analytics {
     func trackDidRepair(function: String) {
         service.track(event: .did, element: .app, name: "repair", param: "function", value: function)
     }
-
 }

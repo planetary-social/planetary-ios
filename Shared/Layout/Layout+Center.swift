@@ -14,8 +14,7 @@ extension Layout {
 
     static func center(_ subview: UIView,
                        in view: UIView,
-                       size: CGSize? = nil)
-    {
+                       size: CGSize? = nil) {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -33,8 +32,7 @@ extension Layout {
                        atTopOf superview: UIView,
                        inset: CGFloat = 0,
                        respectSafeArea: Bool = true,
-                       size: CGSize? = nil)
-    {
+                       size: CGSize? = nil) {
         view.translatesAutoresizingMaskIntoConstraints = false
         superview.addSubview(view)
 
@@ -52,8 +50,7 @@ extension Layout {
     
     static func centerHorizontally(_ subview: UIView,
                        in view: UIView,
-                       size: CGSize? = nil)
-    {
+                       size: CGSize? = nil) {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 

@@ -32,7 +32,7 @@ public class Log {
     }
 
     public var fileUrls: [URL] {
-        return service.fileUrls
+        service.fileUrls
     }
 
     @discardableResult
@@ -55,14 +55,13 @@ public class Log {
     public func fatal(_ reason: Reason, _ detail: String?) {
         service.fatal(reason.rawValue, detail)
     }
-
 }
 
 public extension Log {
 
     /// URLs in the device's filesystem that contain what was logged in this and previous sessions
     static var fileUrls: [URL] {
-        return shared.fileUrls
+        shared.fileUrls
     }
 
     /// Log a ERROR message
@@ -113,5 +112,4 @@ public extension Log {
     static func error(_ message: String) {
         shared.service.unexpected(message, nil)
     }
-
 }

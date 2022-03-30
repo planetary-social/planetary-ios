@@ -34,22 +34,22 @@ class DebugTableViewController: UITableViewController {
         self.tableView.reloadData()
     }
 
-    // MARK:- UITableViewDataSource
+    // MARK: - UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.settings[section].header
+        self.settings[section].header
     }
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return self.settings[section].footer
+        self.settings[section].footer
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return self.settings.count
+        self.settings.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.settings[section].cellModels.count
+        self.settings[section].cellModels.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -65,7 +65,7 @@ class DebugTableViewController: UITableViewController {
         return cell
     }
 
-    // MARK:- UITableViewDelegate
+    // MARK: - UITableViewDelegate
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 

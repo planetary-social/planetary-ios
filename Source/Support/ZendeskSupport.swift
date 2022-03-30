@@ -32,7 +32,7 @@ class ZendeskSupport: SupportService {
     }
     
     func mainViewController() -> UIViewController? {
-        return ZDKHelpCenterUi.buildHelpCenterOverviewUi()
+        ZDKHelpCenterUi.buildHelpCenterOverviewUi()
     }
     
     func articleViewController(_ article: SupportArticle) -> UIViewController? {
@@ -59,7 +59,7 @@ class ZendeskSupport: SupportService {
     }
     
     func newTicketViewController() -> UIViewController? {
-        return _newTicketViewController()
+        _newTicketViewController()
     }
     
     func newTicketViewController(from reporter: Identity, reporting identity: Identity, name: String) -> UIViewController? {
@@ -115,7 +115,6 @@ class ZendeskSupport: SupportService {
             return nil
         }
     }
-
 }
 
 typealias RequestAttachments = [RequestAttachment]
@@ -134,7 +133,7 @@ fileprivate extension String {
     /// since strings are internally represented as UTF8 or UTF16, a force unwrap is safe.
     /// https://www.objc.io/blog/2018/02/13/string-to-data-and-back/
     func utf8data() -> Data {
-        return self.data(using: .utf8)!
+        self.data(using: .utf8)!
     }
 }
 
@@ -148,11 +147,10 @@ fileprivate extension KeyValue {
     }
 }
 
-
 fileprivate extension About {
 
     func requestAttachment() -> RequestAttachment {
-        return RequestAttachment(filename: self.nameOrIdentity,
+        RequestAttachment(filename: self.nameOrIdentity,
                                  data: self.identity.utf8data(),
                                  fileType: .plain)
     }
@@ -161,7 +159,7 @@ fileprivate extension About {
 fileprivate extension Identifier {
 
     func requestAttachment() -> RequestAttachment {
-        return RequestAttachment(filename: "content-identifier",
+        RequestAttachment(filename: "content-identifier",
                                  data: self.utf8data(),
                                  fileType: .plain)
     }
@@ -205,7 +203,7 @@ extension ZendeskSupport {
     }
 }
 
-fileprivate struct SupportArticleID {
+private struct SupportArticleID {
     let faq = "360039199393"
     let privacyPolicy = "360036147293"
     let termsOfService = "360035642794"
@@ -213,4 +211,4 @@ fileprivate struct SupportArticleID {
     let editPost = "360039199393"
 }
 
-fileprivate let ids = SupportArticleID()
+private let ids = SupportArticleID()

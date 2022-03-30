@@ -65,7 +65,6 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         self.tokenLabel.constrainHeight(to: 46)
         
         separator = Layout.addSeparator(southOf: self.tokenTextView)
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -93,7 +92,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
             self.alert(error: AppError.invalidInvite)
             return
         }
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
         let star = Star(invite: redeemCode)
         let operation = RedeemInviteOperation(star: star, shouldFollow: true)
         operation.completionBlock = { [weak self] in
@@ -122,5 +121,4 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
     func saveable(_ saveable: Saveable, isReadyToSave: Bool) {
         self.navigationItem.rightBarButtonItem?.isEnabled = isReadyToSave
     }
-    
 }

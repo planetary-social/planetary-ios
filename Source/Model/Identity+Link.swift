@@ -16,7 +16,7 @@ extension Identity {
     
     var publicLink: URL? {
         let host = "https://planetary.link/"
-        let msgPath = self.addingPercentEncoding(withAllowedCharacters:.rfc3986Unreserved)!
+        let msgPath = self.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved)!
         return URL(string: host + msgPath)
     }
 
@@ -37,5 +37,4 @@ extension Identity {
         
         return nil
     }
-
 }

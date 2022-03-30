@@ -11,8 +11,7 @@ import Foundation
 extension Bot {
 
     func blobsAndDatas(for blobs: Blobs,
-                       completion: @escaping (([(Blob, Data)]) -> Void))
-    {
+                       completion: @escaping (([(Blob, Data)]) -> Void)) {
         Thread.assertIsMainThread()
 
         guard blobs.count > 0 else { completion([]) ; return }
@@ -20,7 +19,7 @@ extension Bot {
 
         for (index, blob) in blobs.enumerated() {
             self.data(for: blob.identifier) {
-                identifier, data, error in
+                _, data, _ in
 
                 // include only if data is not empty
                 if let data = data, data.isEmpty == false {

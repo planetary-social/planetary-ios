@@ -1,4 +1,3 @@
-
 //  Post.swift
 //  FBTTUnitTests
 //
@@ -31,7 +30,7 @@ class Post: ContentCodable {
     /// Returns blobs extracted from the post's markdown.
     /// This is expensive to calculate so we lazy load it as an optimiation
     fileprivate(set) lazy var inlineBlobs: Blobs = {
-        return self.text.blobs()
+        self.text.blobs()
     }()
 
     // MARK: Calculated temporal unserialized properties
@@ -44,8 +43,7 @@ class Post: ContentCodable {
     /// Check out NewPostViewController for an example.
     init(attributedText: NSAttributedString,
          root: MessageIdentifier? = nil,
-         branches: [MessageIdentifier]? = nil)
-    {
+         branches: [MessageIdentifier]? = nil) {
         // required
         self.branch = branches
         self.root = root
@@ -54,7 +52,7 @@ class Post: ContentCodable {
 
         var mentionsFromHashtags = attributedText.string.hashtags().map {
             tag in
-            return Mention(link: tag.string)
+            Mention(link: tag.string)
         }
 
         mentionsFromHashtags.append(contentsOf: attributedText.mentions())
@@ -71,8 +69,7 @@ class Post: ContentCodable {
          hashtags: Hashtags? = nil,
          mentions: [Mention]? = nil,
          root: MessageIdentifier? = nil,
-         text: String)
-    {
+         text: String) {
         // required
         self.branch = branches
         self.root = root
@@ -125,7 +122,7 @@ class Post: ContentCodable {
 extension Post {
 
     var isRoot: Bool {
-        return self.root == nil
+        self.root == nil
     }
 
     func doesMention(_ identity: Identity?) -> Bool {
@@ -179,7 +176,6 @@ struct RecipientNamedKey: Codable {
         case link
     }
 }
-
 
 /* TODO: there is a cleaner solution here
  tried this to get [Identity] but got the following error so I added getRecipientIdentities as a workaround

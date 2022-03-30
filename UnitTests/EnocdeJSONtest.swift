@@ -2,7 +2,7 @@ import Multipart
 import UIKit
 import XCTest
 
-//extension Dictionary {
+// extension Dictionary {
 //
 //    // extract uiimage pairs
 //    func splitValues() -> ([String: Any], [String: UIImage]) {
@@ -22,7 +22,7 @@ import XCTest
 //
 //        return (json, images)
 //    }
-//}
+// }
 
 class EncodingTests: XCTestCase {
 
@@ -88,9 +88,7 @@ class EncodingTests: XCTestCase {
             "{\"type\":\"post\",\"text\":\"Bleep bloop ain’t\\n\\nNo fun\\n\\n😩\"}",
         ]
         
-        
-        for (i,text) in texts.enumerated() {
-            
+        for (i, text) in texts.enumerated() {
         
             let p = Post(text: stringFromHex(hex: text))
             do {
@@ -106,10 +104,10 @@ class EncodingTests: XCTestCase {
     }
 }
 
-fileprivate func stringFromHex(hex: String) -> String {
+private func stringFromHex(hex: String) -> String {
     var hex = hex
     var data = Data()
-    while(hex.count > 0) {
+    while hex.count > 0 {
         let c: String = hex.substring(to: hex.index(hex.startIndex, offsetBy: 2))
         hex = hex.substring(from: hex.index(hex.startIndex, offsetBy: 2))
         var ch: UInt32 = 0

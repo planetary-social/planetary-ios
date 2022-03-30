@@ -11,7 +11,7 @@ import Foundation
 extension String {
 
     var isValidBio: Bool {
-        return self.count <= 140
+        self.count <= 140
     }
 
     var isValidName: Bool {

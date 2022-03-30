@@ -33,5 +33,4 @@ final class SecretsServiceAdapterTests: XCTestCase {
         service = SecretsServiceAdapter(bundle: .main)
         XCTAssertNil(service.get(key: "posthog"))
     }
-
 }
