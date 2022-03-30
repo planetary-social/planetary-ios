@@ -88,7 +88,6 @@ private class BlobInputSource: InputSource {
     deinit {
         guard let uuid = self.completionUUID else { return }
         Caches.blobs.forgetCompletions(with: uuid, for: self.blob.identifier)
-        Caches.blobs.cancelDataTask(for: self.blob.identifier)
     }
 
     func load(to imageView: UIImageView,
