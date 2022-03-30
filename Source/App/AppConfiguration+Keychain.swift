@@ -11,7 +11,7 @@ import Foundation
 extension AppConfiguration {
 
     static var current: AppConfiguration? {
-        return Keychain.configuration
+        Keychain.configuration
     }
 
     func apply() {
@@ -30,7 +30,7 @@ extension AppConfiguration {
 extension AppConfigurations {
 
     static var current: AppConfigurations {
-        return Keychain.configurations
+        Keychain.configurations
     }
 
     static func add(_ configuration: AppConfiguration) {

@@ -32,16 +32,14 @@ extension KeyboardHandling where Self: UIViewController {
         // keyboard will be shown or adjusted
         center.addObserver(forName: UIResponder.keyboardWillShowNotification,
                            object: nil,
-                           queue: nil)
-        {
+                           queue: nil) {
             [weak self] notification in
             self?.keyboardWillShow(notification)
         }
 
         // keyboard will be hidden
         center.addObserver(forName: UIResponder.keyboardWillHideNotification,
-                           object: nil,queue: nil)
-        {
+                           object: nil, queue: nil) {
             [weak self] notification in
             self?.keyboardWillHide(notification)
         }

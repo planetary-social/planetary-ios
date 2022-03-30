@@ -30,5 +30,4 @@ final class SecretsTests: XCTestCase {
         service.value = expectedValue
         XCTAssertEqual(secrets.get(key: .posthog), expectedValue)
     }
-
 }

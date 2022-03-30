@@ -22,5 +22,4 @@ struct PubAPI {
         }
         #endif
     }()
-    
 }

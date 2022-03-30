@@ -51,7 +51,7 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
 
     @discardableResult
     override func becomeFirstResponder() -> Bool {
-        return self.nameView.becomeFirstResponder()
+        self.nameView.becomeFirstResponder()
     }
 
     func resignFirstResponders() {
@@ -68,7 +68,7 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
     // MARK: Saveable
 
     var isReadyToSave: Bool {
-        return self.nameView.textView.text.isValidName
+        self.nameView.textView.text.isValidName
     }
 
     // TODO bah protocol requires this, wish is could be defaulted somehow

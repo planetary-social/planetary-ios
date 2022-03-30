@@ -18,8 +18,7 @@ extension Layout {
                              height: CGFloat = Layout.singlePixelHeight,
                              left: CGFloat = 0,
                              right: CGFloat = 0,
-                             color: UIColor = UIColor.separator.top) -> UIView
-    {
+                             color: UIColor = UIColor.separator.top) -> UIView {
         let separator = Layout.separatorView(height: height, left: left, right: right, color: color)
         Layout.fillTop(of: view, with: separator, insets: .zero)
         return separator
@@ -30,8 +29,7 @@ extension Layout {
                              height: CGFloat = Layout.singlePixelHeight,
                              left: CGFloat = 0,
                              right: CGFloat = 0,
-                             color: UIColor = UIColor.separator.bottom) -> UIView
-    {
+                             color: UIColor = UIColor.separator.bottom) -> UIView {
         let separator = Layout.separatorView(height: height, left: left, right: right, color: color)
         separator.constrainHeight(to: height)
         Layout.fillBottom(of: view, with: separator, insets: .zero)
@@ -43,8 +41,7 @@ extension Layout {
                              height: CGFloat = Layout.singlePixelHeight,
                              left: CGFloat = 0,
                              right: CGFloat = 0,
-                             color: UIColor = UIColor.separator.bottom) -> UIView
-    {
+                             color: UIColor = UIColor.separator.bottom) -> UIView {
         assert(peerView.superview != nil)
         let separator = Layout.separatorView(height: height, left: left, right: right, color: color)
         Layout.fillSouth(of: peerView, with: separator)
@@ -55,8 +52,7 @@ extension Layout {
                               left: CGFloat = 0,
                               right: CGFloat = 0,
                               color: UIColor = UIColor.separator.middle,
-                              backgroundColor: UIColor = .white) -> UIView
-    {
+                              backgroundColor: UIColor = .white) -> UIView {
         let backgroundView = UIView.forAutoLayout()
         backgroundView.backgroundColor = backgroundColor
         backgroundView.constrainHeight(to: height)
@@ -84,5 +80,4 @@ extension Layout {
 
         return separator
     }
-
 }

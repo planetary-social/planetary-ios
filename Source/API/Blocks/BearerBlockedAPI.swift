@@ -33,7 +33,7 @@ class PlanetaryBearerBlockedAPI: BlockedAPIService {
     func retreiveBlockedList(completion: @escaping BlockedListCompletion) {
         let complete: APICompletion = {
             data, error in
-            guard error == nil else { completion([], error); return}
+            guard error == nil else { completion([], error); return }
             
             completion(data?.hashedIdentifier() ?? [], nil)
         }
@@ -51,13 +51,12 @@ class PlanetaryBearerBlockedAPI: BlockedAPIService {
         let authHeader = ["X-Planetary-Bearer-Token": token]
         self.get(path: "/block-list", headers: authHeader, completion: complete)
     }
-
 }
 
 extension PlanetaryBearerBlockedAPI: API {
     
     var headers: APIHeaders {
-        return [:] // just here to implement API...
+        [:] // just here to implement API...
     }
 
     func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {
@@ -85,7 +84,7 @@ extension PlanetaryBearerBlockedAPI: API {
     }
 }
 
-// MARK:- Custom decoding
+// MARK: - Custom decoding
 
 fileprivate extension Data {
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-fileprivate class CurrentBundle {}
+private class CurrentBundle {}
 
 extension Bundle {
 

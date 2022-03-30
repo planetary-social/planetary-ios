@@ -30,8 +30,7 @@ class ImageButton: UIButton {
     /// the cache returns a response.  Note that this means whatever
     /// image is currently set will remain until the cache returns.
     func set(image: ImageMetadata?,
-             for state: UIControl.State = .normal)
-    {
+             for state: UIControl.State = .normal) {
         // always forget any pending completion
         self.forgetBlobCompletion()
 

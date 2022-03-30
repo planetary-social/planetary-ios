@@ -36,5 +36,4 @@ public extension Analytics {
     func trackDidShowScreen(screenName: String) {
         service.track(event: .show, element: .screen, name: screenName)
     }
-
 }

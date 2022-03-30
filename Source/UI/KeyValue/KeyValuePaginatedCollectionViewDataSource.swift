@@ -15,13 +15,12 @@ class KeyValuePaginatedCollectionViewDataSource: NSObject {
     func update(source: PaginatedKeyValueDataProxy) {
         self.data = source
     }
-    
 }
 
 extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.data.count
+        self.data.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -38,7 +37,6 @@ extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSource 
         }
         return cell
     }
-    
 }
 
 extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSourcePrefetching {
@@ -53,5 +51,4 @@ extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSourceP
     func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         // ignore cancels since we cant stop running querys anyhow
     }
-    
 }

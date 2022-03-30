@@ -14,13 +14,12 @@ import XCTest
  * TODO: add tests to the view/bot (local) unit tests, that the UI/ViewDB doesn't expose content from the block author
  */
 
-
 // TODO: fix pub setup
 
 // scenario1: unblock works
 class BlockedTests: XCTestCase {
 
-    static var newSecret: Secret? = nil
+    static var newSecret: Secret?
     static var bot: Bot = GoBot()
 
     static var badBot: Identity = "@unset"
@@ -40,7 +39,7 @@ class BlockedTests: XCTestCase {
         }
 
         let createSecretExpectation = self.expectation(description: "Create secret")
-        BlockedTests.bot.createSecret() {
+        BlockedTests.bot.createSecret {
             sec, err in
             XCTAssertNil(err)
             BlockedTests.newSecret = sec
@@ -126,7 +125,7 @@ class BlockedTests: XCTestCase {
     // regression test
     func test000_setup2_regression_sync_then_logout() {
         let syncExpectation = self.expectation(description: "Sync")
-        BlockedTests.bot.sync() {
+        BlockedTests.bot.sync {
             err, ts, _ in
             XCTAssertNil(err)
             XCTAssertNotEqual(ts, 0)
@@ -135,7 +134,7 @@ class BlockedTests: XCTestCase {
         self.wait(for: [syncExpectation], timeout: 30)
 
         let logoutExpectation = self.expectation(description: "Logout")
-        BlockedTests.bot.logout() {
+        BlockedTests.bot.logout {
             XCTAssertNil($0)
             logoutExpectation.fulfill()
         }
@@ -201,7 +200,7 @@ class BlockedTests: XCTestCase {
 
         let blockExpectation = self.expectation(description: "Block")
         BlockedTests.bot.block(BlockedTests.badBot) {
-            ref, err in
+            _, err in
             XCTAssertNil(err)
             blockExpectation.fulfill()
         }
@@ -240,8 +239,7 @@ class BlockedTests: XCTestCase {
         TestAPI.shared.blockedBlocked(bot: BlockedTests.badBot,
                                    author: BlockedTests.bot.identity!,
                                       seq: latestSeq,
-                                      ref: postAfterBlock)
-        {
+                                      ref: postAfterBlock) {
             err in
             XCTAssertNil(err)
             blockedExpectation.fulfill()
@@ -267,7 +265,7 @@ class BlockedTests: XCTestCase {
 
         let unblockExpectation = self.expectation(description: "Unblock")
         BlockedTests.bot.unblock(BlockedTests.badBot) {
-            ref, err in
+            _, err in
             XCTAssertNil(err)
             unblockExpectation.fulfill()
         }
@@ -275,7 +273,7 @@ class BlockedTests: XCTestCase {
 
         let publishExpectation = self.expectation(description: "Publish")
         var unblockPostRef: MessageIdentifier = "%unset"
-        BlockedTests.bot.publish(content: Post(text:"lets see if they improved")) {
+        BlockedTests.bot.publish(content: Post(text: "lets see if they improved")) {
             ref, err in
             XCTAssertNil(err)
             unblockPostRef = ref
@@ -290,7 +288,7 @@ class BlockedTests: XCTestCase {
         let threadExpectation = self.expectation(description: "Thread")
         var latestSeq: Int = -1
         BlockedTests.bot.thread(rootKey: unblockPostRef) {
-            root, replies, err in
+            root, _, err in
             defer { threadExpectation.fulfill() }
             XCTAssertNil(err)
             guard let r = root else {
@@ -310,8 +308,7 @@ class BlockedTests: XCTestCase {
         TestAPI.shared.blockedUnblocked(bot: BlockedTests.badBot,
                                      author: BlockedTests.bot.identity!,
                                         seq: latestSeq,
-                                        ref: unblockPostRef)
-        {
+                                        ref: unblockPostRef) {
             err in
             XCTAssertNil(err)
             blockedExpectation.fulfill()
@@ -365,7 +362,7 @@ class BlockedTests: XCTestCase {
     @discardableResult
     func syncAndRefresh() -> Bool {
         let syncExpectation = self.expectation(description: "Sync")
-        BlockedTests.bot.sync() {
+        BlockedTests.bot.sync {
             error, _, _ in
             XCTAssertNil(error)
             syncExpectation.fulfill()
@@ -373,7 +370,7 @@ class BlockedTests: XCTestCase {
         self.wait(for: [syncExpectation], timeout: 30)
 
         let refreshExpectation = self.expectation(description: "Refresh")
-        BlockedTests.bot.refresh() {
+        BlockedTests.bot.refresh {
             error, _ in
             XCTAssertNil(error, "view refresh failed")
             refreshExpectation.fulfill()

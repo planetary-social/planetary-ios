@@ -6,7 +6,7 @@
 import Foundation
 import Analytics
 
-// MARK:- API statistics
+// MARK: - API statistics
 
 struct BotStatistics: Equatable {
 
@@ -50,7 +50,6 @@ extension BotStatistics {
 
         return statistics
     }
-
 }
 
 struct RepoStatistics: Equatable {
@@ -90,7 +89,6 @@ struct DatabaseStatistics: Equatable {
     init(lastReceivedMessage: Int = -2) {
         self.lastReceivedMessage = lastReceivedMessage
     }
-
 }
 
 struct PeerStatistics: Equatable {
@@ -107,8 +105,7 @@ struct PeerStatistics: Equatable {
     init(count: Int? = 0,
          connectionCount: UInt? = 0,
          identities: [(String, String)]? = [],
-         open: [(String, String)]? = [])
-    {
+         open: [(String, String)]? = []) {
         self.count = count ?? 0
         self.connectionCount = connectionCount ?? 0
         self.identities = identities ?? []
@@ -116,7 +113,7 @@ struct PeerStatistics: Equatable {
     }
     
     static func == (lhs: PeerStatistics, rhs: PeerStatistics) -> Bool {
-        return lhs.count == rhs.count &&
+        lhs.count == rhs.count &&
         lhs.connectionCount == rhs.connectionCount &&
         lhs.identities.map { $0.0 } == rhs.identities.map { $0.0 } &&
         lhs.identities.map { $0.1 } == rhs.identities.map { $0.1 } &&

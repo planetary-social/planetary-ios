@@ -20,5 +20,4 @@ extension GoBotError: LocalizedError {
             return "Unexpected fault: \(string)"
         }
     }
-    
 }

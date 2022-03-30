@@ -13,5 +13,4 @@ protocol PhoneVerificationAPIService {
     func requestCode(country: String, phone: String, completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void))
     
     func verifyCode(_ code: String, country: String, phone: String, completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void))
-    
 }

@@ -13,13 +13,13 @@ extension UIView {
 
     var widthConstraint: NSLayoutConstraint? {
         get {
-            return constraints.first { $0.firstAttribute == .width && $0.relation == .equal }
+            constraints.first { $0.firstAttribute == .width && $0.relation == .equal }
         }
     }
 
     var heightConstraint: NSLayoutConstraint? {
         get {
-            return constraints.first { $0.firstAttribute == .height && $0.relation == .equal }
+            constraints.first { $0.firstAttribute == .height && $0.relation == .equal }
         }
     }
 }

@@ -9,14 +9,13 @@ struct DebugTableViewCellModel {
     // IMPORTANT!
     // Be sure to use [unowned self] if your closure uses 'self'
     // otherwise a retain cycle will be created.
-    var valueClosure: ((_ cell: UITableViewCell) -> ())?
-    var actionClosure: ((_ cell: UITableViewCell) -> ())?
+    var valueClosure: ((_ cell: UITableViewCell) -> Void)?
+    var actionClosure: ((_ cell: UITableViewCell) -> Void)?
 
     init(title: String? = nil,
          cellReuseIdentifier: String = DebugValueTableViewCell.className,
-         valueClosure: ((_ cell: UITableViewCell) -> ())? = nil,
-         actionClosure: ((_ cell: UITableViewCell) -> ())? = nil)
-    {
+         valueClosure: ((_ cell: UITableViewCell) -> Void)? = nil,
+         actionClosure: ((_ cell: UITableViewCell) -> Void)? = nil) {
         self.title = title ?? ""
         self.cellReuseIdentifier = cellReuseIdentifier
         self.valueClosure = valueClosure

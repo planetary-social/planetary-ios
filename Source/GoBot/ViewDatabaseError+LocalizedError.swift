@@ -20,6 +20,8 @@ extension ViewDatabaseError: LocalizedError {
             return "Unknown message: \(messageIdentifier)"
         case .unknownAuthor(let identifier):
             return "Unknown author: \(identifier)"
+        case .unknownHashtag(let hashtag):
+            return "There are no messages with the hashtag #\(hashtag) in your network."
         case .unknownReferenceID(let referenceId):
             return "Unknown reference id: \(referenceId)"
         case .unexpectedContentType(let contentType):
@@ -32,5 +34,4 @@ extension ViewDatabaseError: LocalizedError {
             return "Message constraint violation: \(identity)"
         }
     }
-    
 }

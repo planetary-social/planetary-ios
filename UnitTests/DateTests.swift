@@ -11,8 +11,8 @@ import XCTest
 class DateTests: XCTestCase {
 
     func test_randomDate() {
-        XCTAssertEqual(Calendar.current.component(.year, from: Date.random(in: 1975)), 1975)
-        XCTAssertEqual(Calendar.current.component(.year, from: Date.random(in: 2040)), 2040)
+        XCTAssertEqual(Calendar.current.component(.year, from: Date.random(in: 1_975)), 1_975)
+        XCTAssertEqual(Calendar.current.component(.year, from: Date.random(in: 2_040)), 2_040)
         XCTAssertFalse(Calendar.current.component(.year, from: Date.random(in: 0)) == 0)
     }
 
@@ -59,7 +59,7 @@ class DateTests: XCTestCase {
         // note that if the date component fails to create a date
         // the test will fail because it will not match the ISO string
         var components = DateComponents()
-        components.year = 2012
+        components.year = 2_012
         components.month = 12
         components.day = 12
         components.hour = 12
@@ -76,7 +76,7 @@ class DateTests: XCTestCase {
         let dictionary: [String: Any] = ["date": date, "ignore": true]
         let transformed = dictionary.copyByTransformingValues(of: Date.self) {
             value in
-            return value.iso8601String
+            value.iso8601String
         }
         XCTAssertTrue(transformed.count == 2)
         XCTAssertTrue((transformed["date"] as? String) == "2012-12-12T12:12:12Z")

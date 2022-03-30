@@ -15,11 +15,11 @@ extension Notification.Name {
 extension Notification {
 
     var about: About? {
-        return self.userInfo?["about"] as? About
+        self.userInfo?["about"] as? About
     }
 
     static func didUpdateAbout(_ about: About?) -> Notification {
-        return Notification(name: .didUpdateAbout,
+        Notification(name: .didUpdateAbout,
                             object: nil,
                             userInfo: ["about": about])
     }

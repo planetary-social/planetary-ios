@@ -161,5 +161,4 @@ class MissionControlCenter {
         
         self.operationQueue.addOperation(refreshOperation)
     }
-    
 }

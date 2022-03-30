@@ -14,7 +14,9 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
-
+    
+    required init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?) {}
+    
     func lastReceivedTimestam() throws -> Double {
         fatalError("TODO:\(#function)")
     }
@@ -68,8 +70,7 @@ class FakeBot: Bot {
 
     func addBlob(jpegOf image: UIImage,
                  largestDimension: UInt?,
-                 completion: @escaping AddImageCompletion)
-    {
+                 completion: @escaping AddImageCompletion) {
         fatalError("TODO:blobs:get")
     }
     
@@ -82,8 +83,7 @@ class FakeBot: Bot {
     }
 
     func data(for identifier: BlobIdentifier,
-              completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
-    {
+              completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) {
         fatalError("TODO")
     }
 
@@ -161,9 +161,8 @@ class FakeBot: Bot {
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion) {
         fatalError("TODO")
     }
-    
 
-    init() {}
+    required init() {}
     static let shared = FakeBot()
 
     // MARK: Name
@@ -175,7 +174,7 @@ class FakeBot: Bot {
     // MARK: Login
     private var _network: String?
     private var _identity: Identity?
-    var identity: Identity? { return self._identity }
+    var identity: Identity? { self._identity }
 
     func createSecret(completion: SecretCompletion) {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
@@ -245,7 +244,7 @@ class FakeBot: Bot {
         return abouts.first
     }
 
-    var about: About? { return nil }
+    var about: About? { nil }
 
     func about(completion: @escaping AboutCompletion) {
 
@@ -338,7 +337,7 @@ class FakeBot: Bot {
 
     private var _statistics = BotStatistics()
     var mockStatistics = [BotStatistics]()
-    var statistics: BotStatistics { return mockStatistics.popLast() ?? _statistics }
+    var statistics: BotStatistics { mockStatistics.popLast() ?? _statistics }
     
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
         let statistics = mockStatistics.popLast() ?? _statistics
@@ -352,5 +351,4 @@ class FakeBot: Bot {
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion) {
         completion(nil)
     }
-    
 }

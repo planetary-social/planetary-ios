@@ -28,11 +28,11 @@ typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
-enum RefreshLoad: Int, CaseIterable {
+enum RefreshLoad: Int32, CaseIterable {
     case tiny = 500 // about 1 second on modern hardware
-    case short = 15000 // about 10 seconds
-    case medium = 45000 // about 30 seconds
-    case long = 100000 // about 60 seconds
+    case short = 15_000 // about 10 seconds
+    case medium = 45_000 // about 30 seconds
+    case long = 100_000 // about 60 seconds
 }
 
 /// Abstract interface to any SSB bot implementation.
@@ -44,6 +44,7 @@ protocol Bot {
     var version: String { get }
 
     // MARK: AppLifecycle
+    init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
     func suspend()
     func exit()
     
@@ -211,7 +212,6 @@ protocol Bot {
     // MARK: Preloading
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
-    
 }
 
 extension Bot {
@@ -236,7 +236,7 @@ extension Bot {
     }
     
     func refresh(load: RefreshLoad, queue: DispatchQueue = .main) async -> (Error?, TimeInterval) {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             refresh(load: load, queue: queue) { result1, result2 in
                 continuation.resume(returning: (result1, result2))
             }
@@ -260,8 +260,8 @@ extension Bot {
     }
     
     func statistics() async -> BotStatistics {
-        return await withCheckedContinuation { continuation in
-            statistics() { result in
+        await withCheckedContinuation { continuation in
+            statistics { result in
                 continuation.resume(returning: result)
             }
         }
@@ -276,7 +276,7 @@ extension Bot {
     }
     
     func about(identity: Identity) async throws -> About? {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             about(identity: identity) { about, error in
                 if let error = error {
                     continuation.resume(throwing: error)
@@ -300,7 +300,7 @@ extension Bot {
     }
     
     func publish(content: ContentCodable) async throws -> MessageIdentifier {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             publish(content: content) { result, error in
                 if let error = error {
                     continuation.resume(throwing: error)
@@ -322,5 +322,4 @@ extension Bot {
     func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
-    
 }

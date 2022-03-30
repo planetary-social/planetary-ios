@@ -50,7 +50,7 @@ extension AppController {
     }
 }
 
-// MARK:- Memory pressure
+// MARK: - Memory pressure
 
 extension AppController {
 

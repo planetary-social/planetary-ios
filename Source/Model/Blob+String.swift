@@ -29,7 +29,7 @@ extension String {
 
         // extract substrings and ranges
         let substringsAndRanges = results.map {
-            return (string.substring(with: $0.range), $0.range)
+            (string.substring(with: $0.range), $0.range)
         }
 
         // trim trailing space and adjust range

@@ -18,8 +18,7 @@ extension Layout {
     @discardableResult
     static func fillSouth(of peerView: UIView,
                           with subview: UIView,
-                          insets: UIEdgeInsets = .zero) -> TopLeftRightConstraints
-    {
+                          insets: UIEdgeInsets = .zero) -> TopLeftRightConstraints {
         assert(peerView.superview != nil)
         let superview = peerView.superview!
         subview.translatesAutoresizingMaskIntoConstraints = false
@@ -38,8 +37,7 @@ extension Layout {
     @discardableResult
     static func fillNorth(of peerView: UIView,
                           with subview: UIView,
-                          insets: UIEdgeInsets = .zero) -> LeftBottomRightConstraints
-    {
+                          insets: UIEdgeInsets = .zero) -> LeftBottomRightConstraints {
         assert(peerView.superview != nil)
         let superview = peerView.superview!
         subview.translatesAutoresizingMaskIntoConstraints = false

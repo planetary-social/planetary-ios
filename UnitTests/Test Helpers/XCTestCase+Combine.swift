@@ -66,11 +66,9 @@ extension XCTestCase {
                                     line: line
                                 )
                                 continuation.resume(with: unwrappedResult)
-                                
                             } catch {
                                 continuation.resume(with: .failure(error))
                             }
-                            
                         },
                         receiveValue: { value in
                             result = .success(value)

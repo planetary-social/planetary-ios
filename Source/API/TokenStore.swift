@@ -31,8 +31,8 @@ class TokenStore {
     }
 
     func current() -> String? {
-        //allow blank tokenss
-        //guard self.currentBearerToken != "" else { return nil }
+        // allow blank tokenss
+        // guard self.currentBearerToken != "" else { return nil }
         return self.currentBearerToken
     }
     

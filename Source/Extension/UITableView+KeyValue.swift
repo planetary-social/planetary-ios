@@ -16,16 +16,14 @@ extension UITableView {
     /// or not in the collection, nothing happens.
     func scroll(to keyValue: KeyValue,
                 scrollPosition: UITableView.ScrollPosition = .top,
-                animated: Bool = true)
-    {
+                animated: Bool = true) {
         guard let indexPath = self.indexPath(for: keyValue) else { return }
         self.scrollToRow(at: indexPath, at: scrollPosition, animated: animated)
     }
 
     func scroll(toKeyValueWith key: Identifier,
                 scrollPosition: UITableView.ScrollPosition = .top,
-                animated: Bool = true)
-    {
+                animated: Bool = true) {
         guard let indexPath = self.indexPath(forKeyValueWith: key) else { return }
         self.scrollToRow(at: indexPath, at: scrollPosition, animated: animated)
     }

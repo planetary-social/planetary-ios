@@ -23,14 +23,14 @@ let botTestConfiguration = { () -> AppConfiguration in
     return config
 }()
 
-fileprivate let publishManyCount = 25
+private let publishManyCount = 25
 
 /// Tests for the GoBot that need to run in a specific order.
 ///
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotOrderedTests: XCTestCase {
 
-    static let shared = GoBot(userDefaults: userDefaults)
+    static let shared = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
     
     static let userDefaults = { () -> UserDefaults in
         let defaults = UserDefaults()
@@ -84,13 +84,12 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertNil(loginErr)
         }
         self.wait(for: [ex], timeout: 10)
-        
     }
     
     func test001_regression_tests() {
         // first, log out for things we shouldn't be able to do
         let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.logout() {
+        GoBotOrderedTests.shared.logout {
             XCTAssertNil($0)
             ex.fulfill()
         }
@@ -196,8 +195,8 @@ class GoBotOrderedTests: XCTestCase {
 
         let exStats = self.expectation(description: "\(#function)")
         GoBotOrderedTests.shared.statistics { statistics in
-            XCTAssertEqual(statistics.db.lastReceivedMessage, 0+publishManyCount)
-            XCTAssertEqual(statistics.repo.messageCount, 1+publishManyCount)
+            XCTAssertEqual(statistics.db.lastReceivedMessage, 0 + publishManyCount)
+            XCTAssertEqual(statistics.repo.messageCount, 1 + publishManyCount)
             exStats.fulfill()
         }
         self.wait(for: [exStats], timeout: 10)
@@ -272,13 +271,13 @@ class GoBotOrderedTests: XCTestCase {
     
     /// Tests that the getPublishedLog function returns nil when we pass an out-of-bounds index.
     func test054_getPublishLogGivenIndexOOB() throws {
-        let publishedMessages = try GoBotOrderedTests.shared.bot.getPublishedLog(after: 99999999)
+        let publishedMessages = try GoBotOrderedTests.shared.bot.getPublishedLog(after: 99_999_999)
         XCTAssertEqual(publishedMessages.count, 0)
     }
 
     func test101_ViewHasAboutSelf() {
         let ex = self.expectation(description: "\(#function)")
-        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, 1+publishManyCount+1)
+        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, 1 + publishManyCount + 1)
         GoBotOrderedTests.shared.about(identity: botTestsKey.identity) {
             about, err in
             XCTAssertNotNil(about)
@@ -299,7 +298,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
 
         XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.feedCount, nicks.count + 1)
-        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, publishManyCount+2+nicks.count)
+        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, publishManyCount + 2 + nicks.count)
 
         for n in nicks {
             let ex = self.expectation(description: "\(#function)")
@@ -323,11 +322,11 @@ class GoBotOrderedTests: XCTestCase {
         // 1 only followed (c)
 
         let whoFollowsWho: [String: [String]] = [
-            "alice":   ["barbara", "claire"],
+            "alice": ["barbara", "claire"],
             "barbara": ["alice"],
-            "claire":  [],
-            "denise":  ["alice", "barbara", "claire"],
-            "page":    [],
+            "claire": [],
+            "denise": ["alice", "barbara", "claire"],
+            "page": [],
         ]
         for tcase in whoFollowsWho {
             for who in tcase.value {
@@ -348,7 +347,7 @@ class GoBotOrderedTests: XCTestCase {
 
         let nFollows = 6
         let extra = 2 + 5 // abouts
-        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, publishManyCount+extra+nFollows)
+        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, publishManyCount + extra + nFollows)
 
         for tc in whoFollowsWho {
             let ex = self.expectation(description: "\(#function) follow \(tc)")
@@ -366,12 +365,12 @@ class GoBotOrderedTests: XCTestCase {
 
         // reverse lookup
         let whoIsFollowedByWho: [String: [String]] = [
-                  "alice":   ["barbara", "denise"],
+                  "alice": ["barbara", "denise"],
                   "barbara": ["alice", "denise"],
-                  "claire":  ["alice", "denise"],
-                  "denise":  [],
-                  "page":    [],
-              ]
+                  "claire": ["alice", "denise"],
+                  "denise": [],
+                  "page": [],
+        ]
         for tc in whoIsFollowedByWho {
             let ex = self.expectation(description: "\(#function) check \(tc)")
             GoBotOrderedTests.shared.followedBy(identity: GoBotOrderedTests.pubkeys[tc.key]!) {
@@ -391,7 +390,7 @@ class GoBotOrderedTests: XCTestCase {
     func test111_skip_unsupported_messages() {
         let currentCount = GoBotOrderedTests.shared.statistics.db.lastReceivedMessage
 
-        let n = 6000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
+        let n = 6_000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
         for i in 1...n {
             let rawJSON = "{ \"type\": \"really-weird-unsupported-for-sure\", \"i\": \(i) }"
             _ = GoBotOrderedTests.shared.testingPublish(as: "denise", raw: rawJSON.data(using: .utf8)!)
@@ -417,7 +416,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
 
         XCTAssertNotEqual(GoBotOrderedTests.shared.statistics.db.lastReceivedMessage, currentCount, "still at the old level")
-        XCTAssertGreaterThan(GoBotOrderedTests.shared.statistics.db.lastReceivedMessage, currentCount+n, "did not get all the messages")
+        XCTAssertGreaterThan(GoBotOrderedTests.shared.statistics.db.lastReceivedMessage, currentCount + n, "did not get all the messages")
 
         // make sure we got the supported message
         ex = self.expectation(description: "\(#function) 3")
@@ -435,7 +434,7 @@ class GoBotOrderedTests: XCTestCase {
 
     func test121_first_notification_empty() {
         let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.reports() {
+        GoBotOrderedTests.shared.reports {
             reports, err in
             XCTAssertNil(err)
             XCTAssertEqual(reports.count, 0)
@@ -452,7 +451,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
 
         let ex = self.expectation(description: "\(#function) notify")
-        GoBotOrderedTests.shared.reports() {
+        GoBotOrderedTests.shared.reports {
             reports, err in
             defer { ex.fulfill() }
             XCTAssertNil(err)
@@ -470,27 +469,27 @@ class GoBotOrderedTests: XCTestCase {
 
     func test130_recent_empty() {
         let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, publishManyCount+1)
+            XCTAssertEqual(msgs.count, publishManyCount + 1)
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
     }
 
     func test131_recent_post_by_not_followed() {
-        let _ = GoBotOrderedTests.shared.testingPublish(
+        _ = GoBotOrderedTests.shared.testingPublish(
             as: "alice",
             content: Post(text: "hello, world!"))
 
         GoBotOrderedTests.shared.testRefresh(self)
         
         let rex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, publishManyCount+1)
+            XCTAssertEqual(msgs.count, publishManyCount + 1)
             rex.fulfill()
         }
         self.wait(for: [rex], timeout: 10)
@@ -510,11 +509,11 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
         
         let ex2 = self.expectation(description: "2")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, publishManyCount+1+1)
-            guard let kv =  msgs.keyValueBy(index: 0) else { XCTFail("no message"); return }
+            XCTAssertEqual(msgs.count, publishManyCount + 1 + 1)
+            guard let kv = msgs.keyValueBy(index: 0) else { XCTFail("no message"); return }
             XCTAssertEqual(kv.value.author, GoBotOrderedTests.pubkeys["alice"]!)
             ex2.fulfill()
         }
@@ -569,7 +568,6 @@ class GoBotOrderedTests: XCTestCase {
             let data = try! Post(text: "lots of spam posts \(i)").encodeToData()
             let newRef = GoBotOrderedTests.shared.testingPublish(as: "page", raw: data)
             refs.append(newRef)
-            
         }
         GoBotOrderedTests.shared.testRefresh(self)
        
@@ -592,9 +590,9 @@ class GoBotOrderedTests: XCTestCase {
         
         // run two prefetches right after another
         proxy.prefetchUpTo(index: 40)
-        usleep(130000) // prefetch debounce is 125ms
+        usleep(130_000) // prefetch debounce is 125ms
         proxy.prefetchUpTo(index: 50)
-        usleep(130000) // prefetch debounce is 125ms
+        usleep(130_000) // prefetch debounce is 125ms
         proxy.prefetchUpTo(index: 60)
         sleep(1)
         
@@ -604,7 +602,7 @@ class GoBotOrderedTests: XCTestCase {
                 return
             }
             // profile view is most recent (last published) first
-            let want = "lots of spam posts \(100-i)"
+            let want = "lots of spam posts \(100 - i)"
             XCTAssertEqual(kv.value.content.post?.text, want)
         }
     }
@@ -619,7 +617,7 @@ class GoBotOrderedTests: XCTestCase {
         ]
         var root: MessageIdentifier = "%fake.unset"
         var lastBranch: MessageIdentifier = "%fake.unset"
-        for (i,p) in posts.enumerated() {
+        for (i, p) in posts.enumerated() {
             if i == 0 {
                 let ref = GoBotOrderedTests.shared.testingPublish(as: p.0, content: Post(text: p.1))
                 root = ref
@@ -636,7 +634,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
 
         var ex = self.expectation(description: "\(#function) thread")
-        var msgMaybe: KeyValue? = nil
+        var msgMaybe: KeyValue?
         GoBotOrderedTests.shared.thread(rootKey: root) {
             rootMsg, replies, err in
             XCTAssertNil(err)
@@ -688,7 +686,7 @@ class GoBotOrderedTests: XCTestCase {
         let ex = self.expectation(description: "\(#function)")
         let tref = BlobIdentifier("&w6uP8Tcg6K2QR905Rms8iXTlksL6OD1KOWBxTK7wxPI=.sha256")
         GoBotOrderedTests.shared.data(for: tref) {
-            identifier, data, err in
+            _, data, err in
             XCTAssertNotNil(data)
             XCTAssertNil(err)
             let td = String(bytes: data!, encoding: .utf8)
@@ -712,7 +710,6 @@ class GoBotOrderedTests: XCTestCase {
             msgRef = ref
         }
         self.wait(for: [ex], timeout: 10)
-        
 
         let postedMsg = try! GoBotOrderedTests.shared.database.get(key: msgRef)
         guard let m = postedMsg.value.content.post?.mentions else { XCTFail("not a post?"); return }
@@ -848,7 +845,7 @@ class GoBotOrderedTests: XCTestCase {
 
     func test181_getMsgForNewPost() {
         let ex = self.expectation(description: "\(#function)")
-        let tag = Hashtag(name:"helloWorld")
+        let tag = Hashtag(name: "helloWorld")
         GoBotOrderedTests.shared.posts(with: tag) {
             (msgs, err) in
             XCTAssertNil(err)
@@ -863,14 +860,13 @@ class GoBotOrderedTests: XCTestCase {
     func test200_delete_own_message() {
         var currentCount = -1
         let ex1 = self.expectation(description: "\(#function) recent")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
             currentCount = msgs.count
             ex1.fulfill()
         }
         self.wait(for: [ex1], timeout: 10)
-        
 
         let p = Post(text: "whoops, i will not have wanted to post this!")
         var whoopsRef: MessageIdentifier = "unset"
@@ -903,21 +899,20 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex4], timeout: 10)
 
         let ex5 = self.expectation(description: "\(#function) final recent")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             defer { ex5.fulfill() }
-            guard msgs.count == currentCount+3 else {
+            guard msgs.count == currentCount + 3 else {
                 XCTFail("not enough messages: \(msgs.count)")
                 return
             }
             XCTAssertNil(err)
             let allMsgs = msgs.getAllMessages()
-            XCTAssertTrue(allMsgs.contains { return $0.key == whoopsRef })
+            XCTAssertTrue(allMsgs.contains { $0.key == whoopsRef })
             let xref = Dictionary(grouping: allMsgs, by: { $0.key })
             XCTAssertEqual(xref.filter { $1.count > 1 }.count, 0)
         }
         self.wait(for: [ex5], timeout: 10)
-        
 
         let exDelete = self.expectation(description: "\(#function) delete")
         GoBotOrderedTests.shared.delete(message: whoopsRef) {
@@ -926,18 +921,16 @@ class GoBotOrderedTests: XCTestCase {
             exDelete.fulfill()
         }
         self.wait(for: [exDelete], timeout: 10)
-        
 
         // gone from recent
         let exGone = self.expectation(description: "\(#function) gone")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
-            XCTAssertEqual(msgs.count, currentCount+2)
+            XCTAssertEqual(msgs.count, currentCount + 2)
             XCTAssertNil(err)
             exGone.fulfill()
         }
         self.wait(for: [exGone], timeout: 10)
-        
 
         // gone from direct open
         let exThread = self.expectation(description: "\(#function) gone")
@@ -975,10 +968,9 @@ class GoBotOrderedTests: XCTestCase {
             msgs, err in
             defer { ex.fulfill() }
             XCTAssertNil(err)
-            XCTAssertTrue(msgs.getAllMessages().contains { return $0.key == ughMsg })
+            XCTAssertTrue(msgs.getAllMessages().contains { $0.key == ughMsg })
         }
         self.wait(for: [ex], timeout: 10)
-        
 
         // user triggers delete of that message
         let exDelete = self.expectation(description: "\(#function) delete")
@@ -988,7 +980,6 @@ class GoBotOrderedTests: XCTestCase {
             exDelete.fulfill()
         }
         self.wait(for: [exDelete], timeout: 10)
-        
 
         // and now it's gone!
         let exGone = self.expectation(description: "\(#function) chek gone")
@@ -996,10 +987,9 @@ class GoBotOrderedTests: XCTestCase {
             msgs, err in
             defer { exGone.fulfill() }
             XCTAssertNil(err)
-            XCTAssertFalse(msgs.getAllMessages().contains { return $0.key == ughMsg })
+            XCTAssertFalse(msgs.getAllMessages().contains { $0.key == ughMsg })
         }
         self.wait(for: [exGone], timeout: 10)
-        
     }
     
     // MARK: block a user
@@ -1008,7 +998,7 @@ class GoBotOrderedTests: XCTestCase {
         var currentCount = -1
         let ex = self.expectation(description: "\(#function)")
         // Count starting messages
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
             currentCount = msgs.count
@@ -1056,14 +1046,13 @@ class GoBotOrderedTests: XCTestCase {
 
         // see the stinks
         let exRecent = self.expectation(description: "\(#function) stinks")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, currentCount+spamCount+1)
+            XCTAssertEqual(msgs.count, currentCount + spamCount + 1)
             exRecent.fulfill()
         }
         self.wait(for: [exRecent], timeout: 10)
-        
         
         // see the uglyness
         let exThread = self.expectation(description: "\(#function) ugly")
@@ -1071,9 +1060,9 @@ class GoBotOrderedTests: XCTestCase {
             root, replies, err in
             XCTAssertNil(err)
             XCTAssertNotNil(root)
-            XCTAssertEqual(replyCount+1, replies.count) // one new post
+            XCTAssertEqual(replyCount + 1, replies.count) // one new post
             XCTAssertTrue(replies.getAllMessages().contains { kv in
-                return kv.key == offseniveRef
+                kv.key == offseniveRef
             })
             exThread.fulfill()
         }
@@ -1091,14 +1080,13 @@ class GoBotOrderedTests: XCTestCase {
         
         // back to normal
         let exClean = self.expectation(description: "\(#function) recent")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
            msgs, err in
            XCTAssertNil(err)
            XCTAssertEqual(msgs.count, currentCount)
            exClean.fulfill()
         }
         self.wait(for: [exClean], timeout: 10)
-        
         
         // feed is empty
         let exFeed = self.expectation(description: "\(#function) feed empty")
@@ -1110,7 +1098,6 @@ class GoBotOrderedTests: XCTestCase {
         }
         self.wait(for: [exFeed], timeout: 10)
         
-        
         // their reply is no longer visable
         let exThreadGone = self.expectation(description: "\(#function) thread gone")
         GoBotOrderedTests.shared.thread(rootKey: GoBotOrderedTests.simpleThread) {
@@ -1118,7 +1105,7 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertEqual(replyCount, replies.count)
-            XCTAssertFalse(replies.getAllMessages().contains { return $0.key == offseniveRef })
+            XCTAssertFalse(replies.getAllMessages().contains { $0.key == offseniveRef })
             exThreadGone.fulfill()
         }
         self.wait(for: [exThreadGone], timeout: 10)
@@ -1129,8 +1116,8 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
 
         let ex1 = self.expectation(description: "\(#function) recent1")
-        var currentCount:Int = -1
-        GoBotOrderedTests.shared.recent() {
+        var currentCount: Int = -1
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertGreaterThan(msgs.count, 0)
@@ -1147,11 +1134,11 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
 
         let ex2 = self.expectation(description: "\(#function) recent2")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             defer { ex2.fulfill() }
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, currentCount+1)
+            XCTAssertEqual(msgs.count, currentCount + 1)
         }
         self.wait(for: [ex2], timeout: 10)
 
@@ -1187,21 +1174,20 @@ class GoBotOrderedTests: XCTestCase {
 
         // and now it's gone!
         let ex4 = self.expectation(description: "\(#function) recent3")
-        GoBotOrderedTests.shared.recent() {
+        GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
             XCTAssertEqual(msgs.count, currentCount)
             ex4.fulfill()
         }
         self.wait(for: [ex4], timeout: 10)
-        
     }
     
     // MARK: Everyone
     
     func test220_everyone_empty() {
         let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.everyone() {
+        GoBotOrderedTests.shared.everyone {
             msgs, err in
             XCTAssertNil(err)
             // we should have 100 posts from page (as is the only one we don't follow)
@@ -1209,7 +1195,6 @@ class GoBotOrderedTests: XCTestCase {
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
-
     }
 
     // MARK: TODOS
@@ -1222,8 +1207,6 @@ class GoBotOrderedTests: XCTestCase {
 
     // test thread reply notification
 }
-
-
 
 fileprivate extension UIImage {
   convenience init?(color: UIColor, size: CGSize = CGSize(width: 5, height: 5)) {
@@ -1241,7 +1224,7 @@ fileprivate extension UIImage {
 
 fileprivate extension PaginatedKeyValueDataProxy {
     func getAllMessages() -> KeyValues {
-        self.prefetchUpTo(index: self.count-1)
+        self.prefetchUpTo(index: self.count - 1)
         
         // TODO
         sleep(5)
@@ -1258,7 +1241,7 @@ fileprivate extension PaginatedKeyValueDataProxy {
         */
 
         var kvs = KeyValues()
-        for i in 0...self.count-1 {
+        for i in 0...self.count - 1 {
             guard let kv = self.keyValueBy(index: i) else {
                 XCTFail("failed to get item \(i) of \(self.count)")
                 continue

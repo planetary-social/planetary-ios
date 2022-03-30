@@ -23,17 +23,17 @@ struct Channel: ContentCodable {
 extension Channel {
 
     var isModern: Bool {
-        return self.root != nil
+        self.root != nil
     }
 
     var hashtag: String {
-        return "#\(self.name)"
+        "#\(self.name)"
     }
 }
 
 extension Channel: Markdownable {
 
     var markdown: String {
-        return self.hashtag
+        self.hashtag
     }
 }

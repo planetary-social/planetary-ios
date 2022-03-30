@@ -12,7 +12,7 @@ import UIKit
 extension UIColor {
 
     func image(dimension: CGFloat) -> UIImage {
-        return self.image(size: CGSize(width: dimension, height: dimension))
+        self.image(size: CGSize(width: dimension, height: dimension))
     }
 
     func image(size: CGSize = CGSize(width: 32, height: 32)) -> UIImage {

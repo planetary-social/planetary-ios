@@ -65,7 +65,6 @@ class UITests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
         button.tap()
         
-        
         // Skip photo step
         elementsQuery.buttons["I'll do it later"].tap()
         

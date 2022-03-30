@@ -20,7 +20,6 @@ class ChannelViewController: ContentViewController {
         let dataSource = PostReplyPaginatedDataSource()
         dataSource.delegate = self
         return dataSource
-        
     }()
     
     private lazy var delegate = PostReplyPaginatedDelegate(on: self)
@@ -58,7 +57,6 @@ class ChannelViewController: ContentViewController {
         super.viewDidLoad()
         self.addLoadingAnimation()
         Layout.fill(view: self.contentView, with: self.tableView, respectSafeArea: false)
-        self.load()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -142,5 +140,4 @@ extension ChannelViewController: PostReplyPaginatedDataSourceDelegate {
         let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    
 }

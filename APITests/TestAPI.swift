@@ -14,7 +14,7 @@ class TestAPI: PubAPI {
     override init() {
         super.init()
         super.headers = ["Verse-Authorize-Pub": "KrztmpEgK0LEX0yseDBfccgWaxTVZIl/bJOZPjkXV+ArUlP9m5te1cUjQKyc0YuH48"]
-        super.httpPort = 8443
+        super.httpPort = 8_443
         super.httpHost = "pub.verse.app"
         super.httpPathPrefix = ""
     }
@@ -24,20 +24,19 @@ class TestAPI: PubAPI {
                           image: BlobIdentifier? = nil,
                           messageCount: Int = -1,
                           follows: String? = nil,
-                          completion: @escaping PubAPIOnboardedTestCompletion)
-    {
+                          completion: @escaping PubAPIOnboardedTestCompletion) {
         var headers: APIHeaders = [ "Verse-New-Key": identity ]
-        var wantName: Bool = false
+        var wantName = false
         if let n = name {
             headers.updateValue(n, forKey: "Verse-Test-Name")
             wantName = true
         }
-        var wantImage: Bool = false
+        var wantImage = false
         if let i = image {
             headers.updateValue(i, forKey: "Verse-Test-Image")
             wantImage = true
         }
-        var wantFollows: Bool = false
+        var wantFollows = false
         if let f = follows {
             headers.updateValue(f, forKey: "Verse-Test-Follows")
             wantFollows = true
@@ -87,11 +86,10 @@ class TestAPI: PubAPI {
     }
 
     func letTestPubUnfollow(_ identity: Identity,
-                            completion: @escaping PubAPICompletion)
-    {
+                            completion: @escaping PubAPICompletion) {
         let headers: APIHeaders = ["Verse-New-Key": identity]
         self.get(path: "/v2/test/unfollow", headers: headers) {
-            data, error in
+            _, error in
             completion(error == nil, error)
         }
     }
@@ -115,11 +113,11 @@ class TestAPI: PubAPI {
                 return
             }
 
-            var res: BlockedBotStartResult? = nil
+            var res: BlockedBotStartResult?
             do {
                 res = try JSONDecoder().decode(BlockedBotStartResult.self, from: d)
             } catch {
-                completion("@error",error)
+                completion("@error", error)
             }
 
             if !res!.started {
@@ -152,7 +150,7 @@ class TestAPI: PubAPI {
             var err: Error? = error
             var body = ""
             if let d = data {
-                body = String(data:d, encoding: .utf8) ?? "<no body>"
+                body = String(data: d, encoding: .utf8) ?? "<no body>"
                 print("testAPI/blocked/blocked: \(body)")
                 if let e = error {
                     err = GoBotError.duringProcessing(body, e)
@@ -178,7 +176,7 @@ class TestAPI: PubAPI {
             var err: Error? = error
             var body = ""
             if let d = data {
-                body = String(data:d, encoding: .utf8) ?? "<no body>"
+                body = String(data: d, encoding: .utf8) ?? "<no body>"
                 print("testAPI/blocked/unblocked: \(body)")
                 if let e = error {
                     err = GoBotError.duringProcessing(body, e)
@@ -194,7 +192,7 @@ class TestAPI: PubAPI {
             var err: Error? = error
             var body = ""
             if let d = data {
-                body = String(data:d, encoding: .utf8) ?? "<no body>"
+                body = String(data: d, encoding: .utf8) ?? "<no body>"
                 print("testAPI/blocked/stop: \(body)")
                 if let e = error {
                     err = GoBotError.duringProcessing(body, e)
@@ -219,7 +217,7 @@ struct OnboardedResult: Codable {
     var GotFollows: Bool
 }
 
-fileprivate struct BlockedBotStartResult: Codable {
+private struct BlockedBotStartResult: Codable {
     let started: Bool
     let msg: String
     let newid: Identity

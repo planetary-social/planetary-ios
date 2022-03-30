@@ -100,9 +100,7 @@ class RedeemInviteOperation: AsynchronousOperation {
                 } else {
                     completion(.success(()))
                 }
-                
             }
         }
     }
-    
 }

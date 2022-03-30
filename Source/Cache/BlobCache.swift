@@ -155,7 +155,7 @@ class BlobCache: DictionaryCache {
         // first 2 chars are directory
         let dir = String(hexRef.prefix(2))
         // rest ist filename
-        let restIdx = hexRef.index(hexRef.startIndex, offsetBy:2)
+        let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
         let rest = String(hexRef[restIdx...])
         
         var gsUrl = URL(string: "https://blobs.planetary.social/")!
@@ -211,8 +211,7 @@ class BlobCache: DictionaryCache {
     }
 
     /// Returns true if the specified Error is a blob unavailable error.
-    private func isBlobUnavailableError(_ error: Error?) -> Bool
-    {
+    private func isBlobUnavailableError(_ error: Error?) -> Bool {
         // check that error is blob unavailable
         if let error = error as? BotError, error == .blobUnavailable {
             return true
@@ -245,6 +244,22 @@ class BlobCache: DictionaryCache {
     }
 
     // MARK: UIImage completions
+
+    // the number of pending blob identifiers to be loaded
+    var numberOfBlobIdentifiers: Int {
+        self.completions.count
+    }
+
+    // the TOTAL number of completions for all blob identifiers
+    // if this is larger than `numberOfBlobIdentifiers` then that
+    // means there are multiple requests for the same blob
+    var numberOfBlobCompletions: Int {
+        var count: Int = 0
+        for element in self.completions {
+            count += element.value.count
+        }
+        return count
+    }
 
     /// An object that manages in-flight requests for blobs.
     private var requestManager = RequestManager()
@@ -363,8 +378,8 @@ class BlobCache: DictionaryCache {
 
     // the max number of bytes that will trigger a purge
     // the min number of bytes that will remain after a purge
-    private let maxNumberOfBytes: Int = (1024 * 1024 * 100)
-    private let minNumberOfBytes: Int = (1024 * 1024 * 50)
+    private let maxNumberOfBytes: Int = (1_024 * 1_024 * 100)
+    private let minNumberOfBytes: Int = (1_024 * 1_024 * 50)
 
     // tracks the total bytes in use
     private var bytes: Int = 0
@@ -426,8 +441,7 @@ class BlobCache: DictionaryCache {
     private func registerNotifications() {
         NotificationCenter.default.addObserver(forName: .didLoadBlob,
                                                object: nil,
-                                               queue: OperationQueue.main)
-        {
+                                               queue: OperationQueue.main) {
             [weak self] notification in
             self?.didLoadBlob(notification)
         }

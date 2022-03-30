@@ -57,8 +57,7 @@ class LaunchViewController: UIViewController {
         // if configuration and is required then onboard
         if let configuration = AppConfiguration.current,
             let identity = configuration.identity,
-            Onboarding.status(for: identity) == .started
-        {
+            Onboarding.status(for: identity) == .started {
             self.launchIntoOnboarding(status: .started)
             return
         }
@@ -66,8 +65,7 @@ class LaunchViewController: UIViewController {
         // if configuration and not started then already onboarded
         if let configuration = AppConfiguration.current,
             let identity = configuration.identity,
-            Onboarding.status(for: identity) == .notStarted
-        {
+            Onboarding.status(for: identity) == .notStarted {
             Onboarding.set(status: .completed, for: identity)
         }
 
@@ -169,15 +167,13 @@ class LaunchViewController: UIViewController {
     }
 
     private func launchIntoOnboarding(status: Onboarding.Status = .notStarted,
-                                      simulate: Bool = false)
-    {
+                                      simulate: Bool = false) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             AppController.shared.showOnboardingViewController(status, simulate)
         }
     }
 
     private func launchIntoMain() {
-
 
         // no need to start a sync here, we can do it later
         // also, user is already logged in

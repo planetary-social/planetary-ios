@@ -12,7 +12,6 @@ extension URLResponse {
 
     var httpStatusCodeError: APIError? {
         guard let response = self as? HTTPURLResponse else { return nil }
-        if response.statusCode > 201 { return APIError.httpStatusCode(response.statusCode) }
-        else { return nil }
+        if response.statusCode > 201 { return APIError.httpStatusCode(response.statusCode) } else { return nil }
     }
 }

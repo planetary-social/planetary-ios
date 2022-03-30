@@ -26,7 +26,6 @@ class NotificationsViewController: ContentViewController {
         return item
     }()
     
-    
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
         view.dataSource = self.dataSource
@@ -80,7 +79,7 @@ class NotificationsViewController: ContentViewController {
     // MARK: Load and refresh
 
     func load(animated: Bool = false) {
-        Bots.current.reports() { [weak self] reports, error in
+        Bots.current.reports { [weak self] reports, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.removeLoadingAnimation()
@@ -166,18 +165,16 @@ class NotificationsViewController: ContentViewController {
         }
     }
     
-    
     @objc func newPostButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
         let controller = NewPostViewController()
         controller.didPublish = {
-            [weak self] post in
+            [weak self] _ in
             self?.load()
         }
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
-
 
     // TODO this won't work because until the data source is updated
     // TODO notifications() will keep returning the same list and the
@@ -199,7 +196,7 @@ class NotificationsViewController: ContentViewController {
 //    }
 }
 
-fileprivate class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
+private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
 
     var reports: [Report] = [] {
         didSet {
@@ -209,19 +206,17 @@ fileprivate class NotificationsTableViewDataSource: KeyValueTableViewDataSource 
             var yesterday: KeyValues = []
             var earlier: KeyValues = []
             for report in reports {
-                if      Calendar.current.isDateInToday(report.createdAt)     { today += [report.keyValue] }
-                else if Calendar.current.isDateInYesterday(report.createdAt) { yesterday += [report.keyValue] }
-                else                                                                { earlier += [report.keyValue] }
+                if      Calendar.current.isDateInToday(report.createdAt) { today += [report.keyValue] } else if Calendar.current.isDateInYesterday(report.createdAt) { yesterday += [report.keyValue] } else { earlier += [report.keyValue] }
             }
 
             // label each section
             var sections: [(Text, KeyValues)] = []
-            if today.count > 0      { sections += [(.today, today)] }
-            if yesterday.count > 0  { sections += [(.yesterday, yesterday)] }
-            if earlier.count > 0    { sections += [(.recently, earlier)] }
+            if today.count > 0 { sections += [(.today, today)] }
+            if yesterday.count > 0 { sections += [(.yesterday, yesterday)] }
+            if earlier.count > 0 { sections += [(.recently, earlier)] }
             self.sectionedKeyValues = sections
             
-            self.keyValues = reports.map{$0.keyValue}
+            self.keyValues = reports.map { $0.keyValue }
         }
     }
 
@@ -233,7 +228,7 @@ fileprivate class NotificationsTableViewDataSource: KeyValueTableViewDataSource 
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return self.sectionedKeyValues.count
+        self.sectionedKeyValues.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -247,7 +242,6 @@ fileprivate class NotificationsTableViewDataSource: KeyValueTableViewDataSource 
         let cell = KeyValueTableViewCell(for: type, with: view)
         return cell
     }
-    
 }
 
 extension NotificationsViewController: TopScrollable {
@@ -256,7 +250,7 @@ extension NotificationsViewController: TopScrollable {
     }
 }
 
-fileprivate class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
+private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let source = tableView.dataSource as? NotificationsTableViewDataSource else { return nil }
@@ -270,9 +264,7 @@ fileprivate class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
             Analytics.shared.trackDidSelectItem(kindName: "identity")
             let controller = AboutViewController(with: keyValue.value.author)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
-        }
-
-        else if keyValue.contentType == .post {
+        } else if keyValue.contentType == .post {
             Analytics.shared.trackDidSelectItem(kindName: "post")
             let controller = ThreadViewController(with: keyValue)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
@@ -280,7 +272,7 @@ fileprivate class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
     }
 }
 
-fileprivate class HeaderView: UITableViewHeaderFooterView {
+private class HeaderView: UITableViewHeaderFooterView {
 
     let label: UILabel = {
         let view = UILabel.forAutoLayout()

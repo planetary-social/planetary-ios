@@ -20,7 +20,6 @@ class BotStatisticsServiceTests: XCTestCase {
     override func setUpWithError() throws {
         mockBot = FakeBot()
         sut = BotStatisticsServiceAdaptor(bot: mockBot, refreshInterval: 0.001)
-        
     }
 
     /// Verifies that statistics are published after subscribe is called.

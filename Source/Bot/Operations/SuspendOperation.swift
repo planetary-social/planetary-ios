@@ -30,5 +30,4 @@ class SuspendOperation: AsynchronousOperation {
         Log.info("SuspendOperation finished.")
         self.finish()
     }
-    
 }

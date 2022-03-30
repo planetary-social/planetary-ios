@@ -135,7 +135,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
 
     // MARK: Keyboard handling
 
-    var isKeyboardHandlingEnabled: Bool = false {
+    var isKeyboardHandlingEnabled = false {
         didSet {
             isKeyboardHandlingEnabled ?
                 self.registerForKeyboardNotifications() :
@@ -145,8 +145,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
 
     func setKeyboardTopConstraint(constant: CGFloat,
                                   duration: TimeInterval,
-                                  curve: UIView.AnimationCurve)
-    {
+                                  curve: UIView.AnimationCurve) {
         UIView.beginAnimations("setKeyboardTopConstraint", context: nil)
         UIView.setAnimationCurve(curve)
         UIView.setAnimationDuration(duration)

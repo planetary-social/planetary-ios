@@ -32,7 +32,7 @@ class FollowOperation: AsynchronousOperation {
             return
         }
         
-        Bots.current.follow(self.identity) { [weak self] (contact, error) in
+        Bots.current.follow(self.identity) { [weak self] (_, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.error = error
@@ -40,5 +40,4 @@ class FollowOperation: AsynchronousOperation {
             self?.finish()
         }
     }
-    
 }

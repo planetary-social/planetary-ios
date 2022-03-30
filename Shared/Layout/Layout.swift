@@ -22,7 +22,7 @@ struct Layout {
     static var horizontalSpacing: CGFloat = 15
 
     static var postSideMargins: CGFloat {
-        return horizontalSpacing - 1
+        horizontalSpacing - 1
     }
 
     static var profileThumbSize: CGFloat = 35
@@ -31,7 +31,7 @@ struct Layout {
     static var profileImageOutside: CGFloat = 182
 
     static func spacing(_ axis: NSLayoutConstraint.Axis) -> CGFloat {
-        return axis == .horizontal ? horizontalSpacing : verticalSpacing
+        axis == .horizontal ? horizontalSpacing : verticalSpacing
     }
 }
 
