@@ -113,12 +113,12 @@ class PostCellView: KeyValueView {
         
         // not so clean but it gest likes displaying.
         if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == Planetary.ContentType.vote {
-            self.textView.font = UIFont.post.body.withSize(200)
-            self.textView.textAlignment = .center
+            self.textView.font = UIFont.post.body.withSize(16)
+            self.textView.textAlignment = .natural
         } else if self.textView.attributedText.string.isSingleEmoji,
              let post = self.keyValue?.value.content.post,
               !post.hasBlobs {
-              self.textView.font = UIFont.post.body.withSize(200)
+              self.textView.font = UIFont.post.body.withSize(100)
               self.textView.textAlignment = .center
           } else {
               self.textView.textAlignment = .natural
@@ -226,12 +226,15 @@ class PostCellView: KeyValueView {
         if let vote = keyValue.value.content.vote {
             let expression: String
             if vote.vote.value > 0 {
-                expression = "💜"
+                expression = "💜 \(Text.likesThis.text)"
             } else {
-                expression = "💔"
+                expression = "💔 \(Text.dislikesThis.text)"
             }
-            
-            self.fullPostText = NSAttributedString(string: expression)
+
+            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.italicSystemFont(ofSize: 16),
+                                                             .foregroundColor: UIColor.secondaryText]
+            self.fullPostText = NSAttributedString(string: expression,
+                                                   attributes: attributes)
             self.textView.text = expression
             self.configureTruncatedState()
             

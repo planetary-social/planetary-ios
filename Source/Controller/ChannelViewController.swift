@@ -57,7 +57,6 @@ class ChannelViewController: ContentViewController {
         super.viewDidLoad()
         self.addLoadingAnimation()
         Layout.fill(view: self.contentView, with: self.tableView, respectSafeArea: false)
-        self.load()
     }
 
     override func viewWillAppear(_ animated: Bool) {

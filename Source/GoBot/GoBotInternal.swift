@@ -23,6 +23,16 @@ typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, 
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
+    
+    init(tcpAddr: String, pubKey: Identity) {
+        self.tcpAddr = tcpAddr
+        self.pubKey = pubKey
+    }
+    
+    init(pubAddress: PubAddress) {
+        self.tcpAddr = "\(pubAddress.host):\(pubAddress.port)"
+        self.pubKey = pubAddress.key
+    }
 }
 
 // used to drain a single user feed
@@ -555,8 +565,8 @@ class GoBotInternal {
     
     /// This fetches posts from go-ssb's RootLog - the log containing all posts from all users. The Go code will filter
     /// out some messages, such as those from blocked users and old messages.
-    func getReceiveLog(startSeq: Int64, limit: Int) throws -> KeyValues {
-        guard let rawBytes = ssbStreamRootLog(UInt64(startSeq), Int32(limit)) else {
+    func getReceiveLog(startSeq: UInt64, limit: Int32) throws -> KeyValues {
+        guard let rawBytes = ssbStreamRootLog(startSeq, limit) else {
             throw GoBotError.unexpectedFault("rxLog pre-processing error")
         }
         let data = String(cString: rawBytes).data(using: .utf8)!

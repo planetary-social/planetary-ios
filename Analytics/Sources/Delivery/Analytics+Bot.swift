@@ -64,7 +64,7 @@ public extension Analytics {
         service.track(event: .did, element: .bot, name: "sync", params: params)
     }
 
-    func trackBotDidRefresh(load: Int, duration: TimeInterval, error: Error? = nil) {
+    func trackBotDidRefresh(load: Int32, duration: TimeInterval, error: Error? = nil) {
         var params: [String: Any] = ["load": load,
                                      "duration": duration]
         if let error = error {

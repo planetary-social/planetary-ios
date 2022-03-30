@@ -1830,7 +1830,7 @@ class ViewDatabase {
                     colName <- name
                 ))
             } else {
-                throw ViewDatabaseError.unknownAuthor(name)
+                throw ViewDatabaseError.unknownHashtag(name)
             }
         }
         return channelID

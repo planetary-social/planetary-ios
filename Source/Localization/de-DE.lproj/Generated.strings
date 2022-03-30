@@ -24,8 +24,11 @@
 "Text.helpAndSupport" = "Hilfe und Support";
 "Text.reportBug" = "Fehler melden";
 "Text.settings" = "Einstellungen";
-"Text.userDirectory" = "Benutzerverzeichnis";
-"Text.communitites" = "Communities";
+"Text.yourNetwork" = "Your Network";
+"Text.pubServers" = "Pub Servers";
+"Text.usersInYourNetwork" = "Users in your network";
+"Text.goToYourNetwork" = "Go to Your Network";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
 "Text.showMeInDirectory" = "Zeige mich im Verzeichnis";
 "Text.showMeInUserDirectory" = "Zeige mich im Benutzerverzeichnis";
 "Text.hideMeFromUserDirectory" = "Verstecke mich im Benutzerverzeichnis";
@@ -50,6 +53,8 @@
 "Text.name" = "Name";
 "Text.bio" = "Über mich";
 "Text.seeMore" = "Mehr anzeigen";
+"Text.likesThis" = "Likes this";
+"Text.dislikesThis" = "Dislikes this";
 "Text.block" = "Blockieren";
 "Text.blocked" = "Blockiert";
 "Text.deleteSecretAndIdentity" = "Schlüssel und Identität löschen";

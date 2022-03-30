@@ -32,7 +32,7 @@ private let refreshDelay = DispatchTimeInterval.milliseconds(125)
 /// presenting a simpler interface for read and write operations, while internally it manages several threads and
 /// synchronization between GoSSB's internal database and the SQLite layer.
 class GoBot: Bot {
-
+    
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
     private let maxBlobBytes = 1_024 * 1_024 * 8
@@ -73,17 +73,23 @@ class GoBot: Bot {
     
     /// A queue for operations that the user is waiting on like publishing a post, pull-to-refresh, etc.
     private let userInitiatedQueue: DispatchQueue
-    
+ 
     private let userDefaults: UserDefaults
     private var config: AppConfiguration?
+
+    private var preloadedPubService: PreloadedPubService?
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
     let bot: GoBotInternal
     let database = ViewDatabase()
 
-    init(userDefaults: UserDefaults = UserDefaults.standard) {
+    required init(
+        userDefaults: UserDefaults = UserDefaults.standard,
+        preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter()
+    ) {
         self.userDefaults = userDefaults
+        self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
                                           qos: .utility,
                                           attributes: .concurrent,
@@ -192,10 +198,12 @@ class GoBot: Bot {
             
             self._identity = secret.identity
             
+            self.preloadedPubService?.preloadPubs(in: self, from: nil)
+            
             BlockedAPI.shared.retreiveBlockedList {
                 blocks, err in
                 guard err == nil else {
-                    Log.unexpected(.botError, "failed to get blocks: \(err)")
+                    Log.unexpected(.botError, "failed to get blocks: \(String(describing: err))")
                     return
                 } // Analitcis error instead?
 
@@ -456,6 +464,7 @@ class GoBot: Bot {
                             let address = star.address.multipeer
                             let redeemed = Date().timeIntervalSince1970 * 1_000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
+                            Analytics.shared.trackDidJoinPub(at: star.address.multipeer)
                         } catch {
                             CrashReporting.shared.reportIfNeeded(error: error)
                         }
@@ -675,7 +684,7 @@ class GoBot: Bot {
     }
     
     // should only be called by refresh() (which does the proper completion on mainthread)
-    private func updateReceive(limit: Int = 15_000, completion: @escaping ErrorCompletion) {
+    private func updateReceive(limit: Int32 = 15_000, completion: @escaping ErrorCompletion) {
         var current: Int64 = 0
         var diff: Int = 0
 
@@ -697,7 +706,7 @@ class GoBot: Bot {
         
         // TOOD: redo until diff==0
         do {
-            let msgs = try self.bot.getReceiveLog(startSeq: current + 1, limit: limit)
+            let msgs = try self.bot.getReceiveLog(startSeq: UInt64(max(0, current + 1)), limit: limit)
             
             guard msgs.count > 0 else {
                 print("warning: triggered update but got no messages from receive log")
@@ -707,13 +716,6 @@ class GoBot: Bot {
             
             do {
                 try self.database.fillMessages(msgs: msgs)
-                                
-                let params = [
-                    "msg.count": msgs.count,
-                    "first.timestamp": msgs[0].timestamp,
-                    "last.timestamp": msgs[msgs.count - 1].timestamp,
-                    "last.hash": msgs[msgs.count - 1].key
-                ] as [String: Any]
 
                 Analytics.shared.trackBotDidUpdateDatabase(count: msgs.count,
                                                            firstTimestamp: msgs[0].timestamp,
@@ -726,7 +728,7 @@ class GoBot: Bot {
                     // self.updatePrivate(completion: completion)
                 } else {
                     #if DEBUG
-                    print("#rx log# \(diff - limit) messages left in go-ssb offset log")
+                    print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
                     #endif
                     completion(nil)
                 }

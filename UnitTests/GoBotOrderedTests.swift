@@ -30,7 +30,7 @@ private let publishManyCount = 25
 /// Warning: running these test will delete the database on whatever device they execute on.
 class GoBotOrderedTests: XCTestCase {
 
-    static let shared = GoBot(userDefaults: userDefaults)
+    static let shared = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
     
     static let userDefaults = { () -> UserDefaults in
         let defaults = UserDefaults()

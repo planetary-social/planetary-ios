@@ -21,6 +21,10 @@ struct Address: Codable {
 struct Pub: ContentCodable {
     let type: ContentType
     let address: PubAddress
+    
+    func toPeer() -> Peer {
+        Peer(pubAddress: address)
+    }
 }
 
 struct PubAddress: Codable {

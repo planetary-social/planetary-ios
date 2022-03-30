@@ -24,6 +24,12 @@ public extension Analytics {
     func trackDidUnfollowIdentity() {
         service.track(event: .publish, element: .identity, name: "unfollow")
     }
+    
+    /// Should fire when a user follows or joins a pub.
+    /// - Parameter multipeerAddress: the address of the pub in multipeer format.
+    func trackDidJoinPub(at multipeerAddress: String) {
+        service.track(event: .did, element: .action, name: "join_pub", params: ["address": multipeerAddress])
+    }
 
     func trackDidBlockIdentity() {
         service.track(event: .publish, element: .identity, name: "block")
