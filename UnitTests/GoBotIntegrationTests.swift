@@ -184,6 +184,73 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
         XCTAssertNotNil(ref)
     }
+
+    /// Verifies that the GoBot can publish a message with an emoji
+    func testPublishAnEmoji() async throws {
+        // Arrange
+        let testPost = Post(text: "🪲")
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+
+        // Act
+        let ref = try await sut.publish(content: testPost)
+
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
+        XCTAssertNotNil(ref)
+    }
+
+    /// Verifies that the GoBOt can publish a message with a mention
+    func testPublishWithAMention() async throws {
+        // Arrange
+        let mention = Mention(
+            link: Identity("@j8jAl6Qs54VKIVQ5Jlja+Y3EQ/OCS6u85xGsNUGgb/g=.ed25519"),
+            name: "Martin Dutra",
+            metadata: nil
+        )
+        let testPost = Post(
+            blobs: nil,
+            branches: nil,
+            hashtags: nil,
+            mentions: [mention],
+            root: nil,
+            text: "Be yourself; everyone else is already taken"
+        )
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+
+        // Act
+        let ref = try await sut.publish(content: testPost)
+
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
+        XCTAssertNotNil(ref)
+    }
+
+    /// Verifies that the GoBot can publish a message with a mention whose name has an emoji
+    func testPublishWithAMentionWithEmoji() async throws {
+        // Arrange
+        let mention = Mention(
+            link: Identity("@j8jAl6Qs54VKIVQ5Jlja+Y3EQ/OCS6u85xGsNUGgb/g=.ed25519"),
+            name: "Martin Dutra 🪲",
+            metadata: nil
+        )
+        let testPost = Post(
+            blobs: nil,
+            branches: nil,
+            hashtags: nil,
+            mentions: [mention],
+            root: nil,
+            text: "Be yourself; everyone else is already taken"
+        )
+        let test = mention.attributedString
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+
+        // Act
+        let ref = try await sut.publish(content: testPost)
+
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
+        XCTAssertNotNil(ref)
+    }
     
     /// Verifies that the statitistics() function updates the number of published messages in the AppConfiguration.
     func testStatisticsFunctionSetsNumberOfPublishedMessages() async throws {

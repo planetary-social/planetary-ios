@@ -90,13 +90,13 @@
 "Text.andCountOthers" = " y {{ count }} más";
 "Text.countOthers" = "{{ count }} más";
 "Text.andOneOther" = " y 1 más";
-"Text.connectedPeers" = "Connected Peers";
+"Text.connectedPeers" = "Pares conectados";
 "Text.countOnlinePeers" = "{{ count }} PARES EN LÍNEA";
 "Text.countLocalPeers" = "{{ count }} PARES LOCALES";
 "Text.lastSynced" = "ULTIMA: {{ when }}";
-"Text.syncingMessages" = "Syncing Messages...";
-"Text.recentlyDownloaded" = "Downloaded {{ postCount }} posts in the last {{ duration }} mins";
-"Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
+"Text.syncingMessages" = "Sincronizando mensajes...";
+"Text.recentlyDownloaded" = "{{ postCount }} publicaciones descargadas en los últimos {{ duration }} mins";
+"Text.identityNotFound" = "No sabemos lo suficiente sobre este par para mostrar su perfil.";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
 "Text.home" = "Para tí";
@@ -231,7 +231,7 @@
 "Error.login" = "El motor de par-a-par falló en el inicio. Por favor prueba cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
 "Error.unexpected" = "Algo inesperado ocurrió.";
 "Error.supportNotConfigured" = "Soporte no está configurado.";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
@@ -249,4 +249,4 @@
 "Error.login" = "El motor de par-a-par falló en el inicio. Por favor prueba cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
 "Error.unexpected" = "Algo inesperado ocurrió.";
 "Error.supportNotConfigured" = "Soporte no está configurado.";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";

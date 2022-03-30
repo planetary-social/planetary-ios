@@ -57,7 +57,7 @@ extension NSMutableAttributedString {
     convenience init(from mention: Mention) {
         let name = mention.name ?? ""
         self.init(string: name)
-        let range = NSRange(location: 0, length: name.count)
+        let range = NSRange(location: 0, length: name.utf16.count)
         self.addAttribute(NSAttributedString.Key.link, value: mention.link, range: range)
     }
 
