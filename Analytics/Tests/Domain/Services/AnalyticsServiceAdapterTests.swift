@@ -54,5 +54,4 @@ class AnalyticsServiceAdapterTests: XCTestCase {
         service.track(event: .did, element: .post, name: "test", params: ["param": "value"])
         XCTAssertTrue(apiService.tracked)
     }
-
 }

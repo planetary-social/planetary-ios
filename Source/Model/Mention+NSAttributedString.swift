@@ -21,8 +21,7 @@ extension NSAttributedString {
         let range = NSRange(location: 0, length: self.length)
         self.enumerateAttribute(NSAttributedString.Key.link,
                                 in: range,
-                                options: [])
-        {
+                                options: []) {
             attribute, range, _ in
             if let identity = attribute as? Identity {
                 let name = self.attributedSubstring(from: range).string
@@ -78,6 +77,6 @@ extension NSMutableAttributedString {
 extension Mention {
 
     var attributedString: NSMutableAttributedString {
-        return NSMutableAttributedString(from: self)
+        NSMutableAttributedString(from: self)
     }
 }

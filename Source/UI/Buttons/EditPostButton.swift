@@ -75,4 +75,3 @@ class EditPostButton: IconButton {
         fatalError("init(coder:) has not been implemented")
     }
 }
-

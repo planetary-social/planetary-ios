@@ -24,7 +24,7 @@ class PostCellView: KeyValueView {
         return seeMore
     }()
 
-    var displayHeader: Bool = true {
+    var displayHeader = true {
         didSet {
             self.headerView.isHidden = !self.displayHeader
             self.textViewTopConstraint.constant = self.textViewTopInset
@@ -86,7 +86,7 @@ class PostCellView: KeyValueView {
     }
 
     var shouldTruncate: Bool {
-        return self.truncationLimit != nil
+        self.truncationLimit != nil
     }
 
     var textIsExpanded = false {
@@ -111,7 +111,7 @@ class PostCellView: KeyValueView {
         self.calculateTruncationDataIfNecessary()
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
         
-        //not so clean but it gest likes displaying.
+        // not so clean but it gest likes displaying.
         if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == Planetary.ContentType.vote {
             self.textView.font = UIFont.post.body.withSize(16)
             self.textView.textAlignment = .natural

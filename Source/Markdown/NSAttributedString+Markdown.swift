@@ -16,5 +16,4 @@ extension NSAttributedString {
         attributedString.replaceMentionLinkAttributesWithMarkdown()
         return attributedString.string
     }
-    
 }

@@ -8,10 +8,9 @@
 
 import XCTest
 
-fileprivate let publishManyCount = 125
+private let publishManyCount = 125
 
 class OnboardingTests: XCTestCase {
-
     
     // state can be carried between test steps by using a static var
     // you can specific a non-optional value to avoid guard statements
@@ -46,8 +45,7 @@ class OnboardingTests: XCTestCase {
         }
         Onboarding.start(birthdate: Date.random(yearsFromNow: -21),
                          phone: "4155555785",
-                         name: name)
-        {
+                         name: name) {
             context, error in
             XCTAssertNil(error, "\(error.debugDescription)")
             XCTAssertNotNil(context)
@@ -125,7 +123,7 @@ class OnboardingTests: XCTestCase {
         ctx.bot.refresh(completion: {
             (err, _) in
             XCTAssertNil(err)
-            XCTAssertEqual(OnboardingTests.context.bot.statistics.repo.messageCount,1)
+            XCTAssertEqual(OnboardingTests.context.bot.statistics.repo.messageCount, 1)
             expectation.fulfill()
         })
 
@@ -161,7 +159,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Refresh bot")
 
-        ctx.bot.refresh() {
+        ctx.bot.refresh {
             err, _ in
             XCTAssertNil(err)
             expectation.fulfill()
@@ -169,7 +167,7 @@ class OnboardingTests: XCTestCase {
 
         self.wait(for: [expectation], timeout: 10)
 
-        XCTAssertEqual(OnboardingTests.context.bot.statistics.repo.messageCount,2)
+        XCTAssertEqual(OnboardingTests.context.bot.statistics.repo.messageCount, 2)
     }
 
     func test22_has_viewdb_follows() {
@@ -197,7 +195,7 @@ class OnboardingTests: XCTestCase {
             return
         }
 
-        guard var badImage = Data(base64Encoded:  "/9j/4AAQSkZJRgABAQAASABIAAD/4QBwRXhpZgAATU0AKgAAAAgABAEGAAMAAAABAAIAAAESAAMAAAABAAEAAAEoAAMAAAABAAIAAIdpAAQAAAABAAAAPgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAD6ADAAQAAAABAAAADwAAAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+/8AAEQgADwAPAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACQkJCQkJDwkJDxUPDw8VHBUVFRUcIxwcHBwcIysjIyMjIyMrKysrKysrKzMzMzMzMzw8PDw8Q0NDQ0NDQ0NDQ//bAEMBCgsLERARHRAQHUYvJy9GRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRv/dAAQAAf/aAAwDAQACEQMRAD8Avpb3TorXE7K+BuEeAobHOMgnGemaj+1rZzeReTKQRlXbAP0OOPoa1MVn3mm217Ikso+ZM8+oPY1784ySvDc8lNdT/9k=") else {
+        guard var badImage = Data(base64Encoded: "/9j/4AAQSkZJRgABAQAASABIAAD/4QBwRXhpZgAATU0AKgAAAAgABAEGAAMAAAABAAIAAAESAAMAAAABAAEAAAEoAAMAAAABAAIAAIdpAAQAAAABAAAAPgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAD6ADAAQAAAABAAAADwAAAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+/8AAEQgADwAPAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACQkJCQkJDwkJDxUPDw8VHBUVFRUcIxwcHBwcIysjIyMjIyMrKysrKysrKzMzMzMzMzw8PDw8Q0NDQ0NDQ0NDQ//bAEMBCgsLERARHRAQHUYvJy9GRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRv/dAAQAAf/aAAwDAQACEQMRAD8Avpb3TorXE7K+BuEeAobHOMgnGemaj+1rZzeReTKQRlXbAP0OOPoa1MVn3mm217Ikso+ZM8+oPY1784ySvDc8lNdT/9k=") else {
             XCTFail("image corrupted")
             return
         }
@@ -259,7 +257,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Set current onboarded")
         
-        ctx.bot.about() {
+        ctx.bot.about {
             newAbout, err in
             XCTAssertNil(err)
 
@@ -314,10 +312,10 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Sync and refresh bot")
 
-        ctx.bot.sync() {
+        ctx.bot.sync {
             err, _, _ in
             XCTAssertNil(err)
-            ctx.bot.refresh() {
+            ctx.bot.refresh {
                 (err, _) in
                 XCTAssertNil(err)
 
@@ -337,7 +335,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Refresh bot")
 
-        ctx.bot.refresh() {
+        ctx.bot.refresh {
             (err, _) in
             XCTAssertNil(err)
             XCTAssertGreaterThan(ctx.bot.statistics.repo.messageCount, 3)
@@ -391,7 +389,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Get onboarded")
 
-        ctx.bot.about() {
+        ctx.bot.about {
             newAbout, err in
             XCTAssertNil(err)
 
@@ -470,7 +468,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Refresh and get follows")
 
-        ctx.bot.refresh() {
+        ctx.bot.refresh {
             (err, _) in
             XCTAssertNil(err)
 
@@ -493,7 +491,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Sync bot")
 
-        ctx.bot.sync() {
+        ctx.bot.sync {
             err, _, _ in
             XCTAssertNil(err)
             expectation.fulfill()
@@ -553,13 +551,13 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Sync and refresh bot")
 
-        ctx.bot.sync() {
+        ctx.bot.sync {
             err, _, _ in
             XCTAssertNil(err)
-            ctx.bot.refresh() {
+            ctx.bot.refresh {
                 err, _ in
                 XCTAssertNil(err)
-                XCTAssertGreaterThan(ctx.bot.statistics.repo.messageCount, publishManyCount+3)
+                XCTAssertGreaterThan(ctx.bot.statistics.repo.messageCount, publishManyCount + 3)
                 expectation.fulfill()
             }
         }
@@ -576,7 +574,7 @@ class OnboardingTests: XCTestCase {
 
         let expectation = self.expectation(description: "Set current onboarded")
 
-        ctx.bot.about() {
+        ctx.bot.about {
             newAbout, err in
             XCTAssertNil(err)
 
@@ -589,7 +587,7 @@ class OnboardingTests: XCTestCase {
 
             TestAPI.shared.onboarded(who: ctx.identity,
                                      image: img.link,
-                                      messageCount: 23+publishManyCount
+                                      messageCount: 23 + publishManyCount
             ) {
                 res, err in
                 XCTAssertNil(err)
@@ -655,28 +653,28 @@ fileprivate extension Data {
         // check that A and B are in bounds
         if a == seedIdx {
             if a == 0 {
-                a+=1
+                a += 1
             }
             if a == size {
-                a-=1
+                a -= 1
             }
         }
 
         if b == seedIdx {
             if b == 0 {
-                b+=1
+                b += 1
             }
             if b == size {
-                b-=1
+                b -= 1
             }
         }
 
         if a == b {
-            a = Int(size/2)
+            a = Int(size / 2)
         }
 
         // XOR a and b with the seed
-        self[a] = self[a]^seed
-        self[b] = self[b]^seed
+        self[a] = self[a] ^ seed
+        self[b] = self[b] ^ seed
     }
 }

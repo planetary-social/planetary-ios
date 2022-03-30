@@ -28,5 +28,4 @@ class SecretsServiceAdapter: SecretsService {
             return nil
         }
     }
-
 }

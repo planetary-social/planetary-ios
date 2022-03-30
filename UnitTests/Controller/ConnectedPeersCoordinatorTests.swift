@@ -318,7 +318,7 @@ actor BotStatisticsServiceMock: BotStatisticsService {
     }
     
     func subscribe() async -> AnyPublisher<BotStatistics, Never> {
-        return statisticsPasthrough.print().eraseToAnyPublisher()
+        statisticsPasthrough.print().eraseToAnyPublisher()
     }
 }
 

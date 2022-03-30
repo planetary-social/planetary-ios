@@ -14,8 +14,7 @@ extension UIView {
     /// Returns a UIView with the specified view as a child and a
     /// colored separator view at the bottom.
     static func headerView(with view: UIView,
-                           separator color: UIColor = UIColor.separator.top) -> UIView
-    {
+                           separator color: UIColor = UIColor.separator.top) -> UIView {
         let header = UIView.forAutoLayout()
         Layout.fillTop(of: header, with: view, respectSafeArea: false)
         let separator = UIView.forAutoLayout()

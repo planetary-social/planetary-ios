@@ -41,5 +41,4 @@ public extension Analytics {
     func trackDidReceiveRemoteNotification() {
         service.track(event: .did, element: .app, name: "receive_remote_notification")
     }
-
 }

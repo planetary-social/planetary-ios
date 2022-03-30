@@ -8,13 +8,13 @@
 
 import Foundation
 
-// MARK:- Blocking
+// MARK: - Blocking
 
 extension Notification.Name {
     static let didBlockUser = Notification.Name("didBlockUser")
 }
 
-// MARK:- Blobs
+// MARK: - Blobs
 
 extension Notification.Name {
     static let didLoadBlob = Notification.Name("didLoadBlob")
@@ -23,17 +23,17 @@ extension Notification.Name {
 extension Notification {
 
     var blobIdentifier: BlobIdentifier? {
-        return self.userInfo?["blobIdentifier"] as? BlobIdentifier
+        self.userInfo?["blobIdentifier"] as? BlobIdentifier
     }
 
     static func didLoadBlob(_ identifier: BlobIdentifier) -> Notification {
-        return Notification(name: .didLoadBlob,
+        Notification(name: .didLoadBlob,
                             object: nil,
                             userInfo: ["blobIdentifier": identifier])
     }
 }
 
-// MARK:- Sync and refresh
+// MARK: - Sync and refresh
 
 // TODO https://app.asana.com/0/914798787098068/1154847034386753/f
 // TODO didRefresh should be deprecated
@@ -43,8 +43,7 @@ extension Notification.Name {
     static let didSync = Notification.Name("didSync")
 }
 
-
-// MARK:- Databae progress
+// MARK: - Databae progress
 extension Notification.Name {
     static let didStartFSCKRepair = Notification.Name("didStartFSCKRepair")
     static let didUpdateFSCKRepair = Notification.Name("didUpdateFSCKRepair")
@@ -55,26 +54,26 @@ extension Notification.Name {
 extension Notification {
 
     var databaseProgressPercentageDone: Float64? {
-        return self.userInfo?["percentage_done"] as? Float64
+        self.userInfo?["percentage_done"] as? Float64
     }
     
     var databaseProgressStatus: String? {
-        return self.userInfo?["status"] as? String
+        self.userInfo?["status"] as? String
     }
     
     static func didStartFSCKRepair() -> Notification {
-        return Notification(name: .didStartFSCKRepair,
+        Notification(name: .didStartFSCKRepair,
                             object: nil,
                             userInfo: [ "status": "Database consistency check in progress" ])
     }
     
     static func didFinishFSCKRepair() -> Notification {
-        return Notification(name: .didFinishFSCKRepair,
+        Notification(name: .didFinishFSCKRepair,
                             object: nil)
     }
 
     static func didUpdateFSCKRepair(perc: Float64, status: String) -> Notification {
-        return Notification(name: .didUpdateFSCKRepair,
+        Notification(name: .didUpdateFSCKRepair,
                             object: nil,
                             userInfo: ["percentage_done": perc, "status": status])
     }

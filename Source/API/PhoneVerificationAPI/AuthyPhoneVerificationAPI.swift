@@ -39,7 +39,6 @@ class AuthyPhoneVerificationAPI: PhoneVerificationAPIService {
             completion(data?.authyResponse(), APIError.optional(error))
         }
     }
-    
 }
 
 // MARK: API
@@ -75,13 +74,12 @@ extension AuthyPhoneVerificationAPI: API {
             Log.optional(apiError, from: response)
         }.resume()
     }
-    
 }
 
 // MARK: Util
 fileprivate extension Data {
 
     func authyResponse() -> PhoneVerificationResponse? {
-        return try? JSONDecoder().decode(PhoneVerificationResponse.self, from: self)
+        try? JSONDecoder().decode(PhoneVerificationResponse.self, from: self)
     }
 }

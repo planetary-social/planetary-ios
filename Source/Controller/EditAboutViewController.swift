@@ -18,7 +18,7 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
     // Private storage of the initial About and any mutated
     // version after `save()` is called.
     private var _about: About
-    var about: About { return self._about }
+    var about: About { self._about }
 
     // MARK: Views
 
@@ -58,7 +58,7 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
     // MARK: Saveable
 
     var isReadyToSave: Bool {
-        return self.aboutView.isReadyToSave
+        self.aboutView.isReadyToSave
     }
 
     var saveCompletion: SaveCompletion?

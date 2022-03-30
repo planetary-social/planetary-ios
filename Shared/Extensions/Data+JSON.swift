@@ -18,6 +18,6 @@ extension Data {
 
     // TODO rename and move to own file
     func string() -> String? {
-        return String(data: self, encoding: .utf8)
+        String(data: self, encoding: .utf8)
     }
 }

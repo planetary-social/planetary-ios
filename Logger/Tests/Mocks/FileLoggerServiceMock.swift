@@ -16,7 +16,7 @@ class FileLoggerServiceMock: FileLoggerService {
     var lastLine: String = ""
 
     var fileUrls: [URL] {
-        return []
+        []
     }
 
     func debug(_ string: String) {
@@ -33,5 +33,4 @@ class FileLoggerServiceMock: FileLoggerService {
         invokedError = true
         lastLine = string
     }
-
 }

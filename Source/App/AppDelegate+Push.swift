@@ -23,22 +23,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 
     func application(_ application: UIApplication,
-                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
-    {
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         AppController.shared.updatePushNotificationToken(deviceToken)
     }
 
     func application(_ application: UIApplication,
-                     didFailToRegisterForRemoteNotificationsWithError error: Error)
-    {
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
         guard UIDevice.isSimulator == false else { return }
         Log.fatal(.apiError, "Could not register for push notifications: \(error)")
     }
 
     func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
-    {
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         // only support silent notifications for now
         guard userInfo.aps.isContentAvailable else {
             completionHandler(.noData)
@@ -90,7 +87,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// can interact with.
     func scheduleLocalNotification(_ report: Report) {
         
-        
         Bots.current.about(queue: .global(qos: .background), identity: report.keyValue.value.author) { (about, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -133,8 +129,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 Log.optional(error)
             }
         }
-        
-        
     }
 
     /// If the response is the default "tap" interaction, forwards the notification to the AppController.
@@ -142,8 +136,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// asynchronous operations are not guaranteed to be completed before the UI is visible.
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void)
-    {
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
         guard response.actionIdentifier == UNNotificationDefaultActionIdentifier else {
             completionHandler()
             return

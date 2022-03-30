@@ -238,7 +238,7 @@ extension Text {
             case start = "\nA new kind of social\nnetwork for creative,\nindependent people"
 
             static var namespace: String {
-                return "OnboardingStepTitle"
+                "OnboardingStepTitle"
             }
         }
 

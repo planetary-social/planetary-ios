@@ -35,7 +35,6 @@ class DataKey {
     func hexEncodedString() -> String {
         let bytes = self.data
         
-        
         let hexDigits = Array("0123456789abcdef".utf16)
         var hexChars = [UTF16.CodeUnit]()
         hexChars.reserveCapacity(bytes.count * 2)
@@ -48,18 +47,17 @@ class DataKey {
     
         return String(utf16CodeUnits: hexChars, count: hexChars.count)
     }
-    
 }
 
-// MARK:- Equatable
+// MARK: - Equatable
 
 extension DataKey: Equatable {
     static func == (lhs: DataKey, rhs: DataKey) -> Bool {
-        return lhs.string == rhs.string
+        lhs.string == rhs.string
     }
 }
 
-// MARK:- Specific keys subclasses
+// MARK: - Specific keys subclasses
 
 class NetworkKey: DataKey {
 
@@ -80,10 +78,7 @@ class NetworkKey: DataKey {
     static let planetaryTest = NetworkKey(base64: Environment.TestingNetwork.key)!
 
     var name: String {
-        if self == NetworkKey.ssb { return Environment.DefaultNetwork.name }
-        else if self == NetworkKey.integrationTests { return Environment.TestingNetwork.name }
-        else if self == NetworkKey.planetary { return Environment.PlanetaryNetwork.name }
-        else { return Environment.DevelopmentNetwork.name }
+        if self == NetworkKey.ssb { return Environment.DefaultNetwork.name } else if self == NetworkKey.integrationTests { return Environment.TestingNetwork.name } else if self == NetworkKey.planetary { return Environment.PlanetaryNetwork.name } else { return Environment.DevelopmentNetwork.name }
     }
 }
 

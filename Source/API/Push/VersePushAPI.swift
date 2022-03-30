@@ -41,7 +41,6 @@ class VersePushAPI: PushAPIService {
             completion(error == nil, error)
         }
     }
-    
 }
 
 // MARK: API
@@ -81,8 +80,6 @@ extension VersePushAPI: API {
             Log.optional(apiError, from: response)
         }.resume()
     }
-    
-    
 }
 
 // MARK: Util
@@ -91,7 +88,7 @@ fileprivate extension Data {
     // Borrowed from Stack Overflow
     // https://stackoverflow.com/questions/8798725/get-device-token-for-push-notification
     func hexEncodedString() -> String {
-        let string = self.reduce("", {$0 + String(format: "%02X", $1)})
+        let string = self.reduce("", { $0 + String(format: "%02X", $1) })
         return string
     }
 }

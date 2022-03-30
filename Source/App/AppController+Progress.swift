@@ -31,6 +31,6 @@ extension AppController {
     }
     
     func hideProgress(completion: (() -> Void)? = nil) {
-        SVProgressHUD.dismiss() { completion?() }
+        SVProgressHUD.dismiss { completion?() }
     }
 }

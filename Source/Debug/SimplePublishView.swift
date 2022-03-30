@@ -107,6 +107,5 @@ class SimplePublishViewController: UIViewController {
                 self.navigationController?.popViewController(animated: true)
             }
         }
-        
     }
 }

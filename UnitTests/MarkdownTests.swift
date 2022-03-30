@@ -141,7 +141,5 @@ without format and with an identifier in the middle
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 1)
         XCTAssertEqual(mentions[0].link, "https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519")
-        
     }
-
 }

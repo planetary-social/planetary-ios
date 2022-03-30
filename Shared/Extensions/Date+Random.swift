@@ -27,13 +27,13 @@ extension Date {
     }
 
     var shortDateString: String {
-        return DateFormatter.localizedString(from: self,
+        DateFormatter.localizedString(from: self,
                                              dateStyle: .short,
                                              timeStyle: .none)
     }
 
     var shortDateTimeString: String {
-        return DateFormatter.localizedString(from: self,
+        DateFormatter.localizedString(from: self,
                                              dateStyle: .short,
                                              timeStyle: .short)
     }

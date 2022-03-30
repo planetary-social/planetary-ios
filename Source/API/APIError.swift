@@ -22,5 +22,4 @@ enum APIError: Error {
         guard let error = error else { return nil }
         return APIError.other(error)
     }
-    
 }

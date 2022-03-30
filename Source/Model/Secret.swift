@@ -35,11 +35,11 @@ struct Secret: Codable {
 }
 
 extension Secret {
-    var identity: Identity { return self.id }
+    var identity: Identity { self.id }
 }
 
 extension Secret: Equatable {
     public static func == (lhs: Secret, rhs: Secret) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 }

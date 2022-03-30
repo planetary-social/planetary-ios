@@ -21,5 +21,4 @@ extension AppDelegate {
         UserDefaults.standard.removePersistentDomain(forName: domain)
         UserDefaults.standard.synchronize()
     }
-    
 }

@@ -31,11 +31,11 @@ extension RemoteNotificationUserInfo {
     }
 
     var isSupported: Bool {
-        return self.type != .unspecified
+        self.type != .unspecified
     }
 
     var aps: UserInfoAps {
-        return self["aps"] as? UserInfoAps ?? [:]
+        self["aps"] as? UserInfoAps ?? [:]
     }
 
     var title: String? {
@@ -53,6 +53,6 @@ extension RemoteNotificationUserInfo {
 extension UserInfoAps {
 
     var isContentAvailable: Bool {
-        return self["content-available"] as? Bool ?? false
+        self["content-available"] as? Bool ?? false
     }
 }

@@ -60,13 +60,11 @@ class SnowView: UIView {
     }
 
     private func windTimer(layer: CAEmitterLayer,
-                           cell: CAEmitterCell)
-    {
+                           cell: CAEmitterCell) {
         guard self.superview != nil else { return }
         Timer.scheduledTimer(withTimeInterval: 5,
-                             repeats: false)
-        {
-            timer in
+                             repeats: false) {
+            _ in
             let duration = TimeInterval(arc4random() % 10)
             let animation = CABasicAnimation(keyPath: "emitterCells.snow.xAcceleration")
             animation.fromValue = cell.xAcceleration
@@ -81,13 +79,11 @@ class SnowView: UIView {
     }
 
     private func birthRateTimer(layer: CAEmitterLayer,
-                                cell: CAEmitterCell)
-    {
+                                cell: CAEmitterCell) {
         guard self.superview != nil else { return }
         Timer.scheduledTimer(withTimeInterval: 5,
-                             repeats: false)
-        {
-            timer in
+                             repeats: false) {
+            _ in
             let duration = TimeInterval(arc4random() % 10)
             let animation = CABasicAnimation(keyPath: "emitterCells.snow.birthRate")
             animation.fromValue = cell.birthRate

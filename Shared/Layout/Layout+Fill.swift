@@ -16,8 +16,7 @@ extension Layout {
     static func fill(view: UIView,
                      with subview: UIView,
                      insets: UIEdgeInsets = .zero,
-                     respectSafeArea: Bool = true) -> TopLeftBottomRightConstraints
-    {
+                     respectSafeArea: Bool = true) -> TopLeftBottomRightConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -38,8 +37,7 @@ extension Layout {
     static func fillTop(of view: UIView,
                         with subview: UIView,
                         insets: UIEdgeInsets = .zero,
-                        respectSafeArea: Bool = true) -> TopLeftRightConstraints
-    {
+                        respectSafeArea: Bool = true) -> TopLeftRightConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -57,8 +55,7 @@ extension Layout {
     static func fillLeft(of view: UIView,
                          with subview: UIView,
                          insets: UIEdgeInsets = .zero,
-                         respectSafeArea: Bool = true) -> TopLeftBottomConstraints
-    {
+                         respectSafeArea: Bool = true) -> TopLeftBottomConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -77,8 +74,7 @@ extension Layout {
     static func fillBottom(of view: UIView,
                            with subview: UIView,
                            insets: UIEdgeInsets = .zero,
-                           respectSafeArea: Bool = true) -> LeftBottomRightConstraints
-    {
+                           respectSafeArea: Bool = true) -> LeftBottomRightConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -98,8 +94,7 @@ extension Layout {
     static func fillRight(of view: UIView,
                           with subview: UIView,
                           insets: UIEdgeInsets = .zero,
-                          respectSafeArea: Bool = true) -> TopBottomRightConstraints
-    {
+                          respectSafeArea: Bool = true) -> TopBottomRightConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -118,8 +113,7 @@ extension Layout {
     static func fillTopLeft(of view: UIView,
                             with subview: UIView,
                             insets: UIEdgeInsets = .zero,
-                            respectSafeArea: Bool = true) -> TopLeftConstraints
-    {
+                            respectSafeArea: Bool = true) -> TopLeftConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -136,8 +130,7 @@ extension Layout {
     static func fillTopRight(of view: UIView,
                              with subview: UIView,
                              insets: UIEdgeInsets = .zero,
-                             respectSafeArea: Bool = true) -> TopRightConstraints
-    {
+                             respectSafeArea: Bool = true) -> TopRightConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -154,8 +147,7 @@ extension Layout {
     static func fillBottomLeft(of view: UIView,
                                with subview: UIView,
                                insets: UIEdgeInsets = .zero,
-                               respectSafeArea: Bool = true) -> LeftBottomConstraints
-    {
+                               respectSafeArea: Bool = true) -> LeftBottomConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -172,8 +164,7 @@ extension Layout {
     static func fillBottomRight(of view: UIView,
                                 with subview: UIView,
                                 insets: UIEdgeInsets = .zero,
-                                respectSafeArea: Bool = true) -> BottomRightConstraints
-    {
+                                respectSafeArea: Bool = true) -> BottomRightConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 

@@ -100,13 +100,13 @@ class BotsViewController: UIViewController {
                                            message: "Please add and select an identity from the Debug menu",
                                            preferredStyle: .actionSheet)
         var action = UIAlertAction(title: "Cancel", style: .cancel) {
-            action in
+            _ in
             controller.dismiss(animated: true, completion: nil)
         }
         controller.addAction(action)
 
         action = UIAlertAction(title: "Debug menu", style: .default) {
-            action in
+            _ in
             AppController.shared.showDebug()
         }
         controller.addAction(action)

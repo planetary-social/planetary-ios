@@ -72,9 +72,9 @@ class PostViewController: ContentViewController {
         let branches = [self.keyValue.key]
         let root = self.keyValue.value.content.post?.root ?? self.keyValue.key
         let post = Post(attributedText: text, branches: branches, root: root)
-        //AppController.shared.showProgress()
+        // AppController.shared.showProgress()
         Bots.current.publish(post) {
-            [unowned self] key, error in
+            [unowned self] _, error in
             Log.optional(error)
             AppController.shared.hideProgress()
             self.navigationController?.popViewController(animated: true)

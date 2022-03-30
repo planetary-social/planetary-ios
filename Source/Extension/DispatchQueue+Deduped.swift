@@ -75,12 +75,11 @@ private extension DispatchQueue {
 
     static var workLock = DispatchSemaphore.init(value: 1)
 
-    static var workItems = [AnyHashable : DispatchWorkItem]()
+    static var workItems = [AnyHashable: DispatchWorkItem]()
 
     static var weakTargets = NSPointerArray.weakObjects()
 
     static func dedupeIdentifierFor(_ object: AnyObject) -> String {
-        return "\(Unmanaged.passUnretained(object).toOpaque())." + String(describing: object)
+        "\(Unmanaged.passUnretained(object).toOpaque())." + String(describing: object)
     }
-
 }

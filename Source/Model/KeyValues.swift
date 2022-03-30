@@ -10,36 +10,36 @@ import Foundation
 
 typealias KeyValues = [KeyValue]
 
-// MARK:- KeyValues filtering
+// MARK: - KeyValues filtering
 
 extension KeyValues {
 
-    var contacts: KeyValues     { return self.filter(by: .contact) }
-    var posts: KeyValues        { return self.filter(by: .post) }
+    var contacts: KeyValues { self.filter(by: .contact) }
+    var posts: KeyValues { self.filter(by: .post) }
 
     func filter(by type: ContentType) -> KeyValues {
-        return self.filter { $0.contentType == type }
+        self.filter { $0.contentType == type }
     }
 }
 
-// MARK:- Compound filters
+// MARK: - Compound filters
 
 extension KeyValues {
 
     func rootPosts() -> KeyValues {
-        return self.filter { $0.contentType == .post && $0.value.content.post?.root == nil }
+        self.filter { $0.contentType == .post && $0.value.content.post?.root == nil }
     }
 
     func replyPosts() -> KeyValues {
-        return self.filter { $0.contentType == .post && $0.value.content.post?.root != nil }
+        self.filter { $0.contentType == .post && $0.value.content.post?.root != nil }
     }
 
     func mentions(of identity: Identity) -> KeyValues {
-        return self.filter { $0.value.content.post?.mentions?.contains { $0.link == identity } ?? false }
+        self.filter { $0.value.content.post?.mentions?.contains { $0.link == identity } ?? false }
     }
 }
 
-// MARK:- Trim by message identifier
+// MARK: - Trim by message identifier
 
 extension KeyValues {
 
@@ -76,28 +76,28 @@ extension KeyValues {
     }
 }
 
-// MARK:- Filter by author
+// MARK: - Filter by author
 
 extension KeyValues {
 
     func excluding(_ author: Identifier) -> KeyValues {
-        return self.filter { $0.value.author != author }
+        self.filter { $0.value.author != author }
     }
 
     func only(from author: Identifier) -> KeyValues {
-        return self.filter { $0.value.author == author }
+        self.filter { $0.value.author == author }
     }
 }
 
-// MARK:- KeyValues sorting
+// MARK: - KeyValues sorting
 
 extension KeyValues {
 
     func sortedByDateAscending() -> KeyValues {
-        return self.sorted() { $0.userDate < $1.userDate }
+        self.sorted { $0.userDate < $1.userDate }
     }
 
     func sortedByDateDescending() -> KeyValues {
-        return self.sorted() { $0.userDate > $1.userDate }
+        self.sorted { $0.userDate > $1.userDate }
     }
 }

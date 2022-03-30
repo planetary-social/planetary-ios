@@ -41,8 +41,7 @@ class ImageView: UIImageView {
 
         // cached image
         if let image = Caches.blobs.image(for: image.identifier) {
-            if animated { self.fade(to: image) }
-            else        { self.image = image }
+            if animated { self.fade(to: image) } else { self.image = image }
             return
         }
 

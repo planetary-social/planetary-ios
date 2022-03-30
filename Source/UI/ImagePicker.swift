@@ -17,7 +17,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
     // presenting view controller has to be weak in case the
     // owner of this instance is also the view controller presenting
     private weak var presentingViewController: UIViewController? = AppController.shared
-    private var selfieMode: Bool = false
+    private var selfieMode = false
     private var completion: ((UIImage?) -> Void)?
     private var controller: UIImagePickerController?
 
@@ -26,8 +26,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
     func present(from view: AnyObject,
                  controller: UIViewController? = nil,
                  openCameraInSelfieMode: Bool = false,
-                 completion: @escaping ((UIImage?) -> Void))
-    {
+                 completion: @escaping ((UIImage?) -> Void)) {
         if let controller = controller { self.presentingViewController = controller }
         self.selfieMode = openCameraInSelfieMode
         self.completion = completion
@@ -43,13 +42,13 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
     private func promptForPhotoLibraryOrCamera(from sourceView: AnyObject) {
 
         let library = UIAlertAction(title: Text.ImagePicker.selectFrom.text, style: .default) {
-            [weak self] action in
+            [weak self] _ in
             Analytics.shared.trackDidSelectAction(actionName: "photo_library")
             self?.openPhotoLibrary()
         }
 
         let camera = UIAlertAction(title: Text.ImagePicker.takePhoto.text, style: .default) {
-            [weak self] action in
+            [weak self] _ in
             Analytics.shared.trackDidSelectAction(actionName: "camera")
             self?.openCamera()
         }
@@ -89,7 +88,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
         }
 
         // unknown
-        PHPhotoLibrary.requestAuthorization() {
+        PHPhotoLibrary.requestAuthorization {
             [weak self] status in
             guard status == .authorized else { return }
             self?.presentImagePickerController(for: .photoLibrary)
@@ -156,8 +155,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
     // TODO replace with another framework that does not have a crop rect bug
     // TODO checking for a non-zero origin for the crop rect only works partially
     func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any])
-    {
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         Analytics.shared.trackDidTapButton(buttonName: "choose")
         let rect = (info[UIImagePickerController.InfoKey.cropRect] as? CGRect) ?? CGRect.zero
         let original = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
@@ -175,6 +173,6 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
 fileprivate extension CGRect {
 
     func originLikelyWasChanged() -> Bool {
-        return self.origin.x != 0 || self.origin.y != 0
+        self.origin.x != 0 || self.origin.y != 0
     }
 }

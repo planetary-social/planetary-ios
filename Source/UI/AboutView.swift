@@ -101,10 +101,9 @@ class AboutView: KeyValueView {
     private func addSubviews() {
 
         Layout.addSeparator(toTopOf: self)
-
         
         Layout.center(self.circleView, atTopOf: self, inset: 23, size: CGSize(square: Layout.profileImageOutside))
-       //self.addLoadingAnimation()
+       // self.addLoadingAnimation()
 
         Layout.center(self.imageView, in: self.circleView, size: CGSize(square: Layout.profileImageInside))
 
@@ -195,7 +194,7 @@ class AboutView: KeyValueView {
             loadRelationship(identity: identity)
         }
         
-        if let star = Environment.Communities.stars.first(where: { $0.feed == identity}) {
+        if let star = Environment.Communities.stars.first(where: { $0.feed == identity }) {
             followButton.star = star
         } else {
             followButton.star = nil
@@ -272,12 +271,11 @@ class AboutView: KeyValueView {
         self.layoutIfNeeded()
     }
     
-    
     // MARK: Loading animation
     
     private lazy var loadingAnimation: PeerConnectionAnimation = {
         let view = PeerConnectionAnimation(color: .networkAnimation)
-        //view.multiplier = 2
+        // view.multiplier = 2
         view.setDotCount(inside: false, count: 1, animated: false)
         view.setDotCount(inside: true, count: 2, animated: false)
         return view
@@ -293,7 +291,7 @@ class AboutView: KeyValueView {
     }()
     
     func addLoadingAnimation() {
-        //Layout.center(self.loadingLabel, in: self.circleView)
+        // Layout.center(self.loadingLabel, in: self.circleView)
         Layout.centerHorizontally(self.loadingAnimation, in: self.circleView)
         self.loadingAnimation.constrainSize(to: Layout.profileImageOutside)
         self.loadingAnimation.pinBottom(toTopOf: self.loadingLabel, constant: -20, activate: true)

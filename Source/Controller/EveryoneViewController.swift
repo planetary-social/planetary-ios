@@ -22,7 +22,6 @@ class EveryoneViewController: ContentViewController {
         return item
     }()
 
-
      lazy var refreshControl: UIRefreshControl = {
          let control = UIRefreshControl.forAutoLayout()
          control.addTarget(self, action: #selector(refreshControlValueChanged(control:)), for: .valueChanged)
@@ -33,7 +32,6 @@ class EveryoneViewController: ContentViewController {
          let dataSource = PostReplyPaginatedDataSource()
          dataSource.delegate = self
          return dataSource
-         
      }()
     
      private lazy var delegate = PostReplyPaginatedDelegate(on: self)
@@ -159,7 +157,6 @@ class EveryoneViewController: ContentViewController {
         self.registerDidRefresh()
     }
 
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Everyone")
@@ -169,7 +166,7 @@ class EveryoneViewController: ContentViewController {
     // MARK: Load and refresh
     
     func load(animated: Bool = false) {
-        Bots.current.everyone() { [weak self] proxy, error in
+        Bots.current.everyone { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
@@ -219,7 +216,6 @@ class EveryoneViewController: ContentViewController {
         AppController.shared.operationQueue.addOperation(refreshOperation)
     }
     
-    
     func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
@@ -257,7 +253,7 @@ class EveryoneViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
          let controller = NewPostViewController()
          controller.didPublish = {
-             [weak self] post in
+             [weak self] _ in
              self?.load()
          }
          let navController = UINavigationController(rootViewController: controller)
@@ -337,5 +333,4 @@ extension EveryoneViewController: PostReplyPaginatedDataSourceDelegate {
         let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    
 }

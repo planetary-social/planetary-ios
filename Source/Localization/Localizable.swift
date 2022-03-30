@@ -15,7 +15,6 @@ protocol Localizable {
     var view: SwiftUI.Text { get }
 
     static func exportForStringsFile() -> String
-    
 }
 
 //    Use as follows:
@@ -72,51 +71,50 @@ extension Localizable {
     }
 
     var uppercased: String {
-        return text.uppercased()
+        text.uppercased()
     }
 
     static var namespace: String {
-        return String(describing: self)
+        String(describing: self)
     }
     
     var view: SwiftUI.Text {
-        return SwiftUI.Text(text)
+        SwiftUI.Text(text)
     }
     
     func view(_ arguments: [String: String]) -> SwiftUI.Text {
-        return SwiftUI.Text(text(arguments))
+        SwiftUI.Text(text(arguments))
     }
 
-
     var key: String {
-        return "\(Self.namespace).\(String(describing: self))"
+        "\(Self.namespace).\(String(describing: self))"
     }
 
     // escape newlines in templates, used when exporting templates for Localizable.strings
     var escapedTemplate: String {
-        return template.replacingOccurrences(of: "\n", with: "\\n")
+        template.replacingOccurrences(of: "\n", with: "\\n")
     }
 }
 
 extension Localizable {
     var description: String {
-        return text
+        text
     }
 }
 
 extension Localizable where Self: RawRepresentable, Self.RawValue == String {
     var template: String {
-        return rawValue
+        rawValue
     }
 }
 
 extension Localizable where Self: CaseIterable {
     static func exportForStringsFile() -> String {
         let list = allCases.map { text in
-            return "\"\(text.key)\" = \"\(text.escapedTemplate)\";"
+            "\"\(text.key)\" = \"\(text.escapedTemplate)\";"
         }
         return list.joined(separator: "\n")
     }
 }
 
-fileprivate class CurrentBundle {}
+private class CurrentBundle {}

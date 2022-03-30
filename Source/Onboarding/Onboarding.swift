@@ -77,8 +77,7 @@ class Onboarding {
     static func start(birthdate: Date,
                       phone: String,
                       name: String,
-                      completion: @escaping StartCompletion)
-    {
+                      completion: @escaping StartCompletion) {
         guard birthdate.olderThan(yearsAgo: 16) else { completion(nil, .invalidBirthdate); return }
         
         // Phone verification is not used anymore
@@ -90,7 +89,7 @@ class Onboarding {
         Analytics.shared.trackOnboardingStart()
 
         // create secret
-        GoBot.shared.createSecret() { secret, error in
+        GoBot.shared.createSecret { secret, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
@@ -121,7 +120,7 @@ class Onboarding {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if let error = error {
-                    completion(nil, .botError(error));
+                    completion(nil, .botError(error))
                     return
                 }
 
@@ -131,7 +130,7 @@ class Onboarding {
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     if let error = error {
-                        completion(nil, .botError(error));
+                        completion(nil, .botError(error))
                         return
                     }
 
@@ -159,8 +158,7 @@ class Onboarding {
     /// Assuming the very last of `Onboarding.start()` completes successfully, this should
     /// be called to set the `Onboarding.status` for the created identity.
     private static func didStart(configuration: AppConfiguration,
-                                 secret: Secret)
-    {
+                                 secret: Secret) {
         // TODO should be one command to do all this
         // TODO doing this here makes it hard to revert if something fails
         configuration.apply()
@@ -177,7 +175,7 @@ class Onboarding {
     /// should not have been set.  Check out `Onboarding.start()` to see all the work that is
     /// done, and to use a template to know what work to undo.
     static func reset(completion: @escaping ResetCompletion) {
-        Bots.current.logout() { error in
+        Bots.current.logout { error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             

@@ -15,14 +15,14 @@ class PostHeaderView: UIView {
 
     private lazy var identityButton: AvatarButton = {
         let button = AvatarButton()
-        button.addTarget(self,action: #selector(selectAboutIdentity), for: .touchUpInside)
+        button.addTarget(self, action: #selector(selectAboutIdentity), for: .touchUpInside)
         button.isSkeletonable = true
         return button
     }()
 
     private lazy var nameButton: UIButton = {
         let button = UIButton(type: .custom).useAutoLayout()
-        button.addTarget(self,action: #selector(selectAboutIdentity), for: .touchUpInside)
+        button.addTarget(self, action: #selector(selectAboutIdentity), for: .touchUpInside)
         button.setTitleColor(UIColor.text.default, for: .normal)
         button.contentHorizontalAlignment = .left
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
@@ -116,7 +116,7 @@ class PostHeaderView: UIView {
     }
 }
 
-// MARK:- Date formatting
+// MARK: - Date formatting
 
 fileprivate extension KeyValue {
 
@@ -133,17 +133,17 @@ fileprivate extension Date {
 
     var todayYesterdayDayOfWeekOrNumberOfDaysAgo: String {
         let calendar = Calendar.current
-        if calendar.isDateInToday(self)         { return Text.today.text }
-        if calendar.isDateInYesterday(self)     { return Text.yesterday.text }
+        if calendar.isDateInToday(self) { return Text.today.text }
+        if calendar.isDateInYesterday(self) { return Text.yesterday.text }
         let components = calendar.dateComponents([.day], from: self, to: Date())
         let daysApart = components.day ?? -1
-        if daysApart < 0                        { return Text.future.text }
-        if daysApart <= 7                       { return DateFormatter.dayOfWeek.string(from: self) }
+        if daysApart < 0 { return Text.future.text }
+        if daysApart <= 7 { return DateFormatter.dayOfWeek.string(from: self) }
         return Text.daysAgo.text(["days": String(daysApart)])
     }
 
     var timeOfDay: String {
-        return DateFormatter.localizedString(from: self, dateStyle: .none, timeStyle: .short)
+        DateFormatter.localizedString(from: self, dateStyle: .none, timeStyle: .short)
     }
 }
 

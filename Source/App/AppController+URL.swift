@@ -75,7 +75,7 @@ extension AppController {
                                            message: "Are you sure you want to redeem this invite?",
                                            preferredStyle: .alert)
         var action = UIAlertAction(title: Text.cancel.text, style: .cancel) {
-            action in
+            _ in
             controller.dismiss(animated: true, completion: nil)
         }
         controller.addAction(action)
@@ -111,13 +111,11 @@ extension AppController {
     // TODO this is incorrectly scoped, push to the app controller should
     // reset the root controller, not push into a child feature controller
     func pushViewController(for contentType: ContentType,
-                            with identity: Identity)
-    {
+                            with identity: Identity) {
         guard contentType == .about else { return }
         let controller = AboutViewController(with: identity)
         self.push(controller, animated: true)
     }
-    
 
     func pushBlobViewController(for blob: BlobIdentifier) {
         let controller = BlobViewController(with: blob)
@@ -133,7 +131,6 @@ extension AppController {
                 self.alert(error: error)
             }
         }
-        
     }
 
     func pushChannelViewController(for hashtag: String) {

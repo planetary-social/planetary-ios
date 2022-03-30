@@ -11,7 +11,7 @@ import Foundation
 extension String {
 
     var isHashtag: Bool {
-        return self.hasPrefix("#")
+        self.hasPrefix("#")
     }
 
     var withoutHashPrefix: String {
@@ -41,6 +41,6 @@ extension String {
     }
 
     var trimmed: String {
-        return self.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

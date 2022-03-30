@@ -79,7 +79,7 @@ class AppController: UIViewController {
     }
 
     var mainViewController: MainViewController? {
-        return self.children.first as? MainViewController
+        self.children.first as? MainViewController
     }
     
     // MARK: Directory tab view controller
@@ -91,15 +91,14 @@ class AppController: UIViewController {
     }
 
     var directoryViewController: DirectoryViewController? {
-        return self.children.first as? DirectoryViewController
+        self.children.first as? DirectoryViewController
     }
     
     // MARK: Onboarding view controller
 
     func showOnboardingViewController(_ status: Onboarding.Status = .notStarted,
                                       _ simulate: Bool = false,
-                                      animated: Bool = true)
-    {
+                                      animated: Bool = true) {
         let controller = OnboardingViewController(status: status, simulate: simulate)
         self.setRootViewController(controller, animated: animated)
     }
@@ -128,17 +127,17 @@ class AppController: UIViewController {
     // MARK: Observers
     
     func addObservers() {
-        let showProgress = { [weak self] (notification: Notification) -> Void in
-            //self?.showProgress(statusText: notification.databaseProgressStatus)
+        let showProgress = { [weak self] (_: Notification) -> Void in
+            // self?.showProgress(statusText: notification.databaseProgressStatus)
             self?.missionControlCenter.pause()
         }
         let updateProgress = { [weak self] (notification: Notification) -> Void in
             guard let percDone = notification.databaseProgressPercentageDone else { return }
             guard let status = notification.databaseProgressStatus else { return }
-            //self?.updateProgress(perc: percDone, status: status)
+            // self?.updateProgress(perc: percDone, status: status)
         }
-        let dismissProgress = { [weak self] (notification: Notification) -> Void in
-            //self?.hideProgress()
+        let dismissProgress = { [weak self] (_: Notification) -> Void in
+            // self?.hideProgress()
             self?.missionControlCenter.resume()
         }
         removeObservers()

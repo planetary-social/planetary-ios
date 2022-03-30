@@ -19,5 +19,4 @@ class AsynchronousBlockOperation: AsynchronousOperation {
     override func main() {
         self.block(self)
     }
-    
 }

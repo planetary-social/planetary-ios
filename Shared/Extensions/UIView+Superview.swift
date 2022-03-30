@@ -12,10 +12,10 @@ import UIKit
 extension UIView {
 
     func superview<T>(of type: T.Type) -> T? {
-        return superview as? T ?? superview?.superview(of: type)
+        superview as? T ?? superview?.superview(of: type)
     }
 
     func subview<T>(of type: T.Type) -> T? {
-        return subviews.compactMap { $0 as? T ?? $0.subview(of: type) }.first
+        subviews.compactMap { $0 as? T ?? $0.subview(of: type) }.first
     }
 }

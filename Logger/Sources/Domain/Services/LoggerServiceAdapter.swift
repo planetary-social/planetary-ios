@@ -21,7 +21,7 @@ class LoggerServiceAdapter: LoggerService {
     }
 
     var fileUrls: [URL] {
-        return fileLoggerService.fileUrls
+        fileLoggerService.fileUrls
     }
 
     func debug(_ string: String) {
@@ -57,5 +57,4 @@ class LoggerServiceAdapter: LoggerService {
         os_log("%@", type: OSLogType.fault, message)
         fileLoggerService.error(message)
     }
-
 }
