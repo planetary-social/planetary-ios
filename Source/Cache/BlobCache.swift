@@ -245,22 +245,6 @@ class BlobCache: DictionaryCache {
 
     // MARK: UIImage completions
 
-    // the number of pending blob identifiers to be loaded
-    var numberOfBlobIdentifiers: Int {
-        self.completions.count
-    }
-
-    // the TOTAL number of completions for all blob identifiers
-    // if this is larger than `numberOfBlobIdentifiers` then that
-    // means there are multiple requests for the same blob
-    var numberOfBlobCompletions: Int {
-        var count: Int = 0
-        for element in self.completions {
-            count += element.value.count
-        }
-        return count
-    }
-
     /// An object that manages in-flight requests for blobs.
     private var requestManager = RequestManager()
     
