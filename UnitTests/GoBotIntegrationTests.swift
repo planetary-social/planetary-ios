@@ -225,7 +225,7 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertNotNil(ref)
     }
 
-    /// Verifies that the GoBOt can publish a message with a mention whose name has an emoji
+    /// Verifies that the GoBot can publish a message with a mention whose name has an emoji
     func testPublishWithAMentionWithEmoji() async throws {
         // Arrange
         let mention = Mention(
