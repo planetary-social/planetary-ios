@@ -24,8 +24,11 @@
 "Text.helpAndSupport" = "帮助与支持";
 "Text.reportBug" = "报告Bug";
 "Text.settings" = "设置";
-"Text.userDirectory" = "用户列表";
-"Text.communitites" = "兴趣圈";
+"Text.yourNetwork" = "Your Network";
+"Text.pubServers" = "Pub Servers";
+"Text.usersInYourNetwork" = "Users in your network";
+"Text.goToYourNetwork" = "Go to Your Network";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
 "Text.showMeInDirectory" = "在用户目录中显示";
 "Text.showMeInUserDirectory" = "在用户目录中显示";
 "Text.hideMeFromUserDirectory" = "在用户目录中显示";

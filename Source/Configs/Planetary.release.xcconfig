@@ -17,6 +17,8 @@ PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios
 
 SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
 
+// If you change any invitations here you should track them here too: https://github.com/planetary-social/infrastructure/wiki/Pub-Invitation-Tracking
+
 PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~KVvak/aZeQJQUrn1imLIvwU+EVTkCzGW8TJWTmK8lOk=
 PUB_TWO = two.planetary.pub:8008:@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519~8pETEamsgecH32ry4bj7sr7ofXtUbeOCG1qq4C7szHY=
 PUB_THREE = 159.89.164.120:8008:@LQ8HBiEinU5FiXGaZH9JYFGBGdsB99mepBdh/Smq3VI=.ed25519~lZItxcdycINquFD1SoeCYtUrLBVlc1zZmz2UAln6TOE=te
@@ -28,13 +30,16 @@ RIGEL = 35.222.71.220:8008:@6OK6Z0x5hIVR4yHKFjqwMejlfQUDQUTBW513pn4INIM=.ed25519
 PLEIADES = 34.68.66.228:8008:@CCX4V0cOscQU4mMz0PbbB7IIJQDcZc1XFCQaQMHUDsI=.ed25519~92RD5VdmAjthKYK0yXfSpE2yJMwp0JUjeBSLtxiIzn0=
 CONSTELLATION = ${PUB_ONE} ${PUB_TWO} ${PUB_THREE} ${PUB_FOUR}
 
-CRYPTO = crypto.planetary.pub:8008:@CBaNGA3MPZHPKo4gvrZsTCCV3DUgydmPnwK0UDRRbqQ=.ed25519~ZxTzJfeVrffCJG7A9byZpD4pOlhCo5E68vB/qcmjyF8=
-FLOSS = floss.planetary.pub:8008:@uHqyTLo/JwapDh+ryXKe0VyBMS7eqt0YEKwvUathiS8=.ed25519~l8EciukRuVREcV4hvQLlnIu3tBJtAYV2mbjxzBXEkBQ=
-NOISEBRIDGE = gossip.noisebridge.info:8008:@2NANnQVdsoqk0XPiJG2oMZqaEpTeoGrxOHJkLIqs7eY=.ed25519~JWTC6+rPYPW5b5zCion0gqjcJs35h6JKpUrQoAKWgJ4=
+CRYPTO = crypto.planetary.pub:8008:@CBaNGA3MPZHPKo4gvrZsTCCV3DUgydmPnwK0UDRRbqQ=.ed25519~sGQ1aP56Kq5XhzI8KK7njn+Dexxggr3IVRt0ro5v7NA=
+FLOSS = floss.planetary.pub:8008:@uHqyTLo/JwapDh+ryXKe0VyBMS7eqt0YEKwvUathiS8=.ed25519~Jukp9cJPKm48ZRJjZniL8HdD/shj8LxpCDOcm8vZq0g=
 SCUTTLEUS = scuttle.us:8008:@WqcuCOIpLtXFRw/9vOAQJti8avTZ9vxT9rKrPo8qG6o=.ed25519~/ZUi9Chpl0g1kuWSrmehq2EwMQeV0Pd+8xw8XhWuhLE=
-SCUTTLEBUTTDE = scuttlebutt.de:8008:@yeh/GKxlfhlYXSdgU7CRLxm58GC42za3tDuC4NJld/k=.ed25519~iyaCpZ0co863K9aF+b7j8BnnHfwY65dGeX6Dh2nXs3c=
 MONERO = xmr-pub.net:8008:@5hTpvduvbDyMLN2IdzDKa7nx7PSem9co3RsOmZoyyCM=.ed25519~vQU+r2HUd6JxPENSinUWdfqrJLlOqXiCbzHoML9iVN4=
-COMMUNITIES = ${CRYPTO} ${FLOSS} ${NOISEBRIDGE} ${SCUTTLEUS} ${SCUTTLEBUTTDE} ${MONERO}
+GARDENING = gardening.planetary.pub:8008:@1ZA2K/bPs41o4EJ1gAVVNGGj0WAB6laJC2AOJbdBrmM=.ed25519~eQGIoibQ6jMpDAFeIC6X3GiaihXIZUn3RxVmfb+AEIg=
+ESPANOL = espanol.planetary.pub:8008:@KpZ49dSM+wr73t8peJQWBLjAlENLG9yLdVBNv7PgatI=.ed25519~s7GLx7uJSllwh4HVB0v7DOY4f9YO1kPw7RvjGDnXe7I=
+POETRY = poetry.planetary.pub:8008:@FBH3fASAJ3aJtzHL7nDg86HiuCjAKSljzXAIhlZqnFw=.ed25519~wt05rBzwx7XelTL4DND+4Ne89LPPzpajZaXhI//MMn8=
+FUNGI = fungi.planetary.pub:8008:@ULtTfklxd39BtkQs97OwKRm1vncQHc/foySwTPErkwg=.ed25519~u986XUj7bYdRNag6tfNdfSQmvlsX1GihwecfZHjubH8=
+COOKING = cooking.planetary.pub:8008:@8oxL9ddFp+y+EJx4HfYsnHKUUlscH0bgng4QJn1g5dQ=.ed25519~h0DFZbED9II5UuxGumlpIFw7fPvQjQVTCTOgp/G1NFI=
+COMMUNITIES = ${CRYPTO} ${FLOSS} ${SCUTTLEUS} ${MONERO} ${GARDENING} ${ESPANOL} ${POETRY} ${FUNGI} ${COOKING}
 
 PLANETARY = @oeNoy1RIArVdMdk8ndeoKbAKuU8b56VgxlYP5y8b9Ic=.ed25519
 PLANETARY_SYSTEM = ${PLANETARY}

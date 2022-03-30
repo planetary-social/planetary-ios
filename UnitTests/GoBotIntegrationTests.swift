@@ -32,7 +32,7 @@ class GoBotIntegrationTests: XCTestCase {
         
         userDefaults = UserDefaults()
         
-        sut = GoBot(userDefaults: userDefaults)
+        sut = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
         
         appConfig = AppConfiguration(with: botTestsKey)
         appConfig.network = botTestNetwork
@@ -283,5 +283,38 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 5)
+    }
+
+    // MARK: - Preloaded Pubs
+    
+    func testPubsArePreloaded() throws {
+        // Arrange
+        try tearDownWithError()
+        do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
+
+        let mockPreloader = MockPreloadedPubService()
+        sut = GoBot(preloadedPubService: mockPreloader)
+        let loginExpectation = self.expectation(description: "login")
+        
+        // Act
+        sut.login(config: appConfig) {
+            error in
+            defer { loginExpectation.fulfill() }
+            XCTAssertNil(error)
+        }
+        self.wait(for: [loginExpectation], timeout: 10)
+        
+        // Assert
+        XCTAssertEqual(mockPreloader.preloadPubsCallCount, 1)
+    }
+}
+
+class MockPreloadedPubService: PreloadedPubService {
+    required init(blobService: PreloadedBlobsService.Type = PreloadedBlobsServiceAdapter.self) {}
+    var preloadPubsCallCount = 0
+    var preloadPubsBotParameter: Bot?
+    func preloadPubs(in bot: Bot, from bundle: Bundle? = nil) {
+        preloadPubsCallCount += 1
+        preloadPubsBotParameter = bot
     }
 }

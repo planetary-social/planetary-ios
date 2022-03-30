@@ -13,6 +13,7 @@ enum ViewDatabaseError: Error {
     case alreadyOpen
     case unknownMessage(MessageIdentifier)
     case unknownAuthor(Identifier)
+    case unknownHashtag(String)
     case unknownReferenceID(Int64)
     case unexpectedContentType(String)
     case unknownTable(ViewDatabaseTableNames)

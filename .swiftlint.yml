@@ -119,4 +119,6 @@ identifier_name:
     - lhs
     - rhs
     - key
+    - pub
+    - bot
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, codeclimate, junit, html, emoji, sonarqube, markdown, github-actions-logging)

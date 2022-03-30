@@ -68,7 +68,7 @@ class SendMissionOperation: AsynchronousOperation {
                 }
                 
                 // Get the stars the users already redeemed an invite to
-                let availableStars = knownStars.filter { star in
+                let joinedStars = knownStars.filter { star in
                     pubs.contains { (pub) -> Bool in
                         pub.address.key == star.feed
                     }
@@ -78,31 +78,40 @@ class SendMissionOperation: AsynchronousOperation {
                 let redeemInviteOperations: [RedeemInviteOperation]
                 
                 // Check if the current number of available stars is enough
-                let numberOfMissingStars = SendMissionOperation.minNumberOfStars - availableStars.count
+                let numberOfMissingStars = SendMissionOperation.minNumberOfStars - joinedStars.count
                 if numberOfMissingStars > 0 {
                     Log.debug("There are \(numberOfMissingStars) missing stars.")
                     
                     // Let's take a random set of stars to reach the minimum and create Redeem Invite
                     // operations
-                    let missingStars = knownStars.subtracting(availableStars)
+                    let missingStars = knownStars.subtracting(joinedStars)
                     let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
                     redeemInviteOperations = randomSampleOfStars.map {
                         return RedeemInviteOperation(star: $0, shouldFollow: false)
                     }
                     
                     // Lets sync to available stars and newly redeemed stars
-                    starsToSync = availableStars.union(missingStars)
+                    starsToSync = joinedStars.union(missingStars)
                 } else {
-                    Log.debug("There are \(availableStars.count) available stars.")
+                    Log.debug("There are \(joinedStars.count) available stars.")
                     
                     // No need to redeem invite
                     redeemInviteOperations = []
                     
                     // Just sync to the available stars
-                    starsToSync = availableStars
+                    starsToSync = joinedStars
                 }
                 
-                let syncOperation = SyncOperation(peers: starsToSync.map { $0.toPeer() })
+                let someNonStarPubs = pubs
+                    .filter { pub in
+                        !knownStars.contains(where: { $0.feed == pub.address.key })
+                    }
+                    .map { $0.toPeer() }
+                    .randomSample(2)
+                let someStars = starsToSync.randomSample(2).map { $0.toPeer() }
+                let peersToSync = someNonStarPubs + someStars
+                
+                let syncOperation = SyncOperation(peers: peersToSync)
                 switch quality {
                 case .low:
                     syncOperation.notificationsOnly = true

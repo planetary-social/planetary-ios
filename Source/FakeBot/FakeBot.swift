@@ -14,7 +14,9 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot {
-
+    
+    required init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?) {}
+    
     func lastReceivedTimestam() throws -> Double {
         fatalError("TODO:\(#function)")
     }
@@ -163,7 +165,7 @@ class FakeBot: Bot {
     }
     
 
-    init() {}
+    required init() {}
     static let shared = FakeBot()
 
     // MARK: Name
