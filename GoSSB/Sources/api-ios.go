@@ -71,6 +71,8 @@ var (
 
 	longCtx  context.Context
 	shutdown context.CancelFunc
+
+	appKey string
 )
 
 var ErrNotInitialized = stderr.New("gosbot: not initialized or crashed")
@@ -176,7 +178,7 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 		return false
 	}
 
-	appKey := cfg.AppKey
+	appKey = cfg.AppKey
 	keyblob := cfg.KeyBlob
 	repoDir = cfg.Repo
 	listenAddr := cfg.ListenAddr
