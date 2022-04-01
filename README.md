@@ -1,6 +1,11 @@
 # Planetary
 
-Planetary iOS is an app based on [Secure Scuttlebutt](https://scuttlebutt.nz/) that doesn't keep your data in the cloud and allows you and your friends to come together and connect even when the internet goes out.  
+![Unit Tests](https://github.com/planetary-social/planetary-ios/actions/workflows/main.yml/badge.svg) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/10d7934ffe4a46f380ff35951cc482e8)](https://www.codacy.com/gh/planetary-social/planetary-ios/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=planetary-social/planetary-ios&amp;utm_campaign=Badge_Grade) [![Crowdin](https://badges.crowdin.net/planetary/localized.svg)](https://crowdin.com/project/planetary)
+
+Social media for humans, not algorithms. 
+
+Planetary passes data from friend to friend, creating a network that is personal, censorship resistant, and minimizes abuse and spam. Planetary gives you ownership over your relationships and content, and is compatible with any app using the [Secure Scuttlebutt](https://scuttlebutt.nz/) protocol. Experience social networking where you're the customer, not the product.
+
 Check our website [planetary.social](https://planetary.social/) for more info!
 
 ## Current Planetary Functionality:
@@ -71,9 +76,6 @@ Check our website [planetary.social](https://planetary.social/) for more info!
 * New installs fail to initialize correctly rarely
 * Connection information is only displayed on debug screens
 * Sometimes users need to pull to refresh to see new content
-
-
-![](https://github.com/planetary-social/planetary-ios/workflows/CI/badge.svg)
 
 ## Developer installation
 
