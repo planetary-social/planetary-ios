@@ -14,7 +14,7 @@ Unlike most social media, Planetary:
 * Allows you to take your friends with you if you decide to move to another client.
 * Is open source!
 
-No one company should own the Internet’s public spaces, which is why we’re building on —and contributing back to— the open source Secure Scuttlebutt (SSB) ecosystem. Their core technologies let us recreate a social network experience, but in a decentralized way that no one organization can dominate.
+No one company should own the Internet’s public spaces, which is why we’re building on —and contributing back to— the open source [Secure Scuttlebutt](https://scuttlebutt.nz/) ecosystem. Their core technologies let us recreate a social network experience, but in a decentralized way that no one organization can dominate.
 
 Check our website [planetary.social](https://planetary.social/) for more info!
 
