@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"go.cryptoscope.co/ssb/client"
 	refs "go.mindeco.de/ssb-refs"
 	"math"
 	"runtime"
@@ -412,7 +413,7 @@ func ssbInviteAccept(token string) bool {
 	}
 
 	ctx, cancel := context.WithCancel(longCtx)
-	err = invite.Redeem(ctx, tok, sbot.KeyPair.ID())
+	err = invite.Redeem(ctx, tok, sbot.KeyPair.ID(), client.WithSHSAppKey(appKey))
 	defer cancel()
 
 	if err == nil {
