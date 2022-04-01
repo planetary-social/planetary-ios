@@ -113,6 +113,7 @@
 "Text.pasteAddress" = "Kod";
 "Text.refresh" = "Odśwież";
 "Text.markdownSupported" = "Podgląd";
+"Text.loggingOut" = "Logging out...";
 
 "Blocking.alertTitle" = "Czy na pewno chcesz zablokować {{ name }}? You will no longer see each other's content or be able to contact each other. Nie będziecie już widzieć wzajemnych treści ani nie będziecie mogli się ze sobą kontaktować.";
 "Blocking.buttonTitle" = "Tak, zablokuj {{ name }}";

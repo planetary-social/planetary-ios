@@ -113,6 +113,7 @@
 "Text.pasteAddress" = "代币";
 "Text.refresh" = "更新";
 "Text.markdownSupported" = "Markdown 预览";
+"Text.loggingOut" = "Logging out...";
 
 "Blocking.alertTitle" = "您确定要屏蔽 {{ name }} 吗？您将不再看到对方的内容或能够相互联系。";
 "Blocking.buttonTitle" = "是，封禁 {{ name }}";

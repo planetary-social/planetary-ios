@@ -113,6 +113,7 @@
 "Text.pasteAddress" = "Schlüssel";
 "Text.refresh" = "Aktualisieren";
 "Text.markdownSupported" = "Markdown-Vorschau";
+"Text.loggingOut" = "Logging out...";
 
 "Blocking.alertTitle" = "Bist du sicher, dass du {{ name }} blockieren willst? Du wirst den Inhalt des anderen nicht mehr sehen oder dich gegenseitig kontaktieren können.";
 "Blocking.buttonTitle" = "Ja, {{ name }} blockieren";

@@ -96,7 +96,11 @@ class SendMissionOperation: AsynchronousOperation {
                     starsToJoin = missingStars
                 }
                 
-                let peerPool = allJoinedPubs.map { $0.toPeer() } + starsToJoin.map { $0.toPeer() }
+                let peerPool = allJoinedPubs.compactMap {
+                    $0.toPeer().multiserverAddress
+                } + starsToJoin.compactMap {
+                    $0.toPeer().multiserverAddress
+                }
                 
                 let syncOperation = SyncOperation(peerPool: peerPool)
                 switch self.quality {

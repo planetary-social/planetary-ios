@@ -29,9 +29,13 @@ struct Peer {
         self.pubKey = pubKey
     }
     
-    init(pubAddress: PubAddress) {
-        self.tcpAddr = "\(pubAddress.host):\(pubAddress.port)"
-        self.pubKey = pubAddress.key
+    init(multiserver: MultiserverAddress) {
+        self.tcpAddr = "\(multiserver.host):\(multiserver.port)"
+        self.pubKey = multiserver.key
+    }
+    
+    var multiserverAddress: MultiserverAddress? {
+        MultiserverAddress(string: "net:\(tcpAddr)~shs:\(pubKey.id)")
     }
 }
 
@@ -251,7 +255,7 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dial(from peers: [Peer], atLeast: Int, tries: Int = 10) -> Bool {
+    func dial(from peers: [MultiserverAddress], atLeast: Int, tries: Int = 10) -> Bool {
         let wanted = min(peers.count, atLeast) // how many connections are we shooting for?
         var hasWorked: Int = 0
         var tried: Int = tries
@@ -268,7 +272,7 @@ class GoBotInternal {
         return true
     }
 
-    private func dialAnyone(from peers: [Peer]) -> Bool {
+    private func dialAnyone(from peers: [MultiserverAddress]) -> Bool {
         guard let peer = peers.randomElement() else {
             Log.unexpected(.botError, "no peers in sheduler table")
             return false
@@ -277,7 +281,7 @@ class GoBotInternal {
     }
     
     @discardableResult
-    func dialSomePeers(from peers: [Peer]) -> Bool {
+    func dialSomePeers(from peers: [MultiserverAddress]) -> Bool {
         guard peers.count > 0 else {
             Log.debug("User doesn't have any redeemed pubs")
             return false
@@ -308,11 +312,10 @@ class GoBotInternal {
         return disconnectSuccess && connectToHealthy && connectToRandom
     }
     
-    func dialOne(peer: Peer) -> Bool {
-        Log.debug("Dialing \(peer.pubKey)")
-        let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
+    func dialOne(peer: MultiserverAddress) -> Bool {
+        Log.debug("Dialing \(peer.rawValue)")
         var worked = false
-        multiServ.withGoString {
+        peer.rawValue.withGoString {
             worked = ssbConnectPeer($0)
         }
         if !worked {
@@ -322,7 +325,7 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dialForNotifications(from peers: [Peer]) -> Bool {
+    func dialForNotifications(from peers: [MultiserverAddress]) -> Bool {
         if let peer = peers.randomElement() {
             return dialOne(peer: peer)
         } else {

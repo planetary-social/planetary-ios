@@ -61,7 +61,7 @@ protocol Bot {
     // MARK: Sync
     
     /// Ensure that these list of addresses are taken into consideration when establishing connections
-    func seedPubAddresses(addresses: [PubAddress],
+    func seedPubAddresses(addresses: [MultiserverAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void)
     
@@ -78,10 +78,10 @@ protocol Bot {
     ///   - queue: the queue that `completion` will be called on.
     ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
     ///   - completion: a handler called with the result of the operation.
-    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
+    func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
-    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
+    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 
@@ -236,7 +236,7 @@ extension Bot {
         }
     }
     
-    func sync(peers: [Peer], completion: @escaping SyncCompletion) {
+    func sync(peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
@@ -324,7 +324,7 @@ extension Bot {
         self.keyAtEveryoneTop(queue: .main, completion: completion)
     }
     
-    func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(addresses: [MultiserverAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
 }

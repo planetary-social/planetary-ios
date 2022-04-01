@@ -92,12 +92,12 @@ class GoBot: Bot {
         self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
                                           qos: .utility,
-                                          attributes: .concurrent,
+                                          attributes: [],
                                           autoreleaseFrequency: .workItem,
                                           target: nil)
         self.userInitiatedQueue = DispatchQueue(label: "GoBot-userInitiated",
                                                 qos: .userInitiated,
-                                                attributes: .concurrent,
+                                                attributes: [],
                                                 autoreleaseFrequency: .workItem,
                                                 target: nil)
         self.bot = GoBotInternal(self.userInitiatedQueue)
@@ -246,12 +246,12 @@ class GoBot: Bot {
 
     // MARK: Sync
     
-    func seedPubAddresses(addresses: [PubAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(addresses: [MultiserverAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
         utilityQueue.async {
             do {
                 try addresses.forEach { address throws in
                     try self.database.saveAddress(feed: address.key,
-                                                  address: address.multipeer,
+                                                  address: address.rawValue,
                                                   redeemed: nil)
                 }
                 queue.async {
@@ -312,7 +312,7 @@ class GoBot: Bot {
     /// note that dialSomePeers() is called, then the completion is called
     /// some time later, this is a workaround until we can figure out how
     /// to determine peer connection status and progress
-    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
@@ -331,7 +331,6 @@ class GoBot: Bot {
 
         utilityQueue.async {
             let before = self.repoNumberOfMessages()
-            self.bot.disconnectAll()
             self.bot.dialSomePeers(from: peers)
             let after = self.repoNumberOfMessages()
             let new = after - before
@@ -351,7 +350,7 @@ class GoBot: Bot {
     ///   - queue: The queue that `completion` will be called on.
     ///   - peers: A list of peers to connect to. One will be chosen randomly.
     ///   - completion: A block that will be called when the operation has finished.
-    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
@@ -462,10 +461,10 @@ class GoBot: Bot {
                     if ssbInviteAccept(goStr) {
                         do {
                             let feed = star.feed
-                            let address = star.address.multipeer
+                            let address = star.address.rawValue
                             let redeemed = Date().timeIntervalSince1970 * 1_000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
-                            Analytics.shared.trackDidJoinPub(at: star.address.multipeer)
+                            Analytics.shared.trackDidJoinPub(at: star.address.rawValue)
                         } catch {
                             CrashReporting.shared.reportIfNeeded(error: error)
                         }
