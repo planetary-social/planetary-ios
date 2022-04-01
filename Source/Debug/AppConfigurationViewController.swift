@@ -371,6 +371,7 @@ class AppConfigurationViewController: DebugTableViewController {
     // MARK: Actions
 
     @objc private func selectConfiguration() {
+        AppController.shared.showProgress(after: 0, statusText: Text.loggingOut.text)
         guard let name = self.nameField.text else { return }
         guard self.configuration.canLaunch else { return }
         self.configuration.name = name
@@ -379,6 +380,7 @@ class AppConfigurationViewController: DebugTableViewController {
         AppController.shared.dismissSettingsViewController {
             Task {
                 await AppController.shared.relaunch()
+                AppController.shared.hideProgress()
             }
         }
     }

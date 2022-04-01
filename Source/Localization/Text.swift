@@ -170,6 +170,8 @@ enum Text: String, Localizable, CaseIterable {
     
     case refresh = "Refresh"
     case markdownSupported = "Markdown preview"
+    
+    case loggingOut = "Logging out..."
 }
 
 // MARK: - ImagePicker
