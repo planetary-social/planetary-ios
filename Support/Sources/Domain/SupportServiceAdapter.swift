@@ -34,7 +34,7 @@ class SupportServiceAdapter: SupportService {
         let logs = Logs(appLog: appLog, botLog: botLog)
         return apiService.myTicketsViewController(
             reporter: reporter,
-            logs: logs
+            attachments: logs.attachments()
         )
     }
 
@@ -44,7 +44,12 @@ class SupportServiceAdapter: SupportService {
             appLog = try? Data(contentsOf: log)
         }
         let logs = Logs(appLog: appLog, botLog: botLog)
-        return apiService.newTicketViewController(logs: logs)
+        return apiService.newTicketViewController(
+            reporter: Identifier(),
+            subject: .bugReport,
+            reason: nil,
+            attachments: logs.attachments()
+        )
     }
 
     func newTicketViewController(from identifier: Identifier, author: Author, botLog: Data?) -> UIViewController? {
@@ -53,7 +58,12 @@ class SupportServiceAdapter: SupportService {
             appLog = try? Data(contentsOf: log)
         }
         let logs = Logs(appLog: appLog, botLog: botLog)
-        return apiService.newTicketViewController(reporter: identifier, author: author, logs: logs)
+        return apiService.newTicketViewController(
+            reporter: identifier,
+            subject: .userReport,
+            reason: nil,
+            attachments: author.attachments() + logs.attachments()
+        )
     }
 
     func newTicketViewController(from identifier: Identifier, content: Content, reason: SupportReason, botLog: Data?) -> UIViewController? {
@@ -64,9 +74,10 @@ class SupportServiceAdapter: SupportService {
         let logs = Logs(appLog: appLog, botLog: botLog)
         return apiService.newTicketViewController(
             reporter: identifier,
-            content: content,
+            subject: .contentReport,
             reason: reason,
-            logs: logs)
+            attachments: content.attachments() + logs.attachments()
+        )
     }
 
     

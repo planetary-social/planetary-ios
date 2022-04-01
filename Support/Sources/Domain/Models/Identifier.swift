@@ -13,3 +13,10 @@ struct Identifier {
         self.key = key ?? "not-logged-in"
     }
 }
+
+extension Identifier: Attachable {
+    func attachments() -> [Attachment] {
+        let data = key.data(using: .utf8) ?? Data()
+        return [Attachment(filename: "content-identifier", data: data, type: .plainText)]
+    }
+}

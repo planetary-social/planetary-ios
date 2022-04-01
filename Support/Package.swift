@@ -42,7 +42,8 @@ let package = Package(
         .testTarget(
             name: "SupportTests",
             dependencies: ["Support"],
-            path: "Tests"
+            path: "Tests",
+            resources: [.copy("Samples/Secrets.plist")]
         )
     ]
 )

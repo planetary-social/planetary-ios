@@ -17,13 +17,15 @@ class ZendeskService: APIService {
     private let zendeskURL = "https://planetarysupport.zendesk.com"
 
     private let tintColor: UIColor = UIColor(named: "defaultTint") ?? #colorLiteral(red: 0.3254901961, green: 0.2431372549, blue: 0.4862745098, alpha: 1)
-    
+
     private let tags = [
         Bundle.main.versionAndBuild,
         UIDevice.current.model,
         UIDevice.current.systemName,
         UIDevice.current.systemVersion
     ]
+
+    private let ids = SupportArticleID()
 
     init(keys: Keys = Keys.shared) {
         Log.info("Configuring Zendesk...")
@@ -52,52 +54,20 @@ class ZendeskService: APIService {
         )
     }
 
-    func myTicketsViewController(reporter: Identifier, logs: Logs) -> UIViewController? {
+    func myTicketsViewController(reporter: Identifier, attachments: [Attachment]) -> UIViewController? {
         let config = RequestUiConfiguration()
         config.tags = tags + [reporter.key]
-        config.fileAttachments = logs.requestAttachments()
+        config.fileAttachments = attachments.map { $0.requestAttachment }
         return RequestUi.buildRequestList(with: [config])
     }
 
-    func newTicketViewController(logs: Logs) -> UIViewController? {
-        return _newTicketViewController(
-            reporter: Identifier(),
-            subject: .bugReport,
-            logs: logs
-        )
+    func newTicketViewController(reporter: Identifier, subject: SupportSubject, reason: SupportReason?, attachments: [Attachment]) -> UIViewController? {
+        let config = RequestUiConfiguration()
+        config.fileAttachments = attachments.map { $0.requestAttachment }
+        config.subject = subject.rawValue
+        config.tags = self.tags + [reason?.rawValue].compactMap { $0 } + [reporter.key]
+        return RequestUi.buildRequestUi(with: [config])
     }
-    
-    func newTicketViewController(reporter: Identifier, author: Author, logs: Logs) -> UIViewController? {
-        let attachment = author.requestAttachment()
-        return _newTicketViewController(
-            reporter: reporter,
-            subject: SupportSubject.userReport,
-            attachments: [attachment],
-            tags: [],
-            logs: logs
-        )
-    }
-
-    func newTicketViewController(reporter: Identifier, content: Content, reason: SupportReason, logs: Logs) -> UIViewController? {
-        let attachments = content.requestAttachments()
-        return self._newTicketViewController(
-            reporter: reporter,
-            subject: SupportSubject.contentReport,
-            attachments: attachments,
-            tags: [reason.rawValue],
-            logs: logs
-        )
-    }
-
-    private struct SupportArticleID {
-        let faq = "360039199393"
-        let privacyPolicy = "360036147293"
-        let termsOfService = "360035642794"
-        let whatIsPlanetary = "360036488373"
-        let editPost = "360039199393"
-    }
-
-    private let ids = SupportArticleID()
 
     private func id(for article: SupportArticle) -> String {
         switch article {
@@ -113,18 +83,5 @@ class ZendeskService: APIService {
             return ids.termsOfService
         }
     }
-
-    private func _newTicketViewController(reporter: Identifier,
-                                          subject: SupportSubject,
-                                          attachments: [RequestAttachment] = [],
-                                          tags: [String] = [],
-                                          logs: Logs) -> UIViewController {
-        var attachments = attachments
-        attachments.append(contentsOf: logs.requestAttachments())
-        let config = RequestUiConfiguration()
-        config.fileAttachments = attachments
-        config.subject = subject.rawValue
-        config.tags = self.tags + tags + [reporter.key]
-        return RequestUi.buildRequestUi(with: [config])
-    }
+    
 }

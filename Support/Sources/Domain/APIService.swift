@@ -15,12 +15,8 @@ protocol APIService {
 
     func articleViewController(article: SupportArticle) -> UIViewController?
 
-    func myTicketsViewController(reporter: Identifier, logs: Logs) -> UIViewController?
+    func myTicketsViewController(reporter: Identifier, attachments: [Attachment]) -> UIViewController?
 
-    func newTicketViewController(logs: Logs) -> UIViewController?
-
-    func newTicketViewController(reporter: Identifier, author: Author, logs: Logs) -> UIViewController?
-
-    func newTicketViewController(reporter: Identifier, content: Content, reason: SupportReason, logs: Logs) -> UIViewController?
+    func newTicketViewController(reporter: Identifier, subject: SupportSubject, reason: SupportReason?, attachments: [Attachment]) -> UIViewController?
 
 }
