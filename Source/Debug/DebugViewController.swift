@@ -460,7 +460,7 @@ class DebugViewController: DebugTableViewController {
     
     /// Allows the user to export the go-ssb log and SQLite database in a zip file. This function will zip up the files
     /// and present a share sheet as a popover on the given cell.
-    private func shareDatabase(cell: UITableViewCell) {
+    private func shareDatabase(cell: UITableViewCell) async {
         cell.showActivityIndicator()
 
         let presentShareSheet = { [weak self] (activityItems: [Any]) in
@@ -472,7 +472,7 @@ class DebugViewController: DebugTableViewController {
             }
         }
         
-        let databaseDirectory = URL(fileURLWithPath: Bots.current.statistics.repo.path).deletingLastPathComponent()
+        let databaseDirectory = URL(fileURLWithPath: await Bots.current.statistics().repo.path).deletingLastPathComponent()
         let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
         let url = temporaryDirectory.appendingPathComponent(UUID().uuidString)
         DispatchQueue.global(qos: .background).async { [weak self] in
