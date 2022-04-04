@@ -15,6 +15,7 @@ class SupportTests: XCTestCase {
     var supportService: SupportServiceMock?
 
     override func setUp() {
+        super.setUp()
         let supportService = SupportServiceMock()
         support = Support(service: supportService)
         self.supportService = supportService

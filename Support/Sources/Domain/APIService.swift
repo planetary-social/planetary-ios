@@ -11,12 +11,16 @@ import UIKit
 protocol APIService {
 
     /// ViewController to show when selecting show Support
-    func mainViewController()  -> UIViewController?
+    func mainViewController() -> UIViewController?
 
     func articleViewController(article: SupportArticle) -> UIViewController?
 
     func myTicketsViewController(reporter: Identifier, attachments: [Attachment]) -> UIViewController?
 
-    func newTicketViewController(reporter: Identifier, subject: SupportSubject, reason: SupportReason?, attachments: [Attachment]) -> UIViewController?
-
+    func newTicketViewController(
+        reporter: Identifier,
+        subject: SupportSubject,
+        reason: SupportReason?,
+        attachments: [Attachment]
+    ) -> UIViewController?
 }

@@ -12,10 +12,11 @@ import Secrets
 
 final class SupportServiceAdapterTests: XCTestCase {
 
-    var service: SupportServiceAdapter!
-    var apiService: APIServiceMock!
+    var service: SupportServiceAdapter?
+    var apiService: APIServiceMock?
 
     override func setUp() {
+        super.setUp()
         let apiService = APIServiceMock()
         service = SupportServiceAdapter(apiService)
         self.apiService = apiService
@@ -43,7 +44,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.myTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "app_log.txt"}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
 
     }
 
@@ -55,8 +56,8 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.myTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "app_log.txt"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "bot_log.txt"}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "bot_log.txt" }))
 
     }
 
@@ -66,7 +67,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, "not-logged-in")
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "app_log.txt"}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
     }
 
     func testNewTicketViewControllerWithBotLog() throws {
@@ -76,8 +77,8 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, "not-logged-in")
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "bot_log.txt"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.data == botLog}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "bot_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == botLog }))
     }
 
     func testNewAuthorTicketViewController() throws {
@@ -89,8 +90,8 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "app_log.txt"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == authorIdentity}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorIdentity }))
     }
 
     func testNewAuthorTicketViewControllerWithAuthorName() throws {
@@ -103,26 +104,27 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "app_log.txt"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == authorName}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.data == authorIdentity.data(using: .utf8)}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorName }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == authorIdentity.data(using: .utf8) }))
     }
 
     func testNewContentTicketViewController() throws {
         let identity = Identifier(key: "test-identity")
         let authorIdentity = "another-identity"
         let author = Author(identifier: Identifier(key: authorIdentity), name: nil)
-        let contentIdentifier = Identifier(key: "content-ref")
+        let contentKey = "content-ref"
+        let contentIdentifier = Identifier(key: contentKey)
         let content = Content(identifier: contentIdentifier, author: author, screenshot: nil)
         let result = service?.newTicketViewController(from: identity, content: content, reason: .copyright, botLog: nil)
         XCTAssertNil(result)
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "app_log.txt"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == authorIdentity}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "content-identifier"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.data == contentIdentifier.key.data(using: .utf8)}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorIdentity }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "content-identifier" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == contentKey.data(using: .utf8) }))
     }
 
     func testNewContentTicketViewControllerWithScreenshot() throws {
@@ -143,18 +145,19 @@ final class SupportServiceAdapterTests: XCTestCase {
         let authorIdentity = "another-identity"
         let authorName = "some name"
         let author = Author(identifier: Identifier(key: authorIdentity), name: authorName)
-        let contentIdentifier = Identifier(key: "content-ref")
+        let contentKey = "content-ref"
+        let contentIdentifier = Identifier(key: contentKey)
         let content = Content(identifier: contentIdentifier, author: author, screenshot: nil)
         let result = service?.newTicketViewController(from: identity, content: content, reason: .copyright, botLog: nil)
         XCTAssertNil(result)
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "app_log.txt"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == authorName}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.data == authorIdentity.data(using: .utf8)}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "content-identifier"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.data == contentIdentifier.key.data(using: .utf8)}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorName }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == authorIdentity.data(using: .utf8) }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "content-identifier" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == contentKey.data(using: .utf8) }))
     }
 
     func testNewContentTicketViewControllerWithBotLog() throws {

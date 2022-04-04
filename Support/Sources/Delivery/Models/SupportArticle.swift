@@ -8,7 +8,7 @@
 import Foundation
 
 public enum SupportArticle: String {
-    case faq
+    case frequentlyAskedQuestions
     case privacyPolicy
     case termsOfService
     case whatIsPlanetary

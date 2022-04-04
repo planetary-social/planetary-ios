@@ -43,10 +43,13 @@ class SupportServiceMock: SupportService {
         return nil
     }
 
-    func newTicketViewController(from identifier: Identifier, content: Content, reason: SupportReason, botLog: Data?) -> UIViewController? {
+    func newTicketViewController(
+        from identifier: Identifier,
+        content: Content,
+        reason: SupportReason,
+        botLog: Data?
+    ) -> UIViewController? {
         newContentTicketCalled = true
         return nil
     }
-
-
 }

@@ -23,12 +23,11 @@ extension Content: Attachable {
                 dateStyle: .short,
                 timeStyle: .short
             )
-            let attachment = Attachment(filename: date, data: data, type: .jpg)
+            let attachment = Attachment(filename: date, data: data, type: .jepg)
             attachments.append(attachment)
         }
         attachments.append(contentsOf: author.attachments())
         attachments.append(contentsOf: identifier.attachments())
         return attachments
     }
-
 }

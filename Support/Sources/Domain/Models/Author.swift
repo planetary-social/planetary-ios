@@ -19,5 +19,4 @@ extension Author: Attachable {
         let data = identifier.key.data(using: .utf8) ?? Data()
         return [Attachment(filename: nameOrIdentity, data: data, type: .plainText)]
     }
-    
 }

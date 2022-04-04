@@ -36,7 +36,12 @@ class APIServiceMock: APIService {
         return nil
     }
 
-    func newTicketViewController(reporter: Identifier, subject: SupportSubject, reason: SupportReason?, attachments: [Attachment]) -> UIViewController? {
+    func newTicketViewController(
+        reporter: Identifier,
+        subject: SupportSubject,
+        reason: SupportReason?,
+        attachments: [Attachment]
+    ) -> UIViewController? {
         newTicketsCalled = true
         lastReporter = reporter
         lastAttachments = attachments

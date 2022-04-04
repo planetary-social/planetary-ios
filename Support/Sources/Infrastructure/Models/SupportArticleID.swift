@@ -8,7 +8,7 @@
 import Foundation
 
 struct SupportArticleID {
-    let faq = "360039199393"
+    let frequentlyAskedQuestions = "360039199393"
     let privacyPolicy = "360036147293"
     let termsOfService = "360035642794"
     let whatIsPlanetary = "360036488373"

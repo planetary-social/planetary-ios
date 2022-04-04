@@ -22,7 +22,6 @@ extension Bundle {
     /// Returns a string from the bundle version and short version
     /// formatted as 1.2.3 (123).
     var versionAndBuild: String {
-        return "\(self.version) (\(self.build))"
+        "\(self.version) (\(self.build))"
     }
-
 }

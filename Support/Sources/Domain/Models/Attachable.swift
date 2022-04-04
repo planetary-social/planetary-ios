@@ -10,5 +10,4 @@ import Foundation
 protocol Attachable {
 
     func attachments() -> [Attachment]
-    
 }

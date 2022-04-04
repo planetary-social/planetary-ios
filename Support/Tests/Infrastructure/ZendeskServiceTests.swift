@@ -12,9 +12,10 @@ import Secrets
 
 final class ZendeskServiceTests: XCTestCase {
 
-    var service: ZendeskService!
+    var service: ZendeskService?
 
     override func setUp() {
+        super.setUp()
         service = ZendeskService(keys: Keys(bundle: .module))
     }
 
@@ -25,7 +26,13 @@ final class ZendeskServiceTests: XCTestCase {
 
     func testArticleViewController() throws {
         let service = try XCTUnwrap(service)
-        let articles: [SupportArticle] = [.editPost, .faq, .termsOfService, .privacyPolicy, .whatIsPlanetary]
+        let articles: [SupportArticle] = [
+            .editPost,
+            .frequentlyAskedQuestions,
+            .termsOfService,
+            .privacyPolicy,
+            .whatIsPlanetary
+        ]
         articles.forEach { article in
             XCTAssertNotNil(service.articleViewController(article: article))
         }
@@ -42,11 +49,12 @@ final class ZendeskServiceTests: XCTestCase {
         let service = try XCTUnwrap(service)
         let reporter = Identifier(key: nil)
         let attachments = [Attachment]()
-        XCTAssertNotNil(service.newTicketViewController(
+        let viewController = service.newTicketViewController(
             reporter: reporter,
             subject: SupportSubject.contentReport,
             reason: SupportReason.copyright,
             attachments: attachments
-        ))
+        )
+        XCTAssertNotNil(viewController)
     }
 }

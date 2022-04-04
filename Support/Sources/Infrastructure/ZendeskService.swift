@@ -16,7 +16,7 @@ class ZendeskService: APIService {
 
     private let zendeskURL = "https://planetarysupport.zendesk.com"
 
-    private let tintColor: UIColor = UIColor(named: "defaultTint") ?? #colorLiteral(red: 0.3254901961, green: 0.2431372549, blue: 0.4862745098, alpha: 1)
+    private let tintColor = UIColor(named: "defaultTint") ?? #colorLiteral(red: 0.3254901961, green: 0.2431372549, blue: 0.4862745098, alpha: 1)
 
     private let tags = [
         Bundle.main.versionAndBuild,
@@ -25,23 +25,21 @@ class ZendeskService: APIService {
         UIDevice.current.systemVersion
     ]
 
-    private let ids = SupportArticleID()
+    private let articleIDs = SupportArticleID()
 
     init(keys: Keys = Keys.shared) {
         Log.info("Configuring Zendesk...")
         guard let appID = keys.get(key: .zendeskAppID), let clientID = keys.get(key: .zendeskClientID) else {
             return
         }
-        Zendesk.initialize(appId: appID,
-                           clientId: clientID,
-                           zendeskUrl: zendeskURL)
+        Zendesk.initialize(appId: appID, clientId: clientID, zendeskUrl: zendeskURL)
         SupportSDK.Support.initialize(withZendesk: Zendesk.instance)
         Zendesk.instance?.setIdentity(ZendeskCoreSDK.Identity.createAnonymous())
         Theme.currentTheme.primaryColor = tintColor
     }
 
     func mainViewController() -> UIViewController? {
-        return ZDKHelpCenterUi.buildHelpCenterOverviewUi()
+        ZDKHelpCenterUi.buildHelpCenterOverviewUi()
     }
 
     func articleViewController(article: SupportArticle) -> UIViewController? {
@@ -72,16 +70,15 @@ class ZendeskService: APIService {
     private func id(for article: SupportArticle) -> String {
         switch article {
         case .whatIsPlanetary:
-            return ids.whatIsPlanetary
-        case .faq:
-            return ids.faq
+            return articleIDs.whatIsPlanetary
+        case .frequentlyAskedQuestions:
+            return articleIDs.frequentlyAskedQuestions
         case .privacyPolicy:
-            return ids.privacyPolicy
+            return articleIDs.privacyPolicy
         case .editPost:
-            return ids.editPost
+            return articleIDs.editPost
         case .termsOfService:
-            return ids.termsOfService
+            return articleIDs.termsOfService
         }
     }
-    
 }

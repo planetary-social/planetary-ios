@@ -19,25 +19,29 @@ public class Support {
     }
 
     public func mainViewController() -> UIViewController? {
-        return service.mainViewController()
+        service.mainViewController()
     }
 
     public func articleViewController(_ article: SupportArticle) -> UIViewController? {
-        return service.articleViewController(for: article)
+        service.articleViewController(for: article)
     }
 
     public func myTicketsViewController(from reporter: String?, botLog: Data?) -> UIViewController? {
-        return service.myTicketsViewController(from: reporter, botLog: botLog)
+        service.myTicketsViewController(from: reporter, botLog: botLog)
     }
 
     public func newTicketViewController(botLog: Data?) -> UIViewController? {
-        return service.newTicketViewController(botLog: botLog)
+        service.newTicketViewController(botLog: botLog)
     }
 
     public func newTicketViewController(from reporter: String, reporting identity: String, name: String, botLog: Data?) -> UIViewController? {
         let identifier = Identifier(key: reporter)
         let author = Author(identifier: Identifier(key: identity), name: name)
-        return service.newTicketViewController(from: identifier, author: author, botLog: botLog)
+        return service.newTicketViewController(
+            from: identifier,
+            author: author,
+            botLog: botLog
+        )
     }
 
     public func newTicketViewController(from reporter: String, reporting contentRef: String, authorRef: String?, authorName: String?, reason: SupportReason, view: UIView?, botLog: Data?) -> UIViewController? {
@@ -45,12 +49,13 @@ public class Support {
         let content = Content(
             identifier: Identifier(key: contentRef),
             author: Author(identifier: Identifier(key: authorRef), name: authorName),
-            screenshot: view?.jpegData())
+            screenshot: view?.jpegData()
+        )
         return service.newTicketViewController(
             from: identifier,
             content: content,
             reason: reason,
-            botLog: botLog)
+            botLog: botLog
+        )
     }
-    
 }

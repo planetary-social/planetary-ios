@@ -20,5 +20,10 @@ protocol SupportService {
 
     func newTicketViewController(from identifier: Identifier, author: Author, botLog: Data?) -> UIViewController?
 
-    func newTicketViewController(from identifier: Identifier, content: Content, reason: SupportReason, botLog: Data?) -> UIViewController?
+    func newTicketViewController(
+        from identifier: Identifier,
+        content: Content,
+        reason: SupportReason,
+        botLog: Data?
+    ) -> UIViewController?
 }

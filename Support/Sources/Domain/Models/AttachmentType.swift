@@ -9,5 +9,5 @@ import Foundation
 
 enum AttachmentType {
     case plainText
-    case jpg
+    case jepg
 }

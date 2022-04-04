@@ -15,12 +15,9 @@ extension Attachment {
         switch type {
         case .plainText:
             fileType = .plain
-        case .jpg:
+        case .jepg:
             fileType = .jpg
         }
-        return RequestAttachment(
-            filename: filename,
-            data: data,
-            fileType: fileType)
+        return RequestAttachment(filename: filename, data: data, fileType: fileType)
     }
 }
