@@ -211,9 +211,6 @@ protocol Bot {
     
     func lastReceivedTimestam() throws -> Double
     
-    @available(*, deprecated)
-    var statistics: BotStatistics { get }
-    
     // MARK: Preloading
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
