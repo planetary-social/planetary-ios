@@ -9,9 +9,9 @@ Planetary passes data from friend to friend, creating a network that is personal
 In Planetary there are no advertisements or artificial intelligence algorithms trying to make you feel a certain way. Your content lives on your device and the devices of those around you, it isn't owned or controlled by a corporation. Experience social networking where you're the customer, not the product.
 
 Unlike most social media, Planetary:
-* Does not sell your data
-* Is naturally spam-resistant
-* Compatible with other apps including Manyverse, Patchwork, and more
+* Does not sell your data.
+* Is naturally spam-resistant.
+* Compatible with other apps including Manyverse, Patchwork, and more.
 * Works off-grid and offline.
 * Allows you to take your friends with you if you decide to move to another client.
 * Is open source!
