@@ -2971,6 +2971,8 @@
 				"es-ES",
 			);
 			mainGroup = 5344D82221C4649700704A34;
+			packageReferences = (
+			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
