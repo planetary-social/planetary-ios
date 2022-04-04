@@ -317,7 +317,7 @@ class GoBotOrderedTests: XCTestCase {
 
     // MARK: contacts (follows / blocks)
 
-    func test110_testuserContacts() async {
+    func test110_testuserContacts() {
         // should have at least:
         // 1 friend (a<>b)
         // 1 follows only (a>c)
@@ -349,7 +349,13 @@ class GoBotOrderedTests: XCTestCase {
 
         let nFollows = 6
         let extra = 2 + 5 // abouts
-        let statistics = await GoBotOrderedTests.shared.statistics()
+        var statistics = BotStatistics()
+        let statisticsExpectation = self.expectation(description: "statistics fetched")
+        GoBotOrderedTests.shared.statistics() { newStatistics in
+            statistics = newStatistics
+            statisticsExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 10)
         XCTAssertEqual(statistics.repo.messageCount, publishManyCount + extra + nFollows)
 
         for tc in whoFollowsWho {
@@ -390,8 +396,15 @@ class GoBotOrderedTests: XCTestCase {
     }
 
     // MARK: various safty checks
-    func test111_skip_unsupported_messages() async {
-        let currentCount = await GoBotOrderedTests.shared.statistics().db.lastReceivedMessage
+    func test111_skip_unsupported_messages() {
+        var statistics = BotStatistics()
+        var statisticsExpectation = self.expectation(description: "statistics fetched")
+        GoBotOrderedTests.shared.statistics() { newStatistics in
+            statistics = newStatistics
+            statisticsExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 10)
+        let currentCount = statistics.db.lastReceivedMessage
 
         let n = 6_000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
         for i in 1...n {
@@ -418,7 +431,12 @@ class GoBotOrderedTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
 
-        let statistics = await GoBotOrderedTests.shared.statistics()
+        statisticsExpectation = self.expectation(description: "statistics fetched")
+        GoBotOrderedTests.shared.statistics() { newStatistics in
+            statistics = newStatistics
+            statisticsExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 10)
         XCTAssertNotEqual(statistics.db.lastReceivedMessage, currentCount, "still at the old level")
         XCTAssertGreaterThan(statistics.db.lastReceivedMessage, currentCount + n, "did not get all the messages")
 

@@ -63,7 +63,7 @@ class GoBotIntegrationTests: XCTestCase {
 
     /// Verifies that we can correctly refresh the `ViewDatabase` from the go-ssb log even after `publish` has copied
     /// some posts with a greater sequence number into `ViewDatabase` already.
-    func testRefreshGivenPublish() async throws {
+    func testRefreshGivenPublish() throws {
         // Arrange
         for i in 0..<10 {
             _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
@@ -77,17 +77,23 @@ class GoBotIntegrationTests: XCTestCase {
             XCTAssertNil(error)
             postExpectation.fulfill()
         }
-        await waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         
         let refreshExpectation = self.expectation(description: "refresh completed")
         sut.refresh(load: .long, queue: .main) { error, _ in
             XCTAssertNil(error)
             refreshExpectation.fulfill()
         }
-        await waitForExpectations(timeout: 10, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         
         // Assert
-        let statistics = await sut.statistics()
+        var statistics = BotStatistics()
+        let statisticsExpectation = self.expectation(description: "statistics fetched")
+        sut.statistics() { newStatistics in
+            statistics = newStatistics
+            statisticsExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 10)
         XCTAssertEqual(statistics.repo.messageCount, 11)
         XCTAssertEqual(statistics.repo.numberOfPublishedMessages, 1)
         XCTAssertEqual(try sut.database.messageCount(), 11)
