@@ -275,9 +275,10 @@ class GoBotOrderedTests: XCTestCase {
         XCTAssertEqual(publishedMessages.count, 0)
     }
 
-    func test101_ViewHasAboutSelf() {
+    func test101_ViewHasAboutSelf() async {
         let ex = self.expectation(description: "\(#function)")
-        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, 1 + publishManyCount + 1)
+        let statistics = await GoBotOrderedTests.shared.statistics()
+        XCTAssertEqual(statistics.repo.messageCount, 1 + publishManyCount + 1)
         GoBotOrderedTests.shared.about(identity: botTestsKey.identity) {
             about, err in
             XCTAssertNotNil(about)
@@ -288,7 +289,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
     }
 
-    func test102_testuserAbouts() {
+    func test102_testuserAbouts() async {
         let nicks = ["alice", "barbara", "claire", "denise", "page"]
         for n in nicks {
             let abt = About(about: GoBotOrderedTests.pubkeys[n]!, name: n)
@@ -297,8 +298,9 @@ class GoBotOrderedTests: XCTestCase {
 
         GoBotOrderedTests.shared.testRefresh(self)
 
-        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.feedCount, nicks.count + 1)
-        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, publishManyCount + 2 + nicks.count)
+        let statistics = await GoBotOrderedTests.shared.statistics()
+        XCTAssertEqual(statistics.repo.feedCount, nicks.count + 1)
+        XCTAssertEqual(statistics.repo.messageCount, publishManyCount + 2 + nicks.count)
 
         for n in nicks {
             let ex = self.expectation(description: "\(#function)")
@@ -315,7 +317,7 @@ class GoBotOrderedTests: XCTestCase {
 
     // MARK: contacts (follows / blocks)
 
-    func test110_testuserContacts() {
+    func test110_testuserContacts() async {
         // should have at least:
         // 1 friend (a<>b)
         // 1 follows only (a>c)
@@ -347,7 +349,8 @@ class GoBotOrderedTests: XCTestCase {
 
         let nFollows = 6
         let extra = 2 + 5 // abouts
-        XCTAssertEqual(GoBotOrderedTests.shared.statistics.repo.messageCount, publishManyCount + extra + nFollows)
+        let statistics = await GoBotOrderedTests.shared.statistics()
+        XCTAssertEqual(statistics.repo.messageCount, publishManyCount + extra + nFollows)
 
         for tc in whoFollowsWho {
             let ex = self.expectation(description: "\(#function) follow \(tc)")
@@ -387,8 +390,8 @@ class GoBotOrderedTests: XCTestCase {
     }
 
     // MARK: various safty checks
-    func test111_skip_unsupported_messages() {
-        let currentCount = GoBotOrderedTests.shared.statistics.db.lastReceivedMessage
+    func test111_skip_unsupported_messages() async {
+        let currentCount = await GoBotOrderedTests.shared.statistics().db.lastReceivedMessage
 
         let n = 6_000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
         for i in 1...n {
@@ -415,8 +418,9 @@ class GoBotOrderedTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
 
-        XCTAssertNotEqual(GoBotOrderedTests.shared.statistics.db.lastReceivedMessage, currentCount, "still at the old level")
-        XCTAssertGreaterThan(GoBotOrderedTests.shared.statistics.db.lastReceivedMessage, currentCount + n, "did not get all the messages")
+        let statistics = await GoBotOrderedTests.shared.statistics()
+        XCTAssertNotEqual(statistics.db.lastReceivedMessage, currentCount, "still at the old level")
+        XCTAssertGreaterThan(statistics.db.lastReceivedMessage, currentCount + n, "did not get all the messages")
 
         // make sure we got the supported message
         ex = self.expectation(description: "\(#function) 3")

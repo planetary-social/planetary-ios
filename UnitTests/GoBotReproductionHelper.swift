@@ -77,10 +77,11 @@ class API_GoBot: XCTestCase {
     }
     
     // check we loaded all the messages from the fixtures repo
-    func test02_replicateUpto() {
-        XCTAssertEqual(API_GoBot.bot.statistics.repo.feedCount, 200)
-        XCTAssertEqual(API_GoBot.bot.statistics.db.lastReceivedMessage, -1)
-        XCTAssertEqual(API_GoBot.bot.statistics.repo.messageCount, 6_700)
+    func test02_replicateUpto() async {
+        let statistics = await API_GoBot.bot.statistics()
+        XCTAssertEqual(statistics.repo.feedCount, 200)
+        XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
+        XCTAssertEqual(statistics.repo.messageCount, 6_700)
         
         XCTAssertFalse(API_GoBot.bot.bot.repoFSCK(.Sequences))
     }
@@ -103,9 +104,10 @@ class API_GoBot: XCTestCase {
         self.wait(for: 10)
     }
 
-    func test04_same_msgs() {
-        XCTAssertEqual(API_GoBot.bot.statistics.db.lastReceivedMessage, 6_699)
-        XCTAssertEqual(API_GoBot.bot.statistics.repo.messageCount, 6_700)
+    func test04_same_msgs() async {
+        let statistics = await API_GoBot.bot.statistics()
+        XCTAssertEqual(statistics.db.lastReceivedMessage, 6_699)
+        XCTAssertEqual(statistics.repo.messageCount, 6_700)
         
         XCTAssertTrue(API_GoBot.bot.bot.repoFSCK(.Sequences))
     }
@@ -118,14 +120,15 @@ class API_GoBot: XCTestCase {
         self.wait()
     }
 
-    func test07_refresh() {
+    func test07_refresh() async {
         API_GoBot.bot.refresh(load: .short, queue: .main) {
             (err, _) in
             XCTAssertNil(err)
         }
         self.wait()
-        XCTAssertEqual(API_GoBot.bot.statistics.db.lastReceivedMessage, 6_699)
-        XCTAssertEqual(API_GoBot.bot.statistics.repo.messageCount, 6_700)
+        let statistics = await API_GoBot.bot.statistics()
+        XCTAssertEqual(statistics.db.lastReceivedMessage, 6_699)
+        XCTAssertEqual(statistics.repo.messageCount, 6_700)
     }
 
     func test900_logout() {
