@@ -20,10 +20,14 @@ class StartOnboardingStep: OnboardingStep {
         let text = NSMutableAttributedString(Text.Onboarding.policyStatement.text,
                                              font: UIFont.systemFont(ofSize: 13, weight: .medium),
                                              color: UIColor.text.detail)
-        text.addLinkAttribute(value: SupportArticle.termsOfService.rawValue,
-                              to: Text.Onboarding.termsOfService.text)
-        text.addLinkAttribute(value: SupportArticle.privacyPolicy.rawValue,
-                              to: Text.Onboarding.privacyPolicy.text)
+        text.addLinkAttribute(
+            value: SupportArticle.termsOfService.rawValue,
+            to: Text.Onboarding.termsOfService.text
+        )
+        text.addLinkAttribute(
+            value: SupportArticle.privacyPolicy.rawValue,
+            to: Text.Onboarding.privacyPolicy.text
+        )
         view.attributedText = text
         return view
     }()

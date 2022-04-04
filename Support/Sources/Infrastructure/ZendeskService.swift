@@ -59,7 +59,12 @@ class ZendeskService: APIService {
         return RequestUi.buildRequestList(with: [config])
     }
 
-    func newTicketViewController(reporter: Identifier, subject: SupportSubject, reason: SupportReason?, attachments: [Attachment]) -> UIViewController? {
+    func newTicketViewController(
+        reporter: Identifier,
+        subject: SupportSubject,
+        reason: SupportReason?,
+        attachments: [Attachment]
+    ) -> UIViewController? {
         let config = RequestUiConfiguration()
         config.fileAttachments = attachments.map { $0.requestAttachment }
         config.subject = subject.rawValue

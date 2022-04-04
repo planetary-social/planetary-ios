@@ -19,8 +19,10 @@ class BenefitsOnboardingStep: OnboardingStep {
     override func customizeView() {
         let text = NSMutableAttributedString(string: Text.Onboarding.benefits.text)
         text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.text.default)
-        text.addLinkAttribute(value: SupportArticle.whatIsPlanetary.rawValue,
-                              to: Text.Onboarding.findOutMore.text)
+        text.addLinkAttribute(
+            value: SupportArticle.whatIsPlanetary.rawValue,
+            to: Text.Onboarding.findOutMore.text
+        )
         text.addParagraphAlignCenter()
         self.view.textView.isEditable = false
         self.view.textView.attributedText = text

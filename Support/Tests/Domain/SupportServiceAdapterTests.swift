@@ -45,7 +45,6 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertTrue(apiService.myTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
-
     }
 
     func testMyTicketsViewControllerWithBotLog() throws {
@@ -137,7 +136,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         let result = service?.newTicketViewController(from: identity, content: content, reason: .copyright, botLog: nil)
         XCTAssertNil(result)
         let apiService = try XCTUnwrap(apiService)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.data == screenshot}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == screenshot }))
     }
 
     func testNewContentTicketViewControllerWithAuthorName() throws {
@@ -178,7 +177,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.filename == "bot_log.txt"}))
-        XCTAssertTrue(apiService.lastAttachments.contains(where: {$0.data == botLog}))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "bot_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == botLog }))
     }
 }

@@ -51,17 +51,39 @@ extension Support {
         }
     }
 
-    public func newTicketViewController(from reporter: String, reporting contentRef: String, authorRef: String?, authorName: String?, reason: SupportReason, view: UIView?) -> UIViewController? {
+    public func newTicketViewController(
+        from reporter: String,
+        reporting contentRef: String,
+        authorRef: String?,
+        authorName: String?,
+        reason: SupportReason,
+        view: UIView?
+    ) -> UIViewController? {
         guard let logUrls = Bots.current.logFileUrls.first else {
-            return newTicketViewController(from: reporter, reporting: contentRef, authorRef: authorRef, authorName: authorName, reason: reason, view: view, botLog: nil)
+            return newTicketViewController(
+                from: reporter,
+                reporting: contentRef,
+                authorRef: authorRef,
+                authorName: authorName,
+                reason: reason,
+                view: view,
+                botLog: nil
+            )
         }
         do {
             let data = try Data(contentsOf: logUrls)
-            return newTicketViewController(from: reporter, reporting: contentRef, authorRef: authorRef, authorName: authorName, reason: reason, view: view, botLog: data)
+            return newTicketViewController(
+                from: reporter,
+                reporting: contentRef,
+                authorRef: authorRef,
+                authorName: authorName,
+                reason: reason,
+                view: view,
+                botLog: data
+            )
         } catch {
             Log.optional(error)
             return newTicketViewController(from: reporter, reporting: contentRef, authorRef: authorRef, authorName: authorName, reason: reason, view: view, botLog: nil)
         }
     }
-
 }
