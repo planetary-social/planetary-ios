@@ -6,6 +6,23 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		C933908427FB511F007B5FD8 /* GoSSB.xcframework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C933908527FB511F007B5FD8 /* Build configuration list for PBXAggregateTarget "GoSSB.xcframework" */;
+			buildPhases = (
+				C933908827FB5134007B5FD8 /* Install Golang toolchain */,
+				C933908927FB5188007B5FD8 /* Make libssb-go.a */,
+				C933908A27FB51C5007B5FD8 /* Combine .a files into GoSSB.xcframework */,
+				C933908C27FB53B1007B5FD8 /* Install GoSSB.xcframework in Planetary */,
+			);
+			dependencies = (
+			);
+			name = GoSSB.xcframework;
+			productName = GoSSB.xcframework;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXFileReference section */
 		0A26524D278A7492008F9EAA /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = include/module.modulemap; sourceTree = "<group>"; };
 		C93DE35627E8C9E700C0E93D /* go.sum */ = {isa = PBXFileReference; lastKnownFileType = text; path = go.sum; sourceTree = "<group>"; };
@@ -25,21 +42,10 @@
 		C93DE36827E8C9E700C0E93D /* utils.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = utils.go; sourceTree = "<group>"; };
 		C93DE36A27E8C9E700C0E93D /* GoSSB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GoSSB.h; sourceTree = "<group>"; };
 		C93DE36B27E8C9E700C0E93D /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
-		C9570F46278640CA0095EFFF /* libGoSSB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGoSSB.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9570F49278640CA0095EFFF /* GoSSB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GoSSB.h; path = include/GoSSB.h; sourceTree = "<group>"; };
 		C9570F55278641B00095EFFF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		C9570F5D27864D850095EFFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		C9570F43278640CA0095EFFF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		C93DE35827E8C9E700C0E93D /* migrations */ = {
@@ -91,7 +97,6 @@
 		C9570F47278640CA0095EFFF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C9570F46278640CA0095EFFF /* libGoSSB.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -120,27 +125,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXNativeTarget section */
-		C9570F45278640CA0095EFFF /* GoSSB */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C9570F4F278640CA0095EFFF /* Build configuration list for PBXNativeTarget "GoSSB" */;
-			buildPhases = (
-				C9570F532786414B0095EFFF /* Install Go */,
-				C9570F52278641280095EFFF /* Build libssb-go.a for all architectures */,
-				C9570F54278641570095EFFF /* Build GoSSB.xcframework */,
-				C9570F43278640CA0095EFFF /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = GoSSB;
-			productName = GoSSB;
-			productReference = C9570F46278640CA0095EFFF /* libGoSSB.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-/* End PBXNativeTarget section */
-
 /* Begin PBXProject section */
 		C9570F3E278640CA0095EFFF /* Project object */ = {
 			isa = PBXProject;
@@ -148,8 +132,8 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
-					C9570F45278640CA0095EFFF = {
-						CreatedOnToolsVersion = 13.2.1;
+					C933908427FB511F007B5FD8 = {
+						CreatedOnToolsVersion = 13.3;
 					};
 				};
 			};
@@ -166,13 +150,33 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C9570F45278640CA0095EFFF /* GoSSB */,
+				C933908427FB511F007B5FD8 /* GoSSB.xcframework */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		C9570F52278641280095EFFF /* Build libssb-go.a for all architectures */ = {
+		C933908827FB5134007B5FD8 /* Install Golang toolchain */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/../Scripts/Sources/go_install.sh",
+			);
+			name = "Install Golang toolchain";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${PROJECT_DIR}/Sources/.goroot",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/Sources/.goroot\n${PROJECT_DIR}/../Scripts/go_install.sh\n";
+		};
+		C933908927FB5188007B5FD8 /* Make libssb-go.a */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -182,35 +186,17 @@
 			);
 			inputPaths = (
 			);
-			name = "Build libssb-go.a for all architectures";
+			name = "Make libssb-go.a";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export GOROOT=${PROJECT_DIR}/Sources/.goroot\ncd ${PROJECT_DIR}/Sources\nmake --debug=\"v\"\n";
+			shellScript = "export GOROOT=${PROJECT_DIR}/Sources/.goroot\ncd ${PROJECT_DIR}/Sources\nmake\n";
 			showEnvVarsInLog = 0;
 		};
-		C9570F532786414B0095EFFF /* Install Go */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Install Go";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n\nset -e\n\n\n# trigger Makefile in go-ssb-bindings\n#export GOROOT_PATCHED=${TEMP_ROOT}/.goroot\nexport GOROOT=${PROJECT_DIR}/Sources/.goroot\n${PROJECT_DIR}/../Scripts/go_install.sh\n";
-		};
-		C9570F54278641570095EFFF /* Build GoSSB.xcframework */ = {
+		C933908A27FB51C5007B5FD8 /* Combine .a files into GoSSB.xcframework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -219,23 +205,63 @@
 			);
 			inputPaths = (
 				"${BUILD_DIR}/iPhoneOS-arm64/libssb-go.a",
-				"${PROJECT_DIR}/Sources/include",
 				"${BUILD_DIR}/iPhoneSimulator-arm64_x86_64/libssb-go.a",
+				"${PROJECT_DIR}/Sources/include",
 			);
-			name = "Build GoSSB.xcframework";
+			name = "Combine .a files into GoSSB.xcframework";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${PROJECT_DIR}/Products/GoSSB.xcframework",
+				"${BUILD_DIR}/Products/GoSSB.xcframework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export XCFRAMEWORK=${PROJECT_DIR}/Products/GoSSB.xcframework\nrm -rf $XCFRAMEWORK\n\nxcodebuild -create-xcframework \\\n    -library ${BUILD_DIR}/iPhoneOS-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -library ${BUILD_DIR}/iPhoneSimulator-arm64_x86_64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -output $XCFRAMEWORK\n\n#mkdir ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#cp -r ${XCFRAMEWORK}/ios-x86_64-simulator/Headers ${XCFRAMEWORK}/ios-arm64_x86_64-simulator\n#rm -r ${XCFRAMEWORK}/ios-x86_64-simulator\n#lipo -create -output ${XCFRAMEWORK}/ios-arm64_x86_64-simulator/libssb-go.a ${BUILD_DIR}/iphonesimulator-x86_64/libssb-go.a ${BUILD_DIR}/iphonesimulator-arm64/libssb-go.a\n \n";
-			showEnvVarsInLog = 0;
+			shellScript = "export XCFRAMEWORK=${BUILD_DIR}/Products/GoSSB.xcframework\nrm -rf $XCFRAMEWORK\n\nxcodebuild -create-xcframework \\\n    -library ${BUILD_DIR}/iPhoneOS-arm64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -library ${BUILD_DIR}/iPhoneSimulator-arm64_x86_64/libssb-go.a \\\n    -headers ${PROJECT_DIR}/Sources/include \\\n    -output $XCFRAMEWORK\n";
+		};
+		C933908C27FB53B1007B5FD8 /* Install GoSSB.xcframework in Planetary */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Install GoSSB.xcframework in Planetary";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -r ${BUILD_DIR}/Products/GoSSB.xcframework/ ${PROJECT_DIR}/../Frameworks/GoSSB.xcframework\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		C933908627FB511F007B5FD8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = NO;
+			};
+			name = Debug;
+		};
+		C933908727FB511F007B5FD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = NO;
+			};
+			name = Release;
+		};
 		C9570F4D278640CA0095EFFF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -350,56 +376,23 @@
 			};
 			name = Release;
 		};
-		C9570F50278640CA0095EFFF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = GZCZBKH7MY;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MODULEMAP_FILE = "${PROJECT_DIR}/Sources/module.modulemap";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C9570F51278640CA0095EFFF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = GZCZBKH7MY;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MODULEMAP_FILE = "${PROJECT_DIR}/Sources/module.modulemap";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C933908527FB511F007B5FD8 /* Build configuration list for PBXAggregateTarget "GoSSB.xcframework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C933908627FB511F007B5FD8 /* Debug */,
+				C933908727FB511F007B5FD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C9570F41278640CA0095EFFF /* Build configuration list for PBXProject "GoSSB" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9570F4D278640CA0095EFFF /* Debug */,
 				C9570F4E278640CA0095EFFF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C9570F4F278640CA0095EFFF /* Build configuration list for PBXNativeTarget "GoSSB" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C9570F50278640CA0095EFFF /* Debug */,
-				C9570F51278640CA0095EFFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
