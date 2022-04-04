@@ -73,6 +73,10 @@ class GoBot: Bot {
     
     /// A queue for operations that the user is waiting on like publishing a post, pull-to-refresh, etc.
     private let userInitiatedQueue: DispatchQueue
+    
+    /// A queue that should be used when fetching `statistics` from the bot, to work around some problems go-ssb
+    /// seems to be having where it locks when you call it from two threads.
+    private let statisticsQueue: DispatchQueue
  
     private let userDefaults: UserDefaults
     private var config: AppConfiguration?
@@ -96,6 +100,11 @@ class GoBot: Bot {
                                           autoreleaseFrequency: .workItem,
                                           target: nil)
         self.userInitiatedQueue = DispatchQueue(label: "GoBot-userInitiated",
+                                                qos: .userInitiated,
+                                                attributes: [],
+                                                autoreleaseFrequency: .workItem,
+                                                target: nil)
+        self.statisticsQueue = DispatchQueue(label: "GoBot-statistics",
                                                 qos: .userInitiated,
                                                 attributes: [],
                                                 autoreleaseFrequency: .workItem,
@@ -389,8 +398,10 @@ class GoBot: Bot {
                                     numberOfMessages: Int,
                                     completion: @escaping SyncCompletion) {
         self._isSyncing = false
-        self._statistics.lastSyncDate = Date()
-        self._statistics.lastSyncDuration = elapsed
+        statisticsQueue.sync {
+            self._statistics.lastSyncDate = Date()
+            self._statistics.lastSyncDuration = elapsed
+        }
         completion(nil, elapsed, numberOfMessages)
         NotificationCenter.default.post(name: .didSync, object: nil)
     }
@@ -437,8 +448,10 @@ class GoBot: Bot {
                                        error: Error?,
                                        completion: @escaping RefreshCompletion) {
         self._isRefreshing = false
-        self._statistics.lastRefreshDate = Date()
-        self._statistics.lastRefreshDuration = elapsed
+        statisticsQueue.sync {
+            self._statistics.lastRefreshDate = Date()
+            self._statistics.lastRefreshDuration = elapsed
+        }
         completion(error, elapsed)
         NotificationCenter.default.post(name: .didRefresh, object: nil)
     }
@@ -1288,44 +1301,12 @@ class GoBot: Bot {
 
     // MARK: Statistics
 
+    /// Any access to this variable should be done on `statisticsQueue`.
     private var _statistics = BotStatistics()
     
-    var statistics: BotStatistics {
-        let counts = try? self.bot.repoStatus()
-        let sequence = try? self.database.stats(table: .messagekeys)
-        
-        var ownMessages = -1
-        if let identity = self._identity, let omc = try? self.database.numberOfMessages(for: identity) {
-            ownMessages = omc
-        }
-        
-        var fc: Int = -1
-        if let feedCount = counts?.feeds { fc = Int(feedCount) }
-        var mc: Int = -1
-        if let msgs = counts?.messages { mc = Int(msgs) }
-        self._statistics.repo = RepoStatistics(path: self.bot.currentRepoPath,
-                                               feedCount: fc,
-                                               messageCount: mc,
-                                               numberOfPublishedMessages: ownMessages,
-                                               lastHash: counts?.lastHash ?? "")
-        
-        self.saveNumberOfPublishedMessages(from: self._statistics.repo)
-        
-        let connectionCount = self.bot.openConnections()
-        let openConnections = self.bot.openConnectionList()
-        
-        self._statistics.peer = PeerStatistics(count: openConnections.count,
-                                               connectionCount: connectionCount,
-                                               identities: openConnections,
-                                               open: openConnections)
-
-        self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
-        
-        return self._statistics
-    }
     
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
-        self.utilityQueue.async {
+        statisticsQueue.async {
             let counts = try? self.bot.repoStatus()
             let sequence = try? self.database.stats(table: .messagekeys)
 
