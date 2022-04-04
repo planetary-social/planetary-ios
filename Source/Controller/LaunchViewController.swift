@@ -82,89 +82,27 @@ class LaunchViewController: UIViewController {
         // TODO include app installation UUID
         // Analytics.shared.app(launch)
         Log.info("Launching with configuration '\(configuration.name)'")
-
-        // note that hmac key can be nil to switch it off
-        guard let network = configuration.network else { return }
-        guard let secret = configuration.secret else { return }
-        guard let bot = configuration.bot else { return }
         
-        bot.login(config: configuration) { error in
+        Task {
+            await self.migrateIfNeeded(using: configuration)
             
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error,
-                                                 metadata: ["action": "login-from-launch",
-                                                            "network": network,
-                                                            "identity": secret.identity])
+            // note that hmac key can be nil to switch it off
+            guard let network = configuration.network else { return }
+            guard let secret = configuration.secret else { return }
+            guard let bot = configuration.bot else { return }
             
-            guard error == nil else {
-                let controller = UIAlertController(title: Text.error.text,
-                                                   message: Text.Error.login.text,
-                                                   preferredStyle: .alert)
-                let action = UIAlertAction(title: "Restart", style: .default) { _ in
-                    Log.debug("Restarting launch...")
-                    bot.logout { err in
-                        // Don't report error here becuase the normal path is to actually receive
-                        // a notLoggedIn error
-                        Log.optional(err)
-                        
-                        ssbDropIndexData()
-                        
-                        Analytics.shared.forget()
-                        CrashReporting.shared.forget()
-                        
-                        Task {
-                            await AppController.shared.relaunch()
-                        }
-                    }
-                }
-                controller.addAction(action)
-                
-                let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
-                    Log.debug("Resetting current configuration and restarting launch...")
-                    AppConfiguration.current?.unapply()
-                    bot.logout { err in
-                        // Don't report error here becuase the normal path is to actually receive
-                        // a notLoggedIn error
-                        Log.optional(err)
-                        
-                        ssbDropIndexData()
-                        
-                        Analytics.shared.forget()
-                        CrashReporting.shared.forget()
-                        
-                        Task {
-                            await AppController.shared.relaunch()
-                        }
-                    }
-                }
-                controller.addAction(reset)
-
-                AppController.shared.showAlertController(with: controller, animated: true)
-                
-                return
+            do {
+                try await bot.login(config: configuration)
+            } catch {
+                self.handleLoginFailure(with: error, configuration: configuration)
             }
             
             self.launchIntoMain()
-            
-            bot.about { (about, aboutErr) in
-                Log.optional(aboutErr)
-                // No need to show an alert to the user as we can fetch the current about later
-                CrashReporting.shared.reportIfNeeded(error: aboutErr)
-                
-                if let about = about {
-                    CrashReporting.shared.identify(
-                        identifier: about.identity,
-                        name: about.name,
-                        networkKey: network.string,
-                        networkName: network.name
-                    )
-                    Analytics.shared.identify(identifier: about.identity,
-                                              name: about.name,
-                                              network: network.name)
-                }
-            }
+            await self.trackLogin(with: configuration)
         }
     }
+    
+    // MARK: - Helpers
 
     private func launchIntoOnboarding(status: Onboarding.Status = .notStarted,
                                       simulate: Bool = false) {
@@ -173,14 +111,109 @@ class LaunchViewController: UIViewController {
         }
     }
 
-    private func launchIntoMain() {
-
+    @MainActor private func launchIntoMain() {
         // no need to start a sync here, we can do it later
         // also, user is already logged in
 
         // transition to main app UI
-        DispatchQueue.main.async {
-            AppController.shared.showMainViewController(animated: true)
+        AppController.shared.showMainViewController(animated: true)
+    }
+
+    private func handleLoginFailure(with error: Error, configuration: AppConfiguration) {
+        guard let network = configuration.network else { return }
+        guard let bot = configuration.bot else { return }
+        guard let secret = configuration.secret else { return }
+        
+        Log.optional(error)
+        CrashReporting.shared.reportIfNeeded(
+            error: error,
+            metadata: [
+                "action": "login-from-launch",
+                "network": network,
+                "identity": secret.identity
+            ]
+        )
+        
+        let controller = UIAlertController(title: Text.error.text,
+                                           message: Text.Error.login.text,
+                                           preferredStyle: .alert)
+        let action = UIAlertAction(title: "Restart", style: .default) { _ in
+            Log.debug("Restarting launch...")
+            bot.logout { err in
+                // Don't report error here becuase the normal path is to actually receive
+                // a notLoggedIn error
+                Log.optional(err)
+                
+                ssbDropIndexData()
+                
+                Analytics.shared.forget()
+                CrashReporting.shared.forget()
+                
+                Task {
+                    await AppController.shared.relaunch()
+                }
+            }
+        }
+        controller.addAction(action)
+        
+        let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
+            Log.debug("Resetting current configuration and restarting launch...")
+            AppConfiguration.current?.unapply()
+            bot.logout { err in
+                // Don't report error here becuase the normal path is to actually receive
+                // a notLoggedIn error
+                Log.optional(err)
+                
+                ssbDropIndexData()
+                
+                Analytics.shared.forget()
+                CrashReporting.shared.forget()
+                
+                Task {
+                    await AppController.shared.relaunch()
+                }
+            }
+        }
+        controller.addAction(reset)
+        
+        AppController.shared.showAlertController(with: controller, animated: true)
+    }
+    
+    private func trackLogin(with configuration: AppConfiguration) async {
+        guard let network = configuration.network else { return }
+        guard let bot = configuration.bot else { return }
+        
+        do {
+            let about = try await bot.about()
+            CrashReporting.shared.identify(
+                identifier: about.identity,
+                name: about.name,
+                networkKey: network.string,
+                networkName: network.name
+            )
+            Analytics.shared.identify(
+                identifier: about.identity,
+                name: about.name,
+                network: network.name
+            )
+            
+        } catch {
+            Log.optional(error)
+            // No need to show an alert to the user as we can fetch the current about later
+            CrashReporting.shared.reportIfNeeded(error: error)
+        }
+    }
+    
+    private func migrateIfNeeded(using configuration: AppConfiguration) async {
+        guard let bot = configuration.bot else { return }
+        
+        let version = UserDefaults.standard.integer(forKey: "GoBotVersion")
+        if version == 0 {
+            do {
+                try await bot.dropDatabase(for: configuration)
+            } catch {
+                Log.optional(error)
+            }
         }
     }
 }

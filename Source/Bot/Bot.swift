@@ -47,6 +47,7 @@ protocol Bot {
     init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
     func suspend()
     func exit()
+    func dropDatabase(for configuration: AppConfiguration) async throws
     
     // MARK: Logs
     var logFileUrls: [URL] { get }
@@ -222,6 +223,17 @@ extension Bot {
         self.login(queue: .main, config: config, completion: completion)
     }
     
+    func login(config: AppConfiguration) async throws {
+        let error: Error? = await withCheckedContinuation { continuation in
+            self.login(config: config) { error in
+                continuation.resume(with: .success(error))
+            }
+        }
+        if let error = error {
+            throw error
+        }
+    }
+    
     func logout() async throws {
         let error: Error? = await withCheckedContinuation { continuation in
             self.logout { error in
@@ -241,6 +253,19 @@ extension Bot {
         await withCheckedContinuation { continuation in
             refresh(load: load, queue: queue) { result1, result2 in
                 continuation.resume(returning: (result1, result2))
+            }
+        }
+    }
+    
+    func about() async throws -> About {
+        try await withCheckedThrowingContinuation { continuation in
+            self.about { about, error in
+                if let about = about {
+                    continuation.resume(returning: about)
+                } else {
+                    let fallbackError = GoBotError.unexpectedFault("Could not fetch about message.")
+                    continuation.resume(throwing: error ?? fallbackError)
+                }
             }
         }
     }

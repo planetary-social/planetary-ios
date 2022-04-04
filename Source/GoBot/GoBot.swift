@@ -125,6 +125,19 @@ class GoBot: Bot {
             self.bot.disconnectAll()
         }
     }
+    
+    func dropDatabase(for configuration: AppConfiguration) async throws {
+        do {
+            try await logout()
+        } catch {
+            guard case BotError.notLoggedIn = error else {
+                throw error
+            }
+        }
+        
+        let databaseDirectory = try Self.databaseDirectory(for: configuration)
+        try FileManager.default.removeItem(atPath: databaseDirectory)
+    }
 
     // MARK: Login/Logout
     
@@ -162,30 +175,25 @@ class GoBot: Bot {
         
         self.config = config
         let hmacKey = config.hmacKey
+        
+        var repoPrefix: String
 
-        // lookup Application Support folder for bot and database
-        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory,
-                                                                 .userDomainMask, true)
-        guard appSupportDirs.count > 0 else {
-            queue.async { completion(GoBotError.unexpectedFault("no support dir")) }
+        do {
+            guard !database.isOpen() else {
+                throw GoBotError.unexpectedFault("\(#function) warning: database still open")
+            }
+            
+            repoPrefix = try Self.databaseDirectory(for: config)
+            
+            try self.database.open(
+                path: repoPrefix,
+                user: secret.identity
+            )
+        } catch {
+            queue.async { completion(error) }
             return
         }
 
-        let repoPrefix = appSupportDirs[0]
-            .appending("/FBTT")
-            .appending("/"+network.hexEncodedString())
-        
-        if !self.database.isOpen() {
-            do {
-                try self.database.open(path: repoPrefix, user: secret.identity)
-            } catch {
-                queue.async { completion(error) }
-                return
-            }
-        } else {
-            Log.unexpected(.botError, "\(#function) warning: database still open")
-        }
-   
         // spawn go-bot in the background to return early
         userInitiatedQueue.async {
             #if DEBUG
@@ -238,7 +246,7 @@ class GoBot: Bot {
         }
     }
     
-    func logout(completion: @escaping ErrorCompletion) {
+    @MainActor func logout(completion: @escaping ErrorCompletion) {
         Thread.assertIsMainThread()
         if self._identity == nil {
             DispatchQueue.main.async { completion(BotError.notLoggedIn) }
@@ -1403,5 +1411,27 @@ class GoBot: Bot {
                 completion(error)
             }
         }
+    }
+    
+    // MARK: - Helpers
+    static func databaseDirectory(for configuration: AppConfiguration) throws -> String {
+        // lookup Application Support folder for bot and database
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        )
+        
+        guard appSupportDirs.count > 0 else {
+            throw GoBotError.unexpectedFault("no support dir")
+        }
+        
+        guard let networkKey = configuration.network else {
+            throw GoBotError.unexpectedFault("No network key in configuration.")
+        }
+
+        return appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/\(networkKey.hexEncodedString())")
     }
 }
