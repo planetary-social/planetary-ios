@@ -57,7 +57,6 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertEqual(apiService.lastReporter.key, identity)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "bot_log.txt" }))
-
     }
 
     func testNewTicketViewController() throws {

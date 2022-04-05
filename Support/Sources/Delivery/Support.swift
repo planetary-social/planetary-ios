@@ -34,14 +34,9 @@ public class Support {
         service.newTicketViewController(botLog: botLog)
     }
 
-    public func newTicketViewController(
-        from reporter: String,
-        reporting identity: String,
-        name: String,
-        botLog: Data?
-    ) -> UIViewController? {
+    public func newTicketViewController(reporter: String, profile: SupportProfile, botLog: Data?) -> UIViewController? {
         let identifier = Identifier(key: reporter)
-        let author = Author(identifier: Identifier(key: identity), name: name)
+        let author = Author(identifier: Identifier(key: profile.identifier), name: profile.name)
         return service.newTicketViewController(
             from: identifier,
             author: author,
@@ -49,20 +44,13 @@ public class Support {
         )
     }
 
-    public func newTicketViewController(
-        from reporter: String,
-        reporting contentRef: String,
-        authorRef: String?,
-        authorName: String?,
-        reason: SupportReason,
-        view: UIView?,
-        botLog: Data?
-    ) -> UIViewController? {
+    public func newTicketViewController(reporter: String, content: SupportContent, botLog: Data?) -> UIViewController? {
         let identifier = Identifier(key: reporter)
+        let reason = content.reason
         let content = Content(
-            identifier: Identifier(key: contentRef),
-            author: Author(identifier: Identifier(key: authorRef), name: authorName),
-            screenshot: view?.jpegData()
+            identifier: Identifier(key: content.identifier),
+            author: Author(identifier: Identifier(key: content.profile?.identifier), name: content.profile?.name),
+            screenshot: content.view?.jpegData()
         )
         return service.newTicketViewController(
             from: identifier,

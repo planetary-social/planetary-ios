@@ -51,10 +51,13 @@ class SupportTests: XCTestCase {
     }
 
     func testNewAuthorTicketViewController() throws {
+        let profile = SupportProfile(
+            identifier: "author-ref",
+            name: "author-name"
+        )
         let result = support?.newTicketViewController(
-            from: "test-identity",
-            reporting: "author-ref",
-            name: "author-name",
+            reporter: "test-identity",
+            profile: profile,
             botLog: nil
         )
         let supportService = try XCTUnwrap(supportService)
@@ -63,13 +66,16 @@ class SupportTests: XCTestCase {
     }
 
     func testNewContentTicketViewController() throws {
-        let result = support?.newTicketViewController(
-            from: "test-identity",
-            reporting: "content-ref",
-            authorRef: "author-ref",
-            authorName: "author-name",
+        let profile = SupportProfile(identifier: "author-ref", name: "author-name")
+        let content = SupportContent(
+            identifier: "content-ref",
+            profile: profile,
             reason: .copyright,
-            view: nil,
+            view: nil
+        )
+        let result = support?.newTicketViewController(
+            reporter: "test-identity",
+            content: content,
             botLog: nil
         )
         let supportService = try XCTUnwrap(supportService)
@@ -78,14 +84,16 @@ class SupportTests: XCTestCase {
     }
 
     func testNewContentTicketViewControllerWithView() throws {
-        let view = UIView()
-        let result = support?.newTicketViewController(
-            from: "test-identity",
-            reporting: "content-ref",
-            authorRef: "author-ref",
-            authorName: "author-name",
+        let profile = SupportProfile(identifier: "author-ref", name: "author-name")
+        let content = SupportContent(
+            identifier: "content-ref",
+            profile: profile,
             reason: .copyright,
-            view: view,
+            view: UIView()
+        )
+        let result = support?.newTicketViewController(
+            reporter: "test-identity",
+            content: content,
             botLog: nil
         )
         let supportService = try XCTUnwrap(supportService)

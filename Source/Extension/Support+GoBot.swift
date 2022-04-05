@@ -38,52 +38,29 @@ extension Support {
         }
     }
 
-    func newTicketViewController(from reporter: String, reporting identity: String, name: String) -> UIViewController? {
+    func newTicketViewController(reporter: String, profile: SupportProfile) -> UIViewController? {
         guard let logUrls = Bots.current.logFileUrls.first else {
-            return newTicketViewController(from: reporter, reporting: identity, name: name, botLog: nil)
+            return newTicketViewController(reporter: reporter, profile: profile, botLog: nil)
         }
         do {
             let data = try Data(contentsOf: logUrls)
-            return newTicketViewController(from: reporter, reporting: identity, name: name, botLog: data)
+            return newTicketViewController(reporter: reporter, profile: profile, botLog: data)
         } catch {
             Log.optional(error)
-            return newTicketViewController(from: reporter, reporting: identity, name: name, botLog: nil)
+            return newTicketViewController(reporter: reporter, profile: profile, botLog: nil)
         }
     }
 
-    public func newTicketViewController(
-        from reporter: String,
-        reporting contentRef: String,
-        authorRef: String?,
-        authorName: String?,
-        reason: SupportReason,
-        view: UIView?
-    ) -> UIViewController? {
+    public func newTicketViewController(reporter: String, content: SupportContent) -> UIViewController? {
         guard let logUrls = Bots.current.logFileUrls.first else {
-            return newTicketViewController(
-                from: reporter,
-                reporting: contentRef,
-                authorRef: authorRef,
-                authorName: authorName,
-                reason: reason,
-                view: view,
-                botLog: nil
-            )
+            return newTicketViewController(reporter: reporter, content: content, botLog: nil)
         }
         do {
             let data = try Data(contentsOf: logUrls)
-            return newTicketViewController(
-                from: reporter,
-                reporting: contentRef,
-                authorRef: authorRef,
-                authorName: authorName,
-                reason: reason,
-                view: view,
-                botLog: data
-            )
+            return newTicketViewController(reporter: reporter, content: content, botLog: data)
         } catch {
             Log.optional(error)
-            return newTicketViewController(from: reporter, reporting: contentRef, authorRef: authorRef, authorName: authorName, reason: reason, view: view, botLog: nil)
+            return newTicketViewController(reporter: reporter, content: content, botLog: nil)
         }
     }
 }

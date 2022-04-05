@@ -34,14 +34,20 @@ extension UIViewController {
                         in view: UIView? = nil,
                         reason: SupportReason,
                         from reporter: Identity) {
-        let controller = Support.shared.newTicketViewController(
-            from: reporter,
-            reporting: post.key,
-            authorRef: post.metadata.author.about?.identity,
-            authorName: post.metadata.author.about?.name,
+        var profile: SupportProfile?
+        if let about = post.metadata.author.about {
+            profile = SupportProfile(
+                identifier: about.identity,
+                name: about.name
+            )
+        }
+        let content = SupportContent(
+            identifier: post.key,
+            profile: profile,
             reason: reason,
             view: view
         )
+        let controller = Support.shared.newTicketViewController(reporter: reporter, content: content)
         guard let controller = controller else {
             AppController.shared.alert(
                 title: Text.error.text,
