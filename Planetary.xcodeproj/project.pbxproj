@@ -3323,7 +3323,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Source/Localization/en.lproj/Generated.strings",
+				"$(SRCROOT)/Source/Localization/*.lproj/Generated.strings",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -4780,12 +4780,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 314;
+				CURRENT_PROJECT_VERSION = 316;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4793,7 +4793,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.23;
+				MARKETING_VERSION = 1.1.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -4801,6 +4801,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 				delete_me = "";
 			};
 			name = Debug;
@@ -4812,12 +4813,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 314;
+				CURRENT_PROJECT_VERSION = 316;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4825,13 +4826,14 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.23;
+				MARKETING_VERSION = 1.1.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 				delete_me = "";
 			};
 			name = Release;

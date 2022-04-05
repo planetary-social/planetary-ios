@@ -61,7 +61,9 @@ class DebugTableViewController: UITableViewController {
         cell.textLabel?.textColor = UIColor.mainText
         cell.textLabel?.text = model.title
         cell.backgroundColor = UIColor.cardBackground
-        model.valueClosure?(cell)
+        Task {
+            await model.valueClosure?(cell)
+        }
         return cell
     }
 
@@ -71,8 +73,10 @@ class DebugTableViewController: UITableViewController {
 
         let model = self.settings[indexPath.section].cellModels[indexPath.row]
         if let cell = tableView.cellForRow(at: indexPath) {
-            model.actionClosure?(cell)
-            model.valueClosure?(cell)
+            Task {
+                await model.actionClosure?(cell)
+                await model.valueClosure?(cell)
+            }
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
