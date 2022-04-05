@@ -180,9 +180,9 @@ class RelationshipButton: IconButton {
 
     func reportUser() {
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
-        let me = relationship.identity
+        let reporter = relationship.identity
         let profile = SupportProfile(identifier: relationship.other, name: otherUserName)
-        guard let controller = Support.shared.newTicketViewController(reporter: me, profile: profile) else {
+        guard let controller = Support.shared.newTicketViewController(reporter: reporter, profile: profile) else {
             AppController.shared.alert(
                 title: Text.error.text,
                 message: Text.Error.supportNotConfigured.text,

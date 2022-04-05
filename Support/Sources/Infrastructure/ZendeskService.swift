@@ -5,6 +5,7 @@
 //  Created by Martin Dutra on 25/3/22.
 //
 
+import CommonUISDK
 import Foundation
 import Logger
 import Secrets
@@ -35,7 +36,7 @@ class ZendeskService: APIService {
         Zendesk.initialize(appId: appID, clientId: clientID, zendeskUrl: zendeskURL)
         SupportSDK.Support.initialize(withZendesk: Zendesk.instance)
         Zendesk.instance?.setIdentity(ZendeskCoreSDK.Identity.createAnonymous())
-        Theme.currentTheme.primaryColor = tintColor
+        CommonTheme.currentTheme.primaryColor = tintColor
     }
 
     func mainViewController() -> UIViewController? {

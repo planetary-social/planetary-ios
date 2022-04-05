@@ -12,7 +12,7 @@ import XCTest
 class Bundle_VersionTests: XCTestCase {
 
     func testModuleBundle() {
-        var bundle = Bundle.module
+        let bundle = Bundle.module
         XCTAssertEqual(bundle.version, "")
         XCTAssertEqual(bundle.build, "")
         XCTAssertEqual(bundle.versionAndBuild, " ()")
