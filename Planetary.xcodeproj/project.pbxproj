@@ -1308,8 +1308,8 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
-		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
 		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
+		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
 		C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueWithReceivedSeq.json; sourceTree = "<group>"; };
@@ -3296,7 +3296,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Source/Localization/en.lproj/Generated.strings",
+				"$(SRCROOT)/Source/Localization/*.lproj/Generated.strings",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -4748,12 +4748,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 314;
+				CURRENT_PROJECT_VERSION = 317;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4761,7 +4761,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.23;
+				MARKETING_VERSION = 1.1.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -4769,6 +4769,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 				delete_me = "";
 			};
 			name = Debug;
@@ -4780,12 +4781,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 314;
+				CURRENT_PROJECT_VERSION = 317;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4793,13 +4794,14 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.0.23;
+				MARKETING_VERSION = 1.1.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 				delete_me = "";
 			};
 			name = Release;

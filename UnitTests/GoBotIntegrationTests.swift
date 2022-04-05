@@ -87,8 +87,15 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         
         // Assert
-        XCTAssertEqual(sut.statistics.repo.messageCount, 11)
-        XCTAssertEqual(sut.statistics.repo.numberOfPublishedMessages, 1)
+        var statistics = BotStatistics()
+        let statisticsExpectation = self.expectation(description: "statistics fetched")
+        sut.statistics() { newStatistics in
+            statistics = newStatistics
+            statisticsExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 10)
+        XCTAssertEqual(statistics.repo.messageCount, 11)
+        XCTAssertEqual(statistics.repo.numberOfPublishedMessages, 1)
         XCTAssertEqual(try sut.database.messageCount(), 11)
     }
     
