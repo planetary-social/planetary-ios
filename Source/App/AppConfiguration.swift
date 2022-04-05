@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /// Represents the set of high-level properties governing the app, like the user's identity, network key, etc.
 /// These configurations can be switched out at runtime much like logging in/out of an account.
@@ -54,7 +55,14 @@ class AppConfiguration: NSObject, NSCoding {
     // Any non-SSB network must have a non-nil value.
     var hmacKey: HMACKey? {
         get {
-            if self.network == NetworkKey.ssb { return nil } else if self.network == NetworkKey.integrationTests { return HMACKey.integrationTests } else if self.network == NetworkKey.verse { return HMACKey.verse } else if self.network == NetworkKey.planetary { return HMACKey.planetary } else { return _hmacKey }
+            // This is legacy code. We should migrate to storing this in the keychain along with everything else.
+            if self.network == Environment.Networks.mainNet.key {
+                return nil
+            } else if self.network == Environment.Networks.test.key {
+                return Environment.Networks.test.hmac
+            } else {
+                return _hmacKey
+            }
         }
         set {
             _hmacKey = newValue
@@ -76,6 +84,34 @@ class AppConfiguration: NSObject, NSCoding {
             self.identity != nil &&
             self.secret != nil &&
             self.bot != nil
+    }
+    
+    var ssbNetwork: SSBNetwork? {
+        get {
+            guard let key = network else {
+                return nil
+            }
+
+            return SSBNetwork(
+                key: key,
+                hmac: hmacKey
+            )
+        }
+        set {
+            network = newValue?.key
+            hmacKey = newValue?.hmac
+        }
+    }
+    
+    var systemPubs: [Star] {
+        switch ssbNetwork {
+        case Environment.Networks.mainNet:
+            return Environment.PlanetarySystem.pubInvitations
+        case Environment.Networks.test:
+            return Environment.TestNetwork.pubs
+        default:
+            return []
+        }
     }
 
     // MARK: Lifecycle

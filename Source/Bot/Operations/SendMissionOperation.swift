@@ -56,8 +56,8 @@ class SendMissionOperation: AsynchronousOperation {
             CrashReporting.shared.reportIfNeeded(error: error)
             
             Log.info("Sending all joined pubs to bot (\(allJoinedPubs.count)).")
-            let stars = Set(Environment.Constellation.stars)
-            let allPubAddresses = stars.map { $0.address } + allJoinedPubs.map { $0.address }
+            let systemPubs = Set(AppConfiguration.current?.systemPubs ?? [])
+            let allPubAddresses = systemPubs.map { $0.address } + allJoinedPubs.map { $0.address }
             
             Bots.current.seedPubAddresses(addresses: allPubAddresses, queue: queue) { [weak self] result in
                 if case .failure(let error) = result {
@@ -70,7 +70,7 @@ class SendMissionOperation: AsynchronousOperation {
                 }
                 
                 // Get the stars the users already redeemed an invite to
-                let joinedStars = stars.filter { star in
+                let joinedStars = systemPubs.filter { star in
                     allJoinedPubs.contains { (pub) -> Bool in
                         pub.address.key == star.feed
                     }
@@ -86,7 +86,7 @@ class SendMissionOperation: AsynchronousOperation {
                     
                     // Let's take a random set of stars to reach the minimum and create Redeem Invite
                     // operations
-                    let missingStars = stars.subtracting(joinedStars)
+                    let missingStars = systemPubs.subtracting(joinedStars)
                     let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
                     redeemInviteOperations = randomSampleOfStars.map {
                         RedeemInviteOperation(star: $0, shouldFollow: false)
