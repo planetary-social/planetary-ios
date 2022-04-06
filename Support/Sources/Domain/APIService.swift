@@ -30,7 +30,8 @@ protocol APIService {
     /// - parameter reporter: The identity of the logged in user
     /// - parameter subject: What the user is reporting (a bug, a content, a profile)
     /// - parameter reason: A reason why the user is reporting something
-    /// - parameter attachments: Attachments to send to the Support service (for instance, profile or content identifiers logs, screenshots)
+    /// - parameter attachments: Attachments to send to the Support
+    /// service (for instance, profile or content identifiers logs, screenshots)
     func newTicketViewController(
         reporter: Identifier,
         subject: Subject,

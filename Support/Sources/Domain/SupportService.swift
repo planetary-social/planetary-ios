@@ -8,7 +8,8 @@
 import Foundation
 import UIKit
 
-/// SupportService provides functions to create tickets independently of the Support third party (Zendesk at the moment) service
+/// SupportService provides functions to create tickets independently
+/// of the Support third party (Zendesk at the moment) service
 protocol SupportService {
 
     /// Creates a view controller to show when selecting show Help and Support
