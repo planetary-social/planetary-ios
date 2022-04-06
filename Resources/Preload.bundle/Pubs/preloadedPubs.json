@@ -594,21 +594,67 @@
       "timestamp": 1648565044874
     },
     {
-      "key": "%e1KB+Djb8z+dnfwZxLr28wg7daupqRu+NvoMBUYYjcU=.sha256",
+      "key": "%gyRcyjBYLKIhwpa9/B7HX37SkNsrMURy7Cf7eKoVpmg=.sha256",
       "value": {
-        "previous": null,
-        "sequence": 1,
+        "previous": "%4iubzXFwPdGecIGNrfaDYTwhswo5l74HP7mCdzfSUFQ=.sha256",
+        "sequence": 15,
+        "author": "@EmJzXv/EZrAuGS1UNpH07AVz908sGckRaX38BxVgA+0=.ed25519",
+        "timestamp": 1649257617738,
+        "hash": "sha256",
+        "content": {
+          "type": "about",
+          "about": "@EmJzXv/EZrAuGS1UNpH07AVz908sGckRaX38BxVgA+0=.ed25519",
+          "image": {
+            "link": "&w4pRys0yBNHM8RRgk8xDKkhLpUv2rYXmhhAs0stYsIo=.sha256",
+            "width": 501,
+            "height": 501,
+            "type": "image/png",
+            "size": 222379
+          }
+        },
+        "signature": "Oap2RzWdhdr97Nm0DEiF4NTDeahJcQyg2U4GSbWe050BjpFdyqmgyvzIj9tTrg1EyagCDJLAz5RW5CClivD3Dw==.sig.ed25519"
+      },
+      "timestamp": 1649257617738.001
+    },
+    {
+      "key": "%qCc0SlFUNOqOAHtvU/OlUIaMiqrAuv0D+hg9+48cFh8=.sha256",
+      "value": {
+        "previous": "%bHFzPbvFS40wRGQgrAZ7/8VdogS9EBq2SdkKu7uShbA=.sha256",
+        "sequence": 5,
         "author": "@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519",
-        "timestamp": 1648565804979,
+        "timestamp": 1649256846133,
         "hash": "sha256",
         "content": {
           "type": "about",
           "about": "@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519",
-          "name": "Паб-сервер для української мови",
-          "description": "Паб-сервер для носіїв української мови.\n\n**Щоб приєднатися:** якщо ви використовуєте програму Planetary, натисніть кнопку Приєднатися.\n\nЯкщо ви користуєтеся іншою програмою, ви можете скористатися цим запрошенням:\n```\nukrainian-language.planetary.pub:8008:@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519~g4Yt3Br+1rUE8xMnjGFKCehbrXJ89NkRJ6CCAibLpJU=\n```\n\n_Hosted by \\[planetary.social\\](https://planetary.social)_"
+          "name": "Паб-сервер для українськомовних користувачів",
+          "description": "Паб-сервер для українськомовних користувачів.\n\n***Щоб приєднатися***: \nЯкщо Ви користуєтеся клієнтом Planetary, натисніть Приєднатися.\n\nЯкщо Ви використовувєте іншого клієнта, скористайтесь запрошенням:\n```\nukrainian-language.planetary.pub:8008:@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519~g4Yt3Br+1rUE8xMnjGFKCehbrXJ89NkRJ6CCAibLpJU=\n```\n\n_Hosted by \\[planetary.social\\](https://planetary.social)_"
         },
-        "signature": "9OaWMiLgzJHpnH4oz4EvDTmh2CZkkYqKX/gWXYl+2D08weIeb+mHcCR0xCOJUuXbT6dVvKJsTZodD3/EIuJkCg==.sig.ed25519"
+        "signature": "vPlLKzxGVCjuRKL0EJv1pmcNDU/tgy3swOS9qwHQO0DBkaygqvyQJsUfeOC7WJfFXV7qXBZIUV4oPWPJwSSGAA==.sig.ed25519"
       },
-      "timestamp": 1648565804980
+      "timestamp": 1649256846134
+    },
+    {
+      "key": "%fXrF2NcraQump+CareCUGCjaptlzzsf9ebJG1jmD9ZM=.sha256",
+      "value": {
+        "previous": "%qCc0SlFUNOqOAHtvU/OlUIaMiqrAuv0D+hg9+48cFh8=.sha256",
+        "sequence": 6,
+        "author": "@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519",
+        "timestamp": 1649257164230,
+        "hash": "sha256",
+        "content": {
+          "type": "about",
+          "about": "@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519",
+          "image": {
+            "link": "&64eRgPegoShaXAavUqAAOlH6ICWYuLIw8/G3u8hbBf0=.sha256",
+            "width": 501,
+            "height": 501,
+            "type": "image/png",
+            "size": 223200
+          }
+        },
+        "signature": "wnL3HtZ5geN6N1OX4/98EAA5pGv/Bbq+oU+HJnZ0SLDWunhtvzIpGA7xDMAXcis6kLPlO3CEJJrDUyAAxwu7Ag==.sig.ed25519"
+      },
+      "timestamp": 1649257164230.001
     }
 ]
