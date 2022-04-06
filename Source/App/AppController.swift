@@ -124,6 +124,11 @@ class AppController: UIViewController {
         mainViewController?.dismiss(animated: true, completion: completion)
     }
     
+    // MARK: Migrations
+    @MainActor func showBeta1ToBeta2MigrationView() async throws {
+        await showAsyncAlert(message: "Placeholder migration UI")
+    }
+    
     // MARK: Observers
     
     func addObservers() {

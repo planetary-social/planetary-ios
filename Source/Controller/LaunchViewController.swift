@@ -15,6 +15,8 @@ import CrashReporting
 class LaunchViewController: UIViewController {
 
     // MARK: Lifecycle
+    
+    var userDefaults = UserDefaults.standard
 
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -207,10 +209,19 @@ class LaunchViewController: UIViewController {
     private func migrateIfNeeded(using configuration: AppConfiguration) async {
         guard let bot = configuration.bot else { return }
         
-        let version = UserDefaults.standard.integer(forKey: "GoBotVersion")
-        if version == 0 {
+        // todo: include network key
+        let version = userDefaults.string(forKey: "GoBotDatabaseVersion")
+        if true || version == nil {
+            // The go-ssb on-disk database format changed with no migration path circa 2022.
+            // This code drops the database and resyncs it from the network.
             do {
+                let migrationUITask = Task<Void, Error> {
+                    try await AppController.shared.showBeta1ToBeta2MigrationView()
+                }
                 try await bot.dropDatabase(for: configuration)
+                userDefaults.set(true, forKey: "PerformingGoSSBUpgrade1")
+                _ = try await migrationUITask.value
+                userDefaults.set(bot.version, forKey: "GoBotDatabaseVersion")
             } catch {
                 Log.optional(error)
             }

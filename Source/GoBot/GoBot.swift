@@ -189,6 +189,10 @@ class GoBot: Bot {
                 path: repoPrefix,
                 user: secret.identity
             )
+            
+            // Save GoBot version to disk in case we need to migrate in the future.
+            // This is a side-effect that may cause problems if we want to use other bots in the future.
+            UserDefaults.standard.set(bot.version, forKey: "GoBotDatabaseVersion")
         } catch {
             queue.async { completion(error) }
             return
