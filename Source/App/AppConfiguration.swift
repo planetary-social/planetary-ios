@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 /// Represents the set of high-level properties governing the app, like the user's identity, network key, etc.
 /// These configurations can be switched out at runtime much like logging in/out of an account.
