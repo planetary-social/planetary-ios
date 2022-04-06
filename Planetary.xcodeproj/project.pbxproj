@@ -334,7 +334,6 @@
 		5314EF7E22EA35A60065D02A /* XCTestCase+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01FA2205035800DFDF16 /* XCTestCase+JSON.swift */; };
 		5314EF7F22EA48BA0065D02A /* ViewDatabaseSchema.sql in Resources */ = {isa = PBXBuildFile; fileRef = 231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */; };
 		5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5314EF8222EB713C0065D02A /* UIView+Shake.swift */; };
-		5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315854A2363614100334863 /* Bot+AppConfiguration.swift */; };
 		531587AD229F0DC00004E2B1 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587AC229F0DC00004E2B1 /* Onboarding.swift */; };
 		531587B0229F1E5F0004E2B1 /* Onboarding+Verify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587AF229F1E5F0004E2B1 /* Onboarding+Verify.swift */; };
 		531587B2229F33F00004E2B1 /* DebugOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B1229F33F00004E2B1 /* DebugOnboardingViewController.swift */; };
@@ -1025,7 +1024,6 @@
 		530F01B322E0D3E7007EBAE2 /* TitledToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledToggle.swift; sourceTree = "<group>"; };
 		530F01B522E0D930007EBAE2 /* JoinOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinOnboardingStep.swift; sourceTree = "<group>"; };
 		5314EF8222EB713C0065D02A /* UIView+Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shake.swift"; sourceTree = "<group>"; };
-		5315854A2363614100334863 /* Bot+AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bot+AppConfiguration.swift"; sourceTree = "<group>"; };
 		531587AC229F0DC00004E2B1 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		531587AF229F1E5F0004E2B1 /* Onboarding+Verify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Onboarding+Verify.swift"; sourceTree = "<group>"; };
 		531587B1229F33F00004E2B1 /* DebugOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugOnboardingViewController.swift; sourceTree = "<group>"; };
@@ -1710,7 +1708,6 @@
 				0A1CA4C824EB233C006CAC43 /* Operations */,
 				531A8A2C21F18BF400D5C8C0 /* Bot.swift */,
 				53C966E3236D074700E70689 /* Bot+Blobs.swift */,
-				5315854A2363614100334863 /* Bot+AppConfiguration.swift */,
 				53E29CD122D40462008A2CB1 /* Bot+Publish.swift */,
 				535754F12268DAB0002A6989 /* BotError.swift */,
 				532751D0222497A70026500F /* Bots.swift */,
@@ -3795,7 +3792,6 @@
 				53C422AD21C4769900A314AD /* DebugViewController.swift in Sources */,
 				5396A62B22445BE900C57A4B /* AppConfiguration.swift in Sources */,
 				5357BD7F23D15471005665AB /* AppDelegate+Repair.swift in Sources */,
-				5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */,
 				23C744412200B12000FB554A /* Vote.swift in Sources */,
 				530F019822DE87EB007EBAE2 /* PhotoConfirmOnboardingStep.swift in Sources */,
 				53EE01FF22051A1700DFDF16 /* ImageMetadata.swift in Sources */,
