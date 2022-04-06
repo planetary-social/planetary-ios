@@ -33,8 +33,8 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
         self.promptForPhotoLibraryOrCamera(from: view)
     }
 
-    func dismiss() {
-        self.controller?.dismiss(animated: true, completion: nil)
+    func dismiss(completion: (() -> Void)? = nil) {
+        self.controller?.dismiss(animated: true, completion: completion)
     }
 
     // MARK: Prompting for source or to open Settings

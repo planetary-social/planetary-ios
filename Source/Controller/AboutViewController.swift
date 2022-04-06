@@ -178,12 +178,22 @@ class AboutViewController: ContentViewController {
         
         Analytics.shared.trackDidTapButton(buttonName: "update_avatar")
         self.imagePicker.present(from: sender, openCameraInSelfieMode: true) {
-            [unowned self] image in
-            guard let uiimage = image else {
+            [weak self] image in
+            guard let self = self,
+                  let uiimage = image else {
                 return
             }
-            self.publishProfilePhoto(uiimage) { [weak self] in
-                self?.imagePicker.dismiss()
+            self.imagePicker.dismiss {
+                AppController.shared.showProgress()
+                self.publishProfilePhoto(uiimage) { [weak self] error in
+                    AppController.shared.hideProgress()
+                    if let error = error {
+                        Log.optional(error)
+                        CrashReporting.shared.reportIfNeeded(error: error)
+                        self?.alert(error: error)
+                        return
+                    }
+                }
             }
         }
     }
@@ -237,47 +247,39 @@ class AboutViewController: ContentViewController {
         AppController.shared.choose(from: actions, sourceView: sender)
     }
 
-    private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping () -> Void) {
-        // AppController.shared.showProgress()
-
+    private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping (Error?) -> Void) {
         Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1_000) { [weak self] image, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
-                AppController.shared.hideProgress()
-                self?.alert(error: error)
-            } else {
-                guard let about = self?.about?.mutatedCopy(image: image) else {
-                    // I don't see why this should ever happen
-                    // But will leave as it is
-                    let error = AppError.unexpected
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    AppController.shared.hideProgress()
+                completionHandler(error)
+                return
+            }
+            
+            guard let about = self?.about?.mutatedCopy(image: image) else {
+                // I don't see why this should ever happen
+                // But will leave as it is
+                let error = AppError.unexpected
+                completionHandler(error)
+                return
+            }
+            Bots.current.publish(content: about) { _, error in
+                if let error = error {
+                    completionHandler(error)
                     return
                 }
-                Bots.current.publish(content: about) { _, error in
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
+                
+                Analytics.shared.trackDidUpdateAvatar()
+                Bots.current.about { (newAbout, error) in
                     if let error = error {
-                        AppController.shared.hideProgress()
-                        self?.alert(error: error)
-                    } else {
-                        Analytics.shared.trackDidUpdateAvatar()
-                        Bots.current.about { (newAbout, error) in
-                            Log.optional(error)
-                            CrashReporting.shared.reportIfNeeded(error: error)
-                            
-                            AppController.shared.hideProgress()
-                            
-                            if let newAbout = newAbout {
-                                NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
-                            }
-                            
-                            self?.aboutView.imageView.fade(to: uiimage)
-                            completionHandler()
-                        }
+                        completionHandler(error)
+                        return
                     }
+                    
+                    if let newAbout = newAbout {
+                        NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
+                    }
+                    
+                    self?.aboutView.imageView.fade(to: uiimage)
+                    completionHandler(nil)
                 }
             }
         }
