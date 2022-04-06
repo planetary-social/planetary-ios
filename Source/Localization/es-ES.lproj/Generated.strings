@@ -232,6 +232,8 @@
 "Error.unexpected" = "Algo inesperado ocurrió.";
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
+"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.invalidAppConfiguration" = "Invalid app configuration";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
@@ -245,8 +247,3 @@
 "Report.postReplied" = "%@ respondió";
 "Report.feedMentioned" = "%@ te mencionó en una publicación";
 "Report.messageLiked" = "A %@ le gustó tu publicación";
-
-"Error.login" = "El motor de par-a-par falló en el inicio. Por favor prueba cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
-"Error.unexpected" = "Algo inesperado ocurrió.";
-"Error.supportNotConfigured" = "Soporte no está configurado.";
-"Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
