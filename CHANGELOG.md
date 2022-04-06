@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Fixed invitation to three.planetary.pub
+- Added Russian and Ukrainian language pubs to the community pub list #474
 
 ## [1.1.0] = 2022-04-04
 - Added several new community pubs #450
