@@ -154,6 +154,5 @@ class PostCollectionViewCell: UICollectionViewCell {
                 self.textView.textAlignment = .center
             }
         }
-        
     }
 }

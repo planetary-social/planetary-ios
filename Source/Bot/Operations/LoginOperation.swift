@@ -11,7 +11,7 @@ import Foundation
 class LoginOperation: AsynchronousOperation {
     
     var configuration: AppConfiguration
-    private(set) var success: Bool = false
+    private(set) var success = false
     private(set) var error: Error?
     
     init(configuration: AppConfiguration) {
@@ -41,5 +41,4 @@ class LoginOperation: AsynchronousOperation {
             }
         }
      }
-    
 }

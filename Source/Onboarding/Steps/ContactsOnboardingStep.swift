@@ -30,8 +30,7 @@ class ContactsOnboardingStep: OnboardingStep {
         AppController.shared.alert(
             title: Text.ok.text,
             message: Text.Onboarding.contactsWIP.text
-        )
-        {
+        ) {
             [unowned self] in
             self.next()
         }

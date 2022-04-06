@@ -48,7 +48,7 @@ class PostTextEditorView: UIView {
 
     var attributedText: NSAttributedString {
         get {
-            return sourceTextView.attributedText
+            sourceTextView.attributedText
         }
 
         set {
@@ -58,7 +58,7 @@ class PostTextEditorView: UIView {
 
     var previewActive: Bool {
         get {
-            return renderedTextView.alpha > 0.9
+            renderedTextView.alpha > 0.9
         }
 
         set {
@@ -117,7 +117,7 @@ class PostTextEditorView: UIView {
     }
 
     override func becomeFirstResponder() -> Bool {
-        return sourceTextView.becomeFirstResponder()
+        sourceTextView.becomeFirstResponder()
     }
 
     private func animateToPreview() {

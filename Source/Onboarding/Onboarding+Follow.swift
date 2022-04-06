@@ -18,8 +18,7 @@ extension Onboarding {
 
     static func follow(_ identities: [Identity],
                        context: Context,
-                       completion: @escaping FollowCompletion)
-    {
+                       completion: @escaping FollowCompletion) {
         guard identities.count > 0 else { completion(true, [], []); return }
 
         var contacts: [Contact] = []
@@ -40,10 +39,9 @@ extension Onboarding {
 
     // TODO analytics
     static func invitePubsToFollow(_ identity: Identity,
-                                  completion: @escaping ((Bool, Error?) -> Void))
-    {
+                                  completion: @escaping ((Bool, Error?) -> Void)) {
         guard identity.isValidIdentifier else {
-            completion(false, OnboardingError.invalidIdentity(identity));
+            completion(false, OnboardingError.invalidIdentity(identity))
             return
         }
         // TODO: this code is not run during APITests but should be called in test40_invite_pubs https://app.asana.com/0/0/1134329918920786/f

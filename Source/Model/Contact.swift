@@ -16,7 +16,7 @@ struct Contact: ContentCodable {
     let blocking: Bool?
 
     var identity: Identity {
-        return self.contact
+        self.contact
     }
     
     init(contact: Identity, following: Bool) {
@@ -37,14 +37,14 @@ struct Contact: ContentCodable {
 extension Contact {
 
     var isFollowing: Bool {
-        return self.following ?? false
+        self.following ?? false
     }
 
     var isBlocking: Bool {
-        return self.blocking ?? false
+        self.blocking ?? false
     }
 
     var isValid: Bool {
-        return self.following != nil || self.blocking != nil
+        self.following != nil || self.blocking != nil
     }
 }

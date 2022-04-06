@@ -22,5 +22,4 @@ struct BlockedAPI {
         }
         #endif
     }()
-    
 }

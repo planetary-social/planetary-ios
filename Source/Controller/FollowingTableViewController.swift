@@ -13,7 +13,7 @@ import CrashReporting
 class FollowingTableViewController: AboutTableViewController {
 
     var identity: Identity
-    var startingAbouts: [About]? = nil
+    var startingAbouts: [About]?
 
     init(identity: Identity, followings: [About]? = nil) {
         self.identity = identity

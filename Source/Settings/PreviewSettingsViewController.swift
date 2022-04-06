@@ -30,7 +30,7 @@ class PreviewSettingsViewController: DebugTableViewController {
         Analytics.shared.trackDidShowScreen(screenName: "advanced_settings")
     }
 
-    internal override func updateSettings() {
+    override internal func updateSettings() {
         self.settings = [self.blocks(), self.reset(), self.debug()]
         super.updateSettings()
     }
@@ -45,20 +45,18 @@ class PreviewSettingsViewController: DebugTableViewController {
         var settings: [DebugTableViewCellModel] = []
 
         settings += [DebugTableViewCellModel(title: Text.Blocking.usersYouHaveBlocked.text,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 guard let identity = Bots.current.identity else { return }
                 cell.showActivityIndicator()
                 Bots.current.blocks(identity: identity) {
-                    identities, error in
+                    identities, _ in
                     cell.hideActivityIndicator(andShow: .disclosureIndicator)
                     cell.detailTextLabel?.text = "\(identities.count)"
                 }
             },
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 let controller = BlockedUsersViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
@@ -72,9 +70,8 @@ class PreviewSettingsViewController: DebugTableViewController {
         var settings: [DebugTableViewCellModel] = []
 
         settings += [DebugTableViewCellModel(title: Text.Offboarding.resetApplicationAndIdentity.text,
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 self.confirmOffboard()
             })]
 
@@ -105,12 +102,11 @@ class PreviewSettingsViewController: DebugTableViewController {
 
     private func offboard() {
         AppController.shared.showProgress(after: 0)
-        Offboarding.offboard() {
+        Offboarding.offboard {
             [weak self] error in
             AppController.shared.hideProgress()
             guard let me = self else { return }
-            if me.didError(error) { return }
-            else { me.relaunch() }
+            if me.didError(error) { return } else { me.relaunch() }
         }
     }
 
@@ -158,7 +154,7 @@ class PreviewSettingsViewController: DebugTableViewController {
                 cell.accessoryType = .disclosureIndicator
             },
                                              actionClosure: {
-                [unowned self] cell in
+                [unowned self] _ in
                 let controller = DebugViewController()
                 controller.shouldAddDismissButton = false
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -166,5 +162,4 @@ class PreviewSettingsViewController: DebugTableViewController {
 
         return (Text.Debug.debugTitle.text, settings, Text.Debug.debugFooter.text)
     }
-    
 }

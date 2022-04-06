@@ -17,5 +17,4 @@ class NullPubAPI: PubAPIService {
     func invitePubsToFollow(_ identity: Identity, completion: @escaping ((Bool, APIError?) -> Void)) {
         completion(true, nil)
     }
-    
 }

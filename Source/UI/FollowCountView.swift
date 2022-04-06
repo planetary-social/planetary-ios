@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 class FollowCountView: UIView {
 
     var abouts: [About] = [] {
@@ -30,7 +29,6 @@ class FollowCountView: UIView {
         view.textColor = UIColor.secondaryText
         return view
     }()
-
 
     init(text: Text, secondaryText: Text) {
         self.text = text
@@ -73,6 +71,4 @@ class FollowCountView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }
-

@@ -37,6 +37,14 @@ class AttributedStringTests: XCTestCase {
         XCTAssertTrue(markdown == "this is a test [identity](identity)")
     }
 
+    func test_mentionWithEmojiAttributedStringToMarkdown() {
+        let string = NSMutableAttributedString(string: "this is a test ")
+        let mention = Mention(link: "identity", name: "identity 🪲")
+        string.append(mention.attributedString)
+        let markdown = string.markdown
+        XCTAssertTrue(markdown == "this is a test [identity 🪲](identity)")
+    }
+
     func test_hashtagToAttributedString() {
         let hashtag = Hashtag.named("channel")
         let string = hashtag.attributedString
@@ -98,5 +106,4 @@ class AttributedStringTests: XCTestCase {
         attributedString.append(Hashtag.named("test").attributedString)
         XCTAssertTrue(attributedString.encodeMarkdown() == "test [identity](identity) #test")
     }
-    
 }

@@ -94,8 +94,7 @@ extension PostReplyView {
     /// for the various subviews, but this needs to be a very fast call so no complicated calculations
     /// should be done.  Instead, some magic numbers are used based on the various constraints.
     static func estimatedHeight(with keyValue: KeyValue,
-                                in superview: UIView) -> CGFloat
-    {
+                                in superview: UIView) -> CGFloat {
         // starting height based for all non-zero height subviews
         // header + text + reply box
         var height = CGFloat(300)
@@ -116,13 +115,12 @@ extension PostReplyView {
 
 class RepliesView: KeyValueView {
 
-
     private let textFont = UIFont.systemFont(ofSize: 14, weight: .regular)
 
     let avatarImageView = AvatarStackView()
 
     var expandedHeight: CGFloat {
-        return self.avatarImageView.height + Layout.verticalSpacing
+        self.avatarImageView.height + Layout.verticalSpacing
     }
 
     let label = UILabel.forAutoLayout()

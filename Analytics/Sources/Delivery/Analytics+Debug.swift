@@ -20,5 +20,4 @@ public extension Analytics {
     func trackDidLogoutAndOnboard() {
         service.track(event: .select, element: .action, name: "logout_onboard")
     }
-
 }

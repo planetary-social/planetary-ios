@@ -18,7 +18,7 @@ protocol AboutTableViewDelegate {
 
 extension AboutTableViewDelegate where Self: ContentViewController {
     var navigationController: UINavigationController? {
-        return self.navigationController
+        self.navigationController
     }
 }
 
@@ -62,7 +62,7 @@ class AboutTableViewDataSource: NSObject {
 extension AboutTableViewDataSource: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.identities.count
+        self.identities.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -73,7 +73,7 @@ extension AboutTableViewDataSource: UITableViewDataSource {
     }
 }
 
-// MARK:- Data source to prefetch About while scrolling
+// MARK: - Data source to prefetch About while scrolling
 
 extension AboutTableViewDataSource: UITableViewDataSourcePrefetching {
 
@@ -86,7 +86,7 @@ extension AboutTableViewDataSource: UITableViewDataSourcePrefetching {
     }
 }
 
-// MARK:- Delegate to handle tapping a cell
+// MARK: - Delegate to handle tapping a cell
 
 extension AboutTableViewDataSource: UITableViewDelegate {
 

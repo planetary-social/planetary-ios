@@ -43,8 +43,7 @@ extension API {
     func get(path: String,
              query: [URLQueryItem] = [],
              headers: APIHeaders? = nil,
-             completion: @escaping APICompletion)
-    {
+             completion: @escaping APICompletion) {
         self.send(method: .GET,
                   path: path,
                   query: query,
@@ -57,8 +56,7 @@ extension API {
 
     func put(path: String,
              query: [URLQueryItem],
-             completion: @escaping APICompletion)
-    {
+             completion: @escaping APICompletion) {
         self.send(method: .PUT,
                   path: path,
                   query: query,
@@ -69,8 +67,7 @@ extension API {
 
     func put(path: String,
              json: [String: Any],
-             completion: @escaping APICompletion)
-    {
+             completion: @escaping APICompletion) {
         guard let data = json.data() else { completion(nil, .encodeError); return }
         self.send(method: .PUT,
                   path: path,
@@ -84,8 +81,7 @@ extension API {
     // TODO need MIME type too
     func put(path: String,
              body: Data,
-             completion: @escaping APICompletion)
-    {
+             completion: @escaping APICompletion) {
         self.send(method: .PUT,
                   path: path,
                   query: [],
@@ -98,8 +94,7 @@ extension API {
 
     func post(path: String,
               query: [URLQueryItem],
-              completion: @escaping APICompletion)
-    {
+              completion: @escaping APICompletion) {
         self.send(method: .POST,
                   path: path,
                   query: query,
@@ -110,8 +105,7 @@ extension API {
 
     func post(path: String,
               json: [String: Any],
-              completion: @escaping APICompletion)
-    {
+              completion: @escaping APICompletion) {
         guard let data = json.data() else { completion(nil, .encodeError); return }
         self.send(method: .POST,
                   path: path,
@@ -125,8 +119,7 @@ extension API {
 
     func delete(path: String,
                 query: [URLQueryItem] = [],
-                completion: @escaping APICompletion)
-    {
+                completion: @escaping APICompletion) {
         self.send(method: .DELETE,
                   path: path,
                   query: query,
@@ -140,6 +133,6 @@ extension API {
 extension String {
 
     var beginsWithSlash: Bool {
-        return self.hasPrefix("/")
+        self.hasPrefix("/")
     }
 }

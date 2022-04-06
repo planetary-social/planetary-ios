@@ -10,7 +10,7 @@ import Foundation
 import Logger
 import CrashReporting
 
-/// Attempts connection to a Planetary's pub. It redeems invitation to these pubs if the user
+/// Starts and/or cycles connections to pub servers. It redeems invitations to the system pubs if the user
 /// didn't do it previously.
 class SendMissionOperation: AsynchronousOperation {
     
@@ -50,69 +50,56 @@ class SendMissionOperation: AsynchronousOperation {
         
         let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
         
-        let knownStars = Set(Environment.Constellation.stars)
-        let knownStarsAddresses = knownStars.map { $0.address }
-        
-        Log.debug("Seeding known stars stars...")
-        Bots.current.seedPubAddresses(addresses: knownStarsAddresses, queue: queue) { [weak self, quality] result in
-            Log.debug("Retrieving list of available stars...")
-            Bots.current.pubs(queue: queue) { (pubs, error) in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
+        Log.info("Retreiving all joined pubs from database.")
+        Bots.current.joinedPubs(queue: queue) { (allJoinedPubs, error) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
+            Log.info("Sending all joined pubs to bot (\(allJoinedPubs.count)).")
+            let stars = Set(Environment.Constellation.stars)
+            let allPubAddresses = stars.map { $0.address } + allJoinedPubs.map { $0.address }
+            
+            Bots.current.seedPubAddresses(addresses: allPubAddresses, queue: queue) { [weak self] result in
+                if case .failure(let error) = result {
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                }
                 
-                if let error = error {
-                    Log.info("Couldn't get list of available stars. SendMissionOperation finished.")
-                    self?.result = .failure(error)
-                    self?.finish()
+                guard let self = self else {
                     return
                 }
                 
                 // Get the stars the users already redeemed an invite to
-                let joinedStars = knownStars.filter { star in
-                    pubs.contains { (pub) -> Bool in
+                let joinedStars = stars.filter { star in
+                    allJoinedPubs.contains { (pub) -> Bool in
                         pub.address.key == star.feed
                     }
                 }
                 
-                let starsToSync: Set<Star>
-                let redeemInviteOperations: [RedeemInviteOperation]
+                var starsToJoin = Set<Star>()
+                var redeemInviteOperations = [RedeemInviteOperation]()
                 
-                // Check if the current number of available stars is enough
+                // Join more stars if we haven't yet.
                 let numberOfMissingStars = SendMissionOperation.minNumberOfStars - joinedStars.count
                 if numberOfMissingStars > 0 {
-                    Log.debug("There are \(numberOfMissingStars) missing stars.")
+                    Log.debug("Joining \(numberOfMissingStars) stars to get to minimum.")
                     
                     // Let's take a random set of stars to reach the minimum and create Redeem Invite
                     // operations
-                    let missingStars = knownStars.subtracting(joinedStars)
+                    let missingStars = stars.subtracting(joinedStars)
                     let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
                     redeemInviteOperations = randomSampleOfStars.map {
-                        return RedeemInviteOperation(star: $0, shouldFollow: false)
+                        RedeemInviteOperation(star: $0, shouldFollow: false)
                     }
                     
                     // Lets sync to available stars and newly redeemed stars
-                    starsToSync = joinedStars.union(missingStars)
-                } else {
-                    Log.debug("There are \(joinedStars.count) available stars.")
-                    
-                    // No need to redeem invite
-                    redeemInviteOperations = []
-                    
-                    // Just sync to the available stars
-                    starsToSync = joinedStars
+                    starsToJoin = missingStars
                 }
                 
-                let someNonStarPubs = pubs
-                    .filter { pub in
-                        !knownStars.contains(where: { $0.feed == pub.address.key })
-                    }
-                    .map { $0.toPeer() }
-                    .randomSample(2)
-                let someStars = starsToSync.randomSample(2).map { $0.toPeer() }
-                let peersToSync = someNonStarPubs + someStars
+                let peerPool = allJoinedPubs.map { $0.toPeer() } + starsToJoin.map { $0.toPeer() }
                 
-                let syncOperation = SyncOperation(peers: peersToSync)
-                switch quality {
+                let syncOperation = SyncOperation(peerPool: peerPool)
+                switch self.quality {
                 case .low:
                     syncOperation.notificationsOnly = true
                 case .high:
@@ -121,11 +108,11 @@ class SendMissionOperation: AsynchronousOperation {
                 redeemInviteOperations.forEach { syncOperation.addDependency($0) }
                 
                 let operations = redeemInviteOperations + [syncOperation]
-                self?.operationQueue.addOperations(operations, waitUntilFinished: true)
+                self.operationQueue.addOperations(operations, waitUntilFinished: true)
                 
                 Log.info("SendMissionOperation finished.")
-                self?.result = .success(())
-                self?.finish()
+                self.result = .success(())
+                self.finish()
             }
         }
     }

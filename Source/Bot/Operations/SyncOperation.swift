@@ -11,23 +11,23 @@ import Logger
 import Analytics
 import CrashReporting
 
-/// Pokes the bot into doing a sync. Don't use this SyncOperation directly, use
+/// Tries to connect to the given peers to gossip with them. Don't use this SyncOperation directly, use
 /// SendMissionOperation instead.
 class SyncOperation: AsynchronousOperation {
     
-    /// List of available peers to establish connection
-    var peers: [Peer]
+    /// List of available peers to establish connection. Only a subset will be actually be connected to.
+    var peerPool: [Peer]
     
     /// If true, only will sync to one peer with no retries
-    var notificationsOnly: Bool = false
+    var notificationsOnly = false
     
     /// Number of new messages available in the repo after the sync
     private(set) var newMessages: Int = 0
     
     private(set) var error: Error?
     
-    init(peers: [Peer]) {
-        self.peers = peers
+    init(peerPool: [Peer]) {
+        self.peerPool = peerPool
         super.init()
     }
      
@@ -46,7 +46,7 @@ class SyncOperation: AsynchronousOperation {
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
         if self.notificationsOnly {
-            Bots.current.syncNotifications(queue: queue, peers: peers) { [weak self] (error, timeInterval, newMessages) in
+            Bots.current.syncNotifications(queue: queue, peers: peerPool) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
                                           numberOfMessages: newMessages)
                 Log.optional(error)
@@ -59,7 +59,7 @@ class SyncOperation: AsynchronousOperation {
                 self?.finish()
             }
         } else {
-            Bots.current.sync(queue: queue, peers: peers) { [weak self] (error, timeInterval, newMessages) in
+            Bots.current.sync(queue: queue, peers: peerPool) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
                                           numberOfMessages: newMessages)
                 Log.optional(error)
@@ -73,6 +73,4 @@ class SyncOperation: AsynchronousOperation {
             }
         }
     }
-     
-    
 }

@@ -124,5 +124,4 @@ class MarkdownStyler: DownStyler {
     func style(seeMore str: NSMutableAttributedString) {
         self.style(text: str)
     }
-    
 }

@@ -22,7 +22,7 @@ class VersePubAPI: PubAPIService {
         if CommandLine.arguments.contains("use-ci-network") {
             self.scheme = "https"
             self.host = "pub.verse.app"
-            self.port = 8443
+            self.port = 8_443
             self.token = "KrztmpEgK0LEX0yseDBfccgWaxTVZIl/bJOZPjkXV+ArUlP9m5te1cUjQKyc0YuH48"
             self.pathPrefix = ""
         } else {
@@ -42,12 +42,11 @@ class VersePubAPI: PubAPIService {
     
     func invitePubsToFollow(_ identity: Identity, completion: @escaping ((Bool, APIError?) -> Void)) {
         let headers: APIHeaders = ["Verse-New-Key": identity]
-        self.get(path: "/v1/invite", headers: headers) { data, error in
+        self.get(path: "/v1/invite", headers: headers) { _, error in
             Log.optional(error)
             completion(error == nil, error)
         }
     }
-
 }
 
 extension VersePubAPI: API {
@@ -88,7 +87,7 @@ extension VersePubAPI: API {
     }
 }
 
-// MARK:- Custom decoding
+// MARK: - Custom decoding
 
 fileprivate extension Data {
 

@@ -6,7 +6,7 @@ import CrashReporting
 
 class DebugViewController: DebugTableViewController {
 
-    var shouldAddDismissButton: Bool = true
+    var shouldAddDismissButton = true
     
     // Since we change the 3 primary aspects of the SSB
     // configuration, we want to make sure the changes were
@@ -31,7 +31,7 @@ class DebugViewController: DebugTableViewController {
         Analytics.shared.trackDidShowScreen(screenName: "debug")
     }
 
-    internal override func updateSettings() {
+    override internal func updateSettings() {
         self.settings = [self.application(),
                          self.features(),
                          self.configurations(),
@@ -46,8 +46,7 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Version",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = Bundle.main.versionAndBuild
             },
@@ -55,8 +54,7 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Bundle",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = Bundle.main.bundleIdentifier
             },
@@ -64,8 +62,7 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Localhost",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = UIDevice.current.localhost()
             },
@@ -80,70 +77,60 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Caches",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = CachesViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
         settings += [DebugTableViewCellModel(title: "Onboarding",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = DebugOnboardingViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
         settings += [DebugTableViewCellModel(title: "Layout",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = DebugUIViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
         settings += [DebugTableViewCellModel(title: "Posts",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = DebugPostsViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
         settings += [DebugTableViewCellModel(title: "Support - Help Center",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 guard let controller = Support.shared.mainViewController() else {
                     self.alert(message: Text.Error.supportNotConfigured.text)
                     return
@@ -153,14 +140,12 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Support - My Tickets",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
                     self.alert(message: Text.Error.supportNotConfigured.text)
                     return
@@ -170,14 +155,12 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Support - New Bug Report",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 guard let controller = Support.shared.newTicketViewController() else {
                     self.alert(message: Text.Error.supportNotConfigured.text)
                     return
@@ -187,8 +170,7 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Show peer-to-peer widget",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 let toggle = UISwitch()
                 toggle.isOn = UserDefaults.standard.showPeerToPeerWidget
@@ -213,16 +195,14 @@ class DebugViewController: DebugTableViewController {
         for configuration in configurations {
             settings += [DebugTableViewCellModel(title: configuration.name,
                                                  cellReuseIdentifier: DebugValueTableViewCell.className,
-                                                 valueClosure:
-                {
+                                                 valueClosure: {
                     cell in
                     cell.detailTextLabel?.text = configuration.network?.name
                     let selected = (configuration.identity == AppConfiguration.current?.identity)
                     cell.accessoryType = selected ? .checkmark : .disclosureIndicator
                 },
-                                                 actionClosure:
-                {
-                    [unowned self] cell in
+                                                 actionClosure: {
+                    [unowned self] _ in
                     let controller = AppConfigurationViewController(with: configuration)
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
@@ -231,14 +211,12 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Create new configuration and secret",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 Bots.current.createSecret {
                     secret, error in
                     Log.optional(error)
@@ -251,14 +229,12 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Add new configuration from secret",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 let controller = SecretViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
             }
@@ -273,14 +249,12 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "GoBot",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
             },
-                                             actionClosure:
-            {
-                cell in
+                                             actionClosure: {
+                _ in
                 let controller = BotViewController(bot: GoBot.shared, configuration: self.configuration)
                 self.navigationController?.pushViewController(controller, animated: true)
             }
@@ -288,8 +262,7 @@ class DebugViewController: DebugTableViewController {
 
         settings += [DebugTableViewCellModel(title: "Mission Control Center",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure:
-            {
+                                             valueClosure: {
                 cell in
                 cell.detailTextLabel?.text = "\(AppController.shared.missionControlCenter.state)"
             },
@@ -305,8 +278,7 @@ class DebugViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Export logs",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,
                                          valueClosure: nil,
-                                         actionClosure:
-        {
+                                         actionClosure: {
             [unowned self] cell in
             let alertController = UIAlertController(title: "Share Logs", message: nil, preferredStyle: .actionSheet)
             alertController.addAction(UIAlertAction(title: "All files", style: .default, handler: { (_) in
@@ -341,27 +313,24 @@ class DebugViewController: DebugTableViewController {
         settings += [DebugTableViewCellModel(title: "Simulate onboarding",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 self.relaunchIntoOnboarding()
             })]
 
         settings += [DebugTableViewCellModel(title: "Logout and login",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 self.logout()
             })]
 
         settings += [DebugTableViewCellModel(title: "Logout and onboard",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: nil,
-                                             actionClosure:
-            {
-                [unowned self] cell in
+                                             actionClosure: {
+                [unowned self] _ in
                 self.logoutAndRelaunch()
         })]
 
@@ -386,7 +355,7 @@ class DebugViewController: DebugTableViewController {
         }
     }
 
-    @objc internal override func didPressDismiss() {
+    @objc override internal func didPressDismiss() {
         if AppConfiguration.hasCurrent == false {
             self.confirm(message: "There is no selected configuration.  This will relaunch the app into onboarding.",
                          confirmTitle: "Relaunch",
@@ -439,8 +408,8 @@ class DebugViewController: DebugTableViewController {
                     }
                     
                     if allFiles {
-                        try appFileUrls.forEach{try copy($0)}
-                        try botFileURLs.forEach{try copy($0)}
+                        try appFileUrls.forEach { try copy($0) }
+                        try botFileURLs.forEach { try copy($0) }
                     } else if let firstAppFileURL = appFileUrls.first, let firstBotFileURL = botFileURLs.first {
                         try copy(firstAppFileURL)
                         try copy(firstBotFileURL)
@@ -459,7 +428,7 @@ class DebugViewController: DebugTableViewController {
                     coord.coordinate(readingItemAt: url, options: .forUploading, error: &readError) { (zippedURL: URL) -> Void in
                         do {
                             try FileManager.default.copyItem(at: zippedURL, to: zipFileURL)
-                        } catch let error {
+                        } catch {
                             DispatchQueue.main.async { [weak self] in
                                 self?.alert(error: error)
                             }
@@ -468,7 +437,7 @@ class DebugViewController: DebugTableViewController {
                             share([zipFileURL])
                         }
                     }
-                } catch let error {
+                } catch {
                     DispatchQueue.main.async { [weak self] in
                         self?.alert(error: error)
                     }
@@ -491,7 +460,7 @@ class DebugViewController: DebugTableViewController {
     
     /// Allows the user to export the go-ssb log and SQLite database in a zip file. This function will zip up the files
     /// and present a share sheet as a popover on the given cell.
-    private func shareDatabase(cell: UITableViewCell) {
+    private func shareDatabase(cell: UITableViewCell) async {
         cell.showActivityIndicator()
 
         let presentShareSheet = { [weak self] (activityItems: [Any]) in
@@ -503,7 +472,7 @@ class DebugViewController: DebugTableViewController {
             }
         }
         
-        let databaseDirectory = URL(fileURLWithPath: Bots.current.statistics.repo.path).deletingLastPathComponent()
+        let databaseDirectory = URL(fileURLWithPath: await Bots.current.statistics().repo.path).deletingLastPathComponent()
         let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
         let url = temporaryDirectory.appendingPathComponent(UUID().uuidString)
         DispatchQueue.global(qos: .background).async { [weak self] in
@@ -523,7 +492,7 @@ class DebugViewController: DebugTableViewController {
                 coord.coordinate(readingItemAt: url, options: .forUploading, error: &readError) { (zippedURL: URL) -> Void in
                     do {
                         try FileManager.default.copyItem(at: zippedURL, to: zipFileURL)
-                    } catch let error {
+                    } catch {
                         DispatchQueue.main.async { [weak self] in
                             self?.alert(error: error)
                         }
@@ -532,7 +501,7 @@ class DebugViewController: DebugTableViewController {
                         presentShareSheet([zipFileURL])
                     }
                 }
-            } catch let error {
+            } catch {
                 DispatchQueue.main.async { [weak self] in
                     self?.alert(error: error)
                 }
@@ -582,7 +551,6 @@ class DebugViewController: DebugTableViewController {
                      confirmClosure: {
                         Analytics.shared.trackDidLogout()
                         self.applyConfigurationAndDismiss()
-                        
         })
     }
 

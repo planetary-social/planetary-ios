@@ -25,11 +25,11 @@ extension Collection {
      * If there are not enough elements in the Array, a smaller Array is returned.
      * Elements will not be returned twice except when there are duplicate elements in the original Array.
      */
-    func randomSample(_ count : UInt) -> [Element] {
+    func randomSample(_ count: UInt) -> [Element] {
         let sampleCount = Swift.min(numericCast(count), self.count)
 
         var elements = Array(self)
-        var samples : [Element] = []
+        var samples: [Element] = []
 
         while samples.count < sampleCount {
             let idx = (0..<elements.count).randomSample()!

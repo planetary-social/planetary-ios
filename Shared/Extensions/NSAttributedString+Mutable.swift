@@ -11,6 +11,6 @@ import Foundation
 extension NSAttributedString {
 
     func mutable() -> NSMutableAttributedString {
-        return NSMutableAttributedString(attributedString: self)
+        NSMutableAttributedString(attributedString: self)
     }
 }

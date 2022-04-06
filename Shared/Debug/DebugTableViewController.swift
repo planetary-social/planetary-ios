@@ -34,22 +34,22 @@ class DebugTableViewController: UITableViewController {
         self.tableView.reloadData()
     }
 
-    // MARK:- UITableViewDataSource
+    // MARK: - UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.settings[section].header
+        self.settings[section].header
     }
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return self.settings[section].footer
+        self.settings[section].footer
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return self.settings.count
+        self.settings.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.settings[section].cellModels.count
+        self.settings[section].cellModels.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -61,18 +61,22 @@ class DebugTableViewController: UITableViewController {
         cell.textLabel?.textColor = UIColor.mainText
         cell.textLabel?.text = model.title
         cell.backgroundColor = UIColor.cardBackground
-        model.valueClosure?(cell)
+        Task {
+            await model.valueClosure?(cell)
+        }
         return cell
     }
 
-    // MARK:- UITableViewDelegate
+    // MARK: - UITableViewDelegate
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let model = self.settings[indexPath.section].cellModels[indexPath.row]
         if let cell = tableView.cellForRow(at: indexPath) {
-            model.actionClosure?(cell)
-            model.valueClosure?(cell)
+            Task {
+                await model.actionClosure?(cell)
+                await model.valueClosure?(cell)
+            }
         }
 
         tableView.deselectRow(at: indexPath, animated: true)

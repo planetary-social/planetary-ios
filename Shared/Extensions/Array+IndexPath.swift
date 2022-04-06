@@ -11,6 +11,6 @@ import Foundation
 extension Array {
 
     func indexPathForLast() -> IndexPath {
-        return IndexPath(row: Swift.max(0, self.count - 1), section: 0)
+        IndexPath(row: Swift.max(0, self.count - 1), section: 0)
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import Logger
 
-/// Manages sending missions to nearby stars
+/// Manages connections to other peers aka sending missions to nearby stars.
 class MissionControlCenter {
     
     /// State of a Mission Control Center object
@@ -34,12 +34,12 @@ class MissionControlCenter {
     
     /// Timer for the SendMissionOperation
     private lazy var sendMissionTimer: RepeatingTimer = {
-        RepeatingTimer(interval: 60) { [weak self] in self?.sendMissions() }
+        RepeatingTimer(interval: 30) { [weak self] in self?.sendMissions() }
     }()
     
     /// Timer for the RefreshOperation
     private lazy var refreshTimer: RepeatingTimer = {
-        RepeatingTimer(interval: 17) { [weak self] in self?.pokeRefresh() }
+        RepeatingTimer(interval: 14) { [weak self] in self?.pokeRefresh() }
     }()
     
     /// Background Task Identifier for the SendMissionOperation
@@ -55,9 +55,8 @@ class MissionControlCenter {
         }
         Log.info("Mission Control Center started operations")
         self.state = .started
-        self.sendMissionTimer.start(fireImmediately: false)
-        self.refreshTimer.start(fireImmediately: false)
-        self.sendMission()
+        self.sendMissionTimer.start(fireImmediately: true)
+        self.refreshTimer.start(fireImmediately: true)
     }
     
     /// Resumes Mission Control Center operations. It resumes timers and starts a new missions.
@@ -67,9 +66,8 @@ class MissionControlCenter {
         }
         Log.info("Mission Control Center resumed operations")
         self.state = .started
-        self.sendMissionTimer.start(fireImmediately: false)
-        self.refreshTimer.start(fireImmediately: false)
-        self.sendMission()
+        self.sendMissionTimer.start(fireImmediately: true)
+        self.refreshTimer.start(fireImmediately: true)
     }
     
     /// Pauses Mission Control Center operations. It pauses timers and cancels current missions.
@@ -161,5 +159,4 @@ class MissionControlCenter {
         
         self.operationQueue.addOperation(refreshOperation)
     }
-    
 }

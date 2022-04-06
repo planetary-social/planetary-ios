@@ -15,35 +15,34 @@ import UIKit
 class NullSupport: SupportService {
     
     func mainViewController() -> UIViewController? {
-        return nil
+        nil
     }
     
     func articleViewController(_ article: SupportArticle) -> UIViewController? {
-        return nil
+        nil
     }
     
     func myTicketsViewController(from reporter: Identity?) -> UIViewController? {
-        return nil
+        nil
     }
     
     func newTicketViewController() -> UIViewController? {
-        return nil
+        nil
     }
     
     func newTicketViewController(from reporter: Identity, reporting identity: Identity, name: String) -> UIViewController? {
-        return nil
+        nil
     }
     
     func newTicketViewController(from reporter: Identity, reporting content: KeyValue, reason: SupportReason, view: UIView?) -> UIViewController? {
-        return nil
+        nil
     }
     
     func id(for article: SupportArticle) -> String {
-        return ""
+        ""
     }
     
     func article(for id: String) -> SupportArticle? {
-        return nil
+        nil
     }
-    
 }

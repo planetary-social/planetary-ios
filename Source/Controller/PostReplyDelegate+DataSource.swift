@@ -30,8 +30,7 @@ class PostReplyDelegate: KeyValueTableViewDelegate {
 
     override func tableView(_ tableView: UITableView,
                             willDisplay cell: UITableViewCell,
-                            forRowAt indexPath: IndexPath)
-    {
+                            forRowAt indexPath: IndexPath) {
         guard let cell = cell as? KeyValueTableViewCell else { return }
         guard let view = cell.keyValueView as? PostReplyView else { return }
         guard let keyValue = tableView.keyValue(for: indexPath) else { return }

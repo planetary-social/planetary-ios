@@ -46,7 +46,7 @@ class DictionaryCache: Cache {
         Thread.assertIsMainThread()
         let items = self.dictionary.sorted {
             (first: (key: String, value: (Date, Any)), second: (key: String, value: (Date, Any))) in
-            return first.value.0 < second.value.0
+            first.value.0 < second.value.0
         }
         return items
     }

@@ -10,6 +10,8 @@ import Foundation
 import Logger
 import Network
 
+/// An object representing a Planetary owned SSB pub server, including connection information and an embedded
+/// invitation. AKA system pubs.
 struct Star {
     let invite: String
     
@@ -18,11 +20,11 @@ struct Star {
     private(set) var port: UInt
     
     var tcpAddress: String {
-        return "\(host):\(port)"
+        "\(host):\(port)"
     }
     
     var address: PubAddress {
-        return PubAddress(key: self.feed, host: self.host, port: self.port)
+        PubAddress(key: self.feed, host: self.host, port: self.port)
     }
     
     init(invite: String) {
@@ -55,11 +57,11 @@ struct Star {
     }
     
     func toPeer() -> Peer {
-        return Peer(tcpAddr: self.tcpAddress, pubKey: self.feed)
+        Peer(tcpAddr: self.tcpAddress, pubKey: self.feed)
     }
     
     func toPub() -> Pub {
-        return Pub(type: .pub, address: self.address)
+        Pub(type: .pub, address: self.address)
     }
     
     /// Checks whether we can establish a TCP connection to the star. This is only necessary to work around a bug
@@ -96,5 +98,4 @@ extension Star: Hashable {
     func hash(into hasher: inout Hasher) {
         self.feed.hash(into: &hasher)
     }
-    
 }

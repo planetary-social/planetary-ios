@@ -18,7 +18,7 @@ extension Onboarding {
         guard let identity = AppConfiguration.current?.identity else { return }
         Log.info("\(#function)")
         Onboarding.invitePubsToFollow(identity) {
-            success, error in
+            _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
         }

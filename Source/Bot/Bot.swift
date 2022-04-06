@@ -30,9 +30,9 @@ typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
 enum RefreshLoad: Int32, CaseIterable {
     case tiny = 500 // about 1 second on modern hardware
-    case short = 15000 // about 10 seconds
-    case medium = 45000 // about 30 seconds
-    case long = 100000 // about 60 seconds
+    case short = 15_000 // about 10 seconds
+    case medium = 45_000 // about 30 seconds
+    case long = 100_000 // about 60 seconds
 }
 
 /// Abstract interface to any SSB bot implementation.
@@ -60,19 +60,24 @@ protocol Bot {
 
     // MARK: Sync
     
-    // Ensure that these list of addresses are taken into consideration when establishing connections
+    /// Ensure that these list of addresses are taken into consideration when establishing connections
     func seedPubAddresses(addresses: [PubAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void)
     
     func knownPubs(completion: @escaping KnownPubsCompletion)
     
-    func pubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
+    /// Retrieves a list of all pubs the current user is currently a member of.
+    func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
 
-    // Sync is the bot reaching out to remote peers and gathering the latest
-    // data from the network.  This only updates the local log and requires
-    // calling `refresh` to ensure the view database is updated.
     var isSyncing: Bool { get }
+    
+    /// Sync is the bot reaching out to remote peers and gathering the latest gossip from the network. This only
+    /// updates the local log and requires calling `refresh` to ensure the view database is updated.
+    /// - Parameters:
+    ///   - queue: the queue that `completion` will be called on.
+    ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
+    ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
@@ -206,13 +211,9 @@ protocol Bot {
     
     func lastReceivedTimestam() throws -> Double
     
-    @available(*, deprecated)
-    var statistics: BotStatistics { get }
-    
     // MARK: Preloading
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
-    
 }
 
 extension Bot {
@@ -237,7 +238,7 @@ extension Bot {
     }
     
     func refresh(load: RefreshLoad, queue: DispatchQueue = .main) async -> (Error?, TimeInterval) {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             refresh(load: load, queue: queue) { result1, result2 in
                 continuation.resume(returning: (result1, result2))
             }
@@ -261,8 +262,8 @@ extension Bot {
     }
     
     func statistics() async -> BotStatistics {
-        return await withCheckedContinuation { continuation in
-            statistics() { result in
+        await withCheckedContinuation { continuation in
+            statistics { result in
                 continuation.resume(returning: result)
             }
         }
@@ -277,7 +278,7 @@ extension Bot {
     }
     
     func about(identity: Identity) async throws -> About? {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             about(identity: identity) { about, error in
                 if let error = error {
                     continuation.resume(throwing: error)
@@ -293,7 +294,7 @@ extension Bot {
     }
     
     func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
-        self.pubs(queue: .main, completion: completion)
+        self.joinedPubs(queue: .main, completion: completion)
     }
     
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
@@ -301,7 +302,7 @@ extension Bot {
     }
     
     func publish(content: ContentCodable) async throws -> MessageIdentifier {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             publish(content: content) { result, error in
                 if let error = error {
                     continuation.resume(throwing: error)
@@ -323,5 +324,4 @@ extension Bot {
     func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
-    
 }

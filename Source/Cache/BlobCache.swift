@@ -63,18 +63,25 @@ class BlobCache: DictionaryCache {
             } else {
                 completion(.failure(BlobCacheError.unsupported))
             }
+            return nil
         }
-
-        // otherwise schedule the completion
-        let uuid = self.add(completion, for: identifier)
-
-        // start request if there is not a pending one
-        if self.completions(for: identifier).count == 1 {
-            self.loadImage(for: identifier)
+        
+        let requestUUID = UUID()
+        
+        Task {
+            // otherwise schedule the completion
+            await self.requestManager.add(completion, for: identifier, uuid: requestUUID)
+            
+            // start request if there is not a pending one
+            if await self.requestManager.numberOfCompletions(for: identifier) == 1 {
+                await MainActor.run {
+                    self.loadImage(for: identifier)
+                }
+            }
         }
 
         // wait for load
-        return uuid
+        return requestUUID
     }
     
     /// Same as `image(for identifier:completion:)` except in returns a placeholder image if the blob type is
@@ -148,7 +155,7 @@ class BlobCache: DictionaryCache {
         // first 2 chars are directory
         let dir = String(hexRef.prefix(2))
         // rest ist filename
-        let restIdx = hexRef.index(hexRef.startIndex, offsetBy:2)
+        let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
         let rest = String(hexRef[restIdx...])
         
         var gsUrl = URL(string: "https://blobs.planetary.social/")!
@@ -186,23 +193,25 @@ class BlobCache: DictionaryCache {
                     }
                 }
                 
-                self?.removeDataTask(for: blobRef)
+                guard let requestManager = self?.requestManager else {
+                    return
+                }
+                
+                Task {
+                    await requestManager.removeDataTask(for: blobRef)
+                }
             }
         }
         
-        self.dataTasksQueue.async { [weak self] in
-            if let dataTask = self?.dataTasks[blobRef] {
-                dataTask.cancel()
-            }
-            self?.dataTasks[blobRef] = dataTask
+        Task {
+            await self.requestManager.add(dataTask, for: blobRef)
         }
         
         dataTask.resume()
     }
 
     /// Returns true if the specified Error is a blob unavailable error.
-    private func isBlobUnavailableError(_ error: Error?) -> Bool
-    {
+    private func isBlobUnavailableError(_ error: Error?) -> Bool {
         // check that error is blob unavailable
         if let error = error as? BotError, error == .blobUnavailable {
             return true
@@ -211,115 +220,136 @@ class BlobCache: DictionaryCache {
         // otherwise the error is something else
         return false
     }
-
+    
     private func didLoad(_ identifier: BlobIdentifier, result: Result<UIImage, Error>) {
-        if let image = try? result.get() {
-            store(image, for: identifier)
+        Task {
+            await MainActor.run {
+                if let image = try? result.get() {
+                    store(image, for: identifier)
+                }
+            }
+            
+            let uuidsAndCompletionBlocks = await requestManager.popCompletions(for: identifier)
+            
+            for completion in uuidsAndCompletionBlocks.values {
+                await MainActor.run {
+                    completion(result.map { (identifier, $0) })
+                }
+            }
+            
+            await MainActor.run {
+                purge()
+            }
         }
-
-        let completions = completions(for: identifier)
-        forgetCompletions(for: identifier)
-        cancelDataTask(for: identifier)
-        
-        completions.forEach { (_, completion) in
-            completion(result.map { (identifier, $0) })
-        }
-        
-        purge()
     }
 
     // MARK: UIImage completions
 
-    // the number of pending blob identifiers to be loaded
-    var numberOfBlobIdentifiers: Int {
-        return self.completions.count
-    }
+    /// An object that manages in-flight requests for blobs.
+    private var requestManager = RequestManager()
+    
+    /// An object that manages in-flight requests for blobs. Structured as an actor to prevent data races.
+    actor RequestManager {
+        
+        /// A map of completion handlers along with their unique IDs and the identifiers of the blobs they are
+        /// waiting on.
+        private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
+        
+        /// A dictionary of HTTP requests to load blobs and the identifiers of the blobs they have requested.
+        private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
 
-    // the TOTAL number of completions for all blob identifiers
-    // if this is larger than `numberOfBlobIdentifiers` then that
-    // means there are multiple requests for the same blob
-    var numberOfBlobCompletions: Int {
-        var count: Int = 0
-        for element in self.completions {
-            count += element.value.count
+        /// The number of pending blob identifiers currently being loaded
+        var numberOfBlobIdentifiers: Int {
+            return self.completions.count
         }
-        return count
-    }
 
-    // for each blob identifier, there are one or more UUID tagged UIImage completion blocks
-    private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
-    
-    // for each blob identifier, there should be one data task
-    // use dataTasksQueue to read/write this property
-    private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
-    private var dataTasksQueue: DispatchQueue = DispatchQueue(label: "com.planetary.blobcache")
-
-    /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
-    /// be used to forget a pending completion later.
-    private func add(_ completion: @escaping UIImageCompletion,
-                     for identifier: BlobIdentifier) -> UUID
-    {
-        var completions = self.completions(for: identifier)
-        let uuid = UUID()
-        completions[uuid] = completion
-        self.completions[identifier] = completions
-        return uuid
-    }
-
-    private func completions(for identifier: BlobIdentifier) -> [UUID: UIImageCompletion] {
-        return self.completions[identifier] ?? [:]
-    }
-
-    /// Forgets all completions for all blob identifiers.
-    func forgetCompletions() {
-        self.completions.removeAll()
-    }
-
-    /// Forgets the all the completions for the specified blob identifier.
-    func forgetCompletions(for identifier: BlobIdentifier) {
-        let _ = self.completions.removeValue(forKey: identifier)
-    }
-    
-    func cancelAllDataTasks() {
-        self.dataTasksQueue.async { [weak self] in
-            self?.dataTasks.forEach { (ref, dataTask) in
-                dataTask.cancel()
+        // The total number of requests for all blob identifiers
+        // if this is larger than `numberOfBlobIdentifiers` then that
+        // means there are multiple requests for at least one blob.
+        var numberOfBlobCompletions: Int {
+            var count: Int = 0
+            for element in self.completions {
+                count += element.value.count
             }
-            self?.dataTasks.removeAll()
+            return count
         }
-    }
-    
-    func cancelDataTask(for identifier: BlobIdentifier) {
-        self.dataTasksQueue.async { [weak self] in
-            if let dataTask = self?.dataTasks.removeValue(forKey: identifier) {
-                dataTask.cancel()
-            }
+        
+        func numberOfCompletions(for identifier: BlobIdentifier) -> Int {
+            completions[identifier]?.count ?? 0
         }
-    }
-    
-    func removeDataTask(for identifier: BlobIdentifier) {
-        self.dataTasksQueue.async { [weak self] in
-            self?.dataTasks.removeValue(forKey: identifier)
-        }
-    }
-
-    /// Forgets a specific UUID tagged completion for a blob identifier.  This will
-    /// remove a single completion at a time.
-    func forgetCompletions(with uuid: UUID,
-                           for identifier: BlobIdentifier)
-    {
-        // remove completions per UUID
-        var completions = self.completions(for: identifier)
-        completions.removeValue(forKey: uuid)
-
-        // if no completions left then remove blob identifier
-        if completions.isEmpty {
-            self.completions.removeValue(forKey: identifier)
-        }
-
-        // otherwise update identifier with remaining completions
-        else {
+        
+        /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
+        /// be used to forget a pending completion later.
+        func add(_ completion: @escaping UIImageCompletion, for identifier: BlobIdentifier, uuid: UUID) {
+            var completions = self.completions[identifier] ?? [:]
+            completions[uuid] = completion
             self.completions[identifier] = completions
+        }
+        
+        /// Removes the completion handlers for the given blob from storage and returns them.
+        /// Completions can only be accessed this way externally to prevent handlers from being called twice.
+        func popCompletions(for identifier: BlobIdentifier) -> [UUID: UIImageCompletion] {
+            let completionsForIdentifier = completions[identifier] ?? [:]
+            forgetCompletions(for: identifier)
+            return completionsForIdentifier
+        }
+
+        /// Forgets all completions for all blob identifiers.
+        func forgetCompletions() {
+            completions.removeAll()
+            cancelAllDataTasks()
+        }
+
+        /// Forgets the all the completions for the specified blob identifier.
+        func forgetCompletions(for identifier: BlobIdentifier) {
+            let _ = self.completions.removeValue(forKey: identifier)
+            cancelDataTask(for: identifier)
+        }
+        
+        func add(_ dataTask: URLSessionDataTask, for identifier: BlobIdentifier) {
+            dataTasks[identifier] = dataTask
+        }
+        
+        func cancelAllDataTasks() {
+            dataTasks.forEach { (_, dataTask) in
+                dataTask.cancel()
+            }
+            dataTasks.removeAll()
+        }
+        
+        func cancelDataTask(for identifier: BlobIdentifier) {
+            if let dataTask = dataTasks.removeValue(forKey: identifier) {
+                dataTask.cancel()
+            }
+        }
+        
+        func removeDataTask(for identifier: BlobIdentifier) {
+            dataTasks.removeValue(forKey: identifier)
+        }
+        /// Forgets a specific UUID tagged completion for a blob identifier.  This will
+        /// remove a single completion at a time.
+        func forgetCompletions(with uuid: UUID, for identifier: BlobIdentifier) {
+            // remove completions per UUID
+            var completions = self.completions[identifier] ?? [:]
+            completions.removeValue(forKey: uuid)
+
+            // if no completions left then remove blob identifier
+            if completions.isEmpty {
+                self.completions.removeValue(forKey: identifier)
+            }
+
+            // otherwise update identifier with remaining completions
+            else {
+                self.completions[identifier] = completions
+            }
+            
+            cancelDataTask(for: identifier)
+        }
+    }
+    
+    func forgetCompletions(with uuid: UUID, for identifier: BlobIdentifier) {
+        Task {
+            await self.requestManager.forgetCompletions(with: uuid, for: identifier)
         }
     }
 
@@ -332,8 +362,8 @@ class BlobCache: DictionaryCache {
 
     // the max number of bytes that will trigger a purge
     // the min number of bytes that will remain after a purge
-    private let maxNumberOfBytes: Int = (1024 * 1024 * 100)
-    private let minNumberOfBytes: Int = (1024 * 1024 * 50)
+    private let maxNumberOfBytes: Int = (1_024 * 1_024 * 100)
+    private let minNumberOfBytes: Int = (1_024 * 1_024 * 50)
 
     // tracks the total bytes in use
     private var bytes: Int = 0
@@ -395,8 +425,7 @@ class BlobCache: DictionaryCache {
     private func registerNotifications() {
         NotificationCenter.default.addObserver(forName: .didLoadBlob,
                                                object: nil,
-                                               queue: OperationQueue.main)
-        {
+                                               queue: OperationQueue.main) {
             [weak self] notification in
             self?.didLoadBlob(notification)
         }
@@ -409,10 +438,13 @@ class BlobCache: DictionaryCache {
     }
 
     private func didLoadBlob(_ notification: Notification) {
-        Thread.assertIsMainThread()
-        guard let identifier = notification.blobIdentifier else { return }
-        guard self.completions(for: identifier).isEmpty == false else { return }
-        self.loadImage(for: identifier)
+        Task {
+            guard let identifier = notification.blobIdentifier else { return }
+            guard await self.requestManager.numberOfCompletions(for: identifier) > 1 else { return }
+            await MainActor.run {
+                self.loadImage(for: identifier)
+            }
+        }
     }
 }
 

@@ -19,7 +19,7 @@ class AppButton: UIButton {
         super.init(frame: .zero)
         self.useAutoLayout()
 
-        self.addTarget(self,action: #selector(didPress), for: .touchUpInside)
+        self.addTarget(self, action: #selector(didPress), for: .touchUpInside)
     }
 
     // allows the button class to implement a default action, if no additional context is needed to perform the action

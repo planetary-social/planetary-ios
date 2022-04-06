@@ -11,7 +11,6 @@ import Foundation
 protocol ThreadReplyPaginatedTableViewDataSourceDelegate: class {
     
     func threadReplyView(view: ThreadReplyView, didLoad keyValue: KeyValue)
-    
 }
 
 class ThreadReplyPaginatedTableViewDataSource: KeyValuePaginatedTableViewDataSource {
@@ -40,6 +39,4 @@ class ThreadReplyPaginatedTableViewDataSource: KeyValuePaginatedTableViewDataSou
         view.textIsExpanded = false
         return KeyValueTableViewCell(for: .post, with: view)
     }
-    
-    
 }

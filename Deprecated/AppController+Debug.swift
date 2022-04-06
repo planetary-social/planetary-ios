@@ -17,8 +17,8 @@ extension AppController {
     }
 
 #if DEBUG
-    override var canBecomeFirstResponder : Bool {
-        return true
+    override var canBecomeFirstResponder: Bool {
+        true
     }
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {

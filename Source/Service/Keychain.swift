@@ -22,15 +22,15 @@ class Keychain {
     private static let keychain = KeychainSwift()
 
     static func string(for key: String) -> String? {
-        return self.keychain.get(key)
+        self.keychain.get(key)
     }
 
     static func bool(for key: String) -> Bool? {
-        return self.keychain.getBool(key)
+        self.keychain.getBool(key)
     }
 
     static func data(for key: String) -> Data? {
-        return self.keychain.getData(key)
+        self.keychain.getData(key)
     }
 
     static func set(_ value: String, for key: String) {

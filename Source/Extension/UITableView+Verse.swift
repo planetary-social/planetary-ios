@@ -18,7 +18,7 @@ extension UITableView {
         view.backgroundColor = .appBackground
         view.rowHeight = UITableView.automaticDimension
         view.separatorColor = UIColor.clear
-        //view.separatorInset = UIEdgeInsets.zero
+        // view.separatorInset = UIEdgeInsets.zero
         view.tableFooterView = UIView()
         view.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
         return view

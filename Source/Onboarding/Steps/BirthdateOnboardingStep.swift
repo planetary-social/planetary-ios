@@ -25,7 +25,7 @@ class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerView
     
     lazy var years: [Int] = {
         var years = [Int]()
-        for i in (currentYear-99..<currentYear+1).reversed() {
+        for i in (currentYear - 99..<currentYear + 1).reversed() {
             years.append(i)
         }
         return years
@@ -69,15 +69,15 @@ class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerView
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        1
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return years.count
+        years.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return "\(years[row])"
+        "\(years[row])"
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
@@ -85,7 +85,7 @@ class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerView
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        return false
+        false
     }
 }
 

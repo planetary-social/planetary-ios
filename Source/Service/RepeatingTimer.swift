@@ -15,7 +15,7 @@ class RepeatingTimer {
     private var timer: Timer?
 
     var isRunning: Bool {
-        return self.timer != nil
+        self.timer != nil
     }
 
     init(interval: TimeInterval = 10, completion: @escaping (() -> Void)) {
@@ -26,7 +26,7 @@ class RepeatingTimer {
     func start(fireImmediately: Bool = false) {
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) {
-            timer in
+            _ in
             self.completion()
         }
         if fireImmediately { self.completion() }

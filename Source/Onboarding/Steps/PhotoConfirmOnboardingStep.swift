@@ -80,7 +80,7 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
         self.view.lookBusy(disable: self.view.primaryButton)
 
         // TODO could be a composite func that does all of this
-        context.bot.addBlob(jpegOf: image, largestDimension: 1000) {
+        context.bot.addBlob(jpegOf: image, largestDimension: 1_000) {
             [weak self] image, error in
 
             CrashReporting.shared.reportIfNeeded(error: error)

@@ -66,11 +66,11 @@ class Relationship {
     }
 
     var notificationName: NSNotification.Name {
-        return NSNotification.Name(rawValue: "Relationship-\(identity)-\(other)")
+        NSNotification.Name(rawValue: "Relationship-\(identity)-\(other)")
     }
 
     static var infoKey: String {
-        return String(describing: Self.self)
+        String(describing: Self.self)
     }
 
     func notifyUpdate() {
@@ -85,6 +85,6 @@ class Relationship {
 extension Notification {
 
     var relationship: Relationship? {
-        return self.userInfo?[Relationship.infoKey] as? Relationship
+        self.userInfo?[Relationship.infoKey] as? Relationship
     }
 }

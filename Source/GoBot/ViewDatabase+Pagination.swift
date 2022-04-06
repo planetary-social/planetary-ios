@@ -26,7 +26,7 @@ protocol PaginatedKeyValueDataProxy {
     func keyValueBy(index: Int) -> KeyValue?
 
     // notify the proxy to fetch more messages (up to and including index)
-    func prefetchUpTo(index: Int) -> Void
+    func prefetchUpTo(index: Int)
 }
 
 // StaticDataProxy only has a fixed set of messages from the start and cant prefetch
@@ -44,7 +44,7 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
         self.count = kvs.count
     }
     
-    func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { return self.kvs[index] }
+    func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { self.kvs[index] }
     
     func keyValueBy(index: Int) -> KeyValue? {
         if self.kvs.isEmpty {
@@ -86,7 +86,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     // we don't plan to spoort growing the backing list beyond it's initialisation
     func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? {
         if index >= self.count { fatalError("FeedDataProxy #\(index) out-of-bounds") }
-        if index > self.msgs.count-1 {
+        if index > self.msgs.count - 1 {
             self.inflightSema.wait()
             var forIdx = self.inflight[index] ?? []
             if forIdx.isEmpty {
@@ -110,14 +110,14 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     func prefetchUpTo(index: Int) {
         // TODO: i think this might race without an extra lock...?
         guard index < self.count && index >= 0 else { fatalError("FeedDataProxy prefetch #\(index) out-of-bounds") }
-        guard index > self.msgs.count-1 else { return }
+        guard index > self.msgs.count - 1 else { return }
 
         self.backgroundQueue.asyncDeduped(target: self, after: 0.125) { [weak self] in
             guard let proxy = self else { return }
 
             // how many messages do we need?
             // +1 because we want fetch up to that index, not message count
-            var diff = 1+index - proxy.lastPrefetch
+            var diff = 1 + index - proxy.lastPrefetch
             if diff < 10 { // don't just do a little work
                 diff = 25 // do a little extra
             }
@@ -139,7 +139,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
             // notify calls to keyValueBy that happend to soon
             for (idx, lateCompletions) in proxy.inflight {
                 // handle calls to keyValueBy() for data right after the prefetch window
-                if idx > newCount-1 {
+                if idx > newCount - 1 {
                     proxy.prefetchUpTo(index: idx)
                     print("WARNING: prefetching again for \(idx)!")
                     continue
@@ -151,7 +151,7 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
                 proxy.inflight.removeValue(forKey: idx)
             }
             if moreMessages.count == 0 {
-                print("expected to prefetch(\(diff):\(proxy.lastPrefetch-diff)) more messages but got none - clearning inflight")
+                print("expected to prefetch(\(diff):\(proxy.lastPrefetch - diff)) more messages but got none - clearning inflight")
                 proxy.inflight = [:]
             }
             proxy.inflightSema.signal()
@@ -182,11 +182,11 @@ class RecentViewKeyValueSource: KeyValueSource {
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
+        try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
     }
     
     static func top(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws -> MessageIdentifier? {
-        return try vdb.recentIdentifiers(limit: 1, onlyFollowed: onlyFollowed).first
+        try vdb.recentIdentifiers(limit: 1, onlyFollowed: onlyFollowed).first
     }
 }
 
@@ -198,17 +198,16 @@ class FeedKeyValueSource: KeyValueSource {
 
     init?(with vdb: ViewDatabase, feed: FeedIdentifier) throws {
         self.view = vdb
-        //we should find a better way of handling errors than intentionally crashing.
+        // we should find a better way of handling errors than intentionally crashing.
         if feed.isValidIdentifier {
             self.feed = feed
 
             self.total = try self.view.stats(for: self.feed)
-        }
-        else {
+        } else {
             self.feed = feed
             self.total = 0
             print("invalid feed handle: \(feed)")
-            //assertionFailure("invalid feed handle: \(feed)")
+            // assertionFailure("invalid feed handle: \(feed)")
         }
     }
 

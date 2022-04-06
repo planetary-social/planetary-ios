@@ -18,7 +18,6 @@ class LoadBundleOperation: AsynchronousOperation {
         self.bundle = bundle
         super.init()
     }
-    
 
     override func main() {
         Log.info("LoadBundleOperation started.")
@@ -57,5 +56,4 @@ class LoadBundleOperation: AsynchronousOperation {
         group.wait()
         self.finish()
     }
-    
 }

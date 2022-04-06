@@ -24,8 +24,7 @@ class Offboarding {
 
     typealias Completion = ((OffboardingError?) -> Void)
 
-    static func offboard(completion: @escaping Completion)
-    {
+    static func offboard(completion: @escaping Completion) {
         guard let identity = Bots.current.identity else { completion(.mustBeLoggedIn); return }
         guard let configuration = AppConfiguration.current else { completion(.invalidConfiguration) ; return }
         guard configuration.identity == identity else { completion(.invalidIdentity); return }
@@ -62,8 +61,7 @@ class Offboarding {
 
     // TODO move to Bot+Unfollow
     private static func unfollowAllFollowedBy(_ identity: Identity,
-                                              completion: @escaping ((Error?) -> Void))
-    {
+                                              completion: @escaping ((Error?) -> Void)) {
         // identities following this identity
         Bots.current.follows(identity: identity) { (identities: [Identity], error) in
             if let error = error { completion(error); return }

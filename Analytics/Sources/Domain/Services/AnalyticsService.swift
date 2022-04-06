@@ -16,7 +16,6 @@ protocol AnalyticsService {
     func optOut()
     func forget()
     func track(event: Event, element: Element, name: String, params: [String: Any]?)
-
 }
 
 // MARK: Track single param
@@ -29,5 +28,4 @@ extension AnalyticsService {
         }
         self.track(event: event, element: element, name: name, params: params)
     }
-
 }
