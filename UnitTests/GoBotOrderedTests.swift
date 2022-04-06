@@ -98,7 +98,7 @@ class GoBotOrderedTests: XCTestCase {
         // make sure we can't sync
         for i in 1...20 {
             let ex = self.expectation(description: "\(#function) cant sync")
-            let peers = Environment.Constellation.stars.map { $0.toPeer() }
+            let peers = Environment.TestNetwork.pubs.map { $0.toPeer().multiserverAddress! }
             GoBotOrderedTests.shared.sync(queue: .main, peers: peers) {
                 err, ts, numberOfMessages in
                 XCTAssertNotNil(err, "try\(i): should get an error")

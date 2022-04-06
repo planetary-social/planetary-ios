@@ -59,6 +59,8 @@
 	<string>$(COMMUNITIES)</string>
 	<key>PLConstellation</key>
 	<string>$(CONSTELLATION)</string>
+	<key>PLTestNetworkPubs</key>
+	<string>$(TEST_NETWORK_PUBS)</string>
 	<key>PLDefaultNetworkKey</key>
 	<string>$(DEFAULT_NETWORK_KEY)</string>
 	<key>PLDefaultNetworkName</key>
@@ -76,7 +78,7 @@
 	<key>PLPlanetaryNetworkName</key>
 	<string>$(PLANETARY_NETWORK_NAME)</string>
 	<key>PLPlanetarySystem</key>
-	<string>$(PLANETARY_SYSTEM)</string>
+	<string>$(PLANETARY_SYSTEM_PUBS)</string>
 	<key>PLTestingNetworkHMAC</key>
 	<string>$(TESTING_NETWORK_HMAC)</string>
 	<key>PLTestingNetworkKey</key>

@@ -43,7 +43,8 @@ xcuserdata/
 GoSSB/Sources/.goroot
 GoSSB/Sources/vendor
 GoSSB/Products/
-Frameworks/GoSSB.xcframework/**/*.a
+Frameworks/GoSSB.xcframework/ios-arm64/libssb-go.a
+Frameworks/GoSSB.xcframework/ios-arm64_x86_64-simulator/libssb-go.a
  
 ## Test artifacts
 UnitTests/Resources/Feed_big.sqlite-*

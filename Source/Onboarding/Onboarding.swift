@@ -102,13 +102,11 @@ class Onboarding {
             let configuration = AppConfiguration(with: secret)
             configuration.name = "\(name) (\(Date().shortDateTimeString))"
 
-            // TODO https://app.asana.com/0/0/1134329918920789/f
-            // TODO abstract GoBot network configuration
-            if CommandLine.arguments.contains("use-ci-network") {
-                configuration.network = NetworkKey.integrationTests
-            } else {
-                configuration.network = NetworkKey.ssb
-            }
+            #if DEBUG
+            configuration.ssbNetwork = Environment.Networks.test
+            #else
+            configuration.ssbNetwork = Environment.Networks.mainNet
+            #endif
 
             // login to bot
             

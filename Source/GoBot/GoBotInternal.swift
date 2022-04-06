@@ -125,10 +125,10 @@ class GoBotInternal {
         ssbBotIsRunning()
     }
 
-    private var currentNetwork = NetworkKey.ssb
+    private var currentNetwork: SSBNetwork?
 
-    var getNetworkKey: NetworkKey {
-        self.currentNetwork
+    var getNetworkKey: NetworkKey? {
+        self.currentNetwork?.key
     }
 
     // MARK: login / logout
@@ -146,7 +146,7 @@ class GoBotInternal {
         // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
 
-        let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
+        let servicePubs: [Identity] = Environment.PlanetarySystem.pubInvitations.map { $0.feed }
 
         let cfg = GoBotConfig(
             AppKey: network.string,
@@ -174,8 +174,6 @@ class GoBotInternal {
         }
         
         if worked {
-            self.currentNetwork = network
-
             self.replicate(feed: secret.identity)
             // make sure internal planetary pubs are authorized for connections
             for pub in servicePubs {

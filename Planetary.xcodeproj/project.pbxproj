@@ -101,7 +101,7 @@
 		0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9052437C12C00D7F39C /* NSAttributedString+Markdown.swift */; };
 		0ABCA90A2437C22400D7F39C /* MarkdownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA9092437C22400D7F39C /* MarkdownTests.swift */; };
-		0ABCBCA6247708000009036D /* NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* NetworkKey.swift */; };
+		0ABCBCA6247708000009036D /* SSBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* SSBNetwork.swift */; };
 		0AC10DDB246C43DC00CCA22A /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0AC10DD9246C43DC00CCA22A /* Generated.strings */; };
 		0AC10DE6246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */; };
 		0ACA5742243CFAEC001C5E37 /* MarkdownStyler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACA5741243CFAEC001C5E37 /* MarkdownStyler.swift */; };
@@ -282,7 +282,7 @@
 		530F01B622E0D930007EBAE2 /* JoinOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B522E0D930007EBAE2 /* JoinOnboardingStep.swift */; };
 		5314EF3A22EA276A0065D02A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		5314EF3B22EA27840065D02A /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62A22445BE900C57A4B /* AppConfiguration.swift */; };
-		5314EF3C22EA27920065D02A /* NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* NetworkKey.swift */; };
+		5314EF3C22EA27920065D02A /* SSBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* SSBNetwork.swift */; };
 		5314EF3D22EA27980065D02A /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01F32204F66200DFDF16 /* Secret.swift */; };
 		5314EF3E22EA279F0065D02A /* Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A2C21F18BF400D5C8C0 /* Bot.swift */; };
 		5314EF3F22EA27AF0065D02A /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4121F7DE0D00D5C8C0 /* Identifier.swift */; };
@@ -334,7 +334,6 @@
 		5314EF7E22EA35A60065D02A /* XCTestCase+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01FA2205035800DFDF16 /* XCTestCase+JSON.swift */; };
 		5314EF7F22EA48BA0065D02A /* ViewDatabaseSchema.sql in Resources */ = {isa = PBXBuildFile; fileRef = 231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */; };
 		5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5314EF8222EB713C0065D02A /* UIView+Shake.swift */; };
-		5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315854A2363614100334863 /* Bot+AppConfiguration.swift */; };
 		531587AD229F0DC00004E2B1 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587AC229F0DC00004E2B1 /* Onboarding.swift */; };
 		531587B0229F1E5F0004E2B1 /* Onboarding+Verify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587AF229F1E5F0004E2B1 /* Onboarding+Verify.swift */; };
 		531587B2229F33F00004E2B1 /* DebugOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B1229F33F00004E2B1 /* DebugOnboardingViewController.swift */; };
@@ -413,10 +412,9 @@
 		532751D1222497A70026500F /* Bots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532751D0222497A70026500F /* Bots.swift */; };
 		532751D32224A0CD0026500F /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532751D22224A0CD0026500F /* ContentViewController.swift */; };
 		53362F672208C2B3007264CB /* AppController+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F662208C2B3007264CB /* AppController+Lifecycle.swift */; };
-		53362F6A2209108F007264CB /* NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* NetworkKey.swift */; };
-		53362F6C22091DD4007264CB /* NetworkKeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F6B22091DD4007264CB /* NetworkKeyViewController.swift */; };
+		53362F6A2209108F007264CB /* SSBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* SSBNetwork.swift */; };
 		53362F6E2209F754007264CB /* NetworkKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F6D2209F754007264CB /* NetworkKeyTests.swift */; };
-		53362F6F2209F8D5007264CB /* NetworkKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* NetworkKey.swift */; };
+		53362F6F2209F8D5007264CB /* SSBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* SSBNetwork.swift */; };
 		5336611122D965B300100707 /* UIColor+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5336611022D965B300100707 /* UIColor+Random.swift */; };
 		5336611322D965C700100707 /* UIColor+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5336611222D965C700100707 /* UIColor+UIImage.swift */; };
 		5336611422D9669E00100707 /* UIColor+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5336611022D965B300100707 /* UIColor+Random.swift */; };
@@ -1026,7 +1024,6 @@
 		530F01B322E0D3E7007EBAE2 /* TitledToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledToggle.swift; sourceTree = "<group>"; };
 		530F01B522E0D930007EBAE2 /* JoinOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinOnboardingStep.swift; sourceTree = "<group>"; };
 		5314EF8222EB713C0065D02A /* UIView+Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shake.swift"; sourceTree = "<group>"; };
-		5315854A2363614100334863 /* Bot+AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bot+AppConfiguration.swift"; sourceTree = "<group>"; };
 		531587AC229F0DC00004E2B1 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		531587AF229F1E5F0004E2B1 /* Onboarding+Verify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Onboarding+Verify.swift"; sourceTree = "<group>"; };
 		531587B1229F33F00004E2B1 /* DebugOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugOnboardingViewController.swift; sourceTree = "<group>"; };
@@ -1104,8 +1101,7 @@
 		532751D22224A0CD0026500F /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
 		532751D5222A3EF60026500F /* increment_build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = increment_build.sh; sourceTree = "<group>"; };
 		53362F662208C2B3007264CB /* AppController+Lifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppController+Lifecycle.swift"; sourceTree = "<group>"; };
-		53362F692209108F007264CB /* NetworkKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKey.swift; sourceTree = "<group>"; };
-		53362F6B22091DD4007264CB /* NetworkKeyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkKeyViewController.swift; sourceTree = "<group>"; };
+		53362F692209108F007264CB /* SSBNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSBNetwork.swift; sourceTree = "<group>"; };
 		53362F6D2209F754007264CB /* NetworkKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeyTests.swift; sourceTree = "<group>"; };
 		5336611022D965B300100707 /* UIColor+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Random.swift"; sourceTree = "<group>"; };
 		5336611222D965C700100707 /* UIColor+UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+UIImage.swift"; sourceTree = "<group>"; };
@@ -1712,13 +1708,11 @@
 				0A1CA4C824EB233C006CAC43 /* Operations */,
 				531A8A2C21F18BF400D5C8C0 /* Bot.swift */,
 				53C966E3236D074700E70689 /* Bot+Blobs.swift */,
-				5315854A2363614100334863 /* Bot+AppConfiguration.swift */,
 				53E29CD122D40462008A2CB1 /* Bot+Publish.swift */,
 				535754F12268DAB0002A6989 /* BotError.swift */,
 				532751D0222497A70026500F /* Bots.swift */,
 				535CD3742266901F0039BCF2 /* BotStatistics.swift */,
 				53211CE122836666007FB785 /* MIMEType.swift */,
-				53362F692209108F007264CB /* NetworkKey.swift */,
 				535B6A0D23728049008C248E /* NSNotification+Bot.swift */,
 			);
 			path = Bot;
@@ -2116,7 +2110,6 @@
 				531EC40B230F6B9E001A25AD /* DebugPostsViewController.swift */,
 				533F4050225E9E010060B4B9 /* DebugUIViewController.swift */,
 				53C422AC21C4769900A314AD /* DebugViewController.swift */,
-				53362F6B22091DD4007264CB /* NetworkKeyViewController.swift */,
 				53FCAFDD22051C88009E9E82 /* SecretViewController.swift */,
 				2346ECB922144D61009A94CB /* SimplePublishView.swift */,
 				53C422B921C4772D00A314AD /* UIViewController+Debug.swift */,
@@ -2263,6 +2256,7 @@
 				1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */,
 				0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */,
 				0AF9966B24D8A0B6001113BE /* Report.swift */,
+				53362F692209108F007264CB /* SSBNetwork.swift */,
 				0A56ABDC24E32F8000D30649 /* Star.swift */,
 				0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */,
 				0A674A28253F3C4400698CF7 /* Draft.swift */,
@@ -2432,13 +2426,13 @@
 		C98A013F2790B9EB00E29A97 /* Configs */ = {
 			isa = PBXGroup;
 			children = (
+				C98A01472790B9F200E29A97 /* Environment.swift */,
 				C98A01422790B9EE00E29A97 /* Planetary.debug.xcconfig */,
 				C98A01462790B9F100E29A97 /* Planetary.release.xcconfig */,
 				C98A01442790B9F000E29A97 /* APITests.debug.xcconfig */,
 				C98A01432790B9EF00E29A97 /* APITests.release.xcconfig */,
 				C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */,
 				C98A01452790B9F100E29A97 /* UnitTests.release.xcconfig */,
-				C98A01472790B9F200E29A97 /* Environment.swift */,
 				C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */,
 				C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */,
 				C98A01412790B9ED00E29A97 /* UITests.debug.xcconfig */,
@@ -3417,7 +3411,7 @@
 				2358696024A0FB8600F4FC1D /* MIMEType.swift in Sources */,
 				2358695C24A0FB1200F4FC1D /* URLResponse+APIError.swift in Sources */,
 				23EF5AB0249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
-				0ABCBCA6247708000009036D /* NetworkKey.swift in Sources */,
+				0ABCBCA6247708000009036D /* SSBNetwork.swift in Sources */,
 				C955CAB627D18367005146F2 /* Bundle+Current.swift in Sources */,
 				2358695824A0FAA200F4FC1D /* API.swift in Sources */,
 				0A38801B2475BB4500777843 /* UITests.swift in Sources */,
@@ -3561,7 +3555,7 @@
 				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				53211CE622838121007FB785 /* Image+UIImage.swift in Sources */,
 				C9C3788527C6940C00238B58 /* IdentityFixtures.swift in Sources */,
-				53362F6F2209F8D5007264CB /* NetworkKey.swift in Sources */,
+				53362F6F2209F8D5007264CB /* SSBNetwork.swift in Sources */,
 				0A64A852247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
 				53E26C5F23045D4C009240B2 /* Person.swift in Sources */,
 				0A4870F92492C06400BCD063 /* AsynchronousOperation.swift in Sources */,
@@ -3601,7 +3595,7 @@
 				0ABCA8F624366CC800D7F39C /* AppError.swift in Sources */,
 				53E26C63230461E0009240B2 /* Dictionary+Transform.swift in Sources */,
 				5314EF4B22EA289F0065D02A /* KeyValue.swift in Sources */,
-				5314EF3C22EA27920065D02A /* NetworkKey.swift in Sources */,
+				5314EF3C22EA27920065D02A /* SSBNetwork.swift in Sources */,
 				0A65A631244DEFBF004C48C8 /* SupportService.swift in Sources */,
 				5314EF5322EA28FC0065D02A /* GoBot.swift in Sources */,
 				5314EF5922EA295C0065D02A /* FakeBot.swift in Sources */,
@@ -3798,7 +3792,6 @@
 				53C422AD21C4769900A314AD /* DebugViewController.swift in Sources */,
 				5396A62B22445BE900C57A4B /* AppConfiguration.swift in Sources */,
 				5357BD7F23D15471005665AB /* AppDelegate+Repair.swift in Sources */,
-				5315854B2363614100334863 /* Bot+AppConfiguration.swift in Sources */,
 				23C744412200B12000FB554A /* Vote.swift in Sources */,
 				530F019822DE87EB007EBAE2 /* PhotoConfirmOnboardingStep.swift in Sources */,
 				53EE01FF22051A1700DFDF16 /* ImageMetadata.swift in Sources */,
@@ -4024,7 +4017,7 @@
 				535754F22268DAB0002A6989 /* BotError.swift in Sources */,
 				0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */,
 				535B6A0623712D79008C248E /* UIViewController+Block.swift in Sources */,
-				53362F6A2209108F007264CB /* NetworkKey.swift in Sources */,
+				53362F6A2209108F007264CB /* SSBNetwork.swift in Sources */,
 				0A56ABDD24E32F8000D30649 /* Star.swift in Sources */,
 				C9C3788427C6940C00238B58 /* IdentityFixtures.swift in Sources */,
 				53E341F4224D9E3B002BB5F4 /* URL+Identifier.swift in Sources */,
@@ -4065,7 +4058,6 @@
 				53631EED23A87474009C6999 /* PostTruncatedTextTableViewDataSourcePrefetching.swift in Sources */,
 				0A4870FB2497FFAB00BCD063 /* DiscoverViewController.swift in Sources */,
 				5372175122FD0841008A760A /* DataUsageSettingsViewController.swift in Sources */,
-				53362F6C22091DD4007264CB /* NetworkKeyViewController.swift in Sources */,
 				C9EADA8727D162F3002066D9 /* Optional+Map.swift in Sources */,
 				53F24FB422C70B5200CFCBAA /* AvatarButton.swift in Sources */,
 				0A4870F72492BF6700BCD063 /* AsynchronousBlockOperation.swift in Sources */,
