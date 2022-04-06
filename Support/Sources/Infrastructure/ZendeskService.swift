@@ -62,7 +62,7 @@ class ZendeskService: APIService {
 
     func newTicketViewController(
         reporter: Identifier,
-        subject: SupportSubject,
+        subject: Subject,
         reason: SupportReason?,
         attachments: [Attachment]
     ) -> UIViewController? {

@@ -51,8 +51,8 @@ final class ZendeskServiceTests: XCTestCase {
         let attachments = [Attachment]()
         let viewController = service.newTicketViewController(
             reporter: reporter,
-            subject: SupportSubject.contentReport,
-            reason: SupportReason.copyright,
+            subject: .contentReport,
+            reason: .copyright,
             attachments: attachments
         )
         XCTAssertNotNil(viewController)
