@@ -20,10 +20,10 @@
 "Text.daysAgo" = "{{ days }} days ago";
 "Text.atDayTime" = "{{ day }} at {{ time }}";
 "Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
-"Text.yourProfile" = "Your Profile";
-"Text.helpAndSupport" = "Help and Support";
-"Text.reportBug" = "Report a Bug";
-"Text.settings" = "Settings";
+"Text.yourProfile" = "Ваш профиль";
+"Text.helpAndSupport" = "Справка и поддержка";
+"Text.reportBug" = "Сообщить об ошибке";
+"Text.settings" = "Настройки";
 "Text.yourNetwork" = "Your Network";
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
