@@ -1,22 +1,22 @@
 // This file is auto-generated at build time
 // Existing translations are left in place, and new keys are added as needed
 
-"Text.planetary" = "Planetary";
-"Text.error" = "Oops";
-"Text.cancel" = "Cancel";
-"Text.skip" = "Skip";
-"Text.ok" = "OK";
-"Text.next" = "Next";
-"Text.done" = "Done";
-"Text.save" = "Save";
-"Text.yes" = "Yes";
-"Text.no" = "No";
-"Text.tryAgain" = "Try Again";
-"Text.loading" = "Loading...";
-"Text.today" = "Today";
-"Text.yesterday" = "Yesterday";
-"Text.recently" = "Recently";
-"Text.future" = "In the future";
+"Text.planetary" = "Планетарные";
+"Text.error" = "Ой";
+"Text.cancel" = "Отмена";
+"Text.skip" = "Пропустить";
+"Text.ok" = "ОК";
+"Text.next" = "Следующий";
+"Text.done" = "Готово";
+"Text.save" = "Сохранить";
+"Text.yes" = "Да";
+"Text.no" = "Нет";
+"Text.tryAgain" = "Попробовать снова";
+"Text.loading" = "Загрузка...";
+"Text.today" = "Cегодня";
+"Text.yesterday" = "Вчера";
+"Text.recently" = "Недавние";
+"Text.future" = "В будущем";
 "Text.daysAgo" = "{{ days }} days ago";
 "Text.atDayTime" = "{{ day }} at {{ time }}";
 "Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
