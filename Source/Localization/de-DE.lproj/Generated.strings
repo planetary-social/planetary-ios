@@ -24,9 +24,9 @@
 "Text.helpAndSupport" = "Hilfe und Support";
 "Text.reportBug" = "Fehler melden";
 "Text.settings" = "Einstellungen";
-"Text.yourNetwork" = "Your Network";
+"Text.yourNetwork" = "Ihr Netzwerk";
 "Text.pubServers" = "Pub Servers";
-"Text.usersInYourNetwork" = "Users in your network";
+"Text.usersInYourNetwork" = "Benutzer in Ihrem Netzwerk";
 "Text.goToYourNetwork" = "Go to Your Network";
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.showMeInDirectory" = "Zeige mich im Verzeichnis";
@@ -50,7 +50,7 @@
 "Text.createProfile" = "Profil erstellen";
 "Text.editProfile" = "Profil bearbeiten";
 "Text.thisIsYou" = "Das bist du!";
-"Text.name" = "Name";
+"Text.name" = "Namen";
 "Text.bio" = "Über mich";
 "Text.seeMore" = "Mehr anzeigen";
 "Text.likesThis" = "Likes this";
