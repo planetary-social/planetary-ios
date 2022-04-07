@@ -180,7 +180,7 @@ class AboutViewController: ContentViewController {
         self.imagePicker.present(from: sender, openCameraInSelfieMode: true) {
             [weak self] image in
             guard let self = self,
-                  let uiimage = image else {
+                let uiimage = image else {
                 return
             }
             self.imagePicker.dismiss {
