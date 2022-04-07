@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/zendesk/commonui_sdk_ios",
         "state": {
           "branch": null,
-          "revision": "45ef3ab2bbf2efbe73735f67723643495c424ffb",
-          "version": "6.1.2"
+          "revision": "c7b1eaae04ad234daa72b1235393a23975e4caea",
+          "version": "6.1.3"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/zendesk/messaging_sdk_ios",
         "state": {
           "branch": null,
-          "revision": "11121b6dc3e9b3065faa1b6ab2d775b3e3a4ea1e",
-          "version": "3.8.3"
+          "revision": "a4d855a1b8f4460130d605cfb560f5641727cc88",
+          "version": "3.8.4"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/zendesk/messagingapi_sdk_ios",
         "state": {
           "branch": null,
-          "revision": "75a4bb9d81bf15de1d4f98f52a4523ce2aacdceb",
-          "version": "3.8.3"
+          "revision": "4027e34322954f5ef6b1cca90c346475fd251bbd",
+          "version": "3.8.4"
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/zendesk/sdkconfigurations_sdk_ios",
         "state": {
           "branch": null,
-          "revision": "dd8365d28c4885cd916c772db05222acc12c7edf",
-          "version": "1.1.9"
+          "revision": "9e4768ef3093bd61cbc0b64d75dcdcc92414e1f0",
+          "version": "1.1.10"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/zendesk/support_providers_sdk_ios",
         "state": {
           "branch": null,
-          "revision": "24b27a6b9e3b07705a85e6d22c60067462151b9b",
-          "version": "5.4.0"
+          "revision": "77a29ef9b3a2d5f904a2000c43c82f6cef1a0de3",
+          "version": "5.4.1"
         }
       },
       {
@@ -87,8 +87,8 @@
         "repositoryURL": "https://github.com/zendesk/support_sdk_ios.git",
         "state": {
           "branch": null,
-          "revision": "565168ec6ef687ec0ca00163fa1401cc3284fca2",
-          "version": "5.4.0"
+          "revision": "58927444e9f30bfdf3a7754d06d64b6631bfe41b",
+          "version": "5.4.1"
         }
       },
       {

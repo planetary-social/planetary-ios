@@ -20,7 +20,7 @@ let package = Package(
         .package(
             name: "ZendeskSupportSDK",
             url: "https://github.com/zendesk/support_sdk_ios.git",
-            from: "5.4.0"
+            from: "5.4.1"
         ),
         .package(
             name: "Logger",
