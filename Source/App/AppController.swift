@@ -125,8 +125,8 @@ class AppController: UIViewController {
     }
     
     // MARK: Migrations
-    @MainActor func showBeta1ToBeta2MigrationView() async throws {
-        await showAsyncAlert(message: "Placeholder migration UI")
+    @MainActor func showBeta1ToBeta2MigrationView() {
+        Beta1MigrationCoordinator.presentMigrationView(on: self)
     }
     
     // MARK: Observers
