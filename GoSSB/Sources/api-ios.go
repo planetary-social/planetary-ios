@@ -52,7 +52,7 @@ import (
 var versionString *C.char
 
 func init() {
-	versionString = C.CString("beta1")
+	versionString = C.CString("beta2")
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 	log = kitlog.With(log, "warning", "pre-init")
 }
