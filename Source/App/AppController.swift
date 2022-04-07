@@ -124,11 +124,6 @@ class AppController: UIViewController {
         mainViewController?.dismiss(animated: true, completion: completion)
     }
     
-    // MARK: Migrations
-    @MainActor func showBeta1ToBeta2MigrationView() {
-        Beta1MigrationCoordinator.presentMigrationView(on: self)
-    }
-    
     // MARK: Observers
     
     func addObservers() {

@@ -207,21 +207,16 @@ class LaunchViewController: UIViewController {
     }
     
     private func migrateIfNeeded(using configuration: AppConfiguration) async {
-        guard let bot = configuration.bot else { return }
         
-        // todo: include network key
-        let version = userDefaults.string(forKey: "GoBotDatabaseVersion")
-        if true || version == nil {
-            // The go-ssb on-disk database format changed with no migration path circa 2022.
-            // This code drops the database and resyncs it from the network.
-            do {
-                AppController.shared.showBeta1ToBeta2MigrationView()
-                try await bot.dropDatabase(for: configuration)
-                userDefaults.set(true, forKey: "PerformingGoSSBUpgrade1")
-                userDefaults.set(bot.version, forKey: "GoBotDatabaseVersion")
-            } catch {
-                Log.optional(error)
-            }
+        do {
+            try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+                appConfiguration: configuration,
+                appController: AppController.shared,
+                userDefaults: userDefaults
+            )
+        } catch {
+            // TODO: handle
+            Log.optional(error)
         }
     }
 }

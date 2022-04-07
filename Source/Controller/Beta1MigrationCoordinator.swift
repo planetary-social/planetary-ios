@@ -8,26 +8,169 @@
 
 import Foundation
 import SwiftUI
+import SQLite
+import Logger
+import CrashReporting
+import Combine
+import simd
 
+/// An enumeration of things that can go wrong with the "beta1" migration.
+enum Beta1MigrationError: Error {
+    case couldNotGetCompletionMessageCount
+    
+    var localizedDescription: String {
+        switch self {
+        case .couldNotGetCompletionMessageCount:
+            return "Beta1 migration could not get number of messages from SQLite."
+        }
+    }
+}
+
+/// Manages the "beta1" migration, by dropping the go-ssb and view databases and showing a screen explaining this to
+/// the user.
+///
+/// The go-ssb on-disk database format changed with no migration path circa 2022, so we wrote this custom flow in Swift
+/// to drop all data and resync from the network.
 class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
+    // MARK: - Properties
+    
+    /// A number between 0 and 1.0 representing the progress of the migration.
+    @Published var progress: Float = 0
+    
+    /// A block that can be called to dismiss the migration view.
     private var dismissHandler: () -> Void
     
-    init(dismissHandler: @escaping () -> Void) {
-        self.dismissHandler = dismissHandler
+    /// The number of messages that were in the database before the migration started.
+    private var completionMessageCount: Int
+    
+    /// A service that will be used to measure the progress of the migration.
+    private var statisticsService: BotStatisticsService
+    
+    /// An on-disk key value store used to track the status of the migration.
+    private var userDefaults: UserDefaults
+    
+    private var cancellabes = [AnyCancellable]()
+    
+    // MARK: - Public Interface
+    
+    public static func performBeta1MigrationIfNeeded(
+        appConfiguration: AppConfiguration,
+        appController: AppController,
+        userDefaults: UserDefaults
+    ) async throws {
+        guard let bot = appConfiguration.bot as? GoBot else {
+            return
+        }
+        
+        // todo: include network key
+        let version = userDefaults.string(forKey: "GoBotDatabaseVersion")
+        guard true || version == nil else {
+            return
+        }
+        
+        let statisticsService = BotStatisticsServiceAdaptor(bot: bot)
+        let coordinator = Beta1MigrationCoordinator(
+            appConfiguration: appConfiguration,
+            statisticsService: statisticsService,
+            userDefaults: userDefaults,
+            dismissHandler: {
+                Task { await appController.dismiss(animated: true) }
+            }
+        )
+        let view = await Beta1MigrationView(viewModel: coordinator)
+        let hostingController = await UIHostingController(rootView: view)
+        await appController.present(hostingController, animated: true)
+        
+        try await bot.dropDatabase(for: appConfiguration)
+        userDefaults.set(true, forKey: "StartedBeta1Migration")
+        userDefaults.set(bot.version, forKey: "GoBotDatabaseVersion")
+        userDefaults.synchronize()
     }
     
-    static func presentMigrationView(on viewController: UIViewController) {
-        let coordinator = Beta1MigrationCoordinator(dismissHandler: {
-            viewController.dismiss(animated: true)
-        })
-        let view = Beta1MigrationView(viewModel: coordinator)
-        let hostingController = UIHostingController(rootView: view)
-        viewController.present(hostingController, animated: true)
+    // MARK: - Internal functions
+    
+    private init(
+        appConfiguration: AppConfiguration,
+        statisticsService: BotStatisticsService,
+        userDefaults: UserDefaults,
+        dismissHandler: @escaping () -> Void
+    ) {
+        self.dismissHandler = dismissHandler
+        self.statisticsService = statisticsService
+        self.userDefaults = userDefaults
+        do {
+            self.completionMessageCount = try Self.getNumberOfMessagesInViewDatabase(with: appConfiguration)
+        } catch {
+            let migrationError = Beta1MigrationError.couldNotGetCompletionMessageCount
+            Log.optional(error, migrationError.localizedDescription)
+            CrashReporting.shared.reportIfNeeded(
+                error: migrationError,
+                metadata: ["underlyingError": error.localizedDescription]
+            )
+            self.completionMessageCount = 1
+        }
         
+        Task {
+            await bindPublishedStatisticsToProgress()
+        }
     }
+    
+    /// Wires up our published `progress` property to the statistics service.
+    private func bindPublishedStatisticsToProgress() async {
+        let statisticsPublisher = await statisticsService.subscribe()
+        
+        // Wire up peers array to the statisticsService
+        statisticsPublisher
+            // Ignore the first statistics because the database doesn't get dropped right away
+            .dropFirst()
+            .map {
+                // Calculate completion percentage
+                let completionFraction = Float($0.repo.messageCount) / Float(self.completionMessageCount)
+                return completionFraction.clamped(to: 0.0...1.0)
+            }
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { progress in
+                self.progress = progress
+            })
+            .store(in: &self.cancellabes)
+    }
+    
+    /// This opens up a special connection to the SQLLite database and retrieves the total message count.
+    /// We duplicate code from `ViewDatabase` on purpose. This way if the `ViewDatabase` schema changes in future
+    /// releases this migration will still work in the unlikely event someone updates a very old installation of
+    /// Planetary and opens it up.
+    private static func getNumberOfMessagesInViewDatabase(with configuration: AppConfiguration) throws -> Int {
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        )
+        
+        guard appSupportDirs.count > 0 else {
+            throw GoBotError.unexpectedFault("no support dir")
+        }
+        
+        guard let networkKey = configuration.network else {
+            throw GoBotError.unexpectedFault("No network key in configuration.")
+        }
+
+        let path = appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/\(networkKey.hexEncodedString())")
+        
+        let dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
+        let db = try Connection(dbPath)
+        let msgs = Table("messages")
+        return try db.scalar(msgs.count)
+    }
+    
+    // MARK: Handle User Interation
     
     func dismissPressed() {
-         dismissHandler()
+        userDefaults.set(true, forKey: "CompletedBeta1Migration")
+        userDefaults.synchronize()
+        cancellabes.forEach { $0.cancel() }
+        dismissHandler()
     }
 }

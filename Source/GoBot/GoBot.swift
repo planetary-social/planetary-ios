@@ -79,7 +79,7 @@ class GoBot: Bot {
     private let statisticsQueue: DispatchQueue
  
     private let userDefaults: UserDefaults
-    private var config: AppConfiguration?
+    private(set) var config: AppConfiguration?
 
     private var preloadedPubService: PreloadedPubService?
 

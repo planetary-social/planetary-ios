@@ -10,6 +10,7 @@ import SwiftUI
 
 protocol Beta1MigrationViewModel: ObservableObject {
     func dismissPressed()
+    var progress: Float { get }
 }
 
 /// A view to show the user while they are upgrading from GoBot version "beta1" to "beta2"
@@ -20,6 +21,7 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
     var body: some View {
         VStack {
             SwiftUI.Text("Upgrade in progress")
+            SwiftUI.Text(String(format: "%.0f%% complete", viewModel.progress * 100))
             
             Button("I'm done waiting") {
                 viewModel.dismissPressed()
@@ -33,7 +35,9 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
 
 fileprivate class PreviewViewModel: Beta1MigrationViewModel {
     func dismissPressed() {}
+    var progress: Float = 36
 }
+
 struct Beta1MigrationView_Previews: PreviewProvider {
     static var previews: some View {
         Beta1MigrationView(viewModel: PreviewViewModel())
