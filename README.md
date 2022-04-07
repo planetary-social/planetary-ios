@@ -2,9 +2,21 @@
 
 ![Unit Tests](https://github.com/planetary-social/planetary-ios/actions/workflows/main.yml/badge.svg) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/10d7934ffe4a46f380ff35951cc482e8)](https://www.codacy.com/gh/planetary-social/planetary-ios/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=planetary-social/planetary-ios&amp;utm_campaign=Badge_Grade) [![Crowdin](https://badges.crowdin.net/planetary/localized.svg)](https://crowdin.com/project/planetary)
 
-Social media for humans, not algorithms. 
+Social media for humans, not algorithms.
 
-Planetary passes data from friend to friend, creating a network that is personal, censorship resistant, and minimizes abuse and spam. Planetary gives you ownership over your relationships and content, and is compatible with any app using the [Secure Scuttlebutt](https://scuttlebutt.nz/) protocol. Experience social networking where you're the customer, not the product.
+Planetary passes data from friend to friend, creating a network that is personal, censorship resistant, and minimizes abuse and spam. Planetary gives you ownership over your relationships and content, and is compatible with any app using the Secure Scuttlebutt protocol.
+
+In Planetary there are no advertisements or artificial intelligence algorithms trying to make you feel a certain way. Your content lives on your device and the devices of those around you, it isn't owned or controlled by a corporation. Experience social networking where you're the customer, not the product.
+
+Unlike most social media, Planetary:
+* Does not sell your data.
+* Is naturally spam-resistant.
+* Compatible with other apps including Manyverse, Patchwork, and more.
+* Works off-grid and offline.
+* Allows you to take your friends with you if you decide to move to another client.
+* Is open source!
+
+No one company should own the Internet’s public spaces, which is why we’re building on —and contributing back to— the open source [Secure Scuttlebutt](https://scuttlebutt.nz/) ecosystem. Their core technologies let us recreate a social network experience, but in a decentralized way that no one organization can dominate.
 
 Check our website [planetary.social](https://planetary.social/) for more info!
 
