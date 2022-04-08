@@ -110,11 +110,11 @@ private func stringFromHex(hex: String) -> String {
     var data = Data()
     while hex.count > 0 {
         let endIndex = hex.index(hex.startIndex, offsetBy: 2)
-        let c = String(hex[..<endIndex])
+        let nextHex = String(hex[..<endIndex])
         hex = String(hex[endIndex...])
-        var ch: UInt64 = 0
-        Scanner(string: c).scanHexInt64(&ch)
-        var char = UInt8(ch)
+        var nextInt: UInt64 = 0
+        Scanner(string: nextHex).scanHexInt64(&nextInt)
+        var char = UInt8(nextInt)
         data.append(&char, count: 1)
     }
     return String(data: data, encoding: .utf8)!

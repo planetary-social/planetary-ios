@@ -134,7 +134,7 @@ class AppController: UIViewController {
 //        let updateProgress = { (notification: Notification) -> Void in
 //            guard let percDone = notification.databaseProgressPercentageDone else { return }
 //            guard let status = notification.databaseProgressStatus else { return }
-            // self?.updateProgress(perc: percDone, status: status)
+//            self?.updateProgress(perc: percDone, status: status)
 //        }
         let dismissProgress = { [weak self] (_: Notification) -> Void in
             // self?.hideProgress()

@@ -19,8 +19,10 @@ extension Notification {
     }
 
     static func didUpdateAbout(_ about: About?) -> Notification {
-        Notification(name: .didUpdateAbout,
-                            object: nil,
-                     userInfo: ["about": about as Any])
+        Notification(
+            name: .didUpdateAbout,
+            object: nil,
+            userInfo: ["about": about as Any]
+        )
     }
 }

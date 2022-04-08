@@ -221,7 +221,7 @@
 		23E8805E22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
 		23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
 		23E8806022F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
-		23E880B522857F8700486AD0 /* EnocdeJSONtest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E880B422857F8700486AD0 /* EnocdeJSONtest.swift */; };
+		23E880B522857F8700486AD0 /* EncodeJSONtest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E880B422857F8700486AD0 /* EncodeJSONtest.swift */; };
 		23EF5A99249CDCF900469977 /* BlocksAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5A98249CDCF900469977 /* BlocksAPIService.swift */; };
 		23EF5A9A249CDCF900469977 /* BlocksAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5A98249CDCF900469977 /* BlocksAPIService.swift */; };
 		23EF5A9B249CDCF900469977 /* BlocksAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5A98249CDCF900469977 /* BlocksAPIService.swift */; };
@@ -953,7 +953,7 @@
 		23D8CE262253DB29001EB7D5 /* Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		23E76A5523F2F0F70074F424 /* ValueTimestamp.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ValueTimestamp.json; sourceTree = "<group>"; };
 		23E8805D22F894650074D399 /* Collection+RandomSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+RandomSample.swift"; sourceTree = "<group>"; };
-		23E880B422857F8700486AD0 /* EnocdeJSONtest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnocdeJSONtest.swift; sourceTree = "<group>"; };
+		23E880B422857F8700486AD0 /* EncodeJSONtest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncodeJSONtest.swift; sourceTree = "<group>"; };
 		23EF5A98249CDCF900469977 /* BlocksAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlocksAPIService.swift; sourceTree = "<group>"; };
 		23EF5A9D249CDD5400469977 /* TokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStore.swift; sourceTree = "<group>"; };
 		23EF5AA2249CE69900469977 /* NullBlocksAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullBlocksAPI.swift; sourceTree = "<group>"; };
@@ -1586,7 +1586,7 @@
 				53E29CE322D8E423008A2CB1 /* AttributedStringTests.swift */,
 				53211CEC22852216007FB785 /* AppConfigurationTests.swift */,
 				531A8A4621FA36A600D5C8C0 /* ContentTests.swift */,
-				23E880B422857F8700486AD0 /* EnocdeJSONtest.swift */,
+				23E880B422857F8700486AD0 /* EncodeJSONtest.swift */,
 				23888978220867DB0030CB92 /* ViewDatabaseTests.swift */,
 				23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */,
 				C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */,
@@ -3446,7 +3446,7 @@
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
-				23E880B522857F8700486AD0 /* EnocdeJSONtest.swift in Sources */,
+				23E880B522857F8700486AD0 /* EncodeJSONtest.swift in Sources */,
 				53211CE522838107007FB785 /* UIImage+Resize.swift in Sources */,
 				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				53211CE622838121007FB785 /* Image+UIImage.swift in Sources */,
