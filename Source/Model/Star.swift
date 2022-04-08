@@ -10,6 +10,8 @@ import Foundation
 import Logger
 import Network
 
+/// An object representing a Planetary owned SSB pub server, including connection information and an embedded
+/// invitation. AKA system pubs.
 struct Star {
     let invite: String
     

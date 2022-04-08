@@ -228,9 +228,9 @@
 "Debug.debugMenu" = "危险和强大的调试菜单";
 "Debug.debugFooter" = "这是我们让你在脚下开枪的地方。 这里是您在私钥上的地方，设置新的密钥，查看网络信息，Pub和所有类型的事情。 注意你在这个菜单中的更改，你可以用这些选项打破一切。";
 
-"Error.login" = "对等点引擎的对等点启动失败。 请使用重启来修复并重新启动它，或使用忽略来浏览已经获取到您设备的内容。";
-"Error.unexpected" = "发生了一些意外事件。";
-"Error.supportNotConfigured" = "支持未配置。";
+"Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
+"Error.unexpected" = "Something unexpected happened.";
+"Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";

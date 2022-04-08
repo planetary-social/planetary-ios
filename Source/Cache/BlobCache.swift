@@ -441,7 +441,9 @@ class BlobCache: DictionaryCache {
         Task {
             guard let identifier = notification.blobIdentifier else { return }
             guard await self.requestManager.numberOfCompletions(for: identifier) > 1 else { return }
-            self.loadImage(for: identifier)
+            await MainActor.run {
+                self.loadImage(for: identifier)
+            }
         }
     }
 }
