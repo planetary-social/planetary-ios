@@ -3201,7 +3201,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [ $CONFIGURATION = \"Release\" ]; then\n/opt/homebrew/bin/license-plist --output-path Resources/Settings.bundle\nfi\n";
+			shellScript = "if [ $CONFIGURATION = \"Release\" ]; then\n/opt/homebrew/bin/license-plist --config-path Resources/license_plist.yml --output-path Resources/Settings.bundle\nfi\n";
 		};
 		5B0D585727BEE41D002F927D /* Copy Secrets.plist */ = {
 			isa = PBXShellScriptBuildPhase;
