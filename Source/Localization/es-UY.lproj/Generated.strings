@@ -28,7 +28,7 @@
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
-"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.showMeInDirectory" = "Mostrame en el directorio";
 "Text.showMeInUserDirectory" = "Mostrame en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultame en el directorio de usuarios";
@@ -99,7 +99,7 @@
 "Text.identityNotFound" = "No sabemos mucho sobre este par como para mostrar su perfil.";
 "Text.channels" = "Etiquetas";
 "Text.select" = "Seleccionar";
-"Text.home" = "Para vos";
+"Text.home" = "Home Feed";
 "Text.explore" = "Descubrí";
 "Text.messages" = "Mensajes";
 "Text.notifications" = "Notificaciones";
@@ -228,10 +228,10 @@
 "Debug.debugMenu" = "Menú de desarrollo poderoso y peligroso";
 "Debug.debugFooter" = "Esta es la parte en la que dejamos que te dispares en el pié. Acá es donde accedés a tu llave privada, configurás nuevas llaves, ves información sobre la red, sobre los pubs, y todo tipo de cosas. Cuidado con lo que cambiás en este menú, podés romper cosas con estas opciones.";
 
-"Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
-"Error.unexpected" = "Something unexpected happened.";
-"Error.supportNotConfigured" = "Support is not configured.";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.login" = "El motor de par-a-par falló al arrancar. Por favor probá cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
+"Error.unexpected" = "Algo inesperado ocurrió.";
+"Error.supportNotConfigured" = "Soporte no está configurado.";
+"Error.invitationRedemptionFailed" = "No pudimos unirte a {{ starName }}. Por favor, intentá de vuelta o contactá con soporte.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 
