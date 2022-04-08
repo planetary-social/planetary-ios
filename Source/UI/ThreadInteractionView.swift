@@ -9,7 +9,7 @@
 import UIKit
 import Analytics
 
-protocol ThreadInteractionViewDelegate: class {
+protocol ThreadInteractionViewDelegate: AnyObject {
     
     func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue)
 }
@@ -133,19 +133,11 @@ class ThreadInteractionView: UIView {
         
         let copyMesssageLink = UIAlertAction(title: Text.shareThisMessage.text, style: .default) { _ in
             guard let publicLink = post.key.publicLink else {
+                AppController.shared.alert(message: Text.Error.couldNotGenerateLink.text)
                 return
             }
-            
-            let who = post.metadata.author.about?.nameOrIdentity ?? post.value.author
-            let link = publicLink.absoluteString
-            let postWithoutGallery = post.value.content.post?.text.withoutGallery() ?? ""
-            let what = postWithoutGallery.prefix(280 - who.count - link.count - Text.shareThisMessageText.text.count)
-            let text = Text.shareThisMessageText.text(["who": who,
-                                                       "what": String(what),
-                                                       "link": publicLink.absoluteString])
             Analytics.shared.trackDidSelectAction(actionName: "share_message")
-            let activityController = UIActivityViewController(activityItems: [text],
-                                                              applicationActivities: nil)
+            let activityController = UIActivityViewController(activityItems: [publicLink], applicationActivities: nil)
             AppController.shared.present(activityController, animated: true)
             if let popOver = activityController.popoverPresentationController {
                 popOver.sourceView = self

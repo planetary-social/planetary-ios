@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-protocol KeyboardHandling: class {
+protocol KeyboardHandling: AnyObject {
 
     var isKeyboardHandlingEnabled: Bool { get set }
 

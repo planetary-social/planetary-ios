@@ -180,7 +180,6 @@
 		2367615A2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 236761582450681800A97140 /* ViewDatabase+Pagination.swift */; };
 		2367615B2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 236761582450681800A97140 /* ViewDatabase+Pagination.swift */; };
 		236BCB7222689406006DF05B /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D8CE262253DB29001EB7D5 /* Address.swift */; };
-		2370620823CFC53C0070712C /* GoBotReproductionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */; };
 		237D057B2335139700973D63 /* Bot+Publish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E29CD122D40462008A2CB1 /* Bot+Publish.swift */; };
 		237D057C2335149100973D63 /* Blob+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BD748523232FB70060E47E /* Blob+UIImage.swift */; };
 		237D057D2335149200973D63 /* Blob+UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BD748523232FB70060E47E /* Blob+UIImage.swift */; };
@@ -3471,7 +3470,6 @@
 				53211CE722838137007FB785 /* MIMEType.swift in Sources */,
 				0ABCA8F724366CC900D7F39C /* AppError.swift in Sources */,
 				533EDBE82385F7CD008B3565 /* CacheTests.swift in Sources */,
-				2370620823CFC53C0070712C /* GoBotReproductionHelper.swift in Sources */,
 				23EF5AA0249CDD5400469977 /* TokenStore.swift in Sources */,
 				5319258522F9E63900B44FA3 /* Date+Elapsed.swift in Sources */,
 				0A64A82D24735169009A5EBF /* NullPubAPI.swift in Sources */,

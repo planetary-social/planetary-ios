@@ -190,7 +190,6 @@ protocol Bot {
 
     // TODO https://app.asana.com/0/914798787098068/1122165003408766/f
     // TODO consider if this is appropriate to know about UIImage at this level
-    @available(*, deprecated)
     func addBlob(jpegOf image: UIImage,
                  largestDimension: UInt?,
                  completion: @escaping AddImageCompletion)
@@ -280,6 +279,18 @@ extension Bot {
     func about(identity: Identity) async throws -> About? {
         try await withCheckedThrowingContinuation { continuation in
             about(identity: identity) { about, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: about)
+            }
+        }
+    }
+    
+    func about() async throws -> About? {
+        try await withCheckedThrowingContinuation { continuation in
+            about() { about, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
