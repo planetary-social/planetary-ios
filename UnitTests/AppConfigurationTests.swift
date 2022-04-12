@@ -9,7 +9,7 @@
 import KeychainSwift
 import XCTest
 
-// swiftlint:disable implicitly_unwrapped_optional
+// swiftlint:disable implicitly_unwrapped_optional 
 
 class AppConfigurationTests: XCTestCase {
     
@@ -18,7 +18,7 @@ class AppConfigurationTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         let data = self.data(for: "Secret.json")
-        secret = try! JSONDecoder().decode(Secret.self, from: data)
+        secret = try JSONDecoder().decode(Secret.self, from: data)
     }
 
     func test_archiving() throws {
