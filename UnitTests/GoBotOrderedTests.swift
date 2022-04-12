@@ -744,10 +744,6 @@ class GoBotOrderedTests: XCTestCase {
     }
     
     func test163_storeBlob() {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail intermittently. See #269", options: options)
-        
         let ref = BlobIdentifier("&d2rP8Tcg6K2QR905Rms8iXTlksL6OD1KOWBxTK7wxPI=.sha256")
         
         var ex = self.expectation(description: "Get current blob")

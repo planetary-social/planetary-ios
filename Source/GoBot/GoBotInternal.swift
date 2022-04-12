@@ -481,14 +481,17 @@ class GoBotInternal {
     }
 
     func blobsAdd(data: Data, completion: @escaping BlobsAddCompletion) {
-        let p = Pipe()
+        /// Apple docs say to interact with pipe on the main thread (or one configured with a run loop)
+        let pipe = Pipe()
 
-        self.queue.async {
-            p.fileHandleForWriting.write(data)
-            p.fileHandleForWriting.closeFile()
+        // Start writing the file
+        DispatchQueue.main.async {
+            pipe.fileHandleForWriting.write(data)
+            pipe.fileHandleForWriting.closeFile()
         }
-
-        let readFD = p.fileHandleForReading.fileDescriptor
+        
+        // Give go-ssb the file handle to read
+        let readFD = pipe.fileHandleForReading.fileDescriptor
         guard let rawBytes = ssbBlobsAdd(readFD) else {
             completion("", GoBotError.unexpectedFault("blobsAdd failed"))
             return

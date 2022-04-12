@@ -96,12 +96,12 @@ class GoBot: Bot {
         self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
                                           qos: .utility,
-                                          attributes: [],
+                                          attributes: .concurrent,
                                           autoreleaseFrequency: .workItem,
                                           target: nil)
         self.userInitiatedQueue = DispatchQueue(label: "GoBot-userInitiated",
                                                 qos: .userInitiated,
-                                                attributes: [],
+                                                attributes: .concurrent,
                                                 autoreleaseFrequency: .workItem,
                                                 target: nil)
         self.statisticsQueue = DispatchQueue(label: "GoBot-statistics",
