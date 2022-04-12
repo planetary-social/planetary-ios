@@ -62,11 +62,14 @@ class SendMissionOperation: AsynchronousOperation {
                     CrashReporting.shared.reportIfNeeded(error: error)
                 }
                 
-                guard let self = self else {
+                guard let self = self, let appConfiguration = AppConfiguration.current else {
                     return
                 }
                 
-                let joinPlanetarySystemOperation = JoinPlanetarySystemOperation(appConfiguration: AppConfiguration.current!, operationQueue: self.operationQueue)
+                let joinPlanetarySystemOperation = JoinPlanetarySystemOperation(
+                    appConfiguration: appConfiguration,
+                    operationQueue: self.operationQueue
+                )
                 
                 let peerPool = allJoinedPubs.map { $0.toPeer() } + stars.map { $0.toPeer() }
                 

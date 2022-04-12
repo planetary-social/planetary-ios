@@ -9,7 +9,7 @@
 import KeychainSwift
 import XCTest
 
-// swiftlint:disable force_unwrapping implicitly_unwrapped_optional
+// swiftlint:disable implicitly_unwrapped_optional
 
 class AppConfigurationTests: XCTestCase {
     
