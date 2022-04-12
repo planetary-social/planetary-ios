@@ -165,7 +165,7 @@ class AppConfigurationViewController: DebugTableViewController {
                                              valueClosure: {
                 [unowned self] cell in
                 cell.textLabel?.isEnabled = self.canEditConfiguration
-                cell.textLabel?.numberOfLines = 0
+                cell.textLabel?.numberOfLines = 1
                 guard let secret = self.configuration.secret ?? self.secret else { return }
                 cell.textLabel?.text = secret.jsonStringUnescaped()
             },
