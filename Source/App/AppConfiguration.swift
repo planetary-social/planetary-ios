@@ -26,6 +26,10 @@ class AppConfiguration: NSObject, NSCoding {
     /// their feed has fully synced, which "forks" or breaks it forever.
     /// Should be kept up-to-date by the `Bot`.
     var numberOfPublishedMessages: Int = 0
+    
+    /// A bool indicating whether the user has opted to join the "Planetary System". Joining the Planetary System means
+    /// the system pubs will follow you automatically.
+    var joinedPlanetarySystem = false
 
     private var networkDidChange = false
     var network: NetworkKey? {
@@ -98,6 +102,9 @@ class AppConfiguration: NSObject, NSCoding {
         if aDecoder.containsValue(forKey: "numberOfPublishedMessages") {
             self.numberOfPublishedMessages = aDecoder.decodeInteger(forKey: "numberOfPublishedMessages")
         }
+        if aDecoder.containsValue(forKey: "joinedPlanetarySystem") {
+            self.joinedPlanetarySystem = aDecoder.decodeBool(forKey: "joinedPlanetarySystem")
+        }
     }
 
     func encode(with aCoder: NSCoder) {
@@ -106,6 +113,7 @@ class AppConfiguration: NSObject, NSCoding {
         if let network = self.network { aCoder.encode(network.data, forKey: "network") }
         if let bot = self.bot { aCoder.encode(bot.name, forKey: "bot") }
         aCoder.encode(numberOfPublishedMessages, forKey: "numberOfPublishedMessages")
+        aCoder.encode(joinedPlanetarySystem, forKey: "joinedPlanetarySystem")
     }
 
     override func isEqual(_ object: Any?) -> Bool {
