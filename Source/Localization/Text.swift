@@ -22,7 +22,6 @@ extension Text {
             Text.Channel.self,
             Text.Post.self,
             Text.Report.self,
-            Text.Error.self
         ]
     }
 }
@@ -389,6 +388,8 @@ extension Text {
         case unexpected = "Something unexpected happened."
         case supportNotConfigured = "Support is not configured."
         case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
+        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
+        case invalidAppConfiguration = "Invalid app configuration"
     }
 }
 
@@ -414,15 +415,5 @@ extension Text {
         case postReplied = "%@ replied to your post"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
-    }
-}
-
-// MARK: - Errors
-
-extension Text {
-    // There should be a better way to do this for enum errors
-    enum Errors: String, Localizable, CaseIterable {
-        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
-        case invalidAppConfiguration = "Invalid app configuration"
     }
 }

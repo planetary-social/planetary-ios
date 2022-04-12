@@ -24,11 +24,11 @@
 "Text.helpAndSupport" = "Hilfe und Support";
 "Text.reportBug" = "Fehler melden";
 "Text.settings" = "Einstellungen";
-"Text.yourNetwork" = "Your Network";
+"Text.yourNetwork" = "Ihr Netzwerk";
 "Text.pubServers" = "Pub Servers";
-"Text.usersInYourNetwork" = "Users in your network";
+"Text.usersInYourNetwork" = "Benutzer in Ihrem Netzwerk";
 "Text.goToYourNetwork" = "Go to Your Network";
-"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.showMeInDirectory" = "Zeige mich im Verzeichnis";
 "Text.showMeInUserDirectory" = "Zeige mich im Benutzerverzeichnis";
 "Text.hideMeFromUserDirectory" = "Verstecke mich im Benutzerverzeichnis";
@@ -50,7 +50,7 @@
 "Text.createProfile" = "Profil erstellen";
 "Text.editProfile" = "Profil bearbeiten";
 "Text.thisIsYou" = "Das bist du!";
-"Text.name" = "Name";
+"Text.name" = "Namen";
 "Text.bio" = "Über mich";
 "Text.seeMore" = "Mehr anzeigen";
 "Text.likesThis" = "Likes this";
@@ -99,7 +99,7 @@
 "Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Hashtags";
 "Text.select" = "Wählen";
-"Text.home" = "Für dich";
+"Text.home" = "Home Feed";
 "Text.explore" = "Entdecken";
 "Text.messages" = "Nachrichten";
 "Text.notifications" = "Benachrichtigungen";
@@ -233,6 +233,8 @@
 "Error.unexpected" = "Etwas Unerwartetes ist passiert.";
 "Error.supportNotConfigured" = "Support ist nicht konfiguriert.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.invalidAppConfiguration" = "Invalid app configuration";
 
 "Channel.one" = "Kanal";
 "Channel.many" = "Kanäle";
@@ -246,8 +248,3 @@
 "Report.postReplied" = "%@ antwortete auf deinen Beitrag";
 "Report.feedMentioned" = "%@ hat dich in einem Beitrag erwähnt";
 "Report.messageLiked" = "%@ gefällt dein Beitrag";
-
-"Error.login" = "Die Peer-to-Peer-Engine konnte nicht gestartet werden. Bitte verwenden Sie Neustart, um zu reparieren und neu zu starten, oder verwenden Sie Ignore, um die Inhalte zu durchsuchen, die bereits auf Ihrem Gerät abgerufen werden.";
-"Error.unexpected" = "Etwas Unerwartetes ist passiert.";
-"Error.supportNotConfigured" = "Support ist nicht konfiguriert.";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";

@@ -28,7 +28,7 @@
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
-"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.showMeInDirectory" = "在用户目录中显示";
 "Text.showMeInUserDirectory" = "在用户目录中显示";
 "Text.hideMeFromUserDirectory" = "在用户目录中显示";
@@ -99,7 +99,7 @@
 "Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Hashtags";
 "Text.select" = "Select";
-"Text.home" = "For You";
+"Text.home" = "Home Feed";
 "Text.explore" = "Discover";
 "Text.messages" = "Messages";
 "Text.notifications" = "Notifications";
@@ -233,6 +233,8 @@
 "Error.unexpected" = "发生了一些意外事件。";
 "Error.supportNotConfigured" = "支持未配置。";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.invalidAppConfiguration" = "Invalid app configuration";
 
 "Channel.one" = "频道";
 "Channel.many" = "频道";
@@ -246,8 +248,3 @@
 "Report.postReplied" = "%@ 回复了你的动态";
 "Report.feedMentioned" = "%@ 提到你的评论";
 "Report.messageLiked" = "%@ X点赞了你";
-
-"Error.login" = "对等点引擎的对等点启动失败。 请使用重启来修复并重新启动它，或使用忽略来浏览已经获取到您设备的内容。";
-"Error.unexpected" = "发生了一些意外事件。";
-"Error.supportNotConfigured" = "支持未配置。";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
