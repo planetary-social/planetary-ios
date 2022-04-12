@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Touch libgo-ssb.a"
-               scriptText = "touch ${PROJECT_DIR}/Frameworks/GoSSB.xcframework/ios-arm64_x86_64-simulator/libssb-go.a&#10;">
+               scriptText = "touch ${PROJECT_DIR}/Frameworks/GoSSB.xcframework/ios-arm64_x86_64-simulator/libssb-go.a&#10;touch ${PROJECT_DIR}/Frameworks/GoSSB.xcframework/ios-arm64/libssb-go.a&#10;">
             </ActionContent>
          </ExecutionAction>
       </PreActions>
