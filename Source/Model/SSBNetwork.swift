@@ -8,6 +8,24 @@
 
 import Foundation
 
+/// An SSB network configuration. SSB clients will only replicate with other clients using the same configuration.
+struct SSBNetwork: Equatable {
+    
+    /// The name of the network. This is for convenience and is not transmitted, not part of the protocol, nor
+    /// Equatable conformance.
+    var name: String? = nil
+    
+    /// The network key. Also called shs or caps.shs.
+    var key: NetworkKey
+    
+    /// A key that will be used to encrypt messages. Also called the signing key or caps.sign.
+    var hmac: HMACKey?
+    
+    static func == (lhs: SSBNetwork, rhs: SSBNetwork) -> Bool {
+        lhs.key == rhs.key && lhs.hmac == rhs.hmac
+    }
+}
+
 class DataKey {
 
     let data: Data
@@ -60,41 +78,24 @@ extension DataKey: Equatable {
 // MARK: - Specific keys subclasses
 
 class NetworkKey: DataKey {
-
-    // SSB default network
-    static let ssb = NetworkKey(base64: Environment.DefaultNetwork.key)!
-
-    // Verse development network
-    // Generated from "Verse Communications, Inc." string
-    static let verse = NetworkKey(base64: Environment.DevelopmentNetwork.key)!
-
-    // Verse testing network
-    // auto-deploy network for CI testing, will be scrubbed
-    static let integrationTests = NetworkKey(base64: Environment.TestingNetwork.key)!
-    
-    // Planetary develpoment network for the new format
-    static let planetary = NetworkKey(base64: Environment.PlanetaryNetwork.key)!
-    
-    static let planetaryTest = NetworkKey(base64: Environment.TestingNetwork.key)!
-
+    /// TODO: this should be stored in AppConfiguration and then we can get rid of this
     var name: String {
-        if self == NetworkKey.ssb { return Environment.DefaultNetwork.name } else if self == NetworkKey.integrationTests { return Environment.TestingNetwork.name } else if self == NetworkKey.planetary { return Environment.PlanetaryNetwork.name } else { return Environment.DevelopmentNetwork.name }
+        var name: String?
+        switch self {
+        case Environment.Networks.mainNet.key:
+            name = Environment.Networks.mainNet.name
+        case Environment.Networks.test.key:
+            name = Environment.Networks.test.name
+        default:
+            break
+        }
+        
+        if let name = name {
+            return name
+        } else {
+            return string
+        }
     }
 }
 
-class HMACKey: DataKey {
-
-    // SSB default network
-    // there is no HMAC key for the SSB network
-
-    // development network
-    static let verse = HMACKey(base64: Environment.DevelopmentNetwork.hmac)!
-    
-    // automated testing network
-    static let integrationTests = HMACKey(base64: Environment.TestingNetwork.hmac)!
-
-    // Next HMAC key
-    static let planetary = HMACKey(base64: Environment.PlanetaryNetwork.hmac)!
-    
-    static let planetaryTest = HMACKey(base64: Environment.TestingNetwork.hmac)!
-}
+class HMACKey: DataKey {}

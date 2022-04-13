@@ -50,6 +50,8 @@
 	<string>$(PLANETARY_NETWORK_KEY)</string>
 	<key>PLPlanetaryNetworkHMAC</key>
 	<string>$(PLANETARY_NETWORK_HMAC)</string>
+	<key>PLTestNetworkPubs</key>
+	<string>$(TEST_NETWORK_PUBS)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

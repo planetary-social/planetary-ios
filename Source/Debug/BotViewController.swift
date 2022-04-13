@@ -178,10 +178,36 @@ class BotViewController: DebugTableViewController {
 
         return ("Repo", settings, nil)
     }
+    
+    var connectToPeerCell: DebugTextFieldTableViewCell?
 
     private func peers() -> DebugTableViewController.Settings {
 
         var settings: [DebugTableViewCellModel] = []
+        
+        settings += [DebugTableViewCellModel(title: "Connect to peer:",
+                                             cellReuseIdentifier: DebugTextFieldTableViewCell.className,
+                                             valueClosure: { [weak self] cell in
+            guard let cell = cell as? DebugTextFieldTableViewCell else {
+                return
+            }
+            
+            self?.connectToPeerCell = cell
+        })]
+        
+        settings += [DebugTableViewCellModel(title: "Connect",
+                                             cellReuseIdentifier: DebugValueTableViewCell.className,
+                                             actionClosure: { [weak self] cell in
+            guard let enteredString = self?.connectToPeerCell?.textField.text,
+                let multiserver = MultiserverAddress(string: enteredString) else {
+                Log.error("Could not parse peer address")
+                return
+            }
+            
+            Bots.current.sync(peers: [multiserver]) { error, _, _ in
+                Log.optional(error)
+            }
+        })]
 
         settings += [DebugTableViewCellModel(title: "Connections (open/total)",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,

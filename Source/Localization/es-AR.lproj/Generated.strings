@@ -113,6 +113,7 @@
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Recargar";
 "Text.markdownSupported" = "Markdown soportado";
+"Text.loggingOut" = "Logging out...";
 
 "Blocking.alertTitle" = "¿Estás seguro de que querés bloquear a {{ name }}? No vas a poder ver su contenido mutuamente ni tampoco volver a contactarse.";
 "Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";

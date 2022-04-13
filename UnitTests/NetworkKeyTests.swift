@@ -11,9 +11,8 @@ import XCTest
 class NetworkKeyTests: XCTestCase {
 
     func test_statics() {
-        XCTAssertNotNil(NetworkKey.ssb)
-        XCTAssertNotNil(NetworkKey.verse)
-        XCTAssertNotNil(NetworkKey.planetary)
+        XCTAssertNotNil(Environment.Networks.mainNet)
+        XCTAssertNotNil(Environment.Networks.test)
     }
 
     func test_valid() {
@@ -21,7 +20,7 @@ class NetworkKeyTests: XCTestCase {
         // SSB default
         let key = NetworkKey(base64: "1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s=")
         XCTAssertNotNil(key)
-        XCTAssertTrue(key == NetworkKey.ssb)
+        XCTAssertTrue(key == Environment.Networks.mainNet.key)
     }
 
     func test_invalid() {

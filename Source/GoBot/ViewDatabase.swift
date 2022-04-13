@@ -625,7 +625,7 @@ class ViewDatabase {
             let key = try row.get(colKey)
             
             return Pub(type: .pub,
-                       address: PubAddress(key: key,
+                       address: MultiserverAddress(key: key,
                                            host: host,
                                            port: UInt(port)))
         }

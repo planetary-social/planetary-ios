@@ -113,6 +113,7 @@
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Refresh";
 "Text.markdownSupported" = "Markdown preview";
+"Text.loggingOut" = "Logging out...";
 
 "Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other.";
 "Blocking.buttonTitle" = "Yes, block {{ name }}";

@@ -35,7 +35,7 @@ class FakeBot: Bot {
         }
     }
     
-    func seedPubAddresses(addresses: [PubAddress],
+    func seedPubAddresses(addresses: [MultiserverAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void) {
         queue.async {
@@ -198,14 +198,14 @@ class FakeBot: Bot {
 
     let isSyncing = false
 
-    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)
         }
     }
     
-    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)

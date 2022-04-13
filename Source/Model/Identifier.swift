@@ -47,6 +47,10 @@ typealias LinkIdentifier = MessageIdentifier
 typealias MessageIdentifier = Identifier
 typealias InviteIdentifier = Identifier
 
+/// A public key identifier. For the identity @kS1GT34Sg+Kzjcqoehz//afmIQC5+CGo8O/KvMddVrM=.ed25519
+/// the public key would be kS1GT34Sg+Kzjcqoehz//afmIQC5+CGo8O/KvMddVrM=
+typealias PublicKey = String
+
 extension Identifier {
 
     static let null = "null"
