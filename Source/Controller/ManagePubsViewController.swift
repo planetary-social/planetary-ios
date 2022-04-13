@@ -33,7 +33,7 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
         self.dataSource.delegate = self
         self.tableView.dataSource = self.dataSource
         self.tableView.prefetchDataSource = self.dataSource
-        Bots.current.pubs { [weak self] (pubs, error) in
+        Bots.current.joinedPubs { [weak self] (pubs, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {

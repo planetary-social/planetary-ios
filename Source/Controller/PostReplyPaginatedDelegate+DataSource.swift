@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol PostReplyPaginatedDataSourceDelegate: class {
+protocol PostReplyPaginatedDataSourceDelegate: AnyObject {
     
     func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue)
 }

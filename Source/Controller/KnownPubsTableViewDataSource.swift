@@ -11,7 +11,7 @@ import UIKit
 import Logger
 import CrashReporting
 
-protocol KnownPubsTableViewDataSourceDelegate: class {
+protocol KnownPubsTableViewDataSourceDelegate: AnyObject {
     func reload()
 }
 

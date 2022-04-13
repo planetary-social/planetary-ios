@@ -60,7 +60,7 @@ jobs:
     - name: Run iOS tests
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Analytics -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" | xcpretty
   crashreporting:
-    name: CrashReporting
+    name: Crash Reporting
     runs-on: macOS-latest
     steps:
     - name: Checkout
@@ -69,3 +69,13 @@ jobs:
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme CrashReporting -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" | xcpretty
     - name: Run iOS tests
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme CrashReporting -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" | xcpretty
+  support:
+    name: Support
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Build for iOS
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Support -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" | xcpretty
+    - name: Run iOS tests
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Support -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" | xcpretty

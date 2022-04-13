@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Support
 
 class AboutViewController: ContentViewController {
 
@@ -375,9 +376,8 @@ class AboutViewController: ContentViewController {
             return
         }
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
-        guard let controller = Support.shared.newTicketViewController(from: me,
-                                                                      reporting: about.identity,
-                                                                      name: name) else {
+        let profile = AbusiveProfile(identifier: about.identity, name: about.name)
+        guard let controller = Support.shared.newTicketViewController(reporter: me, profile: profile) else {
             AppController.shared.alert(
                 title: Text.error.text,
                 message: Text.Error.supportNotConfigured.text,
