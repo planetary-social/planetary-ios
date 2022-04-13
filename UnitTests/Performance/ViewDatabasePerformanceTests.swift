@@ -7,6 +7,7 @@
 //
 
 import XCTest
+@testable import Planetary
 
 /// Tests to measure performance of `ViewDatabase`
 class ViewDatabasePerformanceTests: XCTestCase {
@@ -76,6 +77,42 @@ class ViewDatabasePerformanceTests: XCTestCase {
         print("dropping \(urls.count) runs") // clean up
         for u in urls {
             try FileManager.default.removeItem(at: u)
+        }
+    }
+
+    func testCurrentPostsStrategy() throws {
+        let connection = try XCTUnwrap(self.vdb.getOpenDB())
+        let currentUserID = self.vdb.currentUserID
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            startMeasuring()
+            let strategy = CurrentPostsStrategy(connection: connection, currentUserID: currentUserID)
+            let posts = try! strategy.recentPosts(limit: 100, offset: 0, wantPrivate: false, onlyFollowed: false)
+            XCTAssertEqual(posts.count, 100)
+            stopMeasuring()
+        }
+    }
+
+    func testPostsStrategy() throws {
+        let connection = try XCTUnwrap(self.vdb.getOpenDB())
+        let currentUserID = self.vdb.currentUserID
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            startMeasuring()
+            let strategy = PostsStrategy(connection: connection, currentUserID: currentUserID)
+            let posts = try! strategy.recentPosts(limit: 100, offset: 0, wantPrivate: false, onlyFollowed: false)
+            XCTAssertEqual(posts.count, 100)
+            stopMeasuring()
+        }
+    }
+
+    func testPostsAndContactsStrategy() throws {
+        let connection = try XCTUnwrap(self.vdb.getOpenDB())
+        let currentUserID = self.vdb.currentUserID
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            startMeasuring()
+            let strategy = PostsAndContactsStrategy(connection: connection, currentUserID: currentUserID)
+            let posts = try! strategy.recentPosts(limit: 100, offset: 0, wantPrivate: false, onlyFollowed: false)
+            XCTAssertEqual(posts.count, 100)
+            stopMeasuring()
         }
     }
     

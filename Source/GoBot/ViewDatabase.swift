@@ -14,6 +14,7 @@ import CryptoKit
 import Logger
 import Analytics
 import CrashReporting
+import SQLite3
 
 // schema migration handling
 extension Connection {
@@ -57,7 +58,7 @@ class ViewDatabase {
     static var schemaVersion: UInt = 20
 
     // should be changed on login/logout
-    private var currentUserID: Int64 = -1
+    var currentUserID: Int64 = -1
 
     // skip messages older than this (6 month)
     // this should be removed once the database was refactored
@@ -458,22 +459,7 @@ class ViewDatabase {
     
     // helper to get some counts for pagination
     func statsForRootPosts(onlyFollowed: Bool = false) throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        var qry = self.posts
-            .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
-            .filter(colMsgType == "post")
-            .filter(colIsRoot == true)
-            .filter(colHidden == false)
-            .filter(colDecrypted == false)
-        
-        if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
-        } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
-        }
-        return try db.scalar(qry.count)
+        return try self.recentIdentifiers2(limit: 10000, offset: 0, wantPrivate: false, onlyFollowed: onlyFollowed).count
     }
 
     // posts for a feed
@@ -1147,22 +1133,12 @@ class ViewDatabase {
 
     // MARK: recent
     func recentPosts(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> KeyValues {
-        guard let _ = self.openDB else {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
-            .order(colClaimedAt.desc)
-        
-        if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
-        } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
-        }
-        
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
-            
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
+        let currentUserID = self.currentUserID
+        let strategy = PostsAndContactsStrategy(connection: connection, currentUserID: currentUserID)
+        return try strategy.recentPosts(limit: limit, offset: offset, wantPrivate: wantPrivate, onlyFollowed: onlyFollowed)
     }
     
     // This gets called a lot from the go-bot... 
@@ -1195,6 +1171,48 @@ class ViewDatabase {
         }
         
         return try db.prepare(qry).compactMap { row in
+            try row.get(colKey)
+        }
+    }
+
+    func recentIdentifiers2(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let authorsClause = onlyFollowed ? "IN" : "NOT IN"
+
+        let qry = try db.prepare("""
+        SELECT * FROM messages
+        LEFT JOIN posts ON messages.msg_id == posts.msg_ref
+        LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
+        JOIN messagekeys ON messagekeys.id == messages.msg_id
+        JOIN authors ON authors.id == messages.author_id
+        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
+        WHERE type IN ('post', 'contact')
+        AND is_decrypted == ?
+        AND hidden == false
+        AND (posts.is_root == true OR type == 'contact')
+        AND (contact_about.about_id IS NOT NULL OR type != 'contact')
+        AND authors.author \(authorsClause) (SELECT authors2.author FROM contacts
+                               JOIN authors ON contacts.author_id == authors.id
+                               JOIN authors authors2 ON contacts.contact_id == authors2.id
+                               WHERE authors.id == ? OR authors2.id == ?)
+        AND claimed_at < ?
+        ORDER BY claimed_at DESC
+        LIMIT ? OFFSET ?;
+        """)
+
+        let bindings: [Binding?] = [
+            wantPrivate,
+            self.currentUserID,
+            self.currentUserID,
+            Date().millisecondsSince1970,
+            limit,
+            offset ?? 0
+        ]
+
+        return try qry.bind(bindings).prepareRowIterator().map { row -> MessageIdentifier in
             try row.get(colKey)
         }
     }

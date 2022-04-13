@@ -182,11 +182,11 @@ class RecentViewKeyValueSource: KeyValueSource {
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
+        return try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
     }
     
     static func top(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws -> MessageIdentifier? {
-        try vdb.recentIdentifiers(limit: 1, onlyFollowed: onlyFollowed).first
+        try vdb.recentIdentifiers2(limit: 1, onlyFollowed: onlyFollowed).first
     }
 }
 

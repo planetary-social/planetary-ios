@@ -74,6 +74,7 @@ class KeyValuePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UIT
     func cell(at indexPath: IndexPath, for type: ContentType) -> KeyValueTableViewCell {
         switch type {
             case .post:     return KeyValueTableViewCell(for: type, height: 300)
+            case .contact:  return KeyValueTableViewCell(for: type, height: 300)
             default:        return KeyValueTableViewCell(for: type)
         }
     }
