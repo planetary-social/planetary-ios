@@ -19,6 +19,8 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
     /// Minimum number of Planetary's pubs that should be followng the user for them to be considered in the system.
     private static let minNumberOfStars = 3
     
+    let userDefaults = UserDefaults.standard
+    
     init(appConfiguration: AppConfiguration, operationQueue: OperationQueue) {
         self.appConfiguration = appConfiguration
         self.operationQueue = operationQueue
@@ -31,12 +33,19 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
             return
         }
         
+        guard self.userDefaults.bool(forKey: "prevent_feed_from_forks") else {
+            Log.info("JoinPlanetarySystemOperation refusing to join Planetary system pubs because forked feed " +
+                " protection is turned off.")
+            self.finish()
+            return
+        }
+        
+        guard appConfiguration.joinedPlanetarySystem else {
+            self.finish()
+            return
+        }
+        
         Task {
-            guard appConfiguration.joinedPlanetarySystem else {
-                self.finish()
-                return
-            }
-                
             do {
                 let allJoinedPubs = try await bot.joinedPubs()
                 let stars = Set(Environment.Constellation.stars)
