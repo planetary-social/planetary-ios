@@ -19,8 +19,8 @@ To work on the code, clone and bootstrap the project first:
 1. Clone the repository
 
 ```sh
-$ git clone https://github.com/planetary-social/planetary-ios.git
-$ cd planetary-ios/
+git clone https://github.com/planetary-social/planetary-ios.git
+cd planetary-ios/
 ```
 
 **You should be able to Build and Run in Xcode without installing any external tools other than Xcode. However, if you
@@ -29,31 +29,31 @@ want to contribute with new code, we suggest setting up a more complete environm
 2. Install `rbenv` and `swiftlint` using [Homebrew](https://brew.sh/) and add it to your shell: 
 
 ```sh
-$ brew install rbenv swiftlint && rbenv init
+brew install rbenv swiftlint && rbenv init
 ```
 
 3. Install ruby v2.7.5
 
 ```sh
-$ rbenv install 2.7.5
+rbenv install 2.7.5
 ```
 
 4. Install gems
 
 ```sh
-$ bundle install
+bundle install
 ```
 
 5. Install dependencies (optional)
 
 ```sh
-$ pod install
+pod install
 ```
 
 6. Prevent git from commiting your API keys (see below, The Secrets.plist configuration file) in the public repository
 
 ```sh
-$ git update-index --skip-worktree Resources/Secrets.debug.plist
+git update-index --skip-worktree Resources/Secrets.debug.plist
 ```
 
 ### Running
