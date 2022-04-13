@@ -37,7 +37,7 @@ enum RefreshLoad: Int32, CaseIterable {
 
 /// Abstract interface to any SSB bot implementation.
 /// - SeeAlso: `GoBot`
-protocol Bot {
+protocol Bot: AnyObject {
 
     // MARK: Name
     var name: String { get }
@@ -304,8 +304,20 @@ extension Bot {
         self.redeemInvitation(to: star, completionQueue: .main, completion: completion)
     }
     
-    func pubs(completion: @escaping (([Pub], Error?) -> Void)) {
+    func joinedPubs(completion: @escaping (([Pub], Error?) -> Void)) {
         self.joinedPubs(queue: .main, completion: completion)
+    }
+    
+    func joinedPubs() async throws -> [Pub] {
+        return try await withCheckedThrowingContinuation { continuation in
+            joinedPubs(queue: DispatchQueue.main) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result)
+            }
+        }
     }
     
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {

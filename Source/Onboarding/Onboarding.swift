@@ -101,6 +101,8 @@ class Onboarding {
             // create app configuration with name and time stamp
             let configuration = AppConfiguration(with: secret)
             configuration.name = "\(name) (\(Date().shortDateTimeString))"
+            // We will add this as an option in the UI in the future #494
+            configuration.joinedPlanetarySystem = true
 
             // TODO https://app.asana.com/0/0/1134329918920789/f
             // TODO abstract GoBot network configuration
