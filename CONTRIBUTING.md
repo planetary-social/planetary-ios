@@ -29,7 +29,7 @@ want to contribute with new code, we suggest setting up a more complete environm
 2. Install `rbenv` and `swiftlint` using [Homebrew](https://brew.sh/) and add it to your shell: 
 
 ```
-$ brew install rbenv && rbenv init
+$ brew install rbenv swiftlint && rbenv init
 ```
 
 3. Install ruby v2.7.5
@@ -50,13 +50,7 @@ $ bundle install
 $ pod install
 ```
 
-6. Install `swiftlint` using [Homebrew](https://brew.sh/) 
-
-```
-$ brew install swiftlint
-```
-
-7. Prevent git from commiting your API keys (see below, The Secrets.plist configuration file) in the public repository
+6. Prevent git from commiting your API keys (see below, The Secrets.plist configuration file) in the public repository
 
 ```
 $ git update-index --skip-worktree Resources/Secrets.debug.plist
