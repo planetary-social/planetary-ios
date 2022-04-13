@@ -376,7 +376,7 @@ class AboutViewController: ContentViewController {
             return
         }
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
-        let profile = SupportProfile(identifier: about.identity, name: about.name)
+        let profile = AbusiveProfile(identifier: about.identity, name: about.name)
         guard let controller = Support.shared.newTicketViewController(reporter: me, profile: profile) else {
             AppController.shared.alert(
                 title: Text.error.text,

@@ -37,12 +37,12 @@ The `botLog` is created automatically by Planetary's `Support+GoBot.swift` exten
 
 ### Reporting an abusive profile 
 
-A profile can be reported using the `SupportProfile` struct, it contains the profile identity and name (optional):
+A profile can be reported using the `AbusiveProfile` struct, it contains the profile identity and name (optional):
 
  ```swift
 import Support
 
-let profile = SupportProfile(identifier: "profile-ref", name: "Lucas")
+let profile = AbusiveProfile(identifier: "profile-ref", name: "Lucas")
 let viewController = Support.shared.newTicketViewController(reporter: "my-ref", profile: profile, botLog: nil)
 ```
 
@@ -50,13 +50,13 @@ The `botLog` is created automatically by Planetary's `Support+GoBot.swift` exten
 
 ### Reporting an offensive content 
 
-A content can be reported using the `SupportContent` struct, it contains the content key, the profile of the creator of that content, a reason (listed in `SupportReason`) and an instance of a UIView that Support uses for taking a screenshot of the content, that UIView must be displaying the offensive post:
+A content can be reported using the `OffensiveContent` struct, it contains the content key, the profile of the creator of that content, a reason (listed in `SupportReason`) and an instance of a UIView that Support uses for taking a screenshot of the content, that UIView must be displaying the offensive post:
 
  ```swift
 import Support
 
-let profile = SupportProfile(identifier: "profile-ref", name: "Lucas")
-let content = SupportContent(
+let profile = AbusiveProfile(identifier: "profile-ref", name: "Lucas")
+let content = OffensiveContent(
     identifier: "content-ref",
     profile: profile,
     reason: .copyright,

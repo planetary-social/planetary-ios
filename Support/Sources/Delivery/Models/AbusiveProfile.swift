@@ -8,7 +8,7 @@
 import Foundation
 
 /// An abusive profile the user wants to report
-public struct SupportProfile {
+public struct AbusiveProfile {
 
     /// The identifier of the abusive profile
     public var identifier: String

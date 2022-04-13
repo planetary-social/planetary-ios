@@ -51,7 +51,7 @@ class SupportTests: XCTestCase {
     }
 
     func testNewAuthorTicketViewController() throws {
-        let profile = SupportProfile(
+        let profile = AbusiveProfile(
             identifier: "author-ref",
             name: "author-name"
         )
@@ -66,8 +66,8 @@ class SupportTests: XCTestCase {
     }
 
     func testNewContentTicketViewController() throws {
-        let profile = SupportProfile(identifier: "author-ref", name: "author-name")
-        let content = SupportContent(
+        let profile = AbusiveProfile(identifier: "author-ref", name: "author-name")
+        let content = OffensiveContent(
             identifier: "content-ref",
             profile: profile,
             reason: .copyright,
@@ -84,8 +84,8 @@ class SupportTests: XCTestCase {
     }
 
     func testNewContentTicketViewControllerWithView() throws {
-        let profile = SupportProfile(identifier: "author-ref", name: "author-name")
-        let content = SupportContent(
+        let profile = AbusiveProfile(identifier: "author-ref", name: "author-name")
+        let content = OffensiveContent(
             identifier: "content-ref",
             profile: profile,
             reason: .copyright,

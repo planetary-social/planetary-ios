@@ -181,7 +181,7 @@ class RelationshipButton: IconButton {
     func reportUser() {
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
         let reporter = relationship.identity
-        let profile = SupportProfile(identifier: relationship.other, name: otherUserName)
+        let profile = AbusiveProfile(identifier: relationship.other, name: otherUserName)
         guard let controller = Support.shared.newTicketViewController(reporter: reporter, profile: profile) else {
             AppController.shared.alert(
                 title: Text.error.text,

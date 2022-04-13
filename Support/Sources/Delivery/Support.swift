@@ -52,7 +52,7 @@ public class Support {
     /// - parameter reporter: The identity of the logged in user
     /// - parameter profile: The profile to report
     /// - parameter botLog: A Data object containing the log of the go bot
-    public func newTicketViewController(reporter: String, profile: SupportProfile, botLog: Data?) -> UIViewController? {
+    public func newTicketViewController(reporter: String, profile: AbusiveProfile, botLog: Data?) -> UIViewController? {
         let identifier = Identifier(key: reporter)
         let author = Author(identifier: Identifier(key: profile.identifier), name: profile.name)
         return service.newTicketViewController(
@@ -67,7 +67,11 @@ public class Support {
     /// - parameter reporter: The identity of the logged in user
     /// - parameter content: The content to report
     /// - parameter botLog: A Data object containing the log of the go bot
-    public func newTicketViewController(reporter: String, content: SupportContent, botLog: Data?) -> UIViewController? {
+    public func newTicketViewController(
+        reporter: String,
+        content: OffensiveContent,
+        botLog: Data?
+    ) -> UIViewController? {
         let identifier = Identifier(key: reporter)
         let reason = content.reason
         let content = Content(

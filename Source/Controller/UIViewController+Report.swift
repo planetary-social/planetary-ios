@@ -34,14 +34,14 @@ extension UIViewController {
                         in view: UIView? = nil,
                         reason: SupportReason,
                         from reporter: Identity) {
-        var profile: SupportProfile?
+        var profile: AbusiveProfile?
         if let about = post.metadata.author.about {
-            profile = SupportProfile(
+            profile = AbusiveProfile(
                 identifier: about.identity,
                 name: about.name
             )
         }
-        let content = SupportContent(
+        let content = OffensiveContent(
             identifier: post.key,
             profile: profile,
             reason: reason,

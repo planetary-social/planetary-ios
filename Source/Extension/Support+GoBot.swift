@@ -38,7 +38,7 @@ extension Support {
         }
     }
 
-    func newTicketViewController(reporter: String, profile: SupportProfile) -> UIViewController? {
+    func newTicketViewController(reporter: String, profile: AbusiveProfile) -> UIViewController? {
         guard let logUrls = Bots.current.logFileUrls.first else {
             return newTicketViewController(reporter: reporter, profile: profile, botLog: nil)
         }
@@ -51,7 +51,7 @@ extension Support {
         }
     }
 
-    public func newTicketViewController(reporter: String, content: SupportContent) -> UIViewController? {
+    public func newTicketViewController(reporter: String, content: OffensiveContent) -> UIViewController? {
         guard let logUrls = Bots.current.logFileUrls.first else {
             return newTicketViewController(reporter: reporter, content: content, botLog: nil)
         }
