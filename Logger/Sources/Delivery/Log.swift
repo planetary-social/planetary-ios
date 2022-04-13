@@ -111,6 +111,5 @@ public extension Log {
     /// Log a ERROR message
     static func error(_ message: String) {
         shared.service.unexpected(message, nil)
-        shared.service.unexpected(message, nil)
     }
 }
