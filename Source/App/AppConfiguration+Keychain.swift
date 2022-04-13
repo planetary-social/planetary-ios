@@ -16,6 +16,7 @@ extension AppConfiguration {
 
     func apply() {
         Keychain.configuration = self
+        AppConfigurations.add(self)
     }
 
     func unapply() {
@@ -34,8 +35,11 @@ extension AppConfigurations {
     }
 
     static func add(_ configuration: AppConfiguration) {
-        if let _ = Keychain.configurations.firstIndex(of: configuration) { return }
-        Keychain.configurations += [configuration]
+        if let existingIndex = Keychain.configurations.firstIndex(where: {configuration.identity == $0.identity}) {
+            Keychain.configurations[existingIndex] = configuration
+        } else {
+            Keychain.configurations += [configuration]
+        }
     }
 
     static func delete(_ configuration: AppConfiguration) {

@@ -12,11 +12,10 @@ extension Onboarding.Context {
 
     init?(from configuration: AppConfiguration) {
 
-        guard let identity = configuration.identity else { return nil }
         guard let network = configuration.network else { return nil }
         guard let bot = configuration.bot else { return nil }
 
-        self.identity = identity
+        self.identity = configuration.secret.identity
         self.network = network
         self.signingKey = configuration.hmacKey
         self.bot = bot

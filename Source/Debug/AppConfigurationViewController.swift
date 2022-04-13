@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 // TODO https://app.asana.com/0/914798787098068/1122607002060947/f
 // TODO deprecate identity manager
@@ -120,7 +121,7 @@ class AppConfigurationViewController: DebugTableViewController {
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: {
                 [unowned self] cell in
-                cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity!).rawValue
+            cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity).rawValue
             },
                                              actionClosure: nil)]
 
@@ -174,6 +175,7 @@ class AppConfigurationViewController: DebugTableViewController {
                                     fullySynced = finished
                                 } catch {
                                     self.alert(error: error)
+                                    return
                                 }
                             }
                             let statistics = await bot.statistics()
@@ -182,6 +184,10 @@ class AppConfigurationViewController: DebugTableViewController {
                             UserDefaults.standard.set(false, forKey: "prevent_feed_from_forks")
                             UserDefaults.standard.synchronize()
                             self.tableView.reloadData()
+                            Log.info(
+                                "User reset number of published messages " +
+                                "to \(self.configuration.numberOfPublishedMessages)"
+                            )
                             AppController.shared.hideProgress()
                         }
                     }
@@ -215,7 +221,7 @@ class AppConfigurationViewController: DebugTableViewController {
                 [unowned self] cell in
                 cell.textLabel?.isEnabled = self.canEditConfiguration
                 cell.textLabel?.numberOfLines = 1
-                guard let secret = self.configuration.secret ?? self.secret else { return }
+                let secret = self.configuration.secret 
                 cell.textLabel?.text = secret.jsonStringUnescaped()
             },
                                              actionClosure: {

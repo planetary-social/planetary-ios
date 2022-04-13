@@ -182,7 +182,7 @@ class FakeBot: Bot {
 
     func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
         self._network = config.network?.string
-        self._identity = config.secret?.identity
+        self._identity = config.secret.identity
         queue.async {
             completion(nil)
         }

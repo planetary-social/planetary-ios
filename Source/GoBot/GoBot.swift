@@ -145,12 +145,12 @@ class GoBot: Bot {
         config: AppConfiguration,
         completion: @escaping ErrorCompletion
     ) {
-        guard let secret = config.secret,
-            let network = config.network else {
-                  queue.async { completion(BotError.invalidAppConfiguration) }
-                  return
-              }
+        guard let network = config.network else {
+            queue.async { completion(BotError.invalidAppConfiguration) }
+            return
+        }
 
+        let secret = config.secret
         guard self._identity == nil else {
             if secret.identity == self._identity {
                 queue.async { completion(nil) }
