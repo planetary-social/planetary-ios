@@ -1,4 +1,8 @@
-# Run SwiftLint
+#!/bin/sh
+
+# Script to run swiftlint on modified files (staged or unstaged) using git diff
+# Source: https://github.com/realm/SwiftLint/issues/413
+
 START_DATE=$(date +"%s")
 
 SWIFT_LINT=/opt/homebrew/bin/swiftlint
@@ -24,5 +28,5 @@ fi
 
 END_DATE=$(date +"%s")
 
-DIFF=$(($END_DATE - $START_DATE))
-echo "SwiftLint took $(($DIFF / 60)) minutes and $(($DIFF % 60)) seconds to complete."
+DIFF=$((END_DATE - START_DATE))
+echo "SwiftLint took $((DIFF / 60)) minutes and $((DIFF % 60)) seconds to complete."
