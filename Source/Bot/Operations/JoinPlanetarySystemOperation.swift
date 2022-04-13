@@ -34,8 +34,10 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
         }
         
         guard self.userDefaults.bool(forKey: "prevent_feed_from_forks") else {
-            Log.info("JoinPlanetarySystemOperation refusing to join Planetary system pubs because forked feed " +
-                " protection is turned off.")
+            Log.info(
+                "JoinPlanetarySystemOperation refusing to join Planetary system pubs because forked feed " +
+                " protection is turned off."
+            )
             self.finish()
             return
         }
