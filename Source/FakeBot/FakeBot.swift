@@ -219,7 +219,7 @@ class FakeBot: Bot {
     func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
         queue.async {
-            completion(nil, 0)
+            completion(nil, 0, false)
         }
     }
 

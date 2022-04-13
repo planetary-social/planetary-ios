@@ -131,13 +131,62 @@ class AppConfigurationViewController: DebugTableViewController {
 
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: "Published messages",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure: {
-                [unowned self] cell in
-                cell.detailTextLabel?.text = "\(self.configuration.numberOfPublishedMessages)"
-            },
-                                             actionClosure: nil)]
+        settings += [
+            DebugTableViewCellModel(
+                title: "Published messages",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { [unowned self] cell in
+                    cell.detailTextLabel?.text = "\(self.configuration.numberOfPublishedMessages)"
+                }
+            )
+        ]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.Debug.resetForkedFeedProtection.text,
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { [weak self] cell in
+                    let enabled = AppConfiguration.current == self?.configuration
+                    cell.textLabel?.isEnabled = enabled
+                    cell.isUserInteractionEnabled = enabled
+                    cell.textLabel?.textColor = .systemBlue
+                },
+                actionClosure: { [weak self] cell in
+                    self?.confirm(
+                        from: cell,
+                        message: Text.Debug.resetForkedFeedProtectionDescription.text,
+                        isDestructive: true,
+                        confirmTitle: Text.Debug.reset.text
+                    ) {
+                        guard let self = self,
+                            let bot = self.configuration.bot else {
+                            self?.alert(message: Text.Debug.noBotConfigured.text)
+                            return
+                        }
+                        
+                        Task {
+                            AppController.shared.showProgress()
+                            // Make sure the view database is fully synced with the backing store.
+                            var fullySynced = false
+                            while !fullySynced {
+                                do {
+                                    let (_, finished) = try await bot.refresh(load: .long)
+                                    fullySynced = finished
+                                } catch {
+                                    self.alert(error: error)
+                                }
+                            }
+                            let statistics = await bot.statistics()
+                            self.configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
+                            self.configuration.apply()
+                            UserDefaults.standard.set(false, forKey: "prevent_feed_from_forks")
+                            UserDefaults.standard.synchronize()
+                            self.tableView.reloadData()
+                            AppController.shared.hideProgress()
+                        }
+                    }
+                }
+        )]
 
         return ("Statistics", settings, nil)
     }

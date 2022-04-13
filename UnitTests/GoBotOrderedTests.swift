@@ -341,7 +341,7 @@ class GoBotOrderedTests: XCTestCase {
 
         let ex = self.expectation(description: "\(#function) refresh")
         GoBotOrderedTests.shared.refresh(load: .short, queue: .main) {
-            err, _ in
+            err, _, _ in
             XCTAssertNil(err, "refresh error!")
             ex.fulfill()
         }
@@ -416,7 +416,7 @@ class GoBotOrderedTests: XCTestCase {
 
         var ex = self.expectation(description: "\(#function) 1")
         GoBotOrderedTests.shared.refresh(load: .short, queue: .main) {
-            err, _ in
+            err, _, _ in
             XCTAssertNil(err, "refresh error!")
             ex.fulfill()
         }
@@ -425,7 +425,7 @@ class GoBotOrderedTests: XCTestCase {
         // need two refresh calls to consume the whole batch
         ex = self.expectation(description: "\(#function) 2")
         GoBotOrderedTests.shared.refresh(load: .short, queue: .main) {
-            err, _ in
+            err, _, _ in
             XCTAssertNil(err, "refresh error!")
             ex.fulfill()
         }

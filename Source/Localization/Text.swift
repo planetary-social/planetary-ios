@@ -1,4 +1,4 @@
-// swiftlint:disable line_length
+// swiftlint:disable line_length identifier_name nesting
 
 // provide the types of any new Localizable enums
 // in order to automatically export their strings to the localization files
@@ -376,6 +376,10 @@ extension Text {
         case debugTitle = "Hacker Mode"
         case debugMenu = "Dangerous and powerful debug menu"
         case debugFooter = "This is where we let you shoot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options."
+        case resetForkedFeedProtection = "Reset Forked Feed Protection"
+        case resetForkedFeedProtectionDescription = "This will reset the number of published messages associated with your identity to the number currently in your database. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?"
+        case reset = "Reset"
+        case noBotConfigured = "No bot configured."
     }
 }
 

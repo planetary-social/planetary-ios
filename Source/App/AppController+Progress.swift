@@ -18,7 +18,7 @@ extension AppController {
         SVProgressHUD.showSuccess(withStatus: text)
     }
     
-    func showProgress(after: TimeInterval = 1, statusText: String? = nil) {
+    @MainActor func showProgress(after: TimeInterval = 1, statusText: String? = nil) {
         SVProgressHUD.setDefaultMaskType(.clear)
         SVProgressHUD.setBackgroundColor(.appBackground)
         SVProgressHUD.setForegroundColor(UIColor.tint.default)
@@ -26,11 +26,11 @@ extension AppController {
         SVProgressHUD.show(withStatus: statusText)
     }
 
-    func updateProgress(perc: Float64, status: String? = nil) {
+    @MainActor func updateProgress(perc: Float64, status: String? = nil) {
         SVProgressHUD.showProgress(Float(perc), status: status)
     }
     
-    func hideProgress(completion: (() -> Void)? = nil) {
+    @MainActor func hideProgress(completion: (() -> Void)? = nil) {
         SVProgressHUD.dismiss { completion?() }
     }
 }

@@ -425,7 +425,7 @@ class GoBot: Bot {
     private func internalRefresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         guard self._isRefreshing == false else {
             queue.async {
-                completion(nil, 0)
+                completion(nil, 0, false)
             }
             return
         }
@@ -434,11 +434,21 @@ class GoBot: Bot {
         
         let elapsed = Date()
         self.utilityQueue.async {
-            self.updateReceive(limit: load.rawValue) {
-                [weak self] error in
+            self.updateReceive(limit: load.rawValue) { [weak self] error in
+                
+                // Figure out if the refresh got the ViewDatabase fully synced with the backing store.
+                var finished = false
+                do {
+                    let (_, numberOfRemainingMessages) = try self?.needsViewFill() ?? (0, -1)
+                    finished = numberOfRemainingMessages == 0
+                } catch {
+                    Log.optional(error)
+                }
+                
                 queue.async {
                     self?.notifyRefreshComplete(in: -elapsed.timeIntervalSinceNow,
                                                 error: error,
+                                                finished: finished,
                                                 completion: completion)
                 }
             }
@@ -447,13 +457,14 @@ class GoBot: Bot {
 
     private func notifyRefreshComplete(in elapsed: TimeInterval,
                                        error: Error?,
+                                       finished: Bool,
                                        completion: @escaping RefreshCompletion) {
         self._isRefreshing = false
         statisticsQueue.sync {
             self._statistics.lastRefreshDate = Date()
             self._statistics.lastRefreshDuration = elapsed
         }
-        completion(error, elapsed)
+        completion(error, elapsed, finished)
         NotificationCenter.default.post(name: .didRefresh, object: nil)
     }
     
@@ -533,8 +544,6 @@ class GoBot: Bot {
                     return
                 }
                 
-                self?.config?.numberOfPublishedMessages += 1
-                self?.config?.apply()
                 Log.info("Published message with key \(key)")
                 
                 // Copy the newly published post into the ViewDatabase immediately.
@@ -546,6 +555,7 @@ class GoBot: Bot {
                     let lastPostIndex = try self.database.largestSeqFromPublishedLog()
                     let publishedPosts = try self.bot.getPublishedLog(after: lastPostIndex)
                     try self.database.fillMessages(msgs: publishedPosts)
+                    try self.updateNumberOfPublishedMessages(for: identity)
                     completionQueue.async { completion(key, nil) }
                 } catch {
                     completionQueue.async { completion(MessageIdentifier.null, error) }
@@ -560,6 +570,20 @@ class GoBot: Bot {
         let numberOfMessagesInRepo = try self.database.numberOfMessages(for: feed)
         let knownNumberOfMessagesInKeychain = self.config?.numberOfPublishedMessages ?? 0
         return numberOfMessagesInRepo < knownNumberOfMessagesInKeychain
+    }
+                                                                 
+    /// Updates the number of known published messages for the given feed.
+    private func updateNumberOfPublishedMessages(for feed: FeedIdentifier) throws {
+        guard let configuration = config else {
+            return
+        }
+        
+        let numberOfMessagesInRepo = try self.database.numberOfMessages(for: feed)
+        configuration.numberOfPublishedMessages = max(
+            numberOfMessagesInRepo,
+            configuration.numberOfPublishedMessages
+        )
+        configuration.apply()
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {

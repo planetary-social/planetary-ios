@@ -227,6 +227,10 @@
 "Debug.debugTitle" = "Modo Hacker";
 "Debug.debugMenu" = "Menú de desarrollo poderoso y peligroso";
 "Debug.debugFooter" = "Esta es la parte en la que dejamos que te dispares en el pié. Acá es donde accedés a tu llave privada, configurás nuevas llaves, ves información sobre la red, sobre los pubs, y todo tipo de cosas. Cuidado con lo que cambiás en este menú, podés romper cosas con estas opciones.";
+"Debug.resetForkedFeedProtection" = "Reset Forked Feed Protection";
+"Debug.resetForkedFeedProtectionDescription" = "This will reset the number of published messages associated with your identity to the number currently in your database. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?";
+"Debug.reset" = "Reset";
+"Debug.noBotConfigured" = "No bot configured.";
 
 "Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
 "Error.unexpected" = "Something unexpected happened.";
