@@ -30,8 +30,8 @@ extension ViewDatabaseError: LocalizedError {
             return "Unknown table: \(table)"
         case .unhandledContentType(let contentType):
             return "Unhandled content type: \(contentType)"
-        case .messageConstraintViolation(let identity):
-            return "Message constraint violation: \(identity)"
+        case .messageConstraintViolation(let identity, let sqlError):
+            return "Message constraint violation: \(identity), \(sqlError)"
         }
     }
 }

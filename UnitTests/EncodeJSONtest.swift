@@ -104,15 +104,17 @@ class EncodingTests: XCTestCase {
     }
 }
 
+/// Converts a string representing Unicode characters codes in hexadecimal format to the Unicode string they represent.
 private func stringFromHex(hex: String) -> String {
     var hex = hex
     var data = Data()
     while hex.count > 0 {
-        let c: String = hex.substring(to: hex.index(hex.startIndex, offsetBy: 2))
-        hex = hex.substring(from: hex.index(hex.startIndex, offsetBy: 2))
-        var ch: UInt32 = 0
-        Scanner(string: c).scanHexInt32(&ch)
-        var char = UInt8(ch)
+        let endIndex = hex.index(hex.startIndex, offsetBy: 2)
+        let nextHex = String(hex[..<endIndex])
+        hex = String(hex[endIndex...])
+        var nextInt: UInt64 = 0
+        Scanner(string: nextHex).scanHexInt64(&nextInt)
+        var char = UInt8(nextInt)
         data.append(&char, count: 1)
     }
     return String(data: data, encoding: .utf8)!

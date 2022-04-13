@@ -259,7 +259,7 @@ class HomeViewController: ContentViewController {
             if currentProxy.count == 0 {
                 self?.load(animated: true)
             } else {
-                let shouldAnimate = self?.navigationController?.topViewController == self
+//                let shouldAnimate = self?.navigationController?.topViewController == self
                 // self?.floatingRefreshButton.show(animated: shouldAnimate)
             }
         }
