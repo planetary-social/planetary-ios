@@ -273,7 +273,6 @@ class GoBotIntegrationTests: XCTestCase {
             root: nil,
             text: "Be yourself; everyone else is already taken"
         )
-        let test = mention.attributedString
         AppConfiguration.current?.numberOfPublishedMessages = 0
 
         // Act

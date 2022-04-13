@@ -20,8 +20,10 @@ class GalleryView: UIView, KeyValueUpdateable {
         view.contentScaleMode = .scaleAspectFill
         view.pageIndicator = UIPageControl.default()
         view.preload = .all
-        view.activityIndicator = DefaultActivityIndicator(style: .gray,
-                                                          color: UIColor.loadingIcon)
+        view.activityIndicator = DefaultActivityIndicator(
+            style: UIActivityIndicatorView.Style.medium,
+            color: UIColor.loadingIcon
+        )
         return view
     }()
 

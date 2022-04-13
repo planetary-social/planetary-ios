@@ -11,6 +11,7 @@ import UIKit
 import SwiftUI
 import Analytics
 import CrashReporting
+import Logger
 
 class MenuViewController: UIViewController, ConnectedPeerListRouter {
     
@@ -89,9 +90,18 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     }
 
     private func load() {
-        guard let about = Bots.current.about else { return }
-        self.menuView.profileView.update(with: about)
-        self.menuView.label.text = about.nameOrIdentity
+        Task { [weak self] in
+            do {
+                guard let about = try await Bots.current.about() else {
+                    return
+                }
+            
+                self?.menuView.profileView.update(with: about)
+                self?.menuView.label.text = about.nameOrIdentity
+            } catch {
+                Log.optional(error)
+            }
+        }
     }
 
     // MARK: Actions

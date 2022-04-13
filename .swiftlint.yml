@@ -121,4 +121,5 @@ identifier_name:
     - key
     - pub
     - bot
+    - sut
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, codeclimate, junit, html, emoji, sonarqube, markdown, github-actions-logging)

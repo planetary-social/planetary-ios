@@ -16,8 +16,8 @@ extension Bot {
     func login(with configuration: AppConfiguration,
                completion: @escaping ((Bool) -> Void)) {
         guard configuration.canLaunch else { completion(false); return }
-        guard let network = configuration.network else { completion(false); return }
-        guard let secret = configuration.secret else { completion(false); return }
+        guard configuration.network != nil else { completion(false); return }
+        guard configuration.secret != nil else { completion(false); return }
 
         Bots.current.login(config: configuration) { error in
             let loggedIn = ((error as? BotError) == .alreadyLoggedIn) || error == nil

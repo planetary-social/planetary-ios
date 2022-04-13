@@ -392,6 +392,7 @@ extension Text {
         case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
         case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
         case invalidAppConfiguration = "Invalid app configuration"
+        case couldNotGenerateLink = "Could not generate link."
     }
 }
 

@@ -31,7 +31,9 @@ class AvatarButton: ImageButton {
     }
 
     func setImageForMe() {
-        setImage(for: Bots.current.about)
+        Task {
+            setImage(for: try? await Bots.current.about())
+        }
     }
 
     func setImage(for about: About?) {
