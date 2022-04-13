@@ -186,12 +186,14 @@ class AboutViewController: ContentViewController {
             self.imagePicker.dismiss {
                 AppController.shared.showProgress()
                 self.publishProfilePhoto(uiimage) { [weak self] error in
-                    AppController.shared.hideProgress()
-                    if let error = error {
-                        Log.optional(error)
-                        CrashReporting.shared.reportIfNeeded(error: error)
-                        self?.alert(error: error)
-                        return
+                    DispatchQueue.main.async {
+                        AppController.shared.hideProgress()
+                        if let error = error {
+                            Log.optional(error)
+                            CrashReporting.shared.reportIfNeeded(error: error)
+                            self?.alert(error: error)
+                            return
+                        }
                     }
                 }
             }
@@ -278,8 +280,10 @@ class AboutViewController: ContentViewController {
                         NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
                     }
                     
-                    self?.aboutView.imageView.fade(to: uiimage)
-                    completionHandler(nil)
+                    DispatchQueue.main.async {
+                        self?.aboutView.imageView.fade(to: uiimage)
+                        completionHandler(nil)
+                    }
                 }
             }
         }
