@@ -24,11 +24,11 @@
 "Text.helpAndSupport" = "Pomoc";
 "Text.reportBug" = "Zgłoś Problem";
 "Text.settings" = "Ustawienia";
-"Text.yourNetwork" = "Your Network";
+"Text.yourNetwork" = "Twoja Sieć";
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
-"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.showMeInDirectory" = "Pokaż mnie w katalogu";
 "Text.showMeInUserDirectory" = "Pokaż mnie w katalogu użytkowników";
 "Text.hideMeFromUserDirectory" = "Nie pokazuj mnie w katalogu użytkowników";
@@ -99,7 +99,7 @@
 "Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Kanały";
 "Text.select" = "Wybierz";
-"Text.home" = "Twoja Strona";
+"Text.home" = "Home Feed";
 "Text.explore" = "Odkryj";
 "Text.messages" = "Wiadomości";
 "Text.notifications" = "Powiadomienia";
@@ -233,6 +233,9 @@
 "Error.unexpected" = "Stało się coś nieoczekiwanego.";
 "Error.supportNotConfigured" = "Wsparcie techniczne nie jest dostępne.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.invalidAppConfiguration" = "Invalid app configuration";
+"Error.couldNotGenerateLink" = "Could not generate link.";
 
 "Channel.one" = "kanał";
 "Channel.many" = "kanały";
@@ -246,8 +249,3 @@
 "Report.postReplied" = "%@ odpowiedział na Twój post";
 "Report.feedMentioned" = "%@ wspomniał o Tobie w poście";
 "Report.messageLiked" = "%@ polubił twój post";
-
-"Error.login" = "Nie udało się uruchomić połączenia z siecią. Uruchom ponownie, aby spróbować naprawić tą sytuację, lub użyj opcji Ignoruj, aby przeglądać zawartość, która została już pobrana na Twoje urządzenie.";
-"Error.unexpected" = "Stało się coś nieoczekiwanego.";
-"Error.supportNotConfigured" = "Wsparcie techniczne nie jest dostępne.";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";

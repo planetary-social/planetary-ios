@@ -16,14 +16,12 @@ import CrashReporting
 
     private let blob: BlobIdentifier
 
-    private let imageView: UIImageView = {
-        let view = UIImageView.forAutoLayout()
-        view.contentMode = .scaleAspectFit
-        return view
-    }()
-
+    private let imageView: UIImageView
+    
     init(with blob: BlobIdentifier) {
         self.blob = blob
+        imageView = UIImageView.forAutoLayout()
+        imageView.contentMode = .scaleAspectFit
         super.init(scrollable: false)
     }
 

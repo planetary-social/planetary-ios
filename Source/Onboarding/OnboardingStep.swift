@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import Analytics
 
-protocol OnboardingStepDelegate: class {
+protocol OnboardingStepDelegate: AnyObject {
 
     func step(_ step: OnboardingStep, next: OnboardingStep.Name?)
     func step(_ step: OnboardingStep, back: OnboardingStep.Name?)

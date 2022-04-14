@@ -54,13 +54,13 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
 
     override func performPrimaryAction(sender button: UIButton) {
 
-        var identities = self.selected.map { $0.identity }
+        let identities = self.selected.map { $0.identity }
         self.data.following = identities
 
         // SIMULATE ONBOARDING
         if self.data.simulated { self.next(); return }
 
-        guard let context = self.data.context else {
+        guard self.data.context != nil else {
             Log.unexpected(.missingValue, "Expecting self.data.context, skipping step")
             self.next()
             return

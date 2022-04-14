@@ -611,13 +611,9 @@ class ViewDatabase {
         }
 
         let qry = self.msgs
-           .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
+            .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
             .where(self.msgs[colAuthorID] == currentUserID)
             .where(self.msgs[colMsgType] == "pub")
-            .join(authors, on: authors[colAuthor] == pubs[colKey])
-            .join(contacts, on: contacts[colContactID] == authors[colID])
-            .filter(contacts[colAuthorID] == currentUserID)
-            .filter(colContactState == 1)
 
         return try db.prepare(qry).map { row in
             let host = try row.get(colHost)

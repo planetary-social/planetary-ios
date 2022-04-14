@@ -26,7 +26,7 @@ typealias SaveCompletion = ((Saveable) -> Void)
     func save()
 }
 
-protocol SaveableDelegate: class {
+protocol SaveableDelegate: AnyObject {
 
     /// Indicates when this protocol has changed `isReadyToSave` state.
     func saveable(_ saveable: Saveable, isReadyToSave: Bool)

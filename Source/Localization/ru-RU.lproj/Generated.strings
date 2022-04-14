@@ -1,34 +1,34 @@
 // This file is auto-generated at build time
 // Existing translations are left in place, and new keys are added as needed
 
-"Text.planetary" = "Planetary";
-"Text.error" = "Oops";
-"Text.cancel" = "Cancel";
-"Text.skip" = "Skip";
-"Text.ok" = "OK";
-"Text.next" = "Next";
-"Text.done" = "Done";
-"Text.save" = "Save";
-"Text.yes" = "Yes";
-"Text.no" = "No";
-"Text.tryAgain" = "Try Again";
-"Text.loading" = "Loading...";
-"Text.today" = "Today";
-"Text.yesterday" = "Yesterday";
-"Text.recently" = "Recently";
-"Text.future" = "In the future";
+"Text.planetary" = "Планетарные";
+"Text.error" = "Ой";
+"Text.cancel" = "Отмена";
+"Text.skip" = "Пропустить";
+"Text.ok" = "ОК";
+"Text.next" = "Следующий";
+"Text.done" = "Готово";
+"Text.save" = "Сохранить";
+"Text.yes" = "Да";
+"Text.no" = "Нет";
+"Text.tryAgain" = "Попробовать снова";
+"Text.loading" = "Загрузка...";
+"Text.today" = "Cегодня";
+"Text.yesterday" = "Вчера";
+"Text.recently" = "Недавние";
+"Text.future" = "В будущем";
 "Text.daysAgo" = "{{ days }} days ago";
 "Text.atDayTime" = "{{ day }} at {{ time }}";
 "Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
-"Text.yourProfile" = "Your Profile";
-"Text.helpAndSupport" = "Help and Support";
-"Text.reportBug" = "Report a Bug";
-"Text.settings" = "Settings";
+"Text.yourProfile" = "Ваш профиль";
+"Text.helpAndSupport" = "Справка и поддержка";
+"Text.reportBug" = "Сообщить об ошибке";
+"Text.settings" = "Настройки";
 "Text.yourNetwork" = "Your Network";
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
-"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.showMeInDirectory" = "Show me in the directory";
 "Text.showMeInUserDirectory" = "Show me in the user directory";
 "Text.hideMeFromUserDirectory" = "Hide me from the user directory";
@@ -99,7 +99,7 @@
 "Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Hashtags";
 "Text.select" = "Select";
-"Text.home" = "For You";
+"Text.home" = "Home Feed";
 "Text.explore" = "Discover";
 "Text.messages" = "Messages";
 "Text.notifications" = "Notifications";
@@ -233,6 +233,9 @@
 "Error.unexpected" = "Something unexpected happened.";
 "Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.invalidAppConfiguration" = "Invalid app configuration";
+"Error.couldNotGenerateLink" = "Could not generate link.";
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";
@@ -246,8 +249,3 @@
 "Report.postReplied" = "%@ replied to your post";
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";
-
-"Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
-"Error.unexpected" = "Something unexpected happened.";
-"Error.supportNotConfigured" = "Support is not configured.";
-"Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";

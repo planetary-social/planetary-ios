@@ -131,11 +131,11 @@ class AppController: UIViewController {
             // self?.showProgress(statusText: notification.databaseProgressStatus)
             self?.missionControlCenter.pause()
         }
-        let updateProgress = { [weak self] (notification: Notification) -> Void in
-            guard let percDone = notification.databaseProgressPercentageDone else { return }
-            guard let status = notification.databaseProgressStatus else { return }
-            // self?.updateProgress(perc: percDone, status: status)
-        }
+//        let updateProgress = { (notification: Notification) -> Void in
+//            guard let percDone = notification.databaseProgressPercentageDone else { return }
+//            guard let status = notification.databaseProgressStatus else { return }
+//            self?.updateProgress(perc: percDone, status: status)
+//        }
         let dismissProgress = { [weak self] (_: Notification) -> Void in
             // self?.hideProgress()
             self?.missionControlCenter.resume()
@@ -150,10 +150,10 @@ class AppController: UIViewController {
                                                                      object: nil,
                                                                      queue: .main,
                                                                      using: dismissProgress)
-        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateFSCKRepair,
-                                                                       object: nil,
-                                                                       queue: .main,
-                                                                       using: updateProgress)
+//        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateFSCKRepair,
+//                                                                       object: nil,
+//                                                                       queue: .main,
+//                                                                       using: updateProgress)
     }
     
     func removeObservers() {
