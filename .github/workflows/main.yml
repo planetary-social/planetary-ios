@@ -1,6 +1,9 @@
 name: CI
 on:
-  pull_request
+  pull_request:
+  push:
+    - main
+    
 jobs:
   unit_test:
     name : Unit Tests
