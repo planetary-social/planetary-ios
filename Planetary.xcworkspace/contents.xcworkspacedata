@@ -17,6 +17,13 @@
       location = "group:Secrets">
    </FileRef>
    <FileRef
+      location = "group:Support">
+   </FileRef>
+   <Group
+      location = "group:Performance Tests"
+      name = "Performance Tests">
+   </Group>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

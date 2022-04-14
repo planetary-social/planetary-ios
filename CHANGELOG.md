@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-- Fixed invitation to three.planetary.pub
+## [1.1.1] = 2022-04-14
 - Added Russian and Ukrainian language pubs to the community pub list #474
 - Fixed secret key JSON overflowing its text box in the debug settings #493 @cappster
+- Fixed some error messages showing placeholder text instead of localized text #476
+- Fixed a case where no error message was shown if adding a photo failed #482
+- Fixed a bug where the users feed could be forked after importing a key using the debug menu. #495
+- Fixed a bug where Planetary would publish duplicate pub messages. #495 
+- Fixed the embedded invitation to Planetary System Pub 3 #477 
 
 ## [1.1.0] = 2022-04-04
 - Added several new community pubs #450

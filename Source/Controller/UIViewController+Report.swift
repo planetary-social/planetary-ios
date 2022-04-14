@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Support
 
 extension UIViewController {
 
@@ -33,7 +34,21 @@ extension UIViewController {
                         in view: UIView? = nil,
                         reason: SupportReason,
                         from reporter: Identity) {
-        guard let controller = Support.shared.newTicketViewController(from: reporter, reporting: post, reason: reason, view: view) else {
+        var profile: AbusiveProfile?
+        if let about = post.metadata.author.about {
+            profile = AbusiveProfile(
+                identifier: about.identity,
+                name: about.name
+            )
+        }
+        let content = OffensiveContent(
+            identifier: post.key,
+            profile: profile,
+            reason: reason,
+            view: view
+        )
+        let controller = Support.shared.newTicketViewController(reporter: reporter, content: content)
+        guard let controller = controller else {
             AppController.shared.alert(
                 title: Text.error.text,
                 message: Text.Error.supportNotConfigured.text,

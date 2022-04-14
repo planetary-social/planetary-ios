@@ -235,6 +235,7 @@
 "Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
+"Error.couldNotGenerateLink" = "Could not generate link.";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";

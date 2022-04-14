@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol ThreadReplyPaginatedTableViewDataSourceDelegate: class {
+protocol ThreadReplyPaginatedTableViewDataSourceDelegate: AnyObject {
     
     func threadReplyView(view: ThreadReplyView, didLoad keyValue: KeyValue)
 }

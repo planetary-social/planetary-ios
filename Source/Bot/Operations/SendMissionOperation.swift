@@ -10,8 +10,8 @@ import Foundation
 import Logger
 import CrashReporting
 
-/// Starts and/or cycles connections to pub servers. It redeems invitations to the system pubs if the user
-/// didn't do it previously.
+/// Starts and/or cycles connections to pub servers. It also redeems invitations to the system pubs if the user
+/// has opted in.
 class SendMissionOperation: AsynchronousOperation {
     
     enum MissionQuality {
@@ -24,9 +24,6 @@ class SendMissionOperation: AsynchronousOperation {
     
     /// Result of the operation
     private(set) var result: Result<Void, Error> = .failure(AppError.unexpected)
-    
-    /// Minimum number of Planetary's pubs the users must have been invited to
-    private static let minNumberOfStars = 3
     
     /// Internal operation queue meant for executing other operations
     private let operationQueue = OperationQueue()
@@ -65,41 +62,21 @@ class SendMissionOperation: AsynchronousOperation {
                     CrashReporting.shared.reportIfNeeded(error: error)
                 }
                 
-                guard let self = self else {
+                guard let self = self, let appConfiguration = AppConfiguration.current else {
                     return
                 }
                 
-                // Get the stars the users already redeemed an invite to
-                let joinedStars = systemPubs.filter { star in
-                    allJoinedPubs.contains { (pub) -> Bool in
-                        pub.address.key == star.feed
-                    }
+                let joinPlanetarySystemOperation = JoinPlanetarySystemOperation(
+                    appConfiguration: appConfiguration,
+                    operationQueue: self.operationQueue
+                )
+                
+                var peerPool = allJoinedPubs.compactMap {
+                    $0.toPeer().multiserverAddress
                 }
                 
-                var starsToJoin = Set<Star>()
-                var redeemInviteOperations = [RedeemInviteOperation]()
-                
-                // Join more stars if we haven't yet.
-                let numberOfMissingStars = SendMissionOperation.minNumberOfStars - joinedStars.count
-                if numberOfMissingStars > 0 {
-                    Log.debug("Joining \(numberOfMissingStars) stars to get to minimum.")
-                    
-                    // Let's take a random set of stars to reach the minimum and create Redeem Invite
-                    // operations
-                    let missingStars = systemPubs.subtracting(joinedStars)
-                    let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
-                    redeemInviteOperations = randomSampleOfStars.map {
-                        RedeemInviteOperation(star: $0, shouldFollow: false)
-                    }
-                    
-                    // Lets sync to available stars and newly redeemed stars
-                    starsToJoin = missingStars
-                }
-                
-                let peerPool = allJoinedPubs.compactMap {
-                    $0.toPeer().multiserverAddress
-                } + starsToJoin.compactMap {
-                    $0.toPeer().multiserverAddress
+                if peerPool.isEmpty {
+                    peerPool = systemPubs.compactMap { $0.toPeer().multiserverAddress }
                 }
                 
                 let syncOperation = SyncOperation(peerPool: peerPool)
@@ -109,9 +86,9 @@ class SendMissionOperation: AsynchronousOperation {
                 case .high:
                     syncOperation.notificationsOnly = false
                 }
-                redeemInviteOperations.forEach { syncOperation.addDependency($0) }
+                syncOperation.addDependency(joinPlanetarySystemOperation)
                 
-                let operations = redeemInviteOperations + [syncOperation]
+                let operations = [joinPlanetarySystemOperation, syncOperation]
                 self.operationQueue.addOperations(operations, waitUntilFinished: true)
                 
                 Log.info("SendMissionOperation finished.")

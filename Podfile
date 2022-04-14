@@ -12,7 +12,6 @@ target 'Planetary' do
     pod 'PhoneNumberKit', '3.2.0'
     pod 'SQLite.swift', '0.12.2'
     pod 'SVProgressHUD', '2.2.5'
-    pod 'ZendeskSupportSDK'
     pod 'Down', '0.9.2'
     pod 'SkeletonView', '1.8.7'
 end

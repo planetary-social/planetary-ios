@@ -94,46 +94,25 @@ body: MIT License
 Copyrig…
 version: 2.2.5
 
-name: ZendeskCommonUISDK, nameSpecified: 
-body: ZendeskSDKs
-Created …
-version: 6.1.1
-
-name: ZendeskCoreSDK, nameSpecified: 
-body: ZendeskSDKs
-Created …
-version: 2.5.1
-
-name: ZendeskMessagingAPISDK, nameSpecified: 
-body: ZendeskSDKs
-Created …
-version: 3.8.2
-
-name: ZendeskMessagingSDK, nameSpecified: 
-body: ZendeskSDKs
-Created …
-version: 3.8.2
-
-name: ZendeskSDKConfigurationsSDK, nameSpecified: 
-body: ZendeskSDKs
-Created …
-version: 1.1.8
-
-name: ZendeskSupportProvidersSDK, nameSpecified: 
-body: ZendeskSDKs
-Created …
-version: 5.3.0
-
-name: ZendeskSupportSDK, nameSpecified: 
-body: ZendeskSDKs
-Created …
-version: 5.3.0
-
-name: bugsnag-cocoa, nameSpecified: Bugsnag, owner: bugsnag, version: 6.16.4
+name: bugsnag-cocoa, nameSpecified: Bugsnag, owner: bugsnag, version: 6.16.7
 
 name: CocoaLumberjack, nameSpecified: CocoaLumberjack, owner: CocoaLumberjack, version: 3.7.4
 
+name: commonui_sdk_ios, nameSpecified: ZendeskCommonUISDK, owner: zendesk, version: 6.1.3
+
+name: core_sdk_ios, nameSpecified: ZendeskCoreSDK, owner: zendesk, version: 2.6.0
+
+name: messaging_sdk_ios, nameSpecified: ZendeskMessagingSDK, owner: zendesk, version: 3.8.4
+
+name: messagingapi_sdk_ios, nameSpecified: ZendeskMessagingAPISDK, owner: zendesk, version: 3.8.4
+
 name: posthog-ios, nameSpecified: PostHog, owner: PostHog, version: 1.4.4
+
+name: sdkconfigurations_sdk_ios, nameSpecified: ZendeskSDKConfigurationsSDK, owner: zendesk, version: 1.1.10
+
+name: support_providers_sdk_ios, nameSpecified: ZendeskSupportProvidersSDK, owner: zendesk, version: 5.4.1
+
+name: support_sdk_ios, nameSpecified: ZendeskSupportSDK, owner: zendesk, version: 5.4.1
 
 name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.4.2
 

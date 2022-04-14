@@ -18,7 +18,7 @@ extension AppController {
         SVProgressHUD.showSuccess(withStatus: text)
     }
     
-    func showProgress(after: TimeInterval = 1, statusText: String? = nil) {
+    func showProgress(after: TimeInterval = 0.3, statusText: String? = nil) {
         SVProgressHUD.setDefaultMaskType(.clear)
         SVProgressHUD.setBackgroundColor(.appBackground)
         SVProgressHUD.setForegroundColor(UIColor.tint.default)

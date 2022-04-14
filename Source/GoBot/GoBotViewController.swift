@@ -226,7 +226,7 @@ extension GoBotViewController {
             _ in
             do {
                 if GoBot.shared.bot.isRunning {
-                    GoBot.shared.bot.logout()
+                    _ = GoBot.shared.bot.logout()
                 }
 
                 // TODO https://app.asana.com/0/914798787098068/1153254864207581/f
