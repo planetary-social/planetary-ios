@@ -11,6 +11,7 @@ SWIFT_LINT=/opt/homebrew/bin/swiftlint
 run_swiftlint() {
     local filename="${1}"
     if [[ "${filename##*.}" == "swift" ]]; then
+        #${SWIFT_LINT} autocorrect --path "${filename}"
         ${SWIFT_LINT} lint --lenient --path "${filename}"
     fi
 }
