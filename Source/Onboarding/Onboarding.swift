@@ -86,8 +86,6 @@ class Onboarding {
         guard name.isValidName else { completion(nil, .invalidName); return }
         guard Bots.current.identity == nil else { completion(nil, .cannotOnboardWhileLoggedIn); return }
 
-        Analytics.shared.trackOnboardingStart()
-
         // create secret
         GoBot.shared.createSecret { secret, error in
             Log.optional(error)
@@ -168,7 +166,6 @@ class Onboarding {
         AppConfigurations.current.save()
 
         // mark as started
-        Analytics.shared.trackOnboardingEnd()
         Onboarding.set(status: .started, for: secret.identity)
     }
 
