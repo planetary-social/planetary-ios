@@ -123,6 +123,7 @@ class GoBot: Bot {
     func exit() {
         userInitiatedQueue.async {
             self.bot.disconnectAll()
+            self.database.close()
         }
     }
     

@@ -30,7 +30,7 @@ struct Pub: ContentCodable {
 
 /// Represents a [multiserver address](https://github.com/ssb-js/multiserver).
 /// Currently only supports net (TCP) and shs protocols
-struct MultiserverAddress: Codable {
+struct MultiserverAddress: Codable, Hashable {
     
     let rawValue: String
     let key: PublicKey

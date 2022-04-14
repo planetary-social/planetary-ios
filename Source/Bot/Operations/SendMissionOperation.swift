@@ -53,7 +53,7 @@ class SendMissionOperation: AsynchronousOperation {
             CrashReporting.shared.reportIfNeeded(error: error)
             
             let systemPubs = Set(AppConfiguration.current?.systemPubs ?? [])
-            let allPubAddresses = systemPubs.map { $0.address } + allJoinedPubs.map { $0.address }
+            let allPubAddresses = Array(Set(systemPubs.map { $0.address } + allJoinedPubs.map { $0.address }))
             Log.info("Sending all joined pubs & system pubs to bot (\(allPubAddresses.count)).")
             
             Bots.current.seedPubAddresses(addresses: allPubAddresses, queue: queue) { [weak self] result in

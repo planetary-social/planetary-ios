@@ -86,7 +86,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
     }
     
-    func test001_regression_tests() {
+    @MainActor func test001_regression_tests() {
         // first, log out for things we shouldn't be able to do
         let ex = self.expectation(description: "\(#function)")
         GoBotOrderedTests.shared.logout {

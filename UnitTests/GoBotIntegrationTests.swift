@@ -53,10 +53,10 @@ class GoBotIntegrationTests: XCTestCase {
         }
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
         let logoutExpectation = self.expectation(description: "logout")
-        sut.logout { _ in logoutExpectation.fulfill() }
-        waitForExpectations(timeout: 10, handler: nil)
+        await sut.logout { _ in logoutExpectation.fulfill() }
+        await waitForExpectations(timeout: 10, handler: nil)
         sut.exit()
         try fm.removeItem(atPath: workingDirectory)
     }
@@ -293,9 +293,9 @@ class GoBotIntegrationTests: XCTestCase {
 
     // MARK: - Preloaded Pubs
     
-    func testPubsArePreloaded() throws {
+    func testPubsArePreloaded() async throws {
         // Arrange
-        try tearDownWithError()
+        try await tearDown()
         do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
 
         let mockPreloader = MockPreloadedPubService()
@@ -303,8 +303,7 @@ class GoBotIntegrationTests: XCTestCase {
         let loginExpectation = self.expectation(description: "login")
         
         // Act
-        sut.login(config: appConfig) {
-            error in
+        sut.login(config: appConfig) { error in
             defer { loginExpectation.fulfill() }
             XCTAssertNil(error)
         }

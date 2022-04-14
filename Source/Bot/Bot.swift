@@ -256,19 +256,6 @@ extension Bot {
         }
     }
     
-    func about() async throws -> About {
-        try await withCheckedThrowingContinuation { continuation in
-            self.about { about, error in
-                if let about = about {
-                    continuation.resume(returning: about)
-                } else {
-                    let fallbackError = GoBotError.unexpectedFault("Could not fetch about message.")
-                    continuation.resume(throwing: error ?? fallbackError)
-                }
-            }
-        }
-    }
-    
     func abouts(completion:  @escaping AboutsCompletion) {
         self.abouts(queue: .main, completion: completion)
     }

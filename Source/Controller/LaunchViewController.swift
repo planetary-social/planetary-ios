@@ -161,10 +161,10 @@ class LaunchViewController: UIViewController {
         let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
             Log.debug("Resetting current configuration and restarting launch...")
             AppConfiguration.current?.unapply()
-            bot.logout { err in
+            bot.logout { error in
                 // Don't report error here becuase the normal path is to actually receive
                 // a notLoggedIn error
-                Log.optional(err)
+                Log.optional(error)
                 
                 ssbDropIndexData()
                 
@@ -186,19 +186,23 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         
         do {
+            guard let identity = configuration.secret?.identity else {
+                Log.error("Could not fetch identity while logging in.")
+                return
+            }
+            
             let about = try await bot.about()
             CrashReporting.shared.identify(
-                identifier: about.identity,
-                name: about.name,
+                identifier: identity,
+                name: about?.name,
                 networkKey: network.string,
                 networkName: network.name
             )
             Analytics.shared.identify(
-                identifier: about.identity,
-                name: about.name,
+                identifier: identity,
+                name: about?.name,
                 network: network.name
             )
-            
         } catch {
             Log.optional(error)
             // No need to show an alert to the user as we can fetch the current about later
