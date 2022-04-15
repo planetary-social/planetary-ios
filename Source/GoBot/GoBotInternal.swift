@@ -504,17 +504,12 @@ class GoBotInternal {
         if hexRef.isEmpty {
             throw GoBotError.unexpectedFault("blobGet: could not make hex representation of blob reference")
         }
-         // first 2 chars are directory
-        let dir = String(hexRef.prefix(2))
-        // rest ist filename
-        let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
-        let rest = String(hexRef[restIdx...])
 
         var u = URL(fileURLWithPath: self.repoPath)
+        u.appendPathComponent("raptor")
         u.appendPathComponent("blobs")
-        u.appendPathComponent("sha256")
-        u.appendPathComponent(dir)
-        u.appendPathComponent(rest)
+        u.appendPathComponent("storage")
+        u.appendPathComponent(hexRef)
        
         return u
     }
