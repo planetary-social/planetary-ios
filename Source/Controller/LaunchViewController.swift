@@ -16,12 +16,26 @@ class LaunchViewController: UIViewController {
 
     // MARK: Lifecycle
     
-    var userDefaults = UserDefaults.standard
-
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
+    var appConfiguration: AppConfiguration?
+    var appController: AppController
+    var userDefaults: UserDefaults
+    
+    init(
+        appConfiguration: AppConfiguration?,
+        appController: AppController,
+        userDefaults: UserDefaults = UserDefaults.standard
+    ) {
+        self.appConfiguration = appConfiguration
+        self.appController = appController
+        self.userDefaults = userDefaults
+        super.init(nibName: nil, bundle: nil)
     }
-
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -51,22 +65,20 @@ class LaunchViewController: UIViewController {
         }
 
         // if no configuration then onboard
-        if AppConfiguration.needsToBeCreated {
+        guard let configuration = appConfiguration else {
             self.launchIntoOnboarding()
             return
         }
 
         // if configuration and is required then onboard
-        if let configuration = AppConfiguration.current,
-            let identity = configuration.identity,
+        if let identity = configuration.identity,
             Onboarding.status(for: identity) == .started {
             self.launchIntoOnboarding(status: .started)
             return
         }
 
         // if configuration and not started then already onboarded
-        if let configuration = AppConfiguration.current,
-            let identity = configuration.identity,
+        if let identity = configuration.identity,
             Onboarding.status(for: identity) == .notStarted {
             Onboarding.set(status: .completed, for: identity)
         }
@@ -75,7 +87,7 @@ class LaunchViewController: UIViewController {
 
         // TODO analytics
         // this should no longer be necessary with onboarding
-        guard let configuration = AppConfiguration.current, configuration.canLaunch else {
+        guard configuration.canLaunch else {
             self.alert(message: "The configuration is incomplete and cannot be launched. Please try deleting and reinstalling the app.")
             return
         }
@@ -106,10 +118,12 @@ class LaunchViewController: UIViewController {
     
     // MARK: - Helpers
 
-    private func launchIntoOnboarding(status: Onboarding.Status = .notStarted,
-                                      simulate: Bool = false) {
+    private func launchIntoOnboarding(
+        status: Onboarding.Status = .notStarted,
+        simulate: Bool = false
+    ) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            AppController.shared.showOnboardingViewController(status, simulate)
+            self.appController.showOnboardingViewController(status, simulate)
         }
     }
 
@@ -118,7 +132,7 @@ class LaunchViewController: UIViewController {
         // also, user is already logged in
 
         // transition to main app UI
-        AppController.shared.showMainViewController(animated: true)
+        appController.showMainViewController(animated: true)
     }
 
     private func handleLoginFailure(with error: Error, configuration: AppConfiguration) {
@@ -152,7 +166,7 @@ class LaunchViewController: UIViewController {
                 CrashReporting.shared.forget()
                 
                 Task {
-                    await AppController.shared.relaunch()
+                    await self.appController.relaunch()
                 }
             }
         }
@@ -172,13 +186,13 @@ class LaunchViewController: UIViewController {
                 CrashReporting.shared.forget()
                 
                 Task {
-                    await AppController.shared.relaunch()
+                    await self.appController.relaunch()
                 }
             }
         }
         controller.addAction(reset)
         
-        AppController.shared.showAlertController(with: controller, animated: true)
+        appController.showAlertController(with: controller, animated: true)
     }
     
     private func trackLogin(with configuration: AppConfiguration) async {
@@ -215,7 +229,7 @@ class LaunchViewController: UIViewController {
         do {
             try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
                 appConfiguration: configuration,
-                appController: AppController.shared,
+                appController: appController,
                 userDefaults: userDefaults
             )
         } catch {

@@ -94,7 +94,7 @@ class ThreadInteractionView: UIView {
         let me = Bots.current.identity
         if self.replies!.count - 1 >= 0 {
             for index in 0...self.replies!.count - 1 {
-                if self.replies!.keyValueBy(index: index)?.value.content.type == Planetary.ContentType.vote {
+                if self.replies!.keyValueBy(index: index)?.value.content.type == ContentType.vote {
                     let likeIdentity = self.replies!.keyValueBy(index: index)?.metadata.author.about?.about
                     if me == likeIdentity {
                         self.userLikes = true

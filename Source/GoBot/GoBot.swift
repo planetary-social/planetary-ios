@@ -1419,7 +1419,7 @@ class GoBot: Bot {
     }
     
     // MARK: - Helpers
-    static func databaseDirectory(for configuration: AppConfiguration) throws -> String {
+    class func databaseDirectory(for configuration: AppConfiguration) throws -> String {
         // lookup Application Support folder for bot and database
         let appSupportDirs = NSSearchPathForDirectoriesInDomains(
             .applicationSupportDirectory,

@@ -9,8 +9,6 @@
 import Foundation
 import Down
 
-typealias MarkdownStyler = NullMarkdownStyler
-
 /// MarkdownStyler suitable for use with unit or API test targets.
 class NullMarkdownStyler: DownStyler {
     

@@ -32,7 +32,7 @@ struct VerseImages {
     let smallShare = UIImage(named: "button-share")
     let optionsOff = UIImage(named: "icon-options-off")
     let optionsOn = UIImage(named: "icon-options-on")
-    let unsupportedBlobPlaceholder = UIImage(named: "unsupported-blob-placeholder")!
+    let unsupportedBlobPlaceholder = UIImage(named: "unsupported-blob-placeholder", in: Bundle.current, with: nil)!
 }
 
 extension UIImage {

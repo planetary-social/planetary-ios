@@ -172,7 +172,7 @@ class FakeBot: Bot {
     // MARK: Name
 
     let name = "FakeBot"
-    let version = "1.0"
+    var version = "1.0"
     let logFileUrls: [URL] = []
     
     // MARK: Login
