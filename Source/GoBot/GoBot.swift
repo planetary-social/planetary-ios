@@ -128,6 +128,7 @@ class GoBot: Bot {
     }
     
     func dropDatabase(for configuration: AppConfiguration) async throws {
+        Log.info("Dropping GoBot database...")
         do {
             try await logout()
         } catch {
@@ -137,7 +138,9 @@ class GoBot: Bot {
         }
         
         let databaseDirectory = try Self.databaseDirectory(for: configuration)
-        try FileManager.default.removeItem(atPath: databaseDirectory)
+        do {
+            try FileManager.default.removeItem(atPath: databaseDirectory)
+        }
     }
 
     // MARK: Login/Logout
@@ -193,7 +196,7 @@ class GoBot: Bot {
             
             // Save GoBot version to disk in case we need to migrate in the future.
             // This is a side-effect that may cause problems if we want to use other bots in the future.
-            UserDefaults.standard.set(bot.version, forKey: "GoBotDatabaseVersion")
+            UserDefaults.standard.set(version, forKey: "GoBotDatabaseVersion")
         } catch {
             queue.async { completion(error) }
             return

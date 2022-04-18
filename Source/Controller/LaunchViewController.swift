@@ -98,18 +98,21 @@ class LaunchViewController: UIViewController {
         Log.info("Launching with configuration '\(configuration.name)'")
         
         Task {
-            await self.migrateIfNeeded(using: configuration)
-            
-            // note that hmac key can be nil to switch it off
-            guard let network = configuration.network else { return }
-            guard let secret = configuration.secret else { return }
-            guard let bot = configuration.bot else { return }
-            
             do {
-                try await bot.login(config: configuration)
+                let isMigrating = try await self.migrateIfNeeded(using: configuration)
+                
+                if !isMigrating {
+                    // note that hmac key can be nil to switch it off
+                    guard let network = configuration.network else { return }
+                    guard let secret = configuration.secret else { return }
+                    guard let bot = configuration.bot else { return }
+                    
+                    try await bot.login(config: configuration)
+                }
             } catch {
                 self.handleLoginFailure(with: error, configuration: configuration)
             }
+            
             
             self.launchIntoMain()
             await self.trackLogin(with: configuration)
@@ -135,7 +138,7 @@ class LaunchViewController: UIViewController {
         appController.showMainViewController(animated: true)
     }
 
-    private func handleLoginFailure(with error: Error, configuration: AppConfiguration) {
+    func handleLoginFailure(with error: Error, configuration: AppConfiguration) {
         guard let network = configuration.network else { return }
         guard let bot = configuration.bot else { return }
         guard let secret = configuration.secret else { return }
@@ -224,17 +227,11 @@ class LaunchViewController: UIViewController {
         }
     }
     
-    private func migrateIfNeeded(using configuration: AppConfiguration) async {
-        
-        do {
-            try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
-                appConfiguration: configuration,
-                appController: appController,
-                userDefaults: userDefaults
-            )
-        } catch {
-            // TODO: handle
-            Log.optional(error)
-        }
+    private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
+        return try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: configuration,
+            appController: appController,
+            userDefaults: userDefaults
+        )
     }
 }

@@ -41,19 +41,40 @@ class MockMigrationBot: GoBot {
     }
     
     override class func databaseDirectory(for configuration: AppConfiguration) throws -> String {
-        NSTemporaryDirectory()
-            .appending("/PlanetaryUnitTests")
-            .appending("/Beta1MigrationTests")
+        NSTemporaryDirectory().appending("PlanetaryUnitTests").appending("/Beta1MigrationTests")
     }
 }
 
 class Beta1MigrationTests: XCTestCase {
     
+    var mockBot: MockMigrationBot!
     var userDefaults: UserDefaults!
+    let userDefaultsSuite = "com.Planetary.unit-tests.Beta1MigrationTests"
+    var testPath: String!
+    
+    override func setUp() async throws {
+        try await super.setUp()
+        
+        testPath = NSTemporaryDirectory().appending("PlanetaryUnitTests").appending("/Beta1MigrationTests")
+        userDefaults = UserDefaults(suiteName: userDefaultsSuite)
+        mockBot = MockMigrationBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
+    }
+    
+    override func tearDown() async throws {
+        try await super.tearDown()
+        userDefaults.removeSuite(named: userDefaultsSuite)
+        do {
+            try await mockBot.logout()
+        } catch {
+            guard case BotError.notLoggedIn = error else {
+                throw error
+            }
+        }
+    }
 
-    func testLaunchViewControllerTriggersMigration() {
+    func testLaunchViewControllerTriggersMigration() throws {
+        print("---- starting testLaunchViewControllerTriggersMigration")
         userDefaults = UserDefaults()
-        let mockBot = MockMigrationBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
         let appConfig = MockAppConfiguration(with: botTestsKey)
         appConfig.network = botTestNetwork
         appConfig.hmacKey = botTestHMAC
@@ -64,6 +85,8 @@ class Beta1MigrationTests: XCTestCase {
             appController: appController,
             userDefaults: userDefaults
         )
+        
+        try FileManager.default.createDirectory(atPath: testPath, withIntermediateDirectories: true)
         
         // Act
         _ = sut.view

@@ -233,7 +233,7 @@ extension Bot {
         }
     }
     
-    func logout() async throws {
+    @MainActor func logout() async throws {
         let error: Error? = await withCheckedContinuation { continuation in
             self.logout { error in
                 continuation.resume(with: .success(error))

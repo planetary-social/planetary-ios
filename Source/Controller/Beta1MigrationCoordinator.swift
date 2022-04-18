@@ -54,20 +54,22 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: - Public Interface
     
-    public static func performBeta1MigrationIfNeeded(
+    static func performBeta1MigrationIfNeeded(
         appConfiguration: AppConfiguration,
         appController: AppController,
         userDefaults: UserDefaults
-    ) async throws {
+    ) async throws -> Bool {
         guard let bot = appConfiguration.bot as? GoBot else {
-            return
+            return false
         }
         
         // todo: include network key
         let version = userDefaults.string(forKey: "GoBotDatabaseVersion")
         guard true || version == nil else {
-            return
+            return false
         }
+        
+        Log.info("Beta1 migration triggered.")
         
         let statisticsService = BotStatisticsServiceAdaptor(bot: bot)
         let coordinator = Beta1MigrationCoordinator(
@@ -83,9 +85,15 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         await appController.present(hostingController, animated: true)
         
         try await bot.dropDatabase(for: appConfiguration)
+        Log.info("Data dropped successfully. Restoring data from the network.")
         userDefaults.set(true, forKey: "StartedBeta1Migration")
         userDefaults.set(bot.version, forKey: "GoBotDatabaseVersion")
         userDefaults.synchronize()
+        
+        try await bot.login(config: appConfiguration)
+        await coordinator.bindPublishedStatisticsToProgress()
+        
+        return true
     }
     
     // MARK: - Internal functions
@@ -109,10 +117,6 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
                 metadata: ["underlyingError": error.localizedDescription]
             )
             self.completionMessageCount = 1
-        }
-        
-        Task {
-            await bindPublishedStatisticsToProgress()
         }
     }
     
