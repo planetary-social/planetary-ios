@@ -3,6 +3,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Support
 
 class DebugViewController: DebugTableViewController {
 

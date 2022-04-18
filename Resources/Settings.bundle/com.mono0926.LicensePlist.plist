@@ -28,6 +28,22 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/commonui_sdk_ios</string>
+			<key>Title</key>
+			<string>ZendeskCommonUISDK</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/core_sdk_ios</string>
+			<key>Title</key>
+			<string>ZendeskCoreSDK</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/Down</string>
 			<key>Title</key>
 			<string>Down</string>
@@ -60,6 +76,22 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/messaging_sdk_ios</string>
+			<key>Title</key>
+			<string>ZendeskMessagingSDK</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/messagingapi_sdk_ios</string>
+			<key>Title</key>
+			<string>ZendeskMessagingAPISDK</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/Multipart</string>
 			<key>Title</key>
 			<string>Multipart</string>
@@ -84,6 +116,14 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/sdkconfigurations_sdk_ios</string>
+			<key>Title</key>
+			<string>ZendeskSDKConfigurationsSDK</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/SkeletonView</string>
 			<key>Title</key>
 			<string>SkeletonView</string>
@@ -100,6 +140,22 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/support_providers_sdk_ios</string>
+			<key>Title</key>
+			<string>ZendeskSupportProvidersSDK</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/support_sdk_ios</string>
+			<key>Title</key>
+			<string>ZendeskSupportSDK</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/SVProgressHUD</string>
 			<key>Title</key>
 			<string>SVProgressHUD</string>
@@ -111,62 +167,6 @@
 			<string>com.mono0926.LicensePlist/swift-log</string>
 			<key>Title</key>
 			<string>swift-log</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/ZendeskCommonUISDK</string>
-			<key>Title</key>
-			<string>ZendeskCommonUISDK</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/ZendeskCoreSDK</string>
-			<key>Title</key>
-			<string>ZendeskCoreSDK</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/ZendeskMessagingAPISDK</string>
-			<key>Title</key>
-			<string>ZendeskMessagingAPISDK</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/ZendeskMessagingSDK</string>
-			<key>Title</key>
-			<string>ZendeskMessagingSDK</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/ZendeskSDKConfigurationsSDK</string>
-			<key>Title</key>
-			<string>ZendeskSDKConfigurationsSDK</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/ZendeskSupportProvidersSDK</string>
-			<key>Title</key>
-			<string>ZendeskSupportProvidersSDK</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/ZendeskSupportSDK</string>
-			<key>Title</key>
-			<string>ZendeskSupportSDK</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>

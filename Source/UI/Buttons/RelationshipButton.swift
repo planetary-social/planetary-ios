@@ -10,6 +10,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Support
 
 class RelationshipButton: IconButton {
 
@@ -156,18 +157,11 @@ class RelationshipButton: IconButton {
     
     func shareMessage() {
         guard let publicLink = content.key.publicLink else {
+            AppController.shared.alert(message: Text.Error.couldNotGenerateLink.text)
             return
         }
-        let who = otherUserName
-        let link = publicLink.absoluteString
-        let postWithoutGallery = content.value.content.post?.text.withoutGallery() ?? ""
-        let what = postWithoutGallery.prefix(280 - who.count - link.count - Text.shareThisMessageText.text.count)
-        let text = Text.shareThisMessageText.text(["who": who,
-                                                   "what": String(what),
-                                                   "link": publicLink.absoluteString])
         Analytics.shared.trackDidSelectAction(actionName: "share_message")
-        let activityController = UIActivityViewController(activityItems: [text],
-                                                          applicationActivities: nil)
+        let activityController = UIActivityViewController(activityItems: [publicLink], applicationActivities: nil)
         AppController.shared.present(activityController, animated: true)
         if let popOver = activityController.popoverPresentationController {
             popOver.sourceView = self
@@ -186,7 +180,9 @@ class RelationshipButton: IconButton {
 
     func reportUser() {
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
-        guard let controller = Support.shared.newTicketViewController(from: self.relationship.identity, reporting: self.relationship.other, name: self.otherUserName) else {
+        let reporter = relationship.identity
+        let profile = AbusiveProfile(identifier: relationship.other, name: otherUserName)
+        guard let controller = Support.shared.newTicketViewController(reporter: reporter, profile: profile) else {
             AppController.shared.alert(
                 title: Text.error.text,
                 message: Text.Error.supportNotConfigured.text,

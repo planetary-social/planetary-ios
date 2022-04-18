@@ -52,7 +52,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem.for(self)
         
-        self.view.backgroundColor = UIColor.groupTableViewBackground
+        self.view.backgroundColor = UIColor.systemGroupedBackground
         
         let spacer = Layout.addSpacerView(toTopOf: self.view, height: 58)
         var separator = Layout.addSeparator(southOf: spacer)
