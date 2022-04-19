@@ -24,6 +24,8 @@ import "C"
 
 //export ssbConnectPeer
 func ssbConnectPeer(quasiMs string) bool {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -70,6 +72,8 @@ func ssbConnectPeer(quasiMs string) bool {
 
 //export ssbConnectPeers
 func ssbConnectPeers(count uint32) bool {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -238,6 +242,8 @@ func queryAddresses(count uint32) ([]*addrRow, error) {
 
 //export ssbDisconnectAllPeers
 func ssbDisconnectAllPeers() bool {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 	if sbot == nil {
@@ -252,6 +258,8 @@ func ssbDisconnectAllPeers() bool {
 
 //export ssbFeedReplicate
 func ssbFeedReplicate(ref string, yes bool) {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -281,6 +289,8 @@ func ssbFeedReplicate(ref string, yes bool) {
 
 //export ssbFeedBlock
 func ssbFeedBlock(ref string, yes bool) {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -310,6 +320,8 @@ func ssbFeedBlock(ref string, yes bool) {
 
 //export ssbNullContent
 func ssbNullContent(author string, sequence uint64) int {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 	if sbot == nil {
@@ -338,6 +350,8 @@ func ssbNullContent(author string, sequence uint64) int {
 
 //export ssbNullFeed
 func ssbNullFeed(ref string) int {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -368,6 +382,8 @@ func ssbNullFeed(ref string) int {
 
 //export ssbDropIndexData
 func ssbDropIndexData() bool {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -392,6 +408,8 @@ func ssbDropIndexData() bool {
 
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {

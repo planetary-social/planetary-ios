@@ -23,6 +23,8 @@ import "C"
 
 //export ssbStreamRootLog
 func ssbStreamRootLog(seq int64, limit int) *C.char {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -92,6 +94,8 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 // The seq parameter should be the index of the last known message that the user published in the RootLog.
 // Pass -1 to get the entire log.
 func ssbStreamPublishedLog(afterSeq int64) *C.char {
+	defer logPanic()
+
 	// Please don't judge me too hard I don't know much Go - ml
 	var err error
 	defer func() {

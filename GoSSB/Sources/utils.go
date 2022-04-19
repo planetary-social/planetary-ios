@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go.cryptoscope.co/ssb/multilogs"
 	"os"
+	"runtime/debug"
 	"strconv"
 	"time"
 	"unsafe"
@@ -29,6 +30,8 @@ import "C"
 
 //export ssbGenKey
 func ssbGenKey() *C.char {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -55,6 +58,8 @@ func ssbGenKey() *C.char {
 
 //export ssbReplicateUpTo
 func ssbReplicateUpTo() int {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -122,6 +127,8 @@ var lastFSCK mksbot.ErrConsistencyProblems
 
 //export ssbOffsetFSCK
 func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -162,6 +169,8 @@ func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 
 //export ssbHealRepo
 func ssbHealRepo() *C.char {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -209,6 +218,8 @@ type healReport struct {
 
 //export planetaryBearerToken
 func planetaryBearerToken() *C.char {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -236,4 +247,11 @@ func planetaryBearerToken() *C.char {
 	}
 
 	return C.CString(tok)
+}
+
+func logPanic() {
+	if p := recover(); p != nil {
+		level.Error(log).Log("panic", p, "stack", string(debug.Stack()))
+		panic(p)
+	}
 }

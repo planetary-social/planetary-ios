@@ -17,6 +17,8 @@ import "C"
 
 //export ssbBotStatus
 func ssbBotStatus() *C.char {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -49,6 +51,8 @@ func ssbBotStatus() *C.char {
 
 //export ssbOpenConnections
 func ssbOpenConnections() uint {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 	if sbot == nil {
@@ -65,6 +69,8 @@ type repoCounts struct {
 
 //export ssbRepoStats
 func ssbRepoStats() *C.char {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
