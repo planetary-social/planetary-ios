@@ -54,7 +54,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: - Public Interface
     
-    static func performBeta1MigrationIfNeeded(
+    class func performBeta1MigrationIfNeeded(
         appConfiguration: AppConfiguration,
         appController: AppController,
         userDefaults: UserDefaults
@@ -65,7 +65,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         
         // todo: include network key
         let version = userDefaults.string(forKey: "GoBotDatabaseVersion")
-        guard true || version == nil else {
+        guard version == nil else {
             return false
         }
         

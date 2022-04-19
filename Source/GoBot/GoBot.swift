@@ -129,6 +129,7 @@ class GoBot: Bot {
     
     func dropDatabase(for configuration: AppConfiguration) async throws {
         Log.info("Dropping GoBot database...")
+                
         do {
             try await logout()
         } catch {
@@ -137,9 +138,19 @@ class GoBot: Bot {
             }
         }
         
-        let databaseDirectory = try Self.databaseDirectory(for: configuration)
         do {
+            let databaseDirectory = try Self.databaseDirectory(for: configuration)
             try FileManager.default.removeItem(atPath: databaseDirectory)
+        } catch {
+            let nsError = error as NSError
+            // It's ok if the directory is already gone
+            guard nsError.domain == NSCocoaErrorDomain,
+                  nsError.code == 4,
+                  let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
+                  underlyingError.domain == NSPOSIXErrorDomain,
+                  underlyingError.code == 2 else {
+                throw error
+            }
         }
     }
 

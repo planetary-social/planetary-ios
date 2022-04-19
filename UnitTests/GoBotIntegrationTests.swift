@@ -124,6 +124,32 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
     }
     
+    func testDropDatabase() async throws {
+        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
+        let databaseURL = try XCTUnwrap(
+            URL(fileURLWithPath: GoBot.databaseDirectory(for: appConfig).appending("/mockDatabase"))
+        )
+        try mockData.write(to: databaseURL)
+        
+        try await sut.dropDatabase(for: appConfig)
+        
+        // Assert
+        XCTAssertThrowsError(try Data(contentsOf: databaseURL))
+    }
+    
+    func testDropDatabaseWhenMissing() async throws {
+        // This test exhibits a hang in `ssbBotStop`. It appears that if its working directory is removed it hangs
+        // forever. It should instead return an error or maybe even complete successfully if it can still shut itself
+        // down.
+        try fm.removeItem(atPath: workingDirectory)
+        try await sut.dropDatabase(for: appConfig)
+    }
+    
+    func testDropDatabaseWhenLoggedOut() async throws {
+        try await sut.logout()
+        try await sut.dropDatabase(for: appConfig)
+    }
+    
     // MARK: - Forked Feed Protection
     
     /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number
