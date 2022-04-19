@@ -15,6 +15,8 @@ import "C"
 
 //export ssbBlobsWant
 func ssbBlobsWant(ref string) bool {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -48,6 +50,8 @@ func ssbBlobsWant(ref string) bool {
 
 //export ssbBlobsGet
 func ssbBlobsGet(ref string) int {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -101,6 +105,8 @@ func ssbBlobsGet(ref string) int {
 
 //export ssbBlobsAdd
 func ssbBlobsAdd(fd int32) *C.char {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
