@@ -11,7 +11,5 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@main
-    - name: Install xcbeautify
-      run: brew install xcbeautify
     - name: Run tests
-      run: xcodebuild clean test -workspace Planetary.xcworkspace -scheme Support -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" | xcbeautify
+      run: set -o pipefail && xcodebuild clean test -workspace Planetary.xcworkspace -scheme Support -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" | xcpretty
