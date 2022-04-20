@@ -88,6 +88,8 @@ func ssbVersion() *C.char {
 
 //export ssbBotStop
 func ssbBotStop() bool {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 	stopEvt := kitlog.With(log, "event", "botStop")
@@ -158,6 +160,8 @@ var (
 
 //export ssbBotInit
 func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerTokenFn uintptr) bool {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 

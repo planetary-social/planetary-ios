@@ -17,6 +17,8 @@ var publishLock sync.Mutex
 
 //export ssbPublish
 func ssbPublish(content string) *C.char {
+	defer logPanic()
+
 	lock.Lock()
 	var err error
 	defer func() {
@@ -50,6 +52,8 @@ func ssbPublish(content string) *C.char {
 
 //export ssbPublishPrivate
 func ssbPublishPrivate(content, recps string) *C.char {
+	defer logPanic()
+
 	lock.Lock()
 	var err error
 	defer func() {
