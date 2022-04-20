@@ -204,10 +204,6 @@ class GoBot: Bot {
                 path: repoPrefix,
                 user: secret.identity
             )
-            
-            // Save GoBot version to disk in case we need to migrate in the future.
-            // This is a side-effect that may cause problems if we want to use other bots in the future.
-            UserDefaults.standard.set(version, forKey: "GoBotDatabaseVersion")
         } catch {
             queue.async { completion(error) }
             return
@@ -231,6 +227,11 @@ class GoBot: Bot {
             guard loginErr == nil else {
                 return
             }
+            
+            // Save GoBot version to disk in case we need to migrate in the future.
+            // This is a side-effect that may cause problems if we want to use other bots in the future.
+            self.userDefaults.set(self.version, forKey: "GoBotDatabaseVersion")
+            self.userDefaults.synchronize()
             
             self._identity = secret.identity
             
@@ -265,10 +266,10 @@ class GoBot: Bot {
         }
     }
     
-    @MainActor func logout(completion: @escaping ErrorCompletion) {
+    func logout(completion: @escaping ErrorCompletion) {
         Thread.assertIsMainThread()
         if self._identity == nil {
-            DispatchQueue.main.async { completion(BotError.notLoggedIn) }
+            completion(BotError.notLoggedIn)
             return
         }
         if !self.bot.logout() {
@@ -277,7 +278,7 @@ class GoBot: Bot {
         database.close()
         self._identity = nil
         self.config = nil
-        DispatchQueue.main.async { completion(nil) }
+        completion(nil)
     }
 
     // MARK: Sync

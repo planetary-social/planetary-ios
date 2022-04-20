@@ -54,11 +54,21 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        let logoutExpectation = self.expectation(description: "logout")
-        await sut.logout { _ in logoutExpectation.fulfill() }
-        await waitForExpectations(timeout: 10, handler: nil)
+        try await super.tearDown()
+        
+        do {
+            try await sut.logout()
+        } catch {
+            guard case BotError.notLoggedIn = error else {
+                throw error
+            }
+        }
         sut.exit()
-        try fm.removeItem(atPath: workingDirectory)
+        do {
+            try fm.removeItem(atPath: workingDirectory)
+        } catch {
+            print(error)
+        }
     }
 
     /// Verifies that we can correctly refresh the `ViewDatabase` from the go-ssb log even after `publish` has copied
@@ -124,51 +134,103 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
     }
     
-    func testDropDatabase() async throws {
+    func testDropDatabaseWhenLoggedIn() async throws {
+        // Arrange
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(
             URL(fileURLWithPath: GoBot.databaseDirectory(for: appConfig).appending("/mockDatabase"))
         )
         try mockData.write(to: databaseURL)
+
+        // Act
+        try await sut.dropDatabase(for: appConfig)
+
+        // Assert
+        XCTAssertThrowsError(try Data(contentsOf: databaseURL))
+    }
+    
+    func testDropDatabaseWhenLoggedOut() async throws {
+        // Arrange
+        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
+        let databaseURL = try XCTUnwrap(
+            URL(fileURLWithPath: GoBot.databaseDirectory(for: appConfig).appending("/mockDatabase"))
+        )
+        try mockData.write(to: databaseURL)
+        try await sut.logout()
         
+        // Act
         try await sut.dropDatabase(for: appConfig)
         
         // Assert
         XCTAssertThrowsError(try Data(contentsOf: databaseURL))
     }
     
-    func testDropDatabaseWhenMissing() async throws {
-        // This test exhibits a hang in `ssbBotStop`. It appears that if its working directory is removed it hangs
-        // forever. It should instead return an error or maybe even complete successfully if it can still shut itself
-        // down.
-        try fm.removeItem(atPath: workingDirectory)
-        try await sut.dropDatabase(for: appConfig)
-    }
-    
-    func testLogoutWithDirectoryMissing() async throws {
-        // This test exhibits a hang in `ssbBotStop`. It appears that if its working directory does not exist it hangs
-        // forever. It should instead return an error or maybe even complete successfully if it can still verify that
-        // it is shut down.
-        try fm.removeItem(atPath: workingDirectory)
+
+    func testLogoutWithDirectoryMissing() throws {
+        // Arrange
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout(completion: { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        })
         
-        let expectation = XCTestExpectation(description: "logout finished")
-        await sut.logout { _ in
-            expectation.fulfill()
+        waitForExpectations(timeout: 10)
+        
+        // Act
+        do {
+            try fm.removeItem(atPath: workingDirectory)
+        } catch {
+            print(error)
         }
-        await waitForExpectations(timeout: 10)
+
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout(completion: { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        })
+        
+        waitForExpectations(timeout: 10)
     }
     
-    func testLogoutWithDirectoryPresent() async throws {
-        // This test exhibits a hang in `ssbBotStop`. It appears that if its working directory is removed it hangs
-        // forever. It should instead return an error or maybe even complete successfully if it can still shut itself
-        // down.
+    @MainActor func testLogoutWithDirectoryPresent() throws {
+        // Arrange
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+        
+        // Act
+        try fm.removeItem(atPath: workingDirectory)
         try fm.createDirectory(atPath: workingDirectory, withIntermediateDirectories: true)
-        try await sut.logout()
+
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout() { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
     }
     
-    func testDropDatabaseWhenLoggedOut() async throws {
-        try await sut.logout()
-        try await sut.dropDatabase(for: appConfig)
+    @MainActor func testLogoutTwice() throws {
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+        
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout() { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
     }
     
     // MARK: - Forked Feed Protection

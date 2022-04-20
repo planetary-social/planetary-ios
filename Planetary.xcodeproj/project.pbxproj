@@ -672,6 +672,7 @@
 		C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C94A23D227FB610E002DE7AC /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; };
 		C94A23D327FB610E002DE7AC /* GoSSB.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C94F66742810AB9F00DEA5AC /* XCTBlockExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */; };
 		C950B5512805CD6700D7059B /* JoinPlanetarySystemOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C950B5502805CD6600D7059B /* JoinPlanetarySystemOperation.swift */; };
 		C955CAB627D18367005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CAB727D18368005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
@@ -1532,6 +1533,7 @@
 		C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedBlobService.swift; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTBlockExpectation.swift; sourceTree = "<group>"; };
 		C950B5502805CD6600D7059B /* JoinPlanetarySystemOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinPlanetarySystemOperation.swift; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -2610,6 +2612,7 @@
 				C9C3788327C6940C00238B58 /* IdentityFixtures.swift */,
 				C9C3788927C6CC3200238B58 /* XCTestCase+Combine.swift */,
 				C9C3788B27C6CC6900238B58 /* Publisher+collectNext.swift */,
+				C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */,
 			);
 			path = "Test Helpers";
 			sourceTree = "<group>";
@@ -3818,6 +3821,7 @@
 				2346ECB8221420E1009A94CB /* GoBot.swift in Sources */,
 				53B4F60022B9E4F200027C6A /* Abouts.swift in Sources */,
 				23C744552200B12200FB554A /* Profile.swift in Sources */,
+				C94F66742810AB9F00DEA5AC /* XCTBlockExpectation.swift in Sources */,
 				237D057C2335149100973D63 /* Blob+UIImage.swift in Sources */,
 				C9724B652809D6E4000EBCCD /* KeyValueTableViewCell.swift in Sources */,
 				C9724B472809D51E000EBCCD /* String+PhoneNumberKit.swift in Sources */,

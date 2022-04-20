@@ -44,9 +44,6 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     /// The number of messages that were in the database before the migration started.
     private var completionMessageCount: Int
     
-    /// A service that will be used to measure the progress of the migration.
-    private var statisticsService: BotStatisticsService
-    
     /// An on-disk key value store used to track the status of the migration.
     private var userDefaults: UserDefaults
     
@@ -71,10 +68,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         
         Log.info("Beta1 migration triggered.")
         
-        let statisticsService = BotStatisticsServiceAdaptor(bot: bot)
         let coordinator = Beta1MigrationCoordinator(
             appConfiguration: appConfiguration,
-            statisticsService: statisticsService,
             userDefaults: userDefaults,
             dismissHandler: {
                 Task { await appController.dismiss(animated: true) }
@@ -91,7 +86,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         userDefaults.synchronize()
         
         try await bot.login(config: appConfiguration)
-        await coordinator.bindPublishedStatisticsToProgress()
+        let statisticsService = BotStatisticsServiceAdaptor(bot: bot)
+        await coordinator.bindProgress(to: statisticsService)
         
         return true
     }
@@ -100,12 +96,10 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     private init(
         appConfiguration: AppConfiguration,
-        statisticsService: BotStatisticsService,
         userDefaults: UserDefaults,
         dismissHandler: @escaping () -> Void
     ) {
         self.dismissHandler = dismissHandler
-        self.statisticsService = statisticsService
         self.userDefaults = userDefaults
         do {
             self.completionMessageCount = try Self.getNumberOfMessagesInViewDatabase(with: appConfiguration)
@@ -121,7 +115,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     }
     
     /// Wires up our published `progress` property to the statistics service.
-    private func bindPublishedStatisticsToProgress() async {
+    private func bindProgress(to statisticsService: BotStatisticsService) async {
         let statisticsPublisher = await statisticsService.subscribe()
         
         // Wire up peers array to the statisticsService
@@ -151,7 +145,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             true
         )
         
-        guard appSupportDirs.count > 0 else {
+        guard !appSupportDirs.isEmpty else {
             throw GoBotError.unexpectedFault("no support dir")
         }
         
@@ -164,9 +158,9 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             .appending("/\(networkKey.hexEncodedString())")
         
         let dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
-        let db = try Connection(dbPath)
+        let dbConnection = try Connection(dbPath)
         let msgs = Table("messages")
-        return try db.scalar(msgs.count)
+        return try dbConnection.scalar(msgs.count)
     }
     
     // MARK: Handle User Interation
