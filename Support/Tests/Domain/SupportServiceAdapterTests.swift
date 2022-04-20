@@ -105,7 +105,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertNil(result)
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
-        XCTAssertNotEqual(apiService.lastReporter.key, identity.key)
+        XCTAssertEqual(apiService.lastReporter.key, identity.key)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorName }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == authorIdentity.data(using: .utf8) }))
