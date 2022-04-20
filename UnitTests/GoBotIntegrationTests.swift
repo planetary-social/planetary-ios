@@ -145,20 +145,25 @@ class GoBotIntegrationTests: XCTestCase {
         try await sut.dropDatabase(for: appConfig)
     }
     
-    func testLogoutWithoutDirectory() async throws {
-        // This test exhibits a hang in `ssbBotStop`. It appears that if its working directory is removed it hangs
-        // forever. It should instead return an error or maybe even complete successfully if it can still shut itself
-        // down.
+    func testLogoutWithDirectoryMissing() async throws {
+        // This test exhibits a hang in `ssbBotStop`. It appears that if its working directory does not exist it hangs
+        // forever. It should instead return an error or maybe even complete successfully if it can still verify that
+        // it is shut down.
         try fm.removeItem(atPath: workingDirectory)
-        try await sut.dropDatabase(for: appConfig)
+        
+        let expectation = XCTestExpectation(description: "logout finished")
+        await sut.logout { _ in
+            expectation.fulfill()
+        }
+        await waitForExpectations(timeout: 10)
     }
     
-    func testLogoutWithDirectory() async throws {
+    func testLogoutWithDirectoryPresent() async throws {
         // This test exhibits a hang in `ssbBotStop`. It appears that if its working directory is removed it hangs
         // forever. It should instead return an error or maybe even complete successfully if it can still shut itself
         // down.
         try fm.createDirectory(atPath: workingDirectory, withIntermediateDirectories: true)
-        try await sut.dropDatabase(for: appConfig)
+        try await sut.logout()
     }
     
     func testDropDatabaseWhenLoggedOut() async throws {
