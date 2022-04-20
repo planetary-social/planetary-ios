@@ -3372,21 +3372,24 @@
 		};
 		5B0D585727BEE41D002F927D /* Copy Secrets.plist */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Resources/Secrets.debug.plist",
+				"$(SRCROOT)/Resources/Secrets.release.plist",
 			);
 			name = "Copy Secrets.plist";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ $CONFIGURATION = \"Debug\" ]; then\ncp $SRCROOT/Resources/Secrets.debug.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nelse\ncp $SRCROOT/Resources/Secrets.release.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ $CONFIGURATION = \"Debug\" ]; then\nrsync -t $SRCROOT/Resources/Secrets.debug.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nelse\nrsync -t $SRCROOT/Resources/Secrets.release.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nfi\n";
 		};
 		5B8DC4CE27FF8C960007E73F /* Run swiftlint on modified files */ = {
 			isa = PBXShellScriptBuildPhase;

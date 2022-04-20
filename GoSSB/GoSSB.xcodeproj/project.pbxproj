@@ -235,7 +235,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -r ${BUILD_DIR}/Products/GoSSB.xcframework/ ${PROJECT_DIR}/../Frameworks/GoSSB.xcframework\n\n";
+			shellScript = "rsync -t ${BUILD_DIR}/Products/GoSSB.xcframework/ ${PROJECT_DIR}/../Frameworks/GoSSB.xcframework\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
