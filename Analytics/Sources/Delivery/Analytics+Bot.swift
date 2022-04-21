@@ -72,4 +72,20 @@ public extension Analytics {
         }
         service.track(event: .did, element: .bot, name: "refresh", params: params)
     }
+    
+    func trackDidDropDatabase() {
+        service.track(event: .did, element: .bot, name: "drop_database")
+    }
+    
+    func trackDidStartBeta1Migration() {
+        service.track(event: .did, element: .bot, name: "beta1_migration_start")
+    }
+    
+    func trackDidDismissBeta1Migration(syncedMessages: Int, totalMessages: Int) {
+        let params: [String: Any] = [
+            "synced_messages": syncedMessages,
+            "total_messages": totalMessages
+        ]
+        service.track(event: .did, element: .bot, name: "beta1_migration_dismiss", params: params)
+    }
 }
