@@ -240,7 +240,8 @@ extension Bot {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
-    @discardableResult func refresh(
+    @discardableResult
+    func refresh(
         load: RefreshLoad,
         queue: DispatchQueue = .main
     ) async throws -> (TimeInterval, Bool) {

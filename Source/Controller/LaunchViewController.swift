@@ -56,14 +56,14 @@ class LaunchViewController: UIViewController {
 
         // if configuration and is required then onboard
         if let configuration = AppConfiguration.current,
-           Onboarding.status(for: configuration.identity) == .started {
+            Onboarding.status(for: configuration.identity) == .started {
             self.launchIntoOnboarding(status: .started)
             return
         }
 
         // if configuration and not started then already onboarded
         if let configuration = AppConfiguration.current,
-           Onboarding.status(for: configuration.identity) == .notStarted {
+            Onboarding.status(for: configuration.identity) == .notStarted {
             Onboarding.set(status: .completed, for: configuration.identity)
         }
 
