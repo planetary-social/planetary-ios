@@ -257,43 +257,6 @@ func newLogDrain(sourceLog margaret.Log, seq int64, limit int) (*bytes.Buffer, e
 	})
 	src = mfr.SourceFilter(src, noNulled)
 
-	sixMonthAgo := time.Now().Add(-6 * time.Hour * 24 * 30)
-
-	nowOldStuff := func(ctx context.Context, v interface{}) (bool, error) {
-		sw, ok := v.(margaret.SeqWrapper)
-		if !ok {
-			if errv, ok := v.(error); ok && margaret.IsErrNulled(errv) {
-				return false, nil
-			}
-			return false, errors.Errorf("drainLog: want wrapper type got: %T", v)
-		}
-		wrappedVal := sw.Value()
-		msg, ok := wrappedVal.(refs.Message)
-		if !ok {
-			return false, errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
-		}
-
-		if msg.Claimed().Before(sixMonthAgo) {
-			var typeMsg struct {
-				Type string
-			}
-
-			err := json.Unmarshal(msg.ContentBytes(), &typeMsg)
-			typeStr := typeMsg.Type
-			if err != nil {
-				return false, nil
-			}
-			// the app viewdb needs older about and contact info
-			if typeStr == "about" || typeStr == "contact" {
-				return true, nil
-			}
-			return false, nil
-		}
-		return true, nil
-	}
-
-	src = mfr.SourceFilter(src, nowOldStuff)
-
 	keyHasher := sha256.New()
 	i := 0
 	w.WriteString("[")
