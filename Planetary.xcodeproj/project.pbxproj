@@ -660,6 +660,8 @@
 		C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		C928DAF227B5AC850007C5FC /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = C928DAF127B5AC850007C5FC /* Logger */; };
+		C931927C2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */; };
+		C931927D2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */; };
 		C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */; };
 		C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */; };
 		C93A4B3C2798B711009F963D /* KeyValueWithReceivedSeq.json in Resources */ = {isa = PBXBuildFile; fileRef = C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */; };
@@ -669,6 +671,10 @@
 		C941A6E427ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C949E96928118C32006C5F18 /* MultiserverAddressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E96828118C32006C5F18 /* MultiserverAddressTests.swift */; };
+		C949E96E28119B47006C5F18 /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E96D28119B47006C5F18 /* ProgressButton.swift */; };
+		C949E96F28119B47006C5F18 /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E96D28119B47006C5F18 /* ProgressButton.swift */; };
+		C949E9712811A8AF006C5F18 /* VerticallyCenteringScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E9702811A8AF006C5F18 /* VerticallyCenteringScrollView.swift */; };
+		C949E9722811A8AF006C5F18 /* VerticallyCenteringScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E9702811A8AF006C5F18 /* VerticallyCenteringScrollView.swift */; };
 		C94A23D227FB610E002DE7AC /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; };
 		C94A23D327FB610E002DE7AC /* GoSSB.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C94F66742810AB9F00DEA5AC /* XCTBlockExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */; };
@@ -1522,6 +1528,7 @@
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
 		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
 		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
+		C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beta1MigrationDescriptionText.swift; sourceTree = "<group>"; };
 		C933908F27FB5498007B5FD8 /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = Frameworks/GoSSB.xcframework; sourceTree = "<group>"; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
@@ -1531,6 +1538,8 @@
 		C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedBlobService.swift; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C949E96828118C32006C5F18 /* MultiserverAddressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiserverAddressTests.swift; sourceTree = "<group>"; };
+		C949E96D28119B47006C5F18 /* ProgressButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressButton.swift; sourceTree = "<group>"; };
+		C949E9702811A8AF006C5F18 /* VerticallyCenteringScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticallyCenteringScrollView.swift; sourceTree = "<group>"; };
 		C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTBlockExpectation.swift; sourceTree = "<group>"; };
 		C950B5502805CD6600D7059B /* JoinPlanetarySystemOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinPlanetarySystemOperation.swift; sourceTree = "<group>"; };
@@ -2260,6 +2269,8 @@
 				C9F1C85227C980A6005A3228 /* AvatarImageViewRepresentable.swift */,
 				53EAB3902398692000DF5530 /* AvatarStackView.swift */,
 				C9EE7BD727FF371200748106 /* Beta1MigrationView.swift */,
+				C949E9702811A8AF006C5F18 /* VerticallyCenteringScrollView.swift */,
+				C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */,
 				0AAF8C4225C6444B00FD8D0F /* CommunityCellView.swift */,
 				C9A2DE2C27CFD61800EAFA73 /* ConnectedPeerCell.swift */,
 				C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */,
@@ -2553,6 +2564,7 @@
 				8D180357234F5E77004E30AA /* IconButton.swift */,
 				8D180358234F5E77004E30AA /* PillButton.swift */,
 				8DE093D42344CA10009E505D /* RelationshipButton.swift */,
+				C949E96D28119B47006C5F18 /* ProgressButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -3388,7 +3400,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ $CONFIGURATION = \"Debug\" ]; then\nrsync -t $SRCROOT/Resources/Secrets.debug.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nelse\nrsync -t $SRCROOT/Resources/Secrets.release.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nfi\n";
+			shellScript = "if [ $CONFIGURATION = \"Debug\" ]; then\nrsync -t $SRCROOT/Resources/Secrets.debug.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nelse\nrsync -t $SRCROOT/Resources/Secrets.release.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nfi\n";
 		};
 		5B8DC4CE27FF8C960007E73F /* Run swiftlint on modified files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3407,7 +3419,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsh $SRCROOT/Scripts/swiftlint_diffonly.sh\n";
+			shellScript = "sh $SRCROOT/Scripts/swiftlint_diffonly.sh\n";
 		};
 		7723EA9C2D57EFC61D5051B3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3490,7 +3502,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsh $SRCROOT/Source/Localization/ExportStrings.sh\n";
+			shellScript = "if [ \"${ENABLE_PREVIEWS}\" = \"YES\" ]; then\n  echo \"SwiftUI Previews enabled, quitting to prevent 'preview paused'.\"\n  exit 0;\nfi\n\nsh $SRCROOT/Source/Localization/ExportStrings.sh\n";
 		};
 		C627FA40401D3BF3A23EDB4A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3699,6 +3711,7 @@
 				230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */,
 				C9724B512809D5A6000EBCCD /* AppDelegate+UIAppearance.swift in Sources */,
 				C9724B122809D2CC000EBCCD /* MainViewController.swift in Sources */,
+				C949E96F28119B47006C5F18 /* ProgressButton.swift in Sources */,
 				C9724B742809E7A6000EBCCD /* UIFont+Verse.swift in Sources */,
 				C9724BE22809EE7D000EBCCD /* SyncOperation.swift in Sources */,
 				C9724B102809D1D6000EBCCD /* AppController.swift in Sources */,
@@ -3751,6 +3764,7 @@
 				C9724B672809D6F4000EBCCD /* PostReplyPaginatedDelegate+DataSource.swift in Sources */,
 				53E29CCB22D292A3008A2CB1 /* String+Whitespace.swift in Sources */,
 				C9724BC52809ED5F000EBCCD /* UIImageView+Fade.swift in Sources */,
+				C949E9722811A8AF006C5F18 /* VerticallyCenteringScrollView.swift in Sources */,
 				C9724BAB2809EB6E000EBCCD /* KeyValuePaginatedTableViewDataSource.swift in Sources */,
 				C9724BED2809EF39000EBCCD /* EditAboutView.swift in Sources */,
 				C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */,
@@ -3948,6 +3962,7 @@
 				2343F1CD245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */,
 				2343E7802326953F00E0B6F5 /* Post+Blob.swift in Sources */,
 				535754F622692B4B002A6989 /* BotStatistics.swift in Sources */,
+				C931927D2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */,
 				53AD3FEB22776A3C005228F9 /* Value.swift in Sources */,
 				53E26C58230382DC009240B2 /* Date+ISO8601.swift in Sources */,
 				C9724BCD2809EDCF000EBCCD /* AppDelegate+Reset.swift in Sources */,
@@ -4172,6 +4187,7 @@
 				5396A6212244312400C57A4B /* UIEdgeInsets+Layout.swift in Sources */,
 				0A38800D2475ACF000777843 /* PubAPI.swift in Sources */,
 				53211CD42280E1E1007FB785 /* EditAboutViewController.swift in Sources */,
+				C949E9712811A8AF006C5F18 /* VerticallyCenteringScrollView.swift in Sources */,
 				5336611322D965C700100707 /* UIColor+UIImage.swift in Sources */,
 				2343F1CB245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */,
 				53B4F5FC22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
@@ -4187,6 +4203,7 @@
 				53E341FE224FF9EE002BB5F4 /* UIImage+Verse.swift in Sources */,
 				2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */,
 				53C9FA2C22FBBC3C00EAC35F /* NSAttributedString+FontColor.swift in Sources */,
+				C949E96E28119B47006C5F18 /* ProgressButton.swift in Sources */,
 				0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */,
 				53EE01F12204C16800DFDF16 /* Post.swift in Sources */,
 				53E341F6224D9FC7002BB5F4 /* AppController+URL.swift in Sources */,
@@ -4205,6 +4222,7 @@
 				5363A23422B058A5009154B7 /* URLResponse+APIError.swift in Sources */,
 				536255DC23AC090D001007D0 /* RemoteNotificationUserInfo.swift in Sources */,
 				53631EEA23A8704F009C6999 /* KeyValueTableViewDataSourcePrefetching.swift in Sources */,
+				C931927C2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */,
 				53E26C5023023074009240B2 /* UISwitch+Verse.swift in Sources */,
 				53211CCE227BF068007FB785 /* Array+ElementsAtIndexes.swift in Sources */,
 				0ABCA8FD2436B41300D7F39C /* APIError+LocalizedError.swift in Sources */,
@@ -4862,7 +4880,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4895,7 +4913,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4928,6 +4946,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/APITests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4962,6 +4981,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/APITests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5037,7 +5057,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -5094,7 +5114,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -5119,7 +5139,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5152,7 +5172,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5181,6 +5201,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_HARDENED_RUNTIME = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MACOSX_DEPLOYMENT_TARGET = 12.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5197,6 +5218,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_HARDENED_RUNTIME = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MACOSX_DEPLOYMENT_TARGET = 12.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

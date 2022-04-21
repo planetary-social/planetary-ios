@@ -65,7 +65,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         }
         
         let version = userDefaults.string(forKey: GoBot.versionKey)
-        guard version == nil else {
+        guard true || version == nil else {
             return false
         }
         
@@ -80,6 +80,10 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         )
         let view = await Beta1MigrationView(viewModel: coordinator)
         let hostingController = await UIHostingController(rootView: view)
+        await MainActor.run {
+            hostingController.modalPresentationStyle = .fullScreen
+            hostingController.modalTransitionStyle = .crossDissolve
+        }
         await appController.present(hostingController, animated: true)
         
         try await bot.dropDatabase(for: appConfiguration)
@@ -170,7 +174,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: Handle User Interation
     
-    func dismissPressed() {
+    func buttonPressed() {
         Log.info("User dismissed Beta1MigrationView with progress: \(progress)")
         cancellabes.forEach { $0.cancel() }
         dismissHandler()
