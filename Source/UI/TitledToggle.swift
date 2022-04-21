@@ -24,7 +24,7 @@ class TitledToggle: UIView {
         let view = UILabel.forAutoLayout()
         view.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         view.lineBreakMode = .byWordWrapping
-        view.numberOfLines = 3
+        view.numberOfLines = 0
         view.textColor = UIColor.text.detail
         return view
     }()
