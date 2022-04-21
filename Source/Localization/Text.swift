@@ -70,7 +70,7 @@ enum Text: String, Localizable, CaseIterable {
 
     case sendAnalytics = "Send analytics to Planetary"
     case dontSendAnalytics = "Don't send analytics at all"
-    case analyticsMessage = "We would like to capture anonymized data about your use of the app - and crash reports when something goes wrong - so we can make the application better."
+    case analyticsMessage = "Allow us to collect data about your use of the app so we can make it better."
     
     case loadingUpdates = "Planetary is searching for updates\non the peer to peer decentralized web."
 
@@ -295,6 +295,8 @@ extension Text {
         case doneOnboarding = "Phew! I'm done!"
         case earlyAccess = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!"
         case iUnderstand = "Yes, I understand"
+        case followPlanetaryToggleTitle = "Follow Planetary"
+        case followPlanetaryToggleDescription = "Follow the Planetary account to see posts from out team."
 
         case somethingWentWrong = "Oh no! Something went wrong!"
         case errorRetryMessage = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it."

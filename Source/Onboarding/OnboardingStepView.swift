@@ -270,10 +270,10 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
 
     // MARK: Animations
 
-    func lookBusy(after: TimeInterval = 1, disable button: UIButton? = nil) {
+    func lookBusy(after: TimeInterval = 0.3, disable button: UIButton? = nil) {
         self.isUserInteractionEnabled = false
         button?.isEnabled = false
-        // AppController.shared.showProgress(after: after)
+        AppController.shared.showProgress(after: after)
     }
 
     func lookReady() {

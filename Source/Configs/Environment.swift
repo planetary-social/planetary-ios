@@ -37,10 +37,15 @@ struct Environment {
     enum PlanetarySystem {
         private enum Keys {
             static let planetarySystem = "PLPlanetarySystem"
+            static let planetaryIdentity = "PLPlanetaryIdentity"
         }
         
         static let pubInvitations: [Star] = {
             Environment.value(for: Keys.planetarySystem).split(separator: " ").map { Star(invite: String($0)) }
+        }()
+        
+        static let planetaryIdentity: Identity = {
+            Environment.value(for: Keys.planetaryIdentity)
         }()
     }
     

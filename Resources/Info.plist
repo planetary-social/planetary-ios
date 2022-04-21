@@ -79,6 +79,8 @@
 	<string>$(PLANETARY_NETWORK_NAME)</string>
 	<key>PLPlanetarySystem</key>
 	<string>$(PLANETARY_SYSTEM_PUBS)</string>
+	<key>PLPlanetaryIdentity</key>
+	<string>$(PLANETARY)</string>
 	<key>PLTestingNetworkHMAC</key>
 	<string>$(TESTING_NETWORK_HMAC)</string>
 	<key>PLTestingNetworkKey</key>

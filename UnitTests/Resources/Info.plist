@@ -25,7 +25,9 @@
 	<key>PLCommunities</key>
 	<string>$(COMMUNITIES)</string>
 	<key>PLPlanetarySystem</key>
-	<string>$(PLANETARY_SYSTEM)</string>
+	<string>$(PLANETARY_SYSTEM_PUBS)</string>
+	<key>PLPlanetaryIdentity</key>
+	<string>$(PLANETARY)</string>
 	<key>PLVerseToken</key>
 	<string>$(VERSE_TOKEN)</string>
 	<key>PLVerseDirectoryPath</key>
