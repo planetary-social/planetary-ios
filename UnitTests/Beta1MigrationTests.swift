@@ -24,7 +24,11 @@ class Beta1MigrationTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         
-        testPath = NSTemporaryDirectory().appending("PlanetaryUnitTests").appending("/Beta1MigrationTests")
+        testPath = NSTemporaryDirectory()
+            .appending(UUID().uuidString)
+            .appending("/PlanetaryUnitTests")
+            .appending("/Beta1MigrationTests")
+        MockMigrationBot.databaseDirectory = testPath
         try FileManager.default.createDirectory(atPath: testPath, withIntermediateDirectories: true)
         userDefaults = UserDefaults(suiteName: userDefaultsSuite)
         userDefaults.dictionaryRepresentation().keys.forEach { userDefaults.set(nil, forKey: $0) }
@@ -39,6 +43,8 @@ class Beta1MigrationTests: XCTestCase {
     override func tearDown() async throws {
         try await super.tearDown()
         userDefaults.removeSuite(named: userDefaultsSuite)
+
+        mockBot.exit()
         do {
             try await mockBot.logout()
         } catch {
@@ -176,9 +182,11 @@ class Beta1MigrationTests: XCTestCase {
         }
         
         wait(for: [expectation], timeout: 10)
+        
+        print(self.userDefaults.object(forKey: "PerformedBeta1Migration"))
+        print(self.userDefaults.string(forKey: "GoBotDatabaseVersion"))
     }
         
-    
     /// Verifies that the LaunchViewController doees not start the migration on a fresh install of the app, when there
     /// is no AppConfiguration in the keychain.
     func testLaunchViewControllerDoesNotTriggerMigrationOnFreshInstall() throws {
@@ -269,11 +277,16 @@ class MockAppConfiguration: AppConfiguration {
 }
 
 class MockMigrationBot: GoBot {
+    
+    static var databaseDirectory = NSTemporaryDirectory()
+        .appending("/PlanetaryUnitTests")
+        .appending("/Beta1MigrationTests")
+    
     override var version: String {
         "beta2Test"
     }
     
     override class func databaseDirectory(for configuration: AppConfiguration) throws -> String {
-        NSTemporaryDirectory().appending("PlanetaryUnitTests").appending("/Beta1MigrationTests")
+        databaseDirectory
     }
 }

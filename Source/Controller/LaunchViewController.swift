@@ -143,6 +143,7 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         guard let secret = configuration.secret else { return }
         
+        Log.error("Bot.login failed")
         Log.optional(error)
         CrashReporting.shared.reportIfNeeded(
             error: error,
