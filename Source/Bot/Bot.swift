@@ -118,6 +118,10 @@ protocol Bot: AnyObject {
     // `Post` model, but then also the embedded `Hashtag` models.
     func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion)
 
+    /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
+    /// a message before the user's feed has resynced from the network during a restore.
+    func publishingWouldFork(feed: FeedIdentifier) throws -> Bool
+        
     // MARK: Post Management
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion)
