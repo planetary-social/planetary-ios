@@ -9,6 +9,27 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
+AUTHY_TOKEN = XMxnJoZc1aBN9E826r6zmDe91GePaBYE
+
+// Optionally add this key if you want to use MixpanelAnalytics implementation
+MIXPANEL_TOKEN =
+
+// Optionally add this key if you want to use BugsnagCrashReporting implementation
+BUGSNAG_TOKEN =
+
+// Optionally add these keys if you want to use ZendeskSupport implementation
+ZENDESK_APP_ID =
+ZENDESK_CLIENT_ID =
+
+PUSH_HOST =
+PUSH_TOKEN =
+PUSH_ENVIRONMENT =
+PUB_HOST =
+PUB_TOKEN =
+
+VERSE_HOST =
+VERSE_TOKEN =
+VERSE_DIRECTORY_PATH =
 VERSE_BLOB_TOKEN =
 
 DEFAULT_NETWORK_NAME = SSB

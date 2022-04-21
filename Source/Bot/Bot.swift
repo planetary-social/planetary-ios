@@ -47,6 +47,7 @@ protocol Bot: AnyObject {
     init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
     func suspend()
     func exit()
+    func dropDatabase(for configuration: AppConfiguration) async throws
     
     // MARK: Logs
     var logFileUrls: [URL] { get }
@@ -61,7 +62,7 @@ protocol Bot: AnyObject {
     // MARK: Sync
     
     /// Ensure that these list of addresses are taken into consideration when establishing connections
-    func seedPubAddresses(addresses: [PubAddress],
+    func seedPubAddresses(addresses: [MultiserverAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void)
     
@@ -78,10 +79,10 @@ protocol Bot: AnyObject {
     ///   - queue: the queue that `completion` will be called on.
     ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
     ///   - completion: a handler called with the result of the operation.
-    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
+    func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
-    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
+    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 
@@ -221,7 +222,18 @@ extension Bot {
         self.login(queue: .main, config: config, completion: completion)
     }
     
-    func logout() async throws {
+    func login(config: AppConfiguration) async throws {
+        let error: Error? = await withCheckedContinuation { continuation in
+            self.login(config: config) { error in
+                continuation.resume(with: .success(error))
+            }
+        }
+        if let error = error {
+            throw error
+        }
+    }
+    
+    @MainActor func logout() async throws {
         let error: Error? = await withCheckedContinuation { continuation in
             self.logout { error in
                 continuation.resume(with: .success(error))
@@ -232,7 +244,7 @@ extension Bot {
         }
     }
     
-    func sync(peers: [Peer], completion: @escaping SyncCompletion) {
+    func sync(peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
@@ -290,7 +302,7 @@ extension Bot {
     
     func about() async throws -> About? {
         try await withCheckedThrowingContinuation { continuation in
-            about() { about, error in
+            about { about, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
@@ -309,7 +321,7 @@ extension Bot {
     }
     
     func joinedPubs() async throws -> [Pub] {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             joinedPubs(queue: DispatchQueue.main) { result, error in
                 if let error = error {
                     continuation.resume(throwing: error)
@@ -344,7 +356,7 @@ extension Bot {
         self.keyAtEveryoneTop(queue: .main, completion: completion)
     }
     
-    func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(addresses: [MultiserverAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
 }

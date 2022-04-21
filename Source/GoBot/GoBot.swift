@@ -41,6 +41,8 @@ class GoBot: Bot {
     var version: String { self.bot.version }
     
     static let shared = GoBot()
+    
+    static let versionKey = "GoBotDatabaseVersion"
 
     private var _identity: Identity?
     var identity: Identity? { self._identity }
@@ -79,7 +81,7 @@ class GoBot: Bot {
     private let statisticsQueue: DispatchQueue
  
     private let userDefaults: UserDefaults
-    private var config: AppConfiguration?
+    private(set) var config: AppConfiguration?
 
     private var preloadedPubService: PreloadedPubService?
 
@@ -123,6 +125,34 @@ class GoBot: Bot {
     func exit() {
         userInitiatedQueue.async {
             self.bot.disconnectAll()
+            self.database.close()
+        }
+    }
+    
+    func dropDatabase(for configuration: AppConfiguration) async throws {
+        Log.info("Dropping GoBot database...")
+                
+        do {
+            try await logout()
+        } catch {
+            guard case BotError.notLoggedIn = error else {
+                throw error
+            }
+        }
+        
+        do {
+            let databaseDirectory = try Self.databaseDirectory(for: configuration)
+            try FileManager.default.removeItem(atPath: databaseDirectory)
+        } catch {
+            let nsError = error as NSError
+            // It's ok if the directory is already gone
+            guard nsError.domain == NSCocoaErrorDomain,
+                  nsError.code == 4,
+                  let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
+                  underlyingError.domain == NSPOSIXErrorDomain,
+                  underlyingError.code == 2 else {
+                throw error
+            }
         }
     }
 
@@ -162,30 +192,25 @@ class GoBot: Bot {
         
         self.config = config
         let hmacKey = config.hmacKey
+        
+        var repoPrefix: String
 
-        // lookup Application Support folder for bot and database
-        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory,
-                                                                 .userDomainMask, true)
-        guard appSupportDirs.count > 0 else {
-            queue.async { completion(GoBotError.unexpectedFault("no support dir")) }
+        do {
+            guard !database.isOpen() else {
+                throw GoBotError.unexpectedFault("\(#function) warning: database still open")
+            }
+            
+            repoPrefix = try Self.databaseDirectory(for: config)
+            
+            try self.database.open(
+                path: repoPrefix,
+                user: secret.identity
+            )
+        } catch {
+            queue.async { completion(error) }
             return
         }
 
-        let repoPrefix = appSupportDirs[0]
-            .appending("/FBTT")
-            .appending("/"+network.hexEncodedString())
-        
-        if !self.database.isOpen() {
-            do {
-                try self.database.open(path: repoPrefix, user: secret.identity)
-            } catch {
-                queue.async { completion(error) }
-                return
-            }
-        } else {
-            Log.unexpected(.botError, "\(#function) warning: database still open")
-        }
-   
         // spawn go-bot in the background to return early
         userInitiatedQueue.async {
             #if DEBUG
@@ -204,6 +229,11 @@ class GoBot: Bot {
             guard loginErr == nil else {
                 return
             }
+            
+            // Save GoBot version to disk in case we need to migrate in the future.
+            // This is a side-effect that may cause problems if we want to use other bots in the future.
+            self.userDefaults.set(self.version, forKey: GoBot.versionKey)
+            self.userDefaults.synchronize()
             
             self._identity = secret.identity
             
@@ -241,7 +271,7 @@ class GoBot: Bot {
     func logout(completion: @escaping ErrorCompletion) {
         Thread.assertIsMainThread()
         if self._identity == nil {
-            DispatchQueue.main.async { completion(BotError.notLoggedIn) }
+            completion(BotError.notLoggedIn)
             return
         }
         if !self.bot.logout() {
@@ -250,17 +280,17 @@ class GoBot: Bot {
         database.close()
         self._identity = nil
         self.config = nil
-        DispatchQueue.main.async { completion(nil) }
+        completion(nil)
     }
 
     // MARK: Sync
     
-    func seedPubAddresses(addresses: [PubAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(addresses: [MultiserverAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
         utilityQueue.async {
             do {
                 try addresses.forEach { address throws in
                     try self.database.saveAddress(feed: address.key,
-                                                  address: address.multipeer,
+                                                  address: address.rawValue,
                                                   redeemed: nil)
                 }
                 queue.async {
@@ -321,7 +351,7 @@ class GoBot: Bot {
     /// note that dialSomePeers() is called, then the completion is called
     /// some time later, this is a workaround until we can figure out how
     /// to determine peer connection status and progress
-    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
@@ -340,7 +370,6 @@ class GoBot: Bot {
 
         utilityQueue.async {
             let before = self.repoNumberOfMessages()
-            self.bot.disconnectAll()
             self.bot.dialSomePeers(from: peers)
             let after = self.repoNumberOfMessages()
             let new = after - before
@@ -360,7 +389,7 @@ class GoBot: Bot {
     ///   - queue: The queue that `completion` will be called on.
     ///   - peers: A list of peers to connect to. One will be chosen randomly.
     ///   - completion: A block that will be called when the operation has finished.
-    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
                 completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
@@ -475,10 +504,10 @@ class GoBot: Bot {
                     if ssbInviteAccept(goStr) {
                         do {
                             let feed = star.feed
-                            let address = star.address.multipeer
+                            let address = star.address.rawValue
                             let redeemed = Date().timeIntervalSince1970 * 1_000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
-                            Analytics.shared.trackDidJoinPub(at: star.address.multipeer)
+                            Analytics.shared.trackDidJoinPub(at: star.address.rawValue)
                         } catch {
                             CrashReporting.shared.reportIfNeeded(error: error)
                         }
@@ -1404,5 +1433,27 @@ class GoBot: Bot {
                 completion(error)
             }
         }
+    }
+    
+    // MARK: - Helpers
+    class func databaseDirectory(for configuration: AppConfiguration) throws -> String {
+        // lookup Application Support folder for bot and database
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        )
+        
+        guard appSupportDirs.count > 0 else {
+            throw GoBotError.unexpectedFault("no support dir")
+        }
+        
+        guard let networkKey = configuration.network else {
+            throw GoBotError.unexpectedFault("No network key in configuration.")
+        }
+
+        return appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/\(networkKey.hexEncodedString())")
     }
 }

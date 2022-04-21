@@ -22,6 +22,8 @@
 	<string>$(VERSE_HOST)</string>
 	<key>PLConstellation</key>
 	<string>$(CONSTELLATION)</string>
+	<key>PLCommunities</key>
+	<string>$(COMMUNITIES)</string>
 	<key>PLPlanetarySystem</key>
 	<string>$(PLANETARY_SYSTEM)</string>
 	<key>PLVerseToken</key>
@@ -50,6 +52,8 @@
 	<string>$(PLANETARY_NETWORK_KEY)</string>
 	<key>PLPlanetaryNetworkHMAC</key>
 	<string>$(PLANETARY_NETWORK_HMAC)</string>
+	<key>PLTestNetworkPubs</key>
+	<string>$(TEST_NETWORK_PUBS)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

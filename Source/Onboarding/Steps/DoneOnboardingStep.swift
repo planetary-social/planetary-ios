@@ -65,19 +65,6 @@ class DoneOnboardingStep: OnboardingStep {
             }
         }
         
-        let followOperation = BlockOperation {
-            let identities = Environment.PlanetarySystem.planets
-            let semaphore = DispatchSemaphore(value: identities.count - 1)
-            for identity in identities {
-                Bots.current.follow(identity) {
-                    _, _ in
-                    semaphore.signal()
-                }
-            }
-            semaphore.wait()
-        }
-        followOperation.addDependency(startOperation)
-        
         let publicWebHostingOperation = BlockOperation {
             guard data.publicWebHosting else {
                 return
@@ -92,7 +79,7 @@ class DoneOnboardingStep: OnboardingStep {
             }
             semaphore.wait()
         }
-        publicWebHostingOperation.addDependency(followOperation)
+        publicWebHostingOperation.addDependency(startOperation)
         
         let bundle = Bundle(path: Bundle.main.path(forResource: "Preload", ofType: "bundle")!)!
         let preloadOperation = LoadBundleOperation(bundle: bundle)
@@ -111,7 +98,6 @@ class DoneOnboardingStep: OnboardingStep {
         completionOperation.addDependency(refreshOperation)
         
         let operations = [startOperation,
-                          followOperation,
                           publicWebHostingOperation,
                           preloadOperation,
                           refreshOperation,

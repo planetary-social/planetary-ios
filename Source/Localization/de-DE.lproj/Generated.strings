@@ -113,6 +113,15 @@
 "Text.pasteAddress" = "Schlüssel";
 "Text.refresh" = "Aktualisieren";
 "Text.markdownSupported" = "Markdown-Vorschau";
+"Text.loggingOut" = "Logging out...";
+"Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
+"Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
+"Text.beta1MigrationPleaseLeaveAppOpen" = "This will take around 2 minutes.\n\nPlease leave the app open until it's done.\n";
+"Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
+"Text.startUsingPlanetary" = "start using Planetary";
+"Text.startUsingPlanetaryTitle" = "Start Using Planetary";
+"Text.percentComplete" = "complete";
+"Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 
 "Blocking.alertTitle" = "Bist du sicher, dass du {{ name }} blockieren willst? Du wirst den Inhalt des anderen nicht mehr sehen oder dich gegenseitig kontaktieren können.";
 "Blocking.buttonTitle" = "Ja, {{ name }} blockieren";

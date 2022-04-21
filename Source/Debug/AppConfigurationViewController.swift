@@ -186,81 +186,43 @@ class AppConfigurationViewController: DebugTableViewController {
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: {
                 cell in
+                let network = Environment.Networks.mainNet
                 cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
                 cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                cell.detailTextLabel?.text = NetworkKey.ssb.string
-                let selected = self.configuration.network == NetworkKey.ssb
+                cell.detailTextLabel?.text = Environment.Networks.mainNet.key.string
+                let selected = self.configuration.network == network.key
                 cell.accessoryType = selected ? .checkmark : .none
                 cell.textLabel?.isEnabled = self.canEditConfiguration
                 cell.isUserInteractionEnabled = self.canEditConfiguration
             },
                                              actionClosure: {
                 [unowned self] _ in
-                self.configuration.network = NetworkKey.ssb
+                self.configuration.ssbNetwork = Environment.Networks.mainNet
                 self.refresh()
             }
         )]
 
-        settings += [DebugTableViewCellModel(title: "Verse",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure: {
-                cell in
-                cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
-                cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                cell.detailTextLabel?.text = NetworkKey.verse.string
-                let selected = self.configuration.network == NetworkKey.verse
-                cell.accessoryType = selected ? .checkmark : .none
-                cell.textLabel?.isEnabled = self.canEditConfiguration
-                cell.isUserInteractionEnabled = self.canEditConfiguration
-            },
-                                             actionClosure: {
-                [unowned self] _ in
-                self.configuration.network = NetworkKey.verse
-                self.refresh()
-            }
-        )]
-
-        settings += [DebugTableViewCellModel(title: "Planetary",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure: {
-                cell in
-                cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
-                cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                cell.detailTextLabel?.text = NetworkKey.planetary.string
-                let selected = self.configuration.network == NetworkKey.planetary
-                cell.accessoryType = selected ? .checkmark : .none
-                cell.textLabel?.isEnabled = self.canEditConfiguration
-                cell.isUserInteractionEnabled = self.canEditConfiguration
-        },
-                                             actionClosure: {
-                [unowned self] _ in
-                self.configuration.network = NetworkKey.planetary
-                self.refresh()
-            }
-        )]
-        
-        #if DEBUG
         settings += [
             DebugTableViewCellModel(
                 title: "Planetary Test Network",
                 cellReuseIdentifier: DebugValueTableViewCell.className,
                 valueClosure: {
                     cell in
+                    let network = Environment.Networks.test
                     cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
                     cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                    cell.detailTextLabel?.text = NetworkKey.planetaryTest.string
-                    let selected = self.configuration.network == NetworkKey.planetaryTest
+                    cell.detailTextLabel?.text = network.key.string
+                    let selected = self.configuration.network == network.key
                     cell.accessoryType = selected ? .checkmark : .none
                     cell.textLabel?.isEnabled = self.canEditConfiguration
                     cell.isUserInteractionEnabled = self.canEditConfiguration
                 }, actionClosure: {
                     [unowned self] _ in
-                    self.configuration.network = NetworkKey.planetaryTest
+                    self.configuration.ssbNetwork = Environment.Networks.test
                     self.refresh()
                 }
             )
         ]
-        #endif
         
         return ("Networks", settings, nil)
     }
@@ -282,49 +244,20 @@ class AppConfigurationViewController: DebugTableViewController {
             },
                                              actionClosure: nil)]
 
-        settings += [DebugTableViewCellModel(title: "Verse",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure: {
-                cell in
-                cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
-                cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                cell.detailTextLabel?.text = HMACKey.verse.string
-                let selected = self.configuration.hmacKey == HMACKey.verse
-                cell.accessoryType = selected ? .checkmark : .none
-                cell.isUserInteractionEnabled = false
-                cell.textLabel?.isEnabled = false
-        },
-                                             actionClosure: nil)]
-        
-        settings += [DebugTableViewCellModel(title: "Planetary",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure: {
-                cell in
-                cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
-                cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                cell.detailTextLabel?.text = HMACKey.planetary.string
-                let selected = self.configuration.hmacKey == HMACKey.planetary
-                cell.accessoryType = selected ? .checkmark : .none
-                cell.isUserInteractionEnabled = false
-                cell.textLabel?.isEnabled = false
-            },
-                                             actionClosure: nil)]
-        
-        #if DEBUG
         settings += [DebugTableViewCellModel(title: "Planetary Test Network",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: {
                 cell in
+                let network = Environment.Networks.test
                 cell.detailTextLabel?.allowsDefaultTighteningForTruncation = false
                 cell.detailTextLabel?.lineBreakMode = .byTruncatingMiddle
-                cell.detailTextLabel?.text = HMACKey.planetaryTest.string
-                let selected = self.configuration.hmacKey == HMACKey.planetaryTest
+                cell.detailTextLabel?.text = network.hmac?.string
+                let selected = self.configuration.hmacKey == network.hmac
                 cell.accessoryType = selected ? .checkmark : .none
                 cell.isUserInteractionEnabled = false
                 cell.textLabel?.isEnabled = false
             },
                                              actionClosure: nil)]
-        #endif
 
         return ("HMAC Signing Key", settings, nil)
     }
@@ -371,6 +304,7 @@ class AppConfigurationViewController: DebugTableViewController {
     // MARK: Actions
 
     @objc private func selectConfiguration() {
+        AppController.shared.showProgress(after: 0, statusText: Text.loggingOut.text)
         guard let name = self.nameField.text else { return }
         guard self.configuration.canLaunch else { return }
         self.configuration.name = name
@@ -379,6 +313,7 @@ class AppConfigurationViewController: DebugTableViewController {
         AppController.shared.dismissSettingsViewController {
             Task {
                 await AppController.shared.relaunch()
+                AppController.shared.hideProgress()
             }
         }
     }

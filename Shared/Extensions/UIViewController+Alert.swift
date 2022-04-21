@@ -58,6 +58,21 @@ extension UIViewController: AlertRouter {
         self.choose(from: [cancel], title: title, message: message, sourceView: sourceView)
     }
     
+    /// An async alternative to `alert(from:title:message:cancelTitle:cancelClosure)`.
+    /// It's name includes async because otherwise Swift gets confused and thinks calls to the completion handler
+    /// version are calls to the async version.
+    func showAsyncAlert(from sourceView: AnyObject? = nil,
+               title: String? = nil,
+               message: String,
+               cancelTitle: String = Text.cancel.text) async {
+        
+        await withCheckedContinuation { continuation in
+            alert(from: sourceView, title: title, message: message, cancelTitle: cancelTitle) {
+                continuation.resume()
+            }
+        }
+    }
+    
     /// Presents a modal dialog prompting the user to confirm an action.
     ///
     /// - Parameters:

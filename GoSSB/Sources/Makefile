@@ -53,7 +53,7 @@ export PATH := $(GOROOT)/bin:$(PATH)
 
 GO := $(GOROOT)/bin/go
 
-GOEXTRAFLAGS=-trimpath -mod=vendor
+GOEXTRAFLAGS=-trimpath
 GOBUILDTAGS = nommio x509omitbundledroots
 # ifdef DEBUG <  this var is not set when the Build Step script is called  by Xcode
 # ifeq ($(ENABLE_TESTABILITY),YES) < also works, not sure what the difference is
@@ -65,7 +65,7 @@ endif
 
 # this builds multiple lib.a files for different ARCHS_PHONE
 define libssb-go-phone-a
-$(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a: *.go
+$(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a: *.go **/*.go
 	CGO_CFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	CGO_LDFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	GOARCH="$(GOARCH_$(1))" \
@@ -79,7 +79,7 @@ $(foreach ARCH,$(ARCHS_PHONE),$(eval $(call libssb-go-phone-a,$(ARCH))))
 
 # build for sim with correct cflags
 define libssb-go-sim-a
-$(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a: *.go
+$(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a: *.go **/*.go
 	CGO_CFLAGS="$(CFLAGS_SIM) -arch $(ARCH)" \
 	CGO_LDFLAGS="$(CFLAGS_SIM) -arch $(ARCH)" \
 	GOARCH="$(GOARCHSIM_$(1))" \

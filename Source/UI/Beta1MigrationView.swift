@@ -1,0 +1,101 @@
+//
+//  Beta1MigrationView.swift
+//  Planetary
+//
+//  Created by Matthew Lorentz on 4/7/22.
+//  Copyright © 2022 Verse Communications Inc. All rights reserved.
+//
+
+import SwiftUI
+
+protocol Beta1MigrationViewModel: ProgressButtonViewModel {
+    func buttonPressed()
+    var progress: Float { get }
+}
+
+/// A view to show the user while they are upgrading from GoBot version "beta1" to "beta2"
+struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewModel {
+    
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            ZStack {
+                // Blurred background
+                VStack {
+                    Image("icon-planetary-2")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                    Spacer()
+                }
+                .frame(maxWidth: 375)
+                .blur(radius: 90)
+                
+                // Foreground
+                VStack(spacing: 0) {
+                    Spacer()
+                    VerticallyCenteringScrollView {
+                        VStack(spacing: 30) {
+                            Color.clear.frame(width: 0, height: 40)
+                            HStack {
+                                Image("icon-planetary-2")
+                                    .resizable()
+                                    .frame(width: 72.11, height: 88)
+                                Spacer()
+                            }
+                            Text.upgradingAndRestoring.view
+                                .font(.title)
+                                .foregroundColor(Color("mainText"))
+                                .multilineTextAlignment(.leading)
+                            
+                            Beta1MigrationDescriptionText(viewModel: viewModel)
+                            
+                            Spacer()
+                            
+                            ProgressButton(viewModel: viewModel)
+                            
+                            Color.clear.frame(width: 0, height: 10)
+                        }
+                        .frame(maxWidth: 287, maxHeight: 800)
+                    }
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .edgesIgnoringSafeArea([.top, .bottom])
+            }
+            
+            Spacer()
+        }
+        .background(
+            Color("appBackground").edgesIgnoringSafeArea(.all)
+        )
+    }
+}
+
+fileprivate class PreviewViewModel: Beta1MigrationViewModel {
+    func buttonPressed() {}
+    var progress: Float
+    
+    init(progress: Float) {
+        self.progress = progress
+    }
+}
+
+struct Beta1MigrationView_Previews: PreviewProvider {
+    static var previews: some View {
+        Beta1MigrationView(viewModel: PreviewViewModel(progress: 0.66))
+        
+        Beta1MigrationView(viewModel: PreviewViewModel(progress: 0.66))
+            .preferredColorScheme(.dark)
+        
+        Beta1MigrationView(viewModel: PreviewViewModel(progress: 0.995))
+            .preferredColorScheme(.dark)
+        
+        Beta1MigrationView(viewModel: PreviewViewModel(progress: 0.66))
+            .previewDevice("iPhone SE (2nd generation)")
+        
+        Beta1MigrationView(viewModel: PreviewViewModel(progress: 0.66))
+            .previewDevice("iPad Air (4th generation)")
+    }
+}

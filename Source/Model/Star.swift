@@ -23,8 +23,8 @@ struct Star {
         "\(host):\(port)"
     }
     
-    var address: PubAddress {
-        PubAddress(key: self.feed, host: self.host, port: self.port)
+    var address: MultiserverAddress {
+        MultiserverAddress(key: self.feed, host: self.host, port: self.port)
     }
     
     init(invite: String) {

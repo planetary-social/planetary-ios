@@ -21,8 +21,8 @@ let reproKey = Secret(from: """
 }
 """)!
 
-let reproNetwork = NetworkKey.planetary
-let reproHMAC = HMACKey.planetary
+let reproNetwork = Environment.Networks.test.key
+let reproHMAC = Environment.Networks.test.hmac
 let reproConfiguration = { () -> AppConfiguration in
     let config = AppConfiguration(with: reproKey)
     config.network = reproNetwork

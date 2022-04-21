@@ -104,13 +104,11 @@ class Onboarding {
             // We will add this as an option in the UI in the future #494
             configuration.joinedPlanetarySystem = true
 
-            // TODO https://app.asana.com/0/0/1134329918920789/f
-            // TODO abstract GoBot network configuration
-            if CommandLine.arguments.contains("use-ci-network") {
-                configuration.network = NetworkKey.integrationTests
-            } else {
-                configuration.network = NetworkKey.ssb
-            }
+            #if DEBUG
+            configuration.ssbNetwork = Environment.Networks.test
+            #else
+            configuration.ssbNetwork = Environment.Networks.mainNet
+            #endif
 
             // login to bot
             

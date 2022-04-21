@@ -6,23 +6,25 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"time"
-
 	"github.com/go-kit/kit/log/level"
-
-	"github.com/cryptix/go/encodedTime"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/luigi"
 	"go.cryptoscope.co/luigi/mfr"
 	"go.cryptoscope.co/margaret"
-	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/private"
+	"go.cryptoscope.co/margaret/indexes"
+	"go.cryptoscope.co/ssb/multilogs"
+	"go.mindeco.de/encodedTime"
+	refs "go.mindeco.de/ssb-refs"
+	"go.mindeco.de/ssb-refs/tfk"
+	"time"
 )
 
 import "C"
 
 //export ssbStreamRootLog
-func ssbStreamRootLog(seq uint64, limit int) *C.char {
+func ssbStreamRootLog(seq int64, limit int) *C.char {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -38,7 +40,7 @@ func ssbStreamRootLog(seq uint64, limit int) *C.char {
 	}
 	lock.Unlock()
 
-	buf, err := newLogDrain(sbot.RootLog, seq, limit)
+	buf, err := newLogDrain(sbot.ReceiveLog, seq, limit)
 	if err != nil {
 		err = errors.Wrap(err, "rootLog: draining failed")
 		return nil
@@ -51,40 +53,40 @@ func ssbStreamRootLog(seq uint64, limit int) *C.char {
 func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 	// return empty array until there is actual UI in place for these
 	return C.CString("[]")
-	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("ssbStreamPrivateLog", err)
-		}
-	}()
-
-	lock.Lock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		return nil
-	}
-	lock.Unlock()
-
-	pl, ok := sbot.GetMultiLog("privLogs")
-	if !ok {
-		err = errors.Errorf("sbot: missing privLogs index")
-		return nil
-	}
-
-	userPrivs, err := pl.Get(sbot.KeyPair.Id.StoredAddr())
-	if err != nil {
-		err = errors.Wrap(err, "failed to open user private index")
-		return nil
-	}
-
-	unboxlog := private.NewUnboxerLog(sbot.RootLog, userPrivs, sbot.KeyPair)
-	buf, err := newLogDrain(unboxlog, seq, limit)
-	if err != nil {
-		err = errors.Wrap(err, "PrivateLog: pipe draining failed")
-		return nil
-	}
-
-	return C.CString(buf.String())
+	//var err error
+	//defer func() {
+	//	if err != nil {
+	//		level.Error(log).Log("ssbStreamPrivateLog", err)
+	//	}
+	//}()
+	//
+	//lock.Lock()
+	//if sbot == nil {
+	//	err = ErrNotInitialized
+	//	return nil
+	//}
+	//lock.Unlock()
+	//
+	//pl, ok := sbot.GetMultiLog("privLogs")
+	//if !ok {
+	//	err = errors.Errorf("sbot: missing privLogs index")
+	//	return nil
+	//}
+	//
+	//userPrivs, err := pl.Get(sbot.KeyPair.ID().StoredAddr())
+	//if err != nil {
+	//	err = errors.Wrap(err, "failed to open user private index")
+	//	return nil
+	//}
+	//
+	//unboxlog := private.NewUnboxerLog(sbot.ReceiveLog, userPrivs, sbot.KeyPair)
+	//buf, err := newLogDrain(unboxlog, seq, limit)
+	//if err != nil {
+	//	err = errors.Wrap(err, "PrivateLog: pipe draining failed")
+	//	return nil
+	//}
+	//
+	//return C.CString(buf.String())
 }
 
 //export ssbStreamPublishedLog
@@ -92,6 +94,8 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 // The seq parameter should be the index of the last known message that the user published in the RootLog.
 // Pass -1 to get the entire log.
 func ssbStreamPublishedLog(afterSeq int64) *C.char {
+	defer logPanic()
+
 	// Please don't judge me too hard I don't know much Go - ml
 	var err error
 	defer func() {
@@ -108,13 +112,19 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 	}
 	lock.Unlock()
 
-	uf, ok := sbot.GetMultiLog("userFeeds")
+	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
 	if !ok {
 		err = errors.Wrapf(err, "failed to get user feed")
 		return nil
 	}
 
-	publishedLog, err := uf.Get(sbot.KeyPair.Id.StoredAddr())
+	addr, err := feedStoredAddr(sbot.KeyPair.ID())
+	if err != nil {
+		err = errors.Wrap(err, "failed to get the address used for storage")
+		return nil
+	}
+
+	publishedLog, err := uf.Get(addr)
 	if err != nil {
 		err = errors.Wrap(err, "userFeeds: could not get log for current user")
 		return nil
@@ -156,7 +166,7 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 		}
 
 		wrappedVal := sw.Value()
-		indexOfMessageInRootLog, ok := wrappedVal.(margaret.BaseSeq)
+		indexOfMessageInRootLog, ok := wrappedVal.(int64)
 		if !ok {
 			errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
 			return nil
@@ -165,17 +175,17 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 		// Filter out messages before seq
 		// This is an inefficient way to do this. Really we should be adding a filter to the publishLog.Query, but I'm not sure how to convert an index
 		// in the RootLog to an index in the publishedLog
-		if indexOfMessageInRootLog.Seq() <= afterSeq {
+		if indexOfMessageInRootLog <= afterSeq {
 			continue
 		}
 
-		v, err = sbot.RootLog.Get(indexOfMessageInRootLog)
+		v, err = sbot.ReceiveLog.Get(indexOfMessageInRootLog)
 		if err != nil {
-			errors.Wrapf(err, "drainLog: could not get message %i from RootLog", indexOfMessageInRootLog)
+			errors.Wrapf(err, "drainLog: could not get message %d from RootLog", indexOfMessageInRootLog)
 			return nil
 		}
 
-		msg, ok := v.(ssb.Message)
+		msg, ok := v.(refs.Message)
 		if !ok {
 			errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
 			return nil
@@ -186,16 +196,16 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 		}
 
 		var kv struct {
-			ssb.KeyValueRaw
+			refs.KeyValueRaw
 			ReceiveLogSeq int64 // the sequence no of the log its stored in
 			HashedKey     string
 		}
-		kv.ReceiveLogSeq = indexOfMessageInRootLog.Seq()
+		kv.ReceiveLogSeq = indexOfMessageInRootLog
 		kv.Key_ = msg.Key()
 		kv.Value = *msg.ValueContent()
 		kv.Timestamp = encodedTime.Millisecs(msg.Received())
 
-		keyHasher.Write([]byte(kv.Key_.Ref()))
+		keyHasher.Write([]byte(kv.Key_.String()))
 		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
 
 		if err := json.NewEncoder(w).Encode(kv); err != nil {
@@ -217,14 +227,14 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 	return C.CString(w.String())
 }
 
-func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, error) {
+func newLogDrain(sourceLog margaret.Log, seq int64, limit int) (*bytes.Buffer, error) {
 	start := time.Now()
 
 	w := &bytes.Buffer{}
 
 	src, err := sourceLog.Query(
 		margaret.SeqWrap(true),
-		margaret.Gte(margaret.BaseSeq(seq)),
+		margaret.Gte(seq),
 		margaret.Limit(limit*3)) // HACK: we know we will get less because we skip a lot of stuff but it's dangerous
 	if err != nil {
 		return nil, errors.Wrapf(err, "drainLog: failed to open query")
@@ -258,7 +268,7 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 			return false, errors.Errorf("drainLog: want wrapper type got: %T", v)
 		}
 		wrappedVal := sw.Value()
-		msg, ok := wrappedVal.(ssb.Message)
+		msg, ok := wrappedVal.(refs.Message)
 		if !ok {
 			return false, errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
 		}
@@ -304,9 +314,9 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 			return nil, errors.Errorf("drainLog: want wrapper type got: %T", v)
 		}
 
-		rxLogSeq := sw.Seq().Seq()
+		rxLogSeq := sw.Seq()
 		wrappedVal := sw.Value()
-		msg, ok := wrappedVal.(ssb.Message)
+		msg, ok := wrappedVal.(refs.Message)
 		if !ok {
 			return nil, errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
 		}
@@ -316,7 +326,7 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 		}
 
 		var kv struct {
-			ssb.KeyValueRaw
+			refs.KeyValueRaw
 			ReceiveLogSeq int64 // the sequence no of the log its stored in
 			HashedKey     string
 		}
@@ -325,7 +335,7 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 		kv.Value = *msg.ValueContent()
 		kv.Timestamp = encodedTime.Millisecs(msg.Received())
 
-		keyHasher.Write([]byte(kv.Key_.Ref()))
+		keyHasher.Write([]byte(kv.Key_.String()))
 		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
 
 		if err := json.NewEncoder(w).Encode(kv); err != nil {
@@ -347,4 +357,18 @@ func newLogDrain(sourceLog margaret.Log, seq uint64, limit int) (*bytes.Buffer, 
 	}
 	return w, nil
 
+}
+
+func feedStoredAddr(r refs.FeedRef) (indexes.Addr, error) {
+	sr, err := tfk.FeedFromRef(r)
+	if err != nil {
+		return "", fmt.Errorf("failed to make stored feed ref: %w", err)
+	}
+
+	b, err := sr.MarshalBinary()
+	if err != nil {
+		return "", fmt.Errorf("error while marshalling stored feed ref: %w", err)
+	}
+
+	return indexes.Addr(b), nil
 }
