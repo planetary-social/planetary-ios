@@ -121,6 +121,7 @@ class DoneOnboardingStep: OnboardingStep {
             DispatchQueue.main.async { [weak self] in
                 self?.view.lookReady()
                 Analytics.shared.trackOnboardingComplete(data.analyticsData)
+                Analytics.shared.trackOnboardingEnd()
                 self?.next()
             }
         }
