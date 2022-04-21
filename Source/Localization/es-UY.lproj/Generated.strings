@@ -238,6 +238,10 @@
 "Debug.debugTitle" = "Modo Hacker";
 "Debug.debugMenu" = "Menú de desarrollo poderoso y peligroso";
 "Debug.debugFooter" = "Esta es la parte en la que dejamos que te dispares en el pié. Acá es donde accedés a tu llave privada, configurás nuevas llaves, ves información sobre la red, sobre los pubs, y todo tipo de cosas. Cuidado con lo que cambiás en este menú, podés romper cosas con estas opciones.";
+"Debug.resetForkedFeedProtection" = "Reset Forked Feed Protection";
+"Debug.resetForkedFeedProtectionDescription" = "This will reset the number of published messages associated with your identity to the number currently in your database. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?";
+"Debug.reset" = "Reset";
+"Debug.noBotConfigured" = "No bot configured.";
 
 "Error.login" = "El motor de par-a-par falló al arrancar. Por favor probá cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
 "Error.unexpected" = "Algo inesperado ocurrió.";

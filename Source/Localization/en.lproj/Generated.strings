@@ -37,7 +37,7 @@
 "Text.userDirectoryMessage" = "Being in the user directory means that people can find you if they already know your name, short code or phone number.";
 "Text.sendAnalytics" = "Send analytics to Planetary";
 "Text.dontSendAnalytics" = "Don't send analytics at all";
-"Text.analyticsMessage" = "We would like to capture anonymized data about your use of the app - and crash reports when something goes wrong - so we can make the application better.";
+"Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
 "Text.post" = "Post";
 "Text.preview" = "Preview";
@@ -116,7 +116,7 @@
 "Text.loggingOut" = "Logging out...";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
-"Text.beta1MigrationPleaseLeaveAppOpen" = "This will take around 2 minutes.\n\nPlease leave the app open until it's done.\n";
+"Text.beta1MigrationPleaseLeaveAppOpen" = "This will take around 5 minutes.\n\nPlease leave the app open until it's done.\n";
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "start using Planetary";
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
@@ -238,6 +238,10 @@
 "Debug.debugTitle" = "Hacker Mode";
 "Debug.debugMenu" = "Dangerous and powerful debug menu";
 "Debug.debugFooter" = "This is where we let you shoot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options.";
+"Debug.resetForkedFeedProtection" = "Reset Forked Feed Protection";
+"Debug.resetForkedFeedProtectionDescription" = "This will reset the number of published messages associated with your identity to the number currently in your database. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?";
+"Debug.reset" = "Reset";
+"Debug.noBotConfigured" = "No bot configured.";
 
 "Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
 "Error.unexpected" = "Something unexpected happened.";

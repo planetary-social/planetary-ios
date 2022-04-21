@@ -20,7 +20,11 @@ typealias PaginatedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
 typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
-typealias RefreshCompletion = ((Error?, TimeInterval) -> Void)
+
+/// - Error: an error if the refresh failed
+/// - TimeInterval: the amount of time the refresh took
+/// - Bool: True if the view database is fully up to date with the backing store.
+typealias RefreshCompletion = ((Error?, TimeInterval, Bool) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
 typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
 typealias ThreadCompletion = ((KeyValue?, PaginatedKeyValueDataProxy, Error?) -> Void)
@@ -248,10 +252,18 @@ extension Bot {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
-    func refresh(load: RefreshLoad, queue: DispatchQueue = .main) async -> (Error?, TimeInterval) {
-        await withCheckedContinuation { continuation in
-            refresh(load: load, queue: queue) { result1, result2 in
-                continuation.resume(returning: (result1, result2))
+    @discardableResult
+    func refresh(
+        load: RefreshLoad,
+        queue: DispatchQueue = .main
+    ) async throws -> (TimeInterval, Bool) {
+        try await withCheckedThrowingContinuation { continuation in
+            refresh(load: load, queue: queue) { error, result2, result3 in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: (result2, result3))
+                }
             }
         }
     }

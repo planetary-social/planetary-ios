@@ -92,7 +92,7 @@ class API_GoBot: XCTestCase {
     func test03_refresh() {
         var refreshExpectation = self.expectation(description: "refresh")
         API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, took) in
+            (err, took, _) in
             XCTAssertNil(err)
             print("ref1:\(took)")
             refreshExpectation.fulfill()
@@ -102,7 +102,7 @@ class API_GoBot: XCTestCase {
         // TODO: retrigger refesh after repair sync
         refreshExpectation = self.expectation(description: "refresh")
         API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, took) in
+            (err, took, _) in
             XCTAssertNil(err)
             print("ref2:\(took)")
             refreshExpectation.fulfill()
@@ -121,7 +121,7 @@ class API_GoBot: XCTestCase {
     func test05_refresh() {
         let refreshExpectation = self.expectation(description: "refresh")
         API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, _) in
+            (err, _, _) in
             XCTAssertNil(err)
             refreshExpectation.fulfill()
         }
@@ -131,7 +131,7 @@ class API_GoBot: XCTestCase {
     func test07_refresh() async {
         let refreshExpectation = self.expectation(description: "refresh")
         API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, _) in
+            (err, _, _) in
             XCTAssertNil(err)
             refreshExpectation.fulfill()
         }

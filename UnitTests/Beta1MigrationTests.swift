@@ -169,7 +169,7 @@ class Beta1MigrationTests: XCTestCase {
         XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
         
         // Arrange
-        Onboarding.set(status: .completed, for: appConfig.identity!)
+        Onboarding.set(status: .completed, for: appConfig.identity)
         let sut = await LaunchViewController(
             appConfiguration: appConfig,
             appController: appController,
@@ -227,7 +227,7 @@ class Beta1MigrationTests: XCTestCase {
         XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
         
         // Arrange
-        Onboarding.set(status: .notStarted, for: appConfig.identity!)
+        Onboarding.set(status: .notStarted, for: appConfig.identity)
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/mockDatabase")))
         let sut = LaunchViewController(
@@ -258,7 +258,7 @@ class Beta1MigrationTests: XCTestCase {
         options.isStrict = false
         XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
         
-        Onboarding.set(status: .started, for: appConfig.identity!)
+        Onboarding.set(status: .started, for: appConfig.identity)
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/mockDatabase")))
         let sut = LaunchViewController(

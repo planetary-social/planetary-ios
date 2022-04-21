@@ -70,16 +70,15 @@ class LaunchViewController: UIViewController {
             return
         }
 
+        let identity = configuration.identity
         // if configuration and is required then onboard
-        if let identity = configuration.identity,
-            Onboarding.status(for: identity) == .started {
+        if Onboarding.status(for: identity) == .started {
             self.launchIntoOnboarding(status: .started)
             return
         }
 
         // if configuration and not started then already onboarded
-        if let identity = configuration.identity,
-            Onboarding.status(for: identity) == .notStarted {
+        if Onboarding.status(for: identity) == .notStarted {
             Onboarding.set(status: .completed, for: identity)
         }
 
@@ -104,7 +103,6 @@ class LaunchViewController: UIViewController {
                 if !isMigrating {
                     // note that hmac key can be nil to switch it off
                     guard let network = configuration.network else { return }
-                    guard let secret = configuration.secret else { return }
                     guard let bot = configuration.bot else { return }
                     
                     try await bot.login(config: configuration)
@@ -141,7 +139,7 @@ class LaunchViewController: UIViewController {
     func handleLoginFailure(with error: Error, configuration: AppConfiguration) {
         guard let network = configuration.network else { return }
         guard let bot = configuration.bot else { return }
-        guard let secret = configuration.secret else { return }
+        let secret = configuration.secret
         
         Log.error("Bot.login failed")
         Log.optional(error)
@@ -204,10 +202,7 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         
         do {
-            guard let identity = configuration.secret?.identity else {
-                Log.error("Could not fetch identity while logging in.")
-                return
-            }
+            let identity = configuration.secret.identity
             
             let about = try await bot.about()
             CrashReporting.shared.identify(

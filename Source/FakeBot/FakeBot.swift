@@ -186,7 +186,7 @@ class FakeBot: Bot {
 
     func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
         self._network = config.network?.string
-        self._identity = config.secret?.identity
+        self._identity = config.secret.identity
         queue.async {
             completion(nil)
         }
@@ -223,7 +223,7 @@ class FakeBot: Bot {
     func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
         queue.async {
-            completion(nil, 0)
+            completion(nil, 0, false)
         }
     }
 

@@ -14,8 +14,8 @@ struct KeyValueFixtures {
     
     static func keyValue(
         key: MessageIdentifier = "TestPostId=.ed25519",
-        receivedTimestamp: Float64 = 2_684_029_486_000, // 2055
         timestamp: Float64 = 2_684_029_486_000, // 2055
+        receivedTimestamp: Float64 = 2_684_029_486_000, // 2055
         receivedSeq: Int64 = 0, // largest in example feed is 77
         author: Identity) -> KeyValue {
         KeyValue(

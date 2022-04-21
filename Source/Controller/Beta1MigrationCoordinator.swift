@@ -68,7 +68,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         }
         
         let version = userDefaults.string(forKey: GoBot.versionKey)
-        guard true || version == nil else {
+        guard version == nil else {
             return false
         }
         

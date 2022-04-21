@@ -120,7 +120,7 @@ class BotViewController: DebugTableViewController {
                 [unowned self] cell in
                 cell.showActivityIndicator()
                 self.bot.refresh(load: .long, queue: .main) {
-                    [weak self] _, _ in
+                    [weak self] _, _, _ in
                     cell.hideActivityIndicator()
                     self?.updateSettings()
                 }

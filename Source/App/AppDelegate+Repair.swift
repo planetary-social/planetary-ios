@@ -26,7 +26,7 @@ extension AppDelegate {
 
         // repair onboarding status' for all identities
         for configuration in configurations {
-            guard let identity = configuration.identity else { continue }
+            let identity = configuration.identity
             let status = Onboarding.status(for: identity)
             Onboarding.set(status: status, for: identity)
         }
