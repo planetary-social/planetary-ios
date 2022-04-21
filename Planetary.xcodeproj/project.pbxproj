@@ -668,6 +668,7 @@
 		C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E341FD224FF9EE002BB5F4 /* UIImage+Verse.swift */; };
 		C941A6E427ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
+		C949E96928118C32006C5F18 /* MultiserverAddressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E96828118C32006C5F18 /* MultiserverAddressTests.swift */; };
 		C94A23D227FB610E002DE7AC /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; };
 		C94A23D327FB610E002DE7AC /* GoSSB.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C94F66742810AB9F00DEA5AC /* XCTBlockExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */; };
@@ -1529,6 +1530,7 @@
 		C93FE9B927D663220013D4CF /* BlobTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobTests.swift; sourceTree = "<group>"; };
 		C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedBlobService.swift; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C949E96828118C32006C5F18 /* MultiserverAddressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiserverAddressTests.swift; sourceTree = "<group>"; };
 		C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTBlockExpectation.swift; sourceTree = "<group>"; };
 		C950B5502805CD6600D7059B /* JoinPlanetarySystemOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinPlanetarySystemOperation.swift; sourceTree = "<group>"; };
@@ -2657,6 +2659,7 @@
 		C9C3788627C6962900238B58 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				C949E96828118C32006C5F18 /* MultiserverAddressTests.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -3829,6 +3832,7 @@
 				C9724B0D2809CC2A000EBCCD /* LaunchViewController.swift in Sources */,
 				C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */,
 				C9724B222809D403000EBCCD /* Layout+Center.swift in Sources */,
+				C949E96928118C32006C5F18 /* MultiserverAddressTests.swift in Sources */,
 				53CF2A4D22026B1700F0A2CC /* ImageMetadata.swift in Sources */,
 				C9724B6A2809D71D000EBCCD /* ImageGalleryView.swift in Sources */,
 				C9724BBC2809ECBB000EBCCD /* UIViewController+Report.swift in Sources */,
