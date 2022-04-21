@@ -182,9 +182,6 @@ class Beta1MigrationTests: XCTestCase {
         }
         
         wait(for: [expectation], timeout: 10)
-        
-        print(self.userDefaults.object(forKey: "PerformedBeta1Migration"))
-        print(self.userDefaults.string(forKey: "GoBotDatabaseVersion"))
     }
         
     /// Verifies that the LaunchViewController doees not start the migration on a fresh install of the app, when there
