@@ -203,7 +203,7 @@
 		23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD4B022C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift */; };
 		23CF345722099E5D00F46A54 /* InvalidVoteMissingIdentifier.json in Resources */ = {isa = PBXBuildFile; fileRef = 23CF345622099E5D00F46A54 /* InvalidVoteMissingIdentifier.json */; };
 		23D8CE272253DB29001EB7D5 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D8CE262253DB29001EB7D5 /* Address.swift */; };
-		23D8E2C022033D31004776EA /* (null) in Resources */ = {isa = PBXBuildFile; };
+		23D8E2C022033D31004776EA /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		23E76A5623F2F0F70074F424 /* ValueTimestamp.json in Resources */ = {isa = PBXBuildFile; fileRef = 23E76A5523F2F0F70074F424 /* ValueTimestamp.json */; };
 		23E8805E22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
 		23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
@@ -266,7 +266,7 @@
 		530F01B222DFCEED007EBAE2 /* String+IsValid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B122DFCEED007EBAE2 /* String+IsValid.swift */; };
 		530F01B422E0D3E7007EBAE2 /* TitledToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B322E0D3E7007EBAE2 /* TitledToggle.swift */; };
 		530F01B622E0D930007EBAE2 /* JoinOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B522E0D930007EBAE2 /* JoinOnboardingStep.swift */; };
-		5314EF3A22EA276A0065D02A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		5314EF3A22EA276A0065D02A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		5314EF3B22EA27840065D02A /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62A22445BE900C57A4B /* AppConfiguration.swift */; };
 		5314EF3C22EA27920065D02A /* SSBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* SSBNetwork.swift */; };
 		5314EF3D22EA27980065D02A /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01F32204F66200DFDF16 /* Secret.swift */; };
@@ -1651,7 +1651,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5314EF3A22EA276A0065D02A /* (null) in Frameworks */,
+				5314EF3A22EA276A0065D02A /* BuildFile in Frameworks */,
 				531A8A3721F4364D00D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
 				531A8A3821F4364D00D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */,
@@ -3133,8 +3133,6 @@
 				"es-ES",
 			);
 			mainGroup = 5344D82221C4649700704A34;
-			packageReferences = (
-			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -3218,7 +3216,7 @@
 				5316E95B21FFD4980053832E /* InvalidChannel.json in Resources */,
 				C924412F278DDECE00592E5E /* Preload.bundle in Resources */,
 				5316E95721FFCDFF0053832E /* UnsupportedType.json in Resources */,
-				23D8E2C022033D31004776EA /* (null) in Resources */,
+				23D8E2C022033D31004776EA /* BuildFile in Resources */,
 				5316E95921FFD19F0053832E /* Invalid.json in Resources */,
 				C9F0B6A027E2728800BE2F0E /* Generated.strings in Resources */,
 				C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */,
@@ -3396,7 +3394,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist,
+				"$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5146,7 +5144,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -5179,7 +5177,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.2.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
