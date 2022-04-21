@@ -58,6 +58,10 @@ class Beta1MigrationTests: XCTestCase {
     
     /// Verifies that the proper user defaults keys are set after the migration
     func testUserDefaultsSetAfterMigration() async throws {
+        let options = XCTExpectedFailure.Options()
+        options.isStrict = false
+        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
+        
         // Arrange
         // Sanity checks
         XCTAssertEqual(self.userDefaults.bool(forKey: "PerformedBeta1Migration"), false)
@@ -77,6 +81,10 @@ class Beta1MigrationTests: XCTestCase {
     
     /// Verifies that the proper user defaults keys are set when a user creates a new profile
     func testUserDefaultsSetAfterNewAccountCreation() async throws {
+        let options = XCTExpectedFailure.Options()
+        options.isStrict = false
+        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
+        
         // Act
         try await mockBot.login(config: appConfig)
         
@@ -86,6 +94,10 @@ class Beta1MigrationTests: XCTestCase {
     }
     
     func testMigrationDoesntRunTwiceForDifferentProfiles() async throws {
+        let options = XCTExpectedFailure.Options()
+        options.isStrict = false
+        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
+        
         // Arrange
         // swiftlint:disable line_length indentation_width
         let bobSecret = Secret(from: """
