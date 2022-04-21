@@ -16,19 +16,6 @@ PODS:
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
   - SVProgressHUD (2.2.5)
-  - ZendeskCommonUISDK (6.1.1)
-  - ZendeskCoreSDK (2.5.1)
-  - ZendeskMessagingAPISDK (3.8.2):
-    - ZendeskSDKConfigurationsSDK (~> 1.1.8)
-  - ZendeskMessagingSDK (3.8.2):
-    - ZendeskCommonUISDK (~> 6.1.1)
-    - ZendeskMessagingAPISDK (~> 3.8.2)
-  - ZendeskSDKConfigurationsSDK (1.1.8)
-  - ZendeskSupportProvidersSDK (5.3.0):
-    - ZendeskCoreSDK (~> 2.5.1)
-  - ZendeskSupportSDK (5.3.0):
-    - ZendeskMessagingSDK (~> 3.8.2)
-    - ZendeskSupportProvidersSDK (~> 5.3.0)
 
 DEPENDENCIES:
   - Down (= 0.9.2)
@@ -39,7 +26,6 @@ DEPENDENCIES:
   - SkeletonView (= 1.8.7)
   - SQLite.swift (= 0.12.2)
   - SVProgressHUD (= 2.2.5)
-  - ZendeskSupportSDK
 
 SPEC REPOS:
   trunk:
@@ -51,13 +37,6 @@ SPEC REPOS:
     - SkeletonView
     - SQLite.swift
     - SVProgressHUD
-    - ZendeskCommonUISDK
-    - ZendeskCoreSDK
-    - ZendeskMessagingAPISDK
-    - ZendeskMessagingSDK
-    - ZendeskSDKConfigurationsSDK
-    - ZendeskSupportProvidersSDK
-    - ZendeskSupportSDK
 
 SPEC CHECKSUMS:
   Down: 1f6a14846dff45ae8e7e4334b4e386a5fd3b2412
@@ -68,14 +47,7 @@ SPEC CHECKSUMS:
   SkeletonView: ba5370f41280b2f0a76918bb143c1294232bb4f4
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
-  ZendeskCommonUISDK: 5808802951ad2bb424f0bed4259dc3c0ce9b52ec
-  ZendeskCoreSDK: 19a18e5ef2edcb18f4dbc0ea0d12bd31f515712a
-  ZendeskMessagingAPISDK: 144e0fb0e633a3c4e73149b781ab65338938d5a8
-  ZendeskMessagingSDK: 500e83d9413481e95180c37ddca0d4ef9d515600
-  ZendeskSDKConfigurationsSDK: 8371b468db0d09e9198f6c5a97818826943ee1ee
-  ZendeskSupportProvidersSDK: 2bdf8544f7cd0fd4c002546f5704b813845beb2a
-  ZendeskSupportSDK: 3a8e508ab1d9dd22dc038df6c694466414e037ba
 
-PODFILE CHECKSUM: 88d39a3dd66da8600c8a9a21d445516329594beb
+PODFILE CHECKSUM: 666082791896bd3801731744055de0d57c984159
 
 COCOAPODS: 1.11.2

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Support
 
 class BenefitsOnboardingStep: OnboardingStep {
 
@@ -18,8 +19,10 @@ class BenefitsOnboardingStep: OnboardingStep {
     override func customizeView() {
         let text = NSMutableAttributedString(string: Text.Onboarding.benefits.text)
         text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.text.default)
-        text.addLinkAttribute(value: Support.shared.id(for: SupportArticle.whatIsPlanetary),
-                              to: Text.Onboarding.findOutMore.text)
+        text.addLinkAttribute(
+            value: SupportArticle.whatIsPlanetary.rawValue,
+            to: Text.Onboarding.findOutMore.text
+        )
         text.addParagraphAlignCenter()
         self.view.textView.isEditable = false
         self.view.textView.attributedText = text
@@ -37,7 +40,7 @@ extension BenefitsOnboardingStep: UITextViewDelegate {
                   shouldInteractWith URL: URL,
                   in characterRange: NSRange,
                   interaction: UITextItemInteraction) -> Bool {
-        guard let article = Support.shared.article(for: URL.absoluteString) else { return false }
+        guard let article = SupportArticle(rawValue: URL.absoluteString) else { return false }
         guard let controller = Support.shared.articleViewController(article) else {
             AppController.shared.alert(
                 title: Text.error.text,

@@ -10,6 +10,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Support
 
 class RelationshipButton: IconButton {
 
@@ -179,7 +180,9 @@ class RelationshipButton: IconButton {
 
     func reportUser() {
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
-        guard let controller = Support.shared.newTicketViewController(from: self.relationship.identity, reporting: self.relationship.other, name: self.otherUserName) else {
+        let reporter = relationship.identity
+        let profile = AbusiveProfile(identifier: relationship.other, name: otherUserName)
+        guard let controller = Support.shared.newTicketViewController(reporter: reporter, profile: profile) else {
             AppController.shared.alert(
                 title: Text.error.text,
                 message: Text.Error.supportNotConfigured.text,

@@ -12,6 +12,7 @@ import SwiftUI
 import Analytics
 import CrashReporting
 import Logger
+import Support
 
 class MenuViewController: UIViewController, ConnectedPeerListRouter {
     
