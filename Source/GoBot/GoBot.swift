@@ -41,6 +41,8 @@ class GoBot: Bot {
     var version: String { self.bot.version }
     
     static let shared = GoBot()
+    
+    static let versionKey = "GoBotDatabaseVersion"
 
     private var _identity: Identity?
     var identity: Identity? { self._identity }
@@ -230,7 +232,7 @@ class GoBot: Bot {
             
             // Save GoBot version to disk in case we need to migrate in the future.
             // This is a side-effect that may cause problems if we want to use other bots in the future.
-            self.userDefaults.set(self.version, forKey: "GoBotDatabaseVersion")
+            self.userDefaults.set(self.version, forKey: GoBot.versionKey)
             self.userDefaults.synchronize()
             
             self._identity = secret.identity

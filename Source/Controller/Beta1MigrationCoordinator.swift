@@ -35,6 +35,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: - Properties
     
+    static let beta1MigrationKey = "PerformedBeta1Migration"
+    
     /// A number between 0 and 1.0 representing the progress of the migration.
     @Published var progress: Float = 0
     
@@ -51,6 +53,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: - Public Interface
     
+    /// Checks if the migration has already run then drops GoBot database and presents migration UI if it hasn't.
+    /// Notes that this function relies on `LaunchViewController` to filter out new and restoring users.
     class func performBeta1MigrationIfNeeded(
         appConfiguration: AppConfiguration,
         appController: AppController,
@@ -60,8 +64,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             return false
         }
         
-        // todo: include network key
-        let version = userDefaults.string(forKey: "GoBotDatabaseVersion")
+        let version = userDefaults.string(forKey: GoBot.versionKey)
         guard version == nil else {
             return false
         }
@@ -81,8 +84,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         
         try await bot.dropDatabase(for: appConfiguration)
         Log.info("Data dropped successfully. Restoring data from the network.")
-        userDefaults.set(true, forKey: "StartedBeta1Migration")
-        userDefaults.set(bot.version, forKey: "GoBotDatabaseVersion")
+        userDefaults.set(true, forKey: beta1MigrationKey)
+        userDefaults.set(bot.version, forKey: GoBot.versionKey)
         userDefaults.synchronize()
         
         try await bot.login(config: appConfiguration)
@@ -103,6 +106,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         self.userDefaults = userDefaults
         do {
             self.completionMessageCount = try Self.getNumberOfMessagesInViewDatabase(with: appConfiguration)
+            Log.info("Total number of messages to resync: \(completionMessageCount)")
         } catch {
             let migrationError = Beta1MigrationError.couldNotGetCompletionMessageCount
             Log.optional(error, migrationError.localizedDescription)
@@ -122,14 +126,15 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         statisticsPublisher
             // Ignore the first statistics because the database doesn't get dropped right away
             .dropFirst()
-            .map {
+            .map { (statistics: BotStatistics) -> Float in
                 // Calculate completion percentage
-                let completionFraction = Float($0.repo.messageCount) / Float(self.completionMessageCount)
+                let completionFraction = Float(statistics.repo.messageCount) / Float(self.completionMessageCount)
                 return completionFraction.clamped(to: 0.0...1.0)
             }
             .receive(on: RunLoop.main)
             .sink(receiveValue: { progress in
                 self.progress = progress
+                Log.info("Resync progress: \(progress)")
             })
             .store(in: &self.cancellabes)
     }
@@ -166,8 +171,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     // MARK: Handle User Interation
     
     func dismissPressed() {
-        userDefaults.set(true, forKey: "CompletedBeta1Migration")
-        userDefaults.synchronize()
+        Log.info("User dismissed Beta1MigrationView with progress: \(progress)")
         cancellabes.forEach { $0.cancel() }
         dismissHandler()
     }

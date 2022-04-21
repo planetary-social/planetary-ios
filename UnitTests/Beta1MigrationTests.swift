@@ -54,7 +54,7 @@ class Beta1MigrationTests: XCTestCase {
     func testUserDefaultsSetAfterMigration() async throws {
         // Arrange
         // Sanity checks
-        XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
+        XCTAssertEqual(self.userDefaults.bool(forKey: "PerformedBeta1Migration"), false)
         XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
         
         // Act
@@ -65,7 +65,7 @@ class Beta1MigrationTests: XCTestCase {
         )
         
         // Assert
-        XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), true)
+        XCTAssertEqual(self.userDefaults.bool(forKey: "PerformedBeta1Migration"), true)
         XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), "beta2Test")
     }
     
@@ -75,7 +75,7 @@ class Beta1MigrationTests: XCTestCase {
         try await mockBot.login(config: appConfig)
         
         // Assert
-        XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
+        XCTAssertEqual(self.userDefaults.bool(forKey: "PerformedBeta1Migration"), false)
         XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), "beta2Test")
     }
     
@@ -171,7 +171,7 @@ class Beta1MigrationTests: XCTestCase {
         
         // Assert
         let expectation = XCTBlockExpectation {
-            self.userDefaults.bool(forKey: "StartedBeta1Migration") == true &&
+            self.userDefaults.bool(forKey: "PerformedBeta1Migration") == true &&
             self.userDefaults.string(forKey: "GoBotDatabaseVersion") == "beta2Test"
         }
         
@@ -201,7 +201,7 @@ class Beta1MigrationTests: XCTestCase {
         wait(for: [expectation], timeout: 10)
         
         // Assert
-        XCTAssertEqual(userDefaults.bool(forKey: "StartedBeta1Migration"), false)
+        XCTAssertEqual(userDefaults.bool(forKey: "PerformedBeta1Migration"), false)
         XCTAssertEqual(userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
         XCTAssertEqual(try Data(contentsOf: databaseURL), mockData)
     }
@@ -229,7 +229,7 @@ class Beta1MigrationTests: XCTestCase {
         wait(for: [expectation], timeout: 10)
         
         // Assert
-        XCTAssertEqual(userDefaults.bool(forKey: "StartedBeta1Migration"), false)
+        XCTAssertEqual(userDefaults.bool(forKey: "PerformedBeta1Migration"), false)
         XCTAssertEqual(userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
         XCTAssertEqual(try Data(contentsOf: databaseURL), mockData)
     }
@@ -256,7 +256,7 @@ class Beta1MigrationTests: XCTestCase {
         wait(for: [expectation], timeout: 10)
         
         // Assert
-        XCTAssertEqual(userDefaults.bool(forKey: "StartedBeta1Migration"), false)
+        XCTAssertEqual(userDefaults.bool(forKey: "PerformedBeta1Migration"), false)
         XCTAssertEqual(userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
         XCTAssertEqual(try Data(contentsOf: databaseURL), mockData)
     }
