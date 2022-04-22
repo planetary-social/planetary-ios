@@ -188,14 +188,6 @@ extension AppConfiguration {
         AppConfiguration.current == nil
     }
     
-    static var needsToBeLoggedOut: Bool {
-        #if DEBUG
-        return false
-        #else
-        return AppConfiguration.current?.network != NetworkKey.ssb
-        #endif
-    }
-
     var isCurrent: Bool {
         self.identity == AppConfiguration.current?.identity
     }
