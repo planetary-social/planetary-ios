@@ -230,7 +230,30 @@ class GoBotIntegrationTests: XCTestCase {
         
         waitForExpectations(timeout: 10)
     }
-    
+
+    func testLoginLogoutLoop() {
+        continueAfterFailure = false
+        
+        for i in 1...100 {
+            var ex = self.expectation(description: "login \(i)")
+            sut.login(config: appConfig) {
+                error in
+                XCTAssertNil(error)
+                ex.fulfill()
+            }
+            self.wait(for: [ex], timeout: 10)
+
+            ex = self.expectation(description: "logout \(i)")
+            sut.exit()
+            sut.logout() {
+                error in
+                XCTAssertNil(error)
+                ex.fulfill()
+            }
+            self.wait(for: [ex], timeout: 10)
+        }
+    }
+
     // MARK: - Forked Feed Protection
     
     /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number
