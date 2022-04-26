@@ -679,7 +679,6 @@
 		C955CAB927D18369005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CABB27D272F3005146F2 /* ExitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0AB246B23F900910575 /* ExitOperation.swift */; };
 		C9604C2927C547FB003D1A6D /* ConnectedPeerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */; };
-		C9724B0C28089499000EBCCD /* Beta1MigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9724B0B28089499000EBCCD /* Beta1MigrationTests.swift */; };
 		C9724B0D2809CC2A000EBCCD /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62E2245A50300C57A4B /* LaunchViewController.swift */; };
 		C9724B0E2809D1BE000EBCCD /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531D0A0C21EAADFB008E40A8 /* Layout.swift */; };
 		C9724B0F2809D1C4000EBCCD /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587AC229F0DC00004E2B1 /* Onboarding.swift */; };
@@ -3941,7 +3940,6 @@
 				C9724BEE2809EF3D000EBCCD /* UITableView+TableHeaderView.swift in Sources */,
 				C9724B722809E788000EBCCD /* UIView+Round.swift in Sources */,
 				531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */,
-				C9724B0C28089499000EBCCD /* Beta1MigrationTests.swift in Sources */,
 				0A64A84D24735766009A5EBF /* PhoneVerificationResponse.swift in Sources */,
 				C9A2DE3627D003EF00EAFA73 /* UIColor+Verse.swift in Sources */,
 				C9724BCB2809ED88000EBCCD /* Date+Holidays.swift in Sources */,
