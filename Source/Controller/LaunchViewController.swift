@@ -113,7 +113,6 @@ class LaunchViewController: UIViewController {
                 self.handleLoginFailure(with: error, configuration: configuration)
             }
             
-            
             self.launchIntoMain()
             await self.trackLogin(with: configuration)
         }

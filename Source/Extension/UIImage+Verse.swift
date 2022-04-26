@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+//swiftlint:disable force_unwrapping
+
 struct VerseImages {
     let buttonBlock = UIImage(named: "button-block")
     let buttonBlocked = UIImage(named: "button-blocked")

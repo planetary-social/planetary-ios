@@ -147,11 +147,11 @@ class GoBot: Bot {
             let nsError = error as NSError
             // It's ok if the directory is already gone
             guard nsError.domain == NSCocoaErrorDomain,
-                  nsError.code == 4,
-                  let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
-                  underlyingError.domain == NSPOSIXErrorDomain,
-                  underlyingError.code == 2 else {
-                throw error
+                nsError.code == 4,
+                let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
+                underlyingError.domain == NSPOSIXErrorDomain,
+                underlyingError.code == 2 else {
+                    throw error
             }
         }
     }
