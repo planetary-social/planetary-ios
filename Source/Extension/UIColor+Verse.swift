@@ -38,6 +38,7 @@ extension UIColor {
     static let unselectedTab = UIColor(named: "unselectedTab", in: Bundle.current, compatibleWith: nil)!
     static let textInputBorder = UIColor(named: "textInputBorder", in: Bundle.current, compatibleWith: nil)!
     static let textInputBackground = UIColor(named: "textInputBackground", in: Bundle.current, compatibleWith: nil)!
+    static let linkColor = UIColor(named: "linkColor", in: Bundle.current, compatibleWith: nil)!
 
     struct background {
         static let gallery = UIColor(named: "galleryColor", in: Bundle.current, compatibleWith: nil) ?? UIColor(rgb: 0xEFEFEF)
