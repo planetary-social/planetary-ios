@@ -22,9 +22,9 @@ class BugsnagService: APIService {
         config.apiKey = apiKey
         config.addOnSendError { (event) -> Bool in
             let shouldAddAppLog: Bool
-            if let logs = event.getMetadata(section: "logs")  {
+            if let logs = event.getMetadata(section: "logs") {
                 shouldAddAppLog = logs.value(forKey: "app") == nil
-            } else  {
+            } else {
                 shouldAddAppLog = true
             }
             guard shouldAddAppLog, let logUrls = logger.fileUrls.first else {
