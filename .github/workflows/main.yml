@@ -34,7 +34,7 @@ jobs:
       run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.4" | xcpretty
   logger:
     name: Logger
-    runs-on: macOS-latest
+    runs-on: macOS-12
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -44,7 +44,7 @@ jobs:
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Logger -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
   secrets:
     name: Secrets
-    runs-on: macOS-latest
+    runs-on: macOS-12
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -54,7 +54,7 @@ jobs:
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Secrets -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
   analytics:
     name: Analytics
-    runs-on: macOS-latest
+    runs-on: macOS-12
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -64,7 +64,7 @@ jobs:
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Analytics -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
   crashreporting:
     name: Crash Reporting
-    runs-on: macOS-latest
+    runs-on: macOS-12
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -74,7 +74,7 @@ jobs:
       run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme CrashReporting -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
   support:
     name: Support
-    runs-on: macOS-latest
+    runs-on: macOS-12
     steps:
     - name: Checkout
       uses: actions/checkout@main
