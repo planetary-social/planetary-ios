@@ -154,6 +154,8 @@ class GoBot: Bot {
                     throw error
             }
         }
+        
+        Analytics.shared.trackDidDropDatabase()
     }
 
     // MARK: Login/Logout

@@ -13,6 +13,7 @@ import Logger
 import CrashReporting
 import Combine
 import simd
+import Analytics
 
 /// An enumeration of things that can go wrong with the "beta1" migration.
 enum Beta1MigrationError: Error {
@@ -51,6 +52,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     private var cancellabes = [AnyCancellable]()
     
+    private var appConfiguration: AppConfiguration
+    
     // MARK: - Public Interface
     
     /// Checks if the migration has already run then drops GoBot database and presents migration UI if it hasn't.
@@ -70,6 +73,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         }
         
         Log.info("Beta1 migration triggered.")
+        Analytics.shared.trackDidStartBeta1Migration()
         
         let coordinator = Beta1MigrationCoordinator(
             appConfiguration: appConfiguration,
@@ -106,6 +110,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         userDefaults: UserDefaults,
         dismissHandler: @escaping () -> Void
     ) {
+        self.appConfiguration = appConfiguration
         self.dismissHandler = dismissHandler
         self.userDefaults = userDefaults
         do {
@@ -176,6 +181,17 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     func buttonPressed() {
         Log.info("User dismissed Beta1MigrationView with progress: \(progress)")
+        var syncedMessages = -1
+        do {
+            syncedMessages = try Self.getNumberOfMessagesInViewDatabase(with: appConfiguration)
+        } catch {
+            Log.optional(error)
+        }
+        Analytics.shared.trackDidDismissBeta1Migration(
+            syncedMessages: syncedMessages,
+            totalMessages: completionMessageCount
+        )
+
         cancellabes.forEach { $0.cancel() }
         dismissHandler()
     }
