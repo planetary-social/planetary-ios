@@ -585,9 +585,7 @@ class GoBot: Bot {
         }
     }
     
-    /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
-    /// a message before the user's feed has resynced from the network during a restore.
-    private func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
+    func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
         let numberOfMessagesInRepo = try self.database.numberOfMessages(for: feed)
         let knownNumberOfMessagesInKeychain = self.config?.numberOfPublishedMessages ?? 0
         return numberOfMessagesInRepo < knownNumberOfMessagesInKeychain

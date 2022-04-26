@@ -232,6 +232,10 @@ class FakeBot: Bot {
     func publish(post: Post, completion: PublishCompletion) {
         completion("TODO?", FakeBotError.runtimeError("TODO:publish"))
     }
+    
+    func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
+        return false
+    }
 
     // MARK: About content
 
