@@ -64,7 +64,7 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
                     // Let's take a random set of stars to reach the minimum and create Redeem Invite
                     // operations
                     let missingStars = systemPubs.subtracting(joinedSystemPubs)
-                    guard missingStars.count > 0 else {
+                    guard !missingStars.isEmpty else {
                         Log.debug("Not enough system pubs to reach minimum")
                         self.finish()
                         return

@@ -11,6 +11,6 @@ import Foundation
 extension Comparable {
     // From https://stackoverflow.com/a/40868784/982195
     func clamped(to limits: ClosedRange<Self>) -> Self {
-        return min(max(self, limits.lowerBound), limits.upperBound)
+        min(max(self, limits.lowerBound), limits.upperBound)
     }
 }

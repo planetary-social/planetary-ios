@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+// swiftlint:disable line_length force_unwrapping
+
 // Colors based on Asset catalog and supporting iOS Dark Mode
 // note that Asset catalog colors are optional so some may require
 // a non-optional value to be used across the app
