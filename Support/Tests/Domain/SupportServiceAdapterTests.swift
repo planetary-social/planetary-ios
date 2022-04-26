@@ -16,11 +16,14 @@ final class SupportServiceAdapterTests: XCTestCase {
     var service: SupportServiceAdapter?
     var apiService: APIServiceMock?
 
+    // This comes from Samples/app_log.txt
+    let appLog = "Hello, world!\n".data(using: .utf8)
+
     override func setUp() {
         super.setUp()
         let apiService = APIServiceMock()
-        let log = LogMock()
-        service = SupportServiceAdapter(apiService, log: log)
+        let logger = LogMock()
+        service = SupportServiceAdapter(apiService, logger: logger)
         self.apiService = apiService
     }
 
@@ -47,6 +50,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertTrue(apiService.myTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == appLog }))
     }
 
     func testMyTicketsViewControllerWithBotLog() throws {
@@ -66,15 +70,6 @@ final class SupportServiceAdapterTests: XCTestCase {
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, "not-logged-in")
-        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
-    }
-
-    func testNewTicketViewControllerWithAppLog() throws {
-        let appLog = "Hello, world!\n".data(using: .utf8)
-        let result = service?.newTicketViewController(botLog: nil)
-        XCTAssertNil(result)
-        let apiService = try XCTUnwrap(apiService)
-        XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == appLog }))
     }
@@ -100,6 +95,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == appLog }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorIdentity }))
     }
 
@@ -114,6 +110,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == appLog }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorName }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == authorIdentity.data(using: .utf8) }))
     }
@@ -131,6 +128,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == appLog }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorIdentity }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "content-identifier" }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == contentKey.data(using: .utf8) }))
@@ -164,6 +162,7 @@ final class SupportServiceAdapterTests: XCTestCase {
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, identity.key)
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == appLog }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == authorName }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == authorIdentity.data(using: .utf8) }))
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "content-identifier" }))

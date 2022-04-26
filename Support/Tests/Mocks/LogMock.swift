@@ -17,7 +17,7 @@ class LogMock: LogProtocol {
     }
     
     func optional(_ error: Error?, _ detail: String?) -> Bool {
-        return false
+        false
     }
     
     func info(_ string: String) {
