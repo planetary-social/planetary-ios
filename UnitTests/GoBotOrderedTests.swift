@@ -86,7 +86,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
     }
     
-    func test001_regression_tests() {
+    @MainActor func test001_regression_tests() {
         // first, log out for things we shouldn't be able to do
         let ex = self.expectation(description: "\(#function)")
         GoBotOrderedTests.shared.logout {
@@ -406,7 +406,7 @@ class GoBotOrderedTests: XCTestCase {
         waitForExpectations(timeout: 10)
         let currentCount = statistics.db.lastReceivedMessage
 
-        let n = 6_000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
+        let n = 6000 // batch size is 5k TODO: find a way to tweek the batch-size in testing mode
         for i in 1...n {
             let rawJSON = "{ \"type\": \"really-weird-unsupported-for-sure\", \"i\": \(i) }"
             _ = GoBotOrderedTests.shared.testingPublish(as: "denise", raw: rawJSON.data(using: .utf8)!)

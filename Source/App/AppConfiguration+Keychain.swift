@@ -8,25 +8,6 @@
 
 import Foundation
 
-extension AppConfiguration {
-
-    static var current: AppConfiguration? {
-        Keychain.configuration
-    }
-
-    func apply() {
-        Keychain.configuration = self
-    }
-
-    func unapply() {
-        Keychain.configuration = nil
-    }
-
-    func unapplyIfCurrent() {
-        if self.isCurrent { self.unapply() }
-    }
-}
-
 extension AppConfigurations {
 
     static var current: AppConfigurations {
@@ -56,23 +37,6 @@ extension AppConfigurations {
 }
 
 fileprivate extension Keychain {
-
-    // TODO https://app.asana.com/0/914798787098068/1149043570373553/f
-    // TODO if the keychain does not unlock fast enough then this will be nil
-    static var configuration: AppConfiguration? {
-        get {
-            guard let data = Keychain.data(for: "app.configuration") else { return nil }
-            return AppConfiguration.from(data)
-        }
-        set {
-            if let data = newValue?.toData() {
-                Keychain.set(data, for: "app.configuration")
-            } else {
-                Keychain.delete("app.configuration")
-            }
-        }
-    }
-
     static var configurations: [AppConfiguration] {
         get {
             guard let data = Keychain.data(for: "app.configurations") else { return [] }

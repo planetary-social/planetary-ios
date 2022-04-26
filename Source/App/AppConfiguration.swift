@@ -155,6 +155,25 @@ class AppConfiguration: NSObject, NSCoding {
         guard let configuration = object as? AppConfiguration else { return false }
         return configuration.name == self.name && configuration.identity == self.identity
     }
+    
+    // MARK: - Keychain interaction
+    
+    static var current: AppConfiguration? {
+        Keychain.configuration
+    }
+
+    func apply() {
+        Keychain.configuration = self
+    }
+
+    func unapply() {
+        Keychain.configuration = nil
+    }
+
+    func unapplyIfCurrent() {
+        if self.isCurrent { self.unapply() }
+    }
+    
 }
 
 extension AppConfiguration {
@@ -196,3 +215,22 @@ extension AppConfiguration {
 }
 
 typealias AppConfigurations = [AppConfiguration]
+
+fileprivate extension Keychain {
+
+    // TODO https://app.asana.com/0/914798787098068/1149043570373553/f
+    // TODO if the keychain does not unlock fast enough then this will be nil
+    static var configuration: AppConfiguration? {
+        get {
+            guard let data = Keychain.data(for: "app.configuration") else { return nil }
+            return AppConfiguration.from(data)
+        }
+        set {
+            if let data = newValue?.toData() {
+                Keychain.set(data, for: "app.configuration")
+            } else {
+                Keychain.delete("app.configuration")
+            }
+        }
+    }
+}

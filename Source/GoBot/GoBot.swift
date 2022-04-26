@@ -35,12 +35,14 @@ class GoBot: Bot {
     
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
-    private let maxBlobBytes = 1_024 * 1_024 * 8
+    private let maxBlobBytes = 1024 * 1024 * 8
     
     let name = "GoBot"
     var version: String { self.bot.version }
     
     static let shared = GoBot()
+    
+    static let versionKey = "GoBotDatabaseVersion"
 
     private var _identity: Identity?
     var identity: Identity? { self._identity }
@@ -79,7 +81,7 @@ class GoBot: Bot {
     private let statisticsQueue: DispatchQueue
  
     private let userDefaults: UserDefaults
-    private var config: AppConfiguration?
+    private(set) var config: AppConfiguration?
 
     private var preloadedPubService: PreloadedPubService?
 
@@ -123,6 +125,34 @@ class GoBot: Bot {
     func exit() {
         userInitiatedQueue.async {
             self.bot.disconnectAll()
+            self.database.close()
+        }
+    }
+    
+    func dropDatabase(for configuration: AppConfiguration) async throws {
+        Log.info("Dropping GoBot database...")
+                
+        do {
+            try await logout()
+        } catch {
+            guard case BotError.notLoggedIn = error else {
+                throw error
+            }
+        }
+        
+        do {
+            let databaseDirectory = try Self.databaseDirectory(for: configuration)
+            try FileManager.default.removeItem(atPath: databaseDirectory)
+        } catch {
+            let nsError = error as NSError
+            // It's ok if the directory is already gone
+            guard nsError.domain == NSCocoaErrorDomain,
+                nsError.code == 4,
+                let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
+                underlyingError.domain == NSPOSIXErrorDomain,
+                underlyingError.code == 2 else {
+                    throw error
+            }
         }
     }
 
@@ -162,30 +192,25 @@ class GoBot: Bot {
         
         self.config = config
         let hmacKey = config.hmacKey
+        
+        var repoPrefix: String
 
-        // lookup Application Support folder for bot and database
-        let appSupportDirs = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory,
-                                                                 .userDomainMask, true)
-        guard appSupportDirs.count > 0 else {
-            queue.async { completion(GoBotError.unexpectedFault("no support dir")) }
+        do {
+            guard !database.isOpen() else {
+                throw GoBotError.unexpectedFault("\(#function) warning: database still open")
+            }
+            
+            repoPrefix = try Self.databaseDirectory(for: config)
+            
+            try self.database.open(
+                path: repoPrefix,
+                user: secret.identity
+            )
+        } catch {
+            queue.async { completion(error) }
             return
         }
 
-        let repoPrefix = appSupportDirs[0]
-            .appending("/FBTT")
-            .appending("/"+network.hexEncodedString())
-        
-        if !self.database.isOpen() {
-            do {
-                try self.database.open(path: repoPrefix, user: secret.identity)
-            } catch {
-                queue.async { completion(error) }
-                return
-            }
-        } else {
-            Log.unexpected(.botError, "\(#function) warning: database still open")
-        }
-   
         // spawn go-bot in the background to return early
         userInitiatedQueue.async {
             #if DEBUG
@@ -204,6 +229,11 @@ class GoBot: Bot {
             guard loginErr == nil else {
                 return
             }
+            
+            // Save GoBot version to disk in case we need to migrate in the future.
+            // This is a side-effect that may cause problems if we want to use other bots in the future.
+            self.userDefaults.set(self.version, forKey: GoBot.versionKey)
+            self.userDefaults.synchronize()
             
             self._identity = secret.identity
             
@@ -241,7 +271,7 @@ class GoBot: Bot {
     func logout(completion: @escaping ErrorCompletion) {
         Thread.assertIsMainThread()
         if self._identity == nil {
-            DispatchQueue.main.async { completion(BotError.notLoggedIn) }
+            completion(BotError.notLoggedIn)
             return
         }
         if !self.bot.logout() {
@@ -250,7 +280,7 @@ class GoBot: Bot {
         database.close()
         self._identity = nil
         self.config = nil
-        DispatchQueue.main.async { completion(nil) }
+        completion(nil)
     }
 
     // MARK: Sync
@@ -475,7 +505,7 @@ class GoBot: Bot {
                         do {
                             let feed = star.feed
                             let address = star.address.rawValue
-                            let redeemed = Date().timeIntervalSince1970 * 1_000
+                            let redeemed = Date().timeIntervalSince1970 * 1000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
                             Analytics.shared.trackDidJoinPub(at: star.address.rawValue)
                         } catch {
@@ -774,7 +804,7 @@ class GoBot: Bot {
             count = Int64(c)
             
             // TOOD: redo until diff==0
-            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1_000)
+            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
             
             if msgs.count > 0 {
                 try self.database.fillMessages(msgs: msgs, pms: true)
@@ -1234,7 +1264,7 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
-                let messages = try self.database.mentions(limit: 1_000)
+                let messages = try self.database.mentions(limit: 1000)
                 let p = StaticDataProxy(with: messages)
                 DispatchQueue.main.async { completion(p, nil) }
             } catch {
@@ -1403,5 +1433,27 @@ class GoBot: Bot {
                 completion(error)
             }
         }
+    }
+    
+    // MARK: - Helpers
+    class func databaseDirectory(for configuration: AppConfiguration) throws -> String {
+        // lookup Application Support folder for bot and database
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        )
+        
+        guard appSupportDirs.count > 0 else {
+            throw GoBotError.unexpectedFault("no support dir")
+        }
+        
+        guard let networkKey = configuration.network else {
+            throw GoBotError.unexpectedFault("No network key in configuration.")
+        }
+
+        return appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/\(networkKey.hexEncodedString())")
     }
 }

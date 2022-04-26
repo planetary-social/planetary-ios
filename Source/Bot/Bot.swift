@@ -47,6 +47,7 @@ protocol Bot: AnyObject {
     init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
     func suspend()
     func exit()
+    func dropDatabase(for configuration: AppConfiguration) async throws
     
     // MARK: Logs
     var logFileUrls: [URL] { get }
@@ -221,7 +222,18 @@ extension Bot {
         self.login(queue: .main, config: config, completion: completion)
     }
     
-    func logout() async throws {
+    func login(config: AppConfiguration) async throws {
+        let error: Error? = await withCheckedContinuation { continuation in
+            self.login(config: config) { error in
+                continuation.resume(with: .success(error))
+            }
+        }
+        if let error = error {
+            throw error
+        }
+    }
+    
+    @MainActor func logout() async throws {
         let error: Error? = await withCheckedContinuation { continuation in
             self.logout { error in
                 continuation.resume(with: .success(error))

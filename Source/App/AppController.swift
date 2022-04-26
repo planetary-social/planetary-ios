@@ -24,7 +24,7 @@ class AppController: UIViewController {
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
     private var didUpdateDatabaseProgressObserver: NSObjectProtocol?
 
-    convenience init() {
+    @MainActor convenience init() {
         self.init(nibName: nil, bundle: nil)
     }
 
