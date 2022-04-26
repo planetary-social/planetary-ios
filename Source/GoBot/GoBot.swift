@@ -35,7 +35,7 @@ class GoBot: Bot {
     
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
-    private let maxBlobBytes = 1_024 * 1_024 * 8
+    private let maxBlobBytes = 1024 * 1024 * 8
     
     let name = "GoBot"
     var version: String { self.bot.version }
@@ -147,11 +147,11 @@ class GoBot: Bot {
             let nsError = error as NSError
             // It's ok if the directory is already gone
             guard nsError.domain == NSCocoaErrorDomain,
-                  nsError.code == 4,
-                  let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
-                  underlyingError.domain == NSPOSIXErrorDomain,
-                  underlyingError.code == 2 else {
-                throw error
+                nsError.code == 4,
+                let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? NSError,
+                underlyingError.domain == NSPOSIXErrorDomain,
+                underlyingError.code == 2 else {
+                    throw error
             }
         }
         
@@ -518,7 +518,7 @@ class GoBot: Bot {
                         do {
                             let feed = star.feed
                             let address = star.address.rawValue
-                            let redeemed = Date().timeIntervalSince1970 * 1_000
+                            let redeemed = Date().timeIntervalSince1970 * 1000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
                             Analytics.shared.trackDidJoinPub(at: star.address.rawValue)
                         } catch {
@@ -595,9 +595,7 @@ class GoBot: Bot {
         }
     }
     
-    /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
-    /// a message before the user's feed has resynced from the network during a restore.
-    private func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
+    func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
         let numberOfMessagesInRepo = try self.database.numberOfMessages(for: feed)
         let knownNumberOfMessagesInKeychain = self.config?.numberOfPublishedMessages ?? 0
         return numberOfMessagesInRepo < knownNumberOfMessagesInKeychain
@@ -830,7 +828,7 @@ class GoBot: Bot {
             count = Int64(c)
             
             // TOOD: redo until diff==0
-            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1_000)
+            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
             
             if msgs.count > 0 {
                 try self.database.fillMessages(msgs: msgs, pms: true)
@@ -1290,7 +1288,7 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
-                let messages = try self.database.mentions(limit: 1_000)
+                let messages = try self.database.mentions(limit: 1000)
                 let p = StaticDataProxy(with: messages)
                 DispatchQueue.main.async { completion(p, nil) }
             } catch {

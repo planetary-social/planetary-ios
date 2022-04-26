@@ -166,6 +166,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             // Don't do anything if user is not logged in
             return
         }
+        
+        do {
+            guard try !Bots.current.publishingWouldFork(feed: currentIdentity) else {
+                // Suppress notifications if the user is restoring
+                return
+            }
+        } catch {
+            Log.optional(error)
+        }
+        
         guard report.authorIdentity == currentIdentity else {
             // Don't do anything if report is not for the logged in user
             return

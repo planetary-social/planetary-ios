@@ -164,7 +164,6 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertThrowsError(try Data(contentsOf: databaseURL))
     }
     
-
     func testLogoutWithDirectoryMissing() throws {
         // Arrange
         let firstLogout = self.expectation(description: "first logout finished")
@@ -206,7 +205,7 @@ class GoBotIntegrationTests: XCTestCase {
         try fm.createDirectory(atPath: workingDirectory, withIntermediateDirectories: true)
 
         let secondLogout = self.expectation(description: "second logout finished")
-        sut.logout() { error in
+        sut.logout { error in
             XCTAssertNotNil(error)
             secondLogout.fulfill()
         }
@@ -224,7 +223,7 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10)
         
         let secondLogout = self.expectation(description: "second logout finished")
-        sut.logout() { error in
+        sut.logout { error in
             XCTAssertNotNil(error)
             secondLogout.fulfill()
         }
