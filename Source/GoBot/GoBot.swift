@@ -35,7 +35,7 @@ class GoBot: Bot {
     
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
-    private let maxBlobBytes = 1_024 * 1_024 * 8
+    private let maxBlobBytes = 1024 * 1024 * 8
     
     let name = "GoBot"
     var version: String { self.bot.version }
@@ -488,7 +488,7 @@ class GoBot: Bot {
                         do {
                             let feed = star.feed
                             let address = star.address.rawValue
-                            let redeemed = Date().timeIntervalSince1970 * 1_000
+                            let redeemed = Date().timeIntervalSince1970 * 1000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
                             Analytics.shared.trackDidJoinPub(at: star.address.rawValue)
                         } catch {
@@ -787,7 +787,7 @@ class GoBot: Bot {
             count = Int64(c)
             
             // TOOD: redo until diff==0
-            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1_000)
+            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
             
             if msgs.count > 0 {
                 try self.database.fillMessages(msgs: msgs, pms: true)
@@ -1247,7 +1247,7 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
-                let messages = try self.database.mentions(limit: 1_000)
+                let messages = try self.database.mentions(limit: 1000)
                 let p = StaticDataProxy(with: messages)
                 DispatchQueue.main.async { completion(p, nil) }
             } catch {

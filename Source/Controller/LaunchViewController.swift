@@ -89,8 +89,8 @@ class LaunchViewController: UIViewController {
             await self.migrateIfNeeded(using: configuration)
             
             // note that hmac key can be nil to switch it off
-            guard let network = configuration.network else { return }
-            guard let secret = configuration.secret else { return }
+            guard configuration.network != nil else { return }
+            guard configuration.secret != nil else { return }
             guard let bot = configuration.bot else { return }
             
             do {
