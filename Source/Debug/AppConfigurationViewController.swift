@@ -136,8 +136,8 @@ class AppConfigurationViewController: DebugTableViewController {
             DebugTableViewCellModel(
                 title: "Published messages",
                 cellReuseIdentifier: DebugValueTableViewCell.className,
-                valueClosure: { [unowned self] cell in
-                    cell.detailTextLabel?.text = "\(self.configuration.numberOfPublishedMessages)"
+                valueClosure: { [weak self] cell in
+                    cell.detailTextLabel?.text = "\(String(describing: self?.configuration.numberOfPublishedMessages))"
                 }
             )
         ]
@@ -192,7 +192,8 @@ class AppConfigurationViewController: DebugTableViewController {
                         }
                     }
                 }
-        )]
+            )
+        ]
 
         return ("Statistics", settings, nil)
     }
