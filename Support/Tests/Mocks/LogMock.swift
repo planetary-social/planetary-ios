@@ -9,6 +9,7 @@ import Foundation
 import Logger
 
 class LogMock: LogProtocol {
+
     var fileUrls: [URL] {
         if let url = Bundle.module.url(forResource: "app_log", withExtension: "txt") {
             return [url]
@@ -25,6 +26,10 @@ class LogMock: LogProtocol {
     }
     
     func debug(_ string: String) {
+        print(string)
+    }
+
+    func error(_ string: String) {
         print(string)
     }
     
