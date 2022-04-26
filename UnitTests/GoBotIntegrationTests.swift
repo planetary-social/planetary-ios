@@ -63,7 +63,7 @@ class GoBotIntegrationTests: XCTestCase {
                 throw error
             }
         }
-        sut.exit()
+        await sut.exit()
         do {
             try fm.removeItem(atPath: workingDirectory)
         } catch {
@@ -231,27 +231,13 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10)
     }
 
-    func testLoginLogoutLoop() {
-        continueAfterFailure = false
-        
-        for i in 1...100 {
-            var ex = self.expectation(description: "login \(i)")
-            sut.login(config: appConfig) {
-                error in
-                XCTAssertNil(error)
-                ex.fulfill()
-            }
-            self.wait(for: [ex], timeout: 10)
+    func testLoginLogoutLoop() async throws {
+        try await sut.login(config: appConfig)
 
-            ex = self.expectation(description: "logout \(i)")
-            sut.exit()
-            sut.logout() {
-                error in
-                XCTAssertNil(error)
-                ex.fulfill()
-            }
-            self.wait(for: [ex], timeout: 10)
-        }
+        await sut.exit()
+        try await sut.logout()
+        
+        try await sut.login(config: appConfig)
     }
 
     // MARK: - Forked Feed Protection

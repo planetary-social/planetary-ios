@@ -25,9 +25,10 @@ class ExitOperation: AsynchronousOperation {
             return
         }
         
-        Bots.current.exit()
-        
-        Log.info("ExitOperation finished.")
-        self.finish()
+        Task {
+            await Bots.current.exit()
+            Log.info("ExitOperation finished.")
+            self.finish()
+        }
     }
 }

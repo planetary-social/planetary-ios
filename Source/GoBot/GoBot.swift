@@ -122,11 +122,11 @@ class GoBot: Bot {
         }
     }
 
-    func exit() {
-        userInitiatedQueue.async {
+    func exit() async {
+        _ = await Task(priority: .userInitiated) {
             self.bot.disconnectAll()
             self.database.close()
-        }
+        }.result
     }
     
     func dropDatabase(for configuration: AppConfiguration) async throws {
