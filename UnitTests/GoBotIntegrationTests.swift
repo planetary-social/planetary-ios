@@ -224,7 +224,7 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10)
         
         let secondLogout = self.expectation(description: "second logout finished")
-        sut.logout() { error in
+        sut.logout { error in
             XCTAssertNotNil(error)
             secondLogout.fulfill()
         }
