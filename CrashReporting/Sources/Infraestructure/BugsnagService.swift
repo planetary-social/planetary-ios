@@ -11,14 +11,35 @@ import Secrets
 import Logger
 
 class BugsnagService: APIService {
-
-    init(keys: Keys = Keys.shared) {
+    
+    init(keys: Keys = Keys.shared, logger: LogProtocol = Log.shared) {
         guard let apiKey = keys.get(key: .bugsnag) else {
             Log.info("Error while configuring Bugsnag. ApiKey does not exist.")
             return
         }
         Log.info("Configuring Bugsnag...")
-        Bugsnag.start(withApiKey: apiKey)
+        let config = BugsnagConfiguration.loadConfig()
+        config.apiKey = apiKey
+        config.addOnSendError { (event) -> Bool in
+            let shouldAddAppLog: Bool
+            if let logs = event.getMetadata(section: "logs")  {
+                shouldAddAppLog = logs.value(forKey: "app") == nil
+            } else  {
+                shouldAddAppLog = true
+            }
+            guard shouldAddAppLog, let logUrls = logger.fileUrls.first else {
+                return true
+            }
+            do {
+                let data = try Data(contentsOf: logUrls)
+                let string = String(data: data, encoding: .utf8)
+                event.addMetadata(string, key: "app", section: "logs")
+            } catch {
+                logger.optional(error, nil)
+            }
+            return true
+        }
+        Bugsnag.start(with: config)
     }
 
     func identify(identity: Identity) {
