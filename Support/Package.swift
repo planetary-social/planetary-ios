@@ -43,7 +43,10 @@ let package = Package(
             name: "SupportTests",
             dependencies: ["Support"],
             path: "Tests",
-            resources: [.copy("Samples/Secrets.plist")]
+            resources: [
+                .copy("Samples/Secrets.plist"),
+                .copy("Samples/app_log.txt")
+            ]
         )
     ]
 )

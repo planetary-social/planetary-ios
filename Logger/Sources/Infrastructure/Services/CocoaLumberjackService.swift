@@ -24,14 +24,14 @@ class CocoaLumberjackService: FileLoggerService {
     }
 
     func debug(_ string: String) {
-        DDLogDebug(string, asynchronous: false)
+        DDLogDebug(string)
     }
 
     func info(_ string: String) {
-        DDLogInfo(string, asynchronous: false)
+        DDLogInfo(string)
     }
 
     func error(_ string: String) {
-        DDLogError(string, asynchronous: false)
+        DDLogError(string)
     }
 }

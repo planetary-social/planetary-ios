@@ -19,7 +19,8 @@ final class SupportServiceAdapterTests: XCTestCase {
     override func setUp() {
         super.setUp()
         let apiService = APIServiceMock()
-        service = SupportServiceAdapter(apiService)
+        let log = LogMock()
+        service = SupportServiceAdapter(apiService, log: log)
         self.apiService = apiService
     }
 
@@ -39,7 +40,6 @@ final class SupportServiceAdapterTests: XCTestCase {
     }
 
     func testMyTicketsViewController() throws {
-        Log.debug("something")
         let identity = "test-identity"
         let result = service?.myTicketsViewController(from: identity, botLog: nil)
         XCTAssertNil(result)
@@ -61,13 +61,22 @@ final class SupportServiceAdapterTests: XCTestCase {
     }
 
     func testNewTicketViewController() throws {
-        Log.debug("something")
         let result = service?.newTicketViewController(botLog: nil)
         XCTAssertNil(result)
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.newTicketsCalled)
         XCTAssertEqual(apiService.lastReporter.key, "not-logged-in")
         XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+    }
+
+    func testNewTicketViewControllerWithAppLog() throws {
+        let appLog = "Hello, world!\n".data(using: .utf8)
+        let result = service?.newTicketViewController(botLog: nil)
+        XCTAssertNil(result)
+        let apiService = try XCTUnwrap(apiService)
+        XCTAssertTrue(apiService.newTicketsCalled)
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.filename == "app_log.txt" }))
+        XCTAssertTrue(apiService.lastAttachments.contains(where: { $0.data == appLog }))
     }
 
     func testNewTicketViewControllerWithBotLog() throws {
@@ -82,7 +91,6 @@ final class SupportServiceAdapterTests: XCTestCase {
     }
 
     func testNewAuthorTicketViewController() throws {
-        Log.debug("something")
         let identity = Identifier(key: "test-identity")
         let authorIdentity = "another-identity"
         let author = Author(identifier: Identifier(key: authorIdentity), name: nil)
@@ -96,7 +104,6 @@ final class SupportServiceAdapterTests: XCTestCase {
     }
 
     func testNewAuthorTicketViewControllerWithAuthorName() throws {
-        Log.debug("something")
         let identity = Identifier(key: "test-identity")
         let authorIdentity = "another-identity"
         let authorName = "author-name"
@@ -112,7 +119,6 @@ final class SupportServiceAdapterTests: XCTestCase {
     }
 
     func testNewContentTicketViewController() throws {
-        Log.debug("something")
         let identity = Identifier(key: "test-identity")
         let authorIdentity = "another-identity"
         let author = Author(identifier: Identifier(key: authorIdentity), name: nil)

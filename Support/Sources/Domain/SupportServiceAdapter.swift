@@ -12,9 +12,11 @@ import UIKit
 class SupportServiceAdapter: SupportService {
 
     var apiService: APIService
+    var log: LogProtocol
 
-    init(_ apiService: APIService) {
+    init(_ apiService: APIService, log: LogProtocol = Log.shared) {
         self.apiService = apiService
+        self.log = log
     }
 
     func mainViewController() -> UIViewController? {
@@ -28,7 +30,7 @@ class SupportServiceAdapter: SupportService {
     func myTicketsViewController(from identity: String?, botLog: Data?) -> UIViewController? {
         let reporter = Identifier(key: identity)
         var appLog: Data?
-        if let logURL = Log.fileUrls.first {
+        if let logURL = log.fileUrls.first {
             appLog = try? Data(contentsOf: logURL)
         }
         let logs = Logs(appLog: appLog, botLog: botLog)
@@ -40,7 +42,7 @@ class SupportServiceAdapter: SupportService {
 
     func newTicketViewController(botLog: Data?) -> UIViewController? {
         var appLog: Data?
-        if let logURL = Log.fileUrls.first {
+        if let logURL = log.fileUrls.first {
             appLog = try? Data(contentsOf: logURL)
         }
         let logs = Logs(appLog: appLog, botLog: botLog)
@@ -54,7 +56,7 @@ class SupportServiceAdapter: SupportService {
 
     func newTicketViewController(from identifier: Identifier, author: Author, botLog: Data?) -> UIViewController? {
         var appLog: Data?
-        if let logURL = Log.fileUrls.first {
+        if let logURL = log.fileUrls.first {
             appLog = try? Data(contentsOf: logURL)
         }
         let logs = Logs(appLog: appLog, botLog: botLog)
@@ -73,7 +75,7 @@ class SupportServiceAdapter: SupportService {
         botLog: Data?
     ) -> UIViewController? {
         var appLog: Data?
-        if let logURL = Log.fileUrls.first {
+        if let logURL = log.fileUrls.first {
             appLog = try? Data(contentsOf: logURL)
         }
         let logs = Logs(appLog: appLog, botLog: botLog)

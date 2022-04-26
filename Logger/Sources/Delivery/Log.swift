@@ -14,14 +14,7 @@ import Foundation
 /// - ERROR or UNEXPECTED: A handleable error condition.
 /// - INFO:  Generic (useful) information about system operation.
 /// - DEBUG: Low-level information for developers.
-public class Log {
-
-    public enum Reason: String {
-        case apiError
-        case botError
-        case missingValue
-        case incorrectValue
-    }
+public class Log: LogProtocol {
 
     public static let shared = Log()
 
