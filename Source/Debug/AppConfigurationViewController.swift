@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 // TODO https://app.asana.com/0/914798787098068/1122607002060947/f
 // TODO deprecate identity manager
@@ -120,7 +121,7 @@ class AppConfigurationViewController: DebugTableViewController {
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: {
                 [unowned self] cell in
-                cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity!).rawValue
+            cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity).rawValue
             },
                                              actionClosure: nil)]
 
@@ -131,13 +132,68 @@ class AppConfigurationViewController: DebugTableViewController {
 
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: "Published messages",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure: {
-                [unowned self] cell in
-                cell.detailTextLabel?.text = "\(self.configuration.numberOfPublishedMessages)"
-            },
-                                             actionClosure: nil)]
+        settings += [
+            DebugTableViewCellModel(
+                title: "Published messages",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { [weak self] cell in
+                    cell.detailTextLabel?.text = "\(String(describing: self?.configuration.numberOfPublishedMessages))"
+                }
+            )
+        ]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.Debug.resetForkedFeedProtection.text,
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { [weak self] cell in
+                    let enabled = AppConfiguration.current == self?.configuration
+                    cell.textLabel?.isEnabled = enabled
+                    cell.isUserInteractionEnabled = enabled
+                    cell.textLabel?.textColor = .systemBlue
+                },
+                actionClosure: { [weak self] cell in
+                    self?.confirm(
+                        from: cell,
+                        message: Text.Debug.resetForkedFeedProtectionDescription.text,
+                        isDestructive: true,
+                        confirmTitle: Text.Debug.reset.text
+                    ) {
+                        guard let self = self,
+                            let bot = self.configuration.bot else {
+                            self?.alert(message: Text.Debug.noBotConfigured.text)
+                            return
+                        }
+                        
+                        Task {
+                            AppController.shared.showProgress()
+                            // Make sure the view database is fully synced with the backing store.
+                            var fullySynced = false
+                            while !fullySynced {
+                                do {
+                                    let (_, finished) = try await bot.refresh(load: .long)
+                                    fullySynced = finished
+                                } catch {
+                                    self.alert(error: error)
+                                    return
+                                }
+                            }
+                            let statistics = await bot.statistics()
+                            self.configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
+                            self.configuration.apply()
+                            UserDefaults.standard.set(false, forKey: "prevent_feed_from_forks")
+                            UserDefaults.standard.synchronize()
+                            self.tableView.reloadData()
+                            Log.info(
+                                "User reset number of published messages " +
+                                "to \(self.configuration.numberOfPublishedMessages)"
+                            )
+                            AppController.shared.hideProgress()
+                        }
+                    }
+                }
+            )
+        ]
 
         return ("Statistics", settings, nil)
     }
@@ -166,7 +222,7 @@ class AppConfigurationViewController: DebugTableViewController {
                 [unowned self] cell in
                 cell.textLabel?.isEnabled = self.canEditConfiguration
                 cell.textLabel?.numberOfLines = 1
-                guard let secret = self.configuration.secret ?? self.secret else { return }
+                let secret = self.configuration.secret 
                 cell.textLabel?.text = secret.jsonStringUnescaped()
             },
                                              actionClosure: {

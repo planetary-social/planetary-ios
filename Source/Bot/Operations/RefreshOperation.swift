@@ -33,7 +33,7 @@ class RefreshOperation: AsynchronousOperation {
         }
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        Bots.current.refresh(load: refreshLoad, queue: queue) { [weak self, refreshLoad] (error, timeInterval) in
+        Bots.current.refresh(load: refreshLoad, queue: queue) { [weak self, refreshLoad] (error, timeInterval, _) in
             Analytics.shared.trackBotDidRefresh(load: refreshLoad.rawValue,
                                                 duration: timeInterval,
                                                 error: error)
