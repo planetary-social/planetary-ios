@@ -24,7 +24,7 @@ struct Star {
     }
     
     var address: MultiserverAddress {
-        MultiserverAddress(key: self.feed, host: self.host, port: self.port)
+        MultiserverAddress(key: self.feed.id, host: self.host, port: self.port)
     }
     
     init(invite: String) {

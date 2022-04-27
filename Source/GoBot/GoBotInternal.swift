@@ -146,7 +146,7 @@ class GoBotInternal {
         // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
 
-        let servicePubs: [Identity] = Environment.PlanetarySystem.pubInvitations.map { $0.feed }
+        let servicePubs: [Identity] = Environment.PlanetarySystem.systemPubs.map { $0.feed }
 
         let cfg = GoBotConfig(
             AppKey: network.string,
@@ -311,9 +311,9 @@ class GoBotInternal {
     }
     
     func dialOne(peer: MultiserverAddress) -> Bool {
-        Log.debug("Dialing \(peer.rawValue)")
+        Log.debug("Dialing \(peer.string)")
         var worked = false
-        peer.rawValue.withGoString {
+        peer.string.withGoString {
             worked = ssbConnectPeer($0)
         }
         if !worked {

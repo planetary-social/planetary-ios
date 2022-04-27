@@ -75,8 +75,11 @@ class SendMissionOperation: AsynchronousOperation {
                     $0.toPeer().multiserverAddress
                 }
                 
-                if peerPool.isEmpty {
-                    peerPool = systemPubs.compactMap { $0.toPeer().multiserverAddress }
+                // If we don't have enough peers, supplement with the Planetary pubs
+                let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
+                if peerPool.count < minPeers {
+                    let someSystemPubs = systemPubs.randomSample(UInt(minPeers - peerPool.count))
+                    peerPool += someSystemPubs.map { $0.address }
                 }
                 
                 let syncOperation = SyncOperation(peerPool: peerPool)

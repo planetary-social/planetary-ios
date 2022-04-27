@@ -16,7 +16,7 @@ class MultiserverAddressTests: XCTestCase {
         XCTAssertEqual(multiserverAddress?.key, "5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=")
         XCTAssertEqual(multiserverAddress?.host, "four.planetary.pub")
         XCTAssertEqual(multiserverAddress?.port, 8008)
-        XCTAssertEqual(multiserverAddress?.rawValue, string)
+        XCTAssertEqual(multiserverAddress?.string, string)
     }
     
     func testInitFromStringGivenDiacritics() {
@@ -25,7 +25,7 @@ class MultiserverAddressTests: XCTestCase {
         XCTAssertEqual(multiserverAddress?.key, "5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=")
         XCTAssertEqual(multiserverAddress?.host, "âßàÁâãóôþüúðæåïçèõöÿýòäœêëìíøùîûñé")
         XCTAssertEqual(multiserverAddress?.port, 8008)
-        XCTAssertEqual(multiserverAddress?.rawValue, string)
+        XCTAssertEqual(multiserverAddress?.string, string)
     }
     
     func testInitFromStringGivenIPHost() {
@@ -34,7 +34,7 @@ class MultiserverAddressTests: XCTestCase {
         XCTAssertEqual(multiserverAddress?.key, "5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=")
         XCTAssertEqual(multiserverAddress?.host, "192.168.1.1")
         XCTAssertEqual(multiserverAddress?.port, 8008)
-        XCTAssertEqual(multiserverAddress?.rawValue, string)
+        XCTAssertEqual(multiserverAddress?.string, string)
     }
     
     func testInitMemberwiseGivenSystemPub() {
@@ -47,7 +47,7 @@ class MultiserverAddressTests: XCTestCase {
         XCTAssertEqual(multiserverAddress.key, "5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=")
         XCTAssertEqual(multiserverAddress.host, "four.planetary.pub")
         XCTAssertEqual(multiserverAddress.port, 8008)
-        XCTAssertEqual(multiserverAddress.rawValue, string)
+        XCTAssertEqual(multiserverAddress.string, string)
     }
     
     func testInitMemberwiseGivenDiacritics() {
@@ -60,7 +60,7 @@ class MultiserverAddressTests: XCTestCase {
         XCTAssertEqual(multiserverAddress.key, "5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=")
         XCTAssertEqual(multiserverAddress.host, "âßàÁâãóôþüúðæåïçèõöÿýòäœêëìíøùîûñé")
         XCTAssertEqual(multiserverAddress.port, 8008)
-        XCTAssertEqual(multiserverAddress.rawValue, string)
+        XCTAssertEqual(multiserverAddress.string, string)
     }
     
     func testInitMemberwiseGivenIPHost() {
@@ -73,6 +73,6 @@ class MultiserverAddressTests: XCTestCase {
         XCTAssertEqual(multiserverAddress.key, "5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=")
         XCTAssertEqual(multiserverAddress.host, "192.168.1.1")
         XCTAssertEqual(multiserverAddress.port, 8008)
-        XCTAssertEqual(multiserverAddress.rawValue, string)
+        XCTAssertEqual(multiserverAddress.string, string)
     }
 }

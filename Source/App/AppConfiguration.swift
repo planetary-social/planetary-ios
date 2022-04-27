@@ -107,9 +107,20 @@ class AppConfiguration: NSObject, NSCoding {
     var systemPubs: [Star] {
         switch ssbNetwork {
         case Environment.Networks.mainNet:
-            return Environment.PlanetarySystem.pubInvitations
+            return Environment.PlanetarySystem.systemPubs
         case Environment.Networks.test:
-            return Environment.TestNetwork.pubs
+            return Environment.TestNetwork.systemPubs
+        default:
+            return []
+        }
+    }
+    
+    var communityPubs: [Star] {
+        switch ssbNetwork {
+        case Environment.Networks.mainNet:
+            return Environment.PlanetarySystem.communityPubs
+        case Environment.Networks.test:
+            return Environment.TestNetwork.communityPubs
         default:
             return []
         }

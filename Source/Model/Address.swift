@@ -32,16 +32,18 @@ struct Pub: ContentCodable {
 /// Currently only supports net (TCP) and shs protocols
 struct MultiserverAddress: Codable, Hashable {
     
-    let rawValue: String
     let key: PublicKey
     let host: String
     let port: UInt
+    
+    var string: String {
+        "net:\(host):\(port)~shs:\(key)"
+    }
     
     internal init(key: PublicKey, host: String, port: UInt) {
         self.key = key
         self.host = host
         self.port = port
-        self.rawValue = "net:\(host):\(port)~shs:\(key)"
     }
     
     /// Parses a multiserver address string like

@@ -25,34 +25,28 @@ struct Environment {
         )
     }
     
-    enum Communities {
-        private enum Keys {
-            static let communities = "PLCommunities"
-        }
-        static let stars: [Star] = {
-            Environment.value(for: Keys.communities).split(separator: " ").map { Star(invite: String($0)) }
-        }()
-    }
-    
     enum PlanetarySystem {
-        private enum Keys {
-            static let planetarySystem = "PLPlanetarySystem"
-            static let planetaryIdentity = "PLPlanetaryIdentity"
-        }
         
-        static let pubInvitations: [Star] = {
-            Environment.value(for: Keys.planetarySystem).split(separator: " ").map { Star(invite: String($0)) }
+        static let systemPubs: [Star] = {
+            Environment.value(for: "PLPlanetarySystem").split(separator: " ").map { Star(invite: String($0)) }
+        }()
+        
+        static let communityPubs: [Star] = {
+            Environment.value(for: "PLCommunities").split(separator: " ").map { Star(invite: String($0)) }
         }()
         
         static let planetaryIdentity: Identity = {
-            Environment.value(for: Keys.planetaryIdentity)
+            Environment.value(for: "PLPlanetaryIdentity")
         }()
     }
     
     enum TestNetwork {
-        
-        static let pubs: [Star] = {
+        static let systemPubs: [Star] = {
             Environment.value(for: "PLTestNetworkPubs").split(separator: " ").map { Star(invite: String($0)) }
+        }()
+        
+        static let communityPubs: [Star] = {
+            Environment.value(for: "PLTestNetworkCommunities").split(separator: " ").map { Star(invite: String($0)) }
         }()
     }
     
