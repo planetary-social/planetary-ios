@@ -65,7 +65,7 @@ endif
 
 # this builds multiple lib.a files for different ARCHS_PHONE
 define libssb-go-phone-a
-$(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a: *.go **/*.go
+$(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a: *.go **/*.go go.mod go.sum
 	CGO_CFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	CGO_LDFLAGS="$(CFLAGS_PHONE) -arch $(ARCH)" \
 	GOARCH="$(GOARCH_$(1))" \
@@ -79,7 +79,7 @@ $(foreach ARCH,$(ARCHS_PHONE),$(eval $(call libssb-go-phone-a,$(ARCH))))
 
 # build for sim with correct cflags
 define libssb-go-sim-a
-$(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a: *.go **/*.go
+$(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a: *.go **/*.go go.mod go.sum
 	CGO_CFLAGS="$(CFLAGS_SIM) -arch $(ARCH)" \
 	CGO_LDFLAGS="$(CFLAGS_SIM) -arch $(ARCH)" \
 	GOARCH="$(GOARCHSIM_$(1))" \
