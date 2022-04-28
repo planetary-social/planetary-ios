@@ -198,6 +198,7 @@
 		};
 		C933908A27FB51C5007B5FD8 /* Combine .a files into GoSSB.xcframework */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -235,7 +236,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "rsync -t ${BUILD_DIR}/Products/GoSSB.xcframework/ ${PROJECT_DIR}/../Frameworks/GoSSB.xcframework\n\n";
+			shellScript = "rsync -rt ${BUILD_DIR}/Products/GoSSB.xcframework/ ${PROJECT_DIR}/../Frameworks/GoSSB.xcframework\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
