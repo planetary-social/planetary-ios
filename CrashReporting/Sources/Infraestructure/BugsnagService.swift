@@ -11,6 +11,8 @@ import Secrets
 import Logger
 
 class BugsnagService: APIService {
+
+    var onEventHandler: (() -> Logs)?
     
     init(keys: Keys = Keys.shared, logger: LogProtocol = Log.shared) {
         guard let apiKey = keys.get(key: .bugsnag) else {
@@ -20,22 +22,21 @@ class BugsnagService: APIService {
         Log.info("Configuring Bugsnag...")
         let config = BugsnagConfiguration.loadConfig()
         config.apiKey = apiKey
-        config.addOnSendError { (event) -> Bool in
-            let shouldAddAppLog: Bool
-            if let logs = event.getMetadata(section: "logs") {
-                shouldAddAppLog = logs.value(forKey: "app") == nil
-            } else {
-                shouldAddAppLog = true
-            }
-            guard shouldAddAppLog, let logUrls = logger.fileUrls.first else {
+        config.addOnSendError { [weak self] (event) -> Bool in
+            guard let logs = self?.onEventHandler?() else {
                 return true
             }
-            do {
-                let data = try Data(contentsOf: logUrls)
-                let string = String(data: data, encoding: .utf8)
-                event.addMetadata(string, key: "app", section: "logs")
-            } catch {
-                logger.optional(error, nil)
+            var shouldAddAppLog = true
+            var shouldAddBotLog = true
+            if let logs = event.getMetadata(section: "logs") {
+                shouldAddAppLog = logs.value(forKey: "app") == nil
+                shouldAddBotLog = logs.value(forKey: "bot") == nil
+            }
+            if shouldAddAppLog, let log = logs.appLog {
+                event.addMetadata(log, key: "app", section: "logs")
+            }
+            if shouldAddBotLog, let log = logs.botLog {
+                event.addMetadata(log, key: "bot", section: "logs")
             }
             return true
         }
@@ -61,15 +62,16 @@ class BugsnagService: APIService {
         Bugsnag.leaveBreadcrumb(withMessage: message)
     }
 
-    func report(error: Error, metadata: [AnyHashable: Any]?, appLog: String?, botLog: String?) {
-        Bugsnag.notifyError(error) { event in
+    func report(error: Error, metadata: [AnyHashable: Any]?) {
+        Bugsnag.notifyError(error) { [weak self] event in
             if let metadata = metadata {
                 event.addMetadata(metadata, section: "metadata")
             }
-            if let string = appLog {
+            let logs = self?.onEventHandler?()
+            if let string = logs?.appLog {
                 event.addMetadata(string, key: "app", section: "logs")
             }
-            if let string = botLog {
+            if let string = logs?.botLog {
                 event.addMetadata(string, key: "bot", section: "logs")
             }
             return true

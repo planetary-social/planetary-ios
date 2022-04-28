@@ -11,18 +11,19 @@ import CrashReporting
 import Logger
 
 extension CrashReporting {
-    func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]? = nil) {
-        guard let logUrls = Bots.current.logFileUrls.first else {
-            reportIfNeeded(error: error, metadata: metadata, botLog: nil)
-            return
-        }
-        do {
-            let data = try Data(contentsOf: logUrls)
-            let string = String(data: data, encoding: .utf8)
-            reportIfNeeded(error: error, metadata: metadata, botLog: string)
-        } catch {
-            Log.optional(error)
-            reportIfNeeded(error: error, metadata: metadata, botLog: nil)
+
+    func registerBotLogHandler() {
+        registerBotLogHandler {
+            guard let url = Bots.current.logFileUrls.first else {
+                return nil
+            }
+            do {
+                let data = try Data(contentsOf: url)
+                return String(data: data, encoding: .utf8)
+            } catch {
+                Log.optional(error)
+            }
+            return nil
         }
     }
 }
