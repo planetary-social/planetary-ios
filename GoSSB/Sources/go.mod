@@ -66,4 +66,4 @@ go 1.17
 
 replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
 
-replace go.cryptoscope.co/ssb => github.com/boreq/ssb v0.2.2-0.20220427141232-7f471b8512c3
+replace go.cryptoscope.co/ssb => github.com/mplorentz/ssb v0.2.2-0.20220427235517-63d7730fad76
