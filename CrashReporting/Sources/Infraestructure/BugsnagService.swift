@@ -32,11 +32,11 @@ class BugsnagService: APIService {
                 shouldAddAppLog = logs.value(forKey: "app") == nil
                 shouldAddBotLog = logs.value(forKey: "bot") == nil
             }
-            if shouldAddAppLog, let log = logs.appLog {
-                event.addMetadata(log, key: "app", section: "logs")
+            if shouldAddAppLog, let appLog = logs.appLog {
+                event.addMetadata(appLog, key: "app", section: "logs")
             }
-            if shouldAddBotLog, let log = logs.botLog {
-                event.addMetadata(log, key: "bot", section: "logs")
+            if shouldAddBotLog, let botLog = logs.botLog {
+                event.addMetadata(botLog, key: "bot", section: "logs")
             }
             return true
         }
