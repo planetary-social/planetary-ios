@@ -17,7 +17,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.1</string>
 	<key>CFBundleVersion</key>
-	<string>318</string>
+	<string>319</string>
     <key>PLTestingNetworkHMAC</key>
     <string>$(TESTING_NETWORK_HMAC)</string>
     <key>PLTestingNetworkKey</key>
