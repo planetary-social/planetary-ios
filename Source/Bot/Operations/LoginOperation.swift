@@ -25,8 +25,7 @@ class LoginOperation: AsynchronousOperation {
             return
         }
         
-        // Unwrapping this values is safe because canLaunch() verify them
-        let identity = configuration.identity!
+        let identity = configuration.identity
         
         if let loggedInIdentity = Bots.current.identity, loggedInIdentity == identity {
             self.success = true

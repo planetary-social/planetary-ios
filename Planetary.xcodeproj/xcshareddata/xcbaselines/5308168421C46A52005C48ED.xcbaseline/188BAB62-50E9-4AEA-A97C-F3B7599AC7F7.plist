@@ -59,6 +59,8 @@
 					<real>2.180000</real>
 					<key>baselineIntegrationDisplayName</key>
 					<string>Local Baseline</string>
+					<key>maxPercentRelativeStandardDeviation</key>
+					<real>30.000000</real>
 				</dict>
 			</dict>
 		</dict>

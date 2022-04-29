@@ -17,7 +17,6 @@ extension Bot {
                completion: @escaping ((Bool) -> Void)) {
         guard configuration.canLaunch else { completion(false); return }
         guard configuration.network != nil else { completion(false); return }
-        guard configuration.secret != nil else { completion(false); return }
 
         Bots.current.login(config: configuration) { error in
             let loggedIn = ((error as? BotError) == .alreadyLoggedIn) || error == nil

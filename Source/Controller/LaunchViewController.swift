@@ -56,17 +56,15 @@ class LaunchViewController: UIViewController {
 
         // if configuration and is required then onboard
         if let configuration = AppConfiguration.current,
-            let identity = configuration.identity,
-            Onboarding.status(for: identity) == .started {
+            Onboarding.status(for: configuration.identity) == .started {
             self.launchIntoOnboarding(status: .started)
             return
         }
 
         // if configuration and not started then already onboarded
         if let configuration = AppConfiguration.current,
-            let identity = configuration.identity,
-            Onboarding.status(for: identity) == .notStarted {
-            Onboarding.set(status: .completed, for: identity)
+            Onboarding.status(for: configuration.identity) == .notStarted {
+            Onboarding.set(status: .completed, for: configuration.identity)
         }
 
         // otherwise there is a configuration and onboarding has been completed
@@ -84,8 +82,8 @@ class LaunchViewController: UIViewController {
         Log.info("Launching with configuration '\(configuration.name)'")
 
         // note that hmac key can be nil to switch it off
+        let secret = configuration.secret 
         guard let network = configuration.network else { return }
-        guard let secret = configuration.secret else { return }
         guard let bot = configuration.bot else { return }
         
         bot.login(config: configuration) { error in

@@ -23,7 +23,7 @@ extension GoBot {
 
         let refreshExpectation = tc.expectation(description: "Refresh")
         self.refresh(load: .short, queue: .main) {
-            error, _ in
+            error, _, _ in
             XCTAssertNil(error, "view refresh failed")
             refreshExpectation.fulfill()
         }
