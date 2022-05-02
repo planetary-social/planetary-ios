@@ -293,8 +293,8 @@ github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/profile v1.2.1/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6JUPA=
-github.com/planetary-social/ssb v0.2.2-0.20220429165939-7f65e31e4a4c h1:V8B+LRo5/GF1vI2hPL9S2qzKHfhibsrXwMlkzDhcqIg=
-github.com/planetary-social/ssb v0.2.2-0.20220429165939-7f65e31e4a4c/go.mod h1:aVHa4tYy6ucGATXL2YvKGFR7nFrzqKuhFeMyA0XRI0s=
+github.com/planetary-social/ssb v0.2.2-0.20220502123126-83270cf85ed3 h1:z5gE5fWBGRAHNq7kGWF/YM00Pm2zYhz3k0Dktjn5Mt8=
+github.com/planetary-social/ssb v0.2.2-0.20220502123126-83270cf85ed3/go.mod h1:aVHa4tYy6ucGATXL2YvKGFR7nFrzqKuhFeMyA0XRI0s=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=
