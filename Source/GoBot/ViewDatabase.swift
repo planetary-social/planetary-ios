@@ -58,7 +58,7 @@ class ViewDatabase {
     static var schemaVersion: UInt = 20
 
     // should be changed on login/logout
-    var currentUserID: Int64 = -1
+    private var currentUserID: Int64 = -1
 
     // skip messages older than this (6 month)
     // this should be removed once the database was refactored
@@ -1173,48 +1173,6 @@ class ViewDatabase {
             limit: limit,
             offset: offset
         )
-    }
-
-    func recentIdentifiers2(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-
-        let authorsClause = onlyFollowed ? "IN" : "NOT IN"
-
-        let qry = try db.prepare("""
-        SELECT * FROM messages
-        LEFT JOIN posts ON messages.msg_id == posts.msg_ref
-        LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
-        JOIN messagekeys ON messagekeys.id == messages.msg_id
-        JOIN authors ON authors.id == messages.author_id
-        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
-        WHERE type IN ('post', 'contact')
-        AND is_decrypted == ?
-        AND hidden == false
-        AND (posts.is_root == true OR type == 'contact')
-        AND (contact_about.about_id IS NOT NULL OR type != 'contact')
-        AND authors.author \(authorsClause) (SELECT authors2.author FROM contacts
-                               JOIN authors ON contacts.author_id == authors.id
-                               JOIN authors authors2 ON contacts.contact_id == authors2.id
-                               WHERE authors.id == ? OR authors2.id == ?)
-        AND claimed_at < ?
-        ORDER BY claimed_at DESC
-        LIMIT ? OFFSET ?;
-        """)
-
-        let bindings: [Binding?] = [
-            wantPrivate,
-            self.currentUserID,
-            self.currentUserID,
-            Date().millisecondsSince1970,
-            limit,
-            offset ?? 0
-        ]
-
-        return try qry.bind(bindings).prepareRowIterator().map { row -> MessageIdentifier in
-            try row.get(colKey)
-        }
     }
     
     // MARK: common query constructors

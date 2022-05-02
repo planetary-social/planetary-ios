@@ -28,10 +28,6 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
         case .contact:
             let view = ContactReplyView()
             return KeyValueTableViewCell(for: .contact, with: view)
-        case .post:
-            let view = PostReplyView()
-            view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-            return KeyValueTableViewCell(for: .post, with: view)
         default:
             let view = PostReplyView()
             view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)

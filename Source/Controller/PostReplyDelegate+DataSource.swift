@@ -16,10 +16,6 @@ class PostReplyDataSource: KeyValueTableViewDataSource {
         case .contact:
             let view = ContactReplyView()
             return KeyValueTableViewCell(for: .contact, with: view)
-        case .post:
-            let view = PostReplyView()
-            view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-            return KeyValueTableViewCell(for: .post, with: view)
         default:
             let view = PostReplyView()
             view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
@@ -75,8 +71,6 @@ class PostReplyDelegate: KeyValueTableViewDelegate {
         switch keyValue.contentType {
         case .contact:
             return ContactReplyView.estimatedHeight(with: keyValue, in: tableView)
-        case .post:
-            return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
         default:
             return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
         }
