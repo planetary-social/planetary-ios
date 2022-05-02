@@ -186,7 +186,7 @@ class RecentViewKeyValueSource: KeyValueSource {
     }
     
     static func top(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws -> MessageIdentifier? {
-        try vdb.recentIdentifiers2(limit: 1, onlyFollowed: onlyFollowed).first
+        try vdb.recentIdentifiers(limit: 1, onlyFollowed: onlyFollowed).first
     }
 }
 

@@ -9,17 +9,47 @@
 import Foundation
 import SQLite
 
-class CurrentPostsStrategy: RecentStrategy {
+class CurrentPostsStrategy: FeedStrategy {
 
     var connection: Connection
     var currentUserID: Int64
+    var wantPrivate: Bool
+    var onlyFollowed: Bool
 
-    init(connection: Connection, currentUserID: Int64) {
+    init(connection: Connection, currentUserID: Int64, wantPrivate: Bool, onlyFollowed: Bool) {
         self.connection = connection
         self.currentUserID = currentUserID
+        self.wantPrivate = wantPrivate
+        self.onlyFollowed = onlyFollowed
     }
 
-    func recentPosts(limit: Int, offset: Int?, wantPrivate: Bool, onlyFollowed: Bool) throws -> [KeyValue] {
+    func countNumberOfRecentPosts() throws -> Int {
+        let posts = Table(ViewDatabaseTableNames.posts.rawValue)
+        let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
+
+        let colMessageRef = Expression<Int64>("msg_ref")
+        let colMessageID = Expression<Int64>("msg_id")
+        let colMsgType = Expression<String>("type")
+        let colDecrypted = Expression<Bool>("is_decrypted")
+        let colIsRoot = Expression<Bool>("is_root")
+        let colHidden = Expression<Bool>("hidden")
+
+        var qry = posts
+            .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
+            .filter(colMsgType == "post")
+            .filter(colIsRoot == true)
+            .filter(colHidden == false)
+            .filter(colDecrypted == false)
+
+        if onlyFollowed {
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
+        } else {
+            qry = try self.filterNotFollowingPeople(qry: qry)
+        }
+        return try connection.scalar(qry.count)
+    }
+
+    func recentPosts(limit: Int, offset: Int?) throws -> [KeyValue] {
         let colClaimedAt = Expression<Double>("claimed_at")
 
         var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
@@ -34,6 +64,48 @@ class CurrentPostsStrategy: RecentStrategy {
         let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
 
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
+    }
+
+    func recentIdentifiers(limit: Int, offset: Int? = nil) throws -> [MessageIdentifier] {
+        let posts = Table(ViewDatabaseTableNames.posts.rawValue)
+        let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
+        let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
+
+        let colMessageRef = Expression<Int64>("msg_ref")
+        let colID = Expression<Int64>("id")
+        let colMessageID = Expression<Int64>("msg_id")
+        let colMsgType = Expression<String>("type")
+        let colDecrypted = Expression<Bool>("is_decrypted")
+        let colIsRoot = Expression<Bool>("is_root")
+        let colHidden = Expression<Bool>("hidden")
+        let colKey = Expression<MessageIdentifier>("key")
+
+        var qry = msgs
+            .join(posts, on: posts[colMessageRef] == msgs[colMessageID])
+            .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
+            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
+            .filter(colDecrypted == wantPrivate)
+            .filter(colHidden == false)
+
+        if let offset = offset {
+            qry = qry.limit(limit, offset: offset)
+        } else {
+            qry = qry.limit(limit)
+        }
+
+        qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
+
+        qry = qry.order(colMessageID.desc)
+
+        if onlyFollowed {
+            qry = try self.filterOnlyFollowedPeople(qry: qry)
+        } else {
+            qry = try self.filterNotFollowingPeople(qry: qry)
+        }
+
+        return try connection.prepare(qry).compactMap { row in
+            try row.get(colKey)
+        }
     }
 
     private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {

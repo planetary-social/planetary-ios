@@ -54,7 +54,7 @@ class BlockButton: PillButton {
 
         let shouldBlock = !self.isSelected
 
-        func complete() {
+        @MainActor func complete() {
             AppController.shared.hideProgress()
             self.isEnabled = true
             relationship.reloadAndNotify()

@@ -9,12 +9,16 @@
 import Foundation
 import SQLite
 
-protocol RecentStrategy {
+protocol FeedStrategy {
 
     var connection: Connection { get set }
 
     var currentUserID: Int64 { get set }
 
-    func recentPosts(limit: Int, offset: Int?, wantPrivate: Bool, onlyFollowed: Bool) throws -> [KeyValue]
+    func countNumberOfRecentPosts() throws -> Int
+    
+    func recentPosts(limit: Int, offset: Int?) throws -> [KeyValue]
+
+    func recentIdentifiers(limit: Int, offset: Int?) throws -> [MessageIdentifier]
 }
 

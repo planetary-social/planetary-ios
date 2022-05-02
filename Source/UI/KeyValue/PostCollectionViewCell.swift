@@ -125,40 +125,34 @@ class PostCollectionViewCell: UICollectionViewCell {
     }
     
     func update(keyValue: KeyValue) {
-        if let post = keyValue.value.content.post {
-            if post.hasBlobs {
-                self.imageView.update(with: post)
-                self.imageViewSquareConstraint?.isActive = true
-                self.imageViewHeightConstraint?.isActive = false
-                // self.textView.textContainer.maximumNumberOfLines = 3
-            }
+        guard let post = keyValue.value.content.post else {
+            return
+        }
+        if post.hasBlobs {
+            self.imageView.update(with: post)
+            self.imageViewSquareConstraint?.isActive = true
+            self.imageViewHeightConstraint?.isActive = false
+            // self.textView.textContainer.maximumNumberOfLines = 3
+        }
 
-            self.headerView.stopSkeletonAnimation()
-            self.headerView.update(with: keyValue)
+        self.headerView.stopSkeletonAnimation()
+        self.headerView.update(with: keyValue)
 
-            let textWithoutGallery = post.text.withoutGallery()
-            if textWithoutGallery.withoutSpacesOrNewlines.isEmpty {
-                self.textView.text = ""
-                self.headerView.backgroundColor = .clear
-                self.headerView.isOpaque = false
-                self.imageViewBottomConstraint?.isActive = false
-                self.textViewZeroHeightConstraint.isActive = true
-            } else {
-                self.textView.attributedText = textWithoutGallery.decodeMarkdown(small: true)
-
-                if textWithoutGallery.isSingleEmoji {
-                    let size: CGFloat = self.contentView.bounds.width / 2
-                    self.textView.font = UIFont.smallPost.body.withSize(size)
-                    self.textView.textAlignment = .center
-                }
-            }
-        } else if let contact = keyValue.value.content.contact {
-            self.headerView.stopSkeletonAnimation()
-            self.headerView.update(with: keyValue)
-            self.textView.text = "Follows \(contact.contact)"
-            self.headerView.backgroundColor = .cardBackground
+        let textWithoutGallery = post.text.withoutGallery()
+        if textWithoutGallery.withoutSpacesOrNewlines.isEmpty {
+            self.textView.text = ""
+            self.headerView.backgroundColor = .clear
             self.headerView.isOpaque = false
+            self.imageViewBottomConstraint?.isActive = false
+            self.textViewZeroHeightConstraint.isActive = true
+        } else {
+            self.textView.attributedText = textWithoutGallery.decodeMarkdown(small: true)
 
+            if textWithoutGallery.isSingleEmoji {
+                let size: CGFloat = self.contentView.bounds.width / 2
+                self.textView.font = UIFont.smallPost.body.withSize(size)
+                self.textView.textAlignment = .center
+            }
         }
     }
 }

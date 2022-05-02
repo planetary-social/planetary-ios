@@ -251,24 +251,6 @@ class PostCellView: KeyValueView {
             self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
             self.galleryViewBottomConstraint?.constant = (post.hasBlobs && self.allowSpaceUnderGallery) ? -Layout.verticalSpacing : 0
             self.galleryView.update(with: post)
-        } else if let contact = keyValue.value.content.contact {
-            let expression: String
-            if contact.isFollowing {
-                expression = "Is following \(contact.contact)"
-            } else {
-                expression = "Stopped following \(contact.contact)"
-            }
-
-            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.italicSystemFont(ofSize: 16),
-                                                             .foregroundColor: UIColor.secondaryText]
-            self.fullPostText = NSAttributedString(string: expression,
-                                                   attributes: attributes)
-            self.textView.text = expression
-            self.configureTruncatedState()
-
-            self.galleryViewFullHeightConstraint.isActive = false
-            self.galleryViewZeroHeightConstraint.isActive = true
-            self.galleryViewBottomConstraint?.constant = 0
         } else {
             return
         }

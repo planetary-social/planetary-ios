@@ -9,17 +9,29 @@
 import Foundation
 import SQLite
 
-class PostsStrategy: RecentStrategy {
+class PostsStrategy: FeedStrategy {
 
     var connection: Connection
     var currentUserID: Int64
+    var wantPrivate: Bool
+    var onlyFollowed: Bool
 
-    init(connection: Connection, currentUserID: Int64) {
+    init(connection: Connection, currentUserID: Int64, wantPrivate: Bool, onlyFollowed: Bool) {
         self.connection = connection
         self.currentUserID = currentUserID
+        self.wantPrivate = wantPrivate
+        self.onlyFollowed = onlyFollowed
     }
 
-    func recentPosts(limit: Int, offset: Int?, wantPrivate: Bool, onlyFollowed: Bool) throws -> [KeyValue] {
+    func countNumberOfRecentPosts() throws -> Int {
+        try recentPosts(limit: 100_000, offset: 0).count
+    }
+
+    func recentIdentifiers(limit: Int, offset: Int?) throws -> [MessageIdentifier] {
+        try recentPosts(limit: limit, offset: offset).map { $0.key }
+    }
+
+    func recentPosts(limit: Int, offset: Int?) throws -> [KeyValue] {
         let authorsClause = onlyFollowed ? "IN" : "NOT IN"
         let qry = try connection.prepare("""
         SELECT messages.*,

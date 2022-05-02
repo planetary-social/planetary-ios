@@ -459,7 +459,17 @@ class ViewDatabase {
     
     // helper to get some counts for pagination
     func statsForRootPosts(onlyFollowed: Bool = false) throws -> Int {
-        return try self.recentIdentifiers2(limit: 10000, offset: 0, wantPrivate: false, onlyFollowed: onlyFollowed).count
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let builder = FeedStrategyBuilder()
+        let strategy: FeedStrategy
+        if onlyFollowed {
+            strategy = builder.buildHomeFeedStrategy(connection: connection, currentUserID: currentUserID)
+        } else {
+            strategy = builder.buildDiscoverFeedStrategy(connection: connection, currentUserID: currentUserID)
+        }
+        return try strategy.countNumberOfRecentPosts()
     }
 
     // posts for a feed
@@ -1133,42 +1143,36 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let currentUserID = self.currentUserID
-        let strategy = PostsAndContactsStrategy(connection: connection, currentUserID: currentUserID)
-        return try strategy.recentPosts(limit: limit, offset: offset, wantPrivate: wantPrivate, onlyFollowed: onlyFollowed)
+        let builder = FeedStrategyBuilder()
+        let strategy: FeedStrategy
+        if onlyFollowed {
+            strategy = builder.buildHomeFeedStrategy(connection: connection, currentUserID: currentUserID)
+        } else {
+            strategy = builder.buildDiscoverFeedStrategy(connection: connection, currentUserID: currentUserID)
+        }
+        return try strategy.recentPosts(
+            limit: limit,
+            offset: offset
+        )
     }
     
     // This gets called a lot from the go-bot... 
     func recentIdentifiers(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {
-        guard let db = self.openDB else {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
-        var qry = self.msgs
-            .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
-            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
-            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
-            .filter(colDecrypted == wantPrivate)
-            .filter(colHidden == false)
-        
-        if let offset = offset {
-            qry = qry.limit(limit, offset: offset)
-        } else {
-            qry = qry.limit(limit)
-        }
-        
-        qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
-        
-        qry = qry.order(colMessageID.desc)
-        
+        let currentUserID = self.currentUserID
+        let builder = FeedStrategyBuilder()
+        let strategy: FeedStrategy
         if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
+            strategy = builder.buildHomeFeedStrategy(connection: connection, currentUserID: currentUserID)
         } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
+            strategy = builder.buildDiscoverFeedStrategy(connection: connection, currentUserID: currentUserID)
         }
-        
-        return try db.prepare(qry).compactMap { row in
-            try row.get(colKey)
-        }
+        return try strategy.recentIdentifiers(
+            limit: limit,
+            offset: offset
+        )
     }
 
     func recentIdentifiers2(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {

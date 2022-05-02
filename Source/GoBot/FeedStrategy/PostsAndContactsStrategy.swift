@@ -9,7 +9,7 @@
 import Foundation
 import SQLite
 
-class PostsAndContactsStrategy: RecentStrategy {
+class PostsAndContactsStrategy: FeedStrategy {
 
     var connection: Connection
     var currentUserID: Int64
@@ -19,8 +19,15 @@ class PostsAndContactsStrategy: RecentStrategy {
         self.currentUserID = currentUserID
     }
 
-    func recentPosts(limit: Int, offset: Int?, wantPrivate: Bool, onlyFollowed: Bool) throws -> [KeyValue] {
-        let authorsClause = onlyFollowed ? "IN" : "NOT IN"
+    func countNumberOfRecentPosts() throws -> Int {
+        try recentPosts(limit: 100_000, offset: 0).count
+    }
+
+    func recentIdentifiers(limit: Int, offset: Int?) throws -> [MessageIdentifier] {
+        try recentPosts(limit: limit, offset: offset).map { $0.key }
+    }
+
+    func recentPosts(limit: Int, offset: Int?) throws -> [KeyValue] {
         let qry = try connection.prepare("""
         SELECT messages.*,
                posts.*,
@@ -29,7 +36,7 @@ class PostsAndContactsStrategy: RecentStrategy {
                messagekeys.*,
                authors.*,
                author_about.*,
-               contact_about.name AS contact_name,
+               contact_author.author AS contact_identifier,
                (SELECT COUNT(*) FROM tangles WHERE root == messages.msg_id) as replies_count
         FROM messages
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref
@@ -38,13 +45,12 @@ class PostsAndContactsStrategy: RecentStrategy {
         JOIN messagekeys ON messagekeys.id == messages.msg_id
         JOIN authors ON authors.id == messages.author_id
         LEFT JOIN abouts AS author_about ON author_about.about_id == messages.author_id
-        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
+        LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
         WHERE type IN ('post', 'contact')
-        AND is_decrypted == ?
+        AND is_decrypted == false
         AND hidden == false
         AND (posts.is_root == true OR type == 'contact')
-        AND (contact_about.about_id IS NOT NULL OR type != 'contact')
-        AND authors.author \(authorsClause) (SELECT authors2.author FROM contacts
+        AND authors.author IN (SELECT authors2.author FROM contacts
                                JOIN authors ON contacts.author_id == authors.id
                                JOIN authors authors2 ON contacts.contact_id == authors2.id
                                WHERE authors.id == ? OR authors2.id == ?)
@@ -54,7 +60,6 @@ class PostsAndContactsStrategy: RecentStrategy {
         """)
 
         let bindings: [Binding?] = [
-            wantPrivate,
             self.currentUserID,
             self.currentUserID,
             Date().millisecondsSince1970,
@@ -126,8 +131,8 @@ class PostsAndContactsStrategy: RecentStrategy {
             case ContentType.contact.rawValue:
                 if let state = try? row.get(colContactState) {
                     let following = state == 1
-                    let name = try row.get(Expression<String?>("contact_name"))
-                    let cc = Contact(contact: name ?? "unknown", following: following)
+                    let identifier = try row.get(Expression<Identifier>("contact_identifier"))
+                    let cc = Contact(contact: identifier, following: following)
                     c = Content(from: cc)
                 } else {
                     // Contacts stores only the latest message
