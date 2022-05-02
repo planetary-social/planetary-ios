@@ -318,6 +318,7 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 		}),
 		mksbot.DisableEBT(true),
 		mksbot.WithPublicAuthorizer(newAcceptAllAuthorizer()),
+		mksbot.WithNumberOfConcurrentReplicationsPerPeer(10),
 	}
 
 	if hmacSignKey != "" {
