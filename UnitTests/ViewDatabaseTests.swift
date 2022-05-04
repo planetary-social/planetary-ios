@@ -63,7 +63,8 @@ class ViewDatabaseTests: XCTestCase {
     }
 
     func test09_recent() throws {
-        let kv = try self.vdb.recentPosts(limit: 1000, offset: nil, wantPrivate: false, onlyFollowed: true)
+        let strategy = CurrentPostsStrategy(wantPrivate: false, onlyFollowed: true)
+        let kv = try self.vdb.recentPosts(strategy: strategy, limit: 1000, offset: nil)
         XCTAssertEqual(kv.count, 8)
     }
     

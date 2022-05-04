@@ -10,19 +10,11 @@ import Foundation
 import SQLite
 
 class FeedStrategyBuilder {
-    func buildHomeFeedStrategy(connection: Connection, currentUserID: Int64) -> FeedStrategy {
-        return PostsAndContactsStrategy(
-            connection: connection,
-            currentUserID: currentUserID
-        )
+    func buildHomeFeedStrategy() -> FeedStrategy {
+        return PostsAndContactsStrategy()
     }
 
-    func buildDiscoverFeedStrategy(connection: Connection, currentUserID: Int64) -> FeedStrategy {
-        return CurrentPostsStrategy(
-            connection: connection,
-            currentUserID: currentUserID,
-            wantPrivate: false,
-            onlyFollowed: true
-        )
+    func buildDiscoverFeedStrategy() -> FeedStrategy {
+        return CurrentPostsStrategy(wantPrivate: false, onlyFollowed: false)
     }
 }

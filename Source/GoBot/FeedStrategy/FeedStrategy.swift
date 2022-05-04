@@ -11,14 +11,10 @@ import SQLite
 
 protocol FeedStrategy {
 
-    var connection: Connection { get set }
-
-    var currentUserID: Int64 { get set }
-
-    func countNumberOfRecentPosts() throws -> Int
+    func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int
     
-    func recentPosts(limit: Int, offset: Int?) throws -> [KeyValue]
+    func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue]
 
-    func recentIdentifiers(limit: Int, offset: Int?) throws -> [MessageIdentifier]
+    func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier]
 }
 

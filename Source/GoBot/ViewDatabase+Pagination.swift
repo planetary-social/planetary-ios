@@ -168,25 +168,29 @@ protocol KeyValueSource {
 }
 
 class RecentViewKeyValueSource: KeyValueSource {
-    let view: ViewDatabase
 
+    let view: ViewDatabase
     let total: Int
 
+    static let builder = FeedStrategyBuilder()
+
     // home or explore view?
-    private let onlyFollowed: Bool
+    private let strategy: FeedStrategy
+
 
     init(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws {
         self.view = vdb
-        self.total = try vdb.statsForRootPosts(onlyFollowed: onlyFollowed)
-        self.onlyFollowed = onlyFollowed
+        self.strategy = onlyFollowed ? Self.builder.buildHomeFeedStrategy() : Self.builder.buildDiscoverFeedStrategy()
+        self.total = try vdb.statsForRootPosts(strategy: strategy)
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        try self.view.recentPosts(limit: limit, offset: offset, onlyFollowed: self.onlyFollowed)
+        try self.view.recentPosts(strategy: strategy, limit: limit, offset: offset)
     }
     
     static func top(with vdb: ViewDatabase, onlyFollowed: Bool = true) throws -> MessageIdentifier? {
-        try vdb.recentIdentifiers(limit: 1, onlyFollowed: onlyFollowed).first
+        let strategy = onlyFollowed ? Self.builder.buildHomeFeedStrategy() : Self.builder.buildDiscoverFeedStrategy()
+        return try vdb.recentIdentifiers(strategy: strategy, limit: 1).first
     }
 }
 

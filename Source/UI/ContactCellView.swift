@@ -90,6 +90,13 @@ class ContactCellView: KeyValueView {
             Bots.current.about(identity: contact.identity) { [weak aboutCellView] about, error in
                 aboutCellView?.update(with: contact.identity, about: about)
             }
+            Bots.current.follows(identity: contact.identity) { follows, error in
+                // TODO: Fill UI
+            }
+            Bots.current.followedBy(identity: contact.identity) { followedBy, error in
+                // TODO: Fill UI
+            }
+
         } else {
             return
         }

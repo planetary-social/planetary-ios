@@ -81,37 +81,31 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
 
     func testCurrentPostsStrategy() throws {
-        let connection = try XCTUnwrap(self.vdb.getOpenDB())
-        let currentUserID = self.vdb.currentUserID
+        let strategy = CurrentPostsStrategy(wantPrivate: false, onlyFollowed: false)
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             startMeasuring()
-            let strategy = CurrentPostsStrategy(connection: connection, currentUserID: currentUserID)
-            let posts = try! strategy.recentPosts(limit: 100, offset: 0, wantPrivate: false, onlyFollowed: false)
-            XCTAssertEqual(posts.count, 100)
+            let keyValues = try! self.vdb.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(keyValues.count, 100)
             stopMeasuring()
         }
     }
 
     func testPostsStrategy() throws {
-        let connection = try XCTUnwrap(self.vdb.getOpenDB())
-        let currentUserID = self.vdb.currentUserID
+        let strategy = PostsStrategy(wantPrivate: false, onlyFollowed: false)
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             startMeasuring()
-            let strategy = PostsStrategy(connection: connection, currentUserID: currentUserID)
-            let posts = try! strategy.recentPosts(limit: 100, offset: 0, wantPrivate: false, onlyFollowed: false)
-            XCTAssertEqual(posts.count, 100)
+            let keyValues = try! self.vdb.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(keyValues.count, 100)
             stopMeasuring()
         }
     }
 
     func testPostsAndContactsStrategy() throws {
-        let connection = try XCTUnwrap(self.vdb.getOpenDB())
-        let currentUserID = self.vdb.currentUserID
+        let strategy = PostsAndContactsStrategy()
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             startMeasuring()
-            let strategy = PostsAndContactsStrategy(connection: connection, currentUserID: currentUserID)
-            let posts = try! strategy.recentPosts(limit: 100, offset: 0, wantPrivate: false, onlyFollowed: false)
-            XCTAssertEqual(posts.count, 100)
+            let keyValues = try! self.vdb.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(keyValues.count, 96)
             stopMeasuring()
         }
     }

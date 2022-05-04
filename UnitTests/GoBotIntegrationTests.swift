@@ -47,7 +47,7 @@ class GoBotIntegrationTests: XCTestCase {
         }
         self.wait(for: [loginExpectation], timeout: 10)
 
-        let nicks = ["alice"]
+        let nicks = ["alice", "bob"]
         for n in nicks {
             try sut.testingCreateKeypair(nick: n)
         }
@@ -337,6 +337,94 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(mockPreloader.preloadPubsCallCount, 1)
+    }
+
+    // MARK: Home feed
+
+    func testWith10Posts() async throws {
+        // I publish 10 messages
+        for i in 0..<10 {
+            let _ = try await sut.publish(content: Post(text: "Me \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my 10 messages
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 10)
+    }
+
+    func testFollowingOnePerson() async throws {
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my follow
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 1)
+    }
+
+    func testUnknownPersonWith10Posts() async throws {
+        // Alice publushes 10 posts
+        for i in 0..<10 {
+            _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should not have messages (I am not following Alice)
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 0)
+    }
+
+    func testPersonAtOneHopWith10Posts() async throws {
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+
+        // Alice publishes 10 posts
+        for i in 0..<10 {
+            _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have 10 alice posts and 1 follow message
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 11)
+    }
+
+    func testPersonAtTwoHopsWith10Posts() async throws {
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+
+        // Alice follows Bob
+        _ = sut.testingFollow(as: "alice", nick: "bob")
+
+        // Bob publishes 10 posts
+        for i in 0..<10 {
+            _ = sut.testingPublish(as: "bob", content: Post(text: "Bob \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my follow and Alice's follow
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 2)
+    }
+
+    func testPersonAtOneHopeFollowsAnotherAtTwoHops() async throws {
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+
+        // Alice follows Bob
+        _ = sut.testingFollow(as: "alice", nick: "bob")
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have Alice follow message
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 2)
     }
 }
 

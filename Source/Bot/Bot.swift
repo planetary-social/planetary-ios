@@ -255,6 +255,18 @@ extension Bot {
             }
         }
     }
+
+    func recent() async throws -> PaginatedKeyValueDataProxy {
+        try await withCheckedThrowingContinuation { continuation in
+            recent { proxy, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: proxy)
+                }
+            }
+        }
+    }
     
     func abouts(completion:  @escaping AboutsCompletion) {
         self.abouts(queue: .main, completion: completion)

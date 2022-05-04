@@ -458,18 +458,11 @@ class ViewDatabase {
     }
     
     // helper to get some counts for pagination
-    func statsForRootPosts(onlyFollowed: Bool = false) throws -> Int {
+    func statsForRootPosts(strategy: FeedStrategy) throws -> Int {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let builder = FeedStrategyBuilder()
-        let strategy: FeedStrategy
-        if onlyFollowed {
-            strategy = builder.buildHomeFeedStrategy(connection: connection, currentUserID: currentUserID)
-        } else {
-            strategy = builder.buildDiscoverFeedStrategy(connection: connection, currentUserID: currentUserID)
-        }
-        return try strategy.countNumberOfRecentPosts()
+        return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID)
     }
 
     // posts for a feed
@@ -1123,7 +1116,7 @@ class ViewDatabase {
 
     // MARK: pagination
     // returns a pagination proxy for the home (or recent) view
-    func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
+    func  paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
         let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
         return try PaginatedPrefetchDataProxy(with: src)
     }
@@ -1138,41 +1131,19 @@ class ViewDatabase {
     }
 
     // MARK: recent
-    func recentPosts(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> KeyValues {
+    func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> KeyValues {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let currentUserID = self.currentUserID
-        let builder = FeedStrategyBuilder()
-        let strategy: FeedStrategy
-        if onlyFollowed {
-            strategy = builder.buildHomeFeedStrategy(connection: connection, currentUserID: currentUserID)
-        } else {
-            strategy = builder.buildDiscoverFeedStrategy(connection: connection, currentUserID: currentUserID)
-        }
-        return try strategy.recentPosts(
-            limit: limit,
-            offset: offset
-        )
+        return try strategy.fetchKeyValues(connection: connection, userId: currentUserID, limit: limit, offset: offset)
     }
     
     // This gets called a lot from the go-bot... 
-    func recentIdentifiers(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {
+    func recentIdentifiers(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> [MessageIdentifier] {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let currentUserID = self.currentUserID
-        let builder = FeedStrategyBuilder()
-        let strategy: FeedStrategy
-        if onlyFollowed {
-            strategy = builder.buildHomeFeedStrategy(connection: connection, currentUserID: currentUserID)
-        } else {
-            strategy = builder.buildDiscoverFeedStrategy(connection: connection, currentUserID: currentUserID)
-        }
-        return try strategy.recentIdentifiers(
-            limit: limit,
-            offset: offset
-        )
+        return try strategy.fetchKeys(connection: connection, userId: currentUserID, limit: limit, offset: offset)
     }
     
     // MARK: common query constructors

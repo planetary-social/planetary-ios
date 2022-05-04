@@ -11,19 +11,15 @@ import SQLite
 
 class CurrentPostsStrategy: FeedStrategy {
 
-    var connection: Connection
-    var currentUserID: Int64
     var wantPrivate: Bool
     var onlyFollowed: Bool
 
-    init(connection: Connection, currentUserID: Int64, wantPrivate: Bool, onlyFollowed: Bool) {
-        self.connection = connection
-        self.currentUserID = currentUserID
+    init(wantPrivate: Bool, onlyFollowed: Bool) {
         self.wantPrivate = wantPrivate
         self.onlyFollowed = onlyFollowed
     }
 
-    func countNumberOfRecentPosts() throws -> Int {
+    func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
         let posts = Table(ViewDatabaseTableNames.posts.rawValue)
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
 
@@ -42,31 +38,31 @@ class CurrentPostsStrategy: FeedStrategy {
             .filter(colDecrypted == false)
 
         if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
+            qry = try self.filterOnlyFollowedPeople(qry: qry, connection: connection, userId: userId)
         } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
+            qry = try self.filterNotFollowingPeople(qry: qry, connection: connection, userId: userId)
         }
         return try connection.scalar(qry.count)
     }
 
-    func recentPosts(limit: Int, offset: Int?) throws -> [KeyValue] {
+    func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         let colClaimedAt = Expression<Double>("claimed_at")
 
         var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
             .order(colClaimedAt.desc)
 
         if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
+            qry = try self.filterOnlyFollowedPeople(qry: qry, connection: connection, userId: userId)
         } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
+            qry = try self.filterNotFollowingPeople(qry: qry, connection: connection, userId: userId)
         }
 
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
+        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry, connection: connection)
 
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
+        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs, connection: connection)
     }
 
-    func recentIdentifiers(limit: Int, offset: Int? = nil) throws -> [MessageIdentifier] {
+    func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier] {
         let posts = Table(ViewDatabaseTableNames.posts.rawValue)
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
         let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
@@ -98,9 +94,9 @@ class CurrentPostsStrategy: FeedStrategy {
         qry = qry.order(colMessageID.desc)
 
         if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
+            qry = try self.filterOnlyFollowedPeople(qry: qry, connection: connection, userId: userId)
         } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
+            qry = try self.filterNotFollowingPeople(qry: qry, connection: connection, userId: userId)
         }
 
         return try connection.prepare(qry).compactMap { row in
@@ -153,7 +149,7 @@ class CurrentPostsStrategy: FeedStrategy {
         return qry
     }
 
-    private func filterOnlyFollowedPeople(qry: Table) throws -> Table {
+    private func filterOnlyFollowedPeople(qry: Table, connection: Connection, userId: Int64) throws -> Table {
         let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
         let colAuthorID = Expression<Int64>("author_id")
         let colContactID = Expression<Int64>("contact_id")
@@ -162,16 +158,16 @@ class CurrentPostsStrategy: FeedStrategy {
         // get the list of people that the active user follows
         let myFollowsQry = contacts
             .select(colContactID)
-            .filter(colAuthorID == self.currentUserID)
+            .filter(colAuthorID == userId)
             .filter(colContactState == 1)
-        var myFollows: [Int64] = [self.currentUserID] // and from self as well
+        var myFollows: [Int64] = [userId] // and from self as well
         for row in try connection.prepare(myFollowsQry) {
             myFollows.append(row[colContactID])
         }
         return qry.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
     }
 
-    private func filterNotFollowingPeople(qry: Table) throws -> Table {
+    private func filterNotFollowingPeople(qry: Table, connection: Connection, userId: Int64) throws -> Table {
         let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
         let colAuthorID = Expression<Int64>("author_id")
         let colContactID = Expression<Int64>("contact_id")
@@ -180,16 +176,16 @@ class CurrentPostsStrategy: FeedStrategy {
         // get the list of people that the active user follows
         let myFollowsQry = contacts
             .select(colContactID)
-            .filter(colAuthorID == self.currentUserID)
+            .filter(colAuthorID == userId)
             .filter(colContactState == 1)
-        var myFollows: [Int64] = [self.currentUserID] // and from self as well
+        var myFollows: [Int64] = [userId] // and from self as well
         for row in try connection.prepare(myFollowsQry) {
             myFollows.append(row[colContactID])
         }
         return qry.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
     }
 
-    private func mapQueryToKeyValue(qry: Table) throws -> [KeyValue] {
+    private func mapQueryToKeyValue(qry: Table, connection: Connection) throws -> [KeyValue] {
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
         let abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
         let colMessageID = Expression<Int64>("msg_id")
@@ -230,12 +226,12 @@ class CurrentPostsStrategy: FeedStrategy {
 
                 var rootKey: Identifier?
                 if let rootID = try row.get(colRootMaybe) {
-                    rootKey = try self.msgKey(id: rootID)
+                    rootKey = try self.msgKey(id: rootID, connection: connection)
                 }
 
                 let p = Post(
-                    blobs: try self.loadBlobs(for: msgID),
-                    mentions: try self.loadMentions(for: msgID),
+                    blobs: try self.loadBlobs(for: msgID, connection: connection),
+                    mentions: try self.loadMentions(for: msgID, connection: connection),
                     root: rootKey,
                     text: try row.get(colText)
                 )
@@ -245,10 +241,10 @@ class CurrentPostsStrategy: FeedStrategy {
             case ContentType.vote.rawValue:
 
                 let lnkID = try row.get(colLinkID)
-                let lnkKey = try self.msgKey(id: lnkID)
+                let lnkKey = try self.msgKey(id: lnkID, connection: connection)
 
                 let rootID = try row.get(colRoot)
-                let rootKey = try self.msgKey(id: rootID)
+                let rootKey = try self.msgKey(id: rootID, connection: connection)
 
                 let cv = ContentVote(
                     link: lnkKey,
@@ -298,7 +294,7 @@ class CurrentPostsStrategy: FeedStrategy {
         }
     }
 
-    private func msgKey(id: Int64) throws -> MessageIdentifier {
+    private func msgKey(id: Int64, connection: Connection) throws -> MessageIdentifier {
         let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
         let colID = Expression<Int64>("id")
         let colKey = Expression<MessageIdentifier>("key")
@@ -311,7 +307,7 @@ class CurrentPostsStrategy: FeedStrategy {
         return msgKey
     }
 
-    private func loadBlobs(for msgID: Int64) throws -> [Blob] {
+    private func loadBlobs(for msgID: Int64, connection: Connection) throws -> [Blob] {
         let post_blobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
         let colMessageRef = Expression<Int64>("msg_ref")
         let colIdentifier = Expression<String>("identifier")
@@ -351,7 +347,7 @@ class CurrentPostsStrategy: FeedStrategy {
         return blobs
     }
 
-    private func loadMentions(for msgID: Int64) throws -> [Mention] {
+    private func loadMentions(for msgID: Int64, connection: Connection) throws -> [Mention] {
         let colMessageRef = Expression<Int64>("msg_ref")
         let colFeedID = Expression<Int64>("feed_id")
         let colLinkID = Expression<Int64>("link_id")
@@ -364,7 +360,7 @@ class CurrentPostsStrategy: FeedStrategy {
             row in
 
             let feedID = try row.get(colFeedID)
-            let feed = try self.author(from: feedID)
+            let feed = try self.author(from: feedID, connection: connection)
 
             return Mention(
                 link: feed,
@@ -378,7 +374,7 @@ class CurrentPostsStrategy: FeedStrategy {
 
             let linkID = try row.get(colLinkID)
             return Mention(
-                link: try self.msgKey(id: linkID),
+                link: try self.msgKey(id: linkID, connection: connection),
                 name: ""
             )
         }
@@ -402,7 +398,7 @@ class CurrentPostsStrategy: FeedStrategy {
         return feedMentions + msgMentions
     }
 
-    private func author(from id: Int64) throws -> Identity {
+    private func author(from id: Int64, connection: Connection) throws -> Identity {
         let authors = Table(ViewDatabaseTableNames.authors.rawValue)
         let colID = Expression<Int64>("id")
         let colAuthor = Expression<Identity>("author")
@@ -416,7 +412,7 @@ class CurrentPostsStrategy: FeedStrategy {
         return authorKey
     }
 
-    private func addNumberOfPeopleReplied(msgs: [KeyValue]) throws -> KeyValues {
+    private func addNumberOfPeopleReplied(msgs: [KeyValue], connection: Connection) throws -> KeyValues {
         let messages = Table(ViewDatabaseTableNames.messages.rawValue)
         let tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
         let authors = Table(ViewDatabaseTableNames.authors.rawValue)
@@ -436,7 +432,7 @@ class CurrentPostsStrategy: FeedStrategy {
         var r: KeyValues = []
         for (index, _) in msgs.enumerated() {
             var msg = msgs[index]
-            let msgID = try self.msgID(of: msg.key)
+            let msgID = try self.msgID(of: msg.key, connection: connection)
 
             let replies = tangles
                 .select(colAuthorID.distinct, colAuthor, colName, colDescr, colImage)
@@ -464,7 +460,7 @@ class CurrentPostsStrategy: FeedStrategy {
         return r
     }
 
-    private func msgID(of key: MessageIdentifier, make: Bool = false) throws -> Int64 {
+    private func msgID(of key: MessageIdentifier, make: Bool = false, connection: Connection) throws -> Int64 {
         let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
         let colID = Expression<Int64>("id")
         let colKey = Expression<MessageIdentifier>("key")

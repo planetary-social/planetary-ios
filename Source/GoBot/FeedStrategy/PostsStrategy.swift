@@ -11,27 +11,23 @@ import SQLite
 
 class PostsStrategy: FeedStrategy {
 
-    var connection: Connection
-    var currentUserID: Int64
     var wantPrivate: Bool
     var onlyFollowed: Bool
 
-    init(connection: Connection, currentUserID: Int64, wantPrivate: Bool, onlyFollowed: Bool) {
-        self.connection = connection
-        self.currentUserID = currentUserID
+    init(wantPrivate: Bool, onlyFollowed: Bool) {
         self.wantPrivate = wantPrivate
         self.onlyFollowed = onlyFollowed
     }
 
-    func countNumberOfRecentPosts() throws -> Int {
-        try recentPosts(limit: 100_000, offset: 0).count
+    func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
+        try fetchKeyValues(connection: connection, userId: userId, limit: 100_000, offset: 0).count
     }
 
-    func recentIdentifiers(limit: Int, offset: Int?) throws -> [MessageIdentifier] {
-        try recentPosts(limit: limit, offset: offset).map { $0.key }
+    func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier] {
+        try fetchKeyValues(connection: connection, userId: userId, limit: limit, offset: offset).map { $0.key }
     }
 
-    func recentPosts(limit: Int, offset: Int?) throws -> [KeyValue] {
+    func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         let authorsClause = onlyFollowed ? "IN" : "NOT IN"
         let qry = try connection.prepare("""
         SELECT messages.*,
@@ -65,8 +61,8 @@ class PostsStrategy: FeedStrategy {
 
         let bindings: [Binding?] = [
             wantPrivate,
-            self.currentUserID,
-            self.currentUserID,
+            userId,
+            userId,
             Date().millisecondsSince1970,
             limit,
             offset ?? 0
@@ -105,12 +101,12 @@ class PostsStrategy: FeedStrategy {
 
                 var rootKey: Identifier?
                 if let rootID = try row.get(colRootMaybe) {
-                    rootKey = try self.msgKey(id: rootID)
+                    rootKey = try self.msgKey(id: rootID, connection: connection)
                 }
 
                 let p = Post(
-                    blobs: try self.loadBlobs(for: msgID),
-                    mentions: try self.loadMentions(for: msgID),
+                    blobs: try self.loadBlobs(for: msgID, connection: connection),
+                    mentions: try self.loadMentions(for: msgID, connection: connection),
                     root: rootKey,
                     text: try row.get(colText)
                 )
@@ -120,10 +116,10 @@ class PostsStrategy: FeedStrategy {
             case ContentType.vote.rawValue:
 
                 let lnkID = try row.get(colLinkID)
-                let lnkKey = try self.msgKey(id: lnkID)
+                let lnkKey = try self.msgKey(id: lnkID, connection: connection)
 
                 let rootID = try row.get(colRoot)
-                let rootKey = try self.msgKey(id: rootID)
+                let rootKey = try self.msgKey(id: rootID, connection: connection)
 
                 let cv = ContentVote(
                     link: lnkKey,
@@ -177,7 +173,7 @@ class PostsStrategy: FeedStrategy {
         return compactKeyValues
     }
 
-    private func msgKey(id: Int64) throws -> MessageIdentifier {
+    private func msgKey(id: Int64, connection: Connection) throws -> MessageIdentifier {
         let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
         let colID = Expression<Int64>("id")
         let colKey = Expression<MessageIdentifier>("key")
@@ -190,7 +186,7 @@ class PostsStrategy: FeedStrategy {
         return msgKey
     }
 
-    private func loadBlobs(for msgID: Int64) throws -> [Blob] {
+    private func loadBlobs(for msgID: Int64, connection: Connection) throws -> [Blob] {
         let post_blobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
         let colMessageRef = Expression<Int64>("msg_ref")
         let colIdentifier = Expression<String>("identifier")
@@ -230,7 +226,7 @@ class PostsStrategy: FeedStrategy {
         return blobs
     }
 
-    private func loadMentions(for msgID: Int64) throws -> [Mention] {
+    private func loadMentions(for msgID: Int64, connection: Connection) throws -> [Mention] {
         let colMessageRef = Expression<Int64>("msg_ref")
         let colFeedID = Expression<Int64>("feed_id")
         let colLinkID = Expression<Int64>("link_id")
@@ -243,7 +239,7 @@ class PostsStrategy: FeedStrategy {
             row in
 
             let feedID = try row.get(colFeedID)
-            let feed = try self.author(from: feedID)
+            let feed = try self.author(from: feedID, connection: connection)
 
             return Mention(
                 link: feed,
@@ -257,7 +253,7 @@ class PostsStrategy: FeedStrategy {
 
             let linkID = try row.get(colLinkID)
             return Mention(
-                link: try self.msgKey(id: linkID),
+                link: try self.msgKey(id: linkID, connection: connection),
                 name: ""
             )
         }
@@ -281,7 +277,7 @@ class PostsStrategy: FeedStrategy {
         return feedMentions + msgMentions
     }
 
-    private func author(from id: Int64) throws -> Identity {
+    private func author(from id: Int64, connection: Connection) throws -> Identity {
         let authors = Table(ViewDatabaseTableNames.authors.rawValue)
         let colID = Expression<Int64>("id")
         let colAuthor = Expression<Identity>("author")

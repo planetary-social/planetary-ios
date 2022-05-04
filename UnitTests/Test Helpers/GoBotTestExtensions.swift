@@ -59,6 +59,48 @@ extension GoBot {
         return pubkeys
     }
 
+    func testingFollow(as nick: String, nick otherNick: String) -> MessageIdentifier {
+        let keypairs = try! testingGetNamedKeypairs()
+        let other = keypairs[otherNick]!
+        let content = Contact(contact: other, following: true)
+        let c = try! content.encodeToData().string()!
+        var identifier: MessageIdentifier?
+        nick.withGoString { goStrMe in
+            c.withGoString { goStrContent in
+                guard let refCstr = ssbTestingPublishAs(goStrMe, goStrContent) else {
+                    XCTFail("publish failed!")
+                    return
+                }
+                identifier = String(cString: refCstr)
+            }
+        }
+        let id = identifier!
+        XCTAssertTrue(id.hasPrefix("%"))
+        XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
+        print(c)
+        return id
+    }
+
+    func testingFollow(nick: String) -> MessageIdentifier {
+        let keypairs = try! testingGetNamedKeypairs()
+        let keypair = keypairs[nick]!
+        let content = Contact(contact: keypair, following: true)
+        let c = try! content.encodeToData().string()!
+        var identifier: MessageIdentifier?
+        c.withGoString { goStrContent in
+            guard let refCstr = ssbPublish(goStrContent) else {
+                XCTFail("publish failed!")
+                return
+            }
+            identifier = String(cString: refCstr)
+        }
+        let id = identifier!
+        XCTAssertTrue(id.hasPrefix("%"))
+        XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
+        print(c)
+        return id
+    }
+
     func testingPublish(as nick: String, recipients: [Identity]? = nil, content: ContentCodable) -> MessageIdentifier {
         let c = try! content.encodeToData().string()!
         var identifier: MessageIdentifier?
