@@ -118,6 +118,7 @@ CREATE TABLE messages (
     sequence             integer NOT NULL,
     type                 text NOT NULL,             -- needed so that we know what tables to merge for more info
     received_at          real NOT NULL,
+    written_at           real NOT NULL,
     claimed_at           real DEFAULT 0,
     is_decrypted         BOOLEAN default false,
     

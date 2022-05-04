@@ -78,6 +78,7 @@ class ViewDatabase {
     private let colMsgType = Expression<String>("type")
     // received time in milliseconds since the unix epoch
     private let colReceivedAt = Expression<Double>("received_at")
+    private let colWrittenAt = Expression<Double>("written_at")
     private let colClaimedAt = Expression<Double>("claimed_at")
     private let colDecrypted = Expression<Bool>("is_decrypted")
     
@@ -219,7 +220,7 @@ class ViewDatabase {
         
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
-        try db.execute("PRAGMA synchronous = FULL;") // Full is best for read performance
+        try db.execute("PRAGMA synchronous = OFF;") // Full is best for read performance
         
         // db.trace { print("\tSQL: \($0)") } // print all the statements
         
@@ -227,157 +228,7 @@ class ViewDatabase {
             if db.userVersion == 0 {
                 let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
                 try db.execute(String(contentsOf: schemaV1url))
-                db.userVersion = 8
-            } else if db.userVersion == 1 {
-                try db.execute("""
-                CREATE INDEX messagekeys_key ON messagekeys(key);
-                CREATE INDEX messagekeys_id ON messagekeys(id);
-                CREATE INDEX posts_msgrefs on posts (msg_ref);
-                CREATE INDEX messages_rxseq on messages (rx_seq);
-                CREATE INDEX tangle_id on tangles (id);
-                CREATE INDEX contacts_state ON contacts (contact_id, state);
-                CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
-                -- add new column to posts and migrate existing data
-                ALTER TABLE posts ADD is_root boolean default false;
-                CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
-                UPDATE posts set is_root=true;
-                UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
-                ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-                ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                try self.migrateHashAllMessageKeys()
-                db.userVersion = 8
-            } else if db.userVersion == 2 {
-                try db.execute("""
-                -- add new column to posts and migrate existing data
-                ALTER TABLE posts ADD is_root boolean default false;
-                CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
-                UPDATE posts set is_root=true;
-                UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
-                ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-                ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                try self.migrateHashAllMessageKeys()
-                db.userVersion = 8
-            } else if db.userVersion == 3 {
-                try db.execute("""
-                ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-                ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                try self.migrateHashAllMessageKeys()
-                db.userVersion = 8
-            } else if db.userVersion == 4 {
-                try db.execute("""
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
-            } else if db.userVersion == 5 {
-                try db.execute("""
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
-            } else if db.userVersion == 6 {
-                try db.execute("""
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
-            } else if db.userVersion == 7 {
-                try db.execute("""
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
+                db.userVersion = 9
             }
         }
 
@@ -2347,7 +2198,8 @@ class ViewDatabase {
                     colDecrypted <- true,
                     colMsgType <- msg.value.content.type.rawValue,
                     colReceivedAt <- msg.timestamp,
-                    colClaimedAt <- claimed
+                    colClaimedAt <- claimed,
+                    colWrittenAt <- Date().millisecondsSince1970
                 ))
             } else {
                 do {
@@ -2358,7 +2210,8 @@ class ViewDatabase {
                         colSequence <- msg.value.sequence,
                         colMsgType <- msg.value.content.type.rawValue,
                         colReceivedAt <- msg.timestamp,
-                        colClaimedAt <- claimed
+                        colClaimedAt <- claimed,
+                        colWrittenAt <- Date().millisecondsSince1970
                     ))
                 } catch Result.error(let errMsg, let errCode, _) {
                     // this is _just_ hear because of a fetch-duplication bug in go-ssb
@@ -2562,8 +2415,8 @@ class ViewDatabase {
     }
     
     /// - Parameter since: the date we want to check against.
-    /// - Returns: The number of messages received since the given date.
-    func messageReceivedCount(since: Date) throws -> Int {
+    /// - Returns: The number of messages added to SQLite since the given date.
+    func receivedMessageCount(since: Date) throws -> Int {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2571,7 +2424,7 @@ class ViewDatabase {
             return try db.scalar(
                 self.msgs
                     .count
-                    .filter(colReceivedAt > since.millisecondsSince1970)
+                    .filter(colWrittenAt > since.millisecondsSince1970)
                     .where(msgs[colAuthorID] != currentUserID)
             )
         } catch {

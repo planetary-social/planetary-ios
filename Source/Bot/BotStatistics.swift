@@ -52,6 +52,7 @@ extension BotStatistics {
     }
 }
 
+/// Statistics for the go-ssb log
 struct RepoStatistics: Equatable {
 
     /// Path to the repo
@@ -82,6 +83,7 @@ struct RepoStatistics: Equatable {
     }
 }
 
+/// Statistics for the SQLite database
 struct DatabaseStatistics: Equatable {
 
     let lastReceivedMessage: Int

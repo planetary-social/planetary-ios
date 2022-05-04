@@ -98,7 +98,7 @@ class MissionControlCenter {
     func sendMission() {
         Log.info("Mission Control Center is sending adhoc missions")
         let sendMissionOperation = SendMissionOperation(quality: .high)
-        let refreshOperation = RefreshOperation(refreshLoad: .medium)
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
         refreshOperation.addDependency(sendMissionOperation)
         self.operationQueue.addOperations([sendMissionOperation, refreshOperation],
                                           waitUntilFinished: false)
