@@ -189,6 +189,7 @@ class Beta1MigrationTests: XCTestCase {
     
     // MARK: Bot isRestoring
     
+    /// Verifies that the migration coordinator puts the bot into restoring mode.
     func testBotIsRestoringDuringMigration() async throws {
         // Arrange
         try touchSQLiteDatabase()
@@ -205,38 +206,28 @@ class Beta1MigrationTests: XCTestCase {
         XCTAssertEqual(mockBot.isRestoring, true)
     }
     
-    func testBotIsNotRestoringAfterMigration() throws {
+    /// Verifies that the migration coordinator removes the bot from restoring mode when dismissed.
+    @MainActor func testBotIsNotRestoringAfterMigration() async throws {
         // Arrange
         try touchSQLiteDatabase()
         XCTAssertEqual(mockBot.isRestoring, false)
         
         // Act
-        Task {
-            let migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
-                appConfiguration: appConfig,
-                appController: appController,
-                userDefaults: userDefaults
-            )
-            XCTAssertEqual(migrating, true)
-        }
+        // Present migration screen
+        _ = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: appConfig,
+            appController: appController,
+            userDefaults: userDefaults
+        )
         
-        /// Wait for migration to be presented
-        var migrationCoordinator: Beta1MigrationCoordinator?
-        let expectation = XCTBlockExpectation {
-            if let controller = self.appController.presentedViewController as?
-                UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>> {
-                let view = controller.rootView as Beta1MigrationView<Beta1MigrationCoordinator>
-                let coordinator = view.viewModel
-                migrationCoordinator = coordinator
-                return true
-            }
-            return false
-        }
-        wait(for: [expectation], timeout: 10)
+        let hostingController = try XCTUnwrap(
+            self.appController.presentedViewControllerParam as?
+                UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>>
+        )
+        let migrationCoordinator = hostingController.rootView.viewModel
         
-        // Dismiss migration
-        migrationCoordinator?.buttonPressed()
-        
+        // Dismiss migration screen
+        migrationCoordinator.buttonPressed()
         
         XCTAssertEqual(mockBot.isRestoring, false)
     }
