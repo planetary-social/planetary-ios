@@ -99,7 +99,7 @@ class GoBot: Bot {
         self.userDefaults = userDefaults
         self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(label: "GoBot-utility",
-                                          qos: .utility,
+                                          qos: .userInitiated,
                                           attributes: .concurrent,
                                           autoreleaseFrequency: .workItem,
                                           target: nil)
@@ -466,7 +466,7 @@ class GoBot: Bot {
         self._isRefreshing = true
         
         let elapsed = Date()
-        self.utilityQueue.async {
+        self.userInitiatedQueue.async {
             self.updateReceive(limit: load.rawValue) { [weak self] error in
                 
                 // Figure out if the refresh got the ViewDatabase fully synced with the backing store.
@@ -1393,7 +1393,7 @@ class GoBot: Bot {
             
             self._statistics.recentlyDownloadedPostDuration = 15 // minutes
             do {
-                self._statistics.recentlyDownloadedPostCount = try self.database.messageReceivedCount(
+                self._statistics.recentlyDownloadedPostCount = try self.database.receivedMessageCount(
                     since: Date(timeIntervalSinceNow: Double(self._statistics.recentlyDownloadedPostDuration) * -60)
                 )
             } catch {
@@ -1406,6 +1406,7 @@ class GoBot: Bot {
             queue.async {
                 completion(statistics)
             }
+            Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
     }
     

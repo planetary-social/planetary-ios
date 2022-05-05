@@ -50,7 +50,6 @@ class StatisticsOperation: AsynchronousOperation {
             }
             Log.debug("Peers: \(statistics.peer.count)")
             Log.debug("Connected peers: \(statistics.peer.connectionCount)")
-            Analytics.shared.trackStatistics(statistics.analyticsStatistics)
             self?.result = .success(statistics)
             self?.finish()
         }
