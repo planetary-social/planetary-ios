@@ -87,6 +87,26 @@ class Beta1MigrationTests: XCTestCase {
         XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), "beta2Test")
     }
     
+    /// Verifies that the migration won't run if we increment the version number in the future
+    func testMigrationDoesntRunOnNewerVersion() async throws {
+        // Arrange
+        try touchSQLiteDatabase()
+        self.userDefaults.set(false, forKey: "StartedBeta1Migration")
+        self.userDefaults.set("beta3Test", forKey: "GoBotDatabaseVersion")
+        
+        // Act
+        let isMigrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: appConfig,
+            appController: appController,
+            userDefaults: userDefaults
+        )
+        
+        // Assert
+        XCTAssertEqual(isMigrating, false)
+        XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
+        XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), "beta3Test")
+    }
+    
     func testMigrationDoesntRunTwiceForDifferentProfiles() async throws {
         // Arrange
         // swiftlint:disable line_length indentation_width
@@ -374,7 +394,8 @@ class Beta1MigrationTests: XCTestCase {
         _ = sut.view
         /// Wait for onboarding to be presented
         let expectation = XCTBlockExpectation {
-            self.appController.children.first is MainViewController
+            self.appController.children.first is MainViewController &&
+            self.appController.presentedViewControllerParam == nil
         }
         wait(for: [expectation], timeout: 10)
         

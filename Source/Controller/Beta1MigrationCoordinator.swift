@@ -71,8 +71,10 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         
         let dbPath = try appConfiguration.databaseDirectory()
         let dbExists = FileManager.default.fileExists(atPath: dbPath)
-        let completed = userDefaults.bool(forKey: Self.beta1MigrationCompleteKey)
-        if !dbExists || completed {
+        let dbVersion = userDefaults.string(forKey: GoBot.versionKey)
+        let didStart = userDefaults.bool(forKey: Self.beta1MigrationStartKey)
+        let didComplete = userDefaults.bool(forKey: Self.beta1MigrationCompleteKey)
+        if !dbExists || didComplete || (!didStart && dbVersion != nil) {
             return false
         }
         
