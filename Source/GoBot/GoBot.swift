@@ -47,6 +47,8 @@ class GoBot: Bot {
     private var _identity: Identity?
     var identity: Identity? { self._identity }
     
+    var isRestoring = false
+    
     var logFileUrls: [URL] {
         let url = URL(fileURLWithPath: self.bot.currentRepoPath.appending("/debug"))
         guard let urls = try? FileManager.default.contentsOfDirectory(at: url,

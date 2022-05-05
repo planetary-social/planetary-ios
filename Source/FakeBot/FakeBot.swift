@@ -15,6 +15,8 @@ enum FakeBotError: Error {
 
 class FakeBot: Bot {
     
+    var isRestoring = false
+    
     required init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?) {}
     
     func lastReceivedTimestam() throws -> Double {

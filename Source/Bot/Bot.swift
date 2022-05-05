@@ -53,6 +53,10 @@ protocol Bot: AnyObject {
     func exit() async
     func dropDatabase(for configuration: AppConfiguration) async throws
     
+    /// A flag that signals that the bot is resyncing the user's feed from the network.
+    /// Currently used to suppress push notifications because the user has already seen them.
+    var isRestoring: Bool { get set }
+    
     // MARK: Logs
     var logFileUrls: [URL] { get }
     

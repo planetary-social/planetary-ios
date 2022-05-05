@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import SwiftUI
 
 // swiftlint:disable implicitly_unwrapped_optional force_unwrapping
 
@@ -163,6 +164,60 @@ class Beta1MigrationTests: XCTestCase {
         } catch {
             XCTAssertEqual(error.localizedDescription, BotError.forkProtection.localizedDescription)
         }
+    }
+    
+    // MARK: Bot isRestoring
+    
+    func testBotIsRestoringDuringMigration() async throws {
+        // Arrange
+        try touchSQLiteDatabase()
+        XCTAssertEqual(mockBot.isRestoring, false)
+        
+        // Act
+        let migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: appConfig,
+            appController: appController,
+            userDefaults: userDefaults
+        )
+        
+        XCTAssertEqual(migrating, true)
+        XCTAssertEqual(mockBot.isRestoring, true)
+    }
+    
+    func testBotIsNotRestoringAfterMigration() throws {
+        // Arrange
+        try touchSQLiteDatabase()
+        XCTAssertEqual(mockBot.isRestoring, false)
+        
+        // Act
+        Task {
+            let migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+                appConfiguration: appConfig,
+                appController: appController,
+                userDefaults: userDefaults
+            )
+            XCTAssertEqual(migrating, true)
+        }
+        
+        /// Wait for migration to be presented
+        var migrationCoordinator: Beta1MigrationCoordinator?
+        let expectation = XCTBlockExpectation {
+            if let controller = self.appController.presentedViewController as?
+                UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>> {
+                let view = controller.rootView as Beta1MigrationView<Beta1MigrationCoordinator>
+                let coordinator = view.viewModel
+                migrationCoordinator = coordinator
+                return true
+            }
+            return false
+        }
+        wait(for: [expectation], timeout: 10)
+        
+        // Dismiss migration
+        migrationCoordinator?.buttonPressed()
+        
+        
+        XCTAssertEqual(mockBot.isRestoring, false)
     }
     
     // MARK: - Launch View Controller
