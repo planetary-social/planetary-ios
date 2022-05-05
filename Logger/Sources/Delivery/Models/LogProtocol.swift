@@ -26,6 +26,9 @@ public protocol LogProtocol {
     func debug(_ string: String)
 
     /// Log a ERROR message
+    func error(_ string: String)
+
+    /// Log a ERROR message
     ///
     /// Convencience function that categorize common errors that the app can handle
     func unexpected(_ reason: Reason, _ detail: String?)

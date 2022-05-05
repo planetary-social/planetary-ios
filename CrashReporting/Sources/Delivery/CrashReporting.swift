@@ -17,6 +17,11 @@ public class CrashReporting {
         self.service = service
     }
 
+    /// Registers a block used for passing the bot log when CrashReporting needs it
+    public func registerBotLogHandler(handler: (() -> String?)?) {
+        service.botLogHandler = handler
+    }
+
     /// Identifies user information on this session
     public func identify(identifier: String, name: String?, networkKey: String, networkName: String) {
         let identity = Identity(
@@ -38,7 +43,7 @@ public class CrashReporting {
     /// This function is useful for testing if the crash reporting tool is actually working
     public func crash() {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
-        service.report(error: error, metadata: nil, botLog: nil)
+        service.report(error: error, metadata: nil)
     }
 
     /// Records a message useful for debugging
@@ -52,9 +57,9 @@ public class CrashReporting {
     /// - parameter botLog: Log of the go bot if available
     ///
     /// If GoBot is moved to a swift package of its own, we can remove this parameter and grab the log from that package
-    public func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]? = nil, botLog: String?) {
+    public func reportIfNeeded(error: Error?, metadata: [AnyHashable: Any]? = nil) {
         if let error = error {
-            service.report(error: error, metadata: metadata, botLog: botLog)
+            service.report(error: error, metadata: metadata)
         }
     }
 }

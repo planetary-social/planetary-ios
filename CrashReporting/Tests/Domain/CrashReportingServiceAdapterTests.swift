@@ -16,7 +16,7 @@ final class CrashReportingServiceAdapterTests: XCTestCase {
     override func setUp() {
         super.setUp()
         let apiService = APIServiceMock()
-        service = CrashReportingServiceAdapter(apiService)
+        service = CrashReportingServiceAdapter(apiService, logger: LogMock())
         self.apiService = apiService
     }
 
@@ -50,8 +50,31 @@ final class CrashReportingServiceAdapterTests: XCTestCase {
     func testReport() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
         let service = try XCTUnwrap(service)
-        service.report(error: error, metadata: nil, botLog: nil)
+        service.report(error: error, metadata: nil)
         let apiService = try XCTUnwrap(apiService)
         XCTAssertTrue(apiService.crashed)
+    }
+
+    func testReportWithAppLog() throws {
+        let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
+        let service = try XCTUnwrap(service)
+        let expectedAppLog = "Hello, world!\n"
+        service.report(error: error, metadata: nil)
+        let apiService = try XCTUnwrap(apiService)
+        XCTAssertTrue(apiService.crashed)
+        XCTAssertEqual(apiService.lastAttachedLogs?.appLog, expectedAppLog)
+    }
+
+    func testReportWithBotLog() throws {
+        let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
+        let service = try XCTUnwrap(service)
+        let expectedBotLog = "hola"
+        service.botLogHandler = { () -> String? in
+            return expectedBotLog
+        }
+        service.report(error: error, metadata: nil)
+        let apiService = try XCTUnwrap(apiService)
+        XCTAssertTrue(apiService.crashed)
+        XCTAssertEqual(apiService.lastAttachedLogs?.botLog, expectedBotLog)
     }
 }
