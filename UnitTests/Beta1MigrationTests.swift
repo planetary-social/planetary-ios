@@ -233,7 +233,8 @@ class Beta1MigrationTests: XCTestCase {
         // Assert
         /// Wait for migration view to be presented
         let expectation = XCTBlockExpectation {
-            self.appController.presentedViewControllerParam is UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>>
+            self.appController.presentedViewControllerParam is
+                UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>>
         }
         wait(for: [expectation], timeout: 10)
     }
@@ -368,7 +369,11 @@ class MockAppController: AppController {
     
     var presentedViewControllerParam: UIViewController?
     
-    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+    override func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
         presentedViewControllerParam = viewControllerToPresent
     }
 }

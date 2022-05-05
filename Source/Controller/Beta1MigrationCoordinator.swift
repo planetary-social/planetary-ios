@@ -129,7 +129,10 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     }
 
     /// Computes the `completionMessageCount` which is used in the progress bar.
-    private class func computeProgressTarget(from appConfiguration: AppConfiguration, userDefaults: UserDefaults) -> Int {
+    private class func computeProgressTarget(
+        from appConfiguration: AppConfiguration,
+        userDefaults: UserDefaults
+    ) -> Int {
         if let completionMessageCount = userDefaults.object(forKey: Self.beta1MigrationProgressTarget) as? Int {
             return completionMessageCount
         } else {
