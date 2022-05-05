@@ -41,6 +41,7 @@ struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel 
         .frame(maxWidth: 286)
         .foregroundColor(.black)
         .buttonStyle(ProgressButtonStyle(viewModel: viewModel))
+        .disabled(viewModel.progress < 0.995)
     }
 }
 
