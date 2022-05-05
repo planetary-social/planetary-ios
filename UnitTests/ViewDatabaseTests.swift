@@ -637,13 +637,13 @@ class ViewDatabaseTests: XCTestCase {
         )
         
         // Assert
-        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 0)
+        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 49)
         
         // Rearrange
         try vdb.fillMessages(msgs: [ownerMessage, friendMessageOne, friendMessageTwo])
         
         // Reassert
-        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 2)
+        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 51)
     }
     
     /// Verify that fillMessages deduplicates records.
