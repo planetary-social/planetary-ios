@@ -676,8 +676,8 @@
 		C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E341FD224FF9EE002BB5F4 /* UIImage+Verse.swift */; };
 		C941A6E427ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
-		C943A12C2818900500E1AF96 /* Beta1MigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9724B0B28089499000EBCCD /* Beta1MigrationTests.swift */; };
 		C943A12F2819BBEC00E1AF96 /* Pub.json in Resources */ = {isa = PBXBuildFile; fileRef = C943A12E2819BBEC00E1AF96 /* Pub.json */; };
+		C943A12C2818900500E1AF96 /* Beta1MigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9724B0B28089499000EBCCD /* Beta1MigrationTests.swift */; };
 		C949E96E28119B47006C5F18 /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E96D28119B47006C5F18 /* ProgressButton.swift */; };
 		C949E96F28119B47006C5F18 /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E96D28119B47006C5F18 /* ProgressButton.swift */; };
 		C949E9712811A8AF006C5F18 /* VerticallyCenteringScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C949E9702811A8AF006C5F18 /* VerticallyCenteringScrollView.swift */; };

@@ -17,7 +17,7 @@ class Beta1MigrationTests: XCTestCase {
     
     var mockBot: MockMigrationBot!
     var userDefaults: UserDefaults!
-    var appConfig: AppConfiguration!
+    var appConfig: MockAppConfiguration!
     let userDefaultsSuite = "com.Planetary.unit-tests.Beta1MigrationTests"
     var testPath: String!
     var appController: MockAppController!
@@ -29,12 +29,12 @@ class Beta1MigrationTests: XCTestCase {
             .appending(UUID().uuidString)
             .appending("/PlanetaryUnitTests")
             .appending("/Beta1MigrationTests")
-        MockMigrationBot.databaseDirectory = testPath
-        try FileManager.default.createDirectory(atPath: testPath, withIntermediateDirectories: true)
+        
         userDefaults = UserDefaults(suiteName: userDefaultsSuite)
         userDefaults.dictionaryRepresentation().keys.forEach { userDefaults.set(nil, forKey: $0) }
         mockBot = MockMigrationBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
         appConfig = MockAppConfiguration(with: botTestsKey)
+        appConfig.mockDatabaseDirectory = testPath
         appConfig.network = botTestNetwork
         appConfig.hmacKey = botTestHMAC
         appConfig.bot = mockBot
@@ -60,6 +60,7 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the proper user defaults keys are set after the migration
     func testUserDefaultsSetAfterMigration() async throws {
         // Arrange
+        try touchSQLiteDatabase()
         // Sanity checks
         XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
         XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
@@ -89,6 +90,7 @@ class Beta1MigrationTests: XCTestCase {
     func testMigrationDoesntRunTwiceForDifferentProfiles() async throws {
         // Arrange
         // swiftlint:disable line_length indentation_width
+        try touchSQLiteDatabase()
         let bobSecret = Secret(from: """
             {
               "curve": "ed25519",
@@ -101,6 +103,7 @@ class Beta1MigrationTests: XCTestCase {
         bobConfig.network = botTestNetwork
         bobConfig.hmacKey = botTestHMAC
         bobConfig.bot = mockBot
+        bobConfig.mockDatabaseDirectory = testPath
         
         let aliceSecret = Secret(from: """
             {
@@ -115,6 +118,7 @@ class Beta1MigrationTests: XCTestCase {
         aliceConfig.network = botTestNetwork
         aliceConfig.hmacKey = botTestHMAC
         aliceConfig.bot = mockBot
+        aliceConfig.mockDatabaseDirectory = testPath
         
         // Act
         // Migrate Bob
@@ -139,10 +143,30 @@ class Beta1MigrationTests: XCTestCase {
         XCTAssertEqual(migrating, false)
         XCTAssertEqual(mockBot.identity, nil)
     }
+    
+    /// Verifies that the LaunchViewController does not resume the migration after it has been completed
+    func testLaunchViewControllerDoesNotResumeCompletedMigration() async throws {
+        // Arrange
+        try touchSQLiteDatabase()
+        userDefaults.set(true, forKey: "CompletedBeta1Migration")
+        userDefaults.set("beta2Test", forKey: "GoBotDatabaseVersion")
+        
+        // Act
+        let isMigrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: appConfig,
+            appController: appController,
+            userDefaults: userDefaults
+        )
+        
+        // Assert
+        XCTAssertEqual(isMigrating, false)
+    }
+        
 
     /// Verifies that the user cannot publish after the migration has started if forked feed protection is enabled.
     func testForkedFeedProtectionAfterMigration() async throws {
         // Arrange
+        try touchSQLiteDatabase()
         let testPost = Post(text: "\(#function)")
         appConfig.numberOfPublishedMessages = 1
         
@@ -169,6 +193,7 @@ class Beta1MigrationTests: XCTestCase {
     func testLaunchViewControllerTriggersMigration() async throws {
         // Arrange
         Onboarding.set(status: .completed, for: appConfig.identity)
+        try touchSQLiteDatabase()
         let sut = await LaunchViewController(
             appConfiguration: appConfig,
             appController: appController,
@@ -188,8 +213,10 @@ class Beta1MigrationTests: XCTestCase {
     }
     
     /// Verifies that the LaunchViewController resumes the migration if it was interrupted.
+    /// than 20.
     func testLaunchViewControllerResumesMigration() throws {
         // Arrange
+        try touchSQLiteDatabase()
         userDefaults.set(100, forKey: "Beta1MigrationResyncTarget")
         userDefaults.set(true, forKey: "StartedBeta1Migration")
         userDefaults.set("beta2Test", forKey: "GoBotDatabaseVersion")
@@ -210,37 +237,35 @@ class Beta1MigrationTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 10)
     }
-    
-    /// Verifies that the LaunchViewController does not resume the migration after it has been completed
-    func testLaunchViewControllerDoesNotResumeCompletedMigration() throws {
+
+    /// Verifies that the LaunchViewController starts the migration for a user with a SQLite database version older
+    /// than 20.
+    func testLaunchViewControllerTriggersMigrationForOldSQLite() async throws {
         // Arrange
-        userDefaults.set(100, forKey: "Beta1MigrationResyncTarget")
-//        userDefaults.set(true, forKey: "CompletedBeta1Migration")
-        userDefaults.set("beta2Test", forKey: "GoBotDatabaseVersion")
+        try touchSQLiteDatabase(version: 1)
         Onboarding.set(status: .completed, for: appConfig.identity)
-        let sut = LaunchViewController(
+        let sut = await LaunchViewController(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
         )
         
         // Act
-        _ = sut.view
+        _ = await sut.view
         
         // Assert
-        /// Wait for migration view to be presented
         let expectation = XCTBlockExpectation {
-            self.appController.children.first is MainViewController
+            self.userDefaults.bool(forKey: "StartedBeta1Migration") == true &&
+            self.userDefaults.string(forKey: "GoBotDatabaseVersion") == "beta2Test"
         }
+        
         wait(for: [expectation], timeout: 10)
     }
-        
+    
     /// Verifies that the LaunchViewController doees not start the migration on a fresh install of the app, when there
     /// is no AppConfiguration in the keychain.
     func testLaunchViewControllerDoesNotTriggerMigrationOnFreshInstall() throws {
         // Arrange
-        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
-        let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/mockDatabase")))
         let sut = LaunchViewController(
             appConfiguration: nil,
             appController: appController,
@@ -248,7 +273,6 @@ class Beta1MigrationTests: XCTestCase {
         )
         
         // Act
-        try mockData.write(to: databaseURL)
         _ = sut.view
         /// Wait for onboarding to be presented
         let expectation = XCTBlockExpectation {
@@ -259,13 +283,13 @@ class Beta1MigrationTests: XCTestCase {
         // Assert
         XCTAssertEqual(userDefaults.bool(forKey: "StartedBeta1Migration"), false)
         XCTAssertEqual(userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
-        XCTAssertEqual(try Data(contentsOf: databaseURL), mockData)
     }
     
     /// Verifies that the LaunchViewController doees not start the migration on an AppConfiguration that has been
     /// created but hasn't started Onboarding yet.
     func testLaunchViewControllerDoesNotTriggerMigrationOnFreshAccount() throws {
         // Arrange
+        try touchSQLiteDatabase()
         Onboarding.set(status: .notStarted, for: appConfig.identity)
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/mockDatabase")))
@@ -293,49 +317,50 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the LaunchViewController does not start the migration on an AppConfiguration that has started
     /// onboarding but hasn't completed it yet.
     func testLaunchViewControllerDoesNotTriggerMigrationOnAccountRestore() throws {
-        Onboarding.set(status: .started, for: appConfig.identity)
-        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
-        let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/mockDatabase")))
+        Onboarding.set(status: .completed, for: appConfig.identity)
         let sut = LaunchViewController(
-            appConfiguration: nil,
+            appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
         )
         
         // Act
-        try mockData.write(to: databaseURL)
         _ = sut.view
         /// Wait for onboarding to be presented
         let expectation = XCTBlockExpectation {
-            self.appController.children.first is OnboardingViewController
+            self.appController.children.first is MainViewController
         }
         wait(for: [expectation], timeout: 10)
         
         // Assert
-        XCTAssertEqual(userDefaults.bool(forKey: "StartedBeta1Migration"), false)
-        XCTAssertEqual(userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
-        XCTAssertEqual(try Data(contentsOf: databaseURL), mockData)
+        XCTAssertEqual(userDefaults.bool(forKey: "CompletedBeta1Migration"), false)
+        XCTAssertEqual(userDefaults.string(forKey: "GoBotDatabaseVersion"), "beta2Test")
+    }
+    
+    private func touchSQLiteDatabase(version: Int = 20) throws {
+        try FileManager.default.createDirectory(atPath: testPath, withIntermediateDirectories: true)
+        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
+        let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/schema-built\(version).sqlite")))
+        try mockData.write(to: databaseURL)
     }
 }
 
 class MockAppConfiguration: AppConfiguration {
+    
+    var mockDatabaseDirectory: String!
+    
     override func apply() {
         // no-op, don't mess with the keychain
+    }
+    
+    override func databaseDirectory() throws -> String {
+        return mockDatabaseDirectory
     }
 }
 
 class MockMigrationBot: GoBot {
-    
-    static var databaseDirectory = NSTemporaryDirectory()
-        .appending("/PlanetaryUnitTests")
-        .appending("/Beta1MigrationTests")
-    
     override var version: String {
         "beta2Test"
-    }
-    
-    override class func databaseDirectory(for configuration: AppConfiguration) throws -> String {
-        databaseDirectory
     }
 }
 

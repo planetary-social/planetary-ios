@@ -137,7 +137,7 @@ class GoBotIntegrationTests: XCTestCase {
         // Arrange
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(
-            URL(fileURLWithPath: GoBot.databaseDirectory(for: appConfig).appending("/mockDatabase"))
+            URL(fileURLWithPath: appConfig.databaseDirectory().appending("/mockDatabase"))
         )
         try mockData.write(to: databaseURL)
 
@@ -152,7 +152,7 @@ class GoBotIntegrationTests: XCTestCase {
         // Arrange
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(
-            URL(fileURLWithPath: GoBot.databaseDirectory(for: appConfig).appending("/mockDatabase"))
+            URL(fileURLWithPath: appConfig.databaseDirectory().appending("/mockDatabase"))
         )
         try mockData.write(to: databaseURL)
         try await sut.logout()

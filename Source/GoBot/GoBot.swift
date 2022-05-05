@@ -141,7 +141,7 @@ class GoBot: Bot {
         }
         
         do {
-            let databaseDirectory = try Self.databaseDirectory(for: configuration)
+            let databaseDirectory = try configuration.databaseDirectory()
             try FileManager.default.removeItem(atPath: databaseDirectory)
         } catch {
             let nsError = error as NSError
@@ -202,7 +202,7 @@ class GoBot: Bot {
                 throw GoBotError.unexpectedFault("\(#function) warning: database still open")
             }
             
-            repoPrefix = try Self.databaseDirectory(for: config)
+            repoPrefix = try config.databaseDirectory()
             
             try self.database.open(
                 path: repoPrefix,
@@ -1458,27 +1458,5 @@ class GoBot: Bot {
                 completion(error)
             }
         }
-    }
-    
-    // MARK: - Helpers
-    class func databaseDirectory(for configuration: AppConfiguration) throws -> String {
-        // lookup Application Support folder for bot and database
-        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
-            .applicationSupportDirectory,
-            .userDomainMask,
-            true
-        )
-        
-        guard appSupportDirs.count > 0 else {
-            throw GoBotError.unexpectedFault("no support dir")
-        }
-        
-        guard let networkKey = configuration.network else {
-            throw GoBotError.unexpectedFault("No network key in configuration.")
-        }
-
-        return appSupportDirs[0]
-            .appending("/FBTT")
-            .appending("/\(networkKey.hexEncodedString())")
     }
 }

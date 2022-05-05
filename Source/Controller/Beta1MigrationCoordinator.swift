@@ -69,9 +69,10 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             return false
         }
         
-        let version = userDefaults.string(forKey: GoBot.versionKey)
+        let dbPath = try appConfiguration.databaseDirectory()
+        let dbExists = FileManager.default.fileExists(atPath: dbPath)
         let completed = userDefaults.bool(forKey: Self.beta1MigrationCompleteKey)
-        if version != nil && completed {
+        if !dbExists || completed {
             return false
         }
         
@@ -172,28 +173,14 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     /// releases this migration will still work in the unlikely event someone updates a very old installation of
     /// Planetary and opens it up.
     private static func getNumberOfMessagesInViewDatabase(with configuration: AppConfiguration) throws -> Int {
-        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
-            .applicationSupportDirectory,
-            .userDomainMask,
-            true
-        )
-        
-        guard !appSupportDirs.isEmpty else {
-            throw GoBotError.unexpectedFault("no support dir")
-        }
-        
-        guard let networkKey = configuration.network else {
-            throw GoBotError.unexpectedFault("No network key in configuration.")
-        }
-
-        let path = appSupportDirs[0]
-            .appending("/FBTT")
-            .appending("/\(networkKey.hexEncodedString())")
-        
-        let dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
-        let dbConnection = try Connection(dbPath)
+        let dbConnection = try Connection(try dbPath(with: configuration))
         let msgs = Table("messages")
         return try dbConnection.scalar(msgs.count)
+    }
+    
+    private static func dbPath(with configuration: AppConfiguration) throws -> String {
+        let directory = try configuration.databaseDirectory()
+        return "\(directory)/schema-built\(ViewDatabase.schemaVersion).sqlite"
     }
     
     // MARK: Handle User Interation

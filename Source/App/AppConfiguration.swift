@@ -125,6 +125,27 @@ class AppConfiguration: NSObject, NSCoding {
             return []
         }
     }
+    
+    func databaseDirectory() throws -> String {
+        // lookup Application Support folder for bot and database
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        )
+        
+        guard appSupportDirs.count > 0 else {
+            throw GoBotError.unexpectedFault("no support dir")
+        }
+        
+        guard let networkKey = network else {
+            throw GoBotError.unexpectedFault("No network key in configuration.")
+        }
+
+        return appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/\(networkKey.hexEncodedString())")
+    }
 
     // MARK: Lifecycle
 
