@@ -14,6 +14,9 @@ import Foundation
 /// APIService provides functions to connect and send events to a Crash Reporting service
 protocol APIService {
 
+    /// Use this block to attach logs to all events sent to the Crash Reporting service
+    var onEventHandler: (() -> Logs)? { get set }
+    
     /// Identifies the current user
     func identify(identity: Identity)
 
@@ -27,5 +30,5 @@ protocol APIService {
     func record(_ message: String)
 
     /// Sends an error to the Crash Reporting service
-    func report(error: Error, metadata: [AnyHashable: Any]?, appLog: String?, botLog: String?)
+    func report(error: Error, metadata: [AnyHashable: Any]?)
 }

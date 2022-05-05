@@ -16,16 +16,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
         // first
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = AppController.shared
         window.makeKeyAndVisible()
         self.window = window
-        
+
+        CrashReporting.shared.registerBotLogHandler()
         CrashReporting.shared.record("Launch")
-        
+
         registerDefaultsFromSettingsBundle()
         
         // reset configurations if user enabled switch in settings

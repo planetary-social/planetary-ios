@@ -71,14 +71,14 @@ final class BugsnagServiceTests: XCTestCase {
     func testReport() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
         let service = try XCTUnwrap(service)
-        service.report(error: error, metadata: nil, appLog: nil, botLog: nil)
+        service.report(error: error, metadata: nil)
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
     }
 
     func testReportWithMetadata() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
         let service = try XCTUnwrap(service)
-        service.report(error: error, metadata: ["key": "value"], appLog: nil, botLog: nil)
+        service.report(error: error, metadata: ["key": "value"])
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
     }
 
@@ -86,7 +86,10 @@ final class BugsnagServiceTests: XCTestCase {
         let error = NSError(domain: "com.planetary.social", code: 407, userInfo: nil)
         let service = try XCTUnwrap(service)
         let expectedAppLog = "hello"
-        service.report(error: error, metadata: nil, appLog: expectedAppLog, botLog: nil)
+        service.onEventHandler = {
+            return Logs(appLog: expectedAppLog, botLog: nil)
+        }
+        service.report(error: error, metadata: nil)
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
     }
 
@@ -94,7 +97,10 @@ final class BugsnagServiceTests: XCTestCase {
         let error = NSError(domain: "com.planetary.social", code: 407, userInfo: nil)
         let service = try XCTUnwrap(service)
         let expectedBotLog = "hello"
-        service.report(error: error, metadata: nil, appLog: nil, botLog: expectedBotLog)
+        service.onEventHandler = {
+            return Logs(appLog: nil, botLog: expectedBotLog)
+        }
+        service.report(error: error, metadata: nil)
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
     }
 }
