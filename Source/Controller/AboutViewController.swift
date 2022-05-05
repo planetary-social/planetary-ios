@@ -378,7 +378,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func didSelectReportAction(action: UIAlertAction) {
-        guard let about = self.about, let name = about.name, let me = Bots.current.identity else {
+        guard let about = self.about, about.name != nil, let me = Bots.current.identity else {
             return
         }
         Analytics.shared.trackDidSelectAction(actionName: "report_user")

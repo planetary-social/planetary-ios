@@ -41,6 +41,10 @@ public class Log: LogProtocol {
         service.debug(string)
     }
 
+    public func error(_ string: String) {
+        service.unexpected(string, nil)
+    }
+
     public func unexpected(_ reason: Reason, _ detail: String?) {
         service.unexpected(reason.rawValue, detail)
     }
@@ -103,6 +107,6 @@ public extension Log {
 
     /// Log a ERROR message
     static func error(_ message: String) {
-        shared.service.unexpected(message, nil)
+        shared.error(message)
     }
 }

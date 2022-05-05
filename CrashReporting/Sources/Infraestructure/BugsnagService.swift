@@ -12,13 +12,35 @@ import Logger
 
 class BugsnagService: APIService {
 
-    init(keys: Keys = Keys.shared) {
+    var onEventHandler: (() -> Logs)?
+    
+    init(keys: Keys = Keys.shared, logger: LogProtocol = Log.shared) {
         guard let apiKey = keys.get(key: .bugsnag) else {
             Log.info("Error while configuring Bugsnag. ApiKey does not exist.")
             return
         }
         Log.info("Configuring Bugsnag...")
-        Bugsnag.start(withApiKey: apiKey)
+        let config = BugsnagConfiguration.loadConfig()
+        config.apiKey = apiKey
+        config.addOnSendError { [weak self] (event) -> Bool in
+            guard let logs = self?.onEventHandler?() else {
+                return true
+            }
+            var shouldAddAppLog = true
+            var shouldAddBotLog = true
+            if let logs = event.getMetadata(section: "logs") {
+                shouldAddAppLog = logs.value(forKey: "app") == nil
+                shouldAddBotLog = logs.value(forKey: "bot") == nil
+            }
+            if shouldAddAppLog, let appLog = logs.appLog {
+                event.addMetadata(appLog, key: "app", section: "logs")
+            }
+            if shouldAddBotLog, let botLog = logs.botLog {
+                event.addMetadata(botLog, key: "bot", section: "logs")
+            }
+            return true
+        }
+        Bugsnag.start(with: config)
     }
 
     func identify(identity: Identity) {
@@ -40,15 +62,16 @@ class BugsnagService: APIService {
         Bugsnag.leaveBreadcrumb(withMessage: message)
     }
 
-    func report(error: Error, metadata: [AnyHashable: Any]?, appLog: String?, botLog: String?) {
-        Bugsnag.notifyError(error) { event in
+    func report(error: Error, metadata: [AnyHashable: Any]?) {
+        Bugsnag.notifyError(error) { [weak self] event in
             if let metadata = metadata {
                 event.addMetadata(metadata, section: "metadata")
             }
-            if let string = appLog {
+            let logs = self?.onEventHandler?()
+            if let string = logs?.appLog {
                 event.addMetadata(string, key: "app", section: "logs")
             }
-            if let string = botLog {
+            if let string = logs?.botLog {
                 event.addMetadata(string, key: "bot", section: "logs")
             }
             return true
