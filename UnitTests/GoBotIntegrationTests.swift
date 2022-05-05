@@ -63,7 +63,7 @@ class GoBotIntegrationTests: XCTestCase {
                 throw error
             }
         }
-        sut.exit()
+        await sut.exit()
         do {
             try fm.removeItem(atPath: workingDirectory)
         } catch {
@@ -230,7 +230,16 @@ class GoBotIntegrationTests: XCTestCase {
         
         waitForExpectations(timeout: 10)
     }
-    
+
+    func testLoginLogoutLoop() async throws {
+        try await sut.login(config: appConfig)
+
+        await sut.exit()
+        try await sut.logout()
+        
+        try await sut.login(config: appConfig)
+    }
+
     // MARK: - Forked Feed Protection
     
     /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number

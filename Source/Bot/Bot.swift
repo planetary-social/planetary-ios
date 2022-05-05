@@ -50,7 +50,7 @@ protocol Bot: AnyObject {
     // MARK: AppLifecycle
     init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
     func suspend()
-    func exit()
+    func exit() async
     func dropDatabase(for configuration: AppConfiguration) async throws
     
     // MARK: Logs

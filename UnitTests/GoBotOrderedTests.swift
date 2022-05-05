@@ -202,41 +202,6 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [exStats], timeout: 10)
     }
 
-//    Commenting text as after block work makes the following tests to not work properly
-//    Possibly race issues.
-
-//    func test009_login_status_logout_loop() {
-//        for it in 1...20 {
-//            var ex = self.expectation(description: "login \(it)")
-//            GoBotTests.shared.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
-//                error in
-//                XCTAssertNil(error)
-//                ex.fulfill()
-//            }
-//            self.wait(for: [ex], timeout: 10)
-//
-//            // trigger ssbBotStatus
-//            // TODO: this maybe should be a loop on a seperate thread to simulate the peer widget
-//            XCTAssertEqual(GoBotTests.shared.statistics.peer.count, 0, "\(it): conn count not zero")
-//
-//            ex = self.expectation(description: "logout \(it)")
-//            GoBotTests.shared.logout() {
-//                error in
-//                XCTAssertNil(error)
-//                ex.fulfill()
-//            }
-//            self.wait(for: [ex], timeout: 10)
-//        }
-//        // start again
-//        let ex = self.expectation(description: "final login")
-//        GoBotTests.shared.login(network: botTestNetwork, hmacKey: botTestHMAC, secret: botTestsKey) {
-//            error in
-//            XCTAssertNil(error)
-//            ex.fulfill()
-//        }
-//        self.wait(for: [ex], timeout: 10)
-//    }
-
     // MARK: abouts
     func test051_postAboutSelf() {
         let ex = self.expectation(description: "\(#function)")

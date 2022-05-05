@@ -44,7 +44,7 @@ class Beta1MigrationTests: XCTestCase {
         try await super.tearDown()
         userDefaults.removeSuite(named: userDefaultsSuite)
 
-        mockBot.exit()
+        await mockBot.exit()
         do {
             try await mockBot.logout()
         } catch {
@@ -58,10 +58,6 @@ class Beta1MigrationTests: XCTestCase {
     
     /// Verifies that the proper user defaults keys are set after the migration
     func testUserDefaultsSetAfterMigration() async throws {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
-        
         // Arrange
         // Sanity checks
         XCTAssertEqual(self.userDefaults.bool(forKey: "PerformedBeta1Migration"), false)
@@ -81,10 +77,6 @@ class Beta1MigrationTests: XCTestCase {
     
     /// Verifies that the proper user defaults keys are set when a user creates a new profile
     func testUserDefaultsSetAfterNewAccountCreation() async throws {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
-        
         // Act
         try await mockBot.login(config: appConfig)
         
@@ -94,10 +86,6 @@ class Beta1MigrationTests: XCTestCase {
     }
     
     func testMigrationDoesntRunTwiceForDifferentProfiles() async throws {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
-        
         // Arrange
         // swiftlint:disable line_length indentation_width
         let bobSecret = Secret(from: """
@@ -176,10 +164,6 @@ class Beta1MigrationTests: XCTestCase {
     
     /// Verifies that the LaunchViewController starts the migration for a user with an old go-ssb database.
     func testLaunchViewControllerTriggersMigration() async throws {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
-        
         // Arrange
         Onboarding.set(status: .completed, for: appConfig.identity)
         let sut = await LaunchViewController(
@@ -203,10 +187,6 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the LaunchViewController doees not start the migration on a fresh install of the app, when there
     /// is no AppConfiguration in the keychain.
     func testLaunchViewControllerDoesNotTriggerMigrationOnFreshInstall() throws {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
-        
         // Arrange
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/mockDatabase")))
@@ -234,10 +214,6 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the LaunchViewController doees not start the migration on an AppConfiguration that has been
     /// created but hasn't started Onboarding yet.
     func testLaunchViewControllerDoesNotTriggerMigrationOnFreshAccount() throws {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
-        
         // Arrange
         Onboarding.set(status: .notStarted, for: appConfig.identity)
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
@@ -266,10 +242,6 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the LaunchViewController doees not start the migration on an AppConfiguration that has started
     /// onboarding but hasn't completed it yet.
     func testLaunchViewControllerDoesNotTriggerMigrationOnAccountRestore() throws {
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is expected to fail until #514 is implemented", options: options)
-        
         Onboarding.set(status: .started, for: appConfig.identity)
         let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
         let databaseURL = try XCTUnwrap(URL(fileURLWithPath: testPath.appending("/mockDatabase")))
