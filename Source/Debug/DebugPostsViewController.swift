@@ -43,7 +43,7 @@ fileprivate extension KeyValue {
         let string = "We\'re at #data_terra_nemo and Dominic is giving his keynote.\n\n![Dominic Talking at Data Terra Nemo](&AmeGz5CnJqvXTX7P6xGKnvCWtc6biFgKryg71swDtPg=.sha256)\n\nTesting posting a message with attachments.\n\n![rabble_foocamp_headshot.jpg](&nV+TeSZBIDQrcOO5ClvfkvQ+XCXjf7yVHF19j2Jk3xI=.sha256)\n"
         let post = Post(text: string)
         let content = Content(from: post)
-        let value = Value(author: Environment.PlanetarySystem.pubInvitations.first!.feed,
+        let value = Value(author: Environment.PlanetarySystem.systemPubs.first!.feed,
                           content: content,
                           hash: "",
                           previous: nil,

@@ -292,7 +292,7 @@ class GoBot: Bot {
             do {
                 try addresses.forEach { address throws in
                     try self.database.saveAddress(feed: address.key,
-                                                  address: address.rawValue,
+                                                  address: address.string,
                                                   redeemed: nil)
                 }
                 queue.async {
@@ -517,10 +517,10 @@ class GoBot: Bot {
                     if ssbInviteAccept(goStr) {
                         do {
                             let feed = star.feed
-                            let address = star.address.rawValue
+                            let address = star.address.string
                             let redeemed = Date().timeIntervalSince1970 * 1000
                             try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
-                            Analytics.shared.trackDidJoinPub(at: star.address.rawValue)
+                            Analytics.shared.trackDidJoinPub(at: star.address.string)
                         } catch {
                             CrashReporting.shared.reportIfNeeded(error: error)
                         }

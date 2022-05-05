@@ -37,7 +37,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>321</string>
+	<string>322</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -59,8 +59,6 @@
 	<string>$(COMMUNITIES)</string>
 	<key>PLConstellation</key>
 	<string>$(CONSTELLATION)</string>
-	<key>PLTestNetworkPubs</key>
-	<string>$(TEST_NETWORK_PUBS)</string>
 	<key>PLDefaultNetworkKey</key>
 	<string>$(DEFAULT_NETWORK_KEY)</string>
 	<key>PLDefaultNetworkName</key>
@@ -81,6 +79,10 @@
 	<string>$(PLANETARY_SYSTEM_PUBS)</string>
 	<key>PLPlanetaryIdentity</key>
 	<string>$(PLANETARY)</string>
+	<key>PLTestNetworkPubs</key>
+	<string>$(TEST_NETWORK_PUBS)</string>
+	<key>PLTestNetworkCommunities</key>
+	<string>$(TEST_NETWORK_COMMUNITIES)</string>
 	<key>PLTestingNetworkHMAC</key>
 	<string>$(TESTING_NETWORK_HMAC)</string>
 	<key>PLTestingNetworkKey</key>

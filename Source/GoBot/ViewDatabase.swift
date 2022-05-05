@@ -609,17 +609,26 @@ class ViewDatabase {
             .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
             .where(self.msgs[colAuthorID] == currentUserID)
             .where(self.msgs[colMsgType] == "pub")
-
-        return try db.prepare(qry).map { row in
+            .order(colSequence.desc)
+        
+        let pubs: [Pub] = try db.prepare(qry).map { row in
             let host = try row.get(colHost)
             let port = try row.get(colPort)
             let key = try row.get(colKey)
             
-            return Pub(type: .pub,
-                       address: MultiserverAddress(key: key,
-                                           host: host,
-                                           port: UInt(port)))
+            return Pub(
+                type: .pub,
+                address: MultiserverAddress(
+                    key: key,
+                    host: host,
+                    port: UInt(port)
+                )
+            )
         }
+        
+        // Filter out duplicates
+        var seenIDs = Set<MultiserverAddress>()
+        return pubs.filter { seenIDs.insert($0.address).inserted }
     }
     
     // MARK: moderation / delete

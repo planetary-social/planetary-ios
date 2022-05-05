@@ -134,9 +134,6 @@ name: support_sdk_ios, nameSpecified: ZendeskSupportSDK, owner: zendesk, version
 
 name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.4.2
 
-name: Go-SSB, nameSpecified: , version: 
-body: The MIT License (MIT…
-
 add-version-numbers: false
 
 LicensePlist Version: 3.17.0
