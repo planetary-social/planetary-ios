@@ -126,7 +126,7 @@ fileprivate struct TextLabelWithHyperlink: UIViewRepresentable {
         let textView = HeightUITextView(height: $height)
         textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         textView.isEditable = false
-        textView.isSelectable = false
+        textView.isSelectable = true
         textView.tintColor = self.tintColor
         textView.delegate = context.coordinator
         textView.isScrollEnabled = false
