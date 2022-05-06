@@ -54,6 +54,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     private var appConfiguration: AppConfiguration
     
+    private var appController: AppController
+    
     // MARK: - Public Interface
     
     /// Checks if the migration has already run then drops GoBot database and presents migration UI if it hasn't.
@@ -79,6 +81,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         
         let coordinator = Beta1MigrationCoordinator(
             appConfiguration: appConfiguration,
+            appController: appController,
             userDefaults: userDefaults,
             dismissHandler: {
                 Task { await appController.dismiss(animated: true) }
@@ -109,10 +112,12 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     private init(
         appConfiguration: AppConfiguration,
+        appController: AppController,
         userDefaults: UserDefaults,
         dismissHandler: @escaping () -> Void
     ) {
         self.appConfiguration = appConfiguration
+        self.appController = appController
         self.dismissHandler = dismissHandler
         self.userDefaults = userDefaults
         do {
@@ -139,7 +144,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             .dropFirst()
             .map { (statistics: BotStatistics) -> Float in
                 // Calculate completion percentage
-                let completionFraction = Float(statistics.repo.messageCount) / Float(self.completionMessageCount)
+                let completionFraction = Float(statistics.db.messageCount) / Float(self.completionMessageCount)
                 return completionFraction.clamped(to: 0.0...1.0)
             }
             .receive(on: RunLoop.main)
@@ -182,5 +187,6 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
 
         cancellabes.forEach { $0.cancel() }
         dismissHandler()
+        appController.showMainViewController(animated: false)
     }
 }
