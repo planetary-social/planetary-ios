@@ -129,9 +129,22 @@ class BlobCache: DictionaryCache {
                 return
             }
             
-            guard let data = data, data.isEmpty == false else {
-                // We don't have the image but we don't fail so the Bot can keep trying to fetch the image in the
-                // background.
+            // Retry failures
+            guard let data = data, data.isEmpty == false, error == nil else {
+                Task {
+                    if await self.requestManager.shouldRetry(identifier: identifier) {
+                        let delay = await self.requestManager.retryDelay(for: identifier)
+                        Log.info("Loading blob \(identifier) failed. Retrying in \(delay) seconds")
+                        
+                        try? await Task.sleep(nanoseconds: UInt64(delay) * 1_000_000_000)
+                        
+                        await MainActor.run {
+                            self.loadImage(for: identifier)
+                        }
+                    } else {
+                        Log.info("Loading blob \(identifier) failed. Reached max retry count")
+                    }
+                }
                 return
             }
 
@@ -255,6 +268,10 @@ class BlobCache: DictionaryCache {
         /// waiting on.
         private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
         
+        /// A dictionary that keeps track of how many time we have tried and failed to get a blob.
+        private var retries: [BlobIdentifier: Int] = [:]
+        private var retryLimit = 5
+        
         /// A dictionary of HTTP requests to load blobs and the identifiers of the blobs they have requested.
         private var dataTasks: [BlobIdentifier: URLSessionDataTask] = [:]
 
@@ -304,6 +321,7 @@ class BlobCache: DictionaryCache {
         func forgetCompletions(for identifier: BlobIdentifier) {
             let _ = self.completions.removeValue(forKey: identifier)
             cancelDataTask(for: identifier)
+            retries.removeValue(forKey: identifier)
         }
         
         func add(_ dataTask: URLSessionDataTask, for identifier: BlobIdentifier) {
@@ -344,6 +362,20 @@ class BlobCache: DictionaryCache {
             }
             
             cancelDataTask(for: identifier)
+        }
+        
+        func shouldRetry(identifier: BlobIdentifier) -> Bool {
+            retries[identifier] ?? 0 < retryLimit
+        }
+        
+        /// The number of seconds that should be waited before the next retry
+        func retryDelay(for identifier: BlobIdentifier) -> Int {
+            NSDecimalNumber(decimal: pow(Decimal(retries[identifier] ?? 0), 2)).intValue
+        }
+        
+        func didRetry(identifier: BlobIdentifier) {
+            let previousRetries = retries[identifier] ?? 0
+            retries[identifier] = previousRetries + 1
         }
     }
     
@@ -440,7 +472,6 @@ class BlobCache: DictionaryCache {
     private func didLoadBlob(_ notification: Notification) {
         Task {
             guard let identifier = notification.blobIdentifier else { return }
-            guard await self.requestManager.numberOfCompletions(for: identifier) > 1 else { return }
             await MainActor.run {
                 self.loadImage(for: identifier)
             }
