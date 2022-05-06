@@ -55,7 +55,7 @@ struct Beta1MigrationDescriptionText<ViewModel>: View where ViewModel: Beta1Migr
                         .init(subText: Text.startUsingPlanetary.text)
                     ],
                     openLink: { _ in
-                        viewModel.buttonPressed()
+                        viewModel.confirmDismissal()
                     }
                 )
                 .frame(height: textLabelHeight)
@@ -214,12 +214,15 @@ fileprivate struct HyperLinkItem: Hashable {
 }
 
 fileprivate class PreviewViewModel: Beta1MigrationViewModel {
-    func buttonPressed() {}
     var progress: Float
+    var shouldConfirmDismissal = false
     
     init(progress: Float) {
         self.progress = progress
     }
+    
+    func dismissPressed() {}
+    func confirmDismissal() {}
 }
 
 struct Beta1MigrationDescriptionText_Previews: PreviewProvider {

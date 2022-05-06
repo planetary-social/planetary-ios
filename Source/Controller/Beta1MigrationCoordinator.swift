@@ -41,6 +41,9 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     /// A number between 0 and 1.0 representing the progress of the migration.
     @Published var progress: Float = 0
     
+    /// A flag that is used to show a confirmation alert before dismissing the migration screen early.
+    @Published var shouldConfirmDismissal = false
+    
     /// A block that can be called to dismiss the migration view.
     private var dismissHandler: () -> Void
     
@@ -172,7 +175,15 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: Handle User Interation
     
-    func buttonPressed() {
+    func confirmDismissal() {
+        guard progress <= 0.995 else {
+            return
+        }
+        
+        shouldConfirmDismissal = true
+    }
+    
+    func dismissPressed() {
         Log.info("User dismissed Beta1MigrationView with progress: \(progress)")
         var syncedMessages = -1
         do {
