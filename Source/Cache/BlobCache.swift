@@ -370,7 +370,10 @@ class BlobCache: DictionaryCache {
         
         /// The number of seconds that should be waited before the next retry
         func retryDelay(for identifier: BlobIdentifier) -> Int {
+            // this is the only way I could find to convert Decimal to Int
+            // swiftlint:disable legacy_objc_type
             NSDecimalNumber(decimal: pow(Decimal(retries[identifier] ?? 0), 2)).intValue
+            // swiftlint:enable legacy_objc_type
         }
         
         func didRetry(identifier: BlobIdentifier) {
