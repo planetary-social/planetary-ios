@@ -293,6 +293,8 @@ github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/profile v1.2.1/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6JUPA=
+github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7 h1:1S33MMjKxP3XvQATW0N28OnY3Y02L5/21lrx1pwdc0Q=
+github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7/go.mod h1:dZty08izAk/rSX8wSLen4gMR4WDPYmA6vUTE0QtepHA=
 github.com/planetary-social/ssb v0.2.2-0.20220503171112-8644350c2422 h1:x1YbTwnfY9C8jRA+YFqouo8LmJy2m0Kdw66HoeHEoWk=
 github.com/planetary-social/ssb v0.2.2-0.20220503171112-8644350c2422/go.mod h1:aVHa4tYy6ucGATXL2YvKGFR7nFrzqKuhFeMyA0XRI0s=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
@@ -402,8 +404,6 @@ go.cryptoscope.co/secretstream v1.2.9 h1:aIHnafW4tDN9vMatYB8fJb4gVvsm85TyEznMIrz
 go.cryptoscope.co/secretstream v1.2.9/go.mod h1:loRL5ujcD9NYZWYg020PDdYD5bSoV08v/fmpYb1kcIU=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738/go.mod h1:dnLIgRNXwCJa5e+c6mIZCrds/GIG4ncV9HhK5PX7jPg=
-go.mindeco.de v1.12.0 h1:K5FHILjJlD/U1HJMs8Y9ZLwdfG4dPEsxw+e+eqg1wKc=
-go.mindeco.de v1.12.0/go.mod h1:dZty08izAk/rSX8wSLen4gMR4WDPYmA6vUTE0QtepHA=
 go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd h1:vjxqEG86sq0U+c4z053+yeic+Z4PQXH6JFAh90P5QYA=
 go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd/go.mod h1:R8ur2+eqUC7QzpyApQR67lt3ksewmQdQORuIgXSBdQw=
 go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9 h1:s8p4i/BDOWhiclbIVzRYKvMuqdib/CAsfmCbdgprgec=
