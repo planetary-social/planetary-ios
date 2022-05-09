@@ -276,7 +276,7 @@ final class AnalyticsTests: XCTestCase {
     func testTrackStatistics() {
         let now = Date.init(timeIntervalSinceNow: 0)
         var statistics = Analytics.Statistics(lastSyncDate: now, lastRefreshDate: now)
-        statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: 1)
+        statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: 1, messageCount: 1)
         statistics.repo = Analytics.RepoStatistics(feedCount: 1,
                                                    messageCount: 2,
                                                    numberOfPublishedMessages: 3,
