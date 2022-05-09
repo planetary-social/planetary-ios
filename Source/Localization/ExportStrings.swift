@@ -1,6 +1,8 @@
 // this file is executed during the Run Phase in a Run Script action
 // it is not to be included in an app target.
 
+// swiftlint:disable force_try force_unwrapping
+
 typealias TranslationKey = String
 typealias Translation = String
 
@@ -18,7 +20,8 @@ extension Text {
         let changedKeys = changedKeys(from: oldPrimaryLocaleStrings, to: newPrimaryLocaleStrings)
         let orderedKeys = orderedKeys(fromGeneratedStrings: newPrimaryLocaleStrings)
         
-        let primaryText = "// This file is auto-generated at build time and should not be modified by hand\n\n\(newPrimaryLocaleStrings)"
+        let primaryText = "// This file is auto-generated at build time and should not be modified by hand\n\n"
+            + newPrimaryLocaleStrings
 
         write(text: primaryText, file: primaryLocation)
 
