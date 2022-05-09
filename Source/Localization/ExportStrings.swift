@@ -118,7 +118,7 @@ func changedKeys(from oldStrings: String, to newStrings: String) -> Set<Translat
     // Find any lines where the tranlation changed but they key didn't
     for (oldKey, oldTranslation) in oldKeysAndTranslations {
         if let newTranslation = newKeysAndTranslations[oldKey],
-           newTranslation != oldTranslation {
+            newTranslation != oldTranslation {
             changedKeys.insert(oldKey)
         }
     }
