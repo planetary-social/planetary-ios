@@ -175,7 +175,7 @@ enum Text: String, Localizable, CaseIterable {
     // MARK: - Beta 1 migration strings
     case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."
     case beta1MigrationComplete = "Tap on the following button to close this screen and go back to your feed."
-    case beta1MigrationPleaseLeaveAppOpen = "This will take around 5 minutes.\n\nPlease leave the app open until it's done.\n"
+    case beta1MigrationPleaseLeaveAppOpen = "This may take a while.\n\nPlease leave the app open until it's done.\n"
     case beta1StartUsingPlanetary =
 """
 If you don't want to wait, you can
