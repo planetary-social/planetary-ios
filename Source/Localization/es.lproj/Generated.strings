@@ -122,6 +122,8 @@
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
 "Text.percentComplete" = "complete";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
+"Text.areYouSure" = "Are you sure?";
+"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres bloquear a {{ name }}? No podrás ver el contenido de ambos ni tampoco volver a contactarse.";
 "Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";

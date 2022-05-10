@@ -191,6 +191,8 @@ start using Planetary right away, but:
 
 • you may not see all previous messages until they are downloaded.
 """
+    case areYouSure = "Are you sure?"
+    case dismissMigrationEarlyMessage = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?"
 }
 
 // MARK: - ImagePicker
