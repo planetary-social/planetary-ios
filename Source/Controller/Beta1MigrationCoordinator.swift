@@ -43,6 +43,9 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     /// A number between 0 and 1.0 representing the progress of the migration.
     @Published var progress: Float = 0
     
+    /// A flag that is used to show a confirmation alert before dismissing the migration screen early.
+    @Published var shouldConfirmDismissal = false
+    
     /// A block that can be called to dismiss the migration view.
     private var dismissHandler: () -> Void
     
@@ -55,6 +58,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     private var cancellabes = [AnyCancellable]()
     
     private var appConfiguration: AppConfiguration
+    
+    private var appController: AppController
     
     // MARK: - Public Interface
     
@@ -83,6 +88,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         
         let coordinator = Beta1MigrationCoordinator(
             appConfiguration: appConfiguration,
+            appController: appController,
             userDefaults: userDefaults,
             dismissHandler: {
                 Task { await appController.dismiss(animated: true) }
@@ -117,10 +123,12 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     private init(
         appConfiguration: AppConfiguration,
+        appController: AppController,
         userDefaults: UserDefaults,
         dismissHandler: @escaping () -> Void
     ) {
         self.appConfiguration = appConfiguration
+        self.appController = appController
         self.dismissHandler = dismissHandler
         self.userDefaults = userDefaults
         
@@ -162,7 +170,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             .dropFirst()
             .map { (statistics: BotStatistics) -> Float in
                 // Calculate completion percentage
-                let completionFraction = Float(statistics.repo.messageCount) / Float(self.completionMessageCount)
+                let completionFraction = Float(statistics.db.messageCount) / Float(self.completionMessageCount)
                 return completionFraction.clamped(to: 0.0...1.0)
             }
             .receive(on: RunLoop.main)
@@ -190,7 +198,15 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: Handle User Interation
     
-    func buttonPressed() {
+    func confirmDismissal() {
+        guard progress <= 0.995 else {
+            return
+        }
+        
+        shouldConfirmDismissal = true
+    }
+    
+    func dismissPressed() {
         Log.info("User dismissed Beta1MigrationView with progress: \(progress)")
         userDefaults.set(true, forKey: Self.beta1MigrationCompleteKey)
         userDefaults.synchronize()
@@ -207,5 +223,6 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
 
         cancellabes.forEach { $0.cancel() }
         dismissHandler()
+        appController.showMainViewController(animated: false)
     }
 }

@@ -9,8 +9,10 @@
 import SwiftUI
 
 protocol Beta1MigrationViewModel: ProgressButtonViewModel {
-    func buttonPressed()
     var progress: Float { get }
+    var shouldConfirmDismissal: Bool { get set }
+    func dismissPressed()
+    func confirmDismissal()
 }
 
 /// A view to show the user while they are upgrading from GoBot version "beta1" to "beta2"
@@ -67,6 +69,18 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
             
             Spacer()
         }
+        .alert(isPresented: $viewModel.shouldConfirmDismissal, content: {
+            Alert(
+                title: Text.areYouSure.view,
+                message: Text.dismissMigrationEarlyMessage.view,
+                primaryButton: .default(Text.yes.view, action: {
+                    viewModel.dismissPressed()
+                }),
+                secondaryButton: .destructive(Text.cancel.view, action: {
+                    viewModel.shouldConfirmDismissal = false
+                })
+            )
+        })
         .background(
             Color("appBackground").edgesIgnoringSafeArea(.all)
         )
@@ -74,12 +88,16 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
 }
 
 fileprivate class PreviewViewModel: Beta1MigrationViewModel {
-    func buttonPressed() {}
+    
     var progress: Float
+    var shouldConfirmDismissal = false
     
     init(progress: Float) {
         self.progress = progress
     }
+    
+    func dismissPressed() {}
+    func confirmDismissal() {}
 }
 
 struct Beta1MigrationView_Previews: PreviewProvider {

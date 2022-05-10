@@ -38,9 +38,11 @@ public extension Analytics {
 
     struct DatabaseStatistics {
         public var lastReceivedMessage: Int
+        public var messageCount: Int
 
-        public init(lastReceivedMessage: Int) {
+        public init(lastReceivedMessage: Int, messageCount: Int) {
             self.lastReceivedMessage = lastReceivedMessage
+            self.messageCount = messageCount
         }
     }
 
@@ -67,7 +69,7 @@ public extension Analytics {
 
         if let repo = statistics.repo {
             params["Feed Count"] = repo.feedCount
-            params["Message Count"] = repo.messageCount
+            params["Repo Message Count"] = repo.messageCount
             params["Published Message Count"] = repo.numberOfPublishedMessages
             params["Last Hash"] = repo.lastHash
         }
@@ -75,6 +77,7 @@ public extension Analytics {
         if let database = statistics.database {
             let lastRxSeq = database.lastReceivedMessage
             params["Last Received Message"] = lastRxSeq
+            params["Database Message Count"] = database.messageCount
 
             if let repo = statistics.repo {
                 let diff = repo.messageCount - 1 - lastRxSeq
