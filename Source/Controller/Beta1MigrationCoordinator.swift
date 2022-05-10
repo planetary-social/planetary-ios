@@ -95,7 +95,9 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             hostingController.modalTransitionStyle = .crossDissolve
         }
         await appController.present(hostingController, animated: true)
-        
+     
+        bot.isRestoring = true
+   
         if !userDefaults.bool(forKey: beta1MigrationStartKey) {
             try await bot.dropDatabase(for: appConfiguration)
             Log.info("Data dropped successfully. Restoring data from the network.")
@@ -190,6 +192,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: Handle User Interation
     
+    /// Called by the Beta1MigrationView when the user wants to dismiss the migration screen. The name is very generic
+    /// because I just used the ProgressButtonViewModel protocol.
     func buttonPressed() {
         Log.info("User dismissed Beta1MigrationView with progress: \(progress)")
         userDefaults.set(true, forKey: Self.beta1MigrationCompleteKey)
@@ -204,6 +208,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             syncedMessages: syncedMessages,
             totalMessages: completionMessageCount
         )
+        appConfiguration.bot?.isRestoring = false
 
         cancellabes.forEach { $0.cancel() }
         dismissHandler()

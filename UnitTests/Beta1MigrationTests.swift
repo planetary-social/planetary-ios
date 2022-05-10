@@ -207,6 +207,51 @@ class Beta1MigrationTests: XCTestCase {
         }
     }
     
+    // MARK: Bot isRestoring
+    
+    /// Verifies that the migration coordinator puts the bot into restoring mode.
+    func testBotIsRestoringDuringMigration() async throws {
+        // Arrange
+        try touchSQLiteDatabase()
+        XCTAssertEqual(mockBot.isRestoring, false)
+        
+        // Act
+        let migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: appConfig,
+            appController: appController,
+            userDefaults: userDefaults
+        )
+        
+        XCTAssertEqual(migrating, true)
+        XCTAssertEqual(mockBot.isRestoring, true)
+    }
+    
+    /// Verifies that the migration coordinator removes the bot from restoring mode when dismissed.
+    @MainActor func testBotIsNotRestoringAfterMigration() async throws {
+        // Arrange
+        try touchSQLiteDatabase()
+        XCTAssertEqual(mockBot.isRestoring, false)
+        
+        // Act
+        // Present migration screen
+        _ = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: appConfig,
+            appController: appController,
+            userDefaults: userDefaults
+        )
+        
+        let hostingController = try XCTUnwrap(
+            self.appController.presentedViewControllerParam as?
+                UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>>
+        )
+        let migrationCoordinator = hostingController.rootView.viewModel
+        
+        // Dismiss migration screen
+        migrationCoordinator.buttonPressed()
+        
+        XCTAssertEqual(mockBot.isRestoring, false)
+    }
+    
     // MARK: - Launch View Controller
     
     /// Verifies that the LaunchViewController starts the migration for a user with an old go-ssb database.
