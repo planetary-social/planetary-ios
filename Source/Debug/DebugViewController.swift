@@ -378,12 +378,14 @@ class DebugViewController: DebugTableViewController {
 
     private func shareLogs(shouldZip: Bool, allFiles: Bool, cell: UITableViewCell) {
         let share = { [weak self] (activityItems: [Any]) in
-            let activityController = UIActivityViewController(activityItems: activityItems,
-                                                              applicationActivities: nil)
-            self?.present(activityController, animated: true)
+            let activityController = UIActivityViewController(
+                activityItems: activityItems,
+                applicationActivities: nil
+            )
             if let popOver = activityController.popoverPresentationController {
                 popOver.sourceView = cell
             }
+            self?.present(activityController, animated: true)
         }
         
         let botFileURLs = Bots.current.logFileUrls
@@ -465,12 +467,14 @@ class DebugViewController: DebugTableViewController {
         cell.showActivityIndicator()
 
         let presentShareSheet = { [weak self] (activityItems: [Any]) in
-            let activityController = UIActivityViewController(activityItems: activityItems,
-                                                              applicationActivities: nil)
-            self?.present(activityController, animated: true)
+            let activityController = UIActivityViewController(
+                activityItems: activityItems,
+                applicationActivities: nil
+            )
             if let popOver = activityController.popoverPresentationController {
                 popOver.sourceView = cell
             }
+            self?.present(activityController, animated: true)
         }
         
         let databaseDirectory = URL(fileURLWithPath: await Bots.current.statistics().repo.path).deletingLastPathComponent()

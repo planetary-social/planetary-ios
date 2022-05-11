@@ -35,10 +35,10 @@ class EditPostButton: IconButton {
             }
             Analytics.shared.trackDidSelectAction(actionName: "share_message")
             let activityController = UIActivityViewController(activityItems: [publicLink], applicationActivities: nil)
-            AppController.shared.present(activityController, animated: true)
             if let popOver = activityController.popoverPresentationController {
                 popOver.sourceView = self
             }
+            AppController.shared.present(activityController, animated: true)
         }
         
         let delete = UIAlertAction(title: Text.deletePost.text, style: .destructive) { _ in
