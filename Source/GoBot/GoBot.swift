@@ -1399,8 +1399,12 @@ class GoBot: Bot {
             } catch {
                 Log.optional(error)
             }
-
-            self._statistics.db = DatabaseStatistics(lastReceivedMessage: sequence ?? -3)
+            
+            let sqliteMessageCount = (try? self.database.messageCount()) ?? 0
+            self._statistics.db = DatabaseStatistics(
+                lastReceivedMessage: sequence ?? -3,
+                messageCount: sqliteMessageCount
+            )
             
             let statistics = self._statistics
             queue.async {

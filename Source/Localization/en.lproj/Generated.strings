@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -116,12 +115,14 @@
 "Text.loggingOut" = "Logging out...";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
-"Text.beta1MigrationPleaseLeaveAppOpen" = "This will take around 5 minutes.\n\nPlease leave the app open until it's done.\n";
+"Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "start using Planetary";
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
 "Text.percentComplete" = "complete";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
+"Text.areYouSure" = "Are you sure?";
+"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
 "Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other.";
 "Blocking.buttonTitle" = "Yes, block {{ name }}";

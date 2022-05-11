@@ -11,7 +11,7 @@ import SwiftUI
 // swiftlint:disable function_body_length
 
 protocol ProgressButtonViewModel: ObservableObject {
-    func buttonPressed()
+    func dismissPressed()
     var progress: Float { get }
 }
 
@@ -21,7 +21,7 @@ struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel 
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        Button(action: viewModel.buttonPressed, label: {
+        Button(action: viewModel.dismissPressed, label: {
             if viewModel.progress < 0.995 {
                 SwiftUI.Text(
                     String(
@@ -135,7 +135,7 @@ fileprivate class PreviewViewModel: ProgressButtonViewModel {
         self.progress = progress
     }
     
-    func buttonPressed() {}
+    func dismissPressed() {}
 }
 
 struct ProgressButton_Previews: PreviewProvider {

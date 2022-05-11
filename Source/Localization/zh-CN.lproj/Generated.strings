@@ -116,12 +116,14 @@
 "Text.loggingOut" = "Logging out...";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
-"Text.beta1MigrationPleaseLeaveAppOpen" = "This will take around 2 minutes.\n\nPlease leave the app open until it's done.\n";
+"Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "start using Planetary";
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
 "Text.percentComplete" = "complete";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
+"Text.areYouSure" = "Are you sure?";
+"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
 "Blocking.alertTitle" = "您确定要屏蔽 {{ name }} 吗？您将不再看到对方的内容或能够相互联系。";
 "Blocking.buttonTitle" = "是，封禁 {{ name }}";
