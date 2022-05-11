@@ -6,15 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0] 2022-04-21
 - Updated to the latest version of go-ssb which requires us to delete and resync all data from the network. #510
-- Fixed invitations for Gardening and Poetry pubs #503
-- Fixed onboarding analytics events #501
-- Added a button in the debug menu to reset forked feed protection #498
-- Fixed forked feed protection false positive after importing key #498
 - Added back toggle to onboarding to opt out of analytics #513
 - Added toggle in onboarding to follow Planetary identity #513
 - Changed database to show all messages, even those older than 6 months #513
 - Changed debug builds to create identities on a test network caps #470
 - Removed connection firewall in go-ssb #435
+
+## [1.1.2] 2022-04-29
+- Fixed invitations for Gardening and Poetry pubs #503
+- Fixed onboarding analytics events #501
+- Added a button in the debug menu to reset forked feed protection #498
+- Fixed forked feed protection false positive after importing key #498
 
 ## [1.1.1] = 2022-04-18
 - Added Russian and Ukrainian language pubs to the community pub list #474

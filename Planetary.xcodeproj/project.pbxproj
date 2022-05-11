@@ -1310,6 +1310,7 @@
 		532751D22224A0CD0026500F /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
 		532751D5222A3EF60026500F /* increment_build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = increment_build.sh; sourceTree = "<group>"; };
 		53362F662208C2B3007264CB /* AppController+Lifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppController+Lifecycle.swift"; sourceTree = "<group>"; };
+		53362F692209108F007264CB /* NetworkKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKey.swift; sourceTree = "<group>"; };
 		53362F692209108F007264CB /* SSBNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSBNetwork.swift; sourceTree = "<group>"; };
 		53362F6D2209F754007264CB /* NetworkKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkKeyTests.swift; sourceTree = "<group>"; };
 		5336611022D965B300100707 /* UIColor+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Random.swift"; sourceTree = "<group>"; };
