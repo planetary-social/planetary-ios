@@ -247,7 +247,7 @@ class Beta1MigrationTests: XCTestCase {
         let migrationCoordinator = hostingController.rootView.viewModel
         
         // Dismiss migration screen
-        migrationCoordinator.buttonPressed()
+        migrationCoordinator.dismissPressed()
         
         XCTAssertEqual(mockBot.isRestoring, false)
     }
