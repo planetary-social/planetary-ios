@@ -101,7 +101,9 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             hostingController.modalTransitionStyle = .crossDissolve
         }
         await appController.present(hostingController, animated: true)
-        
+     
+        bot.isRestoring = true
+   
         if !userDefaults.bool(forKey: beta1MigrationStartKey) {
             try await bot.dropDatabase(for: appConfiguration)
             Log.info("Data dropped successfully. Restoring data from the network.")
@@ -198,6 +200,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: Handle User Interation
     
+    /// Called by the Beta1MigrationView when the user wants to dismiss the migration screen. 
     func confirmDismissal() {
         guard progress <= 0.995 else {
             return
@@ -220,6 +223,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             syncedMessages: syncedMessages,
             totalMessages: completionMessageCount
         )
+        appConfiguration.bot?.isRestoring = false
 
         cancellabes.forEach { $0.cancel() }
         dismissHandler()

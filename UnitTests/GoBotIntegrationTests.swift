@@ -432,6 +432,11 @@ class GoBotIntegrationTests: XCTestCase {
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 5)
     }
+    
+    /// Verifies that the isRestoring value defaults to false.
+    func testIsRestoringDefaultValue() {
+        XCTAssertEqual(sut.isRestoring, false)
+    }
 
     // MARK: - Preloaded Pubs
     
