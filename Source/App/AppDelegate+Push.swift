@@ -167,13 +167,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
         
-        do {
-            guard try !Bots.current.publishingWouldFork(feed: currentIdentity) else {
-                // Suppress notifications if the user is restoring
-                return
-            }
-        } catch {
-            Log.optional(error)
+        // Suppress notifications if the user is restoring
+        guard !Bots.current.isRestoring else {
+            return
         }
         
         guard report.authorIdentity == currentIdentity else {
@@ -181,6 +177,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
         self.scheduleLocalNotification(report)
-        print("RECEIVED REPORT!: \(report)")
+        print("Showing notification: \(report)")
     }
 }

@@ -29,6 +29,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -55,6 +56,8 @@ func init() {
 	versionString = C.CString("beta2")
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 	log = kitlog.With(log, "warning", "pre-init")
+
+	debug.SetGCPercent(10)
 }
 
 // globals
@@ -315,6 +318,8 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 		}),
 		mksbot.DisableEBT(true),
 		mksbot.WithPublicAuthorizer(newAcceptAllAuthorizer()),
+		mksbot.WithNumberOfConcurrentReplicationsPerPeer(25),
+		mksbot.WithNumberOfConcurrentReplications(25),
 	}
 
 	if hmacSignKey != "" {
