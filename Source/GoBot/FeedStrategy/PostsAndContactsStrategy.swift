@@ -12,11 +12,76 @@ import SQLite
 class PostsAndContactsStrategy: FeedStrategy {
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
-        try fetchKeyValues(connection: connection, userId: userId, limit: 100_000, offset: 0).count
+        let qry = try connection.prepare("""
+        SELECT COUNT(*)
+        FROM messages
+        JOIN authors ON authors.id == messages.author_id
+        LEFT JOIN posts ON messages.msg_id == posts.msg_ref
+        LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
+        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
+        LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
+        WHERE messages.type IN ('post', 'contact')
+        AND messages.is_decrypted == false
+        AND messages.hidden == false
+        AND (type <> 'post' OR posts.is_root == true)
+        AND (type <> 'contact' OR (contact_about.about_id IS NOT NULL AND contact_author.author NOT IN (SELECT key FROM pubs)))
+        AND (authors.author IN (SELECT authors.author FROM contacts
+                               JOIN authors ON contacts.contact_id == authors.id
+                               WHERE contacts.author_id = ? AND contacts.state == 1)
+             OR authors.id == ?)
+        AND authors.author NOT IN (SELECT key FROM pubs)
+        AND claimed_at < ?;
+        """)
+
+        let bindings: [Binding?] = [
+            userId,
+            userId,
+            Date().millisecondsSince1970
+        ]
+
+        if let count = try qry.scalar(bindings) as? Int64 {
+            return Int(truncatingIfNeeded: count)
+        }
+        return 0
     }
 
     func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier] {
-        try fetchKeyValues(connection: connection, userId: userId, limit: limit, offset: offset).map { $0.key }
+        let qry = try connection.prepare("""
+        SELECT messagekeys.key
+        FROM messages
+        JOIN authors ON authors.id == messages.author_id
+        JOIN messagekeys ON messagekeys.id == messages.msg_id
+        LEFT JOIN posts ON messages.msg_id == posts.msg_ref
+        LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
+        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
+        LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
+        WHERE messages.type IN ('post', 'contact')
+        AND messages.is_decrypted == false
+        AND messages.hidden == false
+        AND (type <> 'post' OR posts.is_root == true)
+        AND (type <> 'contact' OR (contact_about.about_id IS NOT NULL AND contact_author.author NOT IN (SELECT key FROM pubs)))
+        AND (authors.author IN (SELECT authors.author FROM contacts
+                               JOIN authors ON contacts.contact_id == authors.id
+                               WHERE contacts.author_id = ? AND contacts.state == 1)
+             OR authors.id == ?)
+        AND authors.author NOT IN (SELECT key FROM pubs)
+        AND claimed_at < ?
+        ORDER BY messages.claimed_at DESC
+        LIMIT ? OFFSET ?;
+        """)
+
+        let bindings: [Binding?] = [
+            userId,
+            userId,
+            Date().millisecondsSince1970,
+            limit,
+            offset ?? 0
+        ]
+
+        let colKey = Expression<MessageIdentifier>("key")
+        return try qry.bind(bindings).prepareRowIterator().map { row -> MessageIdentifier in
+            try row.get(colKey)
+        }
     }
 
     func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
@@ -29,7 +94,11 @@ class PostsAndContactsStrategy: FeedStrategy {
                authors.*,
                author_about.*,
                contact_author.author AS contact_identifier,
-               (SELECT COUNT(*) FROM tangles WHERE root == messages.msg_id) as replies_count
+               EXISTS (SELECT 1 FROM post_blobs WHERE post_blobs.msg_ref == messages.msg_id) as has_blobs,
+               EXISTS (SELECT 1 FROM mention_feed WHERE mention_feed.msg_ref == messages.msg_id) as has_feed_mentions,
+               EXISTS (SELECT 1 FROM mention_message WHERE mention_message.msg_ref == messages.msg_id) as has_message_mentions,
+               (SELECT COUNT(*) FROM tangles WHERE root == messages.msg_id) as replies_count,
+               (SELECT GROUP_CONCAT(authors.author, ';') FROM tangles JOIN messages AS tangled_message ON tangled_message.msg_id == tangles.msg_ref JOIN authors ON authors.id == tangled_message.author_id WHERE tangles.root == messages.msg_id LIMIT 3) as replies
         FROM messages
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref
         LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
@@ -38,14 +107,17 @@ class PostsAndContactsStrategy: FeedStrategy {
         JOIN authors ON authors.id == messages.author_id
         LEFT JOIN abouts AS author_about ON author_about.about_id == messages.author_id
         LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
+        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
         WHERE type IN ('post', 'contact')
         AND is_decrypted == false
         AND hidden == false
-        AND (posts.is_root == true OR type == 'contact')
+        AND (type <> 'post' OR posts.is_root == true)
+        AND (type <> 'contact' OR (contact_about.about_id IS NOT NULL AND contact_author.author NOT IN (SELECT key FROM pubs)))
         AND (authors.author IN (SELECT authors.author FROM contacts
                                JOIN authors ON contacts.contact_id == authors.id
                                WHERE contacts.author_id = ? AND contacts.state == 1)
              OR authors.id == ?)
+        AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
         ORDER BY claimed_at DESC
         LIMIT ? OFFSET ?;
@@ -95,9 +167,22 @@ class PostsAndContactsStrategy: FeedStrategy {
                     rootKey = try self.msgKey(id: rootID, connection: connection)
                 }
 
+                let hasBlobs = try row.get(Expression<Bool>("has_blobs"))
+                let blobs = hasBlobs ? try self.loadBlobs(for: msgID, connection: connection) : []
+
+                var mentions = [Mention]()
+                let hasFeedMentions = try row.get(Expression<Bool>("has_feed_mentions"))
+                if hasFeedMentions {
+                    mentions.append(contentsOf: try self.loadFeedMentions(for: msgID, connection: connection))
+                }
+                let hasMessageMentions = try row.get(Expression<Bool>("has_message_mentions"))
+                if hasMessageMentions {
+                    mentions.append(contentsOf: try self.loadMessageMentions(for: msgID, connection: connection))
+                }
+
                 let p = Post(
-                    blobs: try self.loadBlobs(for: msgID, connection: connection),
-                    mentions: try self.loadMentions(for: msgID, connection: connection),
+                    blobs: blobs,
+                    mentions: mentions,
                     root: rootKey,
                     text: try row.get(colText)
                 )
@@ -155,7 +240,11 @@ class PostsAndContactsStrategy: FeedStrategy {
                 description: try row.get(colDescr),
                 imageLink: try row.get(colImage)
             )
-            keyValue.metadata.replies.count = try row.get(Expression<Int>("replies_count"))
+            let numberOfReplies = try row.get(Expression<Int>("replies_count"))
+            let replies = try row.get(Expression<String?>("replies"))
+            let abouts = replies?.split(separator: ";").map { About(about: String($0)) } ?? []
+            keyValue.metadata.replies.count = numberOfReplies
+            keyValue.metadata.replies.abouts = abouts
             keyValue.metadata.isPrivate = try row.get(colDecrypted)
             return keyValue
         }
@@ -217,11 +306,9 @@ class PostsAndContactsStrategy: FeedStrategy {
         return blobs
     }
 
-    private func loadMentions(for msgID: Int64, connection: Connection) throws -> [Mention] {
+    private func loadFeedMentions(for msgID: Int64, connection: Connection) throws -> [Mention] {
         let colMessageRef = Expression<Int64>("msg_ref")
         let colFeedID = Expression<Int64>("feed_id")
-        let colLinkID = Expression<Int64>("link_id")
-        let mentions_msg = Table(ViewDatabaseTableNames.mentionsMsg.rawValue)
         let mentions_feed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
         let colName = Expression<String?>("name")
 
@@ -238,6 +325,14 @@ class PostsAndContactsStrategy: FeedStrategy {
             )
         }
 
+        return feedMentions
+    }
+
+    private func loadMessageMentions(for msgID: Int64, connection: Connection) throws -> [Mention] {
+        let colMessageRef = Expression<Int64>("msg_ref")
+        let colLinkID = Expression<Int64>("link_id")
+        let mentions_msg = Table(ViewDatabaseTableNames.mentionsMsg.rawValue)
+
         let msgMentionQry = mentions_msg.where(colMessageRef == msgID)
         let msgMentions: [Mention] = try connection.prepare(msgMentionQry).map {
             row in
@@ -248,24 +343,8 @@ class PostsAndContactsStrategy: FeedStrategy {
                 name: ""
             )
         }
-        /*
-        // TODO: We don't =populate mentions_images... so why are we looking it up?
-        let imgMentionQry = self.mentions_image
-            .where(colMessageRef == msgID)
-            .where(colImage != "")
-        let imgMentions: [Mention] = try db.prepare(imgMentionQry).map {
-            row in
 
-            let img = try row.get(colImage)
-
-            return Mention(
-                link: img!, // illegal insert
-                name: try row.get(colName) ?? ""
-            )
-        }
-        */
-
-        return feedMentions + msgMentions
+        return msgMentions
     }
 
     private func author(from id: Int64, connection: Connection) throws -> Identity {

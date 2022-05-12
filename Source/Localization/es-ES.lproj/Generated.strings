@@ -29,6 +29,8 @@
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
+"Text.startedFollowing" = "{{somebody}} started following";
+"Text.stoppedFollowing" = "{{somebody}} stopped following";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "No mostrarme en el directorio de usuarios";

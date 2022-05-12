@@ -91,6 +91,10 @@ class FakeBot: Bot {
         fatalError("TODO")
     }
 
+    func hashtags(identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) {
+        fatalError("TODO")
+    }
+
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) {
         fatalError("TODO")
     }
@@ -135,6 +139,10 @@ class FakeBot: Bot {
     }
     
     func friends(identity: Identity, completion: @escaping ContactsCompletion) {
+        fatalError("TODO")
+    }
+
+    func numberOfFollowers(identity: Identity, completion: @escaping ((FollowStats, Error?) -> Void)) {
         fatalError("TODO")
     }
     

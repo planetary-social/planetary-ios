@@ -148,6 +148,8 @@ protocol Bot: AnyObject {
     
     func friends(identity: Identity, completion:  @escaping ContactsCompletion)
 
+    func numberOfFollowers(identity: Identity, completion: @escaping ((FollowStats, Error?) -> Void))
+
     // TODO the func names should be swapped
     func blocks(identity: Identity, completion:  @escaping ContactsCompletion)
     func blockedBy(identity: Identity, completion:  @escaping ContactsCompletion)
@@ -160,6 +162,7 @@ protocol Bot: AnyObject {
     // MARK: Hashtags
 
     func hashtags(completion: @escaping HashtagsCompletion)
+    func hashtags(identity: Identity, limit: Int, completion: @escaping HashtagsCompletion)
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion)
     
     // MARK: Feed
@@ -320,6 +323,18 @@ extension Bot {
                     return
                 }
                 continuation.resume(returning: about)
+            }
+        }
+    }
+
+    func numberOfFollowers(identity: Identity) async throws -> FollowStats	 {
+        try await withCheckedThrowingContinuation { continuation in
+            numberOfFollowers(identity: identity) { count, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: count)
             }
         }
     }

@@ -25,7 +25,7 @@ class ContactCellView: KeyValueView {
     var keyValue: KeyValue?
     private lazy var headerView = ContactHeaderView()
 
-    private lazy var aboutCellView = AboutCellView()
+    private lazy var contactView = ContactView()
 
     var textViewTopConstraint = NSLayoutConstraint()
 
@@ -48,15 +48,14 @@ class ContactCellView: KeyValueView {
         Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
 
         let (top, _, _) = Layout.fillTop(of: self,
-                                         with: self.aboutCellView,
+                                         with: self.contactView,
                                          insets: UIEdgeInsets(top: self.textViewTopInset, left: Layout.postSideMargins, bottom: 0, right: -Layout.postSideMargins),
                                          respectSafeArea: false)
         self.textViewTopConstraint = top
         // self.aboutCellView.constrainHeight(to: MiniAboutCellView.height)
 
-        self.aboutCellView.pinBottomToSuperviewBottom()
+        self.contactView.pinBottomToSuperviewBottom()
 
-        self.isSkeletonable = false
     }
 
     convenience init(keyValue: KeyValue) {
@@ -76,27 +75,22 @@ class ContactCellView: KeyValueView {
         self.headerView.update(with: keyValue)
 
         if let contact = keyValue.value.content.contact {
-            let expression: String
-            if contact.isFollowing {
-                expression = "\(keyValue.value.author) started following \(contact.contact)"
-            } else {
-                expression = "\(keyValue.value.author) stopped following \(contact.contact)"
+            contactView.showSkeleton()
+            Bots.current.about(identity: contact.identity) { [weak contactView] about, error in
+                DispatchQueue.main.async {
+                    contactView?.update(with: contact.identity, about: about)
+                }
             }
-
-            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.italicSystemFont(ofSize: 16),
-                                                             .foregroundColor: UIColor.secondaryText]
-            let attributedString = NSAttributedString(string: expression,
-                                                      attributes: attributes)
-            Bots.current.about(identity: contact.identity) { [weak aboutCellView] about, error in
-                aboutCellView?.update(with: contact.identity, about: about)
+            Bots.current.numberOfFollowers(identity: contact.identity) { [weak contactView] stats, _ in
+                DispatchQueue.main.async {
+                    contactView?.update(numberOfFollowers: stats.numberOfFollowers, numberOfFollows: stats.numberOfFollows)
+                }
             }
-            Bots.current.follows(identity: contact.identity) { follows, error in
-                // TODO: Fill UI
+            Bots.current.hashtags(identity: contact.identity, limit: 3) { [weak contactView] hashtags, _ in
+                DispatchQueue.main.async {
+                    contactView?.update(hashtags: hashtags)
+                }
             }
-            Bots.current.followedBy(identity: contact.identity) { followedBy, error in
-                // TODO: Fill UI
-            }
-
         } else {
             return
         }

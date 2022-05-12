@@ -226,7 +226,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = FULL;") // Full is best for read performance
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\tSQL: \($0)") } // print all the statements
         
         try db.transaction {
             if db.userVersion == 0 {
@@ -1032,6 +1032,28 @@ class ViewDatabase {
             return keyValue
         }
     }
+    
+    /// Returns the number of followers for a given identity
+    func countNumberOfFollowers(feed: Identity) throws -> FollowStats {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let qry = try db.prepare("""
+        SELECT SUM(CASE WHEN follow.author = ? THEN 1 ELSE 0 END) as followers_count,
+               SUM(CASE WHEN follower.author = ? THEN 1 ELSE 0 END) as follows_count
+        FROM contacts
+        JOIN authors follower ON follower.id = contacts.author_id
+        JOIN authors follow ON follow.id = contacts.contact_id
+        WHERE contacts.state = 1;
+        """)
+
+        return try qry.bind(feed, feed).prepareRowIterator().map { row -> FollowStats in
+            let followersCount = try row.get(Expression<Int>("followers_count"))
+            let followsCount = try row.get(Expression<Int>("follows_count"))
+            return FollowStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
+        }.first ?? FollowStats(numberOfFollowers: 0, numberOfFollows: 0)
+    }
 
     // who is this feed blocking
     func getBlocks(feed: Identity) throws -> [Identity] {
@@ -1736,8 +1758,7 @@ class ViewDatabase {
             "channels"."id" = "channel_assignments"."chan_ref"
         )
         Group by channels.id
-        ORDER BY "messages.received_at" ASC
-        
+        ORDER BY "messages.received_at" ASC;
         """)
 
         var channels: [Hashtag] = []
@@ -1749,6 +1770,30 @@ class ViewDatabase {
             channels += [hashtag]
         }
         return channels
+    }
+
+    func hashtags(identity: Identity, limit: Int = 100) throws -> [Hashtag] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let qry = try db.prepare("""
+        SELECT c.name AS channel_name
+        FROM channel_assignments ca
+        JOIN messages m ON m.msg_id = ca.msg_ref
+        JOIN authors a ON a.id = m.author_id
+        JOIN channels c ON c.id = ca.chan_ref
+        WHERE a.author = ?
+        ORDER BY m.received_at DESC
+        LIMIT ? OFFSET 0;
+        """)
+        let bindings: [Binding?] = [
+            identity,
+            limit
+        ]
+        return try qry.bind(bindings).prepareRowIterator().map { row -> Hashtag in
+            let channelName = try row.get(Expression<String>("channel_name"))
+            return Hashtag(name: channelName)
+        }
     }
     
     // TODO: pagination

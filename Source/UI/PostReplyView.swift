@@ -148,10 +148,13 @@ class RepliesView: KeyValueView {
     override func update(with keyValue: KeyValue) {
         let uniqueAbouts = Array(Set(keyValue.metadata.replies.abouts))
 
-        self.avatarImageView.abouts = uniqueAbouts
-
         if !uniqueAbouts.isEmpty {
-            self.updateLabel(from: uniqueAbouts, total: keyValue.metadata.replies.count)
+            Bots.current.abouts(identities: uniqueAbouts.map {$0.identity}) { abouts, error in
+                DispatchQueue.main.async {
+                    self.avatarImageView.abouts = abouts
+                    self.updateLabel(from: abouts, total: keyValue.metadata.replies.count)
+                }
+            }
         }
 
         self.heightConstraint?.constant = uniqueAbouts.isEmpty ? 0 : self.expandedHeight

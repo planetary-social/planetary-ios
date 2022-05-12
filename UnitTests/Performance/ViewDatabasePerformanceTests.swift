@@ -105,7 +105,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             startMeasuring()
             let keyValues = try! self.vdb.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues.count, 96)
+            XCTAssertEqual(keyValues.count, 100)
             stopMeasuring()
         }
     }

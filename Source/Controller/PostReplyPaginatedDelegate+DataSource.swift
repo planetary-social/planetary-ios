@@ -83,6 +83,14 @@ class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
     }
     
     override func viewController(for keyValue: KeyValue) -> UIViewController? {
-        ThreadViewController(with: keyValue, startReplying: false)
+        switch keyValue.contentType {
+        case .contact:
+            if let identity = keyValue.value.content.contact?.identity {
+                return AboutViewController(with: identity)
+            }
+            return nil
+        default:
+            return ThreadViewController(with: keyValue, startReplying: false)
+        }
     }
 }

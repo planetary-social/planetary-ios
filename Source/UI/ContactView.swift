@@ -11,292 +11,172 @@ import UIKit
 
 class ContactView: KeyValueView {
 
-    private let circleView: UIView = {
-        let view = UIView.forAutoLayout()
-        view.stroke(color: UIColor.avatarRing)
+    let imageView: AvatarImageView = {
+        let view = AvatarImageView()
+        view.constrainSize(to: Layout.contactAvatarSize)
         return view
     }()
 
-    let imageView = AvatarImageView()
-
-    private let nameLabel: UILabel = {
+    let label: UILabel = {
         let label = UILabel.forAutoLayout()
-        label.font = UIFont.boldSystemFont(ofSize: 18)
         label.lineBreakMode = .byCharWrapping
-        label.numberOfLines = 2
-        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.font = UIFont.verse.contactName
+        label.lineBreakMode = .byTruncatingTail
         return label
     }()
 
-    private let followingLabel: UILabel = {
+    let followerCountLabel: UILabel = {
         let label = UILabel.forAutoLayout()
-        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.textColor = UIColor.text.default
+        label.textColor = UIColor.text.detail
+        label.font = UIFont.verse.contactFollowerCount
         return label
     }()
 
-    lazy var followButton: FollowButton = {
-        let button = FollowButton()
-        return button
+    let hashtagsLabel: UITextView = {
+        let label = UITextView.forAutoLayout()
+        label.textColor = UIColor.primaryAction
+        label.font = UIFont.verse.contactFollowerCount
+        label.isScrollEnabled = false
+        label.isEditable = false
+        label.textContainerInset = .zero
+        label.textContainer.lineFragmentPadding = 0
+        return label
     }()
 
-    lazy var editButton: PillButton = {
-        let button = PillButton()
-        button.isHidden = true
-        button.setTitle(.editProfile)
-        button.setImage(UIImage.verse.editPencil)
-        button.isSelected = true
-
-        return button
+    let stackView: UIStackView = {
+        let stackView = UIStackView.forAutoLayout()
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.spacing = 5
+        return stackView
     }()
 
-    lazy var shareButton: PillButton = {
-        let button = PillButton()
-        button.setTitle(.share)
-        button.setImage(UIImage.verse.smallShare)
-        return button
+    let followButton: FollowButton = {
+        let followButton = FollowButton()
+        followButton.height = 22
+        followButton.fontSize = 12
+        return followButton
     }()
 
-    lazy var editPhotoButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.backgroundColor = .avatarRing
-        button.isHidden = true
-        button.setImage(UIImage.verse.camera, for: .normal)
-        button.stroke(color: .avatarRing)
-        return button
-    }()
-
-    var descriptionContainerZeroHeightConstraint: NSLayoutConstraint?
-
-    private lazy var descriptionTextView: UITextView = {
-        let view = UITextView.forAutoLayout()
-        view.addGestureRecognizer(self.tapGesture.recognizer)
-        view.isEditable = false
-        view.isScrollEnabled = false
-        view.textContainer.lineFragmentPadding = 0
-        view.backgroundColor = .cardBackground
-        return view
-    }()
-
-    var followingView = FollowCountView(text: .followingCount, secondaryText: .inYourNetwork)
-    var followedByView = FollowCountView(text: .followedByCount, secondaryText: .inYourNetwork)
-
-    // MARK: Lifecycle
+    private var image: ImageMetadata?
 
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
         self.backgroundColor = .cardBackground
-        self.addSubviews()
+
+        let targetHeight: CGFloat = 120
+        let verticalMargin = floor((targetHeight - Layout.contactAvatarSize) / 2)
+
+        Layout.fillLeft(of: self,
+                        with: self.imageView,
+                        insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: -verticalMargin, right: 0),
+                        respectSafeArea: false)
+
+        addSubview(stackView)
+        stackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
+        stackView.constrainTrailingToSuperview()
+        stackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+        stackView.addArrangedSubview(label)
+        stackView.addArrangedSubview(followerCountLabel)
+        stackView.addArrangedSubview(hashtagsLabel)
+        stackView.addArrangedSubview(followButton)
+
+        hashtagsLabel.delegate = self
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: Layout
-
-    private func addSubviews() {
-
-        Layout.addSeparator(toTopOf: self)
-
-        Layout.center(self.circleView, atTopOf: self, inset: 23, size: CGSize(square: Layout.profileImageOutside))
-       // self.addLoadingAnimation()
-
-        Layout.center(self.imageView, in: self.circleView, size: CGSize(square: Layout.profileImageInside))
-
-        self.addSubview(self.editPhotoButton)
-        self.editPhotoButton.constrainSize(to: CGSize(square: 45))
-        self.editPhotoButton.constrainTop(toTopOf: self.circleView, constant: 120)
-        self.editPhotoButton.constrainLeading(to: self.circleView, constant: 140)
-
-        var insets = UIEdgeInsets.topLeftRight
-        insets.top = insets.top - 2
-        Layout.fillSouth(of: self.circleView, with: self.nameLabel, insets: insets)
-
-        Layout.fillSouth(of: self.nameLabel, with: self.followingLabel, insets: .leftBottomRight)
-
-        let buttonStack = UIStackView.forAutoLayout()
-        buttonStack.spacing = Layout.horizontalSpacing
-        buttonStack.distribution = .equalCentering
-
-        buttonStack.addArrangedSubview(UIView())
-        buttonStack.addArrangedSubview(self.editButton)
-        buttonStack.addArrangedSubview(self.followButton)
-        buttonStack.addArrangedSubview(self.shareButton)
-        buttonStack.addArrangedSubview(UIView())
-
-        Layout.fillSouth(of: self.followingLabel, with: buttonStack, insets: .top(Layout.verticalSpacing - 3))
-
-        var separator = Layout.sectionSeparatorView(color: .appBackground)
-        Layout.fillSouth(of: buttonStack, with: separator, insets: .top(Layout.verticalSpacing - 3))
-
-        let descriptionContainer = UIView.forAutoLayout()
-        descriptionContainer.clipsToBounds = true
-        let verticalInset = Layout.verticalSpacing - 10
-        insets = UIEdgeInsets(top: verticalInset, left: Layout.postSideMargins, bottom: -verticalInset, right: -Layout.postSideMargins)
-        Layout.fill(view: descriptionContainer, with: self.descriptionTextView, insets: insets)
-        Layout.addSeparator(toBottomOf: descriptionContainer)
-
-        Layout.fillSouth(of: separator, with: descriptionContainer)
-
-        self.descriptionContainerZeroHeightConstraint = descriptionContainer.constrainHeight(to: 0)
-
-        Layout.fillSouth(of: descriptionContainer, with: self.followedByView)
-        self.followedByView.constrainHeight(to: 50)
-
-        separator = Layout.addSeparator(southOf: self.followedByView)
-
-        Layout.fillSouth(of: separator, with: self.followingView)
-        self.followingView.constrainHeight(to: 50)
-
-        separator = Layout.sectionSeparatorView(bottom: false,
-                                                color: .appBackground)
-        Layout.fillSouth(of: self.followingView, with: separator)
-        separator.pinBottomToSuperviewBottom()
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.circleView.round()
-        self.editPhotoButton.round()
-    }
-
-    // MARK: KeyValueUpdateable
-
-    override func update(with keyValue: KeyValue) {
-        guard let contact = keyValue.value.content.contact else { return }
-        self.update(with: contact)
-    }
-
-    // MARK: Other updates
-
-    // called by other update functions
-    private func update(name: String, bio: NSAttributedString, identity: Identity) {
-        self.backgroundColor = .cardBackground
-
-        self.nameLabel.text = name
-        self.nameLabel.lineBreakMode = .byWordWrapping
-
-        self.descriptionTextView.attributedText = bio
-
-        self.descriptionContainerZeroHeightConstraint?.isActive = bio.string.trimmed.isEmpty
-
-        self.editButton.isHidden = !identity.isCurrentUser
-        self.editPhotoButton.isHidden = self.editButton.isHidden
-
-        if identity.isCurrentUser {
-            self.followingLabel.text = Text.thisIsYou.text
-            self.followButton.isHidden = true
+    func update(with identity: Identity, about: About?) {
+        if let about = about {
+            self.label.text = about.nameOrIdentity
+            self.imageView.set(image: about.image)
         } else {
-            loadRelationship(identity: identity)
+            self.label.text = identity
         }
+        self.setRelationship(to: identity)
+    }
 
-        if let star = Environment.Communities.stars.first(where: { $0.feed == identity }) {
-            followButton.star = star
+    func update(numberOfFollowers: Int, numberOfFollows: Int) {
+        let string = "Following numberOfFollows • Followed by numberOfFollowers"
+
+        let primaryColor = [NSAttributedString.Key.foregroundColor:  UIColor.text.default]
+        let secondaryColor = [NSAttributedString.Key.foregroundColor:  UIColor.text.detail]
+
+        let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
+        attributedString.replaceCharacters(in: (attributedString.string as NSString).range(of: "numberOfFollows"),
+                                           with: NSAttributedString(string: "\(numberOfFollows)",
+                                                                    attributes: primaryColor))
+        attributedString.replaceCharacters(in: (attributedString.string as NSString).range(of: "numberOfFollowers"),
+                                           with: NSAttributedString(string: "\(numberOfFollowers)",
+                                                                    attributes: primaryColor))
+        
+        followerCountLabel.attributedText = attributedString
+    }
+
+    func update(hashtags: [Hashtag]) {
+        if hashtags.isEmpty {
+            hashtagsLabel.removeFromSuperview()
         } else {
-            followButton.star = nil
-        }
+            stackView.insertArrangedSubview(hashtagsLabel, at: 2)
+            let string = "Active on "
+            let secondaryColor = [
+                NSAttributedString.Key.foregroundColor: UIColor.text.detail,
+                NSAttributedString.Key.font: UIFont.verse.contactFollowerCount
+            ]
+            let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
 
-        // updating may change the content of the description text view
-        // and hence change it's height, so a layout is likely needed
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-    }
-
-    func update(with contact: Contact) {
-
-        self.update(name: contact.identity,
-                    bio: NSAttributedString(string: ""),
-                    identity: contact.identity)
-    }
-
-    func update(with person: Person) {
-        self.update(name: person.name,
-                    bio: person.attributedBio,
-                    identity: person.identity)
-
-        self.imageView.load(for: person, animate: true)
-    }
-
-    var relationship: Relationship?
-
-    // do this once, so we only have one notification
-    private func loadRelationship(identity: Identity) {
-        guard relationship == nil, let me = Bots.current.identity else { return }
-
-        self.followButton.isHidden = true
-
-        let relationship = Relationship(from: me, to: identity)
-
-        relationship.load {
-            self.update(with: relationship)
-            self.followButton.isHidden = false
-            // The follow button may re-hide itself when the relationship is set. i.e. if the relationship is
-            // to oneself.
-            self.followButton.relationship = relationship
-        }
-
-        NotificationCenter.default.addObserver(self, selector: #selector(relationshipDidChange(notification:)), name: relationship.notificationName, object: nil)
-    }
-
-    func update(with relationship: Relationship) {
-        self.relationship = relationship
-
-        self.followButton.isSelected = relationship.isFollowing
-
-        if relationship.isFollowedBy {
-            self.followingLabel.text = Text.isFollowingYou.text
+            for (index, hashtag) in hashtags.enumerated() {
+                let link = [
+                    NSAttributedString.Key.foregroundColor: UIColor.primaryAction,
+                    NSAttributedString.Key.font: UIFont.verse.contactFollowerCount,
+                    NSAttributedString.Key.link: hashtag.string
+                ] as [NSAttributedString.Key: Any]
+                let hashtagAttributedString = NSAttributedString(
+                    string: hashtag.string,
+                    attributes: link
+                )
+                attributedString.append(hashtagAttributedString)
+                if index < hashtags.count - 1 {
+                    attributedString.append(NSAttributedString(string: " ", attributes: secondaryColor))
+                }
+            }
+            hashtagsLabel.attributedText = attributedString
         }
     }
 
-    @objc func relationshipDidChange(notification: Notification) {
-        guard let relationship = notification.userInfo?[Relationship.infoKey] as? Relationship else {
-            return
+    func setRelationship(to identity: Identity) {
+        if let me = Bots.current.identity {
+            let relationship = Relationship(from: me, to: identity)
+
+            relationship.load {
+                self.followButton.relationship = relationship
+            }
         }
-        self.update(with: relationship)
     }
 
-    func update(followedBy: [About], following: [About]) {
-        self.followedByView.abouts = followedBy
-        self.followingView.abouts = following
+    // allows us to cancel the image download when reusing for a new cell
+    private var imageLoadingTask: URLSessionDataTask?
 
-        // updating may change the content of the following label
-        // and hence change it's height, so a layout is likely needed
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
+    private func loadImage(for person: Person) {
+        self.imageLoadingTask = self.imageView.load(for: person)
     }
 
-    // MARK: Loading animation
-
-    private lazy var loadingAnimation: PeerConnectionAnimation = {
-        let view = PeerConnectionAnimation(color: .networkAnimation)
-        // view.multiplier = 2
-        view.setDotCount(inside: false, count: 1, animated: false)
-        view.setDotCount(inside: true, count: 2, animated: false)
-        return view
-    }()
-
-    private lazy var loadingLabel: UILabel = {
-        let view = UILabel.forAutoLayout()
-        view.textAlignment = .center
-        view.numberOfLines = 2
-        view.text = Text.loadingUpdates.text
-        view.textColor = UIColor.tint.default
-        return view
-    }()
-
-    func addLoadingAnimation() {
-        // Layout.center(self.loadingLabel, in: self.circleView)
-        Layout.centerHorizontally(self.loadingAnimation, in: self.circleView)
-        self.loadingAnimation.constrainSize(to: Layout.profileImageOutside)
-        self.loadingAnimation.pinBottom(toTopOf: self.loadingLabel, constant: -20, activate: true)
+    func reset() {
+        self.label.text = ""
+        self.imageLoadingTask?.cancel()
+        self.imageView.image = UIImage.verse.missingAbout
     }
+}
 
-    func removeLoadingAnimation() {
-        self.loadingLabel.removeFromSuperview()
-        self.loadingAnimation.removeFromSuperview()
+extension ContactView: UITextViewDelegate {
+
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        let hashtag = URL.absoluteString
+        AppController.shared.pushChannelViewController(for: hashtag)
+        return false
     }
 }
