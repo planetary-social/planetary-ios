@@ -76,9 +76,9 @@ class GoBot: Bot {
     /// A queue for operations that the user is waiting on like publishing a post, pull-to-refresh, etc.
     private let userInitiatedQueue: DispatchQueue
     
-    /// A queue that should be used when fetching `statistics` from the bot, to work around some problems go-ssb
-    /// seems to be having where it locks when you call it from two threads.
-    private let statisticsQueue: DispatchQueue
+    /// A queue that is used for tasks that aren't safe to execute simultaneously, like publishing and reading
+    /// statistics.
+    private let serialQueue: DispatchQueue
  
     private let userDefaults: UserDefaults
     private(set) var config: AppConfiguration?
@@ -106,7 +106,7 @@ class GoBot: Bot {
                                                 attributes: .concurrent,
                                                 autoreleaseFrequency: .workItem,
                                                 target: nil)
-        self.statisticsQueue = DispatchQueue(label: "GoBot-statistics",
+        self.serialQueue = DispatchQueue(label: "GoBot-statistics",
                                                 qos: .userInitiated,
                                                 attributes: [],
                                                 autoreleaseFrequency: .workItem,
@@ -430,7 +430,7 @@ class GoBot: Bot {
                                     numberOfMessages: Int,
                                     completion: @escaping SyncCompletion) {
         self._isSyncing = false
-        statisticsQueue.sync {
+        serialQueue.sync {
             self._statistics.lastSyncDate = Date()
             self._statistics.lastSyncDuration = elapsed
         }
@@ -491,7 +491,7 @@ class GoBot: Bot {
                                        finished: Bool,
                                        completion: @escaping RefreshCompletion) {
         self._isRefreshing = false
-        statisticsQueue.sync {
+        serialQueue.sync {
             self._statistics.lastRefreshDate = Date()
             self._statistics.lastRefreshDuration = elapsed
         }
@@ -546,7 +546,7 @@ class GoBot: Bot {
     ///   - completionQueue: The queue that `completion` should be called on.
     ///   - completion: A block that will be called with the result of the operation when it is finished.
     func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion) {
-        self.userInitiatedQueue.async {
+        serialQueue.async {
             guard let identity = self._identity else {
                 completionQueue.async {
                     completion(MessageIdentifier.null, BotError.notLoggedIn)
@@ -1360,7 +1360,7 @@ class GoBot: Bot {
     
     
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
-        statisticsQueue.async {
+        serialQueue.async {
             let counts = try? self.bot.repoStatus()
             let sequence = try? self.database.stats(table: .messagekeys)
 

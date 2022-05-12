@@ -404,13 +404,15 @@ class GoBotIntegrationTests: XCTestCase {
     func testPublishSimultaneously() async throws {
         // Arrange
         let testPost = Post(text: "Be yourself; everyone else is already taken")
-        AppConfiguration.current?.numberOfPublishedMessages = 0
+        appConfig.numberOfPublishedMessages = 0
 
         // Act
         await withThrowingTaskGroup(of: Void.self, body: { group in
-            for _ in 0..<100 {
+            for i in 0..<100 {
                 group.addTask {
-                    _ = try await self.sut.publish(testPost)
+                    let messageID = try await self.sut.publish(testPost)
+                    XCTAssertEqual(self.appConfig.numberOfPublishedMessages, i + 1)
+                    XCTAssertNotNil(messageID)
                 }
             }
         })
@@ -425,7 +427,7 @@ class GoBotIntegrationTests: XCTestCase {
     func testPublishSimultaneouslyWithStatistics() async throws {
         // Arrange
         let testPost = Post(text: "Be yourself; everyone else is already taken")
-        AppConfiguration.current?.numberOfPublishedMessages = 0
+        appConfig.numberOfPublishedMessages = 0
 
         // Act
         await withThrowingTaskGroup(of: Void.self, body: { group in
@@ -437,15 +439,10 @@ class GoBotIntegrationTests: XCTestCase {
                     let stats1 = await futureStats1
                     let stats2 = await futureStats2
                     let publishedID = try await futurePublishedID
-                    XCTAssert(
-                        abs(stats1.repo.numberOfPublishedMessages - i) < 1,
-                        "numberOfPublishedMessages: \(stats1.repo.numberOfPublishedMessages) is not close to \(i)"
-                    )
-                    XCTAssert(
-                        abs(stats2.repo.numberOfPublishedMessages - i) < 1,
-                        "numberOfPublishedMessages: \(stats2.repo.numberOfPublishedMessages) is not close to \(i)"
-                    )
+                    XCTAssert(stats1.repo.numberOfPublishedMessages <= 100)
+                    XCTAssert(stats2.repo.numberOfPublishedMessages <= 100)
                     XCTAssertNotNil(publishedID)
+                    XCTAssertEqual(self.appConfig.numberOfPublishedMessages, i + 1)
                 }
             }
         })
