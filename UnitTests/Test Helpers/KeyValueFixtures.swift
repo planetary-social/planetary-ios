@@ -27,7 +27,7 @@ struct KeyValueFixtures {
                 previous: nil,
                 sequence: 0,
                 signature: Identifier("signature"),
-                timestamp: timestamp
+                timestamp: timestamp 
             ),
             timestamp: receivedTimestamp,
             receivedSeq: receivedSeq,

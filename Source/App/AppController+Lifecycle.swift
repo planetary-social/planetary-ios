@@ -18,7 +18,7 @@ extension AppController {
         // when showing MainViewController
         self.missionControlCenter.stop()
         
-        let controller = LaunchViewController()
+        let controller = LaunchViewController(appConfiguration: AppConfiguration.current, appController: self)
         self.setRootViewController(controller, animated: false)
         self.syncPushNotificationsSettings()
     }

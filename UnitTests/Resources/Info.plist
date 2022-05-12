@@ -22,8 +22,12 @@
 	<string>$(VERSE_HOST)</string>
 	<key>PLConstellation</key>
 	<string>$(CONSTELLATION)</string>
+	<key>PLCommunities</key>
+	<string>$(COMMUNITIES)</string>
 	<key>PLPlanetarySystem</key>
-	<string>$(PLANETARY_SYSTEM)</string>
+	<string>$(PLANETARY_SYSTEM_PUBS)</string>
+	<key>PLPlanetaryIdentity</key>
+	<string>$(PLANETARY)</string>
 	<key>PLVerseToken</key>
 	<string>$(VERSE_TOKEN)</string>
 	<key>PLVerseDirectoryPath</key>
@@ -40,6 +44,10 @@
 	<string>$(DEVELOPMENT_NETWORK_HMAC)</string>
 	<key>PLTestingNetworkName</key>
 	<string>$(TESTING_NETWORK_NAME)</string>
+	<key>PLTestNetworkPubs</key>
+	<string>$(TEST_NETWORK_PUBS)</string>
+	<key>PLTestNetworkCommunities</key>
+	<string>$(TEST_NETWORK_COMMUNITIES)</string>
 	<key>PLTestingNetworkKey</key>
 	<string>$(TESTING_NETWORK_KEY)</string>
 	<key>PLTestingNetworkHMAC</key>

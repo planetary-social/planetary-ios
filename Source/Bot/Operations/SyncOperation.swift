@@ -16,7 +16,7 @@ import CrashReporting
 class SyncOperation: AsynchronousOperation {
     
     /// List of available peers to establish connection. Only a subset will be actually be connected to.
-    var peerPool: [Peer]
+    var peerPool: [MultiserverAddress]
     
     /// If true, only will sync to one peer with no retries
     var notificationsOnly = false
@@ -26,7 +26,7 @@ class SyncOperation: AsynchronousOperation {
     
     private(set) var error: Error?
     
-    init(peerPool: [Peer]) {
+    init(peerPool: [MultiserverAddress]) {
         self.peerPool = peerPool
         super.init()
     }

@@ -52,9 +52,9 @@ class SendMissionOperation: AsynchronousOperation {
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
-            Log.info("Sending all joined pubs to bot (\(allJoinedPubs.count)).")
-            let stars = Set(Environment.Constellation.stars)
-            let allPubAddresses = stars.map { $0.address } + allJoinedPubs.map { $0.address }
+            let systemPubs = Set(AppConfiguration.current?.systemPubs ?? [])
+            let allPubAddresses = Array(Set(systemPubs.map { $0.address } + allJoinedPubs.map { $0.address }))
+            Log.info("Sending all joined pubs & system pubs to bot (\(allPubAddresses.count)).")
             
             Bots.current.seedPubAddresses(addresses: allPubAddresses, queue: queue) { [weak self] result in
                 if case .failure(let error) = result {
@@ -71,7 +71,16 @@ class SendMissionOperation: AsynchronousOperation {
                     operationQueue: self.operationQueue
                 )
                 
-                let peerPool = allJoinedPubs.map { $0.toPeer() } + stars.map { $0.toPeer() }
+                var peerPool = allJoinedPubs.compactMap {
+                    $0.toPeer().multiserverAddress
+                }
+                
+                // If we don't have enough peers, supplement with the Planetary pubs
+                let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
+                if peerPool.count < minPeers {
+                    let someSystemPubs = systemPubs.randomSample(UInt(minPeers - peerPool.count))
+                    peerPool += someSystemPubs.map { $0.address }
+                }
                 
                 let syncOperation = SyncOperation(peerPool: peerPool)
                 switch self.quality {

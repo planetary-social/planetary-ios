@@ -15,11 +15,27 @@ import CrashReporting
 class LaunchViewController: UIViewController {
 
     // MARK: Lifecycle
-
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
+    
+    var appConfiguration: AppConfiguration?
+    var appController: AppController
+    var userDefaults: UserDefaults
+    
+    init(
+        appConfiguration: AppConfiguration?,
+        appController: AppController,
+        userDefaults: UserDefaults = UserDefaults.standard
+    ) {
+        self.appConfiguration = appConfiguration
+        self.appController = appController
+        self.userDefaults = userDefaults
+        super.init(nibName: nil, bundle: nil)
     }
-
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -49,29 +65,28 @@ class LaunchViewController: UIViewController {
         }
 
         // if no configuration then onboard
-        if AppConfiguration.needsToBeCreated {
+        guard let configuration = appConfiguration else {
             self.launchIntoOnboarding()
             return
         }
 
+        let identity = configuration.identity
         // if configuration and is required then onboard
-        if let configuration = AppConfiguration.current,
-            Onboarding.status(for: configuration.identity) == .started {
+        if Onboarding.status(for: identity) == .started {
             self.launchIntoOnboarding(status: .started)
             return
         }
 
         // if configuration and not started then already onboarded
-        if let configuration = AppConfiguration.current,
-            Onboarding.status(for: configuration.identity) == .notStarted {
-            Onboarding.set(status: .completed, for: configuration.identity)
+        if Onboarding.status(for: identity) == .notStarted {
+            Onboarding.set(status: .completed, for: identity)
         }
 
         // otherwise there is a configuration and onboarding has been completed
 
         // TODO analytics
         // this should no longer be necessary with onboarding
-        guard let configuration = AppConfiguration.current, configuration.canLaunch else {
+        guard configuration.canLaunch else {
             self.alert(message: "The configuration is incomplete and cannot be launched. Please try deleting and reinstalling the app.")
             return
         }
@@ -80,105 +95,138 @@ class LaunchViewController: UIViewController {
         // TODO include app installation UUID
         // Analytics.shared.app(launch)
         Log.info("Launching with configuration '\(configuration.name)'")
-
-        // note that hmac key can be nil to switch it off
-        let secret = configuration.secret 
-        guard let network = configuration.network else { return }
-        guard let bot = configuration.bot else { return }
         
-        bot.login(config: configuration) { error in
-            
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error,
-                                                 metadata: ["action": "login-from-launch",
-                                                            "network": network,
-                                                            "identity": secret.identity])
-            
-            guard error == nil else {
-                let controller = UIAlertController(title: Text.error.text,
-                                                   message: Text.Error.login.text,
-                                                   preferredStyle: .alert)
-                let action = UIAlertAction(title: "Restart", style: .default) { _ in
-                    Log.debug("Restarting launch...")
-                    bot.logout { err in
-                        // Don't report error here becuase the normal path is to actually receive
-                        // a notLoggedIn error
-                        Log.optional(err)
-                        
-                        ssbDropIndexData()
-                        
-                        Analytics.shared.forget()
-                        CrashReporting.shared.forget()
-                        
-                        Task {
-                            await AppController.shared.relaunch()
-                        }
-                    }
-                }
-                controller.addAction(action)
+        Task {
+            do {
+                let isMigrating = try await self.migrateIfNeeded(using: configuration)
                 
-                let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
-                    Log.debug("Resetting current configuration and restarting launch...")
-                    AppConfiguration.current?.unapply()
-                    bot.logout { err in
-                        // Don't report error here becuase the normal path is to actually receive
-                        // a notLoggedIn error
-                        Log.optional(err)
-                        
-                        ssbDropIndexData()
-                        
-                        Analytics.shared.forget()
-                        CrashReporting.shared.forget()
-                        
-                        Task {
-                            await AppController.shared.relaunch()
-                        }
-                    }
+                if !isMigrating {
+                    // note that hmac key can be nil to switch it off
+                    guard let network = configuration.network else { return }
+                    guard let bot = configuration.bot else { return }
+                    
+                    try await bot.login(config: configuration)
                 }
-                controller.addAction(reset)
-
-                AppController.shared.showAlertController(with: controller, animated: true)
-                
-                return
+            } catch {
+                self.handleLoginFailure(with: error, configuration: configuration)
             }
             
             self.launchIntoMain()
-            
-            bot.about { (about, aboutErr) in
-                Log.optional(aboutErr)
-                // No need to show an alert to the user as we can fetch the current about later
-                CrashReporting.shared.reportIfNeeded(error: aboutErr)
-                
-                if let about = about {
-                    CrashReporting.shared.identify(
-                        identifier: about.identity,
-                        name: about.name,
-                        networkKey: network.string,
-                        networkName: network.name
-                    )
-                    Analytics.shared.identify(identifier: about.identity,
-                                              name: about.name,
-                                              network: network.name)
-                }
-            }
+            await self.trackLogin(with: configuration)
         }
     }
+    
+    // MARK: - Helpers
 
-    private func launchIntoOnboarding(status: Onboarding.Status = .notStarted,
-                                      simulate: Bool = false) {
+    private func launchIntoOnboarding(
+        status: Onboarding.Status = .notStarted,
+        simulate: Bool = false
+    ) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            AppController.shared.showOnboardingViewController(status, simulate)
+            self.appController.showOnboardingViewController(status, simulate)
         }
     }
 
-    private func launchIntoMain() {
-
+    @MainActor private func launchIntoMain() {
         // no need to start a sync here, we can do it later
         // also, user is already logged in
 
         // transition to main app UI
-        DispatchQueue.main.async {
-            AppController.shared.showMainViewController(animated: true)
+        appController.showMainViewController(animated: true)
+    }
+
+    func handleLoginFailure(with error: Error, configuration: AppConfiguration) {
+        guard let network = configuration.network else { return }
+        guard let bot = configuration.bot else { return }
+        let secret = configuration.secret
+        
+        Log.error("Bot.login failed")
+        Log.optional(error)
+        CrashReporting.shared.reportIfNeeded(
+            error: error,
+            metadata: [
+                "action": "login-from-launch",
+                "network": network,
+                "identity": secret.identity
+            ]
+        )
+        
+        let controller = UIAlertController(title: Text.error.text,
+                                           message: Text.Error.login.text,
+                                           preferredStyle: .alert)
+        let action = UIAlertAction(title: "Restart", style: .default) { _ in
+            Log.debug("Restarting launch...")
+            bot.logout { err in
+                // Don't report error here becuase the normal path is to actually receive
+                // a notLoggedIn error
+                Log.optional(err)
+                
+                ssbDropIndexData()
+                
+                Analytics.shared.forget()
+                CrashReporting.shared.forget()
+                
+                Task {
+                    await self.appController.relaunch()
+                }
+            }
         }
+        controller.addAction(action)
+        
+        let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
+            Log.debug("Resetting current configuration and restarting launch...")
+            AppConfiguration.current?.unapply()
+            bot.logout { error in
+                // Don't report error here becuase the normal path is to actually receive
+                // a notLoggedIn error
+                Log.optional(error)
+                
+                ssbDropIndexData()
+                
+                Analytics.shared.forget()
+                CrashReporting.shared.forget()
+                
+                Task {
+                    await self.appController.relaunch()
+                }
+            }
+        }
+        controller.addAction(reset)
+        
+        appController.showAlertController(with: controller, animated: true)
+    }
+    
+    private func trackLogin(with configuration: AppConfiguration) async {
+        guard let network = configuration.network else { return }
+        guard let bot = configuration.bot else { return }
+        
+        do {
+            let identity = configuration.secret.identity
+            
+            let about = try await bot.about()
+            CrashReporting.shared.identify(
+                identifier: identity,
+                name: about?.name,
+                networkKey: network.string,
+                networkName: network.name
+            )
+            Analytics.shared.identify(
+                identifier: identity,
+                name: about?.name,
+                network: network.name
+            )
+        } catch {
+            Log.optional(error)
+            // No need to show an alert to the user as we can fetch the current about later
+            CrashReporting.shared.reportIfNeeded(error: error)
+        }
+    }
+    
+    private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
+        return try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+            appConfiguration: configuration,
+            appController: appController,
+            userDefaults: userDefaults
+        )
     }
 }

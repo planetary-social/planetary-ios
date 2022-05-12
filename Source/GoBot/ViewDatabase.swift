@@ -59,10 +59,6 @@ class ViewDatabase {
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
 
-    // skip messages older than this (6 month)
-    // this should be removed once the database was refactored
-    private var temporaryMessageExpireDate: Double = -60 * 60 * 24 * 30 * 6
-
     // MARK: Tables and fields
     private let colID = Expression<Int64>("id")
     
@@ -399,7 +395,6 @@ class ViewDatabase {
     #if DEBUG
     func open(path: String, user: Identity, maxAge: Double) throws {
         try self.open(path: path, user: user)
-        self.temporaryMessageExpireDate = maxAge
     }
     #endif
     
@@ -614,17 +609,26 @@ class ViewDatabase {
             .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
             .where(self.msgs[colAuthorID] == currentUserID)
             .where(self.msgs[colMsgType] == "pub")
-
-        return try db.prepare(qry).map { row in
+            .order(colSequence.desc)
+        
+        let pubs: [Pub] = try db.prepare(qry).map { row in
             let host = try row.get(colHost)
             let port = try row.get(colPort)
             let key = try row.get(colKey)
             
-            return Pub(type: .pub,
-                       address: PubAddress(key: key,
-                                           host: host,
-                                           port: UInt(port)))
+            return Pub(
+                type: .pub,
+                address: MultiserverAddress(
+                    key: key,
+                    host: host,
+                    port: UInt(port)
+                )
+            )
         }
+        
+        // Filter out duplicates
+        var seenIDs = Set<MultiserverAddress>()
+        return pubs.filter { seenIDs.insert($0.address).inserted }
     }
     
     // MARK: moderation / delete
@@ -2278,13 +2282,6 @@ class ViewDatabase {
         return []
     }
     
-    private func isOldMessage(msg: KeyValue) -> Bool {
-        let now = Date()
-        let claimed = Date(timeIntervalSince1970: msg.value.timestamp / 1_000)
-        let since = claimed.timeIntervalSince(now)
-        return since < self.temporaryMessageExpireDate
-    }
-    
     func fillMessages(msgs: [KeyValue], pms: Bool = false) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -2309,16 +2306,6 @@ class ViewDatabase {
                 if !pms {
                     throw GoBotError.unexpectedFault("ViewDB: no receive sequence number on message")
                 }
-            }
-            
-            /* This is the don't put older than 6 months in the db. */
-            if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about) {
-                // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
-                skipped += 1
-                print("Skipped(\(msg.value.content.type) \(msg.key)%)")
-                Analytics.shared.trackBotDidSkipMessage(key: msg.key,
-                                                        reason: "Old Message")
-                continue
             }
             
             if !pms && !msg.value.content.isValid {

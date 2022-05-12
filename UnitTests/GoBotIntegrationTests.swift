@@ -53,12 +53,22 @@ class GoBotIntegrationTests: XCTestCase {
         }
     }
 
-    override func tearDownWithError() throws {
-        let logoutExpectation = self.expectation(description: "logout")
-        sut.logout { _ in logoutExpectation.fulfill() }
-        waitForExpectations(timeout: 10, handler: nil)
-        sut.exit()
-        try fm.removeItem(atPath: workingDirectory)
+    override func tearDown() async throws {
+        try await super.tearDown()
+        
+        do {
+            try await sut.logout()
+        } catch {
+            guard case BotError.notLoggedIn = error else {
+                throw error
+            }
+        }
+        await sut.exit()
+        do {
+            try fm.removeItem(atPath: workingDirectory)
+        } catch {
+            print(error)
+        }
     }
 
     /// Verifies that we can correctly refresh the `ViewDatabase` from the go-ssb log even after `publish` has copied
@@ -123,6 +133,113 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
     }
     
+    func testDropDatabaseWhenLoggedIn() async throws {
+        // Arrange
+        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
+        let databaseURL = try XCTUnwrap(
+            URL(fileURLWithPath: appConfig.databaseDirectory().appending("/mockDatabase"))
+        )
+        try mockData.write(to: databaseURL)
+
+        // Act
+        try await sut.dropDatabase(for: appConfig)
+
+        // Assert
+        XCTAssertThrowsError(try Data(contentsOf: databaseURL))
+    }
+    
+    func testDropDatabaseWhenLoggedOut() async throws {
+        // Arrange
+        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
+        let databaseURL = try XCTUnwrap(
+            URL(fileURLWithPath: appConfig.databaseDirectory().appending("/mockDatabase"))
+        )
+        try mockData.write(to: databaseURL)
+        try await sut.logout()
+        
+        // Act
+        try await sut.dropDatabase(for: appConfig)
+        
+        // Assert
+        XCTAssertThrowsError(try Data(contentsOf: databaseURL))
+    }
+    
+    func testLogoutWithDirectoryMissing() throws {
+        // Arrange
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout(completion: { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        })
+        
+        waitForExpectations(timeout: 10)
+        
+        // Act
+        do {
+            try fm.removeItem(atPath: workingDirectory)
+        } catch {
+            print(error)
+        }
+
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout(completion: { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        })
+        
+        waitForExpectations(timeout: 10)
+    }
+    
+    @MainActor func testLogoutWithDirectoryPresent() throws {
+        // Arrange
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+        
+        // Act
+        try fm.removeItem(atPath: workingDirectory)
+        try fm.createDirectory(atPath: workingDirectory, withIntermediateDirectories: true)
+
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+    }
+    
+    @MainActor func testLogoutTwice() throws {
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+        
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+    }
+
+    func testLoginLogoutLoop() async throws {
+        try await sut.login(config: appConfig)
+
+        await sut.exit()
+        try await sut.logout()
+        
+        try await sut.login(config: appConfig)
+    }
+
     // MARK: - Publishing
     
     /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number
@@ -372,9 +489,9 @@ class GoBotIntegrationTests: XCTestCase {
 
     // MARK: - Preloaded Pubs
     
-    func testPubsArePreloaded() throws {
+    func testPubsArePreloaded() async throws {
         // Arrange
-        try tearDownWithError()
+        try await tearDown()
         do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
 
         let mockPreloader = MockPreloadedPubService()
@@ -382,8 +499,7 @@ class GoBotIntegrationTests: XCTestCase {
         let loginExpectation = self.expectation(description: "login")
         
         // Act
-        sut.login(config: appConfig) {
-            error in
+        sut.login(config: appConfig) { error in
             defer { loginExpectation.fulfill() }
             XCTAssertNil(error)
         }

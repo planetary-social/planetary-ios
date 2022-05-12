@@ -14,6 +14,22 @@ import CrashReporting
 
 class DoneOnboardingStep: OnboardingStep {
     
+    private let analyticsToggle: TitledToggle = {
+        let view = TitledToggle.forAutoLayout()
+        view.titleLabel.text = Text.sendAnalytics.text
+        view.subtitleLabel.text = Text.analyticsMessage.text
+        view.toggle.isOn = true
+        return view
+    }()
+    
+    private let followPlanetaryToggle: TitledToggle = {
+        let view = TitledToggle.forAutoLayout()
+        view.titleLabel.text = Text.Onboarding.followPlanetaryToggleTitle.text
+        view.subtitleLabel.text = Text.Onboarding.followPlanetaryToggleDescription.text
+        view.toggle.isOn = true
+        return view
+    }()
+    
     private let publicWebHostingToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
         view.titleLabel.text = Text.PublicWebHosting.title.text
@@ -30,7 +46,9 @@ class DoneOnboardingStep: OnboardingStep {
 
         let insets = UIEdgeInsets(top: 30, left: 0, bottom: -16, right: 0)
         
-        Layout.fillSouth(of: self.view.hintLabel, with: self.publicWebHostingToggle, insets: insets)
+        Layout.fillSouth(of: view.hintLabel, with: analyticsToggle, insets: insets)
+        Layout.fillSouth(of: analyticsToggle, with: followPlanetaryToggle)
+        Layout.fillSouth(of: followPlanetaryToggle, with: publicWebHostingToggle)
 
         self.view.hintLabel.text = Text.Onboarding.thanksForTrying.text
 
@@ -39,6 +57,8 @@ class DoneOnboardingStep: OnboardingStep {
 
     override func performPrimaryAction(sender button: UIButton) {
         self.data.publicWebHosting = self.publicWebHostingToggle.toggle.isOn
+        self.data.analytics = self.analyticsToggle.toggle.isOn
+        self.data.followPlanetary = self.followPlanetaryToggle.toggle.isOn
         let data = self.data
         
         // SIMULATE ONBOARDING
@@ -46,6 +66,10 @@ class DoneOnboardingStep: OnboardingStep {
             Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
             self.next()
             return
+        }
+        
+        if !data.analytics {
+            Analytics.shared.optOut()
         }
 
         guard let me = data.context?.identity else {
@@ -55,35 +79,27 @@ class DoneOnboardingStep: OnboardingStep {
             return
         }
         
+        var operations = [Operation]()
+        
         let startOperation = BlockOperation { [weak self] in
             DispatchQueue.main.async { [weak self] in
                 if let primaryButton = self?.view.primaryButton {
-                    self?.view.lookBusy(disable: primaryButton)
+                    self?.view.lookBusy(after: 0, disable: primaryButton)
                 } else {
-                    self?.view.lookBusy()
+                    self?.view.lookBusy(after: 0)
                 }
             }
         }
         
-        let followOperation = BlockOperation {
-            let identities = Environment.PlanetarySystem.planets
-            let semaphore = DispatchSemaphore(value: identities.count - 1)
-            for identity in identities {
-                Bots.current.follow(identity) {
-                    _, _ in
-                    semaphore.signal()
-                }
-            }
-            semaphore.wait()
+        if data.followPlanetary {
+            let followPlanetaryOperation = FollowOperation(identity: Environment.PlanetarySystem.planetaryIdentity)
+            followPlanetaryOperation.addDependency(startOperation)
+            operations.append(followPlanetaryOperation)
         }
-        followOperation.addDependency(startOperation)
         
         let publicWebHostingOperation = BlockOperation {
-            guard data.publicWebHosting else {
-                return
-            }
             let semaphore = DispatchSemaphore(value: 0)
-            let about = About(about: me, publicWebHosting: true)
+            let about = About(about: me, publicWebHosting: data.publicWebHosting)
             let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
             Bots.current.publish(content: about, completionQueue: queue) { (_, error) in
                 Log.optional(error)
@@ -92,7 +108,7 @@ class DoneOnboardingStep: OnboardingStep {
             }
             semaphore.wait()
         }
-        publicWebHostingOperation.addDependency(followOperation)
+        publicWebHostingOperation.addDependency(startOperation)
         
         let bundle = Bundle(path: Bundle.main.path(forResource: "Preload", ofType: "bundle")!)!
         let preloadOperation = LoadBundleOperation(bundle: bundle)
@@ -111,14 +127,14 @@ class DoneOnboardingStep: OnboardingStep {
         }
         completionOperation.addDependency(refreshOperation)
         
-        let operations = [startOperation,
-                          followOperation,
-                          publicWebHostingOperation,
-                          preloadOperation,
-                          refreshOperation,
-                          completionOperation]
-        AppController.shared.operationQueue.addOperations(operations,
-                                                          waitUntilFinished: false)
+        operations += [
+            startOperation,
+            publicWebHostingOperation,
+            preloadOperation,
+            refreshOperation,
+            completionOperation
+        ]
+        AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 
     override func didStart() {

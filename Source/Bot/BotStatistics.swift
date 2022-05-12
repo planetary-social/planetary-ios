@@ -42,7 +42,10 @@ extension BotStatistics {
         }
 
         if db.lastReceivedMessage != -3 {
-            statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: db.lastReceivedMessage)
+            statistics.database = Analytics.DatabaseStatistics(
+                lastReceivedMessage: db.lastReceivedMessage,
+                messageCount: db.messageCount
+            )
         }
 
         statistics.peer = Analytics.PeerStatistics(peers: peer.count,
@@ -85,9 +88,12 @@ struct RepoStatistics: Equatable {
 struct DatabaseStatistics: Equatable {
 
     let lastReceivedMessage: Int
+    
+    let messageCount: Int
 
-    init(lastReceivedMessage: Int = -2) {
+    init(lastReceivedMessage: Int = -2, messageCount: Int = 0) {
         self.lastReceivedMessage = lastReceivedMessage
+        self.messageCount = messageCount
     }
 }
 

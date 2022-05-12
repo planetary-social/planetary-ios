@@ -18,6 +18,10 @@ name: ImageSlideshow, nameSpecified:
 body: Copyright (c) 2015 P…
 version: 1.8.3
 
+name: ImageSlideshow, nameSpecified: 
+body: Copyright (c) 2015 P…
+version: 1.8.3
+
 name: KeychainSwift, nameSpecified: 
 body: The MIT License
 
@@ -60,6 +64,14 @@ name: PhoneNumberKit, nameSpecified:
 body: The MIT License (MIT…
 version: 3.2.0
 
+name: PhoneNumberKit, nameSpecified: 
+body: The MIT License (MIT…
+version: 3.2.0
+
+name: SkeletonView, nameSpecified: 
+body: The MIT License (MIT…
+version: 1.8.7
+
 name: SkeletonView, nameSpecified: 
 body: The MIT License (MIT…
 version: 1.8.7
@@ -87,6 +99,12 @@ body: (The MIT License)
 
 C…
 version: 0.12.2
+
+name: SVProgressHUD, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 2.2.5
 
 name: SVProgressHUD, nameSpecified: 
 body: MIT License

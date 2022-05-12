@@ -1,0 +1,20 @@
+{
+  "key": "%E4KqBX3s5b3d3zHrYc0Oua214yGeSf6Vr2/GJ2O7k38=.sha256",
+  "value": {
+    "previous": "%nr0y9dBQYsrx6bYepoDGvOaq1kKhojr0X8p64qwoY1k=.sha256",
+    "author": "@4wXR/KiJrkz9D2LPXpZl5XOLw+gYCoJW6p6rwFlI5yA=.ed25519",
+    "sequence": 3,
+    "timestamp": 1635963253852,
+    "hash": "sha256",
+    "content": {
+      "type": "pub",
+      "address": {
+        "key": "@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519",
+        "host": "two.planetary.pub",
+        "port": 8008
+      }
+    },
+    "signature": "ysoaIypJfR+ZT5PNtYd2huEws/b5oq090JMFdU2nzR+zSg/kI7HbXYeUdxunJOd1KAlfXw4Ca8pICEUTo3i2Dg==.sig.ed25519"
+  },
+  "timestamp": 1636037415519.001
+}

@@ -28,9 +28,9 @@ jobs:
         VerseBlobToken: nil
         PostHogAPIKey: nil
         PostHogHost: nil
-    - name: Build
+    - name: Build Planetary
       run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.4" | xcpretty
-    - name: Test
+    - name: Run Tests
       run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.4" | xcpretty
   logger:
     name: Logger

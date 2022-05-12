@@ -70,7 +70,7 @@ enum Text: String, Localizable, CaseIterable {
 
     case sendAnalytics = "Send analytics to Planetary"
     case dontSendAnalytics = "Don't send analytics at all"
-    case analyticsMessage = "We would like to capture anonymized data about your use of the app - and crash reports when something goes wrong - so we can make the application better."
+    case analyticsMessage = "Allow us to collect data about your use of the app so we can make it better."
     
     case loadingUpdates = "Planetary is searching for updates\non the peer to peer decentralized web."
 
@@ -169,6 +169,30 @@ enum Text: String, Localizable, CaseIterable {
     
     case refresh = "Refresh"
     case markdownSupported = "Markdown preview"
+    
+    case loggingOut = "Logging out..."
+    
+    // MARK: - Beta 1 migration strings
+    case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."
+    case beta1MigrationComplete = "Tap on the following button to close this screen and go back to your feed."
+    case beta1MigrationPleaseLeaveAppOpen = "This may take a while.\n\nPlease leave the app open until it's done.\n"
+    case beta1StartUsingPlanetary =
+"""
+If you don't want to wait, you can
+start using Planetary right away, but:
+"""
+    case startUsingPlanetary = "start using Planetary"
+    case startUsingPlanetaryTitle = "Start Using Planetary"
+    case percentComplete = "complete"
+    case beta1Disclaimers =
+"""
+
+• you won't be able to post or follow until your whole feed is downloaded
+
+• you may not see all previous messages until they are downloaded.
+"""
+    case areYouSure = "Are you sure?"
+    case dismissMigrationEarlyMessage = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?"
 }
 
 // MARK: - ImagePicker
@@ -273,6 +297,8 @@ extension Text {
         case doneOnboarding = "Phew! I'm done!"
         case earlyAccess = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!"
         case iUnderstand = "Yes, I understand"
+        case followPlanetaryToggleTitle = "Follow Planetary"
+        case followPlanetaryToggleDescription = "Follow the Planetary account to see posts from out team."
 
         case somethingWentWrong = "Oh no! Something went wrong!"
         case errorRetryMessage = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it."

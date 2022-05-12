@@ -113,6 +113,17 @@
 "Text.pasteAddress" = "代币";
 "Text.refresh" = "更新";
 "Text.markdownSupported" = "Markdown 预览";
+"Text.loggingOut" = "Logging out...";
+"Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
+"Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
+"Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
+"Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
+"Text.startUsingPlanetary" = "start using Planetary";
+"Text.startUsingPlanetaryTitle" = "Start Using Planetary";
+"Text.percentComplete" = "complete";
+"Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
+"Text.areYouSure" = "Are you sure?";
+"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
 "Blocking.alertTitle" = "您确定要屏蔽 {{ name }} 吗？您将不再看到对方的内容或能够相互联系。";
 "Blocking.buttonTitle" = "是，封禁 {{ name }}";
@@ -168,6 +179,8 @@
 "Onboarding.doneOnboarding" = "Phew! I'm done!";
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";
+"Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
+"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from out team.";
 "Onboarding.somethingWentWrong" = "Oh no! Something went wrong!";
 "Onboarding.errorRetryMessage" = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it.";
 "Onboarding.resumeRetryMessage" = "This is not your fault, we messed something up. In some cases, it may mean your device cannot reach the network, and trying again later might help.";

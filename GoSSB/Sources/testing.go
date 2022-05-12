@@ -1,3 +1,4 @@
+//go:build testing
 // +build testing
 
 package main
@@ -7,13 +8,12 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"go.cryptoscope.co/ssb/private/box"
 	"strings"
 
 	"github.com/pkg/errors"
-
-	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/private"
 	"go.cryptoscope.co/ssb/repo"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 import "C"
@@ -23,7 +23,7 @@ func ssbTestingMakeNamedKey(name string) int {
 	testRepo := repo.New(repoDir)
 	h := sha256.New()
 	fmt.Fprint(h, name)
-	_, err := repo.NewKeyPairFromSeed(testRepo, name, ssb.RefAlgoFeedGabby, bytes.NewReader(h.Sum(nil)))
+	_, err := repo.NewKeyPairFromSeed(testRepo, name, refs.RefAlgoFeedSSB1, bytes.NewReader(h.Sum(nil)))
 	if err != nil {
 		return -1
 	}
@@ -48,7 +48,7 @@ func ssbTestingAllNamedKeypairs() *C.char {
 
 	pubkeys := make(map[string]string, len(pairs))
 	for name, kp := range pairs {
-		pubkeys[name] = kp.Id.Ref()
+		pubkeys[name] = kp.ID().Sigil()
 	}
 
 	jsonMap, err := json.Marshal(pubkeys)
@@ -80,7 +80,7 @@ func ssbTestingPublishAs(nick, content string) *C.char {
 		err = errors.Wrapf(err, "ssbTestingPublishAs: failed to publush value as %s", nick)
 		return nil
 	}
-	return C.CString(newRef.Ref())
+	return C.CString(newRef.Key().Sigil())
 }
 
 //export ssbTestingPublishPrivateAs
@@ -101,9 +101,9 @@ func ssbTestingPublishPrivateAs(nick, content, recps string) *C.char {
 	defer publishLock.Unlock()
 	lock.Unlock()
 
-	var rcpsRefs []*ssb.FeedRef
+	var rcpsRefs []refs.FeedRef
 	for i, rstr := range strings.Split(recps, ";") {
-		ref, err := ssb.ParseFeedRef(rstr)
+		ref, err := refs.ParseFeedRef(rstr)
 		if err != nil {
 			err = errors.Wrapf(err, "private/publishAs: failed to parse recipient %d", i)
 			return nil
@@ -111,7 +111,7 @@ func ssbTestingPublishPrivateAs(nick, content, recps string) *C.char {
 		rcpsRefs = append(rcpsRefs, ref)
 	}
 
-	boxedMsg, err := private.Box(json.RawMessage(content), rcpsRefs...)
+	boxedMsg, err := box.NewBoxer(nil).Encrypt(json.RawMessage(content), rcpsRefs...)
 	if err != nil {
 		err = errors.Wrap(err, "private/publishAs: failed to box message")
 		return nil
@@ -129,5 +129,5 @@ func ssbTestingPublishPrivateAs(nick, content, recps string) *C.char {
 		return nil
 	}
 
-	return C.CString(newMsgRef.Ref())
+	return C.CString(newMsgRef.Key().Sigil())
 }

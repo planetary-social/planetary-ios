@@ -660,6 +660,24 @@ class ViewDatabaseTests: XCTestCase {
         XCTAssertEqual(try vdb.messageCount(), messageCount + 1)
     }
     
+    /// Verify that fillMessages fills messages older than 6 months.
+    func testFillMessagesGivenOldMessage() throws {
+        // Arrange
+        let messageCount = try vdb.messageCount()
+        let oldDate = Date(timeIntervalSince1970: 1_619_037_184)
+        let testMessage = KeyValueFixtures.keyValue(
+            timestamp: oldDate.millisecondsSince1970,
+            receivedSeq: 800,
+            author: IdentityFixture.alice
+        )
+        
+        // Act
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), messageCount + 1)
+    }
+    
     func testGetAboutForIDGivenUserID() throws {
         // Arrange
         let id = try XCTUnwrap(fixture.identities.first) // userOne

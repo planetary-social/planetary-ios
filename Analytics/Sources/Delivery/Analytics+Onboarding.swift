@@ -40,6 +40,8 @@ public extension Analytics {
         var hasImage = false
         var joinedDirectory = false
         var publicWebHosting = false
+        var analytics = false
+        var followPlanetary = false
         var nameLength = 0
         var phone: String?
         var simulated = false
@@ -51,6 +53,8 @@ public extension Analytics {
                     hasImage: Bool = false,
                     joinedDirectory: Bool = false,
                     publicWebHosting: Bool = false,
+                    analytics: Bool = false,
+                    followPlanetary: Bool = false,
                     nameLength: Int = 0,
                     phone: String? = nil,
                     simulated: Bool = false) {
@@ -61,6 +65,8 @@ public extension Analytics {
             self.hasImage = hasImage
             self.joinedDirectory = joinedDirectory
             self.publicWebHosting = publicWebHosting
+            self.analytics = analytics
+            self.followPlanetary = followPlanetary
             self.nameLength = nameLength
             self.phone = phone
             self.simulated = simulated
@@ -80,6 +86,8 @@ public extension Analytics {
                                      "image_set": data.hasImage,
                                      "joined_directory": data.joinedDirectory,
                                      "public_web_hosting": data.publicWebHosting,
+                                     "analytics": data.analytics,
+                                     "followPlanetary": data.followPlanetary,
                                      "name_length": data.nameLength,
                                      "simulated": data.simulated]
         service.track(event: .view, element: .screen, name: "onboarding", params: params)

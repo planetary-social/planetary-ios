@@ -194,7 +194,8 @@ class AboutView: KeyValueView {
             loadRelationship(identity: identity)
         }
         
-        if let star = Environment.Communities.stars.first(where: { $0.feed == identity }) {
+        let communityPubs = AppConfiguration.current?.communityPubs ?? []
+        if let star = communityPubs.first(where: { $0.feed == identity }) {
             followButton.star = star
         } else {
             followButton.star = nil

@@ -40,6 +40,10 @@ class AnalyticsServiceAdapter: AnalyticsService {
     }
 
     func track(event: Event, element: Element, name: String, params: [String: Any]?) {
+        guard isEnabled else {
+            return
+        }
+        
         let eventName = eventName(event: event, element: element, name: name)
         Log.debug("Tracked \(eventName)")
         apiService.track(event: eventName, params: params)
