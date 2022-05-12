@@ -35,6 +35,7 @@ struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel 
                     
                     LottieAnimation(name: "bouncing_ellipse")
                         .frame(width: 26, height: 14)
+                        .padding(.bottom, -1)
                     
                     Spacer()
                 }
