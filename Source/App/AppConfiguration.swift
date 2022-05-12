@@ -39,7 +39,7 @@ class AppConfiguration: NSObject, NSCoding {
     }
 
     private var secretDidChange = false
-    var secret: Secret? {
+    var secret: Secret {
         didSet {
             self.secretDidChange = true
         }
@@ -71,34 +71,35 @@ class AppConfiguration: NSObject, NSCoding {
         self.hmacKey
     }
 
-    var identity: Identity? {
-        self.secret?.identity
+    var identity: Identity {
+        self.secret.identity
     }
 
     var canLaunch: Bool {
         self.network != nil &&
-            self.identity != nil &&
-            self.secret != nil &&
             self.bot != nil
     }
 
     // MARK: Lifecycle
 
-    override init() {}
-
-    convenience init(with secret: Secret) {
-        self.init()
-        self.setDefaultName()
+    init(with secret: Secret) {
         self.secret = secret
+        super.init()
+        self.setDefaultName()
         self.bot = Bots.bot(named: "GoBot")
     }
 
     required init?(coder aDecoder: NSCoder) {
+        guard let secretString = aDecoder.decodeObject(forKey: "secret") as? String,
+            let secret = Secret(from: secretString) else {
+            return nil
+        }
+        self.secret = secret
+        
         guard let name = aDecoder.decodeObject(forKey: "name") as? String else { return nil }
         self.name = name
         if let data = aDecoder.decodeObject(forKey: "network") as? Data { self.network = NetworkKey(base64: data) } else { self.network = nil }
         if let named = aDecoder.decodeObject(forKey: "bot") as? String { self.bot = Bots.bot(named: named) } else { self.bot = nil }
-        if let string = aDecoder.decodeObject(forKey: "secret") as? String { self.secret = Secret(from: string) }
         if aDecoder.containsValue(forKey: "numberOfPublishedMessages") {
             self.numberOfPublishedMessages = aDecoder.decodeInteger(forKey: "numberOfPublishedMessages")
         }
@@ -109,7 +110,7 @@ class AppConfiguration: NSObject, NSCoding {
 
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.name, forKey: "name")
-        if let secret = self.secret { aCoder.encode(secret.jsonString(), forKey: "secret") }
+        aCoder.encode(secret.jsonString(), forKey: "secret")
         if let network = self.network { aCoder.encode(network.data, forKey: "network") }
         if let bot = self.bot { aCoder.encode(bot.name, forKey: "bot") }
         aCoder.encode(numberOfPublishedMessages, forKey: "numberOfPublishedMessages")

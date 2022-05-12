@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Support
+import Analytics
 
 class StartOnboardingStep: OnboardingStep {
 
@@ -34,6 +35,7 @@ class StartOnboardingStep: OnboardingStep {
 
     init() {
         super.init(.start)
+        Analytics.shared.trackOnboardingStart()
     }
 
     override func customizeView() {

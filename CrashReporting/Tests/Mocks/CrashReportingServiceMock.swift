@@ -9,7 +9,7 @@ import Foundation
 @testable import CrashReporting
 
 class CrashReportingServiceMock: CrashReportingService {
-
+    var botLogHandler: (() -> String?)?
     var identified = false
     var crashed = false
     var forgot = false
@@ -27,7 +27,7 @@ class CrashReportingServiceMock: CrashReportingService {
         recorded = true
     }
 
-    func report(error: Error, metadata: [AnyHashable: Any]?, botLog: String?) {
+    func report(error: Error, metadata: [AnyHashable: Any]?) {
         crashed = true
     }
 }

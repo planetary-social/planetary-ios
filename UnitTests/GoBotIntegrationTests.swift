@@ -80,7 +80,7 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         
         let refreshExpectation = self.expectation(description: "refresh completed")
-        sut.refresh(load: .long, queue: .main) { error, _ in
+        sut.refresh(load: .long, queue: .main) { error, _, _ in
             XCTAssertNil(error)
             refreshExpectation.fulfill()
         }
@@ -113,13 +113,12 @@ class GoBotIntegrationTests: XCTestCase {
         for i in 0..<10 {
             _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
         }
-        let (error, _) = await sut.refresh(load: .long)
+        try await sut.refresh(load: .long)
         
         // Act
         let statistics = await sut.statistics()
 
         // Assert
-        XCTAssertNil(error)
         XCTAssertEqual(statistics.recentlyDownloadedPostCount, 10)
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
     }
@@ -189,6 +188,32 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
+        XCTAssertNotNil(ref)
+    }
+    
+    /// Tests that forked feed protection updates correctly after a user imports a key and restores their feed.
+    func testPublishSetsPublishMessageCountAfterRestore() async throws {
+        // Arrange
+        let testPost = Post(text: "\(#function)")
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+        userDefaults.set(false, forKey: "prevent_feed_from_forks")
+        let author = try XCTUnwrap(appConfig.identity)
+        let nowFloat = Date().millisecondsSince1970
+        let existingMessage = KeyValueFixtures.keyValue(
+            timestamp: nowFloat,
+            receivedTimestamp: nowFloat,
+            receivedSeq: -1,
+            author: author
+        )
+        
+        // Act
+        // Write a message without incrementing the numberOfPublishedMessages to simulate a user redownloading their
+        // own feed after importing their secret key.
+        try sut.database.fillMessages(msgs: [existingMessage])
+        let ref = try await sut.publish(content: testPost)
+        
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 2)
         XCTAssertNotNil(ref)
     }
 

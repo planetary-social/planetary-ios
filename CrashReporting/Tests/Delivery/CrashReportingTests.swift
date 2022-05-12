@@ -56,7 +56,7 @@ final class CrashReportingTests: XCTestCase {
     func testReport() throws {
         let error = NSError(domain: "com.planetary.social", code: 408, userInfo: nil)
         let crashReporting = try XCTUnwrap(crashReporting)
-        crashReporting.reportIfNeeded(error: error, botLog: nil)
+        crashReporting.reportIfNeeded(error: error)
         let service = try XCTUnwrap(service)
         XCTAssertTrue(service.crashed)
     }
