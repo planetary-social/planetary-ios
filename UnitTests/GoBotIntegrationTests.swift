@@ -89,7 +89,7 @@ class GoBotIntegrationTests: XCTestCase {
         // Assert
         var statistics = BotStatistics()
         let statisticsExpectation = self.expectation(description: "statistics fetched")
-        sut.statistics() { newStatistics in
+        sut.statistics { newStatistics in
             statistics = newStatistics
             statisticsExpectation.fulfill()
         }
@@ -124,7 +124,7 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
     }
     
-    // MARK: - Forked Feed Protection
+    // MARK: - Publishing
     
     /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number
     /// of published messages is higher than the number of messages in go-ssb.
@@ -256,6 +256,54 @@ class GoBotIntegrationTests: XCTestCase {
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
         XCTAssertNotNil(ref)
+    }
+    
+    /// Tests that publishing from multiple threads simultaneously is safe. (It wasn't in #489)
+    func testPublishSimultaneously() async throws {
+        // Arrange
+        let testPost = Post(text: "Be yourself; everyone else is already taken")
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+
+        // Act
+        await withThrowingTaskGroup(of: Void.self, body: { group in
+            for _ in 0..<100 {
+                group.addTask {
+                    _ = try await self.sut.publish(testPost)
+                }
+            }
+        })
+
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 100)
+    }
+    
+    /// Verifies that the GoBot can handle publishes from many tasks simultaneously, while the statistics function is
+    /// also being called. Both of these can update the numberOfPublishedMessages in the AppConfig, and we had a
+    /// race condition where this could fail in the past (#489).
+    func testPublishSimultaneouslyWithStatistics() async throws {
+        // Arrange
+        let testPost = Post(text: "Be yourself; everyone else is already taken")
+        AppConfiguration.current?.numberOfPublishedMessages = 0
+
+        // Act
+        await withThrowingTaskGroup(of: Void.self, body: { group in
+            for i in 0..<100 {
+                group.addTask {
+                    async let futureStats1 = self.sut.statistics()
+                    async let futurePublishedID = try self.sut.publish(testPost)
+                    async let futureStats2 = self.sut.statistics()
+                    let stats1 = await futureStats1
+                    let stats2 = await futureStats2
+                    let publishedID = try await futurePublishedID
+                    XCTAssertEqual(stats1.repo.numberOfPublishedMessages, i)
+                    XCTAssertEqual(stats2.repo.numberOfPublishedMessages, i + 1)
+                    XCTAssertNotNil(publishedID)
+                }
+            }
+        })
+
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 100)
     }
     
     /// Verifies that the statitistics() function updates the number of published messages in the AppConfiguration.
