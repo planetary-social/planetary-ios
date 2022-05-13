@@ -386,6 +386,34 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(hashtags.count, 2)
     }
 
+    // MARK: Number of followers
+
+    func testNumberOfFollowers() async throws {
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+
+        // Alice follows Bob
+        _ = sut.testingFollow(as: "alice", nick: "bob")
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let bob = try XCTUnwrap(keypairs["bob"])
+
+        let myFollowStats = try await sut.numberOfFollowers(identity: botTestsKey.identity)
+        XCTAssertEqual(myFollowStats.numberOfFollows, 1)
+        XCTAssertEqual(myFollowStats.numberOfFollowers, 0)
+
+        let aliceFollowStats = try await sut.numberOfFollowers(identity: alice)
+        XCTAssertEqual(aliceFollowStats.numberOfFollows, 1)
+        XCTAssertEqual(aliceFollowStats.numberOfFollowers, 1)
+
+        let bobFollowStats = try await sut.numberOfFollowers(identity: bob)
+        XCTAssertEqual(bobFollowStats.numberOfFollows, 0)
+        XCTAssertEqual(bobFollowStats.numberOfFollowers, 1)
+    }
+
     // MARK: Home feed
 
     func testWith10Posts() async throws {
