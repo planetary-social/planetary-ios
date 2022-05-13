@@ -1,5 +1,5 @@
 //
-//  PostsAndContactsStrategy.swift
+//  PostsAndContactsAlgorithm.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 12/4/22.
@@ -9,7 +9,10 @@
 import Foundation
 import SQLite
 
-class PostsAndContactsStrategy: FeedStrategy {
+/// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
+///
+/// It doesn't include pubs follows and posts in the feed
+class PostsAndContactsAlgorithm: FeedStrategy {
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
         let qry = try connection.prepare("""

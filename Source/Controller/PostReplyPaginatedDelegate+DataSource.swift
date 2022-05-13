@@ -75,8 +75,6 @@ class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
         switch keyValue.contentType {
         case .contact:
             return ContactReplyView.estimatedHeight(with: keyValue, in: tableView)
-        case .post:
-            return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
         default:
             return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
         }
@@ -85,10 +83,10 @@ class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
     override func viewController(for keyValue: KeyValue) -> UIViewController? {
         switch keyValue.contentType {
         case .contact:
-            if let identity = keyValue.value.content.contact?.identity {
-                return AboutViewController(with: identity)
+            guard let identity = keyValue.value.content.contact?.identity else {
+                return nil
             }
-            return nil
+            return AboutViewController(with: identity)
         default:
             return ThreadViewController(with: keyValue, startReplying: false)
         }

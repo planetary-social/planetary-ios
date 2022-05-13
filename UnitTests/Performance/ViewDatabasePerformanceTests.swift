@@ -80,8 +80,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         }
     }
 
-    func testCurrentPostsStrategy() throws {
-        let strategy = CurrentPostsStrategy(wantPrivate: false, onlyFollowed: false)
+    func testCurrentPostsAlgorithm() throws {
+        let strategy = PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             startMeasuring()
             let keyValues = try! self.vdb.recentPosts(strategy: strategy, limit: 100, offset: 0)
@@ -90,18 +90,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         }
     }
 
-    func testPostsStrategy() throws {
-        let strategy = PostsStrategy(wantPrivate: false, onlyFollowed: false)
-        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
-            startMeasuring()
-            let keyValues = try! self.vdb.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues.count, 100)
-            stopMeasuring()
-        }
-    }
-
-    func testPostsAndContactsStrategy() throws {
-        let strategy = PostsAndContactsStrategy()
+    func testPostsAndContactsAlgorithm() throws {
+        let strategy = PostsAndContactsAlgorithm()
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             startMeasuring()
             let keyValues = try! self.vdb.recentPosts(strategy: strategy, limit: 100, offset: 0)

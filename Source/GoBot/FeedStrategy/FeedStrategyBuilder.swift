@@ -9,12 +9,13 @@
 import Foundation
 import SQLite
 
+/// 
 class FeedStrategyBuilder {
     func buildHomeFeedStrategy() -> FeedStrategy {
-        return PostsAndContactsStrategy()
+        return PostsAndContactsAlgorithm()
     }
 
     func buildDiscoverFeedStrategy() -> FeedStrategy {
-        return CurrentPostsStrategy(wantPrivate: false, onlyFollowed: false)
+        return PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
     }
 }
