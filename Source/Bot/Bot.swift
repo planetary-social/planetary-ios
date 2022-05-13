@@ -327,6 +327,18 @@ extension Bot {
         }
     }
 
+    func hashtags(identity: Identity, limit: Int) async throws -> [Hashtag] {
+        try await withCheckedThrowingContinuation { continuation in
+            hashtags(identity: identity, limit: limit) { hashtags, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: hashtags)
+            }
+        }
+    }
+
     func numberOfFollowers(identity: Identity) async throws -> FollowStats	 {
         try await withCheckedThrowingContinuation { continuation in
             numberOfFollowers(identity: identity) { count, error in

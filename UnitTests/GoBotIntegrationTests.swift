@@ -339,6 +339,53 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(mockPreloader.preloadPubsCallCount, 1)
     }
 
+    // MARK: Hashtags
+
+    func testOnePostWithThreeHashtag() async throws {
+        let post = Post(attributedText: NSAttributedString(string: "Hello #one #two #three"))
+        _ = sut.testingPublish(as: "alice", content: post)
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let identity = try XCTUnwrap(keypairs["alice"])
+
+        let hashtags = try await sut.hashtags(identity: identity, limit: 10)
+        XCTAssertEqual(hashtags.count, 3)
+    }
+
+    func testThreePostsWithOneHashtagEach() async throws {
+        let firstPost = Post(attributedText: NSAttributedString(string: "Hello #one"))
+        _ = sut.testingPublish(as: "alice", content: firstPost)
+
+        let secondPost = Post(attributedText: NSAttributedString(string: "Hello #two"))
+        _ = sut.testingPublish(as: "alice", content: secondPost)
+
+        let thirdPost = Post(attributedText: NSAttributedString(string: "Hello #three"))
+        _ = sut.testingPublish(as: "alice", content: thirdPost)
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let identity = try XCTUnwrap(keypairs["alice"])
+
+        let hashtags = try await sut.hashtags(identity: identity, limit: 10)
+        XCTAssertEqual(hashtags.count, 3)
+    }
+
+    func testLimitInHashtags() async throws {
+        let post = Post(attributedText: NSAttributedString(string: "Hello #one #two #three"))
+        _ = sut.testingPublish(as: "alice", content: post)
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let identity = try XCTUnwrap(keypairs["alice"])
+
+        let hashtags = try await sut.hashtags(identity: identity, limit: 2)
+        XCTAssertEqual(hashtags.count, 2)
+    }
+
     // MARK: Home feed
 
     func testWith10Posts() async throws {
