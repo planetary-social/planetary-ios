@@ -23,13 +23,22 @@ struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel 
     var body: some View {
         Button(action: viewModel.dismissPressed, label: {
             if viewModel.progress < 0.995 {
-                SwiftUI.Text(
-                    String(
-                        format: "%.0f%% \(Text.percentComplete.text)",
-                        viewModel.progress * 100
+                HStack(alignment: .bottom, spacing: 3) {
+                    Spacer()
+                    SwiftUI.Text(
+                        String(
+                            format: "%.0f%% \(Text.percentComplete.text)",
+                            viewModel.progress * 100
+                        )
                     )
-                )
-                .font(.headline)
+                    .font(.headline)
+                    
+                    LottieAnimation(name: "bouncing_ellipse")
+                        .frame(width: 26, height: 14)
+                        .padding(.bottom, -1)
+                    
+                    Spacer()
+                }
             } else {
                 Text.startUsingPlanetaryTitle.view
                     .transition(.opacity)
