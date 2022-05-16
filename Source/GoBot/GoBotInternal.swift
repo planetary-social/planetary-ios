@@ -285,11 +285,6 @@ class GoBotInternal {
             return false
         }
         
-        // only make connections if we dont have enough
-        guard self.openConnections() < 4 else {
-            return true
-        }
-        
         // connect to two peers based on go-ssb's internal logic (reliability)
         let disconnectSuccess = ssbDisconnectAllPeers()
         if !disconnectSuccess {
