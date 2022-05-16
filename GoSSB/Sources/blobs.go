@@ -133,3 +133,33 @@ func ssbBlobsAdd(fd int32) *C.char {
 
 	return C.CString(br.String())
 }
+
+//export ssbPushBlobToAllPeers
+func ssbPushBlobToAllPeers(ref string) bool {
+	defer logPanic()
+
+	var err error
+	defer func() {
+		if err != nil {
+			level.Error(log).Log("where", "ssbPushBlobToAllPeers", "error", err)
+		}
+	}()
+
+	lock.Lock()
+	if sbot == nil {
+		err = ErrNotInitialized
+		lock.Unlock()
+		return false
+	}
+	lock.Unlock()
+
+	br, err := refs.ParseBlobRef(ref)
+	if err != nil {
+		err = errors.Wrap(err, "could not parse blob ref")
+		return false
+	}
+
+	sbot.WantManager.PushBlob(br)
+
+	return true
+}
