@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.2] 2022-04-29
 - Fixed invitations for Gardening and Poetry pubs #503
+- Fixed onboarding analytics events #501
+- Added a button in the debug menu to reset forked feed protection #498
+- Fixed forked feed protection false positive after importing key #498
 
 ## [1.1.1] = 2022-04-18
 - Added Russian and Ukrainian language pubs to the community pub list #474
