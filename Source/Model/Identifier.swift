@@ -49,7 +49,7 @@ typealias InviteIdentifier = Identifier
 
 /// A public key identifier. For the identity @kS1GT34Sg+Kzjcqoehz//afmIQC5+CGo8O/KvMddVrM=.ed25519
 /// the public key would be kS1GT34Sg+Kzjcqoehz//afmIQC5+CGo8O/KvMddVrM=
-typealias PublicKey = String
+typealias KeyID = String
 
 extension Identifier {
 
@@ -64,7 +64,7 @@ extension Identifier {
     }
 
     /// the base64 number between the sigil, marker, and algorithm
-    var id: String {
+    var id: KeyID {
         let components = self.components(separatedBy: ".")
         guard components.count == 2 else { return Identifier.unsupported }
         let component = components[0] as Identifier

@@ -9,45 +9,87 @@
 import Foundation
 import Logger
 
-// new pub/peer advertisments
-// address is multiserver encoded like net:10.10.0.1:8008~shs:pybKey=
-// but only go bot has to deal with that.
-// just using sqlite the datastore for enable/worked
+/// A model for the new style pub/peer advertisement messages.
+/// Replaces the old 'pub' message type (`Pub` in Planetary code.
+///
+/// https://github.com/ssbc/ssb-device-address
 struct Address: Codable {
+    
     let type: ContentType
+    
+    /// Address in multiserver format (see `MultiserverAddress`)
     let address: String
+    
     let availability: Double
+    
+    var multiserver: MultiserverAddress? {
+        MultiserverAddress(string: address)
+    }
 }
 
+/// A message type that announces the location of a pub.
 struct Pub: ContentCodable {
     let type: ContentType
-    let address: MultiserverAddress
+    let address: PubAddress
     
     func toPeer() -> Peer {
-        Peer(multiserver: address)
+        address.peer
     }
 }
 
-/// Represents a [multiserver address](https://github.com/ssb-js/multiserver).
-/// Currently only supports net (TCP) and shs protocols
-struct MultiserverAddress: Codable, Hashable {
+/// A subtype of `Pub`, encodes the IP address or domain name of a pub. Note that the `key` parameter here is a full
+/// Identity string including sigil and feed format (unlike `MultiserverAddress`).
+struct PubAddress: Codable, Hashable {
     
-    let key: PublicKey
+    /// The pub's identity
+    let key: Identity
+    
+    /// The location of the pub server. An IP address or DNS name.
     let host: String
+    
+    /// The port to user when talking to the pub server.
     let port: UInt
     
-    var string: String {
-        "net:\(host):\(port)~shs:\(key)"
+    /// This address in multiserver format.
+    var multiserver: MultiserverAddress {
+        MultiserverAddress(keyID: key.id, host: host, port: port)
     }
     
-    internal init(key: PublicKey, host: String, port: UInt) {
-        self.key = key
+    /// This address as a peer
+    var peer: Peer {
+        Peer(tcpAddr: "\(host):\(port)", pubKey: key)
+    }
+}
+
+/// Represents a [multiserver address](https://github.com/ssbc/multiserver), pointing to another scuttlebutt peer that
+/// we can talk to.
+///
+/// Currently this model only supports net (TCP) and shs protocols, although in general the multiserver address format
+/// supports other ways of connecting.
+struct MultiserverAddress: Codable, Hashable {
+    
+    /// The key part of the peer's identifier. Note: this does not include the sigil or feed format identifier.
+    let keyID: KeyID
+    
+    /// The location of the pub server. An IP address or DNS name.
+    let host: String
+    
+    /// The port to user when talking to the peer.
+    let port: UInt
+    
+    /// The string representation of this address.
+    var string: String {
+        "net:\(host):\(port)~shs:\(keyID)"
+    }
+    
+    internal init(keyID: KeyID, host: String, port: UInt) {
+        self.keyID = keyID
         self.host = host
         self.port = port
     }
     
     /// Parses a multiserver address string like
-    /// "net:wx.larpa.net:8008~shs:DTNmX+4SjsgZ7xyDh5xxmNtFqa6pWi5Qtw7cE8aR9TQ=". only supports net (TCP) and shs
+    /// "net:wx.larpa.net:8008~shs:DTNmX+4SjsgZ7xyDh5xxmNtFqa6pWi5Qtw7cE8aR9TQ=". Only supports net (TCP) and shs
     /// protocols currently.
     init?(string: String) {
         var address: MultiserverAddress?
@@ -70,8 +112,8 @@ struct MultiserverAddress: Codable, Hashable {
                     let port = UInt(string[portRange]) {
                     
                     let host = String(string[hostRange])
-                    let key = String(string[keyRange])
-                    address = MultiserverAddress(key: key, host: host, port: port)
+                    let keyID = String(string[keyRange])
+                    address = MultiserverAddress(keyID: keyID, host: host, port: port)
                 }
             }
         } catch {

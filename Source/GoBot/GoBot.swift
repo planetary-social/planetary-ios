@@ -289,13 +289,19 @@ class GoBot: Bot {
 
     // MARK: Sync
     
-    func seedPubAddresses(addresses: [MultiserverAddress], queue: DispatchQueue, completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(
+        addresses: [PubAddress],
+        queue: DispatchQueue,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         utilityQueue.async {
             do {
                 try addresses.forEach { address throws in
-                    try self.database.saveAddress(feed: address.key,
-                                                  address: address.string,
-                                                  redeemed: nil)
+                    try self.database.saveAddress(
+                        feed: address.key,
+                        address: address.multiserver,
+                        redeemed: nil
+                    )
                 }
                 queue.async {
                     completion(.success(()))
@@ -519,10 +525,10 @@ class GoBot: Bot {
                     if ssbInviteAccept(goStr) {
                         do {
                             let feed = star.feed
-                            let address = star.address.string
+                            let address = star.address
                             let redeemed = Date().timeIntervalSince1970 * 1000
-                            try self.database.saveAddress(feed: feed, address: address, redeemed: redeemed)
-                            Analytics.shared.trackDidJoinPub(at: star.address.string)
+                            try self.database.saveAddress(feed: feed, address: address.multiserver, redeemed: redeemed)
+                            Analytics.shared.trackDidJoinPub(at: star.address.multiserver.string)
                         } catch {
                             CrashReporting.shared.reportIfNeeded(error: error)
                         }
