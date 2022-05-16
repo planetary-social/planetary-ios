@@ -61,12 +61,6 @@ class ViewDatabaseTests: XCTestCase {
             XCTFail("\(error)")
         }
     }
-
-    func test09_recent() throws {
-        let strategy = CurrentPostsStrategy(wantPrivate: false, onlyFollowed: true)
-        let kv = try self.vdb.recentPosts(strategy: strategy, limit: 1000, offset: nil)
-        XCTAssertEqual(kv.count, 8)
-    }
     
     func test10_names() {
         do {

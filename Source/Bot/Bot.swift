@@ -148,6 +148,10 @@ protocol Bot: AnyObject {
     
     func friends(identity: Identity, completion:  @escaping ContactsCompletion)
 
+    /// Fetch the number of follows and followers of an identity
+    ///
+    /// - parameter identity: The identity to make the query
+    /// - parameter completion: The completion block to handle the results
     func numberOfFollowers(identity: Identity, completion: @escaping ((FollowStats, Error?) -> Void))
 
     // TODO the func names should be swapped
@@ -162,7 +166,14 @@ protocol Bot: AnyObject {
     // MARK: Hashtags
 
     func hashtags(completion: @escaping HashtagsCompletion)
+
+    /// Fetch the hashtags that someone has published to recently
+    ///
+    /// - parameter identity: The publisher's identity
+    /// - parameter limit: The maximum number of hashtags to look for
+    /// - parameter completion: The completion block to handle the results
     func hashtags(identity: Identity, limit: Int, completion: @escaping HashtagsCompletion)
+
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion)
     
     // MARK: Feed
@@ -327,6 +338,13 @@ extension Bot {
         }
     }
 
+    /// Fetch the hashtags that someone has published to recently
+    ///
+    /// - parameter identity: The publisher's identity
+    /// - parameter limit: The maximum number of hashtags to look for
+    /// - returns: Array with the hashtags found
+    ///
+    /// This function will throw if it cannot access the database
     func hashtags(identity: Identity, limit: Int) async throws -> [Hashtag] {
         try await withCheckedThrowingContinuation { continuation in
             hashtags(identity: identity, limit: limit) { hashtags, error in
@@ -339,6 +357,12 @@ extension Bot {
         }
     }
 
+    /// Fetch the number of follows and followers of an identity
+    ///
+    /// - parameter identity: The identity to make the query
+    /// - returns: A FollowStats object with the number of followers and follows
+    ///
+    /// This function will throw if it cannot access the database
     func numberOfFollowers(identity: Identity) async throws -> FollowStats	 {
         try await withCheckedThrowingContinuation { continuation in
             numberOfFollowers(identity: identity) { count, error in

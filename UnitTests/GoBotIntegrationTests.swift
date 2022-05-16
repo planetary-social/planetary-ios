@@ -430,6 +430,21 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     func testFollowingOnePerson() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my follow
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 1)
+    }
+
+    func testFollowingOnePersonWithoutAbout() async throws {
         // Follow alice
         _ = sut.testingFollow(nick: "alice")
 
@@ -437,7 +452,7 @@ class GoBotIntegrationTests: XCTestCase {
 
         // Home feed should have my follow
         let proxy = try await sut.recent()
-        XCTAssertEqual(proxy.count, 1)
+        XCTAssertEqual(proxy.count, 0)
     }
 
     func testUnknownPersonWith10Posts() async throws {
@@ -454,8 +469,12 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     func testPersonAtOneHopWith10Posts() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+
         // Follow alice
         _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
 
         // Alice publishes 10 posts
         for i in 0..<10 {
@@ -470,11 +489,17 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     func testPersonAtTwoHopsWith10Posts() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let bob = try XCTUnwrap(keypairs["bob"])
+
         // Follow alice
         _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
 
         // Alice follows Bob
         _ = sut.testingFollow(as: "alice", nick: "bob")
+        _ = sut.testingPublish(as: "bob", content: About(about: bob, name: "Bob"))
 
         // Bob publishes 10 posts
         for i in 0..<10 {
@@ -489,11 +514,17 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     func testPersonAtOneHopeFollowsAnotherAtTwoHops() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let bob = try XCTUnwrap(keypairs["bob"])
+
         // Follow alice
         _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
 
         // Alice follows Bob
         _ = sut.testingFollow(as: "alice", nick: "bob")
+        _ = sut.testingPublish(as: "bob", content: About(about: bob, name: "Bob"))
 
         try await sut.refresh(load: .short)
 
