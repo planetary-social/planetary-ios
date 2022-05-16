@@ -96,6 +96,7 @@ class ContactView: KeyValueView {
             self.imageView.set(image: about.image)
         } else {
             self.label.text = identity
+            self.imageView.set(image: nil)
         }
         self.setRelationship(to: identity)
     }

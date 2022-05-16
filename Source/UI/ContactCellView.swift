@@ -59,7 +59,6 @@ class ContactCellView: KeyValueView {
     }
 
     convenience init(keyValue: KeyValue) {
-        assert(keyValue.value.content.isPost)
         self.init()
         self.update(with: keyValue)
     }
@@ -75,7 +74,7 @@ class ContactCellView: KeyValueView {
         self.headerView.update(with: keyValue)
 
         if let contact = keyValue.value.content.contact {
-            contactView.showSkeleton()
+            contactView.update(with: contact.identity, about: nil)
             Bots.current.about(identity: contact.identity) { [weak contactView] about, error in
                 DispatchQueue.main.async {
                     contactView?.update(with: contact.identity, about: about)
