@@ -1040,16 +1040,17 @@ class ViewDatabase {
         }
 
         // swiftlint:disable indentation_width
-        let query = try connection.prepare("""
+        let queryString = """
         SELECT SUM(CASE WHEN follow.author = ? THEN 1 ELSE 0 END) as followers_count,
                SUM(CASE WHEN follower.author = ? THEN 1 ELSE 0 END) as follows_count
         FROM contacts
         JOIN authors follower ON follower.id = contacts.author_id
         JOIN authors follow ON follow.id = contacts.contact_id
         WHERE contacts.state = 1;
-        """)
+        """
         // swiftlint:enable indentation_width
 
+        let query = try connection.prepare(queryString)
         return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> FollowStats in
             let followersCount = try countsRow.get(Expression<Int>("followers_count"))
             let followsCount = try countsRow.get(Expression<Int>("follows_count"))
