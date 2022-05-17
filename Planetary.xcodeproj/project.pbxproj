@@ -701,6 +701,10 @@
 		C9604C2927C547FB003D1A6D /* ConnectedPeerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */; };
 		C978D35127BF051700842458 /* OperationQueue+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C978D35027BF018600842458 /* OperationQueue+Async.swift */; };
 		C978D35327BF053B00842458 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
+		C982CBD12833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
+		C982CBD22833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
+		C982CBD42833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */; };
+		C982CBD52833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
@@ -1342,6 +1346,8 @@
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListView.swift; sourceTree = "<group>"; };
 		C978D35027BF018600842458 /* OperationQueue+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Async.swift"; sourceTree = "<group>"; };
+		C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
+		C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchworkAlgorithm.swift; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
 		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
 		C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
@@ -1771,6 +1777,7 @@
 				0AF9E0A12465D7A700910575 /* ThreadReplyPaginatedDataSource.swift */,
 				0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */,
 				C9C3787727C6881000238B58 /* ConnectedPeerListCoordinator.swift */,
+				C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2285,6 +2292,7 @@
 				5BC297532805F4A800C0CD81 /* FeedStrategy.swift */,
 				5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */,
 				5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */,
+				C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */,
 			);
 			path = FeedStrategy;
 			sourceTree = "<group>";
@@ -3580,6 +3588,7 @@
 				C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */,
 				531A8A4721FA36A600D5C8C0 /* ContentTests.swift in Sources */,
 				5316E96121FFED2E0053832E /* Vote.swift in Sources */,
+				C982CBD22833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */,
 				0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
@@ -3600,6 +3609,7 @@
 				2343E7802326953F00E0B6F5 /* Post+Blob.swift in Sources */,
 				535754F622692B4B002A6989 /* BotStatistics.swift in Sources */,
 				53AD3FEB22776A3C005228F9 /* Value.swift in Sources */,
+				C982CBD52833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */,
 				53E26C58230382DC009240B2 /* Date+ISO8601.swift in Sources */,
 				53B4F5F722B85DE300027C6A /* Markdownable.swift in Sources */,
 				23CA4B92232291C1005B35E8 /* Blob+NSAttributedString.swift in Sources */,
@@ -3771,6 +3781,7 @@
 				53211CD82281D587007FB785 /* EditValueView.swift in Sources */,
 				53E29CC622D13272008A2CB1 /* ChannelViewController.swift in Sources */,
 				5374DF4021E9ADFE00956122 /* AppController.swift in Sources */,
+				C982CBD12833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */,
 				53C966E4236D074700E70689 /* Bot+Blobs.swift in Sources */,
 				0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */,
 				C9A2DE3227CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift in Sources */,
@@ -4073,6 +4084,7 @@
 				53575509226A3113002A6989 /* KeyValueTableViewDataSource.swift in Sources */,
 				531B92B122CAC203005D5255 /* PostButtonsView.swift in Sources */,
 				531D0A1321EACC0A008E40A8 /* GoBotViewController.swift in Sources */,
+				C982CBD42833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */,
 				0AAF8C4325C6444B00FD8D0F /* CommunityCellView.swift in Sources */,
 				53C2B12C2294E8A50018D0A8 /* AppConfiguration+Keychain.swift in Sources */,
 				5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */,

@@ -14,6 +14,7 @@ extension Text {
             Text.Onboarding.StepTitle.self,
             Text.ManagePubs.self,
             Text.Preview.self,
+            Text.FeedAlgorithm.self,
             Text.PublicWebHosting.self,
             Text.Push.self,
             Text.Reporting.self,
@@ -319,6 +320,16 @@ extension Text {
     enum Preview: String, Localizable, CaseIterable {
         case title = "Advanced Settings"
         case footer = "New features that are being developed and tested, and haven't found a permanent home yet in the app."
+    }
+}
+
+// MARK: - Feed Algorithms
+
+extension Text {
+
+    enum FeedAlgorithm: String, Localizable, CaseIterable {
+        case feedAlgorithmTitle = "Home Feed Algorithm"
+        case feedAlgorithmDescription = "Choose the way your Home Feed is sorted and filtered."
     }
 }
 

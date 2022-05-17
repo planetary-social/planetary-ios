@@ -211,6 +211,9 @@
 "Preview.title" = "Advanced Settings";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
 
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the way your Home Feed is sorted and filtered.";
+
 "PublicWebHosting.enabled" = "Enabled";
 "PublicWebHosting.title" = "Public Web Hosting";
 "PublicWebHosting.footer" = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible.";

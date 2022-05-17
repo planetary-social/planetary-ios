@@ -1172,12 +1172,28 @@ class GoBot: Bot {
     }
 
     // MARK: Feeds
+    
+    /// The algorithm we use to filter and sort the home feed.
+    var homeFeedStrategy: FeedStrategy {
+        if let data = userDefaults.object(forKey: "homeFeedStrategy") as? Data,
+           let decodedObject = NSKeyedUnarchiver.unarchiveObject(with: data),
+           let strategy = decodedObject as? FeedStrategy {
+            return strategy
+        }
+        
+        return PostsAndContactsAlgorithm()
+    }
 
+    /// The algorithm we use to filter and sort the discover tab feed.
+    var discoverFeedStrategy: FeedStrategy {
+        PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
+    }
+    
     // old recent
     func recent(completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {
             do {
-                let ds = try self.database.paginated(onlyFollowed: true)
+                let ds = try self.database.paginatedFeed(with: self.homeFeedStrategy)
                 DispatchQueue.main.async { completion(ds, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
@@ -1188,7 +1204,7 @@ class GoBot: Bot {
     func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
         userInitiatedQueue.async {
             do {
-                let key = try self.database.paginatedTop(onlyFollowed: true)
+                let key = try self.database.messageIDAtTopOfFeed(with: self.homeFeedStrategy)
                 queue.async {
                     completion(key)
                 }
@@ -1204,7 +1220,7 @@ class GoBot: Bot {
     func everyone(completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {
             do {
-                let msgs = try self.database.paginated(onlyFollowed: false)
+                let msgs = try self.database.paginatedFeed(with: self.discoverFeedStrategy)
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
@@ -1215,7 +1231,7 @@ class GoBot: Bot {
     func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
         userInitiatedQueue.async {
             do {
-                let key = try self.database.paginatedTop(onlyFollowed: false)
+                let key = try self.database.messageIDAtTopOfFeed(with: self.discoverFeedStrategy)
                 queue.async {
                     completion(key)
                 }

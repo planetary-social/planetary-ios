@@ -211,6 +211,9 @@
 "Preview.title" = "Niestabilne Funkcjonalności";
 "Preview.footer" = "Nowe funkcje w fazie rozwoju i testów, które nie znalazły jeszcze stałego miejsca w aplikacji.";
 
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the way your Home Feed is sorted and filtered.";
+
 "PublicWebHosting.enabled" = "Aktywny";
 "PublicWebHosting.title" = "Publiczny Web-hosting";
 "PublicWebHosting.footer" = "Włącz, aby Twoje treści pojawiały się publicznych bramkach internetowych. Może minąć kilka godzin, zanim zmiany będą widoczne.";

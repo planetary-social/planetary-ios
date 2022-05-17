@@ -211,6 +211,9 @@
 "Preview.title" = "Configuración avanzada";
 "Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
 
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the way your Home Feed is sorted and filtered.";
+
 "PublicWebHosting.enabled" = "Activado";
 "PublicWebHosting.title" = "Web Pública";
 "PublicWebHosting.footer" = "Indicá que querés que tus posts se muestren en sitios web públicos. Los cambios pueden tomar un par de horas en ser efectuados.";

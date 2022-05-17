@@ -29,12 +29,34 @@ class SettingsViewController: DebugTableViewController {
     }
 
     override internal func updateSettings() {
-        self.settings = [self.publicWebHosting(),
-                         self.push(),
-                         self.usage(),
-                         self.managePubs(),
-                         self.preview()]
+        self.settings = [
+            feedStrategy(),
+            publicWebHosting(),
+            push(),
+            usage(),
+            managePubs(),
+            preview()
+        ]
         super.updateSettings()
+    }
+    
+    // MARK: Feed Algorithm Selection
+    
+    private func feedStrategy() -> DebugTableViewController.Settings {
+        let settings = [
+            DebugTableViewCellModel(
+                title: Text.FeedAlgorithm.feedAlgorithmTitle.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let controller = FeedStrategySelectionViewController()
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        return (Text.FeedAlgorithm.feedAlgorithmTitle.text, settings, Text.FeedAlgorithm.feedAlgorithmDescription.text)
     }
 
     // MARK: Public web hosting

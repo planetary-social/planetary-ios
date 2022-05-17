@@ -211,6 +211,9 @@
 "Preview.title" = "Erweiterte Einstellungen";
 "Preview.footer" = "Neue Funktionen, die entwickelt und getestet werden und noch kein permanentes Zuhause in der App gefunden haben.";
 
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the way your Home Feed is sorted and filtered.";
+
 "PublicWebHosting.enabled" = "Aktiviert";
 "PublicWebHosting.title" = "Öffentliches Web-Hosting";
 "PublicWebHosting.footer" = "Opt-in zeigt an, dass Ihr Feed auf öffentlichen Gateways erscheinen soll. Es kann einige Stunden dauern, bis die Änderungen sichtbar sind.";

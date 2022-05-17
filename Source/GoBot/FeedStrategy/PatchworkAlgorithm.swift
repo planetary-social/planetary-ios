@@ -12,7 +12,7 @@ import SQLite
 /// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
 ///
 /// It doesn't include pubs follows and posts in the feed
-class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
+class PatchworkAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     private let countNumberOfKeysQuery = """
@@ -42,7 +42,14 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     private let fetchKeysQuery = """
-        SELECT messagekeys.key
+        SELECT messagekeys.key,
+               (SELECT tangled_message.claimed_at
+                FROM tangles
+                JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
+                WHERE tangles.root == messages.msg_id
+                /*WHERE tangled_message.claimed_at < ?*/
+                ORDER BY tangled_message.claimed_at DESC LIMIT 1
+               ) as last_reply
         FROM messages
         JOIN authors ON authors.id == messages.author_id
         JOIN messagekeys ON messagekeys.id == messages.msg_id
@@ -63,7 +70,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
             ) OR authors.id == ?)
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
-        ORDER BY messages.claimed_at DESC
+        ORDER BY last_reply DESC, messages.claimed_at DESC
         LIMIT ? OFFSET ?;
     """
     // swiftlint:enable indentation_width
@@ -94,7 +101,14 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 JOIN messages AS tangled_message ON tangled_message.msg_id == tangles.msg_ref
                 JOIN authors ON authors.id == tangled_message.author_id
                 WHERE tangles.root == messages.msg_id LIMIT 3
-               ) as replies
+               ) as replies,
+               (SELECT tangled_message.claimed_at
+                FROM tangles
+                JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
+                WHERE tangles.root == messages.msg_id
+                /*WHERE tangled_message.claimed_at < ?*/
+                ORDER BY tangled_message.claimed_at DESC LIMIT 1
+               ) as last_reply
         FROM messages
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref
         LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
@@ -116,7 +130,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
              OR authors.id == ?)
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
-        ORDER BY claimed_at DESC
+        ORDER BY last_reply DESC, claimed_at DESC
         LIMIT ? OFFSET ?;
     """
     // swiftlint:enable indentation_width
@@ -162,6 +176,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
     func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         let query = try connection.prepare(fetchKeyValuesQuery)
         let bindings: [Binding?] = [userId, userId, Date().millisecondsSince1970, limit, offset ?? 0]
+//        let bindings: [Binding?] = [userId, Date().millisecondsSince1970, userId, Date().millisecondsSince1970, limit, offset ?? 0]
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, connection: connection)
         }

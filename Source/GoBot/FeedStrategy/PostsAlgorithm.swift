@@ -18,7 +18,7 @@ import SQLite
 /// - filter follows and followers in the same query
 /// - fetch the number of replies in the same query
 /// - remove additional queryies made after getting the results
-class PostsAlgorithm: FeedStrategy {
+class PostsAlgorithm: NSObject, FeedStrategy {
     // swiftlint:enable type_body_length
 
     var wantPrivate: Bool
@@ -27,6 +27,16 @@ class PostsAlgorithm: FeedStrategy {
     init(wantPrivate: Bool, onlyFollowed: Bool) {
         self.wantPrivate = wantPrivate
         self.onlyFollowed = onlyFollowed
+    }
+    
+    required init?(coder: NSCoder) {
+        wantPrivate = coder.decodeBool(forKey: "wantPrivate")
+        onlyFollowed = coder.decodeBool(forKey: "onlyFollowed")
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(wantPrivate, forKey: "wantPrivate")
+        coder.encode(onlyFollowed, forKey: "onlyFollowed")
     }
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
