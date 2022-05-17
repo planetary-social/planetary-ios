@@ -1018,7 +1018,8 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, currentCount + spamCount + 1)
+            // 4 = 1 for alice following denise + 3 for the three follows denise has
+            XCTAssertEqual(msgs.count, currentCount + spamCount + 1 + 4)
             exRecent.fulfill()
         }
         self.wait(for: [exRecent], timeout: 10)
@@ -1049,11 +1050,11 @@ class GoBotOrderedTests: XCTestCase {
         
         // back to normal
         let exClean = self.expectation(description: "\(#function) recent")
-        GoBotOrderedTests.shared.recent {
-           msgs, err in
-           XCTAssertNil(err)
-           XCTAssertEqual(msgs.count, currentCount)
-           exClean.fulfill()
+        GoBotOrderedTests.shared.recent { msgs, err in
+            XCTAssertNil(err)
+            // 1 = still have my follow to denise
+            XCTAssertEqual(msgs.count, currentCount + 1)
+            exClean.fulfill()
         }
         self.wait(for: [exClean], timeout: 10)
         
@@ -1082,6 +1083,16 @@ class GoBotOrderedTests: XCTestCase {
         // TODO: test they can't mention us
     }
     func test210_alice_posts_delete_request() {
+        // Follow alice
+        let exFollow = self.expectation(description: "\(#function) follow")
+        GoBotOrderedTests.shared.publish(content: Contact(contact: GoBotOrderedTests.pubkeys["alice"]!, following: true)) {
+            ref, err in
+            XCTAssertNil(err)
+            XCTAssertNotNil(ref)
+            exFollow.fulfill()
+        }
+        self.wait(for: [exFollow], timeout: 10)
+
         GoBotOrderedTests.shared.testRefresh(self)
 
         let ex1 = self.expectation(description: "\(#function) recent1")
