@@ -15,6 +15,19 @@ import SQLite
 class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
+    /// SQL query to count the total number of items in the feed
+    ///
+    /// This query should be as fast as possible so only required joins and where clauses where used.
+    /// The result should be the same as the number of items returned by the other two queries in this class.
+    /// The where clauses are as follows:
+    /// - Only posts and follows (contacts) are considered
+    /// - Discard private messages
+    /// - Discard hidden messages
+    /// - Only root posts
+    /// - Only follows (contacts) to people we know something about and discard follows to pubs
+    /// - Only posts and follows from user's follows or from user itsef
+    /// - Discard posts and follows from pubs
+    /// - Discard posts and follows from the future
     private let countNumberOfKeysQuery = """
         SELECT COUNT(*)
         FROM messages
@@ -41,6 +54,21 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
     // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
+    /// SQL query to return the feed's keys
+    ///
+    /// This query should be as fast as possible so only required joins and where clauses where used.
+    /// The result should be the same as the number of items returned by the other two queries in this class.
+    /// The where clauses are as follows:
+    /// - Only posts and follows (contacts) are considered
+    /// - Discard private messages
+    /// - Discard hidden messages
+    /// - Only root posts
+    /// - Only follows (contacts) to people we know something about and discard follows to pubs
+    /// - Only posts and follows from user's follows or from user itsef
+    /// - Discard posts and follows from pubs
+    /// - Discard posts and follows from the future
+    ///
+    /// The result is sorted by  date
     private let fetchKeysQuery = """
         SELECT messagekeys.key
         FROM messages
@@ -69,6 +97,31 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
     // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
+    /// SQL query to return the feed's keyvalues
+    ///
+    /// This query should be as fast as possible and contain just the minimum data
+    /// to display it in the Home or Discover feed. The result should be the same as the number of items
+    /// returned by the other two queries in this class.
+    ///
+    /// The select clauses are as follows:
+    /// - All data from message, post, contact, tangle, messagekey, author and about of the author
+    /// - The identified of the followed author if the message is a follow (contact)
+    /// - A bool column indicating if the message has blobs
+    /// - A bool column indicating if the message has feed mentions
+    /// - A bool column indicating if the message has message mentions
+    /// - The number of replies to the message
+    ///
+    /// The where clauses are as follows:
+    /// - Only posts and follows (contacts) are considered
+    /// - Discard private messages
+    /// - Discard hidden messages
+    /// - Only root posts
+    /// - Only follows (contacts) to people we know something about and discard follows to pubs
+    /// - Only posts and follows from user's follows or from user itsef
+    /// - Discard posts and follows from pubs
+    /// - Discard posts and follows from the future
+    ///
+    /// The result is sorted by  date
     private let fetchKeyValuesQuery = """
         SELECT messages.*,
                posts.*,

@@ -619,8 +619,8 @@
 		5B2A4F9928205C8900A5BE48 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
 		5B2A4F9A28205C8C00A5BE48 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
 		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
-		5B4C8C73282D45E700803547 /* FollowStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* FollowStats.swift */; };
-		5B4C8C74282D45E800803547 /* FollowStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* FollowStats.swift */; };
+		5B4C8C73282D45E700803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
+		5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
@@ -646,7 +646,7 @@
 		5BC2975A2806022C00C0CD81 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
 		5BC2975D2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
 		5BC2975E2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
-		5BC3DE6128299CB900F6A363 /* FollowStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* FollowStats.swift */; };
+		5BC3DE6128299CB900F6A363 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE28DFC27CD7BA1004D7D27 /* Analytics */; };
 		5BE69B0D27CEA1B70013D51D /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE69B0C27CEA1B70013D51D /* Analytics */; };
 		5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = 5BFFCE8F27B56D300088F6D6 /* Logger */; };
@@ -1297,7 +1297,7 @@
 		5BC297532805F4A800C0CD81 /* FeedStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategy.swift; sourceTree = "<group>"; };
 		5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAlgorithm.swift; sourceTree = "<group>"; };
 		5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
-		5BC3DE6028299CB900F6A363 /* FollowStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowStats.swift; sourceTree = "<group>"; };
+		5BC3DE6028299CB900F6A363 /* SocialStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialStats.swift; sourceTree = "<group>"; };
 		5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		606DCE79703F49AE5AB530BD /* Pods-APITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.release.xcconfig"; sourceTree = "<group>"; };
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -2287,7 +2287,7 @@
 				0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */,
 				0A674A28253F3C4400698CF7 /* Draft.swift */,
 				C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */,
-				5BC3DE6028299CB900F6A363 /* FollowStats.swift */,
+				5BC3DE6028299CB900F6A363 /* SocialStats.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -3599,7 +3599,7 @@
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
-				5B4C8C74282D45E800803547 /* FollowStats.swift in Sources */,
+				5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */,
 				53211CE522838107007FB785 /* UIImage+Resize.swift in Sources */,
 				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				53211CE622838121007FB785 /* Image+UIImage.swift in Sources */,
@@ -3653,7 +3653,7 @@
 				5314EF4722EA28820065D02A /* BotError.swift in Sources */,
 				5314EF6922EA2B3E0065D02A /* Data+JSON.swift in Sources */,
 				238793E5246EC34F00C9AD36 /* RepeatingTimer.swift in Sources */,
-				5B4C8C73282D45E700803547 /* FollowStats.swift in Sources */,
+				5B4C8C73282D45E700803547 /* SocialStats.swift in Sources */,
 				5314EF5522EA29210065D02A /* Address.swift in Sources */,
 				5314EF7322EA34B60065D02A /* String+PhoneNumberKit.swift in Sources */,
 				2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */,
@@ -3936,7 +3936,7 @@
 				0A1CA4C524E5D714006CAC43 /* FollowOperation.swift in Sources */,
 				53631EF123A95E7B009C6999 /* NSAttributedString+Empty.swift in Sources */,
 				533EDBF023861169008B3565 /* Caches.swift in Sources */,
-				5BC3DE6128299CB900F6A363 /* FollowStats.swift in Sources */,
+				5BC3DE6128299CB900F6A363 /* SocialStats.swift in Sources */,
 				5336611122D965B300100707 /* UIColor+Random.swift in Sources */,
 				C9F1C85527C9875A005A3228 /* Color+Hex.swift in Sources */,
 				8DA9567D230DA46C00A334EB /* UIButton+Text.swift in Sources */,
@@ -4838,7 +4838,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -4871,7 +4871,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;

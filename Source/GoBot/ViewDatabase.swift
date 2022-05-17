@@ -1033,28 +1033,29 @@ class ViewDatabase {
         }
     }
     
-    /// Returns the number of followers for a given identity
-    func countNumberOfFollowers(feed: Identity) throws -> FollowStats {
+    /// Returns the number of followers and follows for a given identity
+    func countNumberOfFollowersAndFollows(feed: Identity) throws -> SocialStats {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
         // swiftlint:disable indentation_width
-        let query = try connection.prepare("""
+        let queryString = """
         SELECT SUM(CASE WHEN follow.author = ? THEN 1 ELSE 0 END) as followers_count,
                SUM(CASE WHEN follower.author = ? THEN 1 ELSE 0 END) as follows_count
         FROM contacts
         JOIN authors follower ON follower.id = contacts.author_id
         JOIN authors follow ON follow.id = contacts.contact_id
         WHERE contacts.state = 1;
-        """)
+        """
         // swiftlint:enable indentation_width
 
-        return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> FollowStats in
+        let query = try connection.prepare(queryString)
+        return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> SocialStats in
             let followersCount = try countsRow.get(Expression<Int>("followers_count"))
             let followsCount = try countsRow.get(Expression<Int>("follows_count"))
-            return FollowStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
-        }.first ?? FollowStats(numberOfFollowers: 0, numberOfFollows: 0)
+            return SocialStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
+        }.first ?? SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
     }
 
     // who is this feed blocking
@@ -1778,7 +1779,7 @@ class ViewDatabase {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let query = try connection.prepare("""
+        let queryString = """
         SELECT c.name AS channel_name
         FROM channel_assignments ca
         JOIN messages m ON m.msg_id = ca.msg_ref
@@ -1787,7 +1788,8 @@ class ViewDatabase {
         WHERE a.author = ?
         ORDER BY m.received_at DESC
         LIMIT ? OFFSET 0;
-        """)
+        """
+        let query = try connection.prepare(queryString)
         let bindings: [Binding?] = [
             identity,
             limit

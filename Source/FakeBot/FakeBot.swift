@@ -66,7 +66,7 @@ class FakeBot: Bot {
 
     func hashtags(completion: @escaping HashtagsCompletion) { }
 
-    func hashtags(identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) { }
+    func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) { }
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) { }
 
@@ -94,7 +94,7 @@ class FakeBot: Bot {
     
     func friends(identity: Identity, completion: @escaping ContactsCompletion) { }
 
-    func numberOfFollowers(identity: Identity, completion: @escaping ((FollowStats, Error?) -> Void)) { }
+    func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void)) { }
     
     func blocks(identity: Identity, completion: @escaping ContactsCompletion) { }
     
