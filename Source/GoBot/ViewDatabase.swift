@@ -1775,10 +1775,10 @@ class ViewDatabase {
     }
 
     func hashtags(identity: Identity, limit: Int = 100) throws -> [Hashtag] {
-        guard let db = self.openDB else {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let qry = try db.prepare("""
+        let query = try connection.prepare("""
         SELECT c.name AS channel_name
         FROM channel_assignments ca
         JOIN messages m ON m.msg_id = ca.msg_ref
@@ -1792,8 +1792,8 @@ class ViewDatabase {
             identity,
             limit
         ]
-        return try qry.bind(bindings).prepareRowIterator().map { row -> Hashtag in
-            let channelName = try row.get(Expression<String>("channel_name"))
+        return try query.bind(bindings).prepareRowIterator().map { channelRow -> Hashtag in
+            let channelName = try channelRow.get(Expression<String>("channel_name"))
             return Hashtag(name: channelName)
         }
     }

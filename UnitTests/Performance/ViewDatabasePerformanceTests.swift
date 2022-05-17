@@ -19,14 +19,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
     override func setUpWithError() throws {
         viewDatabase.close()
         viewDatabase = ViewDatabase()
-        let dbDir = try XCTUnwrap(NSURL.fileURL(
-            withPathComponents: [NSTemporaryDirectory(), "ViewDatabaseBenchmarkTests"]
-        ))
-        dbURL = try XCTUnwrap(NSURL.fileURL(withPathComponents: [
-            NSTemporaryDirectory(),
-            "ViewDatabaseBenchmarkTests",
-            "schema-built\(ViewDatabase.schemaVersion).sqlite"
-        ]))
+        let dbDir = FileManager.default.temporaryDirectory.appendingPathComponent("ViewDatabaseBenchmarkTests")
+        dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
         try? FileManager.default.removeItem(at: dbURL)
         try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
         let sqliteURL = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: "Feed_big", withExtension: "sqlite"))
