@@ -1033,8 +1033,8 @@ class ViewDatabase {
         }
     }
     
-    /// Returns the number of followers for a given identity
-    func countNumberOfFollowers(feed: Identity) throws -> FollowStats {
+    /// Returns the number of followers and follows for a given identity
+    func countNumberOfFollowersAndFollows(feed: Identity) throws -> SocialStats {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1051,11 +1051,11 @@ class ViewDatabase {
         // swiftlint:enable indentation_width
 
         let query = try connection.prepare(queryString)
-        return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> FollowStats in
+        return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> SocialStats in
             let followersCount = try countsRow.get(Expression<Int>("followers_count"))
             let followsCount = try countsRow.get(Expression<Int>("follows_count"))
-            return FollowStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
-        }.first ?? FollowStats(numberOfFollowers: 0, numberOfFollows: 0)
+            return SocialStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
+        }.first ?? SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
     }
 
     // who is this feed blocking
@@ -1141,7 +1141,7 @@ class ViewDatabase {
 
     // MARK: pagination
     // returns a pagination proxy for the home (or recent) view
-    func  paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
+    func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
         let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
         return try PaginatedPrefetchDataProxy(with: src)
     }

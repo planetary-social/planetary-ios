@@ -85,7 +85,7 @@ class ContactCellView: KeyValueView {
                     contactView?.update(with: contact.identity, about: about)
                 }
             }
-            Bots.current.numberOfFollowers(identity: contact.identity) { [weak contactView] stats, _ in
+            Bots.current.socialStats(for: contact.identity) { [weak contactView] stats, _ in
                 DispatchQueue.main.async {
                     contactView?.update(
                         numberOfFollowers: stats.numberOfFollowers,
@@ -93,7 +93,7 @@ class ContactCellView: KeyValueView {
                     )
                 }
             }
-            Bots.current.hashtags(identity: contact.identity, limit: 3) { [weak contactView] hashtags, _ in
+            Bots.current.hashtags(usedBy: contact.identity, limit: 3) { [weak contactView] hashtags, _ in
                 DispatchQueue.main.async {
                     contactView?.update(hashtags: hashtags)
                 }

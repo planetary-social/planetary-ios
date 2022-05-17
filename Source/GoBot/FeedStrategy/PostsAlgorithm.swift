@@ -10,7 +10,7 @@ import Foundation
 import SQLite
 
 // swiftlint:disable type_body_length
-/// This algorithm returns a feed just with user's and follows' posts
+/// This algorithm returns a feed just with user's and follows' root posts
 ///
 /// This algorithm is the same algorithm we used to have in production, I'm leaving this here for comparison.
 /// For this reason, I didn't put effort in optimizing this algorithm even though there is room for improvement:

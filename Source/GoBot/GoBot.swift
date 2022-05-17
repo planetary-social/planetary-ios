@@ -1088,16 +1088,16 @@ class GoBot: Bot {
         }
     }
 
-    func numberOfFollowers(identity: Identity, completion: @escaping ((FollowStats, Error?) -> Void)) {
+    func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void)) {
         userInitiatedQueue.async { [database] in
             do {
-                let count = try database.countNumberOfFollowers(feed: identity)
+                let count = try database.countNumberOfFollowersAndFollows(feed: identity)
                 DispatchQueue.main.async {
                     completion(count, nil)
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completion(FollowStats(numberOfFollowers: 0, numberOfFollows: 0), error)
+                    completion(SocialStats(numberOfFollowers: 0, numberOfFollows: 0), error)
                 }
             }
         }
@@ -1326,7 +1326,7 @@ class GoBot: Bot {
         }
     }
 
-    func hashtags(identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) {
+    func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) {
         userInitiatedQueue.async { [database] in
             do {
                 let hashtags = try database.hashtags(identity: identity, limit: limit)

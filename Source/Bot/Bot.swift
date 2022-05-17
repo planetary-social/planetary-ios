@@ -148,11 +148,11 @@ protocol Bot: AnyObject {
     
     func friends(identity: Identity, completion:  @escaping ContactsCompletion)
 
-    /// Fetch the number of follows and followers of an identity
+    /// Fetch the social stats of an identity
     ///
     /// - parameter identity: The identity to make the query
     /// - parameter completion: The completion block to handle the results
-    func numberOfFollowers(identity: Identity, completion: @escaping ((FollowStats, Error?) -> Void))
+    func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void))
 
     // TODO the func names should be swapped
     func blocks(identity: Identity, completion:  @escaping ContactsCompletion)
@@ -172,7 +172,7 @@ protocol Bot: AnyObject {
     /// - parameter identity: The publisher's identity
     /// - parameter limit: The maximum number of hashtags to look for
     /// - parameter completion: The completion block to handle the results
-    func hashtags(identity: Identity, limit: Int, completion: @escaping HashtagsCompletion)
+    func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion)
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion)
     
@@ -345,9 +345,9 @@ extension Bot {
     /// - returns: Array with the hashtags found
     ///
     /// This function will throw if it cannot access the database
-    func hashtags(identity: Identity, limit: Int) async throws -> [Hashtag] {
+    func hashtags(usedBy identity: Identity, limit: Int) async throws -> [Hashtag] {
         try await withCheckedThrowingContinuation { continuation in
-            hashtags(identity: identity, limit: limit) { hashtags, error in
+            hashtags(usedBy: identity, limit: limit) { hashtags, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
@@ -357,20 +357,20 @@ extension Bot {
         }
     }
 
-    /// Fetch the number of follows and followers of an identity
+    /// Fetch the social stats of an identity
     ///
     /// - parameter identity: The identity to make the query
     /// - returns: A FollowStats object with the number of followers and follows
     ///
     /// This function will throw if it cannot access the database
-    func numberOfFollowers(identity: Identity) async throws -> FollowStats {
+    func socialStats(for identity: Identity) async throws -> SocialStats {
         try await withCheckedThrowingContinuation { continuation in
-            numberOfFollowers(identity: identity) { count, error in
+            socialStats(for: identity) { socialStats, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
                 }
-                continuation.resume(returning: count)
+                continuation.resume(returning: socialStats)
             }
         }
     }

@@ -350,7 +350,7 @@ class GoBotIntegrationTests: XCTestCase {
         let keypairs = try sut.testingGetNamedKeypairs()
         let identity = try XCTUnwrap(keypairs["alice"])
 
-        let hashtags = try await sut.hashtags(identity: identity, limit: 10)
+        let hashtags = try await sut.hashtags(usedBy: identity, limit: 10)
         XCTAssertEqual(hashtags.count, 3)
     }
 
@@ -369,7 +369,7 @@ class GoBotIntegrationTests: XCTestCase {
         let keypairs = try sut.testingGetNamedKeypairs()
         let identity = try XCTUnwrap(keypairs["alice"])
 
-        let hashtags = try await sut.hashtags(identity: identity, limit: 10)
+        let hashtags = try await sut.hashtags(usedBy: identity, limit: 10)
         XCTAssertEqual(hashtags.count, 3)
     }
 
@@ -382,7 +382,7 @@ class GoBotIntegrationTests: XCTestCase {
         let keypairs = try sut.testingGetNamedKeypairs()
         let identity = try XCTUnwrap(keypairs["alice"])
 
-        let hashtags = try await sut.hashtags(identity: identity, limit: 2)
+        let hashtags = try await sut.hashtags(usedBy: identity, limit: 2)
         XCTAssertEqual(hashtags.count, 2)
     }
 
@@ -401,15 +401,15 @@ class GoBotIntegrationTests: XCTestCase {
         let aliceIdentity = try XCTUnwrap(keypairs["alice"])
         let bobIdentity = try XCTUnwrap(keypairs["bob"])
 
-        let myFollowStats = try await sut.numberOfFollowers(identity: botTestsKey.identity)
+        let myFollowStats = try await sut.socialStats(for: botTestsKey.identity)
         XCTAssertEqual(myFollowStats.numberOfFollows, 1)
         XCTAssertEqual(myFollowStats.numberOfFollowers, 0)
 
-        let aliceFollowStats = try await sut.numberOfFollowers(identity: aliceIdentity)
+        let aliceFollowStats = try await sut.socialStats(for: aliceIdentity)
         XCTAssertEqual(aliceFollowStats.numberOfFollows, 1)
         XCTAssertEqual(aliceFollowStats.numberOfFollowers, 1)
 
-        let bobFollowStats = try await sut.numberOfFollowers(identity: bobIdentity)
+        let bobFollowStats = try await sut.socialStats(for: bobIdentity)
         XCTAssertEqual(bobFollowStats.numberOfFollows, 0)
         XCTAssertEqual(bobFollowStats.numberOfFollowers, 1)
     }
@@ -456,7 +456,7 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     func testUnknownPersonWith10Posts() async throws {
-        // Alice publushes 10 posts
+        // Alice publishes 10 posts
         for i in 0..<10 {
             _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
         }
@@ -513,7 +513,7 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(proxy.count, 2)
     }
 
-    func testPersonAtOneHopeFollowsAnotherAtTwoHops() async throws {
+    func testPersonAtOneHopFollowsAnotherAtTwoHops() async throws {
         let keypairs = try sut.testingGetNamedKeypairs()
         let aliceIdentity = try XCTUnwrap(keypairs["alice"])
         let bobIdentity = try XCTUnwrap(keypairs["bob"])
