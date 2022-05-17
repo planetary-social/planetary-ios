@@ -88,8 +88,12 @@ extension GoBot {
     }
 
     func testingFollow(nick: String) -> MessageIdentifier {
-        let keypairs = try! testingGetNamedKeypairs()
-        let keypair = keypairs[nick]!
+        guard let keypairs = try? testingGetNamedKeypairs() else {
+            return MessageIdentifier.null
+        }
+        guard let keypair = keypairs[nick] else {
+            return MessageIdentifier.null
+        }
         let content = Contact(contact: keypair, following: true)
         let c = try! content.encodeToData().string()!
         var identifier: MessageIdentifier?
