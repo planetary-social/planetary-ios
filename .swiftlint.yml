@@ -116,6 +116,7 @@ identifier_name:
     - k
     - id
     - url
+    - URL
     - lhs
     - rhs
     - key

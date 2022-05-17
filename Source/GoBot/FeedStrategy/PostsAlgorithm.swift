@@ -9,6 +9,7 @@
 import Foundation
 import SQLite
 
+// swiftlint:disable type_body_length
 /// This algorithm returns a feed just with user's and follows' posts
 ///
 /// This algorithm is the same algorithm we used to have in production, I'm leaving this here for comparison.
@@ -18,6 +19,7 @@ import SQLite
 /// - fetch the number of replies in the same query
 /// - remove additional queryies made after getting the results
 class PostsAlgorithm: FeedStrategy {
+    // swiftlint:enable type_body_length
 
     var wantPrivate: Bool
     var onlyFollowed: Bool
@@ -38,7 +40,7 @@ class PostsAlgorithm: FeedStrategy {
         let colIsRoot = Expression<Bool>("is_root")
         let colHidden = Expression<Bool>("hidden")
 
-        var qry = posts
+        var query = posts
             .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
             .filter(colMsgType == "post")
             .filter(colIsRoot == true)
@@ -46,26 +48,26 @@ class PostsAlgorithm: FeedStrategy {
             .filter(colDecrypted == false)
 
         if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry, connection: connection, userId: userId)
+            query = try self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
         } else {
-            qry = try self.filterNotFollowingPeople(qry: qry, connection: connection, userId: userId)
+            query = try self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
-        return try connection.scalar(qry.count)
+        return try connection.scalar(query.count)
     }
 
     func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         let colClaimedAt = Expression<Double>("claimed_at")
 
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
+        var query = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
             .order(colClaimedAt.desc)
 
         if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry, connection: connection, userId: userId)
+            query = try self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
         } else {
-            qry = try self.filterNotFollowingPeople(qry: qry, connection: connection, userId: userId)
+            query = try self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
 
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry, connection: connection)
+        let feedOfMsgs = try self.mapQueryToKeyValue(query: query, connection: connection)
 
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs, connection: connection)
     }
@@ -84,7 +86,7 @@ class PostsAlgorithm: FeedStrategy {
         let colHidden = Expression<Bool>("hidden")
         let colKey = Expression<MessageIdentifier>("key")
 
-        var qry = msgs
+        var query = msgs
             .join(posts, on: posts[colMessageRef] == msgs[colMessageID])
             .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
@@ -92,27 +94,32 @@ class PostsAlgorithm: FeedStrategy {
             .filter(colHidden == false)
 
         if let offset = offset {
-            qry = qry.limit(limit, offset: offset)
+            query = query.limit(limit, offset: offset)
         } else {
-            qry = qry.limit(limit)
+            query = query.limit(limit)
         }
 
-        qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
+        query = query.filter(colIsRoot == true)   // only thread-starting posts (no replies)
 
-        qry = qry.order(colMessageID.desc)
+        query = query.order(colMessageID.desc)
 
         if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry, connection: connection, userId: userId)
+            query = try self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
         } else {
-            qry = try self.filterNotFollowingPeople(qry: qry, connection: connection, userId: userId)
+            query = try self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
 
-        return try connection.prepare(qry).compactMap { row in
-            try row.get(colKey)
+        return try connection.prepare(query).compactMap { keyRow in
+            try keyRow.get(colKey)
         }
     }
 
-    private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {
+    private func basicRecentPostsQuery(
+        limit: Int,
+        wantPrivate: Bool,
+        onlyRoots: Bool = true,
+        offset: Int? = nil
+    ) -> Table {
         let authors = Table(ViewDatabaseTableNames.authors.rawValue)
         let posts = Table(ViewDatabaseTableNames.posts.rawValue)
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
@@ -132,7 +139,7 @@ class PostsAlgorithm: FeedStrategy {
         let colAboutID = Expression<Int64>("about_id")
         let colAuthorID = Expression<Int64>("author_id")
 
-        var qry = msgs
+        var query = msgs
             .join(posts, on: posts[colMessageRef] == msgs[colMessageID])
             .join(.leftOuter, tangles, on: tangles[colMessageRef] == msgs[colMessageID])
             .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
@@ -144,20 +151,17 @@ class PostsAlgorithm: FeedStrategy {
             .filter(colClaimedAt <= Date().millisecondsSince1970)
 
         if let offset = offset {
-            qry = qry.limit(limit, offset: offset)
+            query = query.limit(limit, offset: offset)
         } else {
-            qry = qry.limit(limit)
+            query = query.limit(limit)
         }
-
-        // TODO: this is a very handy query but also used in a lot of places
-        // maybe should be split apart into a wrapper like filterOnlyFollowedPeople which is just func(Table) -> Table
         if onlyRoots {
-            qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
+            query = query.filter(colIsRoot == true)   // only thread-starting posts (no replies)
         }
-        return qry
+        return query
     }
 
-    private func filterOnlyFollowedPeople(qry: Table, connection: Connection, userId: Int64) throws -> Table {
+    private func filterOnlyFollowedPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
         let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
         let colAuthorID = Expression<Int64>("author_id")
         let colContactID = Expression<Int64>("contact_id")
@@ -169,13 +173,13 @@ class PostsAlgorithm: FeedStrategy {
             .filter(colAuthorID == userId)
             .filter(colContactState == 1)
         var myFollows: [Int64] = [userId] // and from self as well
-        for row in try connection.prepare(myFollowsQry) {
-            myFollows.append(row[colContactID])
+        for followRow in try connection.prepare(myFollowsQry) {
+            myFollows.append(followRow[colContactID])
         }
-        return qry.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
+        return query.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
     }
 
-    private func filterNotFollowingPeople(qry: Table, connection: Connection, userId: Int64) throws -> Table {
+    private func filterNotFollowingPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
         let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
         let colAuthorID = Expression<Int64>("author_id")
         let colContactID = Expression<Int64>("contact_id")
@@ -187,13 +191,15 @@ class PostsAlgorithm: FeedStrategy {
             .filter(colAuthorID == userId)
             .filter(colContactState == 1)
         var myFollows: [Int64] = [userId] // and from self as well
-        for row in try connection.prepare(myFollowsQry) {
-            myFollows.append(row[colContactID])
+        for followRow in try connection.prepare(myFollowsQry) {
+            myFollows.append(followRow[colContactID])
         }
-        return qry.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
+        return query.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
     }
 
-    private func mapQueryToKeyValue(qry: Table, connection: Connection) throws -> [KeyValue] {
+    // swiftlint:disable function_body_length
+    private func mapQueryToKeyValue(query: Table, connection: Connection) throws -> [KeyValue] {
+        // swiftlint:enable function_body_length
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
         let abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
         let colMessageID = Expression<Int64>("msg_id")
@@ -214,60 +220,42 @@ class PostsAlgorithm: FeedStrategy {
         let colDecrypted = Expression<Bool>("is_decrypted")
         let colValue = Expression<Int>("value")
 
-        // TODO: add switch over type (to support contact, vote, gathering, etc..)
-
-        return try connection.prepare(qry).compactMap { row in
-            // tried 'return try row.decode()'
-            // but failed - see https://github.com/VerseApp/ios/issues/29
-
-            let msgID = try row.get(colMessageID)
-
-            let msgKey = try row.get(colKey)
-            let msgAuthor = try row.get(colAuthor)
-
-            var c: Content
-
-            let type = try row.get(msgs[colMsgType])
-
+        return try connection.prepare(query).compactMap { keyValueRow in
+            let msgID = try keyValueRow.get(colMessageID)
+            let msgKey = try keyValueRow.get(colKey)
+            let msgAuthor = try keyValueRow.get(colAuthor)
+            var content: Content
+            let type = try keyValueRow.get(msgs[colMsgType])
             switch type {
             case ContentType.post.rawValue:
-
                 var rootKey: Identifier?
-                if let rootID = try row.get(colRootMaybe) {
+                if let rootID = try keyValueRow.get(colRootMaybe) {
                     rootKey = try self.msgKey(id: rootID, connection: connection)
                 }
-
-                let p = Post(
+                let post = Post(
                     blobs: try self.loadBlobs(for: msgID, connection: connection),
                     mentions: try self.loadMentions(for: msgID, connection: connection),
                     root: rootKey,
-                    text: try row.get(colText)
+                    text: try keyValueRow.get(colText)
                 )
-
-                c = Content(from: p)
-
+                content = Content(from: post)
             case ContentType.vote.rawValue:
-
-                let lnkID = try row.get(colLinkID)
+                let lnkID = try keyValueRow.get(colLinkID)
                 let lnkKey = try self.msgKey(id: lnkID, connection: connection)
-
-                let rootID = try row.get(colRoot)
+                let rootID = try keyValueRow.get(colRoot)
                 let rootKey = try self.msgKey(id: rootID, connection: connection)
-
-                let cv = ContentVote(
+                let contentVote = ContentVote(
                     link: lnkKey,
-                    value: try row.get(colValue),
+                    value: try keyValueRow.get(colValue),
                     root: rootKey,
-                    branches: [] // TODO: branches for root
+                    branches: []
                 )
-
-                c = Content(from: cv)
+                content = Content(from: contentVote)
             case ContentType.contact.rawValue:
-                if let state = try? row.get(colContactState) {
+                if let state = try? keyValueRow.get(colContactState) {
                     let following = state == 1
-                    let cc = Contact(contact: msgAuthor, following: following)
-
-                    c = Content(from: cc)
+                    let contentContact = Contact(contact: msgAuthor, following: following)
+                    content = Content(from: contentContact)
                 } else {
                     // Contacts stores only the latest message
                     // So, an old follow that was later unfollowed won't appear here.
@@ -276,28 +264,27 @@ class PostsAlgorithm: FeedStrategy {
             default:
                 throw ViewDatabaseError.unexpectedContentType(type)
             }
-
-            let v = Value(
+            let value = Value(
                 author: msgAuthor,
-                content: c,
+                content: content,
                 hash: "sha256", // only currently supported
-                previous: nil, // TODO: .. needed at this level?
-                sequence: try row.get(colSequence),
+                previous: nil,
+                sequence: try keyValueRow.get(colSequence),
                 signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
+                timestamp: try keyValueRow.get(colClaimedAt)
             )
             var keyValue = KeyValue(
                 key: msgKey,
-                value: v,
-                timestamp: try row.get(colReceivedAt)
+                value: value,
+                timestamp: try keyValueRow.get(colReceivedAt)
             )
             keyValue.metadata.author.about = About(
                 about: msgAuthor,
-                name: try row.get(abouts[colName]),
-                description: try row.get(colDescr),
-                imageLink: try row.get(colImage)
+                name: try keyValueRow.get(abouts[colName]),
+                description: try keyValueRow.get(colDescr),
+                imageLink: try keyValueRow.get(colImage)
             )
-            keyValue.metadata.isPrivate = try row.get(colDecrypted)
+            keyValue.metadata.isPrivate = try keyValueRow.get(colDecrypted)
             return keyValue
         }
     }
@@ -316,7 +303,7 @@ class PostsAlgorithm: FeedStrategy {
     }
 
     private func loadBlobs(for msgID: Int64, connection: Connection) throws -> [Blob] {
-        let post_blobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
+        let postBlobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
         let colMessageRef = Expression<Int64>("msg_ref")
         let colIdentifier = Expression<String>("identifier")
         let colName = Expression<String?>("name")
@@ -326,29 +313,29 @@ class PostsAlgorithm: FeedStrategy {
         let colMetaMimeType = Expression<String?>("meta_mime_type")
         let colMetaAverageColorRGB = Expression<Int?>("meta_average_color_rgb")
 
-        let qry = post_blobs.where(colMessageRef == msgID)
+        let query = postBlobs.where(colMessageRef == msgID)
             .filter(colMetaMimeType == "image/jpeg" || colMetaMimeType == "image/png" )
 
-        let blobs: [Blob] = try connection.prepare(qry).map {
-            row in
-            let img_hash = try row.get(colIdentifier)
+        let blobs: [Blob] = try connection.prepare(query).map { blobRow in
+            let imgHash = try blobRow.get(colIdentifier)
 
-            var dim: Blob.Metadata.Dimensions?
-            if let w = try row.get(colMetaWidth) {
-                if let h = try row.get(colMetaHeight) {
-                    dim = Blob.Metadata.Dimensions(width: w, height: h)
+            var dimensions: Blob.Metadata.Dimensions?
+            if let width = try blobRow.get(colMetaWidth) {
+                if let height = try blobRow.get(colMetaHeight) {
+                    dimensions = Blob.Metadata.Dimensions(width: width, height: height)
                 }
             }
 
             let meta = Blob.Metadata(
-                averageColorRGB: try row.get(colMetaAverageColorRGB),
-                dimensions: dim,
-                mimeType: try row.get(colMetaMimeType),
-                numberOfBytes: try row.get(colMetaBytes))
+                averageColorRGB: try blobRow.get(colMetaAverageColorRGB),
+                dimensions: dimensions,
+                mimeType: try blobRow.get(colMetaMimeType),
+                numberOfBytes: try blobRow.get(colMetaBytes)
+            )
 
             return Blob(
-                identifier: img_hash,
-                name: try? row.get(colName),
+                identifier: imgHash,
+                name: try? blobRow.get(colName),
                 metadata: meta
             )
         }
@@ -359,49 +346,28 @@ class PostsAlgorithm: FeedStrategy {
         let colMessageRef = Expression<Int64>("msg_ref")
         let colFeedID = Expression<Int64>("feed_id")
         let colLinkID = Expression<Int64>("link_id")
-        let mentions_msg = Table(ViewDatabaseTableNames.mentionsMsg.rawValue)
-        let mentions_feed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
+        let mentionsMsg = Table(ViewDatabaseTableNames.mentionsMsg.rawValue)
+        let mentionsFeed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
         let colName = Expression<String?>("name")
 
-        let feedQry = mentions_feed.where(colMessageRef == msgID)
-        let feedMentions: [Mention] = try connection.prepare(feedQry).map {
-            row in
-
-            let feedID = try row.get(colFeedID)
+        let feedQry = mentionsFeed.where(colMessageRef == msgID)
+        let feedMentions: [Mention] = try connection.prepare(feedQry).map { feedMentionRow in
+            let feedID = try feedMentionRow.get(colFeedID)
             let feed = try self.author(from: feedID, connection: connection)
-
             return Mention(
                 link: feed,
-                name: try row.get(colName) ?? ""
+                name: try feedMentionRow.get(colName) ?? ""
             )
         }
 
-        let msgMentionQry = mentions_msg.where(colMessageRef == msgID)
-        let msgMentions: [Mention] = try connection.prepare(msgMentionQry).map {
-            row in
-
-            let linkID = try row.get(colLinkID)
+        let msgMentionQry = mentionsMsg.where(colMessageRef == msgID)
+        let msgMentions: [Mention] = try connection.prepare(msgMentionQry).map { messageMentionRow in
+            let linkID = try messageMentionRow.get(colLinkID)
             return Mention(
                 link: try self.msgKey(id: linkID, connection: connection),
                 name: ""
             )
         }
-        /*
-        // TODO: We don't =populate mentions_images... so why are we looking it up?
-        let imgMentionQry = self.mentions_image
-            .where(colMessageRef == msgID)
-            .where(colImage != "")
-        let imgMentions: [Mention] = try db.prepare(imgMentionQry).map {
-            row in
-
-            let img = try row.get(colImage)
-
-            return Mention(
-                link: img!, // illegal insert
-                name: try row.get(colName) ?? ""
-            )
-        }
-        */
 
         return feedMentions + msgMentions
     }
@@ -437,10 +403,9 @@ class PostsAlgorithm: FeedStrategy {
         let colRoot = Expression<Int64>("root")
         let colAboutID = Expression<Int64>("about_id")
 
-        var r: KeyValues = []
-        for (index, _) in msgs.enumerated() {
-            var msg = msgs[index]
-            let msgID = try self.msgID(of: msg.key, connection: connection)
+        var keyValues: KeyValues = []
+        for var message in msgs {
+            let msgID = try self.msgID(of: message.key, connection: connection)
 
             let replies = tangles
                 .select(colAuthorID.distinct, colAuthor, colName, colDescr, colImage)
@@ -453,19 +418,21 @@ class PostsAlgorithm: FeedStrategy {
             let count = try connection.scalar(replies.count)
 
             var abouts: [About] = []
-            for row in try connection.prepare(replies.limit(3, offset: 0)) {
-                let about = About(about: row[colAuthor],
-                                  name: row[colName],
-                                  description: row[colDescr],
-                                  imageLink: row[colImage])
+            for replyRow in try connection.prepare(replies.limit(3, offset: 0)) {
+                let about = About(
+                    about: replyRow[colAuthor],
+                    name: replyRow[colName],
+                    description: replyRow[colDescr],
+                    imageLink: replyRow[colImage]
+                )
                 abouts += [about]
             }
 
-            msg.metadata.replies.count = count
-            msg.metadata.replies.abouts = abouts
-            r.append(msg)
+            message.metadata.replies.count = count
+            message.metadata.replies.abouts = abouts
+            keyValues.append(message)
         }
-        return r
+        return keyValues
     }
 
     private func msgID(of key: MessageIdentifier, make: Bool = false, connection: Connection) throws -> Int64 {

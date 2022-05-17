@@ -47,15 +47,20 @@ class ContactCellView: KeyValueView {
 
         Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
 
-        let (top, _, _) = Layout.fillTop(of: self,
-                                         with: self.contactView,
-                                         insets: UIEdgeInsets(top: self.textViewTopInset, left: Layout.postSideMargins, bottom: 0, right: -Layout.postSideMargins),
-                                         respectSafeArea: false)
-        self.textViewTopConstraint = top
-        // self.aboutCellView.constrainHeight(to: MiniAboutCellView.height)
+        let (topConstraint, _, _) = Layout.fillTop(
+            of: self,
+            with: self.contactView,
+            insets: UIEdgeInsets(
+                top: self.textViewTopInset,
+                left: Layout.postSideMargins,
+                bottom: 0,
+                right: -Layout.postSideMargins
+            ),
+            respectSafeArea: false
+        )
+        self.textViewTopConstraint = topConstraint
 
         self.contactView.pinBottomToSuperviewBottom()
-
     }
 
     convenience init(keyValue: KeyValue) {
@@ -64,7 +69,7 @@ class ContactCellView: KeyValueView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     // MARK: KeyValueUpdateable
@@ -75,14 +80,17 @@ class ContactCellView: KeyValueView {
 
         if let contact = keyValue.value.content.contact {
             contactView.update(with: contact.identity, about: nil)
-            Bots.current.about(identity: contact.identity) { [weak contactView] about, error in
+            Bots.current.about(identity: contact.identity) { [weak contactView] about, _ in
                 DispatchQueue.main.async {
                     contactView?.update(with: contact.identity, about: about)
                 }
             }
             Bots.current.numberOfFollowers(identity: contact.identity) { [weak contactView] stats, _ in
                 DispatchQueue.main.async {
-                    contactView?.update(numberOfFollowers: stats.numberOfFollowers, numberOfFollows: stats.numberOfFollows)
+                    contactView?.update(
+                        numberOfFollowers: stats.numberOfFollowers,
+                        numberOfFollows: stats.numberOfFollows
+                    )
                 }
             }
             Bots.current.hashtags(identity: contact.identity, limit: 3) { [weak contactView] hashtags, _ in

@@ -56,7 +56,7 @@ class ContactHeaderView: UIView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func layoutSubviews() {
@@ -71,10 +71,12 @@ class ContactHeaderView: UIView {
         let about = keyValue.metadata.author.about
         let name = about?.nameOrIdentity ?? keyValue.value.author
         let string = Text.startedFollowing.text(["somebody": name])
-        let primaryColor = [NSAttributedString.Key.foregroundColor:  UIColor.text.default]
-        let secondaryColor = [NSAttributedString.Key.foregroundColor:  UIColor.text.detail]
+        let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
+        let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
         let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
+        // swiftlint:disable legacy_objc_type
         let range = (string as NSString).range(of: name)
+        // swiftlint:enable legacy_objc_type
         attributedString.addAttributes(primaryColor, range: range)
 
         self.nameButton.setAttributedTitle(attributedString, for: .normal)
@@ -84,7 +86,8 @@ class ContactHeaderView: UIView {
         self.layoutIfNeeded()
     }
 
-    @objc private func selectAboutIdentity() {
+    @objc
+    private func selectAboutIdentity() {
         guard let identity = self.identity else { return }
         Analytics.shared.trackDidTapButton(buttonName: "avatar")
         AppController.shared.pushViewController(for: .about, with: identity)

@@ -35,8 +35,7 @@ class ContactReplyView: KeyValueView {
         topBorder.backgroundColor = .cardBorder
         bottomBorder.backgroundColor = .cardBorder
 
-        let bottomSeparator = Layout.separatorView(height: 10,
-                                                   color: .appBackground)
+        let bottomSeparator = Layout.separatorView(height: 10, color: .appBackground)
 
         Layout.fillTop(of: self, with: topBorder)
         Layout.fillSouth(of: topBorder, with: self.contactView)
@@ -51,7 +50,7 @@ class ContactReplyView: KeyValueView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func update(with keyValue: KeyValue) {
@@ -68,8 +67,7 @@ extension ContactReplyView {
     /// height for the `RepliesView` is added.  This does require some knowledge of the heights
     /// for the various subviews, but this needs to be a very fast call so no complicated calculations
     /// should be done.  Instead, some magic numbers are used based on the various constraints.
-    static func estimatedHeight(with keyValue: KeyValue,
-                                in superview: UIView) -> CGFloat {
+    static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
         // starting height based for all non-zero height subviews
         // header + text + reply box
         var height = CGFloat(700)
@@ -81,7 +79,9 @@ extension ContactReplyView {
         if post.hasBlobs { height += superview.bounds.size.width }
 
         // add replies view if necessary
+        // swiftlint:disable empty_count
         if keyValue.metadata.replies.count > 0 { height += 35 }
+        // swiftlint:enable empty_count
 
         // done
         return height

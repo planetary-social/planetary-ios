@@ -69,10 +69,12 @@ class ContactView: KeyValueView {
         let targetHeight: CGFloat = 120
         let verticalMargin = floor((targetHeight - Layout.contactAvatarSize) / 2)
 
-        Layout.fillLeft(of: self,
-                        with: self.imageView,
-                        insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: -verticalMargin, right: 0),
-                        respectSafeArea: false)
+        Layout.fillLeft(
+            of: self,
+            with: self.imageView,
+            insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: -verticalMargin, right: 0),
+            respectSafeArea: false
+        )
 
         addSubview(stackView)
         stackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
@@ -87,7 +89,7 @@ class ContactView: KeyValueView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     func update(with identity: Identity, about: About?) {
@@ -104,17 +106,28 @@ class ContactView: KeyValueView {
     func update(numberOfFollowers: Int, numberOfFollows: Int) {
         let string = "Following numberOfFollows • Followed by numberOfFollowers"
 
-        let primaryColor = [NSAttributedString.Key.foregroundColor:  UIColor.text.default]
-        let secondaryColor = [NSAttributedString.Key.foregroundColor:  UIColor.text.detail]
+        let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
+        let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
 
         let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
-        attributedString.replaceCharacters(in: (attributedString.string as NSString).range(of: "numberOfFollows"),
-                                           with: NSAttributedString(string: "\(numberOfFollows)",
-                                                                    attributes: primaryColor))
-        attributedString.replaceCharacters(in: (attributedString.string as NSString).range(of: "numberOfFollowers"),
-                                           with: NSAttributedString(string: "\(numberOfFollowers)",
-                                                                    attributes: primaryColor))
-        
+        attributedString.replaceCharacters(
+            // swiftlint:disable legacy_objc_type
+            in: (attributedString.string as NSString).range(of: "numberOfFollows"),
+            // swiftlint:enable legacy_objc_type
+            with: NSAttributedString(
+                string: "\(numberOfFollows)",
+                attributes: primaryColor
+            )
+        )
+        attributedString.replaceCharacters(
+            // swiftlint:disable legacy_objc_type
+            in: (attributedString.string as NSString).range(of: "numberOfFollowers"),
+            // swiftlint:enable legacy_objc_type
+            with: NSAttributedString(
+                string: "\(numberOfFollowers)",
+                attributes: primaryColor
+            )
+        )
         followerCountLabel.attributedText = attributedString
     }
 
@@ -150,8 +163,8 @@ class ContactView: KeyValueView {
     }
 
     func setRelationship(to identity: Identity) {
-        if let me = Bots.current.identity {
-            let relationship = Relationship(from: me, to: identity)
+        if let myIdentity = Bots.current.identity {
+            let relationship = Relationship(from: myIdentity, to: identity)
 
             relationship.load {
                 self.followButton.relationship = relationship
@@ -175,7 +188,12 @@ class ContactView: KeyValueView {
 
 extension ContactView: UITextViewDelegate {
 
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith URL: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         let hashtag = URL.absoluteString
         AppController.shared.pushChannelViewController(for: hashtag)
         return false

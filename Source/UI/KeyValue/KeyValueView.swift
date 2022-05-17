@@ -31,11 +31,16 @@ extension KeyValueView {
     /// best suited to the specified `ContentType`.
     static func `for`(_ type: ContentType) -> KeyValueView {
         switch type {
-            case .about:    return AboutView()
-            case .contact:    return ContactCellView()
-            case .post:     return PostCellView()
-            case .vote:     return PostCellView()
-            default:        return UnsupportedView()
+        case .about:
+            return AboutView()
+        case .contact:
+            return ContactCellView()
+        case .post:
+            return PostCellView()
+        case .vote:
+            return PostCellView()
+        default:
+            return UnsupportedView()
         }
     }
 }
