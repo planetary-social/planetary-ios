@@ -72,4 +72,9 @@ public extension Analytics {
         }
         service.track(event: .did, element: .bot, name: "refresh", params: params)
     }
+    
+    func trackBotDidChangeHomeFeedStrategy(to strategyName: String) {
+        let params = ["strategy": strategyName]
+        service.track(event: .did, element: .bot, name: "changeHomeFeedStrategy", params: params)
+    }
 }

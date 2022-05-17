@@ -7,7 +7,10 @@
 //
 
 import UIKit
+import Logger
+import Analytics
 
+/// Allows the user to choose the algorithm used to fetch the Home Feed.
 class FeedStrategySelectionViewController: DebugTableViewController {
 
     override func viewDidLoad() {
@@ -18,25 +21,16 @@ class FeedStrategySelectionViewController: DebugTableViewController {
 
     override internal func updateSettings() {
         self.settings = [
-            feedStrategy1Section(),
-            feedStrategy2Section(),
-            feedStrategy3Section()
+            recentPostsWithFollows(),
+            recentPosts(),
+            recentlyActivePostsWithFollows()
         ]
         super.updateSettings()
     }
-     
-    private func selectedStrategy() -> FeedStrategy {
-        if let data = UserDefaults.standard.object(forKey: "homeFeedStrategy") as? Data,
-           let decodedObject = NSKeyedUnarchiver.unarchiveObject(with: data),
-           let strategy = decodedObject as? FeedStrategy {
-            return strategy
-        }
-        return PostsAndContactsAlgorithm()
-    }
 
-    private func feedStrategy1Section() -> Settings {
+    private func recentPostsWithFollows() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: "Posts and Contacts",
+            title: Text.FeedAlgorithm.recentPostsWithFollowsAlgorithm.text,
             valueClosure: { cell in
                 if self.selectedStrategy() is PostsAndContactsAlgorithm {
                     cell.accessoryType = .checkmark
@@ -44,58 +38,76 @@ class FeedStrategySelectionViewController: DebugTableViewController {
                     cell.accessoryType = .none
                 }
             },
-            actionClosure: { [unowned self] _ in
-                let encodedStrategy = try! NSKeyedArchiver.archivedData(withRootObject: PostsAndContactsAlgorithm(), requiringSecureCoding: false)
-                UserDefaults.standard.set(encodedStrategy, forKey: "homeFeedStrategy")
-                UserDefaults.standard.synchronize()
-                updateSettings()
+            actionClosure: { [weak self] _ in
+                self?.save(strategy: PostsAndContactsAlgorithm())
             }
         )
         
-        return ("Feed Strategy 1", [cell], "Shows blah blah and foo")
+        return (nil, [cell], Text.FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription.text)
     }
     
-    private func feedStrategy2Section() -> Settings {
+    private func recentPosts() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: "Posts Only",
+            title: Text.FeedAlgorithm.recentPostsAlgorithm.text,
             valueClosure: { cell in
                 if let postsAlgorithm = self.selectedStrategy() as? PostsAlgorithm,
-                   postsAlgorithm.onlyFollowed == true,
-                   postsAlgorithm.wantPrivate == false {
+                    postsAlgorithm.onlyFollowed == true,
+                    postsAlgorithm.wantPrivate == false {
                     cell.accessoryType = .checkmark
                 } else {
                     cell.accessoryType = .none
                 }
             },
-            actionClosure: { [unowned self] _ in
-                let encodedStrategy = try! NSKeyedArchiver.archivedData(withRootObject: PostsAlgorithm(wantPrivate: false, onlyFollowed: true), requiringSecureCoding: false)
-                UserDefaults.standard.set(encodedStrategy, forKey: "homeFeedStrategy")
-                UserDefaults.standard.synchronize()
-                updateSettings()
+            actionClosure: { [weak self] _ in
+                self?.save(strategy: PostsAlgorithm(wantPrivate: false, onlyFollowed: true))
             }
         )
         
-        return ("Feed Strategy 1", [cell], "Shows blah blah and foo")
+        return (nil, [cell], Text.FeedAlgorithm.recentPostsAlgorithmDescription.text)
     }
     
-    private func feedStrategy3Section() -> Settings {
+    private func recentlyActivePostsWithFollows() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: "Patchwork Algorithm",
+            title: Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm.text,
             valueClosure: { cell in
-                if let postsAlgorithm = self.selectedStrategy() as? PatchworkAlgorithm {
+                if self.selectedStrategy() is RecentlyActivePostsAndContactsAlgorithm {
                     cell.accessoryType = .checkmark
                 } else {
                     cell.accessoryType = .none
                 }
             },
-            actionClosure: { [unowned self] _ in
-                let encodedStrategy = try! NSKeyedArchiver.archivedData(withRootObject: PatchworkAlgorithm(), requiringSecureCoding: false)
-                UserDefaults.standard.set(encodedStrategy, forKey: "homeFeedStrategy")
-                UserDefaults.standard.synchronize()
-                updateSettings()
+            actionClosure: { [weak self] _ in
+                self?.save(strategy: RecentlyActivePostsAndContactsAlgorithm())
             }
         )
         
-        return ("Feed Strategy 3", [cell], "Shows blah blah and foo")
+        return (nil, [cell], Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription.text)
+    }
+    
+    // MARK: - Helpers
+    
+    private func selectedStrategy() -> FeedStrategy {
+        if let data = UserDefaults.standard.object(forKey: UserDefaults.homeFeedStrategy) as? Data,
+           let decodedObject = NSKeyedUnarchiver.unarchiveObject(with: data),
+           let strategy = decodedObject as? FeedStrategy {
+            return strategy
+        }
+        return PostsAndContactsAlgorithm()
+    }
+    
+    private func save(strategy: FeedStrategy) {
+        do {
+            let encodedStrategy = try NSKeyedArchiver.archivedData(
+                withRootObject: strategy,
+                requiringSecureCoding: false
+            )
+            UserDefaults.standard.set(encodedStrategy, forKey: UserDefaults.homeFeedStrategy)
+            UserDefaults.standard.synchronize()
+            updateSettings()
+            NotificationCenter.default.post(name: .didChangeHomeFeedAlgorithm, object: nil)
+            Analytics.shared.trackBotDidChangeHomeFeedStrategy(to: String(describing: type(of: strategy)))
+        } catch {
+            Log.optional(error)
+        }
     }
 }

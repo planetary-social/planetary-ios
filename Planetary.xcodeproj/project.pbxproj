@@ -702,9 +702,11 @@
 		C978D35127BF051700842458 /* OperationQueue+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C978D35027BF018600842458 /* OperationQueue+Async.swift */; };
 		C978D35327BF053B00842458 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
 		C982CBD12833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
-		C982CBD22833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
-		C982CBD42833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */; };
-		C982CBD52833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */; };
+		C982CBD42833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
+		C982CBD52833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
+		C982CBD72834233700D8963F /* FeedStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD62834233700D8963F /* FeedStrategyTests.swift */; };
+		C982CBD92834682C00D8963F /* UserDefaults+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */; };
+		C982CBDA2834682C00D8963F /* UserDefaults+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
@@ -1347,7 +1349,9 @@
 		C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListView.swift; sourceTree = "<group>"; };
 		C978D35027BF018600842458 /* OperationQueue+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Async.swift"; sourceTree = "<group>"; };
 		C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
-		C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchworkAlgorithm.swift; sourceTree = "<group>"; };
+		C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentlyActivePostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
+		C982CBD62834233700D8963F /* FeedStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyTests.swift; sourceTree = "<group>"; };
+		C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Planetary.swift"; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
 		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
 		C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
@@ -1634,6 +1638,7 @@
 				531A8A4621FA36A600D5C8C0 /* ContentTests.swift */,
 				5BB4C7DD28205AE600EA522F /* EncodeJSONtest.swift */,
 				23888978220867DB0030CB92 /* ViewDatabaseTests.swift */,
+				C982CBD62834233700D8963F /* FeedStrategyTests.swift */,
 				23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */,
 				C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */,
 				2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */,
@@ -2212,6 +2217,7 @@
 				533DAFA4223AD2D600229EB3 /* XCTest+Test.swift */,
 				53EE01FA2205035800DFDF16 /* XCTestCase+JSON.swift */,
 				C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */,
+				C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2292,7 +2298,7 @@
 				5BC297532805F4A800C0CD81 /* FeedStrategy.swift */,
 				5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */,
 				5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */,
-				C982CBD32833F7D500D8963F /* PatchworkAlgorithm.swift */,
+				C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */,
 			);
 			path = FeedStrategy;
 			sourceTree = "<group>";
@@ -3472,6 +3478,7 @@
 				C9A2DE3427CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift in Sources */,
 				5B2A4F9A28205C8C00A5BE48 /* FeedStrategy.swift in Sources */,
 				0ABCA9022437BF4A00D7F39C /* String+Markdown.swift in Sources */,
+				C982CBD72834233700D8963F /* FeedStrategyTests.swift in Sources */,
 				237D057E23351E4600973D63 /* Hashtag.swift in Sources */,
 				53211CED22852216007FB785 /* AppConfigurationTests.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
@@ -3588,7 +3595,6 @@
 				C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */,
 				531A8A4721FA36A600D5C8C0 /* ContentTests.swift in Sources */,
 				5316E96121FFED2E0053832E /* Vote.swift in Sources */,
-				C982CBD22833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */,
 				0ABCA9082437C16200D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
@@ -3602,6 +3608,7 @@
 				0A64A852247357B6009A5EBF /* NullPhoneVerificationAPI.swift in Sources */,
 				53E26C5F23045D4C009240B2 /* Person.swift in Sources */,
 				0A4870F92492C06400BCD063 /* AsynchronousOperation.swift in Sources */,
+				C982CBDA2834682C00D8963F /* UserDefaults+Planetary.swift in Sources */,
 				531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */,
 				0A64A84D24735766009A5EBF /* PhoneVerificationResponse.swift in Sources */,
 				C9A2DE3627D003EF00EAFA73 /* UIColor+Verse.swift in Sources */,
@@ -3609,7 +3616,7 @@
 				2343E7802326953F00E0B6F5 /* Post+Blob.swift in Sources */,
 				535754F622692B4B002A6989 /* BotStatistics.swift in Sources */,
 				53AD3FEB22776A3C005228F9 /* Value.swift in Sources */,
-				C982CBD52833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */,
+				C982CBD52833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */,
 				53E26C58230382DC009240B2 /* Date+ISO8601.swift in Sources */,
 				53B4F5F722B85DE300027C6A /* Markdownable.swift in Sources */,
 				23CA4B92232291C1005B35E8 /* Blob+NSAttributedString.swift in Sources */,
@@ -4005,6 +4012,7 @@
 				8DB04200235539F5006AC35B /* DirectoryViewController.swift in Sources */,
 				233A8F8A220138F600CE01CE /* ViewDatabase.swift in Sources */,
 				539208B4235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift in Sources */,
+				C982CBD92834682C00D8963F /* UserDefaults+Planetary.swift in Sources */,
 				5344D82F21C4649700704A34 /* AppDelegate.swift in Sources */,
 				53AD3FE72273AE21005228F9 /* ThreadViewController.swift in Sources */,
 				0A38800B2475ACC300777843 /* NullPubAPI.swift in Sources */,
@@ -4084,7 +4092,7 @@
 				53575509226A3113002A6989 /* KeyValueTableViewDataSource.swift in Sources */,
 				531B92B122CAC203005D5255 /* PostButtonsView.swift in Sources */,
 				531D0A1321EACC0A008E40A8 /* GoBotViewController.swift in Sources */,
-				C982CBD42833F7D600D8963F /* PatchworkAlgorithm.swift in Sources */,
+				C982CBD42833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */,
 				0AAF8C4325C6444B00FD8D0F /* CommunityCellView.swift in Sources */,
 				53C2B12C2294E8A50018D0A8 /* AppConfiguration+Keychain.swift in Sources */,
 				5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */,

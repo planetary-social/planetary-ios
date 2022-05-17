@@ -567,7 +567,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `testLargestSeqFromReceiveLog()` excludes posts published by the current user.
     func testLargestSeqFromReceiveLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.keyValue(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
         
         // Assert
@@ -583,7 +583,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqNotFromPublishedLog()` excludes posts published by the current user.
     func testLargestSeqNotFromPublishedLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.keyValue(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
 
         // Assert
@@ -599,7 +599,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqFromPublishedLog()` only looks at posts published by the current user.
     func testLargestSeqFromPublishedLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.keyValue(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestPublishedSeqInDbAtStart: Int64 = 77
         
         // Assert
@@ -617,19 +617,19 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let sinceTime = Date(timeIntervalSinceNow: -1)
         let postTime = Date().millisecondsSince1970
-        let ownerMessage = KeyValueFixtures.keyValue(
+        let ownerMessage = KeyValueFixtures.post(
             key: "1",
             receivedTimestamp: postTime,
             receivedSeq: 778,
             author: fixture.owner
         )
-        let friendMessageOne = KeyValueFixtures.keyValue(
+        let friendMessageOne = KeyValueFixtures.post(
             key: "2",
             receivedTimestamp: postTime,
             receivedSeq: 779,
             author: fixture.identities[0]
         )
-        let friendMessageTwo = KeyValueFixtures.keyValue(
+        let friendMessageTwo = KeyValueFixtures.post(
             key: "3",
             receivedTimestamp: postTime,
             receivedSeq: 780,

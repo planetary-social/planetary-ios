@@ -9,10 +9,13 @@
 import Foundation
 import SQLite
 
-/// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
+/// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network.
+/// If a root post is replied to it will be boosted back up to the top of the feed.
 ///
-/// It doesn't include pubs follows and posts in the feed
-class PatchworkAlgorithm: NSObject, FeedStrategy {
+/// It doesn't include pubs follows and posts in the feed.
+///
+/// NOTE: This has a lot of code copied from PostsAndContactsAlgorithm. We should factor it out.
+class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     private let countNumberOfKeysQuery = """
@@ -43,7 +46,7 @@ class PatchworkAlgorithm: NSObject, FeedStrategy {
     // swiftlint:disable indentation_width
     private let fetchKeysQuery = """
         SELECT messagekeys.key,
-               (SELECT tangled_message.claimed_at
+               (SELECT COALESCE(tangled_message.claimed_at, messages.claimed_at)
                 FROM tangles
                 JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
                 WHERE tangles.root == messages.msg_id
@@ -70,7 +73,7 @@ class PatchworkAlgorithm: NSObject, FeedStrategy {
             ) OR authors.id == ?)
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
-        ORDER BY last_reply DESC, messages.claimed_at DESC
+        ORDER BY last_reply DESC
         LIMIT ? OFFSET ?;
     """
     // swiftlint:enable indentation_width
@@ -102,7 +105,7 @@ class PatchworkAlgorithm: NSObject, FeedStrategy {
                 JOIN authors ON authors.id == tangled_message.author_id
                 WHERE tangles.root == messages.msg_id LIMIT 3
                ) as replies,
-               (SELECT tangled_message.claimed_at
+               (SELECT COALESCE(tangled_message.claimed_at, messages.claimed_at)
                 FROM tangles
                 JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
                 WHERE tangles.root == messages.msg_id
@@ -130,7 +133,7 @@ class PatchworkAlgorithm: NSObject, FeedStrategy {
              OR authors.id == ?)
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
-        ORDER BY last_reply DESC, claimed_at DESC
+        ORDER BY last_reply DESC
         LIMIT ? OFFSET ?;
     """
     // swiftlint:enable indentation_width
@@ -176,7 +179,6 @@ class PatchworkAlgorithm: NSObject, FeedStrategy {
     func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         let query = try connection.prepare(fetchKeyValuesQuery)
         let bindings: [Binding?] = [userId, userId, Date().millisecondsSince1970, limit, offset ?? 0]
-//        let bindings: [Binding?] = [userId, Date().millisecondsSince1970, userId, Date().millisecondsSince1970, limit, offset ?? 0]
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, connection: connection)
         }

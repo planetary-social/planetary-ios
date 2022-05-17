@@ -1175,7 +1175,7 @@ class GoBot: Bot {
     
     /// The algorithm we use to filter and sort the home feed.
     var homeFeedStrategy: FeedStrategy {
-        if let data = userDefaults.object(forKey: "homeFeedStrategy") as? Data,
+        if let data = userDefaults.object(forKey: UserDefaults.homeFeedStrategy) as? Data,
            let decodedObject = NSKeyedUnarchiver.unarchiveObject(with: data),
            let strategy = decodedObject as? FeedStrategy {
             return strategy
@@ -1193,6 +1193,7 @@ class GoBot: Bot {
     func recent(completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {
             do {
+                Log.debug("GoBot fetching recent posts with strategy: \(String(describing: type(of: self.homeFeedStrategy)))")
                 let ds = try self.database.paginatedFeed(with: self.homeFeedStrategy)
                 DispatchQueue.main.async { completion(ds, nil) }
             } catch {

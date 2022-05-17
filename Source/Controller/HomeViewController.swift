@@ -135,6 +135,12 @@ class HomeViewController: ContentViewController {
         self.load()
         
         self.registerDidRefresh()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didChangeHomeFeedAlgorithm(notification:)),
+            name: .didChangeHomeFeedAlgorithm,
+            object: nil
+        )
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -263,6 +269,10 @@ class HomeViewController: ContentViewController {
                 // self?.floatingRefreshButton.show(animated: shouldAnimate)
             }
         }
+    }
+    
+    @objc func didChangeHomeFeedAlgorithm(notification: NSNotification) {
+        refreshAndLoad(animated: true)
     }
 }
 

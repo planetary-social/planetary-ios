@@ -56,7 +56,7 @@ class SettingsViewController: DebugTableViewController {
             )
         ]
         
-        return (Text.FeedAlgorithm.feedAlgorithmTitle.text, settings, Text.FeedAlgorithm.feedAlgorithmDescription.text)
+        return (Text.FeedAlgorithm.algorithms.text, settings, Text.FeedAlgorithm.feedAlgorithmDescription.text)
     }
 
     // MARK: Public web hosting
