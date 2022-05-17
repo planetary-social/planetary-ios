@@ -42,7 +42,6 @@ import (
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/plugins2"
-	"go.cryptoscope.co/ssb/repo"
 	mksbot "go.cryptoscope.co/ssb/sbot"
 	refs "go.mindeco.de/ssb-refs"
 
@@ -231,7 +230,6 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 			return false
 		}
 	}
-	r := repo.New(repoDir)
 
 	// open viewdatabase for address-stuff
 	vdbPath := filepath.Join(repoDir, "..", fmt.Sprintf("schema-built%d.sqlite?cache=shared&mode=rwc&_journal_mode=WAL", cfg.ViewDBSchemaVersion))
@@ -240,9 +238,6 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 		err = errors.Wrap(err, "BotInit: failed to open view database")
 		return false
 	}
-
-	// key should be stored in keychain anyway
-	os.Remove(r.GetPath("secret"))
 
 	if !cfg.Testing {
 		log = level.NewFilter(log, level.AllowInfo())
