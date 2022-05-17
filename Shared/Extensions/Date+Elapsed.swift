@@ -47,7 +47,7 @@ extension Date {
         default:
             let formatter = DateFormatter()
             formatter.timeStyle = .none
-            formatter.dateFormat = "MMMM dd"
+            formatter.dateFormat = "MMMM dd YYYY"
             return formatter.string(from: self)
         }
     }
