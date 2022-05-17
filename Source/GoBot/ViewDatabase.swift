@@ -1779,7 +1779,7 @@ class ViewDatabase {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let query = try connection.prepare("""
+        let queryString = """
         SELECT c.name AS channel_name
         FROM channel_assignments ca
         JOIN messages m ON m.msg_id = ca.msg_ref
@@ -1788,7 +1788,8 @@ class ViewDatabase {
         WHERE a.author = ?
         ORDER BY m.received_at DESC
         LIMIT ? OFFSET 0;
-        """)
+        """
+        let query = try connection.prepare(queryString)
         let bindings: [Binding?] = [
             identity,
             limit
