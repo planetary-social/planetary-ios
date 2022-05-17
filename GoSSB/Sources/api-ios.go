@@ -46,7 +46,6 @@ import (
 	mksbot "go.cryptoscope.co/ssb/sbot"
 	refs "go.mindeco.de/ssb-refs"
 
-	"verseproj/scuttlegobridge/migrations"
 	"verseproj/scuttlegobridge/servicesplug"
 )
 
@@ -244,47 +243,6 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 
 	// key should be stored in keychain anyway
 	os.Remove(r.GetPath("secret"))
-
-	doUpgradeOffsetEncoding, err := migrations.UpgradeToMultiMessage(log, r)
-	if err != nil {
-		err = errors.Wrap(err, "BotInit: repo migration failed")
-		shutdown()
-		return false
-	}
-	doUpgradeToRoaring, err := migrations.StillUsingBadger(log, r)
-	if err != nil {
-		err = errors.Wrap(err, "BotInit: badger index migration failed")
-		shutdown()
-		return false
-	}
-	if doUpgradeOffsetEncoding || doUpgradeToRoaring {
-		os.RemoveAll(r.GetPath(repo.PrefixIndex))
-		os.RemoveAll(r.GetPath(repo.PrefixMultiLog))
-		level.Debug(log).Log("event", "db upgrade", "msg", "dropped old indexes")
-
-		start := time.Now()
-		sbot, err = mksbot.New(
-			mksbot.WithInfo(log),
-			mksbot.WithContext(longCtx),
-			mksbot.WithRepoPath(repoDir),
-			mksbot.WithJSONKeyPair(keyblob),
-			mksbot.DisableNetworkNode(),
-			mksbot.DisableLiveIndexMode())
-		if err != nil {
-			err = errors.Wrap(err, "BotInit: failed to make reindexing sbot")
-			shutdown()
-			return false
-		}
-		level.Debug(log).Log("event", "db upgrade", "msg", "sbot started", "took", time.Since(start))
-		start = time.Now()
-		err = sbot.Close()
-		if err != nil {
-			err = errors.Wrap(err, "BotInit: failed to shut down reindexed sbot")
-			shutdown()
-			return false
-		}
-		level.Info(log).Log("event", "db upgrade", "msg", "sbot done", "took", time.Since(start))
-	}
 
 	if !cfg.Testing {
 		log = level.NewFilter(log, level.AllowInfo())
