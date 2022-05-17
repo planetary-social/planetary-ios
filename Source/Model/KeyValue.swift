@@ -55,9 +55,9 @@ struct KeyValue: Codable {
             var count: Int = 0
             var abouts: [About] = []
             var isEmpty: Bool {
-                // swiftlint: disable empty_count
+                // swiftlint:disable empty_count
                 count <= 0
-                // swiftlint: enable empty_count
+                // swiftlint:enable empty_count
             }
         }
 

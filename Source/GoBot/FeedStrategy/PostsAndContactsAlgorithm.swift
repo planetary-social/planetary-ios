@@ -14,7 +14,7 @@ import SQLite
 /// It doesn't include pubs follows and posts in the feed
 class PostsAndContactsAlgorithm: FeedStrategy {
 
-    // swiftlint: disable indentation_width
+    // swiftlint:disable indentation_width
     private let countNumberOfKeysQuery = """
         SELECT COUNT(*)
         FROM messages
@@ -38,9 +38,9 @@ class PostsAndContactsAlgorithm: FeedStrategy {
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?;
     """
-    // swiftlint: enable indentation_width
+    // swiftlint:enable indentation_width
 
-    // swiftlint: disable indentation_width
+    // swiftlint:disable indentation_width
     private let fetchKeysQuery = """
         SELECT messagekeys.key
         FROM messages
@@ -66,9 +66,9 @@ class PostsAndContactsAlgorithm: FeedStrategy {
         ORDER BY messages.claimed_at DESC
         LIMIT ? OFFSET ?;
     """
-    // swiftlint: enable indentation_width
+    // swiftlint:enable indentation_width
 
-    // swiftlint: disable indentation_width
+    // swiftlint:disable indentation_width
     private let fetchKeyValuesQuery = """
         SELECT messages.*,
                posts.*,
@@ -119,7 +119,7 @@ class PostsAndContactsAlgorithm: FeedStrategy {
         ORDER BY claimed_at DESC
         LIMIT ? OFFSET ?;
     """
-    // swiftlint: enable indentation_width
+    // swiftlint:enable indentation_width
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
         let query = try connection.prepare(countNumberOfKeysQuery)

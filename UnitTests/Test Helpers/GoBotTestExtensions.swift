@@ -60,13 +60,19 @@ extension GoBot {
     }
 
     func testingFollow(as nick: String, nick otherNick: String) -> MessageIdentifier {
-        let keypairs = try! testingGetNamedKeypairs()
-        let other = keypairs[otherNick]!
+        guard let keypairs = try? testingGetNamedKeypairs() else {
+            return MessageIdentifier.null
+        }
+        guard let other = keypairs[otherNick] else {
+            return MessageIdentifier.null
+        }
         let content = Contact(contact: other, following: true)
-        let c = try! content.encodeToData().string()!
+        guard let content = try? content.encodeToData().string() else {
+            return MessageIdentifier.null
+        }
         var identifier: MessageIdentifier?
         nick.withGoString { goStrMe in
-            c.withGoString { goStrContent in
+            content.withGoString { goStrContent in
                 guard let refCstr = ssbTestingPublishAs(goStrMe, goStrContent) else {
                     XCTFail("publish failed!")
                     return
@@ -77,7 +83,7 @@ extension GoBot {
         let id = identifier!
         XCTAssertTrue(id.hasPrefix("%"))
         XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
-        print(c)
+        print(content)
         return id
     }
 

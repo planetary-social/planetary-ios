@@ -177,11 +177,13 @@ class RepliesView: KeyValueView {
             if let name = abouts.first?.name {
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
                 let others = count > 2 ? Text.andCountOthers : Text.andOneOther
-                text.append(NSAttributedString(
-                    others.text(["count": String(count - 1)]),
-                    font: self.textFont,
-                    color: .reactionUser
-                ))
+                text.append(
+                    NSAttributedString(
+                        others.text(["count": String(count - 1)]),
+                        font: self.textFont,
+                        color: .reactionUser
+                    )
+                )
             } else {
                 text.append(NSAttributedString(Text.countOthers.text, font: self.textFont, color: .reactionUser))
             }

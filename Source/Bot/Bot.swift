@@ -363,7 +363,7 @@ extension Bot {
     /// - returns: A FollowStats object with the number of followers and follows
     ///
     /// This function will throw if it cannot access the database
-    func numberOfFollowers(identity: Identity) async throws -> FollowStats	 {
+    func numberOfFollowers(identity: Identity) async throws -> FollowStats {
         try await withCheckedThrowingContinuation { continuation in
             numberOfFollowers(identity: identity) { count, error in
                 if let error = error {

@@ -1035,11 +1035,12 @@ class ViewDatabase {
     
     /// Returns the number of followers for a given identity
     func countNumberOfFollowers(feed: Identity) throws -> FollowStats {
-        guard let db = self.openDB else {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
-        let qry = try db.prepare("""
+        // swiftlint:disable indentation_width
+        let query = try connection.prepare("""
         SELECT SUM(CASE WHEN follow.author = ? THEN 1 ELSE 0 END) as followers_count,
                SUM(CASE WHEN follower.author = ? THEN 1 ELSE 0 END) as follows_count
         FROM contacts
@@ -1047,10 +1048,11 @@ class ViewDatabase {
         JOIN authors follow ON follow.id = contacts.contact_id
         WHERE contacts.state = 1;
         """)
+        // swiftlint:enable indentation_width
 
-        return try qry.bind(feed, feed).prepareRowIterator().map { row -> FollowStats in
-            let followersCount = try row.get(Expression<Int>("followers_count"))
-            let followsCount = try row.get(Expression<Int>("follows_count"))
+        return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> FollowStats in
+            let followersCount = try countsRow.get(Expression<Int>("followers_count"))
+            let followsCount = try countsRow.get(Expression<Int>("follows_count"))
             return FollowStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
         }.first ?? FollowStats(numberOfFollowers: 0, numberOfFollows: 0)
     }

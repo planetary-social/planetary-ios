@@ -447,9 +447,6 @@ class PostsAlgorithm: FeedStrategy {
 
         guard make else { throw ViewDatabaseError.unknownMessage(key) }
 
-        return try connection.run(msgKeys.insert(
-            colKey <- key,
-            colHashedKey <- key.sha256hash
-        ))
+        return try connection.run(msgKeys.insert(colKey <- key, colHashedKey <- key.sha256hash))
     }
 }
