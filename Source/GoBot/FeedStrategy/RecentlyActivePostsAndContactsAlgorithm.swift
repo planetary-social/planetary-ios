@@ -14,7 +14,7 @@ import SQLite
 ///
 /// It doesn't include pubs follows and posts in the feed.
 ///
-/// NOTE: This has a lot of code copied from PostsAndContactsAlgorithm. We should factor it out.
+/// NOTE: This has a lot of code copied from PostsAndContactsAlgorithm. We should factor it out. (#564)
 class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
