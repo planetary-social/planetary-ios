@@ -337,6 +337,9 @@ extension Text {
         case recentPostsWithFollowsAlgorithmDescription = "Shows posts and follow messages from the people you follow in the order they were posted."
         case recentlyActivePostsWithFollowsAlgorithm = "Recently active posts and follows"
         case recentlyActivePostsWithFollowsAlgorithmDescription = "Shows posts and follow messages from the people you follow. If a message receives a reply it will be pushed back up to the top of the feed."
+        case viewAlgorithmSource = "View Source Code"
+        case sourceCode = "Source Code"
+        case sourceCodeDescription = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above."
     }
 }
 

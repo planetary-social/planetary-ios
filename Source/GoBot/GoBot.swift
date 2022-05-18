@@ -1176,8 +1176,8 @@ class GoBot: Bot {
     /// The algorithm we use to filter and sort the home feed.
     var homeFeedStrategy: FeedStrategy {
         if let data = userDefaults.object(forKey: UserDefaults.homeFeedStrategy) as? Data,
-           let decodedObject = NSKeyedUnarchiver.unarchiveObject(with: data),
-           let strategy = decodedObject as? FeedStrategy {
+            let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
+            let strategy = decodedObject as? FeedStrategy {
             return strategy
         }
         

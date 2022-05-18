@@ -9,6 +9,7 @@
 import UIKit
 import Logger
 import Analytics
+import SafariServices
 
 /// Allows the user to choose the algorithm used to fetch the Home Feed.
 class FeedStrategySelectionViewController: DebugTableViewController {
@@ -23,7 +24,8 @@ class FeedStrategySelectionViewController: DebugTableViewController {
         self.settings = [
             recentPostsWithFollows(),
             recentPosts(),
-            recentlyActivePostsWithFollows()
+            recentlyActivePostsWithFollows(),
+            viewSource()
         ]
         super.updateSettings()
     }
@@ -43,7 +45,11 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription.text)
+        return (
+            Text.FeedAlgorithm.algorithms.text,
+            [cell],
+            Text.FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription.text
+        )
     }
     
     private func recentPosts() -> Settings {
@@ -84,12 +90,32 @@ class FeedStrategySelectionViewController: DebugTableViewController {
         return (nil, [cell], Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription.text)
     }
     
+    private func viewSource() -> Settings {
+        let cell = DebugTableViewCellModel(
+            title: Text.FeedAlgorithm.viewAlgorithmSource.text,
+            valueClosure: { cell in
+                cell.textLabel?.textColor = .systemBlue
+            },
+            actionClosure: { [weak self] _ in
+                // swiftlint:disable line_length
+                guard let url = URL(string: "https://github.com/planetary-social/planetary-ios/tree/main/Source/GoBot/FeedStrategy") else {
+                    return
+                }
+                // swiftlint:enable line_length
+                let controller = SFSafariViewController(url: url)
+                self?.present(controller, animated: true, completion: nil)
+            }
+        )
+        
+        return (Text.FeedAlgorithm.sourceCode.text, [cell], Text.FeedAlgorithm.sourceCodeDescription.text)
+    }
+    
     // MARK: - Helpers
     
     private func selectedStrategy() -> FeedStrategy {
         if let data = UserDefaults.standard.object(forKey: UserDefaults.homeFeedStrategy) as? Data,
-           let decodedObject = NSKeyedUnarchiver.unarchiveObject(with: data),
-           let strategy = decodedObject as? FeedStrategy {
+            let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
+            let strategy = decodedObject as? FeedStrategy {
             return strategy
         }
         return PostsAndContactsAlgorithm()
