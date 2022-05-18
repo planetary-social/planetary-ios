@@ -134,10 +134,10 @@ class PostCollectionViewCell: UICollectionViewCell {
             self.imageViewHeightConstraint?.isActive = false
             // self.textView.textContainer.maximumNumberOfLines = 3
         }
-        
+
         self.headerView.stopSkeletonAnimation()
         self.headerView.update(with: keyValue)
-        
+
         let textWithoutGallery = post.text.withoutGallery()
         if textWithoutGallery.withoutSpacesOrNewlines.isEmpty {
             self.textView.text = ""
@@ -147,7 +147,7 @@ class PostCollectionViewCell: UICollectionViewCell {
             self.textViewZeroHeightConstraint.isActive = true
         } else {
             self.textView.attributedText = textWithoutGallery.decodeMarkdown(small: true)
-            
+
             if textWithoutGallery.isSingleEmoji {
                 let size: CGFloat = self.contentView.bounds.width / 2
                 self.textView.font = UIFont.smallPost.body.withSize(size)

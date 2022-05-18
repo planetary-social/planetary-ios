@@ -453,59 +453,6 @@ class GoBotOrderedTests: XCTestCase {
     }
 
     // MARK: recent
-
-    func test130_recent_empty() {
-        let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.recent {
-            msgs, err in
-            XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, publishManyCount + 1)
-            ex.fulfill()
-        }
-        self.wait(for: [ex], timeout: 10)
-    }
-
-    func test131_recent_post_by_not_followed() {
-        _ = GoBotOrderedTests.shared.testingPublish(
-            as: "alice",
-            content: Post(text: "hello, world!"))
-
-        GoBotOrderedTests.shared.testRefresh(self)
-        
-        let rex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.recent {
-            msgs, err in
-            XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, publishManyCount + 1)
-            rex.fulfill()
-        }
-        self.wait(for: [rex], timeout: 10)
-    }
-
-    func test132_recent_follow_alice() {
-        let ex1 = self.expectation(description: "1")
-        let c = Contact(contact: GoBotOrderedTests.pubkeys["alice"]!, following: true)
-        GoBotOrderedTests.shared.publish(content: c) {
-            ref, err in
-            XCTAssertNotNil(ref)
-            XCTAssertNil(err)
-            ex1.fulfill()
-        }
-        self.wait(for: [ex1], timeout: 10)
-        
-        GoBotOrderedTests.shared.testRefresh(self)
-        
-        let ex2 = self.expectation(description: "2")
-        GoBotOrderedTests.shared.recent {
-            msgs, err in
-            XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, publishManyCount + 1 + 1)
-            guard let kv = msgs.keyValueBy(index: 0) else { XCTFail("no message"); return }
-            XCTAssertEqual(kv.value.author, GoBotOrderedTests.pubkeys["alice"]!)
-            ex2.fulfill()
-        }
-        self.wait(for: [ex2], timeout: 10)
-    }
     
     func test135_recent_paginated_feed() {
         // publish more so we have some to work with
@@ -527,7 +474,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex1], timeout: 10)
 
         // check we have the start (default is 100 messages pre-fetched)
-        XCTAssertEqual(proxy.count, 202)
+        XCTAssertEqual(proxy.count, 201)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
         XCTAssertNotNil(proxy.keyValueBy(index: 1))
         XCTAssertNil(proxy.keyValueBy(index: 100))
@@ -1040,7 +987,8 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.recent {
             msgs, err in
             XCTAssertNil(err)
-            XCTAssertEqual(msgs.count, startingCount + spamCount + 1)
+            // 4 = 1 for alice following denise + 3 for the three follows denise has
+            XCTAssertEqual(msgs.count, startingCount + spamCount + 1 + 4)
             exRecent.fulfill()
         }
         self.wait(for: [exRecent], timeout: 10)
@@ -1071,11 +1019,11 @@ class GoBotOrderedTests: XCTestCase {
         
         // back to normal
         let exClean = self.expectation(description: "\(#function) recent")
-        GoBotOrderedTests.shared.recent {
-           msgs, err in
-           XCTAssertNil(err)
-           XCTAssertEqual(msgs.count, startingCount)
-           exClean.fulfill()
+        GoBotOrderedTests.shared.recent { msgs, err in
+            XCTAssertNil(err)
+            // 1 = still have my follow to denise
+            XCTAssertEqual(msgs.count, startingCount + 1)
+            exClean.fulfill()
         }
         self.wait(for: [exClean], timeout: 10)
         
@@ -1104,6 +1052,16 @@ class GoBotOrderedTests: XCTestCase {
         // TODO: test they can't mention us
     }
     func test210_alice_posts_delete_request() {
+        // Follow alice
+        let exFollow = self.expectation(description: "\(#function) follow")
+        GoBotOrderedTests.shared.publish(content: Contact(contact: GoBotOrderedTests.pubkeys["alice"]!, following: true)) {
+            ref, err in
+            XCTAssertNil(err)
+            XCTAssertNotNil(ref)
+            exFollow.fulfill()
+        }
+        self.wait(for: [exFollow], timeout: 10)
+
         GoBotOrderedTests.shared.testRefresh(self)
 
         let ex1 = self.expectation(description: "\(#function) recent1")

@@ -36,8 +36,7 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     /// The typical `UITableViewCell` factory function, tied to the `keyValues` store.
     /// Subclasses should not need to override this unless they need to do specific
     /// things with the returned instance related to the `indexPath`.
-    func tableView(_ tableView: UITableView,
-                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let keyValue = self.keyValue(at: indexPath)
         let cell = self.dequeueReusuableCell(in: tableView, at: indexPath, for: keyValue)
         cell.update(with: keyValue)
@@ -47,9 +46,11 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     /// This is purposefully not public as no subclass should need to override
     /// the resuable cell dequeue process.  If a different type of cell is needed,
     /// override `cell(for: type)` instead.
-    private func dequeueReusuableCell(in tableView: UITableView,
-                                      at indexPath: IndexPath,
-                                      for keyValue: KeyValue) -> KeyValueTableViewCell {
+    private func dequeueReusuableCell(
+        in tableView: UITableView,
+        at indexPath: IndexPath,
+        for keyValue: KeyValue
+    ) -> KeyValueTableViewCell {
         let type = keyValue.value.content.type
         let cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? KeyValueTableViewCell
         return cell ?? self.cell(at: indexPath, for: type, tableView: tableView)
@@ -58,12 +59,14 @@ class KeyValueTableViewDataSource: NSObject, UITableViewDataSource {
     /// Convenience function to return a `KeyValueTableViewCell` instance
     /// for the specified `ContentType`.  Subclasses are encouraged to override
     /// if a dfferent cell is required for their use case.
-    func cell(at indexPath: IndexPath,
-              for type: ContentType,
-              tableView: UITableView) -> KeyValueTableViewCell {
+    func cell(at indexPath: IndexPath, for type: ContentType, tableView: UITableView) -> KeyValueTableViewCell {
         switch type {
-            case .post:     return KeyValueTableViewCell(for: type, height: 300)
-            default:        return KeyValueTableViewCell(for: type)
+        case .post:
+            return KeyValueTableViewCell(for: type, height: 300)
+        case .contact:
+            return KeyValueTableViewCell(for: type, height: 300)
+        default:
+            return KeyValueTableViewCell(for: type)
         }
     }
 
@@ -129,7 +132,7 @@ extension UITableView {
 
         // clean up data source key values
         let indexPaths = self.indexPaths(forKeyValuesBy: author)
-        guard indexPaths.count > 0 else { return }
+        guard !indexPaths.isEmpty else { return }
         self.keyValueDataSource?.deleteKeyValues(at: indexPaths)
 
         // if the table view is in a view controller that is not

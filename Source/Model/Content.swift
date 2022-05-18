@@ -57,6 +57,13 @@ struct Content: Codable {
         self.typeException = nil
         self.contact = contact
     }
+    
+    init(from about: About) {
+        self.type = .about
+        self.typeString = "about"
+        self.typeException = nil
+        self.about = about
+    }
 
     /// The first responsibility of this decoder is to ensure that
     /// it never throws even when the supplied data does not contain
