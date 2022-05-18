@@ -96,7 +96,7 @@ class FeedStrategyTests: XCTestCase {
         
         try db.fillMessages(msgs: [post0, follow1, about2, post3, reply4])
         
-        let strategy = PatchworkAlgorithm()
+        let strategy = RecentlyActivePostsAndContactsAlgorithm()
         let proxy = try db.paginatedFeed(with: strategy)
         
         XCTAssertEqual(proxy.count, 3)
