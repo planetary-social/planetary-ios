@@ -1,5 +1,5 @@
 //
-//  PostsAndContactsAlgorithm.swift
+//  RecentlyActivePostsAndContactsAlgorithm.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 12/4/22.
