@@ -1141,13 +1141,13 @@ class ViewDatabase {
 
     // MARK: pagination
     // returns a pagination proxy for the home (or recent) view
-    func paginated(onlyFollowed: Bool) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try RecentViewKeyValueSource(with: self, onlyFollowed: onlyFollowed)
+    func paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedKeyValueDataProxy) {
+        let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
     }
     
-    func paginatedTop(onlyFollowed: Bool) throws -> MessageIdentifier? {
-        try RecentViewKeyValueSource.top(with: self, onlyFollowed: onlyFollowed)
+    func messageIDAtTopOfFeed(with feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
+        try RecentViewKeyValueSource.top(with: self, feedStrategy: feedStrategy)
     }
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {

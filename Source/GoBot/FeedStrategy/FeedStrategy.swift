@@ -14,7 +14,7 @@ import SQLite
 /// This strategy supports having a family of algorithms that implement fetching
 /// a feed in different and unique ways (one could fetch just posts, another one
 /// could fetch posts and follows, and so on), and making them interchangeable.
-protocol FeedStrategy {
+protocol FeedStrategy: NSObjectProtocol, NSCoding {
     /// Returns the total number of items in the feed
     /// - parameter connection: the database connection needed to run queries in the database
     /// - parameter userId: the ID of the user for which the feed will be calculated from
