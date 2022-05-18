@@ -1141,7 +1141,7 @@ class ViewDatabase {
 
     // MARK: pagination
     // returns a pagination proxy for the home (or recent) view
-    func  paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedKeyValueDataProxy) {
+    func paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedKeyValueDataProxy) {
         let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
     }
