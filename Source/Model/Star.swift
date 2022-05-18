@@ -23,8 +23,8 @@ struct Star {
         "\(host):\(port)"
     }
     
-    var address: MultiserverAddress {
-        MultiserverAddress(key: self.feed.id, host: self.host, port: self.port)
+    var address: PubAddress {
+        PubAddress(key: self.feed, host: self.host, port: self.port)
     }
     
     init(invite: String) {
@@ -61,7 +61,7 @@ struct Star {
     }
     
     func toPub() -> Pub {
-        Pub(type: .pub, address: self.address)
+        Pub(type: .pub, address: PubAddress(key: feed, host: host, port: port))
     }
     
     /// Checks whether we can establish a TCP connection to the star. This is only necessary to work around a bug
