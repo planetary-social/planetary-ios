@@ -5,12 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.2.0] 2022-04-21
-- Updated to the latest version of go-ssb which requires us to delete and resync all data from the network. #510
-- Added back toggle to onboarding to opt out of analytics #513
-- Added toggle in onboarding to follow Planetary identity #513
-- Changed database to show all messages, even those older than 6 months #513
-- Changed debug builds to create identities on a test network caps #470
-- Removed connection firewall in go-ssb #435
+
+- Added a section in the Settings menu to let you choose from several algorithms for the Home Feed. #565
+- Changed default home feed algorithm to show follow messages. #532
+- Added a Home Feed algorithm that moves posts back to the top of your feed when they receive a reply. #565
+- Updated to the latest version of our SSB library which requires us to delete and resync all data from the network. #510
+- (re-)Added option during onboarding to opt out of analytics. #513
+- Added option in onboarding to follow Planetary identity. #513
+- Changed database to show all messages, even those older than 6 months. #513
+- Changed debug builds to use the Planetary Test Network rather than the SSB main network caps. #470
+- Removed connection firewall in go-ssb. Planetary will now replicate with any other SSB client on your local network. #435
+- Display year in timestamps on old posts. @jyu1129 #560 
+- Improved performance of replication algorithm. #553 #533
+- Fixed an issue where Planetary would incorrectly prevent the user from posting with a message about it restoring. #548
+- Improved loading of images. #535
 
 ## [1.1.2] 2022-04-29
 - Fixed invitations for Gardening and Poetry pubs #503
