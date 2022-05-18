@@ -175,18 +175,19 @@ class RecentViewKeyValueSource: KeyValueSource {
     // home or explore view?
     private let strategy: FeedStrategy
 
-    init(with vdb: ViewDatabase, feedStrategy: FeedStrategy) throws {
-        self.view = vdb
+    init(with db: ViewDatabase, feedStrategy: FeedStrategy) throws {
+        self.view = db
+
         self.strategy = feedStrategy
-        self.total = try vdb.statsForRootPosts(strategy: strategy)
+        self.total = try db.statsForRootPosts(strategy: strategy)
     }
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
         try self.view.recentPosts(strategy: strategy, limit: limit, offset: offset)
     }
     
-    static func top(with vdb: ViewDatabase, feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
-        return try vdb.recentIdentifiers(strategy: feedStrategy, limit: 1).first
+    static func top(with db: ViewDatabase, feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
+        return try db.recentIdentifiers(strategy: feedStrategy, limit: 1).first
     }
 }
 
