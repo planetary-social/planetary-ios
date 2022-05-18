@@ -2,7 +2,7 @@
 //  RecentlyActivePostsAndContactsAlgorithm.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 12/4/22.
+//  Created by Matt Lorentz on 17/5/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
