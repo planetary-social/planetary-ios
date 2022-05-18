@@ -1087,6 +1087,21 @@ class GoBot: Bot {
             }
         }
     }
+
+    func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void)) {
+        userInitiatedQueue.async { [database] in
+            do {
+                let count = try database.countNumberOfFollowersAndFollows(feed: identity)
+                DispatchQueue.main.async {
+                    completion(count, nil)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(SocialStats(numberOfFollowers: 0, numberOfFollows: 0), error)
+                }
+            }
+        }
+    }
     
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
@@ -1304,6 +1319,17 @@ class GoBot: Bot {
             do {
                 var hashtags = try self.database.hashtags()
                 hashtags.reverse()
+                DispatchQueue.main.async { completion(hashtags, nil) }
+            } catch {
+                DispatchQueue.main.async { completion([], error) }
+            }
+        }
+    }
+
+    func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) {
+        userInitiatedQueue.async { [database] in
+            do {
+                let hashtags = try database.hashtags(identity: identity, limit: limit)
                 DispatchQueue.main.async { completion(hashtags, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }

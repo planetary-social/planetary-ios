@@ -12,10 +12,15 @@ import Analytics
 class PostReplyDataSource: KeyValueTableViewDataSource {
 
     override func cell(at indexPath: IndexPath, for type: ContentType, tableView: UITableView) -> KeyValueTableViewCell {
-        let view = PostReplyView()
-        view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-        let cell = KeyValueTableViewCell(for: .post, with: view)
-        return cell
+        switch type {
+        case .contact:
+            let view = ContactReplyView()
+            return KeyValueTableViewCell(for: .contact, with: view)
+        default:
+            let view = PostReplyView()
+            view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
+            return KeyValueTableViewCell(for: .post, with: view)
+        }
     }
 
     private func truncationLimitForPost(at indexPath: IndexPath) -> TruncationSettings? {
@@ -63,6 +68,11 @@ class PostReplyDelegate: KeyValueTableViewDelegate {
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let dataSource = tableView.keyValueDataSource else { return tableView.bounds.size.width }
         let keyValue = dataSource.keyValues[indexPath.row]
-        return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
+        switch keyValue.contentType {
+        case .contact:
+            return ContactReplyView.estimatedHeight(with: keyValue, in: tableView)
+        default:
+            return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
+        }
     }
 }

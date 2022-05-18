@@ -53,8 +53,10 @@ class PostReplyView: KeyValueView {
         topBorder.backgroundColor = .cardBorder
         bottomBorder.backgroundColor = .cardBorder
         
-        let bottomSeparator = Layout.separatorView(height: 10,
-                                                   color: .appBackground)
+        let bottomSeparator = Layout.separatorView(
+            height: 10,
+            color: .appBackground
+        )
 
         Layout.fillTop(of: self, with: topBorder)
         Layout.fillSouth(of: topBorder, with: self.postView)
@@ -71,13 +73,13 @@ class PostReplyView: KeyValueView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func update(with keyValue: KeyValue) {
         self.postView.update(with: keyValue)
         self.repliesView.update(with: keyValue)
-        if keyValue.metadata.replies.count > 0 {
+        if !keyValue.metadata.replies.isEmpty {
             self.degrade.heightConstraint?.constant = 12.33
         } else {
             self.degrade.heightConstraint?.constant = 0
@@ -93,8 +95,7 @@ extension PostReplyView {
     /// height for the `RepliesView` is added.  This does require some knowledge of the heights
     /// for the various subviews, but this needs to be a very fast call so no complicated calculations
     /// should be done.  Instead, some magic numbers are used based on the various constraints.
-    static func estimatedHeight(with keyValue: KeyValue,
-                                in superview: UIView) -> CGFloat {
+    static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
         // starting height based for all non-zero height subviews
         // header + text + reply box
         var height = CGFloat(300)
@@ -106,7 +107,7 @@ extension PostReplyView {
         if post.hasBlobs { height += superview.bounds.size.width }
 
         // add replies view if necessary
-        if keyValue.metadata.replies.count > 0 { height += 35 }
+        if !keyValue.metadata.replies.isEmpty { height += 35 }
 
         // done
         return height
@@ -135,12 +136,12 @@ class RepliesView: KeyValueView {
 
         self.label.constrainLeading(toTrailingOf: self.avatarImageView, constant: Layout.horizontalSpacing)
 
-        // creates a height constraint, which we can access as heightConstraint through the UIView extension that adds it
+        // creates a height constraint, which we can access as heightConstraint through the UIView extension that add it
         self.constrainHeight(to: 0)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     // MARK: KeyValueUpdateable
@@ -148,10 +149,13 @@ class RepliesView: KeyValueView {
     override func update(with keyValue: KeyValue) {
         let uniqueAbouts = Array(Set(keyValue.metadata.replies.abouts))
 
-        self.avatarImageView.abouts = uniqueAbouts
-
         if !uniqueAbouts.isEmpty {
-            self.updateLabel(from: uniqueAbouts, total: keyValue.metadata.replies.count)
+            Bots.current.abouts(identities: uniqueAbouts.map { $0.identity }) { abouts, _ in
+                DispatchQueue.main.async {
+                    self.avatarImageView.abouts = abouts
+                    self.updateLabel(from: abouts, total: keyValue.metadata.replies.count)
+                }
+            }
         }
 
         self.heightConstraint?.constant = uniqueAbouts.isEmpty ? 0 : self.expandedHeight
@@ -173,7 +177,13 @@ class RepliesView: KeyValueView {
             if let name = abouts.first?.name {
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
                 let others = count > 2 ? Text.andCountOthers : Text.andOneOther
-                text.append(NSAttributedString(others.text(["count": String(count - 1)]), font: self.textFont, color: .reactionUser))
+                text.append(
+                    NSAttributedString(
+                        others.text(["count": String(count - 1)]),
+                        font: self.textFont,
+                        color: .reactionUser
+                    )
+                )
             } else {
                 text.append(NSAttributedString(Text.countOthers.text, font: self.textFont, color: .reactionUser))
             }

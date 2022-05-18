@@ -74,6 +74,15 @@
         }
       },
       {
+        "package": "SQLite.swift",
+        "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
+        "state": {
+          "branch": null,
+          "revision": "4d543d811ee644fa4cc4bfa0be996b4dd6ba0f54",
+          "version": "0.13.3"
+        }
+      },
+      {
         "package": "ZendeskSupportProvidersSDK",
         "repositoryURL": "https://github.com/zendesk/support_providers_sdk_ios",
         "state": {

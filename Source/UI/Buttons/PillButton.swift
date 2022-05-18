@@ -17,6 +17,12 @@ class PillButton: AppButton {
             self.heightConstraint?.constant = self.height
         }
     }
+
+    var fontSize: CGFloat = 14 {
+        didSet {
+            self.titleLabel?.font = UIFont.verse.pillButton.withSize(fontSize)
+        }
+    }
     
     private var primaryColor: UIColor
     private var secondaryColor: UIColor

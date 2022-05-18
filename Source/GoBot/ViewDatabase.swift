@@ -14,6 +14,7 @@ import CryptoKit
 import Logger
 import Analytics
 import CrashReporting
+import SQLite3
 
 // schema migration handling
 extension Connection {
@@ -457,23 +458,11 @@ class ViewDatabase {
     }
     
     // helper to get some counts for pagination
-    func statsForRootPosts(onlyFollowed: Bool = false) throws -> Int {
-        guard let db = self.openDB else {
+    func statsForRootPosts(strategy: FeedStrategy) throws -> Int {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        var qry = self.posts
-            .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
-            .filter(colMsgType == "post")
-            .filter(colIsRoot == true)
-            .filter(colHidden == false)
-            .filter(colDecrypted == false)
-        
-        if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
-        } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
-        }
-        return try db.scalar(qry.count)
+        return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID)
     }
 
     // posts for a feed
@@ -1043,6 +1032,31 @@ class ViewDatabase {
             return keyValue
         }
     }
+    
+    /// Returns the number of followers and follows for a given identity
+    func countNumberOfFollowersAndFollows(feed: Identity) throws -> SocialStats {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        // swiftlint:disable indentation_width
+        let queryString = """
+        SELECT SUM(CASE WHEN follow.author = ? THEN 1 ELSE 0 END) as followers_count,
+               SUM(CASE WHEN follower.author = ? THEN 1 ELSE 0 END) as follows_count
+        FROM contacts
+        JOIN authors follower ON follower.id = contacts.author_id
+        JOIN authors follow ON follow.id = contacts.contact_id
+        WHERE contacts.state = 1;
+        """
+        // swiftlint:enable indentation_width
+
+        let query = try connection.prepare(queryString)
+        return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> SocialStats in
+            let followersCount = try countsRow.get(Expression<Int>("followers_count"))
+            let followsCount = try countsRow.get(Expression<Int>("follows_count"))
+            return SocialStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
+        }.first ?? SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
+    }
 
     // who is this feed blocking
     func getBlocks(feed: Identity) throws -> [Identity] {
@@ -1142,57 +1156,19 @@ class ViewDatabase {
     }
 
     // MARK: recent
-    func recentPosts(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> KeyValues {
-        guard let _ = self.openDB else {
+    func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> KeyValues {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
-        var qry = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
-            .order(colClaimedAt.desc)
-        
-        if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
-        } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
-        }
-        
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: qry)
-            
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
+        return try strategy.fetchKeyValues(connection: connection, userId: currentUserID, limit: limit, offset: offset)
     }
     
     // This gets called a lot from the go-bot... 
-    func recentIdentifiers(limit: Int, offset: Int? = nil, wantPrivate: Bool = false, onlyFollowed: Bool = true) throws -> [MessageIdentifier] {
-        guard let db = self.openDB else {
+    func recentIdentifiers(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> [MessageIdentifier] {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        
-        var qry = self.msgs
-            .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
-            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
-            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
-            .filter(colDecrypted == wantPrivate)
-            .filter(colHidden == false)
-        
-        if let offset = offset {
-            qry = qry.limit(limit, offset: offset)
-        } else {
-            qry = qry.limit(limit)
-        }
-        
-        qry = qry.filter(colIsRoot == true)   // only thread-starting posts (no replies)
-        
-        qry = qry.order(colMessageID.desc)
-        
-        if onlyFollowed {
-            qry = try self.filterOnlyFollowedPeople(qry: qry)
-        } else {
-            qry = try self.filterNotFollowingPeople(qry: qry)
-        }
-        
-        return try db.prepare(qry).compactMap { row in
-            try row.get(colKey)
-        }
+        return try strategy.fetchKeys(connection: connection, userId: currentUserID, limit: limit, offset: offset)
     }
     
     // MARK: common query constructors
@@ -1785,8 +1761,7 @@ class ViewDatabase {
             "channels"."id" = "channel_assignments"."chan_ref"
         )
         Group by channels.id
-        ORDER BY "messages.received_at" ASC
-        
+        ORDER BY "messages.received_at" ASC;
         """)
 
         var channels: [Hashtag] = []
@@ -1798,6 +1773,31 @@ class ViewDatabase {
             channels += [hashtag]
         }
         return channels
+    }
+
+    func hashtags(identity: Identity, limit: Int = 100) throws -> [Hashtag] {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let queryString = """
+        SELECT c.name AS channel_name
+        FROM channel_assignments ca
+        JOIN messages m ON m.msg_id = ca.msg_ref
+        JOIN authors a ON a.id = m.author_id
+        JOIN channels c ON c.id = ca.chan_ref
+        WHERE a.author = ?
+        ORDER BY m.received_at DESC
+        LIMIT ? OFFSET 0;
+        """
+        let query = try connection.prepare(queryString)
+        let bindings: [Binding?] = [
+            identity,
+            limit
+        ]
+        return try query.bind(bindings).prepareRowIterator().map { channelRow -> Hashtag in
+            let channelName = try channelRow.get(Expression<String>("channel_name"))
+            return Hashtag(name: channelName)
+        }
     }
     
     // TODO: pagination

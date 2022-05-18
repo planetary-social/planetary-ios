@@ -17,17 +17,11 @@ class FakeBot: Bot {
     
     required init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?) {}
     
-    func lastReceivedTimestam() throws -> Double {
-        fatalError("TODO:\(#function)")
-    }
+    func lastReceivedTimestam() throws -> Double { 0 }
     
-    func suspend() {
-        fatalError("TODO:\(#function)")
-    }
+    func suspend() { }
     
-    func exit() {
-        fatalError("TODO:\(#function)")
-    }
+    func exit() { }
     
     func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
         queue.async {
@@ -35,17 +29,17 @@ class FakeBot: Bot {
         }
     }
     
-    func seedPubAddresses(addresses: [PubAddress],
-                          queue: DispatchQueue,
-                          completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(
+        addresses: [PubAddress],
+        queue: DispatchQueue,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         queue.async {
             completion(.success(()))
         }
     }
     
-    func knownPubs(completion: @escaping KnownPubsCompletion) {
-        fatalError("TODO:knownPubs")
-    }
+    func knownPubs(completion: @escaping KnownPubsCompletion) { }
     
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         queue.async {
@@ -56,53 +50,29 @@ class FakeBot: Bot {
         completionQueue.async { completion(nil) }
     }
     
-    func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
-        fatalError("TODO:thread:byRootKey")
-    }
+    func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) { }
 
-    func updateReceive(limit: Int, completion: @escaping PublishCompletion) {
-           fatalError("TODO:update:rx")
-    }
+    func updateReceive(limit: Int, completion: @escaping PublishCompletion) { }
     
-    func addBlob(data: Data, completion: @escaping BlobsAddCompletion) {
-        fatalError("TODO:blobs:add")
-    }
+    func addBlob(data: Data, completion: @escaping BlobsAddCompletion) { }
 
-    func addBlob(jpegOf image: UIImage,
-                 largestDimension: UInt?,
-                 completion: @escaping AddImageCompletion) {
-        fatalError("TODO:blobs:get")
-    }
+    func addBlob(jpegOf image: UIImage, largestDimension: UInt?, completion: @escaping AddImageCompletion) { }
     
-    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
-        fatalError("TODO")
-    }
+    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) { }
     
-    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
-        fatalError("TODO")
-    }
+    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) { }
 
-    func data(for identifier: BlobIdentifier,
-              completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) {
-        fatalError("TODO")
-    }
+    func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) { }
 
-    func hashtags(completion: @escaping HashtagsCompletion) {
-        fatalError("TODO")
-    }
+    func hashtags(completion: @escaping HashtagsCompletion) { }
 
-    func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) {
-        fatalError("TODO")
-    }
+    func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) { }
+
+    func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) { }
+
+    func uiimage(for identity: Identity, completion: @escaping UIImageCompletion) { }
     
-    // TODO: just lots of stubs
-    func uiimage(for identity: Identity, completion: @escaping UIImageCompletion) {
-        fatalError("TODO")
-    }
-    
-    func uiimage(for image: ImageMetadata, completion: @escaping UIImageCompletion) {
-        fatalError("TODO")
-    }
+    func uiimage(for image: ImageMetadata, completion: @escaping UIImageCompletion) { }
 
     func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion) {
         completionQueue.async {
@@ -110,57 +80,33 @@ class FakeBot: Bot {
         }
     }
 
-    func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
-        fatalError("TODO")
-    }
+    func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) { }
 
-    func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) {
-        fatalError("TODO")
-    }
+    func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) { }
     
-    func follows(identity: Identity, completion: @escaping ContactsCompletion) {
-        fatalError("TODO")
-    }
+    func follows(identity: Identity, completion: @escaping ContactsCompletion) { }
     
-    func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
-        fatalError("TODO")
-    }
+    func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     
-    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
-        fatalError("TODO")
-    }
+    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
 
-    func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) {
-        fatalError("TODO")
-    }
+    func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     
-    func friends(identity: Identity, completion: @escaping ContactsCompletion) {
-        fatalError("TODO")
-    }
+    func friends(identity: Identity, completion: @escaping ContactsCompletion) { }
+
+    func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void)) { }
     
-    func blocks(identity: Identity, completion: @escaping ContactsCompletion) {
-        fatalError("TODO")
-    }
+    func blocks(identity: Identity, completion: @escaping ContactsCompletion) { }
     
-    func blockedBy(identity: Identity, completion: @escaping ContactsCompletion) {
-        fatalError("TODO")
-    }
+    func blockedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
 
-    func block(_ identity: Identity, completion: @escaping PublishCompletion) {
-        fatalError("TODO")
-    }
+    func block(_ identity: Identity, completion: @escaping PublishCompletion) { }
 
-    func unblock(_ identity: Identity, completion: @escaping PublishCompletion) {
-        fatalError("TODO")
-    }
+    func unblock(_ identity: Identity, completion: @escaping PublishCompletion) { }
 
-    func follow(_ identity: Identity, completion: @escaping ContactCompletion) {
-        fatalError("TODO")
-    }
+    func follow(_ identity: Identity, completion: @escaping ContactCompletion) { }
 
-    func unfollow(_ identity: Identity, completion: @escaping ContactCompletion) {
-        fatalError("TODO")
-    }
+    func unfollow(_ identity: Identity, completion: @escaping ContactCompletion) { }
 
     required init() {}
     static let shared = FakeBot()
@@ -210,7 +156,7 @@ class FakeBot: Bot {
         queue.async {
             completion(nil, 0, 0)
         }
-      }
+    }
 
     // MARK: Refresh
 
@@ -286,7 +232,6 @@ class FakeBot: Bot {
     }
     
     func recent(completion: PaginatedCompletion) {
-//        let data = Data.fromJSON(resource: "Feed_big.json")
         let data = Data.fromJSON(resource: "Feed.json")
         var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
         feed?.sort { $0.value.timestamp < $1.value.timestamp }

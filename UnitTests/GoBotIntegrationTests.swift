@@ -18,7 +18,7 @@ class GoBotIntegrationTests: XCTestCase {
     var workingDirectory: String!
     var userDefaults: UserDefaults!
     var appConfig: AppConfiguration!
-    let fm = FileManager.default
+    let fileManager = FileManager.default
 
     override func setUpWithError() throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
@@ -28,7 +28,7 @@ class GoBotIntegrationTests: XCTestCase {
             .appending("/FBTT")
 
         // start fresh
-        do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
+        do { try fileManager.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
         
         userDefaults = UserDefaults()
         
@@ -40,17 +40,17 @@ class GoBotIntegrationTests: XCTestCase {
         appConfig.bot = sut
         
         let loginExpectation = self.expectation(description: "login")
-        sut.login(config: appConfig) {
-            error in
+        sut.login(config: appConfig) { error in
             defer { loginExpectation.fulfill() }
             XCTAssertNil(error)
         }
         self.wait(for: [loginExpectation], timeout: 10)
 
-        let nicks = ["alice"]
-        for n in nicks {
-            try sut.testingCreateKeypair(nick: n)
+        let nicks = ["alice", "bob"]
+        for nick in nicks {
+            try sut.testingCreateKeypair(nick: nick)
         }
+        try super.setUpWithError()
     }
 
     override func tearDownWithError() throws {
@@ -58,7 +58,8 @@ class GoBotIntegrationTests: XCTestCase {
         sut.logout { _ in logoutExpectation.fulfill() }
         waitForExpectations(timeout: 10, handler: nil)
         sut.exit()
-        try fm.removeItem(atPath: workingDirectory)
+        try fileManager.removeItem(atPath: workingDirectory)
+        try super.tearDownWithError()
     }
 
     /// Verifies that we can correctly refresh the `ViewDatabase` from the go-ssb log even after `publish` has copied
@@ -89,7 +90,7 @@ class GoBotIntegrationTests: XCTestCase {
         // Assert
         var statistics = BotStatistics()
         let statisticsExpectation = self.expectation(description: "statistics fetched")
-        sut.statistics() { newStatistics in
+        sut.statistics { newStatistics in
             statistics = newStatistics
             statisticsExpectation.fulfill()
         }
@@ -135,10 +136,10 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Act
         do {
-            let ref = try await sut.publish(content: testPost)
+            let messageRef = try await sut.publish(content: testPost)
             
         // Assert
-            XCTAssertNil(ref)
+            XCTAssertNil(messageRef)
         } catch {
             XCTAssertNotNil(error)
         }
@@ -153,10 +154,10 @@ class GoBotIntegrationTests: XCTestCase {
         userDefaults.set(false, forKey: "prevent_feed_from_forks")
         
         // Act
-        let ref = try await sut.publish(content: testPost)
+        let messageRef = try await sut.publish(content: testPost)
         
         // Assert
-        XCTAssertNotNil(ref)
+        XCTAssertNotNil(messageRef)
     }
     
     /// Verifies that the GoBot assumes the `"prevent_feed_from_forks"` setting is `true` when it hasn't been set.
@@ -168,10 +169,10 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Act
         do {
-            let ref = try await sut.publish(content: testPost)
+            let messageRef = try await sut.publish(content: testPost)
             
         // Assert
-            XCTAssertNil(ref)
+            XCTAssertNil(messageRef)
         } catch {
             XCTAssertNotNil(error)
         }
@@ -184,11 +185,11 @@ class GoBotIntegrationTests: XCTestCase {
         AppConfiguration.current?.numberOfPublishedMessages = 0
         
         // Act
-        let ref = try await sut.publish(content: testPost)
+        let messageRef = try await sut.publish(content: testPost)
         
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
-        XCTAssertNotNil(ref)
+        XCTAssertNotNil(messageRef)
     }
     
     /// Tests that forked feed protection updates correctly after a user imports a key and restores their feed.
@@ -210,11 +211,11 @@ class GoBotIntegrationTests: XCTestCase {
         // Write a message without incrementing the numberOfPublishedMessages to simulate a user redownloading their
         // own feed after importing their secret key.
         try sut.database.fillMessages(msgs: [existingMessage])
-        let ref = try await sut.publish(content: testPost)
+        let messageRef = try await sut.publish(content: testPost)
         
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 2)
-        XCTAssertNotNil(ref)
+        XCTAssertNotNil(messageRef)
     }
 
     /// Verifies that the GoBot can publish a message with an emoji
@@ -224,11 +225,11 @@ class GoBotIntegrationTests: XCTestCase {
         AppConfiguration.current?.numberOfPublishedMessages = 0
 
         // Act
-        let ref = try await sut.publish(content: testPost)
+        let messageRef = try await sut.publish(content: testPost)
 
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
-        XCTAssertNotNil(ref)
+        XCTAssertNotNil(messageRef)
     }
 
     /// Verifies that the GoBOt can publish a message with a mention
@@ -250,11 +251,11 @@ class GoBotIntegrationTests: XCTestCase {
         AppConfiguration.current?.numberOfPublishedMessages = 0
 
         // Act
-        let ref = try await sut.publish(content: testPost)
+        let messageRef = try await sut.publish(content: testPost)
 
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
-        XCTAssertNotNil(ref)
+        XCTAssertNotNil(messageRef)
     }
 
     /// Verifies that the GoBot can publish a message with a mention whose name has an emoji
@@ -276,11 +277,11 @@ class GoBotIntegrationTests: XCTestCase {
         AppConfiguration.current?.numberOfPublishedMessages = 0
 
         // Act
-        let ref = try await sut.publish(content: testPost)
+        let messageRef = try await sut.publish(content: testPost)
 
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 1)
-        XCTAssertNotNil(ref)
+        XCTAssertNotNil(messageRef)
     }
     
     /// Verifies that the statitistics() function updates the number of published messages in the AppConfiguration.
@@ -321,15 +322,14 @@ class GoBotIntegrationTests: XCTestCase {
     func testPubsArePreloaded() throws {
         // Arrange
         try tearDownWithError()
-        do { try fm.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
+        do { try fileManager.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
 
         let mockPreloader = MockPreloadedPubService()
         sut = GoBot(preloadedPubService: mockPreloader)
         let loginExpectation = self.expectation(description: "login")
         
         // Act
-        sut.login(config: appConfig) {
-            error in
+        sut.login(config: appConfig) { error in
             defer { loginExpectation.fulfill() }
             XCTAssertNil(error)
         }
@@ -337,6 +337,200 @@ class GoBotIntegrationTests: XCTestCase {
         
         // Assert
         XCTAssertEqual(mockPreloader.preloadPubsCallCount, 1)
+    }
+
+    // MARK: Hashtags
+
+    func testOnePostWithThreeHashtag() async throws {
+        let post = Post(attributedText: NSAttributedString(string: "Hello #one #two #three"))
+        _ = sut.testingPublish(as: "alice", content: post)
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let identity = try XCTUnwrap(keypairs["alice"])
+
+        let hashtags = try await sut.hashtags(usedBy: identity, limit: 10)
+        XCTAssertEqual(hashtags.count, 3)
+    }
+
+    func testThreePostsWithOneHashtagEach() async throws {
+        let firstPost = Post(attributedText: NSAttributedString(string: "Hello #one"))
+        _ = sut.testingPublish(as: "alice", content: firstPost)
+
+        let secondPost = Post(attributedText: NSAttributedString(string: "Hello #two"))
+        _ = sut.testingPublish(as: "alice", content: secondPost)
+
+        let thirdPost = Post(attributedText: NSAttributedString(string: "Hello #three"))
+        _ = sut.testingPublish(as: "alice", content: thirdPost)
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let identity = try XCTUnwrap(keypairs["alice"])
+
+        let hashtags = try await sut.hashtags(usedBy: identity, limit: 10)
+        XCTAssertEqual(hashtags.count, 3)
+    }
+
+    func testLimitInHashtags() async throws {
+        let post = Post(attributedText: NSAttributedString(string: "Hello #one #two #three"))
+        _ = sut.testingPublish(as: "alice", content: post)
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let identity = try XCTUnwrap(keypairs["alice"])
+
+        let hashtags = try await sut.hashtags(usedBy: identity, limit: 2)
+        XCTAssertEqual(hashtags.count, 2)
+    }
+
+    // MARK: Number of followers
+
+    func testNumberOfFollowers() async throws {
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+
+        // Alice follows Bob
+        _ = sut.testingFollow(as: "alice", nick: "bob")
+
+        try await sut.refresh(load: .short)
+
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let aliceIdentity = try XCTUnwrap(keypairs["alice"])
+        let bobIdentity = try XCTUnwrap(keypairs["bob"])
+
+        let myFollowStats = try await sut.socialStats(for: botTestsKey.identity)
+        XCTAssertEqual(myFollowStats.numberOfFollows, 1)
+        XCTAssertEqual(myFollowStats.numberOfFollowers, 0)
+
+        let aliceFollowStats = try await sut.socialStats(for: aliceIdentity)
+        XCTAssertEqual(aliceFollowStats.numberOfFollows, 1)
+        XCTAssertEqual(aliceFollowStats.numberOfFollowers, 1)
+
+        let bobFollowStats = try await sut.socialStats(for: bobIdentity)
+        XCTAssertEqual(bobFollowStats.numberOfFollows, 0)
+        XCTAssertEqual(bobFollowStats.numberOfFollowers, 1)
+    }
+
+    // MARK: Home feed
+
+    func testWith10Posts() async throws {
+        // I publish 10 messages
+        for i in 0..<10 {
+            _ = try await sut.publish(content: Post(text: "Me \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my 10 messages
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 10)
+    }
+
+    func testFollowingOnePerson() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my follow
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 1)
+    }
+
+    func testFollowingOnePersonWithoutAbout() async throws {
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my follow
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 0)
+    }
+
+    func testUnknownPersonWith10Posts() async throws {
+        // Alice publishes 10 posts
+        for i in 0..<10 {
+            _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should not have messages (I am not following Alice)
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 0)
+    }
+
+    func testPersonAtOneHopWith10Posts() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        // Alice publishes 10 posts
+        for i in 0..<10 {
+            _ = sut.testingPublish(as: "alice", content: Post(text: "Alice \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have 10 alice posts and 1 follow message
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 11)
+    }
+
+    func testPersonAtTwoHopsWith10Posts() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let aliceIdentity = try XCTUnwrap(keypairs["alice"])
+        let bobIdentity = try XCTUnwrap(keypairs["bob"])
+
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: aliceIdentity, name: "Alice"))
+
+        // Alice follows Bob
+        _ = sut.testingFollow(as: "alice", nick: "bob")
+        _ = sut.testingPublish(as: "bob", content: About(about: bobIdentity, name: "Bob"))
+
+        // Bob publishes 10 posts
+        for i in 0..<10 {
+            _ = sut.testingPublish(as: "bob", content: Post(text: "Bob \(i)"))
+        }
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have my follow and Alice's follow
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 2)
+    }
+
+    func testPersonAtOneHopFollowsAnotherAtTwoHops() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let aliceIdentity = try XCTUnwrap(keypairs["alice"])
+        let bobIdentity = try XCTUnwrap(keypairs["bob"])
+
+        // Follow alice
+        _ = sut.testingFollow(nick: "alice")
+        _ = sut.testingPublish(as: "alice", content: About(about: aliceIdentity, name: "Alice"))
+
+        // Alice follows Bob
+        _ = sut.testingFollow(as: "alice", nick: "bob")
+        _ = sut.testingPublish(as: "bob", content: About(about: bobIdentity, name: "Bob"))
+
+        try await sut.refresh(load: .short)
+
+        // Home feed should have Alice follow message
+        let proxy = try await sut.recent()
+        XCTAssertEqual(proxy.count, 2)
     }
 }
 
