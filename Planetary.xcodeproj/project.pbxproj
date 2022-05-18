@@ -623,8 +623,6 @@
 		5BC297482804A22500C0CD81 /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297472804A22500C0CD81 /* ContactView.swift */; };
 		5BC2974A2804B98C00C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC297492804B98C00C0CD81 /* SQLite */; };
 		5BC2974C2804B9DE00C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC2974B2804B9DE00C0CD81 /* SQLite */; };
-		5BC297502804BA8E00C0CD81 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */; };
-		5BC297522804BAAA00C0CD81 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */; };
 		5BC297542805F4A800C0CD81 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
 		5BC297552806017700C0CD81 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
 		5BC297592806022C00C0CD81 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
@@ -1521,7 +1519,6 @@
 		5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactReplyView.swift; sourceTree = "<group>"; };
 		5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactHeaderView.swift; sourceTree = "<group>"; };
 		5BC297472804A22500C0CD81 /* ContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactView.swift; sourceTree = "<group>"; };
-		5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/libsqlite3.0.tbd; sourceTree = DEVELOPER_DIR; };
 		5BC297532805F4A800C0CD81 /* FeedStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategy.swift; sourceTree = "<group>"; };
 		5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAlgorithm.swift; sourceTree = "<group>"; };
 		5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
@@ -1689,7 +1686,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BC297522804BAAA00C0CD81 /* libsqlite3.0.tbd in Frameworks */,
 				C97270932832A47100EBF023 /* GoSSB.xcframework in Frameworks */,
 				C969F43E282C81A700FF6FE3 /* Lottie in Frameworks */,
 				5BC2974A2804B98C00C0CD81 /* SQLite in Frameworks */,
@@ -1722,7 +1718,6 @@
 				C9134DE6281854E700595D49 /* Support in Frameworks */,
 				C969F436282C79CC00FF6FE3 /* Lottie in Frameworks */,
 				5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */,
-				5BC297502804BA8E00C0CD81 /* libsqlite3.0.tbd in Frameworks */,
 				5BC2974628048AD800C0CD81 /* SQLite in Frameworks */,
 				C94A23D227FB610E002DE7AC /* GoSSB.xcframework in Frameworks */,
 				5BAE9C88281E11B6008AEA84 /* Support in Frameworks */,
@@ -2123,7 +2118,6 @@
 				53C422AE21C476AF00A314AD /* Shared */,
 				5344D82D21C4649700704A34 /* Source */,
 				5308168621C46A53005C48ED /* UnitTests */,
-				C982CBDD28353C6A00D8963F /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2186,7 +2180,6 @@
 		5355556EBCE069620663A547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */,
 				C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */,
 				C933908F27FB5498007B5FD8 /* GoSSB.xcframework */,
 				C95A131F2786279A00FFD52F /* Foundation.framework */,
@@ -2668,13 +2661,6 @@
 				C969F438282C7A3700FF6FE3 /* bouncing_ellipse.json */,
 			);
 			path = "Lottie Animations";
-			sourceTree = "<group>";
-		};
-		C982CBDD28353C6A00D8963F /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		C98A013627907F9200E29A97 /* Performance */ = {
