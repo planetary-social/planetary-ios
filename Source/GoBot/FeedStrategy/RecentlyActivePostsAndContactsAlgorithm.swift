@@ -50,7 +50,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 FROM tangles
                 JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
                 WHERE tangles.root == messages.msg_id
-                /*WHERE tangled_message.claimed_at < ?*/
+                AND tangled_message.claimed_at < ?
                 ORDER BY tangled_message.claimed_at DESC LIMIT 1
                ) as last_reply
         FROM messages
@@ -109,7 +109,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 FROM tangles
                 JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
                 WHERE tangles.root == messages.msg_id
-                /*WHERE tangled_message.claimed_at < ?*/
+                AND tangled_message.claimed_at < ?
                 ORDER BY tangled_message.claimed_at DESC LIMIT 1
                ) as last_reply
         FROM messages
@@ -163,6 +163,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         let query = try connection.prepare(fetchKeysQuery)
 
         let bindings: [Binding?] = [
+            Date().millisecondsSince1970,
             userId,
             userId,
             Date().millisecondsSince1970,
@@ -178,7 +179,14 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         let query = try connection.prepare(fetchKeyValuesQuery)
-        let bindings: [Binding?] = [userId, userId, Date().millisecondsSince1970, limit, offset ?? 0]
+        let bindings: [Binding?] = [
+            Date().millisecondsSince1970,
+            userId,
+            userId,
+            Date().millisecondsSince1970,
+            limit,
+            offset ?? 0
+        ]
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, connection: connection)
         }
