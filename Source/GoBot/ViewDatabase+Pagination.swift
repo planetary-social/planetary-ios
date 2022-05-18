@@ -177,6 +177,7 @@ class RecentViewKeyValueSource: KeyValueSource {
 
     init(with vdb: ViewDatabase, feedStrategy: FeedStrategy) throws {
         self.view = vdb
+
         self.strategy = feedStrategy
         self.total = try vdb.statsForRootPosts(strategy: strategy)
     }
@@ -186,7 +187,18 @@ class RecentViewKeyValueSource: KeyValueSource {
     }
     
     static func top(with vdb: ViewDatabase, feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
+        let strategy = buildStrategy(onlyFollowed: onlyFollowed)
         return try vdb.recentIdentifiers(strategy: feedStrategy, limit: 1).first
+    }
+
+    private static func buildStrategy(onlyFollowed: Bool) -> FeedStrategy {
+        if onlyFollowed {
+            // Home Feed
+            return PostsAndContactsAlgorithm()
+        } else {
+            // Discover feed
+            return PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
+        }
     }
 }
 
