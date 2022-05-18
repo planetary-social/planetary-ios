@@ -465,11 +465,11 @@ class ViewDatabase {
         let pubs: [Pub] = try db.prepare(qry).map { row in
             let host = try row.get(colHost)
             let port = try row.get(colPort)
-            let key = try row.get(colKey)
+            let key: Identifier = try row.get(colKey)
             
             return Pub(
                 type: .pub,
-                address: MultiserverAddress(
+                address: PubAddress(
                     key: key,
                     host: host,
                     port: UInt(port)
@@ -478,8 +478,10 @@ class ViewDatabase {
         }
         
         // Filter out duplicates
-        var seenIDs = Set<MultiserverAddress>()
-        return pubs.filter { seenIDs.insert($0.address).inserted }
+        var seenIDs = Set<PubAddress>()
+        return pubs
+            .filter { $0.address.key.isValidIdentifier }
+            .filter { seenIDs.insert($0.address).inserted }
     }
     
     // MARK: moderation / delete
@@ -1715,17 +1717,17 @@ class ViewDatabase {
     
     private func fillAddress(msgID: Int64, msg: KeyValue) throws {
         
-        guard let a = msg.value.content.address else {
+        guard let address = msg.value.content.address,
+              let multiserverAddress = address.multiserver else {
             Log.info("[viewdb/fill] broken addr message: \(msg.key)")
             return
         }
         
         let author = msg.value.author
-        let address = a.address
-        try saveAddress(feed: author, address: address, redeemed: nil)
+        try saveAddress(feed: author, address: multiserverAddress, redeemed: nil)
     }
     
-    func saveAddress(feed: Identity, address: String, redeemed: Double?) throws {
+    func saveAddress(feed: Identity, address: MultiserverAddress, redeemed: Double?) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1736,7 +1738,7 @@ class ViewDatabase {
         
         try db.run(self.addresses.insert(or: conflictStrategy,
             colAboutID <- authorID,
-            colAddress <- address,
+            colAddress <- address.string,
             colRedeemed <- redeemed
         ))
     }
@@ -1896,7 +1898,8 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
 
-        guard let p = msg.value.content.pub else {
+        guard let p = msg.value.content.pub,
+            p.address.key.isValidIdentifier else {
             Log.info("[viewdb/fill] broken pub message: \(msg.key)")
             return
         }

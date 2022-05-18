@@ -79,7 +79,7 @@ class SendMissionOperation: AsynchronousOperation {
                 let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
                 if peerPool.count < minPeers {
                     let someSystemPubs = systemPubs.randomSample(UInt(minPeers - peerPool.count))
-                    peerPool += someSystemPubs.map { $0.address }
+                    peerPool += someSystemPubs.map { $0.address.multiserver }
                 }
                 
                 let syncOperation = SyncOperation(peerPool: peerPool)

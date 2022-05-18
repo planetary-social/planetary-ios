@@ -41,7 +41,7 @@ class FakeBot: Bot {
         }
     }
     
-    func seedPubAddresses(addresses: [MultiserverAddress],
+    func seedPubAddresses(addresses: [PubAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void) {
         queue.async {

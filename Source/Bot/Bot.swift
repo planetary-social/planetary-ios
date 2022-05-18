@@ -70,7 +70,7 @@ protocol Bot: AnyObject {
     // MARK: Sync
     
     /// Ensure that these list of addresses are taken into consideration when establishing connections
-    func seedPubAddresses(addresses: [MultiserverAddress],
+    func seedPubAddresses(addresses: [PubAddress],
                           queue: DispatchQueue,
                           completion: @escaping (Result<Void, Error>) -> Void)
     
@@ -376,7 +376,7 @@ extension Bot {
         self.keyAtEveryoneTop(queue: .main, completion: completion)
     }
     
-    func seedPubAddresses(addresses: [MultiserverAddress], completion: @escaping (Result<Void, Error>) -> Void) {
+    func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
 }

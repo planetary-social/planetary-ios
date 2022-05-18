@@ -20,6 +20,10 @@ typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?)
 // get's called with a token and an expiry date as unix timestamp
 typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, Int64) -> Void
 
+/// An abstract representation of a peer that we can replicate with.
+/// 
+/// Note: This model only really supports peers we talk to over secret handshake and the IP protocol. Much of the stack
+/// has been upgraded to support the new `MultiserverAddress` format which is more flexible.
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
@@ -27,11 +31,6 @@ struct Peer {
     init(tcpAddr: String, pubKey: Identity) {
         self.tcpAddr = tcpAddr
         self.pubKey = pubKey
-    }
-    
-    init(multiserver: MultiserverAddress) {
-        self.tcpAddr = "\(multiserver.host):\(multiserver.port)"
-        self.pubKey = multiserver.key
     }
     
     var multiserverAddress: MultiserverAddress? {
