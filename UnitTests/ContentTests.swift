@@ -206,6 +206,11 @@ class ContentTests: XCTestCase {
         XCTAssertEqual(msg.value.content.type, .pub)
         XCTAssertEqual(msg.value.content.isValid, true)
         XCTAssertEqual(msg.value.content.contentException, nil)
+        let pub = try XCTUnwrap(msg.value.content.pub)
+        XCTAssertEqual(pub.address.key, "@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519")
+        XCTAssertEqual(pub.address.host, "two.planetary.pub")
+        XCTAssertEqual(pub.address.port, 8008)
+        XCTAssertEqual(pub.address.multiserver.string, "net:two.planetary.pub:8008~shs:7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=")
     }
 
     // TODO need to confirm string content to ensure everything was captured

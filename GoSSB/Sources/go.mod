@@ -66,6 +66,6 @@ go 1.18
 
 replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
 
-replace go.cryptoscope.co/ssb => github.com/planetary-social/ssb v0.2.2-0.20220503171112-8644350c2422
+replace go.cryptoscope.co/ssb => github.com/planetary-social/ssb v0.2.2-0.20220518160634-9f5526e77c01
 
 replace go.mindeco.de => github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7
