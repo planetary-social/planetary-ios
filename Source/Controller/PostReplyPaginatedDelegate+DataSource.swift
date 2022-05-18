@@ -24,10 +24,15 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
     }
     
     override func cell(at indexPath: IndexPath, for type: ContentType) -> KeyValueTableViewCell {
-        let view = PostReplyView()
-        view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-        let cell = KeyValueTableViewCell(for: .post, with: view)
-        return cell
+        switch type {
+        case .contact:
+            let view = ContactReplyView()
+            return KeyValueTableViewCell(for: .contact, with: view)
+        default:
+            let view = PostReplyView()
+            view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
+            return KeyValueTableViewCell(for: .post, with: view)
+        }
     }
     
     private func truncationLimitForPost(at indexPath: IndexPath) -> TruncationSettings? {
@@ -44,10 +49,17 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
     }
     
     override func loadKeyValue(_ keyValue: KeyValue, in cell: KeyValueTableViewCell) {
-        let postReplyView = cell.keyValueView as! PostReplyView
-        postReplyView.postView.truncationLimit = self.truncationLimitForPost(keyValue: keyValue)
-        super.loadKeyValue(keyValue, in: cell)
-        self.delegate?.postReplyView(view: postReplyView, didLoad: keyValue)
+        switch keyValue.contentType {
+        case .contact:
+            super.loadKeyValue(keyValue, in: cell)
+        default:
+            guard let postReplyView = cell.keyValueView as? PostReplyView else {
+                return
+            }
+            postReplyView.postView.truncationLimit = self.truncationLimitForPost(keyValue: keyValue)
+            super.loadKeyValue(keyValue, in: cell)
+            self.delegate?.postReplyView(view: postReplyView, didLoad: keyValue)
+        }
     }
 }
 
@@ -60,10 +72,23 @@ class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
         guard let keyValue = dataSource.data.keyValueBy(index: indexPath.row) else {
             return tableView.bounds.size.width
         }
-        return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
+        switch keyValue.contentType {
+        case .contact:
+            return ContactReplyView.estimatedHeight(with: keyValue, in: tableView)
+        default:
+            return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
+        }
     }
     
     override func viewController(for keyValue: KeyValue) -> UIViewController? {
-        ThreadViewController(with: keyValue, startReplying: false)
+        switch keyValue.contentType {
+        case .contact:
+            guard let identity = keyValue.value.content.contact?.identity else {
+                return nil
+            }
+            return AboutViewController(with: identity)
+        default:
+            return ThreadViewController(with: keyValue, startReplying: false)
+        }
     }
 }

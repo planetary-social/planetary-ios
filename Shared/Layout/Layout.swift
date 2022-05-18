@@ -25,6 +25,11 @@ struct Layout {
         horizontalSpacing - 1
     }
 
+    // Size of avatar in a ContactCellView header
+    static var contactThumbSize: CGFloat = 19
+    // Size of avatar in a ContactCellView body
+    static var contactAvatarSize: CGFloat = 83
+
     static var profileThumbSize: CGFloat = 35
 
     static var profileImageInside: CGFloat = 167

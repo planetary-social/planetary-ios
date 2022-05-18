@@ -340,10 +340,6 @@
 		5319258522F9E63900B44FA3 /* Date+Elapsed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5319258322F9E5EB00B44FA3 /* Date+Elapsed.swift */; };
 		5319EBD722F22BA700EC7583 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5319EBD622F22BA700EC7583 /* MenuViewController.swift */; };
 		5319F06B234EDC8000F4D3C1 /* UIView+HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5319F06A234EDC7F00F4D3C1 /* UIView+HeaderView.swift */; };
-		531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */; };
-		531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */; };
-		531A8A3721F4364D00D5C8C0 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */; };
-		531A8A3821F4364D00D5C8C0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */; };
 		531A8A4321F8358600D5C8C0 /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4121F7DE0D00D5C8C0 /* Identifier.swift */; };
 		531A8A4721FA36A600D5C8C0 /* ContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4621FA36A600D5C8C0 /* ContentTests.swift */; };
 		531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A3D21F7DDB400D5C8C0 /* Content.swift */; };
@@ -479,8 +475,6 @@
 		539208B4235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539208B3235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift */; };
 		539246DA22A82F9000D01EEC /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539246D922A82F9000D01EEC /* API.swift */; };
 		539246E022A9CCBF00D01EEC /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539246DF22A9CCBF00D01EEC /* Person.swift */; };
-		5396A617223D467200C57A4B /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 531A8A3421F4364100D5C8C0 /* libsqlite3.0.tbd */; };
-		5396A618223D467200C57A4B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 531A8A3321F4364100D5C8C0 /* libsqlite3.tbd */; };
 		5396A6212244312400C57A4B /* UIEdgeInsets+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6202244312400C57A4B /* UIEdgeInsets+Layout.swift */; };
 		5396A6232244356600C57A4B /* Layout+ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6222244356600C57A4B /* Layout+ContentView.swift */; };
 		5396A6252244358A00C57A4B /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6242244358A00C57A4B /* UIView+Layout.swift */; };
@@ -610,12 +604,34 @@
 		53FCAFDC22051C44009E9E82 /* Bundle+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B021C476AF00A314AD /* Bundle+Version.swift */; };
 		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
 		5B0D585227BEAE9E002F927D /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Support */; };
-		5B22EF2F280778F300C5F1E1 /* Support+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B22EF2E280778F300C5F1E1 /* Support+GoBot.swift */; };
-		5B22EF312807792700C5F1E1 /* JoinPlanetarySystemOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B22EF302807792700C5F1E1 /* JoinPlanetarySystemOperation.swift */; };
+		5B2A4F9928205C8900A5BE48 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
+		5B2A4F9A28205C8C00A5BE48 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
+		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
+		5B4C8C73282D45E700803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
+		5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
 		5BAA0BB627DF9CEC00C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */; };
+		5BAE9C82281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C81281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift */; };
+		5BAE9C86281E0EA9008AEA84 /* Support+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C85281E0EA9008AEA84 /* Support+GoBot.swift */; };
+		5BAE9C88281E11B6008AEA84 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAE9C87281E11B6008AEA84 /* Support */; };
+		5BAE9C8C281F5226008AEA84 /* ContactCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */; };
+		5BAE9C8E281F556A008AEA84 /* ContactReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */; };
+		5BAE9C90281F779F008AEA84 /* ContactHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */; };
+		5BC2974628048AD800C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC2974528048AD800C0CD81 /* SQLite */; };
+		5BC297482804A22500C0CD81 /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297472804A22500C0CD81 /* ContactView.swift */; };
+		5BC2974A2804B98C00C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC297492804B98C00C0CD81 /* SQLite */; };
+		5BC2974C2804B9DE00C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC2974B2804B9DE00C0CD81 /* SQLite */; };
+		5BC297502804BA8E00C0CD81 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */; };
+		5BC297522804BAAA00C0CD81 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */; };
+		5BC297542805F4A800C0CD81 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
+		5BC297552806017700C0CD81 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
+		5BC297592806022C00C0CD81 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
+		5BC2975A2806022C00C0CD81 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
+		5BC2975D2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
+		5BC2975E2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
+		5BC3DE6128299CB900F6A363 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE28DFC27CD7BA1004D7D27 /* Analytics */; };
 		5BE69B0D27CEA1B70013D51D /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE69B0C27CEA1B70013D51D /* Analytics */; };
 		5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = 5BFFCE8F27B56D300088F6D6 /* Logger */; };
@@ -650,9 +666,9 @@
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
 		C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
-		C9134DDB28184AF700595D49 /* JoinPlanetarySystemOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B22EF302807792700C5F1E1 /* JoinPlanetarySystemOperation.swift */; };
+		C9134DDB28184AF700595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9134DE228184C2700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE128184C2700595D49 /* Support */; };
-		C9134DE328184D4200595D49 /* Support+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B22EF2E280778F300C5F1E1 /* Support+GoBot.swift */; };
+		C9134DE328184D4200595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9134DE6281854E700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE5281854E700595D49 /* Support */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		C928DAF227B5AC850007C5FC /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = C928DAF127B5AC850007C5FC /* Logger */; };
@@ -868,7 +884,6 @@
 		C9724BC72809ED6F000EBCCD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5344D82E21C4649700704A34 /* AppDelegate.swift */; };
 		C9724BC82809ED75000EBCCD /* UINavigationBar+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5349E4AD23514CC000E21053 /* UINavigationBar+Verse.swift */; };
 		C9724BC92809ED7C000EBCCD /* KeyValuePaginatedTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E09B2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift */; };
-		C9724BCA2809ED83000EBCCD /* SnowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536255D723AB16E8001007D0 /* SnowView.swift */; };
 		C9724BCB2809ED88000EBCCD /* Date+Holidays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536255D423AB16A6001007D0 /* Date+Holidays.swift */; };
 		C9724BCC2809EDC7000EBCCD /* GoBotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531D0A1221EACC0A008E40A8 /* GoBotViewController.swift */; };
 		C9724BCD2809EDCF000EBCCD /* AppDelegate+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A78CCBB2416ABC80058959B /* AppDelegate+Reset.swift */; };
@@ -913,6 +928,19 @@
 		C97270932832A47100EBF023 /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; };
 		C978D35127BF051700842458 /* OperationQueue+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C978D35027BF018600842458 /* OperationQueue+Async.swift */; };
 		C978D35327BF053B00842458 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
+		C982CBD12833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
+		C982CBD42833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
+		C982CBD52833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
+		C982CBD72834233700D8963F /* FeedStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD62834233700D8963F /* FeedStrategyTests.swift */; };
+		C982CBD92834682C00D8963F /* UserDefaults+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */; };
+		C982CBDA2834682C00D8963F /* UserDefaults+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */; };
+		C982CBDE28353DBB00D8963F /* JoinPlanetarySystemOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C81281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift */; };
+		C982CBDF28353DE700D8963F /* ContactReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */; };
+		C982CBE028353DF200D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
+		C982CBE128353DF900D8963F /* ContactCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */; };
+		C982CBE228353E2600D8963F /* ContactHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */; };
+		C982CBE328353E2D00D8963F /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297472804A22500C0CD81 /* ContactView.swift */; };
+		C982CBE428353E7400D8963F /* Support+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C85281E0EA9008AEA84 /* Support+GoBot.swift */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
@@ -1485,11 +1513,19 @@
 		53FCAFDD22051C88009E9E82 /* SecretViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretViewController.swift; sourceTree = "<group>"; };
 		5B0D585327BEE1F1002F927D /* Secrets.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.release.plist; sourceTree = "<group>"; };
 		5B0D585827BEE4FC002F927D /* Secrets.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.debug.plist; sourceTree = "<group>"; };
-		5B22EF2D2807732B00C5F1E1 /* swiftlint_diffonly.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = swiftlint_diffonly.sh; sourceTree = "<group>"; };
-		5B22EF2E280778F300C5F1E1 /* Support+GoBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Support+GoBot.swift"; sourceTree = "<group>"; };
-		5B22EF302807792700C5F1E1 /* JoinPlanetarySystemOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinPlanetarySystemOperation.swift; sourceTree = "<group>"; };
-		5B8DC4CC27FF826D0007E73F /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+		5B6C333C2832D512001F10D6 /* swiftlint_diffonly.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = swiftlint_diffonly.sh; sourceTree = "<group>"; };
 		5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrashReporting+GoBot.swift"; sourceTree = "<group>"; };
+		5BAE9C81281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinPlanetarySystemOperation.swift; sourceTree = "<group>"; };
+		5BAE9C85281E0EA9008AEA84 /* Support+GoBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Support+GoBot.swift"; sourceTree = "<group>"; };
+		5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCellView.swift; sourceTree = "<group>"; };
+		5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactReplyView.swift; sourceTree = "<group>"; };
+		5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactHeaderView.swift; sourceTree = "<group>"; };
+		5BC297472804A22500C0CD81 /* ContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactView.swift; sourceTree = "<group>"; };
+		5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/libsqlite3.0.tbd; sourceTree = DEVELOPER_DIR; };
+		5BC297532805F4A800C0CD81 /* FeedStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategy.swift; sourceTree = "<group>"; };
+		5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAlgorithm.swift; sourceTree = "<group>"; };
+		5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
+		5BC3DE6028299CB900F6A363 /* SocialStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialStats.swift; sourceTree = "<group>"; };
 		5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		606DCE79703F49AE5AB530BD /* Pods-APITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.release.xcconfig"; sourceTree = "<group>"; };
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1546,6 +1582,10 @@
 		C969F43A282C7AB000FF6FE3 /* LottieAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieAnimation.swift; sourceTree = "<group>"; };
 		C9724B0B28089499000EBCCD /* Beta1MigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beta1MigrationTests.swift; sourceTree = "<group>"; };
 		C978D35027BF018600842458 /* OperationQueue+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Async.swift"; sourceTree = "<group>"; };
+		C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
+		C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentlyActivePostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
+		C982CBD62834233700D8963F /* FeedStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyTests.swift; sourceTree = "<group>"; };
+		C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Planetary.swift"; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
 		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
 		C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
@@ -1649,10 +1689,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5396A617223D467200C57A4B /* libsqlite3.0.tbd in Frameworks */,
-				5396A618223D467200C57A4B /* libsqlite3.tbd in Frameworks */,
+				5BC297522804BAAA00C0CD81 /* libsqlite3.0.tbd in Frameworks */,
 				C97270932832A47100EBF023 /* GoSSB.xcframework in Frameworks */,
 				C969F43E282C81A700FF6FE3 /* Lottie in Frameworks */,
+				5BC2974A2804B98C00C0CD81 /* SQLite in Frameworks */,
 				5BAA0BB627DF9CEC00C7BE63 /* CrashReporting in Frameworks */,
 				C928DAF227B5AC850007C5FC /* Logger in Frameworks */,
 				C9134DE228184C2700595D49 /* Support in Frameworks */,
@@ -1666,9 +1706,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BC2974C2804B9DE00C0CD81 /* SQLite in Frameworks */,
 				5314EF3A22EA276A0065D02A /* (null) in Frameworks */,
-				531A8A3721F4364D00D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
-				531A8A3821F4364D00D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1681,11 +1720,12 @@
 				5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */,
 				5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */,
 				C9134DE6281854E700595D49 /* Support in Frameworks */,
-				531A8A3521F4364200D5C8C0 /* libsqlite3.tbd in Frameworks */,
 				C969F436282C79CC00FF6FE3 /* Lottie in Frameworks */,
 				5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */,
-				531A8A3621F4364200D5C8C0 /* libsqlite3.0.tbd in Frameworks */,
+				5BC297502804BA8E00C0CD81 /* libsqlite3.0.tbd in Frameworks */,
+				5BC2974628048AD800C0CD81 /* SQLite in Frameworks */,
 				C94A23D227FB610E002DE7AC /* GoSSB.xcframework in Frameworks */,
+				5BAE9C88281E11B6008AEA84 /* Support in Frameworks */,
 				8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1719,11 +1759,11 @@
 				0AF9E0AB246B23F900910575 /* ExitOperation.swift */,
 				0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */,
 				1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */,
+				5BAE9C81281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift */,
 				0A56ABDE24E470A200D30649 /* RedeemInviteOperation.swift */,
 				0A1CA4C424E5D714006CAC43 /* FollowOperation.swift */,
 				0A1CA4C924EB2353006CAC43 /* SendMissionOperation.swift */,
 				0AAF8C4625C704B500FD8D0F /* UnfollowOperation.swift */,
-				5B22EF302807792700C5F1E1 /* JoinPlanetarySystemOperation.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -1845,6 +1885,7 @@
 				533EDBE72385F7CD008B3565 /* CacheTests.swift */,
 				531A8A4621FA36A600D5C8C0 /* ContentTests.swift */,
 				23888978220867DB0030CB92 /* ViewDatabaseTests.swift */,
+				C982CBD62834233700D8963F /* FeedStrategyTests.swift */,
 				23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */,
 				C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */,
 				2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */,
@@ -1983,6 +2024,7 @@
 				0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */,
 				C9C3787727C6881000238B58 /* ConnectedPeerListCoordinator.swift */,
 				C9EE7BD927FF3A5D00748106 /* Beta1MigrationCoordinator.swift */,
+				C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2022,6 +2064,7 @@
 		531D0A1121EACBEE008E40A8 /* GoBot */ = {
 			isa = PBXGroup;
 			children = (
+				5BC297572806021500C0CD81 /* FeedStrategy */,
 				2346ECB6221420E1009A94CB /* GoBot.swift */,
 				2391BF6F22FC69C5005DE311 /* GoBotBridge.h */,
 				2334D04421F7786600AB28E2 /* GoBotInternal.swift */,
@@ -2044,7 +2087,7 @@
 			children = (
 				0AD8D62D2408627000D87A95 /* go_install.sh */,
 				532751D5222A3EF60026500F /* increment_build.sh */,
-				5B22EF2D2807732B00C5F1E1 /* swiftlint_diffonly.sh */,
+				5B6C333C2832D512001F10D6 /* swiftlint_diffonly.sh */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -2068,7 +2111,6 @@
 			children = (
 				C9489999278CCC3A009BE021 /* README.md */,
 				C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */,
-				5B8DC4CC27FF826D0007E73F /* CONTRIBUTING.md */,
 				C9570F652788E2280095EFFF /* Architecture */,
 				5308169221C46A6E005C48ED /* APITests */,
 				531B92BE22CDA4F9005D5255 /* Deprecated */,
@@ -2081,6 +2123,7 @@
 				53C422AE21C476AF00A314AD /* Shared */,
 				5344D82D21C4649700704A34 /* Source */,
 				5308168621C46A53005C48ED /* UnitTests */,
+				C982CBDD28353C6A00D8963F /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2143,6 +2186,7 @@
 		5355556EBCE069620663A547 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5BC2974E2804BA8100C0CD81 /* libsqlite3.0.tbd */,
 				C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */,
 				C933908F27FB5498007B5FD8 /* GoSSB.xcframework */,
 				C95A131F2786279A00FFD52F /* Foundation.framework */,
@@ -2223,6 +2267,7 @@
 				5396A6342248377900C57A4B /* UIColor+Verse.swift */,
 				531B92BC22CD65ED005D5255 /* UIFont+Verse.swift */,
 				0ACA5745243D1A20001C5E37 /* UIFont+Tracking.swift */,
+				5BAE9C85281E0EA9008AEA84 /* Support+GoBot.swift */,
 				53E341FD224FF9EE002BB5F4 /* UIImage+Verse.swift */,
 				8D317ECC2357A37C0009E073 /* UIImageView+Fade.swift */,
 				5349E4AD23514CC000E21053 /* UINavigationBar+Verse.swift */,
@@ -2243,7 +2288,6 @@
 				C9F1C85427C9875A005A3228 /* Color+Hex.swift */,
 				C9EADA8827D178D5002066D9 /* View+RoundedCorner.swift */,
 				5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */,
-				5B22EF2E280778F300C5F1E1 /* Support+GoBot.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -2297,7 +2341,11 @@
 				C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */,
 				531B92B022CAC203005D5255 /* PostButtonsView.swift */,
 				535754FC22694A4C002A6989 /* PostCellView.swift */,
+				5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */,
+				5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */,
+				5BC297472804A22500C0CD81 /* ContactView.swift */,
 				8D8A7B18231995670087895B /* PostHeaderView.swift */,
+				5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */,
 				531B92C322CEAD25005D5255 /* PostReplyView.swift */,
 				1FFCEC5F25646D12007BC13A /* PostTextEditorView.swift */,
 				539FD4CA22C586CC005A4DF2 /* ReplyTextView.swift */,
@@ -2417,6 +2465,7 @@
 				533DAFA4223AD2D600229EB3 /* XCTest+Test.swift */,
 				53EE01FA2205035800DFDF16 /* XCTestCase+JSON.swift */,
 				C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */,
+				C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2487,8 +2536,20 @@
 				0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */,
 				0A674A28253F3C4400698CF7 /* Draft.swift */,
 				C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */,
+				5BC3DE6028299CB900F6A363 /* SocialStats.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		5BC297572806021500C0CD81 /* FeedStrategy */ = {
+			isa = PBXGroup;
+			children = (
+				5BC297532805F4A800C0CD81 /* FeedStrategy.swift */,
+				5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */,
+				5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */,
+				C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */,
+			);
+			path = FeedStrategy;
 			sourceTree = "<group>";
 		};
 		60D3F9F6A7FF90C8B89E7A52 /* Pods */ = {
@@ -2607,6 +2668,13 @@
 				C969F438282C7A3700FF6FE3 /* bouncing_ellipse.json */,
 			);
 			path = "Lottie Animations";
+			sourceTree = "<group>";
+		};
+		C982CBDD28353C6A00D8963F /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		C98A013627907F9200E29A97 /* Performance */ = {
@@ -3050,6 +3118,7 @@
 				5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */,
 				C9134DE128184C2700595D49 /* Support */,
 				C969F43D282C81A700FF6FE3 /* Lottie */,
+				5BC297492804B98C00C0CD81 /* SQLite */,
 			);
 			productName = FBTTUnitTests;
 			productReference = 5308168521C46A52005C48ED /* UnitTests.xctest */;
@@ -3071,6 +3140,9 @@
 				0AD00E7423FC5C71006BF017 /* PBXTargetDependency */,
 			);
 			name = APITests;
+			packageProductDependencies = (
+				5BC2974B2804B9DE00C0CD81 /* SQLite */,
+			);
 			productName = FBTTAPITests;
 			productReference = 5308169121C46A6E005C48ED /* APITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -3080,6 +3152,7 @@
 			buildConfigurationList = 5344D83D21C4649A00704A34 /* Build configuration list for PBXNativeTarget "Planetary" */;
 			buildPhases = (
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
+				5B6C333B2832D4FE001F10D6 /* Run swiftlint on modified files */,
 				8D9143FB230C6B670075BC8A /* Generate Localized Strings */,
 				5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */,
 				5B0D585727BEE41D002F927D /* Copy Secrets.plist */,
@@ -3100,8 +3173,9 @@
 				5B0D584F27BEAE93002F927D /* Secrets */,
 				5BE28DFC27CD7BA1004D7D27 /* Analytics */,
 				5BAA0BB327DF9CE200C7BE63 /* CrashReporting */,
-				C9134DE5281854E700595D49 /* Support */,
 				C969F435282C79CC00FF6FE3 /* Lottie */,
+				5BC2974528048AD800C0CD81 /* SQLite */,
+				5BAE9C87281E11B6008AEA84 /* Support */,
 			);
 			productName = FBTT;
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
@@ -3208,6 +3282,7 @@
 			mainGroup = 5344D82221C4649700704A34;
 			packageReferences = (
 				C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */,
 			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
@@ -3465,7 +3540,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [ $CONFIGURATION = \"Release\" ]; then\n/opt/homebrew/bin/license-plist --output-path Resources/Settings.bundle\nfi\n";
+			shellScript = "if [ $CONFIGURATION = \"Release\" ]; then\n/opt/homebrew/bin/license-plist --config-path Resources/license_plist.yml --output-path Resources/Settings.bundle\nfi\n";
 		};
 		5B0D585727BEE41D002F927D /* Copy Secrets.plist */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3482,11 +3557,30 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ $CONFIGURATION = \"Debug\" ]; then\nrsync -t $SRCROOT/Resources/Secrets.debug.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nelse\nrsync -t $SRCROOT/Resources/Secrets.release.plist $CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist\nfi\n";
+		};
+		5B6C333B2832D4FE001F10D6 /* Run swiftlint on modified files */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run swiftlint on modified files";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh $SRCROOT/Scripts/swiftlint_diffonly.sh\n";
 		};
 		7723EA9C2D57EFC61D5051B3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3681,8 +3775,10 @@
 				C9724B112809D2C6000EBCCD /* MissionControlCenter.swift in Sources */,
 				C9A2DE3427CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift in Sources */,
 				C9724BB42809EC4F000EBCCD /* DebugOnboardingViewController.swift in Sources */,
+				5B2A4F9A28205C8C00A5BE48 /* FeedStrategy.swift in Sources */,
 				0ABCA9022437BF4A00D7F39C /* String+Markdown.swift in Sources */,
 				C9D1EACB2832A0230092E098 /* IdentifierTests.swift in Sources */,
+				C982CBD72834233700D8963F /* FeedStrategyTests.swift in Sources */,
 				237D057E23351E4600973D63 /* Hashtag.swift in Sources */,
 				C9724B682809D70F000EBCCD /* AppController+URL.swift in Sources */,
 				C9724B952809EA6D000EBCCD /* Bool+YesOrNo.swift in Sources */,
@@ -3709,6 +3805,7 @@
 				C9724B0E2809D1BE000EBCCD /* Layout.swift in Sources */,
 				53B4F5FD22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
 				C9D1EACA2832A0230092E098 /* AttributedStringTests.swift in Sources */,
+				5B2A4F9928205C8900A5BE48 /* PostsAndContactsAlgorithm.swift in Sources */,
 				5369D2AF220CF39E00A65622 /* Data+JSON.swift in Sources */,
 				C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */,
 				530F018822DAD5D8007EBAE2 /* Date+Random.swift in Sources */,
@@ -3752,6 +3849,8 @@
 				C9724B502809D5A0000EBCCD /* DiscoverViewController.swift in Sources */,
 				C9724BD22809EDE7000EBCCD /* RemoteNotificationUserInfo.swift in Sources */,
 				C9724B322809D47D000EBCCD /* ResumeOnboardingStep.swift in Sources */,
+				C982CBE328353E2D00D8963F /* ContactView.swift in Sources */,
+				C982CBE228353E2600D8963F /* ContactHeaderView.swift in Sources */,
 				C9724B332809D47D000EBCCD /* NameOnboardingStep.swift in Sources */,
 				C9724B4E2809D594000EBCCD /* NotificationsViewController.swift in Sources */,
 				C9724B8A2809E971000EBCCD /* AttributedStringCache.swift in Sources */,
@@ -3760,6 +3859,7 @@
 				C9724B342809D47D000EBCCD /* PhoneOnboardingStep.swift in Sources */,
 				C9724B9C2809EA9B000EBCCD /* KnownPubsTableViewDataSource.swift in Sources */,
 				C9724B572809D5F2000EBCCD /* PinterestCollectionViewLayout.swift in Sources */,
+				C982CBE028353DF200D8963F /* FeedStrategySelectionViewController.swift in Sources */,
 				C9724B352809D47D000EBCCD /* PhoneVerifyOnboardingStep.swift in Sources */,
 				C9724B992809EA86000EBCCD /* UIView+NSLayoutConstraint.swift in Sources */,
 				C9724BEB2809EF2E000EBCCD /* NSAttributedString+Flatten.swift in Sources */,
@@ -3769,6 +3869,7 @@
 				C9724B372809D47D000EBCCD /* PhotoOnboardingStep.swift in Sources */,
 				C9724B522809D5AB000EBCCD /* Layout+Separator.swift in Sources */,
 				C9724B7C2809E8D4000EBCCD /* PillButton.swift in Sources */,
+				C982CBDE28353DBB00D8963F /* JoinPlanetarySystemOperation.swift in Sources */,
 				C9724B382809D47D000EBCCD /* SplashOnboardingStep.swift in Sources */,
 				C9724B392809D47D000EBCCD /* DirectoryOnboardingStep.swift in Sources */,
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
@@ -3806,6 +3907,8 @@
 				8DB041FD234FA994006AC35B /* Identity+Bot.swift in Sources */,
 				C9724B9A2809EA8C000EBCCD /* Array+IndexPath.swift in Sources */,
 				C9F1C84827C9283A005A3228 /* Text.swift in Sources */,
+				C982CBE428353E7400D8963F /* Support+GoBot.swift in Sources */,
+				5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */,
 				C9724BAE2809EBE4000EBCCD /* MarkdownStyler.swift in Sources */,
 				23EF5AAF249D185E00469977 /* BearerBlockedAPI.swift in Sources */,
 				C9724B832809E934000EBCCD /* AboutView.swift in Sources */,
@@ -3819,6 +3922,7 @@
 				0A3880092475AAE000777843 /* PushAPI.swift in Sources */,
 				C9724B972809EA7D000EBCCD /* Comparable+Clamped.swift in Sources */,
 				C9C3788A27C6CC3200238B58 /* XCTestCase+Combine.swift in Sources */,
+				C982CBDF28353DE700D8963F /* ContactReplyView.swift in Sources */,
 				C9724B662809D6EC000EBCCD /* AboutCellView.swift in Sources */,
 				C9724BC82809ED75000EBCCD /* UINavigationBar+Verse.swift in Sources */,
 				C9724BDA2809EE32000EBCCD /* SendMissionOperation.swift in Sources */,
@@ -3860,7 +3964,7 @@
 				C9724B182809D350000EBCCD /* AppController+Progress.swift in Sources */,
 				53B4F5FA22B8602F00027C6A /* Mention+NSAttributedString.swift in Sources */,
 				0A64A84824735717009A5EBF /* PhoneVerificationAPIService.swift in Sources */,
-				C9134DE328184D4200595D49 /* Support+GoBot.swift in Sources */,
+				C9134DE328184D4200595D49 /* (null) in Sources */,
 				C9724BE72809EEA4000EBCCD /* SimplePublishView.swift in Sources */,
 				C9724B432809D4F1000EBCCD /* UIButton+Text.swift in Sources */,
 				535754F722692B59002A6989 /* BotError.swift in Sources */,
@@ -3884,7 +3988,7 @@
 				53631EF623A9A93F009C6999 /* Blob+String.swift in Sources */,
 				C9724BC42809ED5B000EBCCD /* Blob+UIColor.swift in Sources */,
 				C9724B782809E7C1000EBCCD /* AppController+Push.swift in Sources */,
-				C9134DDB28184AF700595D49 /* JoinPlanetarySystemOperation.swift in Sources */,
+				C9134DDB28184AF700595D49 /* (null) in Sources */,
 				C9724B262809D426000EBCCD /* HomeViewController.swift in Sources */,
 				C9724BE02809EE5A000EBCCD /* Tappable.swift in Sources */,
 				C9F1C84927C92842005A3228 /* Localizable.swift in Sources */,
@@ -3908,6 +4012,7 @@
 				23C744552200B12200FB554A /* Profile.swift in Sources */,
 				C94F66742810AB9F00DEA5AC /* XCTBlockExpectation.swift in Sources */,
 				237D057C2335149100973D63 /* Blob+UIImage.swift in Sources */,
+				C982CBE128353DF900D8963F /* ContactCellView.swift in Sources */,
 				C9724B652809D6E4000EBCCD /* KeyValueTableViewCell.swift in Sources */,
 				C9724B472809D51E000EBCCD /* String+PhoneNumberKit.swift in Sources */,
 				2358695B24A0FB1100F4FC1D /* URLResponse+APIError.swift in Sources */,
@@ -3956,7 +4061,6 @@
 				2346ECB422141D9E009A94CB /* Bot.swift in Sources */,
 				C9724B6E2809E735000EBCCD /* KeyValueView.swift in Sources */,
 				C9A2DE3527D0038700EAFA73 /* UIViewController+Alert.swift in Sources */,
-				C9724BCA2809ED83000EBCCD /* SnowView.swift in Sources */,
 				C9724BDC2809EE3C000EBCCD /* SuspendOperation.swift in Sources */,
 				5316E95F21FFEB130053832E /* Post.swift in Sources */,
 				5336611622D96AD500100707 /* Dictionary+JSONSerialization.swift in Sources */,
@@ -4008,6 +4112,7 @@
 				C9724BEF2809EF45000EBCCD /* UIViewController+TopViewController.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
+				5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */,
 				53211CE522838107007FB785 /* UIImage+Resize.swift in Sources */,
 				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				C9724B712809E782000EBCCD /* CGSize+Square.swift in Sources */,
@@ -4022,6 +4127,7 @@
 				0A4870F92492C06400BCD063 /* AsynchronousOperation.swift in Sources */,
 				C9724BEE2809EF3D000EBCCD /* UITableView+TableHeaderView.swift in Sources */,
 				C9724B722809E788000EBCCD /* UIView+Round.swift in Sources */,
+				C982CBDA2834682C00D8963F /* UserDefaults+Planetary.swift in Sources */,
 				531A8A4821FA37B000D5C8C0 /* Content.swift in Sources */,
 				0A64A84D24735766009A5EBF /* PhoneVerificationResponse.swift in Sources */,
 				C9D1EACF2832A0230092E098 /* DateTests.swift in Sources */,
@@ -4032,6 +4138,7 @@
 				535754F622692B4B002A6989 /* BotStatistics.swift in Sources */,
 				C931927D2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */,
 				53AD3FEB22776A3C005228F9 /* Value.swift in Sources */,
+				C982CBD52833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */,
 				53E26C58230382DC009240B2 /* Date+ISO8601.swift in Sources */,
 				C9724BCD2809EDCF000EBCCD /* AppDelegate+Reset.swift in Sources */,
 				53B4F5F722B85DE300027C6A /* Markdownable.swift in Sources */,
@@ -4076,9 +4183,11 @@
 				5314EF5322EA28FC0065D02A /* GoBot.swift in Sources */,
 				5314EF5922EA295C0065D02A /* FakeBot.swift in Sources */,
 				5314EF4F22EA28C80065D02A /* String+Whitespace.swift in Sources */,
+				5BC2975A2806022C00C0CD81 /* PostsAlgorithm.swift in Sources */,
 				5314EF4722EA28820065D02A /* BotError.swift in Sources */,
 				5314EF6922EA2B3E0065D02A /* Data+JSON.swift in Sources */,
 				238793E5246EC34F00C9AD36 /* RepeatingTimer.swift in Sources */,
+				5B4C8C73282D45E700803547 /* SocialStats.swift in Sources */,
 				5314EF5522EA29210065D02A /* Address.swift in Sources */,
 				5314EF7322EA34B60065D02A /* String+PhoneNumberKit.swift in Sources */,
 				2302428A2372C88C0091BBCA /* NSNotification+Bot.swift in Sources */,
@@ -4091,11 +4200,13 @@
 				5314EF6B22EA2B730065D02A /* Hashtag+String.swift in Sources */,
 				0AF9966D24D8A232001113BE /* Report.swift in Sources */,
 				0A3880082475AAE000777843 /* PushAPI.swift in Sources */,
+				5BC2975E2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */,
 				2383DDA822F0FA5100D9E47C /* Onboarding+Follow.swift in Sources */,
 				23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */,
 				5314EF4D22EA28B60065D02A /* Value.swift in Sources */,
 				5314EF5422EA290A0065D02A /* Mention.swift in Sources */,
 				53E26C6123046054009240B2 /* VerseAPITests.swift in Sources */,
+				5BC297552806017700C0CD81 /* FeedStrategy.swift in Sources */,
 				0A38803A2475D18F00777843 /* PubAPIService.swift in Sources */,
 				53E26C64230462D4009240B2 /* Date+ISO8601.swift in Sources */,
 				2343F1CC245851E5008D7ECE /* DispatchQueue+Deduped.swift in Sources */,
@@ -4178,11 +4289,13 @@
 			files = (
 				530F018322DA7A06007EBAE2 /* Mention+NSAttributedString.swift in Sources */,
 				23C744392200B12000FB554A /* Bot.swift in Sources */,
+				5BAE9C8C281F5226008AEA84 /* ContactCellView.swift in Sources */,
 				0A387FFE2474E67900777843 /* NullPhoneVerificationAPI.swift in Sources */,
 				539FD4C522C3D6CC005A4DF2 /* String+Whitespace.swift in Sources */,
 				531B92BB22CD1383005D5255 /* NSMutableAttributedString+Attributes.swift in Sources */,
 				5369D2AA220BAFC600A65622 /* KeyValues.swift in Sources */,
 				0AF9966C24D8A0B6001113BE /* Report.swift in Sources */,
+				5BC297592806022C00C0CD81 /* PostsAlgorithm.swift in Sources */,
 				531B92B322CAC25C005D5255 /* UITextView+Verse.swift in Sources */,
 				0ABCA9012437BF3400D7F39C /* String+Markdown.swift in Sources */,
 				53E26C5D23045D19009240B2 /* Data+Person.swift in Sources */,
@@ -4204,9 +4317,11 @@
 				C9A2DE2927CFCB5F00EAFA73 /* Publisher+Async.swift in Sources */,
 				0AF9E09C2462338800910575 /* KeyValuePaginatedTableViewDelegate.swift in Sources */,
 				536255D823AB16E8001007D0 /* SnowView.swift in Sources */,
+				5BC297482804A22500C0CD81 /* ContactView.swift in Sources */,
 				53211CD82281D587007FB785 /* EditValueView.swift in Sources */,
 				53E29CC622D13272008A2CB1 /* ChannelViewController.swift in Sources */,
 				5374DF4021E9ADFE00956122 /* AppController.swift in Sources */,
+				C982CBD12833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */,
 				53C966E4236D074700E70689 /* Bot+Blobs.swift in Sources */,
 				0ACA5746243D1A20001C5E37 /* UIFont+Tracking.swift in Sources */,
 				C9A2DE3227CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift in Sources */,
@@ -4220,6 +4335,8 @@
 				539FD4AF22C19B9F005A4DF2 /* AboutsMenu.swift in Sources */,
 				53C9FA2F22FCF64700EAC35F /* SettingsViewController.swift in Sources */,
 				C9604C2927C547FB003D1A6D /* ConnectedPeerListView.swift in Sources */,
+				5BC297542805F4A800C0CD81 /* FeedStrategy.swift in Sources */,
+				5BAE9C86281E0EA9008AEA84 /* Support+GoBot.swift in Sources */,
 				5396A633224836E800C57A4B /* UIColor+Hex.swift in Sources */,
 				1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */,
 				1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */,
@@ -4251,6 +4368,7 @@
 				53211CE222836666007FB785 /* MIMEType.swift in Sources */,
 				0AC10DE6246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift in Sources */,
 				5306F770228E65240058D67A /* RepeatingTimer.swift in Sources */,
+				5BC2975D2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */,
 				5396A62F2245A50300C57A4B /* LaunchViewController.swift in Sources */,
 				5376FADF228CF83A00411F5B /* Saveable.swift in Sources */,
 				0A387FFA2474E65300777843 /* PhoneVerificationAPI.swift in Sources */,
@@ -4276,6 +4394,7 @@
 				C949E96E28119B47006C5F18 /* ProgressButton.swift in Sources */,
 				0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */,
 				53EE01F12204C16800DFDF16 /* Post.swift in Sources */,
+				5BAE9C90281F779F008AEA84 /* ContactHeaderView.swift in Sources */,
 				53E341F6224D9FC7002BB5F4 /* AppController+URL.swift in Sources */,
 				5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */,
 				530F019122DCEC4E007EBAE2 /* OnboardingStep.swift in Sources */,
@@ -4304,7 +4423,6 @@
 				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				0AF9E0A42465D7D000910575 /* ThreadReplyView.swift in Sources */,
 				0A64A83C247353CE009A5EBF /* VersePushAPI.swift in Sources */,
-				5B22EF2F280778F300C5F1E1 /* Support+GoBot.swift in Sources */,
 				53EE01F42204F66200DFDF16 /* Secret.swift in Sources */,
 				53B4F5FF22B9E4F200027C6A /* Abouts.swift in Sources */,
 				2356500B2369C6CB00C3DBC0 /* DropContentRequest.swift in Sources */,
@@ -4342,6 +4460,7 @@
 				530AC93522051D5600B7F2F2 /* SecretViewController.swift in Sources */,
 				23C744572200B13F00FB554A /* Contact.swift in Sources */,
 				8DDA836F237CBE5A00B2A52C /* PostReplyDelegate+DataSource.swift in Sources */,
+				5BAE9C82281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift in Sources */,
 				8D18035D234F5E77004E30AA /* PillButton.swift in Sources */,
 				C9C3787627C5956200238B58 /* PeerConnectionAnimationView.swift in Sources */,
 				530F019A22DE8F57007EBAE2 /* ImagePicker.swift in Sources */,
@@ -4354,6 +4473,7 @@
 				0A1CA4C524E5D714006CAC43 /* FollowOperation.swift in Sources */,
 				53631EF123A95E7B009C6999 /* NSAttributedString+Empty.swift in Sources */,
 				533EDBF023861169008B3565 /* Caches.swift in Sources */,
+				5BC3DE6128299CB900F6A363 /* SocialStats.swift in Sources */,
 				5336611122D965B300100707 /* UIColor+Random.swift in Sources */,
 				C9F1C85527C9875A005A3228 /* Color+Hex.swift in Sources */,
 				8DA9567D230DA46C00A334EB /* UIButton+Text.swift in Sources */,
@@ -4369,6 +4489,7 @@
 				0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */,
 				0AE5EDBB25826FD7008BDA0C /* String+Emoji.swift in Sources */,
 				53E26C5723037927009240B2 /* Date+ISO8601.swift in Sources */,
+				5BAE9C8E281F556A008AEA84 /* ContactReplyView.swift in Sources */,
 				5396A6252244358A00C57A4B /* UIView+Layout.swift in Sources */,
 				53C966E2236D037000E70689 /* UIViewController+Report.swift in Sources */,
 				533F4051225E9E010060B4B9 /* DebugUIViewController.swift in Sources */,
@@ -4428,6 +4549,7 @@
 				8DB04200235539F5006AC35B /* DirectoryViewController.swift in Sources */,
 				233A8F8A220138F600CE01CE /* ViewDatabase.swift in Sources */,
 				539208B4235A8413000A20C1 /* UIViewController+ApplicationWillEnterForeground.swift in Sources */,
+				C982CBD92834682C00D8963F /* UserDefaults+Planetary.swift in Sources */,
 				5344D82F21C4649700704A34 /* AppDelegate.swift in Sources */,
 				53AD3FE72273AE21005228F9 /* ThreadViewController.swift in Sources */,
 				0A38800B2475ACC300777843 /* NullPubAPI.swift in Sources */,
@@ -4509,6 +4631,7 @@
 				53575509226A3113002A6989 /* KeyValueTableViewDataSource.swift in Sources */,
 				531B92B122CAC203005D5255 /* PostButtonsView.swift in Sources */,
 				531D0A1321EACC0A008E40A8 /* GoBotViewController.swift in Sources */,
+				C982CBD42833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */,
 				0AAF8C4325C6444B00FD8D0F /* CommunityCellView.swift in Sources */,
 				53C2B12C2294E8A50018D0A8 /* AppConfiguration+Keychain.swift in Sources */,
 				5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */,
@@ -4533,7 +4656,6 @@
 				53211CE022827B58007FB785 /* UIImage+Resize.swift in Sources */,
 				5319EBD722F22BA700EC7583 /* MenuViewController.swift in Sources */,
 				53631EED23A87474009C6999 /* PostTruncatedTextTableViewDataSourcePrefetching.swift in Sources */,
-				5B22EF312807792700C5F1E1 /* JoinPlanetarySystemOperation.swift in Sources */,
 				0A4870FB2497FFAB00BCD063 /* DiscoverViewController.swift in Sources */,
 				5372175122FD0841008A760A /* DataUsageSettingsViewController.swift in Sources */,
 				C9EADA8727D162F3002066D9 /* Optional+Map.swift in Sources */,
@@ -5003,8 +5125,6 @@
 					"\"KeychainSwift\"",
 					"-framework",
 					"\"Multipart\"",
-					"-framework",
-					"\"SQLite\"",
 					"-lssb-go",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
@@ -5036,8 +5156,6 @@
 					"\"KeychainSwift\"",
 					"-framework",
 					"\"Multipart\"",
-					"-framework",
-					"\"SQLite\"",
 					"-lssb-go",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
@@ -5395,6 +5513,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
+			requirement = {
+				kind = exactVersion;
+				version = 0.13.3;
+			};
+		};
 		C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
@@ -5421,6 +5547,25 @@
 		5BAA0BB527DF9CEC00C7BE63 /* CrashReporting */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CrashReporting;
+		};
+		5BAE9C87281E11B6008AEA84 /* Support */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Support;
+		};
+		5BC2974528048AD800C0CD81 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
+			productName = SQLite;
+		};
+		5BC297492804B98C00C0CD81 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
+			productName = SQLite;
+		};
+		5BC2974B2804B9DE00C0CD81 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
+			productName = SQLite;
 		};
 		5BE28DFC27CD7BA1004D7D27 /* Analytics */ = {
 			isa = XCSwiftPackageProductDependency;

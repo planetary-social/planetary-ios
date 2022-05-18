@@ -59,6 +59,58 @@ extension GoBot {
         return pubkeys
     }
 
+    func testingFollow(as nick: String, nick otherNick: String) -> MessageIdentifier {
+        guard let keypairs = try? testingGetNamedKeypairs() else {
+            return MessageIdentifier.null
+        }
+        guard let other = keypairs[otherNick] else {
+            return MessageIdentifier.null
+        }
+        let content = Contact(contact: other, following: true)
+        guard let content = try? content.encodeToData().string() else {
+            return MessageIdentifier.null
+        }
+        var identifier: MessageIdentifier?
+        nick.withGoString { goStrMe in
+            content.withGoString { goStrContent in
+                guard let refCstr = ssbTestingPublishAs(goStrMe, goStrContent) else {
+                    XCTFail("publish failed!")
+                    return
+                }
+                identifier = String(cString: refCstr)
+            }
+        }
+        let id = identifier!
+        XCTAssertTrue(id.hasPrefix("%"))
+        XCTAssertTrue(id.hasSuffix(".sha256"))
+        print(content)
+        return id
+    }
+
+    func testingFollow(nick: String) -> MessageIdentifier {
+        guard let keypairs = try? testingGetNamedKeypairs() else {
+            return MessageIdentifier.null
+        }
+        guard let keypair = keypairs[nick] else {
+            return MessageIdentifier.null
+        }
+        let content = Contact(contact: keypair, following: true)
+        let c = try! content.encodeToData().string()!
+        var identifier: MessageIdentifier?
+        c.withGoString { goStrContent in
+            guard let refCstr = ssbPublish(goStrContent) else {
+                XCTFail("publish failed!")
+                return
+            }
+            identifier = String(cString: refCstr)
+        }
+        let id = identifier!
+        XCTAssertTrue(id.hasPrefix("%"))
+        XCTAssertTrue(id.hasSuffix(".sha256"))
+        print(c)
+        return id
+    }
+
     func testingPublish(as nick: String, recipients: [Identity]? = nil, content: ContentCodable) -> MessageIdentifier {
         let c = try! content.encodeToData().string()!
         var identifier: MessageIdentifier?

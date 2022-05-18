@@ -118,6 +118,7 @@ identifier_name:
     - k
     - id
     - url
+    - URL
     - lhs
     - rhs
     - key
@@ -126,6 +127,8 @@ identifier_name:
     - sut
     - log
     - bar
+    - bob
+    - db
     - top
 number_separator:
   minimum_length: 5

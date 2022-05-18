@@ -28,6 +28,10 @@ struct VerseFonts {
     let aboutCellIdentity = UIFont.systemFont(ofSize: 15, weight: .regular)
 
     let pillButton = UIFont.systemFont(ofSize: 14, weight: .medium)
+
+    let contactName = UIFont.systemFont(ofSize: 15, weight: .semibold)
+    let contactFollowerCount = UIFont.systemFont(ofSize: 10, weight: .regular)
+    let contactHashtags = UIFont.systemFont(ofSize: 10, weight: .regular)
 }
 
 struct PostFonts {
