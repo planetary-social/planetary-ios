@@ -38,6 +38,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     
     static let beta1MigrationStartKey = "StartedBeta1Migration"
     static let beta1MigrationCompleteKey = "CompletedBeta1Migration"
+    static let beta1MigrationProgress = "Beta1MigrationProgress"
     static let beta1MigrationProgressTarget = "Beta1MigrationProgressTarget"
     
     /// A number between 0 and 1.0 representing the progress of the migration.
@@ -112,6 +113,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             userDefaults.synchronize()
         } else {
             Log.info("Resuming Beta1 migration")
+            coordinator.progress = userDefaults.float(forKey: beta1MigrationProgress)
         }
         
         try await bot.login(config: appConfiguration)
@@ -178,6 +180,8 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             .receive(on: RunLoop.main)
             .sink(receiveValue: { progress in
                 self.progress = progress
+                self.userDefaults.set(progress, forKey: Self.beta1MigrationProgress)
+                self.userDefaults.synchronize()
                 Log.info("Resync progress: \(progress)")
             })
             .store(in: &self.cancellabes)
