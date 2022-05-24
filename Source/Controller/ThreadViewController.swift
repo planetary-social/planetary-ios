@@ -329,7 +329,7 @@ class ThreadViewController: ContentViewController {
         
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
-        // AppController.shared.showProgress()
+        AppController.shared.showProgress()
         Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
