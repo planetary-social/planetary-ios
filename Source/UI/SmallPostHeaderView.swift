@@ -76,7 +76,6 @@ class SmallPostHeaderView: UIView {
         let about = keyValue.metadata.author.about
         let name = about?.nameOrIdentity ?? keyValue.value.author
         self.nameButton.setTitle(name, for: .normal)
-        self.nameButton.titleLabel?.setNeedsLayout()
         self.avatarButton.setImage(for: about)
     }
 
