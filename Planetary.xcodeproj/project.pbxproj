@@ -942,6 +942,7 @@
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
+		C99328FA283E736E00D86D7C /* rabbledb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C99328F7283E736E00D86D7C /* rabbledb.sqlite */; };
 		C9A2DE2927CFCB5F00EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
 		C9A2DE2A27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
 		C9A2DE2B27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
@@ -1596,6 +1597,7 @@
 		C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UnitTests.debug.xcconfig; sourceTree = "<group>"; };
 		C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
 		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feed_big.sqlite; sourceTree = "<group>"; };
+		C99328F7283E736E00D86D7C /* rabbledb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = rabbledb.sqlite; sourceTree = "<group>"; };
 		C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Async.swift"; sourceTree = "<group>"; };
 		C9A2DE2C27CFD61800EAFA73 /* ConnectedPeerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerCell.swift; sourceTree = "<group>"; };
 		C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeerConnectionInfo+Preview.swift"; sourceTree = "<group>"; };
@@ -2674,6 +2676,7 @@
 		C98A013727907FF600E29A97 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C99328F7283E736E00D86D7C /* rabbledb.sqlite */,
 				C98A014A2790C5A800E29A97 /* Feed_big.sqlite */,
 				5308168921C46A53005C48ED /* Info.plist */,
 				53CF2A4A220268CF00F0A2CC /* Abouts.json */,
@@ -3322,6 +3325,7 @@
 				C9F0B6BC27E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B6B827E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F1C84B27C932A8005A3228 /* Generated.strings in Resources */,
+				C99328FA283E736E00D86D7C /* rabbledb.sqlite in Resources */,
 				C9F0B6C427E2728800BE2F0E /* Generated.strings in Resources */,
 				5316E95521FFC7FB0053832E /* PostBranchArray.json in Resources */,
 				C9F0B6AA27E2728800BE2F0E /* Generated.strings in Resources */,
