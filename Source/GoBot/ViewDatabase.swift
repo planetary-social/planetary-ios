@@ -59,7 +59,12 @@ class ViewDatabase {
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
+    private var currentUser: Identity?
 
+    // skip messages older than this (6 months)
+    // this should be removed once the database was refactored
+    private var temporaryMessageExpireDate: Double = -60 * 60 * 24 * 30 * 6
+    
     // MARK: Tables and fields
     private let colID = Expression<Int64>("id")
     
@@ -221,7 +226,7 @@ class ViewDatabase {
         
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
-        try db.execute("PRAGMA synchronous = OFF;") // Full is best for read performance
+        try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
         
         // db.trace { print("\tSQL: \($0)") } // print all the statements
         
@@ -233,6 +238,7 @@ class ViewDatabase {
             }
         }
 
+        self.currentUser = user
         self.currentUserID = try self.authorID(of: user, make: true)
     }
     
@@ -247,6 +253,7 @@ class ViewDatabase {
     #if DEBUG
     func open(path: String, user: Identity, maxAge: Double) throws {
         try self.open(path: path, user: user)
+        self.temporaryMessageExpireDate = maxAge
     }
     #endif
     
@@ -2136,6 +2143,13 @@ class ViewDatabase {
         return []
     }
     
+    private func isOldMessage(message: KeyValue) -> Bool {
+        let now = Date()
+        let claimed = Date(timeIntervalSince1970: message.value.timestamp / 1000)
+        let since = claimed.timeIntervalSince(now)
+        return since < self.temporaryMessageExpireDate
+    }
+    
     func fillMessages(msgs: [KeyValue], pms: Bool = false) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -2160,6 +2174,17 @@ class ViewDatabase {
                 if !pms {
                     throw GoBotError.unexpectedFault("ViewDB: no receive sequence number on message")
                 }
+            }
+            
+            /* This is the don't put older than 6 months in the db. */
+            if isOldMessage(message: msg) &&
+                (msg.value.content.type != .contact &&
+                msg.value.content.type != .about &&
+                msg.value.author != currentUser) {
+                // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
+                skipped += 1
+                print("Skipped(\(msg.value.content.type) \(msg.key)%)")
+                continue
             }
             
             if !pms && !msg.value.content.isValid {
