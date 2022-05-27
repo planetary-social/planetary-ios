@@ -49,10 +49,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
         try loadDB(named: "Feed_big", user: testFeed.owner)
     }
     
-    func setUpBigDB() throws {
-        try loadDB(named: "rabbledb", user: "@0uOwBrHIeiRK7lcvpLwjSFkcS3UHSQb/jyN52zf+J6Y=.ed25519")
-    }
-    
     func loadDB(named dbName: String, user: Identity) throws {
         viewDatabase.close()
         viewDatabase = ViewDatabase()
@@ -72,11 +68,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
     func resetSmallDB() throws {
         try tearDownWithError()
         try setUpSmallDB()
-    }
-    
-    func resetBigDB() throws {
-        try tearDownWithError()
-        try setUpBigDB()
     }
 
     /// Measures the peformance of `fillMessages(msgs:)`. This is the function that is called to copy posts from go-ssb
@@ -108,17 +99,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
         }
     }
     
-    func testDiscoverAlgorithmGivenBigDB() throws {
-        let strategy = PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
-        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
-            try! resetBigDB()
-            startMeasuring()
-            let keyValues = try! self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues.count, 100)
-            stopMeasuring()
-        }
-    }
-    
     func testCurrentPostsAlgorithmGivenSmallDb() throws {
         let strategy = PostsAlgorithm(wantPrivate: false, onlyFollowed: true)
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
@@ -130,17 +110,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
         }
     }
     
-    func testCurrentPostsAlgorithmGivenBigDB() throws {
-        let strategy = PostsAlgorithm(wantPrivate: false, onlyFollowed: true)
-        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
-            try! resetBigDB()
-            startMeasuring()
-            let keyValues = try! self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues.count, 100)
-            stopMeasuring()
-        }
-    }
-
     func testPostsAndContactsAlgorithmGivenSmallDB() throws {
         viewDatabase.close()
         let strategy = PostsAndContactsAlgorithm()
@@ -149,18 +118,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
             startMeasuring()
             let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
             XCTAssertEqual(keyValues?.count, 100)
-            stopMeasuring()
-        }
-    }
-    
-    func testPostsAndContactsAlgorithmGivenBigDB() throws {
-        viewDatabase.close()
-        let strategy = PostsAndContactsAlgorithm()
-        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
-            try! resetBigDB()
-            startMeasuring()
-            let keyValues = try! self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues.count, 100)
             stopMeasuring()
         }
     }

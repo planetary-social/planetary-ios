@@ -223,7 +223,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = OFF;") // Full is best for read performance
         
-         db.trace { print("\tSQL: \($0)") } // print all the statements
+        // db.trace { print("\tSQL: \($0)") } // print all the statements
         
         try db.transaction {
             if db.userVersion == 0 {
