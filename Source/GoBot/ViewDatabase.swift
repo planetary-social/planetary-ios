@@ -263,6 +263,7 @@ class ViewDatabase {
     
     func close() {
         self.openDB = nil
+        self.currentUser = nil
         self.currentUserID = -1
     }
     
