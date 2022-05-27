@@ -32,14 +32,13 @@ git update-index --skip-worktree Resources/Secrets.debug.plist
 
 5. Open the Planetary project in Xcode:
 
-```
+```sh
 open Planetary.xcworkspace
 ```
 
 In Xcode:
 
 6. In the menu bar choose Product -> Build
-
 
 ## Running
 
@@ -55,8 +54,8 @@ For now `main` is the main branch and code improvements are made in topic branch
 
 1. Fork the repo and create a branch named `initials-topic` or ticket tag like `esw-190`.
 2. Make your proposed changes. Make sure to test them thoroughly and consider adding unit or integration tests.
-4. Open a PR with a short description of what the PR accomplishes, and a link to the corresponding issue.
-5. If possible add screenshots (use shift-command-4-space-click to capture the iOS simulator window).
+3. Open a PR with a short description of what the PR accomplishes, and a link to the corresponding issue.
+4. If possible add screenshots (use shift-command-4-space-click to capture the iOS simulator window).
 
 A maintainer will review your code and merge it when it has the required number of approvals.
 
@@ -119,7 +118,6 @@ $ gem install cocoapods
 ```
 $ pod install
 ```
-
 
 #### Creating a Swift Package
 
