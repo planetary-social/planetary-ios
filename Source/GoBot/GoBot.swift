@@ -81,6 +81,10 @@ class GoBot: Bot {
     /// A queue that is used for tasks that aren't safe to execute simultaneously, like publishing and reading
     /// statistics.
     private let serialQueue: DispatchQueue
+    
+    /// A lock to prevent races when updating the numberOfPublished since it can be updated by `statistics()` and
+    /// `publish()`.
+    private let numberOfPublishedMessagesLock = NSLock()
  
     private let userDefaults: UserDefaults
     private(set) var config: AppConfiguration?
@@ -98,11 +102,13 @@ class GoBot: Bot {
     ) {
         self.userDefaults = userDefaults
         self.preloadedPubService = preloadedPubService
-        self.utilityQueue = DispatchQueue(label: "GoBot-utility",
-                                          qos: .userInitiated,
-                                          attributes: .concurrent,
-                                          autoreleaseFrequency: .workItem,
-                                          target: nil)
+        self.utilityQueue = DispatchQueue(
+            label: "GoBot-utility",
+            qos: .utility,
+            attributes: .concurrent,
+            autoreleaseFrequency: .workItem,
+            target: nil
+        )
         self.userInitiatedQueue = DispatchQueue(label: "GoBot-userInitiated",
                                                 qos: .userInitiated,
                                                 attributes: .concurrent,
@@ -472,7 +478,7 @@ class GoBot: Bot {
         self._isRefreshing = true
         
         let elapsed = Date()
-        self.userInitiatedQueue.async {
+        self.utilityQueue.async {
             self.updateReceive(limit: load.rawValue) { [weak self] error in
                 
                 // Figure out if the refresh got the ViewDatabase fully synced with the backing store.
@@ -554,7 +560,7 @@ class GoBot: Bot {
     ///   - completionQueue: The queue that `completion` should be called on.
     ///   - completion: A block that will be called with the result of the operation when it is finished.
     func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion) {
-        serialQueue.async {
+        userInitiatedQueue.async {
             guard let identity = self._identity else {
                 completionQueue.async {
                     completion(MessageIdentifier.null, BotError.notLoggedIn)
@@ -564,9 +570,11 @@ class GoBot: Bot {
             
             // Forked feed protection
             do {
+                self.numberOfPublishedMessagesLock.lock()
                 let preventForks = self.userDefaults.object(forKey: "prevent_feed_from_forks") as? Bool
                 if preventForks == true || preventForks == nil {
                     guard try self.publishingWouldFork(feed: identity) == false else {
+                        self.numberOfPublishedMessagesLock.unlock()
                         completionQueue.async {
                             completion(MessageIdentifier.null, BotError.forkProtection)
                         }
@@ -574,11 +582,13 @@ class GoBot: Bot {
                     }
                 }
             } catch {
+                self.numberOfPublishedMessagesLock.unlock()
                 completion(MessageIdentifier.null, error)
             }
             
             self.bot.publish(content) { [weak self] key, error in
                 if let error = error {
+                    self?.numberOfPublishedMessagesLock.unlock()
                     completionQueue.async { completion(MessageIdentifier.null, error) }
                     return
                 }
@@ -595,8 +605,10 @@ class GoBot: Bot {
                     let publishedPosts = try self.bot.getPublishedLog(after: lastPostIndex)
                     try self.database.fillMessages(msgs: publishedPosts)
                     try self.updateNumberOfPublishedMessages(for: identity)
+                    self.numberOfPublishedMessagesLock.unlock()
                     completionQueue.async { completion(key, nil) }
                 } catch {
+                    self?.numberOfPublishedMessagesLock.unlock()
                     completionQueue.async { completion(MessageIdentifier.null, error) }
                 }
             }
@@ -955,7 +967,7 @@ class GoBot: Bot {
             return
         }
 
-        utilityQueue.async {
+        userInitiatedQueue.async {
             do {
                 try FileManager.default.createDirectory(at: url.deletingLastPathComponent(),
                                                         withIntermediateDirectories: true,
@@ -1409,16 +1421,18 @@ class GoBot: Bot {
     /// Any access to this variable should be done on `statisticsQueue`.
     private var _statistics = BotStatistics()
     
-    
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
         serialQueue.async {
             let counts = try? self.bot.repoStatus()
             let sequence = try? self.database.stats(table: .messagekeys)
 
             var ownMessages = -1
-            if let identity = self._identity, let omc = try? self.database.numberOfMessages(for: identity) {
-                ownMessages = omc
+            self.numberOfPublishedMessagesLock.lock()
+            if let identity = self._identity, let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
+                ownMessages = ownMessageCount
+                self.saveNumberOfPublishedMessages(from: self._statistics.repo)
             }
+            self.numberOfPublishedMessagesLock.unlock()
             
             var fc: Int = -1
             if let feedCount = counts?.feeds { fc = Int(feedCount) }
@@ -1430,7 +1444,6 @@ class GoBot: Bot {
                                                    numberOfPublishedMessages: ownMessages,
                                                    lastHash: counts?.lastHash ?? "")
             
-            self.saveNumberOfPublishedMessages(from: self._statistics.repo)
             
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()

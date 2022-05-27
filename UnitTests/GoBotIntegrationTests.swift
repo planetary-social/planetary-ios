@@ -405,14 +405,15 @@ class GoBotIntegrationTests: XCTestCase {
         // Arrange
         let testPost = Post(text: "Be yourself; everyone else is already taken")
         appConfig.numberOfPublishedMessages = 0
+        XCTAssertEqual(self.appConfig.numberOfPublishedMessages, 0)
 
         // Act
         await withThrowingTaskGroup(of: Void.self, body: { group in
-            for i in 0..<100 {
+            for _ in 0..<100 {
                 group.addTask {
                     let messageID = try await self.sut.publish(testPost)
-                    XCTAssertEqual(self.appConfig.numberOfPublishedMessages, i + 1)
                     XCTAssertNotNil(messageID)
+                    XCTAssert(self.appConfig.numberOfPublishedMessages <= 100)
                 }
             }
         })
@@ -431,7 +432,7 @@ class GoBotIntegrationTests: XCTestCase {
 
         // Act
         await withThrowingTaskGroup(of: Void.self, body: { group in
-            for i in 0..<100 {
+            for _ in 0..<100 {
                 group.addTask {
                     async let futureStats1 = self.sut.statistics()
                     async let futurePublishedID = try self.sut.publish(testPost)
@@ -442,13 +443,33 @@ class GoBotIntegrationTests: XCTestCase {
                     XCTAssert(stats1.repo.numberOfPublishedMessages <= 100)
                     XCTAssert(stats2.repo.numberOfPublishedMessages <= 100)
                     XCTAssertNotNil(publishedID)
-                    XCTAssertEqual(self.appConfig.numberOfPublishedMessages, i + 1)
+                    XCTAssert(self.appConfig.numberOfPublishedMessages <= 100)
                 }
             }
         })
 
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 100)
+    }
+    
+    /// Tests the performance of the publish function.
+    func testPublishPerformance() throws {
+        // Arrange
+        let testPost = Post(text: "Be yourself; everyone else is already taken")
+        appConfig.numberOfPublishedMessages = 0
+
+        // Act
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            let expectation = self.expectation(description: "posted")
+            startMeasuring()
+            sut.publish(testPost) { messageID, error in
+                XCTAssertNil(error)
+                XCTAssertNotNil(messageID)
+                expectation.fulfill()
+            }
+            waitForExpectations(timeout: 1)
+            stopMeasuring()
+        }
     }
     
     /// Verifies that the statitistics() function updates the number of published messages in the AppConfiguration.
