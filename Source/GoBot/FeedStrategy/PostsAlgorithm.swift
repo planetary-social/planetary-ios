@@ -172,39 +172,27 @@ class PostsAlgorithm: NSObject, FeedStrategy {
     }
 
     private func filterOnlyFollowedPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
-        let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
-        let colAuthorID = Expression<Int64>("author_id")
-        let colContactID = Expression<Int64>("contact_id")
-        let colContactState = Expression<Int>("state")
-
-        // get the list of people that the active user follows
-        let myFollowsQry = contacts
-            .select(colContactID)
-            .filter(colAuthorID == userId)
-            .filter(colContactState == 1)
-        var myFollows: [Int64] = [userId] // and from self as well
-        for followRow in try connection.prepare(myFollowsQry) {
-            myFollows.append(followRow[colContactID])
-        }
-        return query.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
+        return query
+            .filter(
+                Expression(literal: """
+                (authors.author IN (SELECT followed_authors.author FROM contacts
+                JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
+                WHERE contacts.author_id = \(userId) AND contacts.state == 1))
+                """
+                )
+            )
     }
 
     private func filterNotFollowingPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
-        let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
-        let colAuthorID = Expression<Int64>("author_id")
-        let colContactID = Expression<Int64>("contact_id")
-        let colContactState = Expression<Int>("state")
-
-        // get the list of people that the active user follows
-        let myFollowsQry = contacts
-            .select(colContactID)
-            .filter(colAuthorID == userId)
-            .filter(colContactState == 1)
-        var myFollows: [Int64] = [userId] // and from self as well
-        for followRow in try connection.prepare(myFollowsQry) {
-            myFollows.append(followRow[colContactID])
-        }
-        return query.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
+        return query
+            .filter(
+                Expression(literal: """
+                (authors.author NOT IN (SELECT followed_authors.author FROM contacts
+                JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
+                WHERE contacts.author_id = \(userId) AND contacts.state == 1))
+                """
+                )
+            )
     }
 
     // swiftlint:disable function_body_length
