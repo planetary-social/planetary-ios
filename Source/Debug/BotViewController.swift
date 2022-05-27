@@ -142,13 +142,25 @@ class BotViewController: DebugTableViewController {
             },
                                              actionClosure: nil)]
 
-        settings += [DebugTableViewCellModel(title: "Messages",
-                                             cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             valueClosure: {
-                cell in
-                cell.detailTextLabel?.text = "\(statistics.repo.messageCount)"
-            },
-                                             actionClosure: nil)]
+        settings += [
+            DebugTableViewCellModel(
+                title: "Messages in Badger",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { cell in
+                    cell.detailTextLabel?.text = String(statistics.repo.messageCount)
+                }
+            )
+        ]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: "Messages in SQLite",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { cell in
+                    cell.detailTextLabel?.text = String(statistics.db.messageCount)
+                }
+            )
+        ]
         
         settings += [DebugTableViewCellModel(title: "Published Messages",
                                          cellReuseIdentifier: DebugValueTableViewCell.className,

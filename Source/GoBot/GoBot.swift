@@ -1481,7 +1481,7 @@ class GoBot: Bot {
         let currentNumberOfPublishedMessages = statistics.numberOfPublishedMessages
         if let configuration = config,
             currentNumberOfPublishedMessages > -1,
-            configuration.numberOfPublishedMessages <= currentNumberOfPublishedMessages {
+            configuration.numberOfPublishedMessages < currentNumberOfPublishedMessages {
             configuration.numberOfPublishedMessages = currentNumberOfPublishedMessages
             configuration.apply()
         }

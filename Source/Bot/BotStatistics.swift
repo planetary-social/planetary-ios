@@ -64,7 +64,7 @@ struct RepoStatistics: Equatable {
     /// Number of feeds in the repo
     let feedCount: Int
 
-    /// Total number of messages
+    /// Total number of messages in Badger
     let messageCount: Int
 
     /// Number of messages published by the user
