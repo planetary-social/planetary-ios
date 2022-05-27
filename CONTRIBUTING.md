@@ -12,72 +12,60 @@ Feel free to open an [issue on Github](https://github.com/planetary-social/plane
 
 If you want to contribute by translating the app to another language, you can head in to our [project in Crowdin](https://crowdin.com/project/planetary) and start translating there. It will automatically generate a Pull Request that we will happily take care of merging.
 
-## Working on the code
+## Building
 
-To work on the code, clone and bootstrap the project first:
+Planetary iOS is built using Xcode. To build it yourself you can follow the steps below. These steps assume you have installed Xcode, Homebrew, and have some familiarity with the Terminal app.
 
-1. Clone the repository
+From the Terminal: 
 
-```sh
-git clone https://github.com/planetary-social/planetary-ios.git
-cd planetary-ios/
-```
+1. `brew install git-lfs swiftlint`
 
-**You should be able to Build and Run in Xcode without installing any external tools other than Xcode. However, if you
-want to contribute with new code, we suggest setting up a more complete environment following the next steps.**
+2. `git clone git@github.com:planetary-social/planetary-ios.git`
 
-2. Install `rbenv` and `swiftlint` using [Homebrew](https://brew.sh/) and add it to your shell: 
+3. `cd planetary-ios`
 
-```sh
-brew install rbenv swiftlint && rbenv init
-```
-
-3. Install ruby v2.7.5
-
-```sh
-rbenv install 2.7.5
-```
-
-4. Install gems
-
-```sh
-bundle install
-```
-
-5. Install dependencies (optional)
-
-```sh
-pod install
-```
-
-6. Prevent git from commiting your API keys (see below, The Secrets.plist configuration file) in the public repository
+4. Prevent git from commiting your API keys (see below, The Secrets.plist configuration file) in the public repository
 
 ```sh
 git update-index --skip-worktree Resources/Secrets.debug.plist
 ```
 
-### Running
+5. Open the Planetary project in Xcode:
 
-The app is fully functional in the iOS simulator. If you want to run it on a device you will need to change the Bundle Identifier and Code Signing settings to use your personal team.
+```
+open Planetary.xcworkspace
+```
 
-### Creating a Pull Request
+In Xcode:
 
-For now `master` is the main branch and code improvements are made in topic branches that get merged into it.
+6. In the menu bar choose Product -> Build
 
-1. Create a branch named `initials-topic` or ticket tag like `esw-190`
-2. dd commits at whatever pace/detail necessary (these are mostly for your benefit)
-3. Push your named branch
-4. Add a short description of what the PR accomplishes
-5. If possible add screenshots (use shift-command-4-space-click to capture the iOS simulator window)
 
-Due to the small team size, code reviews are mostly to inform other members what's going on. Use GitHub's inline comment feature to leave notes for others to read and reply.
+## Running
+
+The app is fully functional in the iOS simulator. To run the app in the simulator, select a simulator using the Product -> Destination menu in Xcode, and then click Product -> Run.  If you want to run it on a device you will need to change the Bundle Identifier and Code Signing settings to use your personal team.
+
+## Contributing Code
+
+If you'd like to contribute code to the main branch of Planetary, it's best to check with us first. The best way to do this is to open or comment on an [issue](https://github.com/planetary-social/planetary-ios/issues) describing your proposed change. Feel free to @-mention some of the maintainers if we don't respond in a reasonable amount of time.
+
+### Opening a Pull Request
+
+For now `main` is the main branch and code improvements are made in topic branches that get merged into it.
+
+1. Fork the repo and create a branch named `initials-topic` or ticket tag like `esw-190`.
+2. Make your proposed changes. Make sure to test them thoroughly and consider adding unit or integration tests.
+4. Open a PR with a short description of what the PR accomplishes, and a link to the corresponding issue.
+5. If possible add screenshots (use shift-command-4-space-click to capture the iOS simulator window).
+
+A maintainer will review your code and merge it when it has the required number of approvals.
 
 ### Merging a Pull Request
 
 1. Select "Squash and merge" from the drop-down Merge button.
 2. Delete the branch (as the UI recommends) to keep the repo clean.
 
-## Architecture
+### Architecture
 
 **A good place to start: all of our important architectural decisions are being annotated inside the [Architecture folder](Architecture/) using [Architecture Decision Records](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions).**
 
@@ -102,7 +90,38 @@ graph TD
 
 You can contribute by working on each of these packages, or in the Planetary app itself.
 
-### Creating a Swift Package
+### Dependency Management
+
+We install some of our depencies using CocoaPods. If you are adding a new dependency we prefer to use the Swift Package Manager. If you need to change an exising dependency, install the `cocoapods` dependency manager first. 
+
+#### Cocoapods
+
+1. Install `rbenv` using [Homebrew](https://brew.sh/) and add it to your shell: 
+
+```
+$ brew install rbenv && rbenv init
+```
+
+2. Install ruby v2.7.5
+
+```
+$ rbenv install 2.7.5
+```
+
+3. Install gem
+
+```
+$ gem install cocoapods
+```
+
+4. Install dependencies
+
+```
+$ pod install
+```
+
+
+#### Creating a Swift Package
 
 In order to create a new package, follow these steps:
 
@@ -119,6 +138,6 @@ You are ready to go. Please, use other local swift packages like `Analytics` or 
 
 In order to configure third-party libraries, we need to add API keys. They are listed in the [Secrets.debug.plist](Resources/Secrets.debug.plist) file with empty values, the app still works without them. When making a Release build, you will need a similar file named Secrets.release.plist added in the same folder.
 
-## Go Development
+### Go Development
 
 Planetary’s underlying SSB protocol implementation is written in Go (see [cryptoscope/ssb](https://github.com/cryptoscope/ssb)). The GoSSB folder contains an Xcode project that packages [cryptoscope/ssb](https://github.com/cryptoscope/ssb) as an XCFramework that works across Apple’s various platforms and architectures. GoSSB.xcframework is included in this repository so that contributors don’t need to install a full Go stack to work on the iOS app. More information about the GoSSB.xcframework can be found in its [README](GoSSB/README.md)
