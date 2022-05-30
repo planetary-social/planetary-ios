@@ -12,7 +12,6 @@ target 'Planetary' do
     pod 'PhoneNumberKit', '3.2.0'
     pod 'SVProgressHUD', '2.2.5'
     pod 'Down', '0.9.2'
-    pod 'SkeletonView', '1.8.7'
 end
 
 target 'APITests' do
@@ -28,7 +27,6 @@ target 'UnitTests' do
     pod 'Down', '0.9.2'
     pod 'SVProgressHUD', '2.2.5'
     pod 'PhoneNumberKit', '3.2.0'
-    pod 'SkeletonView', '1.8.7'
 end
 
 target 'UITests' do

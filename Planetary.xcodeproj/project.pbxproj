@@ -609,6 +609,7 @@
 		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
 		5B4C8C73282D45E700803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
+		5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */; };
 		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
@@ -1712,6 +1713,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */,
 				5B0D585027BEAE93002F927D /* Secrets in Frameworks */,
 				5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */,
 				5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */,
@@ -3162,6 +3164,7 @@
 				C969F435282C79CC00FF6FE3 /* Lottie */,
 				5BC2974528048AD800C0CD81 /* SQLite */,
 				5BAE9C87281E11B6008AEA84 /* Support */,
+				5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */,
 			);
 			productName = FBTT;
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
@@ -3269,6 +3272,7 @@
 			packageReferences = (
 				C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */,
+				5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
@@ -5499,6 +5503,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
@@ -5525,6 +5537,11 @@
 		5B0D585127BEAE9E002F927D /* Support */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Support;
+		};
+		5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
 		};
 		5BAA0BB327DF9CE200C7BE63 /* CrashReporting */ = {
 			isa = XCSwiftPackageProductDependency;

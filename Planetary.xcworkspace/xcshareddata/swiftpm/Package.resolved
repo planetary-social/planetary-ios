@@ -83,6 +83,15 @@
         }
       },
       {
+        "package": "SkeletonView",
+        "repositoryURL": "https://github.com/Juanpe/SkeletonView",
+        "state": {
+          "branch": null,
+          "revision": "9e61ff3a85a3780a2cdfceae0257ad32fa8ae4d3",
+          "version": "1.29.2"
+        }
+      },
+      {
         "package": "SQLite.swift",
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
         "state": {

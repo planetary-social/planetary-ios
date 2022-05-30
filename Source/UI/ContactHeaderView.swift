@@ -51,8 +51,6 @@ class ContactHeaderView: UIView {
         self.nameButton.constrainTrailingToSuperview()
 
         self.nameButton.constrainHeight(to: 19)
-
-        self.isSkeletonable = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -81,6 +79,8 @@ class ContactHeaderView: UIView {
 
         self.nameButton.setAttributedTitle(attributedString, for: .normal)
         self.identityButton.setImage(for: about)
+
+        self.hideSkeleton()
 
         self.setNeedsLayout()
         self.layoutIfNeeded()

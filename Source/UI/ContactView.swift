@@ -8,12 +8,14 @@
 
 import Foundation
 import UIKit
+import SkeletonView
 
 class ContactView: KeyValueView {
 
     let imageView: AvatarImageView = {
         let view = AvatarImageView()
         view.constrainSize(to: Layout.contactAvatarSize)
+        view.isSkeletonable = true
         return view
     }()
 
@@ -23,6 +25,8 @@ class ContactView: KeyValueView {
         label.numberOfLines = 1
         label.font = UIFont.verse.contactName
         label.lineBreakMode = .byTruncatingTail
+        label.linesCornerRadius = 7
+        label.isSkeletonable = true
         return label
     }()
 
@@ -30,6 +34,8 @@ class ContactView: KeyValueView {
         let label = UILabel.forAutoLayout()
         label.textColor = UIColor.text.detail
         label.font = UIFont.verse.contactFollowerCount
+        label.linesCornerRadius = 7
+        label.isSkeletonable = true
         return label
     }()
 
@@ -41,6 +47,8 @@ class ContactView: KeyValueView {
         label.isEditable = false
         label.textContainerInset = .zero
         label.textContainer.lineFragmentPadding = 0
+        label.isSkeletonable = true
+        label.linesCornerRadius = 7
         return label
     }()
 
@@ -49,6 +57,7 @@ class ContactView: KeyValueView {
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.spacing = 5
+        stackView.isSkeletonable = true
         return stackView
     }()
 
@@ -56,10 +65,9 @@ class ContactView: KeyValueView {
         let followButton = FollowButton()
         followButton.height = 22
         followButton.fontSize = 12
+        followButton.isSkeletonable = true
         return followButton
     }()
-
-    private var image: ImageMetadata?
 
     init() {
         super.init(frame: CGRect.zero)
@@ -86,13 +94,34 @@ class ContactView: KeyValueView {
         stackView.addArrangedSubview(followButton)
 
         hashtagsLabel.delegate = self
+
+        isSkeletonable = true
+
+        reset()
     }
 
     required init?(coder aDecoder: NSCoder) {
         nil
     }
 
-    func update(with identity: Identity, about: About?) {
+    override func reset() {
+        super.reset()
+        update(
+            with: Identity.null,
+            about: nil,
+            socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0),
+            hashtags: []
+        )
+    }
+
+    func update(with identity: Identity, about: About?, socialStats: SocialStats, hashtags: [Hashtag]) {
+        update(numberOfFollowers: socialStats.numberOfFollowers, numberOfFollows: socialStats.numberOfFollows)
+        update(hashtags: hashtags)
+        update(with: identity, about: about)
+        hideSkeleton()
+    }
+
+    private func update(with identity: Identity, about: About?) {
         if let about = about {
             self.label.text = about.nameOrIdentity
             self.imageView.set(image: about.image)
@@ -100,10 +129,20 @@ class ContactView: KeyValueView {
             self.label.text = identity
             self.imageView.set(image: nil)
         }
-        self.setRelationship(to: identity)
+        if identity == Identity.null {
+            followButton.removeFromSuperview()
+        } else if let myIdentity = Bots.current.identity {
+            stackView.addArrangedSubview(followButton)
+            let relationship = Relationship(from: myIdentity, to: identity)
+            relationship.load {
+                self.followButton.relationship = relationship
+            }
+        } else {
+            followButton.removeFromSuperview()
+        }
     }
 
-    func update(numberOfFollowers: Int, numberOfFollows: Int) {
+    private func update(numberOfFollowers: Int, numberOfFollows: Int) {
         let string = "Following numberOfFollows • Followed by numberOfFollowers"
 
         let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
@@ -131,11 +170,11 @@ class ContactView: KeyValueView {
         followerCountLabel.attributedText = attributedString
     }
 
-    func update(hashtags: [Hashtag]) {
+    private func update(hashtags: [Hashtag]) {
         if hashtags.isEmpty {
             hashtagsLabel.removeFromSuperview()
         } else {
-            stackView.insertArrangedSubview(hashtagsLabel, at: 2)
+            stackView.addArrangedSubview(hashtagsLabel)
             let string = "Active on "
             let secondaryColor = [
                 NSAttributedString.Key.foregroundColor: UIColor.text.detail,
@@ -162,28 +201,6 @@ class ContactView: KeyValueView {
         }
     }
 
-    func setRelationship(to identity: Identity) {
-        if let myIdentity = Bots.current.identity {
-            let relationship = Relationship(from: myIdentity, to: identity)
-
-            relationship.load {
-                self.followButton.relationship = relationship
-            }
-        }
-    }
-
-    // allows us to cancel the image download when reusing for a new cell
-    private var imageLoadingTask: URLSessionDataTask?
-
-    private func loadImage(for person: Person) {
-        self.imageLoadingTask = self.imageView.load(for: person)
-    }
-
-    func reset() {
-        self.label.text = ""
-        self.imageLoadingTask?.cancel()
-        self.imageView.image = UIImage.verse.missingAbout
-    }
 }
 
 extension ContactView: UITextViewDelegate {
