@@ -300,7 +300,6 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 
 	sbot.BlobStore.Register(newEmitter())
 
-	sbot.WaitUntilIndexesAreSynced()
 	log.Log("event", "serving", "self", sbot.KeyPair.ID().ShortSigil(), "addr", listenAddr)
 	go func() {
 		srvErr := sbot.Network.Serve(longCtx)
