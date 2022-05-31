@@ -69,6 +69,6 @@ extension ContactReplyView {
     /// Returns a CGFloat suitable to be used as a `UITableView.estimatedRowHeight` or
     /// `UITableViewDelegate.estimatedRowHeightAtIndexPath()`.
     static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
-        return CGFloat(158)
+        return 158
     }
 }
