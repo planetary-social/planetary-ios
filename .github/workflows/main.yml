@@ -11,6 +11,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@main
+      lfs: true
     - name: Install CocoaPods Keys
       run: gem install cocoapods-keys
     - name: Dependencies
