@@ -117,8 +117,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         }
         
         try await bot.login(config: appConfiguration)
-        let statisticsService = BotStatisticsServiceAdaptor(bot: bot)
-        await coordinator.bindProgress(to: statisticsService)
+        await coordinator.bindProgress(to: bot)
         
         return true
     }
@@ -165,16 +164,17 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     }
     
     /// Wires up our published `progress` property to the statistics service.
-    private func bindProgress(to statisticsService: BotStatisticsService) async {
-        let statisticsPublisher = await statisticsService.subscribe()
-        
-        // Wire up peers array to the statisticsService
-        statisticsPublisher
+    private func bindProgress(to bot: GoBot) async {
+        Timer.publish(every: 1, on: .main, in: .default)
+            .autoconnect()
+            .asyncFlatMap(maxPublishers: .max(1)) { _ in
+                (try? bot.database.messageCount()) ?? 0
+            }
             // Ignore the first statistics because the database doesn't get dropped right away
             .dropFirst()
-            .map { (statistics: BotStatistics) -> Float in
+            .map { (currentMessageCount: Int) -> Float in
                 // Calculate completion percentage
-                let completionFraction = Float(statistics.db.messageCount) / Float(self.completionMessageCount)
+                let completionFraction = Float(currentMessageCount) / Float(self.completionMessageCount)
                 return completionFraction.clamped(to: 0.0...1.0)
             }
             .receive(on: RunLoop.main)
@@ -182,9 +182,17 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
                 self.progress = progress
                 self.userDefaults.set(progress, forKey: Self.beta1MigrationProgress)
                 self.userDefaults.synchronize()
-                Log.info("Resync progress: \(progress)")
             })
             .store(in: &self.cancellabes)
+        
+        // Print progress only every 60 seconds
+        Timer.publish(every: 60, on: .main, in: .default)
+            .autoconnect()
+            .sink(receiveValue: { progress in
+                Log.info("Resync progress: \(self.progress)")
+            })
+            .store(in: &self.cancellabes)
+
     }
     
     /// This opens up a special connection to the SQLLite database and retrieves the total message count.
