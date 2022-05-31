@@ -197,6 +197,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
                 (authors.author NOT IN (SELECT followed_authors.author FROM contacts
                 JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
                 WHERE contacts.author_id = \(userId) AND contacts.state == 1))
+                AND authors.id != \(userId)
                 """
                 )
             )
