@@ -38,13 +38,11 @@ class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
     override func prepareForReuse() {
         super.prepareForReuse()
         keyValueView.reset()
-        keyValueView.showAnimatedSkeleton()
     }
 
     // MARK: KeyValueUpdateable
 
     func update(with keyValue: KeyValue) {
-        // self.keyValueView.hideSkeleton()
         self.keyValueView.update(with: keyValue)
     }
 }

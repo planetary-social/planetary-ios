@@ -84,14 +84,15 @@ class ContactCellView: KeyValueView {
         super.reset()
         currentTask?.cancel()
         contactView.reset()
+        headerView.reset()
+        hideSkeleton()
     }
 
     override func update(with keyValue: KeyValue) {
         self.keyValue = keyValue
-        self.headerView.update(with: keyValue)
-
         if let contact = keyValue.value.content.contact {
             let identity = contact.identity
+            showAnimatedSkeleton()
             currentTask = Task {
                 // The idea here is to execute the three database queries in order so that if the task is cancelled
                 // in the middle we can omit at least one of them
@@ -117,12 +118,14 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
+                headerView.update(with: keyValue)
                 contactView.update(
                     with: identity,
                     about: about,
                     socialStats: stats,
                     hashtags: hashtags
                 )
+                hideSkeleton()
             }
         } else {
             return

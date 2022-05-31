@@ -118,7 +118,6 @@ class ContactView: KeyValueView {
         update(numberOfFollowers: socialStats.numberOfFollowers, numberOfFollows: socialStats.numberOfFollows)
         update(hashtags: hashtags)
         update(with: identity, about: about)
-        hideSkeleton()
     }
 
     private func update(with identity: Identity, about: About?) {

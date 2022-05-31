@@ -29,6 +29,8 @@ class ContactHeaderView: UIView {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.titleLabel?.numberOfLines = 1
+        button.titleLabel?.linesCornerRadius = 7
+        button.titleLabel?.isSkeletonable = true
         button.isSkeletonable = true
         return button
     }()
@@ -48,9 +50,13 @@ class ContactHeaderView: UIView {
         self.addSubview(self.nameButton)
         self.nameButton.pinTopToSuperview()
         self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
-        self.nameButton.constrainTrailingToSuperview()
+        self.nameButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor).isActive = true
 
         self.nameButton.constrainHeight(to: 19)
+
+        self.isSkeletonable = true
+
+        reset()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -62,12 +68,19 @@ class ContactHeaderView: UIView {
         self.identityButton.round()
     }
 
+    func reset() {
+        update(with: Identity.null, about: nil)
+    }
+
     func update(with keyValue: KeyValue) {
         let identity = keyValue.value.author
         self.identity = identity
-
         let about = keyValue.metadata.author.about
-        let name = about?.nameOrIdentity ?? keyValue.value.author
+        self.update(with: identity, about: about)
+    }
+
+    private func update(with identity: Identity, about: About?) {
+        let name = about?.nameOrIdentity ?? identity
         let string = Text.startedFollowing.text(["somebody": name])
         let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
         let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
@@ -78,9 +91,11 @@ class ContactHeaderView: UIView {
         attributedString.addAttributes(primaryColor, range: range)
 
         self.nameButton.setAttributedTitle(attributedString, for: .normal)
-        self.identityButton.setImage(for: about)
-
-        self.hideSkeleton()
+        if let about = about {
+            self.identityButton.setImage(for: about)
+        } else {
+            identityButton.setImage(UIImage.verse.missingAbout, for: .normal)
+        }
 
         self.setNeedsLayout()
         self.layoutIfNeeded()
