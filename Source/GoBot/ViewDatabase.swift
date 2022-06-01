@@ -2155,6 +2155,8 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
+        
+        Log.info("[rx log] starting fillMessages with \(msgs.count) new messages")
 
         #if SSB_MSGDEBUG
         // google claimed this is the tool to use to measure block execution time
