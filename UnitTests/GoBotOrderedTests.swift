@@ -380,16 +380,7 @@ class GoBotOrderedTests: XCTestCase {
         let afterUnsupported = GoBotOrderedTests.shared.testingPublish(as: "denise", content: Post(text: "after lots of unsupported"))
 
         var ex = self.expectation(description: "\(#function) 1")
-        GoBotOrderedTests.shared.refresh(load: .short, queue: .main) {
-            err, _, _ in
-            XCTAssertNil(err, "refresh error!")
-            ex.fulfill()
-        }
-        self.wait(for: [ex], timeout: 10)
-
-        // need two refresh calls to consume the whole batch
-        ex = self.expectation(description: "\(#function) 2")
-        GoBotOrderedTests.shared.refresh(load: .short, queue: .main) {
+        GoBotOrderedTests.shared.refresh(load: .long, queue: .main) {
             err, _, _ in
             XCTAssertNil(err, "refresh error!")
             ex.fulfill()
