@@ -10,6 +10,7 @@ import Foundation
 import ImageSlideshow
 import UIKit
 import SkeletonView
+import Logger
 
 class ContactCellView: KeyValueView {
 
@@ -22,7 +23,10 @@ class ContactCellView: KeyValueView {
         }
     }
 
+    var currentTask: Task<Void, Error>?
+
     var keyValue: KeyValue?
+
     private lazy var headerView = ContactHeaderView()
 
     private lazy var contactView = ContactView()
@@ -61,6 +65,8 @@ class ContactCellView: KeyValueView {
         self.textViewTopConstraint = topConstraint
 
         self.contactView.pinBottomToSuperviewBottom()
+
+        isSkeletonable = true
     }
 
     convenience init(keyValue: KeyValue) {
@@ -74,29 +80,52 @@ class ContactCellView: KeyValueView {
 
     // MARK: KeyValueUpdateable
 
+    override func reset() {
+        super.reset()
+        currentTask?.cancel()
+        contactView.reset()
+        headerView.reset()
+        hideSkeleton()
+    }
+
     override func update(with keyValue: KeyValue) {
         self.keyValue = keyValue
-        self.headerView.update(with: keyValue)
-
         if let contact = keyValue.value.content.contact {
-            contactView.update(with: contact.identity, about: nil)
-            Bots.current.about(identity: contact.identity) { [weak contactView] about, _ in
-                DispatchQueue.main.async {
-                    contactView?.update(with: contact.identity, about: about)
+            let identity = contact.identity
+            showAnimatedSkeleton()
+            currentTask = Task.detached { [weak self] in
+                // The idea here is to execute the three database queries in order so that if the task is cancelled
+                // in the middle we can omit at least one of them
+                try Task.checkCancellation()
+                var about: About?
+                do {
+                    about = try await Bots.current.about(identity: identity)
+                } catch {
+                    Log.optional(error)
                 }
-            }
-            Bots.current.socialStats(for: contact.identity) { [weak contactView] stats, _ in
-                DispatchQueue.main.async {
-                    contactView?.update(
-                        numberOfFollowers: stats.numberOfFollowers,
-                        numberOfFollows: stats.numberOfFollows
-                    )
+                try Task.checkCancellation()
+                var stats = SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
+                do {
+                    stats = try await Bots.current.socialStats(for: identity)
+                } catch {
+                    Log.optional(error)
                 }
-            }
-            Bots.current.hashtags(usedBy: contact.identity, limit: 3) { [weak contactView] hashtags, _ in
-                DispatchQueue.main.async {
-                    contactView?.update(hashtags: hashtags)
+                try Task.checkCancellation()
+                var hashtags: [Hashtag] = []
+                do {
+                    hashtags = try await Bots.current.hashtags(usedBy: identity, limit: 3)
+                } catch {
+                    Log.optional(error)
                 }
+                try Task.checkCancellation()
+                await self?.headerView.update(with: keyValue)
+                await self?.contactView.update(
+                    with: identity,
+                    about: about,
+                    socialStats: stats,
+                    hashtags: hashtags
+                )
+                await self?.hideSkeleton()
             }
         } else {
             return

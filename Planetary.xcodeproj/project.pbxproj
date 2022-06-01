@@ -607,8 +607,10 @@
 		5B2A4F9928205C8900A5BE48 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
 		5B2A4F9A28205C8C00A5BE48 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
 		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
+		5B3D893828468846002514AF /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B3D893728468846002514AF /* SkeletonView */; };
 		5B4C8C73282D45E700803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
+		5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */; };
 		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
@@ -1690,6 +1692,7 @@
 				C969F43E282C81A700FF6FE3 /* Lottie in Frameworks */,
 				5BC2974A2804B98C00C0CD81 /* SQLite in Frameworks */,
 				5BAA0BB627DF9CEC00C7BE63 /* CrashReporting in Frameworks */,
+				5B3D893828468846002514AF /* SkeletonView in Frameworks */,
 				C928DAF227B5AC850007C5FC /* Logger in Frameworks */,
 				C9134DE228184C2700595D49 /* Support in Frameworks */,
 				5BE69B0D27CEA1B70013D51D /* Analytics in Frameworks */,
@@ -1712,6 +1715,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */,
 				5B0D585027BEAE93002F927D /* Secrets in Frameworks */,
 				5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */,
 				5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */,
@@ -2337,8 +2341,8 @@
 				5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */,
 				5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */,
 				5BC297472804A22500C0CD81 /* ContactView.swift */,
-				8D8A7B18231995670087895B /* PostHeaderView.swift */,
 				5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */,
+				8D8A7B18231995670087895B /* PostHeaderView.swift */,
 				531B92C322CEAD25005D5255 /* PostReplyView.swift */,
 				1FFCEC5F25646D12007BC13A /* PostTextEditorView.swift */,
 				539FD4CA22C586CC005A4DF2 /* ReplyTextView.swift */,
@@ -3105,6 +3109,7 @@
 				C9134DE128184C2700595D49 /* Support */,
 				C969F43D282C81A700FF6FE3 /* Lottie */,
 				5BC297492804B98C00C0CD81 /* SQLite */,
+				5B3D893728468846002514AF /* SkeletonView */,
 			);
 			productName = FBTTUnitTests;
 			productReference = 5308168521C46A52005C48ED /* UnitTests.xctest */;
@@ -3162,6 +3167,7 @@
 				C969F435282C79CC00FF6FE3 /* Lottie */,
 				5BC2974528048AD800C0CD81 /* SQLite */,
 				5BAE9C87281E11B6008AEA84 /* Support */,
+				5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */,
 			);
 			productName = FBTT;
 			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
@@ -3269,6 +3275,7 @@
 			packageReferences = (
 				C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */,
+				5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
@@ -5499,6 +5506,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
@@ -5525,6 +5540,16 @@
 		5B0D585127BEAE9E002F927D /* Support */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Support;
+		};
+		5B3D893728468846002514AF /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
+		};
+		5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
 		};
 		5BAA0BB327DF9CE200C7BE63 /* CrashReporting */ = {
 			isa = XCSwiftPackageProductDependency;

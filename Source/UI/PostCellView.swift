@@ -203,8 +203,6 @@ class PostCellView: KeyValueView {
         self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
         self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
         self.galleryViewZeroHeightConstraint.isActive = true
-        
-        self.isSkeletonable = true
     }
 
     convenience init(keyValue: KeyValue) {

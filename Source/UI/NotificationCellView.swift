@@ -124,7 +124,7 @@ class NotificationCellView: KeyValueView {
         self.forceNeedsLayout()
     }
 
-    private func reset() {
+    override func reset() {
         self.button.set(image: nil)
         self.contentLabel.text = nil
         self.forceNeedsLayout()
