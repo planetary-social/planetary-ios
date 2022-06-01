@@ -47,6 +47,7 @@ Frameworks/GoSSB.xcframework/**/*.a
  
 ## Test artifacts
 UnitTests/Resources/Feed_big.sqlite-*
+UnitTests/Resources/rabbledb.sqlite-*
 
 ## Playgrounds
 timeline.xctimeline

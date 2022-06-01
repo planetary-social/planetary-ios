@@ -76,30 +76,6 @@ name: SkeletonView, nameSpecified:
 body: The MIT License (MIT…
 version: 1.8.7
 
-name: SQLite.swift, nameSpecified: 
-body: (The MIT License)
-
-C…
-version: 0.12.2
-
-name: SQLite.swift, nameSpecified: 
-body: (The MIT License)
-
-C…
-version: 0.12.2
-
-name: SQLite.swift, nameSpecified: 
-body: (The MIT License)
-
-C…
-version: 0.12.2
-
-name: SQLite.swift, nameSpecified: 
-body: (The MIT License)
-
-C…
-version: 0.12.2
-
 name: SVProgressHUD, nameSpecified: 
 body: MIT License
 
@@ -120,6 +96,8 @@ name: commonui_sdk_ios, nameSpecified: ZendeskCommonUISDK, owner: zendesk, versi
 
 name: core_sdk_ios, nameSpecified: ZendeskCoreSDK, owner: zendesk, version: 2.6.0
 
+name: lottie-ios, nameSpecified: Lottie, owner: airbnb, version: 3.3.0
+
 name: messaging_sdk_ios, nameSpecified: ZendeskMessagingSDK, owner: zendesk, version: 3.8.4
 
 name: messagingapi_sdk_ios, nameSpecified: ZendeskMessagingAPISDK, owner: zendesk, version: 3.8.4
@@ -128,11 +106,16 @@ name: posthog-ios, nameSpecified: PostHog, owner: PostHog, version: 1.4.4
 
 name: sdkconfigurations_sdk_ios, nameSpecified: ZendeskSDKConfigurationsSDK, owner: zendesk, version: 1.1.10
 
+name: SQLite.swift, nameSpecified: SQLite.swift, owner: stephencelis, version: 0.13.3
+
 name: support_providers_sdk_ios, nameSpecified: ZendeskSupportProvidersSDK, owner: zendesk, version: 5.4.1
 
 name: support_sdk_ios, nameSpecified: ZendeskSupportSDK, owner: zendesk, version: 5.4.1
 
 name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.4.2
+
+name: Go-SSB, nameSpecified: , version: 
+body: The MIT License (MIT…
 
 add-version-numbers: false
 
