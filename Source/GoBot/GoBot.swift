@@ -104,7 +104,7 @@ class GoBot: Bot {
         self.preloadedPubService = preloadedPubService
         self.utilityQueue = DispatchQueue(
             label: "GoBot-utility",
-            qos: .utility,
+            qos: .userInitiated,
             attributes: .concurrent,
             autoreleaseFrequency: .workItem,
             target: nil
@@ -785,7 +785,7 @@ class GoBot: Bot {
         guard diff > 0 else {
             // still might want to update privates
             #if DEBUG
-            print("[rx log] viewdb already up to date.")
+            Log.debug("[rx log] viewdb already up to date.")
             #endif
             self.updatePrivate(completion: completion)
             return
@@ -793,6 +793,7 @@ class GoBot: Bot {
         
         // TOOD: redo until diff==0
         do {
+            Log.debug("[rx log] asking go-ssb for new messages.")
             let msgs = try self.bot.getReceiveLog(startSeq: UInt64(max(0, current + 1)), limit: limit)
             
             guard msgs.count > 0 else {
@@ -922,6 +923,11 @@ class GoBot: Bot {
 
         guard identifier.isValidIdentifier else {
             completion(identifier, nil, BotError.blobInvalidIdentifier)
+            return
+        }
+        
+        guard !isRestoring else {
+            completion(identifier, nil, BotError.restoring)
             return
         }
 

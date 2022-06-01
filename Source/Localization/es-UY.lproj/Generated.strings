@@ -265,6 +265,7 @@
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No pudimos unirte a {{ starName }}. Por favor, intentá de vuelta o contactá con soporte.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
 

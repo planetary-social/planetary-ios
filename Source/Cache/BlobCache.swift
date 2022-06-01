@@ -131,10 +131,16 @@ class BlobCache: DictionaryCache {
             
             // Retry failures
             guard let data = data, data.isEmpty == false, error == nil else {
+                if let botError = error as? BotError, case BotError.restoring = botError {
+                    // Don't mess with blobs while restoring
+                    return
+                }
+                
                 Task {
                     if await self.requestManager.shouldRetry(identifier: identifier) {
                         let delay = await self.requestManager.retryDelay(for: identifier)
                         Log.info("Loading blob \(identifier) failed. Retrying in \(delay) seconds")
+                        await self.requestManager.didRetry(identifier: identifier)
                         
                         try? await Task.sleep(nanoseconds: UInt64(delay) * 1_000_000_000)
                         

@@ -16,7 +16,8 @@ enum BotError: Error, LocalizedError {
     case notLoggedIn
     case forkProtection
     case invalidAppConfiguration
-
+    case restoring
+    
     // MARK: - LocalizedError
     
     var errorDescription: String? {
@@ -41,6 +42,8 @@ enum BotError: Error, LocalizedError {
             return Text.Error.cannotPublishBecauseRestoring.text
         case .invalidAppConfiguration:
             return Text.Error.invalidAppConfiguration.text
+        case .restoring:
+            return Text.Error.restoring.text
         }
     }
 }

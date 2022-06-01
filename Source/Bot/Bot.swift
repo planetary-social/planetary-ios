@@ -34,7 +34,7 @@ typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
 enum RefreshLoad: Int32, CaseIterable {
     case tiny = 500 // about 1 second on modern hardware
-    case short = 15_000 // about 10 seconds
+    case short = 5_000 
     case medium = 45_000 // about 30 seconds
     case long = 100_000 // about 60 seconds
 }

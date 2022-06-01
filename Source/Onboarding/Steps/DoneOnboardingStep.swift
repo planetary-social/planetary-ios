@@ -114,7 +114,7 @@ class DoneOnboardingStep: OnboardingStep {
         let preloadOperation = LoadBundleOperation(bundle: bundle)
         preloadOperation.addDependency(publicWebHostingOperation)
         
-        let refreshOperation = RefreshOperation(refreshLoad: .long)
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
         refreshOperation.addDependency(preloadOperation)
         
         let completionOperation = BlockOperation { [weak self] in
