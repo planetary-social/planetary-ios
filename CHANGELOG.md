@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed default home feed algorithm to show follow messages. #532
 - Added a Home Feed algorithm that moves posts back to the top of your feed when they receive a reply. #565
 - Updated to the latest version of our SSB library which requires us to delete and resync all data from the network. #510
+- Added a search bar to the Hashtags screen #570
 - (re-)Added option during onboarding to opt out of analytics. #513
 - Added option in onboarding to follow Planetary identity. #513
 - Changed database to show all messages, even those older than 6 months. #513
@@ -19,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved performance of replication algorithm. #553 #533
 - Fixed an issue where Planetary would incorrectly prevent the user from posting with a message about it restoring. #548
 - Improved loading of images. #535
+- Remove in-app image cropping since it was buggy #568
+- Update style of photo gallery page indicator #569
+- Fixed usernames getting clipped on the Discover tab #589
+- Reduced app launch time #598
 
 ## [1.1.2] 2022-04-29
 - Fixed invitations for Gardening and Poetry pubs #503
