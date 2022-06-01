@@ -200,7 +200,7 @@ class GoBotIntegrationTests: XCTestCase {
         userDefaults.set(false, forKey: "prevent_feed_from_forks")
         let author = try XCTUnwrap(appConfig.identity)
         let nowFloat = Date().millisecondsSince1970
-        let existingMessage = KeyValueFixtures.keyValue(
+        let existingMessage = KeyValueFixtures.post(
             timestamp: nowFloat,
             receivedTimestamp: nowFloat,
             receivedSeq: -1,

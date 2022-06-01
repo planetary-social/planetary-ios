@@ -41,6 +41,7 @@ extension Notification {
 extension Notification.Name {
     static let didRefresh = Notification.Name("didRefresh")
     static let didSync = Notification.Name("didSync")
+    static let didChangeHomeFeedAlgorithm = Notification.Name("didChangeHomeFeedAlgorithm")
 }
 
 // MARK: - Databae progress

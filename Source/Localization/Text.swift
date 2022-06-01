@@ -14,6 +14,7 @@ extension Text {
             Text.Onboarding.StepTitle.self,
             Text.ManagePubs.self,
             Text.Preview.self,
+            Text.FeedAlgorithm.self,
             Text.PublicWebHosting.self,
             Text.Push.self,
             Text.Reporting.self,
@@ -319,6 +320,26 @@ extension Text {
     enum Preview: String, Localizable, CaseIterable {
         case title = "Advanced Settings"
         case footer = "New features that are being developed and tested, and haven't found a permanent home yet in the app."
+    }
+}
+
+// MARK: - Feed Algorithms
+
+extension Text {
+
+    enum FeedAlgorithm: String, Localizable, CaseIterable {
+        case algorithms = "Algorithms"
+        case feedAlgorithmTitle = "Home Feed"
+        case feedAlgorithmDescription = "Choose the algorithm used to sort and filter your Home Feed."
+        case recentPostsAlgorithm = "Recent posts"
+        case recentPostsAlgorithmDescription = "Shows posts from the people you follow in the order they were posted."
+        case recentPostsWithFollowsAlgorithm = "Recent posts and follows (default)"
+        case recentPostsWithFollowsAlgorithmDescription = "Shows posts and follow messages from the people you follow in the order they were posted."
+        case recentlyActivePostsWithFollowsAlgorithm = "Recently active posts and follows"
+        case recentlyActivePostsWithFollowsAlgorithmDescription = "Shows posts and follow messages from the people you follow. If a message receives a reply it will be pushed back up to the top of the feed."
+        case viewAlgorithmSource = "View Source Code"
+        case sourceCode = "Source Code"
+        case sourceCodeDescription = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above."
     }
 }
 

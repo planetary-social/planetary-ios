@@ -1,33 +1,23 @@
 //
-//  PostsAndContactsAlgorithm.swift
+//  RecentlyActivePostsAndContactsAlgorithm.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 12/4/22.
+//  Created by Matt Lorentz on 17/5/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
 import Foundation
 import SQLite
 
-/// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
+/// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network.
+/// If a root post is replied to it will be boosted back up to the top of the feed.
 ///
-/// It doesn't include pubs follows and posts in the feed
-class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
+/// It doesn't include pubs follows and posts in the feed.
+///
+/// NOTE: This has a lot of code copied from PostsAndContactsAlgorithm. We should factor it out. (#564)
+class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
-    /// SQL query to count the total number of items in the feed
-    ///
-    /// This query should be as fast as possible so only required joins and where clauses where used.
-    /// The result should be the same as the number of items returned by the other two queries in this class.
-    /// The where clauses are as follows:
-    /// - Only posts and follows (contacts) are considered
-    /// - Discard private messages
-    /// - Discard hidden messages
-    /// - Only root posts
-    /// - Only follows (contacts) to people we know something about and discard follows to pubs
-    /// - Only posts and follows from user's follows or from user itsef
-    /// - Discard posts and follows from pubs
-    /// - Discard posts and follows from the future
     private let countNumberOfKeysQuery = """
         SELECT COUNT(*)
         FROM messages
@@ -54,23 +44,15 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
     // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
-    /// SQL query to return the feed's keys
-    ///
-    /// This query should be as fast as possible so only required joins and where clauses where used.
-    /// The result should be the same as the number of items returned by the other two queries in this class.
-    /// The where clauses are as follows:
-    /// - Only posts and follows (contacts) are considered
-    /// - Discard private messages
-    /// - Discard hidden messages
-    /// - Only root posts
-    /// - Only follows (contacts) to people we know something about and discard follows to pubs
-    /// - Only posts and follows from user's follows or from user itsef
-    /// - Discard posts and follows from pubs
-    /// - Discard posts and follows from the future
-    ///
-    /// The result is sorted by  date
     private let fetchKeysQuery = """
-        SELECT messagekeys.key
+        SELECT messagekeys.key,
+               (SELECT COALESCE(tangled_message.claimed_at, messages.claimed_at)
+                FROM tangles
+                JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
+                WHERE tangles.root == messages.msg_id
+                AND tangled_message.claimed_at < ?
+                ORDER BY tangled_message.claimed_at DESC LIMIT 1
+               ) as last_reply
         FROM messages
         JOIN authors ON authors.id == messages.author_id
         JOIN messagekeys ON messagekeys.id == messages.msg_id
@@ -91,37 +73,12 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
             ) OR authors.id == ?)
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
-        ORDER BY messages.claimed_at DESC
+        ORDER BY last_reply DESC
         LIMIT ? OFFSET ?;
     """
     // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
-    /// SQL query to return the feed's keyvalues
-    ///
-    /// This query should be as fast as possible and contain just the minimum data
-    /// to display it in the Home or Discover feed. The result should be the same as the number of items
-    /// returned by the other two queries in this class.
-    ///
-    /// The select clauses are as follows:
-    /// - All data from message, post, contact, tangle, messagekey, author and about of the author
-    /// - The identified of the followed author if the message is a follow (contact)
-    /// - A bool column indicating if the message has blobs
-    /// - A bool column indicating if the message has feed mentions
-    /// - A bool column indicating if the message has message mentions
-    /// - The number of replies to the message
-    ///
-    /// The where clauses are as follows:
-    /// - Only posts and follows (contacts) are considered
-    /// - Discard private messages
-    /// - Discard hidden messages
-    /// - Only root posts
-    /// - Only follows (contacts) to people we know something about and discard follows to pubs
-    /// - Only posts and follows from user's follows or from user itsef
-    /// - Discard posts and follows from pubs
-    /// - Discard posts and follows from the future
-    ///
-    /// The result is sorted by  date
     private let fetchKeyValuesQuery = """
         SELECT messages.*,
                posts.*,
@@ -147,7 +104,14 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 JOIN messages AS tangled_message ON tangled_message.msg_id == tangles.msg_ref
                 JOIN authors ON authors.id == tangled_message.author_id
                 WHERE tangles.root == messages.msg_id LIMIT 3
-               ) as replies
+               ) as replies,
+               (SELECT COALESCE(tangled_message.claimed_at, messages.claimed_at)
+                FROM tangles
+                JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
+                WHERE tangles.root == messages.msg_id
+                AND tangled_message.claimed_at < ?
+                ORDER BY tangled_message.claimed_at DESC LIMIT 1
+               ) as last_reply
         FROM messages
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref
         LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
@@ -169,7 +133,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
              OR authors.id == ?)
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
-        ORDER BY claimed_at DESC
+        ORDER BY last_reply DESC
         LIMIT ? OFFSET ?;
     """
     // swiftlint:enable indentation_width
@@ -199,6 +163,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
         let query = try connection.prepare(fetchKeysQuery)
 
         let bindings: [Binding?] = [
+            Date().millisecondsSince1970,
             userId,
             userId,
             Date().millisecondsSince1970,
@@ -214,7 +179,14 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         let query = try connection.prepare(fetchKeyValuesQuery)
-        let bindings: [Binding?] = [userId, userId, Date().millisecondsSince1970, limit, offset ?? 0]
+        let bindings: [Binding?] = [
+            Date().millisecondsSince1970,
+            userId,
+            userId,
+            Date().millisecondsSince1970,
+            limit,
+            offset ?? 0
+        ]
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, connection: connection)
         }
