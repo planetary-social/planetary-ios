@@ -93,7 +93,7 @@ class ContactCellView: KeyValueView {
         if let contact = keyValue.value.content.contact {
             let identity = contact.identity
             showAnimatedSkeleton()
-            currentTask = Task {
+            currentTask = Task.detached { [weak self] in
                 // The idea here is to execute the three database queries in order so that if the task is cancelled
                 // in the middle we can omit at least one of them
                 try Task.checkCancellation()
@@ -118,14 +118,14 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
-                headerView.update(with: keyValue)
-                contactView.update(
+                await self?.headerView.update(with: keyValue)
+                await self?.contactView.update(
                     with: identity,
                     about: about,
                     socialStats: stats,
                     hashtags: hashtags
                 )
-                hideSkeleton()
+                await self?.hideSkeleton()
             }
         } else {
             return
