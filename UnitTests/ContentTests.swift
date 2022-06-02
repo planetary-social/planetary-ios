@@ -419,42 +419,48 @@ class ContentTests: XCTestCase {
         do {
             try ContentType.allCases.forEach {
                 switch $0 {
-
-                    case .about:
-                        let data = try About(about: .testIdentity, name: "test").encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-                        break
-
-                    case .contact:
-                        let data = try Contact(contact: .testIdentity, blocking: true).encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-                        break
                     
-                    case .dropContentRequest:
-                        let fakeHash = "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.ggfeed-v1"
-                        let data = try DropContentRequest(sequence: 1, hash: fakeHash).encodeToData()
-                        let content = try? JSONDecoder().decode(DropContentRequest.self, from: data)
-//                        XCTAssertTrue(content?.assertValid() ?? false)
-                        XCTAssertNotNil(content)
-                        XCTAssertEqual(content?.sequence, 1)
-                        XCTAssertEqual(content?.hash, fakeHash)
-                        break
-
-                    case .post:
-                        let data = try Post(text: "this is a test").encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-                        break
-
-                    case .vote:
-                        let data = try ContentVote(link: .testLink, value: 1).encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-
+                case .about:
+                    let data = try About(about: .testIdentity, name: "test").encodeToData()
+                    let content = try? JSONDecoder().decode(Content.self, from: data)
+                    XCTAssertTrue(content?.assertValid() ?? false)
+                    break
+                    
+                case .contact:
+                    let data = try Contact(contact: .testIdentity, blocking: true).encodeToData()
+                    let content = try? JSONDecoder().decode(Content.self, from: data)
+                    XCTAssertTrue(content?.assertValid() ?? false)
+                    break
+                    
+                case .dropContentRequest:
+                    let fakeHash = "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.ggfeed-v1"
+                    let data = try DropContentRequest(sequence: 1, hash: fakeHash).encodeToData()
+                    let content = try? JSONDecoder().decode(DropContentRequest.self, from: data)
+                    //                        XCTAssertTrue(content?.assertValid() ?? false)
+                    XCTAssertNotNil(content)
+                    XCTAssertEqual(content?.sequence, 1)
+                    XCTAssertEqual(content?.hash, fakeHash)
+                    break
+                    
+                case .post:
+                    let data = try Post(text: "this is a test").encodeToData()
+                    let content = try? JSONDecoder().decode(Content.self, from: data)
+                    XCTAssertTrue(content?.assertValid() ?? false)
+                    break
+                    
+                case .vote:
+                    let data = try ContentVote(
+                        link: .testLink,
+                        value: 1,
+                        expression: nil,
+                        root: "1",
+                        branches: ["1"]
+                    ).encodeToData()
+                    let content = try? JSONDecoder().decode(Content.self, from: data)
+                    XCTAssertTrue(content?.assertValid() ?? false)
+                    
                     // models that SHOULD NOT be encoded
-                    case .pub, .address, .unknown, .unsupported: break
+                case .pub, .address, .unknown, .unsupported: break
                 }
             }
         } catch {
