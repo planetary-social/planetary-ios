@@ -55,8 +55,8 @@
 "Text.name" = "Namen";
 "Text.bio" = "Über mich";
 "Text.seeMore" = "Mehr anzeigen";
-"Text.likesThis" = "Likes this";
-"Text.dislikesThis" = "Dislikes this";
+"Text.likesThis" = "likes this";
+"Text.dislikesThis" = "dislikes this";
 "Text.block" = "Blockieren";
 "Text.blocked" = "Blockiert";
 "Text.deleteSecretAndIdentity" = "Schlüssel und Identität löschen";

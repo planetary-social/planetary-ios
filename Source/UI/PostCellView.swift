@@ -224,11 +224,14 @@ class PostCellView: KeyValueView {
         self.headerView.update(with: keyValue)
 
         if let vote = keyValue.value.content.vote {
-            let expression: String
-            if vote.vote.value > 0 {
-                expression = "💜 \(Text.likesThis.text)"
+            var expression: String 
+            if let explicitExpression = vote.vote.expression,
+               explicitExpression.isSingleEmoji {
+                expression = explicitExpression
+            } else if vote.vote.value > 0 {
+                expression = "\(Text.likesThis.text)"
             } else {
-                expression = "💔 \(Text.dislikesThis.text)"
+                expression = "\(Text.dislikesThis.text)"
             }
 
             let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.italicSystemFont(ofSize: 16),

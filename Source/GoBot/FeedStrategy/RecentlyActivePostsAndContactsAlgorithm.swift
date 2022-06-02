@@ -282,6 +282,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         let colRoot = Expression<Int64>("root")
         let colLinkID = Expression<Int64>("link_id")
         let colValue = Expression<Int>("value")
+        let colExpression = Expression<String?>("expression")
 
         let lnkID = try keyValueRow.get(colLinkID)
         let lnkKey = try self.msgKey(id: lnkID, connection: connection)
@@ -292,6 +293,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         let voteContent = ContentVote(
             link: lnkKey,
             value: try keyValueRow.get(colValue),
+            expression: try keyValueRow.get(colExpression),
             root: rootKey,
             branches: []
         )
