@@ -68,14 +68,6 @@ name: PhoneNumberKit, nameSpecified:
 body: The MIT License (MIT…
 version: 3.2.0
 
-name: SkeletonView, nameSpecified: 
-body: The MIT License (MIT…
-version: 1.8.7
-
-name: SkeletonView, nameSpecified: 
-body: The MIT License (MIT…
-version: 1.8.7
-
 name: SVProgressHUD, nameSpecified: 
 body: MIT License
 
@@ -105,6 +97,8 @@ name: messagingapi_sdk_ios, nameSpecified: ZendeskMessagingAPISDK, owner: zendes
 name: posthog-ios, nameSpecified: PostHog, owner: PostHog, version: 1.4.4
 
 name: sdkconfigurations_sdk_ios, nameSpecified: ZendeskSDKConfigurationsSDK, owner: zendesk, version: 1.1.10
+
+name: SkeletonView, nameSpecified: SkeletonView, owner: Juanpe, version: 1.29.2
 
 name: SQLite.swift, nameSpecified: SQLite.swift, owner: stephencelis, version: 0.13.3
 
