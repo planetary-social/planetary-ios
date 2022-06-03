@@ -46,13 +46,15 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
     // swiftlint:disable indentation_width
     private let fetchKeysQuery = """
         SELECT messagekeys.key,
-               (SELECT COALESCE(tangled_message.claimed_at, messages.claimed_at)
+           (SELECT COALESCE(
+                (SELECT tangled_message.claimed_at
                 FROM tangles
                 JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
                 WHERE tangles.root == messages.msg_id
                 AND tangled_message.claimed_at < ?
-                ORDER BY tangled_message.claimed_at DESC LIMIT 1
-               ) as last_reply
+                ORDER BY tangled_message.claimed_at DESC LIMIT 1),
+                messages.claimed_at
+           )) as last_reply
         FROM messages
         JOIN authors ON authors.id == messages.author_id
         JOIN messagekeys ON messagekeys.id == messages.msg_id
@@ -105,13 +107,15 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 JOIN authors ON authors.id == tangled_message.author_id
                 WHERE tangles.root == messages.msg_id LIMIT 3
                ) as replies,
-               (SELECT COALESCE(tangled_message.claimed_at, messages.claimed_at)
-                FROM tangles
-                JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
-                WHERE tangles.root == messages.msg_id
-                AND tangled_message.claimed_at < ?
-                ORDER BY tangled_message.claimed_at DESC LIMIT 1
-               ) as last_reply
+               (SELECT COALESCE(
+                    (SELECT tangled_message.claimed_at
+                    FROM tangles
+                    JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
+                    WHERE tangles.root == messages.msg_id
+                    AND tangled_message.claimed_at < ?
+                    ORDER BY tangled_message.claimed_at DESC LIMIT 1),
+                    messages.claimed_at
+               )) as last_reply
         FROM messages
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref
         LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
