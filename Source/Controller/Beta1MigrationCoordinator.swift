@@ -202,7 +202,11 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
     private static func getNumberOfMessagesInViewDatabase(with configuration: AppConfiguration) throws -> Int {
         let dbConnection = try Connection(try dbPath(with: configuration))
         let msgs = Table("messages")
-        return try dbConnection.scalar(msgs.count)
+        let colClaimedAt = Expression<Double>("claimed_at")
+        let sixMonthsAgo = Date().millisecondsSince1970 - 1000 * 60 * 60 * 24 * 30 * 6
+        return try dbConnection.scalar(
+            msgs.count.where(colClaimedAt > sixMonthsAgo)
+        ) + configuration.numberOfPublishedMessages
     }
     
     private static func dbPath(with configuration: AppConfiguration) throws -> String {
