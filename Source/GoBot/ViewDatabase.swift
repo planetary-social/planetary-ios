@@ -1747,32 +1747,13 @@ class ViewDatabase {
     }
     
     // MARK: channels
-    
-    func hashtags() throws -> [Hashtag] {
-        guard let db = self.openDB else {
+
+    /// Returns a list of hashtags sorted by a given strategy
+    func hashtags(with strategy: HashtagListStrategy) throws -> [Hashtag] {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let qry = try db.prepare("""
-        SELECT distinct( channels.name), count(*), messages.received_at 
-        FROM "channels", "channel_assignments", "messages"
-        WHERE (
-            "messages"."msg_id" = "channel_assignments"."msg_ref"
-            AND
-            "channels"."id" = "channel_assignments"."chan_ref"
-        )
-        Group by channels.id
-        ORDER BY "messages.received_at" ASC;
-        """)
-
-        var channels: [Hashtag] = []
-        
-        for f in try qry.run() {
-            let count = f[1] as! Int64
-            let timestamp = f[2] as! Float64
-            let hashtag = Hashtag(name: "\(f[0]!)", count: count, timestamp: timestamp)
-            channels += [hashtag]
-        }
-        return channels
+        return try strategy.fetchHashtags(connection: connection, userId: currentUserID)
     }
 
     func hashtags(identity: Identity, limit: Int = 100) throws -> [Hashtag] {

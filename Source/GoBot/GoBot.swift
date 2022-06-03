@@ -1330,12 +1330,15 @@ class GoBot: Bot {
 
     // MARK: Hashtags
 
+    /// The algorithm we use to sort the list of hashtags
+    var hashtagListStrategy: HashtagListStrategy {
+        PopularHashtagsAlgorithm()
+    }
+
     func hashtags(completion: @escaping HashtagsCompletion) {
-        Thread.assertIsMainThread()
-        userInitiatedQueue.async {
+        userInitiatedQueue.async { [hashtagListStrategy] in
             do {
-                var hashtags = try self.database.hashtags()
-                hashtags.reverse()
+                let hashtags = try self.database.hashtags(with: hashtagListStrategy)
                 DispatchQueue.main.async { completion(hashtags, nil) }
             } catch {
                 DispatchQueue.main.async { completion([], error) }

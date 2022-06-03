@@ -44,7 +44,7 @@ class ChannelsViewController: ContentViewController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func viewDidLoad() {
@@ -58,19 +58,12 @@ class ChannelsViewController: ContentViewController {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Channels")
         Analytics.shared.trackDidShowScreen(screenName: "channels")
-        self.deeregisterDidRefresh()
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        self.registerDidRefresh()
     }
 
     // MARK: Load and refresh
 
     private func load(animated: Bool = false) {
-        Bots.current.hashtags {
-            [weak self] hashtags, error in
+        Bots.current.hashtags { [weak self] hashtags, error in
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             self?.removeLoadingAnimation()
@@ -124,7 +117,8 @@ class ChannelsViewController: ContentViewController {
 
     // MARK: Actions
 
-    @objc func refreshControlValueChanged(control: UIRefreshControl) {
+    @objc
+    func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
         self.refreshAndLoad()
     }
@@ -139,21 +133,6 @@ class ChannelsViewController: ContentViewController {
     override func deregisterNotifications() {
         super.deregisterNotifications()
         self.deeregisterDidRefresh()
-    }
-
-    /// Refreshes the view,  but only if this is the top controller, not when there are any child
-    /// controllers.  The notification will also only be received when the view is not visible,
-    /// check out `viewDidAppear()` and `viewDidDisappear()`.  This is because
-    /// we don't want the view to be updated while someone is looking/scrolling it.
-    override func didRefresh(notification: NSNotification) {
-        DispatchQueue.main.async {
-            guard self.navigationController?.topViewController == self else {
-                return
-            }
-            // TODO: Maybe we want to update the table here
-            // Or show a REFRESH button
-            // self.load()
-        }
     }
 }
 
@@ -172,7 +151,12 @@ private class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+        let cell: UITableViewCell
+        if let reusedCell = tableView.dequeueReusableCell(withIdentifier: "cell") {
+            cell = reusedCell
+        } else {
+            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+        }
         let hashtag = self.hashtags[indexPath.row]
         cell.accessoryType = .disclosureIndicator
         cell.textLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
@@ -180,10 +164,9 @@ private class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
         cell.selectionStyle = .none
         cell.backgroundColor = .cardBackground
         
-        let post_text = (hashtag.count == 1) ? Text.Post.one.text : Text.Post.many.text
-        let ago = hashtag.timeAgo()
+        let postText = (hashtag.count == 1) ? Text.Post.one.text : Text.Post.many.text
         
-        cell.detailTextLabel?.text = "\(hashtag.count) \(post_text) \(Text.Channel.lastUpdated.text) \(ago)"
+        cell.detailTextLabel?.text = "\(hashtag.count) \(postText)"
         
         return cell
     }

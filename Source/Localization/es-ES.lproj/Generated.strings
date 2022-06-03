@@ -257,7 +257,6 @@
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
-"Channel.lastUpdated" = "actualizada";
 
 "Post.one" = "publicación";
 "Post.many" = "publicaciones";

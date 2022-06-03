@@ -621,6 +621,13 @@
 		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
 		5B4C8C73282D45E700803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
+		5B92E2772849583C003127F2 /* HashtagListStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */; };
+		5B92E27A284A7A8F003127F2 /* HashtagListStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */; };
+		5B92E27C284A7B12003127F2 /* PopularHashtagsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */; };
+		5B92E27D284A7B2D003127F2 /* HashtagListStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */; };
+		5B92E27E284A7B2D003127F2 /* HashtagListStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */; };
+		5B92E27F284A7B2F003127F2 /* PopularHashtagsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */; };
+		5B92E280284A7B30003127F2 /* PopularHashtagsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */; };
 		5B9A5EF827E8D1F1001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5B9A5EF927E8DBAF001D7CA3 /* CrashReporting+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
@@ -1284,6 +1291,9 @@
 		5B0D585327BEE1F1002F927D /* Secrets.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.release.plist; sourceTree = "<group>"; };
 		5B0D585827BEE4FC002F927D /* Secrets.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.debug.plist; sourceTree = "<group>"; };
 		5B6C333C2832D512001F10D6 /* swiftlint_diffonly.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = swiftlint_diffonly.sh; sourceTree = "<group>"; };
+		5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategyTests.swift; sourceTree = "<group>"; };
+		5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategy.swift; sourceTree = "<group>"; };
+		5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularHashtagsAlgorithm.swift; sourceTree = "<group>"; };
 		5B9A5EF727E8D1F1001D7CA3 /* CrashReporting+GoBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrashReporting+GoBot.swift"; sourceTree = "<group>"; };
 		5BAE9C81281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinPlanetarySystemOperation.swift; sourceTree = "<group>"; };
 		5BAE9C85281E0EA9008AEA84 /* Support+GoBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Support+GoBot.swift"; sourceTree = "<group>"; };
@@ -1639,6 +1649,7 @@
 				5BB4C7DD28205AE600EA522F /* EncodeJSONtest.swift */,
 				23888978220867DB0030CB92 /* ViewDatabaseTests.swift */,
 				C982CBD62834233700D8963F /* FeedStrategyTests.swift */,
+				5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */,
 				23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */,
 				C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */,
 				2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */,
@@ -1822,6 +1833,7 @@
 		531D0A1121EACBEE008E40A8 /* GoBot */ = {
 			isa = PBXGroup;
 			children = (
+				5B92E278284A7A70003127F2 /* HashtagListStrategy */,
 				5BC297572806021500C0CD81 /* FeedStrategy */,
 				2346ECB6221420E1009A94CB /* GoBot.swift */,
 				2391BF6F22FC69C5005DE311 /* GoBotBridge.h */,
@@ -2290,6 +2302,15 @@
 				5BC3DE6028299CB900F6A363 /* SocialStats.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		5B92E278284A7A70003127F2 /* HashtagListStrategy */ = {
+			isa = PBXGroup;
+			children = (
+				5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */,
+				5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */,
+			);
+			path = HashtagListStrategy;
 			sourceTree = "<group>";
 		};
 		5BC297572806021500C0CD81 /* FeedStrategy */ = {
@@ -2867,8 +2888,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5344D83D21C4649A00704A34 /* Build configuration list for PBXNativeTarget "Planetary" */;
 			buildPhases = (
-				5B6C333B2832D4FE001F10D6 /* Run swiftlint on modified files */,
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
+				5B6C333B2832D4FE001F10D6 /* Run swiftlint on modified files */,
 				8D9143FB230C6B670075BC8A /* Generate Localized Strings */,
 				5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */,
 				5B0D585727BEE41D002F927D /* Copy Secrets.plist */,
@@ -3496,6 +3517,7 @@
 				530F018822DAD5D8007EBAE2 /* Date+Random.swift in Sources */,
 				0ACE91AC243D74AF00EFB4E9 /* ViewDatabaseError.swift in Sources */,
 				23EF5A9B249CDCF900469977 /* BlocksAPIService.swift in Sources */,
+				5B92E280284A7B30003127F2 /* PopularHashtagsAlgorithm.swift in Sources */,
 				53211CF0228522B2007FB785 /* FakeBot.swift in Sources */,
 				C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */,
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
@@ -3553,6 +3575,7 @@
 				23C744552200B12200FB554A /* Profile.swift in Sources */,
 				237D057C2335149100973D63 /* Blob+UIImage.swift in Sources */,
 				2358695B24A0FB1100F4FC1D /* URLResponse+APIError.swift in Sources */,
+				5B92E2772849583C003127F2 /* HashtagListStrategyTests.swift in Sources */,
 				C9C3788227C692F800238B58 /* ConnectedPeerListCoordinator.swift in Sources */,
 				C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */,
 				53CF2A4D22026B1700F0A2CC /* ImageMetadata.swift in Sources */,
@@ -3621,6 +3644,7 @@
 				53B4F5F722B85DE300027C6A /* Markdownable.swift in Sources */,
 				23CA4B92232291C1005B35E8 /* Blob+NSAttributedString.swift in Sources */,
 				23EF5AA5249CE69900469977 /* NullBlocksAPI.swift in Sources */,
+				5B92E27E284A7B2D003127F2 /* HashtagListStrategy.swift in Sources */,
 				53211CE722838137007FB785 /* MIMEType.swift in Sources */,
 				0ABCA8F724366CC900D7F39C /* AppError.swift in Sources */,
 				533EDBE82385F7CD008B3565 /* CacheTests.swift in Sources */,
@@ -3689,6 +3713,7 @@
 				8DB041FE234FAA48006AC35B /* Identity+Bot.swift in Sources */,
 				5314EF5B22EA29AA0065D02A /* Mention+NSAttributedString.swift in Sources */,
 				5314EF4322EA286C0065D02A /* Contact.swift in Sources */,
+				5B92E27D284A7B2D003127F2 /* HashtagListStrategy.swift in Sources */,
 				5314EF4C22EA28A40065D02A /* BotStatistics.swift in Sources */,
 				5314EF6D22EA2BA90065D02A /* ImageMetadata.swift in Sources */,
 				5314EF5622EA292A0065D02A /* Markdownable.swift in Sources */,
@@ -3729,6 +3754,7 @@
 				C9A2DE2A27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */,
 				5314EF5E22EA29E40065D02A /* Date+millisecs.swift in Sources */,
 				0ACE919B243D599E00EFB4E9 /* NullMarkdownStyler.swift in Sources */,
+				5B92E27F284A7B2F003127F2 /* PopularHashtagsAlgorithm.swift in Sources */,
 				5314EF7422EA34BC0065D02A /* String+IsValid.swift in Sources */,
 				533DC01A2331951400C8472F /* Blob.swift in Sources */,
 				0ACE91A3243D741200EFB4E9 /* GoBotError.swift in Sources */,
@@ -4005,6 +4031,7 @@
 				53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */,
 				53BD748623232FB70060E47E /* Blob+UIImage.swift in Sources */,
 				0A4870FF249801CD00BCD063 /* KeyValuePaginatedCollectionViewDataSource.swift in Sources */,
+				5B92E27C284A7B12003127F2 /* PopularHashtagsAlgorithm.swift in Sources */,
 				53BD748A23289B3F0060E47E /* ImageGalleryView.swift in Sources */,
 				C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */,
 				8D9143F6230C5F4E0075BC8A /* Localizable.swift in Sources */,
@@ -4133,6 +4160,7 @@
 				C9C3787F27C691EA00238B58 /* PeerConnectionInfo.swift in Sources */,
 				53E26C4E23022482009240B2 /* AppDelegate+Push.swift in Sources */,
 				531B92BD22CD65ED005D5255 /* UIFont+Verse.swift in Sources */,
+				5B92E27A284A7A8F003127F2 /* HashtagListStrategy.swift in Sources */,
 				5357550B226A3523002A6989 /* UITableView+KeyValue.swift in Sources */,
 				530F018A22DADCE7007EBAE2 /* Date+OlderThan.swift in Sources */,
 			);

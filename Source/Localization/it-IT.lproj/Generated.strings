@@ -257,7 +257,6 @@
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";
-"Channel.lastUpdated" = "last updated";
 
 "Post.one" = "post";
 "Post.many" = "posts";

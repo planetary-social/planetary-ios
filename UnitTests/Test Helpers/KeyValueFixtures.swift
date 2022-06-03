@@ -46,13 +46,14 @@ enum KeyValueFixtures {
         timestamp: Float64 = 2_684_029_486_000, // 2055
         receivedTimestamp: Float64 = 2_684_029_486_000, // 2055
         receivedSeq: Int64 = 0, // largest in example feed is 77
+        post: Post = Post(text: "post"),
         author: Identity
     ) -> KeyValue {
             
         keyValue(
             key: key,
             sequence: sequence,
-            content: Content(from: Post(text: "post")),
+            content: Content(from: post),
             timestamp: timestamp,
             receivedTimestamp: receivedTimestamp,
             receivedSeq: receivedSeq,
