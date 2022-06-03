@@ -226,7 +226,7 @@ class PostCellView: KeyValueView {
         if let vote = keyValue.value.content.vote {
             var expression: String 
             if let explicitExpression = vote.vote.expression,
-               explicitExpression.isSingleEmoji {
+                explicitExpression.isSingleEmoji {
                 expression = explicitExpression
             } else if vote.vote.value > 0 {
                 expression = "\(Text.likesThis.text)"
