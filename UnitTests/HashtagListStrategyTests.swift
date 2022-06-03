@@ -11,7 +11,7 @@ import XCTest
 /// Tests to make sure our `FeedStrategy`s fetch the posts we expect.
 class HashtagListStrategyTests: XCTestCase {
 
-    var tmpURL = URL(string: "unset")!
+    var tmpURL = URL(fileURLWithPath: "unset")
     var db = ViewDatabase()
     let testAuthor: Identity = DatabaseFixture.exampleFeed.identities[0]
 
@@ -19,16 +19,16 @@ class HashtagListStrategyTests: XCTestCase {
         try super.setUpWithError()
         db.close()
 
-        // get random location for the new db
-        self.tmpURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/viewDBtest-feedFill2"))
+        // get random location for the new
+        tmpURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/viewDBtest-feedFill2"))
 
         do {
-            try FileManager.default.removeItem(at: self.tmpURL)
+            try FileManager.default.removeItem(at: tmpURL)
         } catch {
             // ignore - most likely not exists
         }
 
-        try FileManager.default.createDirectory(at: self.tmpURL, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: tmpURL, withIntermediateDirectories: true)
 
         // open DB
         let dbPath = tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
