@@ -1261,7 +1261,7 @@ class ViewDatabase {
             .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue )
             .filter(colRoot == msgID)
             .filter(colHidden == false)
-            .order(colMessageID.asc)
+            .order(colClaimedAt.asc)
         
         // making this a two-pass query until i can figure out how to dynamlicly join based on type
 
@@ -1336,39 +1336,6 @@ class ViewDatabase {
             return kv
         }
         return msgs
-    }
-
-    // finds all the posts from current user that are not replies.
-    // then looks for all replies to these threads.
-    // TOOD: pagination
-    func getRepliesToMyThreads(limit: Int = 50) throws -> [KeyValue] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-
-        // reminder: SQLite.swift can't do subquerys
-        // https://app.asana.com/0/0/1133029620163798/f
-
-        // posts by user that are not replies
-        let colMaybeRoot = Expression<Int64?>("root")
-        let threadsStartedByUserQry = self.msgs
-            .select(colMessageID)
-            .join(.leftOuter, self.tangles, on: self.msgs[colMessageID] == self.tangles[colMessageRef])
-            .filter(colAuthorID == self.currentUserID)
-            .filter(colMsgType == "post")
-            .filter(colMaybeRoot == nil)
-            .filter(colHidden == false)
-            .limit(limit)
-
-        var threadIDs: [Int64] = [] // and from self as well
-        for row in try db.prepare(threadsStartedByUserQry) {
-            threadIDs.append(row[colMessageID])
-        }
-
-        let repliesQry = self.basicRecentPostsQuery(limit: limit, wantPrivate: false, onlyRoots: false)
-            .filter(threadIDs.contains(colRoot))
-
-        return try self.mapQueryToKeyValue(qry: repliesQry)
     }
 
     func mentions(limit: Int = 200, wantPrivate: Bool = false, onlyImages: Bool = true) throws -> KeyValues {
