@@ -92,8 +92,8 @@ enum Text: String, Localizable, CaseIterable {
     case name = "Name"
     case bio = "Bio"
     case seeMore = "See more"
-    case likesThis = "Likes this"
-    case dislikesThis = "Dislikes this"
+    case likesThis = "likes this"
+    case dislikesThis = "dislikes this"
 
     case block = "Block"
     case blocked = "Blocked"

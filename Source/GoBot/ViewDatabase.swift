@@ -133,7 +133,7 @@ class ViewDatabase {
     private var votes: Table
     private let colLinkID = Expression<Int64>("link_id")
     private let colValue = Expression<Int>("value")
-    private let colExpression = Expression<String>("expression")
+    private let colExpression = Expression<String?>("expression")
 
     private var channels: Table
     // id
@@ -1297,6 +1297,7 @@ class ViewDatabase {
                 let cv = ContentVote(
                     link: lnkKey,
                     value: try row.get(colValue),
+                    expression: try row.get(colExpression),
                     root: rootKey,
                     branches: [] // TODO: branches for root
                 )
@@ -1430,6 +1431,7 @@ class ViewDatabase {
                 
                 let lnkID = try row.get(colLinkID)
                 let lnkKey = try self.msgKey(id: lnkID)
+                let expression = try row.get(colExpression)
                 
                 let rootID = try row.get(colRoot)
                 let rootKey = try self.msgKey(id: rootID)
@@ -1437,6 +1439,7 @@ class ViewDatabase {
                 let cv = ContentVote(
                     link: lnkKey,
                     value: try row.get(colValue),
+                    expression: expression,
                     root: rootKey,
                     branches: [] // TODO: branches for root
                 )
@@ -1554,6 +1557,7 @@ class ViewDatabase {
                 let cv = ContentVote(
                     link: lnkKey,
                     value: try row.get(colValue),
+                    expression: try row.get(colExpression),
                     root: rootKey,
                     branches: [] // TODO: branches for root
                 )
@@ -2080,7 +2084,7 @@ class ViewDatabase {
             colValue <- v.vote.value
         ))
         
-        try self.insertBranches(msgID: msgID, root: v.root, branches: v.branch)
+        try self.insertBranches(msgID: msgID, root: v.vote.link, branches: [v.vote.link])
     }
     
     private func fillReportIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws -> [Report] {

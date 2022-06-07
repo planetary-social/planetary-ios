@@ -270,7 +270,7 @@ class ViewDatabaseTests: XCTestCase {
         do {
             // TODO: verify ordering
             let replies = try self.vdb.getRepliesTo(thread: "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWs=.sha256")
-            XCTAssertEqual(replies.count, 13)
+            XCTAssertEqual(replies.count, 7)
             for (i, kv) in replies.enumerated() {
                 XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
                 
@@ -296,53 +296,17 @@ class ViewDatabaseTests: XCTestCase {
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "[@realUserThree](@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519) who are you?!")
                 case 4:
-                    XCTAssertEqual(kv.key, "%l1IwSOOeofqmiOyT84y42Tcn9RJKLeg6zKtVN0v/nIE=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[0])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%2q0+HuVVun2LWCb/uQVQThFAA65VHxrzDIwRYuljoSY=.sha256")
-                case 5:
                     XCTAssertEqual(kv.key, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
                     XCTAssertEqual(kv.value.author, testFeeds[3])
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "hello people!")
-                case 6:
-                    XCTAssertEqual(kv.key, "%YR/7RhApX0Znb5s4w9B/eDK8fN3/5Jx3z5ih/gOoB6Y=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 7:
-                    XCTAssertEqual(kv.key, "%oQTjGmUQ9S0SLAoKSz+KNL8mRN6aCj2Mrsy0E/nRwOg=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 0)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 8:
-                    XCTAssertEqual(kv.key, "%as5O7FtNV1ZfIHnmirVZ2ptHfrBpQWVITtvL5z/CfUc=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                case 9:
-                    XCTAssertEqual(kv.key, "%CRGKl5idyt7UjFQf7GlgVDd3lcvvCUaWqYs4iip9sjE=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 10:
-                    XCTAssertEqual(kv.key, "%00TehcsrAYe1fHbivR1j0htNj26mzeldSNt7uDO4RZ0=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                case 11:
+                case 5:
                     XCTAssertEqual(kv.key, "%YGZ8L7iAv3b50k3/Nks7Jm//2v6t9Jd/di1l6q/eIe8=.sha256")
                     XCTAssertEqual(kv.value.author, testFeeds[1])
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "[@userFour](@27PkouhQuhr9Ffn+rgSnN0zabcfoE31qD3ZMkCs3c+0=.ed25519) hey you!\n\n[@userOne](@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519) i don\'t know either..")
                     // TODO: decode & check mentions
-                case 12:
+                case 6:
                     XCTAssertEqual(kv.key, "%ruVFSar2PMCK1WZdz0AL7JIOgxjbFuwcHL8zWrqw9Ig=.sha256")
                     XCTAssertEqual(kv.value.author, DatabaseFixture.exampleFeed.secret.identity)
                     XCTAssertEqual(kv.value.content.type, .post)

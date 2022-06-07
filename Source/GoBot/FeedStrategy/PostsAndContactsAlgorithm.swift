@@ -310,16 +310,19 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
         let colRoot = Expression<Int64>("root")
         let colLinkID = Expression<Int64>("link_id")
         let colValue = Expression<Int>("value")
+        let colExpression = Expression<String?>("expression")
 
         let lnkID = try keyValueRow.get(colLinkID)
         let lnkKey = try self.msgKey(id: lnkID, connection: connection)
 
         let rootID = try keyValueRow.get(colRoot)
         let rootKey = try self.msgKey(id: rootID, connection: connection)
+        let expression = try keyValueRow.get(colExpression)
 
         let voteContent = ContentVote(
             link: lnkKey,
             value: try keyValueRow.get(colValue),
+            expression: expression,
             root: rootKey,
             branches: []
         )

@@ -229,6 +229,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         let colDescr = Expression<String?>("description")
         let colDecrypted = Expression<Bool>("is_decrypted")
         let colValue = Expression<Int>("value")
+        let colExpression = Expression<String?>("expression")
 
         return try connection.prepare(query).compactMap { keyValueRow in
             let msgID = try keyValueRow.get(colMessageID)
@@ -254,9 +255,11 @@ class PostsAlgorithm: NSObject, FeedStrategy {
                 let lnkKey = try self.msgKey(id: lnkID, connection: connection)
                 let rootID = try keyValueRow.get(colRoot)
                 let rootKey = try self.msgKey(id: rootID, connection: connection)
+                let expression = try keyValueRow.get(colExpression)
                 let contentVote = ContentVote(
                     link: lnkKey,
                     value: try keyValueRow.get(colValue),
+                    expression: expression,
                     root: rootKey,
                     branches: []
                 )
