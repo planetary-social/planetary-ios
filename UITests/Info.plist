@@ -17,12 +17,12 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.1</string>
 	<key>CFBundleVersion</key>
-	<string>330</string>
-    <key>PLTestingNetworkHMAC</key>
-    <string>$(TESTING_NETWORK_HMAC)</string>
-    <key>PLTestingNetworkKey</key>
-    <string>$(TESTING_NETWORK_KEY)</string>
-    <key>PLTestingNetworkName</key>
-    <string>$(TESTING_NETWORK_NAME)</string>
+	<string>332</string>
+	<key>PLTestingNetworkHMAC</key>
+	<string>$(TESTING_NETWORK_HMAC)</string>
+	<key>PLTestingNetworkKey</key>
+	<string>$(TESTING_NETWORK_KEY)</string>
+	<key>PLTestingNetworkName</key>
+	<string>$(TESTING_NETWORK_NAME)</string>
 </dict>
 </plist>

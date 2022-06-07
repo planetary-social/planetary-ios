@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed usernames getting clipped on the Discover tab #589
 - Reduced app launch time #598
 - Improved replication performance. #553 #533 #604
+- Updated Spanish translation
+- Thread view now sorts replies by claimed timestamp instead of received timestamp #609
 
 ## [1.1.2] 2022-04-29
 - Fixed invitations for Gardening and Poetry pubs #503
