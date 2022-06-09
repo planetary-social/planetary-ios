@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -39,7 +38,7 @@
 "Text.userDirectoryMessage" = "Being in the user directory means that people can find you if they already know your name, short code or phone number.";
 "Text.sendAnalytics" = "Send analytics to Planetary";
 "Text.dontSendAnalytics" = "Don't send analytics at all";
-"Text.analyticsMessage" = "We would like to capture anonymized data about your use of the app - and crash reports when something goes wrong - so we can make the application better.";
+"Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
 "Text.post" = "Post";
 "Text.preview" = "Preview";
@@ -115,6 +114,17 @@
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Refresh";
 "Text.markdownSupported" = "Markdown preview";
+"Text.loggingOut" = "Logging out...";
+"Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
+"Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
+"Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
+"Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
+"Text.startUsingPlanetary" = "start using Planetary";
+"Text.startUsingPlanetaryTitle" = "Start Using Planetary";
+"Text.percentComplete" = "complete";
+"Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
+"Text.areYouSure" = "Are you sure?";
+"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
 "Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other.";
 "Blocking.buttonTitle" = "Yes, block {{ name }}";
@@ -170,6 +180,8 @@
 "Onboarding.doneOnboarding" = "Phew! I'm done!";
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";
+"Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
+"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from out team.";
 "Onboarding.somethingWentWrong" = "Oh no! Something went wrong!";
 "Onboarding.errorRetryMessage" = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it.";
 "Onboarding.resumeRetryMessage" = "This is not your fault, we messed something up. In some cases, it may mean your device cannot reach the network, and trying again later might help.";
@@ -252,6 +264,7 @@
 "Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
 
