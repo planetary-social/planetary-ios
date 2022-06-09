@@ -7,6 +7,7 @@ class ViewDatabaseTests: XCTestCase {
     let expMsgCount = 81
     let fixture = DatabaseFixture.exampleFeed
     var testFeeds: [Identity] { fixture.identities }
+    var currentUser: Identity { fixture.identities[4] }
 
     override func setUp() {
         let data = self.data(for: fixture.fileName)
@@ -27,7 +28,7 @@ class ViewDatabaseTests: XCTestCase {
             
             // open DB
             let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try self.vdb.open(path: damnPath, user: testFeeds[4], maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
+            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
@@ -346,10 +347,10 @@ class ViewDatabaseTests: XCTestCase {
     
     func test41_feed() {
         do {
-            let replies = try self.vdb.feed(for: testFeeds[4])
+            let replies = try self.vdb.feed(for: currentUser)
             for (i, kv) in replies.enumerated() {
                 XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
-                XCTAssertEqual(kv.value.author, testFeeds[4])
+                XCTAssertEqual(kv.value.author, currentUser)
                 XCTAssertEqual(kv.value.content.type, .post)
                 switch i {
                 case 0:
@@ -370,7 +371,7 @@ class ViewDatabaseTests: XCTestCase {
     }
 
     func test42_feed_paginated() throws {
-        let dataProxy = try self.vdb.paginated(feed: testFeeds[4])
+        let dataProxy = try self.vdb.paginated(feed: currentUser)
         let prefetchedCount = 2
         XCTAssertEqual(dataProxy.count, 3)
         for idx in 0...prefetchedCount - 1 {
@@ -378,7 +379,7 @@ class ViewDatabaseTests: XCTestCase {
                 XCTFail("failed to get KV for index \(idx)")
                 continue
             }
-            XCTAssertEqual(kv.value.author, testFeeds[4])
+            XCTAssertEqual(kv.value.author, currentUser)
             XCTAssertEqual(kv.value.content.type, .post)
             switch idx {
             case 0:
@@ -601,13 +602,13 @@ class ViewDatabaseTests: XCTestCase {
         )
         
         // Assert
-        XCTAssertEqual(try vdb.messageReceivedCount(since: sinceTime), 0)
+        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 49)
         
         // Rearrange
         try vdb.fillMessages(msgs: [ownerMessage, friendMessageOne, friendMessageTwo])
         
         // Reassert
-        XCTAssertEqual(try vdb.messageReceivedCount(since: sinceTime), 2)
+        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 51)
     }
     
     /// Verify that fillMessages deduplicates records.
@@ -618,6 +619,42 @@ class ViewDatabaseTests: XCTestCase {
         
         // Act
         try vdb.fillMessages(msgs: [testMessage, testMessage])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), messageCount + 1)
+    }
+    
+    /// Verify that fillMessages does not fill messages older than 6 months.
+    func testFillMessagesGivenOldMessage() throws {
+        // Arrange
+        let messageCount = try vdb.messageCount()
+        let oldDate = Date(timeIntervalSince1970: 5)
+        let testMessage = KeyValueFixtures.post(
+            timestamp: oldDate.millisecondsSince1970,
+            receivedSeq: 800,
+            author: IdentityFixture.alice
+        )
+        
+        // Act
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), messageCount)
+    }
+    
+    /// Verify that fillMessages fills messages older than 6 months for messages the current user published.
+    func testFillMessagesGivenOldMessageFromSelf() throws {
+        // Arrange
+        let messageCount = try vdb.messageCount()
+        let oldDate = Date(timeIntervalSince1970: 1_619_037_184)
+        let testMessage = KeyValueFixtures.post(
+            timestamp: oldDate.millisecondsSince1970,
+            receivedSeq: 800,
+            author: currentUser
+        )
+        
+        // Act
         try vdb.fillMessages(msgs: [testMessage])
         
         // Assert
@@ -647,6 +684,7 @@ class ViewDatabasePreloadTest: XCTestCase {
     let preloadExpMsgCount = 5
     let expMsgCount = 81
     let testFeeds = DatabaseFixture.exampleFeed.identities
+    var currentUser: Identity { DatabaseFixture.exampleFeed.identities[4] }
 
     override func setUp() {
         let preloadData = self.data(for: "Feed_example_preload.json")
@@ -667,7 +705,7 @@ class ViewDatabasePreloadTest: XCTestCase {
             
             // open DB
             let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try self.vdb.open(path: damnPath, user: testFeeds[4], maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
+            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([KeyValue].self, from: preloadData)

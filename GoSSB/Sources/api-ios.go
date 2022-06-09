@@ -29,6 +29,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -39,13 +40,10 @@ import (
 	"github.com/go-kit/kit/log/level"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/luigi"
-
 	"go.cryptoscope.co/ssb"
 	"go.cryptoscope.co/ssb/plugins2"
-	"go.cryptoscope.co/ssb/repo"
-	"go.cryptoscope.co/ssb/repo/migrations"
 	mksbot "go.cryptoscope.co/ssb/sbot"
+	refs "go.mindeco.de/ssb-refs"
 
 	"verseproj/scuttlegobridge/servicesplug"
 )
@@ -53,9 +51,11 @@ import (
 var versionString *C.char
 
 func init() {
-	versionString = C.CString("beta1")
+	versionString = C.CString("beta2")
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 	log = kitlog.With(log, "warning", "pre-init")
+
+	debug.SetGCPercent(10)
 }
 
 // globals
@@ -72,6 +72,8 @@ var (
 
 	longCtx  context.Context
 	shutdown context.CancelFunc
+
+	appKey string
 )
 
 var ErrNotInitialized = stderr.New("gosbot: not initialized or crashed")
@@ -87,6 +89,8 @@ func ssbVersion() *C.char {
 
 //export ssbBotStop
 func ssbBotStop() bool {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 	stopEvt := kitlog.With(log, "event", "botStop")
@@ -145,7 +149,7 @@ type botConfig struct {
 	Testing    bool
 
 	// Pubs that host planetary specific muxrpc calls
-	ServicePubs []ssb.FeedRef
+	ServicePubs []refs.FeedRef
 
 	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
 }
@@ -157,6 +161,8 @@ var (
 
 //export ssbBotInit
 func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerTokenFn uintptr) bool {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -177,7 +183,7 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 		return false
 	}
 
-	appKey := cfg.AppKey
+	appKey = cfg.AppKey
 	keyblob := cfg.KeyBlob
 	repoDir = cfg.Repo
 	listenAddr := cfg.ListenAddr
@@ -224,7 +230,6 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 			return false
 		}
 	}
-	r := repo.New(repoDir)
 
 	// open viewdatabase for address-stuff
 	vdbPath := filepath.Join(repoDir, "..", fmt.Sprintf("schema-built%d.sqlite?cache=shared&mode=rwc&_journal_mode=WAL", cfg.ViewDBSchemaVersion))
@@ -232,50 +237,6 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 	if err != nil {
 		err = errors.Wrap(err, "BotInit: failed to open view database")
 		return false
-	}
-
-	// key should be stored in keychain anyway
-	os.Remove(r.GetPath("secret"))
-
-	doUpgradeOffsetEncoding, err := migrations.UpgradeToMultiMessage(log, r)
-	if err != nil {
-		err = errors.Wrap(err, "BotInit: repo migration failed")
-		shutdown()
-		return false
-	}
-	doUpgradeToRoaring, err := migrations.StillUsingBadger(log, r)
-	if err != nil {
-		err = errors.Wrap(err, "BotInit: badger index migration failed")
-		shutdown()
-		return false
-	}
-	if doUpgradeOffsetEncoding || doUpgradeToRoaring {
-		os.RemoveAll(r.GetPath(repo.PrefixIndex))
-		os.RemoveAll(r.GetPath(repo.PrefixMultiLog))
-		level.Debug(log).Log("event", "db upgrade", "msg", "dropped old indexes")
-
-		start := time.Now()
-		sbot, err = mksbot.New(
-			mksbot.WithInfo(log),
-			mksbot.WithContext(longCtx),
-			mksbot.WithRepoPath(repoDir),
-			mksbot.WithJSONKeyPair(keyblob),
-			mksbot.DisableNetworkNode(),
-			mksbot.DisableLiveIndexMode())
-		if err != nil {
-			err = errors.Wrap(err, "BotInit: failed to make reindexing sbot")
-			shutdown()
-			return false
-		}
-		level.Debug(log).Log("event", "db upgrade", "msg", "sbot started", "took", time.Since(start))
-		start = time.Now()
-		err = sbot.Close()
-		if err != nil {
-			err = errors.Wrap(err, "BotInit: failed to shut down reindexed sbot")
-			shutdown()
-			return false
-		}
-		level.Info(log).Log("event", "db upgrade", "msg", "sbot done", "took", time.Since(start))
 	}
 
 	if !cfg.Testing {
@@ -308,6 +269,8 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 			// TODO: make version that prints bytes "unhumanized" so that we can count them
 			return countconn.WrapConn(level.Debug(log), c), nil
 		}),
+		mksbot.DisableEBT(true),
+		mksbot.WithPublicAuthorizer(newAcceptAllAuthorizer()),
 	}
 
 	if hmacSignKey != "" {
@@ -333,37 +296,9 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 		return false
 	}
 
-	sbot.BlobStore.Changes().Register(luigi.FuncSink(func(ctx context.Context, v interface{}, err error) error {
-		if err != nil {
-			if luigi.IsEOS(err) {
-				return nil
-			}
-			return err
-		}
+	sbot.BlobStore.Register(newEmitter())
 
-		n, ok := v.(ssb.BlobStoreNotification)
-		if !ok {
-			return errors.Errorf("blob change: unhandled notification type: %T", v)
-		}
-
-		if n.Op != ssb.BlobStoreOpPut {
-			return nil
-		}
-
-		sz, err := sbot.BlobStore.Size(n.Ref)
-		if err != nil {
-			return err
-		}
-
-		testRef := C.CString(n.Ref.Ref())
-		ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(sz), testRef)
-		C.free(unsafe.Pointer(testRef))
-		log.Log("event", "swift side notifyed of stored blob", "ret", ret, "blob", n.Ref.Ref())
-		return nil
-	}))
-
-	sbot.WaitUntilIndexesAreSynced()
-	log.Log("event", "serving", "self", sbot.KeyPair.Id.Ref()[1:5], "addr", listenAddr)
+	log.Log("event", "serving", "self", sbot.KeyPair.ID().ShortSigil(), "addr", listenAddr)
 	go func() {
 		srvErr := sbot.Network.Serve(longCtx)
 		log.Log("event", "sbot node.Serve returned", "srvErr", srvErr)
@@ -373,3 +308,37 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 
 // needed for buildmode c-archive
 func main() {}
+
+type emitter struct {
+}
+
+func newEmitter() *emitter {
+	return &emitter{}
+}
+
+func (e emitter) EmitBlob(n ssb.BlobStoreNotification) error {
+	if n.Op != ssb.BlobStoreOpPut {
+		return nil
+	}
+
+	testRef := C.CString(n.Ref.String())
+	ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(n.Size), testRef)
+	C.free(unsafe.Pointer(testRef))
+	log.Log("event", "swift side notified of stored blob", "ret", ret, "blob", n.Ref.String())
+	return nil
+}
+
+func (e emitter) Close() error {
+	return nil
+}
+
+type acceptAllAuthorizer struct {
+}
+
+func newAcceptAllAuthorizer() *acceptAllAuthorizer {
+	return &acceptAllAuthorizer{}
+}
+
+func (a acceptAllAuthorizer) Authorize(remote refs.FeedRef) error {
+	return nil
+}

@@ -41,9 +41,13 @@ xcuserdata/
 
 ## Go
 GoSSB/Sources/.goroot
+GoSSB/Sources/vendor
+GoSSB/Products/
+Frameworks/GoSSB.xcframework/**/*.a
  
 ## Test artifacts
 UnitTests/Resources/Feed_big.sqlite-*
+UnitTests/Resources/rabbledb.sqlite-*
 
 ## Playgrounds
 timeline.xctimeline
@@ -83,3 +87,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+.idea

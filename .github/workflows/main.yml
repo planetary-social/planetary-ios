@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@main
+      with:
+        lfs: true
     - name: Install CocoaPods Keys
       run: gem install cocoapods-keys
     - name: Dependencies
@@ -28,9 +30,9 @@ jobs:
         VerseBlobToken: nil
         PostHogAPIKey: nil
         PostHogHost: nil
-    - name: Build
+    - name: Build Planetary
       run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.4" | xcpretty
-    - name: Test
+    - name: Run Tests
       run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.4" | xcpretty
   logger:
     name: Logger

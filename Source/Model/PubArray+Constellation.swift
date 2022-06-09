@@ -11,7 +11,7 @@ import Foundation
 extension Array where Element == Pub {
     
     func filterInConstellation() -> [Pub] {
-        let stars = Environment.Constellation.stars
+        let stars = Environment.PlanetarySystem.systemPubs
         return self.filter { (pub) -> Bool in
             stars.contains { (star) -> Bool in
                 star.feed == pub.address.key

@@ -151,7 +151,7 @@ class NewPostViewController: ContentViewController {
     // MARK: Animations
 
     private func lookBusy() {
-        // AppController.shared.showProgress()
+        AppController.shared.showProgress()
         self.buttonsView.photoButton.isEnabled = false
         self.buttonsView.postButton.isEnabled = false
         self.buttonsView.previewToggle.isEnabled = false

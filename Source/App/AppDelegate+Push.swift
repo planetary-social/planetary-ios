@@ -166,11 +166,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             // Don't do anything if user is not logged in
             return
         }
+        
+        // Suppress notifications if the user is restoring
+        guard !Bots.current.isRestoring else {
+            return
+        }
+        
         guard report.authorIdentity == currentIdentity else {
             // Don't do anything if report is not for the logged in user
             return
         }
         self.scheduleLocalNotification(report)
-        print("RECEIVED REPORT!: \(report)")
+        print("Showing notification: \(report)")
     }
 }

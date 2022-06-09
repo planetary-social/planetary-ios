@@ -19,6 +19,7 @@ class DebugTableViewController: UITableViewController {
         self.tableView.register(DebugValueTableViewCell.self, forCellReuseIdentifier: DebugValueTableViewCell.className)
         self.tableView.register(DebugSubtitleTableViewCell.self, forCellReuseIdentifier: DebugSubtitleTableViewCell.className)
         self.tableView.register(DebugImageTableViewCell.self, forCellReuseIdentifier: DebugImageTableViewCell.className)
+        self.tableView.register(DebugTextFieldTableViewCell.self, forCellReuseIdentifier: DebugTextFieldTableViewCell.className)
         self.removeBackItemText()
     }
 

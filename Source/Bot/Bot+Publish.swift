@@ -14,9 +14,7 @@ typealias PublishBlobsCompletion = ((Blobs, Error?) -> Void)
 
 extension Bot {
 
-    func publish(_ post: Post,
-                 with images: [UIImage] = [],
-                 completion: @escaping PublishCompletion) {
+    func publish(_ post: Post, with images: [UIImage] = [], completion: @escaping PublishCompletion) {
         Thread.assertIsMainThread()
 
         // publish all images first
@@ -32,6 +30,18 @@ extension Bot {
                 postIdentifier, error in
                 if Log.optional(error) { completion(.null, error); return }
                 completion(postIdentifier, nil)
+            }
+        }
+    }
+    
+    @MainActor func publish(_ post: Post, with images: [UIImage] = []) async throws -> MessageIdentifier {
+        try await withCheckedThrowingContinuation { continuation in
+            publish(post, with: images) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result)
             }
         }
     }

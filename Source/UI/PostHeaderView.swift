@@ -69,8 +69,6 @@ class PostHeaderView: UIView {
 
         self.nameButton.constrainHeight(to: 19)
         self.dateLabel.constrainHeight(to: 19)
-        
-        self.isSkeletonable = true
     }
 
     required init?(coder aDecoder: NSCoder) {

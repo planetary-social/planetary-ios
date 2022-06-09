@@ -41,17 +41,21 @@ class PostsAlgorithm: NSObject, FeedStrategy {
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
         let posts = Table(ViewDatabaseTableNames.posts.rawValue)
+        let authors = Table(ViewDatabaseTableNames.authors.rawValue)
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
 
         let colMessageRef = Expression<Int64>("msg_ref")
+        let colID = Expression<Int64>("id")
         let colMessageID = Expression<Int64>("msg_id")
         let colMsgType = Expression<String>("type")
         let colDecrypted = Expression<Bool>("is_decrypted")
         let colIsRoot = Expression<Bool>("is_root")
         let colHidden = Expression<Bool>("hidden")
+        let colAuthorID = Expression<Int64>("author_id")
 
         var query = posts
             .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
+            .join(authors, on: authors[colID] == msgs[colAuthorID])
             .filter(colMsgType == "post")
             .filter(colIsRoot == true)
             .filter(colHidden == false)
@@ -84,6 +88,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
 
     func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier] {
         let posts = Table(ViewDatabaseTableNames.posts.rawValue)
+        let authors = Table(ViewDatabaseTableNames.authors.rawValue)
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
         let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
 
@@ -95,10 +100,12 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         let colIsRoot = Expression<Bool>("is_root")
         let colHidden = Expression<Bool>("hidden")
         let colKey = Expression<MessageIdentifier>("key")
+        let colAuthorID = Expression<Int64>("author_id")
 
         var query = msgs
             .join(posts, on: posts[colMessageRef] == msgs[colMessageID])
             .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
+            .join(authors, on: authors[colID] == msgs[colAuthorID])
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
@@ -172,39 +179,28 @@ class PostsAlgorithm: NSObject, FeedStrategy {
     }
 
     private func filterOnlyFollowedPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
-        let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
-        let colAuthorID = Expression<Int64>("author_id")
-        let colContactID = Expression<Int64>("contact_id")
-        let colContactState = Expression<Int>("state")
-
-        // get the list of people that the active user follows
-        let myFollowsQry = contacts
-            .select(colContactID)
-            .filter(colAuthorID == userId)
-            .filter(colContactState == 1)
-        var myFollows: [Int64] = [userId] // and from self as well
-        for followRow in try connection.prepare(myFollowsQry) {
-            myFollows.append(followRow[colContactID])
-        }
-        return query.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
+        return query
+            .filter(
+                Expression(literal: """
+                (authors.author IN (SELECT followed_authors.author FROM contacts
+                JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
+                WHERE contacts.author_id = \(userId) AND contacts.state == 1))
+                """
+                )
+            )
     }
 
     private func filterNotFollowingPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
-        let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
-        let colAuthorID = Expression<Int64>("author_id")
-        let colContactID = Expression<Int64>("contact_id")
-        let colContactState = Expression<Int>("state")
-
-        // get the list of people that the active user follows
-        let myFollowsQry = contacts
-            .select(colContactID)
-            .filter(colAuthorID == userId)
-            .filter(colContactState == 1)
-        var myFollows: [Int64] = [userId] // and from self as well
-        for followRow in try connection.prepare(myFollowsQry) {
-            myFollows.append(followRow[colContactID])
-        }
-        return query.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
+        return query
+            .filter(
+                Expression(literal: """
+                (authors.author NOT IN (SELECT followed_authors.author FROM contacts
+                JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
+                WHERE contacts.author_id = \(userId) AND contacts.state == 1))
+                AND authors.id != \(userId)
+                """
+                )
+            )
     }
 
     // swiftlint:disable function_body_length

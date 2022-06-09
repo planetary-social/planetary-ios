@@ -59,11 +59,12 @@ class ViewDatabase {
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
+    private var currentUser: Identity?
 
-    // skip messages older than this (6 month)
+    // skip messages older than this (6 months)
     // this should be removed once the database was refactored
     private var temporaryMessageExpireDate: Double = -60 * 60 * 24 * 30 * 6
-
+    
     // MARK: Tables and fields
     private let colID = Expression<Int64>("id")
     
@@ -83,6 +84,7 @@ class ViewDatabase {
     private let colMsgType = Expression<String>("type")
     // received time in milliseconds since the unix epoch
     private let colReceivedAt = Expression<Double>("received_at")
+    private let colWrittenAt = Expression<Double>("written_at")
     private let colClaimedAt = Expression<Double>("claimed_at")
     private let colDecrypted = Expression<Bool>("is_decrypted")
     
@@ -224,7 +226,7 @@ class ViewDatabase {
         
         self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
-        try db.execute("PRAGMA synchronous = FULL;") // Full is best for read performance
+        try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
         
         // db.trace { print("\tSQL: \($0)") } // print all the statements
         
@@ -232,160 +234,11 @@ class ViewDatabase {
             if db.userVersion == 0 {
                 let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
                 try db.execute(String(contentsOf: schemaV1url))
-                db.userVersion = 8
-            } else if db.userVersion == 1 {
-                try db.execute("""
-                CREATE INDEX messagekeys_key ON messagekeys(key);
-                CREATE INDEX messagekeys_id ON messagekeys(id);
-                CREATE INDEX posts_msgrefs on posts (msg_ref);
-                CREATE INDEX messages_rxseq on messages (rx_seq);
-                CREATE INDEX tangle_id on tangles (id);
-                CREATE INDEX contacts_state ON contacts (contact_id, state);
-                CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
-                -- add new column to posts and migrate existing data
-                ALTER TABLE posts ADD is_root boolean default false;
-                CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
-                UPDATE posts set is_root=true;
-                UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
-                ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-                ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                try self.migrateHashAllMessageKeys()
-                db.userVersion = 8
-            } else if db.userVersion == 2 {
-                try db.execute("""
-                -- add new column to posts and migrate existing data
-                ALTER TABLE posts ADD is_root boolean default false;
-                CREATE INDEX IF NOT EXISTS posts_roots on posts (is_root);
-                UPDATE posts set is_root=true;
-                UPDATE posts set is_root=false where msg_ref in (select msg_ref from tangles);
-                ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-                ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                try self.migrateHashAllMessageKeys()
-                db.userVersion = 8
-            } else if db.userVersion == 3 {
-                try db.execute("""
-                ALTER TABLE messagekeys ADD hashed text;
-                CREATE INDEX messagekeys_hashed ON messagekeys(hashed);
-                ALTER TABLE authors ADD hashed text;
-                CREATE INDEX authors_hashed ON authors(hashed);
-                CREATE TABLE blocked_content ( id integer not null, type integer not null );
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                try self.migrateHashAllMessageKeys()
-                db.userVersion = 8
-            } else if db.userVersion == 4 {
-                try db.execute("""
-                ALTER TABLE abouts ADD publicWebHosting boolean;
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
-            } else if db.userVersion == 5 {
-                try db.execute("""
-                CREATE TABLE reports (
-                msg_ref integer not null,
-                author_id integer not null,
-                type text NOT NULL,
-                created_at real NOT NULL,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ),
-                FOREIGN KEY ( author_id ) REFERENCES authors( "id" ));
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
-            } else if db.userVersion == 6 {
-                try db.execute("""
-                ALTER TABLE addresses ADD redeemed real default null;
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
-            } else if db.userVersion == 7 {
-                try db.execute("""
-                CREATE TABLE pubs (
-                msg_ref integer not null,
-                host text not null,
-                port integer not null,
-                key text not null,
-                FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" ));
-                """)
-                db.userVersion = 8
+                db.userVersion = 9
             }
         }
 
+        self.currentUser = user
         self.currentUserID = try self.authorID(of: user, make: true)
     }
     
@@ -410,6 +263,7 @@ class ViewDatabase {
     
     func close() {
         self.openDB = nil
+        self.currentUser = nil
         self.currentUserID = -1
     }
     
@@ -603,17 +457,28 @@ class ViewDatabase {
             .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
             .where(self.msgs[colAuthorID] == currentUserID)
             .where(self.msgs[colMsgType] == "pub")
-
-        return try db.prepare(qry).map { row in
+            .order(colSequence.desc)
+        
+        let pubs: [Pub] = try db.prepare(qry).map { row in
             let host = try row.get(colHost)
             let port = try row.get(colPort)
-            let key = try row.get(colKey)
+            let key: Identifier = try row.get(colKey)
             
-            return Pub(type: .pub,
-                       address: PubAddress(key: key,
-                                           host: host,
-                                           port: UInt(port)))
+            return Pub(
+                type: .pub,
+                address: PubAddress(
+                    key: key,
+                    host: host,
+                    port: UInt(port)
+                )
+            )
         }
+        
+        // Filter out duplicates
+        var seenIDs = Set<PubAddress>()
+        return pubs
+            .filter { $0.address.key.isValidIdentifier }
+            .filter { seenIDs.insert($0.address).inserted }
     }
     
     // MARK: moderation / delete
@@ -1831,17 +1696,17 @@ class ViewDatabase {
     
     private func fillAddress(msgID: Int64, msg: KeyValue) throws {
         
-        guard let a = msg.value.content.address else {
+        guard let address = msg.value.content.address,
+              let multiserverAddress = address.multiserver else {
             Log.info("[viewdb/fill] broken addr message: \(msg.key)")
             return
         }
         
         let author = msg.value.author
-        let address = a.address
-        try saveAddress(feed: author, address: address, redeemed: nil)
+        try saveAddress(feed: author, address: multiserverAddress, redeemed: nil)
     }
     
-    func saveAddress(feed: Identity, address: String, redeemed: Double?) throws {
+    func saveAddress(feed: Identity, address: MultiserverAddress, redeemed: Double?) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1852,7 +1717,7 @@ class ViewDatabase {
         
         try db.run(self.addresses.insert(or: conflictStrategy,
             colAboutID <- authorID,
-            colAddress <- address,
+            colAddress <- address.string,
             colRedeemed <- redeemed
         ))
     }
@@ -2012,7 +1877,8 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
 
-        guard let p = msg.value.content.pub else {
+        guard let p = msg.value.content.pub,
+            p.address.key.isValidIdentifier else {
             Log.info("[viewdb/fill] broken pub message: \(msg.key)")
             return
         }
@@ -2249,9 +2115,9 @@ class ViewDatabase {
         return []
     }
     
-    private func isOldMessage(msg: KeyValue) -> Bool {
+    private func isOldMessage(message: KeyValue) -> Bool {
         let now = Date()
-        let claimed = Date(timeIntervalSince1970: msg.value.timestamp / 1_000)
+        let claimed = Date(timeIntervalSince1970: message.value.timestamp / 1000)
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
     }
@@ -2260,6 +2126,8 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
+        
+        Log.info("[rx log] starting fillMessages with \(msgs.count) new messages")
 
         #if SSB_MSGDEBUG
         // google claimed this is the tool to use to measure block execution time
@@ -2283,12 +2151,13 @@ class ViewDatabase {
             }
             
             /* This is the don't put older than 6 months in the db. */
-            if isOldMessage(msg: msg) && (msg.value.content.type != .contact && msg.value.content.type != .about) {
+            if isOldMessage(message: msg) &&
+                (msg.value.content.type != .contact &&
+                msg.value.content.type != .about &&
+                msg.value.author != currentUser) {
                 // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                 skipped += 1
                 print("Skipped(\(msg.value.content.type) \(msg.key)%)")
-                Analytics.shared.trackBotDidSkipMessage(key: msg.key,
-                                                        reason: "Old Message")
                 continue
             }
             
@@ -2331,7 +2200,8 @@ class ViewDatabase {
                     colDecrypted <- true,
                     colMsgType <- msg.value.content.type.rawValue,
                     colReceivedAt <- msg.timestamp,
-                    colClaimedAt <- claimed
+                    colClaimedAt <- claimed,
+                    colWrittenAt <- Date().millisecondsSince1970
                 ))
             } else {
                 do {
@@ -2342,7 +2212,8 @@ class ViewDatabase {
                         colSequence <- msg.value.sequence,
                         colMsgType <- msg.value.content.type.rawValue,
                         colReceivedAt <- msg.timestamp,
-                        colClaimedAt <- claimed
+                        colClaimedAt <- claimed,
+                        colWrittenAt <- Date().millisecondsSince1970
                     ))
                 } catch Result.error(let errMsg, let errCode, _) {
                     // this is _just_ hear because of a fetch-duplication bug in go-ssb
@@ -2546,8 +2417,8 @@ class ViewDatabase {
     }
     
     /// - Parameter since: the date we want to check against.
-    /// - Returns: The number of messages received since the given date.
-    func messageReceivedCount(since: Date) throws -> Int {
+    /// - Returns: The number of messages added to SQLite since the given date.
+    func receivedMessageCount(since: Date) throws -> Int {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2555,7 +2426,7 @@ class ViewDatabase {
             return try db.scalar(
                 self.msgs
                     .count
-                    .filter(colReceivedAt > since.millisecondsSince1970)
+                    .filter(colWrittenAt > since.millisecondsSince1970)
                     .where(msgs[colAuthorID] != currentUserID)
             )
         } catch {

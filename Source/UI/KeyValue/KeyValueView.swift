@@ -23,6 +23,8 @@ class KeyValueView: UIView, KeyValueUpdateable {
     // MARK: KeyValueUpdateable
 
     func update(with keyValue: KeyValue) {}
+
+    func reset() {}
 }
 
 extension KeyValueView {

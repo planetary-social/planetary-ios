@@ -39,7 +39,7 @@ class MissionControlCenter {
     
     /// Timer for the RefreshOperation
     private lazy var refreshTimer: RepeatingTimer = {
-        RepeatingTimer(interval: 14) { [weak self] in self?.pokeRefresh() }
+        RepeatingTimer(interval: 5) { [weak self] in self?.pokeRefresh() }
     }()
     
     /// Background Task Identifier for the SendMissionOperation
@@ -98,7 +98,7 @@ class MissionControlCenter {
     func sendMission() {
         Log.info("Mission Control Center is sending adhoc missions")
         let sendMissionOperation = SendMissionOperation(quality: .high)
-        let refreshOperation = RefreshOperation(refreshLoad: .medium)
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
         refreshOperation.addDependency(sendMissionOperation)
         self.operationQueue.addOperations([sendMissionOperation, refreshOperation],
                                           waitUntilFinished: false)

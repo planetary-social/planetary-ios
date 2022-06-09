@@ -17,7 +17,7 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
     private var operationQueue: OperationQueue
     
     /// Minimum number of Planetary's pubs that should be followng the user for them to be considered in the system.
-    private static let minNumberOfStars = 3
+    static let minNumberOfStars = 3
     
     let userDefaults = UserDefaults.standard
     
@@ -50,20 +50,25 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
         Task {
             do {
                 let allJoinedPubs = try await bot.joinedPubs()
-                let stars = Set(Environment.Constellation.stars)
-                let joinedStars = stars.filter { star in
+                let systemPubs = Set(AppConfiguration.current?.systemPubs ?? [])
+                let joinedSystemPubs = systemPubs.filter { star in
                     allJoinedPubs.contains { (pub) -> Bool in
                         pub.address.key == star.feed
                     }
                 }
             
-                let numberOfMissingStars = Self.minNumberOfStars - joinedStars.count
+                let numberOfMissingStars = Self.minNumberOfStars - joinedSystemPubs.count
                 if numberOfMissingStars > 0 {
                     Log.debug("User needs to be followed by \(numberOfMissingStars) to be part of the Planetary System")
                     
                     // Let's take a random set of stars to reach the minimum and create Redeem Invite
                     // operations
-                    let missingStars = stars.subtracting(joinedStars)
+                    let missingStars = systemPubs.subtracting(joinedSystemPubs)
+                    guard !missingStars.isEmpty else {
+                        Log.debug("Not enough system pubs to reach minimum")
+                        self.finish()
+                        return
+                    }
                     let randomSampleOfStars = missingStars.randomSample(UInt(numberOfMissingStars))
                     var redeemInviteOperations = [RedeemInviteOperation]()
                     redeemInviteOperations = randomSampleOfStars.map {
@@ -71,7 +76,7 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
                     }
                     
                     // Sync with stars after following
-                    let peerPool = randomSampleOfStars.map { $0.toPeer() }
+                    let peerPool = randomSampleOfStars.compactMap { $0.toPeer().multiserverAddress }
                     
                     let syncOperation = SyncOperation(peerPool: peerPool)
                     redeemInviteOperations.forEach { syncOperation.addDependency($0) }

@@ -15,6 +15,8 @@ enum FakeBotError: Error {
 
 class FakeBot: Bot {
     
+    var isRestoring = false
+    
     required init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?) {}
     
     func lastReceivedTimestam() throws -> Double { 0 }
@@ -22,6 +24,10 @@ class FakeBot: Bot {
     func suspend() { }
     
     func exit() { }
+    
+    func dropDatabase(for configuration: AppConfiguration) async throws {
+        fatalError("TODO:\(#function)")
+    }
     
     func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
         queue.async {
@@ -114,7 +120,7 @@ class FakeBot: Bot {
     // MARK: Name
 
     let name = "FakeBot"
-    let version = "1.0"
+    var version = "1.0"
     let logFileUrls: [URL] = []
     
     // MARK: Login
@@ -144,14 +150,14 @@ class FakeBot: Bot {
 
     let isSyncing = false
 
-    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)
         }
     }
     
-    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion) {
+    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
             completion(nil, 0, 0)
@@ -173,6 +179,10 @@ class FakeBot: Bot {
 
     func publish(post: Post, completion: PublishCompletion) {
         completion("TODO?", FakeBotError.runtimeError("TODO:publish"))
+    }
+    
+    func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
+        return false
     }
 
     // MARK: About content
