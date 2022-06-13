@@ -200,14 +200,8 @@ class GoBotInternal {
 
     // MARK: planetary services
 
-    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = {
-        cstr, expires in
-        let now = Int64(Date.init().timeIntervalSince1970)
-        guard expires - now > 0 else { print("received expired token? \(expires)"); return }
-        guard let token = cstr else { return }
-        let tok = String(cString: token)
-        let expiresWhen = Date(timeIntervalSince1970: Double(expires))
-        TokenStore.shared.update(tok, expires: expiresWhen)
+    // TODO: deprecated
+    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = { cstr, expires in
         return
     }
 

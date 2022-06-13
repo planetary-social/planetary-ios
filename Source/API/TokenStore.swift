@@ -7,41 +7,59 @@
 //
 
 import Foundation
+import Secrets
 
-typealias ReadyCallback = (String) -> Void
+enum TokenStoreError: Error {
+    case invalidApiPath
+    case missingCloudAPISecret
+}
 
-// simple store to hold bearer tokens
-// TODO: should persist those for their durration
-class TokenStore {
+/// An object requests and stores bearer tokens used for authentication when talking to Planetary's cloud services.
+actor TokenStore {
 
     static let shared = TokenStore()
+    
+    private static let apiPath = "https://us-central1-pub-verse-app.cloudfunctions.net/bearer-token-service/request-new-token"
+    private let keys = Keys.shared
+    private var cachedCredentials: BearerCredentials?
+    
+    /// Credentials needed to access Planetary's cloud services.
+    struct BearerCredentials: Codable {
+        var token: String
+        var expires: Date
+        var identity: FeedIdentifier
+    }
 
-    private var currentBearerToken: String = ""
-
-    func update(_ token: String, expires: Date) {
-        print("received new bearer token until: \(expires)") // TODO: analytics event. should track we know where these are going (tack created - consumed)
-        self.currentBearerToken = token
-        
-        // notify waiting callbacks
-        // TODO: mutex
-        for cb in self.waiting {
-            cb(token)
+    /// Fetches the bearer token for the given identity. If one is cached then it will be returned immediately,
+    /// otherwise a new one will be requested.
+    func tokenString(for identity: FeedIdentifier) async throws -> String {
+        if let currentCredentials = cachedCredentials,
+           currentCredentials.identity == identity,
+           Date.now < currentCredentials.expires {
+            return currentCredentials.token
+        } else {
+            let newCredentials = try await newBearerToken(for: identity)
+            cachedCredentials = newCredentials
+            return newCredentials.token
         }
-        self.waiting = []
-    }
-
-    func current() -> String? {
-        // allow blank tokenss
-        // guard self.currentBearerToken != "" else { return nil }
-        return self.currentBearerToken
     }
     
-    // TODO: mutex
-    private var waiting: [ReadyCallback] = []
-    
-    // register handlers that will be notified (with the new token) once a new token is available
-    func register(cb: @escaping ReadyCallback) {
-        // TODO: mutex
-        self.waiting.append(cb)
+    /// Fetches a fresh bearer token from the authentication API.
+    private func newBearerToken(for identity: FeedIdentifier) async throws -> BearerCredentials {
+        guard let url = URL(string: TokenStore.apiPath) else {
+            throw TokenStoreError.invalidApiPath
+        }
+        
+        guard let clientSecret = keys.get(key: .planetaryCloudAPISecret) else {
+            throw TokenStoreError.missingCloudAPISecret
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(clientSecret, forHTTPHeaderField: "Authorization")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = "{\"identity\": \"\(identity)\" }".data(using: .utf8)
+        let (responseData, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(BearerCredentials.self, from: responseData)
     }
 }

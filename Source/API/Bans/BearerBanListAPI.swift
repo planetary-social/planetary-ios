@@ -1,5 +1,5 @@
 //
-//  BearerBlockedAPI.swift
+//  BearerBanListAPI.swift
 //  Planetary
 //
 //  Created by H on 19.06.20.
@@ -8,7 +8,13 @@
 
 import Foundation
 
-class PlanetaryBearerBlockedAPI: BlockedAPIService {
+enum BearerBanListAPIError: Error {
+    case invalidApiPath
+    case missingCloudAPISecret
+}
+
+/// An object that fetches the official ban list from Planetary's cloud API.
+class BearerBanListAPI: BanListAPIService {
 
     private var scheme: String
     private var host: String
@@ -30,36 +36,29 @@ class PlanetaryBearerBlockedAPI: BlockedAPIService {
         }
     }
 
-    func retreiveBlockedList(completion: @escaping BlockedListCompletion) {
-        let complete: APICompletion = {
-            data, error in
-            guard error == nil else { completion([], error); return }
-            
-            completion(data?.hashedIdentifier() ?? [], nil)
-        }
-
-        guard let token = TokenStore.shared.current() else {
-            TokenStore.shared.register(cb: { // TODO: this blocks indefinitly. might want to add a timeout?!
-                token in
-                
-                let authHeader = ["X-Planetary-Bearer-Token": token]
-                self.get(path: "/block-list", headers: authHeader, completion: complete)
-            })
-            return
-        }
-        
-        let authHeader = ["X-Planetary-Bearer-Token": token]
-        self.get(path: "/block-list", headers: authHeader, completion: complete)
+    /// Fetches the ban list on behalf of the given user.
+    func retreiveBanList(for identity: FeedIdentifier) async throws -> BanList {
+        let bearerToken = try await TokenStore.shared.tokenString(for: identity)
+        let authHeader = ["X-Planetary-Bearer-Token": bearerToken]
+        let data = try await get(path: "/block-list", headers: authHeader)
+        return try JSONDecoder().decode(BanList.self, from: data)
     }
 }
 
-extension PlanetaryBearerBlockedAPI: API {
+extension BearerBanListAPI: API {
     
     var headers: APIHeaders {
         [:] // just here to implement API...
     }
 
-    func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {
+    func send(
+        method: APIMethod,
+        path: String,
+        query: [URLQueryItem],
+        body: Data?,
+        headers: APIHeaders?,
+        completion: @escaping APICompletion
+    ) {
         assert(query.isEmpty || body == nil, "Cannot use query and body at the same time")
         guard path.beginsWithSlash else { completion(nil, .invalidPath(path)); return }
 
@@ -76,23 +75,10 @@ extension PlanetaryBearerBlockedAPI: API {
         request.httpMethod = method.rawValue
         request.httpBody = body
 
-        URLSession.shared.dataTask(with: request) {
-            data, response, error in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             let apiError = response?.httpStatusCodeError ?? APIError.optional(error)
             completion(data, apiError)
-        }.resume()
-    }
-}
-
-// MARK: - Custom decoding
-
-fileprivate extension Data {
-
-    func hashedIdentifier() -> [String] {
-        do {
-            return try JSONDecoder().decode([String].self, from: self)
-        } catch {
-            return []
         }
+        .resume()
     }
 }

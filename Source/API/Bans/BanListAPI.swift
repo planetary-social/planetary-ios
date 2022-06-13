@@ -1,5 +1,5 @@
 //
-//  BlockedAPI.swift
+//  BanListAPI.swift
 //  Planetary
 //
 //  Created by H on 19.06.20.
@@ -8,17 +8,18 @@
 
 import Foundation
 
-struct BlockedAPI {
+/// A singleton for the `BanListAPIService` that chooses different services based on the environment.
+struct BanListAPI {
     
-    static var shared: BlockedAPIService = {
+    static var shared: BanListAPIService = {
         // We don't want to spam the push API when running unit tests
         #if UNIT_TESTS
-        return NullBlockedAPI()
+        return NullBanListAPI()
         #else
         if CommandLine.arguments.contains("mock-pub-api") {
-            return NullBlockedAPI()
+            return NullBanListAPI()
         } else {
-            return PlanetaryBearerBlockedAPI()
+            return BearerBanListAPI()
         }
         #endif
     }()
