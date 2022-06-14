@@ -246,7 +246,7 @@ class ViewDatabase {
                 db.userVersion = 9
             }
             if db.userVersion == 9 {
-                try db.execute("ALTER TABLE `blocked_content` RENAME TO `banned_content`;");
+                try db.execute("ALTER TABLE `blocked_content` RENAME TO `banned_content`;")
                 db.userVersion = 10
             }
         }
@@ -498,9 +498,9 @@ class ViewDatabase {
             var bannedAuthors: [Int64] = []
 
             let bannedContentQry = try db.prepare(self.currentBannedContent)
-            for bc in bannedContentQry {
-                let id = try bc.get(colID)
-                switch try bc.get(colIDType) {
+            for bannedContent in bannedContentQry {
+                let id = try bannedContent.get(colID)
+                switch try bannedContent.get(colIDType) {
                 case 0: bannedMsgs.append(id)
                 case 1: bannedAuthors.append(id)
                 default: fatalError("unhandled content type")
