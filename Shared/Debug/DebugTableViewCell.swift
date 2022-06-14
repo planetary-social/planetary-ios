@@ -94,3 +94,35 @@ class DebugImageTableViewCell: UITableViewCell {
         self.accessoryView = nil
     }
 }
+
+/// A cell with a title and editable text field.
+class DebugTextFieldTableViewCell: UITableViewCell, UITextFieldDelegate {
+
+    var text: String = ""
+
+    var textField: UITextField
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        self.textField = UITextField(frame: CGRect.zero)
+        super.init(style: UITableViewCell.CellStyle.value1, reuseIdentifier: reuseIdentifier)
+        
+        guard let textLabel = textLabel else {
+            return
+        }
+        textField.useAutoLayout()
+        contentView.addSubview(textField)
+        textField.constrainLeading(toTrailingOf: textLabel)
+        textField.constrainTrailingToSuperview()
+        textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        setNeedsLayout()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.text = ""
+    }
+}

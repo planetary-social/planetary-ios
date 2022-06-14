@@ -82,7 +82,7 @@ extension GoBot {
         }
         let id = identifier!
         XCTAssertTrue(id.hasPrefix("%"))
-        XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
+        XCTAssertTrue(id.hasSuffix(".sha256"))
         print(content)
         return id
     }
@@ -106,7 +106,7 @@ extension GoBot {
         }
         let id = identifier!
         XCTAssertTrue(id.hasPrefix("%"))
-        XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
+        XCTAssertTrue(id.hasSuffix(".sha256"))
         print(c)
         return id
     }
@@ -143,7 +143,7 @@ extension GoBot {
         }
         let id = identifier!
         XCTAssertTrue(id.hasPrefix("%"))
-        XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
+        XCTAssertTrue(id.hasSuffix(Algorithm.sha256.rawValue))
         print(c)
         return id
     }
@@ -167,7 +167,7 @@ extension GoBot {
             return "%publish-failed.wrong"
         }
         XCTAssertTrue(id.hasPrefix("%"))
-        XCTAssertTrue(id.hasSuffix("ggmsg-v1"))
+        XCTAssertTrue(id.hasSuffix(Algorithm.sha256.rawValue))
         return id
     }
 }

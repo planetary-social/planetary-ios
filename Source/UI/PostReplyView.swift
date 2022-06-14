@@ -68,8 +68,6 @@ class PostReplyView: KeyValueView {
         
         Layout.fillSouth(of: degrade, with: bottomSeparator)
         bottomSeparator.pinBottomToSuperviewBottom()
-        
-        self.isSkeletonable = true
     }
 
     required init?(coder aDecoder: NSCoder) {

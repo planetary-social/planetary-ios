@@ -34,7 +34,7 @@ typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
 enum RefreshLoad: Int32, CaseIterable {
     case tiny = 500 // about 1 second on modern hardware
-    case short = 15_000 // about 10 seconds
+    case short = 5_000 
     case medium = 45_000 // about 30 seconds
     case long = 100_000 // about 60 seconds
 }
@@ -50,7 +50,12 @@ protocol Bot: AnyObject {
     // MARK: AppLifecycle
     init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
     func suspend()
-    func exit()
+    func exit() async
+    func dropDatabase(for configuration: AppConfiguration) async throws
+    
+    /// A flag that signals that the bot is resyncing the user's feed from the network.
+    /// Currently used to suppress push notifications because the user has already seen them.
+    var isRestoring: Bool { get set }
     
     // MARK: Logs
     var logFileUrls: [URL] { get }
@@ -82,10 +87,10 @@ protocol Bot: AnyObject {
     ///   - queue: the queue that `completion` will be called on.
     ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
     ///   - completion: a handler called with the result of the operation.
-    func sync(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
+    func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // TODO: this is temporary until live-streaming is deployed on the pubs
-    func syncNotifications(queue: DispatchQueue, peers: [Peer], completion: @escaping SyncCompletion)
+    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 
@@ -121,6 +126,10 @@ protocol Bot: AnyObject {
     // `Post` model, but then also the embedded `Hashtag` models.
     func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion)
 
+    /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
+    /// a message before the user's feed has resynced from the network during a restore.
+    func publishingWouldFork(feed: FeedIdentifier) throws -> Bool
+        
     // MARK: Post Management
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion)
@@ -239,7 +248,18 @@ extension Bot {
         self.login(queue: .main, config: config, completion: completion)
     }
     
-    func logout() async throws {
+    func login(config: AppConfiguration) async throws {
+        let error: Error? = await withCheckedContinuation { continuation in
+            self.login(config: config) { error in
+                continuation.resume(with: .success(error))
+            }
+        }
+        if let error = error {
+            throw error
+        }
+    }
+    
+    @MainActor func logout() async throws {
         let error: Error? = await withCheckedContinuation { continuation in
             self.logout { error in
                 continuation.resume(with: .success(error))
@@ -250,7 +270,7 @@ extension Bot {
         }
     }
     
-    func sync(peers: [Peer], completion: @escaping SyncCompletion) {
+    func sync(peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
@@ -328,7 +348,7 @@ extension Bot {
     
     func about() async throws -> About? {
         try await withCheckedThrowingContinuation { continuation in
-            about() { about, error in
+            about { about, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
@@ -384,7 +404,7 @@ extension Bot {
     }
     
     func joinedPubs() async throws -> [Pub] {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             joinedPubs(queue: DispatchQueue.main) { result, error in
                 if let error = error {
                     continuation.resume(throwing: error)

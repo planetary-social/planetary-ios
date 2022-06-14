@@ -20,6 +20,10 @@ typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?)
 // get's called with a token and an expiry date as unix timestamp
 typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, Int64) -> Void
 
+/// An abstract representation of a peer that we can replicate with.
+/// 
+/// Note: This model only really supports peers we talk to over secret handshake and the IP protocol. Much of the stack
+/// has been upgraded to support the new `MultiserverAddress` format which is more flexible.
 struct Peer {
     let tcpAddr: String
     let pubKey: Identity
@@ -29,9 +33,8 @@ struct Peer {
         self.pubKey = pubKey
     }
     
-    init(pubAddress: PubAddress) {
-        self.tcpAddr = "\(pubAddress.host):\(pubAddress.port)"
-        self.pubKey = pubAddress.key
+    var multiserverAddress: MultiserverAddress? {
+        MultiserverAddress(string: "net:\(tcpAddr)~shs:\(pubKey.id)")
     }
 }
 
@@ -121,10 +124,10 @@ class GoBotInternal {
         ssbBotIsRunning()
     }
 
-    private var currentNetwork = NetworkKey.ssb
+    private var currentNetwork: SSBNetwork?
 
-    var getNetworkKey: NetworkKey {
-        self.currentNetwork
+    var getNetworkKey: NetworkKey? {
+        self.currentNetwork?.key
     }
 
     // MARK: login / logout
@@ -142,7 +145,7 @@ class GoBotInternal {
         // https://github.com/VerseApp/ios/issues/82
         let listenAddr = ":8008" // can be set to :0 for testing
 
-        let servicePubs: [Identity] = Environment.Constellation.stars.map { $0.feed }
+        let servicePubs: [Identity] = Environment.PlanetarySystem.systemPubs.map { $0.feed }
 
         let cfg = GoBotConfig(
             AppKey: network.string,
@@ -170,8 +173,6 @@ class GoBotInternal {
         }
         
         if worked {
-            self.currentNetwork = network
-
             self.replicate(feed: secret.identity)
             // make sure internal planetary pubs are authorized for connections
             for pub in servicePubs {
@@ -251,7 +252,7 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dial(from peers: [Peer], atLeast: Int, tries: Int = 10) -> Bool {
+    func dial(from peers: [MultiserverAddress], atLeast: Int, tries: Int = 10) -> Bool {
         let wanted = min(peers.count, atLeast) // how many connections are we shooting for?
         var hasWorked: Int = 0
         var tried: Int = tries
@@ -268,7 +269,7 @@ class GoBotInternal {
         return true
     }
 
-    private func dialAnyone(from peers: [Peer]) -> Bool {
+    private func dialAnyone(from peers: [MultiserverAddress]) -> Bool {
         guard let peer = peers.randomElement() else {
             Log.unexpected(.botError, "no peers in sheduler table")
             return false
@@ -277,15 +278,10 @@ class GoBotInternal {
     }
     
     @discardableResult
-    func dialSomePeers(from peers: [Peer]) -> Bool {
+    func dialSomePeers(from peers: [MultiserverAddress]) -> Bool {
         guard peers.count > 0 else {
             Log.debug("User doesn't have any redeemed pubs")
             return false
-        }
-        
-        // only make connections if we dont have enough
-        guard self.openConnections() < 4 else {
-            return true
         }
         
         // connect to two peers based on go-ssb's internal logic (reliability)
@@ -308,11 +304,10 @@ class GoBotInternal {
         return disconnectSuccess && connectToHealthy && connectToRandom
     }
     
-    func dialOne(peer: Peer) -> Bool {
-        Log.debug("Dialing \(peer.pubKey)")
-        let multiServ = "net:\(peer.tcpAddr)~shs:\(peer.pubKey.id)"
+    func dialOne(peer: MultiserverAddress) -> Bool {
+        Log.debug("Dialing \(peer.string)")
         var worked = false
-        multiServ.withGoString {
+        peer.string.withGoString {
             worked = ssbConnectPeer($0)
         }
         if !worked {
@@ -322,7 +317,7 @@ class GoBotInternal {
     }
 
     @discardableResult
-    func dialForNotifications(from peers: [Peer]) -> Bool {
+    func dialForNotifications(from peers: [MultiserverAddress]) -> Bool {
         if let peer = peers.randomElement() {
             return dialOne(peer: peer)
         } else {
@@ -480,14 +475,17 @@ class GoBotInternal {
     }
 
     func blobsAdd(data: Data, completion: @escaping BlobsAddCompletion) {
-        let p = Pipe()
+        /// Apple docs say to interact with pipe on the main thread (or one configured with a run loop)
+        let pipe = Pipe()
 
-        self.queue.async {
-            p.fileHandleForWriting.write(data)
-            p.fileHandleForWriting.closeFile()
+        // Start writing the file
+        DispatchQueue.main.async {
+            pipe.fileHandleForWriting.write(data)
+            pipe.fileHandleForWriting.closeFile()
         }
-
-        let readFD = p.fileHandleForReading.fileDescriptor
+        
+        // Give go-ssb the file handle to read
+        let readFD = pipe.fileHandleForReading.fileDescriptor
         guard let rawBytes = ssbBlobsAdd(readFD) else {
             completion("", GoBotError.unexpectedFault("blobsAdd failed"))
             return

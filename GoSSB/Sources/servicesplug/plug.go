@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"sync"
 
+	refs "go.mindeco.de/ssb-refs"
 	"golang.org/x/crypto/ed25519"
 
-	"go.cryptoscope.co/muxrpc"
+	"go.cryptoscope.co/muxrpc/v2"
 	"go.cryptoscope.co/ssb"
 )
 
@@ -16,7 +17,7 @@ const pubKeySize = ed25519.PublicKeySize
 
 type pubKey [pubKeySize]byte
 
-func refAsArray(fr ssb.FeedRef) pubKey {
+func refAsArray(fr refs.FeedRef) pubKey {
 	var k pubKey
 	if n := copy(k[:], fr.PubKey()); n != pubKeySize {
 		panic(fmt.Sprintf("invalid public key size:%d", n))
@@ -43,7 +44,7 @@ type NotifyFn func(Token)
 func notifyNoop(Token) {}
 
 // New creates a new servicesplug
-func New(pubs []ssb.FeedRef, notify NotifyFn) *Plugin {
+func New(pubs []refs.FeedRef, notify NotifyFn) *Plugin {
 	if notify == nil {
 		notify = notifyNoop
 	}

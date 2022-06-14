@@ -329,7 +329,7 @@ class ThreadViewController: ContentViewController {
         
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
-        // AppController.shared.showProgress()
+        AppController.shared.showProgress()
         Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -418,9 +418,10 @@ extension ThreadViewController: ThreadInteractionViewDelegate {
     func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue) {
         let vote = ContentVote(link: self.rootKey,
                                value: 1,
+                               expression: "💜",
                                root: self.rootKey,
                                branches: [self.branchKey])
-        // AppController.shared.showProgress()
+        AppController.shared.showProgress()
         Bots.current.publish(content: vote) { [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)

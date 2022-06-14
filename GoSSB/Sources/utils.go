@@ -1,19 +1,21 @@
 package main
 
 import (
-	"encoding/base64"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"go.cryptoscope.co/ssb/multilogs"
 	"os"
+	"runtime/debug"
 	"strconv"
 	"time"
 	"unsafe"
 
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/ssb"
 	mksbot "go.cryptoscope.co/ssb/sbot"
+	refs "go.mindeco.de/ssb-refs"
 )
 
 // #include <stdlib.h>
@@ -28,6 +30,8 @@ import "C"
 
 //export ssbGenKey
 func ssbGenKey() *C.char {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -35,37 +39,27 @@ func ssbGenKey() *C.char {
 		}
 	}()
 
-	kp, err := ssb.NewKeyPair(nil)
+	kp, err := ssb.NewKeyPair(nil, refs.RefAlgoFeedSSB1)
 	if err != nil {
 		err = errors.Wrap(err, "GenerateKeyPair: keygen failed")
 		return nil
 	}
 
-	var sec = jsonSecret{
-		Curve:   "ed25519",
-		ID:      kp.Id,
-		Private: base64.StdEncoding.EncodeToString(kp.Pair.Secret[:]) + ".ed25519",
-		Public:  base64.StdEncoding.EncodeToString(kp.Pair.Public[:]) + ".ed25519",
-	}
+	buf := &bytes.Buffer{}
 
-	bytes, err := json.Marshal(sec)
+	err = ssb.EncodeKeyPairAsJSON(kp, buf)
 	if err != nil {
-		err = errors.Wrap(err, "GenerateKeyPair: json encoding failed")
+		err = errors.Wrap(err, "GenerateKeyPair: failed to encode key pair as JSON")
 		return nil
 	}
-	return C.CString(string(bytes))
-}
 
-// todo: deduplicate
-type jsonSecret struct {
-	Curve   string       `json:"curve"`
-	ID      *ssb.FeedRef `json:"id"`
-	Private string       `json:"private"`
-	Public  string       `json:"public"`
+	return C.CString(string(buf.Bytes()))
 }
 
 //export ssbReplicateUpTo
 func ssbReplicateUpTo() int {
+	defer logPanic()
+
 	var err error
 	defer func() {
 		if err != nil {
@@ -73,7 +67,7 @@ func ssbReplicateUpTo() int {
 		}
 	}()
 
-	uf, ok := sbot.GetMultiLog("userFeeds")
+	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
 	if !ok {
 		err = errors.Errorf("sbot: missing userFeeds index")
 		return -1
@@ -93,15 +87,15 @@ func ssbReplicateUpTo() int {
 			return -1
 		}
 
-		ms, err := subLog.Seq().Value()
+		ms := subLog.Seq()
+
+		fr, err := refs.NewLegacyFeedRefFromBytes([]byte(addr)) // todo is this correct?
 		if err != nil {
 			err = errors.Wrapf(err, "feeds: log(%d) failed to get current seq", i)
 			return -1
 		}
-		var fr ssb.FeedRef
-		fr.Algo = "ed25519"
-		fr.ID = []byte(addr)
-		feedCnt[fr.Ref()] = ms.(margaret.Seq).Seq()
+
+		feedCnt[fr.String()] = ms
 	}
 
 	r, w, err := os.Pipe()
@@ -133,6 +127,8 @@ var lastFSCK mksbot.ErrConsistencyProblems
 
 //export ssbOffsetFSCK
 func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -173,6 +169,8 @@ func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 
 //export ssbHealRepo
 func ssbHealRepo() *C.char {
+	defer logPanic()
+
 	var retErr error
 	defer func() {
 		if retErr != nil {
@@ -212,7 +210,7 @@ func ssbHealRepo() *C.char {
 }
 
 type healReport struct {
-	Authors  []*ssb.FeedRef
+	Authors  []refs.FeedRef
 	Messages uint64
 }
 
@@ -220,6 +218,8 @@ type healReport struct {
 
 //export planetaryBearerToken
 func planetaryBearerToken() *C.char {
+	defer logPanic()
+
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -247,4 +247,11 @@ func planetaryBearerToken() *C.char {
 	}
 
 	return C.CString(tok)
+}
+
+func logPanic() {
+	if p := recover(); p != nil {
+		level.Error(log).Log("panic", p, "stack", string(debug.Stack()))
+		panic(p)
+	}
 }

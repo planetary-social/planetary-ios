@@ -55,8 +55,8 @@
 "Text.name" = "Nombre";
 "Text.bio" = "Bio";
 "Text.seeMore" = "Ver más";
-"Text.likesThis" = "Le gusta";
-"Text.dislikesThis" = "No le gusta";
+"Text.likesThis" = "likes this";
+"Text.dislikesThis" = "dislikes this";
 "Text.block" = "Bloquear";
 "Text.blocked" = "Bloqueado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
@@ -115,6 +115,17 @@
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Recargar";
 "Text.markdownSupported" = "Markdown soportado";
+"Text.loggingOut" = "Logging out...";
+"Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
+"Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
+"Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
+"Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
+"Text.startUsingPlanetary" = "start using Planetary";
+"Text.startUsingPlanetaryTitle" = "Start Using Planetary";
+"Text.percentComplete" = "complete";
+"Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
+"Text.areYouSure" = "Are you sure?";
+"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
 "Blocking.alertTitle" = "¿Estás seguro de que querés bloquear a {{ name }}? No vas a poder ver su contenido mutuamente ni tampoco volver a contactarse.";
 "Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";
@@ -170,6 +181,8 @@
 "Onboarding.doneOnboarding" = "¡Uf! ¡Ya terminé!";
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes desprolijas en la interfaz. ¡Animate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
+"Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
+"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from out team.";
 "Onboarding.somethingWentWrong" = "¡Uh no! ¡Algo salió mal!";
 "Onboarding.errorRetryMessage" = "Esto no es tu culpa, nosotros metimos la pata. Podés volver a intentar o empezar de nuevo, y por favor contanos sobre lo que pasó.";
 "Onboarding.resumeRetryMessage" = "Esto no es tu culpa, nosotros metimos la pata. En algunos casos, puede significar que tu dispositivo no se puede conectar a la red, por lo que intentar de nuevo puede ayudar.";
@@ -252,6 +265,7 @@
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No pudimos unirte a {{ starName }}. Por favor, intentá de vuelta o contactá con soporte.";
 "Error.cannotPublishBecauseRestoring" = "Planetary está restableciendo tus datos desde la red, y no puede publicar nuevos posts en este momento.";
+"Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Configuración de app inválida";
 "Error.couldNotGenerateLink" = "No pudo generar el link.";
 

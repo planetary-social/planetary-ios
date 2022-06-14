@@ -112,7 +112,7 @@ class PostCellView: KeyValueView {
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
         
         // not so clean but it gest likes displaying.
-        if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == Planetary.ContentType.vote {
+        if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == ContentType.vote {
             self.textView.font = UIFont.post.body.withSize(16)
             self.textView.textAlignment = .natural
         } else if self.textView.attributedText.string.isSingleEmoji,
@@ -203,8 +203,6 @@ class PostCellView: KeyValueView {
         self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
         self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
         self.galleryViewZeroHeightConstraint.isActive = true
-        
-        self.isSkeletonable = true
     }
 
     convenience init(keyValue: KeyValue) {
@@ -224,11 +222,14 @@ class PostCellView: KeyValueView {
         self.headerView.update(with: keyValue)
 
         if let vote = keyValue.value.content.vote {
-            let expression: String
-            if vote.vote.value > 0 {
-                expression = "💜 \(Text.likesThis.text)"
+            var expression: String 
+            if let explicitExpression = vote.vote.expression,
+                explicitExpression.isSingleEmoji {
+                expression = explicitExpression
+            } else if vote.vote.value > 0 {
+                expression = "\(Text.likesThis.text)"
             } else {
-                expression = "💔 \(Text.dislikesThis.text)"
+                expression = "\(Text.dislikesThis.text)"
             }
 
             let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.italicSystemFont(ofSize: 16),
