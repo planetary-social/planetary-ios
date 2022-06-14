@@ -104,6 +104,10 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
+                await self?.contactView.update(with: identity, about: about)
+                await self?.headerView.update(with: keyValue)
+                await self?.headerView.hideSkeleton()
+                
                 var stats = SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
                 do {
                     stats = try await Bots.current.socialStats(for: identity)
@@ -111,6 +115,8 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
+                await self?.contactView.update(socialStats: stats)
+                
                 var hashtags: [Hashtag] = []
                 do {
                     hashtags = try await Bots.current.hashtags(usedBy: identity, limit: 3)
@@ -118,14 +124,7 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
-                await self?.headerView.update(with: keyValue)
-                await self?.contactView.update(
-                    with: identity,
-                    about: about,
-                    socialStats: stats,
-                    hashtags: hashtags
-                )
-                await self?.hideSkeleton()
+                await self?.contactView.update(hashtags: hashtags)
             }
         } else {
             return

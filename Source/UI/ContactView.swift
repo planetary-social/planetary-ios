@@ -49,6 +49,7 @@ class ContactView: KeyValueView {
         label.textContainer.lineFragmentPadding = 0
         label.isSkeletonable = true
         label.linesCornerRadius = 7
+        label.backgroundColor = .clear
         return label
     }()
 
@@ -106,21 +107,12 @@ class ContactView: KeyValueView {
 
     override func reset() {
         super.reset()
-        update(
-            with: Identity.null,
-            about: nil,
-            socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0),
-            hashtags: []
-        )
+        update(with: Identity.null, about: nil)
+        update(socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0))
+        update(hashtags: [])
     }
-
-    func update(with identity: Identity, about: About?, socialStats: SocialStats, hashtags: [Hashtag]) {
-        update(numberOfFollowers: socialStats.numberOfFollowers, numberOfFollows: socialStats.numberOfFollows)
-        update(hashtags: hashtags)
-        update(with: identity, about: about)
-    }
-
-    private func update(with identity: Identity, about: About?) {
+    
+    func update(with identity: Identity, about: About?) {
         if let about = about {
             self.label.text = about.nameOrIdentity
             self.imageView.set(image: about.image)
@@ -132,16 +124,23 @@ class ContactView: KeyValueView {
             followButton.removeFromSuperview()
         } else if let myIdentity = Bots.current.identity {
             stackView.addArrangedSubview(followButton)
+            followButton.showSkeleton()
             let relationship = Relationship(from: myIdentity, to: identity)
             relationship.load {
                 self.followButton.relationship = relationship
+                self.followButton.hideSkeleton()
             }
         } else {
             followButton.removeFromSuperview()
         }
+        
+        label.hideSkeleton()
+        imageView.hideSkeleton()
     }
-
-    private func update(numberOfFollowers: Int, numberOfFollows: Int) {
+    
+    func update(socialStats: SocialStats) {
+        let numberOfFollowers = socialStats.numberOfFollowers
+        let numberOfFollows = socialStats.numberOfFollows
         let string = "Following numberOfFollows • Followed by numberOfFollowers"
 
         let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
@@ -167,9 +166,10 @@ class ContactView: KeyValueView {
             )
         )
         followerCountLabel.attributedText = attributedString
+        followerCountLabel.hideSkeleton()
     }
 
-    private func update(hashtags: [Hashtag]) {
+    func update(hashtags: [Hashtag]) {
         if hashtags.isEmpty {
             hashtagsLabel.removeFromSuperview()
         } else {
@@ -197,9 +197,9 @@ class ContactView: KeyValueView {
                 }
             }
             hashtagsLabel.attributedText = attributedString
+            hashtagsLabel.hideSkeleton()
         }
     }
-
 }
 
 extension ContactView: UITextViewDelegate {
