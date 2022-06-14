@@ -448,7 +448,7 @@ class GoBot: Bot {
         completion: @escaping SyncCompletion
     ) {
         self._isSyncing = false
-        serialQueue.sync {
+        serialQueue.async {
             self._statistics.lastSyncDate = Date()
             self._statistics.lastSyncDuration = elapsed
         }
@@ -513,7 +513,7 @@ class GoBot: Bot {
         completion: @escaping RefreshCompletion
     ) {
         self._isRefreshing = false
-        serialQueue.sync {
+        serialQueue.async {
             self._statistics.lastRefreshDate = Date()
             self._statistics.lastRefreshDuration = elapsed
         }
