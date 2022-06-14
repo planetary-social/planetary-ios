@@ -486,7 +486,6 @@ class ViewDatabase {
     
     // MARK: moderation / delete
     
-
     func applyBanList(_ banList: [String]) throws -> [FeedIdentifier] {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
 

@@ -34,8 +34,8 @@ actor TokenStore {
     /// otherwise a new one will be requested.
     func tokenString(for identity: FeedIdentifier) async throws -> String {
         if let currentCredentials = cachedCredentials,
-           currentCredentials.identity == identity,
-           Date.now < currentCredentials.expires {
+            currentCredentials.identity == identity,
+            Date.now < currentCredentials.expires {
             return currentCredentials.token
         } else {
             let newCredentials = try await newBearerToken(for: identity)

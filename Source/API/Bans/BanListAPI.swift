@@ -9,7 +9,7 @@
 import Foundation
 
 /// A singleton for the `BanListAPIService` that chooses different services based on the environment.
-struct BanListAPI {
+enum BanListAPI {
     
     static var shared: BanListAPIService = {
         // We don't want to spam the push API when running unit tests

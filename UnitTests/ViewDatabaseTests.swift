@@ -717,7 +717,6 @@ class ViewDatabaseTests: XCTestCase {
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
         XCTAssertEqual(authors, [currentUser])
         XCTAssertThrowsError(try vdb.get(key: testMessage.key))
-        
     }
 }
 
