@@ -34,8 +34,8 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         }
     }
     
-    private var communityPubs = Environment.Communities.stars
-    private var communityPubIdentities = Set(Environment.Communities.stars.map { $0.feed })
+    private let communityPubs = AppConfiguration.current?.communityPubs ?? []
+    private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
@@ -179,7 +179,7 @@ extension DirectoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 && searchFilter.isEmpty {
-            return Environment.Communities.stars.count
+            return communityPubs.count
         } else {
             return self.people.count
         }
@@ -218,7 +218,7 @@ extension DirectoryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 && searchFilter.isEmpty {
-            let star = Environment.Communities.stars[indexPath.row]
+            let star = communityPubs[indexPath.row]
             let controller = AboutViewController(with: star.feed)
             self.navigationController?.pushViewController(controller, animated: true)
         } else {

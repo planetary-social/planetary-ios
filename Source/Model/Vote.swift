@@ -57,57 +57,18 @@ struct ContentVote: ContentCodable {
         }
     }
 
-    // create/publish
-    init(link: LinkIdentifier, value: Int) {
+    init(
+        link: LinkIdentifier,
+        value: Int,
+        expression: String?,
+        root: MessageIdentifier,
+        branches: [MessageIdentifier]
+    ) {
         self.type = .vote
-        
-        let exp: String
-        if value == 1 {
-            exp = "❤️"
-        } else {
-            exp = "💔"
-        }
-        self.vote = Vote(link: link, value: value, expression: exp)
-        
-        self.root = nil
-        self.branch = nil
-        
-        // TODO: constructor for PMs (should maybe also live in Content.init
-        self.recps = nil
-    }
-
-    init(link: LinkIdentifier, value: Int, root: MessageIdentifier, branches: [MessageIdentifier]) {
-        self.type = .vote
-        
-        let exp: String
-        if value == 1 {
-            exp = "❤️"
-        } else {
-            exp = "💔"
-        }
-        self.vote = Vote(link: link, value: value, expression: exp)
+        self.vote = Vote(link: link, value: value, expression: expression)
 
         self.root = root
         self.branch = branches
-        
-        // TODO: constructor for PMs (should maybe also live in Content.init
-        self.recps = nil
-    }
-    
-    init(value: Int, root: MessageIdentifier) {
-        self.type = .vote
-        
-        let exp: String
-        if value == 1 {
-            exp = "❤️"
-        } else {
-            exp = "💔"
-        }
-        self.vote = Vote(link: LinkIdentifier.null, value: value, expression: exp)
-        // self.link = Identity.null
-        
-        self.root = root
-        self.branch = nil
         
         // TODO: constructor for PMs (should maybe also live in Content.init
         self.recps = nil

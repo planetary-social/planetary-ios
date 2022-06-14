@@ -58,7 +58,14 @@ class AppConfiguration: NSObject, NSCoding {
     // Any non-SSB network must have a non-nil value.
     var hmacKey: HMACKey? {
         get {
-            if self.network == NetworkKey.ssb { return nil } else if self.network == NetworkKey.integrationTests { return HMACKey.integrationTests } else if self.network == NetworkKey.verse { return HMACKey.verse } else if self.network == NetworkKey.planetary { return HMACKey.planetary } else { return _hmacKey }
+            // This is legacy code. We should migrate to storing this in the keychain along with everything else.
+            if self.network == Environment.Networks.mainNet.key {
+                return nil
+            } else if self.network == Environment.Networks.test.key {
+                return Environment.Networks.test.hmac
+            } else {
+                return _hmacKey
+            }
         }
         set {
             _hmacKey = newValue
@@ -78,6 +85,66 @@ class AppConfiguration: NSObject, NSCoding {
     var canLaunch: Bool {
         self.network != nil &&
             self.bot != nil
+    }
+    
+    var ssbNetwork: SSBNetwork? {
+        get {
+            guard let key = network else {
+                return nil
+            }
+
+            return SSBNetwork(
+                key: key,
+                hmac: hmacKey
+            )
+        }
+        set {
+            network = newValue?.key
+            hmacKey = newValue?.hmac
+        }
+    }
+    
+    var systemPubs: [Star] {
+        switch ssbNetwork {
+        case Environment.Networks.mainNet:
+            return Environment.PlanetarySystem.systemPubs
+        case Environment.Networks.test:
+            return Environment.TestNetwork.systemPubs
+        default:
+            return []
+        }
+    }
+    
+    var communityPubs: [Star] {
+        switch ssbNetwork {
+        case Environment.Networks.mainNet:
+            return Environment.PlanetarySystem.communityPubs
+        case Environment.Networks.test:
+            return Environment.TestNetwork.communityPubs
+        default:
+            return []
+        }
+    }
+    
+    func databaseDirectory() throws -> String {
+        // lookup Application Support folder for bot and database
+        let appSupportDirs = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        )
+        
+        guard appSupportDirs.count > 0 else {
+            throw GoBotError.unexpectedFault("no support dir")
+        }
+        
+        guard let networkKey = network else {
+            throw GoBotError.unexpectedFault("No network key in configuration.")
+        }
+
+        return appSupportDirs[0]
+            .appending("/FBTT")
+            .appending("/\(networkKey.hexEncodedString())")
     }
 
     // MARK: Lifecycle
@@ -121,6 +188,26 @@ class AppConfiguration: NSObject, NSCoding {
         guard let configuration = object as? AppConfiguration else { return false }
         return configuration.name == self.name && configuration.identity == self.identity
     }
+    
+    // MARK: - Keychain interaction
+    
+    static var current: AppConfiguration? {
+        Keychain.configuration
+    }
+
+    func apply() {
+        Keychain.configuration = self
+        AppConfigurations.add(self)
+    }
+
+    func unapply() {
+        Keychain.configuration = nil
+    }
+
+    func unapplyIfCurrent() {
+        if self.isCurrent { self.unapply() }
+    }
+    
 }
 
 extension AppConfiguration {
@@ -133,14 +220,6 @@ extension AppConfiguration {
         AppConfiguration.current == nil
     }
     
-    static var needsToBeLoggedOut: Bool {
-        #if DEBUG
-        return false
-        #else
-        return AppConfiguration.current?.network != NetworkKey.ssb
-        #endif
-    }
-
     var isCurrent: Bool {
         self.identity == AppConfiguration.current?.identity
     }
@@ -162,3 +241,22 @@ extension AppConfiguration {
 }
 
 typealias AppConfigurations = [AppConfiguration]
+
+fileprivate extension Keychain {
+
+    // TODO https://app.asana.com/0/914798787098068/1149043570373553/f
+    // TODO if the keychain does not unlock fast enough then this will be nil
+    static var configuration: AppConfiguration? {
+        get {
+            guard let data = Keychain.data(for: "app.configuration") else { return nil }
+            return AppConfiguration.from(data)
+        }
+        set {
+            if let data = newValue?.toData() {
+                Keychain.set(data, for: "app.configuration")
+            } else {
+                Keychain.delete("app.configuration")
+            }
+        }
+    }
+}

@@ -7,6 +7,7 @@ class ViewDatabaseTests: XCTestCase {
     let expMsgCount = 81
     let fixture = DatabaseFixture.exampleFeed
     var testFeeds: [Identity] { fixture.identities }
+    var currentUser: Identity { fixture.identities[4] }
 
     override func setUp() {
         let data = self.data(for: fixture.fileName)
@@ -27,7 +28,7 @@ class ViewDatabaseTests: XCTestCase {
             
             // open DB
             let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try self.vdb.open(path: damnPath, user: testFeeds[4], maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
+            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
@@ -270,7 +271,7 @@ class ViewDatabaseTests: XCTestCase {
         do {
             // TODO: verify ordering
             let replies = try self.vdb.getRepliesTo(thread: "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWs=.sha256")
-            XCTAssertEqual(replies.count, 13)
+            XCTAssertEqual(replies.count, 7)
             for (i, kv) in replies.enumerated() {
                 XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
                 
@@ -296,53 +297,17 @@ class ViewDatabaseTests: XCTestCase {
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "[@realUserThree](@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519) who are you?!")
                 case 4:
-                    XCTAssertEqual(kv.key, "%l1IwSOOeofqmiOyT84y42Tcn9RJKLeg6zKtVN0v/nIE=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[0])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%2q0+HuVVun2LWCb/uQVQThFAA65VHxrzDIwRYuljoSY=.sha256")
-                case 5:
                     XCTAssertEqual(kv.key, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
                     XCTAssertEqual(kv.value.author, testFeeds[3])
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "hello people!")
-                case 6:
-                    XCTAssertEqual(kv.key, "%YR/7RhApX0Znb5s4w9B/eDK8fN3/5Jx3z5ih/gOoB6Y=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 7:
-                    XCTAssertEqual(kv.key, "%oQTjGmUQ9S0SLAoKSz+KNL8mRN6aCj2Mrsy0E/nRwOg=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 0)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 8:
-                    XCTAssertEqual(kv.key, "%as5O7FtNV1ZfIHnmirVZ2ptHfrBpQWVITtvL5z/CfUc=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                case 9:
-                    XCTAssertEqual(kv.key, "%CRGKl5idyt7UjFQf7GlgVDd3lcvvCUaWqYs4iip9sjE=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                case 10:
-                    XCTAssertEqual(kv.key, "%00TehcsrAYe1fHbivR1j0htNj26mzeldSNt7uDO4RZ0=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .vote)
-                    XCTAssertEqual(kv.value.content.vote?.vote.value, 1)
-                    XCTAssertEqual(kv.value.content.vote?.vote.link, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                case 11:
+                case 5:
                     XCTAssertEqual(kv.key, "%YGZ8L7iAv3b50k3/Nks7Jm//2v6t9Jd/di1l6q/eIe8=.sha256")
                     XCTAssertEqual(kv.value.author, testFeeds[1])
                     XCTAssertEqual(kv.value.content.type, .post)
                     XCTAssertEqual(kv.value.content.post?.text, "[@userFour](@27PkouhQuhr9Ffn+rgSnN0zabcfoE31qD3ZMkCs3c+0=.ed25519) hey you!\n\n[@userOne](@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519) i don\'t know either..")
                     // TODO: decode & check mentions
-                case 12:
+                case 6:
                     XCTAssertEqual(kv.key, "%ruVFSar2PMCK1WZdz0AL7JIOgxjbFuwcHL8zWrqw9Ig=.sha256")
                     XCTAssertEqual(kv.value.author, DatabaseFixture.exampleFeed.secret.identity)
                     XCTAssertEqual(kv.value.content.type, .post)
@@ -382,10 +347,10 @@ class ViewDatabaseTests: XCTestCase {
     
     func test41_feed() {
         do {
-            let replies = try self.vdb.feed(for: testFeeds[4])
+            let replies = try self.vdb.feed(for: currentUser)
             for (i, kv) in replies.enumerated() {
                 XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
-                XCTAssertEqual(kv.value.author, testFeeds[4])
+                XCTAssertEqual(kv.value.author, currentUser)
                 XCTAssertEqual(kv.value.content.type, .post)
                 switch i {
                 case 0:
@@ -406,7 +371,7 @@ class ViewDatabaseTests: XCTestCase {
     }
 
     func test42_feed_paginated() throws {
-        let dataProxy = try self.vdb.paginated(feed: testFeeds[4])
+        let dataProxy = try self.vdb.paginated(feed: currentUser)
         let prefetchedCount = 2
         XCTAssertEqual(dataProxy.count, 3)
         for idx in 0...prefetchedCount - 1 {
@@ -414,7 +379,7 @@ class ViewDatabaseTests: XCTestCase {
                 XCTFail("failed to get KV for index \(idx)")
                 continue
             }
-            XCTAssertEqual(kv.value.author, testFeeds[4])
+            XCTAssertEqual(kv.value.author, currentUser)
             XCTAssertEqual(kv.value.content.type, .post)
             switch idx {
             case 0:
@@ -637,13 +602,13 @@ class ViewDatabaseTests: XCTestCase {
         )
         
         // Assert
-        XCTAssertEqual(try vdb.messageReceivedCount(since: sinceTime), 0)
+        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 49)
         
         // Rearrange
         try vdb.fillMessages(msgs: [ownerMessage, friendMessageOne, friendMessageTwo])
         
         // Reassert
-        XCTAssertEqual(try vdb.messageReceivedCount(since: sinceTime), 2)
+        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 51)
     }
     
     /// Verify that fillMessages deduplicates records.
@@ -654,6 +619,42 @@ class ViewDatabaseTests: XCTestCase {
         
         // Act
         try vdb.fillMessages(msgs: [testMessage, testMessage])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), messageCount + 1)
+    }
+    
+    /// Verify that fillMessages does not fill messages older than 6 months.
+    func testFillMessagesGivenOldMessage() throws {
+        // Arrange
+        let messageCount = try vdb.messageCount()
+        let oldDate = Date(timeIntervalSince1970: 5)
+        let testMessage = KeyValueFixtures.post(
+            timestamp: oldDate.millisecondsSince1970,
+            receivedSeq: 800,
+            author: IdentityFixture.alice
+        )
+        
+        // Act
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), messageCount)
+    }
+    
+    /// Verify that fillMessages fills messages older than 6 months for messages the current user published.
+    func testFillMessagesGivenOldMessageFromSelf() throws {
+        // Arrange
+        let messageCount = try vdb.messageCount()
+        let oldDate = Date(timeIntervalSince1970: 1_619_037_184)
+        let testMessage = KeyValueFixtures.post(
+            timestamp: oldDate.millisecondsSince1970,
+            receivedSeq: 800,
+            author: currentUser
+        )
+        
+        // Act
         try vdb.fillMessages(msgs: [testMessage])
         
         // Assert
@@ -683,6 +684,7 @@ class ViewDatabasePreloadTest: XCTestCase {
     let preloadExpMsgCount = 5
     let expMsgCount = 81
     let testFeeds = DatabaseFixture.exampleFeed.identities
+    var currentUser: Identity { DatabaseFixture.exampleFeed.identities[4] }
 
     override func setUp() {
         let preloadData = self.data(for: "Feed_example_preload.json")
@@ -703,7 +705,7 @@ class ViewDatabasePreloadTest: XCTestCase {
             
             // open DB
             let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try self.vdb.open(path: damnPath, user: testFeeds[4], maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
+            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([KeyValue].self, from: preloadData)

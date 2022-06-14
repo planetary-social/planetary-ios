@@ -247,10 +247,6 @@ private class MenuView: UIView {
         let maxHeightConstraint = connectedPeersView.heightAnchor.constraint(equalToConstant: 310)
         maxHeightConstraint.priority = UILayoutPriority(501)
         maxHeightConstraint.isActive = true
-
-        if Date.todayIsAHoliday() {
-            Layout.fill(view: self, with: SnowView(), respectSafeArea: false)
-        }
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -42,7 +42,7 @@ class FeedStrategyTests: XCTestCase {
         db.close()
     }
 
-    func testPatchworkFeedStrategy() throws {
+    func testRecentlyActivePostsAndContactsAlgorithm() throws {
         let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis
         let receivedDate: Double = 1_652_813_515_000 // May 17, 2022 in millis
         let alice = DatabaseFixture.exampleFeed.identities[1]
@@ -93,15 +93,24 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 4,
             author: bob
         )
+        let post5 = KeyValueFixtures.post(
+            key: "%5",
+            sequence: 5,
+            timestamp: referenceDate + 5,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 5,
+            author: testAuthor
+        )
         
-        try db.fillMessages(msgs: [post0, follow1, about2, post3, reply4])
+        try db.fillMessages(msgs: [post0, follow1, about2, post3, reply4, post5])
         
         let strategy = RecentlyActivePostsAndContactsAlgorithm()
         let proxy = try db.paginatedFeed(with: strategy)
         
-        XCTAssertEqual(proxy.count, 3)
-        XCTAssertEqual(proxy.keyValueBy(index: 0), post0)
-        XCTAssertEqual(proxy.keyValueBy(index: 1), follow1)
+        XCTAssertEqual(proxy.count, 4)
+        XCTAssertEqual(proxy.keyValueBy(index: 0), post5)
+        XCTAssertEqual(proxy.keyValueBy(index: 1), post0)
         XCTAssertEqual(proxy.keyValueBy(index: 2), post3)
+        XCTAssertEqual(proxy.keyValueBy(index: 3), follow1)
     }
 }

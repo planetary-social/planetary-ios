@@ -28,21 +28,27 @@ class OnboardingStepData {
     var image: UIImage?
     var joinedDirectory = false
     var publicWebHosting = false
+    var analytics = false
+    var followPlanetary = false
     var name: String?
     var phone: String?
     var simulated = false
 
     var analyticsData: Analytics.OnboardingStepData {
-        Analytics.OnboardingStepData(allowedBackup: allowedBackup,
-                                            allowedContacts: allowedContacts,
-                                            bio: bio,
-                                            followingCount: following.count,
-                                            hasImage: image != nil,
-                                            joinedDirectory: joinedDirectory,
-                                            publicWebHosting: publicWebHosting,
-                                            nameLength: name?.count ?? 0,
-                                            phone: phone,
-                                            simulated: simulated)
+        Analytics.OnboardingStepData(
+            allowedBackup: allowedBackup,
+            allowedContacts: allowedContacts,
+            bio: bio,
+            followingCount: following.count,
+            hasImage: image != nil,
+            joinedDirectory: joinedDirectory,
+            publicWebHosting: publicWebHosting,
+            analytics: analytics,
+            followPlanetary: followPlanetary,
+            nameLength: name?.count ?? 0,
+            phone: phone,
+            simulated: simulated
+        )
     }
 }
 

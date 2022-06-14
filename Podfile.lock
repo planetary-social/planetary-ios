@@ -11,7 +11,6 @@ PODS:
   - PhoneNumberKit/PhoneNumberKitCore (3.2.0)
   - PhoneNumberKit/UIKit (3.2.0):
     - PhoneNumberKit/PhoneNumberKitCore
-  - SkeletonView (1.8.7)
   - SVProgressHUD (2.2.5)
 
 DEPENDENCIES:
@@ -20,7 +19,6 @@ DEPENDENCIES:
   - KeychainSwift (= 19.0.0)
   - Multipart (= 0.1.0)
   - PhoneNumberKit (= 3.2.0)
-  - SkeletonView (= 1.8.7)
   - SVProgressHUD (= 2.2.5)
 
 SPEC REPOS:
@@ -30,7 +28,6 @@ SPEC REPOS:
     - KeychainSwift
     - Multipart
     - PhoneNumberKit
-    - SkeletonView
     - SVProgressHUD
 
 SPEC CHECKSUMS:
@@ -39,9 +36,8 @@ SPEC CHECKSUMS:
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
   PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
-  SkeletonView: ba5370f41280b2f0a76918bb143c1294232bb4f4
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: e2b7fccf1d94e8100625b7428faabde4383aae11
+PODFILE CHECKSUM: 3a3b8965439f97056d40f746cb553ee8e400e141
 
 COCOAPODS: 1.11.3

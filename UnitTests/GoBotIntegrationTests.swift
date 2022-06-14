@@ -53,13 +53,22 @@ class GoBotIntegrationTests: XCTestCase {
         try super.setUpWithError()
     }
 
-    override func tearDownWithError() throws {
-        let logoutExpectation = self.expectation(description: "logout")
-        sut.logout { _ in logoutExpectation.fulfill() }
-        waitForExpectations(timeout: 10, handler: nil)
-        sut.exit()
-        try fileManager.removeItem(atPath: workingDirectory)
-        try super.tearDownWithError()
+    override func tearDown() async throws {
+        try await super.tearDown()
+        
+        do {
+            try await sut.logout()
+        } catch {
+            guard case BotError.notLoggedIn = error else {
+                throw error
+            }
+        }
+        await sut.exit()
+        do {
+            try fileManager.removeItem(atPath: workingDirectory)
+        } catch {
+            print(error)
+        }
     }
 
     /// Verifies that we can correctly refresh the `ViewDatabase` from the go-ssb log even after `publish` has copied
@@ -124,7 +133,114 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(statistics.recentlyDownloadedPostDuration, 15)
     }
     
-    // MARK: - Forked Feed Protection
+    func testDropDatabaseWhenLoggedIn() async throws {
+        // Arrange
+        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
+        let databaseURL = try XCTUnwrap(
+            URL(fileURLWithPath: appConfig.databaseDirectory().appending("/mockDatabase"))
+        )
+        try mockData.write(to: databaseURL)
+
+        // Act
+        try await sut.dropDatabase(for: appConfig)
+
+        // Assert
+        XCTAssertThrowsError(try Data(contentsOf: databaseURL))
+    }
+    
+    func testDropDatabaseWhenLoggedOut() async throws {
+        // Arrange
+        let mockData = try XCTUnwrap("mockDatabase".data(using: .utf8))
+        let databaseURL = try XCTUnwrap(
+            URL(fileURLWithPath: appConfig.databaseDirectory().appending("/mockDatabase"))
+        )
+        try mockData.write(to: databaseURL)
+        try await sut.logout()
+        
+        // Act
+        try await sut.dropDatabase(for: appConfig)
+        
+        // Assert
+        XCTAssertThrowsError(try Data(contentsOf: databaseURL))
+    }
+    
+    func testLogoutWithDirectoryMissing() throws {
+        // Arrange
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout(completion: { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        })
+        
+        waitForExpectations(timeout: 10)
+        
+        // Act
+        do {
+            try fileManager.removeItem(atPath: workingDirectory)
+        } catch {
+            print(error)
+        }
+
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout(completion: { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        })
+        
+        waitForExpectations(timeout: 10)
+    }
+    
+    @MainActor func testLogoutWithDirectoryPresent() throws {
+        // Arrange
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+        
+        // Act
+        try fileManager.removeItem(atPath: workingDirectory)
+        try fileManager.createDirectory(atPath: workingDirectory, withIntermediateDirectories: true)
+
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+    }
+    
+    @MainActor func testLogoutTwice() throws {
+        let firstLogout = self.expectation(description: "first logout finished")
+        sut.logout { error in
+            XCTAssertNil(error)
+            firstLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+        
+        let secondLogout = self.expectation(description: "second logout finished")
+        sut.logout { error in
+            XCTAssertNotNil(error)
+            secondLogout.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10)
+    }
+
+    func testLoginLogoutLoop() async throws {
+        try await sut.login(config: appConfig)
+
+        await sut.exit()
+        try await sut.logout()
+        
+        try await sut.login(config: appConfig)
+    }
+
+    // MARK: - Publishing
     
     /// Verifies that the GoBot checks the `"prevent_feed_from_forks"` settings and avoids publishing when the number
     /// of published messages is higher than the number of messages in go-ssb.
@@ -284,6 +400,78 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertNotNil(messageRef)
     }
     
+    /// Tests that publishing from multiple threads simultaneously is safe. (It wasn't in #489)
+    func testPublishSimultaneously() async throws {
+        // Arrange
+        let testPost = Post(text: "Be yourself; everyone else is already taken")
+        appConfig.numberOfPublishedMessages = 0
+        XCTAssertEqual(self.appConfig.numberOfPublishedMessages, 0)
+
+        // Act
+        await withThrowingTaskGroup(of: Void.self, body: { group in
+            for _ in 0..<100 {
+                group.addTask {
+                    let messageID = try await self.sut.publish(testPost)
+                    XCTAssertNotNil(messageID)
+                    XCTAssert(self.appConfig.numberOfPublishedMessages <= 100)
+                }
+            }
+        })
+
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 100)
+    }
+    
+    /// Verifies that the GoBot can handle publishes from many tasks simultaneously, while the statistics function is
+    /// also being called. Both of these can update the numberOfPublishedMessages in the AppConfig, and we had a
+    /// race condition where this could fail in the past (#489).
+    func testPublishSimultaneouslyWithStatistics() async throws {
+        // Arrange
+        let testPost = Post(text: "Be yourself; everyone else is already taken")
+        appConfig.numberOfPublishedMessages = 0
+
+        // Act
+        await withThrowingTaskGroup(of: Void.self, body: { group in
+            for _ in 0..<100 {
+                group.addTask {
+                    async let futureStats1 = self.sut.statistics()
+                    async let futurePublishedID = try self.sut.publish(testPost)
+                    async let futureStats2 = self.sut.statistics()
+                    let stats1 = await futureStats1
+                    let stats2 = await futureStats2
+                    let publishedID = try await futurePublishedID
+                    XCTAssert(stats1.repo.numberOfPublishedMessages <= 100)
+                    XCTAssert(stats2.repo.numberOfPublishedMessages <= 100)
+                    XCTAssertNotNil(publishedID)
+                    XCTAssert(self.appConfig.numberOfPublishedMessages <= 100)
+                }
+            }
+        })
+
+        // Assert
+        XCTAssertEqual(appConfig.numberOfPublishedMessages, 100)
+    }
+    
+    /// Tests the performance of the publish function.
+    func testPublishPerformance() throws {
+        // Arrange
+        let testPost = Post(text: "Be yourself; everyone else is already taken")
+        appConfig.numberOfPublishedMessages = 0
+
+        // Act
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            let expectation = self.expectation(description: "posted")
+            startMeasuring()
+            sut.publish(testPost) { messageID, error in
+                XCTAssertNil(error)
+                XCTAssertNotNil(messageID)
+                expectation.fulfill()
+            }
+            waitForExpectations(timeout: 1)
+            stopMeasuring()
+        }
+    }
+    
     /// Verifies that the statitistics() function updates the number of published messages in the AppConfiguration.
     func testStatisticsFunctionSetsNumberOfPublishedMessages() async throws {
         // Arrange
@@ -316,12 +504,17 @@ class GoBotIntegrationTests: XCTestCase {
         // Assert
         XCTAssertEqual(appConfig.numberOfPublishedMessages, 5)
     }
+    
+    /// Verifies that the isRestoring value defaults to false.
+    func testIsRestoringDefaultValue() {
+        XCTAssertEqual(sut.isRestoring, false)
+    }
 
     // MARK: - Preloaded Pubs
     
-    func testPubsArePreloaded() throws {
+    func testPubsArePreloaded() async throws {
         // Arrange
-        try tearDownWithError()
+        try await tearDown()
         do { try fileManager.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
 
         let mockPreloader = MockPreloadedPubService()

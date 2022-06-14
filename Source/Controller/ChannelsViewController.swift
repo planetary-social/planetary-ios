@@ -16,11 +16,36 @@ class ChannelsViewController: ContentViewController {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
 
-    private let dataSource = HashtagTableViewDataSource()
+    // unfiltered collection
+    private var allChannels = [Hashtag]() {
+        didSet {
+            applySearchFilter()
+        }
+    }
+
+    // filtered collection for display
+    private var channels = [Hashtag]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+
+    // for a bug fix — see note in Search extension below
+    private var searchEditBeginDate = Date()
+
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchResultsUpdater = self
+        controller.searchBar.delegate = self
+        controller.searchBar.isTranslucent = false
+        controller.obscuresBackgroundDuringPresentation = false
+        controller.hidesNavigationBarDuringPresentation = false
+        return controller
+    }()
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
-        view.dataSource = self.dataSource
+        view.dataSource = self
         view.delegate = self
         view.estimatedRowHeight = 54
         view.refreshControl = self.refreshControl
@@ -37,6 +62,13 @@ class ChannelsViewController: ContentViewController {
         return control
     }()
 
+    // text on which to filter results
+    private var searchFilter = "" {
+        didSet {
+            applySearchFilter()
+        }
+    }
+
     // MARK: Lifecycle
 
     init() {
@@ -49,6 +81,7 @@ class ChannelsViewController: ContentViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.searchController = self.searchController
         Layout.fill(view: self.view, with: self.tableView)
         self.addLoadingAnimation()
         self.load()
@@ -118,8 +151,19 @@ class ChannelsViewController: ContentViewController {
     }
 
     private func update(with hashtags: [Hashtag], animated: Bool = true) {
-        self.dataSource.hashtags = hashtags
+        self.allChannels = hashtags
         self.tableView.reloadData()
+    }
+
+    func applySearchFilter() {
+        if self.searchFilter.isEmpty {
+            self.channels = allChannels
+        } else {
+            let filter = searchFilter.lowercased()
+            channels = allChannels.filter { channel in
+                return channel.name.lowercased().contains(filter)
+            }
+        }
     }
 
     // MARK: Actions
@@ -163,17 +207,41 @@ extension ChannelsViewController: TopScrollable {
     }
 }
 
-private class HashtagTableViewDataSource: NSObject, UITableViewDataSource {
+extension ChannelsViewController: UISearchResultsUpdating, UISearchBarDelegate {
 
-    var hashtags: [Hashtag] = []
+    func updateSearchResults(for searchController: UISearchController) {
+        Analytics.shared.trackDidTapSearchbar(searchBarName: "channels")
+        self.searchFilter = searchController.searchBar.text ?? ""
+    }
+
+    // These two functions are implemented to avoid a bug where the initial
+    // tap of the search bar begins editing, but first responder is immediately resigned
+    // I can't figure out why this is happening, but this is a potential solution to avoid the bug.
+    // I set a symbolic breakpoint and can't find why resignFirstResponder is being called there.
+    //
+    // first, when the edit begins, we store the date in self.searchEditBeginDate
+    // then, in searchBarShouldEndEditing, we check whether this date was extremely recent
+    // if it was too recent to be performed intentionally, we don't allow the field to end editing.
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        self.searchEditBeginDate = Date()
+        return true
+    }
+
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        let timeSinceStart = Date().timeIntervalSince(self.searchEditBeginDate)
+        return timeSinceStart > 0.4
+    }
+}
+
+extension ChannelsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.hashtags.count
+        channels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
-        let hashtag = self.hashtags[indexPath.row]
+        let hashtag = self.channels[indexPath.row]
         cell.accessoryType = .disclosureIndicator
         cell.textLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         cell.textLabel?.text = hashtag.string
@@ -195,7 +263,7 @@ extension ChannelsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         Analytics.shared.trackDidSelectItem(kindName: "channel")
-        let controller = ChannelViewController(with: self.dataSource.hashtags[indexPath.row])
+        let controller = ChannelViewController(with: channels[indexPath.row])
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

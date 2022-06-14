@@ -52,6 +52,14 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/Go-SSB</string>
+			<key>Title</key>
+			<string>Go-SSB</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/ImageSlideshow</string>
 			<key>Title</key>
 			<string>ImageSlideshow</string>
@@ -63,6 +71,14 @@
 			<string>com.mono0926.LicensePlist/KeychainSwift</string>
 			<key>Title</key>
 			<string>KeychainSwift</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/lottie-ios</string>
+			<key>Title</key>
+			<string>Lottie</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>

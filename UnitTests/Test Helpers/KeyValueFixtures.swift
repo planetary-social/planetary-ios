@@ -32,7 +32,7 @@ enum KeyValueFixtures {
                 previous: nil,
                 sequence: sequence,
                 signature: Identifier("signature"),
-                timestamp: timestamp
+                timestamp: timestamp 
             ),
             timestamp: receivedTimestamp,
             receivedSeq: receivedSeq,

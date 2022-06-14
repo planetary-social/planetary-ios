@@ -143,7 +143,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
         // present OS image picker
         // source type must be set before other options
         let controller = UIImagePickerController()
-        controller.allowsEditing = true
+//        controller.allowsEditing = true
         controller.delegate = self
         controller.sourceType = type
         if type == .camera && self.selfieMode { controller.cameraDevice = .front }

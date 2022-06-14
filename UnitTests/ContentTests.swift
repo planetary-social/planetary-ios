@@ -10,238 +10,207 @@ import XCTest
 
 class ContentTests: XCTestCase {
 
-    func test_keyValue() {
+    func test_keyValue() throws {
         let data = self.data(for: "KeyValue.json")
-        do {
-            let keyValue = try JSONDecoder().decode(KeyValue.self, from: data)
-            XCTAssertNotNil(keyValue)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let keyValue = try JSONDecoder().decode(KeyValue.self, from: data)
+        XCTAssertNotNil(keyValue)
+        XCTAssertEqual(keyValue.value.content.type, .post)
+        XCTAssertEqual(keyValue.value.content.isValid, true)
     }
     
-    func test_firstAndEnc() {
+    func test_firstAndEnc() throws {
         let data = self.data(for: "FirstAndEncrypted.json")
-        do {
-            let keyVals = try JSONDecoder().decode([KeyValue].self, from: data)
-            XCTAssertNotNil(keyVals)
-            XCTAssertTrue(keyVals.count == 2)
-            XCTAssertNil(keyVals[0].value.previous)
-            XCTAssertNotNil(keyVals[1].value.previous)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let keyVals = try JSONDecoder().decode([KeyValue].self, from: data)
+        XCTAssertNotNil(keyVals)
+        XCTAssertTrue(keyVals.count == 2)
+        XCTAssertNil(keyVals[0].value.previous)
+        XCTAssertNotNil(keyVals[1].value.previous)
+        XCTAssertEqual(keyVals[0].value.content.type, .contact)
+        XCTAssertEqual(keyVals[0].value.content.isValid, true)
     }
 
-    func test_ContentVote() {
+    func test_ContentVote() throws {
         let data = self.data(for: "ContentVote.json")
-        do {
-            let contentVote = try JSONDecoder().decode(ContentVote.self, from: data)
-            XCTAssertTrue(contentVote.type == .vote)
-            XCTAssertFalse(contentVote.vote.link.isEmpty)
-            XCTAssertTrue(contentVote.vote.value == 1)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let contentVote = try JSONDecoder().decode(ContentVote.self, from: data)
+        XCTAssertTrue(contentVote.type == .vote)
+        XCTAssertFalse(contentVote.vote.link.isEmpty)
+        XCTAssertTrue(contentVote.vote.value == 1)
     }
     
-    func test_PrivateVote() {
+    func test_PrivateVote() throws {
         let data = self.data(for: "ContentPrivate.json")
-        do {
-            let contents = try JSONDecoder().decode([Content].self, from: data)
-            for (i, c) in contents.enumerated() {
-                switch i {
-                case 0:
-                    XCTAssertTrue(c.type == .vote)
-                    XCTAssertFalse((c.vote?.vote.link.isEmpty)!)
-                    XCTAssertTrue(c.vote?.vote.value == 1)
-                    XCTAssertEqual(c.vote?.recps?.count, 5)
-                case 1:
-                    XCTAssertTrue(c.type == .post)
-                    XCTAssertEqual(c.post?.recps?.count, 3)
-                default:
-                    XCTFail("unhandled content case \(i)")
-                }
+        let contents = try JSONDecoder().decode([Content].self, from: data)
+        for (i, c) in contents.enumerated() {
+            switch i {
+            case 0:
+                XCTAssertTrue(c.type == .vote)
+                XCTAssertFalse((c.vote?.vote.link.isEmpty)!)
+                XCTAssertTrue(c.vote?.vote.value == 1)
+                XCTAssertEqual(c.vote?.recps?.count, 5)
+                XCTAssertEqual(c.isValid, true)
+            case 1:
+                XCTAssertTrue(c.type == .post)
+                XCTAssertEqual(c.post?.recps?.count, 3)
+                XCTAssertEqual(c.isValid, true)
+            default:
+                XCTFail("unhandled content case \(i)")
             }
-        } catch {
-            XCTFail("\(error)")
         }
     }
 
-    func test_KeyValueVote() {
+    func test_KeyValueVote() throws {
         let data = self.data(for: "KeyValueVote.json")
-        do {
-            let keyValue = try JSONDecoder().decode(KeyValue.self, from: data)
-            XCTAssertTrue(keyValue.value.content.type == .vote)
-            guard let vote = keyValue.value.content.vote else { XCTFail(); return }
-            XCTAssertFalse(vote.vote.link.isEmpty)
-            XCTAssertTrue(vote.vote.value == 1)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let keyValue = try JSONDecoder().decode(KeyValue.self, from: data)
+        XCTAssertTrue(keyValue.value.content.type == .vote)
+        XCTAssertEqual(keyValue.value.content.isValid, true)
+        guard let vote = keyValue.value.content.vote else { XCTFail(); return }
+        XCTAssertFalse(vote.vote.link.isEmpty)
+        XCTAssertTrue(vote.vote.value == 1)
     }
     
-    func test_KeyValueFeed() {
+    func test_KeyValueFeed() throws {
         let data = self.data(for: "Feed_cryptix2.json")
-        do {
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
-            XCTAssertNotNil(msgs)
-            XCTAssertEqual(msgs.count, 961)
-            for m in msgs {
-                XCTAssertNotNil(m.value.content.type)
-                if m.value.content.type == .unknown {
-                    XCTAssertEqual(m.value.content.typeString, "xxx-encrypted",
-                    "encrypted msg \(m.value.sequence) (\(m.key)) not marked as such")
-                }
+        let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+        XCTAssertNotNil(msgs)
+        XCTAssertEqual(msgs.count, 961)
+        for m in msgs {
+            XCTAssertNotNil(m.value.content.type)
+            if m.value.content.type == .unknown {
+                XCTAssertEqual(m.value.content.typeString, "xxx-encrypted",
+                "encrypted msg \(m.value.sequence) (\(m.key)) not marked as such")
             }
-        } catch {
-            XCTFail("\(error)")
         }
     }
 
-    func test_contacts() {
+    func test_contacts() throws {
         let data = self.data(for: "Contacts.json")
-        do {
-            let contacts = try JSONDecoder().decode([Content].self, from: data)
-            XCTAssertNotNil(contacts)
-            XCTAssertTrue(contacts.count == 4)
-            for c in contacts {
-                XCTAssertTrue(c.type == .contact)
-                XCTAssertTrue(c.isValid)
-                XCTAssertTrue(c.typeString == "contact")
-                XCTAssertNotNil(c.contact)
-                XCTAssertTrue(c.contact?.contact == "@URSb7GMTxPuEygB3956QXsaYELO2rMoSvj0GdVTnrIw=.ed25519")
-            }
-            XCTAssertTrue((contacts[0].contact?.blocking)!)
-            XCTAssertTrue((contacts[1].contact?.blocking)!)
-            XCTAssertTrue((contacts[2].contact?.following)!)
-            XCTAssertTrue((contacts[3].contact?.following)!)
-        } catch {
-            XCTFail("\(error)")
+        let contacts = try JSONDecoder().decode([Content].self, from: data)
+        XCTAssertNotNil(contacts)
+        XCTAssertTrue(contacts.count == 4)
+        for c in contacts {
+            XCTAssertTrue(c.type == .contact)
+            XCTAssertTrue(c.isValid)
+            XCTAssertTrue(c.typeString == "contact")
+            XCTAssertNotNil(c.contact)
+            XCTAssertTrue(c.contact?.contact == "@URSb7GMTxPuEygB3956QXsaYELO2rMoSvj0GdVTnrIw=.ed25519")
         }
+        XCTAssertTrue((contacts[0].contact?.blocking)!)
+        XCTAssertTrue((contacts[1].contact?.blocking)!)
+        XCTAssertTrue((contacts[2].contact?.following)!)
+        XCTAssertTrue((contacts[3].contact?.following)!)
     }
     
-    func test_abouts() {
+    func test_abouts() throws {
         let data = self.data(for: "Abouts.json")
-        do {
-            let contents = try JSONDecoder().decode([Content].self, from: data)
-            XCTAssertNotNil(contents)
-            XCTAssertEqual(contents.count, 9)
-            for content in contents {
-                XCTAssertTrue(content.type == .about)
-                XCTAssertTrue(content.isValid)
-                XCTAssertTrue(content.typeString == "about")
-                XCTAssertNotNil(content.about)
-            }
-            // these are about all kinds of things.
-            // TODO: group them and make sure the decoding is deep enough
-        } catch {
-            XCTFail("\(error)")
+        let contents = try JSONDecoder().decode([Content].self, from: data)
+        XCTAssertNotNil(contents)
+        XCTAssertEqual(contents.count, 9)
+        for content in contents {
+            XCTAssertTrue(content.type == .about)
+            XCTAssertTrue(content.isValid)
+            XCTAssertTrue(content.typeString == "about")
+            XCTAssertNotNil(content.about)
         }
+        // these are about all kinds of things.
+        // TODO: group them and make sure the decoding is deep enough
     }
 
-    func test_invalidVote() {
+    func test_invalidVote() throws {
         let data = self.data(for: "InvalidVoteMissingIdentifier.json")
-        do {
-            var i = 0
-            for content in try JSONDecoder().decode([Content].self, from: data) {
-                XCTAssertFalse(content.isValid)
-                XCTAssertNotNil(content.contentException)
-                i += 1
-            }
-        } catch {
-            XCTFail("\(error)")
+        var i = 0
+        for content in try JSONDecoder().decode([Content].self, from: data) {
+            XCTAssertFalse(content.isValid)
+            XCTAssertNotNil(content.contentException)
+            i += 1
         }
     }
 
-    func test_post() {
+    func test_post() throws {
         let data = self.data(for: "PostBranchField.json")
-        do {
-            let content = try JSONDecoder().decode(Content.self, from: data)
-            XCTAssertTrue(content.type == .post)
-            XCTAssertTrue(content.isValid)
-            guard let post = content.post else { XCTFail(); return }
-            XCTAssertNotNil(post.root)
-            XCTAssertNotNil(post.branch)
-            XCTAssertTrue(post.branch?.count == 1)
-            XCTAssertNotNil(post.mentions)
-            XCTAssertTrue((post.mentions?.count ?? 0) > 0)
-            XCTAssertNil(post.recps)
-            XCTAssertNotNil(post.reply)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let content = try JSONDecoder().decode(Content.self, from: data)
+        XCTAssertTrue(content.type == .post)
+        XCTAssertTrue(content.isValid)
+        guard let post = content.post else { XCTFail(); return }
+        XCTAssertNotNil(post.root)
+        XCTAssertNotNil(post.branch)
+        XCTAssertTrue(post.branch?.count == 1)
+        XCTAssertNotNil(post.mentions)
+        XCTAssertTrue((post.mentions?.count ?? 0) > 0)
+        XCTAssertNil(post.recps)
+        XCTAssertNotNil(post.reply)
     }
 
-    func test_postBranchArray() {
+    func test_postBranchArray() throws {
         let data = self.data(for: "PostBranchArray.json")
-        do {
-            let content = try JSONDecoder().decode(Content.self, from: data)
-            XCTAssertTrue(content.type == .post)
-            XCTAssertTrue(content.isValid)
-            guard let post = content.post else { XCTFail(); return }
-            XCTAssertNotNil(post.root)
-            XCTAssertNotNil(post.branch)
-            XCTAssertTrue(post.branch?.count == 2)
-            XCTAssertNotNil(post.mentions)
-            XCTAssertTrue((post.mentions?.count ?? 0) > 0)
-            XCTAssertNil(post.recps)
-            XCTAssertNotNil(post.reply)
-        } catch {
-            XCTFail("\(error)")
+        let content = try JSONDecoder().decode(Content.self, from: data)
+        XCTAssertTrue(content.type == .post)
+        XCTAssertTrue(content.isValid)
+        guard let post = content.post else { XCTFail(); return }
+        XCTAssertNotNil(post.root)
+        XCTAssertNotNil(post.branch)
+        XCTAssertTrue(post.branch?.count == 2)
+        XCTAssertNotNil(post.mentions)
+        XCTAssertTrue((post.mentions?.count ?? 0) > 0)
+        XCTAssertNil(post.recps)
+        XCTAssertNotNil(post.reply)
+    }
+    
+    func test_postMentionsBlob() throws {
+        let data = self.data(for: "PostMentionsBlob.json")
+        let value = try JSONDecoder().decode(Value.self, from: data)
+        let content = value.content
+        XCTAssertEqual(content.type, .post)
+        XCTAssertEqual(content.typeString, "post")
+        XCTAssertEqual(content.isValid, true)
+        XCTAssertNil(content.about)
+        XCTAssertNil(content.contact)
+        XCTAssertNil(content.vote)
+        
+        XCTAssertNotNil(content.post)
+        guard let p = content.post else { return }
+
+        XCTAssertTrue(p.hasBlobs)
+        guard let b = p.mentions?.asBlobs().first else { return }
+        
+        XCTAssertEqual(b.identifier, "&JWofdARjh61uDtdUl5ivwYEPJ4T9TWMyztpgPlgkgek=.sha256")
+        XCTAssertEqual(b.name, "1614434_10206454331651096_887999461891506870_o.jpg")
+        XCTAssertEqual(b.metadata?.numberOfBytes, 67_654)
+        XCTAssertEqual(b.metadata?.dimensions?.height, 440)
+        XCTAssertEqual(b.metadata?.dimensions?.width, 1_024)
+        XCTAssertEqual(b.metadata?.mimeType, "image/jpeg")
+    }
+
+    func test_postMentionsWithAndWithoutname() throws {
+        let data = self.data(for: "PostsWithMentions.json")
+        let posts = try JSONDecoder().decode([Post].self, from: data)
+        guard posts.count == 2 else { XCTFail(); return }
+
+        for (i, p) in posts.enumerated() {
+            guard let m = p.mentions else { XCTFail(); return }
+
+            guard m.count == 1 else { XCTFail(); return }
+
+            switch i {
+            case 0:
+                XCTAssertEqual("some1", m[0].name)
+            case 1:
+                XCTAssertNil(m[0].name)
+            default: XCTFail("unhandled case: \(i)")
+            }
         }
     }
     
-    func test_postMentionsBlob() {
-        let data = self.data(for: "PostMentionsBlob.json")
-        do {
-            let value = try JSONDecoder().decode(Value.self, from: data)
-            let content = value.content
-            XCTAssertEqual(content.type, .post)
-            XCTAssertEqual(content.typeString, "post")
-            XCTAssertNil(content.about)
-            XCTAssertNil(content.contact)
-            XCTAssertNil(content.vote)
-            
-            XCTAssertNotNil(content.post)
-            guard let p = content.post else { return }
-
-            XCTAssertTrue(p.hasBlobs)
-            guard let b = p.mentions?.asBlobs().first else { return }
-            
-            XCTAssertEqual(b.identifier, "&JWofdARjh61uDtdUl5ivwYEPJ4T9TWMyztpgPlgkgek=.sha256")
-            XCTAssertEqual(b.name, "1614434_10206454331651096_887999461891506870_o.jpg")
-            XCTAssertEqual(b.metadata?.numberOfBytes, 67_654)
-            XCTAssertEqual(b.metadata?.dimensions?.height, 440)
-            XCTAssertEqual(b.metadata?.dimensions?.width, 1_024)
-            XCTAssertEqual(b.metadata?.mimeType, "image/jpeg")
-        } catch {
-            XCTFail("\(error)")
-        }
-    }
-
-    func test_postMentionsWithAndWithoutname() {
-        let data = self.data(for: "PostsWithMentions.json")
-        do {
-            let posts = try JSONDecoder().decode([Post].self, from: data)
-            guard posts.count == 2 else { XCTFail(); return }
-
-            for (i, p) in posts.enumerated() {
-                guard let m = p.mentions else { XCTFail(); return }
-
-                guard m.count == 1 else { XCTFail(); return }
-
-                switch i {
-                case 0:
-                    XCTAssertEqual("some1", m[0].name)
-                case 1:
-                    XCTAssertNil(m[0].name)
-                default: XCTFail("unhandled case: \(i)")
-                }
-            }
-        } catch {
-            XCTFail("\(error)")
-        }
+    func testPubParsing() throws {
+        let data = self.data(for: "Pub.json")
+        let msg = try JSONDecoder().decode(KeyValue.self, from: data)
+        XCTAssertEqual(msg.value.content.type, .pub)
+        XCTAssertEqual(msg.value.content.isValid, true)
+        XCTAssertEqual(msg.value.content.contentException, nil)
+        let pub = try XCTUnwrap(msg.value.content.pub)
+        XCTAssertEqual(pub.address.key, "@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519")
+        XCTAssertEqual(pub.address.host, "two.planetary.pub")
+        XCTAssertEqual(pub.address.port, 8008)
+        XCTAssertEqual(pub.address.multiserver.string, "net:two.planetary.pub:8008~shs:7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=")
     }
 
     // TODO need to confirm string content to ensure everything was captured
@@ -278,7 +247,7 @@ class ContentTests: XCTestCase {
     
     // TODO https://app.asana.com/0/914798787098068/1154472587426507/f
     // TODO improve String.blobSubstringsAndRanges() to support alt text
-    func test_postWithBlobAltText() {
+    func test_postWithBlobAltText() throws {
         /*     a post by cel:  %qBZw41oHFPCmtY6VEY1Qh70zliWnNRliRVskWfJtmd4=.sha256
  containing text in this from ![]($blob "alt text..")
  
@@ -290,32 +259,28 @@ class ContentTests: XCTestCase {
  */
 
         let data = self.data(for: "PostWithAltText.json")
-        do {
-            let kv = try JSONDecoder().decode(KeyValue.self, from: data)
-            let content = kv.value.content
-            XCTAssertEqual(content.type, .post)
-            XCTAssertEqual(content.typeString, "post")
-            XCTAssertNil(content.about)
-            XCTAssertNil(content.contact)
-            XCTAssertNil(content.vote)
-            
-            XCTAssertNotNil(content.post)
-            guard let p = content.post else { return }
-            
-            // fill blobs
-//            let _ = p.attributedString
-
-            XCTAssertTrue(p.hasBlobs)
-            guard let b = p.mentions?.asBlobs().first else { return }
-            
-            XCTAssertEqual(b.identifier, "&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256")
-            XCTAssertEqual(b.name, "we-must-get-back-to-oakland-at-once.jpg")
-            
-            // one could argue that the alt text is the better inline description but one step at a time?
-//            XCTAssertEqual(content.post!.blobs!.first!.name, "We must get back to Oakland at once!")
-        } catch {
-            XCTFail("\(error)")
-        }
+        let kv = try JSONDecoder().decode(KeyValue.self, from: data)
+        let content = kv.value.content
+        XCTAssertEqual(content.type, .post)
+        XCTAssertEqual(content.typeString, "post")
+        XCTAssertNil(content.about)
+        XCTAssertNil(content.contact)
+        XCTAssertNil(content.vote)
+        
+        XCTAssertNotNil(content.post)
+        guard let p = content.post else { return }
+        
+        // fill blobs
+        //            let _ = p.attributedString
+        
+        XCTAssertTrue(p.hasBlobs)
+        guard let b = p.mentions?.asBlobs().first else { return }
+        
+        XCTAssertEqual(b.identifier, "&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256")
+        XCTAssertEqual(b.name, "we-must-get-back-to-oakland-at-once.jpg")
+        
+        // one could argue that the alt text is the better inline description but one step at a time?
+        //            XCTAssertEqual(content.post!.blobs!.first!.name, "We must get back to Oakland at once!")
     }
 
     func test_postWithHashtagEncode() {
@@ -339,72 +304,53 @@ class ContentTests: XCTestCase {
         XCTAssertTrue(s.contains("{\"link\":\"#helloWorld\"}"))
     }
     
-    func test_postWithHashtagDecode() {
+    func test_postWithHashtagDecode() throws {
         let data = self.data(for: "PostWithHashtags.json")
-        do {
-            let content = try JSONDecoder().decode(Content.self, from: data)
-            XCTAssertTrue(content.type == .post)
-            XCTAssertTrue(content.isValid)
-            guard let post = content.post else { XCTFail(); return }
-            guard let tags = post.mentions?.asHashtags() else { XCTFail(); return }
-            XCTAssertEqual(tags.count, 2)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let content = try JSONDecoder().decode(Content.self, from: data)
+        XCTAssertTrue(content.type == .post)
+        XCTAssertTrue(content.isValid)
+        guard let post = content.post else { XCTFail(); return }
+        guard let tags = post.mentions?.asHashtags() else { XCTFail(); return }
+        XCTAssertEqual(tags.count, 2)
     }
     
-    func test_ValueTimestamp() {
+    func test_ValueTimestamp() throws {
         let data = self.data(for: "ValueTimestamp.json")
-        do {
-            let val = try JSONDecoder().decode(Value.self, from: data)
-            XCTAssertTrue(val.content.type == .vote)
-            XCTAssertEqual(val.timestamp, 1_573_673_656_588.015_9)
-            let kv = KeyValue(key: "%test.msg", value: val, timestamp: 0)
-            XCTAssertEqual(kv.userDate, Date(timeIntervalSince1970: 1_573_673_656.588_015_9))
-        } catch {
-            XCTFail("\(error)")
-        }
+        let val = try JSONDecoder().decode(Value.self, from: data)
+        XCTAssertTrue(val.content.type == .vote)
+        XCTAssertEqual(val.timestamp, 1_573_673_656_588.015_9)
+        let kv = KeyValue(key: "%test.msg", value: val, timestamp: 0)
+        XCTAssertEqual(kv.userDate, Date(timeIntervalSince1970: 1_573_673_656.588_015_9))
     }
 
     func test_invalidJSON() {
         let data = self.data(for: "Invalid.json")
-        do {
-            _ = try JSONDecoder().decode(Content.self, from: data)
-            XCTFail("data is not valid JSON")
-        } catch {
-            XCTAssertNotNil(error)
-        }
+        XCTAssertThrowsError(try JSONDecoder().decode(Content.self, from: data))
     }
 
-    func test_unsupportedBlob() {
+    func test_unsupportedBlob() throws {
         let data = self.data(for: "UnsupportedBlob.json")
-        do {
-            let content = try JSONDecoder().decode(Content.self, from: data)
-            XCTAssertEqual(content.type, .unsupported)
-            XCTAssertEqual(content.typeString, "Invalid JSON")
-            XCTAssertNil(content.about)
-            XCTAssertNil(content.contact)
-            XCTAssertNil(content.post)
-            XCTAssertNil(content.vote)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let content = try JSONDecoder().decode(Content.self, from: data)
+        XCTAssertEqual(content.type, .unsupported)
+        XCTAssertEqual(content.isValid, false)
+        XCTAssertEqual(content.typeString, "Invalid JSON")
+        XCTAssertNil(content.about)
+        XCTAssertNil(content.contact)
+        XCTAssertNil(content.post)
+        XCTAssertNil(content.vote)
     }
 
-    func test_unsupportedType() {
+    func test_unsupportedType() throws {
         let data = self.data(for: "UnsupportedType.json")
-        do {
-            let content = try JSONDecoder().decode(Content.self, from: data)
-            XCTAssertEqual(content.type, .unsupported)
-            XCTAssertNotNil(content.typeException)
-            XCTAssertEqual(content.typeString, "garbage")
-            XCTAssertNil(content.about)
-            XCTAssertNil(content.contact)
-            XCTAssertNil(content.post)
-            XCTAssertNil(content.vote)
-        } catch {
-            XCTFail("\(error)")
-        }
+        let content = try JSONDecoder().decode(Content.self, from: data)
+        XCTAssertEqual(content.type, .unsupported)
+        XCTAssertEqual(content.isValid, false)
+        XCTAssertNotNil(content.typeException)
+        XCTAssertEqual(content.typeString, "garbage")
+        XCTAssertNil(content.about)
+        XCTAssertNil(content.contact)
+        XCTAssertNil(content.post)
+        XCTAssertNil(content.vote)
     }
 
     /// IMPORTANT!
@@ -414,51 +360,54 @@ class ContentTests: XCTestCase {
     /// is intentional.  Do not add a `default` case, add the new
     /// type with an encode test or add to the SHOULD NOTE ENCODE
     /// clause.
-    func test_ContentCodable() {
-
-        do {
-            try ContentType.allCases.forEach {
-                switch $0 {
-
-                    case .about:
-                        let data = try About(about: .testIdentity, name: "test").encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-                        break
-
-                    case .contact:
-                        let data = try Contact(contact: .testIdentity, blocking: true).encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-                        break
+    func test_ContentCodable() throws {
+        
+        try ContentType.allCases.forEach {
+            switch $0 {
+                
+            case .about:
+                let data = try About(about: .testIdentity, name: "test").encodeToData()
+                let content = try? JSONDecoder().decode(Content.self, from: data)
+                XCTAssertTrue(content?.assertValid() ?? false)
+                break
+                
+            case .contact:
+                let data = try Contact(contact: .testIdentity, blocking: true).encodeToData()
+                let content = try? JSONDecoder().decode(Content.self, from: data)
+                XCTAssertTrue(content?.assertValid() ?? false)
+                break
+                
                     
-                    case .dropContentRequest:
-                        let fakeHash = "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.ggfeed-v1"
-                        let data = try DropContentRequest(sequence: 1, hash: fakeHash).encodeToData()
-                        let content = try? JSONDecoder().decode(DropContentRequest.self, from: data)
-//                        XCTAssertTrue(content?.assertValid() ?? false)
-                        XCTAssertNotNil(content)
-                        XCTAssertEqual(content?.sequence, 1)
-                        XCTAssertEqual(content?.hash, fakeHash)
-                        break
-
-                    case .post:
-                        let data = try Post(text: "this is a test").encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-                        break
-
-                    case .vote:
-                        let data = try ContentVote(link: .testLink, value: 1).encodeToData()
-                        let content = try? JSONDecoder().decode(Content.self, from: data)
-                        XCTAssertTrue(content?.assertValid() ?? false)
-
-                    // models that SHOULD NOT be encoded
-                    case .pub, .address, .unknown, .unsupported: break
-                }
+            case .dropContentRequest:
+                let fakeHash = "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.ggfeed-v1"
+                let data = try DropContentRequest(sequence: 1, hash: fakeHash).encodeToData()
+                let content = try? JSONDecoder().decode(DropContentRequest.self, from: data)
+                //                        XCTAssertTrue(content?.assertValid() ?? false)
+                XCTAssertNotNil(content)
+                XCTAssertEqual(content?.sequence, 1)
+                XCTAssertEqual(content?.hash, fakeHash)
+                break
+                
+            case .post:
+                let data = try Post(text: "this is a test").encodeToData()
+                let content = try? JSONDecoder().decode(Content.self, from: data)
+                XCTAssertTrue(content?.assertValid() ?? false)
+                break
+                
+            case .vote:
+                let data = try ContentVote(
+                        link: .testLink,
+                        value: 1,
+                        expression: nil,
+                        root: "1",
+                        branches: ["1"]
+                    ).encodeToData()
+                let content = try? JSONDecoder().decode(Content.self, from: data)
+                XCTAssertTrue(content?.assertValid() ?? false)
+                
+                // models that SHOULD NOT be encoded
+            case .pub, .address, .unknown, .unsupported: break
             }
-        } catch {
-            XCTFail()
         }
     }
 }

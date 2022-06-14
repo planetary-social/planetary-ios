@@ -42,7 +42,10 @@ extension BotStatistics {
         }
 
         if db.lastReceivedMessage != -3 {
-            statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: db.lastReceivedMessage)
+            statistics.database = Analytics.DatabaseStatistics(
+                lastReceivedMessage: db.lastReceivedMessage,
+                messageCount: db.messageCount
+            )
         }
 
         statistics.peer = Analytics.PeerStatistics(peers: peer.count,
@@ -52,6 +55,7 @@ extension BotStatistics {
     }
 }
 
+/// Statistics for the go-ssb log
 struct RepoStatistics: Equatable {
 
     /// Path to the repo
@@ -60,7 +64,7 @@ struct RepoStatistics: Equatable {
     /// Number of feeds in the repo
     let feedCount: Int
 
-    /// Total number of messages
+    /// Total number of messages in Badger
     let messageCount: Int
 
     /// Number of messages published by the user
@@ -82,12 +86,16 @@ struct RepoStatistics: Equatable {
     }
 }
 
+/// Statistics for the SQLite database
 struct DatabaseStatistics: Equatable {
 
     let lastReceivedMessage: Int
+    
+    let messageCount: Int
 
-    init(lastReceivedMessage: Int = -2) {
+    init(lastReceivedMessage: Int = -2, messageCount: Int = 0) {
         self.lastReceivedMessage = lastReceivedMessage
+        self.messageCount = messageCount
     }
 }
 

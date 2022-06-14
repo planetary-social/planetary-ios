@@ -46,44 +46,29 @@ class ContactReplyView: KeyValueView {
         Layout.fillSouth(of: degrade, with: bottomSeparator)
         bottomSeparator.pinBottomToSuperviewBottom()
 
-        self.isSkeletonable = true
+        isSkeletonable = true
     }
 
     required init?(coder aDecoder: NSCoder) {
         nil
     }
 
+    override func reset() {
+        super.reset()
+        self.contactView.reset()
+        self.degrade.heightConstraint?.constant = 0
+    }
+
     override func update(with keyValue: KeyValue) {
         self.contactView.update(with: keyValue)
-        self.degrade.heightConstraint?.constant = 0
     }
 }
 
 extension ContactReplyView {
 
     /// Returns a CGFloat suitable to be used as a `UITableView.estimatedRowHeight` or
-    /// `UITableViewDelegate.estimatedRowHeightAtIndexPath()`.  If the specified
-    /// `KeyValue` has images, height for the `GalleryView` is included.  If there are replies
-    /// height for the `RepliesView` is added.  This does require some knowledge of the heights
-    /// for the various subviews, but this needs to be a very fast call so no complicated calculations
-    /// should be done.  Instead, some magic numbers are used based on the various constraints.
+    /// `UITableViewDelegate.estimatedRowHeightAtIndexPath()`.
     static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
-        // starting height based for all non-zero height subviews
-        // header + text + reply box
-        var height = CGFloat(700)
-        guard let post = keyValue.value.content.post else { return height }
-
-        // add gallery view if necessary
-        // note that gallery view is square so likely the same
-        // as the width of the superview
-        if post.hasBlobs { height += superview.bounds.size.width }
-
-        // add replies view if necessary
-        // swiftlint:disable empty_count
-        if keyValue.metadata.replies.count > 0 { height += 35 }
-        // swiftlint:enable empty_count
-
-        // done
-        return height
+        158
     }
 }
