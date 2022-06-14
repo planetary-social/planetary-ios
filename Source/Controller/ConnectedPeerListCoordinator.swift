@@ -110,13 +110,20 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             .store(in: &self.cancellables)
         
         // Wire up recentlyDownloadedPostCount and recentlyDownloadedDuration to the statistics
-        statisticsPublisher
+        Timer.publish(every: 1, on: .main, in: .default)
+            .autoconnect()
+            .receive(on: DispatchQueue(label: "recentlyDownloadedPosts", qos: .userInteractive))
+            .flatMap(maxPublishers: .max(1)) { _ in
+                Just(self.bot.recentlyDownloadedPostData())
+            }
             .receive(on: RunLoop.main)
-            .sink(receiveValue: { statistics in
-                self.recentlyDownloadedPostCount = statistics.recentlyDownloadedPostCount
-                self.recentlyDownloadedPostDuration = statistics.recentlyDownloadedPostDuration
+            .sink(receiveValue: { (postData: (Int, Int)) -> Void in
+                let (postCount, duration) = postData
+                self.recentlyDownloadedPostCount = postCount
+                self.recentlyDownloadedPostDuration = duration
             })
-            .store(in: &cancellables)
+            .store(in: &self.cancellables)
+        
     }
     
     private func unsubscribeFromBotStatistics() {

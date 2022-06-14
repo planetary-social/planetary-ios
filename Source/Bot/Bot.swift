@@ -235,6 +235,8 @@ protocol Bot: AnyObject {
 
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion)
     
+    func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int)
+    
     func lastReceivedTimestam() throws -> Double
     
     // MARK: Preloading
