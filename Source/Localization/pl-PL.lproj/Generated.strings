@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Ojejku";
@@ -39,7 +38,7 @@
 "Text.userDirectoryMessage" = "Obecność w katalogu użytkowników oznacza, że będzie można Cię znaleźć znając Twoją nazwę, krótki kod, lub numer telefonu.";
 "Text.sendAnalytics" = "Wyślij statystyki do Planetary";
 "Text.dontSendAnalytics" = "Nie wysyłaj żadnych statystyk";
-"Text.analyticsMessage" = "Chcielibyśmy gromadzić anonimowe statystyki dotyczące korzystania z aplikacji (oraz raporty o awariach, gdy coś pójdzie nie tak), wyłącznie w celu ulepszania aplikacji.";
+"Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "Planetary szuka aktualności\nw rozproszonej sieci bezpośredniej.";
 "Text.post" = "Post";
 "Text.preview" = "Podgąd";
