@@ -463,22 +463,6 @@ class ViewDatabaseTests: XCTestCase {
         }
     }
 
-    func test60_hashtag_names() {
-        do {
-            let hashtags = try self.vdb.hashtags()
-            XCTAssertEqual(hashtags.count, 3)
-            if hashtags.count != 3 {
-                return
-            }
-            // These are shown chronologically
-            XCTAssertEqual(hashtags[0].name, "hello")
-            XCTAssertEqual(hashtags[1].name, "world")
-            XCTAssertEqual(hashtags[2].name, "hashtag")
-        } catch {
-            XCTFail("\(error)")
-        }
-    }
-
     func test61_channel_messages() {
         do {
             let lMsgs = try self.vdb.messagesForHashtag(name: "hashtag")

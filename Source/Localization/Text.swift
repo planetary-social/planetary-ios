@@ -450,7 +450,6 @@ extension Text {
     enum Channel: String, Localizable, CaseIterable {
         case one = "channel"
         case many = "channels"
-        case lastUpdated = "last updated"
     }
 }
 
