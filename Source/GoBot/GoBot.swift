@@ -111,16 +111,20 @@ class GoBot: Bot {
             autoreleaseFrequency: .workItem,
             target: nil
         )
-        self.userInitiatedQueue = DispatchQueue(label: "GoBot-userInitiated",
-                                                qos: .userInitiated,
-                                                attributes: .concurrent,
-                                                autoreleaseFrequency: .workItem,
-                                                target: nil)
-        self.serialQueue = DispatchQueue(label: "GoBot-statistics",
-                                                qos: .userInitiated,
-                                                attributes: [],
-                                                autoreleaseFrequency: .workItem,
-                                                target: nil)
+        self.userInitiatedQueue = DispatchQueue(
+            label: "GoBot-userInitiated",
+            qos: .userInitiated,
+            attributes: .concurrent,
+            autoreleaseFrequency: .workItem,
+            target: nil
+        )
+        self.serialQueue = DispatchQueue(
+            label: "GoBot-statistics",
+            qos: .userInitiated,
+            attributes: [],
+            autoreleaseFrequency: .workItem,
+            target: nil
+        )
         self.bot = GoBotInternal(self.userInitiatedQueue)
     }
 
@@ -182,11 +186,7 @@ class GoBot: Bot {
         completion(secret, nil)
     }
     
-    func login(
-        queue: DispatchQueue,
-        config: AppConfiguration,
-        completion: @escaping ErrorCompletion
-    ) {
+    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
         guard let network = config.network else {
             queue.async { completion(BotError.invalidAppConfiguration) }
             return
@@ -530,7 +530,6 @@ class GoBot: Bot {
             // https://github.com/planetary-social/planetary-ios/issues/272
             star.testConnection { connectionSuccessful in
                 guard connectionSuccessful else {
-                    // TODO: make better error message
                     completion(GoBotError.unexpectedFault("Could not connect to Star."))
                     return
                 }
@@ -747,7 +746,6 @@ class GoBot: Bot {
             numberOfMessagesInRepo: self._statistics.repo.messageCount
         )
 
-        // TODO: maybe make an enum for all these errors?
         let (worked, maybeReport) = self.bot.fsckAndRepair()
         guard worked else {
             return (repair, GoBotError.unexpectedFault("[constraint violation] failed to heal gobot repository"))
@@ -1378,15 +1376,14 @@ class GoBot: Bot {
         userInitiatedQueue.async {
             do {
                 let messages = try self.database.mentions(limit: 1000)
-                let p = StaticDataProxy(with: messages)
-                DispatchQueue.main.async { completion(p, nil) }
+                let proxy = StaticDataProxy(with: messages)
+                DispatchQueue.main.async { completion(proxy, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
     }
 
-    // TODO consider a different form that returns a tuple of arrays
     func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
         userInitiatedQueue.async {
             do {
@@ -1486,8 +1483,7 @@ class GoBot: Bot {
                 numberOfPublishedMessages: ownMessages,
                 lastHash: counts?.lastHash ?? ""
             )
-            
-            
+
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()
             
