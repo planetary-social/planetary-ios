@@ -123,7 +123,6 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
                 self.recentlyDownloadedPostDuration = duration
             })
             .store(in: &self.cancellables)
-        
     }
     
     private func unsubscribeFromBotStatistics() {
