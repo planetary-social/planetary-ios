@@ -12,6 +12,13 @@ import Analytics
 import CrashReporting
 
 class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
+    
+    enum Section: Int, CaseIterable {
+        case communityPubs, users, messages, network
+    }
+    
+    static let defaultSections = [Section.communityPubs, Section.network]
+    var activeSections = defaultSections
 
     // unfiltered collection
     private var allPeople = [About]() {
@@ -33,6 +40,8 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             applySearchFilter()
         }
     }
+    
+    private var showUnknownFeedCell = false
     
     private let communityPubs = AppConfiguration.current?.communityPubs ?? []
     private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
@@ -105,6 +114,8 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     }
 
     func applySearchFilter() {
+        showUnknownFeedCell = false
+        
         if self.searchFilter.isEmpty {
             self.people = allPeople.filter { person in
                 !self.communityPubIdentities.contains(person.identity)
@@ -115,6 +126,18 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
                 let containsName = about.name?.lowercased().contains(filter) ?? false
                 let containsIdentity = about.identity.lowercased().contains(filter)
                 return containsName || containsIdentity
+            }
+            
+            if people.isEmpty {
+                let feedIdentifier: FeedIdentifier = searchFilter
+                if feedIdentifier.isValidIdentifier && feedIdentifier.sigil == .feed {
+                    activeSections = [.users]
+                    showUnknownFeedCell = true
+                    tableView.reloadData()
+                } else {
+                    activeSections = Self.defaultSections
+                    tableView.reloadData()
+                }
             }
         }
     }
@@ -166,27 +189,44 @@ extension DirectoryViewController: TopScrollable {
 extension DirectoryViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        searchFilter.isEmpty ? 2 : 1
+        activeSections.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0 && searchFilter.isEmpty {
+        let section = activeSections[section]
+        
+        switch section {
+        case .communityPubs:
             return Text.pubServers.text
-        } else {
+        case .users:
+            return "Users"
+        case .messages:
+            return "Messages"
+        case .network:
             return Text.usersInYourNetwork.text
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 && searchFilter.isEmpty {
-            return communityPubs.count
-        } else {
-            return self.people.count
+        let section = activeSections[section]
+        
+        switch section {
+        case .communityPubs:
+            return searchFilter.isEmpty ? communityPubs.count : 0
+        case .users:
+            return showUnknownFeedCell ? 1 : 0
+        case .messages:
+            return 0
+        case .network:
+            return people.count
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 && searchFilter.isEmpty {
+        let section = activeSections[indexPath.section]
+        
+        switch section {
+        case .communityPubs:
             let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
             let star = communityPubs[indexPath.row]
             if let about = self.allPeople.first(where: { $0.identity == star.feed }) {
@@ -195,7 +235,15 @@ extension DirectoryViewController: UITableViewDataSource {
                 cell.communityView.update(with: star, about: nil)
             }
             return cell
-        } else {
+        case .users:
+            let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+            cell.aboutView.update(with: searchFilter, about: nil)
+            return cell
+        case .messages:
+            // TODO:
+            return UITableViewCell()
+        case .network:
+            // Users in Your Network
             let about = self.people[indexPath.row]
             let isCommunity = communityPubIdentities.contains(about.identity)
             if isCommunity {
@@ -217,13 +265,22 @@ extension DirectoryViewController: UITableViewDataSource {
 extension DirectoryViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 && searchFilter.isEmpty {
+        let section = activeSections[indexPath.section]
+        
+        switch section {
+        case .communityPubs:
             let star = communityPubs[indexPath.row]
             let controller = AboutViewController(with: star.feed)
             self.navigationController?.pushViewController(controller, animated: true)
-        } else {
-            let about = self.people[indexPath.row]
-            let controller = AboutViewController(with: about)
+        case .users:
+            let identity = searchFilter
+            let controller = AboutViewController(with: identity)
+            self.navigationController?.pushViewController(controller, animated: true)
+        case .messages:
+            // TODO:
+            return
+        case .network:
+            let controller = AboutViewController(with: self.people[indexPath.row])
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
