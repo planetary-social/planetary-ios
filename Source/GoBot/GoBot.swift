@@ -448,7 +448,7 @@ class GoBot: Bot {
         completion: @escaping SyncCompletion
     ) {
         self._isSyncing = false
-        serialQueue.sync {
+        serialQueue.async {
             self._statistics.lastSyncDate = Date()
             self._statistics.lastSyncDuration = elapsed
         }
@@ -513,7 +513,7 @@ class GoBot: Bot {
         completion: @escaping RefreshCompletion
     ) {
         self._isRefreshing = false
-        serialQueue.sync {
+        serialQueue.async {
             self._statistics.lastRefreshDate = Date()
             self._statistics.lastRefreshDuration = elapsed
         }
@@ -1497,14 +1497,9 @@ class GoBot: Bot {
                 open: openConnections
             )
             
-            self._statistics.recentlyDownloadedPostDuration = 15 // minutes
-            do {
-                self._statistics.recentlyDownloadedPostCount = try self.database.receivedMessageCount(
-                    since: Date(timeIntervalSinceNow: Double(self._statistics.recentlyDownloadedPostDuration) * -60)
-                )
-            } catch {
-                Log.optional(error)
-            }
+            let (recentlyDownloadedPostCount, recentlyDownloadedPostDuration) = self.recentlyDownloadedPostData()
+            self._statistics.recentlyDownloadedPostCount = recentlyDownloadedPostCount
+            self._statistics.recentlyDownloadedPostDuration = recentlyDownloadedPostDuration
             
             let sqliteMessageCount = (try? self.database.messageCount()) ?? 0
             self._statistics.db = DatabaseStatistics(
@@ -1518,6 +1513,18 @@ class GoBot: Bot {
             }
             Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
+    }
+    
+    func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
+        let recentlyDownloadedPostDuration = 15 // minutes
+        var recentlyDownloadedPostCount = 0
+        do {
+            let startDate = Date(timeIntervalSinceNow: Double(recentlyDownloadedPostDuration) * -60)
+            recentlyDownloadedPostCount = try self.database.receivedMessageCount(since: startDate)
+        } catch {
+            Log.optional(error)
+        }
+        return (recentlyDownloadedPostCount, recentlyDownloadedPostDuration)
     }
     
     /// Saves the number of published messages to the AppConfiguration. Used for forked feed protection.
