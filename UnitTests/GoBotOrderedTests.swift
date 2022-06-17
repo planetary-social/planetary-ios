@@ -1012,8 +1012,7 @@ class GoBotOrderedTests: XCTestCase {
         let exClean = self.expectation(description: "\(#function) recent")
         GoBotOrderedTests.shared.recent { msgs, err in
             XCTAssertNil(err)
-            // 1 = still have my follow to denise
-            XCTAssertEqual(msgs.count, startingCount + 1)
+            XCTAssertEqual(msgs.count, startingCount)
             exClean.fulfill()
         }
         self.wait(for: [exClean], timeout: 10)
