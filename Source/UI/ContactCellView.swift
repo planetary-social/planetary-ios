@@ -106,7 +106,6 @@ class ContactCellView: KeyValueView {
                 try Task.checkCancellation()
                 await self?.contactView.update(with: identity, about: about)
                 await self?.headerView.update(with: keyValue)
-                await self?.headerView.hideSkeleton()
                 
                 var stats = SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
                 do {

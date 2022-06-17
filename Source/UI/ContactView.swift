@@ -91,14 +91,16 @@ class ContactView: KeyValueView {
         stackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
         stackView.addArrangedSubview(label)
         stackView.addArrangedSubview(followerCountLabel)
-        stackView.addArrangedSubview(hashtagsLabel)
         stackView.addArrangedSubview(followButton)
+        stackView.addArrangedSubview(hashtagsLabel)
 
         hashtagsLabel.delegate = self
 
         isSkeletonable = true
 
         reset()
+        
+        setNeedsLayout()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -109,33 +111,36 @@ class ContactView: KeyValueView {
         super.reset()
         update(with: Identity.null, about: nil)
         update(socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0))
-        update(hashtags: [])
+        label.text = "placeholder name"
+        hashtagsLabel.text = "placeholder #hashtag #hashtag #hashtag"
+        hashtagsLabel.layer.cornerRadius = 7 // hack because SkeletonView won't round the corners for some reason
+        stackView.arrangedSubviews.forEach { $0.isHidden = false }
+        showAnimatedSkeleton()
     }
     
     func update(with identity: Identity, about: About?) {
         if let about = about {
             self.label.text = about.nameOrIdentity
             self.imageView.set(image: about.image)
+            label.hideSkeleton()
+            imageView.hideSkeleton()
         } else {
             self.label.text = identity
             self.imageView.set(image: nil)
         }
         if identity == Identity.null {
-            followButton.removeFromSuperview()
+            followButton.isHidden = false
+            followButton.isSelected = false
         } else if let myIdentity = Bots.current.identity {
-            stackView.addArrangedSubview(followButton)
-            followButton.showSkeleton()
+            followButton.isHidden = false
             let relationship = Relationship(from: myIdentity, to: identity)
             relationship.load {
                 self.followButton.relationship = relationship
                 self.followButton.hideSkeleton()
             }
         } else {
-            followButton.removeFromSuperview()
+            followButton.isHidden = true
         }
-        
-        label.hideSkeleton()
-        imageView.hideSkeleton()
     }
     
     func update(socialStats: SocialStats) {
@@ -171,9 +176,9 @@ class ContactView: KeyValueView {
 
     func update(hashtags: [Hashtag]) {
         if hashtags.isEmpty {
-            hashtagsLabel.removeFromSuperview()
+            hashtagsLabel.isHidden = true
         } else {
-            stackView.addArrangedSubview(hashtagsLabel)
+            hashtagsLabel.isHidden = false
             let string = "Active on "
             let secondaryColor = [
                 NSAttributedString.Key.foregroundColor: UIColor.text.detail,
@@ -197,6 +202,7 @@ class ContactView: KeyValueView {
                 }
             }
             hashtagsLabel.attributedText = attributedString
+            hashtagsLabel.layer.cornerRadius = 0 // hack because SkeletonView won't round the corners for some reason
             hashtagsLabel.hideSkeleton()
         }
     }

@@ -70,6 +70,7 @@ class ContactHeaderView: UIView {
 
     func reset() {
         update(with: Identity.null, about: nil)
+        showSkeleton()
     }
 
     func update(with keyValue: KeyValue) {
@@ -97,6 +98,7 @@ class ContactHeaderView: UIView {
             identityButton.setImage(UIImage.verse.missingAbout, for: .normal)
         }
 
+        hideSkeleton()
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }
