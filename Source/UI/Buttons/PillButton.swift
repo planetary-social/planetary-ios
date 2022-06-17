@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SkeletonView
 
 // a button class with an icon on the left and a label on the right
 class PillButton: AppButton {
@@ -56,7 +57,9 @@ class PillButton: AppButton {
     
     override func draw(_ rect: CGRect) {
         super.draw(rect)
-        if isSelected {
+        if sk.isSkeletonActive {
+            self.layer.borderColor = UIColor.clear.cgColor
+        } else if isSelected {
             self.layer.borderColor = self.primaryColor.cgColor
         } else {
             self.layer.borderColor = self.secondaryColor.cgColor

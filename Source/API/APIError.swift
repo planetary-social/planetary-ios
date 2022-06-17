@@ -16,6 +16,7 @@ enum APIError: Error {
     case invalidPath(String)
     case invalidURL
     case httpStatusCode(Int)
+    case invalidBody
     case other(Error)
 
     static func optional(_ error: Error?) -> APIError? {

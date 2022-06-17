@@ -298,6 +298,11 @@ class FakeBot: Bot {
     var mockStatistics = [BotStatistics]()
     var statistics: BotStatistics { mockStatistics.popLast() ?? _statistics }
     
+    var mockRecentlyDownloadedPostData = (0, 0)
+    func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
+        mockRecentlyDownloadedPostData
+    }
+
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
         let statistics = mockStatistics.popLast() ?? _statistics
         queue.async {

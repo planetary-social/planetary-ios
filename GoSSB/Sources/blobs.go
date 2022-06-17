@@ -131,5 +131,11 @@ func ssbBlobsAdd(fd int32) *C.char {
 	}
 	f.Close()
 
+	err = sbot.WantManager.WantWithDist(br, -1)
+	if err != nil {
+		err = errors.Wrap(err, "push: pushing blob to other peers failed")
+		return nil
+	}
+
 	return C.CString(br.String())
 }
