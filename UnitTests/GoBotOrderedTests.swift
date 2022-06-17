@@ -636,7 +636,7 @@ class GoBotOrderedTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
 
-        let postedMsg = try! GoBotOrderedTests.shared.database.get(key: msgRef)
+        let postedMsg = try! GoBotOrderedTests.shared.database.post(with: msgRef)
         guard let m = postedMsg.value.content.post?.mentions else { XCTFail("not a post?"); return }
         guard m.count == 1 else { XCTFail("no mentions?"); return }
 
