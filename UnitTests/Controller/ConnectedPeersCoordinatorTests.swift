@@ -179,77 +179,30 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(publishedPeers.first, secondExpectedPeers)
     }
     
-    /// Verifies that the coordinator publishes the latest recentPostCount from its BotStatisticsService
+    /// Verifies that the coordinator publishes the latest recentPostCount from the Bot
     func testRecentlyDownloadedPostCount() async throws {
         // Arrange
-        let newStatistics = BotStatistics(
-            lastSyncDate: Date(),
-            lastSyncDuration: 1,
-            lastRefreshDate: Date(),
-            lastRefreshDuration: 2,
-            recentlyDownloadedPostCount: 888,
-            recentlyDownloadedPostDuration: 999,
-            repo: RepoStatistics(
-                path: nil,
-                feedCount: 3,
-                messageCount: 4,
-                numberOfPublishedMessages: 5,
-                lastHash: "hash"
-            ),
-            peer: PeerStatistics(
-                count: 3,
-                connectionCount: 2,
-                identities: [],
-                open: []
-            ),
-            db: DatabaseStatistics(lastReceivedMessage: 10)
-        )
-        
         let recentlyDownloadedPostCountPublisher = await makeAwaitable(
             publisher: sut.$recentlyDownloadedPostCount.collectNext()
         )
         
         // Act
-        await mockStatistics.statisticsPasthrough.send(newStatistics)
+        mockBot.mockRecentlyDownloadedPostData = (888, 999)
         let recentlyDownloadedPostCounts = try await recentlyDownloadedPostCountPublisher.result.get().first
         
         // Assert
         XCTAssertEqual(recentlyDownloadedPostCounts, 888)
     }
     
-    /// Verifies that the coordinators passes through the recentlyDownloadedPostDuration from
-    /// its `BotStatisticsService`.
+    /// Verifies that the coordinators passes through the recentlyDownloadedPostDuration from the Bot
     func testRecentlyDownloadedPostDuration() async throws {
         // Arrange
-        let newStatistics = BotStatistics(
-            lastSyncDate: Date(),
-            lastSyncDuration: 1,
-            lastRefreshDate: Date(),
-            lastRefreshDuration: 2,
-            recentlyDownloadedPostCount: 888,
-            recentlyDownloadedPostDuration: 999,
-            repo: RepoStatistics(
-                path: nil,
-                feedCount: 3,
-                messageCount: 4,
-                numberOfPublishedMessages: 5,
-                lastHash: "hash"
-            ),
-            peer: PeerStatistics(
-                count: 3,
-                connectionCount: 2,
-                identities: [],
-                open: []
-            ),
-            db: DatabaseStatistics(lastReceivedMessage: 10)
-        )
-        
         let recentlyDownloadedPostDurationPublisher = await makeAwaitable(
             publisher: sut.$recentlyDownloadedPostDuration.collectNext()
         )
         
         // Act
-        await mockStatistics.statisticsPasthrough.send(newStatistics)
+        mockBot.mockRecentlyDownloadedPostData = (888, 999)
         let recentlyDownloadedPostDuration = try await recentlyDownloadedPostDurationPublisher.result.get().first
         
         // Assert

@@ -4,10 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.1] 2022-06-14
+## [1.2.1] 2022-06-17
 
-- The threaded conversation view now shows likes posted from other SSB clients #610
-- Hashtags on the Hashtags tab are now sorted by popularity #614
+- Fixed a bug where posts from blocked users could show up in the Discover feed. #639
+- Improve performance of the recently downloaded post count in the side menu. #637
+- Fixed a bug where blocks were showing up as follows in the Home Feed. #619
+- Fixed a bug in the background color on follow messages in dark mode. #620
+- Made follow message loading state more dynamic so that it shows individual pieces of info as soon as they are ready. #636
+- Fixed the ban list API so that Planetary can ban users violating our ToS. #631
+- Improved blob propagation when posting images. #626
+- The threaded conversation view now shows likes posted from other SSB clients. #610
+- Hashtags on the Hashtags tab are now sorted by popularity. #614
 
 ## [1.2.0] 2022-06-01
 
