@@ -175,6 +175,13 @@ enum Text: String, Localizable, CaseIterable {
     
     case loggingOut = "Logging out..."
     
+    case openPost = "Open post {{ postID }}"
+    case postNotFound = "No posts found with the given ID."
+    case users = "Users"
+    case posts = "Posts"
+    case searching = "Searching"
+    case searchForUsersAndPosts = "Search by name, user ID, post ID"
+    
     // MARK: - Beta 1 migration strings
     case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."
     case beta1MigrationComplete = "Tap on the following button to close this screen and go back to your feed."

@@ -200,6 +200,9 @@ protocol Bot: AnyObject {
     /// person, like in an About screen.
     func feed(identity: Identity, completion: @escaping PaginatedCompletion)
     
+    /// Fetches the post with the given ID from the database.
+    func post(from key: MessageIdentifier) throws -> KeyValue
+    
     /// Returns the thread of messages related to the specified message.  The root
     /// of the thread will be returned if it is not the specified message.
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion)

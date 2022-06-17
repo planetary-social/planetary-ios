@@ -1526,8 +1526,8 @@ class ViewDatabase {
         return authorID
     }
     
-    func get(key: MessageIdentifier) throws -> KeyValue {
-        let msgId = try self.msgID(of: key, make: false)
+    func post(with id: MessageIdentifier) throws -> KeyValue {
+        let msgId = try self.msgID(of: id, make: false)
         // TODO: add 2nd signature to get message by internal ID
 //        guard let db = self.openDB else {
 //            throw ViewDatabaseError.notOpen
@@ -1549,8 +1549,8 @@ class ViewDatabase {
             .filter(colHidden == false))
 
         guard let msgType = typeMaybe else {
-            Log.unexpected(.botError, "[viewdb] should have type for this message: \(msgId): \(key)")
-            throw ViewDatabaseError.unknownMessage(key)
+            Log.unexpected(.botError, "[viewdb] should have type for this message: \(msgId): \(id)")
+            throw ViewDatabaseError.unknownMessage(id)
         }
         
         guard let ct = ContentType(rawValue: msgType) else {
@@ -1573,7 +1573,7 @@ class ViewDatabase {
                 
                 if kv.count != 1 {
                     Log.unexpected(.botError, "[viewdb] could not find post after we had the type!?")
-                    throw ViewDatabaseError.unknownMessage(key)
+                    throw ViewDatabaseError.unknownMessage(id)
                 }
                 return kv[0]
             
@@ -1831,7 +1831,7 @@ class ViewDatabase {
 
         var claimedMsg: KeyValue?
         do {
-            claimedMsg = try self.get(key: dcr.hash)
+            claimedMsg = try self.post(with: dcr.hash)
         } catch ViewDatabaseError.unknownMessage(_) {
             return // not stored in view
         }

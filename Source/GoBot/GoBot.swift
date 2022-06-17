@@ -645,7 +645,7 @@ class GoBot: Bot {
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
         var targetMessage: KeyValue?
         do {
-            targetMessage = try self.database.get(key: message)
+            targetMessage = try self.database.post(with: message)
         } catch {
             completion(GoBotError.duringProcessing("failed to get message", error))
             return
@@ -1334,7 +1334,7 @@ class GoBot: Bot {
         userInitiatedQueue.async {
             if let rootKey = keyValue.value.content.post?.root {
                 do {
-                    let root = try self.database.get(key: rootKey)
+                    let root = try self.database.post(with: rootKey)
                     let replies = try self.database.getRepliesTo(thread: root.key)
                     DispatchQueue.main.async {
                         completion(root, StaticDataProxy(with: replies), nil)
@@ -1359,7 +1359,7 @@ class GoBot: Bot {
 
     private func internalThread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
         do {
-            let root = try self.database.get(key: rootKey)
+            let root = try self.database.post(with: rootKey)
             let replies = try self.database.getRepliesTo(thread: rootKey)
             DispatchQueue.main.async {
                 completion(root, StaticDataProxy(with: replies), nil)
@@ -1409,6 +1409,10 @@ class GoBot: Bot {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
+    }
+    
+    func post(from key: MessageIdentifier) throws -> KeyValue {
+        try self.database.post(with: key)
     }
 
     // MARK: Hashtags
