@@ -33,7 +33,7 @@ enum ViewDatabaseTableNames: String {
     case channels
     case channelsAssigned = "channel_assignments"
     case contacts
-    case blockedContent = "blocked_content"
+    case bannedContent = "banned_content"
     case posts
     case postBlobs = "post_blobs"
     case privates
@@ -97,7 +97,7 @@ class ViewDatabase {
     private let colDescr = Expression<String?>("description")
     private let colPublicWebHosting = Expression<Bool?>("publicWebHosting")
     
-    private var currentBlockedContent: Table
+    private var currentBannedContent: Table
     // colID
     private var colIDType = Expression<Int>("type")
     
@@ -189,7 +189,7 @@ class ViewDatabase {
         self.channels = Table(ViewDatabaseTableNames.channels.rawValue)
         self.channelAssigned = Table(ViewDatabaseTableNames.channelsAssigned.rawValue)
         self.contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
-        self.currentBlockedContent = Table(ViewDatabaseTableNames.blockedContent.rawValue)
+        self.currentBannedContent = Table(ViewDatabaseTableNames.bannedContent.rawValue)
         self.privateRecps = Table(ViewDatabaseTableNames.privateRecps.rawValue)
         self.posts = Table(ViewDatabaseTableNames.posts.rawValue)
         self.post_blobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
@@ -230,22 +230,25 @@ class ViewDatabase {
         
         // db.trace { print("\tSQL: \($0)") } // print all the statements
         
+        try checkAndRunMigrations(on: db)
+        
+        self.currentUser = user
+        self.currentUserID = try self.authorID(of: user, make: true)
+    }
+    
+    /// Runs any db migrations that haven't been run yet.
+    private func checkAndRunMigrations(on db: Connection) throws {
         try db.transaction {
+            // Previous migrations dropped in 1.2.0 since we deleted and recreated the SQLite db.
             if db.userVersion == 0 {
                 let schemaV1url = Bundle.current.url(forResource: "ViewDatabaseSchema.sql", withExtension: nil)!
                 try db.execute(String(contentsOf: schemaV1url))
                 db.userVersion = 9
             }
-        }
-
-        self.currentUser = user
-        self.currentUserID = try self.authorID(of: user, make: true)
-    }
-    
-    private func migrateHashAllMessageKeys() throws {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
-        for row in try db.prepare(self.msgKeys) {
-            try db.run(self.msgKeys.filter(colID == row[colID]).update(colHashedKey <- row[colKey].sha256hash))
+            if db.userVersion == 9 {
+                try db.execute("ALTER TABLE `blocked_content` RENAME TO `banned_content`;")
+                db.userVersion = 10
+            }
         }
     }
     
@@ -483,53 +486,53 @@ class ViewDatabase {
     
     // MARK: moderation / delete
     
-    func updateBlockedContent(_ blocked: [String]) throws -> [FeedIdentifier] {
+    func applyBanList(_ banList: [String]) throws -> [FeedIdentifier] {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
 
         var matchedAuthorRefs: [FeedIdentifier] = []
         try db.transaction {
             /// 1. unhide previous content
-            /// unhide previous blocked entries to support appeal process, for instance
+            /// unhide previous banned entries to support appeal process, for instance
             /// important to not over-rule user decision to block someone
-            var blockedMsgs: [Int64] = []
-            var blockedAuthors: [Int64] = []
+            var bannedMsgs: [Int64] = []
+            var bannedAuthors: [Int64] = []
 
-            let blockedContentQry = try db.prepare(self.currentBlockedContent)
-            for bc in blockedContentQry {
-                let id = try bc.get(colID)
-                switch try bc.get(colIDType) {
-                case 0: blockedMsgs.append(id)
-                case 1: blockedAuthors.append(id)
+            let bannedContentQry = try db.prepare(self.currentBannedContent)
+            for bannedContent in bannedContentQry {
+                let id = try bannedContent.get(colID)
+                switch try bannedContent.get(colIDType) {
+                case 0: bannedMsgs.append(id)
+                case 1: bannedAuthors.append(id)
                 default: fatalError("unhandled content type")
                 }
             }
 
-            let blockedMsgQry = self.msgs.filter(blockedMsgs.contains(colMessageID))
-            try db.run(blockedMsgQry.update(colHidden <- false))
+            let bannedMsgQry = self.msgs.filter(bannedMsgs.contains(colMessageID))
+            try db.run(bannedMsgQry.update(colHidden <- false))
 
-            let blockedAuthorsQry = self.msgs.filter(blockedAuthors.contains(colAuthorID))
-            try db.run(blockedAuthorsQry.update(colHidden <- false))
+            let bannedAuthorsQry = self.msgs.filter(bannedAuthors.contains(colAuthorID))
+            try db.run(bannedAuthorsQry.update(colHidden <- false))
 
             /// 2. set all matched messages to hidden
 
-            // look for blocked IDs in msgs
+            // look for banned IDs in msgs
             let matchedMsgsQry = self.msgKeys
                 .join(self.msgs, on: colID == self.msgs[colMessageID])
-                .filter(blocked.contains(colHashedKey))
+                .filter(banList.contains(colHashedKey))
 
             // keep ids for next unhide
             let matchedMsgIDs = try db.prepare(matchedMsgsQry.select(colID)).map { row in
                 row[colID]
             }
 
-            // insert in current blocked for next unhide
+            // insert in current banned for next unhide
             for id in matchedMsgIDs {
-                try db.run(self.currentBlockedContent.insert(colID <- id, colIDType <- 0))
+                try db.run(self.currentBannedContent.insert(colID <- id, colIDType <- 0))
             }
             try db.run(self.msgs.filter(matchedMsgIDs.contains(colMessageID)).update(colHidden <- true))
 
             // now look for authors
-            let matchedAuthors = try db.prepare(self.authors.filter(blocked.contains(colHashedKey))).map { row in
+            let matchedAuthors = try db.prepare(self.authors.filter(banList.contains(colHashedKey))).map { row in
                 // (@ref, num id)
                 // we need the ID for gobot
                 return (row[colAuthor], row[colID])
@@ -537,14 +540,14 @@ class ViewDatabase {
 
             matchedAuthorRefs = matchedAuthors.map { $0.0 }
 
-            // insert in current blocked for next unhide
+            // insert in current banned for next unhide
             for (_, id) in matchedAuthors {
-                try db.run(self.currentBlockedContent.insert(colID <- id, colIDType <- 1))
+                try db.run(self.currentBannedContent.insert(colID <- id, colIDType <- 1))
                 try db.run(self.msgs.filter(colAuthorID == id).update(colHidden <- true))
             }
         }
 
-        // null content on sbot and add replicate block call
+        // null content on sbot and add replicate ban call
         return matchedAuthorRefs
     }
 
@@ -2197,7 +2200,7 @@ class ViewDatabase {
                         colWrittenAt <- Date().millisecondsSince1970
                     ))
                 } catch Result.error(let errMsg, let errCode, _) {
-                    // this is _just_ hear because of a fetch-duplication bug in go-ssb
+                    // this is _just_ here because of a fetch-duplication bug in go-ssb
                     // the constraints on the table are for uniquness:
                     // 1) message key/id
                     // 2) (author,sequence no)
@@ -2282,7 +2285,7 @@ class ViewDatabase {
         Analytics.shared.trackBotDidUpdateMessages(count: msgs.count)
 
         if skipped > 0 {
-            print("skipped \(skipped) messages")
+            Log.info("[rx log] skipped \(skipped) messages.")
         }
         
         Log.info("[rx log] viewdb filled with \(msgs.count - Int(skipped)) messages.")

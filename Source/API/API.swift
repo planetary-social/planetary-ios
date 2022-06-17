@@ -51,6 +51,27 @@ extension API {
                   headers: headers,
                   completion: completion)
     }
+    
+    func get(
+        path: String,
+        query: [URLQueryItem] = [],
+        headers: APIHeaders? = nil
+    ) async throws -> Data {
+        return try await withCheckedThrowingContinuation { continuation in
+            get(path: path, query: query, headers: headers) { responseData, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let responseData = responseData else {
+                    continuation.resume(throwing: APIError.invalidBody)
+                    return
+                }
+                continuation.resume(returning: responseData)
+            }
+        }
+    }
+    
 
     // MARK: Put
 

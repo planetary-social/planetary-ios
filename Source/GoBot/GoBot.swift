@@ -92,6 +92,7 @@ class GoBot: Bot {
     private(set) var config: AppConfiguration?
 
     private var preloadedPubService: PreloadedPubService?
+    private var banListAPI = BanListAPI.shared
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
@@ -253,30 +254,8 @@ class GoBot: Bot {
             
             self.preloadedPubService?.preloadPubs(in: self, from: nil)
             
-            BlockedAPI.shared.retreiveBlockedList { blocks, blockedListError in
-                guard blockedListError == nil else {
-                    Log.unexpected(.botError, "failed to get blocks: \(String(describing: blockedListError))")
-                    return
-                } // Analitcis error instead?
-
-                var authors: [FeedIdentifier] = []
-                do {
-                    authors = try self.database.updateBlockedContent(blocks)
-                } catch {
-                    // Analitcis error instead?
-                    Log.unexpected(.botError, "viewdb failed to update blocked content: \(error)")
-                }
-
-                // add as blocked peers to bot (those dont have contact messages)
-                do {
-                    for author in authors {
-                        try self.bot.nullFeed(author: author)
-                        self.bot.block(feed: author)
-                    }
-                } catch {
-                    // Analitcis error instead?
-                    Log.unexpected(.botError, "failed to drop and block content: \(error)")
-                }
+            Task.detached(priority: .utility) {
+                await self.fetchAndApplyBanList(for: secret.identity)
             }
         }
     }
@@ -1185,6 +1164,8 @@ class GoBot: Bot {
         }
     }
     
+    // MARK: Blocks & Bans
+    
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
@@ -1251,6 +1232,35 @@ class GoBot: Bot {
                 return
             }
             completion(messageIdentifier, nil)
+        }
+    }
+    
+    /// Downloads the latest ban list from the Planetary API and applies it to the db.
+    private func fetchAndApplyBanList(for identity: FeedIdentifier) async {
+        var banList: BanList = []
+        do {
+            banList = try await self.banListAPI.retreiveBanList(for: identity)
+        } catch {
+            Log.unexpected(.botError, "failed to get ban list: \(String(describing: error))")
+            return
+        }
+            
+        var authors: [FeedIdentifier] = []
+        do {
+            authors = try self.database.applyBanList(banList)
+        } catch {
+            Log.unexpected(.botError, "viewdb failed to update banned content: \(error)")
+        }
+        
+        // add as blocked peers to bot (those dont have contact messages)
+        do {
+            for a in authors {
+                // TODO: Maybe private blocks here?
+                try self.bot.nullFeed(author: a)
+                self.bot.block(feed: a)
+            }
+        } catch {
+            Log.unexpected(.botError, "failed to drop and banned content: \(error)")
         }
     }
 

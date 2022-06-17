@@ -26,6 +26,9 @@ public enum Key: String {
 
     /// Planetary Pub token
     case pub
+    
+    /// Token used to authenticate with Planetary's cloud services.
+    case planetaryCloudAPISecret
 
     /// Zendesk App ID
     case zendeskAppID
