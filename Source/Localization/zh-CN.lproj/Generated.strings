@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -39,7 +38,7 @@
 "Text.userDirectoryMessage" = "加入用户目录意味着如果用户已经知道您的姓名、短代码或电话号码，就可以找到您。";
 "Text.sendAnalytics" = "向行星发送分析";
 "Text.dontSendAnalytics" = "完全不要发送分析";
-"Text.analyticsMessage" = "我们想要获取匿名数据，了解您使用应用程序的情况――如果出现错误，崩溃报告――这样我们就可以使应用程序变得更好。";
+"Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "行星正在通过对等端网络搜索更新\n。";
 "Text.post" = "张贴";
 "Text.preview" = "预览";
@@ -271,7 +270,6 @@
 
 "Channel.one" = "频道";
 "Channel.many" = "频道";
-"Channel.lastUpdated" = "最近更新";
 
 "Post.one" = "张贴";
 "Post.many" = "日志";

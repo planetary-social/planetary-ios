@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -39,7 +38,7 @@
 "Text.userDirectoryMessage" = "Being in the user directory means that people can find you if they already know your name, short code or phone number.";
 "Text.sendAnalytics" = "Send analytics to Planetary";
 "Text.dontSendAnalytics" = "Don't send analytics at all";
-"Text.analyticsMessage" = "We would like to capture anonymized data about your use of the app - and crash reports when something goes wrong - so we can make the application better.";
+"Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
 "Text.post" = "Post";
 "Text.preview" = "Preview";
@@ -271,7 +270,6 @@
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";
-"Channel.lastUpdated" = "last updated";
 
 "Post.one" = "post";
 "Post.many" = "posts";

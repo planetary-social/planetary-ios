@@ -271,7 +271,6 @@
 
 "Channel.one" = "hashtag";
 "Channel.many" = "hashtags";
-"Channel.lastUpdated" = "actualizado";
 
 "Post.one" = "publicación";
 "Post.many" = "publicaciones";

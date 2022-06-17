@@ -1,4 +1,5 @@
 import XCTest
+import SQLite
 
 class ViewDatabaseTests: XCTestCase {
 
@@ -463,22 +464,6 @@ class ViewDatabaseTests: XCTestCase {
         }
     }
 
-    func test60_hashtag_names() {
-        do {
-            let hashtags = try self.vdb.hashtags()
-            XCTAssertEqual(hashtags.count, 3)
-            if hashtags.count != 3 {
-                return
-            }
-            // These are shown chronologically
-            XCTAssertEqual(hashtags[0].name, "hello")
-            XCTAssertEqual(hashtags[1].name, "world")
-            XCTAssertEqual(hashtags[2].name, "hashtag")
-        } catch {
-            XCTFail("\(error)")
-        }
-    }
-
     func test61_channel_messages() {
         do {
             let lMsgs = try self.vdb.messagesForHashtag(name: "hashtag")
@@ -674,6 +659,48 @@ class ViewDatabaseTests: XCTestCase {
         XCTAssertEqual(about?.name, expectedAbout.name)
         XCTAssertEqual(about?.description, expectedAbout.description)
         XCTAssertEqual(about?.publicWebHosting, expectedAbout.publicWebHosting)
+    }
+    
+    // MARK: - Bans
+    
+    func testFillBannedMessage() throws {
+        XCTExpectFailure()
+        
+        // Arrange
+        let startingMessageCount = try vdb.messageCount()
+        let testMessage = KeyValueFixtures.post(
+            receivedSeq: 800,
+            author: currentUser
+        )
+        
+        // Act
+        let authors = try vdb.applyBanList([testMessage.key.sha256hash])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
+        XCTAssertEqual(authors, [currentUser])
+        XCTAssertThrowsError(try vdb.get(key: testMessage.key))
+    }
+    
+    func testFillBannedAuthor() throws {
+        XCTExpectFailure()
+        
+        // Arrange
+        let startingMessageCount = try vdb.messageCount()
+        let testMessage = KeyValueFixtures.post(
+            receivedSeq: 800,
+            author: currentUser
+        )
+        
+        // Act
+        let authors = try vdb.applyBanList([currentUser.sha256hash])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
+        XCTAssertEqual(authors, [currentUser])
+        XCTAssertThrowsError(try vdb.get(key: testMessage.key))
     }
 }
 

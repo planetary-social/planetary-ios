@@ -22,6 +22,8 @@ extension APIError: LocalizedError {
             return "Invalid path"
         case .invalidURL:
             return "Invalid URL"
+        case .invalidBody:
+            return "Invalid reponse body"
         case .httpStatusCode(let statusCode):
             return "Status code: \(statusCode)"
         case .other(let error):
