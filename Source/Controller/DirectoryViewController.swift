@@ -37,6 +37,12 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             tableView.reloadData()
         }
     }
+    
+    private var posts = [KeyValue]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
 
     // text on which to filter results
     private var searchFilter = "" {
@@ -49,7 +55,6 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
     
     /// A post that was loaded when the user put its ID in the search bar.
-    private var searchedPost: KeyValue?
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
@@ -57,6 +62,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         view.delegate = self
         view.refreshControl = self.refreshControl
         view.separatorColor = UIColor.separator.middle
+        view.rowHeight = UITableView.automaticDimension
         view.addSeparatorAsHeaderView()
         return view
     }()
@@ -120,35 +126,32 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     }
 
     func applySearchFilter() {
-        searchedPost = nil
-        
-        if self.searchFilter.isEmpty {
+        guard !searchFilter.isEmpty else {
+            // not searching
             activeSections = Self.defaultSections
             self.people = allPeople.filter { person in
                 !self.communityPubIdentities.contains(person.identity)
             }
-        } else {
-            let filter = searchFilter.lowercased()
-            people = allPeople.filter { about in
-                let containsName = about.name?.lowercased().contains(filter) ?? false
-                let containsIdentity = about.identity.lowercased().contains(filter)
-                return containsName || containsIdentity
-            }
-            
-            if !people.isEmpty {
-                activeSections = [.network]
-            } else {
-                let identifier: Identifier = searchFilter
-                if identifier.isValidIdentifier && identifier.sigil == .feed {
-                    // FeedID
-                    activeSections = [.users]
-                } else if identifier.isValidIdentifier && identifier.sigil == .message {
-                    // Post ID
-                    loadAndDisplayMessage(with: identifier)
-                } else {
-                    activeSections = Self.defaultSections
-                }
-            }
+            return
+        }
+        
+        let filter = searchFilter.lowercased()
+        let identifier: Identifier = searchFilter
+        let isFeedIdentifier = identifier.isValidIdentifier && identifier.sigil == .feed
+        let isMessageIdentifier = identifier.isValidIdentifier && identifier.sigil == .message
+        
+        posts = []
+        loadAndDisplayUsers(matching: filter)
+        loadAndDisplayPosts(matching: filter)
+        
+        if !people.isEmpty {
+            activeSections = [.network, .posts]
+        } else if isFeedIdentifier {
+            // FeedID
+            activeSections = [.users, .posts]
+        } else if isMessageIdentifier {
+            // Post ID
+            loadAndDisplayMessage(with: identifier)
         }
         
         tableView.reloadData()
@@ -165,9 +168,39 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func loadAndDisplayUsers(matching filter: String) {
+        people = allPeople.filter { about in
+            let containsName = about.name?.lowercased().contains(filter) ?? false
+            let containsIdentity = about.identity.lowercased().contains(filter)
+            return containsName || containsIdentity
+        }
+    }
+    
+    func loadAndDisplayPosts(matching filter: String) {
+        Task.detached {
+            var posts: [KeyValue]
+            do {
+                posts = try await Bots.current.posts(matching: filter)
+            } catch {
+                Log.optional(error)
+                return
+            }
+            
+            guard await self.searchFilter.lowercased() == filter else {
+                return
+            }
+            
+            let loadedMessage = await self.posts
+            await self.set(posts: loadedMessage + posts)
+        }
+    }
+    
+    func set(posts: [KeyValue]) {
+        self.posts = posts
+    }
+    
     /// Loads the message with the given id from the database and displays it if it's still valid.
     func loadAndDisplayMessage(with msgID: MessageIdentifier) {
-        AppController.shared.showProgress(after: 0.3, statusText: Text.searching.text)
         Task.detached(priority: .high) { [weak self] in
             var result: Either<KeyValue, MessageIdentifier>
             do {
@@ -178,7 +211,6 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             }
             
             await self?.displayLoadedSearchResult(result)
-            await AppController.shared.hideProgress()
         }
     }
     
@@ -190,17 +222,14 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             }
 
             if message.contentType == .post {
-                searchedPost = message
+                posts.insert(message, at: 0)
             }
-            activeSections = [.posts]
-            tableView.reloadData()
         case .right(let msgID):
             guard searchFilter == msgID else {
                 return
             }
             
             activeSections = [.posts]
-            tableView.reloadData()
         }
     }
 }
@@ -267,7 +296,7 @@ extension DirectoryViewController: UITableViewDataSource {
         case .users:
             return activeSections.contains(.users) ? 1 : 0
         case .posts:
-            return 1
+            return posts.count
         case .network:
             return people.count
         }
@@ -291,17 +320,14 @@ extension DirectoryViewController: UITableViewDataSource {
             cell.aboutView.update(with: searchFilter, about: nil)
             return cell
         case .posts:
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            
-            if let post = searchedPost {
-                cell.textLabel?.text = Text.openPost.text(["postID": post.key])
-                cell.textLabel?.textColor = UIColor.tint.default
-            } else {
-                cell.textLabel?.text = Text.postNotFound.text
+            let post = posts[indexPath.row]
+            let type = post.contentType
+            var cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? KeyValueTableViewCell
+            if cell == nil {
+                cell = KeyValueTableViewCell(for: type, height: 300)
             }
-            
-            return cell
-            
+            cell?.update(with: post)
+            return cell ?? UITableViewCell()
         case .network:
             // Users in Your Network
             let about = self.people[indexPath.row]
@@ -337,11 +363,7 @@ extension DirectoryViewController: UITableViewDelegate {
             let controller = AboutViewController(with: identity)
             self.navigationController?.pushViewController(controller, animated: true)
         case .posts:
-            guard let post = searchedPost else {
-                Log.error("DirectoryViewController detected a tap for a nil searchedMessage.")
-                return
-            }
-            
+            let post = posts[indexPath.row]
             navigationController?.pushViewController(
                 ThreadViewController(with: post, startReplying: false), animated: true
             )

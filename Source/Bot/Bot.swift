@@ -184,6 +184,7 @@ protocol Bot: AnyObject {
     func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion)
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion)
+    func posts(matching filter: String) async throws -> [KeyValue]
     
     // MARK: Feed
     
