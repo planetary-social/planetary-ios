@@ -311,7 +311,7 @@ extension Text {
         case backUp = "Yes, back up my identity"
         case bioHint = "Don't worry too much about what you say, you can change it later."
 
-        case benefits = "🤝 On Planetary news travels from one friend to another, like it does in the real world. There are no supercomputers optimizing your experience for *engagement*. We call it a **gossip** network, and it's a healthier, happier place.\n\n👭 By prioritizing real relationships, Planetary creates a **personal network** for you, your friends, and friends-of-friends. Your local network minimizes abusive content and spam that is typical on global platforms.\n\n🌍 We aren't here to lock you in. If you don't like our app, you can take your identity - and all your friends - to another compatible app. Planetary is part of a **growing ecosystem** built on the Secure Scuttlebutt protocol. Refreshing, right?\n\n\n\nFind out more"
+        case benefits = "🤝 On Planetary news travels from one friend to another, like it does in the real world. There are no supercomputers optimizing your experience for *engagement*. We call it a **gossip** network, and it's a healthier, happier place.\n\n👭 Building on real relationships, Planetary creates a **personal network** for you, your friends, and friends-of-friends. Your local network minimizes abusive content and spam that is typical on global platforms.\n\n🌍 We aren't here to lock you in. If you don't like our app, you can take your identity - and all your friends - to another compatible app. Planetary is part of a **growing ecosystem** built on the Secure Scuttlebutt protocol. Refreshing, right?\n\n\n\nFind out more"
         case findOutMore = "Find out more"
         case thatSoundsGreat = "That sounds great!"
 
