@@ -17,10 +17,10 @@ class BenefitsOnboardingStep: OnboardingStep {
     }
 
     override func customizeView() {
-        let text = try! NSMutableAttributedString(
+        let text = (try? NSMutableAttributedString(
             markdown: Text.Onboarding.benefits.text,
             options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        )
+        )) ?? NSMutableAttributedString(string: Text.Onboarding.benefits.text)
         text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.menuUnselectedItemText)
         text.addLinkAttribute(
             value: SupportArticle.whatIsPlanetary.rawValue,
