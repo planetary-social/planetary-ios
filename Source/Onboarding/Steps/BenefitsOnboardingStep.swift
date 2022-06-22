@@ -34,9 +34,10 @@ class BenefitsOnboardingStep: OnboardingStep {
         self.view.textView.attributedText = text
         self.view.textView.delegate = self
         self.view.textView.layer.borderWidth = 0
-        self.view.textView.isScrollEnabled = false
+        self.view.textView.isScrollEnabled = true
         self.view.textView.backgroundColor = .appBackground
         self.view.primaryButton.setText(.thatSoundsGreat)
+        view.textView.bottomAnchor.constraint(equalTo: view.primaryButton.topAnchor, constant: -40).isActive = true
     }
 }
 
