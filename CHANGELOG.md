@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.1] 2022-06-17
 
+- Make go-ssb garbage collection less aggressive. #651
 - Fixed a bug where posts from blocked users could show up in the Discover feed. #639
 - Improve performance of the recently downloaded post count in the side menu. #637
 - Fixed a bug where blocks were showing up as follows in the Home Feed. #619
