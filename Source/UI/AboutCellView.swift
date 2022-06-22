@@ -89,20 +89,6 @@ class AboutCellView: UIView {
         self.setRelationship(to: identity)
     }
 
-    func update(with person: Person, useRelationship: Bool = true) {
-        self.label.text = person.name
-        self.setIdentityText(identity: person.identity)
-
-        self.loadImage(for: person)
-
-        // note that the relationship will change the Follow
-        // button visiblity, and is async so the button may
-        // appear in the wrong initial state if scrolling quickly
-        if useRelationship {
-            self.setRelationship(to: person.identity)
-        }
-    }
-
     func setIdentityText(identity: String) {
         self.identityLabel.text = String(identity.prefix(8))
     }
@@ -120,10 +106,6 @@ class AboutCellView: UIView {
 
     // allows us to cancel the image download when reusing for a new cell
     private var imageLoadingTask: URLSessionDataTask?
-
-    private func loadImage(for person: Person) {
-        self.imageLoadingTask = self.imageView.load(for: person)
-    }
 
     func reset() {
         self.label.text = ""

@@ -216,14 +216,6 @@ class AboutView: KeyValueView {
         self.imageView.set(image: about.image)
     }
 
-    func update(with person: Person) {
-        self.update(name: person.name,
-                    bio: person.attributedBio,
-                    identity: person.identity)
-
-        self.imageView.load(for: person, animate: true)
-    }
-
     var relationship: Relationship?
 
     // do this once, so we only have one notification

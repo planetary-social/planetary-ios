@@ -41,7 +41,7 @@ class ImageButton: UIButton {
         }
 
         // cached image
-        if let image = Caches.blobs.image(for: image.identifier) {
+        if let image = Caches.blobs.cachedImage(for: image.identifier) {
             self.setImage(image, for: state)
             return
         }

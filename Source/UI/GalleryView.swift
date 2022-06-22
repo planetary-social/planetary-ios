@@ -98,7 +98,7 @@ private class BlobInputSource: InputSource {
         imageView.backgroundColor = self.blob.metadata?.averageColor
 
         // use the cached image first
-        if let image = Caches.blobs.image(for: self.blob.identifier) {
+        if let image = Caches.blobs.cachedImage(for: self.blob.identifier) {
             imageView.image = image
             callback(image)
             return

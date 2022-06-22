@@ -38,7 +38,7 @@ class BlobCache: DictionaryCache {
 
     /// Immediately returns the cached image for the identifier.  This will
     /// not request to load the image from the bot, use `image(for:completion)` instead.
-    func image(for identifier: BlobIdentifier) -> UIImage? {
+    func cachedImage(for identifier: BlobIdentifier) -> UIImage? {
         Thread.assertIsMainThread()
         return self.item(for: identifier) as? UIImage
     }
@@ -118,7 +118,7 @@ class BlobCache: DictionaryCache {
             guard let self = self else { return }
 
             // If we don't have the blob downloaded yet ask the Planetary API for it as an optimization.
-            if self.isBlobUnavailableError(error) {
+//            if self.isBlobUnavailableError(error) {
                 self.loadBlobFromCloud(for: identifier) { result in
                     if let image = try? result.get() {
                         self.didLoad(identifier, result: .success(image))
@@ -127,40 +127,40 @@ class BlobCache: DictionaryCache {
                     // fetch images.
                 }
                 return
-            }
-            
-            // Retry failures
-            guard let data = data, data.isEmpty == false, error == nil else {
-                if let botError = error as? BotError, case BotError.restoring = botError {
-                    // Don't mess with blobs while restoring
-                    return
-                }
-                
-                Task {
-                    if await self.requestManager.shouldRetry(identifier: identifier) {
-                        let delay = await self.requestManager.retryDelay(for: identifier)
-                        Log.info("Loading blob \(identifier) failed. Retrying in \(delay) seconds")
-                        await self.requestManager.didRetry(identifier: identifier)
-                        
-                        try? await Task.sleep(nanoseconds: UInt64(delay) * 1_000_000_000)
-                        
-                        await MainActor.run {
-                            self.loadImage(for: identifier)
-                        }
-                    } else {
-                        Log.info("Loading blob \(identifier) failed. Reached max retry count")
-                    }
-                }
-                return
-            }
-
-            guard let image = UIImage(data: data) else {
-                self.didLoad(identifier, result: .failure(BlobCacheError.unsupported))
-                return
-            }
-
-            // only complete if valid image
-            self.didLoad(identifier, result: .success(image))
+//            }
+//
+//            // Retry failures
+//            guard let data = data, data.isEmpty == false, error == nil else {
+//                if let botError = error as? BotError, case BotError.restoring = botError {
+//                    // Don't mess with blobs while restoring
+//                    return
+//                }
+//
+//                Task {
+//                    if await self.requestManager.shouldRetry(identifier: identifier) {
+//                        let delay = await self.requestManager.retryDelay(for: identifier)
+//                        Log.info("Loading blob \(identifier) failed. Retrying in \(delay) seconds")
+//                        await self.requestManager.didRetry(identifier: identifier)
+//
+//                        try? await Task.sleep(nanoseconds: UInt64(delay) * 1_000_000_000)
+//
+//                        await MainActor.run {
+//                            self.loadImage(for: identifier)
+//                        }
+//                    } else {
+//                        Log.info("Loading blob \(identifier) failed. Reached max retry count")
+//                    }
+//                }
+//                return
+//            }
+//
+//            guard let image = UIImage(data: data) else {
+//                self.didLoad(identifier, result: .failure(BlobCacheError.unsupported))
+//                return
+//            }
+//
+//            // only complete if valid image
+//            self.didLoad(identifier, result: .success(image))
         }
     }
     

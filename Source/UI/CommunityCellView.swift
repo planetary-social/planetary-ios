@@ -105,16 +105,8 @@ class CommunityCellView: UIView {
         }
     }
 
-    // allows us to cancel the image download when reusing for a new cell
-    private var imageLoadingTask: URLSessionDataTask?
-
-    private func loadImage(for person: Person) {
-        self.imageLoadingTask = self.imageView.load(for: person)
-    }
-
     func reset() {
         self.label.text = ""
-        self.imageLoadingTask?.cancel()
         self.imageView.image = UIImage.verse.missingAbout
     }
 }

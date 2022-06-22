@@ -141,11 +141,6 @@ class AboutViewController: ContentViewController {
         self.aboutView.update(with: about)
     }
 
-    func update(with person: Person) {
-        self.navigationItem.title = person.name
-        self.aboutView.update(with: person)
-    }
-
     private func updateFollows() {
         self.aboutView.update(followedBy: followers, following: followings)
     }
