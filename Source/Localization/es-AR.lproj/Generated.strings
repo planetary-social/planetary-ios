@@ -182,14 +182,14 @@
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes desprolijas en la interfaz. ¡Animate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
-"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from out team.";
+"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
 "Onboarding.somethingWentWrong" = "¡Uh no! ¡Algo salió mal!";
 "Onboarding.errorRetryMessage" = "Esto no es tu culpa, nosotros metimos la pata. Podés volver a intentar o empezar de nuevo, y por favor contanos sobre lo que pasó.";
 "Onboarding.resumeRetryMessage" = "Esto no es tu culpa, nosotros metimos la pata. En algunos casos, puede significar que tu dispositivo no se puede conectar a la red, por lo que intentar de nuevo puede ayudar.";
 "Onboarding.backupHint" = "Planetary no usa contraseñas - tenés una llave secreta que debés guardar de forma segura. Si podés, deberías respaldarla. Nota: esta funcionalidad todavía está en desarrollo.";
 "Onboarding.backUp" = "Sí, respaldá mi identidad";
 "Onboarding.bioHint" = "Poné cualquier cosa, igual después lo podés cambiar.";
-"Onboarding.benefits" = "Somos parte de un ecosistema abierto que respeta tu privacidad, minimiza la recolección de datos y apunta a recompensar a los creadores.\n\nY si no te gusta nuestra aplicación, ¡podés agarrar tu identidad –y todos tus amigos y contenido– y llevártela a otro servicio!\n\nAprendé más";
+"Onboarding.benefits" = "🤝 On Planetary news travels from one friend to another, like it does in the real world. There are no supercomputers optimizing your experience for *engagement*. We call it a **gossip** network, and it's a healthier, happier place.\n\n👭 By prioritizing real relationships, Planetary creates a **personal network** for you, your friends, and friends-of-friends. Your local network minimizes abusive content and spam that is typical on global platforms.\n\n🌍 We aren't here to lock you in. If you don't like our app, you can take your identity - and all your friends - to another compatible app. Planetary is part of a **growing ecosystem** built on the Secure Scuttlebutt protocol. Refreshing, right?\n\n\n\nFind out more";
 "Onboarding.findOutMore" = "Aprendé más";
 "Onboarding.thatSoundsGreat" = "¡Buenísimo!";
 "Onboarding.policyStatement" = "Si continuás, confirmás que estás de acuerdo con los Términos del Servicio y Política de Privacidad";
@@ -197,7 +197,7 @@
 "Onboarding.privacyPolicy" = "Política de Privacidad";
 
 "OnboardingStepTitle.backup" = "OK, ya creamos tu identidad. ¿Querés respaldarla?";
-"OnboardingStepTitle.benefits" = "Planetary es una red social diferente";
+"OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
 "OnboardingStepTitle.bio" = "¿Por qué no nos contás un poco de vos?";
 "OnboardingStepTitle.birthday" = "Antes que nada, ¿cuál es tu fecha de nacimiento?";
 "OnboardingStepTitle.contacts" = "Podés conectar tu lista de contactos para ver cuál de tus amigos está usando Planetary";
@@ -211,7 +211,7 @@
 "OnboardingStepTitle.photo" = "OK, esa era la parte difícil. Ahora vamos a conseguirte una imagen de perfil";
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil añadida";
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
-"OnboardingStepTitle.start" = "\nUn nuevo tipo de red social \npara gente creativa\ne independiente";
+"OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
 
 "ManagePubs.header" = "Pubs";
 "ManagePubs.title" = "Administrar Pubs";

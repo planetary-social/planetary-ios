@@ -17,13 +17,19 @@ class BenefitsOnboardingStep: OnboardingStep {
     }
 
     override func customizeView() {
-        let text = NSMutableAttributedString(string: Text.Onboarding.benefits.text)
-        text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.text.default)
+        let text = try! NSMutableAttributedString(
+            markdown: Text.Onboarding.benefits.text,
+            options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )
+        text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.menuUnselectedItemText)
         text.addLinkAttribute(
             value: SupportArticle.whatIsPlanetary.rawValue,
             to: Text.Onboarding.findOutMore.text
         )
-        text.addParagraphAlignCenter()
+        text.addParagraphAlignLeft()
+        let centerStyle = NSMutableParagraphStyle()
+        centerStyle.alignment = .center
+        text.addAttributes([.paragraphStyle: centerStyle], to: Text.Onboarding.findOutMore.text)
         self.view.textView.isEditable = false
         self.view.textView.attributedText = text
         self.view.textView.delegate = self
@@ -52,14 +58,5 @@ extension BenefitsOnboardingStep: UITextViewDelegate {
         let nc = UINavigationController(rootViewController: controller)
         AppController.shared.present(nc, animated: true)
         return false
-    }
-}
-
-fileprivate extension NSMutableAttributedString {
-
-    func addParagraphAlignCenter() {
-        let style = NSMutableParagraphStyle()
-        style.alignment = .center
-        self.addAttributes([NSAttributedString.Key.paragraphStyle: style])
     }
 }

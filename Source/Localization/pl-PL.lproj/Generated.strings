@@ -1,4 +1,5 @@
-// This file is auto-generated at build time and should not be modified by hand
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Ojejku";
@@ -181,14 +182,14 @@
 "Onboarding.earlyAccess" = "Aplikacja jest na wczesnym etapie rozwoju. Skupiliśmy się na podstawach, więc w interfejsie użytkownika są spore luki. Prosimy o wyrozumiałość!";
 "Onboarding.iUnderstand" = "Tak, rozumiem";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
-"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from out team.";
+"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
 "Onboarding.somethingWentWrong" = "O nie! Coś poszło nie tak!";
 "Onboarding.errorRetryMessage" = "To nie twoja wina, coś schrzaniliśmy. Możesz spróbować ponownie lub zacząć od nowa, albo zgłosić nam napotkany problem.";
 "Onboarding.resumeRetryMessage" = "To nie Twoja wina, coś schrzaniliśmy. W niektórych przypadkach może to oznaczać, że urządzenie nie może połączyć się z siecią. Ponowna próba w późnieszym czasie może to naprawić.";
 "Onboarding.backupHint" = "Planetary nie używa haseł: zamiast haseł masz tajny klucz, który musisz chronić. Jeśli możesz, wykonaj kopię zapasową. Uwaga: ta funkcja jest nadal w fazie testów.";
 "Onboarding.backUp" = "Tak, utwórz kopię zapasową mojej tożsamości";
 "Onboarding.bioHint" = "Nie przejmuj się tym zbytnio, możesz zmienić później.";
-"Onboarding.benefits" = "Jesteśmy częścią otwartego ekosystemu, który szanuje Twoją prywatność, minimalizuje gromadzenie danych i ma na celu nagradzanie twórców.\n\nJeśli nie podoba Ci się nasza aplikacja, możesz w każdej chwili przenieść do innej apki swoją tożsamość, wszystkich znajomych oraz treści!\n\nDowiedz się więcej";
+"Onboarding.benefits" = "🤝 On Planetary news travels from one friend to another, like it does in the real world. There are no supercomputers optimizing your experience for *engagement*. We call it a **gossip** network, and it's a healthier, happier place.\n\n👭 By prioritizing real relationships, Planetary creates a **personal network** for you, your friends, and friends-of-friends. Your local network minimizes abusive content and spam that is typical on global platforms.\n\n🌍 We aren't here to lock you in. If you don't like our app, you can take your identity - and all your friends - to another compatible app. Planetary is part of a **growing ecosystem** built on the Secure Scuttlebutt protocol. Refreshing, right?\n\n\n\nFind out more";
 "Onboarding.findOutMore" = "Dowiedz się więcej";
 "Onboarding.thatSoundsGreat" = "Brzmi świetnie!";
 "Onboarding.policyStatement" = "Kontynuując, potwierdzasz, że akceptujesz nasze Warunki Korzystania z Usług, oraz Politykę Prywatności";
@@ -196,7 +197,7 @@
 "Onboarding.privacyPolicy" = "Polityka Prywatności";
 
 "OnboardingStepTitle.backup" = "Utworzyliśmy Twoją tożsamość - czy chcesz kopie zapapasową?";
-"OnboardingStepTitle.benefits" = "Planetary to rozmaita sieć społecznościowa";
+"OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
 "OnboardingStepTitle.bio" = "Powiedz trochę o sobie ...";
 "OnboardingStepTitle.birthday" = "Zanim zaczniemy, kiedy masz urodziny?";
 "OnboardingStepTitle.contacts" = "Możesz połączyć swoją książkę adresową, aby zobaczyć, którzy z twoich znajomych używają Planetary";
@@ -210,7 +211,7 @@
 "OnboardingStepTitle.photo" = "Przejdźmy do Twojego zdjęcia profilowego";
 "OnboardingStepTitle.photoConfirm" = "Dodano zdjęcie profilowe";
 "OnboardingStepTitle.resume" = "Wznowienie konfiguracji twojej tożsamości na Planetary...";
-"OnboardingStepTitle.start" = "\nNowy rodzaj społeczności\ndla kreatywnych,\nniezależnych ludzi";
+"OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
 
 "ManagePubs.header" = "Puby";
 "ManagePubs.title" = "Zarządzaj Pubami";
