@@ -45,7 +45,7 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
     }()
 
     override func customizeView() {
-        self.view.secondaryButton.setText(.photoButtonLater)
+        self.view.secondaryButton.setText(.doItLater)
         self.view.primaryButton.setText(.photoButtonAdd)
 
         Layout.center(self.circleView, in: self.view, size: CGSize(square: Layout.profileImageOutside))

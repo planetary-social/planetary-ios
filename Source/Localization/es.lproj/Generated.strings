@@ -157,8 +157,8 @@
 
 "Onboarding.getStartedButton" = "Empecemos";
 "Onboarding.photoButtonAdd" = "Añade una foto";
-"Onboarding.photoButtonLater" = "Lo haré después";
-"Onboarding.useRealName" = "Si puedes, usa tu nombre real para ayudar a tus amigos a encontrarte.";
+"Onboarding.doItLater" = "I'll do it later";
+"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
 "Onboarding.phoneNumber" = "Número de teléfono";
 "Onboarding.phoneNumberConfirmationMessage" = "Usamos esto para confirmar tu identidad y para enviarte alertas del servicio.";
 "Onboarding.didntGetSMS" = "¿No recibiste el SMS?";
