@@ -10,11 +10,13 @@ import Foundation
 import UIKit
 import Logger
 import CrashReporting
+import Analytics
 
 class JoinOnboardingStep: OnboardingStep {
 
     init() {
         super.init(.join)
+        Analytics.shared.trackJoinStep()
     }
 
     override func customizeView() {

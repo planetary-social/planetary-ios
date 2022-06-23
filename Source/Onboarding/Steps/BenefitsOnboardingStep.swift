@@ -9,11 +9,13 @@
 import Foundation
 import UIKit
 import Support
+import Analytics
 
 class BenefitsOnboardingStep: OnboardingStep {
 
     init() {
         super.init(.benefits)
+        Analytics.shared.trackBenefitsStep()
     }
 
     override func customizeView() {

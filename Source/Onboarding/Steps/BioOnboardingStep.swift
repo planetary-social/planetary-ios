@@ -10,11 +10,13 @@ import Foundation
 import UIKit
 import Logger
 import CrashReporting
+import Analytics
 
 class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
 
     init() {
         super.init(.bio, buttonStyle: .horizontalStack)
+        Analytics.shared.trackBioStep()
     }
 
     override func customizeView() {

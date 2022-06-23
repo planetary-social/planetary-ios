@@ -20,4 +20,5 @@ enum Element: String, CaseIterable {
     case profile
     case identity
     case post
+    case vote
 }
