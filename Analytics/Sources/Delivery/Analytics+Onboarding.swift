@@ -98,7 +98,7 @@ public extension Analytics {
     func trackOnboardingStart() {
         service.track(event: .did, element: .app, name: "onboarding_start")
     }
-
+    
     /// Marks the end of a time event for `Onboarding.start()`
     /// Note that this should not be used to track onboarding screens.
     func trackOnboardingEnd() {

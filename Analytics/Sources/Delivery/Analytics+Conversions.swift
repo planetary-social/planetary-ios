@@ -20,6 +20,10 @@ public extension Analytics {
     func trackDidFollowIdentity() {
         service.track(event: .publish, element: .identity, name: "follow")
     }
+    
+    func trackDidFollowPub() {
+        service.track(event: .publish, element: .identity, name: "follow_pub")
+    }
 
     func trackDidUnfollowIdentity() {
         service.track(event: .publish, element: .identity, name: "unfollow")
