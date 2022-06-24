@@ -112,7 +112,8 @@
 "Text.join" = "Join";
 "Text.redeemInvitation" = "Redeem an invitation";
 "Text.pasteAddress" = "Token";
-"Text.refresh" = "Refresh";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown preview";
 "Text.loggingOut" = "Logging out...";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";

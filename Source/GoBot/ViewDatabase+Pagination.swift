@@ -27,6 +27,7 @@ protocol PaginatedKeyValueDataProxy {
 
     // notify the proxy to fetch more messages (up to and including index)
     func prefetchUpTo(index: Int)
+
 }
 
 // StaticDataProxy only has a fixed set of messages from the start and cant prefetch
@@ -184,10 +185,6 @@ class RecentViewKeyValueSource: KeyValueSource {
 
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
         try self.view.recentPosts(strategy: strategy, limit: limit, offset: offset)
-    }
-    
-    static func top(with db: ViewDatabase, feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
-        return try db.recentIdentifiers(strategy: feedStrategy, limit: 1).first
     }
 }
 

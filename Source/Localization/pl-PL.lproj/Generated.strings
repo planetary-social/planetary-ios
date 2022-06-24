@@ -1,4 +1,5 @@
-// This file is auto-generated at build time and should not be modified by hand
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Ojejku";
@@ -112,7 +113,8 @@
 "Text.join" = "Dołącz";
 "Text.redeemInvitation" = "Zrealizuj zaproszenie";
 "Text.pasteAddress" = "Kod";
-"Text.refresh" = "Odśwież";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Podgląd";
 "Text.loggingOut" = "Logging out...";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";

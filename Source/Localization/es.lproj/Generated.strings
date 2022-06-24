@@ -113,7 +113,8 @@
 "Text.join" = "Unirse";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
-"Text.refresh" = "Refrescar";
+"Text.refreshSingular" = "{{ count }} publicación sin leer!";
+"Text.refreshPlural" = "{{ count }} publicaciones sin leer!";
 "Text.markdownSupported" = "Markdown soportado";
 "Text.loggingOut" = "Logging out...";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";

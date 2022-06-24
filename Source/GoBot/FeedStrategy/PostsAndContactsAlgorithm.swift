@@ -69,32 +69,73 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
     /// - Discard posts and follows from the future
     ///
     /// The result is sorted by  date
-    private let fetchKeysQuery = """
-        SELECT messagekeys.key
-        FROM messages
-        JOIN authors ON authors.id == messages.author_id
-        JOIN messagekeys ON messagekeys.id == messages.msg_id
-        LEFT JOIN posts ON messages.msg_id == posts.msg_ref
-        LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
-        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
-        LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
-        WHERE messages.type IN ('post', 'contact')
-        AND messages.is_decrypted == false
-        AND messages.hidden == false
-        AND (type <> 'post' OR posts.is_root == true)
-        AND (type <> 'contact'
-             OR (contact_about.about_id IS NOT NULL AND contact_author.author NOT IN (SELECT key FROM pubs)))
-        AND (authors.author IN (
-                SELECT authors.author FROM contacts
-                JOIN authors ON contacts.contact_id == authors.id
-                WHERE contacts.author_id = ? AND contacts.state == 1
-            ) OR authors.id == ?)
-        AND authors.author NOT IN (SELECT key FROM pubs)
-        AND claimed_at < ?
-        ORDER BY messages.claimed_at DESC
-        LIMIT ? OFFSET ?;
-    """
-    // swiftlint:enable indentation_width
+    private let countNumberOfKeysSinceQuery = """
+        WITH
+          last_post AS (
+            SELECT
+              m.claimed_at as claimed_at,
+              mk.key as key
+            FROM
+              messages m
+              JOIN messagekeys mk ON mk.id = m.msg_id
+          ),
+          pub_list AS (
+            SELECT
+              key
+            FROM
+              pubs
+          )
+        SELECT
+          COUNT(*)
+        FROM
+          messages
+          JOIN authors ON authors.id = messages.author_id
+          LEFT JOIN posts ON messages.msg_id = posts.msg_ref
+          LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
+          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
+          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+        WHERE
+          messages.type IN ('post', 'contact')
+          AND messages.is_decrypted = false
+          AND messages.hidden = false
+          AND (
+            type <> 'post'
+            OR posts.is_root = true
+          )
+          AND (
+            type <> 'contact'
+            OR (
+              contact_about.about_id IS NOT NULL
+              AND contact_author.author NOT IN pub_list
+            )
+          )
+          AND (
+            authors.author IN (
+              SELECT
+                authors.author
+              FROM
+                contacts
+                JOIN authors ON contacts.contact_id = authors.id
+              WHERE
+                contacts.author_id = ?
+                AND contacts.state = 1
+            )
+            OR authors.id = ?
+          )
+          AND authors.author NOT IN pub_list
+          AND claimed_at BETWEEN (
+            SELECT
+              last_post.claimed_at + 1
+            FROM
+              last_post
+            WHERE
+              last_post.key = ?
+            LIMIT
+              1
+          )
+          AND STRFTIME('%s') * 1000;
+        """
+        // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
     /// SQL query to return the feed's keyvalues
@@ -195,21 +236,19 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
         return 0
     }
 
-    func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier] {
-        let query = try connection.prepare(fetchKeysQuery)
+    func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
+        let query = try connection.prepare(countNumberOfKeysSinceQuery)
 
         let bindings: [Binding?] = [
             userId,
             userId,
-            Date().millisecondsSince1970,
-            limit,
-            offset ?? 0
+            message
         ]
 
-        let colKey = Expression<MessageIdentifier>("key")
-        return try query.bind(bindings).prepareRowIterator().map { keyRow -> MessageIdentifier in
-            try keyRow.get(colKey)
+        if let count = try query.scalar(bindings) as? Int64 {
+            return Int(truncatingIfNeeded: count)
         }
+        return 0
     }
 
     func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {

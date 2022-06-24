@@ -59,12 +59,12 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             .filter(colMsgType == "post")
             .filter(colIsRoot == true)
             .filter(colHidden == false)
-            .filter(colDecrypted == false)
+            .filter(colDecrypted == wantPrivate)
 
         if onlyFollowed {
-            query = try self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
+            query = self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
         } else {
-            query = try self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
+            query = self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
         return try connection.scalar(query.count)
     }
@@ -76,9 +76,9 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             .order(colClaimedAt.desc)
 
         if onlyFollowed {
-            query = try self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
+            query = filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
         } else {
-            query = try self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
+            query = filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
 
         let feedOfMsgs = try self.mapQueryToKeyValue(query: query, connection: connection)
@@ -86,11 +86,10 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs, connection: connection)
     }
 
-    func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier] {
+    func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
         let posts = Table(ViewDatabaseTableNames.posts.rawValue)
         let authors = Table(ViewDatabaseTableNames.authors.rawValue)
         let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
-        let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
 
         let colMessageRef = Expression<Int64>("msg_ref")
         let colID = Expression<Int64>("id")
@@ -99,36 +98,38 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         let colDecrypted = Expression<Bool>("is_decrypted")
         let colIsRoot = Expression<Bool>("is_root")
         let colHidden = Expression<Bool>("hidden")
-        let colKey = Expression<MessageIdentifier>("key")
         let colAuthorID = Expression<Int64>("author_id")
 
-        var query = msgs
-            .join(posts, on: posts[colMessageRef] == msgs[colMessageID])
-            .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
+        var query = posts
+            .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
             .join(authors, on: authors[colID] == msgs[colAuthorID])
-            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
-            .filter(colDecrypted == wantPrivate)
+            .filter(colMsgType == "post")
+            .filter(colIsRoot == true)
             .filter(colHidden == false)
-
-        if let offset = offset {
-            query = query.limit(limit, offset: offset)
-        } else {
-            query = query.limit(limit)
-        }
-
-        query = query.filter(colIsRoot == true)   // only thread-starting posts (no replies)
-
-        query = query.order(colMessageID.desc)
+            .filter(colDecrypted == wantPrivate)
+            .filter(
+                Expression(literal: """
+                messages.claimed_at > (
+                  SELECT
+                    m.claimed_at + 1
+                  FROM
+                    messages m
+                    JOIN messagekeys mk ON mk.id = m.msg_id
+                  WHERE
+                    mk.key = '\(message)'
+                  LIMIT
+                    1
+                )
+                """
+                )
+            )
 
         if onlyFollowed {
-            query = try self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
+            query = filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
         } else {
-            query = try self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
+            query = filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
-
-        return try connection.prepare(query).compactMap { keyRow in
-            try keyRow.get(colKey)
-        }
+        return try connection.scalar(query.count)
     }
 
     private func basicRecentPostsQuery(
@@ -178,20 +179,21 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         return query
     }
 
-    private func filterOnlyFollowedPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
-        return query
+    private func filterOnlyFollowedPeople(query: Table, connection: Connection, userId: Int64) -> Table {
+        query
             .filter(
                 Expression(literal: """
-                (authors.author IN (SELECT followed_authors.author FROM contacts
+                ((authors.author IN (SELECT followed_authors.author FROM contacts
                 JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
                 WHERE contacts.author_id = \(userId) AND contacts.state == 1))
+                OR authors.id = \(userId))
                 """
                 )
             )
     }
 
-    private func filterNotFollowingPeople(query: Table, connection: Connection, userId: Int64) throws -> Table {
-        return query
+    private func filterNotFollowingPeople(query: Table, connection: Connection, userId: Int64) -> Table {
+        query
             .filter(
                 Expression(literal: """
                 (authors.author NOT IN (SELECT followed_authors.author FROM contacts

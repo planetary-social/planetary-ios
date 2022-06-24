@@ -1,4 +1,5 @@
-// This file is auto-generated at build time and should not be modified by hand
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -112,7 +113,8 @@
 "Text.join" = "加入";
 "Text.redeemInvitation" = "接受邀请";
 "Text.pasteAddress" = "代币";
-"Text.refresh" = "更新";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown 预览";
 "Text.loggingOut" = "Logging out...";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
