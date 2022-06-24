@@ -52,7 +52,7 @@ class OnboardingStepData {
     }
 }
 
-class OnboardingStep: NSObject {
+@MainActor class OnboardingStep: NSObject {
     enum Name: String {
         case backup
         case benefits

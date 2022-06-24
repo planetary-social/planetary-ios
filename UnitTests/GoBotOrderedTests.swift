@@ -636,7 +636,7 @@ class GoBotOrderedTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
 
-        let postedMsg = try! GoBotOrderedTests.shared.database.get(key: msgRef)
+        let postedMsg = try! GoBotOrderedTests.shared.database.post(with: msgRef)
         guard let m = postedMsg.value.content.post?.mentions else { XCTFail("not a post?"); return }
         guard m.count == 1 else { XCTFail("no mentions?"); return }
 
@@ -1012,8 +1012,7 @@ class GoBotOrderedTests: XCTestCase {
         let exClean = self.expectation(description: "\(#function) recent")
         GoBotOrderedTests.shared.recent { msgs, err in
             XCTAssertNil(err)
-            // 1 = still have my follow to denise
-            XCTAssertEqual(msgs.count, startingCount + 1)
+            XCTAssertEqual(msgs.count, startingCount)
             exClean.fulfill()
         }
         self.wait(for: [exClean], timeout: 10)

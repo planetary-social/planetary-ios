@@ -49,6 +49,7 @@ class ContactView: KeyValueView {
         label.textContainer.lineFragmentPadding = 0
         label.isSkeletonable = true
         label.linesCornerRadius = 7
+        label.backgroundColor = .clear
         return label
     }()
 
@@ -90,14 +91,16 @@ class ContactView: KeyValueView {
         stackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
         stackView.addArrangedSubview(label)
         stackView.addArrangedSubview(followerCountLabel)
-        stackView.addArrangedSubview(hashtagsLabel)
         stackView.addArrangedSubview(followButton)
+        stackView.addArrangedSubview(hashtagsLabel)
 
         hashtagsLabel.delegate = self
 
         isSkeletonable = true
 
         reset()
+        
+        setNeedsLayout()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -106,42 +109,43 @@ class ContactView: KeyValueView {
 
     override func reset() {
         super.reset()
-        update(
-            with: Identity.null,
-            about: nil,
-            socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0),
-            hashtags: []
-        )
+        update(with: Identity.null, about: nil)
+        update(socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0))
+        label.text = "placeholder name"
+        hashtagsLabel.text = "placeholder #hashtag #hashtag #hashtag"
+        hashtagsLabel.layer.cornerRadius = 7 // hack because SkeletonView won't round the corners for some reason
+        stackView.arrangedSubviews.forEach { $0.isHidden = false }
+        showAnimatedSkeleton()
     }
-
-    func update(with identity: Identity, about: About?, socialStats: SocialStats, hashtags: [Hashtag]) {
-        update(numberOfFollowers: socialStats.numberOfFollowers, numberOfFollows: socialStats.numberOfFollows)
-        update(hashtags: hashtags)
-        update(with: identity, about: about)
-    }
-
-    private func update(with identity: Identity, about: About?) {
+    
+    func update(with identity: Identity, about: About?) {
         if let about = about {
             self.label.text = about.nameOrIdentity
             self.imageView.set(image: about.image)
+            label.hideSkeleton()
+            imageView.hideSkeleton()
         } else {
             self.label.text = identity
             self.imageView.set(image: nil)
         }
         if identity == Identity.null {
-            followButton.removeFromSuperview()
+            followButton.isHidden = false
+            followButton.isSelected = false
         } else if let myIdentity = Bots.current.identity {
-            stackView.addArrangedSubview(followButton)
+            followButton.isHidden = false
             let relationship = Relationship(from: myIdentity, to: identity)
             relationship.load {
                 self.followButton.relationship = relationship
+                self.followButton.hideSkeleton()
             }
         } else {
-            followButton.removeFromSuperview()
+            followButton.isHidden = true
         }
     }
-
-    private func update(numberOfFollowers: Int, numberOfFollows: Int) {
+    
+    func update(socialStats: SocialStats) {
+        let numberOfFollowers = socialStats.numberOfFollowers
+        let numberOfFollows = socialStats.numberOfFollows
         let string = "Following numberOfFollows • Followed by numberOfFollowers"
 
         let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
@@ -167,13 +171,14 @@ class ContactView: KeyValueView {
             )
         )
         followerCountLabel.attributedText = attributedString
+        followerCountLabel.hideSkeleton()
     }
 
-    private func update(hashtags: [Hashtag]) {
+    func update(hashtags: [Hashtag]) {
         if hashtags.isEmpty {
-            hashtagsLabel.removeFromSuperview()
+            hashtagsLabel.isHidden = true
         } else {
-            stackView.addArrangedSubview(hashtagsLabel)
+            hashtagsLabel.isHidden = false
             let string = "Active on "
             let secondaryColor = [
                 NSAttributedString.Key.foregroundColor: UIColor.text.detail,
@@ -197,9 +202,10 @@ class ContactView: KeyValueView {
                 }
             }
             hashtagsLabel.attributedText = attributedString
+            hashtagsLabel.layer.cornerRadius = 0 // hack because SkeletonView won't round the corners for some reason
+            hashtagsLabel.hideSkeleton()
         }
     }
-
 }
 
 extension ContactView: UITextViewDelegate {

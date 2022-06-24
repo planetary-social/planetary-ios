@@ -92,6 +92,7 @@ class GoBot: Bot {
     private(set) var config: AppConfiguration?
 
     private var preloadedPubService: PreloadedPubService?
+    private var banListAPI = BanListAPI.shared
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
@@ -253,30 +254,8 @@ class GoBot: Bot {
             
             self.preloadedPubService?.preloadPubs(in: self, from: nil)
             
-            BlockedAPI.shared.retreiveBlockedList { blocks, blockedListError in
-                guard blockedListError == nil else {
-                    Log.unexpected(.botError, "failed to get blocks: \(String(describing: blockedListError))")
-                    return
-                } // Analitcis error instead?
-
-                var authors: [FeedIdentifier] = []
-                do {
-                    authors = try self.database.updateBlockedContent(blocks)
-                } catch {
-                    // Analitcis error instead?
-                    Log.unexpected(.botError, "viewdb failed to update blocked content: \(error)")
-                }
-
-                // add as blocked peers to bot (those dont have contact messages)
-                do {
-                    for author in authors {
-                        try self.bot.nullFeed(author: author)
-                        self.bot.block(feed: author)
-                    }
-                } catch {
-                    // Analitcis error instead?
-                    Log.unexpected(.botError, "failed to drop and block content: \(error)")
-                }
+            Task.detached(priority: .utility) {
+                await self.fetchAndApplyBanList(for: secret.identity)
             }
         }
     }
@@ -448,7 +427,7 @@ class GoBot: Bot {
         completion: @escaping SyncCompletion
     ) {
         self._isSyncing = false
-        serialQueue.sync {
+        serialQueue.async {
             self._statistics.lastSyncDate = Date()
             self._statistics.lastSyncDuration = elapsed
         }
@@ -513,7 +492,7 @@ class GoBot: Bot {
         completion: @escaping RefreshCompletion
     ) {
         self._isRefreshing = false
-        serialQueue.sync {
+        serialQueue.async {
             self._statistics.lastRefreshDate = Date()
             self._statistics.lastRefreshDuration = elapsed
         }
@@ -645,7 +624,7 @@ class GoBot: Bot {
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
         var targetMessage: KeyValue?
         do {
-            targetMessage = try self.database.get(key: message)
+            targetMessage = try self.database.post(with: message)
         } catch {
             completion(GoBotError.duringProcessing("failed to get message", error))
             return
@@ -1185,6 +1164,8 @@ class GoBot: Bot {
         }
     }
     
+    // MARK: Blocks & Bans
+    
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
@@ -1253,6 +1234,35 @@ class GoBot: Bot {
             completion(messageIdentifier, nil)
         }
     }
+    
+    /// Downloads the latest ban list from the Planetary API and applies it to the db.
+    private func fetchAndApplyBanList(for identity: FeedIdentifier) async {
+        var banList: BanList = []
+        do {
+            banList = try await self.banListAPI.retreiveBanList(for: identity)
+        } catch {
+            Log.unexpected(.botError, "failed to get ban list: \(String(describing: error))")
+            return
+        }
+            
+        var authors: [FeedIdentifier] = []
+        do {
+            authors = try self.database.applyBanList(banList)
+        } catch {
+            Log.unexpected(.botError, "viewdb failed to update banned content: \(error)")
+        }
+        
+        // add as blocked peers to bot (those dont have contact messages)
+        do {
+            for a in authors {
+                // TODO: Maybe private blocks here?
+                try self.bot.nullFeed(author: a)
+                self.bot.block(feed: a)
+            }
+        } catch {
+            Log.unexpected(.botError, "failed to drop and banned content: \(error)")
+        }
+    }
 
     // MARK: Feeds
     
@@ -1319,7 +1329,7 @@ class GoBot: Bot {
         userInitiatedQueue.async {
             if let rootKey = keyValue.value.content.post?.root {
                 do {
-                    let root = try self.database.get(key: rootKey)
+                    let root = try self.database.post(with: rootKey)
                     let replies = try self.database.getRepliesTo(thread: root.key)
                     DispatchQueue.main.async {
                         completion(root, StaticDataProxy(with: replies), nil)
@@ -1344,7 +1354,7 @@ class GoBot: Bot {
 
     private func internalThread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion) {
         do {
-            let root = try self.database.get(key: rootKey)
+            let root = try self.database.post(with: rootKey)
             let replies = try self.database.getRepliesTo(thread: rootKey)
             DispatchQueue.main.async {
                 completion(root, StaticDataProxy(with: replies), nil)
@@ -1394,6 +1404,10 @@ class GoBot: Bot {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
+    }
+    
+    func post(from key: MessageIdentifier) throws -> KeyValue {
+        try self.database.post(with: key)
     }
 
     // MARK: Hashtags
@@ -1482,14 +1496,9 @@ class GoBot: Bot {
                 open: openConnections
             )
             
-            self._statistics.recentlyDownloadedPostDuration = 15 // minutes
-            do {
-                self._statistics.recentlyDownloadedPostCount = try self.database.receivedMessageCount(
-                    since: Date(timeIntervalSinceNow: Double(self._statistics.recentlyDownloadedPostDuration) * -60)
-                )
-            } catch {
-                Log.optional(error)
-            }
+            let (recentlyDownloadedPostCount, recentlyDownloadedPostDuration) = self.recentlyDownloadedPostData()
+            self._statistics.recentlyDownloadedPostCount = recentlyDownloadedPostCount
+            self._statistics.recentlyDownloadedPostDuration = recentlyDownloadedPostDuration
             
             let sqliteMessageCount = (try? self.database.messageCount()) ?? 0
             self._statistics.db = DatabaseStatistics(
@@ -1503,6 +1512,18 @@ class GoBot: Bot {
             }
             Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
+    }
+    
+    func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
+        let recentlyDownloadedPostDuration = 15 // minutes
+        var recentlyDownloadedPostCount = 0
+        do {
+            let startDate = Date(timeIntervalSinceNow: Double(recentlyDownloadedPostDuration) * -60)
+            recentlyDownloadedPostCount = try self.database.receivedMessageCount(since: startDate)
+        } catch {
+            Log.optional(error)
+        }
+        return (recentlyDownloadedPostCount, recentlyDownloadedPostDuration)
     }
     
     /// Saves the number of published messages to the AppConfiguration. Used for forked feed protection.

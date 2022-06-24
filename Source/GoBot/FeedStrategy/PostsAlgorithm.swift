@@ -196,9 +196,12 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         query
             .filter(
                 Expression(literal: """
-                (authors.author NOT IN (SELECT followed_authors.author FROM contacts
-                JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
-                WHERE contacts.author_id = \(userId) AND contacts.state == 1))
+                (authors.author NOT IN
+                    (SELECT followed_and_blocked_authors.author FROM contacts
+                    JOIN authors AS followed_and_blocked_authors ON contacts.contact_id == followed_and_blocked_authors.id
+                    WHERE contacts.author_id = \(userId)
+                    AND (contacts.state == -1 OR contacts.state == 1))
+                )
                 AND authors.id != \(userId)
                 """
                 )

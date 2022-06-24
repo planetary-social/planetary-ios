@@ -45,7 +45,7 @@ class StartOnboardingStep: OnboardingStep {
                                        color: .clear)
 
         let subtitle = NSAttributedString(name.title.text,
-                                          font: UIFont.systemFont(ofSize: 17, weight: .regular),
+                                          font: UIFont.systemFont(ofSize: 24, weight: .regular),
                                           color: UIColor.text.detail)
 
         let text = NSMutableAttributedString(attributedString: title)
@@ -57,7 +57,7 @@ class StartOnboardingStep: OnboardingStep {
         // rather than try to position the logo and subtitle text
         // keep the existing attributed title but with a clear
         // and center the logo image view on top
-        let logoImageView = UIImageView(image: UIImage(named: "image-onboarding"))
+        let logoImageView = UIImageView(image: UIImage(named: "splash"))
         logoImageView.contentMode = .center
         Layout.center(logoImageView, in: self.view.titleLabel)
 

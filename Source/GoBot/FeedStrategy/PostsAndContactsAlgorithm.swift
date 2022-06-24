@@ -40,9 +40,11 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
         AND messages.is_decrypted == false
         AND messages.hidden == false
         AND (type <> 'post' OR posts.is_root == true)
-        AND (type <> 'contact'  OR (
-                contact_about.about_id IS NOT NULL AND contact_author.author NOT IN (SELECT key FROM pubs)
-            ))
+        AND (type <> 'contact'
+             OR (contact_about.about_id IS NOT NULL
+                 AND contact_author.author NOT IN (SELECT key FROM pubs))
+                 AND contacts.state != -1
+                )
         AND (authors.author IN (
                 SELECT authors.author FROM contacts
                 JOIN authors ON contacts.contact_id == authors.id
@@ -135,7 +137,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
           )
           AND STRFTIME('%s') * 1000;
         """
-        // swiftlint:enable indentation_width
+    // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
     /// SQL query to return the feed's keyvalues
@@ -203,7 +205,10 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
         AND hidden == false
         AND (type <> 'post' OR posts.is_root == true)
         AND (type <> 'contact'
-             OR (contact_about.about_id IS NOT NULL AND contact_author.author NOT IN (SELECT key FROM pubs)))
+             OR (contact_about.about_id IS NOT NULL
+                 AND contact_author.author NOT IN (SELECT key FROM pubs))
+                 AND contacts.state != -1
+                )
         AND (authors.author IN (SELECT authors.author FROM contacts
                                JOIN authors ON contacts.contact_id == authors.id
                                WHERE contacts.author_id = ? AND contacts.state == 1)

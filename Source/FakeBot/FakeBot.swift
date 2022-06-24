@@ -261,6 +261,10 @@ class FakeBot: Bot {
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
     }
+    
+    func post(from key: MessageIdentifier) throws -> KeyValue {
+        throw FakeBotError.runtimeError("not implemented")
+    }
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         completion(nil, StaticDataProxy(), nil)
@@ -280,6 +284,11 @@ class FakeBot: Bot {
     var mockStatistics = [BotStatistics]()
     var statistics: BotStatistics { mockStatistics.popLast() ?? _statistics }
     
+    var mockRecentlyDownloadedPostData = (0, 0)
+    func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
+        mockRecentlyDownloadedPostData
+    }
+
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
         let statistics = mockStatistics.popLast() ?? _statistics
         queue.async {

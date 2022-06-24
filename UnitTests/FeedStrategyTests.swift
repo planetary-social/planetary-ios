@@ -41,6 +41,8 @@ class FeedStrategyTests: XCTestCase {
         super.tearDown()
         db.close()
     }
+    
+    // MARK: - RecentlyActivePostsAndContactsAlgorithm
 
     func testRecentlyActivePostsAndContactsAlgorithm() throws {
         let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis
@@ -269,5 +271,46 @@ class FeedStrategyTests: XCTestCase {
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%5"), 0)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 1)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%0"), 2)
+    }
+    
+    // MARK: - PostsAlgorithm
+    
+    /// Verifies that posts from blocked users do not show up in the discover feed.
+    func testDiscoverAlgorithmHidesBlocks() throws {
+        // Arrange
+        let referenceDate = Date().millisecondsSince1970 // May 17, 2022 in millis
+        let receivedDate = Date().millisecondsSince1970 // May 17, 2022 in millis
+        let alice = DatabaseFixture.exampleFeed.identities[1]
+        
+        let alicePost = KeyValueFixtures.post(
+            key: "%1",
+            sequence: 1,
+            timestamp: referenceDate + 1,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 1,
+            author: alice
+        )
+        let blockAlice = KeyValueFixtures.keyValue(
+            key: "%2",
+            sequence: 2,
+            content: Content(from: Contact(contact: alice, blocking: true)),
+            timestamp: referenceDate + 2,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 2,
+            author: testAuthor
+        )
+        
+        let strategy = PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
+        
+        // Act
+        try db.fillMessages(msgs: [alicePost])
+        var proxy = try db.paginatedFeed(with: strategy)
+        
+        XCTAssertEqual(proxy.count, 1)
+        
+        try db.fillMessages(msgs: [blockAlice])
+        proxy = try db.paginatedFeed(with: strategy)
+        
+        XCTAssertEqual(proxy.count, 0)
     }
 }
