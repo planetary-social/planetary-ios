@@ -42,8 +42,6 @@ class AboutViewController: ContentViewController {
     
     private var optionsIcon: UIBarButtonItem?
 
-    // TODO https://app.asana.com/0/914798787098068/1146899678085073/f
-    // TODO improve init delegation
     init(with identity: Identity) {
         self.identity = identity
         let about = About(about: identity)
@@ -59,16 +57,18 @@ class AboutViewController: ContentViewController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.contentView, with: self.tableView, respectSafeArea: false)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage.verse.optionsOff,
-                                                                 style: .plain,
-                                                                 target: self,
-                                                                 action: #selector(didPressOptionsIcon))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage.verse.optionsOff,
+            style: .plain,
+            target: self,
+            action: #selector(didPressOptionsIcon)
+        )
         self.navigationItem.rightBarButtonItem?.tintColor = .secondaryAction
     }
     
@@ -92,8 +92,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadAbout() {
-        Bots.current.about(identity: self.identity) {
-            [weak self] about, error in
+        Bots.current.about(identity: self.identity) { [weak self] about, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             guard let about = about else { return }
@@ -103,14 +102,13 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFeed() {
-        Bots.current.feed(identity: self.identity) {
-            [weak self] src, error in
+        Bots.current.feed(identity: self.identity) { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             guard error == nil else {
                 return
             }
-            self?.dataSource.update(source: src)
+            self?.dataSource.update(source: proxy)
             self?.tableView.forceReload()
         }
     }
@@ -160,26 +158,25 @@ class AboutViewController: ContentViewController {
         self.aboutView.followingView.action = self.didTapFollowing
         self.aboutView.followedByView.action = self.didTapFollowedBy
 
-        self.aboutView.editPhotoButton.addTarget(self,
-                                                 action: #selector(editPhotoButtonTouchUpInside),
-                                                 for: .touchUpInside)
+        self.aboutView.editPhotoButton.addTarget(
+            self,
+            action: #selector(editPhotoButtonTouchUpInside),
+            for: .touchUpInside
+        )
 
-        self.aboutView.followButton.onUpdate = {
-            _ in
-
+        self.aboutView.followButton.onUpdate = { _ in
             self.loadFollowedBy()
-
             if let about = self.about {
                 self.update(with: about)
             }
         }
     }
 
-    @objc private func editPhotoButtonTouchUpInside(sender: AnyObject) {
+    @objc
+    private func editPhotoButtonTouchUpInside(sender: AnyObject) {
         
         Analytics.shared.trackDidTapButton(buttonName: "update_avatar")
-        self.imagePicker.present(from: sender, openCameraInSelfieMode: true) {
-            [weak self] image in
+        self.imagePicker.present(from: sender, openCameraInSelfieMode: true) { [weak self] image in
             guard let self = self,
                 let uiimage = image else {
                 return
@@ -201,7 +198,8 @@ class AboutViewController: ContentViewController {
         }
     }
 
-    @objc private func didPressOptionsIcon(sender: AnyObject) {
+    @objc
+    private func didPressOptionsIcon(sender: AnyObject) {
         Analytics.shared.trackDidTapButton(buttonName: "options")
         
         var actions = [UIAlertAction]()
@@ -209,8 +207,10 @@ class AboutViewController: ContentViewController {
         let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
-            let activityController = UIActivityViewController(activityItems: [self.identity],
-                                                              applicationActivities: nil)
+            let activityController = UIActivityViewController(
+                activityItems: [self.identity],
+                applicationActivities: nil
+            )
             activityController.configurePopover(from: sender)
             self.present(activityController, animated: true)
         }
@@ -220,12 +220,16 @@ class AboutViewController: ContentViewController {
             let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
 
-                let who = self.about?.name ?? self.identity
-                let text = Text.shareThisProfileText.text(["who": who,
-                                                           "link": publicLink.absoluteString])
+                let nameOrIdentity = self.about?.name ?? self.identity
+                let text = Text.shareThisProfileText.text([
+                    "who": nameOrIdentity,
+                    "link": publicLink.absoluteString
+                ])
                 
-                let activityController = UIActivityViewController(activityItems: [text],
-                                                                  applicationActivities: nil)
+                let activityController = UIActivityViewController(
+                    activityItems: [text],
+                    applicationActivities: nil
+                )
                 activityController.configurePopover(from: sender)
                 self.present(activityController, animated: true)
             }
@@ -233,14 +237,18 @@ class AboutViewController: ContentViewController {
         }
 
         if !identity.isCurrentUser {
-            let block = UIAlertAction(title: Text.blockUser.text,
-                                      style: .destructive,
-                                      handler: self.didSelectBlockAction(action:))
+            let block = UIAlertAction(
+                title: Text.blockUser.text,
+                style: .destructive,
+                handler: self.didSelectBlockAction(action:)
+            )
             actions.append(block)
 
-            let report = UIAlertAction(title: Text.reportUser.text,
-                                       style: .destructive,
-                                       handler: self.didSelectReportAction(action:))
+            let report = UIAlertAction(
+                title: Text.reportUser.text,
+                style: .destructive,
+                handler: self.didSelectReportAction(action:)
+            )
             actions.append(report)
         }
 
@@ -251,7 +259,7 @@ class AboutViewController: ContentViewController {
     }
 
     private func publishProfilePhoto(_ uiimage: UIImage, completionHandler: @escaping (Error?) -> Void) {
-        Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1_000) { [weak self] image, error in
+        Bots.current.addBlob(jpegOf: uiimage, largestDimension: 1000) { [weak self] image, error in
             if let error = error {
                 completionHandler(error)
                 return
@@ -295,8 +303,7 @@ class AboutViewController: ContentViewController {
         
         guard let about = self.about else { return }
         let controller = EditAboutViewController(with: about)
-        controller.saveCompletion = {
-            [weak self] _ in
+        controller.saveCompletion = { [weak self] _ in
             // AppController.shared.showProgress()
             Bots.current.publish(content: controller.about) { [weak self] (_, error) in
                 Log.optional(error)
@@ -331,8 +338,10 @@ class AboutViewController: ContentViewController {
         let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
-            let activityController = UIActivityViewController(activityItems: [self.identity],
-                                                              applicationActivities: nil)
+            let activityController = UIActivityViewController(
+                activityItems: [self.identity],
+                applicationActivities: nil
+            )
             activityController.configurePopover(from: sender)
             self.present(activityController, animated: true)
         }
@@ -342,12 +351,16 @@ class AboutViewController: ContentViewController {
             let sharePublicLink = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
 
-                let who = self.about?.name ?? self.identity
-                let text = Text.shareThisProfileText.text(["who": who,
-                                                           "link": publicLink.absoluteString])
+                let nameOrIdentity = self.about?.name ?? self.identity
+                let text = Text.shareThisProfileText.text([
+                    "who": nameOrIdentity,
+                    "link": publicLink.absoluteString
+                ])
 
-                let activityController = UIActivityViewController(activityItems: [text],
-                                                                  applicationActivities: nil)
+                let activityController = UIActivityViewController(
+                    activityItems: [text],
+                    applicationActivities: nil
+                )
                 activityController.configurePopover(from: sender)
                 self.present(activityController, animated: true)
             }
@@ -378,12 +391,13 @@ class AboutViewController: ContentViewController {
     }
 
     private func didSelectReportAction(action: UIAlertAction) {
-        guard let about = self.about, about.name != nil, let me = Bots.current.identity else {
+        guard let about = self.about, about.name != nil, let currentIdentity = Bots.current.identity else {
             return
         }
         Analytics.shared.trackDidSelectAction(actionName: "report_user")
         let profile = AbusiveProfile(identifier: about.identity, name: about.name)
-        guard let controller = Support.shared.newTicketViewController(reporter: me, profile: profile) else {
+        let newTicketVC = Support.shared.newTicketViewController(reporter: currentIdentity, profile: profile)
+        guard let controller = newTicketVC else {
             AppController.shared.alert(
                 title: Text.error.text,
                 message: Text.Error.supportNotConfigured.text,
@@ -396,7 +410,7 @@ class AboutViewController: ContentViewController {
 
     // MARK: Notifications
 
-    override func didBlockUser(notification: NSNotification) {
+    override func didBlockUser(notification: Notification) {
         guard let identity = notification.object as? Identity else { return }
         guard identity == self.identity else { return }
         self.navigationController?.remove(viewController: self)
@@ -412,9 +426,11 @@ private class AboutPostView: KeyValueView {
         self.tapGesture = self.view.tapGesture
         let separator = Layout.addSeparator(toTopOf: self, height: 10, color: .appBackground)
         Layout.addSeparator(toBottomOf: separator)
-        Layout.fill(view: self,
-                    with: self.view,
-                    insets: UIEdgeInsets.top(10))
+        Layout.fill(
+            view: self,
+            with: self.view,
+            insets: UIEdgeInsets.top(10)
+        )
         self.view.pinBottomToSuperviewBottom()
         Layout.addSeparator(toBottomOf: self)
     }

@@ -20,6 +20,7 @@ typealias PaginatedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
 typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
+typealias CountCompletion = ((Int, Error?) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -189,11 +190,10 @@ protocol Bot: AnyObject {
     
     // everyone's posts
     func everyone(completion: @escaping PaginatedCompletion)
-    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
     
     // your feed
     func recent(completion: @escaping PaginatedCompletion)
-    func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
+    func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion)
     
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
@@ -316,6 +316,18 @@ extension Bot {
                     continuation.resume(throwing: error)
                 } else {
                     continuation.resume(returning: proxy)
+                }
+            }
+        }
+    }
+
+    func numberOfRecentItems(since message: MessageIdentifier) async throws -> Int {
+        try await withCheckedThrowingContinuation { continuation in
+            numberOfRecentItems(since: message) { count, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: count)
                 }
             }
         }
@@ -448,14 +460,6 @@ extension Bot {
                 continuation.resume(returning: result)
             }
         }
-    }
-    
-    func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {
-        self.keyAtRecentTop(queue: .main, completion: completion)
-    }
-    
-    func keyAtEveryoneTop(completion: @escaping (MessageIdentifier?) -> Void) {
-        self.keyAtEveryoneTop(queue: .main, completion: completion)
     }
     
     func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {

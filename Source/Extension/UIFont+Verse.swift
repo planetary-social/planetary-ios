@@ -19,7 +19,8 @@ struct VerseFonts {
     let followCountView = UIFont.systemFont(ofSize: 15, weight: .regular)
     let followCountViewBold = UIFont.systemFont(ofSize: 15, weight: .semibold)
 
-    let floatingRefresh = UIFont.systemFont(ofSize: 10, weight: .regular)
+    let floatingRefresh = UIFont.systemFont(ofSize: 12, weight: .regular)
+    let floatingRefreshBold = UIFont.systemFont(ofSize: 12, weight: .semibold)
     
     let peerCount = UIFont.systemFont(ofSize: 12, weight: .regular)
     let peerCountBold = UIFont.systemFont(ofSize: 12, weight: .semibold)
