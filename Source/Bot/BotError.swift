@@ -17,6 +17,7 @@ enum BotError: Error, LocalizedError {
     case forkProtection
     case invalidAppConfiguration
     case restoring
+    case internalError
     
     // MARK: - LocalizedError
     
@@ -44,6 +45,8 @@ enum BotError: Error, LocalizedError {
             return Text.Error.invalidAppConfiguration.text
         case .restoring:
             return Text.Error.restoring.text
+        case .internalError:
+            return Text.Error.unexpected.text
         }
     }
 }

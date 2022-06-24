@@ -12,7 +12,7 @@ import UIKit
 class NameOnboardingStep: OnboardingStep {
 
     init() {
-        super.init(.name, buttonStyle: .horizontalStack)
+        super.init(.name)
     }
 
     override func customizeView() {
@@ -22,6 +22,7 @@ class NameOnboardingStep: OnboardingStep {
 
         self.view.hintLabel.text = Text.Onboarding.useRealName.text
         self.view.primaryButton.isEnabled = false
+        self.view.secondaryButton.setText(.doItLater)
     }
 
     override func didStart() {
@@ -37,5 +38,9 @@ class NameOnboardingStep: OnboardingStep {
         guard let name = self.data.name else { return }
         guard name.isValidName else { return }
         super.performPrimaryAction(sender: button)
+    }
+    
+    override func performSecondaryAction(sender button: UIButton) {
+        self.next()
     }
 }

@@ -16,6 +16,19 @@ enum BlobCacheError: Error {
     case network(Error?)
 }
 
+/// An object that loads image blob data. This class not only caches blobs but also coordinates loading them from
+/// backing stores.
+///
+/// The full blob load process goes something like this:
+/// 1. Some piece of UI asks the `BlobCache` for an image.
+/// 2. `BlobCache` checks in-memory cache for blob.
+/// 3. If the image is not in the cache, we ask GoBot to look for the blob the file system at a deterministic path
+/// based on the blob ID
+/// 4. If the image is not on the file system we tell go-ssb that we `ssbBlobWant` it.
+/// 5. `BlobCache` hits the HTTP blob service to see if it has the blob.
+/// 6. If go-ssb is able to get the blob from a peer it calls the swift function `notifyBlobReceived` which posts a
+/// notification that `BlobCache` is listening for.
+/// 7. `BlobCache` hears the notification and retries step 3.
 class BlobCache: DictionaryCache {
 
     // MARK: Lifecycle
@@ -68,7 +81,7 @@ class BlobCache: DictionaryCache {
         
         let requestUUID = UUID()
         
-        Task {
+        Task.detached {
             // otherwise schedule the completion
             await self.requestManager.add(completion, for: identifier, uuid: requestUUID)
             
@@ -136,7 +149,7 @@ class BlobCache: DictionaryCache {
                     return
                 }
                 
-                Task {
+                Task.detached {
                     if await self.requestManager.shouldRetry(identifier: identifier) {
                         let delay = await self.requestManager.retryDelay(for: identifier)
                         Log.info("Loading blob \(identifier) failed. Retrying in \(delay) seconds")
@@ -216,13 +229,13 @@ class BlobCache: DictionaryCache {
                     return
                 }
                 
-                Task {
+                Task.detached {
                     await requestManager.removeDataTask(for: blobRef)
                 }
             }
         }
         
-        Task {
+        Task.detached {
             await self.requestManager.add(dataTask, for: blobRef)
         }
         
@@ -241,14 +254,14 @@ class BlobCache: DictionaryCache {
     }
     
     private func didLoad(_ identifier: BlobIdentifier, result: Result<UIImage, Error>) {
-        Task {
+        Task.detached {
             await MainActor.run {
                 if let image = try? result.get() {
-                    store(image, for: identifier)
+                    self.store(image, for: identifier)
                 }
             }
             
-            let uuidsAndCompletionBlocks = await requestManager.popCompletions(for: identifier)
+            let uuidsAndCompletionBlocks = await self.requestManager.popCompletions(for: identifier)
             
             for completion in uuidsAndCompletionBlocks.values {
                 await MainActor.run {
@@ -257,7 +270,7 @@ class BlobCache: DictionaryCache {
             }
             
             await MainActor.run {
-                purge()
+                self.purge()
             }
         }
     }
@@ -389,7 +402,7 @@ class BlobCache: DictionaryCache {
     }
     
     func forgetCompletions(with uuid: UUID, for identifier: BlobIdentifier) {
-        Task {
+        Task.detached {
             await self.requestManager.forgetCompletions(with: uuid, for: identifier)
         }
     }

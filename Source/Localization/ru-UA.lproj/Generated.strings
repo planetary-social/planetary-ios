@@ -115,6 +115,12 @@
 "Text.refresh" = "Refresh";
 "Text.markdownSupported" = "Markdown preview";
 "Text.loggingOut" = "Logging out...";
+"Text.openPost" = "Open post {{ postID }}";
+"Text.postNotFound" = "No posts found with the given ID.";
+"Text.users" = "Users";
+"Text.posts" = "Posts";
+"Text.searching" = "Searching";
+"Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -156,8 +162,8 @@
 
 "Onboarding.getStartedButton" = "Let's get started";
 "Onboarding.photoButtonAdd" = "Add a photo";
-"Onboarding.photoButtonLater" = "I'll do it later";
-"Onboarding.useRealName" = "If you can, use your real name to help your friends find you.";
+"Onboarding.doItLater" = "I'll do it later";
+"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
 "Onboarding.phoneNumber" = "Phone Number";
 "Onboarding.phoneNumberConfirmationMessage" = "We use this to confirm your identity and for service alerts.";
 "Onboarding.didntGetSMS" = "Didn't get the SMS?";

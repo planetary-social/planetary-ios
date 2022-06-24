@@ -403,7 +403,7 @@ class ViewDatabaseTests: XCTestCase {
     func test50_mentions_names() {
         let k = "%W0qeHpJqbvq3RsAXkAPp4G6GMomOWs+OoQJLEEK+dUE=.sha256"
         do {
-            let post = try self.vdb.get(key: k)
+            let post = try self.vdb.post(with: k)
             XCTAssertEqual(post.key, k)
             XCTAssertEqual(post.value.content.post?.mentions?.count, 4)
             if let m = post.value.content.post?.mentions {
@@ -420,7 +420,7 @@ class ViewDatabaseTests: XCTestCase {
     func test51_mentions_images() {
         let k = "%2AyeVqqLtRZf8KuJh2yz3fOh1zpfBYWqFnw2ZlNPs3A=.sha256"
         do {
-            let post = try self.vdb.get(key: k)
+            let post = try self.vdb.post(with: k)
             XCTAssertEqual(post.key, k)
             XCTAssertEqual(post.value.content.post?.mentions?.count, 1)
             if let m = post.value.content.post?.mentions {
@@ -437,7 +437,7 @@ class ViewDatabaseTests: XCTestCase {
     func test61_has_blobs() {
         let k = "%jxj5ilzRk1SKTLp11BVGsJvcmgf+ArwxnKNVb6KWYs4=.sha256"
         do {
-            let post = try self.vdb.get(key: k)
+            let post = try self.vdb.post(with: k)
             XCTAssertEqual(post.key, k)
             guard let p = post.value.content.post else {
                 XCTFail("not a post")
@@ -680,7 +680,7 @@ class ViewDatabaseTests: XCTestCase {
         // Assert
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
         XCTAssertEqual(authors, [currentUser])
-        XCTAssertThrowsError(try vdb.get(key: testMessage.key))
+        XCTAssertThrowsError(try vdb.post(with: testMessage.key))
     }
     
     func testFillBannedAuthor() throws {
@@ -700,7 +700,7 @@ class ViewDatabaseTests: XCTestCase {
         // Assert
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
         XCTAssertEqual(authors, [currentUser])
-        XCTAssertThrowsError(try vdb.get(key: testMessage.key))
+        XCTAssertThrowsError(try vdb.post(with: testMessage.key))
     }
 }
 

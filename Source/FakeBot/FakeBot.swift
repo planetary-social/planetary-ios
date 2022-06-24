@@ -275,6 +275,10 @@ class FakeBot: Bot {
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
     }
+    
+    func post(from key: MessageIdentifier) throws -> KeyValue {
+        throw FakeBotError.runtimeError("not implemented")
+    }
 
     func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
         completion(nil, StaticDataProxy(), nil)

@@ -116,6 +116,12 @@
 "Text.refresh" = "更新";
 "Text.markdownSupported" = "Markdown 预览";
 "Text.loggingOut" = "Logging out...";
+"Text.openPost" = "Open post {{ postID }}";
+"Text.postNotFound" = "No posts found with the given ID.";
+"Text.users" = "Users";
+"Text.posts" = "Posts";
+"Text.searching" = "Searching";
+"Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -157,8 +163,8 @@
 
 "Onboarding.getStartedButton" = "让我们开始吧";
 "Onboarding.photoButtonAdd" = "添加照片";
-"Onboarding.photoButtonLater" = "“我稍后再做。”";
-"Onboarding.useRealName" = "如果您可以，请使用您的真实姓名来帮助您的朋友找到您。";
+"Onboarding.doItLater" = "I'll do it later";
+"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
 "Onboarding.phoneNumber" = "电话";
 "Onboarding.phoneNumberConfirmationMessage" = "我们用它来确认您的身份和服务警报。";
 "Onboarding.didntGetSMS" = "未收到验证码？";
@@ -182,14 +188,14 @@
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
-"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from out team.";
+"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
 "Onboarding.somethingWentWrong" = "Oh no! Something went wrong!";
 "Onboarding.errorRetryMessage" = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it.";
 "Onboarding.resumeRetryMessage" = "This is not your fault, we messed something up. In some cases, it may mean your device cannot reach the network, and trying again later might help.";
 "Onboarding.backupHint" = "Planetary does not use passwords - you have a secret key that you need to keep safe. If you can, you should back it up. Note: this feature is still a work in progress.";
 "Onboarding.backUp" = "Yes, back up my identity";
 "Onboarding.bioHint" = "Don't worry too much about what you say, you can change it later.";
-"Onboarding.benefits" = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\n\nFind out more";
+"Onboarding.benefits" = "🤝 On Planetary news travels from one friend to another, like it does in the real world. There are no supercomputers optimizing your experience for *engagement*. We call it a **gossip** network, and it's a healthier, happier place.\n\n👭 Building on real relationships, Planetary creates a **personal network** for you, your friends, and friends-of-friends. Your local network minimizes abusive content and spam that is typical on global platforms.\n\n🌍 We don't lock your social data into one app forever. If you stop enjoying our app you can take your data - including all your relationships - to another compatible app. Planetary is part of a **growing ecosystem** built on the Secure Scuttlebutt protocol. Refreshing, right?\n\n\n\nFind out more";
 "Onboarding.findOutMore" = "Find out more";
 "Onboarding.thatSoundsGreat" = "That sounds great!";
 "Onboarding.policyStatement" = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy";
@@ -197,7 +203,7 @@
 "Onboarding.privacyPolicy" = "Privacy Policy";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";
-"OnboardingStepTitle.benefits" = "Planetary is a social network with a difference";
+"OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
 "OnboardingStepTitle.bio" = "Why not say a little about yourself...";
 "OnboardingStepTitle.birthday" = "Before we start, when's your birthday?";
 "OnboardingStepTitle.contacts" = "You can connect your address book to see which of your friends are using Planetary";
@@ -211,7 +217,7 @@
 "OnboardingStepTitle.photo" = "Okay that's the hard stuff - now let's get you a profile image";
 "OnboardingStepTitle.photoConfirm" = "Profile photo added";
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
-"OnboardingStepTitle.start" = "\nA new kind of social\nnetwork for creative,\nindependent people";
+"OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
 
 "ManagePubs.header" = "Pubs";
 "ManagePubs.title" = "Manage Pubs";

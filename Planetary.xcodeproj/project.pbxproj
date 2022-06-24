@@ -684,6 +684,8 @@
 		C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */; };
 		C93A4B3C2798B711009F963D /* KeyValueWithReceivedSeq.json in Resources */ = {isa = PBXBuildFile; fileRef = C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */; };
 		C93A4B3E2798C68B009F963D /* KeyValueFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */; };
+		C93F6087285D234900A7D269 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F6086285D234900A7D269 /* Either.swift */; };
+		C93F6088285D234900A7D269 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F6086285D234900A7D269 /* Either.swift */; };
 		C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E341FD224FF9EE002BB5F4 /* UIImage+Verse.swift */; };
 		C941A6E427ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
@@ -1577,6 +1579,7 @@
 		C93A4B39279894AC009F963D /* GoBotTestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotTestExtensions.swift; sourceTree = "<group>"; };
 		C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueWithReceivedSeq.json; sourceTree = "<group>"; };
 		C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueFixtures.swift; sourceTree = "<group>"; };
+		C93F6086285D234900A7D269 /* Either.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 		C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedBlobService.swift; sourceTree = "<group>"; };
 		C943A12E2819BBEC00E1AF96 /* Pub.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Pub.json; sourceTree = "<group>"; };
 		C9489999278CCC3A009BE021 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -2408,6 +2411,7 @@
 				531D0A0B21EAADEC008E40A8 /* Layout */,
 				0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */,
 				0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */,
+				C93F6086285D234900A7D269 /* Either.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -3812,6 +3816,7 @@
 				2346ECB522141DAD009A94CB /* KeyValues.swift in Sources */,
 				0A3880392475D18E00777843 /* PubAPIService.swift in Sources */,
 				C9724BD42809EE06000EBCCD /* UINavigationController+Remove.swift in Sources */,
+				C93F6088285D234900A7D269 /* Either.swift in Sources */,
 				237D057B2335139700973D63 /* Bot+Publish.swift in Sources */,
 				C9724BA22809EAC7000EBCCD /* String+Emoji.swift in Sources */,
 				53AD3FEA227769F2005228F9 /* Thread+Assert.swift in Sources */,
@@ -4693,6 +4698,7 @@
 				531B92BD22CD65ED005D5255 /* UIFont+Verse.swift in Sources */,
 				5B92E27A284A7A8F003127F2 /* HashtagListStrategy.swift in Sources */,
 				5357550B226A3523002A6989 /* UITableView+KeyValue.swift in Sources */,
+				C93F6087285D234900A7D269 /* Either.swift in Sources */,
 				530F018A22DADCE7007EBAE2 /* Date+OlderThan.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
