@@ -38,7 +38,7 @@
 "Text.userDirectoryMessage" = "Estar en el directorio de usuarios significa que la gente puede encontrarte si ya saben tu nombre, código corto o número de teléfono.";
 "Text.sendAnalytics" = "Enviar analíticas a Planetary";
 "Text.dontSendAnalytics" = "No enviar analíticas";
-"Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
+"Text.analyticsMessage" = "Permítanos recopilar datos sobre su uso de la aplicación para que podamos mejorarla.";
 "Text.loadingUpdates" = "Planetary está buscando actualizaciones\nen la red par-a-par descentralizada.";
 "Text.post" = "Publicar";
 "Text.preview" = "Vista previa";
@@ -54,8 +54,8 @@
 "Text.name" = "Nombre";
 "Text.bio" = "Bio";
 "Text.seeMore" = "Ver más";
-"Text.likesThis" = "likes this";
-"Text.dislikesThis" = "dislikes this";
+"Text.likesThis" = "le gusta esto";
+"Text.dislikesThis" = "no le gusta esto";
 "Text.block" = "Bloquear";
 "Text.blocked" = "Bloqueado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
@@ -114,23 +114,23 @@
 "Text.pasteAddress" = "Token";
 "Text.refresh" = "Refrescar";
 "Text.markdownSupported" = "Markdown soportado";
-"Text.loggingOut" = "Logging out...";
-"Text.openPost" = "Open post {{ postID }}";
-"Text.postNotFound" = "No posts found with the given ID.";
-"Text.users" = "Users";
-"Text.posts" = "Posts";
-"Text.searching" = "Searching";
-"Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
-"Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
+"Text.loggingOut" = "Desloguéandose...";
+"Text.openPost" = "Abrir publicación {{ postID }}";
+"Text.postNotFound" = "No se han encontrado publicaciones con ese ID.";
+"Text.users" = "Usuarios";
+"Text.posts" = "Publicaciones";
+"Text.searching" = "Buscando";
+"Text.searchForUsersAndPosts" = "Busca por nombre, ID de usuario o ID de pubicación";
+"Text.upgradingAndRestoring" = "Planetary esta recuperando tus datos de la red.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
-"Text.startUsingPlanetary" = "start using Planetary";
-"Text.startUsingPlanetaryTitle" = "Start Using Planetary";
-"Text.percentComplete" = "complete";
+"Text.startUsingPlanetary" = "comienza a usar Planetary";
+"Text.startUsingPlanetaryTitle" = "Comienza a usar Planetary";
+"Text.percentComplete" = "completado";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
-"Text.areYouSure" = "Are you sure?";
-"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
+"Text.areYouSure" = "¿Estás seguro?";
+"Text.dismissMigrationEarlyMessage" = "Esta pantalla se cerrará y podrás usar Planetary mientras tus datos se descargan en segundo plano. ¿Estás seguro?";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres bloquear a {{ name }}? No podrás ver el contenido de ambos ni tampoco volver a contactarse.";
 "Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";
@@ -162,8 +162,8 @@
 
 "Onboarding.getStartedButton" = "Empecemos";
 "Onboarding.photoButtonAdd" = "Añade una foto";
-"Onboarding.doItLater" = "I'll do it later";
-"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
+"Onboarding.doItLater" = "Lo haré después";
+"Onboarding.useRealName" = "Tu nombre será visible públicamente, siéntete libre de usar un seudónimo o de saltear esta parte por ahora.";
 "Onboarding.phoneNumber" = "Número de teléfono";
 "Onboarding.phoneNumberConfirmationMessage" = "Usamos esto para confirmar tu identidad y para enviarte alertas del servicio.";
 "Onboarding.didntGetSMS" = "¿No recibiste el SMS?";
@@ -186,8 +186,8 @@
 "Onboarding.doneOnboarding" = "¡Uf! ¡Ya terminé!";
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes ásperas en la interfaz. ¡Anímate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
-"Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
-"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
+"Onboarding.followPlanetaryToggleTitle" = "Sigue a Planetary";
+"Onboarding.followPlanetaryToggleDescription" = "Sigue la cuenta de Planetary para ver publicaciones de nuestro equipo.";
 "Onboarding.somethingWentWrong" = "¡Uh no! ¡Algo salió mal!";
 "Onboarding.errorRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. Puedes volver a intentar o comenzar de nuevo, y por favor ven a contarnos sobre ello.";
 "Onboarding.resumeRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. En algunos casos, puede significar que tu dispositivo no se puede conectar a la red, por lo que intentar de nuevo puede ayudar.";
@@ -202,7 +202,7 @@
 "Onboarding.privacyPolicy" = "Política de Privacidad";
 
 "OnboardingStepTitle.backup" = "Okay, hemos creado tu identidad. ¿Te gustaría respaldarla?";
-"OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
+"OnboardingStepTitle.benefits" = "Planetary es una forma más saludable de ser social";
 "OnboardingStepTitle.bio" = "¿Por qué no cuentas un poco sobre tí?";
 "OnboardingStepTitle.birthday" = "Antes de comenzar, ¿cuál es tu fecha de nacimiento?";
 "OnboardingStepTitle.contacts" = "Puedes conectar tu lista de contactos para ver cuál de tus amigos está usando Planetary";
@@ -216,7 +216,7 @@
 "OnboardingStepTitle.photo" = "Okay, esa era la parte difícil. Ahora vamos a conseguirte una imagen de perfil";
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil añadida";
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
-"OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
+"OnboardingStepTitle.start" = "\nRedes sociales para humanos, no para algoritmos.";
 
 "ManagePubs.header" = "Pubs";
 "ManagePubs.title" = "Administrar Pubs";
@@ -270,7 +270,7 @@
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
 "Error.cannotPublishBecauseRestoring" = "Planetary está restableciendo tus datos de la red, y no puede publicar nuevos mensajes en este momento.";
-"Error.restoring" = "Planetary is currently restoring your data from the network.";
+"Error.restoring" = "Planetary esta recuperando tus datos de la red.";
 "Error.invalidAppConfiguration" = "Configuración de app inválida";
 "Error.couldNotGenerateLink" = "No pudo generar el enlace.";
 
