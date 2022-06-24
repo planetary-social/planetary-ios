@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "Lottie",
+        "repositoryURL": "https://github.com/airbnb/lottie-ios",
+        "state": {
+          "branch": null,
+          "revision": "4a6058cbbdfe4f74aeae92c8bd51ad3b0de2a1ee",
+          "version": "3.3.0"
+        }
+      },
+      {
         "package": "ZendeskMessagingSDK",
         "repositoryURL": "https://github.com/zendesk/messaging_sdk_ios",
         "state": {
@@ -71,6 +80,24 @@
           "branch": null,
           "revision": "9e4768ef3093bd61cbc0b64d75dcdcc92414e1f0",
           "version": "1.1.10"
+        }
+      },
+      {
+        "package": "SkeletonView",
+        "repositoryURL": "https://github.com/Juanpe/SkeletonView",
+        "state": {
+          "branch": null,
+          "revision": "9e61ff3a85a3780a2cdfceae0257ad32fa8ae4d3",
+          "version": "1.29.2"
+        }
+      },
+      {
+        "package": "SQLite.swift",
+        "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
+        "state": {
+          "branch": null,
+          "revision": "4d543d811ee644fa4cc4bfa0be996b4dd6ba0f54",
+          "version": "0.13.3"
         }
       },
       {
