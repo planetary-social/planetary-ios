@@ -16,7 +16,7 @@ extension String {
 
     var isValidName: Bool {
         let string = self.withoutSpacesOrNewlines
-        return string.count >= 3 && string.count <= 50
+        return string.count >= 1 && string.count <= 50
     }
 
     var isValidVerificationCode: Bool {

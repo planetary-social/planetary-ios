@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Allow searches by user ID and post ID #642
+- Allow lookup of user IDs outside your network on Your Network tab. #642
+- Allow lookup of individual messages by ID on Your Network tab. #642
+- Make go-ssb garbage collection less aggressive. #651
 - Fixed a bug where posts from blocked users could show up in the Discover feed. #639
 - Improve performance of the recently downloaded post count in the side menu. #637
 - Fixed a bug where blocks were showing up as follows in the Home Feed. #619
@@ -16,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved blob propagation when posting images. #626
 - The threaded conversation view now shows likes posted from other SSB clients. #610
 - Hashtags on the Hashtags tab are now sorted by popularity. #614
+- Changed text on the first two onboarding screens to better explain Planetary. #653
+- Allow users to skip setting their name during onboarding. #659
 
 ## [1.2.0] 2022-06-01
 

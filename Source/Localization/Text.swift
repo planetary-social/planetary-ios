@@ -278,9 +278,9 @@ extension Text {
         case getStartedButton = "Let's get started"
 
         case photoButtonAdd = "Add a photo"
-        case photoButtonLater = "I'll do it later"
+        case doItLater = "I'll do it later"
 
-        case useRealName = "If you can, use your real name to help your friends find you."
+        case useRealName = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now."
 
         case phoneNumber = "Phone Number"
         case phoneNumberConfirmationMessage = "We use this to confirm your identity and for service alerts."
