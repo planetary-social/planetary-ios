@@ -246,6 +246,20 @@ protocol Bot: AnyObject {
 
 extension Bot {
     
+    @MainActor func createSecret() async throws -> Secret {
+        try await withCheckedThrowingContinuation { continuation in
+            self.createSecret { secret, error in
+                if let secret = secret {
+                    continuation.resume(with: .success(secret))
+                } else if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(throwing: BotError.internalError)
+                }
+            }
+        }
+    }
+    
     func login(config: AppConfiguration, completion: @escaping ErrorCompletion) {
         self.login(queue: .main, config: config, completion: completion)
     }

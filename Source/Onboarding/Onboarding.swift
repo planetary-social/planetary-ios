@@ -60,7 +60,7 @@ class Onboarding {
     /// 2. Create an AppConfiguration with the secret
     /// 3. Creates an OnboardingContext from the configuration
     /// 4. Logs into the bot
-    /// 5. Joins the Planetary API (creates user directory Person record)
+    /// 5. ~~Joins the Planetary API (creates user directory Person record)~~
     /// 6. Publishes an About
     /// If these steps are successful, `Onboarding.didStart()` is called to set
     /// the `Onboarding.status` for the created identity and the configuration is
@@ -74,83 +74,85 @@ class Onboarding {
     /// name that the API will reject with a 500 error.  This is useful to simulate the
     /// API failing and to test the reset and resume mechanisms.
     /// X5GBl8BzsRaQ
-    static func start(birthdate: Date,
-                      phone: String,
-                      name: String,
-                      completion: @escaping StartCompletion) {
-        guard birthdate.olderThan(yearsAgo: 16) else { completion(nil, .invalidBirthdate); return }
+    static func createProfile(birthdate: Date, phone: String, name: String?) async throws -> Context {
+        
+        guard birthdate.olderThan(yearsAgo: 16) else {
+            throw StartError.invalidBirthdate
+        }
         
         // Phone verification is not used anymore
         // guard phone.isValidPhoneNumber else { completion(nil, .invalidPhoneNumber); return }
         
-        guard name.isValidName else { completion(nil, .invalidName); return }
-        guard Bots.current.identity == nil else { completion(nil, .cannotOnboardWhileLoggedIn); return }
-
-        // create secret
-        GoBot.shared.createSecret { secret, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            
-            guard let secret = secret else {
-                completion(nil, .secretFailed(error))
-                return
-            }
-
-            // create app configuration with name and time stamp
-            let configuration = AppConfiguration(with: secret)
-            configuration.name = "\(name) (\(Date().shortDateTimeString))"
-            // We will add this as an option in the UI in the future #494
-            configuration.joinedPlanetarySystem = true
-
-            #if DEBUG
-            configuration.ssbNetwork = Environment.Networks.test
-            #else
-            configuration.ssbNetwork = Environment.Networks.mainNet
-            #endif
-
-            // login to bot
-            
-            // Safe to unwrap as configuration has secret, network and bot
-            var context = Context(from: configuration)!
-            
-            context.bot.login(config: configuration) { error in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
+        if let name = name {
+            guard name.isValidName else {
+                throw StartError.invalidName
                 
-                if let error = error {
-                    completion(nil, .botError(error))
-                    return
-                }
-
-                // publish about
-                let about = About(about: secret.identity, name: name)
-                context.bot.publish(content: about) { _, error in
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    if let error = error {
-                        completion(nil, .botError(error))
-                        return
-                    }
-
-                    if let network = configuration.network {
-                        CrashReporting.shared.identify(
-                            identifier: about.identity,
-                            name: about.name,
-                            networkKey: network.string,
-                            networkName: network.name
-                        )
-                        Analytics.shared.identify(identifier: about.identity,
-                                                  name: about.name,
-                                                  network: network.string)
-                    }
-                    
-                    // done
-                    context.about = about
-                    completion(context, nil)
-                    Onboarding.didStart(configuration: configuration, secret: secret)
-                }
             }
         }
+        
+        guard Bots.current.identity == nil else {
+            throw StartError.cannotOnboardWhileLoggedIn
+        }
+        
+        var secret: Secret
+        
+        do {
+            secret = try await GoBot.shared.createSecret()
+        } catch {
+            throw StartError.secretFailed(error)
+        }
+        
+        // create app configuration with name and time stamp
+        let configuration = AppConfiguration(with: secret)
+        configuration.name = "\(name ?? secret.identity) (\(Date().shortDateTimeString))"
+        // We will add this as an option in the UI in the future #494
+        configuration.joinedPlanetarySystem = true
+        
+        #if DEBUG
+        configuration.ssbNetwork = Environment.Networks.test
+        #else
+        configuration.ssbNetwork = Environment.Networks.mainNet
+        #endif
+        
+        // Safe to unwrap as configuration has secret, network and bot
+        var context = Context(from: configuration)!
+        
+        // login to bot
+        do {
+            try await context.bot.login(config: configuration)
+        } catch {
+            throw StartError.botError(error)
+        }
+        
+        // publish about
+        if let name = name {
+            do {
+                let about = About(about: secret.identity, name: name)
+                _ = try await context.bot.publish(content: about)
+                context.about = about
+            } catch {
+                throw StartError.botError(error)
+            }
+        }
+        
+        // track
+        if let network = configuration.network {
+            CrashReporting.shared.identify(
+                identifier: secret.identity,
+                name: name,
+                networkKey: network.string,
+                networkName: network.name
+            )
+            Analytics.shared.identify(
+                identifier: secret.identity,
+                name: name,
+                network: network.string
+            )
+        }
+        
+        // done
+        Onboarding.didStart(configuration: configuration, secret: secret)
+        return context
     }
 
     /// Assuming the very last of `Onboarding.start()` completes successfully, this should

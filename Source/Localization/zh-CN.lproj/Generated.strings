@@ -1,4 +1,5 @@
-// This file is auto-generated at build time and should not be modified by hand
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -156,8 +157,8 @@
 
 "Onboarding.getStartedButton" = "让我们开始吧";
 "Onboarding.photoButtonAdd" = "添加照片";
-"Onboarding.photoButtonLater" = "“我稍后再做。”";
-"Onboarding.useRealName" = "如果您可以，请使用您的真实姓名来帮助您的朋友找到您。";
+"Onboarding.doItLater" = "I'll do it later";
+"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
 "Onboarding.phoneNumber" = "电话";
 "Onboarding.phoneNumberConfirmationMessage" = "我们用它来确认您的身份和服务警报。";
 "Onboarding.didntGetSMS" = "未收到验证码？";

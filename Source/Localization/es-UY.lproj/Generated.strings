@@ -1,4 +1,5 @@
-// This file is auto-generated at build time and should not be modified by hand
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Opa";
@@ -156,8 +157,8 @@
 
 "Onboarding.getStartedButton" = "Vamos";
 "Onboarding.photoButtonAdd" = "Agregá una foto";
-"Onboarding.photoButtonLater" = "Lo hago después";
-"Onboarding.useRealName" = "Si podés, usá tu nombre real para ayudar a tus amigos a encontrarte.";
+"Onboarding.doItLater" = "I'll do it later";
+"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
 "Onboarding.phoneNumber" = "Número de celular";
 "Onboarding.phoneNumberConfirmationMessage" = "Usamos esto para confirmar tu identidad y para enviarte alertas del servicio.";
 "Onboarding.didntGetSMS" = "¿No recibiste el SMS?";

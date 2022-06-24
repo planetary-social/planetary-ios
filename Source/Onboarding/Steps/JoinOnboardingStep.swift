@@ -11,7 +11,7 @@ import UIKit
 import Logger
 import CrashReporting
 
-class JoinOnboardingStep: OnboardingStep {
+@MainActor class JoinOnboardingStep: OnboardingStep {
 
     init() {
         super.init(.join)
@@ -27,7 +27,7 @@ class JoinOnboardingStep: OnboardingStep {
         guard let birthdate = self.data.birthdate else { return }
         // guard let phone = self.data.phone else { return }
         let phone = "800-555-1212"
-        guard let name = self.data.name else { return }
+        let name = self.data.name 
 
         self.view.lookBusy(after: 0)
 
@@ -40,19 +40,28 @@ class JoinOnboardingStep: OnboardingStep {
             return
         }
 
-        Onboarding.start(birthdate: birthdate, phone: phone, name: name) { [weak self] context, error in
+        Task { [weak self] in
+            var context: Onboarding.Context?
             
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            
-            self?.view.lookReady()
-            guard let context = context else {
+            do {
+                context = try await Onboarding.createProfile(birthdate: birthdate, phone: phone, name: name)
+                self?.view.lookReady()
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                self?.view.lookReady()
                 self?.alert(error: error)
                 return
             }
-            self?.data.context = context
             
-            self?.next()
+            self?.data.context = context
+            if name != nil {
+                // Proceed to bio + photo steps
+                self?.next()
+            } else {
+                // Skip bio + photo
+                self?.next(.done)
+            }
         }
     }
 
@@ -79,7 +88,7 @@ class JoinOnboardingStep: OnboardingStep {
                                     message: error?.localizedDescription ?? Text.Onboarding.errorRetryMessage.text)
     }
 
-    /// If `Onboarding.start()` fails, this will reset onboarding and try again
+    /// If `Onboarding.createProfile()` fails, this will reset onboarding and try again
     /// with the same user input values
     private func tryAgain() {
         guard self.data.simulated == false else { return }
@@ -91,7 +100,7 @@ class JoinOnboardingStep: OnboardingStep {
         }
     }
 
-    /// If `Onboarding.start()` fails, this will reset onboarding and go back to
+    /// If `Onboarding.createProfile()` fails, this will reset onboarding and go back to
     /// the very first onboarding step, and dropping all user input.
     private func startOver() {
         guard self.data.simulated == false else { return }
