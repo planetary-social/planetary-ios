@@ -124,7 +124,6 @@ class Onboarding {
             throw StartError.botError(error)
         }
         
-        
         // publish about
         if let name = name {
             do {
