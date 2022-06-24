@@ -254,7 +254,7 @@ extension Text {
     enum Onboarding: String, Localizable, CaseIterable {
         enum StepTitle: String, Localizable, CaseIterable {
             case backup = "Okay, we've created your identity - would you like to back it up?"
-            case benefits = "Planetary is a social network with a difference"
+            case benefits = "Planetary is a healthier way to be social"
             case bio = "Why not say a little about yourself..."
             case birthday = "Before we start, when's your birthday?"
             case contacts = "You can connect your address book to see which of your friends are using Planetary"
@@ -268,7 +268,7 @@ extension Text {
             case photo = "Okay that's the hard stuff - now let's get you a profile image"
             case photoConfirm = "Profile photo added"
             case resume = "Resuming set up of your identity on Planetary..."
-            case start = "\nA new kind of social\nnetwork for creative,\nindependent people"
+            case start = "\nSocial media for humans, not algorithms."
 
             static var namespace: String {
                 "OnboardingStepTitle"
@@ -308,7 +308,7 @@ extension Text {
         case earlyAccess = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!"
         case iUnderstand = "Yes, I understand"
         case followPlanetaryToggleTitle = "Follow Planetary"
-        case followPlanetaryToggleDescription = "Follow the Planetary account to see posts from out team."
+        case followPlanetaryToggleDescription = "Follow the Planetary account to see posts from our team."
 
         case somethingWentWrong = "Oh no! Something went wrong!"
         case errorRetryMessage = "This is not your fault, we messed something up. You can try again or start over, and please come and tell one of us about it."
@@ -318,7 +318,7 @@ extension Text {
         case backUp = "Yes, back up my identity"
         case bioHint = "Don't worry too much about what you say, you can change it later."
 
-        case benefits = "We're part of an open ecosystem which respects your privacy, minimizes data collection and aims to reward content creators.\n\nAnd if you don't like our app, you can take your identity-and all your friends and content-to another service!\n\nFind out more"
+        case benefits = "🤝 On Planetary news travels from one friend to another, like it does in the real world. There are no supercomputers optimizing your experience for *engagement*. We call it a **gossip** network, and it's a healthier, happier place.\n\n👭 Building on real relationships, Planetary creates a **personal network** for you, your friends, and friends-of-friends. Your local network minimizes abusive content and spam that is typical on global platforms.\n\n🌍 We don't lock your social data into one app forever. If you stop enjoying our app you can take your data - including all your relationships - to another compatible app. Planetary is part of a **growing ecosystem** built on the Secure Scuttlebutt protocol. Refreshing, right?\n\n\n\nFind out more"
         case findOutMore = "Find out more"
         case thatSoundsGreat = "That sounds great!"
 
