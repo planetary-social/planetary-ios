@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import Analytics
 
 class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerViewDataSource, UIPickerViewDelegate {
 
@@ -16,7 +15,6 @@ class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerView
 
     init() {
         super.init(.birthday, buttonStyle: .horizontalStack)
-        Analytics.shared.trackBirthdateStep()
     }
     
     lazy var currentYear: Int = {

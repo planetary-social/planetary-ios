@@ -11,7 +11,6 @@ import Photos
 import UIKit
 import Logger
 import CrashReporting
-import Analytics
 
 class PhotoConfirmOnboardingStep: OnboardingStep {
 
@@ -34,7 +33,6 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
 
     init() {
         super.init(.photoConfirm)
-        Analytics.shared.trackPhotoConfirmationStep()
     }
 
     override func customizeView() {

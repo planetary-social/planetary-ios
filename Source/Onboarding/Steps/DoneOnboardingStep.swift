@@ -40,7 +40,6 @@ class DoneOnboardingStep: OnboardingStep {
 
     init() {
         super.init(.done)
-        Analytics.shared.trackDoneStep()
     }
 
     override func customizeView() {

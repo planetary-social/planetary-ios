@@ -9,7 +9,6 @@
 import Foundation
 import Photos
 import UIKit
-import Analytics
 
 class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -17,7 +16,6 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
 
     init() {
         super.init(.photo)
-        Analytics.shared.trackPhotoStep()
     }
 
     private let circleView: UIView = {

@@ -8,13 +8,11 @@
 
 import Foundation
 import UIKit
-import Analytics
 
 class NameOnboardingStep: OnboardingStep {
 
     init() {
         super.init(.name, buttonStyle: .horizontalStack)
-        Analytics.shared.trackNameStep()
     }
 
     override func customizeView() {

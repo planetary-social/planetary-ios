@@ -99,38 +99,6 @@ public extension Analytics {
         service.track(event: .did, element: .app, name: "onboarding_start")
     }
     
-    func trackBenefitsStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_benefits")
-    }
-    
-    func trackBirthdateStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_birthdate")
-    }
-    
-    func trackNameStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_name")
-    }
-    
-    func trackJoinStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_join")
-    }
-    
-    func trackPhotoStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_photo")
-    }
-    
-    func trackPhotoConfirmationStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_photo_confirmation")
-    }
-    
-    func trackBioStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_bio")
-    }
-    
-    func trackDoneStep() {
-        service.track(event: .show, element: .screen, name: "onboarding_done")
-    }
-
     /// Marks the end of a time event for `Onboarding.start()`
     /// Note that this should not be used to track onboarding screens.
     func trackOnboardingEnd() {
