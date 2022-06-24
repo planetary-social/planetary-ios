@@ -10,6 +10,7 @@ import Foundation
 import Network
 import Logger
 import CrashReporting
+import Analytics
 
 class RedeemInviteOperation: AsynchronousOperation {
 
@@ -94,6 +95,8 @@ class RedeemInviteOperation: AsynchronousOperation {
                             completion(.failure(error!))
                             return
                         }
+                        
+                        Analytics.shared.trackDidFollowPub()
                         
                         completion(.success(()))
                     }
