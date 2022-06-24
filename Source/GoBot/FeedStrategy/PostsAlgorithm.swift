@@ -100,6 +100,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         let colHidden = Expression<Bool>("hidden")
         let colAuthorID = Expression<Int64>("author_id")
 
+        // swiftlint:disable indentation_width
         var query = posts
             .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
             .join(authors, on: authors[colID] == msgs[colAuthorID])
@@ -108,21 +109,23 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             .filter(colHidden == false)
             .filter(colDecrypted == wantPrivate)
             .filter(
-                Expression(literal: """
-                messages.claimed_at > (
-                  SELECT
-                    m.claimed_at + 1
-                  FROM
-                    messages m
-                    JOIN messagekeys mk ON mk.id = m.msg_id
-                  WHERE
-                    mk.key = '\(message)'
-                  LIMIT
-                    1
-                )
-                """
+                Expression(
+                    literal: """
+                    messages.claimed_at > (
+                      SELECT
+                        m.claimed_at + 1
+                      FROM
+                        messages m
+                        JOIN messagekeys mk ON mk.id = m.msg_id
+                      WHERE
+                        mk.key = '\(message)'
+                      LIMIT
+                        1
+                    )
+                    """
                 )
             )
+        // swiftlint:enable indentation_width
 
         if onlyFollowed {
             query = filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)

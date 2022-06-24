@@ -10,8 +10,6 @@ import UIKit
 
 class FloatingRefreshButton: UIButton {
 
-    private var shadowLayer = CAShapeLayer()
-
     init() {
         super.init(frame: .zero)
         self.useAutoLayout()
@@ -25,18 +23,17 @@ class FloatingRefreshButton: UIButton {
     }
 
     func makeRoundedAndShadowed() {
+        layer.masksToBounds = false
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowOpacity = 0.25
+        layer.shadowRadius = 4
         layer.cornerRadius = 16
-        shadowLayer.path = UIBezierPath(roundedRect: .zero, cornerRadius: layer.cornerRadius).cgPath
-        shadowLayer.fillColor = backgroundColor?.cgColor
-        shadowLayer.shadowColor = UIColor.black.cgColor
-        shadowLayer.shadowOffset = CGSize(width: 0, height: 4)
-        shadowLayer.shadowOpacity = 0.25
-        shadowLayer.shadowRadius = 4
-        layer.insertSublayer(shadowLayer, at: 0)
     }
 
     func updateShadowLayer() {
-        shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
     }
 
     func setTitle(with count: Int) {

@@ -27,7 +27,6 @@ protocol PaginatedKeyValueDataProxy {
 
     // notify the proxy to fetch more messages (up to and including index)
     func prefetchUpTo(index: Int)
-
 }
 
 // StaticDataProxy only has a fixed set of messages from the start and cant prefetch
