@@ -222,21 +222,26 @@ class DebugOnboardingViewController: DebugTableViewController {
     private func startOnboarding(from cell: UITableViewCell) {
 
         guard self.validateUserInput() else { return }
+        
+        Task {
 
-        AppController.shared.showProgress()
-        cell.showActivityIndicator()
-        Bots.current.logout {
-            error in
-            let number = "\(self.countryTextField.text ?? "")\(self.phoneTextField.text ?? "")"
-            Onboarding.start(birthdate: self.birthdate,
-                             phone: number,
-                             name: self.nameTextField.text!) {
-                context, error in
-                self.context = context
-                cell.hideActivityIndicator()
+            AppController.shared.showProgress()
+            cell.showActivityIndicator()
+            do {
+                try await Bots.current.logout()
+                let number = "\(self.countryTextField.text ?? "")\(self.phoneTextField.text ?? "")"
+                self.context = try await Onboarding.createProfile(
+                    birthdate: self.birthdate,
+                    phone: number,
+                    name: self.nameTextField.text!
+                )
+            } catch {
+                Log.optional(error)
                 self.startErrorTextView.text = self.string(for: error)
-                AppController.shared.hideProgress()
             }
+            
+            cell.hideActivityIndicator()
+            AppController.shared.hideProgress()
         }
     }
 
