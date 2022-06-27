@@ -272,6 +272,7 @@ class ViewDatabase {
     func close() {
         if let db = openDB {
             do {
+                try db.execute("PRAGMA analysis_limit = 400;")
                 try db.execute("PRAGMA optimize;")
                 Log.info("Finished optimizing db")
             } catch {
