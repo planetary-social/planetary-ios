@@ -159,39 +159,6 @@ class DiscoverViewController: ContentViewController {
         }
     }
     
-    func refreshAndLoad(animated: Bool = false) {
-        if DiscoverViewController.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(DiscoverViewController.refreshBackgroundTaskIdentifier)
-        }
-        
-        Log.info("Pull down to refresh triggering a short refresh")
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "DiscoverPullDownToRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(DiscoverViewController.refreshBackgroundTaskIdentifier)
-            DiscoverViewController.refreshBackgroundTaskIdentifier = .invalid
-        }
-        DiscoverViewController.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = { [weak self] in
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-            
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                DiscoverViewController.refreshBackgroundTaskIdentifier = .invalid
-            }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.load(animated: animated)
-            }
-        }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
-    }
-    
     func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.collectionView.backgroundView = self.emptyView
@@ -208,7 +175,7 @@ class DiscoverViewController: ContentViewController {
     @objc
     func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refreshAndLoad()
+        self.load(animated: true)
     }
     
     @objc
