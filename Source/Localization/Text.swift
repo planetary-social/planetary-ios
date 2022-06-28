@@ -182,6 +182,7 @@ enum Text: String, Localizable, CaseIterable {
     case users = "Users"
     case posts = "Posts"
     case searching = "Searching"
+    case search = "Search"
     case searchForUsersAndPosts = "Search by name, user ID, post ID"
     
     // MARK: - Beta 1 migration strings

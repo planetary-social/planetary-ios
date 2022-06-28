@@ -122,6 +122,7 @@
 "Text.users" = "Usuarios";
 "Text.posts" = "Publicaciones";
 "Text.searching" = "Buscando";
+"Text.search" = "Search";
 "Text.searchForUsersAndPosts" = "Busca por nombre, ID de usuario o ID de pubicación";
 "Text.upgradingAndRestoring" = "Planetary esta recuperando tus datos de la red.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";

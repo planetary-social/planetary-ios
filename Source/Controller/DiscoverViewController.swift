@@ -49,12 +49,14 @@ class DiscoverViewController: ContentViewController {
         return button
     }()
     
-    private lazy var collectionView: UICollectionView = {
+    private lazy var collectionViewLayout: PinterestCollectionViewLayout = {
         let layout = PinterestCollectionViewLayout()
-        layout.numberOfColumns = self.numberOfColumns
         layout.delegate = self
-        
-        let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
+        return layout
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: collectionViewLayout)
         view.dataSource = self.dataSource
         view.delegate = self.delegate
         view.register(PostCollectionViewCell.self, forCellWithReuseIdentifier: "Post")
@@ -67,9 +69,6 @@ class DiscoverViewController: ContentViewController {
         return view
     }()
     
-    private lazy var numberOfColumns: Int = {
-        Int(UIScreen.main.bounds.width) / 180
-    }()
      
     private lazy var emptyView: UIView = {
         let view = UIView()
@@ -266,7 +265,7 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
         let insets = collectionView.contentInset
         let contentWidth = collectionView.bounds.width - (insets.left + insets.right)
         let cellPadding: CGFloat = 5
-        let columnWidth = contentWidth / CGFloat(self.numberOfColumns) - cellPadding * 2
+        let columnWidth = contentWidth / CGFloat(collectionViewLayout.numberOfColumns) - cellPadding * 2
         if let keyValue = dataSource.data.keyValueBy(index: indexPath.row) {
             if let post = keyValue.value.content.post, post.hasBlobs {
                 if post.text.withoutGallery().withoutSpacesOrNewlines.isEmpty {
