@@ -24,7 +24,7 @@ final class DefaultLogsBuilderTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        try FileManager.default.removeItem(atPath: logsPath)
+        try? FileManager.default.removeItem(atPath: logsPath)
         try FileManager.default.createDirectory(atPath: logsPath, withIntermediateDirectories: true)
     }
 

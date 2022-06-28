@@ -18,7 +18,7 @@ class CrashReportingServiceAdapter: CrashReportingService {
     init(_ apiService: APIService, logger: LogProtocol = Log.shared, logsBuilder: LogsBuilder = DefaultLogsBuilder()) {
         self.apiService = apiService
         self.logger = logger
-        self.apiService.onEventHandler = { [weak self] (identity) -> Logs in
+        self.apiService.onEventHandler = { (identity) -> Logs in
             return logsBuilder.build(logger: logger, identity: identity)
         }
         self.apiService.start()
