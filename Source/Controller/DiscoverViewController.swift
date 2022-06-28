@@ -11,7 +11,7 @@ import Logger
 import Analytics
 import CrashReporting
 
-class DiscoverViewController: ContentViewController {
+class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -67,11 +67,22 @@ class DiscoverViewController: ContentViewController {
         return view
     }()
     
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchResultsUpdater = self
+        controller.searchBar.delegate = self
+        controller.searchBar.isTranslucent = false
+        controller.searchBar.placeholder = Text.search.text
+        controller.obscuresBackgroundDuringPresentation = false
+        controller.hidesNavigationBarDuringPresentation = false
+        return controller
+    }()
+    
     private lazy var numberOfColumns: Int = {
         Int(UIScreen.main.bounds.width) / 180
     }()
      
-    private lazy var emptyView: UIView = {
+    private lazy var emptyDiscoverView: UIView = {
         let view = UIView()
          
         let imageView = UIImageView(image: UIImage(imageLiteralResourceName: "icon-planetary"))
@@ -106,6 +117,10 @@ class DiscoverViewController: ContentViewController {
 
         return view
     }()
+    
+    private lazy var searchResultsView: UniversalSearchResultsView = {
+       UniversalSearchResultsView()
+    }()
 
     // MARK: Lifecycle
 
@@ -124,9 +139,9 @@ class DiscoverViewController: ContentViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Layout.fill(view: self.view, with: self.collectionView)
-        
-        self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
+        self.navigationItem.searchController = self.searchController
+        showDiscoverCollectionView()
+//        self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
         
         self.addLoadingAnimation()
         self.load()
@@ -194,13 +209,38 @@ class DiscoverViewController: ContentViewController {
     
     func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
-            self.collectionView.backgroundView = self.emptyView
+            self.collectionView.backgroundView = self.emptyDiscoverView
         } else {
-            self.emptyView.removeFromSuperview()
+            self.emptyDiscoverView.removeFromSuperview()
             self.collectionView.backgroundView = nil
         }
         self.dataSource.update(source: proxy)
         self.collectionView.reloadData()
+    }
+    
+    // MARK: Search
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        Analytics.shared.trackDidTapSearchbar(searchBarName: "discover")
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        searchResultsView.searchQuery = searchController.searchBar.text ?? ""
+        if searchResultsView.searchQuery.isEmpty {
+            showDiscoverCollectionView()
+        } else {
+            showSearchResults()
+        }
+    }
+    
+    func showDiscoverCollectionView() {
+        view.subviews.forEach { $0.removeFromSuperview() }
+        Layout.fill(view: self.view, with: self.collectionView)
+    }
+    
+    func showSearchResults() {
+        view.subviews.forEach { $0.removeFromSuperview() }
+        Layout.fill(view: self.view, with: self.searchResultsView)
     }
     
     // MARK: Actions

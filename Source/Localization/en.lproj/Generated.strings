@@ -120,6 +120,7 @@
 "Text.postNotFound" = "No posts found with the given ID.";
 "Text.users" = "Users";
 "Text.posts" = "Posts";
+"Text.search" = "Search";
 "Text.searching" = "Searching";
 "Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";

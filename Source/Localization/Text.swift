@@ -181,6 +181,7 @@ enum Text: String, Localizable, CaseIterable {
     case postNotFound = "No posts found with the given ID."
     case users = "Users"
     case posts = "Posts"
+    case search = "Search"
     case searching = "Searching"
     case searchForUsersAndPosts = "Search by name, user ID, post ID"
     

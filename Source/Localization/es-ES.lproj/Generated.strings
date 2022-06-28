@@ -121,6 +121,7 @@
 "Text.postNotFound" = "No se han encontrado publicaciones con ese ID.";
 "Text.users" = "Usuarios";
 "Text.posts" = "Publicaciones";
+"Text.search" = "Search";
 "Text.searching" = "Buscando";
 "Text.searchForUsersAndPosts" = "Busca por nombre, ID de usuario o ID de pubicación";
 "Text.upgradingAndRestoring" = "Planetary esta recuperando tus datos de la red.";
