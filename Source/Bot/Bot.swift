@@ -20,7 +20,7 @@ typealias PaginatedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
 typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
-typealias CountCompletion = ((Int, Error?) -> Void)
+typealias CountCompletion = ((Result<Int, Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -193,6 +193,11 @@ protocol Bot: AnyObject {
     
     // your feed
     func recent(completion: @escaping PaginatedCompletion)
+
+    /// Returns the number of items in Home Feed (see `func recent(completion: @escaping PaginatedCompletion)`)
+    /// newer than a particular item given by its identifier (offset). This is useful for calculating the number of posts the user
+    /// has not yet seen in the Home Feed.
+    /// - parameter message: The identifier of the message to account for the offset.
     func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion)
     
     /// Returns all the messages created by the specified Identity.
@@ -323,11 +328,12 @@ extension Bot {
 
     func numberOfRecentItems(since message: MessageIdentifier) async throws -> Int {
         try await withCheckedThrowingContinuation { continuation in
-            numberOfRecentItems(since: message) { count, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
+            numberOfRecentItems(since: message) { result in
+                switch result {
+                case .success(let count):
                     continuation.resume(returning: count)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
                 }
             }
         }

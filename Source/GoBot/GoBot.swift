@@ -1301,11 +1301,11 @@ class GoBot: Bot {
             do {
                 let count = try self.database.numberOfRecentPosts(with: self.homeFeedStrategy, since: message)
                 DispatchQueue.main.async {
-                    completion(count, nil)
+                    completion(.success(count))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completion(0, error)
+                    completion(.failure(error))
                 }
             }
         }
