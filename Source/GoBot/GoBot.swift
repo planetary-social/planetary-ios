@@ -1451,6 +1451,14 @@ class GoBot: Bot {
             }
         }
     }
+    
+    func posts(matching filter: String) async throws -> [KeyValue] {
+        let task = Task.detached(priority: .high) {
+            return try self.database.posts(matching: filter)
+        }
+        
+        return try await task.getResult().get()
+    }
 
     // MARK: Statistics
 
