@@ -274,6 +274,9 @@ class ViewDatabase {
             do {
                 try db.execute("PRAGMA analysis_limit = 400;")
                 try db.execute("PRAGMA optimize;")
+                // this event is mostly so that I can make sure this works reliably in production and the app
+                // isn't being terminated before it's done.
+                Analytics.shared.trackBotDidOptimizeSQLite()
                 Log.info("Finished optimizing db")
             } catch {
                 Log.optional(error)
