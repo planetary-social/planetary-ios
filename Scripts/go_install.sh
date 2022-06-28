@@ -82,9 +82,17 @@ elif [ ! -z "$1" ]; then
 fi
 
 if [ -d "$GOROOT" ]; then
-    echo "The Go install directory ($GOROOT) already exists. Exiting."
-    ${GOROOT}/bin/go version
-    exit 0
+    installed_version=$(${GOROOT}/bin/go version | cut -f3 -d' ')
+    expected_version="go$VERSION"
+    echo "Installed Go version $installed_version, expected Go version $expected_version"
+
+    if [ "$installed_version" = "$expected_version" ]; then
+      echo "Expected Go version is already installed"
+      exit 0
+    else
+      echo "Incorrect Go version detected, removing"
+      rm -r "$GOROOT"
+    fi
 fi
 
 echo "Downloading $PACKAGE_NAME ..."
