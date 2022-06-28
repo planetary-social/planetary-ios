@@ -8,28 +8,20 @@
 import Foundation
 import Logger
 
+/// This implementation of CrashReportingService starts the APIService
+/// when a botLogHandler is set. So be sure to always set it.
 class CrashReportingServiceAdapter: CrashReportingService {
 
     var apiService: APIService
     var logger: LogProtocol
-    var botLogHandler: (() -> String?)?
 
-    init(_ apiService: APIService, logger: LogProtocol = Log.shared) {
+    init(_ apiService: APIService, logger: LogProtocol = Log.shared, logsBuilder: LogsBuilder = DefaultLogsBuilder()) {
         self.apiService = apiService
         self.logger = logger
-        self.apiService.onEventHandler = { [weak self] () -> Logs in
-            var appLog: String?
-            if let logUrls = logger.fileUrls.first {
-                do {
-                    let data = try Data(contentsOf: logUrls)
-                    appLog = String(data: data, encoding: .utf8)
-                } catch {
-                    logger.optional(error, nil)
-                }
-            }
-            let botLog = self?.botLogHandler?()
-            return Logs(appLog: appLog, botLog: botLog)
+        self.apiService.onEventHandler = { [weak self] (identity) -> Logs in
+            return logsBuilder.build(logger: logger, identity: identity)
         }
+        self.apiService.start()
     }
 
     func identify(identity: Identity) {

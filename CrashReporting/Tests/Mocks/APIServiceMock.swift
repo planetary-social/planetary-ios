@@ -9,14 +9,21 @@ import Foundation
 @testable import CrashReporting
 
 class APIServiceMock: APIService {
-    var onEventHandler: (() -> Logs)?
+    var onEventHandler: ((Identity?) -> Logs)?
+    var started = false
     var identified = false
     var crashed = false
     var forgot = false
     var recorded = false
     var lastAttachedLogs: Logs?
+    var identity: Identity?
 
+    func start() {
+        started = true
+    }
+    
     func identify(identity: Identity) {
+        self.identity = identity
         identified = true
     }
 
@@ -30,6 +37,6 @@ class APIServiceMock: APIService {
 
     func report(error: Error, metadata: [AnyHashable: Any]?) {
         crashed = true
-        lastAttachedLogs = onEventHandler?()
+        lastAttachedLogs = onEventHandler?(identity)
     }
 }

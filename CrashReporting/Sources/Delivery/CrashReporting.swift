@@ -17,11 +17,6 @@ public class CrashReporting {
         self.service = service
     }
 
-    /// Registers a block used for passing the bot log when CrashReporting needs it
-    public func registerBotLogHandler(handler: (() -> String?)?) {
-        service.botLogHandler = handler
-    }
-
     /// Identifies user information on this session
     public func identify(identifier: String, name: String?, networkKey: String, networkName: String) {
         let identity = Identity(
