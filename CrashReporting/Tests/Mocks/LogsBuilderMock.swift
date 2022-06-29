@@ -14,7 +14,6 @@ class LogsBuilderMock: LogsBuilder {
     var botLog: String?
 
     func build(logger: LogProtocol, identity: Identity?) -> Logs {
-        return Logs(appLog: appLog, botLog: botLog)
+        Logs(appLog: appLog, botLog: botLog)
     }
-
 }
