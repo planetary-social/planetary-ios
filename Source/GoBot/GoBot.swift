@@ -209,8 +209,8 @@ class GoBot: Bot {
         var repoPrefix: String
 
         do {
-            guard !database.isOpen() else {
-                throw GoBotError.unexpectedFault("\(#function) warning: database still open")
+            if database.isOpen() {
+                database.close()
             }
             
             repoPrefix = try config.databaseDirectory()

@@ -166,9 +166,9 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         detailLabel.textColor = UIColor.text.detail
         detailLabel.textAlignment = .left
         view.addSubview(detailLabel)
-        let leftConstraint = detailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30)
+        let leftConstraint = detailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40)
         leftConstraint.priority = .defaultHigh
-        let rightConstraint = detailLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30)
+        let rightConstraint = detailLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40)
         rightConstraint.priority = .defaultHigh
         NSLayoutConstraint.activate([
             detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
