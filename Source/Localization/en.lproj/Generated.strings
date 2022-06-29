@@ -124,7 +124,7 @@
 "Text.searching" = "Searching";
 "Text.searchForUsers" = "Filter users by name or ID";
 "Text.searchingLocally" = "Searching for posts in your local database";
-"Text.noResultsFound" = "No results found";
+"Text.noResultsFound" = "No results found.";
 "Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";

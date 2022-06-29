@@ -153,23 +153,29 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
          
         let titleLabel = UILabel.forAutoLayout()
         titleLabel.numberOfLines = 0
-        titleLabel.font = UIFont.systemFont(ofSize: 25, weight: .medium)
+        titleLabel.font = UIFont.preferredFont(forTextStyle: .title2)
         titleLabel.text = Text.noResultsFound.text
         titleLabel.textColor = UIColor.text.default
         titleLabel.textAlignment = .center
-        Layout.center(titleLabel, in: view)
+        Layout.center(titleLabel, atTopOf: view, inset: 100)
 
         let detailLabel = UILabel.forAutoLayout()
         detailLabel.numberOfLines = 0
-        detailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        detailLabel.font = UIFont.preferredFont(forTextStyle: .body)
         detailLabel.text = Text.noResultsHelp.text
-        detailLabel.textColor = UIColor.text.default
-        detailLabel.textAlignment = .center
+        detailLabel.textColor = UIColor.text.detail
+        detailLabel.textAlignment = .left
         view.addSubview(detailLabel)
+        let leftConstraint = detailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30)
+        leftConstraint.priority = .defaultHigh
+        let rightConstraint = detailLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30)
+        rightConstraint.priority = .defaultHigh
         NSLayoutConstraint.activate([
             detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-            detailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 60),
-            detailLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -60)
+            leftConstraint,
+            rightConstraint,
+            detailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            detailLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 350)
         ])
 
         return view
@@ -339,7 +345,14 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         loadingAnimation.isHidden = true
         
         switch searchResults.data {
-        case .universal, .feedID, .messageID:
+        case .universal:
+            if searchResults.posts?.isEmpty == true &&
+                searchResults.inNetworkPeople?.isEmpty == true {
+                emptySearchView.isHidden = false
+            } else {
+                tableView.isHidden = false
+            }
+        case .feedID, .messageID:
             tableView.isHidden = false
         case .loading:
             loadingLabel.isHidden = false
