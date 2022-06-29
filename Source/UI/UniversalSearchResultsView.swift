@@ -15,6 +15,12 @@ protocol UniversalSearchDelegate: AnyObject {
     func present(_ controller: UIViewController)
 }
 
+/// This view computes and displays results for "universal search", meaning search of posts, users, and message IDs.
+/// It does not contain a search bar and is intended to be embedded inside a view controller that adheres to
+/// `UniversalSearchDelegate`. This view controller manages the search bar and keyboard and informs the view when
+/// the query changes by setting `searchQuery`.
+///
+/// This implementation was hastily copied from the `DirectoryViewController` so the code quality isn't great.
 class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Internal Models
@@ -24,6 +30,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         case users, posts, network
     }
     
+    /// A model for all the different types of results that can be displayed.
     private struct SearchResults {
         enum ResultData {
             case universal(people: [About], posts: [KeyValue])
@@ -36,6 +43,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         var data: ResultData
         var query: String
         
+        /// The table view sections that should be displayed for these results.
         var activeSections: [Section] {
             switch data {
             case .universal:
@@ -111,7 +119,10 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
     
     // MARK: - Public Properties
     
+    /// A delegate that will be used to manage scene changes like presenting new view controllers.
     weak var delegate: UniversalSearchDelegate?
+    
+    /// The text the user is searching for.
     @Published var searchQuery: String = ""
     
     // MARK: - Private Properties
