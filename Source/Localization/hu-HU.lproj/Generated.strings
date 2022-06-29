@@ -123,7 +123,7 @@
 "Text.posts" = "Posts";
 "Text.search" = "Search";
 "Text.searching" = "Searching";
-"Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
+"Text.searchForUsers" = "Filter users by name or ID";
 "Text.searchingLocally" = "Searching for posts in your local database";
 "Text.noResultsFound" = "No results found";
 "Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
