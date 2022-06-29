@@ -132,6 +132,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         view.delegate = self
         view.separatorColor = UIColor.separator.middle
         view.rowHeight = UITableView.automaticDimension
+        view.estimatedRowHeight = 300
         view.addSeparatorAsHeaderView()
         return view
     }()
@@ -393,6 +394,16 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             var cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? KeyValueTableViewCell
             if cell == nil {
                 cell = KeyValueTableViewCell(for: type, height: 300)
+            }
+            if let postView = cell?.keyValueView as? PostCellView {
+                postView.truncationLimit = (over: 10, to: 8)
+                postView.tapGesture.tap = { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+                    
+                    self.tableView(self.tableView, didSelectRowAt: indexPath)
+                }
             }
             cell?.update(with: post)
             return cell ?? UITableViewCell()

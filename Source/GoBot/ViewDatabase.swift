@@ -257,8 +257,7 @@ class ViewDatabase {
                 try db.execute("PRAGMA optimize;")
                 db.userVersion = 11
             }
-//            if db.userVersion == 10 {
-                // TODO: FTS5
+            if db.userVersion == 11 {
                 try db.run(postSearch.create(.FTS4(
                     FTS4Config()
                         .column(colMessageRef)
@@ -272,8 +271,8 @@ class ViewDatabase {
                     ))
                 }
                 
-//                db.userVersion = 11
-//            }
+                db.userVersion = 12
+            }
         }
     }
     
@@ -1652,9 +1651,11 @@ class ViewDatabase {
         }
         
         // probably need to escape some characters here
-        let wildcardString = "\(text.split(separator: " ").joined(separator: "* AND "))*"
         var messages = [KeyValue]()
-        let query = try connection.prepare(postSearch.filter(colText.match(wildcardString)))
+        let query = try connection.prepare(
+            postSearch
+                .filter(colText.match(text))
+        )
         for row in query {
             let messageID = row[colMessageRef]
             let message = try post(with: messageID)

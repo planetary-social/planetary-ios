@@ -234,7 +234,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
     }
     
     func present(_ controller: UIViewController) {
-        present(controller, animated: true)
+        navigationController?.pushViewController(controller, animated: true)
     }
     
     // MARK: Actions
