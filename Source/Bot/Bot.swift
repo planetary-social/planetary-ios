@@ -144,6 +144,7 @@ protocol Bot: AnyObject {
     func about(queue: DispatchQueue, identity: Identity, completion:  @escaping AboutCompletion)
     func abouts(identities: [Identity], completion:  @escaping AboutsCompletion)
     func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion)
+    func abouts(matching filter: String) async throws -> [About]
 
     // MARK: Contact
 

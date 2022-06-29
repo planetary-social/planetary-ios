@@ -184,6 +184,9 @@ enum Text: String, Localizable, CaseIterable {
     case search = "Search"
     case searching = "Searching"
     case searchForUsersAndPosts = "Search by name, user ID, post ID"
+    case searchingLocally = "Searching for posts in your local database"
+    case noResultsFound = "No results found"
+    case noResultsHelp = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. We also may exclude posts older than 6 months to save space on your device."
     
     // MARK: - Beta 1 migration strings
     case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."

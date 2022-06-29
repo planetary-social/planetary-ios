@@ -233,6 +233,10 @@ class FakeBot: Bot {
             completion(abouts, nil)
         }
     }
+    
+    func abouts(matching filter: String) async throws -> [About] {
+        return []
+    }
 
     // MARK: Feed content
 

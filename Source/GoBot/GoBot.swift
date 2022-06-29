@@ -915,8 +915,6 @@ class GoBot: Bot {
     }
 
     func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) {
-        Thread.assertIsMainThread()
-
         guard identifier.isValidIdentifier else {
             completion(identifier, nil, BotError.blobInvalidIdentifier)
             return
@@ -1057,6 +1055,14 @@ class GoBot: Bot {
                 }
             }
         }
+    }
+    
+    func abouts(matching filter: String) async throws -> [About] {
+        let dbTask = Task.detached(priority: .high) {
+            try self.database.abouts(withNameLike: filter)
+        }
+        
+        return try await dbTask.value
     }
 
     // MARK: Contacts

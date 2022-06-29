@@ -11,7 +11,7 @@ import Logger
 import Analytics
 import CrashReporting
 
-class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate {
+class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate, UniversalSearchDelegate {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -119,8 +119,13 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
     }()
     
     private lazy var searchResultsView: UniversalSearchResultsView = {
-       UniversalSearchResultsView()
+        let view = UniversalSearchResultsView()
+        view.delegate = self
+        return view
     }()
+    
+    // for a bug fix — see note in Search extension below
+    private var searchEditBeginDate = Date()
 
     // MARK: Lifecycle
 
@@ -233,6 +238,24 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         }
     }
     
+    // These two functions are implemented to avoid a bug where the initial
+    // tap of the search bar begins editing, but first responder is immediately resigned
+    // I can't figure out why this is happening, but this is a potential solution to avoid the bug.
+    // I set a symbolic breakpoint and can't find why resignFirstResponder is being called there.
+    //
+    // first, when the edit begins, we store the date in self.searchEditBeginDate
+    // then, in searchBarShouldEndEditing, we check whether this date was extremely recent
+    // if it was too recent to be performed intentionally, we don't allow the field to end editing.
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        self.searchEditBeginDate = Date()
+        return true
+    }
+
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        let timeSinceStart = Date().timeIntervalSince(self.searchEditBeginDate)
+        return timeSinceStart > 0.4
+    }
+    
     func showDiscoverCollectionView() {
         view.subviews.forEach { $0.removeFromSuperview() }
         Layout.fill(view: self.view, with: self.collectionView)
@@ -241,6 +264,10 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
     func showSearchResults() {
         view.subviews.forEach { $0.removeFromSuperview() }
         Layout.fill(view: self.view, with: self.searchResultsView)
+    }
+    
+    func present(_ controller: UIViewController) {
+        present(controller, animated: true)
     }
     
     // MARK: Actions

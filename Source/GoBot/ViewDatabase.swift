@@ -252,7 +252,7 @@ class ViewDatabase {
                 try db.execute("ALTER TABLE `blocked_content` RENAME TO `banned_content`;")
                 db.userVersion = 10
             }
-            if db.userVersion == 10 {
+//            if db.userVersion == 10 {
                 // TODO: FTS5
                 try db.run(postSearch.create(.FTS4(
                     FTS4Config()
@@ -267,8 +267,8 @@ class ViewDatabase {
                     ))
                 }
                 
-                db.userVersion = 11
-            }
+//                db.userVersion = 11
+//            }
         }
     }
     
@@ -750,6 +750,31 @@ class ViewDatabase {
                      description: try about.get(colDescr),
                      imageLink: try about.get(colImage)
                  )
+            abouts += [about]
+        }
+        return abouts
+    }
+    
+    func abouts(withNameLike queryString: String) throws -> [About] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let query = self.abouts
+            .join(self.authors, on: colID == self.abouts[colAboutID])
+            .order(self.abouts[colName])
+            .where(colName.like("%\(queryString)%"))
+        
+        var abouts: [About] = []
+        
+        let aboutsQuery = try db.prepare(query)
+        for about in aboutsQuery {
+            let about = About(
+                about: try about.get(colAuthor),
+                name: try about.get(colName),
+                description: try about.get(colDescr),
+                imageLink: try about.get(colImage)
+            )
             abouts += [about]
         }
         return abouts
@@ -1612,8 +1637,10 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
+        // probably need to escape some characters here
+        let wildcardString = "\(text.split(separator: " ").joined(separator: "* AND "))*"
         var messages = [KeyValue]()
-        let query = try connection.prepare(postSearch.filter(colText.match(text)))
+        let query = try connection.prepare(postSearch.filter(colText.match(wildcardString)))
         for row in query {
             let messageID = row[colMessageRef]
             let message = try post(with: messageID)
