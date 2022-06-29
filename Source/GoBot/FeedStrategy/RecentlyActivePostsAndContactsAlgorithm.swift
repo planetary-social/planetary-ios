@@ -60,6 +60,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                   WHERE
                     tangles.root = messages.msg_id
                     AND tangled_message.claimed_at < STRFTIME('%s') * 1000
+                    AND tangled_message.type = 'post'
                   ORDER BY
                     tangled_message.claimed_at DESC
                   LIMIT
@@ -165,6 +166,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                     JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
                     WHERE tangles.root == messages.msg_id
                     AND tangled_message.claimed_at < ?
+                    AND tangled_message.type = 'post'
                     ORDER BY tangled_message.claimed_at DESC LIMIT 1),
                     messages.claimed_at
                )) as last_reply

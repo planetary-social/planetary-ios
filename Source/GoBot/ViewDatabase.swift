@@ -252,6 +252,11 @@ class ViewDatabase {
                 try db.execute("ALTER TABLE `blocked_content` RENAME TO `banned_content`;")
                 db.userVersion = 10
             }
+            if db.userVersion == 10 {
+                // Run this as a migration since we haven't ever run it before.
+                try db.execute("PRAGMA optimize;")
+                db.userVersion = 11
+            }
 //            if db.userVersion == 10 {
                 // TODO: FTS5
                 try db.run(postSearch.create(.FTS4(
@@ -285,6 +290,15 @@ class ViewDatabase {
     }
     
     func close() {
+        if let db = openDB {
+            do {
+                try db.execute("PRAGMA optimize;")
+                Log.info("Finished optimizing db")
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
+        }
         self.openDB = nil
         self.currentUser = nil
         self.currentUserID = -1
