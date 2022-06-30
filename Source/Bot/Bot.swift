@@ -321,6 +321,7 @@ extension Bot {
         try await withCheckedThrowingContinuation { continuation in
             numberOfRecentItems(since: message) { result in
                 switch result {
+                    continuation.resume(throwing: error)
                 case .success(let count):
                     continuation.resume(returning: count)
                 case .failure(let error):
