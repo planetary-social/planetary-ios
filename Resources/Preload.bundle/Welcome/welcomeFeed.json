@@ -1,0 +1,22 @@
+[
+ {
+   "key": "%cmkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
+   "value": {
+      "previous": "%XCn62F4wvbi2HwggT109gEoyEfiwqKC1FAOLBzooGYM=.sha256",
+      "sequence": 0,
+      "author": "@l/lzpaG3asUP+kSj1KNdEvh+oIzjmsPBk20X5er3YrI=.ed25519",
+      "timestamp": 1656528265886,
+      "hash": "sha256",
+      "content": {
+        "type": "post",
+        "channel": null,
+        "recps": null,
+        "text": "Welcome to Planetary!",
+        "mentions": []
+      },
+      "signature": "4GEg21vqwye0Wbm5dTJCkq89uw5+bcOLOqQKA9ZnmHzadF2Z29Ny2QIHwCDjQXXN1DdfGmfrIirVYEeRFGX0DA==.sig.ed25519"
+    },
+    "timestamp": 1656528265886,
+    "rts": 1656528265886
+  }
+]

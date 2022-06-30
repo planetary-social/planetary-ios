@@ -8,6 +8,7 @@
 
 import Foundation
 import SQLite
+import Logger
 
 // swiftlint:disable type_body_length
 /// This algorithm returns a feed just with user's and follows' root posts
@@ -69,7 +70,12 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         return try connection.scalar(query.count)
     }
 
-    func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
+    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
+        guard let connection = database.getOpenDB() else {
+            Log.error("db is closed")
+            return []
+        }
+        
         let colClaimedAt = Expression<Double>("claimed_at")
 
         var query = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
@@ -81,7 +87,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             query = try self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
 
-        let feedOfMsgs = try self.mapQueryToKeyValue(query: query, connection: connection)
+        let feedOfMsgs = try self.mapQueryToKeyValue(query: query, database: database)
 
         return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs, connection: connection)
     }
@@ -206,98 +212,14 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             )
     }
 
-    // swiftlint:disable function_body_length
-    private func mapQueryToKeyValue(query: Table, connection: Connection) throws -> [KeyValue] {
-        // swiftlint:enable function_body_length
-        let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
-        let abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
-        let colMessageID = Expression<Int64>("msg_id")
-        let colRootMaybe = Expression<Int64?>("root")
-        let colAuthor = Expression<Identity>("author")
-        let colKey = Expression<MessageIdentifier>("key")
-        let colMsgType = Expression<String>("type")
-        let colText = Expression<String>("text")
-        let colLinkID = Expression<Int64>("link_id")
-        let colRoot = Expression<Int64>("root")
-        let colContactState = Expression<Int>("state")
-        let colSequence = Expression<Int>("sequence")
-        let colClaimedAt = Expression<Double>("claimed_at")
-        let colReceivedAt = Expression<Double>("received_at")
-        let colName = Expression<String?>("name")
-        let colImage = Expression<BlobIdentifier?>("image")
-        let colDescr = Expression<String?>("description")
-        let colDecrypted = Expression<Bool>("is_decrypted")
-        let colValue = Expression<Int>("value")
-        let colExpression = Expression<String?>("expression")
-
+    private func mapQueryToKeyValue(query: Table, database: ViewDatabase) throws -> [KeyValue] {
+        guard let connection = database.getOpenDB() else {
+            Log.error("db is closed")
+            return []
+        }
+        
         return try connection.prepare(query).compactMap { keyValueRow in
-            let msgID = try keyValueRow.get(colMessageID)
-            let msgKey = try keyValueRow.get(colKey)
-            let msgAuthor = try keyValueRow.get(colAuthor)
-            var content: Content
-            let type = try keyValueRow.get(msgs[colMsgType])
-            switch type {
-            case ContentType.post.rawValue:
-                var rootKey: Identifier?
-                if let rootID = try keyValueRow.get(colRootMaybe) {
-                    rootKey = try self.msgKey(id: rootID, connection: connection)
-                }
-                let post = Post(
-                    blobs: try self.loadBlobs(for: msgID, connection: connection),
-                    mentions: try self.loadMentions(for: msgID, connection: connection),
-                    root: rootKey,
-                    text: try keyValueRow.get(colText)
-                )
-                content = Content(from: post)
-            case ContentType.vote.rawValue:
-                let lnkID = try keyValueRow.get(colLinkID)
-                let lnkKey = try self.msgKey(id: lnkID, connection: connection)
-                let rootID = try keyValueRow.get(colRoot)
-                let rootKey = try self.msgKey(id: rootID, connection: connection)
-                let expression = try keyValueRow.get(colExpression)
-                let contentVote = ContentVote(
-                    link: lnkKey,
-                    value: try keyValueRow.get(colValue),
-                    expression: expression,
-                    root: rootKey,
-                    branches: []
-                )
-                content = Content(from: contentVote)
-            case ContentType.contact.rawValue:
-                if let state = try? keyValueRow.get(colContactState) {
-                    let following = state == 1
-                    let contentContact = Contact(contact: msgAuthor, following: following)
-                    content = Content(from: contentContact)
-                } else {
-                    // Contacts stores only the latest message
-                    // So, an old follow that was later unfollowed won't appear here.
-                    return nil
-                }
-            default:
-                throw ViewDatabaseError.unexpectedContentType(type)
-            }
-            let value = Value(
-                author: msgAuthor,
-                content: content,
-                hash: "sha256", // only currently supported
-                previous: nil,
-                sequence: try keyValueRow.get(colSequence),
-                signature: "verified_by_go-ssb",
-                timestamp: try keyValueRow.get(colClaimedAt)
-            )
-            var keyValue = KeyValue(
-                key: msgKey,
-                value: value,
-                timestamp: try keyValueRow.get(colReceivedAt)
-            )
-            keyValue.metadata.author.about = About(
-                about: msgAuthor,
-                name: try keyValueRow.get(abouts[colName]),
-                description: try keyValueRow.get(colDescr),
-                imageLink: try keyValueRow.get(colImage)
-            )
-            keyValue.metadata.isPrivate = try keyValueRow.get(colDecrypted)
-            return keyValue
+            return try KeyValue(row: keyValueRow, database: database)
         }
     }
 

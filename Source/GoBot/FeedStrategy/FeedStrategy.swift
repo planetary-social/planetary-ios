@@ -23,12 +23,12 @@ protocol FeedStrategy: NSObjectProtocol, NSCoding {
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int
 
     /// Returns the items (key values) in the feed
-    /// - parameter connection: the database connection needed to run queries in the database
+    /// - parameter database: the database needed to run queries in the database
     /// - parameter userId: the ID of the user for which the feed will be calculated from
     /// - parameter limit: the number of items that should be returned
     /// - parameter offset: the offset, offset=10 will return the 10th item onwards,
     /// offset=nil will return the first item onwards
-    func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue]
+    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue]
 
     /// Returns just the identifiers for the items in the feed
     /// - parameter connection: the database connection needed to run queries in the database
