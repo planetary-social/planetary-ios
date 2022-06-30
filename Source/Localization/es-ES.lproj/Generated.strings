@@ -112,7 +112,8 @@
 "Text.join" = "Unirse";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
-"Text.refresh" = "Refrescar";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown soportado";
 "Text.loggingOut" = "Desloguéandose...";
 "Text.openPost" = "Abrir publicación {{ postID }}";
