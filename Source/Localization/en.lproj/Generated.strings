@@ -121,7 +121,6 @@
 "Text.users" = "Users";
 "Text.posts" = "Posts";
 "Text.searching" = "Searching";
-"Text.search" = "Search";
 "Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
