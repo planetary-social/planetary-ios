@@ -154,7 +154,7 @@ class NotificationsViewController: ContentViewController {
     /// controllers.  The notification will also only be received when the view is not visible,
     /// check out `viewDidAppear()` and `viewDidDisappear()`.  This is because
     /// we don't want the view to be updated while someone is looking/scrolling it.
-    override func didRefresh(notification: NSNotification) {
+    override func didRefresh(notification: Notification) {
         DispatchQueue.main.async {
             guard self.navigationController?.topViewController == self else {
                 return

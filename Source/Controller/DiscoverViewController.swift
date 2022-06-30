@@ -17,7 +17,12 @@ class DiscoverViewController: ContentViewController {
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
-        let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newPostButtonTouchUpInside))
+        let item = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(newPostButtonTouchUpInside)
+        )
         return item
     }()
     
@@ -36,9 +41,11 @@ class DiscoverViewController: ContentViewController {
     
     private lazy var floatingRefreshButton: FloatingRefreshButton = {
         let button = FloatingRefreshButton()
-        button.addTarget(self,
-                         action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
-                         for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
+            for: .touchUpInside
+        )
         return button
     }()
     
@@ -64,41 +71,41 @@ class DiscoverViewController: ContentViewController {
         Int(UIScreen.main.bounds.width) / 180
     }()
      
-     private lazy var emptyView: UIView = {
-         let view = UIView()
+    private lazy var emptyView: UIView = {
+        let view = UIView()
          
-         let imageView = UIImageView(image: UIImage(imageLiteralResourceName: "icon-planetary"))
-         Layout.centerHorizontally(imageView, in: view)
-         NSLayoutConstraint.activate([
-             imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50)
-         ])
-         
-         let titleLabel = UILabel.forAutoLayout()
-         titleLabel.numberOfLines = 0
-         titleLabel.font = UIFont.systemFont(ofSize: 25, weight: .medium)
-         titleLabel.text = "Explore Planetary"
-         titleLabel.textColor = UIColor.text.default
-         titleLabel.textAlignment = .center
-         Layout.centerHorizontally(titleLabel, in: view)
-         NSLayoutConstraint.activate([
-             titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20)
-         ])
-         
-         let detailLabel = UILabel.forAutoLayout()
-         detailLabel.numberOfLines = 0
-         detailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-         detailLabel.text = "The expore tab lets you see more people on Planetary. Specifically it's everything the people you follow are following. "
-         detailLabel.textColor = UIColor.text.default
-         detailLabel.textAlignment = .center
-         view.addSubview(detailLabel)
-         NSLayoutConstraint.activate([
-             detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
-             detailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 60),
-             detailLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -60)
-         ])
-         
-         return view
-     }()
+        let imageView = UIImageView(image: UIImage(imageLiteralResourceName: "icon-planetary"))
+        Layout.centerHorizontally(imageView, in: view)
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50)
+        ])
+
+        let titleLabel = UILabel.forAutoLayout()
+        titleLabel.numberOfLines = 0
+        titleLabel.font = UIFont.systemFont(ofSize: 25, weight: .medium)
+        titleLabel.text = "Explore Planetary"
+        titleLabel.textColor = UIColor.text.default
+        titleLabel.textAlignment = .center
+        Layout.centerHorizontally(titleLabel, in: view)
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20)
+        ])
+
+        let detailLabel = UILabel.forAutoLayout()
+        detailLabel.numberOfLines = 0
+        detailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        detailLabel.text = "The expore tab lets you see more people on Planetary. Specifically it's everything the people you follow are following. "
+        detailLabel.textColor = UIColor.text.default
+        detailLabel.textAlignment = .center
+        view.addSubview(detailLabel)
+        NSLayoutConstraint.activate([
+            detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            detailLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 60),
+            detailLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -60)
+        ])
+
+        return view
+    }()
 
     // MARK: Lifecycle
 
@@ -108,7 +115,7 @@ class DiscoverViewController: ContentViewController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
@@ -198,51 +205,52 @@ class DiscoverViewController: ContentViewController {
     
     // MARK: Actions
 
-     @objc func refreshControlValueChanged(control: UIRefreshControl) {
-         control.beginRefreshing()
-         self.refreshAndLoad()
-     }
+    @objc
+    func refreshControlValueChanged(control: UIRefreshControl) {
+        control.beginRefreshing()
+        self.refreshAndLoad()
+    }
     
-    @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
+    @objc
+    func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
         button.hide()
         self.refreshControl.beginRefreshing()
         self.collectionView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height), animated: false)
         self.load(animated: true)
     }
 
-     @objc func newPostButtonTouchUpInside() {
+    @objc
+    func newPostButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
-         let controller = NewPostViewController()
-         controller.didPublish = {
-             [weak self] _ in
-             self?.load()
-         }
-         let navController = UINavigationController(rootViewController: controller)
-         self.present(navController, animated: true, completion: nil)
-     }
-
-     // MARK: Notifications
-
-     override func didBlockUser(notification: NSNotification) {
-        // TODO: Finish
-         // guard let identity = notification.object as? Identity else { return }
-         // self.collectionView.deleteKeyValues(by: identity)
-     }
-    
-    override func didRefresh(notification: NSNotification) {
-        let currentProxy = self.dataSource.data
-        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
-        Bots.current.keyAtEveryoneTop { [weak self] (key) in
-            guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
-                return
-            }
-            if currentProxy.count == 0 {
-                self?.load(animated: true)
-            } else {
-                let shouldAnimate = self?.navigationController?.topViewController == self
-                self?.floatingRefreshButton.show(animated: shouldAnimate)
-            }
+        let controller = NewPostViewController()
+        controller.didPublish = { [weak self] _ in
+            self?.load()
         }
+        let navController = UINavigationController(rootViewController: controller)
+        self.present(navController, animated: true, completion: nil)
+    }
+
+    // MARK: Notifications
+
+    override func didBlockUser(notification: Notification) {
+        // guard let identity = notification.object as? Identity else { return }
+        // self.collectionView.deleteKeyValues(by: identity)
+    }
+    
+    override func didRefresh(notification: Notification) {
+//        let currentProxy = self.dataSource.data
+//        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
+//        Bots.current.keyAtEveryoneTop { [weak self] (key) in
+//            guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
+//                return
+//            }
+//            if currentProxy.count == 0 {
+//                self?.load(animated: true)
+//            } else {
+//                let shouldAnimate = self?.navigationController?.topViewController == self
+//                self?.floatingRefreshButton.show(animated: shouldAnimate)
+//            }
+//        }
     }
 }
 

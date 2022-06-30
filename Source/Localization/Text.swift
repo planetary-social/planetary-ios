@@ -170,7 +170,9 @@ enum Text: String, Localizable, CaseIterable {
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
     
-    case refresh = "Refresh"
+    case refreshSingular = "{{ count }} unread post!"
+    case refreshPlural = "{{ count }} unread posts!"
+
     case markdownSupported = "Markdown preview"
     
     case loggingOut = "Logging out..."

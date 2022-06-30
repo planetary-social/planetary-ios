@@ -112,7 +112,8 @@
 "Text.join" = "加入";
 "Text.redeemInvitation" = "接受邀请";
 "Text.pasteAddress" = "代币";
-"Text.refresh" = "更新";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown 预览";
 "Text.loggingOut" = "Logging out...";
 "Text.openPost" = "Open post {{ postID }}";

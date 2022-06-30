@@ -113,7 +113,8 @@
 "Text.join" = "Dołącz";
 "Text.redeemInvitation" = "Zrealizuj zaproszenie";
 "Text.pasteAddress" = "Kod";
-"Text.refresh" = "Odśwież";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Podgląd";
 "Text.loggingOut" = "Logging out...";
 "Text.openPost" = "Open post {{ postID }}";

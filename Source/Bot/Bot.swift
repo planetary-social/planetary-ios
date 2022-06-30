@@ -20,6 +20,7 @@ typealias PaginatedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
 typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
+typealias CountCompletion = ((Result<Int, Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -34,7 +35,7 @@ typealias StatisticsCompletion = ((BotStatistics) -> Void)
 
 enum RefreshLoad: Int32, CaseIterable {
     case tiny = 500 // about 1 second on modern hardware
-    case short = 5_000 
+    case short = 5000
     case medium = 45_000 // about 30 seconds
     case long = 100_000 // about 60 seconds
 }
@@ -64,15 +65,16 @@ protocol Bot: AnyObject {
 
     var identity: Identity? { get }
 
-    // TODO https://app.asana.com/0/914798787098068/1109609875273529/f
     func createSecret(completion: SecretCompletion)
 
     // MARK: Sync
     
     /// Ensure that these list of addresses are taken into consideration when establishing connections
-    func seedPubAddresses(addresses: [PubAddress],
-                          queue: DispatchQueue,
-                          completion: @escaping (Result<Void, Error>) -> Void)
+    func seedPubAddresses(
+        addresses: [PubAddress],
+        queue: DispatchQueue,
+        completion: @escaping (Result<Void, Error>) -> Void
+    )
     
     func knownPubs(completion: @escaping KnownPubsCompletion)
     
@@ -89,7 +91,6 @@ protocol Bot: AnyObject {
     ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
-    // TODO: this is temporary until live-streaming is deployed on the pubs
     func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
@@ -118,12 +119,6 @@ protocol Bot: AnyObject {
 
     // MARK: Publish
 
-    // TODO https://app.asana.com/0/914798787098068/1114777817192216/f
-    // TOOD for some lower level applications it might make sense to add Secret to publish
-    // so that you can publish as multiple IDs (think groups or invites)
-    // The `content` argument label is required to avoid conflicts when specialized
-    // forms of `publish` are created.  For example, `publish(post)` will publish a
-    // `Post` model, but then also the embedded `Hashtag` models.
     func publish(content: ContentCodable, completionQueue: DispatchQueue, completion: @escaping PublishCompletion)
 
     /// Computes whether publishing a new message at this time would fork the user's feed. Forks occur when publishing
@@ -163,12 +158,10 @@ protocol Bot: AnyObject {
     /// - parameter completion: The completion block to handle the results
     func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void))
 
-    // TODO the func names should be swapped
-    func blocks(identity: Identity, completion:  @escaping ContactsCompletion)
-    func blockedBy(identity: Identity, completion:  @escaping ContactsCompletion)
-
     // MARK: Block
 
+    func blocks(identity: Identity, completion:  @escaping ContactsCompletion)
+    func blockedBy(identity: Identity, completion:  @escaping ContactsCompletion)
     func block(_ identity: Identity, completion: @escaping PublishCompletion)
     func unblock(_ identity: Identity, completion: @escaping PublishCompletion)
 
@@ -189,11 +182,15 @@ protocol Bot: AnyObject {
     
     // everyone's posts
     func everyone(completion: @escaping PaginatedCompletion)
-    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
     
     // your feed
     func recent(completion: @escaping PaginatedCompletion)
-    func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void)
+
+    /// Returns the number of items in Home Feed (see `func recent(completion: @escaping PaginatedCompletion)`)
+    /// newer than a particular item given by its identifier (offset). This is useful for calculating the number of
+    /// posts the user has not yet seen in the Home Feed.
+    /// - parameter message: The identifier of the message to account for the offset.
+    func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion)
     
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
@@ -218,16 +215,15 @@ protocol Bot: AnyObject {
 
     func addBlob(data: Data, completion: @escaping BlobsAddCompletion)
 
-    // TODO https://app.asana.com/0/914798787098068/1122165003408766/f
-    // TODO consider if this is appropriate to know about UIImage at this level
-    func addBlob(jpegOf image: UIImage,
-                 largestDimension: UInt?,
-                 completion: @escaping AddImageCompletion)
+    func addBlob(
+        jpegOf image: UIImage,
+        largestDimension: UInt?,
+        completion: @escaping AddImageCompletion
+    )
 
     // MARK: Blob loading
 
-    func data(for identifier: BlobIdentifier,
-              completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
+    func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
     
     /// Saves a file to disk in the same path it would be if fetched through the net.
     /// Useful for storing a blob fetched from an external source.
@@ -316,6 +312,19 @@ extension Bot {
                     continuation.resume(throwing: error)
                 } else {
                     continuation.resume(returning: proxy)
+                }
+            }
+        }
+    }
+
+    func numberOfRecentItems(since message: MessageIdentifier) async throws -> Int {
+        try await withCheckedThrowingContinuation { continuation in
+            numberOfRecentItems(since: message) { result in
+                switch result {
+                case .success(let count):
+                    continuation.resume(returning: count)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
                 }
             }
         }
@@ -448,14 +457,6 @@ extension Bot {
                 continuation.resume(returning: result)
             }
         }
-    }
-    
-    func keyAtRecentTop(completion: @escaping (MessageIdentifier?) -> Void) {
-        self.keyAtRecentTop(queue: .main, completion: completion)
-    }
-    
-    func keyAtEveryoneTop(completion: @escaping (MessageIdentifier?) -> Void) {
-        self.keyAtEveryoneTop(queue: .main, completion: completion)
     }
     
     func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {

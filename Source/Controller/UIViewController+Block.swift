@@ -62,7 +62,8 @@ extension UIViewController {
                                                   object: nil)
     }
 
-    @objc func didBlockUser(notification: NSNotification) {
+    @objc
+    func didBlockUser(notification: Notification) {
         // subclass are encouraged to override
     }
 }

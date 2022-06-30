@@ -1296,16 +1296,16 @@ class GoBot: Bot {
         }
     }
     
-    func keyAtRecentTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
+    func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion) {
         userInitiatedQueue.async {
             do {
-                let key = try self.database.messageIDAtTopOfFeed(with: self.homeFeedStrategy)
-                queue.async {
-                    completion(key)
+                let count = try self.database.numberOfRecentPosts(with: self.homeFeedStrategy, since: message)
+                DispatchQueue.main.async {
+                    completion(.success(count))
                 }
             } catch {
-                queue.async {
-                    completion(nil)
+                DispatchQueue.main.async {
+                    completion(.failure(error))
                 }
             }
         }
@@ -1319,21 +1319,6 @@ class GoBot: Bot {
                 DispatchQueue.main.async { completion(msgs, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
-            }
-        }
-    }
-    
-    func keyAtEveryoneTop(queue: DispatchQueue, completion: @escaping (MessageIdentifier?) -> Void) {
-        userInitiatedQueue.async {
-            do {
-                let key = try self.database.messageIDAtTopOfFeed(with: self.discoverFeedStrategy)
-                queue.async {
-                    completion(key)
-                }
-            } catch {
-                queue.async {
-                    completion(nil)
-                }
             }
         }
     }

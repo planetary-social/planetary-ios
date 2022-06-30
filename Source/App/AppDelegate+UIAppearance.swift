@@ -29,8 +29,10 @@ extension AppDelegate {
         appearance.backIndicatorImage = image
         appearance.backIndicatorTransitionMaskImage = image
         appearance.tintColor = UIColor.tint.default
-        appearance.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .medium),
-                                          .foregroundColor: UIColor.secondaryText]
+        appearance.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 20, weight: .medium),
+            .foregroundColor: UIColor.secondaryText
+        ]
 
         // clear the bottom shadow edge to allow for a custom edge
         appearance.shadowImage = UIColor.clear.image(dimension: 1)
@@ -46,7 +48,8 @@ extension AppDelegate {
         UISearchBar.appearance().backgroundColor = .cardBackground
         
         // table footers and headers
-        UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = UIColor.secondaryText
+        let footerColor = UIColor.secondaryText
+        UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = footerColor
     }
 }
 
@@ -60,7 +63,9 @@ extension UITabBar {
         if #available(iOS 13, *) {
             let itemAppearance = UITabBarItemAppearance()
             itemAppearance.normal.iconColor = .unselectedTab
+            itemAppearance.normal.badgeBackgroundColor = .selectedTab
             itemAppearance.selected.iconColor = .selectedTab
+            itemAppearance.selected.badgeBackgroundColor = .selectedTab
             
             let appearance = UITabBarAppearance()
             appearance.stackedLayoutAppearance = itemAppearance
@@ -76,6 +81,6 @@ extension UITabBar {
             appearance.backgroundImage = UIImage()
             appearance.shadowImage = UIImage()
             appearance.unselectedItemTintColor = .unselectedTab
-       }
+        }
     }
 }
