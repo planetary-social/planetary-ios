@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.2] 2022-07-04
 
-- Added regular SQLite database optimization.
+- Add a basic search bar to the Discover tab that allows you to search for posts. #679
+- Fix the layout of the Discover tab on macOS. #683
+- Changed name and description of "Reset Planetary" button to "Delete My Identity" #674
+- Added regular SQLite database optimization. #684
+- Added new tutorial messages in the Home feed for new users. #687
 - Change Recently Active Posts and Contacts home feed algorithm so that votes do not bring posts to the top of the feed anymore.
+- Fixed incorrect Golang version during builds #678
+- Fixed go-ssb logs not being submitted after crash #677
 
 ## [1.2.1] 2022-06-27
 
