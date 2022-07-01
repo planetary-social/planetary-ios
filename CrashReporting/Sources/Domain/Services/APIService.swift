@@ -15,8 +15,11 @@ import Foundation
 protocol APIService {
 
     /// Use this block to attach logs to all events sent to the Crash Reporting service
-    var onEventHandler: (() -> Logs)? { get set }
-    
+    var onEventHandler: ((Identity?) -> Logs)? { get set }
+
+    // Start monitoring crashes and sending events to the service
+    func start()
+
     /// Identifies the current user
     func identify(identity: Identity)
 
