@@ -69,11 +69,17 @@ class PreviewSettingsViewController: DebugTableViewController {
     private func reset() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.Offboarding.resetApplicationAndIdentity.text,
-                                             actionClosure: {
-                [unowned self] _ in
-                self.confirmOffboard()
-            })]
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.Offboarding.resetIdentity.text,
+                valueClosure: { cell in
+                    cell.textLabel?.textColor = .systemRed
+                },
+                actionClosure: { [weak self] _ in
+                    self?.confirmOffboard()
+                }
+            )
+        ]
 
         return (Text.Offboarding.reset.text, settings, Text.Offboarding.resetFooter.text)
     }

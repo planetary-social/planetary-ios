@@ -121,8 +121,12 @@
 "Text.postNotFound" = "No posts found with the given ID.";
 "Text.users" = "Users";
 "Text.posts" = "Posts";
+"Text.search" = "Search";
 "Text.searching" = "Searching";
-"Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
+"Text.searchForUsers" = "Filter users by name or ID";
+"Text.searchingLocally" = "Searching for posts in your local database";
+"Text.noResultsFound" = "No results found.";
+"Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -152,13 +156,13 @@
 "NewPost.confirmRemove" = "Usunąć ten obraz z posta? Zawsze możesz dodać go ponownie.";
 "NewPost.remove" = "Usuń";
 
-"Offboarding.reset" = "Reset";
-"Offboarding.resetApplicationAndIdentity" = "Zresetuj aplikację i tożsamość";
+"Offboarding.reset" = "Delete";
+"Offboarding.resetIdentity" = "Delete My Identity";
 "Offboarding.resetConfirmTitle" = "Uwaga";
-"Offboarding.resetConfirmMessage" = "Czy na pewno chcesz zresetować profil w Planetary? Utracisz tę tożsamość i wszystkie powiązane treści. Tego nie można cofnąć.";
+"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetConfirmAgainTitle" = "Na pewno?";
-"Offboarding.resetConfirmAgainMessage" = "Czy na pewno na pewno chcesz zresetować profil w Planetary?? Utracisz tę tożsamość i wszystkie powiązane treści. Tego nie można cofnąć.";
-"Offboarding.resetFooter" = "Zresetowanie aplikacji Planetary usunie Cię z katalogu użytkownika, przestanie obserwować wszystkich znajomych i zniszczy Twoją tożsamość na tym urządzeniu. Nie będziesz w stanie odzyskać swojej tożsamości, ale będziesz mógł stworzyć nową.";
+"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "Nie mogliśmy połączyć się z katalogiem, aby usunąć Twój profil. Proszę spróbuj ponownie.";
 "Offboarding.resetBotErrorTryAgain" = "Stało się coś nieoczekiwanego, ale nie martw się, zostaliśmy o tym powiadomieni i spróbujemy to naprawić. Proszę spróbuj ponownie.";
 

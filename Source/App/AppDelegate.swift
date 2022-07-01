@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         self.window = window
 
-        CrashReporting.shared.registerBotLogHandler()
         CrashReporting.shared.record("Launch")
 
         registerDefaultsFromSettingsBundle()

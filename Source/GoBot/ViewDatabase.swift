@@ -183,6 +183,9 @@ class ViewDatabase {
     let colHost = Expression<String>("host")
     let colPort = Expression<Int>("port")
     // colKey
+    
+    // Search
+    private let postSearch = VirtualTable("post_search")
 
     // MARK: open / close / stats
 
@@ -235,9 +238,30 @@ class ViewDatabase {
                 try db.execute("PRAGMA optimize;")
                 db.userVersion = 11
             }
-            if db.userVersion == 11 {
-                try db.execute("ALTER TABLE messages ADD off_chain INTEGER NOT NULL DEFAULT (0);")
+            if db.userVersion = 11
+                try db.run(
+                    postSearch.create(
+                        .FTS4(
+                            FTS4Config()
+                                .column(colMessageRef)
+                                .column(colText)
+                        )
+                    )
+                )
+                let posts = try db.prepare(posts)
+                for post in posts {
+                    try db.run(
+                        postSearch.insert(
+                            colMessageRef <- post[colMessageRef],
+                            colText <- post[colText]
+                        )
+                    )
+                }
                 db.userVersion = 12
+            }
+            if db.userVersion == 12 {
+                try db.execute("ALTER TABLE messages ADD off_chain INTEGER NOT NULL DEFAULT (0);")
+                db.userVersion = 13
             }
         }
     }
@@ -257,7 +281,11 @@ class ViewDatabase {
     func close() {
         if let db = openDB {
             do {
+                try db.execute("PRAGMA analysis_limit = 400;")
                 try db.execute("PRAGMA optimize;")
+                // this event is mostly so that I can make sure this works reliably in production and the app
+                // isn't being terminated before it's done.
+                Analytics.shared.trackBotDidOptimizeSQLite()
                 Log.info("Finished optimizing db")
             } catch {
                 Log.optional(error)
@@ -729,6 +757,31 @@ class ViewDatabase {
                      description: try about.get(colDescr),
                      imageLink: try about.get(colImage)
                  )
+            abouts += [about]
+        }
+        return abouts
+    }
+    
+    func abouts(withNameLike queryString: String) throws -> [About] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let query = self.abouts
+            .join(self.authors, on: colID == self.abouts[colAboutID])
+            .order(self.abouts[colName])
+            .where(colName.like("%\(queryString)%"))
+        
+        var abouts: [About] = []
+        
+        let aboutsQuery = try db.prepare(query)
+        for about in aboutsQuery {
+            let about = About(
+                about: try about.get(colAuthor),
+                name: try about.get(colName),
+                description: try about.get(colDescr),
+                imageLink: try about.get(colImage)
+            )
             abouts += [about]
         }
         return abouts
@@ -1435,31 +1488,38 @@ class ViewDatabase {
         return authorID
     }
     
+    // MARK: - Fetching Posts
+    
     func post(with id: MessageIdentifier) throws -> KeyValue {
         let msgId = try self.msgID(of: id, make: false)
-        // TODO: add 2nd signature to get message by internal ID
-//        guard let db = self.openDB else {
-//            throw ViewDatabaseError.notOpen
-//        }
-//        let msgId = try self.msgID(of: key, make: false)
-//
-//        return self.get(msgID: msgID)
-//    }
-//
-//    func get(msgID: Int64) throws -> KeyValue {
+        return try post(with: msgId)
+    }
+    
+    func post(with messageRef: Int64) throws -> KeyValue {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
+
+        // TODO: add 2nd signature to get message by internal ID
+        // guard let db = self.openDB else {
+        //         throw ViewDatabaseError.notOpen
+        //     }
+        //     let msgId = try self.msgID(of: key, make: false)
+        //
+        //     return self.get(msgID: msgID)
+        // }
+        //
+        // func get(msgID: Int64) throws -> KeyValue {
         
         let colTypeMaybe = Expression<String?>("type")
         let typeMaybe = try db.scalar(self.msgs
             .select(colTypeMaybe)
-            .filter(colMessageID == msgId)
+            .filter(colMessageID == messageRef)
             .filter(colHidden == false))
 
         guard let msgType = typeMaybe else {
-            Log.unexpected(.botError, "[viewdb] should have type for this message: \(msgId): \(id)")
-            throw ViewDatabaseError.unknownMessage(id)
+            Log.unexpected(.botError, "[viewdb] should have type for this message: \(messageRef)")
+            throw ViewDatabaseError.unknownMessage(String(messageRef))
         }
         
         guard let ct = ContentType(rawValue: msgType) else {
@@ -1475,20 +1535,40 @@ class ViewDatabase {
                     .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
                     .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
                     .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
-                    .filter(colMessageID == msgId)
+                    .filter(colMessageID == messageRef)
                     .limit(1)
                 
                 let kv = try self.mapQueryToKeyValue(qry: qry)
                 
                 if kv.count != 1 {
                     Log.unexpected(.botError, "[viewdb] could not find post after we had the type!?")
-                    throw ViewDatabaseError.unknownMessage(id)
+                    throw ViewDatabaseError.unknownMessage(String(messageRef))
                 }
                 return kv[0]
             
         default:
             throw ViewDatabaseError.unhandledContentType(ct)
         }
+    }
+    
+    func posts(matching text: String) throws -> [KeyValue] {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        // probably need to escape some characters here
+        var messages = [KeyValue]()
+        let query = try connection.prepare(
+            postSearch
+                .filter(colText.match(text))
+        )
+        for row in query {
+            let messageID = row[colMessageRef]
+            let message = try post(with: messageID)
+            messages.append(message)
+        }
+        
+        return messages
     }
     
     // MARK: channels
@@ -1793,12 +1873,21 @@ class ViewDatabase {
             try self.insertPrivateRecps(msgID: msgID, recps: p.recps)
         }
         
-        try db.run(self.posts.insert(
-            colMessageRef <- msgID,
-            colIsRoot <- p.root == nil,
-            colText <- p.text
-        ))
+        try db.run(
+            self.posts.insert(
+                colMessageRef <- msgID,
+                colIsRoot <- p.root == nil,
+                colText <- p.text
+            )
+        )
         
+        try db.run(
+            postSearch.insert(
+                colMessageRef <- msgID,
+                colText <- p.text.lowercased()
+            )
+        )
+
         try self.insertBranches(msgID: msgID, root: p.root, branches: p.branch)
         
         if let m = p.mentions {
