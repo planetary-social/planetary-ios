@@ -11,7 +11,8 @@ import Logger
 import Analytics
 import CrashReporting
 
-class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate, UniversalSearchDelegate {
+class DiscoverViewController:
+    ContentViewController, UISearchResultsUpdating, UISearchBarDelegate, UniversalSearchDelegate {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     

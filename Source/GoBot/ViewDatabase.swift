@@ -1978,7 +1978,6 @@ class ViewDatabase {
             colText <- p.text.lowercased()
         ))
 
-        
         try self.insertBranches(msgID: msgID, root: p.root, branches: p.branch)
         
         if let m = p.mentions {

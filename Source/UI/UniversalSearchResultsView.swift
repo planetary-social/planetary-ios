@@ -15,6 +15,102 @@ protocol UniversalSearchDelegate: AnyObject {
     func present(_ controller: UIViewController)
 }
 
+// MARK: - Internal Models
+
+/// A model for all the different types of results that can be displayed.
+fileprivate struct SearchResults {
+    enum ResultData {
+        case universal(people: [About], posts: [KeyValue])
+        case feedID(Either<About, FeedIdentifier>)
+        case messageID(Either<KeyValue, MessageIdentifier>)
+        case loading
+        case none
+    }
+    
+    var data: ResultData
+    var query: String
+    
+    /// The table view sections that should be displayed for these results.
+    var activeSections: [Section] {
+        switch data {
+        case .universal:
+            return [.network, .posts]
+        case .feedID(let result):
+            switch result {
+            case .left:
+                return [.network]
+            case .right:
+                return [.users]
+            }
+        case .messageID:
+            return [.posts]
+        case .loading, .none:
+            return []
+        }
+    }
+    
+    var posts: [KeyValue]? {
+        switch data {
+        case .universal(_, let posts):
+            return posts
+        case .messageID(let result):
+            switch result {
+            case .left(let message):
+                return [message]
+            case .right:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
+    var inNetworkPeople: [About]? {
+        switch data {
+        case .universal(let people, _):
+            return people
+        case .feedID(let result):
+            switch result {
+            case .left(let about):
+                return [about]
+            case .right:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
+    var user: FeedIdentifier? {
+        switch data {
+        case .feedID(let result):
+            switch result {
+            case .left:
+                return nil
+            case .right(let identifier):
+                return identifier
+            }
+        default:
+            return nil
+        }
+    }
+    
+    var postCount: Int {
+        posts?.count ?? 0
+    }
+    
+    var inNetworkPeopleCount: Int {
+        inNetworkPeople?.count ?? 0
+    }
+}
+
+/// A model for the various table view sections
+fileprivate enum Section: Int, CaseIterable {
+    case users, posts, network
+}
+
+// MARK: - View
+
 /// This view computes and displays results for "universal search", meaning search of posts, users, and message IDs.
 /// It does not contain a search bar and is intended to be embedded inside a view controller that adheres to
 /// `UniversalSearchDelegate`. This view controller manages the search bar and keyboard and informs the view when
@@ -22,100 +118,6 @@ protocol UniversalSearchDelegate: AnyObject {
 ///
 /// This implementation was hastily copied from the `DirectoryViewController` so the code quality isn't great.
 class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSource {
-    
-    // MARK: - Internal Models
-    
-    /// A model for the various table view sections
-    private enum Section: Int, CaseIterable {
-        case users, posts, network
-    }
-    
-    /// A model for all the different types of results that can be displayed.
-    private struct SearchResults {
-        enum ResultData {
-            case universal(people: [About], posts: [KeyValue])
-            case feedID(Either<About, FeedIdentifier>)
-            case messageID(Either<KeyValue, MessageIdentifier>)
-            case loading
-            case none
-        }
-        
-        var data: ResultData
-        var query: String
-        
-        /// The table view sections that should be displayed for these results.
-        var activeSections: [Section] {
-            switch data {
-            case .universal:
-                return [.network, .posts]
-            case .feedID(let result):
-                switch result {
-                case .left:
-                    return [.network]
-                case .right:
-                    return [.users]
-                }
-            case .messageID:
-                return [.posts]
-            case .loading, .none:
-                return []
-            }
-        }
-        
-        var posts: [KeyValue]? {
-            switch data {
-            case .universal(_, let posts):
-                return posts
-            case .messageID(let result):
-                switch result {
-                case .left(let message):
-                    return [message]
-                case .right:
-                    return nil
-                }
-            default:
-                return nil
-            }
-        }
-        
-        var inNetworkPeople: [About]? {
-            switch data {
-            case .universal(let people, _):
-                return people
-            case .feedID(let result):
-                switch result {
-                case .left(let about):
-                    return [about]
-                case .right:
-                    return nil
-                }
-            default:
-                return nil
-            }
-        }
-        
-        var user: FeedIdentifier? {
-            switch data {
-            case .feedID(let result):
-                switch result {
-                case .left:
-                    return nil
-                case .right(let identifier):
-                    return identifier
-                }
-            default:
-                return nil
-            }
-        }
-        
-        var postCount: Int {
-            posts?.count ?? 0
-        }
-        
-        var inNetworkPeopleCount: Int {
-            inNetworkPeople?.count ?? 0
-        }
-    }
     
     // MARK: - Public Properties
     
@@ -284,7 +286,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         }
     }
     
-    func loadPeople(matching filter: String) async -> [About]  {
+    func loadPeople(matching filter: String) async -> [About] {
         do {
             return try await Bots.current.abouts(matching: filter)
         } catch {
@@ -409,11 +411,16 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
                 return UITableViewCell()
             }
             
-            let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+            let cell = (
+                tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell
+            ) ?? AboutTableViewCell()
             cell.aboutView.update(with: feedIdentifier, about: nil)
             return cell
         case .posts:
-            let post = searchResults.posts![indexPath.row]
+            guard let posts = searchResults.posts else {
+                return UITableViewCell()
+            }
+            let post = posts[indexPath.row]
             let type = post.contentType
             var cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? KeyValueTableViewCell
             if cell == nil {
@@ -442,7 +449,9 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
                 }
                 return cell
             } else {
-                let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+                let cell = (
+                    tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell
+                ) ?? AboutTableViewCell()
                 let about = searchResults.inNetworkPeople![indexPath.row]
                 cell.aboutView.update(with: about.identity, about: about)
                 return cell
@@ -459,7 +468,10 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             let controller = AboutViewController(with: identity)
             delegate?.present(controller)
         case .posts:
-            let post = searchResults.posts![indexPath.row]
+            guard let posts = searchResults.posts else {
+                return
+            }
+            let post = posts[indexPath.row]
             let controller = ThreadViewController(with: post, startReplying: false)
             delegate?.present(controller)
         case .network:
