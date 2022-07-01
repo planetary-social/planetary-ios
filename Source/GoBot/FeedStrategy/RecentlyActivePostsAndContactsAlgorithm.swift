@@ -260,7 +260,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
     }
 
     private func buildKeyValue(keyValueRow: Row, database: ViewDatabase) throws -> KeyValue? {
-        return try KeyValue(row: keyValueRow, database: database)
+        try KeyValue(row: keyValueRow, database: database)
     }
 
     private func buildPostContent(keyValueRow: Row, connection: Connection) throws -> Content {

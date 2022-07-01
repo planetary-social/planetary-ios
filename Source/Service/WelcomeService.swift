@@ -22,6 +22,11 @@ class WelcomeServiceAdapter: WelcomeService {
     func insertNewMessages(in db: ViewDatabase, from bundle: Bundle? = nil) {
         Log.info("Preloading welcome messages")
         
+        guard let currentUser = db.currentUser else {
+            Log.error("database does not have a currentUser")
+            return
+        }
+        
         do {
             var messages = [KeyValue]()
             let now = Date.now.millisecondsSince1970
@@ -30,8 +35,8 @@ class WelcomeServiceAdapter: WelcomeService {
                 key: "%0mkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
                 value: Value(
                     author: welcomeFeedID,
-                    content: Content(from:
-                        About(
+                    content: Content(
+                        from: About(
                             about: welcomeFeedID,
                             name: Text.Onboarding.welcomeBotName.text,
                             description: nil,
@@ -56,7 +61,7 @@ class WelcomeServiceAdapter: WelcomeService {
             let followWelcomeAccount = KeyValue(
                 key: "%1mkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
                 value: Value(
-                    author: db.currentUser!,
+                    author: currentUser,
                     content: Content(from: Contact(contact: welcomeFeedID, following: true)),
                     hash: "nop",
                     previous: nil,
