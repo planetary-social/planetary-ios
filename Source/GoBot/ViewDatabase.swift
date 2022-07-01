@@ -238,7 +238,7 @@ class ViewDatabase {
                 try db.execute("PRAGMA optimize;")
                 db.userVersion = 11
             }
-            if db.userVersion = 11 {
+            if db.userVersion == 11 {
                 try db.run(
                     postSearch.create(
                         .FTS4(
