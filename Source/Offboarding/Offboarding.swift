@@ -20,7 +20,7 @@ enum OffboardingError: Error {
     case other(Error?)
 }
 
-class Offboarding {
+enum Offboarding {
 
     typealias Completion = ((OffboardingError?) -> Void)
 
@@ -31,61 +31,23 @@ class Offboarding {
 
         Analytics.shared.trackOffboardingStart()
 
-        // unfollow all
+        // log out
         // errors not allowed
-        Offboarding.unfollowAllFollowedBy(identity) {
-            error in
+        Bots.current.logout { error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            
             if let error = error { completion(.botError(error)); return }
-
-            // log out
-            // errors not allowed
-            Bots.current.logout {
-                error in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                
-                if let error = error { completion(.botError(error)); return }
-                
-                // remove configuration
-                configuration.unapply()
-                AppConfigurations.delete(configuration)
-
-                // done
-                Analytics.shared.trackOffboardingEnd()
-                Analytics.shared.forget()
-                
-                completion(nil)
-            }
-        }
-    }
-
-    // TODO move to Bot+Unfollow
-    private static func unfollowAllFollowedBy(_ identity: Identity,
-                                              completion: @escaping ((Error?) -> Void)) {
-        // identities following this identity
-        Bots.current.follows(identity: identity) { (identities: [Identity], error) in
-            if let error = error { completion(error); return }
-            if identities.isEmpty { completion(nil); return }
-
-            // unfollow each identity
-            // use a dispatch group to do serially
-            var unfollowError: Error?
-            let group = DispatchGroup()
-            for identity in identities {
-                group.enter()
-                DispatchQueue.main.async(group: group) {
-                    Bots.current.unfollow(identity) {
-                        _, error in
-                        if let error = error { unfollowError = error }
-                        group.leave()
-                    }
-                }
-            }
-
-            // TODO error?
-            group.notify(queue: DispatchQueue.main) {
-                completion(unfollowError)
-            }
+            
+            // remove configuration
+            configuration.unapply()
+            AppConfigurations.delete(configuration)
+            
+            // done
+            Analytics.shared.trackOffboardingEnd()
+            Analytics.shared.forget()
+            
+            completion(nil)
         }
     }
 }
