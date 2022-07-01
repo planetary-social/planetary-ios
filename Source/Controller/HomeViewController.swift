@@ -64,6 +64,7 @@ class HomeViewController: ContentViewController {
         view.separatorStyle = .none
         view.showsVerticalScrollIndicator = false
         view.accessibilityIdentifier = "FeedTableView"
+        view.cellLayoutMarginsFollowReadableWidth = true
         return view
     }()
     
