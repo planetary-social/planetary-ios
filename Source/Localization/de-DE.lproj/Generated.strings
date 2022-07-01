@@ -151,13 +151,13 @@
 "NewPost.confirmRemove" = "Dieses Bild aus dem Beitrag entfernen? Du kannst es immer wieder hinzufügen.";
 "NewPost.remove" = "Entfernen";
 
-"Offboarding.reset" = "Zurücksetzen";
-"Offboarding.resetApplicationAndIdentity" = "Anwendung und Identität zurücksetzen";
+"Offboarding.reset" = "Delete";
+"Offboarding.resetIdentity" = "Delete My Identity";
 "Offboarding.resetConfirmTitle" = "Warnung";
-"Offboarding.resetConfirmMessage" = "Bist du sicher, dass du Planetary zurücksetzen möchtest? Du verlierst diese Identität und alle damit verbundenen Inhalte. Dies kann nicht rückgängig gemacht werden.";
+"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetConfirmAgainTitle" = "Bist du sicher?";
-"Offboarding.resetConfirmAgainMessage" = "Bist du sicher, dass du Planetary zurücksetzen möchtest? Du verlierst diese Identität und alle damit verbundenen Inhalte. Dies kann nicht rückgängig gemacht werden.";
-"Offboarding.resetFooter" = "Das Zurücksetzen der Planetary-App wird dich aus dem Benutzerverzeichnis entfernen. Die anderen Benutzer folgen dich nicht mehr und zerstören deine Identität auf ihrem Gerät. Du wirst nicht in der Lage sein, deine Identität wiederherzustellen, aber du wirst in der Lage sein, eine neue zu erstellen.";
+"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "Wir konnten keine Verbindung zum Verzeichnis herstellen, um dich zu entfernen. Bitte versuche es erneut.";
 "Offboarding.resetBotErrorTryAgain" = "Etwas Unerwartetes ist passiert, aber keine Sorge, wir haben eine Notiz gemacht, um es zu beheben. Bitte versuche es erneut.";
 
