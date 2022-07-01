@@ -91,6 +91,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         SELECT messages.*,
                posts.*,
                contacts.*,
+               contact_about.about_id,
                tangles.*,
                messagekeys.*,
                authors.*,

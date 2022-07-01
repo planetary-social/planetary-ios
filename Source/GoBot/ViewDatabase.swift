@@ -1098,13 +1098,13 @@ class ViewDatabase {
     }
     // table.filter(!(array.contains(id)))
 
-    private func mapQueryToKeyValue(qry: Table) throws -> [KeyValue] {
+    private func mapQueryToKeyValue(qry: Table, useNamespacedTables: Bool = false) throws -> [KeyValue] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
         return try db.prepare(qry).compactMap { row in
-            return try KeyValue(row: row, database: self)
+            return try KeyValue(row: row, database: self, useNamespacedTables: true)
         }
     }
     
@@ -1258,7 +1258,7 @@ class ViewDatabase {
             .order(colMessageID.desc)
             .limit(limit)
         
-        return try self.mapQueryToKeyValue(qry: qry)
+        return try self.mapQueryToKeyValue(qry: qry, useNamespacedTables: true)
     }
     
     func reports(limit: Int = 200) throws -> [Report] {
@@ -2471,7 +2471,6 @@ class ViewDatabase {
         // let supportedMimeTypes = [MIMEType.jpeg, MIMEType.png]
         
         let qry = self.post_blobs.where(colMessageRef == msgID)
-            .filter(colMetaMimeType == "image/jpeg" || colMetaMimeType == "image/png" )
         
         let blobs: [Blob] = try db.prepare(qry).map {
             row in

@@ -15,7 +15,12 @@ extension KeyValue {
     /// columns are required for this function to succeed, but in general I think it's messages joined with message keys
     /// joined with the post type (i.e posts) joined with authors. See `ViewDatabase.fillMessages` for a working
     /// example.
-    init?(row: Row, database: ViewDatabase) throws {
+    /// - Parameters:
+    ///   - row: The SQLite row that should be used to make the KeyValue.
+    ///   - database: A database instance that will be used to fetch supplementary information.
+    ///   - useNamespacedTables: A boolean that tells the initializer to include table names before some common column
+    ///     names that appear in multiple tables like `name`.
+    init?(row: Row, database: ViewDatabase, useNamespacedTables: Bool = false) throws {
         // tried 'return try row.decode()'
         // but failed - see https://github.com/VerseApp/ios/issues/29
         
@@ -95,9 +100,10 @@ extension KeyValue {
             timestamp: try row.get(db.colReceivedAt),
             offChain: try row.get(db.colOffChain)
         )
+        let aboutName = useNamespacedTables ? db.abouts[db.colName] : db.colName
         keyValue.metadata.author.about = About(
             about: msgAuthor,
-            name: try row.get(db.colName),
+            name: try row.get(aboutName),
             description: try row.get(db.colDescr),
             imageLink: try row.get(db.colImage)
         )

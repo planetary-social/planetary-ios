@@ -201,6 +201,8 @@
 "Onboarding.policyStatement" = "Kontynuując, potwierdzasz, że akceptujesz nasze Warunki Korzystania z Usług, oraz Politykę Prywatności";
 "Onboarding.termsOfService" = "Warunki Korzystania z Usług";
 "Onboarding.privacyPolicy" = "Polityka Prywatności";
+"Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
+"Onboarding.welcomeBotName" = "Planetary Help";
 
 "OnboardingStepTitle.backup" = "Utworzyliśmy Twoją tożsamość - czy chcesz kopie zapapasową?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";

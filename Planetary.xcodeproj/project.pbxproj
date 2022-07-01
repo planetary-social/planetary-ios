@@ -1078,6 +1078,7 @@
 		C9F53825286CCF410015A146 /* WelcomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F53824286CCF410015A146 /* WelcomeService.swift */; };
 		C9F53826286CCF410015A146 /* WelcomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F53824286CCF410015A146 /* WelcomeService.swift */; };
 		C9F5382B286DF0440015A146 /* KeyValue+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5382A286DF0440015A146 /* KeyValue+ViewDatabase.swift */; };
+		C9F53837286F6E220015A146 /* KeyValue+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5382A286DF0440015A146 /* KeyValue+ViewDatabase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4087,6 +4088,7 @@
 				C9724BF02809EF4D000EBCCD /* UIView+Superview.swift in Sources */,
 				531A8A4A21FA3C6400D5C8C0 /* KeyValue.swift in Sources */,
 				23C7445A2200B13F00FB554A /* Contact.swift in Sources */,
+				C9F53837286F6E220015A146 /* KeyValue+ViewDatabase.swift in Sources */,
 				2346ECB422141D9E009A94CB /* Bot.swift in Sources */,
 				C9724B6E2809E735000EBCCD /* KeyValueView.swift in Sources */,
 				C9A2DE3527D0038700EAFA73 /* UIViewController+Alert.swift in Sources */,

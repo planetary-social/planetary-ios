@@ -19,27 +19,6 @@ class WelcomeServiceAdapter: WelcomeService {
     
     let welcomeFeedID: FeedIdentifier = "@l/lzpaG3asUP+kSj1KNdEvh+oIzjmsPBk20X5er3YrI=.ed25519"
     
-    let welcomePostJSON = """
-     {
-       "key": "%cmkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
-       "value": {
-          "author": "@l/lzpaG3asUP+kSj1KNdEvh+oIzjmsPBk20X5er3YrI=.ed25519",
-          "previous": null,
-          "sequence": 0,
-          "timestamp": 1656528265886,
-          "hash": "sha256",
-          "content": {
-            "type": "post",
-            "text": "Welcome to Planetary!",
-            "mentions": []
-          },
-          "signature": "4GEg21vqwye0Wbm5dTJCkq89uw5+bcOLOqQKA9ZnmHzadF2Z29Ny2QIHwCDjQXXN1DdfGmfrIirVYEeRFGX0DA==.sig.ed25519"
-        },
-        "timestamp": 1656528265886,
-        "off_chain": true
-      }
-    """
-    
     func insertNewMessages(in db: ViewDatabase, from bundle: Bundle? = nil) {
         Log.info("Preloading welcome messages")
         
@@ -47,38 +26,80 @@ class WelcomeServiceAdapter: WelcomeService {
             var messages = [KeyValue]()
             let now = Date.now.millisecondsSince1970
             
-            let followWelcomeAccount = KeyValue(
-                key: "%1",
+            let welcomeAccountAbout = KeyValue(
+                key: "%0mkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
                 value: Value(
-                    author: db.currentUser!,
-                    content: Content(from: Contact(contact: welcomeFeedID, following: true)),
+                    author: welcomeFeedID,
+                    content: Content(from:
+                        About(
+                            about: welcomeFeedID,
+                            name: Text.Onboarding.welcomeBotName.text,
+                            description: nil,
+                            imageLink: "&XD6l9T+dbtFqlZDbqFHf5Nixo8V7lE8VseArbpZbBwU=.sha256",
+                            publicWebHosting: false
+                        )
+                    ),
                     hash: "nop",
-                    previous: "0",
-                    sequence: 1,
-                    signature: "1",
+                    previous: nil,
+                    sequence: 0,
+                    signature: "nop",
                     timestamp: now
                 ),
                 timestamp: now,
                 receivedSeq: 0,
-                hashedKey: "1",
+                hashedKey: "nop",
+                offChain: true
+            )
+            messages.append(welcomeAccountAbout)
+
+            
+            let followWelcomeAccount = KeyValue(
+                key: "%1mkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
+                value: Value(
+                    author: db.currentUser!,
+                    content: Content(from: Contact(contact: welcomeFeedID, following: true)),
+                    hash: "nop",
+                    previous: nil,
+                    sequence: 1,
+                    signature: "nop",
+                    timestamp: now
+                ),
+                timestamp: now,
+                receivedSeq: 0,
+                hashedKey: "nop",
                 offChain: true
             )
             messages.append(followWelcomeAccount)
             
             let welcomePost = KeyValue(
-                key: "%2",
+                key: "%2mkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
                 value: Value(
                     author: welcomeFeedID,
-                    content: Content(from: Post(text: "Welcome to Planetary!")),
+                    content: Content(
+                        from: Post(
+                            blobs: [
+                                Blob(identifier: "&byA+y+gkCxLzF3vK3wW+R/gLtsVip+ctE3xGAMDjTe8=.sha256"),
+                                Blob(identifier: "&hH+8apK7YrPInrrefyojVwSB7T4Erp82rjE4SNhbl1k=.sha256"),
+                                Blob(identifier: "&QtZae55Hrc+wC9i0y7AbjCWexR6IL/xCGybgeZ3U088=.sha256"),
+                                Blob(identifier: "&nmqgPl0O9J/UzKd1iPERLtwomWho8Q0l5/z6kA7iBZE=.sha256"),
+                                Blob(identifier: "&u/3vkSrP5I6Exj3TD1/Ngg4ldhV+YbpzoI4iNIjKKz8=.sha256")
+                            ],
+                            branches: nil,
+                            hashtags: nil,
+                            mentions: nil,
+                            root: nil,
+                            text: Text.Onboarding.welcomeMessage.text
+                        )
+                    ),
                     hash: "nop",
-                    previous: "1",
+                    previous: nil,
                     sequence: 2,
-                    signature: "2",
+                    signature: "nop",
                     timestamp: now
                 ),
                 timestamp: now,
                 receivedSeq: 0,
-                hashedKey: "2",
+                hashedKey: "nop",
                 offChain: true
             )
             messages.append(welcomePost)
@@ -101,8 +122,7 @@ class WelcomeServiceAdapter: WelcomeService {
             try db.fillMessages(msgs: newMesgs)
             Log.info("Finished preloading welcome messages")
         } catch {
-            print(error) // shows error
-            print("Unable to read file")// local message
+            Log.error("Failed to load welcome messages: \(error.localizedDescription)")
         }
     }
 }

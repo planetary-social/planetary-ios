@@ -149,6 +149,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
         let tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
         let abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
+        let aboutAuthor = abouts.alias("author_about")
 
         let colMessageRef = Expression<Int64>("msg_ref")
 
@@ -167,7 +168,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             .join(.leftOuter, tangles, on: tangles[colMessageRef] == msgs[colMessageID])
             .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
             .join(authors, on: authors[colID] == msgs[colAuthorID])
-            .join(.leftOuter, abouts, on: abouts[colAboutID] == msgs[colAuthorID])
+            .join(.leftOuter, aboutAuthor, on: aboutAuthor[colAboutID] == msgs[colAuthorID])
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
