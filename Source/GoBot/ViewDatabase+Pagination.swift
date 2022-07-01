@@ -185,10 +185,6 @@ class RecentViewKeyValueSource: KeyValueSource {
     func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
         try self.view.recentPosts(strategy: strategy, limit: limit, offset: offset)
     }
-    
-    static func top(with db: ViewDatabase, feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
-        return try db.recentIdentifiers(strategy: feedStrategy, limit: 1).first
-    }
 }
 
 class FeedKeyValueSource: KeyValueSource {

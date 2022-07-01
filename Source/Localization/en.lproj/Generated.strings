@@ -112,7 +112,8 @@
 "Text.join" = "Join";
 "Text.redeemInvitation" = "Redeem an invitation";
 "Text.pasteAddress" = "Token";
-"Text.refresh" = "Refresh";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown preview";
 "Text.loggingOut" = "Logging out...";
 "Text.openPost" = "Open post {{ postID }}";
@@ -150,13 +151,13 @@
 "NewPost.confirmRemove" = "Remove this image from the post?  You can always add it back again.";
 "NewPost.remove" = "Remove";
 
-"Offboarding.reset" = "Reset";
-"Offboarding.resetApplicationAndIdentity" = "Reset application and identity";
+"Offboarding.reset" = "Delete";
+"Offboarding.resetIdentity" = "Delete My Identity";
 "Offboarding.resetConfirmTitle" = "Warning";
-"Offboarding.resetConfirmMessage" = "Are you sure want to reset your Planetary app? You will lose this identity and all related content. This cannot be undone.";
+"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetConfirmAgainTitle" = "Are you sure?";
-"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to reset your Planetary app? You will lose this identity and all related content. This cannot be undone.";
-"Offboarding.resetFooter" = "Resetting the Planetary app will remove you from the user directory, unfollow everyone, and destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
+"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "We weren't able to connect to the directory to remove you. Please try again.";
 "Offboarding.resetBotErrorTryAgain" = "Something unexpected happened but don't worry, we've made a note to fix it. Please try again.";
 

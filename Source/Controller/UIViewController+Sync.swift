@@ -25,7 +25,7 @@ extension UIViewController {
     }
 
     @objc
-    func didSync(notification: NSNotification) {
+    func didSync(notification: Notification) {
         // subclasses are encouraged to override
     }
     
@@ -43,7 +43,7 @@ extension UIViewController {
     }
 
     @objc
-    func didRefresh(notification: NSNotification) {
+    func didRefresh(notification: Notification) {
         // subclasses are encouraged to override
     }
 }

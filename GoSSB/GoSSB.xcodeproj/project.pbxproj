@@ -158,6 +158,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		C933908827FB5134007B5FD8 /* Install Golang toolchain */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

@@ -1013,10 +1013,6 @@ class ViewDatabase {
         let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
     }
-    
-    func messageIDAtTopOfFeed(with feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
-        try RecentViewKeyValueSource.top(with: self, feedStrategy: feedStrategy)
-    }
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
         let src = try FeedKeyValueSource(with: self, feed: feed)
@@ -1030,13 +1026,12 @@ class ViewDatabase {
         }
         return try strategy.fetchKeyValues(connection: connection, userId: currentUserID, limit: limit, offset: offset)
     }
-    
-    // This gets called a lot from the go-bot... 
-    func recentIdentifiers(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> [MessageIdentifier] {
+
+    func numberOfRecentPosts(with strategy: FeedStrategy, since message: MessageIdentifier) throws -> Int {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        return try strategy.fetchKeys(connection: connection, userId: currentUserID, limit: limit, offset: offset)
+        return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID, since: message)
     }
     
     // MARK: common query constructors

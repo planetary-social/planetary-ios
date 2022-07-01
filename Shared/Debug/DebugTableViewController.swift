@@ -53,7 +53,7 @@ class DebugTableViewController: UITableViewController {
         self.settings[section].cellModels.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let model = self.settings[indexPath.section].cellModels[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
         cell.accessoryType = .none

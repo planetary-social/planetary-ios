@@ -17,6 +17,7 @@ final class BugsnagServiceTests: XCTestCase {
     override func setUp() {
         super.setUp()
         service = BugsnagService(keys: Keys(bundle: .module))
+        service?.start()
     }
 
     func testInit() {
@@ -86,7 +87,7 @@ final class BugsnagServiceTests: XCTestCase {
         let error = NSError(domain: "com.planetary.social", code: 407, userInfo: nil)
         let service = try XCTUnwrap(service)
         let expectedAppLog = "hello"
-        service.onEventHandler = {
+        service.onEventHandler = { _ in
             return Logs(appLog: expectedAppLog, botLog: nil)
         }
         service.report(error: error, metadata: nil)
@@ -97,7 +98,7 @@ final class BugsnagServiceTests: XCTestCase {
         let error = NSError(domain: "com.planetary.social", code: 407, userInfo: nil)
         let service = try XCTUnwrap(service)
         let expectedBotLog = "hello"
-        service.onEventHandler = {
+        service.onEventHandler = { _ in
             return Logs(appLog: nil, botLog: expectedBotLog)
         }
         service.report(error: error, metadata: nil)
