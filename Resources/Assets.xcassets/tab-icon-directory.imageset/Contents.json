@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Directory--light.png",
+      "filename" : "Activity.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Directory--light@2x.png",
+      "filename" : "Activity@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Directory--light@3x.png",
+      "filename" : "Activity@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
