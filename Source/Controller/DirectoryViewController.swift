@@ -72,7 +72,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         controller.searchResultsUpdater = self
         controller.searchBar.delegate = self
         controller.searchBar.isTranslucent = false
-        controller.searchBar.placeholder = Text.searchForUsersAndPosts.text
+        controller.searchBar.placeholder = Text.searchForUsers.text
         controller.obscuresBackgroundDuringPresentation = false
         controller.hidesNavigationBarDuringPresentation = false
         return controller

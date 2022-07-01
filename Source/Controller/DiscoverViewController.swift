@@ -11,7 +11,8 @@ import Logger
 import Analytics
 import CrashReporting
 
-class DiscoverViewController: ContentViewController {
+class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate,
+    UniversalSearchDelegate {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -69,8 +70,22 @@ class DiscoverViewController: ContentViewController {
         return view
     }()
     
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchResultsUpdater = self
+        controller.searchBar.delegate = self
+        controller.searchBar.isTranslucent = false
+        controller.searchBar.placeholder = Text.search.text
+        controller.obscuresBackgroundDuringPresentation = false
+        controller.hidesNavigationBarDuringPresentation = false
+        return controller
+    }()
+    
+    private lazy var numberOfColumns: Int = {
+        Int(UIScreen.main.bounds.width) / 180
+    }()
      
-    private lazy var emptyView: UIView = {
+    private lazy var emptyDiscoverView: UIView = {
         let view = UIView()
          
         let imageView = UIImageView(image: UIImage(imageLiteralResourceName: "icon-planetary"))
@@ -105,6 +120,15 @@ class DiscoverViewController: ContentViewController {
 
         return view
     }()
+    
+    private lazy var searchResultsView: UniversalSearchResultsView = {
+        let view = UniversalSearchResultsView()
+        view.delegate = self
+        return view
+    }()
+    
+    // for a bug fix — see note in Search extension below
+    private var searchEditBeginDate = Date()
 
     // MARK: Lifecycle
 
@@ -123,9 +147,9 @@ class DiscoverViewController: ContentViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Layout.fill(view: self.view, with: self.collectionView)
-        
-        self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
+        self.navigationItem.searchController = self.searchController
+        showDiscoverCollectionView()
+        // self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
         
         self.addLoadingAnimation()
         self.load()
@@ -160,13 +184,60 @@ class DiscoverViewController: ContentViewController {
     
     func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
-            self.collectionView.backgroundView = self.emptyView
+            self.collectionView.backgroundView = self.emptyDiscoverView
         } else {
-            self.emptyView.removeFromSuperview()
+            self.emptyDiscoverView.removeFromSuperview()
             self.collectionView.backgroundView = nil
         }
         self.dataSource.update(source: proxy)
         self.collectionView.reloadData()
+    }
+    
+    // MARK: Search
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        Analytics.shared.trackDidTapSearchbar(searchBarName: "discover")
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        searchResultsView.searchQuery = searchController.searchBar.text ?? ""
+        if searchResultsView.searchQuery.isEmpty {
+            showDiscoverCollectionView()
+        } else {
+            showSearchResults()
+        }
+    }
+    
+    // These two functions are implemented to avoid a bug where the initial
+    // tap of the search bar begins editing, but first responder is immediately resigned
+    // I can't figure out why this is happening, but this is a potential solution to avoid the bug.
+    // I set a symbolic breakpoint and can't find why resignFirstResponder is being called there.
+    //
+    // first, when the edit begins, we store the date in self.searchEditBeginDate
+    // then, in searchBarShouldEndEditing, we check whether this date was extremely recent
+    // if it was too recent to be performed intentionally, we don't allow the field to end editing.
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        self.searchEditBeginDate = Date()
+        return true
+    }
+
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        let timeSinceStart = Date().timeIntervalSince(self.searchEditBeginDate)
+        return timeSinceStart > 0.4
+    }
+    
+    func showDiscoverCollectionView() {
+        view.subviews.forEach { $0.removeFromSuperview() }
+        Layout.fill(view: self.view, with: self.collectionView)
+    }
+    
+    func showSearchResults() {
+        view.subviews.forEach { $0.removeFromSuperview() }
+        Layout.fill(view: self.view, with: self.searchResultsView)
+    }
+    
+    func present(_ controller: UIViewController) {
+        navigationController?.pushViewController(controller, animated: true)
     }
     
     // MARK: Actions
