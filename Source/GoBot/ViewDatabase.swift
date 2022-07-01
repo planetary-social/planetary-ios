@@ -1973,16 +1973,20 @@ class ViewDatabase {
             try self.insertPrivateRecps(msgID: msgID, recps: p.recps)
         }
         
-        try db.run(self.posts.insert(
-            colMessageRef <- msgID,
-            colIsRoot <- p.root == nil,
-            colText <- p.text
-        ))
+        try db.run(
+            self.posts.insert(
+                colMessageRef <- msgID,
+                colIsRoot <- p.root == nil,
+                colText <- p.text
+            )
+        )
         
-        try db.run(postSearch.insert(
-            colMessageRef <- msgID,
-            colText <- p.text.lowercased()
-        ))
+        try db.run(
+            postSearch.insert(
+                colMessageRef <- msgID,
+                colText <- p.text.lowercased()
+            )
+        )
 
         try self.insertBranches(msgID: msgID, root: p.root, branches: p.branch)
         

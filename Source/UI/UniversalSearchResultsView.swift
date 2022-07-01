@@ -454,10 +454,13 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
                 }
                 return cell
             } else {
+                guard let inNetworkPeople = searchResults.inNetworkPeople else {
+                    return UITableViewCell()
+                }
+                let about = inNetworkPeople[indexPath.row]
                 let cell = (
                     tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell
                 ) ?? AboutTableViewCell()
-                let about = searchResults.inNetworkPeople![indexPath.row]
                 cell.aboutView.update(with: about.identity, about: about)
                 return cell
             }
