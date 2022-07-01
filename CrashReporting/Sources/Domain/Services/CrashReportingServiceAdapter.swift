@@ -8,8 +8,6 @@
 import Foundation
 import Logger
 
-/// This implementation of CrashReportingService starts the APIService
-/// when a botLogHandler is set. So be sure to always set it.
 class CrashReportingServiceAdapter: CrashReportingService {
 
     var apiService: APIService
