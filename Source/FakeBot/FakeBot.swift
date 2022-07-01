@@ -233,7 +233,7 @@ class FakeBot: Bot {
     // MARK: Feed content
 
     func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion) {
-        completion(0, nil)
+        completion(.success(0))
     }
     
     func recent(completion: PaginatedCompletion) {

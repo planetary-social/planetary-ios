@@ -237,13 +237,13 @@ extension Text {
 extension Text {
 
     enum Offboarding: String, Localizable, CaseIterable {
-        case reset = "Reset"
-        case resetApplicationAndIdentity = "Reset application and identity"
+        case reset = "Delete"
+        case resetIdentity = "Delete My Identity"
         case resetConfirmTitle = "Warning"
-        case resetConfirmMessage = "Are you sure want to reset your Planetary app? You will lose this identity and all related content. This cannot be undone."
+        case resetConfirmMessage = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone."
         case resetConfirmAgainTitle = "Are you sure?"
-        case resetConfirmAgainMessage = "Are you really sure you want to reset your Planetary app? You will lose this identity and all related content. This cannot be undone."
-        case resetFooter = "Resetting the Planetary app will remove you from the user directory, unfollow everyone, and destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one."
+        case resetConfirmAgainMessage = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone."
+        case resetFooter = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one."
         case resetApiErrorTryAgain = "We weren't able to connect to the directory to remove you. Please try again."
         case resetBotErrorTryAgain = "Something unexpected happened but don't worry, we've made a note to fix it. Please try again."
     }
