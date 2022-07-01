@@ -39,6 +39,11 @@ extension UIColor {
     static let textInputBorder = UIColor(named: "textInputBorder", in: Bundle.current, compatibleWith: nil)!
     static let textInputBackground = UIColor(named: "textInputBackground", in: Bundle.current, compatibleWith: nil)!
     static let linkColor = UIColor(named: "linkColor", in: Bundle.current, compatibleWith: nil)!
+    static let floatingRefreshButton = UIColor(
+        named: "floatingRefreshButton",
+        in: Bundle.current,
+        compatibleWith: nil
+    ) ?? #colorLiteral(red: 0.3254901961, green: 0.2431372549, blue: 0.4862745098, alpha: 1)
 
     struct background {
         static let gallery = UIColor(named: "galleryColor", in: Bundle.current, compatibleWith: nil) ?? UIColor(rgb: 0xEFEFEF)

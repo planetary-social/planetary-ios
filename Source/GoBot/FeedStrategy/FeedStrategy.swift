@@ -30,15 +30,9 @@ protocol FeedStrategy: NSObjectProtocol, NSCoding {
     /// offset=nil will return the first item onwards
     func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue]
 
-    /// Returns just the identifiers for the items in the feed
+    /// Returns the total number of items in the feed since a specific message
     /// - parameter connection: the database connection needed to run queries in the database
     /// - parameter userId: the ID of the user for which the feed will be calculated from
-    /// - parameter limit: the number of items that should be returned
-    /// - parameter offset: the offset, offset=10 will return the 10th item onwards,
-    /// offset=nil will return the first item onwards
-    ///
-    /// The only use of this function at the moment is for comparing the current displayed items with the
-    /// potentially new items in the database so that if the identifier at the top is different it means that
-    /// there are new items in the database. This function should be as fast as possible.
-    func fetchKeys(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [MessageIdentifier]
+    /// - parameter message: the offset
+    func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int
 }

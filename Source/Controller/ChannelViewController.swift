@@ -50,7 +50,7 @@ class ChannelViewController: ContentViewController {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     override func viewDidLoad() {
@@ -101,14 +101,15 @@ class ChannelViewController: ContentViewController {
 
     // MARK: Actions
 
-    @objc func refreshControlValueChanged(control: UIRefreshControl) {
+    @objc
+    func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
         self.load()
     }
 
     // MARK: Notifications
 
-    override func didBlockUser(notification: NSNotification) {
+    override func didBlockUser(notification: Notification) {
         guard let identity = notification.object as? Identity else { return }
         self.tableView.deleteKeyValues(by: identity)
     }

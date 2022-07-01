@@ -231,8 +231,13 @@ class ViewDatabase {
                 db.userVersion = 10
             }
             if db.userVersion == 10 {
-                try db.execute("ALTER TABLE messages ADD off_chain INTEGER NOT NULL DEFAULT (0);")
+                // Run this as a migration since we haven't ever run it before.
+                try db.execute("PRAGMA optimize;")
                 db.userVersion = 11
+            }
+            if db.userVersion == 11 {
+                try db.execute("ALTER TABLE messages ADD off_chain INTEGER NOT NULL DEFAULT (0);")
+                db.userVersion = 12
             }
         }
     }
@@ -250,6 +255,15 @@ class ViewDatabase {
     }
     
     func close() {
+        if let db = openDB {
+            do {
+                try db.execute("PRAGMA optimize;")
+                Log.info("Finished optimizing db")
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
+        }
         self.openDB = nil
         self.currentUser = nil
         self.currentUserID = -1
@@ -998,10 +1012,6 @@ class ViewDatabase {
         let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
     }
-    
-    func messageIDAtTopOfFeed(with feedStrategy: FeedStrategy) throws -> MessageIdentifier? {
-        try RecentViewKeyValueSource.top(with: self, feedStrategy: feedStrategy)
-    }
 
     func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
         let src = try FeedKeyValueSource(with: self, feed: feed)
@@ -1012,13 +1022,12 @@ class ViewDatabase {
     func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> KeyValues {
         return try strategy.fetchKeyValues(database: self, userId: currentUserID, limit: limit, offset: offset)
     }
-    
-    // This gets called a lot from the go-bot... 
-    func recentIdentifiers(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> [MessageIdentifier] {
+
+    func numberOfRecentPosts(with strategy: FeedStrategy, since message: MessageIdentifier) throws -> Int {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        return try strategy.fetchKeys(connection: connection, userId: currentUserID, limit: limit, offset: offset)
+        return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID, since: message)
     }
     
     // MARK: common query constructors

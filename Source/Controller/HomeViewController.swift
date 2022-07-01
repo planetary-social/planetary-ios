@@ -18,7 +18,12 @@ class HomeViewController: ContentViewController {
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
-        let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newPostButtonTouchUpInside))
+        let item = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(newPostButtonTouchUpInside)
+        )
         return item
     }()
 
@@ -38,11 +43,16 @@ class HomeViewController: ContentViewController {
     
     private lazy var floatingRefreshButton: FloatingRefreshButton = {
         let button = FloatingRefreshButton()
-        button.addTarget(self,
-                         action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
-                         for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
+            for: .touchUpInside
+        )
         return button
     }()
+
+    /// The last time we loaded the feed from the database or we checked if there are new items to show
+    private var lastTimeNewFeedUpdatesWasChecked = Date()
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse()
@@ -54,6 +64,7 @@ class HomeViewController: ContentViewController {
         view.separatorStyle = .none
         view.showsVerticalScrollIndicator = false
         view.accessibilityIdentifier = "FeedTableView"
+        view.cellLayoutMarginsFollowReadableWidth = true
         return view
     }()
     
@@ -118,7 +129,7 @@ class HomeViewController: ContentViewController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
@@ -168,39 +179,6 @@ class HomeViewController: ContentViewController {
         }
     }
     
-    func refreshAndLoad(animated: Bool = false) {
-        if HomeViewController.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(HomeViewController.refreshBackgroundTaskIdentifier)
-        }
-        
-        Log.info("Pull down to refresh triggering a short refresh")
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "HomePullDownToRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(HomeViewController.refreshBackgroundTaskIdentifier)
-            HomeViewController.refreshBackgroundTaskIdentifier = .invalid
-        }
-        HomeViewController.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = { [weak self] in
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-            
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                HomeViewController.refreshBackgroundTaskIdentifier = .invalid
-            }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.load(animated: animated)
-            }
-        }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
-    }
-    
     private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
@@ -208,8 +186,10 @@ class HomeViewController: ContentViewController {
             self.emptyView.removeFromSuperview()
             self.tableView.backgroundView = nil
         }
+        lastTimeNewFeedUpdatesWasChecked = Date()
         self.dataSource.update(source: proxy)
         self.tableView.reloadData()
+        self.navigationController?.tabBarItem?.badgeValue = nil
         let shouldScrollToTop = proxy.count > 0
         if shouldScrollToTop {
             self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
@@ -218,30 +198,33 @@ class HomeViewController: ContentViewController {
 
     // MARK: Actions
 
-    @objc func refreshControlValueChanged(control: UIRefreshControl) {
+    @objc
+    func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refreshAndLoad()
+        self.load()
     }
     
-    @objc func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
+    @objc
+    func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
         button.hide()
         self.refreshControl.beginRefreshing()
         self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height), animated: false)
         self.load(animated: true)
     }
 
-    @objc func newPostButtonTouchUpInside() {
+    @objc
+    func newPostButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
         let controller = NewPostViewController()
-        controller.didPublish = {
-            [weak self] _ in
+        controller.didPublish = { [weak self] _ in
             self?.load()
         }
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
     
-    @objc func directoryButtonTouchUpInside() {
+    @objc
+    func directoryButtonTouchUpInside() {
         guard let homeViewController = self.parent?.parent as? MainViewController else {
             return
         }
@@ -250,29 +233,43 @@ class HomeViewController: ContentViewController {
 
     // MARK: Notifications
 
-    override func didBlockUser(notification: NSNotification) {
+    override func didBlockUser(notification: Notification) {
         guard let identity = notification.object as? Identity else { return }
         self.tableView.deleteKeyValues(by: identity)
     }
     
-    override func didRefresh(notification: NSNotification) {
+    override func didRefresh(notification: Notification) {
+        // Check that more than a minute passed since the last time we checked for new updates
+        let elapsed = Date().timeIntervalSince(lastTimeNewFeedUpdatesWasChecked)
+        guard elapsed > 60 else {
+            return
+        }
         let currentProxy = self.dataSource.data
         let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
-        Bots.current.keyAtRecentTop { [weak self] (key) in
-            guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
-                return
+        if let message = currentKeyAtTop {
+            let operation = NumberOfRecentItemsOperation(lastMessage: message)
+            operation.completionBlock = { [weak self] in
+                self?.lastTimeNewFeedUpdatesWasChecked = Date()
+                let numberOfNewItems = operation.numberOfRecentItems
+                if numberOfNewItems > 0 {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.navigationController?.tabBarItem?.badgeValue = "\(numberOfNewItems)"
+                        let shouldAnimate = self?.navigationController?.topViewController == self
+                        self?.floatingRefreshButton.setTitle(with: numberOfNewItems)
+                        self?.floatingRefreshButton.show(animated: shouldAnimate)
+                    }
+                }
             }
-            if currentProxy.count == 0 {
-                self?.load(animated: true)
-            } else {
-//                let shouldAnimate = self?.navigationController?.topViewController == self
-                // self?.floatingRefreshButton.show(animated: shouldAnimate)
-            }
+            AppController.shared.operationQueue.addOperation(operation)
+        } else {
+            // If the feed is empty, we just try to fetch the new updates and show them
+            load(animated: false)
         }
     }
     
-    @objc func didChangeHomeFeedAlgorithm(notification: NSNotification) {
-        refreshAndLoad(animated: true)
+    @objc
+    func didChangeHomeFeedAlgorithm(notification: Notification) {
+        load(animated: true)
     }
 }
 

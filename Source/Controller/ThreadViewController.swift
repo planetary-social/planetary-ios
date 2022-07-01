@@ -371,7 +371,7 @@ class ThreadViewController: ContentViewController {
 
     // MARK: Notifications
 
-    override func didBlockUser(notification: NSNotification) {
+    override func didBlockUser(notification: Notification) {
         guard let identity = notification.object as? Identity else { return }
 
         // if identity is root post author then pop off
