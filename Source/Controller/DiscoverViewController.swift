@@ -11,8 +11,8 @@ import Logger
 import Analytics
 import CrashReporting
 
-class DiscoverViewController:
-    ContentViewController, UISearchResultsUpdating, UISearchBarDelegate, UniversalSearchDelegate {
+class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate,
+    UniversalSearchDelegate {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -147,7 +147,7 @@ class DiscoverViewController:
         super.viewDidLoad()
         self.navigationItem.searchController = self.searchController
         showDiscoverCollectionView()
-//        self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
+        // self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
         
         self.addLoadingAnimation()
         self.load()

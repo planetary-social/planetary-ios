@@ -258,17 +258,23 @@ class ViewDatabase {
                 db.userVersion = 11
             }
             if db.userVersion == 11 {
-                try db.run(postSearch.create(.FTS4(
-                    FTS4Config()
-                        .column(colMessageRef)
-                        .column(colText)
-                )))
+                try db.run(
+                    postSearch.create(
+                        .FTS4(
+                            FTS4Config()
+                                .column(colMessageRef)
+                                .column(colText)
+                        )
+                    )
+                )
                 let posts = try db.prepare(posts)
                 for post in posts {
-                    try db.run(postSearch.insert(
-                        colMessageRef <- post[colMessageRef],
-                        colText <- post[colText]
-                    ))
+                    try db.run(
+                        postSearch.insert(
+                            colMessageRef <- post[colMessageRef],
+                            colText <- post[colText]
+                        )
+                    )
                 }
                 
                 db.userVersion = 12
@@ -1595,15 +1601,15 @@ class ViewDatabase {
         }
 
         // TODO: add 2nd signature to get message by internal ID
-//        guard let db = self.openDB else {
-//            throw ViewDatabaseError.notOpen
-//        }
-//        let msgId = try self.msgID(of: key, make: false)
-//
-//        return self.get(msgID: msgID)
-//    }
-//
-//    func get(msgID: Int64) throws -> KeyValue {
+        // guard let db = self.openDB else {
+        //         throw ViewDatabaseError.notOpen
+        //     }
+        //     let msgId = try self.msgID(of: key, make: false)
+        //
+        //     return self.get(msgID: msgID)
+        // }
+        //
+        // func get(msgID: Int64) throws -> KeyValue {
         
         let colTypeMaybe = Expression<String?>("type")
         let typeMaybe = try db.scalar(self.msgs

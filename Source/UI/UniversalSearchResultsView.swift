@@ -439,11 +439,16 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             cell?.update(with: post)
             return cell ?? UITableViewCell()
         case .network:
-            // Users in Your Network
-            let about = searchResults.inNetworkPeople![indexPath.row]
+            guard let inNetworkPeople = searchResults.inNetworkPeople else {
+                return UITableViewCell()
+            }
+            let about = inNetworkPeople[indexPath.row]
             let isCommunity = communityPubIdentities.contains(about.identity)
             if isCommunity {
-                let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
+                let cell = (
+                    tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className)
+                    as? CommunityTableViewCell
+                ) ?? CommunityTableViewCell()
                 if let star = communityPubs.first(where: { $0.feed == about.identity }) {
                     cell.communityView.update(with: star, about: about)
                 }
@@ -475,7 +480,10 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             let controller = ThreadViewController(with: post, startReplying: false)
             delegate?.present(controller)
         case .network:
-            let about = searchResults.inNetworkPeople![indexPath.row]
+            guard let inNetworkPeople = searchResults.inNetworkPeople else {
+                return
+            }
+            let about = inNetworkPeople[indexPath.row]
             let controller = AboutViewController(with: about)
             delegate?.present(controller)
         }
