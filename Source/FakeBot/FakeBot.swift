@@ -34,6 +34,10 @@ class FakeBot: Bot {
             completion([], nil)
         }
     }
+
+    func numberOfReports(since report: Report, completion: @escaping CountCompletion) {
+        completion(.success(0))
+    }
     
     func seedPubAddresses(
         addresses: [PubAddress],

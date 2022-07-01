@@ -1358,12 +1358,14 @@ class ViewDatabase {
         
         return try self.mapQueryToKeyValue(qry: qry)
     }
-    
+
+    // PARGMA MARK: - Reports
+
     func reports(limit: Int = 200) throws -> [Report] {
-        guard let db = self.openDB else {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let qry = self.reports
+        let query = self.reports
             .join(self.msgs, on: self.msgs[colMessageID] == self.reports[colMessageRef])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
             .join(.leftOuter, self.contacts, on: self.contacts[colMessageRef] == self.msgs[colMessageID])
@@ -1373,11 +1375,11 @@ class ViewDatabase {
             .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
         
-        let filteredQuery = qry.filter(self.reports[colAuthorID] == self.currentUserID)
+        let filteredQuery = query.filter(self.reports[colAuthorID] == self.currentUserID)
             
         let sortedQuery = filteredQuery.order(colCreatedAt.desc)
         
-        return try db.prepare(sortedQuery).compactMap { row in
+        return try connection.prepare(sortedQuery).compactMap { row in
             // tried 'return try row.decode()'
             // but failed - see https://github.com/VerseApp/ios/issues/29
             
@@ -1386,7 +1388,7 @@ class ViewDatabase {
             let msgKey = try row.get(colKey)
             let msgAuthor = try row.get(colAuthor)
 
-            var c: Content
+            var content: Content
                
             let type = try row.get(self.msgs[colMsgType])
             
@@ -1400,14 +1402,14 @@ class ViewDatabase {
                     rootKey = try self.msgKey(id: rootID)
                 }
                 
-                let p = Post(
+                let post = Post(
                     blobs: try self.loadBlobs(for: msgID),
                     mentions: try self.loadMentions(for: msgID),
                     root: rootKey,
                     text: try row.get(colText)
                 )
                 
-                c = Content(from: p)
+                content = Content(from: post)
                 
             case ContentType.vote.rawValue:
                 
@@ -1417,21 +1419,21 @@ class ViewDatabase {
                 let rootID = try row.get(colRoot)
                 let rootKey = try self.msgKey(id: rootID)
                 
-                let cv = ContentVote(
+                let contentVote = ContentVote(
                     link: lnkKey,
                     value: try row.get(colValue),
                     expression: try row.get(colExpression),
                     root: rootKey,
-                    branches: [] // TODO: branches for root
+                    branches: []
                 )
                 
-                c = Content(from: cv)
+                content = Content(from: contentVote)
             case ContentType.contact.rawValue:
                 if let state = try? row.get(colContactState) {
                     let following = state == 1
-                    let cc = Contact(contact: msgAuthor, following: following)
+                    let contact = Contact(contact: msgAuthor, following: following)
                     
-                    c = Content(from: cc)
+                    content = Content(from: contact)
                 } else {
                     // Contacts stores only the latest message
                     // So, an old follow that was later unfollowed won't appear here.
@@ -1441,18 +1443,18 @@ class ViewDatabase {
                 throw ViewDatabaseError.unexpectedContentType(type)
             }
             
-            let v = Value(
+            let value = Value(
                 author: msgAuthor,
-                content: c,
+                content: content,
                 hash: "sha256", // only currently supported
-                previous: nil, // TODO: .. needed at this level?
+                previous: nil,
                 sequence: try row.get(colSequence),
                 signature: "verified_by_go-ssb",
                 timestamp: try row.get(colClaimedAt)
             )
             var keyValue = KeyValue(
                 key: msgKey,
-                value: v,
+                value: value,
                 timestamp: try row.get(colReceivedAt)
             )
             keyValue.metadata.author.about = About(
@@ -1464,18 +1466,44 @@ class ViewDatabase {
             keyValue.metadata.isPrivate = try row.get(colDecrypted)
             
             let rawReportType = try row.get(self.reports[colReportType])
-            let reportType = ReportType(rawValue: rawReportType)!
+            let reportType = ReportType(rawValue: rawReportType) ?? ReportType.messageLiked
             
             let createdAtTimestamp = try row.get(colCreatedAt)
-            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1_000)
+            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1000)
             
-            let report = Report(authorIdentity: "undefined",
-                                messageIdentifier: msgKey,
-                                reportType: reportType,
-                                createdAt: createdAt,
-                                keyValue: keyValue)
+            let report = Report(
+                authorIdentity: "undefined",
+                messageIdentifier: msgKey,
+                reportType: reportType,
+                createdAt: createdAt,
+                keyValue: keyValue
+            )
             return report
         }
+    }
+
+    func countNumberOfReports(since report: Report, limit: Int = 200) throws -> Int {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        // swiftlint:disable indentation_width
+        let queryString = """
+        SELECT
+          COUNT(*)
+        FROM
+          reports
+        WHERE
+          reports.author_id = ?
+          AND created_at > ? + 1;
+        """
+        // swiftlint:enable indentation_width
+
+        let query = try connection.prepare(queryString)
+        if let count = try query.scalar(currentUserID, report.createdAt.millisecondsSince1970) as? Int64 {
+            return Int(truncatingIfNeeded: count)
+        }
+        return 0
     }
 
     func feed(for identity: Identity, limit: Int = 5, offset: Int? = nil) throws -> KeyValues {
