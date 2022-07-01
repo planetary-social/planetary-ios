@@ -179,39 +179,6 @@ class HomeViewController: ContentViewController {
         }
     }
     
-    func refreshAndLoad(animated: Bool = false) {
-        if HomeViewController.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(HomeViewController.refreshBackgroundTaskIdentifier)
-        }
-        
-        Log.info("Pull down to refresh triggering a short refresh")
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "HomePullDownToRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(HomeViewController.refreshBackgroundTaskIdentifier)
-            HomeViewController.refreshBackgroundTaskIdentifier = .invalid
-        }
-        HomeViewController.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = { [weak self] in
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-            
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                HomeViewController.refreshBackgroundTaskIdentifier = .invalid
-            }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.load(animated: animated)
-            }
-        }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
-    }
-    
     private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
@@ -234,7 +201,7 @@ class HomeViewController: ContentViewController {
     @objc
     func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refreshAndLoad()
+        self.load()
     }
     
     @objc
@@ -302,7 +269,7 @@ class HomeViewController: ContentViewController {
     
     @objc
     func didChangeHomeFeedAlgorithm(notification: Notification) {
-        refreshAndLoad(animated: true)
+        load(animated: true)
     }
 }
 
