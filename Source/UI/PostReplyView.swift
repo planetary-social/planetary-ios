@@ -41,6 +41,12 @@ class PostReplyView: KeyValueView {
         Layout.fill(view: backgroundView, with: colorView)
         return backgroundView
     }()
+    
+    let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
+    }()
 
     init() {
         super.init(frame: .zero)
@@ -58,16 +64,14 @@ class PostReplyView: KeyValueView {
             color: .appBackground
         )
 
-        Layout.fillTop(of: self, with: topBorder)
-        Layout.fillSouth(of: topBorder, with: self.postView)
-        Layout.fillSouth(of: self.postView, with: self.repliesView)
-        Layout.fillSouth(of: self.repliesView, with: self.replyTextView)
-        Layout.fillSouth(of: self.replyTextView, with: bottomBorder)
-        
-        Layout.fillSouth(of: bottomBorder, with: self.degrade)
-        
-        Layout.fillSouth(of: degrade, with: bottomSeparator)
-        bottomSeparator.pinBottomToSuperviewBottom()
+        Layout.fill(view: self, with: stackView)
+        stackView.addArrangedSubview(topBorder)
+        stackView.addArrangedSubview(postView)
+        stackView.addArrangedSubview(repliesView)
+        stackView.addArrangedSubview(replyTextView)
+        stackView.addArrangedSubview(bottomBorder)
+        stackView.addArrangedSubview(degrade)
+        stackView.addArrangedSubview(bottomSeparator)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -82,6 +86,8 @@ class PostReplyView: KeyValueView {
         } else {
             self.degrade.heightConstraint?.constant = 0
         }
+        
+        replyTextView.isHidden = keyValue.offChain == true
     }
 }
 

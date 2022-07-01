@@ -16,6 +16,7 @@ struct KeyValue: Codable {
         case timestamp
         case receivedSeq = "ReceiveLogSeq"
         case hashedKey = "HashedKey"
+        case offChain = "off_chain"
     }
 
     let key: Identifier
@@ -24,21 +25,25 @@ struct KeyValue: Codable {
     // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
     let receivedSeq: Int64?
     let hashedKey: String?
-
-    init(key: Identifier, value: Value, timestamp: Float64) {
-        self.key = key
-        self.value = value
-        self.timestamp = timestamp
-        self.receivedSeq = -1
-        self.hashedKey = nil
-    }
     
-    init(key: Identifier, value: Value, timestamp: Float64, receivedSeq: Int64, hashedKey: String) {
+    /// A flag that is true if this message is not from a real feed. The `WelcomeService` inserts "fake" messages
+    /// into SQLite to help with onboarding.
+    let offChain: Bool?
+    
+    init(
+        key: Identifier,
+        value: Value,
+        timestamp: Float64,
+        receivedSeq: Int64 = -1,
+        hashedKey: String? = nil,
+        offChain: Bool = false
+    ) {
         self.key = key
         self.value = value
         self.timestamp = timestamp
         self.receivedSeq = receivedSeq
         self.hashedKey = hashedKey
+        self.offChain = offChain
     }
     
     // MARK: Metadata

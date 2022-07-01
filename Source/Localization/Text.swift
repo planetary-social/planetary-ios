@@ -334,6 +334,9 @@ extension Text {
         case policyStatement = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy"
         case termsOfService = "Terms of Service"
         case privacyPolicy = "Privacy Policy"
+        
+        case welcomeMessage = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:"
+        case welcomeBotName = "Planetary Help"
     }
 }
 

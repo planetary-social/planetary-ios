@@ -8,6 +8,7 @@
 
 import Foundation
 import SQLite
+import Logger
 
 /// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network.
 /// If a root post is replied to it will be boosted back up to the top of the feed.
@@ -138,6 +139,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         SELECT messages.*,
                posts.*,
                contacts.*,
+               contact_about.about_id,
                tangles.*,
                messagekeys.*,
                authors.*,
@@ -235,7 +237,12 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         return 0
     }
 
-    func fetchKeyValues(connection: Connection, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
+    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
+        guard let connection = database.getOpenDB() else {
+            Log.error("db is closed")
+            return []
+        }
+        
         let query = try connection.prepare(fetchKeyValuesQuery)
         let bindings: [Binding?] = [
             Date().millisecondsSince1970,
@@ -246,59 +253,14 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
             offset ?? 0
         ]
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
-            try buildKeyValue(keyValueRow: keyValueRow, connection: connection)
+            try buildKeyValue(keyValueRow: keyValueRow, database: database)
         }
         let compactKeyValues = keyValues.compactMap { $0 }
         return compactKeyValues
     }
 
-    private func buildKeyValue(keyValueRow: Row, connection: Connection) throws -> KeyValue? {
-        let msgAuthor = try keyValueRow.get(Expression<Identity>("author"))
-
-        var content: Content
-        let type = try keyValueRow.get(Expression<String>("type"))
-        switch type {
-        case ContentType.post.rawValue:
-            content = try buildPostContent(keyValueRow: keyValueRow, connection: connection)
-        case ContentType.vote.rawValue:
-            content = try buildVoteContent(keyValueRow: keyValueRow, connection: connection)
-        case ContentType.contact.rawValue:
-            guard let contactContent = try buildContactContent(keyValueRow: keyValueRow) else {
-                return nil
-            }
-            content = contactContent
-        default:
-            throw ViewDatabaseError.unexpectedContentType(type)
-        }
-
-        let value = Value(
-            author: msgAuthor,
-            content: content,
-            hash: "sha256", // only currently supported
-            previous: nil,
-            sequence: try keyValueRow.get(Expression<Int>("sequence")),
-            signature: "verified_by_go-ssb",
-            timestamp: try keyValueRow.get(Expression<Double>("claimed_at"))
-        )
-        let msgKey = try keyValueRow.get(Expression<MessageIdentifier>("key"))
-        var keyValue = KeyValue(
-            key: msgKey,
-            value: value,
-            timestamp: try keyValueRow.get(Expression<Double>("received_at"))
-        )
-        keyValue.metadata.author.about = About(
-            about: msgAuthor,
-            name: try keyValueRow.get(Expression<String?>("name")),
-            description: try keyValueRow.get(Expression<String?>("description")),
-            imageLink: try keyValueRow.get(Expression<BlobIdentifier?>("image"))
-        )
-        let numberOfReplies = try keyValueRow.get(Expression<Int>("replies_count"))
-        let replies = try keyValueRow.get(Expression<String?>("replies"))
-        let abouts = replies?.split(separator: ";").map { About(about: String($0)) } ?? []
-        keyValue.metadata.replies.count = numberOfReplies
-        keyValue.metadata.replies.abouts = abouts
-        keyValue.metadata.isPrivate = try keyValueRow.get(Expression<Bool>("is_decrypted"))
-        return keyValue
+    private func buildKeyValue(keyValueRow: Row, database: ViewDatabase) throws -> KeyValue? {
+        try KeyValue(row: keyValueRow, database: database)
     }
 
     private func buildPostContent(keyValueRow: Row, connection: Connection) throws -> Content {

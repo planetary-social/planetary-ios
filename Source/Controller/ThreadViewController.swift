@@ -205,6 +205,7 @@ class ThreadViewController: ContentViewController {
         self.rootPostView.update(with: root)
         self.tableView.tableHeaderView = self.topView
         self.tableView.tableHeaderView?.layoutIfNeeded()
+        replyTextView.isHidden = root.offChain == true
     }
 
     private func update(with root: KeyValue, replies: PaginatedKeyValueDataProxy, animated: Bool = true) {
@@ -224,6 +225,7 @@ class ThreadViewController: ContentViewController {
         self.interactionView.post = root
         self.interactionView.replies = replies as? StaticDataProxy
         self.interactionView.update()
+        replyTextView.isHidden = root.offChain == true
     }
 
     override func viewDidLayoutSubviews() {

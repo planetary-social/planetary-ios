@@ -55,156 +55,137 @@ class ViewDatabase {
 
     // TODO: use this to trigger fill on update and wipe previous versions
     // https://app.asana.com/0/914798787098068/1151842364054322/f
-    static var schemaVersion: UInt = 20
+    static let schemaVersion: UInt = 20
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
-    private var currentUser: Identity?
+    private(set) var currentUser: Identity?
 
     // skip messages older than this (6 months)
     // this should be removed once the database was refactored
     private var temporaryMessageExpireDate: Double = -60 * 60 * 24 * 30 * 6
     
     // MARK: Tables and fields
-    private let colID = Expression<Int64>("id")
+    let colID = Expression<Int64>("id")
     
-    private let authors: Table
-    private let colAuthor = Expression<Identity>("author")
+    let authors = Table(ViewDatabaseTableNames.authors.rawValue)
+    let colAuthor = Expression<Identity>("author")
     
-    private var msgKeys: Table
-    private let colKey = Expression<MessageIdentifier>("key")
-    private let colHashedKey = Expression<String>("hashed")
+    let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
+    let colKey = Expression<MessageIdentifier>("key")
+    let colHashedKey = Expression<String>("hashed")
     
-    private var msgs: Table
-    private let colHidden = Expression<Bool>("hidden")
-    private let colRXseq = Expression<Int64>("rx_seq")
-    private let colMessageID = Expression<Int64>("msg_id")
-    private let colAuthorID = Expression<Int64>("author_id")
-    private let colSequence = Expression<Int>("sequence")
-    private let colMsgType = Expression<String>("type")
+    let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
+    let colHidden = Expression<Bool>("hidden")
+    let colRXseq = Expression<Int64>("rx_seq")
+    let colMessageID = Expression<Int64>("msg_id")
+    let colAuthorID = Expression<Int64>("author_id")
+    let colSequence = Expression<Int>("sequence")
+    let colMsgType = Expression<String>("type")
     // received time in milliseconds since the unix epoch
-    private let colReceivedAt = Expression<Double>("received_at")
-    private let colWrittenAt = Expression<Double>("written_at")
-    private let colClaimedAt = Expression<Double>("claimed_at")
-    private let colDecrypted = Expression<Bool>("is_decrypted")
+    let colReceivedAt = Expression<Double>("received_at")
+    let colWrittenAt = Expression<Double>("written_at")
+    let colClaimedAt = Expression<Double>("claimed_at")
+    let colDecrypted = Expression<Bool>("is_decrypted")
+    /// A flag that is true if this message is not from a real feed. The `WelcomeService` inserts "fake" messages
+    /// into SQLite to help with onboarding.
+    let colOffChain = Expression<Bool>("off_chain")
     
-    private let colMessageRef = Expression<Int64>("msg_ref")
+    let colMessageRef = Expression<Int64>("msg_ref")
 
-    private var abouts: Table
-    private let colAboutID = Expression<Int64>("about_id")
-    private let colName = Expression<String?>("name")
-    private let colImage = Expression<BlobIdentifier?>("image")
-    private let colDescr = Expression<String?>("description")
-    private let colPublicWebHosting = Expression<Bool?>("publicWebHosting")
+    let abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
+    let colAboutID = Expression<Int64>("about_id")
+    let colName = Expression<String?>("name")
+    let colImage = Expression<BlobIdentifier?>("image")
+    let colDescr = Expression<String?>("description")
+    let colPublicWebHosting = Expression<Bool?>("publicWebHosting")
     
-    private var currentBannedContent: Table
+    let currentBannedContent = Table(ViewDatabaseTableNames.bannedContent.rawValue)
     // colID
-    private var colIDType = Expression<Int>("type")
+    let colIDType = Expression<Int>("type")
     
-    private var contacts: Table
+    let contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
     // colAuthorID
-    private let colContactID = Expression<Int64>("contact_id")
-    private let colContactState = Expression<Int>("state")
+    let colContactID = Expression<Int64>("contact_id")
+    let colContactState = Expression<Int>("state")
     
-    private var posts: Table
-    private let colText = Expression<String>("text")
-    private let colIsRoot = Expression<Bool>("is_root")
+    let posts = Table(ViewDatabaseTableNames.posts.rawValue)
+    let colText = Expression<String>("text")
+    let colIsRoot = Expression<Bool>("is_root")
     
-    private var post_blobs: Table
+    let post_blobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
     // msg_ref
-    private let colIdentifier = Expression<String>("identifier") // TODO: blobHash:ID
+    let colIdentifier = Expression<String>("identifier") // TODO: blobHash:ID
     // colName
-    private let colMetaBytes = Expression<Int?>("meta_bytes")
-    private let colMetaWidth = Expression<Int?>("meta_widht")
-    private let colMetaHeight = Expression<Int?>("meta_height")
-    private let colMetaMimeType = Expression<String?>("meta_mime_type")
-    private let colMetaAverageColorRGB = Expression<Int?>("meta_average_color_rgb")
+    let colMetaBytes = Expression<Int?>("meta_bytes")
+    let colMetaWidth = Expression<Int?>("meta_widht")
+    let colMetaHeight = Expression<Int?>("meta_height")
+    let colMetaMimeType = Expression<String?>("meta_mime_type")
+    let colMetaAverageColorRGB = Expression<Int?>("meta_average_color_rgb")
 
-    private var mentions_feed: Table
+    let mentions_feed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
     // msg_ref
-    private let colFeedID = Expression<Int64>("feed_id")
+    let colFeedID = Expression<Int64>("feed_id")
     
-    private var mentions_msg: Table
+    let mentions_msg = Table(ViewDatabaseTableNames.mentionsMsg.rawValue)
     // msg_ref
     // link_id
     
-    private var mentions_image: Table
+    let mentions_image = Table(ViewDatabaseTableNames.mentionsImage.rawValue)
     // msg_ref
     // link_id
     
-    private var votes: Table
-    private let colLinkID = Expression<Int64>("link_id")
-    private let colValue = Expression<Int>("value")
-    private let colExpression = Expression<String?>("expression")
+    let votes = Table(ViewDatabaseTableNames.votes.rawValue)
+    let colLinkID = Expression<Int64>("link_id")
+    let colValue = Expression<Int>("value")
+    let colExpression = Expression<String?>("expression")
 
-    private var channels: Table
+    let channels = Table(ViewDatabaseTableNames.channels.rawValue)
     // id
     // name
-    private let colLegacy = Expression<Bool>("legacy")
+    let colLegacy = Expression<Bool>("legacy")
     
-    private var channelAssigned: Table // what messages are in a channel?
+    // what messages are in a channel?
+    let channelAssigned = Table(ViewDatabaseTableNames.channelsAssigned.rawValue)
     // msg_ref
-    private let colChanRef = Expression<Int64>("chan_ref")
+    let colChanRef = Expression<Int64>("chan_ref")
 
-    private var tangles: Table
-    private let colRoot = Expression<Int64>("root")
+    let tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
+    let colRoot = Expression<Int64>("root")
     
-    private var branches: Table
-    private let colTangleID = Expression<Int64>("tangle_id")
-    private let colBranch = Expression<Int64>("branch")
+    let branches = Table(ViewDatabaseTableNames.branches.rawValue)
+    let colTangleID = Expression<Int64>("tangle_id")
+    let colBranch = Expression<Int64>("branch")
     
-    private var privateRecps: Table
+    let privateRecps = Table(ViewDatabaseTableNames.privateRecps.rawValue)
     // msg_ref
     // contact_id
     
-    private let addresses: Table
-    private let colAddressID = Expression<Int64>("address_id")
+    let addresses: Table = Table(ViewDatabaseTableNames.addresses.rawValue)
+    let colAddressID = Expression<Int64>("address_id")
     // colAboutID
-    private let colAddress = Expression<String>("address")
-    private let colWorkedLast = Expression<Date?>("worked_last")
-    private let colLastErr = Expression<String>("last_err")
-    private let colUse = Expression<Bool>("use")
-    private let colRedeemed = Expression<Double?>("redeemed")
+    let colAddress = Expression<String>("address")
+    let colWorkedLast = Expression<Date?>("worked_last")
+    let colLastErr = Expression<String>("last_err")
+    let colUse = Expression<Bool>("use")
+    let colRedeemed = Expression<Double?>("redeemed")
     
     // Reports
-    private var reports: Table
+    let reports = Table(ViewDatabaseTableNames.reports.rawValue)
     // colMessageRef
     // colAuthorID
-    private let colReportType = Expression<String>("type")
-    private let colCreatedAt = Expression<Double>("created_at")
+    let colReportType = Expression<String>("type")
+    let colCreatedAt = Expression<Double>("created_at")
     
     // Pubs
-    private var pubs: Table
+    let pubs = Table(ViewDatabaseTableNames.pubs.rawValue)
     // colMessageRef
-    private let colHost = Expression<String>("host")
-    private let colPort = Expression<Int>("port")
+    let colHost = Expression<String>("host")
+    let colPort = Expression<Int>("port")
     // colKey
     
     // Search
     private let postSearch = VirtualTable("post_search")
-
-    init() {
-        self.addresses = Table(ViewDatabaseTableNames.addresses.rawValue)
-        self.authors = Table(ViewDatabaseTableNames.authors.rawValue)
-        self.msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
-        self.msgs = Table(ViewDatabaseTableNames.messages.rawValue)
-        self.abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
-        self.channels = Table(ViewDatabaseTableNames.channels.rawValue)
-        self.channelAssigned = Table(ViewDatabaseTableNames.channelsAssigned.rawValue)
-        self.contacts = Table(ViewDatabaseTableNames.contacts.rawValue)
-        self.currentBannedContent = Table(ViewDatabaseTableNames.bannedContent.rawValue)
-        self.privateRecps = Table(ViewDatabaseTableNames.privateRecps.rawValue)
-        self.posts = Table(ViewDatabaseTableNames.posts.rawValue)
-        self.post_blobs = Table(ViewDatabaseTableNames.postBlobs.rawValue)
-        self.mentions_msg = Table(ViewDatabaseTableNames.mentionsMsg.rawValue)
-        self.mentions_feed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
-        self.mentions_image = Table(ViewDatabaseTableNames.mentionsImage.rawValue)
-        self.votes = Table(ViewDatabaseTableNames.votes.rawValue)
-        self.tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
-        self.branches = Table(ViewDatabaseTableNames.branches.rawValue)
-        self.reports = Table(ViewDatabaseTableNames.reports.rawValue)
-        self.pubs = Table(ViewDatabaseTableNames.pubs.rawValue)
-    }
 
     // MARK: open / close / stats
 
@@ -276,8 +257,11 @@ class ViewDatabase {
                         )
                     )
                 }
-                
                 db.userVersion = 12
+            }
+            if db.userVersion == 12 {
+                try db.execute("ALTER TABLE messages ADD off_chain INTEGER NOT NULL DEFAULT (0);")
+                db.userVersion = 13
             }
         }
     }
@@ -1089,10 +1073,7 @@ class ViewDatabase {
 
     // MARK: recent
     func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> KeyValues {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        return try strategy.fetchKeyValues(connection: connection, userId: currentUserID, limit: limit, offset: offset)
+        return try strategy.fetchKeyValues(database: self, userId: currentUserID, limit: limit, offset: offset)
     }
 
     func numberOfRecentPosts(with strategy: FeedStrategy, since message: MessageIdentifier) throws -> Int {
@@ -1179,98 +1160,13 @@ class ViewDatabase {
     }
     // table.filter(!(array.contains(id)))
 
-    private func mapQueryToKeyValue(qry: Table) throws -> [KeyValue] {
+    private func mapQueryToKeyValue(qry: Table, useNamespacedTables: Bool = false) throws -> [KeyValue] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let colRootMaybe = Expression<Int64?>("root")
-
-        // TODO: add switch over type (to support contact, vote, gathering, etc..)
 
         return try db.prepare(qry).compactMap { row in
-            // tried 'return try row.decode()'
-            // but failed - see https://github.com/VerseApp/ios/issues/29
-            
-            let msgID = try row.get(colMessageID)
-            
-            let msgKey = try row.get(colKey)
-            let msgAuthor = try row.get(colAuthor)
-
-            var c: Content
-               
-            let type = try row.get(self.msgs[colMsgType])
-            
-            switch type {
-            case ContentType.post.rawValue:
-                
-                var rootKey: Identifier?
-                if let rootID = try row.get(colRootMaybe) {
-                    rootKey = try self.msgKey(id: rootID)
-                }
-                
-                let p = Post(
-                    blobs: try self.loadBlobs(for: msgID),
-                    mentions: try self.loadMentions(for: msgID),
-                    root: rootKey,
-                    text: try row.get(colText)
-                )
-                
-                c = Content(from: p)
-                
-            case ContentType.vote.rawValue:
-                
-                let lnkID = try row.get(colLinkID)
-                let lnkKey = try self.msgKey(id: lnkID)
-                
-                let rootID = try row.get(colRoot)
-                let rootKey = try self.msgKey(id: rootID)
-                
-                let cv = ContentVote(
-                    link: lnkKey,
-                    value: try row.get(colValue),
-                    expression: try row.get(colExpression),
-                    root: rootKey,
-                    branches: [] // TODO: branches for root
-                )
-                
-                c = Content(from: cv)
-            case ContentType.contact.rawValue:
-                if let state = try? row.get(colContactState) {
-                    let following = state == 1
-                    let cc = Contact(contact: msgAuthor, following: following)
-                    
-                    c = Content(from: cc)
-                } else {
-                    // Contacts stores only the latest message
-                    // So, an old follow that was later unfollowed won't appear here.
-                    return nil
-                }
-            default:
-                throw ViewDatabaseError.unexpectedContentType(type)
-            }
-            
-            let v = Value(
-                author: msgAuthor,
-                content: c,
-                hash: "sha256", // only currently supported
-                previous: nil, // TODO: .. needed at this level?
-                sequence: try row.get(colSequence),
-                signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
-            )
-            var keyValue = KeyValue(
-                key: msgKey,
-                value: v,
-                timestamp: try row.get(colReceivedAt)
-            )
-            keyValue.metadata.author.about = About(
-                about: msgAuthor,
-                name: try row.get(self.abouts[colName]),
-                description: try row.get(colDescr),
-                imageLink: try row.get(colImage)
-            )
-            keyValue.metadata.isPrivate = try row.get(colDecrypted)
-            return keyValue
+            return try KeyValue(row: row, database: self, useNamespacedTables: true)
         }
     }
     
@@ -1424,7 +1320,7 @@ class ViewDatabase {
             .order(colMessageID.desc)
             .limit(limit)
         
-        return try self.mapQueryToKeyValue(qry: qry)
+        return try self.mapQueryToKeyValue(qry: qry, useNamespacedTables: true)
     }
     
     func reports(limit: Int = 200) throws -> [Report] {
@@ -2284,7 +2180,8 @@ class ViewDatabase {
                     colMsgType <- msg.value.content.type.rawValue,
                     colReceivedAt <- msg.timestamp,
                     colClaimedAt <- claimed,
-                    colWrittenAt <- Date().millisecondsSince1970
+                    colWrittenAt <- Date().millisecondsSince1970,
+                    colOffChain <- msg.offChain ?? false
                 ))
             } else {
                 do {
@@ -2296,7 +2193,8 @@ class ViewDatabase {
                         colMsgType <- msg.value.content.type.rawValue,
                         colReceivedAt <- msg.timestamp,
                         colClaimedAt <- claimed,
-                        colWrittenAt <- Date().millisecondsSince1970
+                        colWrittenAt <- Date().millisecondsSince1970,
+                        colOffChain <- msg.offChain ?? false
                     ))
                 } catch Result.error(let errMsg, let errCode, _) {
                     // this is _just_ here because of a fetch-duplication bug in go-ssb
@@ -2424,7 +2322,7 @@ class ViewDatabase {
         ))
     }
 
-    private func msgKey(id: Int64) throws -> MessageIdentifier {
+    func msgKey(id: Int64) throws -> MessageIdentifier {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2593,7 +2491,7 @@ class ViewDatabase {
         }
     }
     
-    private func loadMentions(for msgID: Int64) throws -> [Mention] {
+    func loadMentions(for msgID: Int64) throws -> [Mention] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2663,7 +2561,7 @@ class ViewDatabase {
         }
     }
 
-    private func loadBlobs(for msgID: Int64) throws -> [Blob] {
+    func loadBlobs(for msgID: Int64) throws -> [Blob] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2671,7 +2569,6 @@ class ViewDatabase {
         // let supportedMimeTypes = [MIMEType.jpeg, MIMEType.png]
         
         let qry = self.post_blobs.where(colMessageRef == msgID)
-            .filter(colMetaMimeType == "image/jpeg" || colMetaMimeType == "image/png" )
         
         let blobs: [Blob] = try db.prepare(qry).map {
             row in

@@ -206,6 +206,8 @@
 "Onboarding.policyStatement" = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy";
 "Onboarding.termsOfService" = "Terms of Service";
 "Onboarding.privacyPolicy" = "Privacy Policy";
+"Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
+"Onboarding.welcomeBotName" = "Planetary Help";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
