@@ -22,20 +22,20 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         self.addReportsObservers()
     }
 
-    func application(_ application: UIApplication,
-                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         AppController.shared.updatePushNotificationToken(deviceToken)
     }
 
-    func application(_ application: UIApplication,
-                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         guard UIDevice.isSimulator == false else { return }
         Log.fatal(.apiError, "Could not register for push notifications: \(error)")
     }
 
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         // only support silent notifications for now
         guard userInfo.aps.isContentAvailable else {
             completionHandler(.noData)
@@ -65,19 +65,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // in the future this should probably be the SSB message identifier
         let identifier = UUID().uuidString
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: identifier,
-                                            content: content,
-                                            trigger: trigger)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         
         // badge is incremented regardless of foreground/background
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber += 1
-            AppController.shared.mainViewController?.updateNotificationsTabIcon(hasNotifications: true)
+            AppController.shared.mainViewController?.triggerUpdateInNotificationsScreen()
         }
 
         // schedule the notification
-        UNUserNotificationCenter.current().add(request) {
-            error in
+        UNUserNotificationCenter.current().add(request) { error in
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
         }
@@ -93,38 +90,45 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             
             let content = UNMutableNotificationContent()
             
-            let who = about?.nameOrIdentity ?? Text.Report.somebody.text
-            
+            let nameToShow = about?.nameOrIdentity ?? Text.Report.somebody.text
+
+            // swiftlint:disable legacy_objc_type
             switch report.reportType {
             case .feedFollowed:
-                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.feedFollowed.text,
-                                                                         arguments: [who])
+                content.title = NSString.localizedUserNotificationString(
+                    forKey: Text.Report.feedFollowed.text,
+                    arguments: [nameToShow]
+                )
             case .postReplied:
-                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.postReplied.text,
-                                                                         arguments: [who])
+                content.title = NSString.localizedUserNotificationString(
+                    forKey: Text.Report.postReplied.text,
+                    arguments: [nameToShow]
+                )
                 if let what = report.keyValue.value.content.post?.text {
                     content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .feedMentioned:
-                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.feedMentioned.text,
-                                                                         arguments: [who])
+                content.title = NSString.localizedUserNotificationString(
+                    forKey: Text.Report.feedMentioned.text,
+                    arguments: [nameToShow]
+                )
                 if let what = report.keyValue.value.content.post?.text {
                     content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .messageLiked:
-                content.title = NSString.localizedUserNotificationString(forKey: Text.Report.messageLiked.text,
-                                                                         arguments: [who])
+                content.title = NSString.localizedUserNotificationString(
+                    forKey: Text.Report.messageLiked.text,
+                    arguments: [nameToShow]
+                )
             }
+            // swiftlint:enable legacy_objc_type
             
             content.sound = UNNotificationSound.default
             
-            let request = UNNotificationRequest(identifier: report.messageIdentifier,
-                                                content: content,
-                                                trigger: nil)
+            let request = UNNotificationRequest(identifier: report.messageIdentifier, content: content, trigger: nil)
 
             // schedule the notification
-            UNUserNotificationCenter.current().add(request) {
-                error in
+            UNUserNotificationCenter.current().add(request) { error in
                 CrashReporting.shared.reportIfNeeded(error: error)
                 Log.optional(error)
             }
@@ -134,9 +138,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// If the response is the default "tap" interaction, forwards the notification to the AppController.
     /// Note that when this is called, the OS is transitioning the app from the background, and any
     /// asynchronous operations are not guaranteed to be completed before the UI is visible.
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         guard response.actionIdentifier == UNNotificationDefaultActionIdentifier else {
             completionHandler()
             return
@@ -145,20 +151,32 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         completionHandler()
     }
     
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        AppController.shared.receivedForegroundNotification()
+        if #available(macOS 11.0, iOS 14.0, tvOS 14.0, *) {
+            completionHandler([.banner, .badge, .sound])
+        } else {
+            completionHandler([.alert, .badge, .sound])
+        }
     }
     
     // MARK: Reports
     
     private func addReportsObservers() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didCreateReportHandler(notification:)),
-                                               name: .didCreateReport,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didCreateReportHandler(notification:)),
+            name: .didCreateReport,
+            object: nil
+        )
     }
     
-    @objc func didCreateReportHandler(notification: Notification) {
+    @objc
+    func didCreateReportHandler(notification: Notification) {
         guard let report = notification.userInfo?["report"] as? Report else {
             return
         }

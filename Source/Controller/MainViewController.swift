@@ -16,20 +16,30 @@ class MainViewController: UITabBarController {
         self.homeFeatureViewController.viewControllers.first as? HomeViewController
     }
 
-    private let homeFeatureViewController = FeatureViewController(rootViewController: HomeViewController(),
-                                                                  tabBarItemImageName: "tab-icon-home")
+    private let homeFeatureViewController = FeatureViewController(
+        rootViewController: HomeViewController(),
+        tabBarItemImageName: "tab-icon-home"
+    )
 
-    private let notificationsFeatureViewController = FeatureViewController(rootViewController: NotificationsViewController(),
-                                                                           tabBarItemImageName: "tab-icon-notifications")
+    private let notificationsFeatureViewController = FeatureViewController(
+        rootViewController: NotificationsViewController(),
+        tabBarItemImageName: "tab-icon-notifications"
+    )
 
-    private let channelsFeatureViewController = FeatureViewController(rootViewController: ChannelsViewController(),
-                                                                      tabBarItemImageName: "tab-icon-channels")
+    private let channelsFeatureViewController = FeatureViewController(
+        rootViewController: ChannelsViewController(),
+        tabBarItemImageName: "tab-icon-channels"
+    )
 
-    private let directoryFeatureViewController = FeatureViewController(rootViewController: DirectoryViewController(),
-                                                                       tabBarItemImageName: "tab-icon-directory")
+    private let directoryFeatureViewController = FeatureViewController(
+        rootViewController: DirectoryViewController(),
+        tabBarItemImageName: "tab-icon-directory"
+    )
 
-    private let everyoneViewController = FeatureViewController(rootViewController: DiscoverViewController(),
-                                                                       tabBarItemImageName: "tab-icon-everyone")
+    private let everyoneViewController = FeatureViewController(
+        rootViewController: DiscoverViewController(),
+        tabBarItemImageName: "tab-icon-everyone"
+    )
 
     // custom separator on the top edge of the tab bar
     private var topBorder: UIView?
@@ -42,11 +52,13 @@ class MainViewController: UITabBarController {
         self.tabBar.configureAppearance()
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
 
-        let controllers = [self.homeFeatureViewController,
-                           self.everyoneViewController,
-                           self.notificationsFeatureViewController,
-                           self.channelsFeatureViewController,
-                           self.directoryFeatureViewController]
+        let controllers = [
+            self.homeFeatureViewController,
+            self.everyoneViewController,
+            self.notificationsFeatureViewController,
+            self.channelsFeatureViewController,
+            self.directoryFeatureViewController
+        ]
         self.setViewControllers(controllers, animated: false)
     }
     
@@ -61,34 +73,16 @@ class MainViewController: UITabBarController {
         self.selectedViewController == self.notificationsFeatureViewController
     }
 
-    /// Changes the image and selected image to indicate whether there are notifications or not.
-    /// Note that this does not check the actual state of the view's notifications, or if the bot has
-    /// any new content.  This is temporary as we move closer to using the bot state to drive the
-    /// notifications status.
-    func updateNotificationsTabIcon(hasNotifications: Bool) {
-
-        // both images has to be updated at the same time
-        let image = hasNotifications ? UIImage(named: "tab-icon-has-notifications") : UIImage(named: "tab-icon-notifications")
-        let selectedImage = hasNotifications ? UIImage(named: "tab-icon-has-notifications-selected") : UIImage(named: "tab-icon-notifications-selected")
-
-        // rendering mode is required to disable the "grey" effect when not selected
-        // look at FeatureViewController.setTabBarItem() for more
-        self.notificationsFeatureViewController.tabBarItem.image = image
-        self.notificationsFeatureViewController.tabBarItem.selectedImage = selectedImage
+    func triggerUpdateInNotificationsScreen() {
+        if let controller = self.notificationsFeatureViewController.children.first as? NotificationsViewController {
+            controller.checkForNotificationUpdates(force: true)
+        }
     }
 
     // Simply selects the notifications.  Useful during launch or resume if
     // needing to show notifications.
-    func selectNotificationsTab(hasNotifications: Bool) {
-
-        // this is messy but OK for now
-        // reload the notifications table view first
-        if let controller = self.notificationsFeatureViewController.children.first as? NotificationsViewController {
-            controller.load()
-        }
-
-        // then swap to the tab
-        self.updateNotificationsTabIcon(hasNotifications: hasNotifications)
+    func selectNotificationsTab() {
+        triggerUpdateInNotificationsScreen()
         self.selectedViewController = self.notificationsFeatureViewController
     }
     
@@ -105,12 +99,16 @@ protocol TopScrollable {
 
 extension MainViewController: UITabBarControllerDelegate {
 
-    func tabBarController(_ tabBarController: UITabBarController,
-                          shouldSelect viewController: UIViewController) -> Bool {
+    func tabBarController(
+        _ tabBarController: UITabBarController,
+        shouldSelect viewController: UIViewController
+    ) -> Bool {
         self.clearNotificationsTabIcon(whenSwitchingTo: viewController)
 
-        guard let targetIndex = viewControllers?.firstIndex(where: { $0 == viewController }),
-              self.selectedIndex == targetIndex else { return true }
+        let indexOfTargetViewController = viewControllers?.firstIndex(where: { $0 == viewController })
+        guard let targetIndex = indexOfTargetViewController, self.selectedIndex == targetIndex else {
+            return true
+        }
         
         switch targetIndex {
         case 0:
@@ -143,12 +141,10 @@ extension MainViewController: UITabBarControllerDelegate {
         // if on notifications and leaving, clear
         let onNotifications = self.selectedViewController == self.notificationsFeatureViewController
         let goingToNotifications = controller == self.notificationsFeatureViewController
-        guard (onNotifications && !goingToNotifications) ||
-              (!onNotifications && goingToNotifications) else {
+        guard (onNotifications && !goingToNotifications) || (!onNotifications && goingToNotifications) else {
             return
         }
 
-        self.updateNotificationsTabIcon(hasNotifications: false)
         UIApplication.shared.applicationIconBadgeNumber = 0
     }
 }

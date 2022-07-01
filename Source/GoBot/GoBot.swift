@@ -1400,6 +1400,21 @@ class GoBot: Bot {
         }
     }
 
+    func numberOfReports(since report: Report, completion: @escaping CountCompletion) {
+        userInitiatedQueue.async {
+            do {
+                let count = try self.database.countNumberOfReports(since: report)
+                DispatchQueue.main.async {
+                    completion(.success(count))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
     func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
