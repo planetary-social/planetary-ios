@@ -20,7 +20,18 @@ extension KeyValue {
     ///   - database: A database instance that will be used to fetch supplementary information.
     ///   - useNamespacedTables: A boolean that tells the initializer to include table names before some common column
     ///     names that appear in multiple tables like `name`.
-    init?(row: Row, database: ViewDatabase, useNamespacedTables: Bool = false) throws {
+    ///   - hasMentionColumns: A flag that lets the parser know whether the row includes the columns `hasblobs`,
+    ///     `has_feed_mentions`, `has_message_mentions`. These columns are an optimization to speed up the loading of
+    ///     Posts.
+    ///   - hasReplies: A flag that lets the parse know whether the row `replies_count` and `replies` columns as an
+    ///     optimization for loading post replies.
+    init?(
+        row: Row,
+        database: ViewDatabase,
+        useNamespacedTables: Bool = false,
+        hasMentionColumns: Bool = true,
+        hasReplies: Bool = true
+    ) throws {
         // tried 'return try row.decode()'
         // but failed - see https://github.com/VerseApp/ios/issues/29
         
@@ -44,9 +55,29 @@ extension KeyValue {
                 rootKey = try db.msgKey(id: rootID)
             }
             
+            var blobs: Blobs
+            var mentions: [Mention]
+            if hasMentionColumns {
+                let hasBlobs = try row.get(Expression<Bool>("has_blobs"))
+                blobs = hasBlobs ? try db.loadBlobs(for: msgID) : []
+                
+                mentions = [Mention]()
+                let hasFeedMentions = try row.get(Expression<Bool>("has_feed_mentions"))
+                if hasFeedMentions {
+                    mentions.append(contentsOf: try db.loadFeedMentions(for: msgID))
+                }
+                let hasMessageMentions = try row.get(Expression<Bool>("has_message_mentions"))
+                if hasMessageMentions {
+                    mentions.append(contentsOf: try db.loadMessageMentions(for: msgID))
+                }
+            } else {
+                blobs = try db.loadBlobs(for: msgID)
+                mentions = try db.loadMentions(for: msgID)
+            }
+            
             let p = Post(
-                blobs: try db.loadBlobs(for: msgID),
-                mentions: try db.loadMentions(for: msgID),
+                blobs: blobs,
+                mentions: mentions,
                 root: rootKey,
                 text: try row.get(db.colText)
             )
@@ -72,10 +103,15 @@ extension KeyValue {
             c = Content(from: cv)
         case ContentType.contact.rawValue:
             if let state = try? row.get(db.colContactState) {
-                let following = state == 1
-                let cc = Contact(contact: msgAuthor, following: following)
+                let identifier = try row.get(Expression<Identifier>("contact_identifier"))
                 
-                c = Content(from: cc)
+                if state == 1 {
+                    c = Content(from: Contact(contact: identifier, following: true))
+                } else if state == -1 {
+                    c = Content(from: Contact(contact: identifier, blocking: true))
+                } else {
+                    c = Content(from: Contact(contact: identifier, following: false))
+                }
             } else {
                 // Contacts stores only the latest message
                 // So, an old follow that was later unfollowed won't appear here.
@@ -107,6 +143,13 @@ extension KeyValue {
             description: try row.get(db.colDescr),
             imageLink: try row.get(db.colImage)
         )
+        if hasReplies {
+            let numberOfReplies = try row.get(Expression<Int>("replies_count"))
+            let replies = try row.get(Expression<String?>("replies"))
+            let abouts = replies?.split(separator: ";").map { About(about: String($0)) } ?? []
+            keyValue.metadata.replies.count = numberOfReplies
+            keyValue.metadata.replies.abouts = abouts
+        }
         keyValue.metadata.isPrivate = try row.get(db.colDecrypted)
         self = keyValue
     }

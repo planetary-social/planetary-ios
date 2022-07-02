@@ -1166,7 +1166,13 @@ class ViewDatabase {
         }
 
         return try db.prepare(qry).compactMap { row in
-            return try KeyValue(row: row, database: self, useNamespacedTables: true)
+            return try KeyValue(
+                row: row,
+                database: self,
+                useNamespacedTables: true,
+                hasMentionColumns: false,
+                hasReplies: false
+            )
         }
     }
     
@@ -2492,34 +2498,10 @@ class ViewDatabase {
     }
     
     func loadMentions(for msgID: Int64) throws -> [Mention] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        
         // load mentions for this message
-        let feedQry = self.mentions_feed.where(colMessageRef == msgID)
-        let feedMentions: [Mention] = try db.prepare(feedQry).map {
-            row in
-            
-            let feedID = try row.get(colFeedID)
-            let feed = try self.author(from: feedID)
-            
-            return Mention(
-                link: feed,
-                name: try row.get(colName) ?? ""
-            )
-        }
+        let feedMentions = try loadFeedMentions(for: msgID)
+        let msgMentions = try loadMessageMentions(for: msgID)
         
-        let msgMentionQry = self.mentions_msg.where(colMessageRef == msgID)
-        let msgMentions: [Mention] = try db.prepare(msgMentionQry).map {
-            row in
-            
-            let linkID = try row.get(colLinkID)
-            return Mention(
-                link: try self.msgKey(id: linkID),
-                name: ""
-            )
-        }
         /*
         // TODO: We don't =populate mentions_images... so why are we looking it up?
         let imgMentionQry = self.mentions_image
@@ -2538,6 +2520,43 @@ class ViewDatabase {
         */
         
         return feedMentions + msgMentions
+    }
+    
+    func loadFeedMentions(for msgID: Int64) throws -> [Mention] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let feedQry = mentions_feed.where(colMessageRef == msgID)
+        let feedMentions: [Mention] = try db.prepare(feedQry).map { mentionRow in
+
+            let feedID = try mentionRow.get(colFeedID)
+            let feed = try author(from: feedID)
+
+            return Mention(
+                link: feed,
+                name: try mentionRow.get(colName) ?? ""
+            )
+        }
+
+        return feedMentions
+    }
+
+    func loadMessageMentions(for msgID: Int64) throws -> [Mention] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        let msgMentionQry = mentions_msg.where(colMessageRef == msgID)
+        let msgMentions: [Mention] = try db.prepare(msgMentionQry).map { mentionRow in
+            let linkID = try mentionRow.get(colLinkID)
+            return Mention(
+                link: try msgKey(id: linkID),
+                name: ""
+            )
+        }
+
+        return msgMentions
     }
     
     private func insertBlobs(msgID: Int64, blobs: [Blob]) throws {
