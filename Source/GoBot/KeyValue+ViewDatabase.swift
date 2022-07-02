@@ -72,10 +72,15 @@ extension KeyValue {
             c = Content(from: cv)
         case ContentType.contact.rawValue:
             if let state = try? row.get(db.colContactState) {
-                let following = state == 1
-                let cc = Contact(contact: msgAuthor, following: following)
+                let identifier = try row.get(Expression<Identifier>("contact_identifier"))
                 
-                c = Content(from: cc)
+                if state == 1 {
+                    c = Content(from: Contact(contact: identifier, following: true))
+                } else if state == -1 {
+                    c = Content(from: Contact(contact: identifier, blocking: true))
+                } else {
+                    c = Content(from: Contact(contact: identifier, following: false))
+                }
             } else {
                 // Contacts stores only the latest message
                 // So, an old follow that was later unfollowed won't appear here.
