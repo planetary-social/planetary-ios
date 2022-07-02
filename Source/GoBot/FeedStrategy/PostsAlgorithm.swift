@@ -225,7 +225,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         }
         
         return try connection.prepare(query).compactMap { keyValueRow in
-            return try KeyValue(row: keyValueRow, database: database)
+            return try KeyValue(row: keyValueRow, database: database, hasMentionColumns: false, hasReplies: false)
         }
     }
 
