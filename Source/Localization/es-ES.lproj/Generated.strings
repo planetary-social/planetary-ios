@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Ups";
@@ -113,8 +112,8 @@
 "Text.join" = "Unirse";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
-"Text.refreshSingular" = "{{ count }} publicación sin leer!";
-"Text.refreshPlural" = "{{ count }} publicaciones sin leer!";
+"Text.refreshSingular" = "{{ count }} unread post!";
+"Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown soportado";
 "Text.loggingOut" = "Desloguéandose...";
 "Text.openPost" = "Abrir publicación {{ postID }}";
