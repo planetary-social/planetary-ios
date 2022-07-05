@@ -40,8 +40,8 @@ jobs:
     steps:
       - uses: dangoslen/changelog-enforcer@v3
         with:
-          - skipLabels: 'Skip-Changelog'
-          - missingUpdateErrorMessage: 'You have not updated CHANGELOG.md. If an entry is not applicable add the Skip-Changelog label to your PR. See the top of the CHANGELOG.md for more details.'
+          skipLabels: 'Skip-Changelog'
+          missingUpdateErrorMessage: 'You have not updated CHANGELOG.md. If an entry is not applicable add the Skip-Changelog label to your PR. See the top of the CHANGELOG.md for more details.'
   logger:
     name: Logger
     runs-on: macOS-12
