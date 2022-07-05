@@ -39,6 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: dangoslen/changelog-enforcer@v3
+          with:
+            skipLabels: 'Skip-Changelog'
   logger:
     name: Logger
     runs-on: macOS-12
