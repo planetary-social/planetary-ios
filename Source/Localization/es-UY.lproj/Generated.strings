@@ -121,8 +121,12 @@
 "Text.postNotFound" = "No se han encontrado publicaciones con ese ID.";
 "Text.users" = "Usuarios";
 "Text.posts" = "Publicaciones";
+"Text.search" = "Search";
 "Text.searching" = "Buscando";
-"Text.searchForUsersAndPosts" = "Busca por nombre, ID de usuario o ID de pubicación";
+"Text.searchForUsers" = "Filter users by name or ID";
+"Text.searchingLocally" = "Searching for posts in your local database";
+"Text.noResultsFound" = "No results found.";
+"Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Text.upgradingAndRestoring" = "Planetary esta recuperando tus datos de la red.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -152,13 +156,13 @@
 "NewPost.confirmRemove" = "¿Querés eliminar esta imagen de la publicación? La podés volver a agregar si te arrepentís.";
 "NewPost.remove" = "Eliminar";
 
-"Offboarding.reset" = "Resetear";
-"Offboarding.resetApplicationAndIdentity" = "Resetear aplicación e identidad";
+"Offboarding.reset" = "Delete";
+"Offboarding.resetIdentity" = "Delete My Identity";
 "Offboarding.resetConfirmTitle" = "Cuidado";
-"Offboarding.resetConfirmMessage" = "¿Estás seguro de que querés resetear tu aplicación de Planetary? Vas a perder esta identidad y todo su contenido. Esto no se puede deshacer.";
+"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetConfirmAgainTitle" = "¿Estás seguro?";
-"Offboarding.resetConfirmAgainMessage" = "¿De verdad estás seguro de que quieres reiniciar tu aplicación de Planetary? Vas a perder esta identidad y todo su contenido. Esto no se puede deshacer.";
-"Offboarding.resetFooter" = "Resetear la aplicación de Planetary te va a borrar del directorio de usuarios, vas a dejar de seguir a todos, y se va a eliminar tu identidad en tu dispositivo. No vas a poder recuperar tu identidad, pero vas a poder crear una nueva.";
+"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "No nos pudimos contectar al directorio para quitarte. Por favor intentá de nuevo.";
 "Offboarding.resetBotErrorTryAgain" = "Pasó algo inesperado pero no te preocupes, creamos una nota para arreglarlo. Por favor intentá de nuevo.";
 
@@ -202,6 +206,8 @@
 "Onboarding.policyStatement" = "Si continuás, confirmás que estás de acuerdo con los Términos del Servicio y Política de Privacidad";
 "Onboarding.termsOfService" = "Términos del Servicio";
 "Onboarding.privacyPolicy" = "Política de Privacidad";
+"Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
+"Onboarding.welcomeBotName" = "Planetary Help";
 
 "OnboardingStepTitle.backup" = "OK, ya creamos tu identidad. ¿Querés respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary es una forma más saludable de ser social";

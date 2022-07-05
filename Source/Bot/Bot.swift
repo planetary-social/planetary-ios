@@ -138,6 +138,11 @@ protocol Bot: AnyObject {
     func about(queue: DispatchQueue, identity: Identity, completion:  @escaping AboutCompletion)
     func abouts(identities: [Identity], completion:  @escaping AboutsCompletion)
     func abouts(queue: DispatchQueue, completion:  @escaping AboutsCompletion)
+    
+    /// This fetches About messages for peers whose names contain the given filter string.
+    /// - Parameter filter: A substring that you would like to search Abouts for.
+    /// - Returns: The matching Abouts.
+    func abouts(matching filter: String) async throws -> [About]
 
     // MARK: Contact
 
@@ -177,6 +182,11 @@ protocol Bot: AnyObject {
     func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion)
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion)
+    
+    /// This fetches posts whose text contains the given filter string.
+    /// - Parameter filter: A substring that you would like to search for in Posts.
+    /// - Returns: The matching KeyValues. All will by of type .post.
+    func posts(matching filter: String) async throws -> [KeyValue]
     
     // MARK: Feed
     

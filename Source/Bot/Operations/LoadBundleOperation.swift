@@ -53,6 +53,11 @@ class LoadBundleOperation: AsynchronousOperation {
             group.leave()
         }
         
+        group.enter()
+        PreloadedBlobsServiceAdapter.preloadBlobs(into: Bots.current, from: "Pubs", in: bundle) {
+            group.leave()
+        }
+        
         group.wait()
         self.finish()
     }

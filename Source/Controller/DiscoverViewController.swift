@@ -11,7 +11,8 @@ import Logger
 import Analytics
 import CrashReporting
 
-class DiscoverViewController: ContentViewController {
+class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate,
+    UniversalSearchDelegate {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -49,12 +50,14 @@ class DiscoverViewController: ContentViewController {
         return button
     }()
     
-    private lazy var collectionView: UICollectionView = {
+    private lazy var collectionViewLayout: PinterestCollectionViewLayout = {
         let layout = PinterestCollectionViewLayout()
-        layout.numberOfColumns = self.numberOfColumns
         layout.delegate = self
-        
-        let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
+        return layout
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let view = UICollectionView(frame: self.view.bounds, collectionViewLayout: collectionViewLayout)
         view.dataSource = self.dataSource
         view.delegate = self.delegate
         view.register(PostCollectionViewCell.self, forCellWithReuseIdentifier: "Post")
@@ -67,11 +70,22 @@ class DiscoverViewController: ContentViewController {
         return view
     }()
     
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchResultsUpdater = self
+        controller.searchBar.delegate = self
+        controller.searchBar.isTranslucent = false
+        controller.searchBar.placeholder = Text.search.text
+        controller.obscuresBackgroundDuringPresentation = false
+        controller.hidesNavigationBarDuringPresentation = false
+        return controller
+    }()
+    
     private lazy var numberOfColumns: Int = {
         Int(UIScreen.main.bounds.width) / 180
     }()
      
-    private lazy var emptyView: UIView = {
+    private lazy var emptyDiscoverView: UIView = {
         let view = UIView()
          
         let imageView = UIImageView(image: UIImage(imageLiteralResourceName: "icon-planetary"))
@@ -106,6 +120,15 @@ class DiscoverViewController: ContentViewController {
 
         return view
     }()
+    
+    private lazy var searchResultsView: UniversalSearchResultsView = {
+        let view = UniversalSearchResultsView()
+        view.delegate = self
+        return view
+    }()
+    
+    // for a bug fix — see note in Search extension below
+    private var searchEditBeginDate = Date()
 
     // MARK: Lifecycle
 
@@ -124,9 +147,9 @@ class DiscoverViewController: ContentViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Layout.fill(view: self.view, with: self.collectionView)
-        
-        self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
+        self.navigationItem.searchController = self.searchController
+        showDiscoverCollectionView()
+        // self.floatingRefreshButton.layout(in: self.view, below: self.collectionView)
         
         self.addLoadingAnimation()
         self.load()
@@ -159,48 +182,62 @@ class DiscoverViewController: ContentViewController {
         }
     }
     
-    func refreshAndLoad(animated: Bool = false) {
-        if DiscoverViewController.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(DiscoverViewController.refreshBackgroundTaskIdentifier)
-        }
-        
-        Log.info("Pull down to refresh triggering a short refresh")
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "DiscoverPullDownToRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(DiscoverViewController.refreshBackgroundTaskIdentifier)
-            DiscoverViewController.refreshBackgroundTaskIdentifier = .invalid
-        }
-        DiscoverViewController.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = { [weak self] in
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-            
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                DiscoverViewController.refreshBackgroundTaskIdentifier = .invalid
-            }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.load(animated: animated)
-            }
-        }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
-    }
-    
     func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
         if proxy.count == 0 {
-            self.collectionView.backgroundView = self.emptyView
+            self.collectionView.backgroundView = self.emptyDiscoverView
         } else {
-            self.emptyView.removeFromSuperview()
+            self.emptyDiscoverView.removeFromSuperview()
             self.collectionView.backgroundView = nil
         }
         self.dataSource.update(source: proxy)
         self.collectionView.reloadData()
+    }
+    
+    // MARK: Search
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        Analytics.shared.trackDidTapSearchbar(searchBarName: "discover")
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        searchResultsView.searchQuery = searchController.searchBar.text ?? ""
+        if searchResultsView.searchQuery.isEmpty {
+            showDiscoverCollectionView()
+        } else {
+            showSearchResults()
+        }
+    }
+    
+    // These two functions are implemented to avoid a bug where the initial
+    // tap of the search bar begins editing, but first responder is immediately resigned
+    // I can't figure out why this is happening, but this is a potential solution to avoid the bug.
+    // I set a symbolic breakpoint and can't find why resignFirstResponder is being called there.
+    //
+    // first, when the edit begins, we store the date in self.searchEditBeginDate
+    // then, in searchBarShouldEndEditing, we check whether this date was extremely recent
+    // if it was too recent to be performed intentionally, we don't allow the field to end editing.
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        self.searchEditBeginDate = Date()
+        return true
+    }
+
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        let timeSinceStart = Date().timeIntervalSince(self.searchEditBeginDate)
+        return timeSinceStart > 0.4
+    }
+    
+    func showDiscoverCollectionView() {
+        view.subviews.forEach { $0.removeFromSuperview() }
+        Layout.fill(view: self.view, with: self.collectionView)
+    }
+    
+    func showSearchResults() {
+        view.subviews.forEach { $0.removeFromSuperview() }
+        Layout.fill(view: self.view, with: self.searchResultsView)
+    }
+    
+    func present(_ controller: UIViewController) {
+        navigationController?.pushViewController(controller, animated: true)
     }
     
     // MARK: Actions
@@ -208,7 +245,7 @@ class DiscoverViewController: ContentViewController {
     @objc
     func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refreshAndLoad()
+        self.load(animated: true)
     }
     
     @objc
@@ -266,7 +303,7 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
         let insets = collectionView.contentInset
         let contentWidth = collectionView.bounds.width - (insets.left + insets.right)
         let cellPadding: CGFloat = 5
-        let columnWidth = contentWidth / CGFloat(self.numberOfColumns) - cellPadding * 2
+        let columnWidth = contentWidth / CGFloat(collectionViewLayout.numberOfColumns) - cellPadding * 2
         if let keyValue = dataSource.data.keyValueBy(index: indexPath.row) {
             if let post = keyValue.value.content.post, post.hasBlobs {
                 if post.text.withoutGallery().withoutSpacesOrNewlines.isEmpty {

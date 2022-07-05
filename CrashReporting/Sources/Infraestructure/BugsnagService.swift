@@ -12,18 +12,21 @@ import Logger
 
 class BugsnagService: APIService {
 
-    var onEventHandler: (() -> Logs)?
+    let config: BugsnagConfiguration?
+    var onEventHandler: ((Identity?) -> Logs)?
     
     init(keys: Keys = Keys.shared, logger: LogProtocol = Log.shared) {
         guard let apiKey = keys.get(key: .bugsnag) else {
             Log.info("Error while configuring Bugsnag. ApiKey does not exist.")
+            config = nil
             return
         }
         Log.info("Configuring Bugsnag...")
-        let config = BugsnagConfiguration.loadConfig()
-        config.apiKey = apiKey
-        config.addOnSendError { [weak self] (event) -> Bool in
-            guard let logs = self?.onEventHandler?() else {
+        config = BugsnagConfiguration.loadConfig()
+        config?.apiKey = apiKey
+        config?.addOnSendError { [weak self] (event) -> Bool in
+            let identity = self?.buildIdentity(for: event)
+            guard let logs = self?.onEventHandler?(identity) else {
                 return true
             }
             var shouldAddAppLog = true
@@ -40,7 +43,12 @@ class BugsnagService: APIService {
             }
             return true
         }
-        Bugsnag.start(with: config)
+    }
+
+    func start() {
+        if let config = config {
+            Bugsnag.start(with: config)
+        }
     }
 
     func identify(identity: Identity) {
@@ -67,7 +75,8 @@ class BugsnagService: APIService {
             if let metadata = metadata {
                 event.addMetadata(metadata, section: "metadata")
             }
-            let logs = self?.onEventHandler?()
+            let identity = self?.buildIdentity(for: event)
+            let logs = self?.onEventHandler?(identity)
             if let string = logs?.appLog {
                 event.addMetadata(string, key: "app", section: "logs")
             }
@@ -76,5 +85,25 @@ class BugsnagService: APIService {
             }
             return true
         }
+    }
+
+    private func buildIdentity(for event: BugsnagEvent) -> Identity? {
+        guard let identifier = event.user.id else {
+            return nil
+        }
+        guard let metadata = event.getMetadata(section: "network") else {
+            return nil
+        }
+        guard let networkKey = metadata.value(forKey: "key") as? String else {
+            return nil
+        }
+        guard let networkName = metadata.value(forKey: "name") as? String else {
+            return nil
+        }
+        return Identity(
+            identifier: identifier,
+            networkKey: networkKey,
+            networkName: networkName
+        )
     }
 }
