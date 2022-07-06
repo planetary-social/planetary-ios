@@ -198,7 +198,9 @@ class PostCellView: KeyValueView {
         self.galleryView.pinTop(toBottomOf: self.textView, constant: 5)
         self.galleryView.pinLeftToSuperview()
         self.galleryView.constrainWidth(to: self)
-        self.galleryViewBottomConstraint = self.galleryView.pinBottomToSuperviewBottom()
+        galleryView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+        galleryViewBottomConstraint = galleryView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        galleryViewBottomConstraint?.isActive = true
 
         self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
         self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)

@@ -120,6 +120,54 @@ class FeedStrategyTests: XCTestCase {
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 2)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%1"), 3)
     }
+    
+    /// Verifies that the recently active posts and contacts algorithm does not push old posts to the top when they
+    /// receive a vote.
+    func testRecentlyActivePostsAndContactsAlgorithmDoesNotCountVotes() throws {
+        let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis
+        let receivedDate: Double = 1_652_813_515_000 // May 17, 2022 in millis
+        
+        let post1 = KeyValueFixtures.post(
+            key: "%1",
+            sequence: 1,
+            timestamp: referenceDate + 1,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 1,
+            author: testAuthor
+        )
+        let post2 = KeyValueFixtures.post(
+            key: "%2",
+            sequence: 2,
+            timestamp: referenceDate + 2,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 2,
+            author: testAuthor
+        )
+        // Vote on post 1, to verify it doesn't come to the top.
+        let vote3 = KeyValueFixtures.keyValue(
+            sequence: 3,
+            content: Content(from: ContentVote(
+                link: "%1",
+                value: 1,
+                expression: nil,
+                root: "%1",
+                branches: []
+            )),
+            timestamp: referenceDate + 2,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 2,
+            author: testAuthor
+        )
+        
+        try db.fillMessages(msgs: [post1, post2, vote3])
+        
+        let strategy = RecentlyActivePostsAndContactsAlgorithm()
+        let proxy = try db.paginatedFeed(with: strategy)
+        
+        XCTAssertEqual(proxy.count, 2)
+        XCTAssertEqual(proxy.keyValueBy(index: 0), post2)
+        XCTAssertEqual(proxy.keyValueBy(index: 1), post1)
+    }
 
     func testPostsAndContactsAlgorithm() throws {
         let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis

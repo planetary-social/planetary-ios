@@ -79,6 +79,10 @@ class FakeBot: Bot {
     func hashtags(usedBy identity: Identity, limit: Int, completion: @escaping HashtagsCompletion) { }
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) { }
+    
+    func posts(matching filter: String) async throws -> [KeyValue] {
+        return []
+    }
 
     func uiimage(for identity: Identity, completion: @escaping UIImageCompletion) { }
     
@@ -232,6 +236,10 @@ class FakeBot: Bot {
         queue.async {
             completion(abouts, nil)
         }
+    }
+    
+    func abouts(matching filter: String) async throws -> [About] {
+        return []
     }
 
     // MARK: Feed content

@@ -26,7 +26,7 @@ class PreloadedBlobsServiceAdapter: PreloadedBlobsService {
         guard let blobIdentifiersPath = bundle.path(
             forResource: "BlobIdentifiers",
             ofType: "plist",
-            inDirectory: "Pubs"
+            inDirectory: path
         ),
             let rawblobIdendifiers = FileManager.default.contents(atPath: blobIdentifiersPath),
             let blobIdentifiers = try? PropertyListSerialization.propertyList(
@@ -39,7 +39,7 @@ class PreloadedBlobsServiceAdapter: PreloadedBlobsService {
                 return
         }
         
-        let blobPaths = bundle.paths(forResourcesOfType: nil, inDirectory: "Pubs/Blobs")
+        let blobPaths = bundle.paths(forResourcesOfType: nil, inDirectory: "\(path)/Blobs")
         blobPaths.forEach { path in
             group.enter()
             let url = URL(fileURLWithPath: path)

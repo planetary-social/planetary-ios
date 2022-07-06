@@ -4,11 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.2.2] 2022-07-04
 
+- Add a basic search bar to the Discover tab that allows you to search for posts. #679
+- Fix the layout of the Discover tab on macOS. #683
+- Changed name and description of "Reset Planetary" button to "Delete My Identity" #674
+- Added regular SQLite database optimization. #684
+- Added new tutorial messages in the Home feed for new users. #687
+- Change Recently Active Posts and Contacts home feed algorithm so that votes do not bring posts to the top of the feed anymore.
+- Fixed incorrect Golang version during builds #678
+- Fixed go-ssb logs not being submitted after crash #677
+
+## [1.2.1] 2022-06-27
+
+- Added a badge to the Home Feed when there are new posts available. #663
 - Allow lookup of user IDs outside your network on Your Network tab. #642
 - Allow lookup of individual messages by ID on Your Network tab. #642
-- Make go-ssb garbage collection less aggressive. #651
 - Fixed a bug where posts from blocked users could show up in the Discover feed. #639
 - Improve performance of the recently downloaded post count in the side menu. #637
 - Fixed a bug where blocks were showing up as follows in the Home Feed. #619

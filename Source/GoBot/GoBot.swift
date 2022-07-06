@@ -209,8 +209,8 @@ class GoBot: Bot {
         var repoPrefix: String
 
         do {
-            guard !database.isOpen() else {
-                throw GoBotError.unexpectedFault("\(#function) warning: database still open")
+            if database.isOpen() {
+                database.close()
             }
             
             repoPrefix = try config.databaseDirectory()
@@ -915,8 +915,6 @@ class GoBot: Bot {
     }
 
     func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) {
-        Thread.assertIsMainThread()
-
         guard identifier.isValidIdentifier else {
             completion(identifier, nil, BotError.blobInvalidIdentifier)
             return
@@ -1057,6 +1055,14 @@ class GoBot: Bot {
                 }
             }
         }
+    }
+    
+    func abouts(matching filter: String) async throws -> [About] {
+        let dbTask = Task.detached(priority: .high) {
+            try self.database.abouts(withNameLike: filter)
+        }
+        
+        return try await dbTask.value
     }
 
     // MARK: Contacts
@@ -1465,6 +1471,14 @@ class GoBot: Bot {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
+    }
+    
+    func posts(matching filter: String) async throws -> [KeyValue] {
+        let task = Task.detached(priority: .high) {
+            return try self.database.posts(matching: filter)
+        }
+        
+        return try await task.getResult().get()
     }
 
     // MARK: Statistics
