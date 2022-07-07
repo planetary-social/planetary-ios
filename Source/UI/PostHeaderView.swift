@@ -25,7 +25,7 @@ class PostHeaderView: UIView {
         button.addTarget(self, action: #selector(selectAboutIdentity), for: .touchUpInside)
         button.setTitleColor(UIColor.text.default, for: .normal)
         button.contentHorizontalAlignment = .left
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.titleLabel?.numberOfLines = 1
         button.isSkeletonable = true
@@ -35,6 +35,14 @@ class PostHeaderView: UIView {
     private var rightButtonContainer = UIView()
 
     private let dateLabel: UILabel = {
+        let label = UILabel.forAutoLayout()
+        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        label.numberOfLines = 1
+        label.textColor = UIColor.text.detail
+        return label
+    }()
+    
+    private let identiferLabel: UILabel = {
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         label.numberOfLines = 1
@@ -62,13 +70,20 @@ class PostHeaderView: UIView {
         self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
         self.nameButton.constrainTrailing(toLeadingOf: self.rightButtonContainer, constant: -6)
 
-        self.addSubview(self.dateLabel)
-        self.dateLabel.pinTop(toBottomOf: self.nameButton)
-        self.dateLabel.constrainLeading(to: self.nameButton)
-        self.dateLabel.constrainTrailing(toTrailingOf: self.nameButton)
+        //self.addSubview(self.dateLabel)
+        //self.dateLabel.pinTop(toBottomOf: self.nameButton)
+        //self.dateLabel.constrainLeading(to: self.nameButton)
+        //self.dateLabel.constrainTrailing(toTrailingOf: self.nameButton)
+        
+        //self.addSubview(self.identiferLabel)
+        //self.identiferLabel.pinTop(toBottomOf: self.nameButton)
+        //self.identiferLabel.constrainLeading(to: self.nameButton)
+        //self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton)
 
-        self.nameButton.constrainHeight(to: 19)
-        self.dateLabel.constrainHeight(to: 19)
+        self.nameButton.constrainHeight(to: Layout.profileThumbSize)
+        //self.dateLabel.constrainHeight(to: 19)
+        //self.identiferLabel.constrainHeight(to: 19)
+        
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -89,7 +104,8 @@ class PostHeaderView: UIView {
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
 
-        self.dateLabel.text = keyValue.timestampString
+        //self.dateLabel.text = keyValue.timestampString
+        self.identiferLabel.text = keyValue.metadata.author.about?.identity
 
         if let me = Bots.current.identity {
             let button: UIButton
