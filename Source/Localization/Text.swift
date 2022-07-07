@@ -337,6 +337,7 @@ extension Text {
         
         case welcomeMessage = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:"
         case welcomeBotName = "Planetary Help"
+        case welcomeBotBio = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help."
     }
 }
 
