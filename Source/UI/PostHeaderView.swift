@@ -25,7 +25,7 @@ class PostHeaderView: UIView {
         button.addTarget(self, action: #selector(selectAboutIdentity), for: .touchUpInside)
         button.setTitleColor(UIColor.text.default, for: .normal)
         button.contentHorizontalAlignment = .left
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button.titleLabel?.numberOfLines = 1
         button.isSkeletonable = true
@@ -75,14 +75,14 @@ class PostHeaderView: UIView {
         //self.dateLabel.constrainLeading(to: self.nameButton)
         //self.dateLabel.constrainTrailing(toTrailingOf: self.nameButton)
         
-        //self.addSubview(self.identiferLabel)
-        //self.identiferLabel.pinTop(toBottomOf: self.nameButton)
-        //self.identiferLabel.constrainLeading(to: self.nameButton)
-        //self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton)
+        self.addSubview(self.identiferLabel)
+        self.identiferLabel.pinTop(toBottomOf: self.nameButton)
+        self.identiferLabel.constrainLeading(to: self.nameButton)
+        self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton)
 
-        self.nameButton.constrainHeight(to: Layout.profileThumbSize)
+        self.nameButton.constrainHeight(to: 19)
         //self.dateLabel.constrainHeight(to: 19)
-        //self.identiferLabel.constrainHeight(to: 19)
+        self.identiferLabel.constrainHeight(to: 19)
         
     }
 
