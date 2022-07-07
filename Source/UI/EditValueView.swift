@@ -50,7 +50,7 @@ class EditValueView: UIView {
         self.label.constrainHeight(to: 46)
 
         // note that 114 is arbitrary and does not take into account different screen widths
-        insets = UIEdgeInsets(top: 10, left: 114, bottom: 0, right: -8)
+        insets = UIEdgeInsets(top: 10, left: 114, bottom: 0, right: 8)
         Layout.fill(view: self, with: self.textView, insets: insets)
         self.textView.contentInset = .top(-5)
     }

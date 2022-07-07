@@ -14,8 +14,8 @@ extension UIEdgeInsets {
     static let `default` = UIEdgeInsets(
         top: Layout.verticalSpacing,
         left: Layout.horizontalSpacing,
-        bottom: -Layout.verticalSpacing,
-        right: -Layout.horizontalSpacing
+        bottom: Layout.verticalSpacing,
+        right: Layout.horizontalSpacing
     )
 
     static let defaultText = UIEdgeInsets(
@@ -28,21 +28,28 @@ extension UIEdgeInsets {
     static let leftBottomRight = UIEdgeInsets(
         top: 0,
         left: Layout.horizontalSpacing,
-        bottom: -Layout.verticalSpacing,
-        right: -Layout.horizontalSpacing
+        bottom: Layout.verticalSpacing,
+        right: Layout.horizontalSpacing
     )
 
     static let leftRight = UIEdgeInsets(
         top: 0,
         left: Layout.horizontalSpacing,
         bottom: 0,
-        right: -Layout.horizontalSpacing
+        right: Layout.horizontalSpacing
     )
 
     static let topOnly = UIEdgeInsets(
         top: Layout.verticalSpacing,
         left: 0,
         bottom: 0,
+        right: 0
+    )
+    
+    static let topBottom = UIEdgeInsets(
+        top: Layout.verticalSpacing,
+        left: 0,
+        bottom: Layout.verticalSpacing,
         right: 0
     )
 
@@ -57,35 +64,35 @@ extension UIEdgeInsets {
         top: Layout.verticalSpacing,
         left: 0,
         bottom: 0,
-        right: -Layout.horizontalSpacing
+        right: Layout.horizontalSpacing
     )
 
     static let topLeftRight = UIEdgeInsets(
         top: Layout.verticalSpacing,
         left: Layout.horizontalSpacing,
         bottom: 0,
-        right: -Layout.horizontalSpacing
+        right: Layout.horizontalSpacing
     )
 
     static let topLeftBottom = UIEdgeInsets(
         top: Layout.verticalSpacing,
         left: Layout.horizontalSpacing,
-        bottom: -Layout.verticalSpacing,
+        bottom: Layout.verticalSpacing,
         right: 0
     )
 
     static let topBottomRight = UIEdgeInsets(
         top: Layout.verticalSpacing,
         left: 0,
-        bottom: -Layout.verticalSpacing,
-        right: -Layout.horizontalSpacing
+        bottom: Layout.verticalSpacing,
+        right: Layout.horizontalSpacing
     )
 
     static let debugTableViewCell = UIEdgeInsets(
         top: Layout.verticalSpacing,
         left: Layout.horizontalSpacing,
-        bottom: -Layout.verticalSpacing,
-        right: -Layout.horizontalSpacing
+        bottom: Layout.verticalSpacing,
+        right: Layout.horizontalSpacing
     )
 
     static let pillButton = UIEdgeInsets(

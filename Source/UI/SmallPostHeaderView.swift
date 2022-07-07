@@ -45,7 +45,7 @@ class SmallPostHeaderView: UIView {
         Layout.fillLeft(
             of: self,
             with: self.avatarButton,
-            insets: UIEdgeInsets(top: 10, left: 10, bottom: -10, right: 0),
+            insets: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 0),
             respectSafeArea: false
         )
         self.avatarButton.constrainSize(to: 20)

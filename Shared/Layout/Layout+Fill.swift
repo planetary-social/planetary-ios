@@ -13,10 +13,12 @@ import UIKit
 extension Layout {
 
     @discardableResult
-    static func fill(view: UIView,
-                     with subview: UIView,
-                     insets: UIEdgeInsets = .zero,
-                     respectSafeArea: Bool = true) -> TopLeftBottomRightConstraints {
+    static func fill(
+        view: UIView,
+        with subview: UIView,
+        insets: UIEdgeInsets = .zero,
+        respectSafeArea: Bool = true
+    ) -> TopLeftBottomRightConstraints {
         subview.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(subview)
 
@@ -25,9 +27,8 @@ extension Layout {
 
         let top = subview.topAnchor.constraint(equalTo: topAnchor, constant: insets.top)
         let left = subview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: insets.left)
-        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: insets.bottom)
-        bottom.priority = .defaultHigh
-        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: insets.right)
+        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom)
+        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -insets.right)
 
         NSLayoutConstraint.activate([top, left, bottom, right])
         return (top, left, bottom, right)
@@ -45,7 +46,7 @@ extension Layout {
 
         let top = subview.topAnchor.constraint(equalTo: topAnchor, constant: insets.top)
         let left = subview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: insets.left)
-        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: insets.right)
+        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -insets.right)
 
         NSLayoutConstraint.activate([top, left, right])
         return (top, left, right)
@@ -64,7 +65,7 @@ extension Layout {
 
         let top = subview.topAnchor.constraint(equalTo: topAnchor, constant: insets.top)
         let left = subview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: insets.left)
-        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: insets.bottom)
+        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom)
 
         NSLayoutConstraint.activate([top, left, bottom])
         return (top, left, bottom)
@@ -81,9 +82,9 @@ extension Layout {
         let bottomAnchor = respectSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
 
         let left = subview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: insets.left)
-        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: insets.bottom)
+        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom)
         bottom.priority = .defaultHigh
-        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: insets.right)
+        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -insets.right)
         right.priority = .defaultHigh
 
         NSLayoutConstraint.activate([left, bottom, right])
@@ -102,8 +103,8 @@ extension Layout {
         let bottomAnchor = respectSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
 
         let top = subview.topAnchor.constraint(equalTo: topAnchor, constant: insets.top)
-        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: insets.bottom)
-        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: insets.right)
+        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom)
+        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -insets.right)
 
         NSLayoutConstraint.activate([top, bottom, right])
         return (top, bottom, right)
@@ -137,7 +138,7 @@ extension Layout {
         let topAnchor = respectSafeArea ? view.safeAreaLayoutGuide.topAnchor : view.topAnchor
 
         let top = subview.topAnchor.constraint(equalTo: topAnchor, constant: insets.top)
-        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: insets.right)
+        let right = subview.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -insets.right)
 
         NSLayoutConstraint.activate([top, right])
         return (top, right)
@@ -154,7 +155,7 @@ extension Layout {
         let bottomAnchor = respectSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
 
         let left = subview.leftAnchor.constraint(equalTo: view.leftAnchor, constant: insets.left)
-        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: insets.bottom)
+        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom)
 
         NSLayoutConstraint.activate([left, bottom])
         return (left, bottom)
@@ -170,8 +171,8 @@ extension Layout {
 
         let bottomAnchor = respectSafeArea ? view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor
 
-        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: insets.bottom)
-        let right = subview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0)
+        let bottom = subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom)
+        let right = subview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -insets.right)
 
         NSLayoutConstraint.activate([bottom, right])
         return (bottom, right)

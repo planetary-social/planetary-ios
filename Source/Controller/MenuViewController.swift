@@ -336,7 +336,11 @@ private class ProfileImageView: UIView {
         super.init(frame: frame)
         Layout.fill(view: self, with: self.circleView, insets: .zero)
         let spacing: CGFloat = 7
-        Layout.fill(view: self, with: self.imageView, insets: UIEdgeInsets(top: spacing, left: spacing, bottom: -spacing, right: -spacing))
+        Layout.fill(
+            view: self,
+            with: self.imageView,
+            insets: UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing)
+        )
     }
 
     required init?(coder aDecoder: NSCoder) {

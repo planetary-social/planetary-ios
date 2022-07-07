@@ -46,10 +46,17 @@ class AboutCellView: UIView {
         let targetHeight: CGFloat = 60
         let verticalMargin = floor((targetHeight - Layout.profileThumbSize) / 2)
 
-        Layout.fillLeft(of: self,
-                        with: self.imageView,
-                        insets: UIEdgeInsets(top: verticalMargin, left: Layout.horizontalSpacing, bottom: -verticalMargin, right: 0),
-                        respectSafeArea: false)
+        Layout.fillLeft(
+            of: self,
+            with: self.imageView,
+            insets: UIEdgeInsets(
+                top: verticalMargin,
+                left: Layout.horizontalSpacing,
+                bottom: verticalMargin,
+                right: 0
+            ),
+            respectSafeArea: false
+        )
 
         self.addSubview(self.label)
         self.label.constrainLeading(toTrailingOf: self.imageView, constant: Layout.horizontalSpacing)

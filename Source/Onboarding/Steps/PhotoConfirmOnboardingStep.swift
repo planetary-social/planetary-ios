@@ -39,8 +39,8 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
         Layout.center(self.circleView, in: self.view, size: CGSize(square: Layout.profileImageOutside))
         Layout.center(self.imageView, in: self.circleView, size: CGSize(square: Layout.profileImageInside))
         
-        self.circleView.roundedCorners(radius: Layout.profileImageOutside / 2)
-        self.imageView.roundedCorners(radius: Layout.profileImageInside / 2)
+        self.circleView.roundCorners(radius: Layout.profileImageOutside / 2)
+        self.imageView.roundCorners(radius: Layout.profileImageInside / 2)
 
         self.view.secondaryButton.setText(.changePhoto)
         self.view.primaryButton.setText(.confirmPhoto)

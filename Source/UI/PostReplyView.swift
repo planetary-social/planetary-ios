@@ -42,15 +42,20 @@ class PostReplyView: KeyValueView {
         return backgroundView
     }()
     
-    let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        return stackView
+    let contentStackView: UIStackView = {
+        let contentStackView = UIStackView()
+        contentStackView.axis = .vertical
+        contentStackView.distribution = .fill
+        contentStackView.spacing = Layout.verticalSpacing
+        return contentStackView
     }()
+    
+    let cardView: MessageCard
 
     init() {
+        cardView = MessageCard(content: contentStackView)
         super.init(frame: .zero)
-        self.backgroundColor = .cardBackground
+        self.backgroundColor = .clear
         self.clipsToBounds = true
 
         let topBorder = Layout.separatorView()
@@ -64,14 +69,14 @@ class PostReplyView: KeyValueView {
             color: .appBackground
         )
 
-        Layout.fill(view: self, with: stackView)
-        stackView.addArrangedSubview(topBorder)
-        stackView.addArrangedSubview(postView)
-        stackView.addArrangedSubview(repliesView)
-        stackView.addArrangedSubview(replyTextView)
-        stackView.addArrangedSubview(bottomBorder)
-        stackView.addArrangedSubview(degrade)
-        stackView.addArrangedSubview(bottomSeparator)
+        Layout.fill(view: self, with: cardView, respectSafeArea: false)
+//        contentStackView.addArrangedSubview(topBorder)
+        contentStackView.addArrangedSubview(postView)
+        contentStackView.addArrangedSubview(repliesView)
+        contentStackView.addArrangedSubview(replyTextView)
+//        contentStackView.addArrangedSubview(bottomBorder)
+//        contentStackView.addArrangedSubview(degrade)
+//        contentStackView.addArrangedSubview(bottomSeparator)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -102,7 +107,7 @@ extension PostReplyView {
     static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
         // starting height based for all non-zero height subviews
         // header + text + reply box
-        var height = CGFloat(300)
+        var height = CGFloat(100)
         guard let post = keyValue.value.content.post else { return height }
 
         // add gallery view if necessary
@@ -135,13 +140,12 @@ class RepliesView: KeyValueView {
         self.addGestureRecognizer(self.tapGesture.recognizer)
         self.label.constrainHeight(to: self.avatarImageView.height)
 
-        Layout.fillTopLeft(of: self, with: self.avatarImageView, insets: .left(Layout.horizontalSpacing))
-        Layout.fillTopRight(of: self, with: self.label, insets: .right(Layout.horizontalSpacing))
+        Layout.fillLeft(of: self, with: self.avatarImageView, insets: .left(Layout.horizontalSpacing))
+        Layout.fillRight(of: self, with: self.label, insets: .right(Layout.horizontalSpacing))
 
         self.label.constrainLeading(toTrailingOf: self.avatarImageView, constant: Layout.horizontalSpacing)
 
-        // creates a height constraint, which we can access as heightConstraint through the UIView extension that add it
-        self.constrainHeight(to: 0)
+        isHidden = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -162,7 +166,7 @@ class RepliesView: KeyValueView {
             }
         }
 
-        self.heightConstraint?.constant = uniqueAbouts.isEmpty ? 0 : self.expandedHeight
+        isHidden = uniqueAbouts.isEmpty 
     }
 
     private func updateLabel(from abouts: [About], total: Int) {

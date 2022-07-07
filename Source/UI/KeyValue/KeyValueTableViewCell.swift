@@ -21,6 +21,7 @@ class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
         self.constrainKeyValueViewToContentView(height)
         self.selectionStyle = .none
         self.keyValueView.showAnimatedSkeleton()
+        backgroundColor = .clear
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -28,7 +29,17 @@ class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
     }
 
     private func constrainKeyValueViewToContentView(_ height: CGFloat? = nil) {
-        Layout.fill(view: self.contentView, with: self.keyValueView, respectSafeArea: false)
+//        Layout.fill(view: self.contentView, with: self.keyValueView, respectSafeArea: true)
+        keyValueView.useAutoLayout()
+        contentView.addSubview(keyValueView)
+        NSLayoutConstraint.activate([
+            keyValueView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            keyValueView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+//            keyValueView.centerXAnchor.constraint(equalTo: readableContentGuide.centerXAnchor),
+//            keyValueView.widthAnchor.constraint(equalTo: readableContentGuide.widthAnchor),
+            keyValueView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            keyValueView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+        ])
         guard let height = height else { return }
         let constraint = self.keyValueView.heightAnchor.constraint(lessThanOrEqualToConstant: height)
         constraint.priority = .defaultHigh

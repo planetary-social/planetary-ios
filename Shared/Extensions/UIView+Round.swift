@@ -13,10 +13,10 @@ extension UIView {
 
     func round() {
         let radius = min(self.bounds.width, self.bounds.height) / 2
-        self.roundedCorners(radius: radius)
+        self.roundCorners(radius: radius)
     }
 
-    func roundedCorners(radius: CGFloat) {
+    func roundCorners(radius: CGFloat) {
         self.clipsToBounds = true
         self.layer.cornerRadius = radius
     }

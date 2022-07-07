@@ -52,9 +52,15 @@ class PostHeaderView: UIView {
         self.useAutoLayout()
 
         Layout.fillLeft(of: self, with: self.identityButton, respectSafeArea: false)
+        let centerIdentityButton = identityButton.centerYAnchor.constraint(equalTo: centerYAnchor)
+        centerIdentityButton.priority = .defaultLow
+        centerIdentityButton.isActive = true
         self.identityButton.constrainSize(to: Layout.profileThumbSize)
 
         Layout.fillRight(of: self, with: self.rightButtonContainer, respectSafeArea: false)
+        let centerRightButton = rightButtonContainer.centerYAnchor.constraint(equalTo: centerYAnchor)
+        centerRightButton.priority = .defaultLow
+        centerRightButton.isActive = true
         self.rightButtonContainer.widthAnchor.constraint(lessThanOrEqualToConstant: Layout.profileThumbSize).isActive = true
 
         self.addSubview(self.nameButton)
@@ -89,7 +95,7 @@ class PostHeaderView: UIView {
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
 
-        self.dateLabel.text = keyValue.timestampString
+        self.dateLabel.text = keyValue.value.author
 
         if let me = Bots.current.identity {
             let button: UIButton

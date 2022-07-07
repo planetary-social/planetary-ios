@@ -217,7 +217,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
         self.hintLabelToTextFieldConstraint = self.hintLabel.pinTop(toBottomOf: self._textField, constant: Layout.verticalSpacing, activate: false)
         self.hintLabelToTextViewConstraint = self.hintLabel.pinTop(toBottomOf: self._textView, constant: Layout.verticalSpacing, activate: false)
 
-        self.primaryButton.roundedCorners(radius: self.buttonStyle.buttonHeight / 2)
+        self.primaryButton.roundCorners(radius: self.buttonStyle.buttonHeight / 2)
 
         for button in [self._secondaryButton, self._primaryButton] {
             button.constrainHeight(to: self.buttonStyle.buttonHeight)
@@ -230,7 +230,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
 
         self.addSubview(self.buttonStack)
         let sideInset: CGFloat = self.buttonStyle == .verticalStack ? 48 : Layout.horizontalSpacing
-        let insets = UIEdgeInsets(top: 0, left: sideInset, bottom: -10, right: -sideInset)
+        let insets = UIEdgeInsets(top: 0, left: sideInset, bottom: 10, right: sideInset)
         Layout.fillBottom(of: self, with: self.buttonStack, insets: insets, respectSafeArea: true)
     }
 

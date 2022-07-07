@@ -81,7 +81,7 @@ class ContactView: KeyValueView {
         Layout.fillLeft(
             of: self,
             with: self.imageView,
-            insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: -verticalMargin, right: 0),
+            insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: verticalMargin, right: 0),
             respectSafeArea: false
         )
 

@@ -136,7 +136,7 @@ class AboutView: KeyValueView {
         let descriptionContainer = UIView.forAutoLayout()
         descriptionContainer.clipsToBounds = true
         let verticalInset = Layout.verticalSpacing - 10
-        insets = UIEdgeInsets(top: verticalInset, left: Layout.postSideMargins, bottom: -verticalInset, right: -Layout.postSideMargins)
+        insets = UIEdgeInsets(top: verticalInset, left: Layout.postSideMargins, bottom: verticalInset, right: Layout.postSideMargins)
         Layout.fill(view: descriptionContainer, with: self.descriptionTextView, insets: insets)
         Layout.addSeparator(toBottomOf: descriptionContainer)
 

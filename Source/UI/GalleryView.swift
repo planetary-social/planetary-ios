@@ -32,7 +32,7 @@ class GalleryView: UIView, KeyValueUpdateable {
     init(insets: UIEdgeInsets = .zero) {
         super.init(frame: .zero)
         Layout.addSeparator(toTopOf: self.slideshow, color: UIColor.separator.top)
-        Layout.fill(view: self, with: self.slideshow, insets: insets)
+        Layout.fill(view: self, with: self.slideshow, insets: insets, respectSafeArea: false)
         Layout.addSeparator(toBottomOf: self.slideshow)
         let tap = UITapGestureRecognizer(target: self, action: #selector(slideshowWasTapped))
         self.slideshow.addGestureRecognizer(tap)

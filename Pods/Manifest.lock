@@ -1,8 +1,5 @@
 PODS:
   - Down (0.9.2)
-  - ImageSlideshow (1.8.3):
-    - ImageSlideshow/Core (= 1.8.3)
-  - ImageSlideshow/Core (1.8.3)
   - KeychainSwift (19.0.0)
   - Multipart (0.1.0)
   - PhoneNumberKit (3.2.0):
@@ -15,7 +12,6 @@ PODS:
 
 DEPENDENCIES:
   - Down (= 0.9.2)
-  - ImageSlideshow (= 1.8.3)
   - KeychainSwift (= 19.0.0)
   - Multipart (= 0.1.0)
   - PhoneNumberKit (= 3.2.0)
@@ -24,7 +20,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Down
-    - ImageSlideshow
     - KeychainSwift
     - Multipart
     - PhoneNumberKit
@@ -32,12 +27,11 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Down: 1f6a14846dff45ae8e7e4334b4e386a5fd3b2412
-  ImageSlideshow: 4694d7d699a1549582e7cc631fb392d8f91630f3
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
   PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: 3a3b8965439f97056d40f746cb553ee8e400e141
+PODFILE CHECKSUM: b46ebc6f670d7f0b5322258fe2427b3bf77f542b
 
 COCOAPODS: 1.11.3

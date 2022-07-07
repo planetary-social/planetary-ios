@@ -2,6 +2,24 @@
   "object": {
     "pins": [
       {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
+        "state": {
+          "branch": null,
+          "revision": "354dda32d89fc8cd4f5c46487f64957d355f53d8",
+          "version": "5.6.1"
+        }
+      },
+      {
+        "package": "AlamofireImage",
+        "repositoryURL": "https://github.com/Alamofire/AlamofireImage.git",
+        "state": {
+          "branch": null,
+          "revision": "98cbb00ce0ec5fc8e52a5b50a6bfc08d3e5aee10",
+          "version": "4.2.0"
+        }
+      },
+      {
         "package": "Bugsnag",
         "repositoryURL": "https://github.com/bugsnag/bugsnag-cocoa",
         "state": {
@@ -35,6 +53,24 @@
           "branch": null,
           "revision": "6add05d17a9cbba32b69863c1df9c3a2149fa138",
           "version": "2.6.0"
+        }
+      },
+      {
+        "package": "ImageSlideshow",
+        "repositoryURL": "https://github.com/zvonicek/ImageSlideshow",
+        "state": {
+          "branch": null,
+          "revision": "a54e24d47944a1ca84c2a7bf03cb435425a9929d",
+          "version": "1.9.2"
+        }
+      },
+      {
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
+        "state": {
+          "branch": null,
+          "revision": "1a0c2df04b31ed7aa318354f3583faea24f006fc",
+          "version": "5.15.8"
         }
       },
       {
@@ -80,6 +116,15 @@
           "branch": null,
           "revision": "9e4768ef3093bd61cbc0b64d75dcdcc92414e1f0",
           "version": "1.1.10"
+        }
+      },
+      {
+        "package": "SDWebImage",
+        "repositoryURL": "https://github.com/SDWebImage/SDWebImage.git",
+        "state": {
+          "branch": null,
+          "revision": "c4b8660bb3ef543fe4bdcaac0db956b32dc5583f",
+          "version": "5.13.0"
         }
       },
       {

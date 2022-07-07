@@ -65,6 +65,7 @@ class HomeViewController: ContentViewController {
         view.showsVerticalScrollIndicator = false
         view.accessibilityIdentifier = "FeedTableView"
         view.cellLayoutMarginsFollowReadableWidth = true
+        view.backgroundColor = .cardBorder
         return view
     }()
     
@@ -109,7 +110,7 @@ class HomeViewController: ContentViewController {
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         button.contentEdgeInsets = .pillButton
-        button.roundedCorners(radius: 20)
+        button.roundCorners(radius: 20)
         button.constrainHeight(to: 40)
         view.addSubview(button)
         NSLayoutConstraint.activate([

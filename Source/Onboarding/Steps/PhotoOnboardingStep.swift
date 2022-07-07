@@ -51,8 +51,8 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
         Layout.center(self.circleView, in: self.view, size: CGSize(square: Layout.profileImageOutside))
         Layout.center(self.cameraButton, in: self.circleView, size: CGSize(square: Layout.profileImageInside))
 
-        self.circleView.roundedCorners(radius: Layout.profileImageOutside / 2)
-        self.cameraButton.roundedCorners(radius: Layout.profileImageInside / 2)
+        self.circleView.roundCorners(radius: Layout.profileImageOutside / 2)
+        self.cameraButton.roundCorners(radius: Layout.profileImageInside / 2)
 
         self.circleView.addSubview(self.circleLabel)
         Layout.center(self.circleLabel, atTopOf: self.circleView, inset: 94)

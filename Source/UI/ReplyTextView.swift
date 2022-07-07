@@ -57,7 +57,7 @@ class ReplyTextView: KeyValueView {
     private lazy var sourceTextView: ResizableTextView = {
         let view = ResizableTextView()
         view.configureForPostsAndReplies()
-        view.roundedCorners(radius: Layout.profileThumbSize / 2)
+        view.roundCorners(radius: Layout.profileThumbSize / 2)
         view.backgroundColor = UIColor.textInputBackground
         view.isScrollEnabled = true
         view.textContainerInset = UIEdgeInsets(top: 8, left: 13, bottom: 6, right: 13)
@@ -99,13 +99,19 @@ class ReplyTextView: KeyValueView {
 
         let textViewHeight = Layout.profileThumbSize
 
-        Layout.fillBottomLeft(of: self, with: self.button,
-                              insets: UIEdgeInsets(top: 0, left: Layout.horizontalSpacing, bottom: -bottomSpacing, right: 0),
-                              respectSafeArea: false)
+        Layout.fillLeft(
+            of: self, with: self.button,
+            insets: UIEdgeInsets(
+                top: 0,
+                left: Layout.horizontalSpacing,
+                bottom: bottomSpacing, right: 0
+            ),
+            respectSafeArea: false
+        )
         self.button.constrainSize(to: textViewHeight)
 
         let left: CGFloat = Layout.horizontalSpacing + textViewHeight + 7
-        let insets = UIEdgeInsets(top: topSpacing, left: left, bottom: -bottomSpacing, right: -Layout.horizontalSpacing)
+        let insets = UIEdgeInsets(top: topSpacing, left: left, bottom: bottomSpacing, right: Layout.horizontalSpacing)
         Layout.fill(view: self, with: self.sourceTextView, insets: insets, respectSafeArea: false)
 
         self.sourceTextView.constrainHeight(greaterThanOrEqualTo: textViewHeight)

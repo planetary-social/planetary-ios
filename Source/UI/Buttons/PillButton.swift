@@ -14,7 +14,7 @@ class PillButton: AppButton {
 
     var height: CGFloat = 35 {
         didSet {
-            self.roundedCorners(radius: self.height / 2)
+            self.roundCorners(radius: self.height / 2)
             self.heightConstraint?.constant = self.height
         }
     }
@@ -47,7 +47,7 @@ class PillButton: AppButton {
         self.layer.borderWidth = 1.5
 
         self.constrainHeight(to: self.height)
-        self.roundedCorners(radius: self.height / 2)
+        self.roundCorners(radius: self.height / 2)
 
         // sets default insets
         setImage(nil)

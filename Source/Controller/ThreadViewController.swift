@@ -68,13 +68,13 @@ class ThreadViewController: ContentViewController {
 
     private lazy var topView: UIView = {
         let cellView = UIView.forAutoLayout()
-        cellView.backgroundColor = .appBackground
+        cellView.backgroundColor = .cardBackground
         Layout.addSeparator(toTopOf: cellView)
 
-        Layout.fillTop(of: cellView, with: self.rootPostView)
+        Layout.fillTop(of: cellView, with: self.rootPostView, insets: .top(Layout.verticalSpacing), respectSafeArea: false)
         Layout.fillBottom(of: cellView, with: self.interactionView)
 
-        self.rootPostView.pinBottom(toTopOf: self.interactionView)
+        self.rootPostView.pinBottom(toTopOf: self.interactionView, constant: -Layout.verticalSpacing)
 
         return cellView
     }()
@@ -246,7 +246,7 @@ class ThreadViewController: ContentViewController {
     private func addNavigationHeaderViewIfNeeded() {
         guard headerView.superview == nil, let navBar = self.navigationController?.navigationBar else { return }
 
-        let insets = UIEdgeInsets(top: 0, left: 48, bottom: 0, right: -Layout.horizontalSpacing)
+        let insets = UIEdgeInsets(top: 0, left: 48, bottom: Layout.verticalSpacing, right: Layout.horizontalSpacing)
         Layout.fill(view: navBar, with: self.headerView, insets: insets)
     }
 

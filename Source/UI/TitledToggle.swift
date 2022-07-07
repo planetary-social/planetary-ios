@@ -36,7 +36,7 @@ class TitledToggle: UIView {
 
         Layout.addSeparator(toTopOf: self)
 
-        let insets = UIEdgeInsets(top: 14, left: 20, bottom: -12, right: -18)
+        let insets = UIEdgeInsets(top: 14, left: 20, bottom: 12, right: 18)
         Layout.fillTopRight(of: self, with: self.toggle, insets: insets)
         self.toggle.pinRightToSuperview(constant: insets.right)
 

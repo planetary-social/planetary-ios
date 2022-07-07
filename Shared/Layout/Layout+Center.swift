@@ -62,4 +62,17 @@ extension Layout {
         let height = subview.heightAnchor.constraint(equalToConstant: size.height)
         NSLayoutConstraint.activate([width, height])
     }
+    
+    static func centerVertically(_ subview: UIView, in view: UIView, size: CGSize? = nil) {
+        subview.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(subview)
+
+        let centerY = subview.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        NSLayoutConstraint.activate([centerY])
+
+        guard let size = size else { return }
+        let width = subview.widthAnchor.constraint(equalToConstant: size.width)
+        let height = subview.heightAnchor.constraint(equalToConstant: size.height)
+        NSLayoutConstraint.activate([width, height])
+    }
 }

@@ -26,34 +26,69 @@ class PostCellView: KeyValueView {
 
     var displayHeader = true {
         didSet {
-            self.headerView.isHidden = !self.displayHeader
-            self.textViewTopConstraint.constant = self.textViewTopInset
+            self.headerContainer.isHidden = !self.displayHeader
+//            self.textViewTopConstraint.constant = self.textViewTopInset
         }
     }
 
     var allowSpaceUnderGallery = true
 
     var keyValue: KeyValue?
+    
+    let contentStackView: UIStackView = {
+        let contentStackView = UIStackView()
+        contentStackView.axis = .vertical
+        contentStackView.distribution = .fill
+        contentStackView.spacing = Layout.verticalSpacing
+        return contentStackView
+    }()
+    
+    private lazy var headerContainer: UIView = {
+        let view = UIView.forAutoLayout()
+        Layout.fill(view: view, with: headerView, insets: .topLeftRight, respectSafeArea: false)
+        return view
+    }()
+    
     private lazy var headerView = PostHeaderView()
-
-    private lazy var textView: UITextView = {
-        let view = UITextView.forAutoLayout()
+    
+    private lazy var textViewContainer: UIView = {
+        let view = UIView.forAutoLayout()
+        Layout.fill(view: view, with: textView, insets: .leftRight, respectSafeArea: false)
+        return view
+    }()
+    
+    private lazy var textView: UILabel = {
+        let view = UILabel.forAutoLayout()
         view.addGestureRecognizer(self.tapGesture.recognizer)
-        view.isEditable = false
-        view.isScrollEnabled = false
-        view.textContainer.lineFragmentPadding = 0
-        view.textContainer.lineBreakMode = .byTruncatingTail
+//        view.isEditable = false
+//        view.isScrollEnabled = false
+//        view.textContainer.lineFragmentPadding = 0
+//        view.textContainer.lineBreakMode = .byTruncatingTail
         view.isSkeletonable = true
         view.linesCornerRadius = 30
         view.backgroundColor = .cardBackground
+        view.numberOfLines = 0 // truncationLimit?.to ?? 0
         return view
     }()
 
-    var textViewTopConstraint = NSLayoutConstraint()
+//    private lazy var textView: UITextView = {
+//        let view = UITextView.forAutoLayout()
+//        view.addGestureRecognizer(self.tapGesture.recognizer)
+//        view.isEditable = false
+//        view.isScrollEnabled = false
+//        view.textContainer.lineFragmentPadding = 0
+//        view.textContainer.lineBreakMode = .byTruncatingTail
+//        view.isSkeletonable = true
+//        view.linesCornerRadius = 30
+//        view.backgroundColor = .cardBackground
+//        return view
+//    }()
+
+//    var textViewTopConstraint = NSLayoutConstraint()
     
     /// Activate or deactivate this constraint to make text view have no height (5px actually),
     /// for instance, if the text is empty
-    var textViewZeroHeightConstraint = NSLayoutConstraint()
+//    var textViewZeroHeightConstraint = NSLayoutConstraint()
 
     var textViewTopInset: CGFloat {
         if self.displayHeader {
@@ -75,13 +110,14 @@ class PostCellView: KeyValueView {
 
     var truncationLimit: TruncationSettings? {
         didSet {
-            if let oldValue = oldValue, let newValue = truncationLimit, newValue.to == oldValue.to, newValue.over == oldValue.over {
+//            if let oldValue = oldValue, let newValue = truncationLimit, newValue.to == oldValue.to, newValue.over == oldValue.over {
                 // Don't recalculate truncated state
-                return
-            } else {
-                self.truncationData = nil
-                self.configureTruncatedState()
-            }
+//                return
+//            } else {
+//                self.truncationData = nil
+//                self.configureTruncatedState()
+//            }
+            textView.numberOfLines = 0 // truncationLimit?.to ?? 0
         }
     }
 
@@ -101,36 +137,39 @@ class PostCellView: KeyValueView {
     }
 
     private func updateFullPostText() {
-        guard self.textIsExpanded else { return }
-        guard let keyValue = self.keyValue, keyValue.value.content.isPost else { return }
-        let string = Caches.text.from(keyValue).mutable()
-        self.fullPostText = string
+//        guard self.textIsExpanded else { return }
+//        guard let keyValue = self.keyValue, keyValue.value.content.isPost else { return }
+//        let string = Caches.text.from(keyValue).mutable()
     }
 
     func configureTruncatedState() {
-        self.calculateTruncationDataIfNecessary()
-        self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
+//        self.calculateTruncationDataIfNecessary()
+        self.textView.attributedText = self.fullPostText
         
         // not so clean but it gest likes displaying.
-        if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == ContentType.vote {
+        if self.textView.attributedText?.string.isSingleEmoji == true && self.keyValue?.value.content.type == ContentType.vote {
             self.textView.font = UIFont.post.body.withSize(16)
             self.textView.textAlignment = .natural
-        } else if self.textView.attributedText.string.isSingleEmoji,
-             let post = self.keyValue?.value.content.post,
-              !post.hasBlobs {
-              self.textView.font = UIFont.post.body.withSize(100)
-              self.textView.textAlignment = .center
-          } else {
-              self.textView.textAlignment = .natural
+        } else if self.textView.attributedText?.string.isSingleEmoji == true,
+            let post = self.keyValue?.value.content.post,
+            !post.hasBlobs {
+            self.textView.font = UIFont.post.body.withSize(100)
+            self.textView.textAlignment = .center
+        } else {
+            self.textView.textAlignment = .natural
         }
         
-        self.textViewZeroHeightConstraint.isActive = self.textView.attributedText.string.isEmpty
+        textView.isHidden = textView.attributedText?.string.isEmpty ?? true
+//        self.textViewZeroHeightConstraint.isActive = self.textView.attributedText.string.isEmpty
+        textView.setNeedsLayout()
+        textView.layoutIfNeeded()
     }
 
     /// Calculates the truncation data, but only when necessary.  In some cases, an optimized
     /// answer can be used because `NSAttributedString.truncating()` is very
     /// expensive, especially during scrolling.
     func calculateTruncationDataIfNecessary() {
+        return
 
         // skip calculation if not necessary
         guard let limit = self.truncationLimit else { return }
@@ -165,9 +204,9 @@ class PostCellView: KeyValueView {
     // inside of it, and this value was chosen to allow for a specific
     // distance between the content top and the northern text view
     private let galleryView = GalleryView()
-    private var galleryViewZeroHeightConstraint: NSLayoutConstraint!
-    private var galleryViewFullHeightConstraint: NSLayoutConstraint!
-    private var galleryViewBottomConstraint: NSLayoutConstraint?
+//    private var galleryViewZeroHeightConstraint: NSLayoutConstraint!
+//    private var galleryViewFullHeightConstraint: NSLayoutConstraint!
+//    private var galleryViewBottomConstraint: NSLayoutConstraint?
 
     // MARK: Lifecycle
 
@@ -176,35 +215,54 @@ class PostCellView: KeyValueView {
         self.useAutoLayout()
         
         self.backgroundColor = .cardBackground
-
-        Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
-
-        let (top, _, _) = Layout.fillTop(of: self,
-                                         with: self.textView,
-                                         insets: UIEdgeInsets(top: self.textViewTopInset, left: Layout.postSideMargins, bottom: 0, right: -Layout.postSideMargins),
-                                         respectSafeArea: false)
-        self.textViewTopConstraint = top
         
-        self.textViewZeroHeightConstraint = NSLayoutConstraint(item: self.textView,
-                                                               attribute: .height,
-                                                               relatedBy: .equal,
-                                                               toItem: nil,
-                                                               attribute: .notAnAttribute,
-                                                               multiplier: 1,
-                                                               constant: 5)
-        self.textViewZeroHeightConstraint.isActive = false
+        Layout.fill(
+            view: self,
+            with: contentStackView,
+            respectSafeArea: false
+        )
+        contentStackView.addArrangedSubview(headerContainer)
+        contentStackView.addArrangedSubview(textViewContainer)
+        contentStackView.addArrangedSubview(galleryView)
+//
+        galleryView.constrainWidth(to: self)
+//        galleryView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+        galleryView.heightAnchor.constraint(equalTo: galleryView.widthAnchor).isActive = true
 
-        self.addSubview(self.galleryView)
-        self.galleryView.pinTop(toBottomOf: self.textView, constant: 5)
-        self.galleryView.pinLeftToSuperview()
-        self.galleryView.constrainWidth(to: self)
-        galleryView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        galleryViewBottomConstraint = galleryView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        galleryViewBottomConstraint?.isActive = true
+//        Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
 
-        self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
-        self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
-        self.galleryViewZeroHeightConstraint.isActive = true
+//        let (top, _, _) = Layout.fillTop(
+//            of: self,
+//            with: self.textView,
+//            insets: UIEdgeInsets(
+//                top: 0,
+//                left: Layout.postSideMargins,
+//                bottom: 0,
+//                right: Layout.postSideMargins
+//            ),
+//            respectSafeArea: false
+//        )
+//        self.textViewTopConstraint = top
+//
+//        self.textViewZeroHeightConstraint = NSLayoutConstraint(item: self.textView,
+//                                                               attribute: .height,
+//                                                               relatedBy: .equal,
+//                                                               toItem: nil,
+//                                                               attribute: .notAnAttribute,
+//                                                               multiplier: 1,
+//                                                               constant: 5)
+//        self.textViewZeroHeightConstraint.isActive = false
+
+//        self.addSubview(self.galleryView)
+//        self.galleryView.pinTop(toBottomOf: self.textView, constant: 5)
+//        self.galleryView.pinLeftToSuperview()
+//        self.galleryView.constrainWidth(to: self)
+//        galleryViewBottomConstraint = galleryView.bottomAnchor.constraint(equalTo: bottomAnchor)
+//        galleryViewBottomConstraint?.isActive = true
+
+//        self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
+//        self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
+//        self.galleryViewZeroHeightConstraint.isActive = true
     }
 
     convenience init(keyValue: KeyValue) {
@@ -241,24 +299,36 @@ class PostCellView: KeyValueView {
             self.textView.text = expression
             self.configureTruncatedState()
             
-            self.galleryViewFullHeightConstraint.isActive = false
-            self.galleryViewZeroHeightConstraint.isActive = true
-            self.galleryViewBottomConstraint?.constant = 0
+            contentStackView.removeArrangedSubview(galleryView)
+            galleryView.isHidden = true
+//            self.galleryViewFullHeightConstraint.isActive = false
+//            self.galleryViewZeroHeightConstraint.isActive = true
+//            self.galleryViewBottomConstraint?.constant = 0
         } else if let post = keyValue.value.content.post {
-            let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
+//            let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
+            let text = Caches.text.from(keyValue)
             
             self.fullPostText = text
             self.configureTruncatedState()
 
-            self.galleryViewFullHeightConstraint.isActive = post.hasBlobs
-            self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
-            self.galleryViewBottomConstraint?.constant = (post.hasBlobs && self.allowSpaceUnderGallery) ? -Layout.verticalSpacing : 0
-            self.galleryView.update(with: post)
+//            self.galleryViewFullHeightConstraint.isActive = post.hasBlobs
+//            self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
+            if post.hasBlobs {
+                contentStackView.addArrangedSubview(galleryView)
+                galleryView.isHidden = false
+                self.galleryView.update(with: post)
+            } else {
+                contentStackView.removeArrangedSubview(galleryView)
+                galleryView.isHidden = true
+            }
+//            self.galleryViewBottomConstraint?.constant = (post.hasBlobs && self.allowSpaceUnderGallery) ? -Layout.verticalSpacing : 0
         } else {
             return
         }
 
         // always do this in case of constraint changes
+        textView.invalidateIntrinsicContentSize()
+        contentStackView.invalidateIntrinsicContentSize()
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }

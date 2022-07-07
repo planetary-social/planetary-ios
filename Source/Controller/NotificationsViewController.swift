@@ -285,9 +285,11 @@ private class HeaderView: UITableViewHeaderFooterView {
         self.contentView.backgroundColor = .cardBackground
         self.useAutoLayout()
         Layout.addSeparator(toTopOf: self.contentView)
-        Layout.fill(view: self.contentView,
-                    with: self.label,
-                    insets: UIEdgeInsets(top: 1, left: 18, bottom: 1, right: -18))
+        Layout.fill(
+            view: self.contentView,
+            with: self.label,
+            insets: UIEdgeInsets(top: 1, left: 18, bottom: -1, right: 18)
+        )
         Layout.addSeparator(toBottomOf: self.contentView)
     }
 

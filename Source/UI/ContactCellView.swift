@@ -58,7 +58,7 @@ class ContactCellView: KeyValueView {
                 top: self.textViewTopInset,
                 left: Layout.postSideMargins,
                 bottom: 0,
-                right: -Layout.postSideMargins
+                right: Layout.postSideMargins
             ),
             respectSafeArea: false
         )
