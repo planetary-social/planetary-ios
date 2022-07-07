@@ -82,7 +82,7 @@ class WelcomeServiceAdapter: WelcomeService {
     }
     
     private func fakeMessageID(from string: String) -> MessageIdentifier {
-        "%\(String(describing: Data(base64Encoded: string.sha256hash)))=.sha256"
+        return Data(string.sha256hash.utf8).base64EncodedString()
     }
     
     private func isNewOrDormantUser(_ user: FeedIdentifier, db: ViewDatabase) throws -> Bool {
@@ -108,7 +108,7 @@ class WelcomeServiceAdapter: WelcomeService {
                     from: About(
                         about: welcomeFeedID,
                         name: Text.Onboarding.welcomeBotName.text,
-                        description: nil,
+                        description: Text.Onboarding.welcomeBotBio.text,
                         imageLink: "&XD6l9T+dbtFqlZDbqFHf5Nixo8V7lE8VseArbpZbBwU=.sha256",
                         publicWebHosting: false
                     )
@@ -157,7 +157,7 @@ class WelcomeServiceAdapter: WelcomeService {
                         blobs: [
                             Blob(identifier: "&byA+y+gkCxLzF3vK3wW+R/gLtsVip+ctE3xGAMDjTe8=.sha256"),
                             Blob(identifier: "&hH+8apK7YrPInrrefyojVwSB7T4Erp82rjE4SNhbl1k=.sha256"),
-                            Blob(identifier: "&QtZae55Hrc+wC9i0y7AbjCWexR6IL/xCGybgeZ3U088=.sha256"),
+                            Blob(identifier: "&hZHFLmckfJGG2+hRhIuNWSdEodSs2G+v1VjNaWE/fn0=.sha256"),
                             Blob(identifier: "&nmqgPl0O9J/UzKd1iPERLtwomWho8Q0l5/z6kA7iBZE=.sha256"),
                             Blob(identifier: "&u/3vkSrP5I6Exj3TD1/Ngg4ldhV+YbpzoI4iNIjKKz8=.sha256")
                         ],
