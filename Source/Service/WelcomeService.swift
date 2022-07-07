@@ -82,7 +82,7 @@ class WelcomeServiceAdapter: WelcomeService {
     }
     
     private func fakeMessageID(from string: String) -> MessageIdentifier {
-        return Data(string.sha256hash.utf8).base64EncodedString()
+        Data(string.sha256hash.utf8).base64EncodedString()
     }
     
     private func isNewOrDormantUser(_ user: FeedIdentifier, db: ViewDatabase) throws -> Bool {
