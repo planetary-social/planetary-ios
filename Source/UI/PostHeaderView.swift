@@ -78,8 +78,8 @@ class PostHeaderView: UIView {
         self.addSubview(self.identiferLabel)
         self.identiferLabel.pinTop(toBottomOf: self.nameButton)
         self.identiferLabel.constrainLeading(to: self.nameButton)
-        self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton)
-
+        self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton, constant: 8)
+        
         self.nameButton.constrainHeight(to: 19)
         //self.dateLabel.constrainHeight(to: 19)
         self.identiferLabel.constrainHeight(to: 19)
@@ -105,7 +105,8 @@ class PostHeaderView: UIView {
         self.identityButton.setImage(for: about)
 
         //self.dateLabel.text = keyValue.timestampString
-        self.identiferLabel.text = keyValue.metadata.author.about?.identity
+        let shortcode = identity.prefix (8)
+        self.identiferLabel.text = String(shortcode) + "..."
 
         if let me = Bots.current.identity {
             let button: UIButton
