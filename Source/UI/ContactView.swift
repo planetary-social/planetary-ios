@@ -69,7 +69,7 @@ class ContactView: KeyValueView {
         let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
         stackView.alignment = .leading
-        stackView.spacing = 10
+        stackView.spacing = 8
         stackView.isSkeletonable = true
         return stackView
     }()
@@ -78,9 +78,15 @@ class ContactView: KeyValueView {
         let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
         stackView.alignment = .leading
-        stackView.spacing = 6
+        stackView.spacing = 5
         stackView.isSkeletonable = true
         return stackView
+    }()
+    
+    let followButtonContainer: UIView = {
+        let view = UIView()
+        view.isSkeletonable = true
+        return view
     }()
 
     let followButton: FollowButton = {
@@ -92,29 +98,28 @@ class ContactView: KeyValueView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = .cardBackground
+        self.backgroundColor = .clear
+        
+        addSubview(labelStackView)
 
-        let targetHeight: CGFloat = 120
-        let verticalMargin = floor((targetHeight - Layout.contactAvatarSize) / 2)
-
-        Layout.fillLeft(
+        Layout.fillTopLeft(
             of: self,
             with: self.imageView,
-            insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: -verticalMargin, right: 0),
             respectSafeArea: false
         )
         
         nameAndIdentityStackView.addArrangedSubview(nameLabel)
         nameAndIdentityStackView.addArrangedSubview(contactIdentity)
 
-        addSubview(labelStackView)
         labelStackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
         labelStackView.constrainTrailingToSuperview()
-        labelStackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+        labelStackView.pinTopToSuperview()
+        labelStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Layout.verticalSpacing).isActive = true
         labelStackView.addArrangedSubview(nameAndIdentityStackView)
         labelStackView.addArrangedSubview(followerCountLabel)
         labelStackView.addArrangedSubview(hashtagsLabel)
-        labelStackView.addArrangedSubview(followButton)
+        Layout.fill(view: followButtonContainer, with: followButton, insets: UIEdgeInsets(top: 2, left: 0, bottom: 0, right: 2), respectSafeArea: false)
+        labelStackView.addArrangedSubview(followButtonContainer)
 
         hashtagsLabel.delegate = self
 

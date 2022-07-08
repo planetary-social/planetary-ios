@@ -30,7 +30,7 @@ struct VerseFonts {
 
     let pillButton = UIFont.systemFont(ofSize: 14, weight: .medium)
 
-    let contactName = UIFont.systemFont(ofSize: 15, weight: .semibold)
+    let contactName = UIFont.systemFont(ofSize: 17, weight: .semibold)
     let contactFollowerCount = UIFont.systemFont(ofSize: 14, weight: .regular)
     let contactHashtags = UIFont.systemFont(ofSize: 14, weight: .regular)
     let contactIdentity = UIFont.systemFont(ofSize: 14, weight: .regular)
