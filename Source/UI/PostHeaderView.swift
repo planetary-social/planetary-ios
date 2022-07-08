@@ -42,12 +42,18 @@ class PostHeaderView: UIView {
         return label
     }()
     
-    private let identiferLabel: UILabel = {
+    private let identifierLabel: UILabel = {
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         label.numberOfLines = 1
         label.textColor = UIColor.text.detail
         return label
+    }()
+    
+    private let labelStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
     }()
 
     convenience init(with keyValue: KeyValue) {
@@ -67,27 +73,31 @@ class PostHeaderView: UIView {
         Layout.fillRight(of: self, with: self.rightButtonContainer, respectSafeArea: false)
         self.rightButtonContainer.widthAnchor.constraint(lessThanOrEqualToConstant: Layout.profileThumbSize).isActive = true
 
-        self.addSubview(self.nameButton)
-        self.nameButton.pinTopToSuperview()
-        self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
-        self.nameButton.constrainTrailing(toLeadingOf: self.rightButtonContainer, constant: -6)
+        addSubview(labelStackView)
+        labelStackView.pinTopToSuperview()
+        labelStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        labelStackView.constrainHeight(to: identityButton)
+        labelStackView.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
+        labelStackView.constrainTrailing(toLeadingOf: self.rightButtonContainer, constant: -6)
+        labelStackView.addArrangedSubview(nameButton)
+        
+        labelStackView.addArrangedSubview(self.nameButton)
 
         if showTimestamp {
-            self.addSubview(self.dateLabel)
+            labelStackView.addArrangedSubview(dateLabel)
             self.dateLabel.pinTop(toBottomOf: self.nameButton)
             self.dateLabel.constrainLeading(to: self.nameButton)
             self.dateLabel.constrainTrailing(toTrailingOf: self.nameButton)
         } else {
-            self.addSubview(self.identiferLabel)
-            self.identiferLabel.pinTop(toBottomOf: self.nameButton)
-            self.identiferLabel.constrainLeading(to: self.nameButton)
-            self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton, constant: 8)
+            labelStackView.addArrangedSubview(identifierLabel)
+            self.identifierLabel.pinTop(toBottomOf: self.nameButton)
+            self.identifierLabel.constrainLeading(to: self.nameButton)
+            self.identifierLabel.constrainTrailing(toTrailingOf: self.nameButton, constant: 8)
         }
         
         self.nameButton.constrainHeight(to: 19)
-        //self.dateLabel.constrainHeight(to: 19)
-        self.identiferLabel.constrainHeight(to: 19)
-        
+        self.dateLabel.constrainHeight(to: 19)
+        self.identifierLabel.constrainHeight(to: 19)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -104,11 +114,16 @@ class PostHeaderView: UIView {
         self.identity = identity
 
         let about = keyValue.metadata.author.about
-        let name = about?.nameOrIdentity ?? keyValue.value.author
+        let name = about?.name ?? keyValue.value.author
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
         self.dateLabel.text = keyValue.timestampString
-        self.identiferLabel.text = String(identity.prefix(7))
+        if name != keyValue.value.author {
+            identifierLabel.text = String(identity.prefix(7))
+            identifierLabel.isHidden = false
+        } else {
+            identifierLabel.isHidden = true
+        }
 
         if let me = Bots.current.identity {
             let button: UIButton
