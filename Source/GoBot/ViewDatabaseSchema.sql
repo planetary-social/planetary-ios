@@ -1,3 +1,6 @@
+-- version 1.14
+-- added a few indexes
+
 -- version 1.13
 -- overhaul address table for dialing
 
@@ -145,6 +148,16 @@ CREATE INDEX msgs_claimed ON messages ( claimed_at );
 
 CREATE INDEX msgs_decrypted on messages (is_decrypted);
 
+-- indexes for new feed algorithim options
+CREATE INDEX messages_idx_type_claimed_at ON messages(type, claimed_at);
+CREATE INDEX messages_idx_author_received ON messages(author_id, received_at DESC);
+CREATE INDEX messages_idx_author_type_sequence ON messages(author_id, type, sequence DESC);
+CREATE INDEX messages_idx_is_decrypted_hidden_claimed_at ON messages(is_decrypted, hidden, claimed_at);
+CREATE INDEX messages_idx_type_is_decrypted_hidden_author ON messages(type, is_decrypted, hidden, author_id);
+CREATE INDEX messages_idx_type_is_decrypted_hidden_claimed_at ON messages(type, is_decrypted, hidden, claimed_at);
+CREATE INDEX messages_idx_is_decrypted_hidden_author_claimed_at ON messages(is_decrypted, hidden, author_id, claimed_at);
+
+
 -- quick profile listing
 CREATE INDEX helper_profile on messages (is_decrypted, type, author_id, claimed_at);
 
@@ -177,6 +190,7 @@ FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
 CREATE INDEX posts_msgrefs on posts (msg_ref);
 CREATE INDEX posts_roots on posts (is_root);
+CREATE INDEX posts_root_mesgrefs ON posts(is_root, msg_ref);
 
 -- reply trees aka tangles
 -- a message in a thread (or hopefully soon gatherings) references the first message (root)
@@ -203,6 +217,7 @@ CREATE TABLE tangles (
 CREATE INDEX tangle_roots on tangles (root);
 CREATE INDEX tangle_msgref on tangles (msg_ref);
 CREATE INDEX tangle_id on tangles (id);
+CREATE INDEX tangles_roots_and_msg_refs ON tangles(root, msg_ref);
 
 CREATE TABLE branches (
     tangle_id       integer not null,
@@ -222,6 +237,7 @@ FOREIGN KEY ( feed_id ) REFERENCES authors( "id" )
 );
 CREATE INDEX mention_feed_refs on mention_feed (msg_ref);
 CREATE INDEX mention_feed_author on mention_feed (feed_id);
+CREATE INDEX mention_feed_author_refs on mention_feed (feed_id, msg_ref);
 
 -- posts can mention other messages (backlinks)
 CREATE TABLE mention_message (
@@ -300,6 +316,8 @@ FOREIGN KEY ( contact_id ) REFERENCES authors( "id" )
 
 CREATE INDEX contacts_state ON contacts (contact_id, state);
 CREATE INDEX contacts_state_with_author ON contacts (author_id, contact_id, state);
+CREATE INDEX contacts_msg_ref ON contacts(msg_ref);
+CREATE INDEX contacts_state_and_author ON contacts(state, author_id);
 
 -- private recps
 -- TODO: until we have changing groups, it would be enough to save these for the first message
@@ -325,6 +343,9 @@ CREATE TABLE channel_assignments (
     FOREIGN KEY ( chan_ref ) REFERENCES channels( "id" )
 );
 
+CREATE INDEX channel_assignments_msg_refs ON channel_assignments(msg_ref);
+CREATE INDEX channel_assignments_chan_ref_and_msg_ref ON channel_assignments(chan_ref, msg_ref);
+
 CREATE TABLE reports (
     msg_ref integer not null,
     author_id integer not null,
@@ -334,6 +355,10 @@ CREATE TABLE reports (
     FOREIGN KEY ( author_id ) REFERENCES authors( "id" )
 );
 
+CREATE INDEX reports_author_created_at ON reports(author_id, created_at DESC);
+CREATE INDEX reports_msg_ref ON reports(msg_ref);
+CREATE INDEX reports_msg_ref_author ON reports(msg_ref, author_id;
+
 CREATE TABLE pubs (
     msg_ref integer not null,
     host text not null,
@@ -341,3 +366,5 @@ CREATE TABLE pubs (
     key text not null,
     FOREIGN KEY ( msg_ref ) REFERENCES messages( "msg_id" )
 );
+
+CREATE INDEX pubs_index ON pubs(msg_ref);
