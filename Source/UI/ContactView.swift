@@ -13,13 +13,13 @@ import SkeletonView
 class ContactView: KeyValueView {
 
     let imageView: AvatarImageView = {
-        let view = AvatarImageView()
+        let view = AvatarImageView(borderColor: .primaryAction, borderWidth: 2)
         view.constrainSize(to: Layout.contactAvatarSize)
         view.isSkeletonable = true
         return view
     }()
 
-    let label: UILabel = {
+    let nameLabel: UILabel = {
         let label = UILabel.forAutoLayout()
         label.lineBreakMode = .byCharWrapping
         label.numberOfLines = 1
@@ -36,6 +36,7 @@ class ContactView: KeyValueView {
         label.numberOfLines = 1
         label.font = UIFont.verse.contactIdentity
         label.lineBreakMode = .byTruncatingTail
+        label.textColor = UIColor.text.detail
         label.linesCornerRadius = 7
         label.isSkeletonable = true
         return label
@@ -64,19 +65,26 @@ class ContactView: KeyValueView {
         return label
     }()
 
-    let stackView: UIStackView = {
+    let labelStackView: UIStackView = {
         let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
         stackView.alignment = .leading
-        stackView.spacing = 5
+        stackView.spacing = 10
+        stackView.isSkeletonable = true
+        return stackView
+    }()
+    
+    let nameAndIdentityStackView: UIStackView = {
+        let stackView = UIStackView.forAutoLayout()
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.spacing = 6
         stackView.isSkeletonable = true
         return stackView
     }()
 
     let followButton: FollowButton = {
         let followButton = FollowButton()
-        followButton.height = 22
-        followButton.fontSize = 12
         followButton.isSkeletonable = true
         return followButton
     }()
@@ -95,16 +103,18 @@ class ContactView: KeyValueView {
             insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: -verticalMargin, right: 0),
             respectSafeArea: false
         )
+        
+        nameAndIdentityStackView.addArrangedSubview(nameLabel)
+        nameAndIdentityStackView.addArrangedSubview(contactIdentity)
 
-        addSubview(stackView)
-        stackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
-        stackView.constrainTrailingToSuperview()
-        stackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
-        stackView.addArrangedSubview(label)
-        stackView.addArrangedSubview(contactIdentity)
-        stackView.addArrangedSubview(followerCountLabel)
-        stackView.addArrangedSubview(hashtagsLabel)
-        stackView.addArrangedSubview(followButton)
+        addSubview(labelStackView)
+        labelStackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
+        labelStackView.constrainTrailingToSuperview()
+        labelStackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+        labelStackView.addArrangedSubview(nameAndIdentityStackView)
+        labelStackView.addArrangedSubview(followerCountLabel)
+        labelStackView.addArrangedSubview(hashtagsLabel)
+        labelStackView.addArrangedSubview(followButton)
 
         hashtagsLabel.delegate = self
 
@@ -123,24 +133,24 @@ class ContactView: KeyValueView {
         super.reset()
         update(with: Identity.null, about: nil)
         update(socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0))
-        label.text = "placeholder name"
+        nameLabel.text = "placeholder name"
         hashtagsLabel.text = "placeholder #hashtag #hashtag #hashtag"
         contactIdentity.text = "@abc123abc123"
         hashtagsLabel.layer.cornerRadius = 7 // hack because SkeletonView won't round the corners for some reason
-        stackView.arrangedSubviews.forEach { $0.isHidden = false }
+        labelStackView.arrangedSubviews.forEach { $0.isHidden = false }
         showAnimatedSkeleton()
     }
     
     func update(with identity: Identity, about: About?) {
         if let about = about {
-            self.label.text = about.nameOrIdentity
+            self.nameLabel.text = about.nameOrIdentity
             self.imageView.set(image: about.image)
-            self.contactIdentity.text = String(about.identity.prefix(18)) + "..."
-            label.hideSkeleton()
+            self.contactIdentity.text = String(about.identity.prefix(7))
+            nameLabel.hideSkeleton()
             contactIdentity.hideSkeleton()
             imageView.hideSkeleton()
         } else {
-            self.label.text = identity
+            self.nameLabel.text = identity
             self.imageView.set(image: nil)
         }
         if identity == Identity.null {
@@ -161,7 +171,7 @@ class ContactView: KeyValueView {
     func update(socialStats: SocialStats) {
         let numberOfFollowers = socialStats.numberOfFollowers
         let numberOfFollows = socialStats.numberOfFollows
-        let string = "Following numberOfFollows • Followed by numberOfFollowers"
+        let string = Text.followStats.text
 
         let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
         let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
@@ -169,7 +179,7 @@ class ContactView: KeyValueView {
         let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
         attributedString.replaceCharacters(
             // swiftlint:disable legacy_objc_type
-            in: (attributedString.string as NSString).range(of: "numberOfFollows"),
+            in: (attributedString.string as NSString).range(of: "{{numberOfFollows}}"),
             // swiftlint:enable legacy_objc_type
             with: NSAttributedString(
                 string: "\(numberOfFollows)",
@@ -178,7 +188,7 @@ class ContactView: KeyValueView {
         )
         attributedString.replaceCharacters(
             // swiftlint:disable legacy_objc_type
-            in: (attributedString.string as NSString).range(of: "numberOfFollowers"),
+            in: (attributedString.string as NSString).range(of: "{{numberOfFollowers}}"),
             // swiftlint:enable legacy_objc_type
             with: NSAttributedString(
                 string: "\(numberOfFollowers)",

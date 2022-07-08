@@ -49,8 +49,8 @@ class ContactHeaderView: UIView {
 
         self.addSubview(self.nameButton)
         self.nameButton.pinTopToSuperview()
-        self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
-        self.nameButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor).isActive = true
+        self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: 10)
+        self.nameButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 
         self.nameButton.constrainHeight(to: 19)
 
