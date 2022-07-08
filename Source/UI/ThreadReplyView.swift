@@ -10,8 +10,8 @@ import UIKit
 
 class ThreadReplyView: PostCellView {
 
-    override init() {
-        super.init()
+    init() {
+        super.init(showTimestamp: true)
         self.truncationLimit = (over: 12, to: 8)
         Layout.addSeparator(toBottomOf: self)
     }

@@ -54,8 +54,10 @@ class PostHeaderView: UIView {
         self.init()
         update(with: keyValue)
     }
-
-    init() {
+    
+    /// Initializes the view with the given parameters.
+    /// - Parameter showTimestamp: Will show the claimed post time if true, author id if false.
+    init(showTimestamp: Bool = false) {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
 
@@ -70,15 +72,17 @@ class PostHeaderView: UIView {
         self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
         self.nameButton.constrainTrailing(toLeadingOf: self.rightButtonContainer, constant: -6)
 
-        //self.addSubview(self.dateLabel)
-        //self.dateLabel.pinTop(toBottomOf: self.nameButton)
-        //self.dateLabel.constrainLeading(to: self.nameButton)
-        //self.dateLabel.constrainTrailing(toTrailingOf: self.nameButton)
-        
-        self.addSubview(self.identiferLabel)
-        self.identiferLabel.pinTop(toBottomOf: self.nameButton)
-        self.identiferLabel.constrainLeading(to: self.nameButton)
-        self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton, constant: 8)
+        if showTimestamp {
+            self.addSubview(self.dateLabel)
+            self.dateLabel.pinTop(toBottomOf: self.nameButton)
+            self.dateLabel.constrainLeading(to: self.nameButton)
+            self.dateLabel.constrainTrailing(toTrailingOf: self.nameButton)
+        } else {
+            self.addSubview(self.identiferLabel)
+            self.identiferLabel.pinTop(toBottomOf: self.nameButton)
+            self.identiferLabel.constrainLeading(to: self.nameButton)
+            self.identiferLabel.constrainTrailing(toTrailingOf: self.nameButton, constant: 8)
+        }
         
         self.nameButton.constrainHeight(to: 19)
         //self.dateLabel.constrainHeight(to: 19)
@@ -103,10 +107,8 @@ class PostHeaderView: UIView {
         let name = about?.nameOrIdentity ?? keyValue.value.author
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
-
-        //self.dateLabel.text = keyValue.timestampString
-        let shortcode = identity.prefix (8)
-        self.identiferLabel.text = String(shortcode) + "..."
+        self.dateLabel.text = keyValue.timestampString
+        self.identiferLabel.text = String(identity.prefix(7))
 
         if let me = Bots.current.identity {
             let button: UIButton
