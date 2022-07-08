@@ -85,12 +85,14 @@ class ContactHeaderView: UIView {
         let string = Text.startedFollowing.text(["somebody": name])
         let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
         let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
+        let secondaryBold = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .regular)]
         let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
         // swiftlint:disable legacy_objc_type
         let range = (string as NSString).range(of: name)
         // swiftlint:enable legacy_objc_type
         attributedString.addAttributes(primaryColor, range: range)
-
+        attributedString.addAttributes(secondaryBold, range: range)
+        
         self.nameButton.setAttributedTitle(attributedString, for: .normal)
         if let about = about {
             self.identityButton.setImage(for: about)
