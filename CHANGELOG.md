@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.3] 2022-07-11
 
 - Added new tab bar icons. #691
+- Replace timestamp / posted x days ago with posters identity in home feed. #660 
 - Fix some pub names and images not updating #540
 - Tweaked design of the follow message cells. #699
 
