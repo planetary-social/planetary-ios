@@ -1,7 +1,7 @@
 // This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
-"Text.error" = "Ojejku";
+"Text.error" = "Ups";
 "Text.cancel" = "Anuluj";
 "Text.skip" = "Pomiń";
 "Text.ok" = "OK";
@@ -10,26 +10,26 @@
 "Text.save" = "Zapisz";
 "Text.yes" = "Tak";
 "Text.no" = "Nie";
-"Text.tryAgain" = "Ponów";
-"Text.loading" = "Ładowanie...";
+"Text.tryAgain" = "Spróbuj ponownie";
+"Text.loading" = "Wczytywanie...";
 "Text.today" = "Dzisiaj";
 "Text.yesterday" = "Wczoraj";
 "Text.recently" = "Ostatnio";
 "Text.future" = "W przyszłości";
 "Text.daysAgo" = "{{ days }} dni temu";
 "Text.atDayTime" = "{{ day }} o {{ time }}";
-"Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
-"Text.yourProfile" = "Twój Profil";
+"Text.minutesAbbreviated" = "{{ numberOfMinutes }} min";
+"Text.yourProfile" = "Twój profil";
 "Text.helpAndSupport" = "Pomoc";
-"Text.reportBug" = "Zgłoś Problem";
+"Text.reportBug" = "Zgłoś problem";
 "Text.settings" = "Ustawienia";
 "Text.yourNetwork" = "Twoja Sieć";
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
-"Text.startedFollowing" = "{{somebody}} started following";
-"Text.stoppedFollowing" = "{{somebody}} stopped following";
+"Text.startedFollowing" = "{{somebody}} obserwuje Cię";
+"Text.stoppedFollowing" = "{{somebody}} przestaje Cię obserwować";
 "Text.showMeInDirectory" = "Pokaż mnie w katalogu";
 "Text.showMeInUserDirectory" = "Pokaż mnie w katalogu użytkowników";
 "Text.hideMeFromUserDirectory" = "Nie pokazuj mnie w katalogu użytkowników";
