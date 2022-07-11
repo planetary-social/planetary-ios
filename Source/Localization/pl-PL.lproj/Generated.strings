@@ -160,15 +160,15 @@
 "Offboarding.resetConfirmTitle" = "Uwaga";
 "Offboarding.resetConfirmMessage" = "Czy na pewno chcesz usunąć swoją tożsamość z tego urządzenia? Utracisz ten profil oraz wszelkie powiązane treści. Nie można tego cofnąć.";
 "Offboarding.resetConfirmAgainTitle" = "Na pewno?";
-"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetConfirmAgainMessage" = "Czy masz absolutną pewność, że chcesz usunąć swoją tożsamość z tego urządzenia? Utracisz ten profil oraz wszelkie powiązane treści. Nie można tego cofnąć.";
 "Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "Nie mogliśmy połączyć się z katalogiem, aby usunąć Twój profil. Proszę spróbuj ponownie.";
 "Offboarding.resetBotErrorTryAgain" = "Stało się coś nieoczekiwanego, ale nie martw się, zostaliśmy o tym powiadomieni i spróbujemy to naprawić. Proszę spróbuj ponownie.";
 
 "Onboarding.getStartedButton" = "Zacznijmy";
 "Onboarding.photoButtonAdd" = "Dodaj zdjęcie";
-"Onboarding.doItLater" = "I'll do it later";
-"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
+"Onboarding.doItLater" = "Zrobię to później";
+"Onboarding.useRealName" = "Twoja nazwa będzie widoczna dla wszystkich, więc możesz użyć pseudonimu lub na razie pominąć ten krok.";
 "Onboarding.phoneNumber" = "Numer Telefonu";
 "Onboarding.phoneNumberConfirmationMessage" = "Używamy go do potwierdzenia Twojej tożsamości oraz alertów serwisowych.";
 "Onboarding.didntGetSMS" = "SMS nie dotarł?";
@@ -191,8 +191,8 @@
 "Onboarding.doneOnboarding" = "Uff! Udało się!";
 "Onboarding.earlyAccess" = "Aplikacja jest na wczesnym etapie rozwoju. Skupiliśmy się na podstawach, więc w interfejsie użytkownika są spore luki. Prosimy o wyrozumiałość!";
 "Onboarding.iUnderstand" = "Tak, rozumiem";
-"Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
-"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
+"Onboarding.followPlanetaryToggleTitle" = "Obserwuj Planetary";
+"Onboarding.followPlanetaryToggleDescription" = "Obserwuj konto Planetary, aby zobaczyć wpisy naszego zespołu.";
 "Onboarding.somethingWentWrong" = "O nie! Coś poszło nie tak!";
 "Onboarding.errorRetryMessage" = "To nie twoja wina, coś schrzaniliśmy. Możesz spróbować ponownie lub zacząć od nowa, albo zgłosić nam napotkany problem.";
 "Onboarding.resumeRetryMessage" = "To nie Twoja wina, coś schrzaniliśmy. W niektórych przypadkach może to oznaczać, że urządzenie nie może połączyć się z siecią. Ponowna próba w późnieszym czasie może to naprawić.";
@@ -206,7 +206,7 @@
 "Onboarding.termsOfService" = "Warunki Korzystania z Usług";
 "Onboarding.privacyPolicy" = "Polityka Prywatności";
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
-"Onboarding.welcomeBotName" = "Planetary Help";
+"Onboarding.welcomeBotName" = "Pomoc Planetary";
 
 "OnboardingStepTitle.backup" = "Utworzyliśmy Twoją tożsamość - czy chcesz kopie zapapasową?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
