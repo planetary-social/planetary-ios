@@ -32,6 +32,7 @@ class PostCellView: KeyValueView {
     }
 
     var allowSpaceUnderGallery = true
+    var showTimestamp: Bool
 
     var keyValue: KeyValue?
     
@@ -49,7 +50,7 @@ class PostCellView: KeyValueView {
         return view
     }()
     
-    private lazy var headerView = PostHeaderView()
+    private lazy var headerView = PostHeaderView(showTimestamp: showTimestamp)
     
     private lazy var textViewContainer: UIView = {
         let view = UIView.forAutoLayout()
@@ -210,7 +211,10 @@ class PostCellView: KeyValueView {
 
     // MARK: Lifecycle
 
-    init() {
+    /// Initializes the view with the given parameters.
+    /// - Parameter showTimestamp: Will show the claimed post time if true, author id if false.
+    init(showTimestamp: Bool = false) {
+        self.showTimestamp = showTimestamp
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
         

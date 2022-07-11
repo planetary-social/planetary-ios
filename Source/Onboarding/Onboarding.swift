@@ -150,10 +150,6 @@ class Onboarding {
             )
         }
         
-        if let goBot = context.bot as? GoBot {
-            WelcomeServiceAdapter().insertNewMessages(in: goBot.database)
-        }
-        
         // done
         Onboarding.didStart(configuration: configuration, secret: secret)
         return context

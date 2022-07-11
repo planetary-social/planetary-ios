@@ -13,18 +13,30 @@ import SkeletonView
 class ContactView: KeyValueView {
 
     let imageView: AvatarImageView = {
-        let view = AvatarImageView()
+        let view = AvatarImageView(borderColor: .primaryAction, borderWidth: 2)
         view.constrainSize(to: Layout.contactAvatarSize)
         view.isSkeletonable = true
         return view
     }()
 
-    let label: UILabel = {
+    let nameLabel: UILabel = {
         let label = UILabel.forAutoLayout()
         label.lineBreakMode = .byCharWrapping
         label.numberOfLines = 1
         label.font = UIFont.verse.contactName
         label.lineBreakMode = .byTruncatingTail
+        label.linesCornerRadius = 7
+        label.isSkeletonable = true
+        return label
+    }()
+    
+    let contactIdentity: UILabel = {
+        let label = UILabel.forAutoLayout()
+        label.lineBreakMode = .byCharWrapping
+        label.numberOfLines = 1
+        label.font = UIFont.verse.contactIdentity
+        label.lineBreakMode = .byTruncatingTail
+        label.textColor = UIColor.text.detail
         label.linesCornerRadius = 7
         label.isSkeletonable = true
         return label
@@ -53,7 +65,16 @@ class ContactView: KeyValueView {
         return label
     }()
 
-    let stackView: UIStackView = {
+    let labelStackView: UIStackView = {
+        let stackView = UIStackView.forAutoLayout()
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.spacing = 8
+        stackView.isSkeletonable = true
+        return stackView
+    }()
+    
+    let nameAndIdentityStackView: UIStackView = {
         let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
         stackView.alignment = .leading
@@ -61,11 +82,15 @@ class ContactView: KeyValueView {
         stackView.isSkeletonable = true
         return stackView
     }()
+    
+    let followButtonContainer: UIView = {
+        let view = UIView()
+        view.isSkeletonable = true
+        return view
+    }()
 
     let followButton: FollowButton = {
         let followButton = FollowButton()
-        followButton.height = 22
-        followButton.fontSize = 12
         followButton.isSkeletonable = true
         return followButton
     }()
@@ -73,26 +98,28 @@ class ContactView: KeyValueView {
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-        self.backgroundColor = .cardBackground
+        self.backgroundColor = .clear
+        
+        addSubview(labelStackView)
 
-        let targetHeight: CGFloat = 120
-        let verticalMargin = floor((targetHeight - Layout.contactAvatarSize) / 2)
-
-        Layout.fillLeft(
+        Layout.fillTopLeft(
             of: self,
             with: self.imageView,
-            insets: UIEdgeInsets(top: verticalMargin, left: 0, bottom: verticalMargin, right: 0),
             respectSafeArea: false
         )
+        
+        nameAndIdentityStackView.addArrangedSubview(nameLabel)
+        nameAndIdentityStackView.addArrangedSubview(contactIdentity)
 
-        addSubview(stackView)
-        stackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
-        stackView.constrainTrailingToSuperview()
-        stackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
-        stackView.addArrangedSubview(label)
-        stackView.addArrangedSubview(followerCountLabel)
-        stackView.addArrangedSubview(followButton)
-        stackView.addArrangedSubview(hashtagsLabel)
+        labelStackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
+        labelStackView.constrainTrailingToSuperview()
+        labelStackView.pinTopToSuperview()
+        labelStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Layout.verticalSpacing).isActive = true
+        labelStackView.addArrangedSubview(nameAndIdentityStackView)
+        labelStackView.addArrangedSubview(followerCountLabel)
+        labelStackView.addArrangedSubview(hashtagsLabel)
+        Layout.fill(view: followButtonContainer, with: followButton, insets: UIEdgeInsets(top: 2, left: 0, bottom: 0, right: 2), respectSafeArea: false)
+        labelStackView.addArrangedSubview(followButtonContainer)
 
         hashtagsLabel.delegate = self
 
@@ -111,21 +138,24 @@ class ContactView: KeyValueView {
         super.reset()
         update(with: Identity.null, about: nil)
         update(socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0))
-        label.text = "placeholder name"
+        nameLabel.text = "placeholder name"
         hashtagsLabel.text = "placeholder #hashtag #hashtag #hashtag"
+        contactIdentity.text = "@abc123abc123"
         hashtagsLabel.layer.cornerRadius = 7 // hack because SkeletonView won't round the corners for some reason
-        stackView.arrangedSubviews.forEach { $0.isHidden = false }
+        labelStackView.arrangedSubviews.forEach { $0.isHidden = false }
         showAnimatedSkeleton()
     }
     
     func update(with identity: Identity, about: About?) {
         if let about = about {
-            self.label.text = about.nameOrIdentity
+            self.nameLabel.text = about.nameOrIdentity
             self.imageView.set(image: about.image)
-            label.hideSkeleton()
+            self.contactIdentity.text = String(about.identity.prefix(7))
+            nameLabel.hideSkeleton()
+            contactIdentity.hideSkeleton()
             imageView.hideSkeleton()
         } else {
-            self.label.text = identity
+            self.nameLabel.text = identity
             self.imageView.set(image: nil)
         }
         if identity == Identity.null {
@@ -146,7 +176,7 @@ class ContactView: KeyValueView {
     func update(socialStats: SocialStats) {
         let numberOfFollowers = socialStats.numberOfFollowers
         let numberOfFollows = socialStats.numberOfFollows
-        let string = "Following numberOfFollows • Followed by numberOfFollowers"
+        let string = Text.followStats.text
 
         let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
         let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
@@ -154,7 +184,7 @@ class ContactView: KeyValueView {
         let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
         attributedString.replaceCharacters(
             // swiftlint:disable legacy_objc_type
-            in: (attributedString.string as NSString).range(of: "numberOfFollows"),
+            in: (attributedString.string as NSString).range(of: "{{numberOfFollows}}"),
             // swiftlint:enable legacy_objc_type
             with: NSAttributedString(
                 string: "\(numberOfFollows)",
@@ -163,7 +193,7 @@ class ContactView: KeyValueView {
         )
         attributedString.replaceCharacters(
             // swiftlint:disable legacy_objc_type
-            in: (attributedString.string as NSString).range(of: "numberOfFollowers"),
+            in: (attributedString.string as NSString).range(of: "{{numberOfFollowers}}"),
             // swiftlint:enable legacy_objc_type
             with: NSAttributedString(
                 string: "\(numberOfFollowers)",
@@ -179,7 +209,7 @@ class ContactView: KeyValueView {
             hashtagsLabel.isHidden = true
         } else {
             hashtagsLabel.isHidden = false
-            let string = "Active on "
+            let string = ""
             let secondaryColor = [
                 NSAttributedString.Key.foregroundColor: UIColor.text.detail,
                 NSAttributedString.Key.font: UIFont.verse.contactFollowerCount
