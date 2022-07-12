@@ -30,6 +30,7 @@
 "Text.emptyHomeFeedMessage" = "¡Y está bastante vacío! ¿Y si seguís algunos usuarios o temas?";
 "Text.startedFollowing" = "{{somebody}} empezó a seguir a";
 "Text.stoppedFollowing" = "{{somebody}} dejo de seguir a";
+"Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Text.showMeInDirectory" = "Mostrame en el directorio";
 "Text.showMeInUserDirectory" = "Mostrame en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultame en el directorio de usuarios";
