@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fix some pub names and images not updating #540
 - Replace timestamp / posted x days ago with posters identity in home feed. #660 
 - Don't show loading indicator when publishing a like/vote #672 
 - Max-Rai contributed a fix to the onboarding layout for smaller iOS screen sizes #703 (thanks @Max-Rai!)
