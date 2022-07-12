@@ -21,15 +21,25 @@ class AvatarImageView: ImageView {
             super.image = newValue ?? UIImage.verse.missingAbout
         }
     }
+    
+    var borderColor: UIColor?
+    var borderWidth: CGFloat?
 
-    convenience init() {
+    convenience init(borderColor: UIColor? = nil, borderWidth: CGFloat? = nil) {
         self.init(image: UIImage.verse.missingAbout)
         self.contentMode = .scaleAspectFill
+        self.borderColor = borderColor
+        self.borderWidth = borderWidth
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.round()
+        
+        if let color = borderColor, let width = borderWidth {
+            round(borderColor: color, borderWidth: width)
+        } else {
+            round()
+        }
     }
 
     // This is totally "just get it done" code.  Ideally there would be an

@@ -31,6 +31,7 @@
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.startedFollowing" = "{{somebody}} started following";
 "Text.stoppedFollowing" = "{{somebody}} stopped following";
+"Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Text.showMeInDirectory" = "Zeige mich im Verzeichnis";
 "Text.showMeInUserDirectory" = "Zeige mich im Benutzerverzeichnis";
 "Text.hideMeFromUserDirectory" = "Verstecke mich im Benutzerverzeichnis";
@@ -208,6 +209,7 @@
 "Onboarding.privacyPolicy" = "Datenschutzerklärung";
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
 "Onboarding.welcomeBotName" = "Planetary Help";
+"Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
 
 "OnboardingStepTitle.backup" = "Okay, wir haben deine Identität erstellt - möchtest du sie sicheren?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";

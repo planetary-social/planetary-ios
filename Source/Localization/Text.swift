@@ -64,6 +64,7 @@ enum Text: String, Localizable, CaseIterable {
     case emptyHomeFeedMessage = "And it is rather bare! Have you considered following a few users or topics?"
     case startedFollowing = "{{somebody}} started following"
     case stoppedFollowing = "{{somebody}} stopped following"
+    case followStats = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}"
     case showMeInDirectory = "Show me in the directory"
     case showMeInUserDirectory = "Show me in the user directory"
     case hideMeFromUserDirectory = "Hide me from the user directory"
@@ -337,6 +338,7 @@ extension Text {
         
         case welcomeMessage = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:"
         case welcomeBotName = "Planetary Help"
+        case welcomeBotBio = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help."
     }
 }
 

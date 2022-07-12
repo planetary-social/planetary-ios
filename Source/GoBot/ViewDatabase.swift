@@ -470,6 +470,23 @@ class ViewDatabase {
         return -1
     }
     
+    func lastWrittenMessageDate() throws -> Date? {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        if let row = try db.pluck(msgs.select(colWrittenAt).order(colWrittenAt.desc).limit(1)) {
+            return Date(milliseconds: try row.get(colWrittenAt))
+        } else {
+            return nil
+        }
+    }
+    
+    func message(with id: MessageIdentifier) throws -> KeyValue {
+        let msgId = try self.msgID(of: id, make: false)
+        return try post(with: msgId)
+    }
+    
     // MARK: pubs
 
     func getAllKnownPubs() throws -> [KnownPub] {
@@ -1796,6 +1813,25 @@ class ViewDatabase {
         }
     }
     
+    func deleteAbouts(for feed: FeedIdentifier) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let authorID = try authorID(of: feed, make: false)
+        
+        try db.transaction {
+            try db.run(
+                msgs
+                    .filter(colMsgType == "about")
+                    .filter(colAuthorID == authorID)
+                    .delete()
+            )
+            
+            try db.run(abouts.where(colAboutID == authorID).delete())
+        }
+    }
+    
     private func fillContact(msgID: Int64, msg: KeyValue) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -2662,7 +2698,12 @@ class ViewDatabase {
         }
         do {
             let authorID = try self.authorID(of: feed, make: false)
-            return try db.scalar(self.msgs.filter(colAuthorID == authorID).count)
+            return try db.scalar(
+                msgs
+                    .filter(colAuthorID == authorID)
+                    .filter(colOffChain == false)
+                    .count
+            )
         } catch {
             Log.optional(GoBotError.duringProcessing("numberOfmessages for feed failed", error))
             return 0
