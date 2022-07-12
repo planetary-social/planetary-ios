@@ -285,7 +285,7 @@ class ViewDatabase {
                         CREATE INDEX messages_idx_is_decrypted_hidden_author_claimed_at ON messages(is_decrypted, hidden, author_id, claimed_at);
                         CREATE INDEX reports_author_created_at ON reports(author_id, created_at DESC);
                         CREATE INDEX reports_msg_ref ON reports(msg_ref);
-                        CREATE INDEX reports_msg_ref_author ON reports(msg_ref, author_id;
+                        CREATE INDEX reports_msg_ref_author ON reports(msg_ref, author_id);
                     """
                 )
                 db.userVersion = 14
