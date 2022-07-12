@@ -60,27 +60,19 @@ extension UITabBar {
     /// must be called on a particular UITabBar instance to work correctly, so this extension was created
     /// to be used for all versions.
     func configureAppearance() {
-        if #available(iOS 13, *) {
-            let itemAppearance = UITabBarItemAppearance()
-            itemAppearance.normal.iconColor = .unselectedTab
-            itemAppearance.normal.badgeBackgroundColor = .selectedTab
-            itemAppearance.selected.iconColor = .selectedTab
-            itemAppearance.selected.badgeBackgroundColor = .selectedTab
-            
-            let appearance = UITabBarAppearance()
-            appearance.stackedLayoutAppearance = itemAppearance
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = .cardBackground
-            appearance.backgroundImage = UIImage()
-            appearance.shadowColor = nil
-            appearance.shadowImage = UIImage()
-            self.standardAppearance = appearance
-        } else {
-            let appearance = UITabBar.appearance()
-            appearance.backgroundColor = .cardBackground
-            appearance.backgroundImage = UIImage()
-            appearance.shadowImage = UIImage()
-            appearance.unselectedItemTintColor = .unselectedTab
-        }
+        let itemAppearance = UITabBarItemAppearance()
+        itemAppearance.normal.iconColor = .unselectedTab
+        itemAppearance.normal.badgeBackgroundColor = .selectedTab
+        itemAppearance.selected.iconColor = .selectedTab
+        itemAppearance.selected.badgeBackgroundColor = .selectedTab
+        
+        let appearance = UITabBarAppearance()
+        appearance.stackedLayoutAppearance = itemAppearance
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .cardBackground
+        appearance.backgroundImage = UIImage()
+        appearance.shadowColor = nil
+        appearance.shadowImage = UIImage()
+        self.standardAppearance = appearance
     }
 }
