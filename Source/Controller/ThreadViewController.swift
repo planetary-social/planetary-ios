@@ -96,7 +96,7 @@ class ThreadViewController: ContentViewController {
         return view
     }()
 
-    private let headerView = PostHeaderView()
+    private let headerView = PostHeaderView(showTimestamp: true)
     
     // this view manages it's own height constraints
     // checkout ImageGallery.open() and close()
