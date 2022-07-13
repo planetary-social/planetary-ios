@@ -51,9 +51,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Logger -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Logger -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Logger -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Logger -destination "$SIMULATOR" | xcpretty
   secrets:
     name: Secrets
     runs-on: macOS-12
