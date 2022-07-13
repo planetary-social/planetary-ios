@@ -279,10 +279,14 @@ class ViewDatabase {
                         CREATE INDEX messages_idx_type_claimed_at ON messages(type, claimed_at);
                         CREATE INDEX messages_idx_author_received ON messages(author_id, received_at DESC);
                         CREATE INDEX messages_idx_author_type_sequence ON messages(author_id, type, sequence DESC);
-                        CREATE INDEX messages_idx_is_decrypted_hidden_claimed_at ON messages(is_decrypted, hidden, claimed_at);
-                        CREATE INDEX messages_idx_type_is_decrypted_hidden_author ON messages(type, is_decrypted, hidden, author_id);
-                        CREATE INDEX messages_idx_type_is_decrypted_hidden_claimed_at ON messages(type, is_decrypted, hidden, claimed_at);
-                        CREATE INDEX messages_idx_is_decrypted_hidden_author_claimed_at ON messages(is_decrypted, hidden, author_id, claimed_at);
+                        CREATE INDEX messages_idx_is_decrypted_hidden_claimed_at
+                            ON messages(is_decrypted, hidden, claimed_at);
+                        CREATE INDEX messages_idx_type_is_decrypted_hidden_author
+                            ON messages(type, is_decrypted, hidden, author_id);
+                        CREATE INDEX messages_idx_type_is_decrypted_hidden_claimed_at
+                            ON messages(type, is_decrypted, hidden, claimed_at);
+                        CREATE INDEX messages_idx_is_decrypted_hidden_author_claimed_at
+                            ON messages(is_decrypted, hidden, author_id, claimed_at);
                         CREATE INDEX reports_author_created_at ON reports(author_id, created_at DESC);
                         CREATE INDEX reports_msg_ref ON reports(msg_ref);
                         CREATE INDEX reports_msg_ref_author ON reports(msg_ref, author_id);
