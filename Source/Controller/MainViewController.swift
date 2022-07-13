@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Analytics
+import Logger
 
 class MainViewController: UITabBarController {
 
@@ -45,13 +46,12 @@ class MainViewController: UITabBarController {
     private var topBorder: UIView?
 
     convenience init() {
-
         self.init(nibName: nil, bundle: nil)
         self.delegate = self
         self.view.backgroundColor = .cardBackground
         self.tabBar.configureAppearance()
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
-
+        setNotificationsTabBarIcon()
         let controllers = [
             self.homeFeatureViewController,
             self.everyoneViewController,
@@ -61,6 +61,15 @@ class MainViewController: UITabBarController {
         ]
         self.setViewControllers(controllers, animated: false)
     }
+
+    /// Updates the icon of the notifications tab bar item to match the application badge number
+    func setNotificationsTabBarIcon() {
+        if UIApplication.shared.applicationIconBadgeNumber > 0 {
+            self.notificationsFeatureViewController.setTabBarItemImage("tab-icon-has-notifications")
+        } else {
+            self.notificationsFeatureViewController.setTabBarItemImage("tab-icon-notifications")
+        }
+    }
     
     func setTopBorder(hidden: Bool, animated: Bool = true) {
         let duration = animated ? 0.3 : 0
@@ -69,20 +78,9 @@ class MainViewController: UITabBarController {
         }
     }
 
-    func isNotificationsTabSelected() -> Bool {
-        self.selectedViewController == self.notificationsFeatureViewController
-    }
-
-    func triggerUpdateInNotificationsScreen() {
-        if let controller = self.notificationsFeatureViewController.children.first as? NotificationsViewController {
-            controller.checkForNotificationUpdates(force: true)
-        }
-    }
-
     // Simply selects the notifications.  Useful during launch or resume if
     // needing to show notifications.
     func selectNotificationsTab() {
-        triggerUpdateInNotificationsScreen()
         self.selectedViewController = self.notificationsFeatureViewController
     }
     
@@ -103,8 +101,6 @@ extension MainViewController: UITabBarControllerDelegate {
         _ tabBarController: UITabBarController,
         shouldSelect viewController: UIViewController
     ) -> Bool {
-        self.clearNotificationsTabIcon(whenSwitchingTo: viewController)
-
         let indexOfTargetViewController = viewControllers?.firstIndex(where: { $0 == viewController })
         guard let targetIndex = indexOfTargetViewController, self.selectedIndex == targetIndex else {
             return true
@@ -134,17 +130,4 @@ extension MainViewController: UITabBarControllerDelegate {
         return true
     }
 
-    /// Clears the notifications tab icon (returns it back to the "no new content" state) when necessary.
-    private func clearNotificationsTabIcon(whenSwitchingTo controller: UIViewController) {
-
-        // if not on notifications and going to notifications, clear
-        // if on notifications and leaving, clear
-        let onNotifications = self.selectedViewController == self.notificationsFeatureViewController
-        let goingToNotifications = controller == self.notificationsFeatureViewController
-        guard (onNotifications && !goingToNotifications) || (!onNotifications && goingToNotifications) else {
-            return
-        }
-
-        UIApplication.shared.applicationIconBadgeNumber = 0
-    }
 }
