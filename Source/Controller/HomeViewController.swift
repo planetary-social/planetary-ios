@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
 
 class HomeViewController: ContentViewController {
 
@@ -23,6 +24,17 @@ class HomeViewController: ContentViewController {
             style: .plain,
             target: self,
             action: #selector(newPostButtonTouchUpInside)
+        )
+        return item
+    }()
+    
+    private lazy var helpButton: UIBarButtonItem = {
+        let image = UIImage(systemName: "questionmark.circle")
+        let item = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(helpButtonTouchUpInside)
         )
         return item
     }()
@@ -125,7 +137,7 @@ class HomeViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .home)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        navigationItem.rightBarButtonItems = [helpButton, newPostBarButtonItem]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -221,6 +233,33 @@ class HomeViewController: ContentViewController {
         }
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
+    }
+    
+    @objc
+    func helpButtonTouchUpInside() {
+//        Analytics.shared.trackDidTapButton(buttonName: "compose")
+        
+        let controller = UIHostingController(rootView: HomeHelpView())
+        
+        controller.modalPresentationStyle = .popover
+//        controller.presentationController?.delegate = coordinator as UIAdaptivePresentationControllerDelegate
+        controller.modalTransitionStyle = .coverVertical
+        if let hostPopover = controller.popoverPresentationController {
+            hostPopover.sourceView = view
+            let sheet = hostPopover.adaptiveSheetPresentationController
+            //As of 13 Beta 4 if .medium() is the only detent in landscape error occurs
+            sheet.detents = [.medium()]
+//            sheet.largestUndimmedDetentIdentifier = smallestUndimmedDetentIdentifier
+//            sheet.prefersScrollingExpandsWhenScrolledToEdge =
+//            prefersScrollingExpandsWhenScrolledToEdge
+//            sheet.prefersEdgeAttachedInCompactHeight =
+//            prefersEdgeAttachedInCompactHeight
+//            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
+            
+        }
+        if presentedViewController == nil {
+            present(controller, animated: true, completion: nil)
+        }
     }
     
     @objc
