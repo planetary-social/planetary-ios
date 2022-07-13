@@ -33,9 +33,9 @@ jobs:
         PostHogAPIKey: nil
         PostHogHost: nil
     - name: Build Planetary
-      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "$SIMULATOR" | xcpretty
     - name: Run Tests
-      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "$SIMULATOR" | xcpretty
   changelog:
     name: Check CHANGELOG
     runs-on: ubuntu-latest
@@ -61,9 +61,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Secrets -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Secrets -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Secrets -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Secrets -destination "$SIMULATOR" | xcpretty
   analytics:
     name: Analytics
     runs-on: macOS-12
@@ -71,9 +71,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Analytics -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Analytics -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Analytics -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Analytics -destination "$SIMULATOR" | xcpretty
   crashreporting:
     name: Crash Reporting
     runs-on: macOS-12
@@ -81,9 +81,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme CrashReporting -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme CrashReporting -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme CrashReporting -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme CrashReporting -destination "$SIMULATOR" | xcpretty
   support:
     name: Support
     runs-on: macOS-12
@@ -91,6 +91,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Support -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Support -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Support -destination $SIMULATOR | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Support -destination "$SIMULATOR" | xcpretty
