@@ -6,6 +6,8 @@
 START_DATE=$(date +"%s")
 
 SWIFT_LINT=/opt/homebrew/bin/swiftlint
+# Use homebrew git because Xcode git doesn't support lfs
+GIT=$(/opt/homebrew/bin/brew --prefix git)
 
 # Run SwiftLint for given filename
 run_swiftlint() {
@@ -19,8 +21,8 @@ run_swiftlint() {
 if [[ -e "${SWIFT_LINT}" ]]; then
     echo "SwiftLint version: $(${SWIFT_LINT} version)"
     # Run for both staged and unstaged files
-    git diff --name-only | while read filename; do run_swiftlint "${filename}"; done
-    git diff --cached --name-only | while read filename; do run_swiftlint "${filename}"; done
+    git diff --name-only -- . ':!Frameworks' | while read filename; do run_swiftlint "${filename}"; done
+    git diff --cached --name-only -- . ':!Frameworks' | while read filename; do run_swiftlint "${filename}"; done
 else
     echo "${SWIFT_LINT} is not installed."
     exit 0
