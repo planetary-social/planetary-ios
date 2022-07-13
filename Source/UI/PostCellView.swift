@@ -47,6 +47,7 @@ class PostCellView: KeyValueView {
     private lazy var headerContainer: UIView = {
         let view = UIView.forAutoLayout()
         Layout.fill(view: view, with: headerView, insets: .topLeftRight, respectSafeArea: false)
+        view.heightAnchor.constraint(equalTo: headerView.heightAnchor).isActive = true
         return view
     }()
     
@@ -55,6 +56,7 @@ class PostCellView: KeyValueView {
     private lazy var textViewContainer: UIView = {
         let view = UIView.forAutoLayout()
         Layout.fill(view: view, with: textView, insets: .leftRight, respectSafeArea: false)
+        view.heightAnchor.constraint(equalTo: textView.heightAnchor).isActive = true
         return view
     }()
     
@@ -160,7 +162,13 @@ class PostCellView: KeyValueView {
             self.textView.textAlignment = .natural
         }
         
-        textView.isHidden = textView.attributedText?.string.isEmpty ?? true
+        if textView.attributedText?.string.isEmpty != false {
+            textViewContainer.isHidden = true
+            contentStackView.removeArrangedSubview(textViewContainer)
+        } else {
+            textViewContainer.isHidden = false
+            contentStackView.insertArrangedSubview(textViewContainer, at: 1)
+        }
 //        self.textViewZeroHeightConstraint.isActive = self.textView.attributedText.string.isEmpty
         textView.setNeedsLayout()
         textView.layoutIfNeeded()
@@ -205,33 +213,39 @@ class PostCellView: KeyValueView {
     // inside of it, and this value was chosen to allow for a specific
     // distance between the content top and the northern text view
     private let galleryView = GalleryView()
-//    private var galleryViewZeroHeightConstraint: NSLayoutConstraint!
-//    private var galleryViewFullHeightConstraint: NSLayoutConstraint!
-//    private var galleryViewBottomConstraint: NSLayoutConstraint?
+    private var galleryViewZeroHeightConstraint: NSLayoutConstraint!
+    private var galleryViewFullHeightConstraint: NSLayoutConstraint!
+    private var galleryViewBottomConstraint: NSLayoutConstraint?
+    
+    private let galleryContainer = UIView.forAutoLayout()
 
     // MARK: Lifecycle
 
     /// Initializes the view with the given parameters.
     /// - Parameter showTimestamp: Will show the claimed post time if true, author id if false.
-    init(showTimestamp: Bool = false) {
+    init(bottomMargin: CGFloat = 0, showTimestamp: Bool = false) {
         self.showTimestamp = showTimestamp
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
         
         self.backgroundColor = .cardBackground
         
-        Layout.fill(
-            view: self,
+//        Layout.fill(view: view, with: galleryView, respectSafeArea: false)
+        
+        
+        Layout.fillTop(
+            of: self,
             with: contentStackView,
             respectSafeArea: false
         )
         contentStackView.addArrangedSubview(headerContainer)
         contentStackView.addArrangedSubview(textViewContainer)
-        contentStackView.addArrangedSubview(galleryView)
-//
-        galleryView.constrainWidth(to: self)
-//        galleryView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        galleryView.heightAnchor.constraint(equalTo: galleryView.widthAnchor).isActive = true
+        
+        galleryView.useAutoLayout()
+        addSubview(galleryView)
+//        Layout.centerHorizontally(galleryView, in: galleryContainer)
+        galleryView.topAnchor.constraint(equalTo: contentStackView.bottomAnchor).isActive = true
+        galleryView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
 
 //        Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
 
@@ -261,12 +275,12 @@ class PostCellView: KeyValueView {
 //        self.galleryView.pinTop(toBottomOf: self.textView, constant: 5)
 //        self.galleryView.pinLeftToSuperview()
 //        self.galleryView.constrainWidth(to: self)
-//        galleryViewBottomConstraint = galleryView.bottomAnchor.constraint(equalTo: bottomAnchor)
-//        galleryViewBottomConstraint?.isActive = true
+        galleryViewBottomConstraint = galleryView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
+        galleryViewBottomConstraint?.isActive = true
 
-//        self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
-//        self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
-//        self.galleryViewZeroHeightConstraint.isActive = true
+        self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
+        self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
+        self.galleryViewZeroHeightConstraint.isActive = true
     }
 
     convenience init(keyValue: KeyValue) {
@@ -303,11 +317,12 @@ class PostCellView: KeyValueView {
             self.textView.text = expression
             self.configureTruncatedState()
             
-            contentStackView.removeArrangedSubview(galleryView)
-            galleryView.isHidden = true
-//            self.galleryViewFullHeightConstraint.isActive = false
-//            self.galleryViewZeroHeightConstraint.isActive = true
-//            self.galleryViewBottomConstraint?.constant = 0
+//            contentStackView.removeArrangedSubview(galleryContainer)
+//            galleryView.removeFromSuperview()
+//            galleryContainer.isHidden = true
+            self.galleryViewFullHeightConstraint.isActive = false
+            self.galleryViewZeroHeightConstraint.isActive = true
+            self.galleryViewBottomConstraint?.constant = 0
         } else if let post = keyValue.value.content.post {
 //            let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
             let text = Caches.text.from(keyValue)
@@ -315,15 +330,16 @@ class PostCellView: KeyValueView {
             self.fullPostText = text
             self.configureTruncatedState()
 
-//            self.galleryViewFullHeightConstraint.isActive = post.hasBlobs
-//            self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
+            self.galleryViewFullHeightConstraint.isActive = post.hasBlobs
+            self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
             if post.hasBlobs {
-                contentStackView.addArrangedSubview(galleryView)
-                galleryView.isHidden = false
-                self.galleryView.update(with: post)
+//                contentStackView.addArrangedSubview(galleryContainer)
+//                galleryContainer.isHidden = false
+                galleryView.update(with: post)
             } else {
-                contentStackView.removeArrangedSubview(galleryView)
-                galleryView.isHidden = true
+//                contentStackView.removeArrangedSubview(galleryContainer)
+//                galleryView.removeFromSuperview()
+//                galleryContainer.isHidden = true
             }
 //            self.galleryViewBottomConstraint?.constant = (post.hasBlobs && self.allowSpaceUnderGallery) ? -Layout.verticalSpacing : 0
         } else {
@@ -333,6 +349,8 @@ class PostCellView: KeyValueView {
         // always do this in case of constraint changes
         textView.invalidateIntrinsicContentSize()
         contentStackView.invalidateIntrinsicContentSize()
+        galleryView.invalidateIntrinsicContentSize()
+        galleryView.setNeedsLayout()
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }

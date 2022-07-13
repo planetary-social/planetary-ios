@@ -15,11 +15,11 @@ class PostReplyDataSource: KeyValueTableViewDataSource {
         switch type {
         case .contact:
             let view = ContactReplyView()
-            return KeyValueTableViewCell(for: .contact, with: view)
+            return KeyValueTableViewCell(for: .contact, with: view, readableWidth: true)
         default:
             let view = PostReplyView()
             view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-            return KeyValueTableViewCell(for: .post, with: view)
+            return KeyValueTableViewCell(for: .post, with: view, readableWidth: true)
         }
     }
 

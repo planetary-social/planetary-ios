@@ -246,7 +246,7 @@ class ThreadViewController: ContentViewController {
     private func addNavigationHeaderViewIfNeeded() {
         guard headerView.superview == nil, let navBar = self.navigationController?.navigationBar else { return }
 
-        let insets = UIEdgeInsets(top: 0, left: 48, bottom: Layout.verticalSpacing, right: Layout.horizontalSpacing)
+        let insets = UIEdgeInsets(top: 0, left: 48, bottom: 3, right: Layout.horizontalSpacing)
         Layout.fill(view: navBar, with: self.headerView, insets: insets)
     }
 
@@ -262,8 +262,10 @@ class ThreadViewController: ContentViewController {
     /// stored any time the table view is scrolled.  The optional delay is
     /// useful to stagger animations, just in case there is too much going
     /// on at one time.
-    private func scrollToLastVisibleIndexPath(delay: TimeInterval = 0.25,
-                                              animated: Bool = true) {
+    private func scrollToLastVisibleIndexPath(
+        delay: TimeInterval = 0.25,
+        animated: Bool = true
+    ) {
         guard let indexPath = self.indexPathToScrollToOnKeyboardDidShow else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: animated)

@@ -20,18 +20,18 @@ class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
     override func emptyCell() -> KeyValueTableViewCell {
         let view = PostReplyView()
         view.postView.truncationLimit = TruncationSettings(over: 8, to: 5)
-        return KeyValueTableViewCell(for: .post, with: view)
+        return KeyValueTableViewCell(for: .post, with: view, readableWidth: true)
     }
     
     override func cell(at indexPath: IndexPath, for type: ContentType) -> KeyValueTableViewCell {
         switch type {
         case .contact:
             let view = ContactReplyView()
-            return KeyValueTableViewCell(for: .contact, with: view)
+            return KeyValueTableViewCell(for: .contact, with: view, readableWidth: true)
         default:
             let view = PostReplyView()
             view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-            return KeyValueTableViewCell(for: .post, with: view)
+            return KeyValueTableViewCell(for: .post, with: view, readableWidth: true)
         }
     }
     

@@ -66,8 +66,10 @@ class PostHeaderView: UIView {
     init(showTimestamp: Bool = false) {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
-
-        Layout.fillLeft(of: self, with: self.identityButton, respectSafeArea: false)
+        heightAnchor.constraint(equalToConstant: Layout.profileThumbSize).isActive = true
+        
+        addSubview(identityButton)
+        identityButton.pinLeftToSuperview()
         let centerIdentityButton = identityButton.centerYAnchor.constraint(equalTo: centerYAnchor)
         centerIdentityButton.priority = .defaultLow
         centerIdentityButton.isActive = true
@@ -77,17 +79,22 @@ class PostHeaderView: UIView {
         let centerRightButton = rightButtonContainer.centerYAnchor.constraint(equalTo: centerYAnchor)
         centerRightButton.priority = .defaultLow
         centerRightButton.isActive = true
-        self.rightButtonContainer.widthAnchor.constraint(lessThanOrEqualToConstant: Layout.profileThumbSize).isActive = true
+        self.rightButtonContainer.widthAnchor.constraint(
+            lessThanOrEqualToConstant: Layout.profileThumbSize
+        ).isActive = true
 
         addSubview(labelStackView)
-        labelStackView.pinTopToSuperview()
-        labelStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        labelStackView.constrainHeight(to: identityButton)
-        labelStackView.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
-        labelStackView.constrainTrailing(toLeadingOf: self.rightButtonContainer, constant: -6)
+        labelStackView.useAutoLayout()
+        NSLayoutConstraint.activate([
+            labelStackView.topAnchor.constraint(equalTo: topAnchor),
+            labelStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            labelStackView.leadingAnchor.constraint(
+                equalTo: identityButton.trailingAnchor,
+                constant: Layout.horizontalSpacing
+            ),
+            labelStackView.trailingAnchor.constraint(equalTo: rightButtonContainer.leadingAnchor, constant: -6),
+        ])
         labelStackView.addArrangedSubview(nameButton)
-        
-        labelStackView.addArrangedSubview(self.nameButton)
 
         if showTimestamp {
             labelStackView.addArrangedSubview(dateLabel)

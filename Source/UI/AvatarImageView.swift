@@ -53,13 +53,13 @@ class AvatarImageView: ImageView {
             
             // cached image
             if let image = Caches.blobs.image(for: imageIdentifier) {
-                 DispatchQueue.main.async {
+                DispatchQueue.main.async {
                     if animate {
                         self.fade(to: image)
                     } else {
                         self.image = image
                     }
-                 }
+                }
                 // return(nil)
             }
 
@@ -89,8 +89,7 @@ class AvatarImageView: ImageView {
         
         Log.info("url: \(url)")
 
-        let task = URLSession.shared.dataTask(with: request) {
-            data, response, _ in
+        let task = URLSession.shared.dataTask(with: request) { data, response, _ in
             guard response?.httpStatusCodeError == nil else { return }
             guard let data = data else { return }
             guard let image = UIImage(data: data) else {

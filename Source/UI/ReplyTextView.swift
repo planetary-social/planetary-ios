@@ -99,20 +99,22 @@ class ReplyTextView: KeyValueView {
 
         let textViewHeight = Layout.profileThumbSize
 
-        Layout.fillLeft(
-            of: self, with: self.button,
-            insets: UIEdgeInsets(
-                top: 0,
-                left: Layout.horizontalSpacing,
-                bottom: bottomSpacing, right: 0
-            ),
-            respectSafeArea: false
-        )
+        addSubview(button)
+        addSubview(sourceTextView)
+        
+        button.pinLeftToSuperview(constant: Layout.horizontalSpacing)
+        button.centerYAnchor.constraint(equalTo: sourceTextView.centerYAnchor).isActive = true
+        Layout.centerVertically(button, in: self)
         self.button.constrainSize(to: textViewHeight)
 
-        let left: CGFloat = Layout.horizontalSpacing + textViewHeight + 7
-        let insets = UIEdgeInsets(top: topSpacing, left: left, bottom: bottomSpacing, right: Layout.horizontalSpacing)
-        Layout.fill(view: self, with: self.sourceTextView, insets: insets, respectSafeArea: false)
+        NSLayoutConstraint.activate([
+            sourceTextView.topAnchor.constraint(equalTo: topAnchor, constant: topSpacing),
+            sourceTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            sourceTextView.leadingAnchor.constraint(equalTo: button.trailingAnchor, constant: 7),
+            sourceTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Layout.horizontalSpacing)
+        ])
+        Layout.centerVertically(sourceTextView, in: self)
+        sourceTextView.constrainHeight(to: 35)
 
         self.sourceTextView.constrainHeight(greaterThanOrEqualTo: textViewHeight)
         self.textViewHeightConstraint = self.sourceTextView.heightAnchor.constraint(lessThanOrEqualToConstant: textViewHeight)
