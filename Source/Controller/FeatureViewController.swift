@@ -45,12 +45,24 @@ class FeatureViewController: UINavigationController {
     }
 
     private func setTabBarItem(title: String?, image named: String?) {
-        guard let name = named else { return }
-        guard let image = UIImage(named: name) else { return }
-        guard let selected = UIImage(named: "\(name)-selected") else { return }
-        self.tabBarItem = UITabBarItem(title: nil, image: image, selectedImage: selected)
-        self.tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+        guard let name = named, setTabBarItemImage(name) else {
+            return
+        }
         self.tabBarItem.accessibilityLabel = title
+    }
+
+    @discardableResult
+    func setTabBarItemImage(_ name: String) -> Bool {
+        guard let image = UIImage(named: name) else {
+            return false
+        }
+        guard let selected = UIImage(named: "\(name)-selected") else {
+            return false
+        }
+        let tabBarItem = UITabBarItem(title: nil, image: image, selectedImage: selected)
+        tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+        self.tabBarItem = tabBarItem
+        return true
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -79,7 +79,7 @@ class NotificationsViewController: ContentViewController {
         self.floatingRefreshButton.layout(in: self.view, below: self.tableView)
         self.addLoadingAnimation()
         self.load()
-        self.registerDidRefresh()
+        registerNotifications()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -88,6 +88,7 @@ class NotificationsViewController: ContentViewController {
         Analytics.shared.trackDidShowScreen(screenName: "notifications")
         AppController.shared.promptForPushNotificationsIfNotDetermined(in: self)
     }
+
     // MARK: Load and refresh
 
     func load(animated: Bool = false) {
@@ -147,7 +148,7 @@ class NotificationsViewController: ContentViewController {
 
     func checkForNotificationUpdates(force: Bool = false) {
         if force {
-            lastTimeNewReportsUpdatesWasChecked = Date.distantPast
+            lastTimeNewReportsUpdatesWasChecked = .distantPast
         }
         // Check that more than a minute passed since the last time we checked for new updates
         let elapsed = Date().timeIntervalSince(lastTimeNewReportsUpdatesWasChecked)
@@ -198,15 +199,21 @@ class NotificationsViewController: ContentViewController {
     override func registerNotifications() {
         super.registerNotifications()
         self.registerDidRefresh()
-    }
-
-    override func deregisterNotifications() {
-        super.deregisterNotifications()
-        self.deeregisterDidRefresh()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didCreateReport(notification:)),
+            name: .didCreateReport,
+            object: nil
+        )
     }
     
     override func didRefresh(notification: Notification) {
         checkForNotificationUpdates()
+    }
+
+    @objc
+    func didCreateReport(notification: Notification) {
+        checkForNotificationUpdates(force: true)
     }
     
     @objc
@@ -227,44 +234,59 @@ private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
         didSet {
 
             // segment keyvalues by date
-            var today: KeyValues = []
-            var yesterday: KeyValues = []
-            var earlier: KeyValues = []
+            var today: [Report] = []
+            var yesterday: [Report] = []
+            var earlier: [Report] = []
             for report in reports {
                 if Calendar.current.isDateInToday(report.createdAt) {
-                    today += [report.keyValue]
+                    today += [report]
                 } else if Calendar.current.isDateInYesterday(report.createdAt) {
-                    yesterday += [report.keyValue]
+                    yesterday += [report]
                 } else {
-                    earlier += [report.keyValue]
+                    earlier += [report]
                 }
             }
 
             // label each section
-            var sections: [(Text, KeyValues)] = []
+            var sections: [(Text, [Report])] = []
             if today.count > 0 { sections += [(.today, today)] }
             if yesterday.count > 0 { sections += [(.yesterday, yesterday)] }
             if earlier.count > 0 { sections += [(.recently, earlier)] }
-            self.sectionedKeyValues = sections
+            self.sectionedReports = sections
             
             self.keyValues = reports.map { $0.keyValue }
         }
     }
 
-    fileprivate var sectionedKeyValues: [(Text, KeyValues)] = []
+    fileprivate func report(at indexPath: IndexPath) -> Report {
+        let (_, reports) = self.sectionedReports[indexPath.section]
+        return reports[indexPath.row]
+    }
+
+    fileprivate var sectionedReports: [(Text, [Report])] = []
 
     override func keyValue(at indexPath: IndexPath) -> KeyValue {
-        let (_, keyValues) = self.sectionedKeyValues[indexPath.section]
-        return keyValues[indexPath.row]
+        report(at: indexPath).keyValue
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        self.sectionedKeyValues.count
+        self.sectionedReports.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let (_, keyValues) = self.sectionedKeyValues[section]
-        return keyValues.count
+        let (_, reports) = self.sectionedReports[section]
+        return reports.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        let report = report(at: indexPath)
+        if report.isRead {
+            cell.contentView.backgroundColor = .clear
+        } else {
+            cell.contentView.backgroundColor = .red
+        }
+        return cell
     }
 
     override func cell(
@@ -289,7 +311,7 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let source = tableView.dataSource as? NotificationsTableViewDataSource else { return nil }
-        let (title, _) = source.sectionedKeyValues[section]
+        let (title, _) = source.sectionedReports[section]
         return HeaderView(title: title.text)
     }
 
@@ -303,6 +325,21 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
             Analytics.shared.trackDidSelectItem(kindName: "post")
             let controller = ThreadViewController(with: keyValue)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
+        }
+    }
+
+    override func tableView(
+        _ tableView: UITableView,
+        willDisplay cell: UITableViewCell,
+        forRowAt indexPath: IndexPath
+    ) {
+        guard let source = tableView.dataSource as? NotificationsTableViewDataSource else {
+            return
+        }
+        let (_, reports) = source.sectionedReports[indexPath.section]
+        let report = reports[indexPath.row]
+        if report.isUnread {
+            Bots.current.markMessageAsRead(report.messageIdentifier)
         }
     }
 }

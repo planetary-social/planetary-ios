@@ -140,16 +140,6 @@ extension AppController {
             }
         }
     }
-
-    func receivedForegroundNotification() {
-        self.mainViewController?.triggerUpdateInNotificationsScreen()
-    }
-
-    /// When the local notification is interacted with (tapped), switches to the notifications tab
-    /// while the app is moving from the background to the foreground.
-    func received(backgroundNotification: UNNotification) {
-        self.mainViewController?.selectNotificationsTab()
-    }
 }
 
 fileprivate extension Data {

@@ -218,6 +218,8 @@ protocol Bot: AnyObject {
     /// Returns all the messages in a feed that mention the active identity.
     func mentions(completion: @escaping PaginatedCompletion)
 
+    func markMessageAsRead(_ message: MessageIdentifier)
+
     /// Reports (unifies mentions, replies, follows) for the active identity.
     func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void))
 
@@ -225,6 +227,8 @@ protocol Bot: AnyObject {
     /// This is useful for calculating the number of reports the user has not yet seen in Notifications.
     /// - parameter report: The report to account for the offset.
     func numberOfReports(since report: Report, completion: @escaping CountCompletion)
+
+    func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion)
 
     // MARK: Blob publishing
 
@@ -379,6 +383,19 @@ extension Bot {
     func numberOfReports(since report: Report) async throws -> Int {
         try await withCheckedThrowingContinuation { continuation in
             numberOfReports(since: report) { result in
+                switch result {
+                case .success(let count):
+                    continuation.resume(returning: count)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    func numberOfUnreadReports() async throws -> Int {
+        try await withCheckedThrowingContinuation { continuation in
+            numberOfUnreadReports(queue: DispatchQueue.global(qos: .background)) { result in
                 switch result {
                 case .success(let count):
                     continuation.resume(returning: count)

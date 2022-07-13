@@ -46,6 +46,7 @@ enum ViewDatabaseTableNames: String {
     case mentionsImage = "mention_image"
     case reports
     case pubs
+    case readMessages = "read_messages"
 }
 
 class ViewDatabase {
@@ -187,6 +188,12 @@ class ViewDatabase {
     // Search
     private let postSearch = VirtualTable("post_search")
 
+    // Read messages
+    let readMessages = Table(ViewDatabaseTableNames.readMessages.rawValue)
+    // colMessageID
+    // colAuthorID
+    let colIsRead = Expression<Bool>("is_read")
+
     // MARK: open / close / stats
 
     // IMPORTANT!
@@ -262,6 +269,16 @@ class ViewDatabase {
             if db.userVersion == 12 {
                 try db.execute("ALTER TABLE messages ADD off_chain INTEGER NOT NULL DEFAULT (0);")
                 db.userVersion = 13
+            }
+            if db.userVersion == 13 {
+                try db.execute("""
+        CREATE TABLE IF NOT EXISTS read_messages (
+        author_id BIGINT null,
+        msg_id BIGINT null,
+        is_read BOOLEAN not null default true,
+        primary key (author_id, msg_id)
+        )
+        """)
             }
         }
     }
@@ -1331,6 +1348,58 @@ class ViewDatabase {
 
     // PARGMA MARK: - Reports
 
+    func countNumberOfUnreadReports() throws -> Int {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let queryString = """
+        SELECT
+          COUNT(*)
+        FROM
+          reports r
+          LEFT JOIN read_messages rm ON r.msg_ref = rm.msg_id
+          AND r.author_id = rm.author_id
+        WHERE
+          r.author_id = ?
+          AND (
+            rm.is_read = false
+            OR rm.is_read IS NULL
+          );
+        """
+        let query = try connection.prepare(queryString)
+        if let count = try query.scalar(currentUserID) as? Int64 {
+            return Int(truncatingIfNeeded: count)
+        }
+        return 0
+    }
+
+    func report(for message: MessageIdentifier) throws -> Report? {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let query = self.reports
+            .join(self.msgs, on: self.msgs[colMessageID] == self.reports[colMessageRef])
+            .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, self.contacts, on: self.contacts[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.msgs[colMessageID])
+            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
+            .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
+            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
+            .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
+            .join(
+                .leftOuter,
+                self.readMessages,
+                on: (self.readMessages[colMessageID] == self.msgs[colMessageID]) & (self.readMessages[colAuthorID] == self.reports[colAuthorID])
+            )
+            .filter((self.reports[colAuthorID] == self.currentUserID) & (self.msgKeys[colKey] == message))
+            .limit(1)
+
+        guard let row = try connection.prepare(query).makeIterator().next() else {
+            return nil
+        }
+        return try? buildReport(from: row)
+    }
+
     func reports(limit: Int = 200) throws -> [Report] {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1344,112 +1413,123 @@ class ViewDatabase {
             .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
             .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
+            .join(
+                .leftOuter,
+                self.readMessages,
+                on: (self.readMessages[colMessageID] == self.msgs[colMessageID]) & (self.readMessages[colAuthorID] == self.reports[colAuthorID])
+            )
         
         let filteredQuery = query.filter(self.reports[colAuthorID] == self.currentUserID)
             
         let sortedQuery = filteredQuery.order(colCreatedAt.desc)
-        
-        return try connection.prepare(sortedQuery).compactMap { row in
-            // tried 'return try row.decode()'
-            // but failed - see https://github.com/VerseApp/ios/issues/29
-            
-            let msgID = try row.get(colMessageID)
-            
-            let msgKey = try row.get(colKey)
-            let msgAuthor = try row.get(colAuthor)
 
-            var content: Content
-               
-            let type = try row.get(self.msgs[colMsgType])
-            
-            switch type {
-            case ContentType.post.rawValue:
-                
-                var rootKey: Identifier?
-                let colRootMaybe = Expression<Int64?>("root")
-                
-                if let rootID = try row.get(colRootMaybe) {
-                    rootKey = try self.msgKey(id: rootID)
-                }
-                
-                let post = Post(
-                    blobs: try self.loadBlobs(for: msgID),
-                    mentions: try self.loadMentions(for: msgID),
-                    root: rootKey,
-                    text: try row.get(colText)
-                )
-                
-                content = Content(from: post)
-                
-            case ContentType.vote.rawValue:
-                
-                let lnkID = try row.get(colLinkID)
-                let lnkKey = try self.msgKey(id: lnkID)
-                
-                let rootID = try row.get(colRoot)
-                let rootKey = try self.msgKey(id: rootID)
-                
-                let contentVote = ContentVote(
-                    link: lnkKey,
-                    value: try row.get(colValue),
-                    expression: try row.get(colExpression),
-                    root: rootKey,
-                    branches: []
-                )
-                
-                content = Content(from: contentVote)
-            case ContentType.contact.rawValue:
-                if let state = try? row.get(colContactState) {
-                    let following = state == 1
-                    let contact = Contact(contact: msgAuthor, following: following)
-                    
-                    content = Content(from: contact)
-                } else {
-                    // Contacts stores only the latest message
-                    // So, an old follow that was later unfollowed won't appear here.
-                    return nil
-                }
-            default:
-                throw ViewDatabaseError.unexpectedContentType(type)
-            }
-            
-            let value = Value(
-                author: msgAuthor,
-                content: content,
-                hash: "sha256", // only currently supported
-                previous: nil,
-                sequence: try row.get(colSequence),
-                signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
-            )
-            var keyValue = KeyValue(
-                key: msgKey,
-                value: value,
-                timestamp: try row.get(colReceivedAt)
-            )
-            keyValue.metadata.author.about = About(
-                about: msgAuthor,
-                name: try row.get(self.abouts[colName]),
-                description: try row.get(colDescr),
-                imageLink: try row.get(colImage)
-            )
-            keyValue.metadata.isPrivate = try row.get(colDecrypted)
-            
-            let rawReportType = try row.get(self.reports[colReportType])
-            let reportType = ReportType(rawValue: rawReportType) ?? ReportType.messageLiked
-            
-            let createdAtTimestamp = try row.get(colCreatedAt)
-            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1000)
-            
-            let report = Report(
-                authorIdentity: "undefined",
-                messageIdentifier: msgKey,
-                reportType: reportType,
-                createdAt: createdAt,
-                keyValue: keyValue
-            )
-            return report
+        return try connection.prepare(sortedQuery).compactMap { row in
+            try buildReport(from: row)
         }
+    }
+
+    private func buildReport(from row: Row) throws -> Report? {
+        // tried 'return try row.decode()'
+        // but failed - see https://github.com/VerseApp/ios/issues/29
+
+        let msgID = try row.get(self.msgs[colMessageID])
+
+        let msgKey = try row.get(colKey)
+        let msgAuthor = try row.get(colAuthor)
+
+        var content: Content
+
+        let type = try row.get(self.msgs[colMsgType])
+
+        switch type {
+        case ContentType.post.rawValue:
+
+            var rootKey: Identifier?
+            let colRootMaybe = Expression<Int64?>("root")
+
+            if let rootID = try row.get(colRootMaybe) {
+                rootKey = try self.msgKey(id: rootID)
+            }
+
+            let post = Post(
+                blobs: try self.loadBlobs(for: msgID),
+                mentions: try self.loadMentions(for: msgID),
+                root: rootKey,
+                text: try row.get(colText)
+            )
+
+            content = Content(from: post)
+
+        case ContentType.vote.rawValue:
+
+            let lnkID = try row.get(colLinkID)
+            let lnkKey = try self.msgKey(id: lnkID)
+
+            let rootID = try row.get(colRoot)
+            let rootKey = try self.msgKey(id: rootID)
+
+            let contentVote = ContentVote(
+                link: lnkKey,
+                value: try row.get(colValue),
+                expression: try row.get(colExpression),
+                root: rootKey,
+                branches: []
+            )
+
+            content = Content(from: contentVote)
+        case ContentType.contact.rawValue:
+            if let state = try? row.get(colContactState) {
+                let following = state == 1
+                let contact = Contact(contact: msgAuthor, following: following)
+
+                content = Content(from: contact)
+            } else {
+                // Contacts stores only the latest message
+                // So, an old follow that was later unfollowed won't appear here.
+                return nil
+            }
+        default:
+            throw ViewDatabaseError.unexpectedContentType(type)
+        }
+
+        let value = Value(
+            author: msgAuthor,
+            content: content,
+            hash: "sha256", // only currently supported
+            previous: nil,
+            sequence: try row.get(colSequence),
+            signature: "verified_by_go-ssb",
+            timestamp: try row.get(colClaimedAt)
+        )
+        var keyValue = KeyValue(
+            key: msgKey,
+            value: value,
+            timestamp: try row.get(colReceivedAt)
+        )
+        keyValue.metadata.author.about = About(
+            about: msgAuthor,
+            name: try row.get(self.abouts[colName]),
+            description: try row.get(colDescr),
+            imageLink: try row.get(colImage)
+        )
+        keyValue.metadata.isPrivate = try row.get(colDecrypted)
+
+        let rawReportType = try row.get(self.reports[colReportType])
+        let reportType = ReportType(rawValue: rawReportType) ?? ReportType.messageLiked
+
+        let createdAtTimestamp = try row.get(colCreatedAt)
+        let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1000)
+
+        let isRead = try row.get(Expression<Bool?>("is_read")) ?? false
+        var report = Report(
+            authorIdentity: "undefined",
+            messageIdentifier: msgKey,
+            reportType: reportType,
+            createdAt: createdAt,
+            keyValue: keyValue
+        )
+        report.isRead = isRead
+        return report
     }
 
     func countNumberOfReports(since report: Report, limit: Int = 200) throws -> Int {
@@ -1520,6 +1600,22 @@ class ViewDatabase {
             .filter(colMessageID == msgId)
             .filter(colHidden == false))
         return authorID
+    }
+
+    // MARK: - Read status
+
+    func markMessageAsRead(identifier: MessageIdentifier, isRead: Bool = true) throws {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let query = """
+        INSERT OR REPLACE INTO read_messages (author_id, msg_id, is_read)
+        VALUES (
+        ?,
+        (SELECT id FROM messagekeys WHERE key = ? LIMIT 1),
+        ?)
+        """
+        try connection.prepare(query).bind(currentUserID, identifier, isRead).run()
     }
     
     // MARK: - Fetching Posts

@@ -122,6 +122,10 @@ class FakeBot: Bot {
 
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion) { }
 
+    func markMessageAsRead(_ message: MessageIdentifier) { }
+
+    func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
+
     required init() {}
     static let shared = FakeBot()
 

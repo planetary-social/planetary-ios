@@ -53,7 +53,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// can interact with.  Note that the notification should be validated `RemoteNotificationUserInfo.isViewable`
     /// before getting to this step.
     private func scheduleLocalNotification(_ notification: RemoteNotificationUserInfo) {
-
         // if the notification content structure changes it is possible
         // that an empty content is posted, not sure how the OS treats that
         let content = UNMutableNotificationContent()
@@ -66,12 +65,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let identifier = UUID().uuidString
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        
-        // badge is incremented regardless of foreground/background
-        DispatchQueue.main.async {
-            UIApplication.shared.applicationIconBadgeNumber += 1
-            AppController.shared.mainViewController?.triggerUpdateInNotificationsScreen()
-        }
 
         // schedule the notification
         UNUserNotificationCenter.current().add(request) { error in
@@ -83,7 +76,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// Transforms a report into a scheduled `UNNotificationRequest` that the human
     /// can interact with.
     func scheduleLocalNotification(_ report: Report) {
-        
         Bots.current.about(queue: .global(qos: .background), identity: report.keyValue.value.author) { (about, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -147,7 +139,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler()
             return
         }
-        AppController.shared.received(backgroundNotification: response.notification)
+        AppController.shared.mainViewController?.selectNotificationsTab()
         completionHandler()
     }
     
@@ -156,7 +148,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        AppController.shared.receivedForegroundNotification()
         if #available(macOS 11.0, iOS 14.0, tvOS 14.0, *) {
             completionHandler([.banner, .badge, .sound])
         } else {
@@ -173,6 +164,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             name: .didCreateReport,
             object: nil
         )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didUpdateReportReadStatus(notification:)),
+            name: .didUpdateReportReadStatus,
+            object: nil
+        )
     }
     
     @objc
@@ -184,17 +181,38 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             // Don't do anything if user is not logged in
             return
         }
-        
-        // Suppress notifications if the user is restoring
         guard !Bots.current.isRestoring else {
+            // Suppress notifications if the user is restoring
             return
         }
-        
         guard report.authorIdentity == currentIdentity else {
             // Don't do anything if report is not for the logged in user
             return
         }
-        self.scheduleLocalNotification(report)
-        print("Showing notification: \(report)")
+
+        // Update the application badge number
+        updateApplicationBadgeNumber()
+
+        // Display a local notification so the user is aware of a new report
+        scheduleLocalNotification(report)
+    }
+
+    @objc
+    func didUpdateReportReadStatus(notification: Notification) {
+        // We get this notification after the user read a report that was previously unread, so its time to check the
+        // total number of unread reports and update the badge number
+        updateApplicationBadgeNumber()
+    }
+
+    private func updateApplicationBadgeNumber() {
+        Task {
+            do {
+                let count = try await Bots.current.numberOfUnreadReports()
+                UIApplication.shared.applicationIconBadgeNumber = count
+                AppController.shared.mainViewController?.setNotificationsTabBarIcon()
+            } catch {
+                Log.optional(error)
+            }
+        }
     }
 }

@@ -38,6 +38,16 @@ class KeyValuePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         10
     }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let dataSource = tableView.dataSource as? KeyValuePaginatedTableViewDataSource else {
+            return
+        }
+        guard let keyValue = dataSource.data.keyValueBy(index: indexPath.row) else {
+            return
+        }
+        Bots.current.markMessageAsRead(keyValue.key)
+    }
     
     // MARK: Navigating with controller
 
@@ -51,7 +61,8 @@ class KeyValuePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
     // Override in subclass
     func viewController(for keyValue: KeyValue) -> UIViewController? {
         switch keyValue.contentType {
-            default: return nil
+        default:
+            return nil
         }
     }
 }

@@ -12,16 +12,20 @@ import UIKit
 extension UIViewController {
 
     func registerDidSync() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didSync(notification:)),
-                                               name: .didSync,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didSync(notification:)),
+            name: .didSync,
+            object: nil
+        )
     }
 
     func deeregisterDidSync() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: .didSync,
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .didSync,
+            object: nil
+        )
     }
 
     @objc
@@ -30,16 +34,20 @@ extension UIViewController {
     }
     
     func registerDidRefresh() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didRefresh(notification:)),
-                                               name: .didRefresh,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didRefresh(notification:)),
+            name: .didRefresh,
+            object: nil
+        )
     }
 
     func deeregisterDidRefresh() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: .didRefresh,
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .didRefresh,
+            object: nil
+        )
     }
 
     @objc
