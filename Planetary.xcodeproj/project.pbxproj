@@ -3682,7 +3682,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sh $SRCROOT/Source/Localization/ExportStrings.sh\n";
+			shellScript = "if [ \"${ENABLE_PREVIEWS}\" = \"YES\" ]; then\n  echo \"SwiftUI Previews enabled, quitting to prevent 'preview paused'.\"\n  exit 0;\nfi\nsh $SRCROOT/Source/Localization/ExportStrings.sh\n";
 		};
 		C627FA40401D3BF3A23EDB4A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
