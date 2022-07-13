@@ -14,7 +14,7 @@ import Logger
 
 class ContactCellView: KeyValueView {
 
-    let verticalSpace: CGFloat = 5
+    let verticalSpace: CGFloat = Layout.verticalSpacing
 
     var displayHeader = true {
         didSet {
@@ -64,7 +64,7 @@ class ContactCellView: KeyValueView {
         )
         self.textViewTopConstraint = topConstraint
 
-        self.contactView.pinBottomToSuperviewBottom()
+        contactView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
         isSkeletonable = true
     }

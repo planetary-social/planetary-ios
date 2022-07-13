@@ -10,6 +10,13 @@ import Foundation
 import UIKit
 
 extension UIView {
+    
+    func round(borderColor: UIColor, borderWidth: CGFloat) {
+        let radius = min(self.bounds.width, self.bounds.height) / 2
+        self.roundedCorners(radius: radius)
+        layer.borderColor = borderColor.cgColor
+        layer.borderWidth = borderWidth
+    }
 
     func round() {
         let radius = min(self.bounds.width, self.bounds.height) / 2
