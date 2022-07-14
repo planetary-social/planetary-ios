@@ -1462,36 +1462,9 @@ class ViewDatabase {
     private func buildReport(from row: Row) throws -> Report? {
         let msgKey = try row.get(colKey)
         let msgAuthor = try row.get(colAuthor)
-
-        var content: Content
-
-        let type = try row.get(colMsgType)
-
-        switch type {
-        case ContentType.post.rawValue:
-            content = Content(from: try Post(row: row, db: self, hasMentionColumns: false))
-        case ContentType.vote.rawValue:
-            content = Content(from: try ContentVote(row: row, db: self))
-        case ContentType.contact.rawValue:
-            guard let contact = try Contact(row: row, db: self) else {
-                // Contacts stores only the latest message
-                // So, an old follow that was later unfollowed won't appear here.
-                return nil
-            }
-            content = Content(from: contact)
-        default:
-            throw ViewDatabaseError.unexpectedContentType(type)
+        guard let value = try Value(row: row, db: self, hasMentionColumns: false) else {
+            return nil
         }
-
-        let value = Value(
-            author: msgAuthor,
-            content: content,
-            hash: "sha256", // only currently supported
-            previous: nil,
-            sequence: try row.get(colSequence),
-            signature: "verified_by_go-ssb",
-            timestamp: try row.get(colClaimedAt)
-        )
         var keyValue = KeyValue(
             key: msgKey,
             value: value,

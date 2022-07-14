@@ -21,7 +21,7 @@ extension ContentVote {
             value: try row.get(db.colValue),
             expression: try row.get(db.colExpression),
             root: rootKey,
-            branches: [] // TODO: branches for root
+            branches: []
         )
     }
 }
