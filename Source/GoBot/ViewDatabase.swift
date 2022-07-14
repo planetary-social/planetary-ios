@@ -263,6 +263,37 @@ class ViewDatabase {
                 try db.execute("ALTER TABLE messages ADD off_chain INTEGER NOT NULL DEFAULT (0);")
                 db.userVersion = 13
             }
+            if db.userVersion == 13 {
+                try db.execute(
+                    """
+                        CREATE INDEX channel_assignments_idx_0039db ON channel_assignments(msg_ref);
+                        CREATE INDEX channel_assignments_idx_e349b0cd ON channel_assignments(chan_ref, msg_ref);
+                        CREATE INDEX pubs_index ON pubs(msg_ref);
+                        CREATE INDEX tangles_roots_and_msg_refs ON tangles(root, msg_ref);
+                        CREATE INDEX posts_root_mesgrefs ON posts(is_root, msg_ref);
+                        CREATE INDEX mention_feed_author_refs on mention_feed (feed_id, msg_ref);
+                        CREATE INDEX contacts_msg_ref ON contacts(msg_ref);
+                        CREATE INDEX contacts_state_and_author ON contacts(state, author_id);
+                        CREATE INDEX channel_assignments_msg_refs ON channel_assignments(msg_ref);
+                        CREATE INDEX channel_assignments_chan_ref_and_msg_ref ON channel_assignments(chan_ref, msg_ref);
+                        CREATE INDEX messages_idx_type_claimed_at ON messages(type, claimed_at);
+                        CREATE INDEX messages_idx_author_received ON messages(author_id, received_at DESC);
+                        CREATE INDEX messages_idx_author_type_sequence ON messages(author_id, type, sequence DESC);
+                        CREATE INDEX messages_idx_is_decrypted_hidden_claimed_at
+                            ON messages(is_decrypted, hidden, claimed_at);
+                        CREATE INDEX messages_idx_type_is_decrypted_hidden_author
+                            ON messages(type, is_decrypted, hidden, author_id);
+                        CREATE INDEX messages_idx_type_is_decrypted_hidden_claimed_at
+                            ON messages(type, is_decrypted, hidden, claimed_at);
+                        CREATE INDEX messages_idx_is_decrypted_hidden_author_claimed_at
+                            ON messages(is_decrypted, hidden, author_id, claimed_at);
+                        CREATE INDEX reports_author_created_at ON reports(author_id, created_at DESC);
+                        CREATE INDEX reports_msg_ref ON reports(msg_ref);
+                        CREATE INDEX reports_msg_ref_author ON reports(msg_ref, author_id);
+                    """
+                )
+                db.userVersion = 14
+            }
         }
     }
     
