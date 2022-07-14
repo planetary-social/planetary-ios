@@ -443,13 +443,16 @@ class ViewDatabase {
         return -1
     }
     
+    /// Returns the date at which the newest row in the messages table was inserted. Useful for getting a rough idea of
+    /// the last time the user synced with peers.
     func lastWrittenMessageDate() throws -> Date? {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        if let row = try db.pluck(msgs.select(colWrittenAt).order(colWrittenAt.desc).limit(1)) {
-            return Date(milliseconds: try row.get(colWrittenAt))
+        
+        if let milliseconds = try db.scalar(msgs.select(colWrittenAt.max)) {
+            return Date(milliseconds: milliseconds)
         } else {
             return nil
         }
