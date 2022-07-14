@@ -3,6 +3,8 @@ on:
   pull_request:
   push:
     branches: main
+env:
+  SIMULATOR: platform=iOS Simulator,name=iPhone 13,OS=15.5
     
 jobs:
   unit_test:
@@ -31,9 +33,17 @@ jobs:
         PostHogAPIKey: nil
         PostHogHost: nil
     - name: Build Planetary
-      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.4" | xcpretty
+      run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "$SIMULATOR" | xcpretty
     - name: Run Tests
-      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "platform=iOS Simulator,name=iPhone 13,OS=15.4" | xcpretty
+      run: set -o pipefail && xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme UnitTests -destination "$SIMULATOR" | xcpretty
+  changelog:
+    name: Check CHANGELOG
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dangoslen/changelog-enforcer@v3
+        with:
+          skipLabels: 'Skip-Changelog'
+          missingUpdateErrorMessage: 'You have not updated CHANGELOG.md. If an entry is not applicable add the Skip-Changelog label to your PR. See the top of the CHANGELOG.md for more details.'
   logger:
     name: Logger
     runs-on: macOS-12
@@ -41,9 +51,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Logger -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Logger -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Logger -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Logger -destination "$SIMULATOR" | xcpretty
   secrets:
     name: Secrets
     runs-on: macOS-12
@@ -51,9 +61,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Secrets -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Secrets -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Secrets -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Secrets -destination "$SIMULATOR" | xcpretty
   analytics:
     name: Analytics
     runs-on: macOS-12
@@ -61,9 +71,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Analytics -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Analytics -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Analytics -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Analytics -destination "$SIMULATOR" | xcpretty
   crashreporting:
     name: Crash Reporting
     runs-on: macOS-12
@@ -71,9 +81,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme CrashReporting -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme CrashReporting -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme CrashReporting -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme CrashReporting -destination "$SIMULATOR" | xcpretty
   support:
     name: Support
     runs-on: macOS-12
@@ -81,6 +91,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
     - name: Build for iOS
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Support -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme Support -destination "$SIMULATOR" | xcpretty
     - name: Run iOS tests
-      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Support -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" | xcpretty
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -workspace Planetary.xcworkspace -scheme Support -destination "$SIMULATOR" | xcpretty
