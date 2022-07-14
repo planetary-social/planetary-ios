@@ -20,6 +20,7 @@ class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
         super.init(style: .default, reuseIdentifier: type.reuseIdentifier)
         self.constrainKeyValueViewToContentView(height)
         self.selectionStyle = .none
+        backgroundColor = .clear
         self.keyValueView.showAnimatedSkeleton()
     }
 

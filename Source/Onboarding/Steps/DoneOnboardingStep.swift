@@ -53,6 +53,7 @@ class DoneOnboardingStep: OnboardingStep {
         self.view.hintLabel.text = Text.Onboarding.thanksForTrying.text
 
         self.view.primaryButton.setText(.doneOnboarding)
+        self.view.bringSubviewToFront(view.buttonStack)
     }
 
     override func performPrimaryAction(sender button: UIButton) {

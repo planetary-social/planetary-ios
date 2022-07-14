@@ -31,6 +31,7 @@
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
 "Text.startedFollowing" = "{{somebody}} empezó a seguir a";
 "Text.stoppedFollowing" = "{{somebody}} dejo de seguir a";
+"Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "No mostrarme en el directorio de usuarios";

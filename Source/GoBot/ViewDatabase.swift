@@ -1786,6 +1786,25 @@ class ViewDatabase {
         }
     }
     
+    func deleteAbouts(for feed: FeedIdentifier) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let authorID = try authorID(of: feed, make: false)
+        
+        try db.transaction {
+            try db.run(
+                msgs
+                    .filter(colMsgType == "about")
+                    .filter(colAuthorID == authorID)
+                    .delete()
+            )
+            
+            try db.run(abouts.where(colAboutID == authorID).delete())
+        }
+    }
+    
     private func fillContact(msgID: Int64, msg: KeyValue) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
