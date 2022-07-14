@@ -23,6 +23,7 @@ extension Text {
             Text.Channel.self,
             Text.Post.self,
             Text.Report.self,
+            Text.Help.Home.self,
         ]
     }
 }
@@ -485,5 +486,16 @@ extension Text {
         case postReplied = "%@ replied to your post"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
+    }
+}
+
+// MARK: Help
+extension Text {
+    enum Help {
+        enum Home: String, Localizable, CaseIterable {
+            case title = "See posts from users and topics you follow"
+            case body = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed."
+            case highlightedWord = "Discover"
+        }
     }
 }

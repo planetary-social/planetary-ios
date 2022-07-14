@@ -11,7 +11,6 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
-import SwiftUI
 
 class HomeViewController: ContentViewController {
 
@@ -237,27 +236,8 @@ class HomeViewController: ContentViewController {
     
     @objc
     func helpButtonTouchUpInside() {
-//        Analytics.shared.trackDidTapButton(buttonName: "compose")
-        
-        let controller = UIHostingController(rootView: HomeHelpView())
-        
-        controller.modalPresentationStyle = .popover
-//        controller.presentationController?.delegate = coordinator as UIAdaptivePresentationControllerDelegate
-        controller.modalTransitionStyle = .coverVertical
-        if let hostPopover = controller.popoverPresentationController {
-            hostPopover.sourceView = view
-            let sheet = hostPopover.adaptiveSheetPresentationController
-            //As of 13 Beta 4 if .medium() is the only detent in landscape error occurs
-            sheet.detents = [.medium()]
-//            sheet.largestUndimmedDetentIdentifier = smallestUndimmedDetentIdentifier
-//            sheet.prefersScrollingExpandsWhenScrolledToEdge =
-//            prefersScrollingExpandsWhenScrolledToEdge
-//            sheet.prefersEdgeAttachedInCompactHeight =
-//            prefersEdgeAttachedInCompactHeight
-//            sheet.widthFollowsPreferredContentSizeWhenEdgeAttached = true
-            
-        }
         if presentedViewController == nil {
+            let controller = HelpCoordinator.helpController(for: self, sourceBarButton: helpButton)
             present(controller, animated: true, completion: nil)
         }
     }

@@ -295,3 +295,7 @@
 "Report.postReplied" = "%@ odpowiedział na Twój post";
 "Report.feedMentioned" = "%@ wspomniał o Tobie w poście";
 "Report.messageLiked" = "%@ polubił twój post";
+
+"Home.title" = "See posts from users and topics you follow";
+"Home.body" = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed.";
+"Home.highlightedWord" = "Discover";
