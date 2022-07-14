@@ -69,7 +69,7 @@ class ViewDatabase {
     // All messages in the network should be as read if true. This is to prevent a user that runs into
     // the migration that creates the read_messages table to have all the messages as unread. It cannot be
     // done during migration as we need to know the user id
-    private var needsToSetAllMessagesAsRead: Bool = false
+    private var needsToSetAllMessagesAsRead = false
     
     // MARK: Tables and fields
     let colID = Expression<Int64>("id")
@@ -1370,8 +1370,9 @@ class ViewDatabase {
         return try self.mapQueryToKeyValue(qry: qry, useNamespacedTables: true)
     }
 
-    // PARGMA MARK: - Reports
+    // MARK: - Reports
 
+    /// Returns the total number of unread reports
     func countNumberOfUnreadReports() throws -> Int {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1397,6 +1398,11 @@ class ViewDatabase {
         return 0
     }
 
+    /// Returns a report associated to a given message.
+    ///
+    /// - parameter message: The message associated to the wanted report
+    ///
+    /// This function returns nil if the message doesn't have an associated report.
     func report(for message: MessageIdentifier) throws -> Report? {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1426,6 +1432,9 @@ class ViewDatabase {
         return try? buildReport(from: row)
     }
 
+    /// Returns the list of reports associated to the logged in user
+    ///
+    /// - parameter limit: The maximum number of reports in the list
     func reports(limit: Int = 200) throws -> [Report] {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1459,6 +1468,7 @@ class ViewDatabase {
         return reports.compactMap { $0 }
     }
 
+    /// Builds a Report object from a result query row
     private func buildReport(from row: Row) throws -> Report? {
         let msgKey = try row.get(colKey)
         let msgAuthor = try row.get(colAuthor)
@@ -1496,7 +1506,12 @@ class ViewDatabase {
         return report
     }
 
-    func countNumberOfReports(since report: Report, limit: Int = 200) throws -> Int {
+    /// Counts the total number of reports since a given report.
+    ///
+    /// - parameter report: the offset
+    ///
+    /// This is useful for knowing if there are new reports since the last displayed one.
+    func countNumberOfReports(since report: Report) throws -> Int {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }

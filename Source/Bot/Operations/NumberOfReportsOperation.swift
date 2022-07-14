@@ -10,6 +10,7 @@ import CrashReporting
 import Foundation
 import Logger
 
+/// Calculate the total number of reports since a particular report (offset)
 class NumberOfReportsOperation: AsynchronousOperation {
 
     private(set) var numberOfReports = 0

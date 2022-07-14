@@ -218,9 +218,14 @@ protocol Bot: AnyObject {
     /// Returns all the messages in a feed that mention the active identity.
     func mentions(completion: @escaping PaginatedCompletion)
 
+    /// Sets a message as read.
+    ///
+    /// - parameter message: The message to mark as read
     func markMessageAsRead(_ message: MessageIdentifier)
 
     /// Reports (unifies mentions, replies, follows) for the active identity.
+    ///
+    /// - parameter queue: A queue in which the completion handler will be called in
     func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void))
 
     /// Returns the number of reports newer than a particular report (offset).
@@ -228,6 +233,12 @@ protocol Bot: AnyObject {
     /// - parameter report: The report to account for the offset.
     func numberOfReports(since report: Report, completion: @escaping CountCompletion)
 
+    /// Returns the number of all unread reports.
+    ///
+    /// - parameter queue: A queue in which the completion handler will be called in
+    ///
+    /// Each report is associated to a single KeyValue so an unread report is defined by the read status
+    /// of the associated message.
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion)
 
     // MARK: Blob publishing
@@ -393,6 +404,12 @@ extension Bot {
         }
     }
 
+    /// Returns the number of all unread reports.
+    ///
+    /// - parameter queue: A queue in which the completion handler will be called in
+    ///
+    /// Each report is associated to a single KeyValue so an unread report is defined by the read status
+    /// of the associated message.
     func numberOfUnreadReports() async throws -> Int {
         try await withCheckedThrowingContinuation { continuation in
             numberOfUnreadReports(queue: DispatchQueue.global(qos: .background)) { result in
