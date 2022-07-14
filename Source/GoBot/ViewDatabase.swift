@@ -65,6 +65,11 @@ class ViewDatabase {
     // skip messages older than this (6 months)
     // this should be removed once the database was refactored
     private var temporaryMessageExpireDate: Double = -60 * 60 * 24 * 30 * 6
+
+    // All messages in the network should be as read if true. This is to prevent a user that runs into
+    // the migration that creates the read_messages table to have all the messages as unread. It cannot be
+    // done during migration as we need to know the user id
+    private var needsToSetAllMessagesAsRead: Bool = false
     
     // MARK: Tables and fields
     let colID = Expression<Int64>("id")
@@ -225,6 +230,8 @@ class ViewDatabase {
         
         self.currentUser = user
         self.currentUserID = try self.authorID(of: user, make: true)
+
+        try setAllMessagesAsReadIfNeeded(on: db)
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -271,16 +278,33 @@ class ViewDatabase {
                 db.userVersion = 13
             }
             if db.userVersion == 13 {
-                try db.execute("""
-        CREATE TABLE IF NOT EXISTS read_messages (
-        author_id BIGINT null,
-        msg_id BIGINT null,
-        is_read BOOLEAN not null default true,
-        primary key (author_id, msg_id)
-        )
-        """)
+                try db.execute(
+                    """
+                    CREATE TABLE
+                        read_messages (
+                            author_id BIGINT null,
+                            msg_id BIGINT null,
+                            is_read BOOLEAN not null default true,
+                            PRIMARY KEY (author_id, msg_id)
+                        );
+                    """
+                )
+                db.userVersion = 14
+                needsToSetAllMessagesAsRead = true
             }
         }
+    }
+
+    private func setAllMessagesAsReadIfNeeded(on db: Connection) throws {
+        guard needsToSetAllMessagesAsRead else {
+            return
+        }
+        try db.execute(
+            """
+            INSERT INTO read_messages
+            SELECT \(currentUserID), msg_id, true FROM messages;
+            """
+        )
     }
     
     // this open() is only needed for testing to extend the max age for the fixures... :'(
@@ -1353,18 +1377,18 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let queryString = """
-        SELECT
-          COUNT(*)
-        FROM
-          reports r
-          LEFT JOIN read_messages rm ON r.msg_ref = rm.msg_id
-          AND r.author_id = rm.author_id
-        WHERE
-          r.author_id = ?
-          AND (
-            rm.is_read = false
-            OR rm.is_read IS NULL
-          );
+            SELECT
+                COUNT(*)
+            FROM
+                reports r
+                LEFT JOIN read_messages rm ON r.msg_ref = rm.msg_id
+                AND r.author_id = rm.author_id
+            WHERE
+                r.author_id = ?
+                AND (
+                    rm.is_read = false
+                    OR rm.is_read IS NULL
+                );
         """
         let query = try connection.prepare(queryString)
         if let count = try query.scalar(currentUserID) as? Int64 {
@@ -1377,6 +1401,8 @@ class ViewDatabase {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
+        var readMessagesJoinClause = self.readMessages[colMessageID] == self.msgs[colMessageID]
+        readMessagesJoinClause = readMessagesJoinClause & (self.readMessages[colAuthorID] == self.reports[colAuthorID])
         let query = self.reports
             .join(self.msgs, on: self.msgs[colMessageID] == self.reports[colMessageRef])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
@@ -1389,7 +1415,7 @@ class ViewDatabase {
             .join(
                 .leftOuter,
                 self.readMessages,
-                on: (self.readMessages[colMessageID] == self.msgs[colMessageID]) & (self.readMessages[colAuthorID] == self.reports[colAuthorID])
+                on: readMessagesJoinClause
             )
             .filter((self.reports[colAuthorID] == self.currentUserID) & (self.msgKeys[colKey] == message))
             .limit(1)
@@ -1404,90 +1430,55 @@ class ViewDatabase {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let query = self.reports
-            .join(self.msgs, on: self.msgs[colMessageID] == self.reports[colMessageRef])
-            .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
-            .join(.leftOuter, self.contacts, on: self.contacts[colMessageRef] == self.msgs[colMessageID])
-            .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.msgs[colMessageID])
-            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
-            .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
-            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
-            .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
-            .join(
-                .leftOuter,
-                self.readMessages,
-                on: (self.readMessages[colMessageID] == self.msgs[colMessageID]) & (self.readMessages[colAuthorID] == self.reports[colAuthorID])
+        let queryString = """
+        SELECT
+            *,
+            contact_author.author AS contact_identifier
+        FROM
+            reports
+            INNER JOIN messages ON (messages.msg_id = reports.msg_ref)
+            LEFT OUTER JOIN posts ON (posts.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN contacts ON (contacts.msg_ref = messages.msg_id)
+            LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
+            LEFT OUTER JOIN votes ON (votes.msg_ref = messages.msg_id)
+            INNER JOIN messagekeys ON (messagekeys.id = messages.msg_id)
+            INNER JOIN authors ON (authors.id = messages.author_id)
+            INNER JOIN abouts ON (abouts.about_id = messages.author_id)
+            LEFT OUTER JOIN tangles ON (tangles.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN read_messages ON (
+                (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
             )
-        
-        let filteredQuery = query.filter(self.reports[colAuthorID] == self.currentUserID)
-            
-        let sortedQuery = filteredQuery.order(colCreatedAt.desc)
-
-        return try connection.prepare(sortedQuery).compactMap { row in
+        WHERE
+            (reports.author_id = ?)
+        ORDER BY
+            created_at DESC
+        """
+        let reports = try connection.prepare(queryString, currentUserID).prepareRowIterator().map { row in
             try buildReport(from: row)
         }
+        return reports.compactMap { $0 }
     }
 
     private func buildReport(from row: Row) throws -> Report? {
-        // tried 'return try row.decode()'
-        // but failed - see https://github.com/VerseApp/ios/issues/29
-
-        let msgID = try row.get(self.msgs[colMessageID])
-
         let msgKey = try row.get(colKey)
         let msgAuthor = try row.get(colAuthor)
 
         var content: Content
 
-        let type = try row.get(self.msgs[colMsgType])
+        let type = try row.get(colMsgType)
 
         switch type {
         case ContentType.post.rawValue:
-
-            var rootKey: Identifier?
-            let colRootMaybe = Expression<Int64?>("root")
-
-            if let rootID = try row.get(colRootMaybe) {
-                rootKey = try self.msgKey(id: rootID)
-            }
-
-            let post = Post(
-                blobs: try self.loadBlobs(for: msgID),
-                mentions: try self.loadMentions(for: msgID),
-                root: rootKey,
-                text: try row.get(colText)
-            )
-
-            content = Content(from: post)
-
+            content = Content(from: try Post(row: row, db: self, hasMentionColumns: false))
         case ContentType.vote.rawValue:
-
-            let lnkID = try row.get(colLinkID)
-            let lnkKey = try self.msgKey(id: lnkID)
-
-            let rootID = try row.get(colRoot)
-            let rootKey = try self.msgKey(id: rootID)
-
-            let contentVote = ContentVote(
-                link: lnkKey,
-                value: try row.get(colValue),
-                expression: try row.get(colExpression),
-                root: rootKey,
-                branches: []
-            )
-
-            content = Content(from: contentVote)
+            content = Content(from: try ContentVote(row: row, db: self))
         case ContentType.contact.rawValue:
-            if let state = try? row.get(colContactState) {
-                let following = state == 1
-                let contact = Contact(contact: msgAuthor, following: following)
-
-                content = Content(from: contact)
-            } else {
+            guard let contact = try Contact(row: row, db: self) else {
                 // Contacts stores only the latest message
                 // So, an old follow that was later unfollowed won't appear here.
                 return nil
             }
+            content = Content(from: contact)
         default:
             throw ViewDatabaseError.unexpectedContentType(type)
         }
@@ -1508,13 +1499,13 @@ class ViewDatabase {
         )
         keyValue.metadata.author.about = About(
             about: msgAuthor,
-            name: try row.get(self.abouts[colName]),
+            name: try row.get(colName),
             description: try row.get(colDescr),
             imageLink: try row.get(colImage)
         )
         keyValue.metadata.isPrivate = try row.get(colDecrypted)
 
-        let rawReportType = try row.get(self.reports[colReportType])
+        let rawReportType = try row.get(colReportType)
         let reportType = ReportType(rawValue: rawReportType) ?? ReportType.messageLiked
 
         let createdAtTimestamp = try row.get(colCreatedAt)

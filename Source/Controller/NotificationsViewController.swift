@@ -278,17 +278,6 @@ private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
         return reports.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath)
-        let report = report(at: indexPath)
-        if report.isRead {
-            cell.contentView.backgroundColor = .clear
-        } else {
-            cell.contentView.backgroundColor = .red
-        }
-        return cell
-    }
-
     override func cell(
         at indexPath: IndexPath,
         for type: ContentType,

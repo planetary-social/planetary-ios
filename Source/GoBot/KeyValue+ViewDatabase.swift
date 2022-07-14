@@ -36,9 +36,6 @@ extension KeyValue {
         // but failed - see https://github.com/VerseApp/ios/issues/29
         
         let db = database
-        let colRootMaybe = Expression<Int64?>("root")
-
-        let msgID = try row.get(db.colMessageID)
         
         let msgKey = try row.get(db.colKey)
         let msgAuthor = try row.get(db.colAuthor)
@@ -49,74 +46,16 @@ extension KeyValue {
         
         switch type {
         case ContentType.post.rawValue:
-            
-            var rootKey: Identifier?
-            if let rootID = try row.get(colRootMaybe) {
-                rootKey = try db.msgKey(id: rootID)
-            }
-            
-            var blobs: Blobs
-            var mentions: [Mention]
-            if hasMentionColumns {
-                let hasBlobs = try row.get(Expression<Bool>("has_blobs"))
-                blobs = hasBlobs ? try db.loadBlobs(for: msgID) : []
-                
-                mentions = [Mention]()
-                let hasFeedMentions = try row.get(Expression<Bool>("has_feed_mentions"))
-                if hasFeedMentions {
-                    mentions.append(contentsOf: try db.loadFeedMentions(for: msgID))
-                }
-                let hasMessageMentions = try row.get(Expression<Bool>("has_message_mentions"))
-                if hasMessageMentions {
-                    mentions.append(contentsOf: try db.loadMessageMentions(for: msgID))
-                }
-            } else {
-                blobs = try db.loadBlobs(for: msgID)
-                mentions = try db.loadMentions(for: msgID)
-            }
-            
-            let p = Post(
-                blobs: blobs,
-                mentions: mentions,
-                root: rootKey,
-                text: try row.get(db.colText)
-            )
-            
-            c = Content(from: p)
-            
+            c = Content(from: try Post(row: row, db: db, hasMentionColumns: hasMentionColumns))
         case ContentType.vote.rawValue:
-            
-            let lnkID = try row.get(db.colLinkID)
-            let lnkKey = try db.msgKey(id: lnkID)
-            
-            let rootID = try row.get(db.colRoot)
-            let rootKey = try db.msgKey(id: rootID)
-            
-            let cv = ContentVote(
-                link: lnkKey,
-                value: try row.get(db.colValue),
-                expression: try row.get(db.colExpression),
-                root: rootKey,
-                branches: [] // TODO: branches for root
-            )
-            
-            c = Content(from: cv)
+            c = Content(from: try ContentVote(row: row, db: db))
         case ContentType.contact.rawValue:
-            if let state = try? row.get(db.colContactState) {
-                let identifier = try row.get(Expression<Identifier>("contact_identifier"))
-                
-                if state == 1 {
-                    c = Content(from: Contact(contact: identifier, following: true))
-                } else if state == -1 {
-                    c = Content(from: Contact(contact: identifier, blocking: true))
-                } else {
-                    c = Content(from: Contact(contact: identifier, following: false))
-                }
-            } else {
+            guard let contact = try Contact(row: row, db: db) else {
                 // Contacts stores only the latest message
                 // So, an old follow that was later unfollowed won't appear here.
                 return nil
             }
+            c = Content(from: contact)
         default:
             throw ViewDatabaseError.unexpectedContentType(type)
         }

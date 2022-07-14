@@ -46,8 +46,8 @@ class FeatureViewController: UINavigationController {
         rootViewController.navigationItem.leftBarButtonItem = self.profileBarButtonItem
     }
 
-    private func setTabBarItem(title: String?, image named: String?) {
-        guard let name = named, setTabBarItemImage(name) else {
+    private func setTabBarItem(title: String?, image named: String? = nil) {
+        guard let name = named ?? cachedTabBarItemImageName, setTabBarItemImage(name) else {
             return
         }
         self.tabBarItem.accessibilityLabel = title
@@ -72,6 +72,14 @@ class FeatureViewController: UINavigationController {
         tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
         self.tabBarItem = tabBarItem
         return true
+    }
+
+    func setTabBarItemBadge(_ value: Int?) {
+        if let value = value {
+            tabBarItem?.badgeValue = "\(value)"
+        } else {
+            tabBarItem?.badgeValue = nil
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

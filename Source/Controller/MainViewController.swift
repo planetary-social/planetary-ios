@@ -64,10 +64,13 @@ class MainViewController: UITabBarController {
 
     /// Updates the icon of the notifications tab bar item to match the application badge number
     func setNotificationsTabBarIcon() {
-        if UIApplication.shared.applicationIconBadgeNumber > 0 {
+        let numberOfNotifications = UIApplication.shared.applicationIconBadgeNumber
+        if numberOfNotifications > 0 {
             self.notificationsFeatureViewController.setTabBarItemImage("tab-icon-has-notifications")
+            self.notificationsFeatureViewController.setTabBarItemBadge(numberOfNotifications)
         } else {
             self.notificationsFeatureViewController.setTabBarItemImage("tab-icon-notifications")
+            self.notificationsFeatureViewController.setTabBarItemBadge(nil)
         }
     }
     
