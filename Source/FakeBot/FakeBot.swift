@@ -17,7 +17,11 @@ class FakeBot: Bot {
     
     var isRestoring = false
     
-    required init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?) {}
+    required init(
+        userDefaults: UserDefaults,
+        preloadedPubService: PreloadedPubService?,
+        welcomeService: WelcomeService? = nil
+    ) {}
     
     func lastReceivedTimestam() throws -> Double { 0 }
     

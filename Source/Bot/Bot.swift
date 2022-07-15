@@ -49,7 +49,7 @@ protocol Bot: AnyObject {
     var version: String { get }
 
     // MARK: AppLifecycle
-    init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?)
+    init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?, welcomeService: WelcomeService?)
     func suspend()
     func exit() async
     func dropDatabase(for configuration: AppConfiguration) async throws

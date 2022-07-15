@@ -92,6 +92,7 @@ class GoBot: Bot {
     private(set) var config: AppConfiguration?
 
     private var preloadedPubService: PreloadedPubService?
+    private var welcomeService: WelcomeService?
     private var banListAPI = BanListAPI.shared
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
@@ -101,10 +102,12 @@ class GoBot: Bot {
 
     required init(
         userDefaults: UserDefaults = UserDefaults.standard,
-        preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter()
+        preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter(),
+        welcomeService: WelcomeService? = nil
     ) {
         self.userDefaults = userDefaults
         self.preloadedPubService = preloadedPubService
+        self.welcomeService = WelcomeServiceAdapter(userDefaults: userDefaults)
         self.utilityQueue = DispatchQueue(
             label: "GoBot-utility",
             qos: .userInitiated,
@@ -252,6 +255,12 @@ class GoBot: Bot {
             
             self._identity = secret.identity
             
+            do {
+                try self.welcomeService?.insertNewMessages(in: self.database)
+            } catch {
+                Log.error("Failed to run welcome service: \(error.localizedDescription)")
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
             self.preloadedPubService?.preloadPubs(in: self, from: nil)
             
             Task.detached(priority: .utility) {
