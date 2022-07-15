@@ -12,6 +12,22 @@ import CrashReporting
 
 /// A service class that helps manage the pubs that are loaded into Planetary even if they aren't in your social graph
 /// (aka community pubs).
+///
+/// **To add a new Pub**
+/// 1. Follow the [internal documentation](https://github.com/planetary-social/infrastructure/wiki/Setting-Up-A-New-Pub)
+///     we have for setting up a Planetary pub
+/// 2. Generate the pub invitation and make sure it is listed on our internal
+///     [Pub Invitation Tracking Page](https://github.com/planetary-social/infrastructure/wiki/Pub-Invitation-Tracking)
+/// 3. Add the pub's id to the `pubs` array in the
+///     [feed serializer](https://github.com/planetary-social/feed_seralizer/) and run it. Commit and push your
+///     changes.
+/// 4. Copy the generated `preloadedPubs.json` file into this repo. It should be copied to the directory
+///     `Resources/Preload.bundle/Pubs/`.
+/// 5. Copy the pub's profile image into `Resources/Preload.bundle/Pubs/Blobs`.
+/// 6. Add a entry for the profile image to `Resources/Preload.bundle/Pubs/BlobIdentifiers.plist`. The key should be
+///     the filename and the value is the blob ID.
+/// 7. Add a new variable for the pub in Planetary.release and Plantary.debug. Add the pub invitation as the variable's
+///     value and add the variable to the list of `COMMUNITIES` or `PLANETARY_SYSTEM_PUBS` in the same file.
 protocol PreloadedPubService {
     
     /// Initializes the service with the `PreloadedBlobsService` that will be used to preload profile images for the
