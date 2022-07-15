@@ -649,6 +649,7 @@
 		5BEE74222880534000897ACC /* Contact+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEE74202880534000897ACC /* Contact+ViewDatabase.swift */; };
 		5BEE74242880774600897ACC /* Value+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEE74232880774600897ACC /* Value+ViewDatabase.swift */; };
 		5BEE74252880774600897ACC /* Value+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEE74232880774600897ACC /* Value+ViewDatabase.swift */; };
+		5BEE742A2880B0F500897ACC /* ReportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEE74292880B0F500897ACC /* ReportTests.swift */; };
 		5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = 5BFFCE8F27B56D300088F6D6 /* Logger */; };
 		664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76846E865BB285CC1D52D05B /* Pods_APITests.framework */; };
 		7CADD3FD394F8FD67E295D85 /* Pods_UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CA171A11489B333F8AB5B2 /* Pods_UITests.framework */; };
@@ -1556,6 +1557,7 @@
 		5BEE741D2880515800897ACC /* Post+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Post+ViewDatabase.swift"; sourceTree = "<group>"; };
 		5BEE74202880534000897ACC /* Contact+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Contact+ViewDatabase.swift"; sourceTree = "<group>"; };
 		5BEE74232880774600897ACC /* Value+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Value+ViewDatabase.swift"; sourceTree = "<group>"; };
+		5BEE74292880B0F500897ACC /* ReportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportTests.swift; sourceTree = "<group>"; };
 		5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		606DCE79703F49AE5AB530BD /* Pods-APITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.release.xcconfig"; sourceTree = "<group>"; };
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1923,6 +1925,7 @@
 				23888978220867DB0030CB92 /* ViewDatabaseTests.swift */,
 				C982CBD62834233700D8963F /* FeedStrategyTests.swift */,
 				5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */,
+				5BEE74292880B0F500897ACC /* ReportTests.swift */,
 				23448C1F235F07ED00F6E484 /* GoBotOrderedTests.swift */,
 				C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */,
 				2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */,
@@ -3868,6 +3871,7 @@
 				C9724BAA2809EB67000EBCCD /* UIFont+Tracking.swift in Sources */,
 				C9724B8B2809E97F000EBCCD /* ReplyTextView.swift in Sources */,
 				C9724B3C2809D481000EBCCD /* Onboarding+Migrate.swift in Sources */,
+				5BEE742A2880B0F500897ACC /* ReportTests.swift in Sources */,
 				C9724B152809D2E7000EBCCD /* Onboarding+Status.swift in Sources */,
 				C9724B7E2809E8DE000EBCCD /* ThreadReplyPaginatedDataSource.swift in Sources */,
 				C9724BF22809EFC3000EBCCD /* PeerConnectionAnimationView.swift in Sources */,

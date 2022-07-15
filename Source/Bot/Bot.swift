@@ -406,8 +406,6 @@ extension Bot {
 
     /// Returns the number of all unread reports.
     ///
-    /// - parameter queue: A queue in which the completion handler will be called in
-    ///
     /// Each report is associated to a single KeyValue so an unread report is defined by the read status
     /// of the associated message.
     func numberOfUnreadReports() async throws -> Int {

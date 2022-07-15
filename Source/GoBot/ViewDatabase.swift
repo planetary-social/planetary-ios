@@ -1407,26 +1407,42 @@ class ViewDatabase {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        var readMessagesJoinClause = self.readMessages[colMessageID] == self.msgs[colMessageID]
-        readMessagesJoinClause = readMessagesJoinClause & (self.readMessages[colAuthorID] == self.reports[colAuthorID])
-        let query = self.reports
-            .join(self.msgs, on: self.msgs[colMessageID] == self.reports[colMessageRef])
-            .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
-            .join(.leftOuter, self.contacts, on: self.contacts[colMessageRef] == self.msgs[colMessageID])
-            .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.msgs[colMessageID])
-            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
-            .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
-            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
-            .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
-            .join(
-                .leftOuter,
-                self.readMessages,
-                on: readMessagesJoinClause
+        let queryString = """
+        SELECT
+            reports.type AS report_type,
+            reports.created_at AS created_at,
+            messages.*,
+            posts.*,
+            contacts.*,
+            contact_author.author AS contact_identifier,
+            votes.*,
+            messagekeys.*,
+            authors.*,
+            abouts.*,
+            tangles.*,
+            read_messages.is_read AS is_read
+        FROM
+            reports
+            INNER JOIN messages ON (messages.msg_id = reports.msg_ref)
+            LEFT OUTER JOIN posts ON (posts.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN contacts ON (contacts.msg_ref = messages.msg_id)
+            LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+            LEFT OUTER JOIN votes ON (votes.msg_ref = messages.msg_id)
+            INNER JOIN messagekeys ON (messagekeys.id = messages.msg_id)
+            INNER JOIN authors ON (authors.id = messages.author_id)
+            INNER JOIN abouts ON (abouts.about_id = messages.author_id)
+            LEFT OUTER JOIN tangles ON (tangles.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN read_messages ON (
+                (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
             )
-            .filter((self.reports[colAuthorID] == self.currentUserID) & (self.msgKeys[colKey] == message))
-            .limit(1)
+        WHERE
+            reports.author_id = ?
+            AND messagekeys.key = ?
+        LIMIT
+            1
+        """
 
-        guard let row = try connection.prepare(query).makeIterator().next() else {
+        guard let row = try connection.prepare(queryString, currentUserID, message).prepareRowIterator().next() else {
             return nil
         }
         return try? buildReport(from: row)
@@ -1441,14 +1457,24 @@ class ViewDatabase {
         }
         let queryString = """
         SELECT
-            *,
-            contact_author.author AS contact_identifier
+            reports.type AS report_type,
+            reports.created_at AS created_at,
+            messages.*,
+            posts.*,
+            contacts.*,
+            contact_author.author AS contact_identifier,
+            votes.*,
+            messagekeys.*,
+            authors.*,
+            abouts.*,
+            tangles.*,
+            read_messages.is_read AS is_read
         FROM
             reports
             INNER JOIN messages ON (messages.msg_id = reports.msg_ref)
             LEFT OUTER JOIN posts ON (posts.msg_ref = messages.msg_id)
             LEFT OUTER JOIN contacts ON (contacts.msg_ref = messages.msg_id)
-            LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
+            LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
             LEFT OUTER JOIN votes ON (votes.msg_ref = messages.msg_id)
             INNER JOIN messagekeys ON (messagekeys.id = messages.msg_id)
             INNER JOIN authors ON (authors.id = messages.author_id)
@@ -1458,11 +1484,13 @@ class ViewDatabase {
                 (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
             )
         WHERE
-            (reports.author_id = ?)
+            reports.author_id = ?
         ORDER BY
             created_at DESC
+        LIMIT
+            ?
         """
-        let reports = try connection.prepare(queryString, currentUserID).prepareRowIterator().map { row in
+        let reports = try connection.prepare(queryString, currentUserID, limit).prepareRowIterator().map { row in
             try buildReport(from: row)
         }
         return reports.compactMap { $0 }
@@ -1488,7 +1516,7 @@ class ViewDatabase {
         )
         keyValue.metadata.isPrivate = try row.get(colDecrypted)
 
-        let rawReportType = try row.get(colReportType)
+        let rawReportType = try row.get(Expression<String>("report_type"))
         let reportType = ReportType(rawValue: rawReportType) ?? ReportType.messageLiked
 
         let createdAtTimestamp = try row.get(colCreatedAt)
