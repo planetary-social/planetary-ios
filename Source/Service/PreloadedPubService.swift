@@ -68,7 +68,10 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
     /// This is a one time fix for a bug in the bug about messages. This can be deleted after it has probably run on
     /// everyone's device once. #540
     func fixOldPubMessages(in bot: Bot) {
-        guard let goBot = bot as? GoBot,
+        let hasRunKey = "PreloadedPubService.hasFixedOldPubMessages"
+        let hasRun = UserDefaults.standard.bool(forKey: hasRunKey)
+        guard !hasRun,
+            let goBot = bot as? GoBot,
             let appConfig = goBot.config else {
             return
         }
@@ -83,5 +86,8 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
                 Log.optional(error)
             }
         }
+        
+        UserDefaults.standard.set(true, forKey: hasRunKey)
+        UserDefaults.standard.synchronize()
     }
 }
