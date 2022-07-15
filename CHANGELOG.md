@@ -13,11 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.3] 2022-07-11
 
 - Added new tab bar icons. #691
-- Don't show loading indicator when publishing a like/vote #672 
 - Show welcome tutorial messages to users who haven't opened the app in over a month. #695 
 - Replace timestamp / posted x days ago with posters identity in home feed. #660 
 - Fix some pub names and images not updating #540
 - Tweaked design of the follow message cells. #699
+- Don't show loading indicator when publishing a like/vote #672 
 
 ## [1.2.2] 2022-07-04
 

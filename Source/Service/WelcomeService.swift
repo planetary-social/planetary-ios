@@ -28,7 +28,6 @@ class WelcomeServiceAdapter: WelcomeService {
     }
     
     func insertNewMessages(in db: ViewDatabase) throws {
-        Log.info("Preloading welcome messages")
         
         guard let currentUser = db.currentUser else {
             Log.error("database does not have a currentUser")
@@ -44,6 +43,8 @@ class WelcomeServiceAdapter: WelcomeService {
         guard try isNewOrDormantUser(currentUser, db: db) else {
             return
         }
+        
+        Log.info("Preloading welcome messages")
         
         var messages = [KeyValue]()
         messages.append(welcomeAccountAboutMessage())
