@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Max-Rai contributed a fix to the onboarding layout for smaller iOS screen sizes #703 (thanks @Max-Rai!)
+- Show the number of unread notifications in the application badge
 
 ## [1.2.3] 2022-07-11
 

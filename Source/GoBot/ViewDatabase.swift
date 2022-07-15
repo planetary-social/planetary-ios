@@ -46,6 +46,7 @@ enum ViewDatabaseTableNames: String {
     case mentionsImage = "mention_image"
     case reports
     case pubs
+    case readMessages = "read_messages"
 }
 
 class ViewDatabase {
@@ -64,6 +65,11 @@ class ViewDatabase {
     // skip messages older than this (6 months)
     // this should be removed once the database was refactored
     private var temporaryMessageExpireDate: Double = -60 * 60 * 24 * 30 * 6
+
+    // All messages in the network should be as read if true. This is to prevent a user that runs into
+    // the migration that creates the read_messages table to have all the messages as unread. It cannot be
+    // done during migration as we need to know the user id
+    private var needsToSetAllMessagesAsRead = false
     
     // MARK: Tables and fields
     let colID = Expression<Int64>("id")
@@ -187,6 +193,12 @@ class ViewDatabase {
     // Search
     private let postSearch = VirtualTable("post_search")
 
+    // Read messages
+    let readMessages = Table(ViewDatabaseTableNames.readMessages.rawValue)
+    // colMessageID
+    // colAuthorID
+    let colIsRead = Expression<Bool>("is_read")
+
     // MARK: open / close / stats
 
     // IMPORTANT!
@@ -218,6 +230,8 @@ class ViewDatabase {
         
         self.currentUser = user
         self.currentUserID = try self.authorID(of: user, make: true)
+
+        try setAllMessagesAsReadIfNeeded(on: db)
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -294,7 +308,34 @@ class ViewDatabase {
                 )
                 db.userVersion = 14
             }
+            if db.userVersion == 14 {
+                try db.execute(
+                    """
+                    CREATE TABLE
+                        read_messages (
+                            author_id BIGINT null,
+                            msg_id BIGINT null,
+                            is_read BOOLEAN not null default true,
+                            PRIMARY KEY (author_id, msg_id)
+                        );
+                    """
+                )
+                db.userVersion = 15
+                needsToSetAllMessagesAsRead = true
+            }
         }
+    }
+
+    private func setAllMessagesAsReadIfNeeded(on db: Connection) throws {
+        guard needsToSetAllMessagesAsRead else {
+            return
+        }
+        try db.execute(
+            """
+            INSERT INTO read_messages
+            SELECT \(currentUserID), msg_id, true FROM messages;
+            """
+        )
     }
     
     // this open() is only needed for testing to extend the max age for the fixures... :'(
@@ -1378,124 +1419,198 @@ class ViewDatabase {
         
         return try self.mapQueryToKeyValue(qry: qry, useNamespacedTables: true)
     }
-    
-    func reports(limit: Int = 200) throws -> [Report] {
-        guard let db = self.openDB else {
+
+    // MARK: - Reports
+
+    /// Returns the total number of unread reports
+    func countNumberOfUnreadReports() throws -> Int {
+        guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        let qry = self.reports
-            .join(self.msgs, on: self.msgs[colMessageID] == self.reports[colMessageRef])
-            .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
-            .join(.leftOuter, self.contacts, on: self.contacts[colMessageRef] == self.msgs[colMessageID])
-            .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.msgs[colMessageID])
-            .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
-            .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
-            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
-            .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
-        
-        let filteredQuery = qry.filter(self.reports[colAuthorID] == self.currentUserID)
-            
-        let sortedQuery = filteredQuery.order(colCreatedAt.desc)
-        
-        return try db.prepare(sortedQuery).compactMap { row in
-            // tried 'return try row.decode()'
-            // but failed - see https://github.com/VerseApp/ios/issues/29
-            
-            let msgID = try row.get(colMessageID)
-            
-            let msgKey = try row.get(colKey)
-            let msgAuthor = try row.get(colAuthor)
-
-            var c: Content
-               
-            let type = try row.get(self.msgs[colMsgType])
-            
-            switch type {
-            case ContentType.post.rawValue:
-                
-                var rootKey: Identifier?
-                let colRootMaybe = Expression<Int64?>("root")
-                
-                if let rootID = try row.get(colRootMaybe) {
-                    rootKey = try self.msgKey(id: rootID)
-                }
-                
-                let p = Post(
-                    blobs: try self.loadBlobs(for: msgID),
-                    mentions: try self.loadMentions(for: msgID),
-                    root: rootKey,
-                    text: try row.get(colText)
-                )
-                
-                c = Content(from: p)
-                
-            case ContentType.vote.rawValue:
-                
-                let lnkID = try row.get(colLinkID)
-                let lnkKey = try self.msgKey(id: lnkID)
-                
-                let rootID = try row.get(colRoot)
-                let rootKey = try self.msgKey(id: rootID)
-                
-                let cv = ContentVote(
-                    link: lnkKey,
-                    value: try row.get(colValue),
-                    expression: try row.get(colExpression),
-                    root: rootKey,
-                    branches: [] // TODO: branches for root
-                )
-                
-                c = Content(from: cv)
-            case ContentType.contact.rawValue:
-                if let state = try? row.get(colContactState) {
-                    let following = state == 1
-                    let cc = Contact(contact: msgAuthor, following: following)
-                    
-                    c = Content(from: cc)
-                } else {
-                    // Contacts stores only the latest message
-                    // So, an old follow that was later unfollowed won't appear here.
-                    return nil
-                }
-            default:
-                throw ViewDatabaseError.unexpectedContentType(type)
-            }
-            
-            let v = Value(
-                author: msgAuthor,
-                content: c,
-                hash: "sha256", // only currently supported
-                previous: nil, // TODO: .. needed at this level?
-                sequence: try row.get(colSequence),
-                signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
-            )
-            var keyValue = KeyValue(
-                key: msgKey,
-                value: v,
-                timestamp: try row.get(colReceivedAt)
-            )
-            keyValue.metadata.author.about = About(
-                about: msgAuthor,
-                name: try row.get(self.abouts[colName]),
-                description: try row.get(colDescr),
-                imageLink: try row.get(colImage)
-            )
-            keyValue.metadata.isPrivate = try row.get(colDecrypted)
-            
-            let rawReportType = try row.get(self.reports[colReportType])
-            let reportType = ReportType(rawValue: rawReportType)!
-            
-            let createdAtTimestamp = try row.get(colCreatedAt)
-            let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1_000)
-            
-            let report = Report(authorIdentity: "undefined",
-                                messageIdentifier: msgKey,
-                                reportType: reportType,
-                                createdAt: createdAt,
-                                keyValue: keyValue)
-            return report
+        let queryString = """
+            SELECT
+                COUNT(*)
+            FROM
+                reports r
+                LEFT JOIN read_messages rm ON r.msg_ref = rm.msg_id
+                AND r.author_id = rm.author_id
+            WHERE
+                r.author_id = ?
+                AND (
+                    rm.is_read = false
+                    OR rm.is_read IS NULL
+                );
+        """
+        let query = try connection.prepare(queryString)
+        if let count = try query.scalar(currentUserID) as? Int64 {
+            return Int(truncatingIfNeeded: count)
         }
+        return 0
+    }
+
+    /// Returns a report associated to a given message.
+    ///
+    /// - parameter message: The message associated to the wanted report
+    ///
+    /// This function returns nil if the message doesn't have an associated report.
+    func report(for message: MessageIdentifier) throws -> Report? {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let queryString = """
+        SELECT
+            reports.type AS report_type,
+            reports.created_at AS created_at,
+            messages.*,
+            posts.*,
+            contacts.*,
+            contact_author.author AS contact_identifier,
+            votes.*,
+            messagekeys.*,
+            authors.*,
+            abouts.*,
+            tangles.*,
+            read_messages.is_read AS is_read
+        FROM
+            reports
+            INNER JOIN messages ON (messages.msg_id = reports.msg_ref)
+            LEFT OUTER JOIN posts ON (posts.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN contacts ON (contacts.msg_ref = messages.msg_id)
+            LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+            LEFT OUTER JOIN votes ON (votes.msg_ref = messages.msg_id)
+            INNER JOIN messagekeys ON (messagekeys.id = messages.msg_id)
+            INNER JOIN authors ON (authors.id = messages.author_id)
+            INNER JOIN abouts ON (abouts.about_id = messages.author_id)
+            LEFT OUTER JOIN tangles ON (tangles.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN read_messages ON (
+                (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
+            )
+        WHERE
+            reports.author_id = ?
+            AND messagekeys.key = ?
+        LIMIT
+            1
+        """
+
+        guard let row = try connection.prepare(queryString, currentUserID, message).prepareRowIterator().next() else {
+            return nil
+        }
+        return try? buildReport(from: row)
+    }
+
+    /// Returns the list of reports associated to the logged in user
+    ///
+    /// - parameter limit: The maximum number of reports in the list
+    func reports(limit: Int = 200) throws -> [Report] {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let queryString = """
+        SELECT
+            reports.type AS report_type,
+            reports.created_at AS created_at,
+            messages.*,
+            posts.*,
+            contacts.*,
+            contact_author.author AS contact_identifier,
+            votes.*,
+            messagekeys.*,
+            authors.*,
+            abouts.*,
+            tangles.*,
+            read_messages.is_read AS is_read
+        FROM
+            reports
+            INNER JOIN messages ON (messages.msg_id = reports.msg_ref)
+            LEFT OUTER JOIN posts ON (posts.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN contacts ON (contacts.msg_ref = messages.msg_id)
+            LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+            LEFT OUTER JOIN votes ON (votes.msg_ref = messages.msg_id)
+            INNER JOIN messagekeys ON (messagekeys.id = messages.msg_id)
+            INNER JOIN authors ON (authors.id = messages.author_id)
+            INNER JOIN abouts ON (abouts.about_id = messages.author_id)
+            LEFT OUTER JOIN tangles ON (tangles.msg_ref = messages.msg_id)
+            LEFT OUTER JOIN read_messages ON (
+                (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
+            )
+        WHERE
+            reports.author_id = ?
+        ORDER BY
+            created_at DESC
+        LIMIT
+            ?
+        """
+        let reports = try connection.prepare(queryString, currentUserID, limit).prepareRowIterator().map { row in
+            try buildReport(from: row)
+        }
+        return reports.compactMap { $0 }
+    }
+
+    /// Builds a Report object from a result query row
+    private func buildReport(from row: Row) throws -> Report? {
+        let msgKey = try row.get(colKey)
+        let msgAuthor = try row.get(colAuthor)
+        guard let value = try Value(row: row, db: self, hasMentionColumns: false) else {
+            return nil
+        }
+        var keyValue = KeyValue(
+            key: msgKey,
+            value: value,
+            timestamp: try row.get(colReceivedAt)
+        )
+        keyValue.metadata.author.about = About(
+            about: msgAuthor,
+            name: try row.get(colName),
+            description: try row.get(colDescr),
+            imageLink: try row.get(colImage)
+        )
+        keyValue.metadata.isPrivate = try row.get(colDecrypted)
+
+        let rawReportType = try row.get(Expression<String>("report_type"))
+        let reportType = ReportType(rawValue: rawReportType) ?? ReportType.messageLiked
+
+        let createdAtTimestamp = try row.get(colCreatedAt)
+        let createdAt = Date(timeIntervalSince1970: createdAtTimestamp / 1000)
+
+        let isRead = try row.get(Expression<Bool?>("is_read")) ?? false
+        var report = Report(
+            authorIdentity: "undefined",
+            messageIdentifier: msgKey,
+            reportType: reportType,
+            createdAt: createdAt,
+            keyValue: keyValue
+        )
+        report.isRead = isRead
+        return report
+    }
+
+    /// Counts the total number of reports since a given report.
+    ///
+    /// - parameter report: the offset
+    ///
+    /// This is useful for knowing if there are new reports since the last displayed one.
+    func countNumberOfReports(since report: Report) throws -> Int {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        // swiftlint:disable indentation_width
+        let queryString = """
+        SELECT
+          COUNT(*)
+        FROM
+          reports
+        WHERE
+          reports.author_id = ?
+          AND created_at > ? + 1;
+        """
+        // swiftlint:enable indentation_width
+
+        let query = try connection.prepare(queryString)
+        if let count = try query.scalar(currentUserID, report.createdAt.millisecondsSince1970) as? Int64 {
+            return Int(truncatingIfNeeded: count)
+        }
+        return 0
     }
 
     func feed(for identity: Identity, limit: Int = 5, offset: Int? = nil) throws -> KeyValues {
@@ -1542,6 +1657,22 @@ class ViewDatabase {
             .filter(colMessageID == msgId)
             .filter(colHidden == false))
         return authorID
+    }
+
+    // MARK: - Read status
+
+    func markMessageAsRead(identifier: MessageIdentifier, isRead: Bool = true) throws {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let query = """
+        INSERT OR REPLACE INTO read_messages (author_id, msg_id, is_read)
+        VALUES (
+        ?,
+        (SELECT id FROM messagekeys WHERE key = ? LIMIT 1),
+        ?)
+        """
+        try connection.prepare(query).bind(currentUserID, identifier, isRead).run()
     }
     
     // MARK: - Fetching Posts

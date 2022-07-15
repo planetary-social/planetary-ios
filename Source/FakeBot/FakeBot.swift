@@ -38,6 +38,10 @@ class FakeBot: Bot {
             completion([], nil)
         }
     }
+
+    func numberOfReports(since report: Report, completion: @escaping CountCompletion) {
+        completion(.success(0))
+    }
     
     func seedPubAddresses(
         addresses: [PubAddress],
@@ -121,6 +125,10 @@ class FakeBot: Bot {
     func follow(_ identity: Identity, completion: @escaping ContactCompletion) { }
 
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion) { }
+
+    func markMessageAsRead(_ message: MessageIdentifier) { }
+
+    func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
 
     required init() {}
     static let shared = FakeBot()

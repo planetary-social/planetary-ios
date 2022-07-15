@@ -20,8 +20,7 @@ extension AppController {
     /// If the authorization status has not been determined, the value will be false.  This
     /// will allow UI, like a toggle, to show the state as disabled.
     func arePushNotificationsEnabled(completion: @escaping ((Bool) -> Void)) {
-        UNUserNotificationCenter.current().getNotificationSettings {
-            settings in
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
             let enabled = settings.authorizationStatus == .authorized
             DispatchQueue.main.async { completion(enabled) }
         }
@@ -30,8 +29,7 @@ extension AppController {
     /// Queries the OS notification settings and if the authorization status has not been determined,
     /// prompts via the usual OS prompt.  However, if it has been determined, nothing else is done.
     func promptForPushNotificationsIfNotDetermined(in viewController: UIViewController? = nil) {
-        UNUserNotificationCenter.current().getNotificationSettings {
-            settings in
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 if settings.authorizationStatus == .notDetermined {
                     self.registerForPushNotifications()
@@ -45,16 +43,21 @@ extension AppController {
     /// user has made a choice, subsequent calls will not prompt unless the OS resets the
     /// authorization status (which can happen when the OS is updated).  The authorization
     /// status will be returned once the user has interacted with any prompts.
-    func promptForPushNotifications(in viewController: UIViewController? = nil,
-                                    completion: ((UNAuthorizationStatus) -> Void)? = nil) {
-        UNUserNotificationCenter.current().getNotificationSettings {
-            settings in
+    func promptForPushNotifications(
+        in viewController: UIViewController? = nil,
+        completion: ((UNAuthorizationStatus) -> Void)? = nil
+    ) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 switch settings.authorizationStatus {
-                    case .notDetermined:    self.registerForPushNotifications(completion: completion)
-                    default:                self.promptToOpenSettings(in: viewController,
-                                                                      status: settings.authorizationStatus,
-                                                                      completion: completion)
+                case .notDetermined:
+                    self.registerForPushNotifications(completion: completion)
+                default:
+                    self.promptToOpenSettings(
+                        in: viewController,
+                        status: settings.authorizationStatus,
+                        completion: completion
+                    )
                 }
             }
         }
@@ -64,9 +67,11 @@ extension AppController {
     /// are controlled there.  If cancelled, the supplied status is returned in the completion, allowing
     /// UI to revert any changes (like when a toggle is tapped).  This should only be called if the
     /// authorization status has been determined previously.
-    private func promptToOpenSettings(in viewController: UIViewController? = nil,
-                                      status: UNAuthorizationStatus,
-                                      completion: ((UNAuthorizationStatus) -> Void)? = nil) {
+    private func promptToOpenSettings(
+        in viewController: UIViewController? = nil,
+        status: UNAuthorizationStatus,
+        completion: ((UNAuthorizationStatus) -> Void)? = nil
+    ) {
         let controller = viewController ?? self
         controller.confirm(
             title: Text.Push.title.text,
@@ -80,13 +85,15 @@ extension AppController {
 
     /// Queries the OS push notification settings, and if authorized or denied, updates the PushAPI.
     func syncPushNotificationsSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings {
-            settings in
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 switch settings.authorizationStatus {
-                    case .authorized: UIApplication.shared.registerForRemoteNotifications()
-                    case .denied: self.deregisterForPushNotifications()
-                    default: break
+                case .authorized:
+                    UIApplication.shared.registerForRemoteNotifications()
+                case .denied:
+                    self.deregisterForPushNotifications()
+                default:
+                    break
                 }
             }
         }
@@ -98,13 +105,15 @@ extension AppController {
     /// the authorization status, like when the app is deleted or the OS updates, this
     /// may be called again.
     private func registerForPushNotifications(completion: ((UNAuthorizationStatus) -> Void)? = nil) {
-        UNUserNotificationCenter.current().requestAuthorization(options: AppController.pushNotificationOptions) {
-            allowed, error in
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.requestAuthorization(options: AppController.pushNotificationOptions) { allowed, error in
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
             DispatchQueue.main.async {
                 completion?(allowed ? .authorized : .denied)
-                guard allowed else { return }
+                guard allowed else {
+                    return
+                }
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }
@@ -130,19 +139,6 @@ extension AppController {
             PushAPI.shared.update(token, for: identity) { _, _ in
             }
         }
-    }
-
-    /// Asks the main view controller to update the notification tab icon.
-    /// Note that this does not take into consideration what the actual content
-    /// on that view is, this is superceding it for the moment.
-    func received(foregroundNotification: RemoteNotificationUserInfo) {
-        self.mainViewController?.updateNotificationsTabIcon(hasNotifications: true)
-    }
-
-    /// When the local notification is interacted with (tapped), switches to the notifications tab
-    /// while the app is moving from the background to the foreground.
-    func received(backgroundNotification: UNNotification) {
-        self.mainViewController?.selectNotificationsTab(hasNotifications: true)
     }
 }
 

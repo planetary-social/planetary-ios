@@ -27,21 +27,21 @@ extension Notification {
     }
 
     static func didLoadBlob(_ identifier: BlobIdentifier) -> Notification {
-        Notification(name: .didLoadBlob,
-                            object: nil,
-                            userInfo: ["blobIdentifier": identifier])
+        Notification(
+            name: .didLoadBlob,
+            object: nil,
+            userInfo: ["blobIdentifier": identifier]
+        )
     }
 }
 
 // MARK: - Sync and refresh
 
-// TODO https://app.asana.com/0/914798787098068/1154847034386753/f
-// TODO didRefresh should be deprecated
-// TODO and we should flatten into a single didSync for both operations
 extension Notification.Name {
     static let didRefresh = Notification.Name("didRefresh")
     static let didSync = Notification.Name("didSync")
     static let didChangeHomeFeedAlgorithm = Notification.Name("didChangeHomeFeedAlgorithm")
+    static let didUpdateReportReadStatus = Notification.Name("didUpdateReportReadStatus")
 }
 
 // MARK: - Databae progress
@@ -63,19 +63,25 @@ extension Notification {
     }
     
     static func didStartFSCKRepair() -> Notification {
-        Notification(name: .didStartFSCKRepair,
-                            object: nil,
-                            userInfo: [ "status": "Database consistency check in progress" ])
+        Notification(
+            name: .didStartFSCKRepair,
+            object: nil,
+            userInfo: ["status": "Database consistency check in progress"]
+        )
     }
     
     static func didFinishFSCKRepair() -> Notification {
-        Notification(name: .didFinishFSCKRepair,
-                            object: nil)
+        Notification(
+            name: .didFinishFSCKRepair,
+            object: nil
+        )
     }
 
     static func didUpdateFSCKRepair(perc: Float64, status: String) -> Notification {
-        Notification(name: .didUpdateFSCKRepair,
-                            object: nil,
-                            userInfo: ["percentage_done": perc, "status": status])
+        Notification(
+            name: .didUpdateFSCKRepair,
+            object: nil,
+            userInfo: ["percentage_done": perc, "status": status]
+        )
     }
 }

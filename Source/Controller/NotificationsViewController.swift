@@ -18,11 +18,18 @@ class NotificationsViewController: ContentViewController {
     
     private let dataSource = NotificationsTableViewDataSource()
     private lazy var delegate = NotificationsTableViewDelegate(on: self)
-    
+
+    /// The last time we loaded the reports from the database or we checked if there are new reports to show
+    private var lastTimeNewReportsUpdatesWasChecked = Date()
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
-        let item = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(newPostButtonTouchUpInside))
+        let item = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(newPostButtonTouchUpInside)
+        )
         return item
     }()
     
@@ -45,6 +52,16 @@ class NotificationsViewController: ContentViewController {
         return control
     }()
 
+    private lazy var floatingRefreshButton: FloatingRefreshButton = {
+        let button = FloatingRefreshButton()
+        button.addTarget(
+            self,
+            action: #selector(floatingRefreshButtonDidTouchUpInside(button:)),
+            for: .touchUpInside
+        )
+        return button
+    }()
+
     // MARK: Lifecycle
 
     init() {
@@ -53,14 +70,16 @@ class NotificationsViewController: ContentViewController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
+        self.floatingRefreshButton.layout(in: self.view, below: self.tableView)
         self.addLoadingAnimation()
         self.load()
+        registerNotifications()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -68,12 +87,6 @@ class NotificationsViewController: ContentViewController {
         CrashReporting.shared.record("Did Show Notifications")
         Analytics.shared.trackDidShowScreen(screenName: "notifications")
         AppController.shared.promptForPushNotificationsIfNotDetermined(in: self)
-        self.deeregisterDidRefresh()
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        self.registerDidRefresh()
     }
 
     // MARK: Load and refresh
@@ -84,6 +97,7 @@ class NotificationsViewController: ContentViewController {
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()
+            self?.floatingRefreshButton.hide()
             
             if let error = error {
                 self?.alert(error: error)
@@ -128,14 +142,57 @@ class NotificationsViewController: ContentViewController {
 
     private func update(with reports: [Report], animated: Bool = true) {
         self.dataSource.reports = reports
+        lastTimeNewReportsUpdatesWasChecked = Date()
         self.tableView.reloadData()
+        self.navigationController?.tabBarItem?.badgeValue = nil
+    }
+
+    func checkForNotificationUpdates(force: Bool = false) {
+        if force {
+            lastTimeNewReportsUpdatesWasChecked = .distantPast
+        }
+        // Check that more than a minute passed since the last time we checked for new updates
+        let elapsed = Date().timeIntervalSince(lastTimeNewReportsUpdatesWasChecked)
+        guard elapsed > 60 else {
+            return
+        }
+        let currentReports = self.dataSource.reports
+        let reportAtTop = currentReports.first
+        if let report = reportAtTop {
+            let operation = NumberOfReportsOperation(lastReport: report)
+            operation.completionBlock = { [weak self] in
+                self?.lastTimeNewReportsUpdatesWasChecked = Date()
+                let numberOfNewReports = operation.numberOfReports
+                if numberOfNewReports > 0 {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.navigationController?.tabBarItem?.badgeValue = "\(numberOfNewReports)"
+                        let shouldAnimate = self?.navigationController?.topViewController == self
+                        self?.floatingRefreshButton.setTitle(with: numberOfNewReports)
+                        self?.floatingRefreshButton.show(animated: shouldAnimate)
+                    }
+                }
+            }
+            AppController.shared.operationQueue.addOperation(operation)
+        } else {
+            // If the feed is empty, we just try to fetch the new updates and show them
+            load(animated: false)
+        }
     }
 
     // MARK: Actions
 
-    @objc func refreshControlValueChanged(control: UIRefreshControl) {
+    @objc
+    func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
         self.refreshAndLoad()
+    }
+
+    @objc
+    func floatingRefreshButtonDidTouchUpInside(button: FloatingRefreshButton) {
+        button.hide()
+        self.refreshControl.beginRefreshing()
+        self.tableView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.height), animated: false)
+        self.load(animated: true)
     }
 
     // MARK: Notifications
@@ -143,57 +200,33 @@ class NotificationsViewController: ContentViewController {
     override func registerNotifications() {
         super.registerNotifications()
         self.registerDidRefresh()
-    }
-
-    override func deregisterNotifications() {
-        super.deregisterNotifications()
-        self.deeregisterDidRefresh()
-    }
-
-    /// Refreshes the view,  but only if this is the top controller, not when there are any child
-    /// controllers.  The notification will also only be received when the view is not visible,
-    /// check out `viewDidAppear()` and `viewDidDisappear()`.  This is because
-    /// we don't want the view to be updated while someone is looking/scrolling it.
-    override func didRefresh(notification: Notification) {
-        DispatchQueue.main.async {
-            guard self.navigationController?.topViewController == self else {
-                return
-            }
-            // TODO: Maybe we want to update the table here
-            // Or show a REFRESH button
-            // self.load()
-        }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didCreateReport(notification:)),
+            name: .didCreateReport,
+            object: nil
+        )
     }
     
-    @objc func newPostButtonTouchUpInside() {
+    override func didRefresh(notification: Notification) {
+        checkForNotificationUpdates()
+    }
+
+    @objc
+    func didCreateReport(notification: Notification) {
+        checkForNotificationUpdates(force: true)
+    }
+    
+    @objc
+    func newPostButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "compose")
         let controller = NewPostViewController()
-        controller.didPublish = {
-            [weak self] _ in
+        controller.didPublish = { [weak self] _ in
             self?.load()
         }
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
-
-    // TODO this won't work because until the data source is updated
-    // TODO notifications() will keep returning the same list and the
-    // old.key != new.key check will always be true, but this is good
-    // research on how to background updates and show changes in the UI
-//    func refresh(completion: ((Bool) -> Void)? = nil) {
-//        Bots.current.notifications() {
-//            [weak self] feed, _ in
-            // TODO move to KeyValueDataSource.isOlderThan(feed)
-            // TODO assume if different than new?
-//            guard let new = feed.first else { return }
-//            guard let old = self.dataSource.keyValues.first else { return }
-//            guard old.key != new.key else { return }
-//            AppController.shared.mainViewController?.updateNotificationsTabIcon(hasNotifications: true)
-//            let hasNewContent = (feed.first?.key != self?.dataSource.keyValues.first?.key) ?? false
-//            if hasNewContent { self?.update(with: feed) }
-//            completion?(hasNewContent)
-//        }
-//    }
 }
 
 private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
@@ -202,41 +235,55 @@ private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
         didSet {
 
             // segment keyvalues by date
-            var today: KeyValues = []
-            var yesterday: KeyValues = []
-            var earlier: KeyValues = []
+            var today: [Report] = []
+            var yesterday: [Report] = []
+            var earlier: [Report] = []
             for report in reports {
-                if      Calendar.current.isDateInToday(report.createdAt) { today += [report.keyValue] } else if Calendar.current.isDateInYesterday(report.createdAt) { yesterday += [report.keyValue] } else { earlier += [report.keyValue] }
+                if Calendar.current.isDateInToday(report.createdAt) {
+                    today += [report]
+                } else if Calendar.current.isDateInYesterday(report.createdAt) {
+                    yesterday += [report]
+                } else {
+                    earlier += [report]
+                }
             }
 
             // label each section
-            var sections: [(Text, KeyValues)] = []
+            var sections: [(Text, [Report])] = []
             if today.count > 0 { sections += [(.today, today)] }
             if yesterday.count > 0 { sections += [(.yesterday, yesterday)] }
             if earlier.count > 0 { sections += [(.recently, earlier)] }
-            self.sectionedKeyValues = sections
+            self.sectionedReports = sections
             
             self.keyValues = reports.map { $0.keyValue }
         }
     }
 
-    fileprivate var sectionedKeyValues: [(Text, KeyValues)] = []
+    fileprivate func report(at indexPath: IndexPath) -> Report {
+        let (_, reports) = self.sectionedReports[indexPath.section]
+        return reports[indexPath.row]
+    }
+
+    fileprivate var sectionedReports: [(Text, [Report])] = []
 
     override func keyValue(at indexPath: IndexPath) -> KeyValue {
-        let (_, keyValues) = self.sectionedKeyValues[indexPath.section]
-        return keyValues[indexPath.row]
+        report(at: indexPath).keyValue
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        self.sectionedKeyValues.count
+        self.sectionedReports.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let (_, keyValues) = self.sectionedKeyValues[section]
-        return keyValues.count
+        let (_, reports) = self.sectionedReports[section]
+        return reports.count
     }
 
-    override func cell(at indexPath: IndexPath, for type: ContentType, tableView: UITableView) -> KeyValueTableViewCell {
+    override func cell(
+        at indexPath: IndexPath,
+        for type: ContentType,
+        tableView: UITableView
+    ) -> KeyValueTableViewCell {
         let view = NotificationCellView()
         view.constrainHeight(greaterThanOrEqualTo: 64)
         let cell = KeyValueTableViewCell(for: type, with: view)
@@ -254,7 +301,7 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let source = tableView.dataSource as? NotificationsTableViewDataSource else { return nil }
-        let (title, _) = source.sectionedKeyValues[section]
+        let (title, _) = source.sectionedReports[section]
         return HeaderView(title: title.text)
     }
 
@@ -268,6 +315,21 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
             Analytics.shared.trackDidSelectItem(kindName: "post")
             let controller = ThreadViewController(with: keyValue)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
+        }
+    }
+
+    override func tableView(
+        _ tableView: UITableView,
+        willDisplay cell: UITableViewCell,
+        forRowAt indexPath: IndexPath
+    ) {
+        guard let source = tableView.dataSource as? NotificationsTableViewDataSource else {
+            return
+        }
+        let (_, reports) = source.sectionedReports[indexPath.section]
+        let report = reports[indexPath.row]
+        if report.isUnread {
+            Bots.current.markMessageAsRead(report.messageIdentifier)
         }
     }
 }
@@ -285,9 +347,11 @@ private class HeaderView: UITableViewHeaderFooterView {
         self.contentView.backgroundColor = .cardBackground
         self.useAutoLayout()
         Layout.addSeparator(toTopOf: self.contentView)
-        Layout.fill(view: self.contentView,
-                    with: self.label,
-                    insets: UIEdgeInsets(top: 1, left: 18, bottom: 1, right: -18))
+        Layout.fill(
+            view: self.contentView,
+            with: self.label,
+            insets: UIEdgeInsets(top: 1, left: 18, bottom: 1, right: -18)
+        )
         Layout.addSeparator(toBottomOf: self.contentView)
     }
 
@@ -297,6 +361,6 @@ private class HeaderView: UITableViewHeaderFooterView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 }
