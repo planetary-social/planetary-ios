@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix some pub names and images not updating #540
 - Added new tab bar icons. #691
+- Show welcome tutorial messages to users who haven't opened the app in over a month. #695 
 - Replace timestamp / posted x days ago with posters identity in home feed. #660 
 - Don't show loading indicator when publishing a like/vote #672 
 - Max-Rai contributed a fix to the onboarding layout for smaller iOS screen sizes #703 (thanks @Max-Rai!)

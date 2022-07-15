@@ -443,6 +443,25 @@ class ViewDatabase {
         return -1
     }
     
+    /// Returns the date at which the newest row in the messages table was inserted. Useful for getting a rough idea of
+    /// the last time the user synced with peers.
+    func lastWrittenMessageDate() throws -> Date? {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        if let milliseconds = try db.scalar(msgs.select(colWrittenAt.max)) {
+            return Date(milliseconds: milliseconds)
+        } else {
+            return nil
+        }
+    }
+    
+    func message(with id: MessageIdentifier) throws -> KeyValue {
+        let msgId = try self.msgID(of: id, make: false)
+        return try post(with: msgId)
+    }
+    
     // MARK: pubs
 
     func getAllKnownPubs() throws -> [KnownPub] {
@@ -2654,7 +2673,12 @@ class ViewDatabase {
         }
         do {
             let authorID = try self.authorID(of: feed, make: false)
-            return try db.scalar(self.msgs.filter(colAuthorID == authorID).count)
+            return try db.scalar(
+                msgs
+                    .filter(colAuthorID == authorID)
+                    .filter(colOffChain == false)
+                    .count
+            )
         } catch {
             Log.optional(GoBotError.duringProcessing("numberOfmessages for feed failed", error))
             return 0
