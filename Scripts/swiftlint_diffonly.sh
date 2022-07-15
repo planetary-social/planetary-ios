@@ -6,8 +6,6 @@
 START_DATE=$(date +"%s")
 
 SWIFT_LINT=/opt/homebrew/bin/swiftlint
-# Use homebrew git because Xcode git doesn't support lfs
-GIT=$(/opt/homebrew/bin/brew --prefix git)
 
 # Run SwiftLint for given filename
 run_swiftlint() {
