@@ -40,6 +40,29 @@ class ReportTests: XCTestCase {
     }
 
     func testRecentReports() throws {
+        try fillSampleMessages()
+
+        let reports = try db.reports()
+        XCTAssertEqual(reports.count, 2)
+
+        XCTAssertEqual(try db.countNumberOfReports(since: reports[1]), 1)
+
+        XCTAssertEqual(try db.countNumberOfReports(since: reports[0]), 0)
+
+        XCTAssertEqual(try db.countNumberOfUnreadReports(), 2)
+
+        try db.markMessageAsRead(identifier: "%2")
+
+        XCTAssertEqual(try db.countNumberOfUnreadReports(), 1)
+
+        let firstReport = try XCTUnwrap(try db.report(for: "%3"))
+        XCTAssertEqual(firstReport.reportType, .feedMentioned)
+
+        let secondReport = try XCTUnwrap(try db.report(for: "%2"))
+        XCTAssertEqual(secondReport.reportType, .feedFollowed)
+    }
+
+    private func fillSampleMessages() throws {
         let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis
         let receivedDate: Double = 1_652_813_515_000 // May 17, 2022 in millis
         let alice = DatabaseFixture.exampleFeed.identities[1]
@@ -84,25 +107,5 @@ class ReportTests: XCTestCase {
             author: bob
         )
         try db.fillMessages(msgs: [feedMention1])
-
-        let reports = try db.reports()
-        XCTAssertEqual(reports.count, 2)
-
-        XCTAssertEqual(try db.countNumberOfReports(since: reports[1]), 1)
-
-        XCTAssertEqual(try db.countNumberOfReports(since: reports[0]), 0)
-
-        XCTAssertEqual(try db.countNumberOfUnreadReports(), 2)
-
-        try db.markMessageAsRead(identifier: "%2")
-
-        XCTAssertEqual(try db.countNumberOfUnreadReports(), 1)
-
-        let firstReport = try XCTUnwrap(try db.report(for: "%3"))
-        XCTAssertEqual(firstReport.reportType, .feedMentioned)
-
-        let secondReport = try XCTUnwrap(try db.report(for: "%2"))
-        XCTAssertEqual(secondReport.reportType, .feedFollowed)
-
     }
 }

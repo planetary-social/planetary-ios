@@ -308,7 +308,7 @@ class ViewDatabase {
                 )
                 db.userVersion = 14
             }
-            if db.userVersion = 14 {
+            if db.userVersion == 14 {
                 try db.execute(
                     """
                     CREATE TABLE
