@@ -27,6 +27,8 @@ class FeatureViewController: UINavigationController {
         return item
     }()
 
+    private var cachedTabBarItemImageName: String?
+    
     // MARK: Lifecycle
 
     // Note that this initializer seems to be required for iOS 12 compatibility.
@@ -44,13 +46,20 @@ class FeatureViewController: UINavigationController {
         rootViewController.navigationItem.leftBarButtonItem = self.profileBarButtonItem
     }
 
-    private func setTabBarItem(title: String?, image named: String?) {
-        guard let name = named else { return }
+    private func setTabBarItem(title: String?, image named: String? = nil) {
+        guard let name = named ?? cachedTabBarItemImageName else { return }
+        cachedTabBarItemImageName = name
         guard let image = UIImage(named: name) else { return }
         guard let selected = UIImage(named: "\(name)-selected") else { return }
         self.tabBarItem = UITabBarItem(title: nil, image: image, selectedImage: selected)
         self.tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
         self.tabBarItem.accessibilityLabel = title
+    }
+        
+    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+            setTabBarItem(title: viewControllers.first?.navigationItem.title)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {

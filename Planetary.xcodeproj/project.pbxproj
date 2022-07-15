@@ -1074,12 +1074,12 @@
 		C9F1C85127C932C4005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C9D263DB2F5008B646F /* Generated.strings */; };
 		C9F1C85327C980A6005A3228 /* AvatarImageViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C85227C980A6005A3228 /* AvatarImageViewRepresentable.swift */; };
 		C9F1C85527C9875A005A3228 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1C85427C9875A005A3228 /* Color+Hex.swift */; };
+		C9F5381F286B78240015A146 /* UniversalSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5381E286B78240015A146 /* UniversalSearchResultsView.swift */; };
+		C9F53820286B78240015A146 /* UniversalSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5381E286B78240015A146 /* UniversalSearchResultsView.swift */; };
 		C9F53825286CCF410015A146 /* WelcomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F53824286CCF410015A146 /* WelcomeService.swift */; };
 		C9F53826286CCF410015A146 /* WelcomeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F53824286CCF410015A146 /* WelcomeService.swift */; };
 		C9F5382B286DF0440015A146 /* KeyValue+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5382A286DF0440015A146 /* KeyValue+ViewDatabase.swift */; };
 		C9F53837286F6E220015A146 /* KeyValue+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5382A286DF0440015A146 /* KeyValue+ViewDatabase.swift */; };
-		C9F5381F286B78240015A146 /* UniversalSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5381E286B78240015A146 /* UniversalSearchResultsView.swift */; };
-		C9F53820286B78240015A146 /* UniversalSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5381E286B78240015A146 /* UniversalSearchResultsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1103,13 +1103,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5344D82A21C4649700704A34;
 			remoteInfo = Planetary;
-		};
-		C933909427FB54D0007B5FD8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = C933908427FB511F007B5FD8;
-			remoteInfo = GoSSB.xcframework;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1683,9 +1676,9 @@
 		C9F0B67827E2728700BE2F0E /* es-ES */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-ES"; path = Generated.strings; sourceTree = "<group>"; };
 		C9F1C85227C980A6005A3228 /* AvatarImageViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageViewRepresentable.swift; sourceTree = "<group>"; };
 		C9F1C85427C9875A005A3228 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		C9F5381E286B78240015A146 /* UniversalSearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalSearchResultsView.swift; sourceTree = "<group>"; };
 		C9F53824286CCF410015A146 /* WelcomeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeService.swift; sourceTree = "<group>"; };
 		C9F5382A286DF0440015A146 /* KeyValue+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyValue+ViewDatabase.swift"; sourceTree = "<group>"; };
-		C9F5381E286B78240015A146 /* UniversalSearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalSearchResultsView.swift; sourceTree = "<group>"; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3190,7 +3183,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C933909527FB54D0007B5FD8 /* PBXTargetDependency */,
 			);
 			name = Planetary;
 			packageProductDependencies = (
@@ -3690,7 +3682,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ENABLE_PREVIEWS}\" = \"YES\" ]; then\n  echo \"SwiftUI Previews enabled, quitting to prevent 'preview paused'.\"\n  exit 0;\nfi\n\nsh $SRCROOT/Source/Localization/ExportStrings.sh\n";
+			shellScript = "if [ \"${ENABLE_PREVIEWS}\" = \"YES\" ]; then\n  echo \"SwiftUI Previews enabled, quitting to prevent 'preview paused'.\"\n  exit 0;\nfi\nsh $SRCROOT/Source/Localization/ExportStrings.sh\n";
 		};
 		C627FA40401D3BF3A23EDB4A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4735,11 +4727,6 @@
 			target = 5344D82A21C4649700704A34 /* Planetary */;
 			targetProxy = 0AD00E7323FC5C71006BF017 /* PBXContainerItemProxy */;
 		};
-		C933909527FB54D0007B5FD8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = GoSSB.xcframework;
-			targetProxy = C933909427FB54D0007B5FD8 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -5403,7 +5390,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 341;
+				CURRENT_PROJECT_VERSION = 344;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -5416,7 +5403,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -5435,7 +5422,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 341;
+				CURRENT_PROJECT_VERSION = 344;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -5448,7 +5435,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.3;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;

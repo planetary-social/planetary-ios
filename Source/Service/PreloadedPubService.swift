@@ -51,6 +51,10 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
         
         Log.info("Preloading pub data")
         
+        /// This is a one time fix for a bug in the bug about messages. This can be deleted after it has probably run
+        /// on everyone's device once. #540
+        fixOldPubMessages(in: bot)
+        
         bot.preloadFeed(at: url) { error in
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.optional(error)
@@ -59,5 +63,31 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
         
         // This service should be made an explicit dependency
         preloadedBlobsService.preloadBlobs(into: bot, from: "Pubs", in: bundle, completion: nil)
+    }
+    
+    /// This is a one time fix for a bug in the bug about messages. This can be deleted after it has probably run on
+    /// everyone's device once. #540
+    func fixOldPubMessages(in bot: Bot) {
+        let hasRunKey = "PreloadedPubService.hasFixedOldPubMessages"
+        let hasRun = UserDefaults.standard.bool(forKey: hasRunKey)
+        guard !hasRun,
+            let goBot = bot as? GoBot,
+            let appConfig = goBot.config else {
+            return
+        }
+        
+        Log.info("Dropping pub about messages")
+        
+        let pubs = appConfig.communityPubs + appConfig.systemPubs
+        pubs.forEach {
+            do {
+                try goBot.database.deleteAbouts(for: $0.feed)
+            } catch {
+                Log.optional(error)
+            }
+        }
+        
+        UserDefaults.standard.set(true, forKey: hasRunKey)
+        UserDefaults.standard.synchronize()
     }
 }

@@ -96,7 +96,7 @@ class ThreadViewController: ContentViewController {
         return view
     }()
 
-    private let headerView = PostHeaderView()
+    private let headerView = PostHeaderView(showTimestamp: true)
     
     // this view manages it's own height constraints
     // checkout ImageGallery.open() and close()
@@ -423,18 +423,14 @@ extension ThreadViewController: ThreadInteractionViewDelegate {
                                expression: "💜",
                                root: self.rootKey,
                                branches: [self.branchKey])
-        AppController.shared.showProgress()
         Bots.current.publish(content: vote) { [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             DispatchQueue.main.async { [weak self] in
                 if let error = error {
-                    AppController.shared.hideProgress()
                     self?.alert(error: error)
                 } else {
-                    self?.load(animated: true) {
-                        AppController.shared.hideProgress()
-                    }
+                    self?.load(animated: true)
                 }
             }
         }

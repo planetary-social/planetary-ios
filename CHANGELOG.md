@@ -1,8 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) significant technical or architectural changes that contributors will notice. If your Pull Request does not contain any changes of this nature i.e. minor string/translation changes, patch releases of dependencies, refactoring, etc. then add the `Skip-Changelog` label. 
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+- Max-Rai contributed a fix to the onboarding layout for smaller iOS screen sizes #703 (thanks @Max-Rai!)
+
+## [1.2.3] 2022-07-11
+
+- Added new tab bar icons. #691
+- Show welcome tutorial messages to users who haven't opened the app in over a month. #695 
+- Replace timestamp / posted x days ago with posters identity in home feed. #660 
+- Fix some pub names and images not updating #540
+- Tweaked design of the follow message cells. #699
+- Don't show loading indicator when publishing a like/vote #672 
 
 ## [1.2.2] 2022-07-04
 

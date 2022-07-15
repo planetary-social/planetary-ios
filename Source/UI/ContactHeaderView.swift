@@ -49,8 +49,8 @@ class ContactHeaderView: UIView {
 
         self.addSubview(self.nameButton)
         self.nameButton.pinTopToSuperview()
-        self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
-        self.nameButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor).isActive = true
+        self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: 10)
+        self.nameButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 
         self.nameButton.constrainHeight(to: 19)
 
@@ -83,14 +83,20 @@ class ContactHeaderView: UIView {
     private func update(with identity: Identity, about: About?) {
         let name = about?.nameOrIdentity ?? identity
         let string = Text.startedFollowing.text(["somebody": name])
-        let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
-        let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
-        let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
+        let primaryAttributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.text.default,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .semibold)
+        ]
+        let secondaryAttributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.text.detail,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .regular)
+        ]
+        let attributedString = NSMutableAttributedString(string: string, attributes: secondaryAttributes)
         // swiftlint:disable legacy_objc_type
         let range = (string as NSString).range(of: name)
         // swiftlint:enable legacy_objc_type
-        attributedString.addAttributes(primaryColor, range: range)
-
+        attributedString.addAttributes(primaryAttributes, range: range)
+        
         self.nameButton.setAttributedTitle(attributedString, for: .normal)
         if let about = about {
             self.identityButton.setImage(for: about)
