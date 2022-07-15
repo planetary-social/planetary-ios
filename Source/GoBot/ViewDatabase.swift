@@ -450,7 +450,6 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
-        
         if let milliseconds = try db.scalar(msgs.select(colWrittenAt.max)) {
             return Date(milliseconds: milliseconds)
         } else {
