@@ -497,5 +497,29 @@ extension Text {
             case body = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed."
             case highlightedWord = "Discover"
         }
+        
+        enum Discover: String, Localizable, CaseIterable {
+            case title = "Explore posts from users in your network"
+            case body = "The Discover tab allows you to explore your own personal corner of the scuttlebutt network. Here you will find posts from people 2 hops away from you on the social graph. To be 2 hops away a person needs to be followed by someone you follow. If you want to see more content here join more pubs on the Network tab."
+            case highlightedWord = "Network"
+        }
+        
+        enum Notifications: String, Localizable, CaseIterable {
+            case title = "Get notified when people follow or reply to you"
+            case body = "Here you'll see updates when someone follows you, or replies to a post you've interacted with. You can adjust your notification preferences in the Settings app."
+            case highlightedWord = "Settings"
+        }
+        
+        enum Hashtags: String, Localizable, CaseIterable {
+            case title = "Browse topics that interest you"
+            case body = "Hashtags are a great way to find people with interests you share. The posts you will see here are only from people in Your Network. Saying hello in #new-people is a great place to make new friends."
+            case highlightedWord = "Your Network"
+        }
+        
+        enum YourNetwork: String, Localizable, CaseIterable {
+            case title = "Grow your social sphere"
+            case body = "On scuttlebutt your view of the world is limited by the people you follow. Your Network is what we call your friends and friends of friends. If you don't see who you are looking for, you may need to join more Pub servers."
+            case highlightedWord = "Pub"
+        }
     }
 }
