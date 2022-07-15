@@ -97,6 +97,7 @@ class NotificationsViewController: ContentViewController {
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.removeLoadingAnimation()
             self?.refreshControl.endRefreshing()
+            self?.floatingRefreshButton.hide()
             
             if let error = error {
                 self?.alert(error: error)
