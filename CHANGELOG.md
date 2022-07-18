@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added queer.family pub #726
 - Max-Rai contributed a fix to the onboarding layout for smaller iOS screen sizes #703 (thanks @Max-Rai!)
 - Show the number of unread notifications in the application badge #725
-- Added SQL indexes to speed up feed loading. #702
 
 ## [1.2.3] 2022-07-11
 
