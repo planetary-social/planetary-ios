@@ -51,6 +51,7 @@ enum HelpCoordinator {
     ) -> HelpDrawer? {
         
         let inDrawer = viewController.traitCollection.horizontalSizeClass == .compact
+        let tabBar = AppController.shared.mainViewController
         
         if viewController is HomeViewController {
             return HelpDrawer(
@@ -60,6 +61,17 @@ enum HelpCoordinator {
                 bodyText: Text.Help.Home.body.text,
                 highlightedWord: Text.Help.Home.highlightedWord.text,
                 inDrawer: inDrawer,
+                tipIndex: 1,
+                nextTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.everyoneViewController
+                        let helpHost = featureVC?.viewControllers.first as? DiscoverViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
+                previousTipAction: nil,
                 dismissAction: dismissAction
             )
         } else if viewController is DiscoverViewController {
@@ -70,6 +82,25 @@ enum HelpCoordinator {
                 bodyText: Text.Help.Discover.body.text,
                 highlightedWord: Text.Help.Discover.highlightedWord.text,
                 inDrawer: inDrawer,
+                tipIndex: 2,
+                nextTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.notificationsFeatureViewController
+                        let helpHost = featureVC?.viewControllers.first as? NotificationsViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
+                previousTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.homeFeatureViewController
+                        let helpHost = featureVC?.viewControllers.first as? HomeViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
                 dismissAction: dismissAction
             )
         } else if viewController is NotificationsViewController {
@@ -80,6 +111,25 @@ enum HelpCoordinator {
                 bodyText: Text.Help.Notifications.body.text,
                 highlightedWord: nil,
                 inDrawer: inDrawer,
+                tipIndex: 3,
+                nextTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.channelsFeatureViewController
+                        let helpHost = featureVC?.viewControllers.first as? ChannelsViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
+                previousTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.everyoneViewController
+                        let helpHost = featureVC?.viewControllers.first as? DiscoverViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
                 dismissAction: dismissAction
             )
         } else if viewController is ChannelsViewController {
@@ -90,6 +140,25 @@ enum HelpCoordinator {
                 bodyText: Text.Help.Hashtags.body.text,
                 highlightedWord: Text.Help.Hashtags.highlightedWord.text,
                 inDrawer: inDrawer,
+                tipIndex: 4,
+                nextTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.directoryFeatureViewController
+                        let helpHost = featureVC?.viewControllers.first as? DirectoryViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
+                previousTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.notificationsFeatureViewController
+                        let helpHost = featureVC?.viewControllers.first as? NotificationsViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
                 dismissAction: dismissAction
             )
         } else if viewController is DirectoryViewController {
@@ -98,8 +167,19 @@ enum HelpCoordinator {
                 tabImageName: "tab-icon-directory",
                 helpTitle: Text.Help.YourNetwork.title.text,
                 bodyText: Text.Help.YourNetwork.body.text,
-                highlightedWord: nil,
+                highlightedWord: Text.Help.YourNetwork.highlightedWord.text,
                 inDrawer: inDrawer,
+                tipIndex: 5,
+                nextTipAction: nil,
+                previousTipAction: {
+                    viewController.dismiss(animated: true) {
+                        let featureVC = tabBar?.channelsFeatureViewController
+                        let helpHost = featureVC?.viewControllers.first as? ChannelsViewController
+                        tabBar?.selectedViewController = featureVC
+                        // Yield so we don't end up presenting on a view that hasn't loaded yet.
+                        Task { await helpHost?.helpButtonTouchUpInside() }
+                    }
+                },
                 dismissAction: dismissAction
             )
         } else {

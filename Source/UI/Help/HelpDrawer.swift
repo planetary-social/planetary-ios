@@ -1,5 +1,5 @@
 //
-//  HomeHelpView.swift
+//  HelpDrawer.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 7/13/22.
@@ -8,26 +8,6 @@
 
 import SwiftUI
 import AVKit
-
-
-struct HomeHelpView: View {
-    
-    static let videoURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
-    
-    let dismissAction: () -> Void
-    
-    var body: some View {
-        HelpDrawer(
-            tabName: Text.home.text,
-            tabImageName: "tab-icon-home",
-            helpTitle: Text.Help.Home.title.text,
-            bodyText: Text.Help.Home.body.text,
-            highlightedWord: Text.Help.Home.highlightedWord.text,
-            inDrawer: true,
-            dismissAction: dismissAction
-        )
-    }
-}
 
 struct HelpDrawer: View {
     
@@ -40,6 +20,9 @@ struct HelpDrawer: View {
     private let bodyText: String
     private let highlightedWord: String?
     private let inDrawer: Bool
+    private let tipIndex: Int
+    private let nextTipAction: (() -> Void)?
+    private let previousTipAction: (() -> Void)?
     private let dismissAction: () -> Void
     
     init(
@@ -49,6 +32,9 @@ struct HelpDrawer: View {
         bodyText: String,
         highlightedWord: String?,
         inDrawer: Bool,
+        tipIndex: Int,
+        nextTipAction: (() -> Void)?,
+        previousTipAction: (() -> Void)?,
         dismissAction: @escaping () -> Void
     ) {
         self.tabName = tabName
@@ -57,6 +43,9 @@ struct HelpDrawer: View {
         self.bodyText = bodyText
         self.highlightedWord = highlightedWord
         self.inDrawer = inDrawer
+        self.tipIndex = tipIndex
+        self.nextTipAction = nextTipAction
+        self.previousTipAction = previousTipAction
         self.dismissAction = dismissAction
         //        let asset = AVAsset(url: videoURL)
         //        let item = AVPlayerItem(asset: asset)
@@ -123,23 +112,34 @@ struct HelpDrawer: View {
                         // Tip navigation section
                         HStack {
                             Button {
-                                
+                                previousTipAction?()
                             } label: {
                                 Image(systemName: "arrow.backward")
                                     .foregroundColor(Color("mainText"))
                             }
+                            .disabled(previousTipAction == nil)
+                            .opacity(previousTipAction == nil ? 0.3 : 1.0)
                             
                             Spacer()
-                            SwiftUI.Text("1 of 5 tips")
-                                .font(.footnote)
+                            SwiftUI.Text(
+                                Text.Help.indexOfTip.text(
+                                    [
+                                        "tipIndex": String(tipIndex),
+                                        "totalTipCount": "5"
+                                    ]
+                                )
+                            )
+                            .font(.footnote)
                             Spacer()
                             
                             Button {
-                                
+                                nextTipAction?()
                             } label: {
                                 Image(systemName: "arrow.forward")
                                     .foregroundColor(Color("mainText"))
                             }
+                            .disabled(nextTipAction == nil)
+                            .opacity(nextTipAction == nil ? 0.3 : 1.0)
                         }
                         .padding(25)
                     }
@@ -212,6 +212,9 @@ struct HomeHelpView_Previews: PreviewProvider {
             bodyText: Text.Help.Home.body.text,
             highlightedWord: Text.Help.Home.highlightedWord.text,
             inDrawer: false,
+            tipIndex: 1,
+            nextTipAction: {},
+            previousTipAction: {},
             dismissAction: {}
         )
         return view
@@ -219,16 +222,31 @@ struct HomeHelpView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
     }
     
+    static var defaultPreview: some View {
+        HelpDrawer(
+            tabName: Text.home.text,
+            tabImageName: "tab-icon-home",
+            helpTitle: Text.Help.Home.title.text,
+            bodyText: Text.Help.Home.body.text,
+            highlightedWord: Text.Help.Home.highlightedWord.text,
+            inDrawer: true,
+            tipIndex: 1,
+            nextTipAction: {},
+            previousTipAction: {},
+            dismissAction: {}
+        )
+    }
+    
     static var previews: some View {
-        HomeHelpView(dismissAction: {})
+        defaultPreview
             .previewLayout(.fixed(width: 320, height: 493))
             .preferredColorScheme(.dark)
         
-        HomeHelpView(dismissAction: {})
+        defaultPreview
             .previewLayout(.fixed(width: 320, height: 493))
             .preferredColorScheme(.light)
         
-        HomeHelpView(dismissAction: {})
+        defaultPreview
             .previewLayout(.fixed(width: 320, height: 493))
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraLarge)

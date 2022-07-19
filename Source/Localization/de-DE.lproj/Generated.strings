@@ -296,6 +296,8 @@
 "Report.feedMentioned" = "%@ hat dich in einem Beitrag erwähnt";
 "Report.messageLiked" = "%@ gefällt dein Beitrag";
 
+"Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
+
 "Home.title" = "See posts from users and topics you follow";
 "Home.body" = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed.";
 "Home.highlightedWord" = "Discover";
@@ -305,11 +307,12 @@
 "Discover.highlightedWord" = "Home Feed";
 
 "Notifications.title" = "Keep up-to-date in all your conversations";
-"Notifications.body" = "Check this screen for replies and reactions to your posts as well as conversations you participate of. We'll also notify you when someone mentions you.";
+"Notifications.body" = "Check this screen for replies and reactions to your posts as well as conversations you participate in. We'll also notify you when someone mentions you.";
 
 "Hashtags.title" = "What the community is talking about";
-"Hashtags.body" = "Browse through thousands of topics, engage in conversations and keep up with the hotest topics with people on Your Network.";
+"Hashtags.body" = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network.";
 "Hashtags.highlightedWord" = "Your Network";
 
 "YourNetwork.title" = "Your friends, connections and pubs";
-"YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who they follow and the Pub servers you use to «gossip» messages with all of them.";
+"YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who they follow and the Pub servers you use to gossip messages with all of them.";
+"YourNetwork.highlightedWord" = "gossip";

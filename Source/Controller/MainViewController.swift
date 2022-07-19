@@ -17,27 +17,27 @@ class MainViewController: UITabBarController {
         self.homeFeatureViewController.viewControllers.first as? HomeViewController
     }
 
-    private let homeFeatureViewController = FeatureViewController(
+    let homeFeatureViewController = FeatureViewController(
         rootViewController: HomeViewController(),
         tabBarItemImageName: "tab-icon-home"
     )
 
-    private let notificationsFeatureViewController = FeatureViewController(
+    let notificationsFeatureViewController = FeatureViewController(
         rootViewController: NotificationsViewController(),
         tabBarItemImageName: "tab-icon-notifications"
     )
 
-    private let channelsFeatureViewController = FeatureViewController(
+    let channelsFeatureViewController = FeatureViewController(
         rootViewController: ChannelsViewController(),
         tabBarItemImageName: "tab-icon-channels"
     )
 
-    private let directoryFeatureViewController = FeatureViewController(
+    let directoryFeatureViewController = FeatureViewController(
         rootViewController: DirectoryViewController(),
         tabBarItemImageName: "tab-icon-directory"
     )
 
-    private let everyoneViewController = FeatureViewController(
+    let everyoneViewController = FeatureViewController(
         rootViewController: DiscoverViewController(),
         tabBarItemImageName: "tab-icon-everyone"
     )

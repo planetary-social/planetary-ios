@@ -686,8 +686,8 @@
 		C9134DE228184C2700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE128184C2700595D49 /* Support */; };
 		C9134DE328184D4200595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9134DE6281854E700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE5281854E700595D49 /* Support */; };
-		C923DBB1288057EB00569AAB /* HomeHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923DBB0288057EB00569AAB /* HomeHelpView.swift */; };
-		C923DBB2288057EB00569AAB /* HomeHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923DBB0288057EB00569AAB /* HomeHelpView.swift */; };
+		C923DBB1288057EB00569AAB /* HelpDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923DBB0288057EB00569AAB /* HelpDrawer.swift */; };
+		C923DBB2288057EB00569AAB /* HelpDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923DBB0288057EB00569AAB /* HelpDrawer.swift */; };
 		C924412F278DDECE00592E5E /* Preload.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A41F56C2488078F005BB1DE /* Preload.bundle */; };
 		C928DAF227B5AC850007C5FC /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = C928DAF127B5AC850007C5FC /* Logger */; };
 		C931927C2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */; };
@@ -1593,7 +1593,7 @@
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
 		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
 		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
-		C923DBB0288057EB00569AAB /* HomeHelpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeHelpView.swift; sourceTree = "<group>"; };
+		C923DBB0288057EB00569AAB /* HelpDrawer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpDrawer.swift; sourceTree = "<group>"; };
 		C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beta1MigrationDescriptionText.swift; sourceTree = "<group>"; };
 		C933908F27FB5498007B5FD8 /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = Frameworks/GoSSB.xcframework; sourceTree = "<group>"; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
@@ -2725,7 +2725,7 @@
 		C923DBAE288057E900569AAB /* Help */ = {
 			isa = PBXGroup;
 			children = (
-				C923DBB0288057EB00569AAB /* HomeHelpView.swift */,
+				C923DBB0288057EB00569AAB /* HelpDrawer.swift */,
 				C9D62CC628805F8900CB8BAA /* NoControlsVideoPlayer.swift */,
 			);
 			path = Help;
@@ -4194,7 +4194,7 @@
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				C9724BEF2809EF45000EBCCD /* UIViewController+TopViewController.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
-				C923DBB2288057EB00569AAB /* HomeHelpView.swift in Sources */,
+				C923DBB2288057EB00569AAB /* HelpDrawer.swift in Sources */,
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */,
 				5BEE741C2880502100897ACC /* ContentVote+ViewDatabase.swift in Sources */,
@@ -4770,7 +4770,7 @@
 				53EAB398239AD0D700DF5530 /* AttributedStringCache.swift in Sources */,
 				C9C3787F27C691EA00238B58 /* PeerConnectionInfo.swift in Sources */,
 				53E26C4E23022482009240B2 /* AppDelegate+Push.swift in Sources */,
-				C923DBB1288057EB00569AAB /* HomeHelpView.swift in Sources */,
+				C923DBB1288057EB00569AAB /* HelpDrawer.swift in Sources */,
 				531B92BD22CD65ED005D5255 /* UIFont+Verse.swift in Sources */,
 				5B92E27A284A7A8F003127F2 /* HashtagListStrategy.swift in Sources */,
 				5357550B226A3523002A6989 /* UITableView+KeyValue.swift in Sources */,

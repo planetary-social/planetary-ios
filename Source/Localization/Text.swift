@@ -23,6 +23,7 @@ extension Text {
             Text.Channel.self,
             Text.Post.self,
             Text.Report.self,
+            Text.Help.self,
             Text.Help.Home.self,
             Text.Help.Discover.self,
             Text.Help.Notifications.self,
@@ -495,7 +496,10 @@ extension Text {
 
 // MARK: Help
 extension Text {
-    enum Help {
+    enum Help: String, Localizable, CaseIterable {
+        
+        case indexOfTip = "{{tipIndex}} of {{totalTipCount}} tips"
+        
         enum Home: String, Localizable, CaseIterable {
             case title = "See posts from users and topics you follow"
             case body = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed."
@@ -510,18 +514,19 @@ extension Text {
         
         enum Notifications: String, Localizable, CaseIterable {
             case title = "Keep up-to-date in all your conversations"
-            case body = "Check this screen for replies and reactions to your posts as well as conversations you participate of. We'll also notify you when someone mentions you."
+            case body = "Check this screen for replies and reactions to your posts as well as conversations you participate in. We'll also notify you when someone mentions you."
         }
         
         enum Hashtags: String, Localizable, CaseIterable {
             case title = "What the community is talking about"
-            case body = "Browse through thousands of topics, engage in conversations and keep up with the hotest topics with people on Your Network."
+            case body = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network."
             case highlightedWord = "Your Network"
         }
         
         enum YourNetwork: String, Localizable, CaseIterable {
             case title = "Your friends, connections and pubs"
-            case body = "Your network is unique: it's made by the users you follow, those who they follow and the Pub servers you use to «gossip» messages with all of them."
+            case body = "Your network is unique: it's made by the users you follow, those who they follow and the Pub servers you use to gossip messages with all of them."
+            case highlightedWord = "gossip"
         }
     }
 }
