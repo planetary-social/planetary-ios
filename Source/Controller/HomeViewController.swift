@@ -27,16 +27,7 @@ class HomeViewController: ContentViewController {
         return item
     }()
     
-    private lazy var helpButton: UIBarButtonItem = {
-        let image = UIImage(systemName: "questionmark.circle")
-        let item = UIBarButtonItem(
-            image: image,
-            style: .plain,
-            target: self,
-            action: #selector(helpButtonTouchUpInside)
-        )
-        return item
-    }()
+    private let helpButton = HelpCoordinator.helpBarButton(action: #selector(helpButtonTouchUpInside))
 
     private lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()
@@ -136,7 +127,7 @@ class HomeViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .home)
-        navigationItem.rightBarButtonItems = [helpButton, newPostBarButtonItem]
+        navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {

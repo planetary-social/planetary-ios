@@ -27,6 +27,8 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         return item
     }()
     
+    private let helpButton = HelpCoordinator.helpBarButton(action: #selector(helpButtonTouchUpInside))
+    
     lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()
         control.addTarget(self, action: #selector(refreshControlValueChanged(control:)), for: .valueChanged)
@@ -134,7 +136,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
 
     init() {
         super.init(scrollable: false, title: .explore)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        self.navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -265,6 +267,14 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         }
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
+    }
+    
+    @objc
+    func helpButtonTouchUpInside() {
+        if presentedViewController == nil {
+            let controller = HelpCoordinator.helpController(for: self, sourceBarButton: helpButton)
+            present(controller, animated: true, completion: nil)
+        }
     }
 
     // MARK: Notifications

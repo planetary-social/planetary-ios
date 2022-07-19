@@ -33,6 +33,8 @@ class NotificationsViewController: ContentViewController {
         return item
     }()
     
+    private let helpButton = HelpCoordinator.helpBarButton(action: #selector(helpButtonTouchUpInside))
+    
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
         view.dataSource = self.dataSource
@@ -66,7 +68,7 @@ class NotificationsViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .notifications)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -226,6 +228,14 @@ class NotificationsViewController: ContentViewController {
         }
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
+    }
+
+    @objc
+    func helpButtonTouchUpInside() {
+        if presentedViewController == nil {
+            let controller = HelpCoordinator.helpController(for: self, sourceBarButton: helpButton)
+            present(controller, animated: true, completion: nil)
+        }
     }
 }
 

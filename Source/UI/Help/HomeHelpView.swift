@@ -23,10 +23,12 @@ struct HomeHelpView: View {
             helpTitle: Text.Help.Home.title.text,
             bodyText: Text.Help.Home.body.text,
             highlightedWord: Text.Help.Home.highlightedWord.text,
+            inDrawer: true,
             dismissAction: dismissAction
         )
     }
 }
+
 struct HelpDrawer: View {
     
     //    private let videoPlayer: AVQueuePlayer
@@ -36,7 +38,8 @@ struct HelpDrawer: View {
     private let tabImageName: String
     private let helpTitle: String
     private let bodyText: String
-    private let highlightedWord: String
+    private let highlightedWord: String?
+    private let inDrawer: Bool
     private let dismissAction: () -> Void
     
     init(
@@ -44,7 +47,8 @@ struct HelpDrawer: View {
         tabImageName: String,
         helpTitle: String,
         bodyText: String,
-        highlightedWord: String,
+        highlightedWord: String?,
+        inDrawer: Bool,
         dismissAction: @escaping () -> Void
     ) {
         self.tabName = tabName
@@ -52,6 +56,7 @@ struct HelpDrawer: View {
         self.helpTitle = helpTitle
         self.bodyText = bodyText
         self.highlightedWord = highlightedWord
+        self.inDrawer = inDrawer
         self.dismissAction = dismissAction
         //        let asset = AVAsset(url: videoURL)
         //        let item = AVPlayerItem(asset: asset)
@@ -74,15 +79,9 @@ struct HelpDrawer: View {
     
     var body: some View {
         ZStack {
-            
-            // Orange border
-//            Rectangle()
-//                .fill(diagonalGradient)
-//                .cornerRadius(15, corners: [.topLeft, .topRight])
-            
             VStack {
                 ZStack {
-                    VStack  {
+                    VStack {
                         ScrollView {
                             VStack {
                                 // Video, disabled for now.
@@ -114,7 +113,6 @@ struct HelpDrawer: View {
                                             highlight: diagonalGradient
                                         )
                                     }
-                                    
                                 }
                                 .padding(25)
                             }
@@ -124,25 +122,24 @@ struct HelpDrawer: View {
                         
                         // Tip navigation section
                         HStack {
-//                            Button {
-//
-//                            } label: {
-//                                Image(systemName: "arrow.backward")
-//                                    .foregroundColor(Color("mainText"))
-//
-//                            }
-
+                            Button {
+                                
+                            } label: {
+                                Image(systemName: "arrow.backward")
+                                    .foregroundColor(Color("mainText"))
+                            }
+                            
                             Spacer()
                             SwiftUI.Text("1 of 5 tips")
                                 .font(.footnote)
                             Spacer()
-
-//                            Button {
-//
-//                            } label: {
-//                                Image(systemName: "arrow.forward")
-//                                    .foregroundColor(Color("mainText"))
-//                            }
+                            
+                            Button {
+                                
+                            } label: {
+                                Image(systemName: "arrow.forward")
+                                    .foregroundColor(Color("mainText"))
+                            }
                         }
                         .padding(25)
                     }
@@ -170,19 +167,18 @@ struct HelpDrawer: View {
                                             .frame(width: 30, height: 30)
                                     )
                             }
-
                         }
                         Spacer()
                     }
                 }
-                
             }
-            //            .cornerRadius(15, corners: [.topLeft, .topRight])
+            .cornerRadius(15, corners: inDrawer ? [.topLeft, .topRight] : [.allCorners])
             .padding(.top, 6)
             .padding(.horizontal, 6)
+            .padding(.bottom, inDrawer ? 0 : 6)
         }
-        .background(Color("menuBorderColor"))
         .edgesIgnoringSafeArea(.bottom)
+        .background(diagonalGradient)
     }
 }
 
@@ -207,20 +203,38 @@ extension SwiftUI.Text {
 }
 
 struct HomeHelpView_Previews: PreviewProvider {
+    
+    static var iPadPreview: some View {
+        let view = HelpDrawer(
+            tabName: Text.home.text,
+            tabImageName: "tab-icon-home",
+            helpTitle: Text.Help.Home.title.text,
+            bodyText: Text.Help.Home.body.text,
+            highlightedWord: Text.Help.Home.highlightedWord.text,
+            inDrawer: false,
+            dismissAction: {}
+        )
+        return view
+            .previewLayout(.fixed(width: 320, height: 493))
+            .preferredColorScheme(.light)
+    }
+    
     static var previews: some View {
         HomeHelpView(dismissAction: {})
-            .previewLayout(.sizeThatFits)
-//            .previewDevice("iPhone 13 Pro")
+            .previewLayout(.fixed(width: 320, height: 493))
             .preferredColorScheme(.dark)
         
         HomeHelpView(dismissAction: {})
-            .previewDevice("iPhone 13 Pro")
+            .previewLayout(.fixed(width: 320, height: 493))
             .preferredColorScheme(.light)
         
         HomeHelpView(dismissAction: {})
-            .previewDevice("iPhone 13 Pro")
+            .previewLayout(.fixed(width: 320, height: 493))
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraLarge)
+        
+        // iPad popover size
+        iPadPreview
     }
 }
 
@@ -253,18 +267,19 @@ struct FancySectionName: View {
 struct GradientHighlightedText: View {
     
     let text: String
-    let highlightedWord: String
+    let highlightedWord: String?
     let highlightGradient: LinearGradient
     
     /// An array of segments of text, along with a bool specifying if they should be highlighted.
     private var segments: [(text: String, highlight: Bool)]
     
-    init(_ text: String, highlightedWord: String, highlight: LinearGradient) {
+    init(_ text: String, highlightedWord: String?, highlight: LinearGradient) {
         self.text = text
         self.highlightedWord = highlightedWord
         self.highlightGradient = highlight
         
-        if let rangeOfHighlightedWord = text.ranges(of: highlightedWord).first {
+        if let highlightedWord = highlightedWord,
+            let rangeOfHighlightedWord = text.ranges(of: highlightedWord).first {
             segments = []
             let beforeHighlightedWord = text[..<rangeOfHighlightedWord.lowerBound]
             if !beforeHighlightedWord.isEmpty {

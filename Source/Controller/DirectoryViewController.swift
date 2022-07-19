@@ -50,6 +50,8 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     
     /// A post that was loaded when the user put its ID in the search bar.
     private var searchedPost: KeyValue?
+    
+    private let helpButton = HelpCoordinator.helpBarButton(action: #selector(helpButtonTouchUpInside))
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
@@ -83,6 +85,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
 
     init() {
         super.init(scrollable: false, title: .yourNetwork)
+        navigationItem.rightBarButtonItems = [helpButton]
     }
 
     override func viewDidLoad() {
@@ -201,6 +204,14 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             
             activeSections = [.posts]
             tableView.reloadData()
+        }
+    }
+    
+    @objc
+    func helpButtonTouchUpInside() {
+        if presentedViewController == nil {
+            let controller = HelpCoordinator.helpController(for: self, sourceBarButton: helpButton)
+            present(controller, animated: true, completion: nil)
         }
     }
 }
