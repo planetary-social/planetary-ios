@@ -47,18 +47,38 @@ class FeatureViewController: UINavigationController {
     }
 
     private func setTabBarItem(title: String?, image named: String? = nil) {
-        guard let name = named ?? cachedTabBarItemImageName else { return }
-        cachedTabBarItemImageName = name
-        guard let image = UIImage(named: name) else { return }
-        guard let selected = UIImage(named: "\(name)-selected") else { return }
-        self.tabBarItem = UITabBarItem(title: nil, image: image, selectedImage: selected)
-        self.tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+        guard let name = named ?? cachedTabBarItemImageName, setTabBarItemImage(name) else {
+            return
+        }
         self.tabBarItem.accessibilityLabel = title
     }
         
     open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
             setTabBarItem(title: viewControllers.first?.navigationItem.title)
+        }
+    }
+
+    @discardableResult
+    func setTabBarItemImage(_ name: String) -> Bool {
+        guard let image = UIImage(named: name) else {
+            return false
+        }
+        guard let selected = UIImage(named: "\(name)-selected") else {
+            return false
+        }
+        cachedTabBarItemImageName = name
+        let tabBarItem = UITabBarItem(title: nil, image: image, selectedImage: selected)
+        tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+        self.tabBarItem = tabBarItem
+        return true
+    }
+
+    func setTabBarItemBadge(_ value: Int?) {
+        if let value = value {
+            tabBarItem?.badgeValue = "\(value)"
+        } else {
+            tabBarItem?.badgeValue = nil
         }
     }
 

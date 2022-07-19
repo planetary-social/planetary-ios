@@ -30,6 +30,7 @@
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Text.startedFollowing" = "{{somebody}} started following";
 "Text.stoppedFollowing" = "{{somebody}} stopped following";
+"Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Text.showMeInDirectory" = "Show me in the directory";
 "Text.showMeInUserDirectory" = "Show me in the user directory";
 "Text.hideMeFromUserDirectory" = "Hide me from the user directory";
@@ -120,8 +121,12 @@
 "Text.postNotFound" = "No posts found with the given ID.";
 "Text.users" = "Users";
 "Text.posts" = "Posts";
+"Text.search" = "Search";
 "Text.searching" = "Searching";
-"Text.searchForUsersAndPosts" = "Search by name, user ID, post ID";
+"Text.searchForUsers" = "Filter users by name or ID";
+"Text.searchingLocally" = "Searching for posts in your local database";
+"Text.noResultsFound" = "No results found.";
+"Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Text.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -201,6 +206,9 @@
 "Onboarding.policyStatement" = "By continuing, you confirm that you agree to our Terms of Service and Privacy Policy";
 "Onboarding.termsOfService" = "Terms of Service";
 "Onboarding.privacyPolicy" = "Privacy Policy";
+"Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
+"Onboarding.welcomeBotName" = "Planetary Help";
+"Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";

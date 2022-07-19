@@ -8,12 +8,9 @@
 
 import Foundation
 
-/**
- A Report is an object that encapsulates a notification of some kind: somebody liked your post,
- somebody followed you etc.
- */
+/// A Report is an object that encapsulates a notification of some kind: somebody liked your post,
+/// somebody followed you etc.
 struct Report {
-    
     /// Identity that received this report
     var authorIdentity: Identity
     
@@ -28,6 +25,27 @@ struct Report {
     
     /// Message that generated this report
     var keyValue: KeyValue
+
+    var isRead: Bool
+
+    var isUnread: Bool {
+        !isRead
+    }
+
+    init(
+        authorIdentity: Identity,
+        messageIdentifier: MessageIdentifier,
+        reportType: ReportType,
+        createdAt: Date,
+        keyValue: KeyValue
+    ) {
+        self.authorIdentity = authorIdentity
+        self.messageIdentifier = messageIdentifier
+        self.reportType = reportType
+        self.createdAt = createdAt
+        self.keyValue = keyValue
+        self.isRead = false
+    }
 }
 
 enum ReportType: String {

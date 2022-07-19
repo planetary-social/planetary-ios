@@ -1,8 +1,7 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
-"Text.error" = "Ojejku";
+"Text.error" = "Ups";
 "Text.cancel" = "Anuluj";
 "Text.skip" = "Pomiń";
 "Text.ok" = "OK";
@@ -11,26 +10,26 @@
 "Text.save" = "Zapisz";
 "Text.yes" = "Tak";
 "Text.no" = "Nie";
-"Text.tryAgain" = "Ponów";
-"Text.loading" = "Ładowanie...";
+"Text.tryAgain" = "Spróbuj ponownie";
+"Text.loading" = "Wczytywanie...";
 "Text.today" = "Dzisiaj";
 "Text.yesterday" = "Wczoraj";
 "Text.recently" = "Ostatnio";
 "Text.future" = "W przyszłości";
 "Text.daysAgo" = "{{ days }} dni temu";
 "Text.atDayTime" = "{{ day }} o {{ time }}";
-"Text.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
-"Text.yourProfile" = "Twój Profil";
+"Text.minutesAbbreviated" = "{{ numberOfMinutes }} min";
+"Text.yourProfile" = "Twój profil";
 "Text.helpAndSupport" = "Pomoc";
-"Text.reportBug" = "Zgłoś Problem";
+"Text.reportBug" = "Zgłoś problem";
 "Text.settings" = "Ustawienia";
 "Text.yourNetwork" = "Twoja Sieć";
 "Text.pubServers" = "Pub Servers";
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
-"Text.startedFollowing" = "{{somebody}} started following";
-"Text.stoppedFollowing" = "{{somebody}} stopped following";
+"Text.startedFollowing" = "{{somebody}} obserwuje Cię";
+"Text.stoppedFollowing" = "{{somebody}} przestaje Cię obserwować";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Text.showMeInDirectory" = "Pokaż mnie w katalogu";
 "Text.showMeInUserDirectory" = "Pokaż mnie w katalogu użytkowników";
@@ -56,8 +55,8 @@
 "Text.name" = "Nazwa";
 "Text.bio" = "Opis";
 "Text.seeMore" = "Więcej";
-"Text.likesThis" = "likes this";
-"Text.dislikesThis" = "dislikes this";
+"Text.likesThis" = "lubi to";
+"Text.dislikesThis" = "nie lubi tego";
 "Text.block" = "Zablokuj";
 "Text.blocked" = "Zablokowani";
 "Text.deleteSecretAndIdentity" = "Usuń ten sekret i tożsamość";
@@ -73,7 +72,7 @@
 "Text.identifierCopied" = "Identyfikator został skopiowany";
 "Text.copyMessageIdentifier" = "Skopiuj Identyfikator Wiadomości";
 "Text.copyPublicIdentifier" = "Skopiuj Identyfikator Profilu";
-"Text.sharePublicIdentifier" = "Share Public Identifier";
+"Text.sharePublicIdentifier" = "Udostępnij publiczny identyfikator";
 "Text.shareThisProfile" = "Udostępnij Ten Profil";
 "Text.shareThisMessage" = "Udostępnij Tę Wiadomość";
 "Text.shareThisProfileText" = "Znajdź {{ who }} w Planetary pod adresem {{ link }}";
@@ -97,8 +96,8 @@
 "Text.countOnlinePeers" = "{{ count }} OSÓB ON-LINE";
 "Text.countLocalPeers" = "{{ count }} OSÓB LOKALNIE";
 "Text.lastSynced" = "POBRANO: {{ when }}";
-"Text.syncingMessages" = "Syncing Messages...";
-"Text.recentlyDownloaded" = "Downloaded {{ postCount }} posts in the last {{ duration }} mins";
+"Text.syncingMessages" = "Synchronizacja wiadomości...";
+"Text.recentlyDownloaded" = "Pobrano {{ postCount }} wpisów w ciągu ostatnich {{ duration }} minut";
 "Text.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Text.channels" = "Kanały";
 "Text.select" = "Wybierz";
@@ -110,23 +109,23 @@
 "Text.share" = "Udostępnij";
 "Text.bookmark" = "Zachowaj";
 "Text.like" = "Polub";
-"Text.debug" = "Debug";
+"Text.debug" = "Debugowanie";
 "Text.join" = "Dołącz";
 "Text.redeemInvitation" = "Zrealizuj zaproszenie";
 "Text.pasteAddress" = "Kod";
-"Text.refreshSingular" = "{{ count }} unread post!";
-"Text.refreshPlural" = "{{ count }} unread posts!";
+"Text.refreshSingular" = "{{ count }} nieprzeczytany wpis!";
+"Text.refreshPlural" = "{{ count }} nieprzeczytanych wpisów!";
 "Text.markdownSupported" = "Podgląd";
-"Text.loggingOut" = "Logging out...";
-"Text.openPost" = "Open post {{ postID }}";
-"Text.postNotFound" = "No posts found with the given ID.";
-"Text.users" = "Users";
-"Text.posts" = "Posts";
-"Text.search" = "Search";
-"Text.searching" = "Searching";
-"Text.searchForUsers" = "Filter users by name or ID";
-"Text.searchingLocally" = "Searching for posts in your local database";
-"Text.noResultsFound" = "No results found.";
+"Text.loggingOut" = "Wylogowywanie...";
+"Text.openPost" = "Otwórz wpis {{ postID }}";
+"Text.postNotFound" = "Nie znaleziono wpisu z podanym ID.";
+"Text.users" = "Użytkownicy";
+"Text.posts" = "Wpisy";
+"Text.search" = "Szukaj";
+"Text.searching" = "Wyszukiwanie";
+"Text.searchForUsers" = "Filtruj użytkowników wg nazwy lub ID";
+"Text.searchingLocally" = "Wyszukiwanie wpisów w Twojej lokalnej bazie danych";
+"Text.noResultsFound" = "Brak wyników.";
 "Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Text.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
@@ -136,7 +135,7 @@
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
 "Text.percentComplete" = "complete";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
-"Text.areYouSure" = "Are you sure?";
+"Text.areYouSure" = "Czy na pewno?";
 "Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
 "Blocking.alertTitle" = "Czy na pewno chcesz zablokować {{ name }}? You will no longer see each other's content or be able to contact each other. Nie będziecie już widzieć wzajemnych treści ani nie będziecie mogli się ze sobą kontaktować.";
@@ -157,20 +156,20 @@
 "NewPost.confirmRemove" = "Usunąć ten obraz z posta? Zawsze możesz dodać go ponownie.";
 "NewPost.remove" = "Usuń";
 
-"Offboarding.reset" = "Delete";
-"Offboarding.resetIdentity" = "Delete My Identity";
+"Offboarding.reset" = "Usuń";
+"Offboarding.resetIdentity" = "Usuń moją tożsamość";
 "Offboarding.resetConfirmTitle" = "Uwaga";
-"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetConfirmMessage" = "Czy na pewno chcesz usunąć swoją tożsamość z tego urządzenia? Utracisz ten profil oraz wszelkie powiązane treści. Nie można tego cofnąć.";
 "Offboarding.resetConfirmAgainTitle" = "Na pewno?";
-"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetConfirmAgainMessage" = "Czy masz absolutną pewność, że chcesz usunąć swoją tożsamość z tego urządzenia? Utracisz ten profil oraz wszelkie powiązane treści. Nie można tego cofnąć.";
 "Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "Nie mogliśmy połączyć się z katalogiem, aby usunąć Twój profil. Proszę spróbuj ponownie.";
 "Offboarding.resetBotErrorTryAgain" = "Stało się coś nieoczekiwanego, ale nie martw się, zostaliśmy o tym powiadomieni i spróbujemy to naprawić. Proszę spróbuj ponownie.";
 
 "Onboarding.getStartedButton" = "Zacznijmy";
 "Onboarding.photoButtonAdd" = "Dodaj zdjęcie";
-"Onboarding.doItLater" = "I'll do it later";
-"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
+"Onboarding.doItLater" = "Zrobię to później";
+"Onboarding.useRealName" = "Twoja nazwa będzie widoczna dla wszystkich, więc możesz użyć pseudonimu lub na razie pominąć ten krok.";
 "Onboarding.phoneNumber" = "Numer Telefonu";
 "Onboarding.phoneNumberConfirmationMessage" = "Używamy go do potwierdzenia Twojej tożsamości oraz alertów serwisowych.";
 "Onboarding.didntGetSMS" = "SMS nie dotarł?";
@@ -193,8 +192,8 @@
 "Onboarding.doneOnboarding" = "Uff! Udało się!";
 "Onboarding.earlyAccess" = "Aplikacja jest na wczesnym etapie rozwoju. Skupiliśmy się na podstawach, więc w interfejsie użytkownika są spore luki. Prosimy o wyrozumiałość!";
 "Onboarding.iUnderstand" = "Tak, rozumiem";
-"Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
-"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
+"Onboarding.followPlanetaryToggleTitle" = "Obserwuj Planetary";
+"Onboarding.followPlanetaryToggleDescription" = "Obserwuj konto Planetary, aby zobaczyć wpisy naszego zespołu.";
 "Onboarding.somethingWentWrong" = "O nie! Coś poszło nie tak!";
 "Onboarding.errorRetryMessage" = "To nie twoja wina, coś schrzaniliśmy. Możesz spróbować ponownie lub zacząć od nowa, albo zgłosić nam napotkany problem.";
 "Onboarding.resumeRetryMessage" = "To nie Twoja wina, coś schrzaniliśmy. W niektórych przypadkach może to oznaczać, że urządzenie nie może połączyć się z siecią. Ponowna próba w późnieszym czasie może to naprawić.";
@@ -208,7 +207,7 @@
 "Onboarding.termsOfService" = "Warunki Korzystania z Usług";
 "Onboarding.privacyPolicy" = "Polityka Prywatności";
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
-"Onboarding.welcomeBotName" = "Planetary Help";
+"Onboarding.welcomeBotName" = "Pomoc Planetary";
 "Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
 
 "OnboardingStepTitle.backup" = "Utworzyliśmy Twoją tożsamość - czy chcesz kopie zapapasową?";
