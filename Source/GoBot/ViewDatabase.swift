@@ -326,6 +326,7 @@ class ViewDatabase {
         }
     }
 
+    /// Set all messages as read if needsToSetAllMessagesAsRead is on
     func setAllMessagesAsReadIfNeeded() throws {
         guard needsToSetAllMessagesAsRead else {
             return

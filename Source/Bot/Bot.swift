@@ -225,6 +225,7 @@ protocol Bot: AnyObject {
     func markMessageAsRead(_ message: MessageIdentifier)
 
     /// Mark all messages as read
+    /// - parameter queue: A queue in which the completion handler will be called in
     func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion)
 
     /// Reports (unifies mentions, replies, follows) for the active identity.

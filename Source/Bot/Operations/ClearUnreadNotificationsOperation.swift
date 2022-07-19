@@ -11,7 +11,7 @@ import Foundation
 import Logger
 import UIKit
 
-/// Calculate the total number of reports since a particular report (offset)
+/// Clears all unread notifications and resets the application badge
 class ClearUnreadNotificationsOperation: AsynchronousOperation {
 
     override func main() {
