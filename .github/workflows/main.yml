@@ -98,5 +98,9 @@ jobs:
     name: Verify LFS files
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        lfs: true
     - name: Run gif lfs fsck
       run: git lfs fsck
