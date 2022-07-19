@@ -21,6 +21,7 @@ typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias CountCompletion = ((Result<Int, Error>) -> Void)
+typealias VoidCompletion = ((Result<Void, Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -222,6 +223,9 @@ protocol Bot: AnyObject {
     ///
     /// - parameter message: The message to mark as read
     func markMessageAsRead(_ message: MessageIdentifier)
+
+    /// Mark all messages as read
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion)
 
     /// Reports (unifies mentions, replies, follows) for the active identity.
     ///

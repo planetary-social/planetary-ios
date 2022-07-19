@@ -69,7 +69,7 @@ class ViewDatabase {
     // All messages in the network should be as read if true. This is to prevent a user that runs into
     // the migration that creates the read_messages table to have all the messages as unread. It cannot be
     // done during migration as we need to know the user id
-    private var needsToSetAllMessagesAsRead = false
+    var needsToSetAllMessagesAsRead = false
     
     // MARK: Tables and fields
     let colID = Expression<Int64>("id")
@@ -231,7 +231,7 @@ class ViewDatabase {
         self.currentUser = user
         self.currentUserID = try self.authorID(of: user, make: true)
 
-        try setAllMessagesAsReadIfNeeded(on: db)
+        try setAllMessagesAsReadIfNeeded()
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -326,9 +326,12 @@ class ViewDatabase {
         }
     }
 
-    private func setAllMessagesAsReadIfNeeded(on db: Connection) throws {
+    func setAllMessagesAsReadIfNeeded() throws {
         guard needsToSetAllMessagesAsRead else {
             return
+        }
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
         }
         try db.execute(
             """

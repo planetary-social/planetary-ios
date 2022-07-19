@@ -111,9 +111,12 @@ class NotificationsViewController: ContentViewController {
         if NotificationsViewController.refreshBackgroundTaskIdentifier != .invalid {
             UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
         }
+
+        let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
         
         Log.info("Pull down to refresh triggering a short refresh")
         let refreshOperation = RefreshOperation(refreshLoad: .short)
+        refreshOperation.addDependency(clearUnreadNotificationsOperation)
         
         let taskName = "NotificationsPullDownToRefresh"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
@@ -137,14 +140,14 @@ class NotificationsViewController: ContentViewController {
                 self?.load(animated: animated)
             }
         }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
+        let operations = [clearUnreadNotificationsOperation, refreshOperation]
+        AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 
     private func update(with reports: [Report], animated: Bool = true) {
         self.dataSource.reports = reports
         lastTimeNewReportsUpdatesWasChecked = Date()
         self.tableView.reloadData()
-        self.navigationController?.tabBarItem?.badgeValue = nil
     }
 
     func checkForNotificationUpdates(force: Bool = false) {
@@ -165,7 +168,6 @@ class NotificationsViewController: ContentViewController {
                 let numberOfNewReports = operation.numberOfReports
                 if numberOfNewReports > 0 {
                     DispatchQueue.main.async { [weak self] in
-                        self?.navigationController?.tabBarItem?.badgeValue = "\(numberOfNewReports)"
                         let shouldAnimate = self?.navigationController?.topViewController == self
                         self?.floatingRefreshButton.setTitle(with: numberOfNewReports)
                         self?.floatingRefreshButton.show(animated: shouldAnimate)
