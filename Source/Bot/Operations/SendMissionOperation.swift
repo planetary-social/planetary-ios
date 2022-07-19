@@ -45,7 +45,7 @@ class SendMissionOperation: AsynchronousOperation {
             return
         }
         
-        let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
+        let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .utility)
         
         Log.info("Retreiving all joined pubs from database.")
         Bots.current.joinedPubs(queue: queue) { (allJoinedPubs, error) in

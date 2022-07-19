@@ -175,6 +175,21 @@ class GoBot: Bot {
         
         Analytics.shared.trackDidDropDatabase()
     }
+    
+    func dropViewDatabase() async throws {
+        guard let config = config else {
+            throw BotError.notLoggedIn
+        }
+
+        Log.info("Dropping GoBot SQL ViewDatabase...")
+        let databaseDirectory = try config.databaseDirectory()
+        try database.dropDatabase(at: databaseDirectory)
+        try self.database.open(
+            path: databaseDirectory,
+            user: config.secret.identity
+        )
+        Log.info("GoBot SQL ViewDatabase dropped successfully.")
+    }
 
     // MARK: Login/Logout
     
@@ -710,6 +725,7 @@ class GoBot: Bot {
         }
         
         do {
+            Log.debug("[rx log] asking go-ssb for last rx sequence number.")
             let repoStats = try self.bot.repoStatus()
             if repoStats.messages == 0 {
                 return (lastRxSeq, 0)

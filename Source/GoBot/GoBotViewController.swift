@@ -142,7 +142,7 @@ class GoBotViewController: DebugTableViewController {
               },
                                         actionClosure: {
                 _ in
-                DispatchQueue.global(qos: .background).async {
+                DispatchQueue.global(qos: .userInitiated).async {
                     let (worked, _) = GoBot.shared.bot.fsckAndRepair()
                     guard worked else {
                         Log.unexpected(.botError, "manual fsck failed")

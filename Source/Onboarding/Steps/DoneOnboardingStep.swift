@@ -101,7 +101,7 @@ class DoneOnboardingStep: OnboardingStep {
         let publicWebHostingOperation = BlockOperation {
             let semaphore = DispatchSemaphore(value: 0)
             let about = About(about: me, publicWebHosting: data.publicWebHosting)
-            let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
+            let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .userInitiated)
             Bots.current.publish(content: about, completionQueue: queue) { (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
