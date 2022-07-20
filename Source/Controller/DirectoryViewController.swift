@@ -11,7 +11,7 @@ import Logger
 import Analytics
 import CrashReporting
 
-class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
+class DirectoryViewController: ContentViewController, AboutTableViewDelegate, HelpDrawerHost {
     
     /// A model for the various table view sections
     enum Section: Int, CaseIterable {
@@ -51,7 +51,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
     /// A post that was loaded when the user put its ID in the search bar.
     private var searchedPost: KeyValue?
     
-    private let helpButton = HelpCoordinator.helpBarButton(action: #selector(helpButtonTouchUpInside))
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
@@ -106,6 +106,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Directory")
         Analytics.shared.trackDidShowScreen(screenName: "directory")
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
 
     private func load(completion: @escaping () -> Void) {
@@ -204,14 +205,6 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate {
             
             activeSections = [.posts]
             tableView.reloadData()
-        }
-    }
-    
-    @objc
-    func helpButtonTouchUpInside() {
-        if presentedViewController == nil {
-            let controller = HelpCoordinator.helpController(for: self, sourceBarButton: helpButton)
-            present(controller, animated: true, completion: nil)
         }
     }
 }

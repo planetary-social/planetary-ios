@@ -1,5 +1,5 @@
 //
-//  HelpDrawer.swift
+//  HelpDrawerView.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 7/13/22.
@@ -8,29 +8,41 @@
 
 import SwiftUI
 import AVKit
+import Logger
 
-struct HelpDrawer: View {
-    
-    //    private let videoPlayer: AVQueuePlayer
-    //    private let videoLooper: AVPlayerLooper
+struct HelpDrawerView: View {
     
     private let tabName: String
     private let tabImageName: String
+    private let heroImageName: String?
     private let helpTitle: String
     private let bodyText: String
     private let highlightedWord: String?
+    private let highlight: LinearGradient
+    private let link: URL?
     private let inDrawer: Bool
     private let tipIndex: Int
     private let nextTipAction: (() -> Void)?
     private let previousTipAction: (() -> Void)?
     private let dismissAction: () -> Void
     
+    private let videoPlayer: AVQueuePlayer
+    private let videoLooper: AVPlayerLooper
+    
+    /// This hard coded URL is temporary. See comment on `imageOrVideo` property
+    // swiftlint:disable force_unwrapping
+    let videoURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
+    // swiftlint:enable force_unwrapping
+    
     init(
         tabName: String,
         tabImageName: String,
+        heroImageName: String?,
         helpTitle: String,
         bodyText: String,
         highlightedWord: String?,
+        highlight: LinearGradient,
+        link: URL?,
         inDrawer: Bool,
         tipIndex: Int,
         nextTipAction: (() -> Void)?,
@@ -39,32 +51,43 @@ struct HelpDrawer: View {
     ) {
         self.tabName = tabName
         self.tabImageName = tabImageName
+        self.heroImageName = heroImageName
         self.helpTitle = helpTitle
         self.bodyText = bodyText
         self.highlightedWord = highlightedWord
+        self.highlight = highlight
+        self.link = link
         self.inDrawer = inDrawer
         self.tipIndex = tipIndex
         self.nextTipAction = nextTipAction
         self.previousTipAction = previousTipAction
         self.dismissAction = dismissAction
-        //        let asset = AVAsset(url: videoURL)
-        //        let item = AVPlayerItem(asset: asset)
-        //        videoPlayer = AVQueuePlayer(playerItem: item)
-        //        videoPlayer.isMuted = true
-        //        videoLooper = AVPlayerLooper(player: videoPlayer, templateItem: item)
+        let asset = AVAsset(url: videoURL)
+        let item = AVPlayerItem(asset: asset)
+        videoPlayer = AVQueuePlayer(playerItem: item)
+        videoPlayer.isMuted = true
+        videoLooper = AVPlayerLooper(player: videoPlayer, templateItem: item)
     }
     
-    private let horizontalGradient = LinearGradient(
-        colors: [ Color(hex: "#F08508"), Color(hex: "#F43F75")],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-    
-    private let diagonalGradient = LinearGradient(
-        colors: [ Color(hex: "#F08508"), Color(hex: "#F43F75")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
+    /// This is the image or video that will be displayed at the top of the screen.
+    /// It's only half implemented. Original design had videos at the top of each drawer but
+    /// only one video was ready so the rest get static images for now.
+    var imageOrVideo: some View {
+        VStack(spacing: 0) {
+            if let heroImageName = heroImageName {
+                Image(heroImageName)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                NoControlsVideoPlayer(player: videoPlayer)
+                    .frame(height: 217)
+                    .onAppear {
+                        videoPlayer.play()
+                    }
+            }
+        }
+        .background(Color(hex: "4a386d"))
+    }
     
     var body: some View {
         ZStack {
@@ -72,19 +95,14 @@ struct HelpDrawer: View {
                 ZStack {
                     VStack {
                         ScrollView {
-                            VStack {
-                                // Video, disabled for now.
-                                //                                NoControlsVideoPlayer(player: videoPlayer)
-                                //                                    .frame(height: 237)
-                                //                                    .onAppear {
-                                //                                        videoPlayer.play()
-                                //                                    }
+                            VStack(spacing: 0) {
+                                imageOrVideo
                                 VStack(spacing: 8) {
                                     VStack(alignment: .leading, spacing: 8) {
                                         
                                         // Tab name and icon
                                         FancySectionName(
-                                            gradient: diagonalGradient,
+                                            gradient: LinearGradient.diagonalAccent,
                                             image: Image(tabImageName),
                                             text: tabName
                                         )
@@ -96,16 +114,19 @@ struct HelpDrawer: View {
                                             .font(.title.weight(.medium))
                                         
                                         // Body text
-                                        GradientHighlightedText(
+                                        HighlightedText(
                                             bodyText,
                                             highlightedWord: highlightedWord,
-                                            highlight: diagonalGradient
+                                            highlight: highlight,
+                                            link: link
                                         )
                                     }
                                 }
                                 .padding(25)
                             }
+                            .edgesIgnoringSafeArea(.all)
                         }
+                        .padding(-3)
                         
                         Spacer()
                         
@@ -141,7 +162,9 @@ struct HelpDrawer: View {
                             .disabled(nextTipAction == nil)
                             .opacity(nextTipAction == nil ? 0.3 : 1.0)
                         }
-                        .padding(25)
+                        .padding(.bottom, 25)
+                        .padding(.horizontal, 25)
+                        .padding(.top, 10)
                     }
                     .padding(.top, 3)
                     .padding(.horizontal, 3)
@@ -160,7 +183,7 @@ struct HelpDrawer: View {
                                     .padding(16)
                                 
                                 icon
-                                    .overlay(horizontalGradient.mask(icon))
+                                    .overlay(LinearGradient.horizontalAccent.mask(icon))
                                     .background(
                                         Circle()
                                             .foregroundColor(Color.white)
@@ -172,13 +195,13 @@ struct HelpDrawer: View {
                     }
                 }
             }
-            .cornerRadius(15, corners: inDrawer ? [.topLeft, .topRight] : [.allCorners])
+            .cornerRadius(8, corners: inDrawer ? [.topLeft, .topRight] : [.allCorners])
             .padding(.top, 6)
             .padding(.horizontal, 6)
             .padding(.bottom, inDrawer ? 0 : 6)
         }
         .edgesIgnoringSafeArea(.bottom)
-        .background(diagonalGradient)
+        .background(LinearGradient.diagonalAccent)
     }
 }
 
@@ -205,12 +228,15 @@ extension SwiftUI.Text {
 struct HomeHelpView_Previews: PreviewProvider {
     
     static var iPadPreview: some View {
-        let view = HelpDrawer(
+        let view = HelpDrawerView(
             tabName: Text.home.text,
             tabImageName: "tab-icon-home",
+            heroImageName: nil,
             helpTitle: Text.Help.Home.title.text,
             bodyText: Text.Help.Home.body.text,
             highlightedWord: Text.Help.Home.highlightedWord.text,
+            highlight: .diagonalAccent,
+            link: nil,
             inDrawer: false,
             tipIndex: 1,
             nextTipAction: {},
@@ -223,12 +249,15 @@ struct HomeHelpView_Previews: PreviewProvider {
     }
     
     static var defaultPreview: some View {
-        HelpDrawer(
+        HelpDrawerView(
             tabName: Text.home.text,
             tabImageName: "tab-icon-home",
+            heroImageName: nil,
             helpTitle: Text.Help.Home.title.text,
             bodyText: Text.Help.Home.body.text,
             highlightedWord: Text.Help.Home.highlightedWord.text,
+            highlight: .diagonalAccent,
+            link: URL(string: "https://planetary.social"),
             inDrawer: true,
             tipIndex: 1,
             nextTipAction: {},
@@ -279,70 +308,6 @@ struct FancySectionName: View {
                 .frame(maxHeight: .infinity)
         }
         .fixedSize(horizontal: false, vertical: true)
-    }
-}
-
-struct GradientHighlightedText: View {
-    
-    let text: String
-    let highlightedWord: String?
-    let highlightGradient: LinearGradient
-    
-    /// An array of segments of text, along with a bool specifying if they should be highlighted.
-    private var segments: [(text: String, highlight: Bool)]
-    
-    init(_ text: String, highlightedWord: String?, highlight: LinearGradient) {
-        self.text = text
-        self.highlightedWord = highlightedWord
-        self.highlightGradient = highlight
-        
-        if let highlightedWord = highlightedWord,
-            let rangeOfHighlightedWord = text.ranges(of: highlightedWord).first {
-            segments = []
-            let beforeHighlightedWord = text[..<rangeOfHighlightedWord.lowerBound]
-            if !beforeHighlightedWord.isEmpty {
-                segments.append((text: String(beforeHighlightedWord), highlight: false))
-            }
-            
-            segments.append((text: highlightedWord, highlight: true))
-            
-            let afterHighlightedWord = text[rangeOfHighlightedWord.upperBound...]
-            if !afterHighlightedWord.isEmpty {
-                segments.append((text: String(afterHighlightedWord), highlight: false))
-            }
-        } else {
-            segments = [(text: text, highlight: false)]
-        }
-    }
-    
-    var bodyText: SwiftUI.Text {
-        var bodyText = SwiftUI.Text("")
-        for segment in segments {
-            bodyText = bodyText + SwiftUI.Text(segment.text)
-                .foregroundColor(segment.highlight ? .clear : Color("secondaryText"))
-        }
-        return bodyText
-    }
-    
-    var highlightedText: SwiftUI.Text {
-        var highlightedText = SwiftUI.Text("")
-        for segment in segments {
-            highlightedText = highlightedText + SwiftUI.Text(segment.text)
-                .foregroundColor(segment.highlight ? .black : .clear)
-        }
-        return highlightedText
-    }
-    
-    var body: some View {
-        // layer the text blocks so that the gradient shows through.
-        // Note: gradient here is too wide. Need to restrict it to just the word "Discover"
-        ZStack {
-            // Build two Text objects with the same dimensions. One for the body text where the highlighted word is
-            // transparent, and one that only has the highlighted word.
-            bodyText
-            highlightedText
-                .foregroundLinearGradient(highlightGradient)
-        }
     }
 }
 

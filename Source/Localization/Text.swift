@@ -498,6 +498,7 @@ extension Text {
 extension Text {
     enum Help: String, Localizable, CaseIterable {
         
+        case help = "Help"
         case indexOfTip = "{{tipIndex}} of {{totalTipCount}} tips"
         
         enum Home: String, Localizable, CaseIterable {
@@ -525,8 +526,8 @@ extension Text {
         
         enum YourNetwork: String, Localizable, CaseIterable {
             case title = "Your friends, connections and pubs"
-            case body = "Your network is unique: it's made by the users you follow, those who they follow and the Pub servers you use to gossip messages with all of them."
-            case highlightedWord = "gossip"
+            case body = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them."
+            case highlightedWord = "*gossip*"
         }
     }
 }

@@ -296,6 +296,7 @@
 "Report.feedMentioned" = "%@ wspomniał o Tobie w poście";
 "Report.messageLiked" = "%@ polubił twój post";
 
+"Help.help" = "Help";
 "Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
 
 "Home.title" = "See posts from users and topics you follow";
@@ -314,5 +315,5 @@
 "Hashtags.highlightedWord" = "Your Network";
 
 "YourNetwork.title" = "Your friends, connections and pubs";
-"YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who they follow and the Pub servers you use to gossip messages with all of them.";
-"YourNetwork.highlightedWord" = "gossip";
+"YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
+"YourNetwork.highlightedWord" = "*gossip*";

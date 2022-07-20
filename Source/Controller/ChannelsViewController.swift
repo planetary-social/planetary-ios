@@ -12,7 +12,7 @@ import Logger
 import Analytics
 import CrashReporting
 
-class ChannelsViewController: ContentViewController {
+class ChannelsViewController: ContentViewController, HelpDrawerHost {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
 
@@ -33,7 +33,7 @@ class ChannelsViewController: ContentViewController {
     // for a bug fix — see note in Search extension below
     private var searchEditBeginDate = Date()
     
-    private let helpButton = HelpCoordinator.helpBarButton(action: #selector(helpButtonTouchUpInside))
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
 
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
@@ -94,6 +94,7 @@ class ChannelsViewController: ContentViewController {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Channels")
         Analytics.shared.trackDidShowScreen(screenName: "channels")
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
 
     // MARK: Load and refresh
@@ -168,14 +169,6 @@ class ChannelsViewController: ContentViewController {
     func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
         self.refreshAndLoad()
-    }
-    
-    @objc
-    func helpButtonTouchUpInside() {
-        if presentedViewController == nil {
-            let controller = HelpCoordinator.helpController(for: self, sourceBarButton: helpButton)
-            present(controller, animated: true, completion: nil)
-        }
     }
     
     // MARK: Notifications
