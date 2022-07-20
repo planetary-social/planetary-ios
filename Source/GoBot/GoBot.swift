@@ -1397,13 +1397,13 @@ class GoBot: Bot {
     func markMessageAsRead(_ message: MessageIdentifier) {
         userInitiatedQueue.async {
             do {
-                let report = try self.database.report(for: message)
+                let isRead = try self.database.isReportRead(for: message)
                 try self.database.markMessageAsRead(identifier: message, isRead: true)
-                if let report = report, report.isUnread {
+                if !isRead {
                     NotificationCenter.default.post(
                         name: .didUpdateReportReadStatus,
                         object: nil,
-                        userInfo: ["report": report]
+                        userInfo: nil
                     )
                 }
             } catch {
