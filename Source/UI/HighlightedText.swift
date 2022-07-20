@@ -9,14 +9,24 @@
 import SwiftUI
 import Logger
 
+/// A block of markdown text that optionally highlights one word with a gradient and tappable link.
 struct HighlightedText: View {
     
+    /// The full text that should be displayed.
     let text: String
+    
+    /// The word that should be highlighted, if any. Must be a substring of `text`.
     let highlightedWord: String?
+    
+    /// The gradient that will be used to highlight the word.
     let highlightGradient: LinearGradient
+    
+    /// A link that the highlighted word will open if tapped. Optional.
     let link: URL?
     
-    enum Segment {
+    /// A model for the segments of the string. `HightlightedText` is built by appending several `Text` views together,
+    /// and each `Segment` will eventually be rendered as `Text`
+    private enum Segment {
         case body(String)
         case highlighted(String)
         case space
@@ -25,12 +35,19 @@ struct HighlightedText: View {
     /// An array of segments of text, along with a bool specifying if they should be highlighted.
     private var segments: [Segment]
     
+    /// Creates a `HighlightedText`.
+    /// - Parameters:
+    ///   - text: The full text that should be displayed.
+    ///   - highlightedWord: The word that should be highlighted, if any. Must be a substring of `text`.
+    ///   - highlight: The gradient that will be used to highlight the word.
+    ///   - link: A link that the highlighted word will open if tapped. Optional.
     init(_ text: String, highlightedWord: String?, highlight: LinearGradient, link: URL?) {
         self.text = text
         self.highlightedWord = highlightedWord
         self.highlightGradient = highlight
         self.link = link
         
+        // If we have a highlighted word we break it up into segments.
         if let highlightedWord = highlightedWord,
             let rangeOfHighlightedWord = text.ranges(of: highlightedWord).first {
             segments = []
@@ -56,11 +73,13 @@ struct HighlightedText: View {
                 segments.append(.body(String(afterHighlightedWord)))
             }
         } else {
+            // no highlighted word, so we just have one segment.
             segments = [.body(text)]
         }
     }
     
-    var bodyText: SwiftUI.Text {
+    /// A layer that has the body text colored in, but the highlighted word is clear.
+    private var bodyText: SwiftUI.Text {
         buildTextFromSegments(
             segments: segments,
             highlightBuilder: { string in
@@ -72,7 +91,8 @@ struct HighlightedText: View {
         )
     }
     
-    var highlightedText: SwiftUI.Text {
+    /// A layer that has the body text clear, and the highlighted word colored with `highlightGradient`.
+    private var highlightedText: some View {
         buildTextFromSegments(
             segments: segments,
             highlightBuilder: { string in
@@ -82,10 +102,14 @@ struct HighlightedText: View {
                 textView(markdown: string).foregroundColor(.clear)
             }
         )
+        .foregroundLinearGradient(highlightGradient)
     }
     
-    var linkText: some View {
-        let linkText = buildTextFromSegments(
+    /// A layer that has all text clear, but has a tap target where the highlighted word is, which is used to open
+    /// the `link`. This is necessary because the gradient overlay interferes with SwiftUI's tap gesture recognizer,
+    /// so we can't just add the link in the `highlightedText` layer.
+    private var linkText: some View {
+        buildTextFromSegments(
             segments: segments,
             highlightBuilder: { string in
                 var view: SwiftUI.Text
@@ -101,37 +125,20 @@ struct HighlightedText: View {
                 textView(markdown: string).foregroundColor(.clear)
             }
         )
-
-        return linkText.tint(.clear)
+        .tint(.clear)
     }
     
-    private func textView(markdown: String) -> SwiftUI.Text {
-        var attributedString: AttributedString
-        do {
-            attributedString = try AttributedString(markdown: markdown)
-        } catch {
-            Log.optional(error)
-            attributedString = AttributedString(markdown)
-        }
-        return SwiftUI.Text(attributedString)
-    }
-    
-//    private func append(markdown string: String, to textView: SwiftUI.Text) -> Text {
-//        var attributedString: AttributedString
-//        do {
-//            attributedString = try AttributedString(markdown: string)
-//        } catch {
-//            Log.optional(error)
-//            attributedString = AttributedString(string)
-//        }
-//
-//        let spacer: SwiftUI.Text
-//        if textView.content
-//
-//        return textView + spacer + SwiftUI.Text(attributedString)
-//    }
-    
-    private func buildTextFromSegments(segments: [Segment], highlightBuilder: (String) -> SwiftUI.Text, bodyBuilder: (String) -> SwiftUI.Text) -> SwiftUI.Text {
+    /// This function iterates through a list of segments and builds a single `Text` view from them.
+    /// - Parameters:
+    ///   - segments: the list of segments that will be iterated through.
+    ///   - highlightBuilder: A function that should build and customize the highlighted `Text`.
+    ///   - bodyBuilder: A function that should build and customize the body `Text`.
+    /// - Returns: A single `Text` view representing the whole paragraph.
+    private func buildTextFromSegments(
+        segments: [Segment],
+        highlightBuilder: (String) -> SwiftUI.Text,
+        bodyBuilder: (String) -> SwiftUI.Text
+    ) -> SwiftUI.Text {
         var textView = SwiftUI.Text("")
         for segment in segments {
             // swiftlint:disable shorthand_operator
@@ -148,15 +155,23 @@ struct HighlightedText: View {
         return textView
     }
     
+    /// Convenience function to make a `Text` from raw markdown and fail gracefully.
+    private func textView(markdown: String) -> SwiftUI.Text {
+        var attributedString: AttributedString
+        do {
+            attributedString = try AttributedString(markdown: markdown)
+        } catch {
+            Log.optional(error)
+            attributedString = AttributedString(markdown)
+        }
+        return SwiftUI.Text(attributedString)
+    }
+    
     var body: some View {
-        // layer the text blocks so that the gradient shows through.
         // Note: gradient here is too wide. Need to restrict it to just the word "Discover"
         ZStack {
-            // Build two Text objects with the same dimensions. One for the body text where the highlighted word is
-            // transparent, and one that only has the highlighted word.
             bodyText
             highlightedText
-                .foregroundLinearGradient(highlightGradient)
             linkText
         }
     }

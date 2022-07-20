@@ -10,6 +10,7 @@ import SwiftUI
 import AVKit
 import Logger
 
+/// A view that displays some help text. Intended to be presented in a sheet or popover.
 struct HelpDrawerView: View {
     
     private let tabName: String
@@ -101,7 +102,7 @@ struct HelpDrawerView: View {
                                     VStack(alignment: .leading, spacing: 8) {
                                         
                                         // Tab name and icon
-                                        FancySectionName(
+                                        FancySectionTitle(
                                             gradient: LinearGradient.diagonalAccent,
                                             image: Image(tabImageName),
                                             text: tabName
@@ -205,26 +206,6 @@ struct HelpDrawerView: View {
     }
 }
 
-extension SwiftUI.Text {
-    public func foregroundLinearGradient(colors: [Color], startPoint: UnitPoint, endPoint: UnitPoint) -> some View {
-        self.foregroundLinearGradient(
-            LinearGradient(
-                colors: colors,
-                startPoint: startPoint,
-                endPoint: endPoint
-            )
-        )
-    }
-    
-    public func foregroundLinearGradient(_ gradient: LinearGradient) -> some View {
-        self.overlay {
-            gradient.mask(
-                self
-            )
-        }
-    }
-}
-
 struct HomeHelpView_Previews: PreviewProvider {
     
     static var iPadPreview: some View {
@@ -282,60 +263,5 @@ struct HomeHelpView_Previews: PreviewProvider {
         
         // iPad popover size
         iPadPreview
-    }
-}
-
-struct FancySectionName: View {
-    
-    var gradient: LinearGradient
-    var image: Image
-    var text: String
-    
-    var body: some View {
-        HStack(spacing: 6) {
-            gradient
-                .mask(
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                )
-                .aspectRatio(contentMode: .fit)
-                .frame(maxHeight: .infinity)
-                .fixedSize(horizontal: true, vertical: false)
-            SwiftUI.Text(text)
-                .font(.subheadline.smallCaps())
-                .foregroundLinearGradient(gradient)
-                .frame(maxHeight: .infinity)
-        }
-        .fixedSize(horizontal: false, vertical: true)
-    }
-}
-
-extension String {
-    func indices(of occurrence: String) -> [Int] {
-        var indices = [Int]()
-        var position = startIndex
-        while let range = range(of: occurrence, range: position..<endIndex) {
-            let i = distance(from: startIndex,
-                             to: range.lowerBound)
-            indices.append(i)
-            let offset = occurrence.distance(from: occurrence.startIndex,
-                                             to: occurrence.endIndex) - 1
-            guard let after = index(range.lowerBound,
-                                    offsetBy: offset,
-                                    limitedBy: endIndex) else {
-                                        break
-            }
-            position = index(after: after)
-        }
-        return indices
-    }
-}
-
-extension String {
-    func ranges(of searchString: String) -> [Range<String.Index>] {
-        let _indices = indices(of: searchString)
-        let count = searchString.count
-        return _indices.map({ index(startIndex, offsetBy: $0)..<index(startIndex, offsetBy: $0+count) })
     }
 }

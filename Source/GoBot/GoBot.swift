@@ -1520,7 +1520,7 @@ class GoBot: Bot {
             return try self.database.posts(matching: filter)
         }
         
-        return try await task.getResult().get()
+        return try await task.result.get()
     }
 
     // MARK: Statistics

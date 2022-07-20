@@ -18,8 +18,7 @@ extension AppDelegate {
             return false
         }
         
-        if let tab = MainTab(urlPath: url.path),
-            let appController = window?.rootViewController {
+        if let tab = MainTab(urlPath: url.path) {
             let show = MainTab.createShowClosure(for: tab)
             show()
         }

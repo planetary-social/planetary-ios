@@ -11,38 +11,7 @@ import SwiftUI
 import Analytics
 import Logger
 
-extension LinearGradient {
-    static let horizontalAccent = LinearGradient(
-        colors: [ Color(hex: "#F08508"), Color(hex: "#F43F75")],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-    
-    static let diagonalAccent = LinearGradient(
-        colors: [ Color(hex: "#F08508"), Color(hex: "#F43F75")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    
-    static let solidBlack = LinearGradient(
-        colors: [Color.black],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-}
-
-protocol HelpDrawerHost: UIViewController {
-    var helpButton: UIBarButtonItem { get }
-    func helpButtonTouchUpInside()
-}
-
-extension HelpDrawerHost {
-    
-    @MainActor func helpButtonTouchUpInside() {
-        HelpDrawerCoordinator.showHelp(for: self)
-    }
-}
-
+/// A model for help UI that is presented in a sheet or popover.
 enum HelpDrawer {
     case home, discover, notifications, hashtags, network
     
@@ -62,6 +31,7 @@ enum HelpDrawer {
         }
     }
     
+    /// A key used to persist whether or not users have seen a given drawer.
     var hasSeenDrawerKey: String {
         switch self {
         case .home:
@@ -77,6 +47,7 @@ enum HelpDrawer {
         }
     }
     
+    /// A name for the drawer used for analytics.
     var screenName: String {
         switch self {
         case .home:
@@ -92,9 +63,24 @@ enum HelpDrawer {
         }
     }
 }
+
+/// A protocol for view controllers that host a `HelpDrawer`
+protocol HelpDrawerHost: UIViewController {
+    var helpButton: UIBarButtonItem { get }
+    func helpButtonTouchUpInside()
+}
+
+extension HelpDrawerHost {
     
+    @MainActor func helpButtonTouchUpInside() {
+        HelpDrawerCoordinator.showHelp(for: self)
+    }
+}
+    
+/// A bunc of stateless functions to help with showing help drawers.
 enum HelpDrawerCoordinator {
     
+    /// Shows the help drawer for the given host view controller.
     @MainActor static func showHelp(for viewController: HelpDrawerHost) {
         guard let helpDrawerType = HelpDrawer(viewController: viewController) else {
             Log.error("Tried to present a help drawer for an unkown view controller.")
@@ -111,6 +97,7 @@ enum HelpDrawerCoordinator {
         Analytics.shared.trackDidShowScreen(screenName: helpDrawerType.screenName)
     }
         
+    /// Shows the help drawer only if the user has never seen it before.
     @MainActor static func showFirstTimeHelp(for viewController: HelpDrawerHost) {
         guard let helpDrawerType = HelpDrawer(viewController: viewController) else {
             Log.error("Tried to present a help drawer for an unkown view controller.")
@@ -122,9 +109,11 @@ enum HelpDrawerCoordinator {
         }
     }
     
+    /// Creates a UIViewController containing the help information. Configures it to be presented as a sheet or
+    /// popover depending on size class.
     @MainActor static func helpController(for viewController: HelpDrawerHost) -> UIViewController {
         
-        let view = helpDrawer(for: viewController, dismissAction: { viewController.dismiss(animated: true) })
+        let view = helpDrawerView(for: viewController, dismissAction: { viewController.dismiss(animated: true) })
         let controller = UIHostingController(rootView: view)
         
         controller.modalPresentationStyle = .popover
@@ -138,17 +127,7 @@ enum HelpDrawerCoordinator {
         return controller
     }
     
-    static func helpBarButton(action: Selector) -> UIBarButtonItem {
-        let image = UIImage(systemName: "questionmark.circle")
-        let item = UIBarButtonItem(
-            image: image,
-            style: .plain,
-            target: self,
-            action: action
-        )
-        return item
-    }
-    
+    /// Creates a help button for the navigation bar that presents the help drawer for the given host view controller.
     static func helpBarButton(for host: HelpDrawerHost) -> UIBarButtonItem {
         let image = UIImage(systemName: "questionmark.circle")
         return UIBarButtonItem(
@@ -161,6 +140,7 @@ enum HelpDrawerCoordinator {
         )
     }
     
+    /// Builds a closure that will show the given help drawer from the given viewController.
     static func createShowClosure(for drawer: HelpDrawer, from viewController: UIViewController) -> () -> Void {
         
         let tabBar = AppController.shared.mainViewController
@@ -220,13 +200,17 @@ enum HelpDrawerCoordinator {
         }
     }
     
-    @MainActor private static func helpDrawer(
+    /// Builds the SwiftUI help drawer view for the given view controller.
+    @MainActor private static func helpDrawerView(
         for viewController: UIViewController,
         dismissAction: @escaping () -> Void
     ) -> HelpDrawerView? {
         
         let inDrawer = viewController.traitCollection.horizontalSizeClass == .compact
         
+        // This function is a little kludgy but I'm not going to spend time refactoring it now. It would be
+        // better to build a configuration object and pass that to the HelpDrawerView initializer rather than having
+        // so many parameters.
         if viewController is HomeViewController {
             return HelpDrawerView(
                 tabName: Text.home.text,
