@@ -128,6 +128,8 @@ class FakeBot: Bot {
 
     func markMessageAsRead(_ message: MessageIdentifier) { }
 
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) { }
+
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
 
     required init() {}
