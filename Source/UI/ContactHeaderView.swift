@@ -65,12 +65,18 @@ class ContactHeaderView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.identityButton.round()
+        identityButton.round()
+        layoutSkeletonIfNeeded()
     }
 
     func reset() {
         update(with: Identity.null, about: nil)
         showSkeleton()
+        
+        layoutSkeletonIfNeeded()
+        DispatchQueue.main.async {
+            self.layoutSkeletonIfNeeded()
+        }
     }
 
     func update(with keyValue: KeyValue) {
