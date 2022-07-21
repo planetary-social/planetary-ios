@@ -22,17 +22,6 @@ class NotificationsViewController: ContentViewController {
     /// The last time we loaded the reports from the database or we checked if there are new reports to show
     private var lastTimeNewReportsUpdatesWasChecked = Date()
 
-    private lazy var clearNotificationsBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "icon-mark-all-as-read")
-        let item = UIBarButtonItem(
-            image: image,
-            style: .plain,
-            target: self,
-            action: #selector(clearNotificationsButtonTouchUpInside)
-        )
-        return item
-    }()
-
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
         let item = UIBarButtonItem(
@@ -77,7 +66,7 @@ class NotificationsViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .notifications)
-        self.navigationItem.rightBarButtonItems = [newPostBarButtonItem, clearNotificationsBarButtonItem]
+        self.navigationItem.rightBarButtonItems = [newPostBarButtonItem]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -123,11 +112,8 @@ class NotificationsViewController: ContentViewController {
             UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
         }
 
-        let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
-        
         Log.info("Pull down to refresh triggering a short refresh")
         let refreshOperation = RefreshOperation(refreshLoad: .short)
-        refreshOperation.addDependency(clearUnreadNotificationsOperation)
         
         let taskName = "NotificationsPullDownToRefresh"
         let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
@@ -151,7 +137,7 @@ class NotificationsViewController: ContentViewController {
                 self?.load(animated: animated)
             }
         }
-        let operations = [clearUnreadNotificationsOperation, refreshOperation]
+        let operations = [refreshOperation]
         AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 
@@ -240,13 +226,6 @@ class NotificationsViewController: ContentViewController {
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
-
-    @objc
-    func clearNotificationsButtonTouchUpInside() {
-        Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
-        let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
-        AppController.shared.operationQueue.addOperation(clearUnreadNotificationsOperation)
-    }
 }
 
 private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
@@ -322,7 +301,7 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let source = tableView.dataSource as? NotificationsTableViewDataSource else { return nil }
         let (title, _) = source.sectionedReports[section]
-        return HeaderView(title: title.text)
+        return HeaderView(title: title.text, showClearNotificationsButton: section == 0)
     }
 
     override func tableView(_ tableView: UITableView, didSelect keyValue: KeyValue) {
@@ -356,6 +335,19 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
 
 private class HeaderView: UITableViewHeaderFooterView {
 
+    private lazy var button: UIButton = {
+        let view = UIButton.forAutoLayout()
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        view.setTitleColor(UIColor.primaryAction, for: .normal)
+        view.setTitle(Text.Notifications.markAllAsRead.text, for: .normal)
+        view.addTarget(
+            self,
+            action: #selector(clearNotificationsButtonTouchUpInside),
+            for: .touchUpInside
+        )
+        return view
+    }()
+
     let label: UILabel = {
         let view = UILabel.forAutoLayout()
         view.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
@@ -367,20 +359,33 @@ private class HeaderView: UITableViewHeaderFooterView {
         self.contentView.backgroundColor = .cardBackground
         self.useAutoLayout()
         Layout.addSeparator(toTopOf: self.contentView)
-        Layout.fill(
-            view: self.contentView,
+        Layout.fillRight(
+            of: self.contentView,
+            with: button,
+            insets: UIEdgeInsets(top: 1, left: 18, bottom: 1, right: -18)
+        )
+        Layout.fillLeft(
+            of: self.contentView,
             with: self.label,
             insets: UIEdgeInsets(top: 1, left: 18, bottom: 1, right: -18)
         )
         Layout.addSeparator(toBottomOf: self.contentView)
     }
 
-    convenience init(title: String) {
+    convenience init(title: String, showClearNotificationsButton: Bool = false) {
         self.init(frame: .zero)
         self.label.text = title
+        button.isHidden = !showClearNotificationsButton
     }
 
     required init?(coder aDecoder: NSCoder) {
         nil
+    }
+
+    @objc
+    func clearNotificationsButtonTouchUpInside() {
+        Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
+        let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
+        AppController.shared.operationQueue.addOperation(clearUnreadNotificationsOperation)
     }
 }
