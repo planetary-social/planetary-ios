@@ -29,7 +29,12 @@ class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
     }
 
     private func constrainKeyValueViewToContentView(_ height: CGFloat? = nil) {
-        Layout.fill(view: self.contentView, with: self.keyValueView, respectSafeArea: false)
+        let (_, _, bottomConstraint, _) = Layout.fill(
+            view: self.contentView,
+            with: self.keyValueView,
+            respectSafeArea: false
+        )
+        bottomConstraint.priority = .required
         guard let height = height else { return }
         let constraint = self.keyValueView.heightAnchor.constraint(lessThanOrEqualToConstant: height)
         constraint.priority = .defaultHigh

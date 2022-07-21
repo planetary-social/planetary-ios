@@ -121,12 +121,13 @@ class ContactView: KeyValueView {
         labelStackView.addArrangedSubview(followerCountLabel)
         labelStackView.addArrangedSubview(hashtagsLabel)
         
-        Layout.fill(
+        let (_, _, bottomConstraint, _) = Layout.fill(
             view: followButtonContainer,
             with: followButton,
             insets: UIEdgeInsets(top: 2, left: 0, bottom: 0, right: 2),
             respectSafeArea: false
         )
+        bottomConstraint.priority = .required
         
         labelStackView.addArrangedSubview(followButtonContainer)
 
