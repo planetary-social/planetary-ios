@@ -61,6 +61,7 @@ class ContactView: KeyValueView {
         label.textContainer.lineFragmentPadding = 0
         label.isSkeletonable = true
         label.linesCornerRadius = 7
+        label.lastLineFillPercent = 100
         label.backgroundColor = .clear
         return label
     }()
@@ -108,11 +109,8 @@ class ContactView: KeyValueView {
             respectSafeArea: false
         )
         
-        nameLabel.setContentHuggingPriority(.required, for: .vertical)
-        contactIdentity.setContentHuggingPriority(.required, for: .vertical)
         nameAndIdentityStackView.addArrangedSubview(nameLabel)
         nameAndIdentityStackView.addArrangedSubview(contactIdentity)
-        nameAndIdentityStackView.setContentHuggingPriority(.required, for: .vertical)
 
         labelStackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
         labelStackView.constrainTrailingToSuperview()
@@ -122,13 +120,13 @@ class ContactView: KeyValueView {
         followerCountLabel.setContentHuggingPriority(.required, for: .vertical)
         labelStackView.addArrangedSubview(followerCountLabel)
         labelStackView.addArrangedSubview(hashtagsLabel)
-        let (_, _, bottomConstraint, _) = Layout.fill(
+        
+        Layout.fill(
             view: followButtonContainer,
             with: followButton,
             insets: UIEdgeInsets(top: 2, left: 0, bottom: 0, right: 2),
             respectSafeArea: false
         )
-        bottomConstraint.priority = .required
         
         labelStackView.addArrangedSubview(followButtonContainer)
 
@@ -147,13 +145,14 @@ class ContactView: KeyValueView {
         super.reset()
         update(with: Identity.null, about: nil)
         update(socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0))
-        hashtagsLabel.layer.cornerRadius = 7 // hack because SkeletonView won't round the corners for some reason
+        nameLabel.text = "placeholder name"
+        hashtagsLabel.text = "#hashta #hashta #hashta" // no letters below the baseline
+        contactIdentity.text = "@abc123abc123"
         labelStackView.arrangedSubviews.forEach { $0.isHidden = false }
         
-        nameLabel.text = "placeholder name"
-        hashtagsLabel.text = "#hashtag"
-        contactIdentity.text = "@abc123abc123"
-        
+        // hack because SkeletonView is being weird
+        hashtagsLabel.layer.cornerRadius = 7
+
         showAnimatedSkeleton()
         layoutSkeletonIfNeeded()
         DispatchQueue.main.async {
