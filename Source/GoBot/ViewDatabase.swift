@@ -336,7 +336,7 @@ class ViewDatabase {
         }
         try db.execute(
             """
-            INSERT INTO read_messages
+            INSERT OR REPLACE INTO read_messages
             SELECT \(currentUserID), msg_id, true FROM messages;
             """
         )
