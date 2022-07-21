@@ -21,7 +21,18 @@ class NotificationsViewController: ContentViewController {
 
     /// The last time we loaded the reports from the database or we checked if there are new reports to show
     private var lastTimeNewReportsUpdatesWasChecked = Date()
-    
+
+    private lazy var clearNotificationsBarButtonItem: UIBarButtonItem = {
+        let image = UIImage(named: "icon-mark-all-as-read")
+        let item = UIBarButtonItem(
+            image: image,
+            style: .plain,
+            target: self,
+            action: #selector(clearNotificationsButtonTouchUpInside)
+        )
+        return item
+    }()
+
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
         let item = UIBarButtonItem(
@@ -66,7 +77,7 @@ class NotificationsViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .notifications)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        self.navigationItem.rightBarButtonItems = [newPostBarButtonItem, clearNotificationsBarButtonItem]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -228,6 +239,13 @@ class NotificationsViewController: ContentViewController {
         }
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
+    }
+
+    @objc
+    func clearNotificationsButtonTouchUpInside() {
+        Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
+        let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
+        AppController.shared.operationQueue.addOperation(clearUnreadNotificationsOperation)
     }
 }
 
