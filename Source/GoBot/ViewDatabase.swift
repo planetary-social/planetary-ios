@@ -1452,7 +1452,7 @@ class ViewDatabase {
     /// - parameter message: The message associated to the wanted report
     ///
     /// It returns true/false either if it was read or not, nil if the message doesn't exist or a report for the
-    /// message doesn't exiss.
+    /// message doesn't exist.
     func isReportRead(for message: MessageIdentifier) throws -> Bool? {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
