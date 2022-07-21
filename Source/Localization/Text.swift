@@ -1,4 +1,4 @@
-// swiftlint:disable line_length identifier_name nesting
+// swiftlint:disable line_length identifier_name nesting file_length
 
 // provide the types of any new Localizable enums
 // in order to automatically export their strings to the localization files

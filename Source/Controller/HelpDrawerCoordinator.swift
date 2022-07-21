@@ -200,6 +200,7 @@ enum HelpDrawerCoordinator {
         }
     }
     
+    // swiftlint:disable function_body_length
     /// Builds the SwiftUI help drawer view for the given view controller.
     @MainActor private static func helpDrawerView(
         for viewController: UIViewController,
@@ -295,4 +296,5 @@ enum HelpDrawerCoordinator {
             return nil
         }
     }
+    // swiftlint:enable function_body_length
 }
