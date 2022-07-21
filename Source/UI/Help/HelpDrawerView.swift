@@ -29,6 +29,7 @@ struct HelpDrawerView: View {
     
     private let videoPlayer: AVQueuePlayer
     private let videoLooper: AVPlayerLooper
+    private let videoAspectRatio: CGFloat
     
     /// This hard coded URL is temporary. See comment on `imageOrVideo` property
     // swiftlint:disable force_unwrapping
@@ -68,6 +69,9 @@ struct HelpDrawerView: View {
         videoPlayer = AVQueuePlayer(playerItem: item)
         videoPlayer.isMuted = true
         videoLooper = AVPlayerLooper(player: videoPlayer, templateItem: item)
+        
+        let videoSize = asset.tracks.first?.naturalSize
+        self.videoAspectRatio = (videoSize?.height ?? 1) / (videoSize?.width ?? 1)
     }
     
     /// This is the image or video that will be displayed at the top of the screen.
@@ -80,56 +84,75 @@ struct HelpDrawerView: View {
                     .resizable()
                     .scaledToFit()
             } else {
-                NoControlsVideoPlayer(player: videoPlayer)
-                    .frame(height: 217)
-                    .onAppear {
-                        videoPlayer.play()
-                    }
+                SingleAxisGeometryReader(axis: .horizontal) { containerWidth in
+                    NoControlsVideoPlayer(player: videoPlayer)
+                        .frame(width: containerWidth, height: videoAspectRatio * containerWidth)
+                        .onAppear { videoPlayer.play() }
+                }
             }
+            Spacer()
         }
-        .background(Color(hex: "4a386d"))
+        .cornerRadius(cornerRadius, corners: [.topLeft, .topRight])
+        .clipped()
     }
+    
+    private let borderWidth: CGFloat = 6
+    private let cornerRadius: CGFloat = 8
     
     var body: some View {
         ZStack {
+            
+            // Gradient border
+            LinearGradient.diagonalAccent
+            
+            // Background color
+            Color("menuBorderColor")
+                .cornerRadius(cornerRadius, corners: inDrawer ? [.topLeft, .topRight] : [.allCorners])
+                .padding(.top, borderWidth)
+                .padding(.horizontal, borderWidth)
+                .padding(.bottom, inDrawer ? 0 : borderWidth)
+            
+            // Content
             VStack {
                 ZStack {
-                    VStack {
-                        ScrollView {
-                            VStack(spacing: 0) {
-                                imageOrVideo
-                                VStack(spacing: 8) {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        
-                                        // Tab name and icon
-                                        FancySectionTitle(
-                                            gradient: LinearGradient.diagonalAccent,
-                                            image: Image(tabImageName),
-                                            text: tabName
-                                        )
-                                        
-                                        // Title
-                                        SwiftUI.Text(helpTitle)
-                                            .multilineTextAlignment(.leading)
-                                            .foregroundColor(Color("mainText"))
-                                            .font(.title.weight(.medium))
-                                        
-                                        // Body text
-                                        HighlightedText(
-                                            bodyText,
-                                            highlightedWord: highlightedWord,
-                                            highlight: highlight,
-                                            link: link
-                                        )
-                                    }
-                                }
-                                .padding(25)
-                            }
-                            .edgesIgnoringSafeArea(.all)
-                        }
-                        .padding(-3)
-                        
+                    
+                    // Image / video is stacked at the top behind the text content.
+                    imageOrVideo
+                    
+                    VStack(spacing: 0) {
                         Spacer()
+                        
+                        // Text Container
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 8) {
+                                
+                                // Tab name and icon
+                                FancySectionTitle(
+                                    gradient: LinearGradient.diagonalAccent,
+                                    image: Image(tabImageName),
+                                    text: tabName
+                                )
+                                
+                                // Title
+                                SwiftUI.Text(helpTitle)
+                                    .multilineTextAlignment(.leading)
+                                    .foregroundColor(Color("mainText"))
+                                    .font(.title.weight(.medium))
+                                
+                                // Body text
+                                HighlightedText(
+                                    bodyText,
+                                    highlightedWord: highlightedWord,
+                                    highlight: highlight,
+                                    link: link
+                                )
+                            }
+                            .padding(.top, 15)
+                            .padding(.horizontal, 25)
+                            .padding(.bottom, 25)
+                        }
+                        .background(Color("menuBorderColor").padding(.horizontal, -100))
+                        .fixedSize(horizontal: false, vertical: true)
                         
                         // Tip navigation section
                         HStack {
@@ -162,14 +185,13 @@ struct HelpDrawerView: View {
                             }
                             .disabled(nextTipAction == nil)
                             .opacity(nextTipAction == nil ? 0.3 : 1.0)
+                            .cornerRadius(cornerRadius)
                         }
                         .padding(.bottom, 25)
                         .padding(.horizontal, 25)
-                        .padding(.top, 10)
+                        .background(Color("menuBorderColor"))
                     }
-                    .padding(.top, 3)
-                    .padding(.horizontal, 3)
-                    .background(Color("menuBorderColor"))
+                    .clipped()
                     
                     // X button
                     VStack {
@@ -196,13 +218,14 @@ struct HelpDrawerView: View {
                     }
                 }
             }
-            .cornerRadius(8, corners: inDrawer ? [.topLeft, .topRight] : [.allCorners])
-            .padding(.top, 6)
-            .padding(.horizontal, 6)
-            .padding(.bottom, inDrawer ? 0 : 6)
+            .padding(.top, borderWidth)
+            .padding(.horizontal, borderWidth)
+            .padding(.bottom, inDrawer ? 0 : borderWidth)
+            .clipShape(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            )
         }
         .edgesIgnoringSafeArea(.bottom)
-        .background(LinearGradient.diagonalAccent)
     }
 }
 
@@ -229,7 +252,7 @@ struct HomeHelpView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
     }
     
-    static var defaultPreview: some View {
+    static var homeTabPreview: some View {
         HelpDrawerView(
             tabName: Text.home.text,
             tabImageName: "tab-icon-home",
@@ -247,17 +270,45 @@ struct HomeHelpView_Previews: PreviewProvider {
         )
     }
     
+    static var notificationsTabPreview: some View {
+        HelpDrawerView(
+            tabName: Text.notifications.text,
+            tabImageName: "tab-icon-notifications",
+            heroImageName: "help-hero-notifications",
+            helpTitle: Text.Help.Notifications.title.text,
+            bodyText: Text.Help.Notifications.body.text,
+            highlightedWord: nil,
+            highlight: .diagonalAccent,
+            link: nil,
+            inDrawer: true,
+            tipIndex: 3,
+            nextTipAction: {},
+            previousTipAction: {},
+            dismissAction: {}
+        )
+    }
+    
     static var previews: some View {
-        defaultPreview
-            .previewLayout(.fixed(width: 320, height: 493))
+        homeTabPreview
+            .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.dark)
         
-        defaultPreview
-            .previewLayout(.fixed(width: 320, height: 493))
+        // iPhone 13 Pro Max
+        homeTabPreview
+            .previewLayout(.fixed(width: 428, height: 502))
+            .preferredColorScheme(.dark)
+        
+        // iPhone SE 2nd gen
+        homeTabPreview
+            .previewLayout(.fixed(width: 375, height: 351))
+            .preferredColorScheme(.dark)
+        
+        notificationsTabPreview
+            .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.light)
         
-        defaultPreview
-            .previewLayout(.fixed(width: 320, height: 493))
+        notificationsTabPreview
+            .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraLarge)
         
