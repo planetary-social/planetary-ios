@@ -1459,19 +1459,19 @@ class ViewDatabase {
         }
         let queryString = """
         SELECT
-          read_messages.is_read AS is_read
+            read_messages.is_read AS is_read
         FROM
-          reports
-          INNER JOIN messagekeys ON (messagekeys.id = reports.msg_ref)
-          LEFT OUTER JOIN read_messages ON (
-            (read_messages.msg_id = messagekeys.id)
-            AND (read_messages.author_id = reports.author_id)
-          )
+            reports
+            INNER JOIN messagekeys ON (messagekeys.id = reports.msg_ref)
+            LEFT OUTER JOIN read_messages ON (
+                (read_messages.msg_id = messagekeys.id)
+                AND (read_messages.author_id = reports.author_id)
+            )
         WHERE
-          reports.author_id = ?
-          AND messagekeys.key = ?
+            reports.author_id = ?
+            AND messagekeys.key = ?
         LIMIT
-          1
+            1
         """
         guard let row = try connection.prepare(queryString, currentUserID, message).prepareRowIterator().next() else {
             return nil
