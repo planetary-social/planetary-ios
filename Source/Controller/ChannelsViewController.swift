@@ -34,6 +34,7 @@ class ChannelsViewController: ContentViewController, HelpDrawerHost {
     private var searchEditBeginDate = Date()
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .hashtags }
 
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)

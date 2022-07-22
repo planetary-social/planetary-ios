@@ -28,6 +28,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
     }()
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .home }
 
     private lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()

@@ -52,6 +52,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
     private var searchedPost: KeyValue?
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .network }
 
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)

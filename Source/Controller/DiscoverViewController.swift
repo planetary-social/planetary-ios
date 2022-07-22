@@ -28,6 +28,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
     }()
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .discover }
     
     lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()

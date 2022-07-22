@@ -15,22 +15,6 @@ import Logger
 enum HelpDrawer {
     case home, discover, notifications, hashtags, network
     
-    init?(viewController: HelpDrawerHost) {
-        if viewController is HomeViewController {
-            self = .home
-        } else if viewController is DiscoverViewController {
-            self = .discover
-        } else if viewController is NotificationsViewController {
-            self = .notifications
-        } else if viewController is ChannelsViewController {
-            self = .hashtags
-        } else if viewController is DirectoryViewController {
-            self = .network
-        } else {
-            return nil
-        }
-    }
-    
     /// A key used to persist whether or not users have seen a given drawer.
     var hasSeenDrawerKey: String {
         switch self {
@@ -66,6 +50,7 @@ enum HelpDrawer {
 
 /// A protocol for view controllers that host a `HelpDrawer`
 protocol HelpDrawerHost: UIViewController {
+    var helpDrawerType: HelpDrawer { get }
     var helpButton: UIBarButtonItem { get }
     func helpButtonTouchUpInside()
 }
@@ -82,11 +67,7 @@ enum HelpDrawerCoordinator {
     
     /// Shows the help drawer for the given host view controller.
     @MainActor static func showHelp(for viewController: HelpDrawerHost) {
-        guard let helpDrawerType = HelpDrawer(viewController: viewController) else {
-            Log.error("Tried to present a help drawer for an unkown view controller.")
-            return
-        }
-        
+        let helpDrawerType = viewController.helpDrawerType
         if viewController.presentedViewController == nil {
             let controller = HelpDrawerCoordinator.helpController(for: viewController)
             viewController.present(controller, animated: true, completion: nil)
@@ -99,11 +80,7 @@ enum HelpDrawerCoordinator {
         
     /// Shows the help drawer only if the user has never seen it before.
     @MainActor static func showFirstTimeHelp(for viewController: HelpDrawerHost) {
-        guard let helpDrawerType = HelpDrawer(viewController: viewController) else {
-            Log.error("Tried to present a help drawer for an unkown view controller.")
-            return
-        }
-        
+        let helpDrawerType = viewController.helpDrawerType
         if UserDefaults.standard.bool(forKey: helpDrawerType.hasSeenDrawerKey) == false {
             showHelp(for: viewController)
         }
@@ -203,7 +180,7 @@ enum HelpDrawerCoordinator {
     // swiftlint:disable function_body_length
     /// Builds the SwiftUI help drawer view for the given view controller.
     @MainActor private static func helpDrawerView(
-        for viewController: UIViewController,
+        for viewController: HelpDrawerHost,
         dismissAction: @escaping () -> Void
     ) -> HelpDrawerView? {
         
@@ -212,7 +189,8 @@ enum HelpDrawerCoordinator {
         // This function is a little kludgy but I'm not going to spend time refactoring it now. It would be
         // better to build a configuration object and pass that to the HelpDrawerView initializer rather than having
         // so many parameters.
-        if viewController is HomeViewController {
+        switch viewController.helpDrawerType {
+        case .home:
             return HelpDrawerView(
                 tabName: Text.home.text,
                 tabImageName: "tab-icon-home",
@@ -228,7 +206,7 @@ enum HelpDrawerCoordinator {
                 previousTipAction: nil,
                 dismissAction: dismissAction
             )
-        } else if viewController is DiscoverViewController {
+        case .discover:
             return HelpDrawerView(
                 tabName: Text.explore.text,
                 tabImageName: "tab-icon-everyone",
@@ -244,7 +222,7 @@ enum HelpDrawerCoordinator {
                 previousTipAction: createShowClosure(for: .home, from: viewController),
                 dismissAction: dismissAction
             )
-        } else if viewController is NotificationsViewController {
+        case .notifications:
             return HelpDrawerView(
                 tabName: Text.notifications.text,
                 tabImageName: "tab-icon-notifications",
@@ -260,7 +238,7 @@ enum HelpDrawerCoordinator {
                 previousTipAction: createShowClosure(for: .discover, from: viewController),
                 dismissAction: dismissAction
             )
-        } else if viewController is ChannelsViewController {
+        case .hashtags:
             return HelpDrawerView(
                 tabName: Text.channels.text,
                 tabImageName: "tab-icon-channels",
@@ -276,7 +254,7 @@ enum HelpDrawerCoordinator {
                 previousTipAction: createShowClosure(for: .notifications, from: viewController),
                 dismissAction: dismissAction
             )
-        } else if viewController is DirectoryViewController {
+        case .network:
             return HelpDrawerView(
                 tabName: Text.yourNetwork.text,
                 tabImageName: "tab-icon-directory",
@@ -292,8 +270,6 @@ enum HelpDrawerCoordinator {
                 previousTipAction: createShowClosure(for: .hashtags, from: viewController),
                 dismissAction: dismissAction
             )
-        } else {
-            return nil
         }
     }
     // swiftlint:enable function_body_length

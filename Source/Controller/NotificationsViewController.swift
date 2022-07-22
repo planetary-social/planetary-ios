@@ -34,6 +34,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     }()
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .notifications }
     
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
