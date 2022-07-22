@@ -51,8 +51,14 @@ class ReportTests: XCTestCase {
 
         XCTAssertEqual(try db.countNumberOfUnreadReports(), 2)
 
+        XCTAssertNil(try db.isMessageForReportRead(for: "%0"))
+        XCTAssertNil(try db.isMessageForReportRead(for: "%1"))
+        XCTAssertFalse(try XCTUnwrap(try db.isMessageForReportRead(for: "%2")))
+        XCTAssertFalse(try XCTUnwrap(try db.isMessageForReportRead(for: "%3")))
+
         try db.markMessageAsRead(identifier: "%2")
 
+        XCTAssertTrue(try XCTUnwrap(try db.isMessageForReportRead(for: "%2")))
         XCTAssertEqual(try db.countNumberOfUnreadReports(), 1)
 
         let firstReport = try XCTUnwrap(try db.report(for: "%3"))
