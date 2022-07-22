@@ -61,7 +61,7 @@ class FeedStrategyTests: XCTestCase {
         let follow1 = KeyValueFixtures.keyValue(
             key: "%1",
             sequence: 1,
-            content: Content(from: Contact(contact: alice, blocking: false)),
+            content: Content(from: Contact(contact: alice, following: true)),
             timestamp: referenceDate + 1,
             receivedTimestamp: receivedDate,
             receivedSeq: 1,
@@ -186,7 +186,7 @@ class FeedStrategyTests: XCTestCase {
         let follow1 = KeyValueFixtures.keyValue(
             key: "%1",
             sequence: 1,
-            content: Content(from: Contact(contact: alice, blocking: false)),
+            content: Content(from: Contact(contact: alice, following: true)),
             timestamp: referenceDate + 1,
             receivedTimestamp: receivedDate,
             receivedSeq: 1,
