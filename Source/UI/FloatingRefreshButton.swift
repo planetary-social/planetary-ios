@@ -21,6 +21,11 @@ class FloatingRefreshButton: UIButton {
     required init?(coder: NSCoder) {
         nil
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateShadowLayer()
+    }
 
     func makeRoundedAndShadowed() {
         layer.masksToBounds = false

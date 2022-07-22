@@ -157,9 +157,9 @@ class ChannelsViewController: ContentViewController, HelpDrawerHost {
         if self.searchFilter.isEmpty {
             self.channels = allChannels
         } else {
-            let filter = searchFilter.lowercased()
+            let filter = searchFilter.replacingOccurrences(of: "#", with: "").lowercased()
             channels = allChannels.filter { channel in
-                return channel.name.lowercased().contains(filter)
+                channel.name.lowercased().contains(filter)
             }
         }
     }
