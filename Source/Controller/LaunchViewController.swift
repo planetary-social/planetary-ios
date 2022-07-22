@@ -102,7 +102,7 @@ class LaunchViewController: UIViewController {
                 
                 if !isMigrating {
                     // note that hmac key can be nil to switch it off
-                    guard let network = configuration.network else { return }
+                    guard configuration.network != nil else { return }
                     guard let bot = configuration.bot else { return }
                     
                     try await bot.login(config: configuration)

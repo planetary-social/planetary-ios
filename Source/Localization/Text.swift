@@ -1,4 +1,4 @@
-// swiftlint:disable line_length identifier_name nesting
+// swiftlint:disable line_length identifier_name nesting file_length
 
 // provide the types of any new Localizable enums
 // in order to automatically export their strings to the localization files
@@ -24,6 +24,12 @@ extension Text {
             Text.Post.self,
             Text.Report.self,
             Text.Notifications.self,
+            Text.Help.self,
+            Text.Help.Home.self,
+            Text.Help.Discover.self,
+            Text.Help.Notifications.self,
+            Text.Help.Hashtags.self,
+            Text.Help.YourNetwork.self,
         ]
     }
 }
@@ -495,5 +501,43 @@ extension Text {
         case postReplied = "%@ replied to your post"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
+    }
+}
+
+// MARK: Help
+extension Text {
+    enum Help: String, Localizable, CaseIterable {
+        
+        case help = "Help"
+        case indexOfTip = "{{tipIndex}} of {{totalTipCount}} tips"
+        
+        enum Home: String, Localizable, CaseIterable {
+            case title = "See posts from users and topics you follow"
+            case body = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed."
+            case highlightedWord = "Discover"
+        }
+        
+        enum Discover: String, Localizable, CaseIterable {
+            case title = "See what's new and grow your network"
+            case body = "See posts from users and topics followed by your friends. Follow them to see their content in your Home Feed!"
+            case highlightedWord = "Home Feed"
+        }
+        
+        enum Notifications: String, Localizable, CaseIterable {
+            case title = "Keep up-to-date in all your conversations"
+            case body = "Check this screen for replies and reactions to your posts as well as conversations you participate in. We'll also notify you when someone mentions you."
+        }
+        
+        enum Hashtags: String, Localizable, CaseIterable {
+            case title = "What the community is talking about"
+            case body = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network."
+            case highlightedWord = "Your Network"
+        }
+        
+        enum YourNetwork: String, Localizable, CaseIterable {
+            case title = "Your friends, connections and pubs"
+            case body = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them."
+            case highlightedWord = "*gossip*"
+        }
     }
 }

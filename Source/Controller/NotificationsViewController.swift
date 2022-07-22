@@ -12,7 +12,7 @@ import Logger
 import Analytics
 import CrashReporting
 
-class NotificationsViewController: ContentViewController {
+class NotificationsViewController: ContentViewController, HelpDrawerHost {
 
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -32,6 +32,9 @@ class NotificationsViewController: ContentViewController {
         )
         return item
     }()
+    
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .notifications }
     
     private lazy var tableView: UITableView = {
         let view = UITableView.forVerse(style: .grouped)
@@ -66,7 +69,7 @@ class NotificationsViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .notifications)
-        self.navigationItem.rightBarButtonItems = [newPostBarButtonItem]
+        navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -87,6 +90,7 @@ class NotificationsViewController: ContentViewController {
         CrashReporting.shared.record("Did Show Notifications")
         Analytics.shared.trackDidShowScreen(screenName: "notifications")
         AppController.shared.promptForPushNotificationsIfNotDetermined(in: self)
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
 
     // MARK: Load and refresh

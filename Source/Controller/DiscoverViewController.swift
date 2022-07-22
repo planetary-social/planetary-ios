@@ -12,7 +12,7 @@ import Analytics
 import CrashReporting
 
 class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate,
-    UniversalSearchDelegate {
+    UniversalSearchDelegate, HelpDrawerHost {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -26,6 +26,9 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         )
         return item
     }()
+    
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .discover }
     
     lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()
@@ -134,7 +137,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
 
     init() {
         super.init(scrollable: false, title: .explore)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        self.navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -161,6 +164,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Discover")
         Analytics.shared.trackDidShowScreen(screenName: "discover")
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
     
     // MARK: Load and refresh
@@ -266,7 +270,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
-
+    
     // MARK: Notifications
 
     override func didBlockUser(notification: Notification) {
