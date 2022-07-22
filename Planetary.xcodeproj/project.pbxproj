@@ -618,6 +618,8 @@
 		5B92E27E284A7B2D003127F2 /* HashtagListStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */; };
 		5B92E27F284A7B2F003127F2 /* PopularHashtagsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */; };
 		5B92E280284A7B30003127F2 /* PopularHashtagsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */; };
+		5B9C69562888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */; };
+		5B9C69572888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */; };
 		5B9C6951288726F300229469 /* ClearUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */; };
 		5B9C6952288726F300229469 /* ClearUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */; };
 		5BAA0BB427DF9CE200C7BE63 /* CrashReporting in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAA0BB327DF9CE200C7BE63 /* CrashReporting */; };
@@ -1548,6 +1550,7 @@
 		5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategyTests.swift; sourceTree = "<group>"; };
 		5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategy.swift; sourceTree = "<group>"; };
 		5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularHashtagsAlgorithm.swift; sourceTree = "<group>"; };
+		5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountUnreadNotificationsOperation.swift; sourceTree = "<group>"; };
 		5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearUnreadNotificationsOperation.swift; sourceTree = "<group>"; };
 		5BAE9C81281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinPlanetarySystemOperation.swift; sourceTree = "<group>"; };
 		5BAE9C85281E0EA9008AEA84 /* Support+GoBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Support+GoBot.swift"; sourceTree = "<group>"; };
@@ -1817,6 +1820,7 @@
 				0AAF8C4625C704B500FD8D0F /* UnfollowOperation.swift */,
 				5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */,
 				5B0A4656286E0CA60050D6AC /* NumberOfReportsOperation.swift */,
+				5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */,
 				5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */,
 			);
 			path = Operations;
@@ -4127,6 +4131,7 @@
 				53E29CCE22D2974B008A2CB1 /* String+HashtagSubstrings.swift in Sources */,
 				C9724BE52809EE96000EBCCD /* FollowingTableViewController.swift in Sources */,
 				C9724BC72809ED6F000EBCCD /* AppDelegate.swift in Sources */,
+				5B9C69572888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */,
 				C9724B4A2809D563000EBCCD /* Notification+Keyboard.swift in Sources */,
 				C9724B4C2809D57E000EBCCD /* ImagePicker.swift in Sources */,
 				0ACE91A4243D741300EFB4E9 /* GoBotError.swift in Sources */,
@@ -4596,6 +4601,7 @@
 				53E26C6D23062CD3009240B2 /* Layout+FillSuperview.swift in Sources */,
 				531B92B722CD0E65005D5255 /* MentionTextViewDelegate.swift in Sources */,
 				530F019622DE87CD007EBAE2 /* PhotoOnboardingStep.swift in Sources */,
+				5B9C69562888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */,
 				53AD3FD7226FC4B8005228F9 /* UITableView+Verse.swift in Sources */,
 				53AD3FDD22712CE0005228F9 /* KeyValueTableViewDelegate.swift in Sources */,
 				536255DE23AC4C46001007D0 /* UIViewController+Sync.swift in Sources */,

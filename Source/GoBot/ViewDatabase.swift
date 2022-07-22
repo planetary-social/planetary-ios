@@ -1452,6 +1452,38 @@ class ViewDatabase {
         return 0
     }
 
+    /// Returns a boolean indicating if the report was already read by the user.
+    /// - parameter message: The message associated to the wanted report
+    ///
+    /// It returns true/false either if it was read or not, nil if the message doesn't exist or a report for the
+    /// message doesn't exist.
+    func isMessageForReportRead(for message: MessageIdentifier) throws -> Bool? {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let queryString = """
+        SELECT
+            read_messages.is_read AS is_read
+        FROM
+            reports
+            INNER JOIN messagekeys ON (messagekeys.id = reports.msg_ref)
+            LEFT OUTER JOIN read_messages ON (
+                (read_messages.msg_id = messagekeys.id)
+                AND (read_messages.author_id = reports.author_id)
+            )
+        WHERE
+            reports.author_id = ?
+            AND messagekeys.key = ?
+        LIMIT
+            1
+        """
+        guard let row = try connection.prepare(queryString, currentUserID, message).prepareRowIterator().next() else {
+            return nil
+        }
+        let isRead = try? row.get(Expression<Bool?>("is_read"))
+        return isRead ?? false
+    }
+
     /// Returns a report associated to a given message.
     ///
     /// - parameter message: The message associated to the wanted report
@@ -1676,7 +1708,7 @@ class ViewDatabase {
         (SELECT id FROM messagekeys WHERE key = ? LIMIT 1),
         ?)
         """
-        try connection.prepare(query).bind(currentUserID, identifier, isRead).run()
+        try connection.prepare(query, currentUserID, identifier, isRead).run()
     }
     
     // MARK: - Fetching Posts
@@ -2467,11 +2499,12 @@ class ViewDatabase {
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
         } // for msgs
-        
-        reports.forEach { report in
-            NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
-                                            object: report.authorIdentity,
-                                            userInfo: ["report": report])
+
+        if !reports.isEmpty {
+            NotificationCenter.default.post(
+                name: Notification.Name("didCreateReport"),
+                object: nil
+            )
         }
 
         // debug statistics about unhandled message types

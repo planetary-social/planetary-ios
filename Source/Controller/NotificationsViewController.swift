@@ -163,9 +163,9 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
         let currentReports = self.dataSource.reports
         let reportAtTop = currentReports.first
         if let report = reportAtTop {
+            lastTimeNewReportsUpdatesWasChecked = Date()
             let operation = NumberOfReportsOperation(lastReport: report)
             operation.completionBlock = { [weak self] in
-                self?.lastTimeNewReportsUpdatesWasChecked = Date()
                 let numberOfNewReports = operation.numberOfReports
                 if numberOfNewReports > 0 {
                     DispatchQueue.main.async { [weak self] in
