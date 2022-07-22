@@ -31,6 +31,7 @@ class ContactHeaderView: UIView {
         button.titleLabel?.numberOfLines = 1
         button.titleLabel?.linesCornerRadius = 7
         button.titleLabel?.isSkeletonable = true
+        button.titleLabel?.lastLineFillPercent = 100
         button.isSkeletonable = true
         return button
     }()
@@ -65,7 +66,8 @@ class ContactHeaderView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.identityButton.round()
+        identityButton.round()
+        layoutSkeletonIfNeeded()
     }
 
     func reset() {
@@ -82,7 +84,12 @@ class ContactHeaderView: UIView {
 
     private func update(with identity: Identity, about: About?) {
         let name = about?.nameOrIdentity ?? identity
-        let string = Text.startedFollowing.text(["somebody": name])
+        var string = Text.startedFollowing.text(["somebody": name])
+        if identity == .null {
+            string = "all above the baseline"
+            // because otherwise they stick out under the skeleton
+        }
+        
         let primaryAttributes = [
             NSAttributedString.Key.foregroundColor: UIColor.text.default,
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .semibold)

@@ -61,6 +61,7 @@ class ContactView: KeyValueView {
         label.textContainer.lineFragmentPadding = 0
         label.isSkeletonable = true
         label.linesCornerRadius = 7
+        label.lastLineFillPercent = 100
         label.backgroundColor = .clear
         return label
     }()
@@ -116,9 +117,18 @@ class ContactView: KeyValueView {
         labelStackView.pinTopToSuperview()
         labelStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Layout.verticalSpacing).isActive = true
         labelStackView.addArrangedSubview(nameAndIdentityStackView)
+        followerCountLabel.setContentHuggingPriority(.required, for: .vertical)
         labelStackView.addArrangedSubview(followerCountLabel)
         labelStackView.addArrangedSubview(hashtagsLabel)
-        Layout.fill(view: followButtonContainer, with: followButton, insets: UIEdgeInsets(top: 2, left: 0, bottom: 0, right: 2), respectSafeArea: false)
+        
+        let (_, _, bottomConstraint, _) = Layout.fill(
+            view: followButtonContainer,
+            with: followButton,
+            insets: UIEdgeInsets(top: 2, left: 0, bottom: 0, right: 2),
+            respectSafeArea: false
+        )
+        bottomConstraint.priority = .required
+        
         labelStackView.addArrangedSubview(followButtonContainer)
 
         hashtagsLabel.delegate = self
@@ -126,8 +136,6 @@ class ContactView: KeyValueView {
         isSkeletonable = true
 
         reset()
-        
-        setNeedsLayout()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -139,11 +147,23 @@ class ContactView: KeyValueView {
         update(with: Identity.null, about: nil)
         update(socialStats: SocialStats(numberOfFollowers: 0, numberOfFollows: 0))
         nameLabel.text = "placeholder name"
-        hashtagsLabel.text = "placeholder #hashtag #hashtag #hashtag"
+        hashtagsLabel.text = "#hashta #hashta #hashta" // no letters below the baseline
         contactIdentity.text = "@abc123abc123"
-        hashtagsLabel.layer.cornerRadius = 7 // hack because SkeletonView won't round the corners for some reason
         labelStackView.arrangedSubviews.forEach { $0.isHidden = false }
+        
+        // hack because SkeletonView is being weird
+        hashtagsLabel.layer.cornerRadius = 7
+
         showAnimatedSkeleton()
+        layoutSkeletonIfNeeded()
+        DispatchQueue.main.async {
+            self.layoutSkeletonIfNeeded()
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layoutSkeletonIfNeeded()
     }
     
     func update(with identity: Identity, about: About?) {

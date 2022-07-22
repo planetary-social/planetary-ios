@@ -35,7 +35,7 @@ class AvatarImageView: ImageView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        if let color = borderColor, let width = borderWidth {
+        if let color = borderColor, let width = borderWidth, !sk.isSkeletonActive {
             round(borderColor: color, borderWidth: width)
         } else {
             round()
