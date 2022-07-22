@@ -295,3 +295,5 @@
 "Report.postReplied" = "%@ antwortete auf deinen Beitrag";
 "Report.feedMentioned" = "%@ hat dich in einem Beitrag erwähnt";
 "Report.messageLiked" = "%@ gefällt dein Beitrag";
+
+"Notifications.markAllAsRead" = "Mark all as read";

@@ -295,3 +295,5 @@
 "Report.postReplied" = "%@ 回复了你的动态";
 "Report.feedMentioned" = "%@ 提到你的评论";
 "Report.messageLiked" = "%@ X点赞了你";
+
+"Notifications.markAllAsRead" = "Mark all as read";
