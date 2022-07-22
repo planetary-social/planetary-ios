@@ -296,6 +296,8 @@
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";
 
+"Notifications.markAllAsRead" = "Mark all as read";
+
 "Help.help" = "Help";
 "Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
 

@@ -21,7 +21,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
 
     /// The last time we loaded the reports from the database or we checked if there are new reports to show
     private var lastTimeNewReportsUpdatesWasChecked = Date()
-    
+
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage(named: "nav-icon-write")
         let item = UIBarButtonItem(
@@ -115,7 +115,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
         if NotificationsViewController.refreshBackgroundTaskIdentifier != .invalid {
             UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
         }
-        
+
         Log.info("Pull down to refresh triggering a short refresh")
         let refreshOperation = RefreshOperation(refreshLoad: .short)
         
@@ -141,14 +141,14 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
                 self?.load(animated: animated)
             }
         }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
+        let operations = [refreshOperation]
+        AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 
     private func update(with reports: [Report], animated: Bool = true) {
         self.dataSource.reports = reports
         lastTimeNewReportsUpdatesWasChecked = Date()
         self.tableView.reloadData()
-        self.navigationController?.tabBarItem?.badgeValue = nil
     }
 
     func checkForNotificationUpdates(force: Bool = false) {
@@ -169,7 +169,6 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
                 let numberOfNewReports = operation.numberOfReports
                 if numberOfNewReports > 0 {
                     DispatchQueue.main.async { [weak self] in
-                        self?.navigationController?.tabBarItem?.badgeValue = "\(numberOfNewReports)"
                         let shouldAnimate = self?.navigationController?.topViewController == self
                         self?.floatingRefreshButton.setTitle(with: numberOfNewReports)
                         self?.floatingRefreshButton.show(animated: shouldAnimate)
@@ -306,7 +305,7 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let source = tableView.dataSource as? NotificationsTableViewDataSource else { return nil }
         let (title, _) = source.sectionedReports[section]
-        return HeaderView(title: title.text)
+        return HeaderView(title: title.text, showClearNotificationsButton: section == 0)
     }
 
     override func tableView(_ tableView: UITableView, didSelect keyValue: KeyValue) {
@@ -340,6 +339,19 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
 
 private class HeaderView: UITableViewHeaderFooterView {
 
+    private lazy var button: UIButton = {
+        let view = UIButton.forAutoLayout()
+        view.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        view.setTitleColor(UIColor.primaryAction, for: .normal)
+        view.setTitle(Text.Notifications.markAllAsRead.text, for: .normal)
+        view.addTarget(
+            self,
+            action: #selector(clearNotificationsButtonTouchUpInside),
+            for: .touchUpInside
+        )
+        return view
+    }()
+
     let label: UILabel = {
         let view = UILabel.forAutoLayout()
         view.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
@@ -351,20 +363,33 @@ private class HeaderView: UITableViewHeaderFooterView {
         self.contentView.backgroundColor = .cardBackground
         self.useAutoLayout()
         Layout.addSeparator(toTopOf: self.contentView)
-        Layout.fill(
-            view: self.contentView,
+        Layout.fillRight(
+            of: self.contentView,
+            with: button,
+            insets: UIEdgeInsets(top: 1, left: 18, bottom: 1, right: -18)
+        )
+        Layout.fillLeft(
+            of: self.contentView,
             with: self.label,
             insets: UIEdgeInsets(top: 1, left: 18, bottom: 1, right: -18)
         )
         Layout.addSeparator(toBottomOf: self.contentView)
     }
 
-    convenience init(title: String) {
+    convenience init(title: String, showClearNotificationsButton: Bool = false) {
         self.init(frame: .zero)
         self.label.text = title
+        button.isHidden = !showClearNotificationsButton
     }
 
     required init?(coder aDecoder: NSCoder) {
         nil
+    }
+
+    @objc
+    func clearNotificationsButtonTouchUpInside() {
+        Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
+        let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
+        AppController.shared.operationQueue.addOperation(clearUnreadNotificationsOperation)
     }
 }

@@ -296,6 +296,8 @@
 "Report.feedMentioned" = "%@ 提到你的评论";
 "Report.messageLiked" = "%@ X点赞了你";
 
+"Notifications.markAllAsRead" = "Mark all as read";
+
 "Help.help" = "Help";
 "Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
 

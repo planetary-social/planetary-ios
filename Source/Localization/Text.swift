@@ -23,6 +23,7 @@ extension Text {
             Text.Channel.self,
             Text.Post.self,
             Text.Report.self,
+            Text.Notifications.self,
             Text.Help.self,
             Text.Help.Home.self,
             Text.Help.Discover.self,
@@ -413,6 +414,15 @@ extension Text {
         case title = "Push Notifications"
         case prompt = "Push notifications for Planetary are controlled in your device's Settings app.  Would you like to open Settings now?"
         case footer = "Show a system notification when you are mentioned, replied to, or followed.  The notification infrastructure is still in development, so you may not receive notifications consistently."
+    }
+}
+
+// MARK: - Notifications
+
+extension Text {
+
+    enum Notifications: String, Localizable, CaseIterable {
+        case markAllAsRead = "Mark all as read"
     }
 }
 
