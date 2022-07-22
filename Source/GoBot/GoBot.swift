@@ -1413,6 +1413,22 @@ class GoBot: Bot {
         }
     }
 
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) {
+        userInitiatedQueue.async {
+            do {
+                self.database.needsToSetAllMessagesAsRead = true
+                try self.database.setAllMessagesAsReadIfNeeded()
+                queue.async {
+                    completion(.success(()))
+                }
+            } catch {
+                queue.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) {
         userInitiatedQueue.async {
             do {

@@ -295,3 +295,5 @@
 "Report.postReplied" = "%@ odpowiedział na Twój post";
 "Report.feedMentioned" = "%@ wspomniał o Tobie w poście";
 "Report.messageLiked" = "%@ polubił twój post";
+
+"Notifications.markAllAsRead" = "Mark all as read";
