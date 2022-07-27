@@ -6,6 +6,11 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- Updated the Directory to show useful information like the number of followers and hashtags the user has used recently.
+- Updated the design of follow messages to display a smaller follow button. #743
+
 ## [1.2.4] 2022-07-18
 
 - Added queer.family pub #726
