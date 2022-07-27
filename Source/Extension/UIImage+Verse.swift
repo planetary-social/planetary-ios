@@ -16,6 +16,8 @@ struct VerseImages {
     let buttonBlocked = UIImage(named: "button-blocked")
     let buttonFollow = UIImage(named: "button-follow")
     let buttonFollowing = UIImage(named: "button-following")
+    let buttonBigFollow = UIImage(named: "button-follow-big")
+    let buttonBigFollowing = UIImage(named: "button-following-big")
     let camera = UIImage(named: "nav-icon-camera")
     let cameraLarge = UIImage(named: "camera-large")
     let cellChevron = UIImage(named: "cell-chevron")

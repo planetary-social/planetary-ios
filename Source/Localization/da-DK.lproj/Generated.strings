@@ -1,4 +1,5 @@
-// This file is auto-generated at build time and should not be modified by hand
+// This file is auto-generated at build time
+// Existing translations are left in place, and new keys are added as needed
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -31,6 +32,7 @@
 "Text.startedFollowing" = "{{somebody}} started following";
 "Text.stoppedFollowing" = "{{somebody}} stopped following";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "Show me in the directory";
 "Text.showMeInUserDirectory" = "Show me in the user directory";
 "Text.hideMeFromUserDirectory" = "Hide me from the user directory";
