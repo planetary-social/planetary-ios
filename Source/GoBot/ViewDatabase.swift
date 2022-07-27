@@ -33,7 +33,7 @@ enum ViewDatabaseTableNames: String {
     case channels
     case channelsAssigned = "channel_assignments"
     case contacts
-    case bannedContent = "banned_content"
+    case banList = "ban_list"
     case posts
     case postBlobs = "post_blobs"
     case privates
@@ -76,6 +76,7 @@ class ViewDatabase {
     
     let authors = Table(ViewDatabaseTableNames.authors.rawValue)
     let colAuthor = Expression<Identity>("author")
+    let colBanned = Expression<Bool>("banned")
     
     let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
     let colKey = Expression<MessageIdentifier>("key")
@@ -106,7 +107,8 @@ class ViewDatabase {
     let colDescr = Expression<String?>("description")
     let colPublicWebHosting = Expression<Bool?>("publicWebHosting")
     
-    let currentBannedContent = Table(ViewDatabaseTableNames.bannedContent.rawValue)
+    let banList = Table(ViewDatabaseTableNames.banList.rawValue)
+    let colHash = Expression<String>("hash")
     // colID
     let colIDType = Expression<Int>("type")
     
@@ -322,6 +324,20 @@ class ViewDatabase {
                     """
                 )
                 db.userVersion = 16
+            }
+            if db.userVersion == 16 {
+                try db.execute(
+                    """
+                    ALTER TABLE authors ADD banned INTEGER NOT NULL DEFAULT (0);
+                    DROP TABLE banned_content;
+                    CREATE TABLE
+                        ban_list (
+                            hash TEXT
+                        );
+                    CREATE INDEX ban_list_hash on ban_list (hash);
+                    """
+                )
+                db.userVersion = 17
             }
         }
     }
@@ -608,69 +624,103 @@ class ViewDatabase {
     
     // MARK: moderation / delete
     
-    func applyBanList(_ banList: [String]) throws -> [FeedIdentifier] {
+    /// Takes a list of hashes of banned content and applies it to the db. This function returns a list of newly banned
+    /// authors and newly unbanned authors.
+    func applyBanList(
+        _ banList: [String]
+    ) throws -> (bannedAuthors: [FeedIdentifier], unbannedAuthors: [FeedIdentifier]) {
+        try updateBanTable(from: banList)
+        let bannedAuthors = try authorsMatching(banList: banList)
+        let unbannedAuthors = try bannedAuthorsNotIn(banList: banList)
+        try ban(authors: bannedAuthors)
+        try unban(authors: unbannedAuthors)
+        try deleteMessagesMatching(banList: banList)
+        
+        return (bannedAuthors, unbannedAuthors)
+    }
+    
+    /// Overwrites the banList table with the new banList
+    private func updateBanTable(from banList: [String]) throws {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
-
-        var matchedAuthorRefs: [FeedIdentifier] = []
-        try db.transaction {
-            /// 1. unhide previous content
-            /// unhide previous banned entries to support appeal process, for instance
-            /// important to not over-rule user decision to block someone
-            var bannedMsgs: [Int64] = []
-            var bannedAuthors: [Int64] = []
-
-            let bannedContentQry = try db.prepare(self.currentBannedContent)
-            for bannedContent in bannedContentQry {
-                let id = try bannedContent.get(colID)
-                switch try bannedContent.get(colIDType) {
-                case 0: bannedMsgs.append(id)
-                case 1: bannedAuthors.append(id)
-                default: fatalError("unhandled content type")
-                }
-            }
-
-            let bannedMsgQry = self.msgs.filter(bannedMsgs.contains(colMessageID))
-            try db.run(bannedMsgQry.update(colHidden <- false))
-
-            let bannedAuthorsQry = self.msgs.filter(bannedAuthors.contains(colAuthorID))
-            try db.run(bannedAuthorsQry.update(colHidden <- false))
-
-            /// 2. set all matched messages to hidden
-
-            // look for banned IDs in msgs
-            let matchedMsgsQry = self.msgKeys
-                .join(self.msgs, on: colID == self.msgs[colMessageID])
-                .filter(banList.contains(colHashedKey))
-
-            // keep ids for next unhide
-            let matchedMsgIDs = try db.prepare(matchedMsgsQry.select(colID)).map { row in
-                row[colID]
-            }
-
-            // insert in current banned for next unhide
-            for id in matchedMsgIDs {
-                try db.run(self.currentBannedContent.insert(colID <- id, colIDType <- 0))
-            }
-            try db.run(self.msgs.filter(matchedMsgIDs.contains(colMessageID)).update(colHidden <- true))
-
-            // now look for authors
-            let matchedAuthors = try db.prepare(self.authors.filter(banList.contains(colHashedKey))).map { row in
-                // (@ref, num id)
-                // we need the ID for gobot
-                return (row[colAuthor], row[colID])
-            }
-
-            matchedAuthorRefs = matchedAuthors.map { $0.0 }
-
-            // insert in current banned for next unhide
-            for (_, id) in matchedAuthors {
-                try db.run(self.currentBannedContent.insert(colID <- id, colIDType <- 1))
-                try db.run(self.msgs.filter(colAuthorID == id).update(colHidden <- true))
-            }
+        
+        try db.run(self.banList.delete())
+        for banHash in banList {
+            try db.run(self.banList.insert(colHash <- banHash))
         }
+    }
+    
+    /// Looks for feed IDs that match the hashes in the ban list ban list.
+    private func authorsMatching(banList: [String]) throws -> [FeedIdentifier] {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        return try db.prepare(authors.select(colAuthor).filter(banList.contains(colHashedKey))).map { $0[colAuthor] }
+    }
+    
+    /// Finds authors that are marked banned in the db but not the given ban list.
+    private func bannedAuthorsNotIn(banList: [String]) throws -> [FeedIdentifier] {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        return try db.prepare(
+            authors
+                .select(colAuthor)
+                .filter(colBanned == true)
+                .filter(!banList.contains(colHashedKey))
+        )
+        .map { $0[colAuthor] }
+    }
 
-        // null content on sbot and add replicate ban call
-        return matchedAuthorRefs
+    /// Marks an author as banned. This is mostly so that we can tell if they are subsequently unbanned.
+    private func ban(authors: [FeedIdentifier]) throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        try db.run(
+            self.authors
+                .filter(authors.contains(colAuthor))
+                .update(colBanned <- true)
+        )
+        
+        let authorIDs = try db.prepare(self.authors.select(colID).filter(authors.contains(colAuthor))).map { $0[colID] }
+        try deleteNoTransaction(allFrom: authorIDs)
+    }
+    
+    /// Marks a previously banned author as not banned anymore.
+    /// We keep track of when authors are unbanned so we can unblock them at the replication level.
+    private func unban(authors: [FeedIdentifier]) throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        try db.run(
+            self.authors
+                .filter(authors.contains(colAuthor))
+                .update(colBanned <- false)
+        )
+    }
+    
+    /// Deletes messages matching the given ban list from the messages table and related tables.
+    private func deleteMessagesMatching(banList: [String]) throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        // look for banned IDs in msgs
+        let matchingMsgs = try db.prepare(
+            msgKeys
+                .join(msgs, on: colID == msgs[colMessageID])
+                .filter(banList.contains(colHashedKey))
+        )
+
+        for row in matchingMsgs {
+            try delete(message: row[colKey])
+        }
+    }
+    
+    /// Returns true if the given message is on the ban list.
+  func messageMatchesBanList(_ message: KeyValue) throws -> Bool {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        return try db.scalar(banList.filter(colHash == message.key.sha256hash).exists)
+    }
+    
+    /// Returns true if the author of the given message is on the ban list.
+    func authorMatchesBanList(_ message: KeyValue) throws -> Bool {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        return try db.scalar(banList.filter(colHash == message.value.author.sha256hash).exists)
     }
 
     func hide(allFrom author: FeedIdentifier) throws {
@@ -698,25 +748,25 @@ class ViewDatabase {
         let authorID = try self.authorID(of: author, make: false)
 
         try db.transaction {
-            try self.deleteNoTransaction(allFrom: authorID)
+            try self.deleteNoTransaction(allFrom: [authorID])
         }
     }
 
-    private func deleteNoTransaction(allFrom authorID: Int64) throws {
+    private func deleteNoTransaction(allFrom authorIDs: [Int64]) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
         // all from abouts
-        try db.run(self.abouts.filter(colAuthorID == authorID).delete())
+        try db.run(self.abouts.filter(authorIDs.contains(colAuthorID)).delete())
 
         // all from contacts
-        try db.run(self.contacts.filter(colAuthorID == authorID).delete())
+        try db.run(self.contacts.filter(authorIDs.contains(colAuthorID)).delete())
 
         // all their messages
         let allMsgsQry = self.msgs
             .select(colMessageID, colRXseq)
-            .filter(colAuthorID == authorID)
+            .filter(authorIDs.contains(colAuthorID))
             .order(colRXseq.asc)
         let allMessages = Array(try db.prepare(allMsgsQry))
 
@@ -732,6 +782,7 @@ class ViewDatabase {
             self.addresses,
             self.votes,
             self.channelAssigned,
+            self.abouts,
         ]
 
         // convert rows to [Int64] for (msg_id IN [x1,...,xN]) below
@@ -776,6 +827,7 @@ class ViewDatabase {
             self.mentions_feed,
             self.mentions_image,
             self.privateRecps,
+            self.abouts,
         ]
         for t in messageTables {
             try db.run(t.filter(colMessageRef == msgID).delete())
@@ -1571,6 +1623,7 @@ class ViewDatabase {
             )
         WHERE
             reports.author_id = ?
+            AND messages.hidden == false
         ORDER BY
             created_at DESC
         LIMIT
@@ -2391,6 +2444,21 @@ class ViewDatabase {
                 skipped += 1
                 continue
             }
+                        
+            if try authorMatchesBanList(msg) {
+                // Insert the author into the authors table so we can tell the GoBot to ban them.
+                _ = try self.authorID(of: msg.value.author, make: true)
+                try ban(authors: [msg.value.author])
+                skipped += 1
+                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                continue
+            }
+
+            if try messageMatchesBanList(msg) {
+                skipped += 1
+                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                continue
+            }
             
             /* don't hammer progress with every message
              if msgIndex%100 == 0 {
@@ -2579,7 +2647,7 @@ class ViewDatabase {
         return msgKey
     }
     
-    private func authorID(of author: Identity, make: Bool = false) throws -> Int64 {
+    func authorID(of author: Identity, make: Bool = false) throws -> Int64 {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
 
         if let authorRow = try db.pluck(self.authors.filter(colAuthor == author)) {
