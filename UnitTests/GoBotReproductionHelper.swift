@@ -91,9 +91,8 @@ class API_GoBot: XCTestCase {
     // make sure view db is uptodate with gosbot repo
     func test03_refresh() {
         var refreshExpectation = self.expectation(description: "refresh")
-        API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, took, _) in
-            XCTAssertNil(err)
+        API_GoBot.bot.refresh(load: .short, queue: .main) { (result, took) in
+            XCTAssertNotNil(try? result.get())
             print("ref1:\(took)")
             refreshExpectation.fulfill()
         }
@@ -101,9 +100,8 @@ class API_GoBot: XCTestCase {
         
         // TODO: retrigger refesh after repair sync
         refreshExpectation = self.expectation(description: "refresh")
-        API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, took, _) in
-            XCTAssertNil(err)
+        API_GoBot.bot.refresh(load: .short, queue: .main) { (result, took) in
+            XCTAssertNotNil(try? result.get())
             print("ref2:\(took)")
             refreshExpectation.fulfill()
         }
@@ -112,17 +110,16 @@ class API_GoBot: XCTestCase {
 
     func test04_same_msgs() async {
         let statistics = await API_GoBot.bot.statistics()
-        XCTAssertEqual(statistics.db.lastReceivedMessage, 6_699)
-        XCTAssertEqual(statistics.repo.messageCount, 6_700)
+        XCTAssertEqual(statistics.db.lastReceivedMessage, 6699)
+        XCTAssertEqual(statistics.repo.messageCount, 6700)
         
         XCTAssertTrue(API_GoBot.bot.bot.repoFSCK(.Sequences))
     }
 
     func test05_refresh() {
         let refreshExpectation = self.expectation(description: "refresh")
-        API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, _, _) in
-            XCTAssertNil(err)
+        API_GoBot.bot.refresh(load: .short, queue: .main) { (result, took) in
+            XCTAssertNotNil(try? result.get())
             refreshExpectation.fulfill()
         }
         waitForExpectations(timeout: 10)
@@ -130,21 +127,19 @@ class API_GoBot: XCTestCase {
 
     func test07_refresh() async {
         let refreshExpectation = self.expectation(description: "refresh")
-        API_GoBot.bot.refresh(load: .short, queue: .main) {
-            (err, _, _) in
-            XCTAssertNil(err)
+        API_GoBot.bot.refresh(load: .short, queue: .main) { (result, _) in
+            XCTAssertNotNil(try? result.get())
             refreshExpectation.fulfill()
         }
         await waitForExpectations(timeout: 10)
         let statistics = await API_GoBot.bot.statistics()
-        XCTAssertEqual(statistics.db.lastReceivedMessage, 6_699)
-        XCTAssertEqual(statistics.repo.messageCount, 6_700)
+        XCTAssertEqual(statistics.db.lastReceivedMessage, 6699)
+        XCTAssertEqual(statistics.repo.messageCount, 6700)
     }
 
     func test900_logout() {
         let logoutExpectation = self.expectation(description: "logout")
-        API_GoBot.bot.logout {
-            error in
+        API_GoBot.bot.logout { error in
             XCTAssertNil(error)
             logoutExpectation.fulfill()
         }
