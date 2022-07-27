@@ -11,33 +11,111 @@ import UIKit
 import Analytics
 import Logger
 
+enum MainTab {
+    case home, discover, notifications, hashtags, network
+    
+    init?(urlPath: String) {
+        switch urlPath {
+        case "/home":
+            self = .home
+        case "/discover":
+            self = .discover
+        case "/notifications":
+            self = .notifications
+        case "/hashtags":
+            self = .hashtags
+        case "/network":
+            self = .network
+        default:
+            return nil
+        }
+    }
+    
+    var urlPath: String {
+        switch self {
+        case .home:
+            return "home"
+        case .discover:
+            return "discover"
+        case .notifications:
+            return "notifications"
+        case .hashtags:
+            return "hashtags"
+        case .network:
+            return "network"
+        }
+    }
+    
+    var url: URL? {
+        URL(string: "\(URL.planetaryScheme)://planetary/\(urlPath)")
+    }
+    
+    static func createShowClosure(for tab: MainTab) -> () -> Void {
+        
+        let tabBar = AppController.shared.mainViewController
+        
+        switch tab {
+        case .home:
+            return {
+                tabBar?.selectedViewController?.dismiss(animated: true)
+                let featureVC = tabBar?.homeFeatureViewController
+                tabBar?.selectedViewController = featureVC
+            }
+        case .discover:
+            return {
+                tabBar?.selectedViewController?.dismiss(animated: true)
+                let featureVC = tabBar?.everyoneViewController
+                tabBar?.selectedViewController = featureVC
+            }
+        case .notifications:
+            return {
+                tabBar?.selectedViewController?.dismiss(animated: true)
+                let featureVC = tabBar?.notificationsFeatureViewController
+                tabBar?.selectedViewController = featureVC
+            }
+        case .hashtags:
+            return {
+                tabBar?.selectedViewController?.dismiss(animated: true)
+                let featureVC = tabBar?.channelsFeatureViewController
+                tabBar?.selectedViewController = featureVC
+            }
+        case .network:
+            return {
+                tabBar?.selectedViewController?.dismiss(animated: true)
+                let featureVC = tabBar?.directoryFeatureViewController
+                tabBar?.selectedViewController = featureVC
+            }
+        }
+    }
+}
+
 class MainViewController: UITabBarController {
 
     var homeViewController: HomeViewController? {
         self.homeFeatureViewController.viewControllers.first as? HomeViewController
     }
 
-    private let homeFeatureViewController = FeatureViewController(
+    let homeFeatureViewController = FeatureViewController(
         rootViewController: HomeViewController(),
         tabBarItemImageName: "tab-icon-home"
     )
 
-    private let notificationsFeatureViewController = FeatureViewController(
+    let notificationsFeatureViewController = FeatureViewController(
         rootViewController: NotificationsViewController(),
         tabBarItemImageName: "tab-icon-notifications"
     )
 
-    private let channelsFeatureViewController = FeatureViewController(
+    let channelsFeatureViewController = FeatureViewController(
         rootViewController: ChannelsViewController(),
         tabBarItemImageName: "tab-icon-channels"
     )
 
-    private let directoryFeatureViewController = FeatureViewController(
+    let directoryFeatureViewController = FeatureViewController(
         rootViewController: DirectoryViewController(),
         tabBarItemImageName: "tab-icon-directory"
     )
 
-    private let everyoneViewController = FeatureViewController(
+    let everyoneViewController = FeatureViewController(
         rootViewController: DiscoverViewController(),
         tabBarItemImageName: "tab-icon-everyone"
     )
@@ -134,5 +212,4 @@ extension MainViewController: UITabBarControllerDelegate {
 
         return true
     }
-
 }

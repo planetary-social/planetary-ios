@@ -12,7 +12,7 @@ import Logger
 import Analytics
 import CrashReporting
 
-class HomeViewController: ContentViewController {
+class HomeViewController: ContentViewController, HelpDrawerHost {
 
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
@@ -26,6 +26,9 @@ class HomeViewController: ContentViewController {
         )
         return item
     }()
+    
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .home }
 
     private lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()
@@ -125,7 +128,7 @@ class HomeViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .home)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -158,6 +161,7 @@ class HomeViewController: ContentViewController {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Home")
         Analytics.shared.trackDidShowScreen(screenName: "home")
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
 
     // MARK: Load and refresh

@@ -7,7 +7,6 @@
 //
 
 import XCTest
-@testable import Planetary
 
 // swiftlint:disable implicitly_unwrapped_optional force_try
 
