@@ -67,7 +67,6 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
                                 }
                             }
 
-                            
                             ProgressButton(viewModel: viewModel)
                             
                             Color.clear.frame(width: 0, height: 10)
