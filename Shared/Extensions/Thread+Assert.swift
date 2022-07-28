@@ -10,6 +10,6 @@ import Foundation
 
 extension Thread {
     static func assertIsMainThread() {
-        assert(Thread.isMainThread)
+        //assert(Thread.isMainThread)
     }
 }
