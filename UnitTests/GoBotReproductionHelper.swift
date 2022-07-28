@@ -118,7 +118,7 @@ class API_GoBot: XCTestCase {
 
     func test05_refresh() {
         let refreshExpectation = self.expectation(description: "refresh")
-        API_GoBot.bot.refresh(load: .short, queue: .main) { (result, took) in
+        API_GoBot.bot.refresh(load: .short, queue: .main) { (result, _) in
             XCTAssertNotNil(try? result.get())
             refreshExpectation.fulfill()
         }
