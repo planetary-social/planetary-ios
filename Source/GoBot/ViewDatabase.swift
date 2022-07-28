@@ -224,7 +224,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        db.trace { print("\n\n\n\n\n\n\ntSQL: \($0)\n\n\n\n\n\n\n\n") } // print all the statements
         
         try checkAndRunMigrations(on: db)
         

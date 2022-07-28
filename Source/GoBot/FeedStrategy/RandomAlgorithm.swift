@@ -57,15 +57,16 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         let colIsRead = Expression<Bool>("is_read")
         
         
+
         var query = posts
             .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
             .join(authors, on: authors[colID] == msgs[colAuthorID])
-            //.join(read_messages, on: read_messages[colMessageID] == msgs[colMessageID])
             .filter(colMsgType == "post")
             .filter(colIsRoot == true)
-            //.filter(colIsRead == false)
             .filter(colHidden == false)
-            .filter(colAuthorID == userId)
+            .join(read_messages, on: read_messages[colMessageID] == msgs[colMessageID])
+            .filter(colIsRead == false)
+//            .filter(colAuthorID == userId)
             .filter(colDecrypted == wantPrivate)
 
         if onlyFollowed {
@@ -175,25 +176,30 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         let colAuthorID = Expression<Int64>("author_id")
         let colIsRead = Expression<Bool>("is_read")
 
+        //.join(read_messages, on: read_messages[colMessageID] == msgs[colMessageID])
+        //.filter(colIsRead == false)
+
         var query = msgs
             .join(posts, on: posts[colMessageRef] == msgs[colMessageID])
             .join(.leftOuter, tangles, on: tangles[colMessageRef] == msgs[colMessageID])
             .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
             .join(authors, on: authors[colID] == msgs[colAuthorID])
             .join(.leftOuter, aboutAuthor, on: aboutAuthor[colAboutID] == msgs[colAuthorID])
-            //.join(read_messages, on: read_messages[colMessageID] == msgs[colMessageID])
-            //.filter(colIsRead == false)
             .filter(colMsgType == "post")           // only posts (no votes or contact messages)
             .filter(colDecrypted == wantPrivate)
             .filter(colHidden == false)
             .filter(colClaimedAt <= Date().millisecondsSince1970)
-            .order(Expression<Int>.random())
+            .limit(limit)
+            //.order(Expression<Int>.random())
 
         if let offset = offset {
-            query = query.limit(limit, offset: offset)
+            //query = query.limit(limit, offset: offset)
         } else {
-            query = query.limit(limit)
+            //query = query.limit(limit)
         }
+        
+        
+        
         if onlyRoots {
             query = query.filter(colIsRoot == true)   // only thread-starting posts (no replies)
         }
