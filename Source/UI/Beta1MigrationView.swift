@@ -59,7 +59,7 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
                                 Button {
                                     viewModel.confirmDismissal()
                                 } label: {
-                                    SwiftUI.Text("Dismiss and start using Planetary")
+                                    Text.dismissAndStartUsingPlanetary.view
                                         .foregroundColor(Color(UIColor.linkColor))
                                         .font(.callout)
                                         .underline()
