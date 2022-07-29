@@ -22,9 +22,8 @@ extension GoBot {
 //        tc.wait(for: [syncExpectation], timeout: 30)
 
         let refreshExpectation = tc.expectation(description: "Refresh")
-        self.refresh(load: .short, queue: .main) {
-            error, _, _ in
-            XCTAssertNil(error, "view refresh failed")
+        self.refresh(load: .short, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get(), "view refresh failed")
             refreshExpectation.fulfill()
         }
         tc.wait(for: [refreshExpectation], timeout: 30)
