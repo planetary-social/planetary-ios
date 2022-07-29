@@ -14,9 +14,13 @@ import CrashReporting
 class FollowButton: PillButton {
 
     var operationQueue = OperationQueue()
+    var shouldDisplayTitle = true
     
     var star: Star? {
         didSet {
+            guard shouldDisplayTitle else {
+                return
+            }
             if star == nil {
                 self.setTitle(.following, selected: .follow)
             } else {
@@ -37,7 +41,12 @@ class FollowButton: PillButton {
             self.isSelected = !relationship.isFollowing
             self.isHidden = relationship.identity == relationship.other
 
-            NotificationCenter.default.addObserver(self, selector: #selector(relationshipDidChange(notification:)), name: relationship.notificationName, object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(relationshipDidChange(notification:)),
+                name: relationship.notificationName,
+                object: nil
+            )
         }
     }
 
@@ -47,102 +56,113 @@ class FollowButton: PillButton {
 
     override init(primaryColor: UIColor = .primaryAction, secondaryColor: UIColor = .secondaryAction) {
         super.init(primaryColor: primaryColor, secondaryColor: secondaryColor)
-
         self.setTitle(.following, selected: .follow)
         self.setImage(UIImage.verse.buttonFollowing, selected: UIImage.verse.buttonFollow)
     }
 
-    override func defaultAction() {
-        guard let relationship = self.relationship else {
-            assertionFailure("Follow button action was called, but no relationship is setup yet.")
-            return
+    init(
+        primaryColor: UIColor = .primaryAction,
+        secondaryColor: UIColor = .secondaryAction,
+        displayTitle: Bool = true,
+        followingImage: UIImage? = UIImage.verse.buttonFollowing,
+        followImage: UIImage? = UIImage.verse.buttonFollow
+    ) {
+        super.init(primaryColor: primaryColor, secondaryColor: secondaryColor)
+        self.shouldDisplayTitle = displayTitle
+        if displayTitle {
+            self.setTitle(.following, selected: .follow)
         }
+        self.setImage(UIImage.verse.buttonFollowing, selected: UIImage.verse.buttonFollow)
+    }
 
+    override func defaultAction() {
         Analytics.shared.trackDidTapButton(buttonName: "follow")
         
         let shouldFollow = self.isSelected
 
-        // AppController.shared.showProgress()
         self.isEnabled = false
-        if shouldFollow {
-            if let star = self.star {
-                let operation = RedeemInviteOperation(star: star, shouldFollow: true)
-                operation.completionBlock = {
-                    switch operation.result {
-                    case .success, .none:
-                        DispatchQueue.main.async {
-                            AppController.shared.hideProgress()
-                            self.isEnabled = true
-                            relationship.reloadAndNotify()
-                            self.onUpdate?(shouldFollow)
-                        }
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            AppController.shared.hideProgress()
-                            self.isEnabled = true
-                            relationship.reloadAndNotify()
-                            AppController.shared.alert(error: error)
-                        }
-                    }
-                }
-                self.operationQueue.addOperation(operation)
+        let successHandler = { [weak self] in
+            if shouldFollow {
+                Analytics.shared.trackDidFollowIdentity()
             } else {
-                let operation = FollowOperation(identity: relationship.other)
-                operation.completionBlock = {
-                    if let error = operation.error {
-                        Log.optional(error)
-                        CrashReporting.shared.reportIfNeeded(error: error)
-                        DispatchQueue.main.async {
-                            AppController.shared.hideProgress()
-                            self.isEnabled = true
-                            relationship.reloadAndNotify()
-                            AppController.shared.alert(error: error)
-                        }
-                    } else {
-                        Analytics.shared.trackDidFollowIdentity()
-                        DispatchQueue.main.async {
-                            AppController.shared.hideProgress()
-                            self.isEnabled = true
-                            relationship.reloadAndNotify()
-
-                            self.onUpdate?(shouldFollow)
-                        }
-                    }
-                }
-                self.operationQueue.addOperation(operation)
+                Analytics.shared.trackDidUnfollowIdentity()
             }
+            DispatchQueue.main.async {
+                AppController.shared.hideProgress()
+                self?.isEnabled = true
+                self?.relationship?.reloadAndNotify()
+                self?.onUpdate?(shouldFollow)
+            }
+        }
+        let errorHandler = { [weak self] (error: Error) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            DispatchQueue.main.async {
+                AppController.shared.hideProgress()
+                self?.isEnabled = true
+                self?.relationship?.reloadAndNotify()
+                AppController.shared.alert(error: error)
+            }
+        }
+        if shouldFollow {
+            follow(onSuccess: successHandler, onError: errorHandler)
         } else {
-            let operation = UnfollowOperation(identity: relationship.other)
+            unfollow(onSuccess: successHandler, onError: errorHandler)
+        }
+    }
+
+    private func follow(onSuccess: @escaping () -> Void, onError: @escaping (Error) -> Void) {
+        guard let relationship = self.relationship else {
+            onError(AppError.unexpected)
+            return
+        }
+        if let star = self.star {
+            let operation = RedeemInviteOperation(star: star, shouldFollow: true)
+            operation.completionBlock = {
+                switch operation.result {
+                case .success, .none:
+                    onSuccess()
+                case .failure(let error):
+                    onError(error)
+                }
+            }
+            self.operationQueue.addOperation(operation)
+        } else {
+            let operation = FollowOperation(identity: relationship.other)
             operation.completionBlock = {
                 if let error = operation.error {
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    DispatchQueue.main.async {
-                        AppController.shared.hideProgress()
-                        self.isEnabled = true
-                        relationship.reloadAndNotify()
-                        AppController.shared.alert(error: error)
-                    }
+                    onError(error)
                 } else {
-                    Analytics.shared.trackDidUnfollowIdentity()
-                    DispatchQueue.main.async {
-                        AppController.shared.hideProgress()
-                        self.isEnabled = true
-                        relationship.reloadAndNotify()
-                        self.onUpdate?(shouldFollow)
-                    }
+                    onSuccess()
                 }
             }
             self.operationQueue.addOperation(operation)
         }
     }
 
-    @objc func relationshipDidChange(notification: Notification) {
+    private func unfollow(onSuccess: @escaping () -> Void, onError: @escaping (Error) -> Void) {
+        guard let relationship = self.relationship else {
+            onError(AppError.unexpected)
+            return
+        }
+        let operation = UnfollowOperation(identity: relationship.other)
+        operation.completionBlock = {
+            if let error = operation.error {
+                onError(error)
+            } else {
+                onSuccess()
+            }
+        }
+        self.operationQueue.addOperation(operation)
+    }
+
+    @objc
+    func relationshipDidChange(notification: Notification) {
         guard let relationship = notification.relationship else { return }
         self.relationship = relationship
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 }

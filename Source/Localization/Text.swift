@@ -72,6 +72,7 @@ enum Text: String, Localizable, CaseIterable {
     case startedFollowing = "{{somebody}} started following"
     case stoppedFollowing = "{{somebody}} stopped following"
     case followStats = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}"
+    case userOusideNetwork = "This user is outside your network"
     case showMeInDirectory = "Show me in the directory"
     case showMeInUserDirectory = "Show me in the user directory"
     case hideMeFromUserDirectory = "Hide me from the user directory"

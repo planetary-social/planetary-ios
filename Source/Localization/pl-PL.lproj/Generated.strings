@@ -31,6 +31,7 @@
 "Text.startedFollowing" = "{{somebody}} obserwuje Cię";
 "Text.stoppedFollowing" = "{{somebody}} przestaje Cię obserwować";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "Pokaż mnie w katalogu";
 "Text.showMeInUserDirectory" = "Pokaż mnie w katalogu użytkowników";
 "Text.hideMeFromUserDirectory" = "Nie pokazuj mnie w katalogu użytkowników";

@@ -31,6 +31,7 @@
 "Text.startedFollowing" = "{{somebody}} started following";
 "Text.stoppedFollowing" = "{{somebody}} stopped following";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "在用户目录中显示";
 "Text.showMeInUserDirectory" = "在用户目录中显示";
 "Text.hideMeFromUserDirectory" = "在用户目录中显示";
