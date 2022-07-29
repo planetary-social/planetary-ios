@@ -26,6 +26,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         self.window = window
 
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "missing"
+        let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "missing"
+        Log.info("Launching version: \(appVersion) (\(appBuild))")
         CrashReporting.shared.record("Launch")
 
         registerDefaultsFromSettingsBundle()
