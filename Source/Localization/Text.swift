@@ -208,6 +208,7 @@ start using Planetary right away, but:
 """
     case startUsingPlanetary = "start using Planetary"
     case startUsingPlanetaryTitle = "Start Using Planetary"
+    case dismissAndStartUsingPlanetary = "Dismiss and start using Planetary"
     case percentComplete = "complete"
     case beta1Disclaimers =
 """
