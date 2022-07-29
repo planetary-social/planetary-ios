@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated the Directory to show useful information like the number of followers and hashtags the user has used recently.
 - Updated the design of follow messages to display a smaller follow button. #743
+- Fixed a case where tapping the Reset Forked Feed Protection button would cause the app to hang. #758
 
 ## [1.2.4] 2022-07-18
 
