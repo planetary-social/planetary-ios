@@ -397,9 +397,18 @@ class GoBotInternal {
     }
     
     // MARK: manual block / replicate
-    func block(feed: FeedIdentifier) {
+    
+    /// Instructs the bot to stop replicating the current feed without publishing a message on the user's log.
+    func ban(feed: FeedIdentifier) {
         feed.withGoString {
             ssbFeedBlock($0, true)
+        }
+    }
+    
+    /// Instructs the bot to start replicating the given feed again if appropriate, undoing a call to `ban(feed:)`.
+    func unban(feed: FeedIdentifier) {
+        feed.withGoString {
+            ssbFeedBlock($0, false)
         }
     }
 

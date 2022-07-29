@@ -263,7 +263,7 @@ class GoBot: Bot {
             }
             self.preloadedPubService?.preloadPubs(in: self, from: nil)
             
-            Task.detached(priority: .utility) {
+            Task.detached(priority: .background) {
                 await self.fetchAndApplyBanList(for: secret.identity)
             }
         }
@@ -462,7 +462,7 @@ class GoBot: Bot {
     private func internalRefresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         guard self._isRefreshing == false else {
             queue.async {
-                completion(nil, 0, false)
+                completion(.success(false), 0)
             }
             return
         }
@@ -471,22 +471,11 @@ class GoBot: Bot {
         
         let elapsed = Date()
         self.utilityQueue.async {
-            self.updateReceive(limit: load.rawValue) { [weak self] error in
-                
-                // Figure out if the refresh got the ViewDatabase fully synced with the backing store.
-                var finished = false
-                do {
-                    let (_, numberOfRemainingMessages) = try self?.needsViewFill() ?? (0, -1)
-                    finished = numberOfRemainingMessages == 0
-                } catch {
-                    Log.optional(error)
-                }
-                
+            self.updateReceive(limit: load.rawValue) { [weak self] result in
                 queue.async {
                     self?.notifyRefreshComplete(
                         in: -elapsed.timeIntervalSinceNow,
-                        error: error,
-                        finished: finished,
+                        result: result,
                         completion: completion
                     )
                 }
@@ -496,8 +485,7 @@ class GoBot: Bot {
 
     private func notifyRefreshComplete(
         in elapsed: TimeInterval,
-        error: Error?,
-        finished: Bool,
+        result: Result<Bool, Error>,
         completion: @escaping RefreshCompletion
     ) {
         self._isRefreshing = false
@@ -505,7 +493,7 @@ class GoBot: Bot {
             self._statistics.lastRefreshDate = Date()
             self._statistics.lastRefreshDuration = elapsed
         }
-        completion(error, elapsed, finished)
+        completion(result, elapsed)
         NotificationCenter.default.post(name: .didRefresh, object: nil)
     }
     
@@ -773,14 +761,14 @@ class GoBot: Bot {
     }
     
     // should only be called by refresh() (which does the proper completion on mainthread)
-    private func updateReceive(limit: Int32 = 15_000, completion: @escaping ErrorCompletion) {
+    private func updateReceive(limit: Int32 = 15_000, completion: @escaping (Result<Bool, Error>) -> Void) {
         var current: Int64 = 0
         var diff: Int = 0
 
         do {
             (current, diff) = try self.needsViewFill()
         } catch {
-            completion(error)
+            completion(.failure(error))
             return
         }
         
@@ -800,7 +788,7 @@ class GoBot: Bot {
             
             guard !msgs.isEmpty else {
                 print("warning: triggered update but got no messages from receive log")
-                completion(nil)
+                completion(.success(true))
                 return
             }
             
@@ -814,18 +802,18 @@ class GoBot: Bot {
                     lastHash: msgs[msgs.count - 1].key
                 )
                 if diff < limit { // view is up2date now
-                    completion(nil)
+                    completion(.success(true))
                     // disable private messages until there is UI for it AND ADD SQLCYPHER!!!111
                     // self.updatePrivate(completion: completion)
                 } else {
                     #if DEBUG
                     print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
                     #endif
-                    completion(nil)
+                    completion(.success(false))
                 }
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
                 let (repair, error) = self.repairViewConstraints21012020(with: author, current: current)
-
+    
                 Analytics.shared.trackBotDidRepair(
                     databaseError: sqlErr,
                     error: error?.localizedDescription,
@@ -835,19 +823,19 @@ class GoBot: Bot {
                 #if DEBUG
                 print("[rx log] viewdb fill of aborted and repaired.")
                 #endif
-                completion(error)
+                completion(.failure(error ?? GoBotError.unexpectedFault("updateReceive failed")))
             } catch {
                 let encapsulatedError = GoBotError.duringProcessing("viewDB: message filling failed", error)
                 Log.optional(encapsulatedError)
                 CrashReporting.shared.reportIfNeeded(error: encapsulatedError)
-                completion(encapsulatedError)
+                completion(.failure(encapsulatedError))
             }
         } catch {
-            completion(error)
+            completion(.failure(error))
         }
     }
     
-    private func updatePrivate(completion: @escaping ErrorCompletion) {
+    private func updatePrivate(completion: @escaping (Result<Bool, Error>) -> Void) {
         var count: Int64 = 0
         do {
             let rawCount = try self.database.stats(table: .privates)
@@ -862,9 +850,9 @@ class GoBot: Bot {
                 print("[private log] private log filled with \(msgs.count) msgs (started at \(count))")
             }
             
-            completion(nil)
+            completion(.success(false))
         } catch {
-            completion(error)
+            completion(.failure(error))
         }
     }
     
@@ -1260,22 +1248,20 @@ class GoBot: Bot {
             return
         }
             
-        var authors: [FeedIdentifier] = []
         do {
-            authors = try self.database.applyBanList(banList)
-        } catch {
-            Log.unexpected(.botError, "viewdb failed to update banned content: \(error)")
-        }
-        
-        // add as blocked peers to bot (those dont have contact messages)
-        do {
-            for a in authors {
-                // TODO: Maybe private blocks here?
-                try self.bot.nullFeed(author: a)
-                self.bot.block(feed: a)
+            let (bannedAuthors, unbannedAuthors) = try self.database.applyBanList(banList)
+            
+            // add as blocked peers to bot (those dont have contact messages)
+            for author in bannedAuthors {
+                try bot.nullFeed(author: author)
+                bot.ban(feed: author)
+            }
+            
+            for author in unbannedAuthors {
+                bot.unban(feed: author)
             }
         } catch {
-            Log.unexpected(.botError, "failed to drop and banned content: \(error)")
+            Log.unexpected(.botError, "failed to apply ban list: \(error)")
         }
     }
 

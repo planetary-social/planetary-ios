@@ -55,6 +55,18 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
                             
                             Spacer()
                             
+                            if viewModel.progress < 0.995 {
+                                Button {
+                                    viewModel.confirmDismissal()
+                                } label: {
+                                    Text.dismissAndStartUsingPlanetary.view
+                                        .foregroundColor(Color(UIColor.linkColor))
+                                        .font(.callout)
+                                        .underline()
+                                        .bold()
+                                }
+                            }
+
                             ProgressButton(viewModel: viewModel)
                             
                             Color.clear.frame(width: 0, height: 10)
