@@ -118,11 +118,16 @@ class PostHeaderView: UIView {
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
         self.dateLabel.text = keyValue.timestampString
-        if name != keyValue.value.author {
-            identifierLabel.text = String(identity.prefix(7))
-            identifierLabel.isHidden = false
+        //if name != keyValue.value.author {
+        //    identifierLabel.text = String(identity.prefix(7))
+        //    identifierLabel.isHidden = false
+        //} else {
+        //    identifierLabel.isHidden = true
+        //}
+        if let root = keyValue.value.content.post?.root {
+            identifierLabel.text = "is replying"
         } else {
-            identifierLabel.isHidden = true
+            identifierLabel.text =  "is posting"
         }
 
         if let me = Bots.current.identity {

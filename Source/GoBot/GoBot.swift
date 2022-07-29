@@ -1475,10 +1475,12 @@ class GoBot: Bot {
     }
 
     func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
-        Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
-                let proxy = try self.database.paginated(feed: identity)
+                let strategy = ProfilePostsAlgorithm(identity: identity)
+                let strategyString = String(describing: type(of: strategy))
+                Log.debug("GoBot fetching profile posts with strategy: \(strategyString)")
+                let proxy = try self.database.paginatedFeed(with: strategy)
                 DispatchQueue.main.async { completion(proxy, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }

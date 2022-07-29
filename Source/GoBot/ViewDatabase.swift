@@ -1161,11 +1161,6 @@ class ViewDatabase {
         return try PaginatedPrefetchDataProxy(with: src)
     }
 
-    func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedPrefetchDataProxy(with: src!)
-    }
-
     // MARK: recent
     func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> KeyValues {
         return try strategy.fetchKeyValues(database: self, userId: currentUserID, limit: limit, offset: offset)
