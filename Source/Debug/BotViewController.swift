@@ -119,8 +119,7 @@ class BotViewController: DebugTableViewController {
                                              actionClosure: {
                 [unowned self] cell in
                 cell.showActivityIndicator()
-                self.bot.refresh(load: .long, queue: .main) {
-                    [weak self] _, _, _ in
+                self.bot.refresh(load: .long, queue: .main) { [weak self] _, _ in
                     cell.hideActivityIndicator()
                     self?.updateSettings()
                 }
