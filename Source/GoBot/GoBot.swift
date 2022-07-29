@@ -263,7 +263,7 @@ class GoBot: Bot {
             }
             self.preloadedPubService?.preloadPubs(in: self, from: nil)
             
-            Task.detached(priority: .utility) {
+            Task.detached(priority: .background) {
                 await self.fetchAndApplyBanList(for: secret.identity)
             }
         }
@@ -1248,22 +1248,20 @@ class GoBot: Bot {
             return
         }
             
-        var authors: [FeedIdentifier] = []
         do {
-            authors = try self.database.applyBanList(banList)
-        } catch {
-            Log.unexpected(.botError, "viewdb failed to update banned content: \(error)")
-        }
-        
-        // add as blocked peers to bot (those dont have contact messages)
-        do {
-            for a in authors {
-                // TODO: Maybe private blocks here?
-                try self.bot.nullFeed(author: a)
-                self.bot.block(feed: a)
+            let (bannedAuthors, unbannedAuthors) = try self.database.applyBanList(banList)
+            
+            // add as blocked peers to bot (those dont have contact messages)
+            for author in bannedAuthors {
+                try bot.nullFeed(author: author)
+                bot.ban(feed: author)
+            }
+            
+            for author in unbannedAuthors {
+                bot.unban(feed: author)
             }
         } catch {
-            Log.unexpected(.botError, "failed to drop and banned content: \(error)")
+            Log.unexpected(.botError, "failed to apply ban list: \(error)")
         }
     }
 
