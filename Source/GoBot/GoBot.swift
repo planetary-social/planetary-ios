@@ -1294,7 +1294,8 @@ class GoBot: Bot {
 
     /// The algorithm we use to filter and sort the discover tab feed.
     var discoverFeedStrategy: FeedStrategy {
-         RandomAlgorithm()
+        //RandomAlgorithm(wantPrivate:false, onlyFollowed:false)
+        RandomAlgorithm()
     }
     
     

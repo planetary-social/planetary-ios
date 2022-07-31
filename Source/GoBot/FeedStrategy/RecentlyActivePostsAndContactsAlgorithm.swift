@@ -237,7 +237,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         return 0
     }
 
-    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
+    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?, is_read: Bool?) throws -> [KeyValue] {
         guard let connection = database.getOpenDB() else {
             Log.error("db is closed")
             return []
