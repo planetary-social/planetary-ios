@@ -1,5 +1,5 @@
 //
-//  RandomAlgorithm.swift
+//  ProfilePostsAlgorithm.swift
 //  Planetary
 //
 //  Created by Rabble on 7/27/22.
@@ -10,303 +10,259 @@ import Foundation
 import SQLite
 import Logger
 
-// swiftlint:disable type_body_length
-/// This algorithm returns a feed just with user's and follows' root posts
+/// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
 ///
-/// This algorithm is stupid, it randomly selects posts you've not seen before. 
-/// For this reason, I didn't put effort in optimizing this algorithm even though there is room for improvement:
-/// - make the query with a single string in the way PostsAndContactsStrategy does
-/// - filter follows and followers in the same query
-/// - fetch the number of replies in the same query
-/// - remove additional queryies made after getting the results
+/// It doesn't include pubs follows and posts in the feed
 class RandomAlgorithm: NSObject, FeedStrategy {
-    // swiftlint:enable type_body_length
 
-    var wantPrivate: Bool
-    var onlyFollowed: Bool
+    // swiftlint:disable indentation_width
+    /// SQL query to count the total number of items in the feed
+    ///
+    /// This query should be as fast as possible so only required joins and where clauses where used.
+    /// The result should be the same as the number of items returned by the other two queries in this class.
+    /// The where clauses are as follows:
+    /// - Only posts and follows (contacts) are considered
+    /// - Discard private messages
+    /// - Discard hidden messages
+    /// - Only root posts
+    /// - Only follows (contacts) to people we know something about and discard follows to pubs
+    /// - Only posts and follows from user's follows or from user itsef
+    /// - Discard posts and follows from pubs
+    /// - Discard posts and follows from the future
+    private let countNumberOfKeysQuery = """
+        SELECT COUNT(*)
+        FROM messages
+        JOIN authors ON authors.id == messages.author_id
+        LEFT JOIN posts ON messages.msg_id == posts.msg_ref
+        LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
+        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
+        LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
+        WHERE messages.type IN ('post')
+        AND messages.is_decrypted == false
+        AND messages.hidden == false;
+    """
+    // swiftlint:enable indentation_width
 
-    init(wantPrivate: Bool, onlyFollowed: Bool) {
-        self.wantPrivate = wantPrivate
-        self.onlyFollowed = onlyFollowed
-    }
+    // swiftlint:disable indentation_width
+    /// SQL query to return the feed's keys
+    ///
+    /// This query should be as fast as possible so only required joins and where clauses where used.
+    /// The result should be the same as the number of items returned by the other two queries in this class.
+    /// The where clauses are as follows:
+    /// - Only posts and follows (contacts) are considered
+    /// - Discard private messages
+    /// - Discard hidden messages
+    /// - Only root posts
+    /// - Only follows (contacts) to people we know something about and discard follows to pubs
+    /// - Only posts and follows from user's follows or from user itsef
+    /// - Discard posts and follows from pubs
+    /// - Discard posts and follows from the future
+    ///
+    /// The result is sorted by  date
+    private let countNumberOfKeysSinceQuery = """
+        WITH
+          last_post AS (
+            SELECT
+              m.claimed_at as claimed_at,
+              mk.key as key
+            FROM
+              messages m
+              JOIN messagekeys mk ON mk.id = m.msg_id
+          )
+        SELECT
+          COUNT(*)
+        FROM
+          messages
+          JOIN authors ON authors.id = messages.author_id
+          LEFT JOIN posts ON messages.msg_id = posts.msg_ref
+          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
+          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+        WHERE
+          messages.type IN ('post')
+          AND messages.is_decrypted = false
+          AND messages.hidden = false
+          AND is_root = true
+          LIMIT
+            1
+          )
+          AND STRFTIME('%s') * 1000;
+        """
+    // swiftlint:enable indentation_width
+
+    // swiftlint:disable indentation_width
+    /// SQL query to return the feed's keyvalues
+    ///
+    /// This query should be as fast as possible and contain just the minimum data
+    /// to display it in the Home or Discover feed. The result should be the same as the number of items
+    /// returned by the other two queries in this class.
+    ///
+    /// The select clauses are as follows:
+    /// - All data from message, post, contact, tangle, messagekey, author and about of the author
+    /// - The identified of the followed author if the message is a follow (contact)
+    /// - A bool column indicating if the message has blobs
+    /// - A bool column indicating if the message has feed mentions
+    /// - A bool column indicating if the message has message mentions
+    /// - The number of replies to the message
+    ///
+    /// The where clauses are as follows:
+    /// - Only posts and follows (contacts) are considered
+    /// - Discard private messages
+    /// - Discard hidden messages
+    /// - Only root posts
+    /// - Only follows (contacts) to people we know something about and discard follows to pubs
+    /// - Only posts and follows from user's follows or from user itsef
+    /// - Discard posts and follows from pubs
+    /// - Discard posts and follows from the future
+    ///
+    /// The result is sorted by  date
+    private let fetchKeyValuesQuery = """
+        SELECT
+          messages.*,
+          posts.*,
+          contacts.*,
+          contact_about.about_id,
+          tangles.*,
+          messagekeys.*,
+          authors.*,
+          author_about.*,
+          contact_author.author AS contact_identifier,
+          EXISTS (
+            SELECT
+              1
+            FROM
+              post_blobs
+            WHERE
+              post_blobs.msg_ref = messages.msg_id
+          ) as has_blobs,
+          EXISTS (
+            SELECT
+              1
+            FROM
+              mention_feed
+            WHERE
+              mention_feed.msg_ref = messages.msg_id
+          ) as has_feed_mentions,
+          EXISTS (
+            SELECT
+              1
+            FROM
+              mention_message
+            WHERE
+              mention_message.msg_ref = messages.msg_id
+          ) as has_message_mentions,
+          (
+            SELECT
+              COUNT(*)
+            FROM
+              tangles
+            WHERE
+              root = messages.msg_id
+          ) as replies_count,
+          (
+            SELECT
+              GROUP_CONCAT(authors.author, ';')
+            FROM
+              tangles
+              JOIN messages AS tangled_message ON tangled_message.msg_id = tangles.msg_ref
+              JOIN authors ON authors.id = tangled_message.author_id
+            WHERE
+              tangles.root = messages.msg_id
+            LIMIT
+              3
+          ) as replies
+        FROM
+          messages
+          LEFT JOIN posts ON messages.msg_id = posts.msg_ref
+          LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
+          LEFT JOIN tangles ON tangles.msg_ref = messages.msg_id
+          JOIN messagekeys ON messagekeys.id = messages.msg_id
+          JOIN read_messages ON messagekeys.id = read_messages.msg_id
+          JOIN authors ON authors.id = messages.author_id
+          LEFT JOIN abouts AS author_about ON author_about.about_id = messages.author_id
+          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
+        WHERE
+          type IN ('post')
+          AND is_decrypted = false
+          AND hidden = false
+          AND is_root = true
+          AND is_read = ?
+          AND claimed_at < STRFTIME('%s') * 1000
+        ORDER BY
+          RANDOM()
+        LIMIT
+          ?;
+    """
+    // swiftlint:enable indentation_width
     
-    required init?(coder: NSCoder) {
-        wantPrivate = coder.decodeBool(forKey: "wantPrivate")
-        onlyFollowed = coder.decodeBool(forKey: "onlyFollowed")
-    }
-    
-    func encode(with coder: NSCoder) {
-        coder.encode(wantPrivate, forKey: "wantPrivate")
-        coder.encode(onlyFollowed, forKey: "onlyFollowed")
+      //  .join(read_messages, on: read_messages[colMessageID] == msgs[colMessageID])
+
+    var identity = Identity.null
+
+    override init() {
+        super.init()
     }
 
+    init(identity: Identity) {
+        super.init()
+        self.identity = identity
+    }
+
+    required init?(coder: NSCoder) {}
+    func encode(with coder: NSCoder) {}
+    
+    
+    // we don't care what the user id is in this algorithm.
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
-        let posts = Table(ViewDatabaseTableNames.posts.rawValue)
-        let authors = Table(ViewDatabaseTableNames.authors.rawValue)
-        let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
-        let read_messages = Table(ViewDatabaseTableNames.readMessages.rawValue)
+        let query = try connection.prepare(countNumberOfKeysQuery)
 
-        let colMessageRef = Expression<Int64>("msg_ref")
-        let colID = Expression<Int64>("id")
-        let colMessageID = Expression<Int64>("msg_id")
-        let colMsgType = Expression<String>("type")
-        let colDecrypted = Expression<Bool>("is_decrypted")
-        let colIsRoot = Expression<Bool>("is_root")
-        let colHidden = Expression<Bool>("hidden")
-        let colAuthorID = Expression<Int64>("author_id")
-        let colIsRead = Expression<Bool>("is_read")
-        
-        
-
-        var query = posts
-            .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
-            .join(authors, on: authors[colID] == msgs[colAuthorID])
-            .filter(colMsgType == "post")
-            .filter(colIsRoot == true)
-            .filter(colHidden == false)
-            .join(read_messages, on: read_messages[colMessageID] == msgs[colMessageID])
-            .filter(colIsRead == false)
-//            .filter(colAuthorID == userId)
-            .filter(colDecrypted == wantPrivate)
-
-        if onlyFollowed {
-            query = self.filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
-        } else {
-            query = self.filterNotFollowingPeople(query: query, connection: connection, userId: userId)
+        if let count = try query.scalar() as? Int64 {
+            return Int(truncatingIfNeeded: count)
         }
-        return try connection.scalar(query.count)
+        return 0
     }
-
-    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
-        guard let connection = database.getOpenDB() else {
-            Log.error("db is closed")
-            return []
-        }
+    
+    func countNumberOfKeys(connection: Connection) throws -> Int {
+        let query = try connection.prepare(countNumberOfKeysQuery)
         
-        //let colClaimedAt = Expression<Double>("claimed_at")
-
-        var query = self.basicRecentPostsQuery(limit: limit, wantPrivate: wantPrivate, offset: offset)
-            .order(Expression<Int>.random())
-
-        if onlyFollowed {
-            query = filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
-        } else {
-            query = filterNotFollowingPeople(query: query, connection: connection, userId: userId)
+        if let count = try query.scalar() as? Int64 {
+            return Int(truncatingIfNeeded: count)
         }
-
-        let feedOfMsgs = try self.mapQueryToKeyValue(query: query, database: database)
-
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs, connection: connection)
+        return 0
     }
-
+    
+    // because we sort randomly, there is no new message since 'x message'
     func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
-        let posts = Table(ViewDatabaseTableNames.posts.rawValue)
-        let authors = Table(ViewDatabaseTableNames.authors.rawValue)
-        let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
-
-        let colMessageRef = Expression<Int64>("msg_ref")
-        let colID = Expression<Int64>("id")
-        let colMessageID = Expression<Int64>("msg_id")
-        let colMsgType = Expression<String>("type")
-        let colDecrypted = Expression<Bool>("is_decrypted")
-        let colIsRoot = Expression<Bool>("is_root")
-        let colHidden = Expression<Bool>("hidden")
-        let colAuthorID = Expression<Int64>("author_id")
-
-        // swiftlint:disable indentation_width
-        var query = posts
-            .join(msgs, on: msgs[colMessageID] == posts[colMessageRef])
-            .join(authors, on: authors[colID] == msgs[colAuthorID])
-            .filter(colMsgType == "post")
-            .filter(colIsRoot == true)
-            .filter(colHidden == false)
-            .filter(colDecrypted == wantPrivate)
-            .filter(
-                Expression(
-                    literal: """
-                    messages.claimed_at > (
-                      SELECT
-                        m.claimed_at + 1
-                      FROM
-                        messages m
-                        JOIN messagekeys mk ON mk.id = m.msg_id
-                      WHERE
-                        mk.key = '\(message)'
-                      LIMIT
-                        1
-                    )
-                    """
-                )
-            )
-        // swiftlint:enable indentation_width
-
-        if onlyFollowed {
-            query = filterOnlyFollowedPeople(query: query, connection: connection, userId: userId)
-        } else {
-            query = filterNotFollowingPeople(query: query, connection: connection, userId: userId)
-        }
-        return try connection.scalar(query.count)
+        return 0
     }
-
-    private func basicRecentPostsQuery(
-        limit: Int,
-        wantPrivate: Bool,
-        onlyRoots: Bool = true,
-        offset: Int? = nil
-    ) -> Table {
-        let authors = Table(ViewDatabaseTableNames.authors.rawValue)
-        let posts = Table(ViewDatabaseTableNames.posts.rawValue)
-        let msgs = Table(ViewDatabaseTableNames.messages.rawValue)
-        let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
-        let tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
-        let abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
-        let read_messages = Table(ViewDatabaseTableNames.readMessages.rawValue)
-        let aboutAuthor = abouts.alias("author_about")
-
-        let colMessageRef = Expression<Int64>("msg_ref")
-
-        let colID = Expression<Int64>("id")
-        let colMessageID = Expression<Int64>("msg_id")
-        let colMsgType = Expression<String>("type")
-        let colClaimedAt = Expression<Double>("claimed_at")
-        let colDecrypted = Expression<Bool>("is_decrypted")
-        let colIsRoot = Expression<Bool>("is_root")
-        let colHidden = Expression<Bool>("hidden")
-        let colAboutID = Expression<Int64>("about_id")
-        let colAuthorID = Expression<Int64>("author_id")
-        let colIsRead = Expression<Bool>("is_read")
-
-        //.join(read_messages, on: read_messages[colMessageID] == msgs[colMessageID])
-        //.filter(colIsRead == false)
-
-        var query = msgs
-            .join(posts, on: posts[colMessageRef] == msgs[colMessageID])
-            .join(.leftOuter, tangles, on: tangles[colMessageRef] == msgs[colMessageID])
-            .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
-            .join(authors, on: authors[colID] == msgs[colAuthorID])
-            .join(.leftOuter, aboutAuthor, on: aboutAuthor[colAboutID] == msgs[colAuthorID])
-            .filter(colMsgType == "post")           // only posts (no votes or contact messages)
-            .filter(colDecrypted == wantPrivate)
-            .filter(colHidden == false)
-            .filter(colClaimedAt <= Date().millisecondsSince1970)
-            .limit(limit)
-            //.order(Expression<Int>.random())
-
-        if let offset = offset {
-            //query = query.limit(limit, offset: offset)
-        } else {
-            //query = query.limit(limit)
-        }
-        
-        
-        
-        if onlyRoots {
-            query = query.filter(colIsRoot == true)   // only thread-starting posts (no replies)
-        }
-        return query
+    
+    func countNumberOfKeys(connection: Connection, since message: MessageIdentifier) throws -> Int {
+        return 0
     }
+    
 
-    private func filterOnlyFollowedPeople(query: Table, connection: Connection, userId: Int64) -> Table {
-        query
-            .filter(
-                Expression(literal: """
-                ((authors.author IN (SELECT followed_authors.author FROM contacts
-                JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
-                WHERE contacts.author_id = \(userId) AND contacts.state == 1))
-                OR authors.id = \(userId))
-                """
-                )
-            )
-    }
-
-    private func filterNotFollowingPeople(query: Table, connection: Connection, userId: Int64) -> Table {
-        query
-            .filter(
-                Expression(literal: """
-                (authors.author NOT IN
-                    (SELECT followed_and_blocked_authors.author FROM contacts
-                    JOIN authors AS followed_and_blocked_authors ON contacts.contact_id == followed_and_blocked_authors.id
-                    WHERE contacts.author_id = \(userId)
-                    AND (contacts.state == -1 OR contacts.state == 1))
-                )
-                AND authors.id != \(userId)
-                """
-                )
-            )
-    }
-
-    private func mapQueryToKeyValue(query: Table, database: ViewDatabase) throws -> [KeyValue] {
+    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?, is_read: Bool?) throws -> [KeyValue] {
         guard let connection = database.getOpenDB() else {
             Log.error("db is closed")
             return []
         }
         
-        return try connection.prepare(query).compactMap { keyValueRow in
-            return try KeyValue(row: keyValueRow, database: database, hasMentionColumns: false, hasReplies: false)
+        let is_read: Bool = is_read ?? false
+        let query = try connection.prepare(fetchKeyValuesQuery)
+        let bindings: [Binding?] = [is_read, limit]
+        let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
+            try buildKeyValue(keyValueRow: keyValueRow, database: database)
         }
+        var compactKeyValues = keyValues.compactMap { $0 }
+        
+        //if we don't have any unread messages we get some already read messages to display. 
+        if compactKeyValues.count < limit && is_read == false {
+            compactKeyValues += try fetchKeyValues(database: database, userId: userId, limit: limit - compactKeyValues.count, offset: offset, is_read: true)
+        }
+        return compactKeyValues
     }
 
-    private func addNumberOfPeopleReplied(msgs: [KeyValue], connection: Connection) throws -> KeyValues {
-        let messages = Table(ViewDatabaseTableNames.messages.rawValue)
-        let tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
-        let authors = Table(ViewDatabaseTableNames.authors.rawValue)
-        let abouts = Table(ViewDatabaseTableNames.abouts.rawValue)
-        let colName = Expression<String?>("name")
-        let colImage = Expression<BlobIdentifier?>("image")
-        let colDescr = Expression<String?>("description")
-        let colAuthor = Expression<Identity>("author")
-        let colMsgType = Expression<String>("type")
-        let colMessageID = Expression<Int64>("msg_id")
-        let colMessageRef = Expression<Int64>("msg_ref")
-        let colAuthorID = Expression<Int64>("author_id")
-        let colID = Expression<Int64>("id")
-        let colRoot = Expression<Int64>("root")
-        let colAboutID = Expression<Int64>("about_id")
-
-        var keyValues: KeyValues = []
-        for var message in msgs {
-            let msgID = try self.msgID(of: message.key, connection: connection)
-
-            let replies = tangles
-                .select(colAuthorID.distinct, colAuthor, colName, colDescr, colImage)
-                .join(messages, on: messages[colMessageID] == tangles[colMessageRef])
-                .join(authors, on: messages[colAuthorID] == authors[colID])
-                .join(abouts, on: authors[colID] == abouts[colAboutID])
-                .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue)
-                .filter(colRoot == msgID)
-
-            let count = try connection.scalar(replies.count)
-
-            var abouts: [About] = []
-            for replyRow in try connection.prepare(replies.limit(3, offset: 0)) {
-                let about = About(
-                    about: replyRow[colAuthor],
-                    name: replyRow[colName],
-                    description: replyRow[colDescr],
-                    imageLink: replyRow[colImage]
-                )
-                abouts += [about]
-            }
-
-            message.metadata.replies.count = count
-            message.metadata.replies.abouts = abouts
-            keyValues.append(message)
-        }
-        return keyValues
-    }
-
-    private func msgID(of key: MessageIdentifier, make: Bool = false, connection: Connection) throws -> Int64 {
-        let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
-        let colID = Expression<Int64>("id")
-        let colKey = Expression<MessageIdentifier>("key")
-        let colHashedKey = Expression<String>("hashed")
-
-        if let msgKeysRow = try connection.pluck(msgKeys.filter(colKey == key)) {
-            return msgKeysRow[colID]
-        }
-
-        guard make else { throw ViewDatabaseError.unknownMessage(key) }
-
-        return try connection.run(msgKeys.insert(colKey <- key, colHashedKey <- key.sha256hash))
+    private func buildKeyValue(keyValueRow: Row, database: ViewDatabase) throws -> KeyValue? {
+        try KeyValue(row: keyValueRow, database: database)
     }
 }
