@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Opa";
@@ -32,6 +31,7 @@
 "Text.startedFollowing" = "{{somebody}} empezó a seguir a";
 "Text.stoppedFollowing" = "{{somebody}} dejo de seguir a";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "Mostrame en el directorio";
 "Text.showMeInUserDirectory" = "Mostrame en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultame en el directorio de usuarios";
@@ -134,6 +134,7 @@
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "comienza a usar Planetary";
 "Text.startUsingPlanetaryTitle" = "Comienza a usar Planetary";
+"Text.dismissAndStartUsingPlanetary" = "Dismiss and start using Planetary";
 "Text.percentComplete" = "completado";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 "Text.areYouSure" = "¿Estás seguro?";

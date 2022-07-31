@@ -1,6 +1,6 @@
 //
-//  ContactView.swift
-//  FBTT
+//  ExtendedAboutView.swift
+//  Planetary
 //
 //  Created by Martin on 4/18/19.
 //  Copyright © 2019 Verse Communications Inc. All rights reserved.
@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SkeletonView
 
-class ContactView: KeyValueView {
+class ExtendedAboutView: KeyValueView {
 
     let imageView: AvatarImageView = {
         let view = AvatarImageView(borderColor: .primaryAction, borderWidth: 2)
@@ -69,17 +69,8 @@ class ContactView: KeyValueView {
     let labelStackView: UIStackView = {
         let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
-        stackView.alignment = .leading
+        stackView.alignment = .fill
         stackView.spacing = 8
-        stackView.isSkeletonable = true
-        return stackView
-    }()
-    
-    let nameAndIdentityStackView: UIStackView = {
-        let stackView = UIStackView.forAutoLayout()
-        stackView.axis = .vertical
-        stackView.alignment = .leading
-        stackView.spacing = 5
         stackView.isSkeletonable = true
         return stackView
     }()
@@ -91,7 +82,11 @@ class ContactView: KeyValueView {
     }()
 
     let followButton: FollowButton = {
-        let followButton = FollowButton()
+        let followButton = FollowButton(
+            displayTitle: false,
+            followingImage: UIImage.verse.buttonBigFollowing,
+            followImage: UIImage.verse.buttonBigFollow
+        )
         followButton.isSkeletonable = true
         return followButton
     }()
@@ -103,33 +98,40 @@ class ContactView: KeyValueView {
         
         addSubview(labelStackView)
 
-        Layout.fillTopLeft(
+        Layout.fillLeft(
             of: self,
             with: self.imageView,
             respectSafeArea: false
         )
-        
+
+        Layout.center(followButton, in: followButtonContainer)
+        followButton.trailingAnchor.constraint(equalTo: followButtonContainer.trailingAnchor).isActive = true
+        followButton.leadingAnchor.constraint(equalTo: followButtonContainer.leadingAnchor).isActive = true
+
+        let nameAndIdentityStackView = UIStackView.forAutoLayout()
+        nameAndIdentityStackView.axis = .vertical
+        nameAndIdentityStackView.alignment = .leading
+        nameAndIdentityStackView.spacing = 5
+        nameAndIdentityStackView.isSkeletonable = true
+        nameAndIdentityStackView.setContentHuggingPriority(.defaultLow, for: .horizontal)
         nameAndIdentityStackView.addArrangedSubview(nameLabel)
         nameAndIdentityStackView.addArrangedSubview(contactIdentity)
 
+        let nameIdentityAndFollowButtonStackView = UIStackView.forAutoLayout()
+        nameIdentityAndFollowButtonStackView.axis = .horizontal
+        nameIdentityAndFollowButtonStackView.spacing = 5
+        nameIdentityAndFollowButtonStackView.isSkeletonable = true
+        nameIdentityAndFollowButtonStackView.distribution = .fill
+        nameIdentityAndFollowButtonStackView.addArrangedSubview(nameAndIdentityStackView)
+        nameIdentityAndFollowButtonStackView.addArrangedSubview(followButtonContainer)
+
         labelStackView.constrainLeading(toTrailingOf: imageView, constant: Layout.horizontalSpacing)
         labelStackView.constrainTrailingToSuperview()
-        labelStackView.pinTopToSuperview()
-        labelStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Layout.verticalSpacing).isActive = true
-        labelStackView.addArrangedSubview(nameAndIdentityStackView)
+        labelStackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+        labelStackView.addArrangedSubview(nameIdentityAndFollowButtonStackView)
         followerCountLabel.setContentHuggingPriority(.required, for: .vertical)
         labelStackView.addArrangedSubview(followerCountLabel)
         labelStackView.addArrangedSubview(hashtagsLabel)
-        
-        let (_, _, bottomConstraint, _) = Layout.fill(
-            view: followButtonContainer,
-            with: followButton,
-            insets: UIEdgeInsets(top: 2, left: 0, bottom: 0, right: 2),
-            respectSafeArea: false
-        )
-        bottomConstraint.priority = .required
-        
-        labelStackView.addArrangedSubview(followButtonContainer)
 
         hashtagsLabel.delegate = self
 
@@ -150,9 +152,8 @@ class ContactView: KeyValueView {
         hashtagsLabel.text = "#hashta #hashta #hashta" // no letters below the baseline
         contactIdentity.text = "@abc123abc123"
         labelStackView.arrangedSubviews.forEach { $0.isHidden = false }
-        
-        // hack because SkeletonView is being weird
-        hashtagsLabel.layer.cornerRadius = 7
+        hashtagsLabel.isHidden = true
+        contactIdentity.isHidden = false
 
         showAnimatedSkeleton()
         layoutSkeletonIfNeeded()
@@ -166,7 +167,7 @@ class ContactView: KeyValueView {
         layoutSkeletonIfNeeded()
     }
     
-    func update(with identity: Identity, about: About?) {
+    func update(with identity: Identity, about: About?, star: Star? = nil) {
         if let about = about {
             self.nameLabel.text = about.nameOrIdentity
             self.imageView.set(image: about.image)
@@ -177,6 +178,9 @@ class ContactView: KeyValueView {
         } else {
             self.nameLabel.text = identity
             self.imageView.set(image: nil)
+            self.contactIdentity.isHidden = true
+            nameLabel.hideSkeleton()
+            imageView.hideSkeleton()
         }
         if identity == Identity.null {
             followButton.isHidden = false
@@ -191,15 +195,27 @@ class ContactView: KeyValueView {
         } else {
             followButton.isHidden = true
         }
+        followButton.star = star
     }
-    
-    func update(socialStats: SocialStats) {
+
+    /// Show the social stats (number of followers and follows) in this cell.
+    /// If nil, it will show a "This user seems to be outside your network" label.
+    func update(socialStats: SocialStats?) {
+        let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
+        let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
+
+        guard let socialStats = socialStats else {
+            let attributedString = NSMutableAttributedString(
+                string: Text.userOusideNetwork.text,
+                attributes: secondaryColor
+            )
+            followerCountLabel.attributedText = attributedString
+            followerCountLabel.hideSkeleton()
+            return
+        }
         let numberOfFollowers = socialStats.numberOfFollowers
         let numberOfFollows = socialStats.numberOfFollows
         let string = Text.followStats.text
-
-        let primaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.default]
-        let secondaryColor = [NSAttributedString.Key.foregroundColor: UIColor.text.detail]
 
         let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
         attributedString.replaceCharacters(
@@ -258,7 +274,7 @@ class ContactView: KeyValueView {
     }
 }
 
-extension ContactView: UITextViewDelegate {
+extension ExtendedAboutView: UITextViewDelegate {
 
     func textView(
         _ textView: UITextView,

@@ -305,9 +305,8 @@ class GoBotOrderedTests: XCTestCase {
         }
 
         let ex = self.expectation(description: "\(#function) refresh")
-        GoBotOrderedTests.shared.refresh(load: .short, queue: .main) {
-            err, _, _ in
-            XCTAssertNil(err, "refresh error!")
+        GoBotOrderedTests.shared.refresh(load: .short, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get())
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -380,9 +379,8 @@ class GoBotOrderedTests: XCTestCase {
         let afterUnsupported = GoBotOrderedTests.shared.testingPublish(as: "denise", content: Post(text: "after lots of unsupported"))
 
         var ex = self.expectation(description: "\(#function) 1")
-        GoBotOrderedTests.shared.refresh(load: .long, queue: .main) {
-            err, _, _ in
-            XCTAssertNil(err, "refresh error!")
+        GoBotOrderedTests.shared.refresh(load: .long, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get(), "view refresh failed")
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)

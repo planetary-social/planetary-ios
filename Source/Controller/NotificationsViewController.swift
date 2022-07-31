@@ -340,10 +340,17 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
 private class HeaderView: UITableViewHeaderFooterView {
 
     private lazy var button: UIButton = {
-        let view = UIButton.forAutoLayout()
-        view.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-        view.setTitleColor(UIColor.primaryAction, for: .normal)
-        view.setTitle(Text.Notifications.markAllAsRead.text, for: .normal)
+        let attributeContainer = AttributeContainer([
+            .font: UIFont.systemFont(ofSize: 15, weight: .semibold)
+        ])
+        let attributedTitle = AttributedString(
+            Text.Notifications.markAllAsRead.text,
+            attributes: attributeContainer
+        )
+        var configuration = UIButton.Configuration.plain()
+        configuration.attributedTitle = attributedTitle
+        let view = UIButton(configuration: configuration)
+        view.useAutoLayout()
         view.addTarget(
             self,
             action: #selector(clearNotificationsButtonTouchUpInside),

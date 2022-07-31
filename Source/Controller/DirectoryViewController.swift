@@ -111,8 +111,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
     }
 
     private func load(completion: @escaping () -> Void) {
-        Bots.current.abouts {
-            [weak self] abouts, error in
+        Bots.current.abouts { [weak self] abouts, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.allPeople = abouts
@@ -159,7 +158,8 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
         tableView.reloadData()
     }
 
-    @objc func refreshControlValueChanged(control: UIRefreshControl) {
+    @objc
+    func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
         self.load {
             control.endRefreshing()
@@ -167,7 +167,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     /// Loads the message with the given id from the database and displays it if it's still valid.
@@ -214,7 +214,7 @@ extension DirectoryViewController: UISearchResultsUpdating, UISearchBarDelegate 
 
     func updateSearchResults(for searchController: UISearchController) {
         Analytics.shared.trackDidTapSearchbar(searchBarName: "directory")
-        self.searchFilter = searchController.searchBar.text ?? ""
+        self.searchFilter = searchController.searchBar.text?.trimmingCharacters(in: .whitespaces) ?? ""
     }
 
     // These two functions are implemented to avoid a bug where the initial
@@ -283,16 +283,16 @@ extension DirectoryViewController: UITableViewDataSource {
         
         switch section {
         case .communityPubs:
-            let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
+            let cell = dequeueExtendedAboutTableViewCell(in: tableView)
             let star = communityPubs[indexPath.row]
             if let about = self.allPeople.first(where: { $0.identity == star.feed }) {
-                cell.communityView.update(with: star, about: about)
+                cell.aboutView.update(with: star.feed, about: about, star: star)
             } else {
-                cell.communityView.update(with: star, about: nil)
+                cell.aboutView.update(with: star.feed, about: nil, star: star)
             }
             return cell
         case .users:
-            let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+            let cell = dequeueExtendedAboutTableViewCell(in: tableView)
             cell.aboutView.update(with: searchFilter, about: nil)
             return cell
         case .posts:
@@ -312,18 +312,26 @@ extension DirectoryViewController: UITableViewDataSource {
             let about = self.people[indexPath.row]
             let isCommunity = communityPubIdentities.contains(about.identity)
             if isCommunity {
-                let cell = (tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className) as? CommunityTableViewCell) ?? CommunityTableViewCell()
+                let cell = dequeueExtendedAboutTableViewCell(in: tableView)
                 if let star = communityPubs.first(where: { $0.feed == about.identity }) {
-                    cell.communityView.update(with: star, about: about)
+                    cell.aboutView.update(with: star.feed, about: about, star: star)
                 }
                 return cell
             } else {
-                let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+                let cell = dequeueExtendedAboutTableViewCell(in: tableView)
                 let about = self.people[indexPath.row]
                 cell.aboutView.update(with: about.identity, about: about)
                 return cell
             }
         }
+    }
+
+    private func dequeueExtendedAboutTableViewCell(in tableView: UITableView) -> ExtendedAboutTableViewCell {
+        let dequeuedCell = tableView.dequeueReusableCell(withIdentifier: ExtendedAboutTableViewCell.className)
+        if let extendedAboutTableViewCell = dequeuedCell as? ExtendedAboutTableViewCell {
+            return extendedAboutTableViewCell
+        }
+        return ExtendedAboutTableViewCell()
     }
 }
 

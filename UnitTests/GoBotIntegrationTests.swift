@@ -90,8 +90,8 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         
         let refreshExpectation = self.expectation(description: "refresh completed")
-        sut.refresh(load: .long, queue: .main) { error, _, _ in
-            XCTAssertNil(error)
+        sut.refresh(load: .long, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get())
             refreshExpectation.fulfill()
         }
         waitForExpectations(timeout: 10, handler: nil)
