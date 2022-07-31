@@ -1168,7 +1168,7 @@ class ViewDatabase {
 
     // MARK: recent
     func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> KeyValues {
-        return try strategy.fetchKeyValues(database: self, userId: currentUserID, limit: limit, offset: offset)
+        return try strategy.fetchKeyValues(database: self, userId: currentUserID, limit: limit, offset: offset, is_read: false)
     }
 
     func numberOfRecentPosts(with strategy: FeedStrategy, since message: MessageIdentifier) throws -> Int {
