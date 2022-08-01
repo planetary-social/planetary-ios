@@ -58,8 +58,8 @@
 "Text.seeMore" = "Więcej";
 "Text.likesThis" = "lubi to";
 "Text.dislikesThis" = "nie lubi tego";
-"Text.block" = "Zablokuj";
-"Text.blocked" = "Zablokowani";
+"Text.block" = "Ignore";
+"Text.blocked" = "Ignored";
 "Text.deleteSecretAndIdentity" = "Usuń ten sekret i tożsamość";
 "Text.follow" = "Obserwuj";
 "Text.following" = "Obserwowani";
@@ -80,8 +80,8 @@
 "Text.shareThisMessageText" = "{{ who }} opublikował: {{ what }} {{ link }}";
 "Text.addFriend" = "Dodaj znajomego";
 "Text.removeFriend" = "Usuń ze znajomych";
-"Text.blockUser" = "Zablokuj tego użytkownika";
-"Text.unblockUser" = "Odblokuj tego użytkownika";
+"Text.blockUser" = "Ignore this user";
+"Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Zgłoś tę wiadomość";
 "Text.reportUser" = "Zgłoś użytkownika";
 "Text.noReplies" = "Bez odpowiedzi";
@@ -140,12 +140,12 @@
 "Text.areYouSure" = "Czy na pewno?";
 "Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
-"Blocking.alertTitle" = "Czy na pewno chcesz zablokować {{ name }}? You will no longer see each other's content or be able to contact each other. Nie będziecie już widzieć wzajemnych treści ani nie będziecie mogli się ze sobą kontaktować.";
-"Blocking.buttonTitle" = "Tak, zablokuj {{ name }}";
-"Blocking.blockedUsers" = "Zablokowani Użytkownicy";
-"Blocking.footer" = "Zablokowani użytkownicy nie mogą widzieć Twoich postów ani kontaktować się z Tobą, a przed wyświetleniem ich postów lub skontaktowaniem się z nimi musisz ich odblokować. Wyświetlenie użytkowników i ich treści po odblokowaniu może zająć trochę czasu.";
+"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
+"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
+"Blocking.blockedUsers" = "Ignored Users";
+"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
 "Blocking.thisUser" = "ten użytkownik";
-"Blocking.usersYouHaveBlocked" = "Użytkownicy, których zablokowałeś";
+"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
 
 "ImagePicker.camera" = "Aparat";
 "ImagePicker.cameraNotAvailable" = "Aparat nie jest dostępny na tym urządzeniu";
