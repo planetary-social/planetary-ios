@@ -20,7 +20,8 @@ class ContactReplyView: KeyValueView {
         let colorView = UIImageView.forAutoLayout()
         colorView.image = UIImage(named: "Thread")
         colorView.contentMode = .scaleToFill
-        Layout.fill(view: backgroundView, with: colorView)
+        let (_, _, bottomConstraint, _) = Layout.fill(view: backgroundView, with: colorView)
+        bottomConstraint.priority = .required
         return backgroundView
     }()
 
@@ -44,7 +45,7 @@ class ContactReplyView: KeyValueView {
         Layout.fillSouth(of: bottomBorder, with: self.degrade)
 
         Layout.fillSouth(of: degrade, with: bottomSeparator)
-        bottomSeparator.pinBottomToSuperviewBottom()
+        bottomSeparator.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
         isSkeletonable = true
     }
@@ -57,10 +58,14 @@ class ContactReplyView: KeyValueView {
         super.reset()
         self.contactView.reset()
         self.degrade.heightConstraint?.constant = 0
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     override func update(with keyValue: KeyValue) {
         self.contactView.update(with: keyValue)
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 }
 
@@ -69,6 +74,6 @@ extension ContactReplyView {
     /// Returns a CGFloat suitable to be used as a `UITableView.estimatedRowHeight` or
     /// `UITableViewDelegate.estimatedRowHeightAtIndexPath()`.
     static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
-        158
+        2
     }
 }

@@ -128,6 +128,8 @@ class FakeBot: Bot {
 
     func markMessageAsRead(_ message: MessageIdentifier) { }
 
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) { }
+
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
 
     required init() {}
@@ -187,7 +189,7 @@ class FakeBot: Bot {
     func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
         queue.async {
-            completion(nil, 0, false)
+            completion(.success(true), 0)
         }
     }
 

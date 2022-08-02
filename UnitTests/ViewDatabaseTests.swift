@@ -663,44 +663,114 @@ class ViewDatabaseTests: XCTestCase {
     
     // MARK: - Bans
     
-    func testFillBannedMessage() throws {
-        XCTExpectFailure()
-        
+    /// Verifies that applyBanList deletes banned messages
+    func testApplyBanListBansExistingMessage() throws {
         // Arrange
         let startingMessageCount = try vdb.messageCount()
+        let bannedAuthor = "@banme"
         let testMessage = KeyValueFixtures.post(
             receivedSeq: 800,
-            author: currentUser
+            author: bannedAuthor
         )
-        
-        // Act
-        let authors = try vdb.applyBanList([testMessage.key.sha256hash])
         try vdb.fillMessages(msgs: [testMessage])
         
+        // Act
+        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([testMessage.key.sha256hash])
+        
         // Assert
-        XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
-        XCTAssertEqual(authors, [currentUser])
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
+        XCTAssertEqual(bannedAuthors, [])
+        XCTAssertEqual(unbannedAuthors, [])
         XCTAssertThrowsError(try vdb.post(with: testMessage.key))
     }
     
-    func testFillBannedAuthor() throws {
-        XCTExpectFailure()
-        
+    /// Verifies that applyBanList deletes all messages from a banned author and marks the author as banned.
+    func testApplyBanListBansExistingAuthor() throws {
         // Arrange
+        let bannedAuthor = "@banme"
         let startingMessageCount = try vdb.messageCount()
         let testMessage = KeyValueFixtures.post(
             receivedSeq: 800,
-            author: currentUser
+            author: bannedAuthor
+        )
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Act
+        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([bannedAuthor.sha256hash])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
+        XCTAssertEqual(bannedAuthors, [bannedAuthor])
+        XCTAssertEqual(unbannedAuthors, [])
+        XCTAssertThrowsError(try vdb.post(with: testMessage.key))
+    }
+    
+    /// Verifies that fillMessages will not insert messages that have been banned.
+    func testFillBannedMessage() throws {
+        // Arrange
+        let bannedAuthor = "@banme"
+        let startingMessageCount = try vdb.messageCount()
+        let testMessage = KeyValueFixtures.post(
+            receivedSeq: 800,
+            author: bannedAuthor
         )
         
         // Act
-        let authors = try vdb.applyBanList([currentUser.sha256hash])
+        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([testMessage.key.sha256hash])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
+        XCTAssertEqual(bannedAuthors, [])
+        XCTAssertEqual(unbannedAuthors, [])
+        XCTAssertThrowsError(try vdb.post(with: testMessage.key))
+    }
+    
+    /// Verifies that fillMessages will not insert messages from an author that has been banned.
+    func testFillBannedAuthor() throws {
+        // Arrange
+        let startingMessageCount = try vdb.messageCount()
+        let bannedAuthor = "@banme"
+        let testMessage = KeyValueFixtures.post(
+            receivedSeq: 800,
+            author: bannedAuthor
+        )
+        
+        // Act
+        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([bannedAuthor.sha256hash])
+        try vdb.fillMessages(msgs: [testMessage])
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
+        XCTAssertEqual(bannedAuthors, [])
+        XCTAssertEqual(unbannedAuthors, [])
+        XCTAssertThrowsError(try vdb.post(with: testMessage.key))
+        XCTAssertNotNil(try vdb.authorID(of: bannedAuthor))
+    }
+    
+    func testUnbanAuthor() throws {
+        // Arrange
+        let startingMessageCount = try vdb.messageCount()
+        let bannedAuthor = "@banme"
+        let testMessage = KeyValueFixtures.post(
+            receivedSeq: 800,
+            author: bannedAuthor
+        )
+        
+        // Start out with the author banned
+        try vdb.fillMessages(msgs: [testMessage])
+        _ = try vdb.applyBanList([bannedAuthor.sha256hash])
+
+        // Act
+        // unban
+        _ = try vdb.applyBanList([])
+        // Simulate-re-replication
         try vdb.fillMessages(msgs: [testMessage])
         
         // Assert
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
-        XCTAssertEqual(authors, [currentUser])
-        XCTAssertThrowsError(try vdb.post(with: testMessage.key))
+        XCTAssertNotNil(try vdb.post(with: testMessage.key))
+        XCTAssertNotNil(try vdb.authorID(of: bannedAuthor))
     }
 }
 

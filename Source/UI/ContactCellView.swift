@@ -29,7 +29,7 @@ class ContactCellView: KeyValueView {
 
     private lazy var headerView = ContactHeaderView()
 
-    private lazy var contactView = ContactView()
+    private lazy var aboutView = ExtendedAboutView()
 
     var textViewTopConstraint = NSLayoutConstraint()
 
@@ -51,20 +51,18 @@ class ContactCellView: KeyValueView {
 
         Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
 
-        let (topConstraint, _, _) = Layout.fillTop(
-            of: self,
-            with: self.contactView,
+        let (topConstraint, _, _, _) = Layout.fill(
+            view: self,
+            with: self.aboutView,
             insets: UIEdgeInsets(
                 top: self.textViewTopInset,
                 left: Layout.postSideMargins,
-                bottom: 0,
+                bottom: -verticalSpace,
                 right: -Layout.postSideMargins
             ),
             respectSafeArea: false
         )
         self.textViewTopConstraint = topConstraint
-
-        contactView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
         isSkeletonable = true
     }
@@ -83,7 +81,7 @@ class ContactCellView: KeyValueView {
     override func reset() {
         super.reset()
         currentTask?.cancel()
-        contactView.reset()
+        aboutView.reset()
         headerView.reset()
         hideSkeleton()
     }
@@ -104,7 +102,7 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
-                await self?.contactView.update(with: identity, about: about)
+                await self?.aboutView.update(with: identity, about: about)
                 await self?.headerView.update(with: keyValue)
                 
                 var stats = SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
@@ -114,7 +112,7 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
-                await self?.contactView.update(socialStats: stats)
+                await self?.aboutView.update(socialStats: stats)
                 
                 var hashtags: [Hashtag] = []
                 do {
@@ -123,7 +121,7 @@ class ContactCellView: KeyValueView {
                     Log.optional(error)
                 }
                 try Task.checkCancellation()
-                await self?.contactView.update(hashtags: hashtags)
+                await self?.aboutView.update(hashtags: hashtags)
             }
         } else {
             return

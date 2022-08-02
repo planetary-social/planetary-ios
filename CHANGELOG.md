@@ -6,12 +6,25 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
+
+## [1.2.5] 2022-08-01
+
+- Fixed a race condition that could prevent blobs from loading. #767
+- Add a more obvious dismissal button to the migration screen. #765
+- Added a pressed state to the Mark all notifications as read button. #761
+- Updated the Directory to show useful information like the number of followers and hashtags the user has used recently.
+- Updated the design of follow messages to display a smaller follow button. #743
+- Fixed a case where tapping the Reset Forked Feed Protection button would cause the app to hang. #758
+
+## [1.2.4] 2022-07-18
 
 - Added queer.family pub #726
 - Max-Rai contributed a fix to the onboarding layout for smaller iOS screen sizes #703 (thanks @Max-Rai!)
-- Show the number of unread notifications in the application badge
+- Show the number of unread notifications in the application badge #725
 - Fixed the shadow on the new post toast message. #741
+- Fixed an issue where follow message cells could be too tall. #708
+- Add help buttons to the main tabs with basic descriptions info about the tab. #740
 - Fixed an issue where searching for hashtags wouldn't work if you included the hashtag character in your query. #736
 
 ## [1.2.3] 2022-07-11

@@ -205,14 +205,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 
     private func updateApplicationBadgeNumber() {
-        Task {
-            do {
-                let count = try await Bots.current.numberOfUnreadReports()
-                UIApplication.shared.applicationIconBadgeNumber = count
-                AppController.shared.mainViewController?.setNotificationsTabBarIcon()
-            } catch {
-                Log.optional(error)
-            }
-        }
+        let operation = CountUnreadNotificationsOperation()
+        AppController.shared.operationQueue.addOperation(operation)
     }
 }

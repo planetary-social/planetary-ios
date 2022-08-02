@@ -33,7 +33,7 @@ enum ViewDatabaseTableNames: String {
     case channels
     case channelsAssigned = "channel_assignments"
     case contacts
-    case bannedContent = "banned_content"
+    case banList = "ban_list"
     case posts
     case postBlobs = "post_blobs"
     case privates
@@ -69,13 +69,14 @@ class ViewDatabase {
     // All messages in the network should be as read if true. This is to prevent a user that runs into
     // the migration that creates the read_messages table to have all the messages as unread. It cannot be
     // done during migration as we need to know the user id
-    private var needsToSetAllMessagesAsRead = false
+    var needsToSetAllMessagesAsRead = false
     
     // MARK: Tables and fields
     let colID = Expression<Int64>("id")
     
     let authors = Table(ViewDatabaseTableNames.authors.rawValue)
     let colAuthor = Expression<Identity>("author")
+    let colBanned = Expression<Bool>("banned")
     
     let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
     let colKey = Expression<MessageIdentifier>("key")
@@ -106,7 +107,8 @@ class ViewDatabase {
     let colDescr = Expression<String?>("description")
     let colPublicWebHosting = Expression<Bool?>("publicWebHosting")
     
-    let currentBannedContent = Table(ViewDatabaseTableNames.bannedContent.rawValue)
+    let banList = Table(ViewDatabaseTableNames.banList.rawValue)
+    let colHash = Expression<String>("hash")
     // colID
     let colIDType = Expression<Int>("type")
     
@@ -231,7 +233,7 @@ class ViewDatabase {
         self.currentUser = user
         self.currentUserID = try self.authorID(of: user, make: true)
 
-        try setAllMessagesAsReadIfNeeded(on: db)
+        try setAllMessagesAsReadIfNeeded()
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -278,34 +280,7 @@ class ViewDatabase {
                 db.userVersion = 13
             }
             if db.userVersion == 13 {
-                try db.execute(
-                    """
-                        CREATE INDEX channel_assignments_idx_0039db ON channel_assignments(msg_ref);
-                        CREATE INDEX channel_assignments_idx_e349b0cd ON channel_assignments(chan_ref, msg_ref);
-                        CREATE INDEX pubs_index ON pubs(msg_ref);
-                        CREATE INDEX tangles_roots_and_msg_refs ON tangles(root, msg_ref);
-                        CREATE INDEX posts_root_mesgrefs ON posts(is_root, msg_ref);
-                        CREATE INDEX mention_feed_author_refs on mention_feed (feed_id, msg_ref);
-                        CREATE INDEX contacts_msg_ref ON contacts(msg_ref);
-                        CREATE INDEX contacts_state_and_author ON contacts(state, author_id);
-                        CREATE INDEX channel_assignments_msg_refs ON channel_assignments(msg_ref);
-                        CREATE INDEX channel_assignments_chan_ref_and_msg_ref ON channel_assignments(chan_ref, msg_ref);
-                        CREATE INDEX messages_idx_type_claimed_at ON messages(type, claimed_at);
-                        CREATE INDEX messages_idx_author_received ON messages(author_id, received_at DESC);
-                        CREATE INDEX messages_idx_author_type_sequence ON messages(author_id, type, sequence DESC);
-                        CREATE INDEX messages_idx_is_decrypted_hidden_claimed_at
-                            ON messages(is_decrypted, hidden, claimed_at);
-                        CREATE INDEX messages_idx_type_is_decrypted_hidden_author
-                            ON messages(type, is_decrypted, hidden, author_id);
-                        CREATE INDEX messages_idx_type_is_decrypted_hidden_claimed_at
-                            ON messages(type, is_decrypted, hidden, claimed_at);
-                        CREATE INDEX messages_idx_is_decrypted_hidden_author_claimed_at
-                            ON messages(is_decrypted, hidden, author_id, claimed_at);
-                        CREATE INDEX reports_author_created_at ON reports(author_id, created_at DESC);
-                        CREATE INDEX reports_msg_ref ON reports(msg_ref);
-                        CREATE INDEX reports_msg_ref_author ON reports(msg_ref, author_id);
-                    """
-                )
+                // We created some indexes here but reverted them in migration 15->16
                 db.userVersion = 14
             }
             if db.userVersion == 14 {
@@ -323,16 +298,61 @@ class ViewDatabase {
                 db.userVersion = 15
                 needsToSetAllMessagesAsRead = true
             }
+            if db.userVersion == 15 {
+                try db.execute(
+                    """
+                        DROP INDEX IF EXISTS channel_assignments_idx_0039db;
+                        DROP INDEX IF EXISTS channel_assignments_idx_e349b0cd;
+                        DROP INDEX IF EXISTS pubs_index;
+                        DROP INDEX IF EXISTS tangles_roots_and_msg_refs;
+                        DROP INDEX IF EXISTS posts_root_mesgrefs;
+                        DROP INDEX IF EXISTS mention_feed_author_refs;
+                        DROP INDEX IF EXISTS contacts_msg_ref;
+                        DROP INDEX IF EXISTS contacts_state_and_author;
+                        DROP INDEX IF EXISTS channel_assignments_msg_refs;
+                        DROP INDEX IF EXISTS channel_assignments_chan_ref_and_msg_ref;
+                        DROP INDEX IF EXISTS messages_idx_type_claimed_at;
+                        DROP INDEX IF EXISTS messages_idx_author_received;
+                        DROP INDEX IF EXISTS messages_idx_author_type_sequence;
+                        DROP INDEX IF EXISTS messages_idx_is_decrypted_hidden_claimed_at;
+                        DROP INDEX IF EXISTS messages_idx_type_is_decrypted_hidden_author;
+                        DROP INDEX IF EXISTS messages_idx_type_is_decrypted_hidden_claimed_at;
+                        DROP INDEX IF EXISTS messages_idx_is_decrypted_hidden_author_claimed_at;
+                        DROP INDEX IF EXISTS reports_author_created_at;
+                        DROP INDEX IF EXISTS reports_msg_ref;
+                        DROP INDEX IF EXISTS reports_msg_ref_author;
+                    """
+                )
+                db.userVersion = 16
+            }
+            if db.userVersion == 16 {
+                try db.execute(
+                    """
+                    ALTER TABLE authors ADD banned INTEGER NOT NULL DEFAULT (0);
+                    DROP TABLE banned_content;
+                    CREATE TABLE
+                        ban_list (
+                            hash TEXT
+                        );
+                    CREATE INDEX ban_list_hash on ban_list (hash);
+                    """
+                )
+                db.userVersion = 17
+            }
         }
     }
 
-    private func setAllMessagesAsReadIfNeeded(on db: Connection) throws {
+    /// Set all messages as read if needsToSetAllMessagesAsRead is on
+    func setAllMessagesAsReadIfNeeded() throws {
         guard needsToSetAllMessagesAsRead else {
             return
         }
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
         try db.execute(
             """
-            INSERT INTO read_messages
+            INSERT OR REPLACE INTO read_messages
             SELECT \(currentUserID), msg_id, true FROM messages;
             """
         )
@@ -604,69 +624,103 @@ class ViewDatabase {
     
     // MARK: moderation / delete
     
-    func applyBanList(_ banList: [String]) throws -> [FeedIdentifier] {
+    /// Takes a list of hashes of banned content and applies it to the db. This function returns a list of newly banned
+    /// authors and newly unbanned authors.
+    func applyBanList(
+        _ banList: [String]
+    ) throws -> (bannedAuthors: [FeedIdentifier], unbannedAuthors: [FeedIdentifier]) {
+        try updateBanTable(from: banList)
+        let bannedAuthors = try authorsMatching(banList: banList)
+        let unbannedAuthors = try bannedAuthorsNotIn(banList: banList)
+        try ban(authors: bannedAuthors)
+        try unban(authors: unbannedAuthors)
+        try deleteMessagesMatching(banList: banList)
+        
+        return (bannedAuthors, unbannedAuthors)
+    }
+    
+    /// Overwrites the banList table with the new banList
+    private func updateBanTable(from banList: [String]) throws {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
-
-        var matchedAuthorRefs: [FeedIdentifier] = []
-        try db.transaction {
-            /// 1. unhide previous content
-            /// unhide previous banned entries to support appeal process, for instance
-            /// important to not over-rule user decision to block someone
-            var bannedMsgs: [Int64] = []
-            var bannedAuthors: [Int64] = []
-
-            let bannedContentQry = try db.prepare(self.currentBannedContent)
-            for bannedContent in bannedContentQry {
-                let id = try bannedContent.get(colID)
-                switch try bannedContent.get(colIDType) {
-                case 0: bannedMsgs.append(id)
-                case 1: bannedAuthors.append(id)
-                default: fatalError("unhandled content type")
-                }
-            }
-
-            let bannedMsgQry = self.msgs.filter(bannedMsgs.contains(colMessageID))
-            try db.run(bannedMsgQry.update(colHidden <- false))
-
-            let bannedAuthorsQry = self.msgs.filter(bannedAuthors.contains(colAuthorID))
-            try db.run(bannedAuthorsQry.update(colHidden <- false))
-
-            /// 2. set all matched messages to hidden
-
-            // look for banned IDs in msgs
-            let matchedMsgsQry = self.msgKeys
-                .join(self.msgs, on: colID == self.msgs[colMessageID])
-                .filter(banList.contains(colHashedKey))
-
-            // keep ids for next unhide
-            let matchedMsgIDs = try db.prepare(matchedMsgsQry.select(colID)).map { row in
-                row[colID]
-            }
-
-            // insert in current banned for next unhide
-            for id in matchedMsgIDs {
-                try db.run(self.currentBannedContent.insert(colID <- id, colIDType <- 0))
-            }
-            try db.run(self.msgs.filter(matchedMsgIDs.contains(colMessageID)).update(colHidden <- true))
-
-            // now look for authors
-            let matchedAuthors = try db.prepare(self.authors.filter(banList.contains(colHashedKey))).map { row in
-                // (@ref, num id)
-                // we need the ID for gobot
-                return (row[colAuthor], row[colID])
-            }
-
-            matchedAuthorRefs = matchedAuthors.map { $0.0 }
-
-            // insert in current banned for next unhide
-            for (_, id) in matchedAuthors {
-                try db.run(self.currentBannedContent.insert(colID <- id, colIDType <- 1))
-                try db.run(self.msgs.filter(colAuthorID == id).update(colHidden <- true))
-            }
+        
+        try db.run(self.banList.delete())
+        for banHash in banList {
+            try db.run(self.banList.insert(colHash <- banHash))
         }
+    }
+    
+    /// Looks for feed IDs that match the hashes in the ban list ban list.
+    private func authorsMatching(banList: [String]) throws -> [FeedIdentifier] {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        return try db.prepare(authors.select(colAuthor).filter(banList.contains(colHashedKey))).map { $0[colAuthor] }
+    }
+    
+    /// Finds authors that are marked banned in the db but not the given ban list.
+    private func bannedAuthorsNotIn(banList: [String]) throws -> [FeedIdentifier] {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        return try db.prepare(
+            authors
+                .select(colAuthor)
+                .filter(colBanned == true)
+                .filter(!banList.contains(colHashedKey))
+        )
+        .map { $0[colAuthor] }
+    }
 
-        // null content on sbot and add replicate ban call
-        return matchedAuthorRefs
+    /// Marks an author as banned. This is mostly so that we can tell if they are subsequently unbanned.
+    private func ban(authors: [FeedIdentifier]) throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        try db.run(
+            self.authors
+                .filter(authors.contains(colAuthor))
+                .update(colBanned <- true)
+        )
+        
+        let authorIDs = try db.prepare(self.authors.select(colID).filter(authors.contains(colAuthor))).map { $0[colID] }
+        try deleteNoTransaction(allFrom: authorIDs)
+    }
+    
+    /// Marks a previously banned author as not banned anymore.
+    /// We keep track of when authors are unbanned so we can unblock them at the replication level.
+    private func unban(authors: [FeedIdentifier]) throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        try db.run(
+            self.authors
+                .filter(authors.contains(colAuthor))
+                .update(colBanned <- false)
+        )
+    }
+    
+    /// Deletes messages matching the given ban list from the messages table and related tables.
+    private func deleteMessagesMatching(banList: [String]) throws {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        
+        // look for banned IDs in msgs
+        let matchingMsgs = try db.prepare(
+            msgKeys
+                .join(msgs, on: colID == msgs[colMessageID])
+                .filter(banList.contains(colHashedKey))
+        )
+
+        for row in matchingMsgs {
+            try delete(message: row[colKey])
+        }
+    }
+    
+    /// Returns true if the given message is on the ban list.
+  func messageMatchesBanList(_ message: KeyValue) throws -> Bool {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        return try db.scalar(banList.filter(colHash == message.key.sha256hash).exists)
+    }
+    
+    /// Returns true if the author of the given message is on the ban list.
+    func authorMatchesBanList(_ message: KeyValue) throws -> Bool {
+        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        return try db.scalar(banList.filter(colHash == message.value.author.sha256hash).exists)
     }
 
     func hide(allFrom author: FeedIdentifier) throws {
@@ -694,25 +748,25 @@ class ViewDatabase {
         let authorID = try self.authorID(of: author, make: false)
 
         try db.transaction {
-            try self.deleteNoTransaction(allFrom: authorID)
+            try self.deleteNoTransaction(allFrom: [authorID])
         }
     }
 
-    private func deleteNoTransaction(allFrom authorID: Int64) throws {
+    private func deleteNoTransaction(allFrom authorIDs: [Int64]) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
         // all from abouts
-        try db.run(self.abouts.filter(colAuthorID == authorID).delete())
+        try db.run(self.abouts.filter(authorIDs.contains(colAuthorID)).delete())
 
         // all from contacts
-        try db.run(self.contacts.filter(colAuthorID == authorID).delete())
+        try db.run(self.contacts.filter(authorIDs.contains(colAuthorID)).delete())
 
         // all their messages
         let allMsgsQry = self.msgs
             .select(colMessageID, colRXseq)
-            .filter(colAuthorID == authorID)
+            .filter(authorIDs.contains(colAuthorID))
             .order(colRXseq.asc)
         let allMessages = Array(try db.prepare(allMsgsQry))
 
@@ -728,6 +782,7 @@ class ViewDatabase {
             self.addresses,
             self.votes,
             self.channelAssigned,
+            self.abouts,
         ]
 
         // convert rows to [Int64] for (msg_id IN [x1,...,xN]) below
@@ -772,6 +827,7 @@ class ViewDatabase {
             self.mentions_feed,
             self.mentions_image,
             self.privateRecps,
+            self.abouts,
         ]
         for t in messageTables {
             try db.run(t.filter(colMessageRef == msgID).delete())
@@ -1448,6 +1504,38 @@ class ViewDatabase {
         return 0
     }
 
+    /// Returns a boolean indicating if the report was already read by the user.
+    /// - parameter message: The message associated to the wanted report
+    ///
+    /// It returns true/false either if it was read or not, nil if the message doesn't exist or a report for the
+    /// message doesn't exist.
+    func isMessageForReportRead(for message: MessageIdentifier) throws -> Bool? {
+        guard let connection = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        let queryString = """
+        SELECT
+            read_messages.is_read AS is_read
+        FROM
+            reports
+            INNER JOIN messagekeys ON (messagekeys.id = reports.msg_ref)
+            LEFT OUTER JOIN read_messages ON (
+                (read_messages.msg_id = messagekeys.id)
+                AND (read_messages.author_id = reports.author_id)
+            )
+        WHERE
+            reports.author_id = ?
+            AND messagekeys.key = ?
+        LIMIT
+            1
+        """
+        guard let row = try connection.prepare(queryString, currentUserID, message).prepareRowIterator().next() else {
+            return nil
+        }
+        let isRead = try? row.get(Expression<Bool?>("is_read"))
+        return isRead ?? false
+    }
+
     /// Returns a report associated to a given message.
     ///
     /// - parameter message: The message associated to the wanted report
@@ -1535,6 +1623,7 @@ class ViewDatabase {
             )
         WHERE
             reports.author_id = ?
+            AND messages.hidden == false
         ORDER BY
             created_at DESC
         LIMIT
@@ -1672,7 +1761,7 @@ class ViewDatabase {
         (SELECT id FROM messagekeys WHERE key = ? LIMIT 1),
         ?)
         """
-        try connection.prepare(query).bind(currentUserID, identifier, isRead).run()
+        try connection.prepare(query, currentUserID, identifier, isRead).run()
     }
     
     // MARK: - Fetching Posts
@@ -2355,6 +2444,21 @@ class ViewDatabase {
                 skipped += 1
                 continue
             }
+                        
+            if try authorMatchesBanList(msg) {
+                // Insert the author into the authors table so we can tell the GoBot to ban them.
+                _ = try self.authorID(of: msg.value.author, make: true)
+                try ban(authors: [msg.value.author])
+                skipped += 1
+                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                continue
+            }
+
+            if try messageMatchesBanList(msg) {
+                skipped += 1
+                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                continue
+            }
             
             /* don't hammer progress with every message
              if msgIndex%100 == 0 {
@@ -2463,11 +2567,12 @@ class ViewDatabase {
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
         } // for msgs
-        
-        reports.forEach { report in
-            NotificationCenter.default.post(name: Notification.Name("didCreateReport"),
-                                            object: report.authorIdentity,
-                                            userInfo: ["report": report])
+
+        if !reports.isEmpty {
+            NotificationCenter.default.post(
+                name: Notification.Name("didCreateReport"),
+                object: nil
+            )
         }
 
         // debug statistics about unhandled message types
@@ -2542,7 +2647,7 @@ class ViewDatabase {
         return msgKey
     }
     
-    private func authorID(of author: Identity, make: Bool = false) throws -> Int64 {
+    func authorID(of author: Identity, make: Bool = false) throws -> Int64 {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
 
         if let authorRow = try db.pluck(self.authors.filter(colAuthor == author)) {

@@ -21,11 +21,12 @@ typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias CountCompletion = ((Result<Int, Error>) -> Void)
+typealias VoidCompletion = ((Result<Void, Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
 /// - Bool: True if the view database is fully up to date with the backing store.
-typealias RefreshCompletion = ((Error?, TimeInterval, Bool) -> Void)
+typealias RefreshCompletion = ((Result<Bool, Error>, TimeInterval) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
 typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
 typealias ThreadCompletion = ((KeyValue?, PaginatedKeyValueDataProxy, Error?) -> Void)
@@ -223,6 +224,10 @@ protocol Bot: AnyObject {
     /// - parameter message: The message to mark as read
     func markMessageAsRead(_ message: MessageIdentifier)
 
+    /// Mark all messages as read
+    /// - parameter queue: A queue in which the completion handler will be called in
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion)
+
     /// Reports (unifies mentions, replies, follows) for the active identity.
     ///
     /// - parameter queue: A queue in which the completion handler will be called in
@@ -325,11 +330,12 @@ extension Bot {
         queue: DispatchQueue = .main
     ) async throws -> (TimeInterval, Bool) {
         try await withCheckedThrowingContinuation { continuation in
-            refresh(load: load, queue: queue) { error, result2, result3 in
-                if let error = error {
+            refresh(load: load, queue: queue) { refreshResult, timeElapsed in
+                do {
+                    let finished = try refreshResult.get()
+                    continuation.resume(returning: (timeElapsed, finished))
+                } catch {
                     continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: (result2, result3))
                 }
             }
         }
