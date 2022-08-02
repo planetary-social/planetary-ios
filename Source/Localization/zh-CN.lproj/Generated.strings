@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -32,6 +31,7 @@
 "Text.startedFollowing" = "{{somebody}} started following";
 "Text.stoppedFollowing" = "{{somebody}} stopped following";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "在用户目录中显示";
 "Text.showMeInUserDirectory" = "在用户目录中显示";
 "Text.hideMeFromUserDirectory" = "在用户目录中显示";
@@ -58,8 +58,8 @@
 "Text.seeMore" = "查看更多";
 "Text.likesThis" = "likes this";
 "Text.dislikesThis" = "dislikes this";
-"Text.block" = "区块";
-"Text.blocked" = "屏蔽";
+"Text.block" = "Ignore";
+"Text.blocked" = "Ignored";
 "Text.deleteSecretAndIdentity" = "Delete this secret and identity";
 "Text.follow" = "Follow";
 "Text.following" = "Following";
@@ -80,8 +80,8 @@
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
-"Text.blockUser" = "Block this user";
-"Text.unblockUser" = "Unblock this user";
+"Text.blockUser" = "Ignore this user";
+"Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Report this post";
 "Text.reportUser" = "Report this user";
 "Text.noReplies" = "No replies";
@@ -134,17 +134,18 @@
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "start using Planetary";
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
+"Text.dismissAndStartUsingPlanetary" = "Dismiss and start using Planetary";
 "Text.percentComplete" = "complete";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 "Text.areYouSure" = "Are you sure?";
 "Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
-"Blocking.alertTitle" = "您确定要屏蔽 {{ name }} 吗？您将不再看到对方的内容或能够相互联系。";
-"Blocking.buttonTitle" = "是，封禁 {{ name }}";
-"Blocking.blockedUsers" = "已屏蔽用户";
-"Blocking.footer" = "被屏蔽的用户无法看到您的帖子或联系您，您需要先解除屏蔽他们，然后才能看到他们的帖子或联系他们。 解锁用户和内容后可能需要一些时间。";
+"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
+"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
+"Blocking.blockedUsers" = "Ignored Users";
+"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
 "Blocking.thisUser" = "此用户";
-"Blocking.usersYouHaveBlocked" = "您已屏蔽的用户";
+"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
 
 "ImagePicker.camera" = "照相机";
 "ImagePicker.cameraNotAvailable" = "此功能在设备上无效";

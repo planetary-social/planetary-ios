@@ -31,6 +31,7 @@
 "Text.startedFollowing" = "{{somebody}} started following";
 "Text.stoppedFollowing" = "{{somebody}} stopped following";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "Show me in the directory";
 "Text.showMeInUserDirectory" = "Show me in the user directory";
 "Text.hideMeFromUserDirectory" = "Hide me from the user directory";
@@ -57,8 +58,8 @@
 "Text.seeMore" = "See more";
 "Text.likesThis" = "likes this";
 "Text.dislikesThis" = "dislikes this";
-"Text.block" = "Block";
-"Text.blocked" = "Blocked";
+"Text.block" = "Ignore";
+"Text.blocked" = "Ignored";
 "Text.deleteSecretAndIdentity" = "Delete this secret and identity";
 "Text.follow" = "Follow";
 "Text.following" = "Following";
@@ -79,8 +80,8 @@
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
-"Text.blockUser" = "Block this user";
-"Text.unblockUser" = "Unblock this user";
+"Text.blockUser" = "Ignore this user";
+"Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Report this post";
 "Text.reportUser" = "Report this user";
 "Text.noReplies" = "No replies";
@@ -133,17 +134,18 @@
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "start using Planetary";
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
+"Text.dismissAndStartUsingPlanetary" = "Dismiss and start using Planetary";
 "Text.percentComplete" = "complete";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 "Text.areYouSure" = "Are you sure?";
 "Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
-"Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other.";
-"Blocking.buttonTitle" = "Yes, block {{ name }}";
-"Blocking.blockedUsers" = "Blocked Users";
-"Blocking.footer" = "Blocked users cannot see your posts or contact you, and you will need to unblock them before you can see their posts or contact them. It may take some time to see users and content once they have been unblocked.";
+"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
+"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
+"Blocking.blockedUsers" = "Ignored Users";
+"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
 "Blocking.thisUser" = "this user";
-"Blocking.usersYouHaveBlocked" = "Users that you have blocked";
+"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
 
 "ImagePicker.camera" = "Camera";
 "ImagePicker.cameraNotAvailable" = "Camera is not available on this device";

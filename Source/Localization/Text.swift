@@ -72,6 +72,7 @@ enum Text: String, Localizable, CaseIterable {
     case startedFollowing = "{{somebody}} started following"
     case stoppedFollowing = "{{somebody}} stopped following"
     case followStats = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}"
+    case userOusideNetwork = "This user is outside your network"
     case showMeInDirectory = "Show me in the directory"
     case showMeInUserDirectory = "Show me in the user directory"
     case hideMeFromUserDirectory = "Hide me from the user directory"
@@ -103,8 +104,8 @@ enum Text: String, Localizable, CaseIterable {
     case likesThis = "likes this"
     case dislikesThis = "dislikes this"
 
-    case block = "Block"
-    case blocked = "Blocked"
+    case block = "Ignore"
+    case blocked = "Ignored"
 
     case deleteSecretAndIdentity = "Delete this secret and identity"
 
@@ -136,8 +137,8 @@ enum Text: String, Localizable, CaseIterable {
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
 
-    case blockUser = "Block this user"
-    case unblockUser = "Unblock this user"
+    case blockUser = "Ignore this user"
+    case unblockUser = "Unignore this user"
 
     case reportPost = "Report this post"
     case reportUser = "Report this user"
@@ -207,6 +208,7 @@ start using Planetary right away, but:
 """
     case startUsingPlanetary = "start using Planetary"
     case startUsingPlanetaryTitle = "Start Using Planetary"
+    case dismissAndStartUsingPlanetary = "Dismiss and start using Planetary"
     case percentComplete = "complete"
     case beta1Disclaimers =
 """
@@ -444,12 +446,12 @@ extension Text {
 extension Text {
 
     enum Blocking: String, Localizable, CaseIterable {
-        case alertTitle = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other."
-        case buttonTitle = "Yes, block {{ name }}"
-        case blockedUsers = "Blocked Users"
-        case footer = "Blocked users cannot see your posts or contact you, and you will need to unblock them before you can see their posts or contact them. It may take some time to see users and content once they have been unblocked."
+        case alertTitle = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible."
+        case buttonTitle = "Yes, ignore {{ name }}"
+        case blockedUsers = "Ignored Users"
+        case footer = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored."
         case thisUser = "this user"
-        case usersYouHaveBlocked = "Users that you have blocked"
+        case usersYouHaveBlocked = "Users that you have ignored"
     }
 }
 

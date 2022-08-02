@@ -181,7 +181,7 @@ class AppConfigurationViewController: DebugTableViewController {
                             let statistics = await bot.statistics()
                             self.configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
                             self.configuration.apply()
-                            UserDefaults.standard.set(false, forKey: "prevent_feed_from_forks")
+                            UserDefaults.standard.set(true, forKey: "prevent_feed_from_forks")
                             UserDefaults.standard.synchronize()
                             self.tableView.reloadData()
                             Log.info(

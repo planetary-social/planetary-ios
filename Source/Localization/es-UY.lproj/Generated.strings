@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Opa";
@@ -32,6 +31,7 @@
 "Text.startedFollowing" = "{{somebody}} empezó a seguir a";
 "Text.stoppedFollowing" = "{{somebody}} dejo de seguir a";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "Mostrame en el directorio";
 "Text.showMeInUserDirectory" = "Mostrame en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultame en el directorio de usuarios";
@@ -58,8 +58,8 @@
 "Text.seeMore" = "Ver más";
 "Text.likesThis" = "le gusta esto";
 "Text.dislikesThis" = "no le gusta esto";
-"Text.block" = "Bloquear";
-"Text.blocked" = "Bloqueado";
+"Text.block" = "Ignore";
+"Text.blocked" = "Ignored";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
 "Text.follow" = "Seguir";
 "Text.following" = "Siguiendo";
@@ -80,8 +80,8 @@
 "Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar amigos";
-"Text.blockUser" = "Bloquear este usuario";
-"Text.unblockUser" = "Desbloquear este usuario";
+"Text.blockUser" = "Ignore this user";
+"Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Reportar este post";
 "Text.reportUser" = "Reportar este usuario";
 "Text.noReplies" = "Sin respuestas";
@@ -134,17 +134,18 @@
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "comienza a usar Planetary";
 "Text.startUsingPlanetaryTitle" = "Comienza a usar Planetary";
+"Text.dismissAndStartUsingPlanetary" = "Dismiss and start using Planetary";
 "Text.percentComplete" = "completado";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 "Text.areYouSure" = "¿Estás seguro?";
 "Text.dismissMigrationEarlyMessage" = "Esta pantalla se cerrará y podrás usar Planetary mientras tus datos se descargan en segundo plano. ¿Estás seguro?";
 
-"Blocking.alertTitle" = "¿Estás seguro de que querés bloquear a {{ name }}? No vas a poder ver su contenido mutuamente ni tampoco volver a contactarse.";
-"Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";
-"Blocking.blockedUsers" = "Usuarios Bloqueados";
-"Blocking.footer" = "Los usuarios bloqueados no pueden ver tus posts ni contactarte, y vas a tener que desbloquearlos para ver sus publicaciones o contactarlos. Podría tomar un tiempo volver a ver usuarios y contenido una vez que han sido desbloqueados.";
+"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
+"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
+"Blocking.blockedUsers" = "Ignored Users";
+"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
 "Blocking.thisUser" = "este usuario";
-"Blocking.usersYouHaveBlocked" = "Usuarios que has bloqueado";
+"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
 
 "ImagePicker.camera" = "Cámara";
 "ImagePicker.cameraNotAvailable" = "La cámara no está disponible en este dispositivo";
