@@ -131,38 +131,38 @@
 "Text.upgradingAndRestoring" = "O Planetary está atualizando e restaurando suas mensagens da rede.";
 "Text.beta1MigrationComplete" = "Pressione o seguinte botão para fechar esta tela e voltar ao seu feed.";
 "Text.beta1MigrationPleaseLeaveAppOpen" = "Isto pode levar algum tempo.\n\nDeixe o aplicativo aberto até a conclusão.\n";
-"Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
-"Text.startUsingPlanetary" = "start using Planetary";
-"Text.startUsingPlanetaryTitle" = "Start Using Planetary";
-"Text.dismissAndStartUsingPlanetary" = "Dismiss and start using Planetary";
-"Text.percentComplete" = "complete";
-"Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
-"Text.areYouSure" = "Are you sure?";
-"Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
+"Text.beta1StartUsingPlanetary" = "Se não quiser esperar, pode\ncomeçar a usar o Planetary agora mesmo, mas:";
+"Text.startUsingPlanetary" = "comece a usar o Planetary";
+"Text.startUsingPlanetaryTitle" = "Comece a usar o Planetary";
+"Text.dismissAndStartUsingPlanetary" = "Descartar e começar a usar o Planetary";
+"Text.percentComplete" = "concluído";
+"Text.beta1Disclaimers" = "\n• você apenas conseguirá postar algo ou seguir alguém quando o feed completo for baixado\n\n• é possível que apenas consiga visualizar todas as mensagens anteriores quando elas forem baixadas.";
+"Text.areYouSure" = "Tem certeza?";
+"Text.dismissMigrationEarlyMessage" = "Esta tela será descartada e você poderá usar o Planetary enquanto seus dados continuam sendo baixados em segundo plano. Tem certeza?";
 
-"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
-"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
-"Blocking.blockedUsers" = "Ignored Users";
-"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
-"Blocking.thisUser" = "this user";
-"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
+"Blocking.alertTitle" = "Tem certeza de que deseja ignorar {{ name }}? Vocês não conseguirão mais ver o conteúdo um do outro nem conseguirão entrar em contato um com o outro. Esta ação será publicamente visível.";
+"Blocking.buttonTitle" = "Sim, ignorar {{ name }}";
+"Blocking.blockedUsers" = "Usuários ignorados";
+"Blocking.footer" = "Os usuários ignorados não conseguem ver suas postagens ou entrar em contato com você e será necessário deixar de ignorá-los para poder visualizar suas postagens ou contatá-los. É possível que demore algum tempo até que os usuários e o conteúdo voltem a ser visualizados quando deixarem de ser ignorados.";
+"Blocking.thisUser" = "este usuário";
+"Blocking.usersYouHaveBlocked" = "Usuários que você ignorou";
 
-"ImagePicker.camera" = "Camera";
-"ImagePicker.cameraNotAvailable" = "Camera is not available on this device";
-"ImagePicker.openSettingsMessage" = "You can allow camera permissions by opening the Settings app.";
-"ImagePicker.permissionsRequired" = "Permissions required for {{ title }}";
-"ImagePicker.photoLibrary" = "Photo Library";
-"ImagePicker.selectFrom" = "Select from Photo Library";
-"ImagePicker.takePhoto" = "Take photo with Camera";
+"ImagePicker.camera" = "Câmera";
+"ImagePicker.cameraNotAvailable" = "Não há uma câmera disponível neste dispositivo";
+"ImagePicker.openSettingsMessage" = "É possível permitir o uso da câmera no aplicativo Configurações.";
+"ImagePicker.permissionsRequired" = "Permissão necessária para {{ title }}";
+"ImagePicker.photoLibrary" = "Álbum de fotos";
+"ImagePicker.selectFrom" = "Selecionar do álbum de fotos";
+"ImagePicker.takePhoto" = "Tirar uma foto com a câmera";
 
-"NewPost.confirmRemove" = "Remove this image from the post?  You can always add it back again.";
-"NewPost.remove" = "Remove";
+"NewPost.confirmRemove" = "Remover esta imagem da postagem? Será possível readicioná-la.";
+"NewPost.remove" = "Remover";
 
-"Offboarding.reset" = "Delete";
-"Offboarding.resetIdentity" = "Delete My Identity";
-"Offboarding.resetConfirmTitle" = "Warning";
-"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
-"Offboarding.resetConfirmAgainTitle" = "Are you sure?";
+"Offboarding.reset" = "Excluir";
+"Offboarding.resetIdentity" = "Excluir minha identidade";
+"Offboarding.resetConfirmTitle" = "Aviso";
+"Offboarding.resetConfirmMessage" = "Tem certeza de que deseja excluir sua identidade deste dispositivo? Você perderá este perfil e todo o conteúdo relacionado. Esta ação não poderá ser revertida.";
+"Offboarding.resetConfirmAgainTitle" = "Tem certeza?";
 "Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "We weren't able to connect to the directory to remove you. Please try again.";
@@ -319,4 +319,4 @@
 
 "YourNetwork.title" = "Your friends, connections and pubs";
 "YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
-"YourNetwork.highlightedWord" = "*gossip*";
+"YourNetwork.highlightedWord" = "*fofoca*";
