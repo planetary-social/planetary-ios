@@ -832,18 +832,21 @@ class ViewDatabase {
         let msgIDs = try allMessages.map { row in
             try row.get(colMessageID)
         }
-        for tbl in messageTables {
-            let qry = tbl.filter(msgIDs.contains(colMessageRef)).delete()
-            try db.run(qry)
+        
+        for chunk in msgIDs.chunked(into: 500) {
+            for table in messageTables {
+                let query = table.filter(chunk.contains(colMessageRef)).delete()
+                try db.run(query)
+            }
+
+            // delete reply branches
+            // refactor idea: could rename 'branch' column to msgRef
+            // then branches can be part of messageTables
+            try db.run(self.branches.filter(chunk.contains(colBranch)).delete())
+
+            // delete the base messages
+            try db.run(self.msgs.filter(chunk.contains(colMessageID)).delete())
         }
-
-        // delete reply branches
-        // refactor idea: could rename 'branch' column to msgRef
-        // then branches can be part of messageTables
-        try db.run(self.branches.filter(msgIDs.contains(colBranch)).delete())
-
-        // delete the base messages
-        try db.run(self.msgs.filter(msgIDs.contains(colMessageID)).delete())
     }
 
     func delete(message: MessageIdentifier) throws {

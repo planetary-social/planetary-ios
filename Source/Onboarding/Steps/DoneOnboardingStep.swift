@@ -67,7 +67,7 @@ class DoneOnboardingStep: OnboardingStep {
         Layout.fillSouth(of: view.hintLabel, with: analyticsToggle, insets: insets)
         Layout.fillSouth(of: analyticsToggle, with: followPlanetaryToggle)
         Layout.fillSouth(of: followPlanetaryToggle, with: publicWebHostingToggle)
-        Layout.fillSouth(of: publicWebHostingToggle, with: joinPlanetarySystemToggle)
+//        Layout.fillSouth(of: publicWebHostingToggle, with: joinPlanetarySystemToggle)
         #if DEBUG
         Layout.fillSouth(of: joinPlanetarySystemToggle, with: useTestNetworkToggle)
         #endif

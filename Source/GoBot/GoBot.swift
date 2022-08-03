@@ -406,6 +406,16 @@ class GoBot: Bot {
         }
     }
     
+    func connect(to address: MultiserverAddress) {
+        guard self.bot.isRunning else {
+            return
+        }
+        
+        utilityQueue.async {
+            _ = self.bot.dialOne(peer: address)
+        }
+    }
+    
     /// Instructs the bot to attempt to connect to one of the given peers and gossip with them.
     /// Note: this looks like it does the same thing as `sync(queue:peers:completion:)` but it only attempts to dial one
     /// peer. Presumably this is intended to be a quicker sync operation.
@@ -846,7 +856,10 @@ class GoBot: Bot {
                 #endif
                 completion(.failure(error ?? GoBotError.unexpectedFault("updateReceive failed")))
             } catch {
-                let encapsulatedError = GoBotError.duringProcessing("viewDB: message filling failed", error)
+                let encapsulatedError = GoBotError.duringProcessing(
+                    "viewDB: message filling failed: \(error.localizedDescription)",
+                    error
+                )
                 Log.optional(encapsulatedError)
                 CrashReporting.shared.reportIfNeeded(error: encapsulatedError)
                 completion(.failure(encapsulatedError))

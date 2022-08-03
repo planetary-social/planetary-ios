@@ -8,13 +8,29 @@
 
 import SwiftUI
 
+/// A view model for the RoomListView
 @MainActor protocol RoomListViewModel: ObservableObject {
+    
+    /// A list of rooms the user is a member of.
     var rooms: [Room] { get }
+    
+    /// A loading message that should be displayed when it is not nil
     var loadingMessage: String? { get }
+    
+    /// An error message that should be displayed when it is not nil
     var errorMessage: String? { get }
+    
+    /// An error message that should be displayed when it is not nil
     func deleteRooms(at: IndexSet)
-    func add(room: String)
+    
+    /// Tries to add a room to the database from an invitation link or multiserver address string.
+    func addRoom(from: String)
+    
+    /// Called when the user dismisses the shown error message. Should clear `errorMessage`.
     func didDismissError()
+    
+    /// Called when the user pulls to refresh the view.
+    func refresh()
 }
 
 struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
@@ -35,13 +51,14 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         viewModel.loadingMessage != nil
     }
     
+    /// A loading overlay that displays the `loadingMessage` from the view model.
     private var loadingIndicator: some View {
         VStack {
             Spacer()
-            if showProgress {
+            if showProgress, let loadingMessage = viewModel.loadingMessage {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(viewModel.loadingMessage!)
+                    SwiftUI.Text(loadingMessage)
                 }
                 .padding(16)
                 .cornerRadius(8)
@@ -55,28 +72,55 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
     
     var body: some View {
         List {
-            ForEach(viewModel.rooms) { room in
-                HStack {
-                    SwiftUI.Text(room.address.host)
-                }
-            }
-            .onDelete(perform: { viewModel.deleteRooms(at: $0) })
-            
-            HStack {
-                TextField("add a room", text: $newRoomString)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .onSubmit {
-                        viewModel.add(room: newRoomString)
-                        newRoomString = ""
+            // Joined Rooms
+            Section {
+                ForEach(viewModel.rooms) { room in
+                    HStack {
+                        SwiftUI.Text(room.address.host)
                     }
-                Button {
-                    viewModel.add(room: newRoomString)
-                    newRoomString = ""
-                } label: {
-                    Image(systemName: "plus.circle.fill")
+                    .foregroundColor(Color("mainText"))
+                    .listRowBackground(Color("cardBackground"))
                 }
-                .disabled(newRoomString.isEmpty || showProgress)
+                .onDelete(perform: { viewModel.deleteRooms(at: $0) })
+            } header: {
+                Text.ManageRelays.joinedRooms.view
+                    .foregroundColor(Color("secondaryText"))
+                    .font(.body.smallCaps())
+            }
+            
+            // Add Rooms
+            Section {
+                HStack {
+                    TextField("", text: $newRoomString)
+                        .placeholder(when: newRoomString.isEmpty) {
+                            Text.addRoomAddressOrInvitation.view
+                                .foregroundColor(Color("secondaryText"))
+                        }
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                        .onSubmit {
+                            viewModel.addRoom(from: newRoomString)
+                            newRoomString = ""
+                        }
+                    Button {
+                        viewModel.addRoom(from: newRoomString)
+                        newRoomString = ""
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundColor(Color("primaryAction"))
+                    }
+                    .disabled(newRoomString.isEmpty || showProgress)
+                }
+                .listRowBackground(Color("cardBackground"))
+            } header: {
+                Text.ManageRelays.addRooms.view
+                    .foregroundColor(Color("secondaryText"))
+                    .font(.body.smallCaps())
+            } footer: {
+                Text.ManageRelays.roomHelpText.view
+                    .foregroundColor(Color("secondaryText"))
+                    .font(.subheadline)
+                    .padding(.top, 4)
             }
         }
         .disabled(showProgress)
@@ -84,9 +128,19 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         .alert(isPresented: showAlert) {
             Alert(
                 title: SwiftUI.Text("Failed Joining Room"),
-                message: SwiftUI.Text(viewModel.errorMessage!)
+                message: SwiftUI.Text(viewModel.errorMessage ?? "")
             )
         }
+        .refreshable {
+            viewModel.refresh()
+        }
+        .navigationBarTitle(Text.ManageRelays.manageRooms.text, displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
+            }
+        }
+        .accentColor(Color("primaryAction"))
     }
 }
 
@@ -102,14 +156,17 @@ fileprivate class PreviewViewModel: RoomListViewModel {
     
     init(rooms: [Room]) {
         self.rooms = rooms
+        UITableView.appearance().backgroundColor = UIColor.appBackground
     }
     
     func deleteRooms(at indexes: IndexSet) {
         indexes.forEach { rooms.remove(at: $0) }
     }
     
-    func add(room: String) {
-        if let address = MultiserverAddress(string: room) {
+    func refresh() {}
+    
+    func addRoom(from: String) {
+        if let address = MultiserverAddress(string: from) {
             loadingMessage = "Joining room..."
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
                 self.rooms.append(Room(address: address))
@@ -129,11 +186,19 @@ struct RoomListView_Previews: PreviewProvider {
     
     static let rooms = [
         Room(address: MultiserverAddress(
-            string: "net:192.168.1.131:8008~shs:bGo2yHoSjTFVYmZxPD9+AZM2LYnp6A/5WxHzezfDLls="
+            string: "net:test-room.planetary.social:8008~shs:bGo2yHoSjTFVYmZxPD9+AZM2LYnp6A/5WxHzezfDLls="
         )!)
     ]
     
     static var previews: some View {
-        RoomListView(viewModel: PreviewViewModel(rooms: rooms))
+        NavigationView {
+            RoomListView(viewModel: PreviewViewModel(rooms: rooms))
+        }
+        .preferredColorScheme(.dark)
+        
+        NavigationView {
+            RoomListView(viewModel: PreviewViewModel(rooms: rooms))
+        }
+        .preferredColorScheme(.light)
     }
 }

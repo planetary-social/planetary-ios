@@ -19,7 +19,7 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
     
     convenience init() {
         self.init(style: .grouped)
-        self.title = Text.ManagePubs.title.text
+        self.title = Text.ManageRelays.managePubs.text
     }
 
     override func viewWillAppear(_ animated: Bool) {

@@ -12,7 +12,7 @@ extension Text {
             Text.Offboarding.self,
             Text.Onboarding.self,
             Text.Onboarding.StepTitle.self,
-            Text.ManagePubs.self,
+            Text.ManageRelays.self,
             Text.Preview.self,
             Text.FeedAlgorithm.self,
             Text.PublicWebHosting.self,
@@ -179,6 +179,8 @@ enum Text: String, Localizable, CaseIterable {
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
     case invitationRedeemed = "Invitation redeemed!"
+    case addRoomAddressOrInvitation = "paste address or invitation"
+    case joiningRoom = "Joining room..."
     
     case refreshSingular = "{{ count }} unread post!"
     case refreshPlural = "{{ count }} unread posts!"
@@ -352,18 +354,22 @@ extension Text {
     }
 }
 
-// MARK: - Manage Pubs
+// MARK: - Manage Relays
 
 extension Text {
-
-    enum ManagePubs: String, Localizable, CaseIterable {
-        case header = "Pubs"
-        case title = "Manage Pubs"
-        case footer = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself."
+    
+    enum ManageRelays: String, Localizable, CaseIterable {
+        case relayServers = "Relay Servers"
+        case managePubs = "Manage Pubs"
+        case manageRooms = "Manage Rooms (beta)"
+        case footer = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself."
         case addingPubs = "Adding Pubs"
         case yourPubs = "Your Pubs"
         case lastWorked = "Last worked on"
         case pasteAddress = "Paste the address here"
+        case joinedRooms = "Joined Rooms"
+        case addRooms = "Add Rooms"
+        case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
     }
 }
 
@@ -482,6 +488,7 @@ extension Text {
         case invalidAppConfiguration = "Invalid app configuration"
         case couldNotGenerateLink = "Could not generate link."
         case invalidRoomURL = "Could not parse invitation."
+        case invalidRoomInvitationOrAddress = "Planetary does not recognize this as a valid room invitation or address."
         case notLoggedIn = "The operation could not be completed because no user is logged in."
     }
 }

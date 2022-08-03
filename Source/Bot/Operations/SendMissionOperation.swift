@@ -74,8 +74,8 @@ class SendMissionOperation: AsynchronousOperation {
     }
     
     func createSyncOperation(bot: Bot, config: AppConfiguration) async -> SyncOperation {
-        async let peers = loadPeerPool(from: bot, config: config)
-        let syncOperation = await SyncOperation(peerPool: peers)
+        async let (rooms, pubs) = loadPeerPool(from: bot, config: config)
+        let syncOperation = await SyncOperation(rooms: rooms, pubs: pubs)
         switch self.quality {
         case .low:
             syncOperation.notificationsOnly = true
@@ -86,28 +86,24 @@ class SendMissionOperation: AsynchronousOperation {
         return syncOperation
     }
     
-    func loadPeerPool(from bot: Bot, config: AppConfiguration) async -> [MultiserverAddress] {
-        var peers = [MultiserverAddress]()
-        async let joinedRooms = bot.joinedRooms().map { $0.address }
-        async let joinedPubs = bot.joinedPubs().map { $0.address.multiserver }
-        
+    func loadPeerPool(from bot: Bot, config: AppConfiguration) async -> ([MultiserverAddress], [MultiserverAddress]) {
         do {
-            peers = try await joinedRooms + joinedPubs
+            async let joinedRooms = bot.joinedRooms().map { $0.address }
+            var joinedPubs = try await bot.joinedPubs().map { $0.address.multiserver }
             
             // If we don't have enough peers, supplement with the Planetary pubs
             let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
-            if peers.count < minPeers && config.joinedPlanetarySystem {
+            if joinedPubs.count < minPeers && config.joinedPlanetarySystem {
                 let systemPubs = Set(config.systemPubs).map { $0.address.multiserver }
-                let someSystemPubs = systemPubs.randomSample(UInt(minPeers - peers.count))
-                peers += someSystemPubs
+                let someSystemPubs = systemPubs.randomSample(UInt(minPeers - joinedPubs.count))
+                joinedPubs += someSystemPubs
             }
             
-            return peers
+            return (try await joinedRooms, joinedPubs)
         } catch {
             Log.error("Error fetching joined rooms and pubs: \(error.localizedDescription)")
             CrashReporting.shared.reportIfNeeded(error: error)
-            let systemPubs = Set(config.systemPubs).map { $0.address.multiserver }
-            return systemPubs
+            return ([], [])
         }
     }
 }

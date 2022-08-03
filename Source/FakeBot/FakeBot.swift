@@ -182,6 +182,8 @@ class FakeBot: Bot {
         }
     }
     
+    func connect(to address: MultiserverAddress) { }
+    
     func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {

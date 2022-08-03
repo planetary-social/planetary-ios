@@ -22,9 +22,11 @@ extension AppDelegate {
         }
         
         if url.scheme == URL.ssbScheme {
-            let canRedeem = RoomInvitationRedeemer.canRedeem(url)
+            let canRedeem = RoomInvitationRedeemer.canRedeem(redirectURL: url)
             if canRedeem {
-                Task { await RoomInvitationRedeemer.redeem(url, in: AppController.shared, bot: Bots.current) }
+                Task {
+                    await RoomInvitationRedeemer.redeem(redirectURL: url, in: AppController.shared, bot: Bots.current)
+                }
                 return true
             }
         }

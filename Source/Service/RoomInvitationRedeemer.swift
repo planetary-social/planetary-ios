@@ -43,7 +43,28 @@ enum RoomInvitationRedeemer {
         var error: String?
     }
     
-    static func canRedeem(_ url: URL) -> Bool {
+    struct OpenInvitationResponse: Codable {
+        var status: String
+        var invite: String?
+        var postTo: String?
+        var error: String?
+    }
+    
+    static func canRedeem(inviteURL url: URL) -> Bool {
+        guard url.scheme == "https",
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            components.path == "/join",
+            let queryParams = components.queryItems,
+            let tokenParam = queryParams.first(where: { $0.name == "token" }),
+            tokenParam.value?.isEmpty == false else {
+            
+            return false
+        }
+        
+        return true
+    }
+    
+    static func canRedeem(redirectURL url: URL) -> Bool {
         guard url.scheme == URL.ssbScheme,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             components.path == "experimental",
@@ -59,8 +80,53 @@ enum RoomInvitationRedeemer {
         
         return true
     }
+    
+    static func redeem(inviteURL url: URL, in controller: AppController, bot: Bot) async {
+        guard url.scheme == "https",
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            components.path == "/join",
+            let queryParams = components.queryItems,
+            let tokenParam = queryParams.first(where: { $0.name == "token" }),
+            tokenParam.value?.isEmpty == false else {
+            
+            Log.error("invalid room URL: \(url.absoluteURL)")
+            await controller.topViewController.alert(error: RoomInvitationError.invalidURL)
+            return
+        }
         
-    static func redeem(_ url: URL, in controller: AppController, bot: Bot) async {
+        guard let jsonURL = URL(string: url.absoluteString + "&encoding=json") else {
+            Log.error("could not build URL from: \(url.absoluteURL)")
+            await controller.topViewController.alert(error: RoomInvitationError.invalidURL)
+            return
+        }
+        
+        do {
+            var request = URLRequest(url: jsonURL)
+            request.httpMethod = "GET"
+            let (responseData, _) = try await URLSession.shared.data(for: request)
+            let response = try JSONDecoder().decode(OpenInvitationResponse.self, from: responseData)
+            
+            if let token = response.invite, let postTo = response.postTo, let postToURL = URL(string: postTo) {
+                await post(token, to: postToURL, controller: controller, bot: bot)
+            } else {
+                Log.error("Got failure response from room: \(String(describing: responseData.string))")
+                if let errorMessage = response.error {
+                    await controller.topViewController.alert(
+                        error: RoomInvitationError.invitationRedemptionFailedWithReason(errorMessage)
+                    )
+                } else {
+                    await controller.topViewController.alert(error: RoomInvitationError.invitationRedemptionFailed)
+                }
+            }
+        } catch {
+            Log.optional(error)
+            await controller.topViewController.alert(
+                error: RoomInvitationError.invitationRedemptionFailedWithReason(error.localizedDescription)
+            )
+        }
+    }
+    
+    static func redeem(redirectURL url: URL, in controller: AppController, bot: Bot) async {
         guard url.scheme == URL.ssbScheme,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             components.path == "experimental",
@@ -76,6 +142,10 @@ enum RoomInvitationRedeemer {
             return
         }
         
+        await post(inviteCode, to: postToURL, controller: controller, bot: bot)
+    }
+    
+    private static func post(_ token: String, to url: URL, controller: AppController, bot: Bot) async {
         guard let identity = bot.identity else {
             Log.error("missing identity for room invitation redemption: \(url.absoluteURL)")
             await controller.topViewController.alert(error: RoomInvitationError.notLoggedIn)
@@ -83,10 +153,10 @@ enum RoomInvitationRedeemer {
         }
         
         do {
-            var request = URLRequest(url: postToURL)
+            var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            let claimInvitationRequest = ClaimInvitationRequest(id: identity, invite: inviteCode)
+            let claimInvitationRequest = ClaimInvitationRequest(id: identity, invite: token)
             request.httpBody = try JSONEncoder().encode(claimInvitationRequest)
             let (responseData, _) = try await URLSession.shared.data(for: request)
             let response = try JSONDecoder().decode(ClaimInvitationResponse.self, from: responseData)
@@ -104,6 +174,8 @@ enum RoomInvitationRedeemer {
                     await controller.topViewController.alert(
                         error: RoomInvitationError.invitationRedemptionFailedWithReason(errorMessage)
                     )
+                } else {
+                    await controller.topViewController.alert(error: RoomInvitationError.invitationRedemptionFailed)
                 }
             }
         } catch {
@@ -113,4 +185,5 @@ enum RoomInvitationRedeemer {
             )
         }
     }
+        
 }

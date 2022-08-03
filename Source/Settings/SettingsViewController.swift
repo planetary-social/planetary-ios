@@ -35,8 +35,7 @@ class SettingsViewController: DebugTableViewController {
             publicWebHosting(),
             push(),
             usage(),
-            managePubs(),
-            manageRooms(),
+            manageRelays(),
             preview()
         ]
         super.updateSettings()
@@ -184,33 +183,27 @@ class SettingsViewController: DebugTableViewController {
         return (Text.usageData.text, settings, nil)
     }
     
-    // MARK: Manage Pubs
+    // MARK: Manage Relay Servers
     
-    private func managePubs() -> DebugTableViewController.Settings {
-        var settings: [DebugTableViewCellModel] = []
-        
-        settings += [DebugTableViewCellModel(title: Text.ManagePubs.title.text,
-                                         valueClosure: {
-            cell in
-            cell.accessoryType = .disclosureIndicator
-        },
-                                         actionClosure: {
-            [unowned self] _ in
-            let controller = ManagePubsViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-        })]
-        
-        return (Text.ManagePubs.header.text, settings, Text.ManagePubs.footer.text)
-    }
-    
-    // MARK: Manage Rooms
-    
-    private func manageRooms() -> DebugTableViewController.Settings {
+    private func manageRelays() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
         
         settings += [
             DebugTableViewCellModel(
-                title: "Manage Rooms",
+                title: Text.ManageRelays.managePubs.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [unowned self] _ in
+                    let controller = ManagePubsViewController()
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.ManageRelays.manageRooms.text,
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
@@ -222,9 +215,9 @@ class SettingsViewController: DebugTableViewController {
             )
         ]
         
-        return ("Rooms", settings, nil)
+        return (Text.ManageRelays.relayServers.text, settings, Text.ManageRelays.footer.text)
     }
-
+    
     // MARK: Preview
 
     private func preview() -> DebugTableViewController.Settings {

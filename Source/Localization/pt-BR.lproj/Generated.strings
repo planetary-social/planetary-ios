@@ -115,6 +115,8 @@
 "Text.redeemInvitation" = "Redeem an invitation";
 "Text.pasteAddress" = "Token";
 "Text.invitationRedeemed" = "Invitation redeemed!";
+"Text.addRoomAddressOrInvitation" = "paste address or invitation";
+"Text.joiningRoom" = "Joining room...";
 "Text.refreshSingular" = "{{ count }} unread post!";
 "Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown preview";
@@ -230,13 +232,17 @@
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
 
-"ManagePubs.header" = "Pubs";
-"ManagePubs.title" = "Manage Pubs";
-"ManagePubs.footer" = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
-"ManagePubs.addingPubs" = "Adding Pubs";
-"ManagePubs.yourPubs" = "Your Pubs";
-"ManagePubs.lastWorked" = "Last worked on";
-"ManagePubs.pasteAddress" = "Paste the address here";
+"ManageRelays.relayServers" = "Relay Servers";
+"ManageRelays.managePubs" = "Manage Pubs";
+"ManageRelays.manageRooms" = "Manage Rooms (beta)";
+"ManageRelays.footer" = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
+"ManageRelays.addingPubs" = "Adding Pubs";
+"ManageRelays.yourPubs" = "Your Pubs";
+"ManageRelays.lastWorked" = "Last worked on";
+"ManageRelays.pasteAddress" = "Paste the address here";
+"ManageRelays.joinedRooms" = "Joined Rooms";
+"ManageRelays.addRooms" = "Add Rooms";
+"ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
 "Preview.title" = "Advanced Settings";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
@@ -287,6 +293,7 @@
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
 "Error.invalidRoomURL" = "Could not parse invitation.";
+"Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
 
 "Channel.one" = "channel";

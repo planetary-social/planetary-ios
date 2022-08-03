@@ -9,6 +9,7 @@
 import Foundation
 import Logger
 
+/// A coordinator for the `RoomListView`. Manages CRUD operations for a list of joined room servers.
 @MainActor class RoomListCoordinator: RoomListViewModel {
     
     @Published var rooms = [Room]()
@@ -24,19 +25,7 @@ import Logger
         loadRooms()
     }
     
-    func loadRooms() {
-        loadingMessage = "Loading rooms..."
-        Task {
-            do {
-                let rooms = try await self.bot.joinedRooms()
-                self.rooms = rooms
-            } catch {
-                Log.optional(error)
-                self.errorMessage = error.localizedDescription
-            }
-            self.loadingMessage = nil
-        }
-    }
+    // MARK: View Model Actions
     
     func deleteRooms(at indexes: IndexSet) {
         Task {
@@ -51,30 +40,63 @@ import Logger
                 Log.optional(error)
                 self.errorMessage = error.localizedDescription
             }
-
         }
     }
     
-    func add(room: String) {
-        // TODO: detect invite link
-        if let address = MultiserverAddress(string: room) {
-            loadingMessage = "Joining room..."
+    func addRoom(from string: String) {
+        // Check if this is an invitation
+        if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
+            loadingMessage = Text.joiningRoom.text
+            Task {
+                await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
+                self.finishAddingRoom()
+            }
+        // Check if this is an address
+        } else if let address = MultiserverAddress(string: string) {
+            loadingMessage = Text.joiningRoom.text
             Task {
                 do {
                     try await self.bot.insert(room: Room(address: address))
+                    self.finishAddingRoom()
                 } catch {
                     Log.optional(error)
                     self.errorMessage = error.localizedDescription
                 }
-                self.loadingMessage = nil
-                self.loadRooms()
             }
         } else {
-            errorMessage = "Could not parse multiserver address."
+            errorMessage = Text.Error.invalidRoomInvitationOrAddress.text
         }
     }
     
     func didDismissError() {
         errorMessage = nil
+    }
+    
+    func refresh() {
+        loadRooms()
+    }
+    
+    // MARK: Helpers
+    
+    /// Called at the end of all flows that add a room to the db.
+    private func finishAddingRoom() {
+        self.loadingMessage = nil
+        self.loadRooms()
+        AppController.shared.missionControlCenter.sendMission()
+    }
+    
+    /// Loads rooms from the db into this coordinator's `rooms` array.
+    private func loadRooms() {
+        loadingMessage = "Loading rooms..."
+        Task {
+            do {
+                let rooms = try await self.bot.joinedRooms()
+                self.rooms = rooms
+            } catch {
+                Log.optional(error)
+                self.errorMessage = error.localizedDescription
+            }
+            self.loadingMessage = nil
+        }
     }
 }

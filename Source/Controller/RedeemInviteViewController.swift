@@ -18,7 +18,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.text.detail
-        label.text = Text.ManagePubs.pasteAddress.text.uppercased()
+        label.text = Text.ManageRelays.pasteAddress.text.uppercased()
         return label
     }()
     

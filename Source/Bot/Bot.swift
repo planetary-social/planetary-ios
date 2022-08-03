@@ -95,6 +95,9 @@ protocol Bot: AnyObject {
     ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
     ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
+    
+    /// Connect to the SSB peer at the given address.
+    func connect(to address: MultiserverAddress)
 
     func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
