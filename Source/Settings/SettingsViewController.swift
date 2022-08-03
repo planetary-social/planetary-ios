@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
 
 // It turns out that DebugTableViewController works really well
 // for the design of the settings, so we're just gonna use it for now.
@@ -35,6 +36,7 @@ class SettingsViewController: DebugTableViewController {
             push(),
             usage(),
             managePubs(),
+            manageRooms(),
             preview()
         ]
         super.updateSettings()
@@ -199,6 +201,28 @@ class SettingsViewController: DebugTableViewController {
         })]
         
         return (Text.ManagePubs.header.text, settings, Text.ManagePubs.footer.text)
+    }
+    
+    // MARK: Manage Rooms
+    
+    private func manageRooms() -> DebugTableViewController.Settings {
+        var settings: [DebugTableViewCellModel] = []
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: "Manage Rooms",
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let viewModel = RoomListCoordinator(bot: Bots.current)
+                    let controller = UIHostingController(rootView: RoomListView(viewModel: viewModel))
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        return ("Rooms", settings, nil)
     }
 
     // MARK: Preview

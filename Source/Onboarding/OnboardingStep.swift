@@ -27,6 +27,8 @@ class OnboardingStepData {
     var following: [Identity] = []
     var image: UIImage?
     var joinedDirectory = false
+    var joinPlanetarySystem = false
+    var useTestNetwork = false
     var publicWebHosting = false
     var analytics = false
     var followPlanetary = false
@@ -42,6 +44,7 @@ class OnboardingStepData {
             followingCount: following.count,
             hasImage: image != nil,
             joinedDirectory: joinedDirectory,
+            // TODO: add
             publicWebHosting: publicWebHosting,
             analytics: analytics,
             followPlanetary: followPlanetary,

@@ -81,6 +81,10 @@ protocol Bot: AnyObject {
     
     /// Retrieves a list of all pubs the current user is currently a member of.
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
+    
+    func joinedRooms() async throws -> [Room]
+    func insert(room: Room) async throws
+    func delete(room: Room) async throws
 
     var isSyncing: Bool { get }
     

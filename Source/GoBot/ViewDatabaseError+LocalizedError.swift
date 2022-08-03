@@ -32,6 +32,8 @@ extension ViewDatabaseError: LocalizedError {
             return "Unhandled content type: \(contentType)"
         case .messageConstraintViolation(let identity, let sqlError):
             return "Message constraint violation: \(identity), \(sqlError)"
+        case .invalidAddress(let address):
+            return "Invalid multiserver address: \(address)"
         }
     }
 }

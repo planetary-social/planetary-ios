@@ -124,6 +124,16 @@ class AppConfigurationViewController: DebugTableViewController {
             cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity).rawValue
             },
                                              actionClosure: nil)]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: "Joined Planetary System",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { cell in
+                    cell.detailTextLabel?.text = String(self.configuration.joinedPlanetarySystem)
+                }
+            )
+        ]
 
         return ("Onboarding", settings, nil)
     }

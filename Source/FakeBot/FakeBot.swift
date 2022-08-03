@@ -60,6 +60,13 @@ class FakeBot: Bot {
             completion([], nil)
         }
     }
+    
+    func joinedRooms() async throws -> [Room] {
+        return []
+    }
+    func insert(room: Room) async throws { }
+    func delete(room: Room) async throws { }
+    
     func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion) {
         completionQueue.async { completion(nil) }
     }

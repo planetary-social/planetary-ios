@@ -326,7 +326,7 @@ class GoBot: Bot {
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         userInitiatedQueue.async {
             do {
-                let pubs = try self.database.getRedeemedPubs()
+                let pubs = try self.database.getJoinedPubs()
                 queue.async {
                     completion(pubs, nil)
                 }
@@ -336,6 +336,27 @@ class GoBot: Bot {
                 }
             }
         }
+    }
+    
+    func joinedRooms() async throws -> [Room] {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.getJoinedRooms()
+        }
+        return try await task.value
+    }
+    
+    func insert(room: Room) async throws {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.insert(room: room)
+        }
+        return try await task.value
+    }
+    
+    func delete(room: Room) async throws {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.delete(room: room)
+        }
+        return try await task.value
     }
 
     private var _isSyncing = false

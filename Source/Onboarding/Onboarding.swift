@@ -74,16 +74,16 @@ class Onboarding {
     /// name that the API will reject with a 500 error.  This is useful to simulate the
     /// API failing and to test the reset and resume mechanisms.
     /// X5GBl8BzsRaQ
-    static func createProfile(birthdate: Date, phone: String, name: String?) async throws -> Context {
+    static func createProfile(from data: OnboardingStepData) async throws -> Context {
         
-        guard birthdate.olderThan(yearsAgo: 16) else {
+        guard let birthdate = data.birthdate, birthdate.olderThan(yearsAgo: 16) else {
             throw StartError.invalidBirthdate
         }
         
         // Phone verification is not used anymore
         // guard phone.isValidPhoneNumber else { completion(nil, .invalidPhoneNumber); return }
         
-        if let name = name {
+        if let name = data.name {
             guard name.isValidName else {
                 throw StartError.invalidName
                 
@@ -104,15 +104,15 @@ class Onboarding {
         
         // create app configuration with name and time stamp
         let configuration = AppConfiguration(with: secret)
-        configuration.name = "\(name ?? secret.identity) (\(Date().shortDateTimeString))"
+        configuration.name = "\(data.name ?? secret.identity) (\(Date().shortDateTimeString))"
         // We will add this as an option in the UI in the future #494
-        configuration.joinedPlanetarySystem = true
+        configuration.joinedPlanetarySystem = data.joinPlanetarySystem
         
-        #if DEBUG
-        configuration.ssbNetwork = Environment.Networks.test
-        #else
-        configuration.ssbNetwork = Environment.Networks.mainNet
-        #endif
+        if data.useTestNetwork {
+            configuration.ssbNetwork = Environment.Networks.test
+        } else {
+            configuration.ssbNetwork = Environment.Networks.mainNet
+        }
         
         // Safe to unwrap as configuration has secret, network and bot
         var context = Context(from: configuration)!
@@ -125,7 +125,7 @@ class Onboarding {
         }
         
         // publish about
-        if let name = name {
+        if let name = data.name {
             do {
                 let about = About(about: secret.identity, name: name)
                 _ = try await context.bot.publish(content: about)
@@ -139,13 +139,13 @@ class Onboarding {
         if let network = configuration.network {
             CrashReporting.shared.identify(
                 identifier: secret.identity,
-                name: name,
+                name: data.name,
                 networkKey: network.string,
                 networkName: network.name
             )
             Analytics.shared.identify(
                 identifier: secret.identity,
-                name: name,
+                name: data.name,
                 network: network.string
             )
         }

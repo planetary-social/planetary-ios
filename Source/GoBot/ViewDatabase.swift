@@ -46,6 +46,7 @@ enum ViewDatabaseTableNames: String {
     case mentionsImage = "mention_image"
     case reports
     case pubs
+    case rooms
     case readMessages = "read_messages"
 }
 
@@ -191,6 +192,9 @@ class ViewDatabase {
     let colHost = Expression<String>("host")
     let colPort = Expression<Int>("port")
     // colKey
+    
+    // Rooms
+    let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
     
     // Search
     private let postSearch = VirtualTable("post_search")
@@ -338,6 +342,16 @@ class ViewDatabase {
                     """
                 )
                 db.userVersion = 17
+            }
+            if db.userVersion == 17 {
+                try db.execute(
+                    """
+                    CREATE TABLE rooms (
+                        address TEXT UNIQUE NOT NULL
+                    );
+                    """
+                )
+                db.userVersion = 18
             }
         }
     }
@@ -554,7 +568,7 @@ class ViewDatabase {
         return try post(with: msgId)
     }
     
-    // MARK: pubs
+    // MARK: pubs & rooms
 
     func getAllKnownPubs() throws -> [KnownPub] {
         guard let db = self.openDB else {
@@ -589,18 +603,18 @@ class ViewDatabase {
         }
     }
     
-    func getRedeemedPubs() throws -> [Pub] {
+    func getJoinedPubs() throws -> [Pub] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
-        let qry = self.msgs
+        let query = self.msgs
             .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
             .where(self.msgs[colAuthorID] == currentUserID)
             .where(self.msgs[colMsgType] == "pub")
             .order(colSequence.desc)
         
-        let pubs: [Pub] = try db.prepare(qry).map { row in
+        let pubs: [Pub] = try db.prepare(query).map { row in
             let host = try row.get(colHost)
             let port = try row.get(colPort)
             let key: Identifier = try row.get(colKey)
@@ -620,6 +634,35 @@ class ViewDatabase {
         return pubs
             .filter { $0.address.key.isValidIdentifier }
             .filter { seenIDs.insert($0.address).inserted }
+    }
+    
+    func getJoinedRooms() throws -> [Room] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        return try db.prepare(rooms).map { row in
+            guard let address = MultiserverAddress(string: row[colAddress]) else {
+                throw ViewDatabaseError.invalidAddress(row[colAddress])
+            }
+            return Room(address: address)
+        }
+    }
+    
+    func insert(room: Room) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        try db.run(rooms.insert(colAddress <- room.address.string))
+    }
+    
+    func delete(room: Room) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        try db.run(rooms.filter(colAddress == room.address.string).delete())
     }
     
     // MARK: moderation / delete
