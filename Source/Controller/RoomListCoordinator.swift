@@ -34,22 +34,24 @@ import Logger
                 Log.optional(error)
                 self.errorMessage = error.localizedDescription
             }
-            self.loadingMessage = nil 
+            self.loadingMessage = nil
         }
     }
     
     func deleteRooms(at indexes: IndexSet) {
         Task {
-            for index in indexes {
-                do {
+            do {
+                for index in indexes {
                     let room = self.rooms[index]
                     try await self.bot.delete(room: room)
-                } catch {
-                    Log.optional(error)
-                    self.errorMessage = error.localizedDescription
                 }
+                
+                self.rooms.remove(atOffsets: indexes)
+            } catch {
+                Log.optional(error)
+                self.errorMessage = error.localizedDescription
             }
-            self.loadRooms()
+
         }
     }
     

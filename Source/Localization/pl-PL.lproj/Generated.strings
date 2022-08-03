@@ -114,6 +114,7 @@
 "Text.join" = "Dołącz";
 "Text.redeemInvitation" = "Zrealizuj zaproszenie";
 "Text.pasteAddress" = "Kod";
+"Text.invitationRedeemed" = "Invitation redeemed!";
 "Text.refreshSingular" = "{{ count }} nieprzeczytany wpis!";
 "Text.refreshPlural" = "{{ count }} nieprzeczytanych wpisów!";
 "Text.markdownSupported" = "Podgląd";
@@ -280,10 +281,13 @@
 "Error.unexpected" = "Stało się coś nieoczekiwanego.";
 "Error.supportNotConfigured" = "Wsparcie techniczne nie jest dostępne.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
 "Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
+"Error.invalidRoomURL" = "Could not parse invitation.";
+"Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
 
 "Channel.one" = "kanał";
 "Channel.many" = "kanały";

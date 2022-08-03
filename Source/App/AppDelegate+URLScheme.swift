@@ -14,15 +14,21 @@ extension AppDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        guard url.scheme == URL.planetaryScheme else {
-            return false
-        }
-        
-        if let tab = MainTab(urlPath: url.path) {
+        if url.scheme == URL.planetaryScheme,
+            let tab = MainTab(urlPath: url.path) {
             let show = MainTab.createShowClosure(for: tab)
             show()
+            return true
         }
         
-        return true
+        if url.scheme == URL.ssbScheme {
+            let canRedeem = RoomInvitationRedeemer.canRedeem(url)
+            if canRedeem {
+                Task { await RoomInvitationRedeemer.redeem(url, in: AppController.shared, bot: Bots.current) }
+                return true
+            }
+        }
+        
+        return false
     }
 }

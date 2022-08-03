@@ -696,6 +696,8 @@
 		C928DAF227B5AC850007C5FC /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = C928DAF127B5AC850007C5FC /* Logger */; };
 		C9313A78289A89580093AC47 /* RoomListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9313A77289A89580093AC47 /* RoomListCoordinator.swift */; };
 		C9313A79289A89580093AC47 /* RoomListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9313A77289A89580093AC47 /* RoomListCoordinator.swift */; };
+		C9313A7C289AD9D40093AC47 /* RoomInvitationRedeemer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9313A7B289AD9D40093AC47 /* RoomInvitationRedeemer.swift */; };
+		C9313A7D289AD9D40093AC47 /* RoomInvitationRedeemer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9313A7B289AD9D40093AC47 /* RoomInvitationRedeemer.swift */; };
 		C931927C2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */; };
 		C931927D2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */; };
 		C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */; };
@@ -1614,6 +1616,7 @@
 		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
 		C923DBB0288057EB00569AAB /* HelpDrawerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpDrawerView.swift; sourceTree = "<group>"; };
 		C9313A77289A89580093AC47 /* RoomListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomListCoordinator.swift; sourceTree = "<group>"; };
+		C9313A7B289AD9D40093AC47 /* RoomInvitationRedeemer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomInvitationRedeemer.swift; sourceTree = "<group>"; };
 		C931927B2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beta1MigrationDescriptionText.swift; sourceTree = "<group>"; };
 		C933908F27FB5498007B5FD8 /* GoSSB.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoSSB.xcframework; path = Frameworks/GoSSB.xcframework; sourceTree = "<group>"; };
 		C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotIntegrationTests.swift; sourceTree = "<group>"; };
@@ -2305,6 +2308,7 @@
 				C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */,
 				C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */,
 				C9F53824286CCF410015A146 /* WelcomeService.swift */,
+				C9313A7B289AD9D40093AC47 /* RoomInvitationRedeemer.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -4002,6 +4006,7 @@
 				C9724B882809E967000EBCCD /* PostTextCache.swift in Sources */,
 				C9724B672809D6F4000EBCCD /* PostReplyPaginatedDelegate+DataSource.swift in Sources */,
 				53E29CCB22D292A3008A2CB1 /* String+Whitespace.swift in Sources */,
+				C9313A7D289AD9D40093AC47 /* RoomInvitationRedeemer.swift in Sources */,
 				C9724BC52809ED5F000EBCCD /* UIImageView+Fade.swift in Sources */,
 				C949E9722811A8AF006C5F18 /* VerticallyCenteringScrollView.swift in Sources */,
 				C9724BAB2809EB6E000EBCCD /* KeyValuePaginatedTableViewDataSource.swift in Sources */,
@@ -4725,6 +4730,7 @@
 				53C422BA21C4772D00A314AD /* UIViewController+Debug.swift in Sources */,
 				C9EE7BD827FF371200748106 /* Beta1MigrationView.swift in Sources */,
 				8D317ECD2357A37C0009E073 /* UIImageView+Fade.swift in Sources */,
+				C9313A7C289AD9D40093AC47 /* RoomInvitationRedeemer.swift in Sources */,
 				535754F22268DAB0002A6989 /* BotError.swift in Sources */,
 				0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */,
 				C9F5E477288891DC000BCF03 /* HighlightedText.swift in Sources */,

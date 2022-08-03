@@ -178,6 +178,7 @@ enum Text: String, Localizable, CaseIterable {
     case join = "Join"
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
+    case invitationRedeemed = "Invitation redeemed!"
     
     case refreshSingular = "{{ count }} unread post!"
     case refreshPlural = "{{ count }} unread posts!"
@@ -475,10 +476,13 @@ extension Text {
         case unexpected = "Something unexpected happened."
         case supportNotConfigured = "Support is not configured."
         case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
+        case invitationRedemptionFailedWithReason = "Invitation redemption failed with message: {{ reason }}."
         case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
         case restoring = "Planetary is currently restoring your data from the network."
         case invalidAppConfiguration = "Invalid app configuration"
         case couldNotGenerateLink = "Could not generate link."
+        case invalidRoomURL = "Could not parse invitation."
+        case notLoggedIn = "The operation could not be completed because no user is logged in."
     }
 }
 
