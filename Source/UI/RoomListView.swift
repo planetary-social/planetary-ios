@@ -59,10 +59,11 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
                     SwiftUI.Text(loadingMessage)
+                        .foregroundColor(Color("mainText"))
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color.white.cornerRadius(8))
+                .background(Color("cardBackground").cornerRadius(8))
             } else {
                 EmptyView()
             }
@@ -126,8 +127,9 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         .disabled(showProgress)
         .overlay(loadingIndicator)
         .alert(isPresented: showAlert) {
+            // Error alert
             Alert(
-                title: SwiftUI.Text("Failed Joining Room"),
+                title: Text.error.view,
                 message: SwiftUI.Text(viewModel.errorMessage ?? "")
             )
         }

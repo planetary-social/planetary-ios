@@ -21,7 +21,7 @@ class AppConfigurationViewController: DebugTableViewController {
 
     init(with configuration: AppConfiguration) {
         self.configuration = configuration
-        super.init(style: .grouped)
+        super.init(style: .insetGrouped)
         self.navigationItem.title = self.configuration.name
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Select",
                                                                  style: .plain,
