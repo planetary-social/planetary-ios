@@ -8,9 +8,12 @@
 
 import Foundation
 
+/// A model for an SSB Room server, used to tunnel connections between SSB peers.
 struct Room: Equatable, Identifiable {
     
+    /// A unique string representing this room.
     var id: String { address.string }
     
+    /// The multiserver address of the room.
     let address: MultiserverAddress
 }

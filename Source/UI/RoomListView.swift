@@ -36,6 +36,7 @@ import SwiftUI
     func refresh()
 }
 
+/// Shows a list of room servers and allows the user to add and remove them.
 struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
     
     @ObservedObject var viewModel: ViewModel
@@ -77,22 +78,24 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
     var body: some View {
         List {
             // Joined Rooms
-            Section {
-                ForEach(viewModel.rooms) { room in
-                    Button {
-                        viewModel.open(room)
-                    } label: {
-                        SwiftUI.Text(room.address.host)
+            if !viewModel.rooms.isEmpty {
+                Section {
+                    ForEach(viewModel.rooms) { room in
+                        Button {
+                            viewModel.open(room)
+                        } label: {
+                            SwiftUI.Text(room.address.host)
+                        }
+                        .foregroundColor(Color("mainText"))
+                        .listRowBackground(Color("cardBackground"))
+                        
                     }
-                    .foregroundColor(Color("mainText"))
-                    .listRowBackground(Color("cardBackground"))
-
+                    .onDelete(perform: { viewModel.deleteRooms(at: $0) })
+                } header: {
+                    Text.ManageRelays.joinedRooms.view
+                        .foregroundColor(Color("secondaryText"))
+                        .font(.body.smallCaps())
                 }
-                .onDelete(perform: { viewModel.deleteRooms(at: $0) })
-            } header: {
-                Text.ManageRelays.joinedRooms.view
-                    .foregroundColor(Color("secondaryText"))
-                    .font(.body.smallCaps())
             }
             
             // Add Rooms

@@ -105,7 +105,6 @@ class Onboarding {
         // create app configuration with name and time stamp
         let configuration = AppConfiguration(with: secret)
         configuration.name = "\(data.name ?? secret.identity) (\(Date().shortDateTimeString))"
-        // We will add this as an option in the UI in the future #494
         configuration.joinedPlanetarySystem = data.joinPlanetarySystem
         
         if data.useTestNetwork {

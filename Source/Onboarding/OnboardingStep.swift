@@ -44,7 +44,8 @@ class OnboardingStepData {
             followingCount: following.count,
             hasImage: image != nil,
             joinedDirectory: joinedDirectory,
-            // TODO: add
+            joinPlanetarySystem: joinPlanetarySystem,
+            useTestNetwork: useTestNetwork,
             publicWebHosting: publicWebHosting,
             analytics: analytics,
             followPlanetary: followPlanetary,

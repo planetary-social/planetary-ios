@@ -8,8 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.6] 2022-08-03
 
-- Added beta support for room servers
-- Fixed an issue where the ban service could fail to delete messages 
+- Added beta support for replicating via room servers. #783
+- Fixed an issue where the ban service could fail to delete messages. #783
+- Added a toggle during onboarding to opt out of syncing with Planetary pubs. #783
 
 ## [1.2.5] 2022-08-01
 
