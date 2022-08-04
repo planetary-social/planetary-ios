@@ -40,14 +40,16 @@ class DoneOnboardingStep: OnboardingStep {
 
     private let joinPlanetarySystemToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = "Join Planetary System"
+        view.titleLabel.text = Text.Onboarding.joinPlanetarySystem.text
+        view.subtitleLabel.text = Text.Onboarding.joinPlanetarySystemDescription.text
         view.toggle.isOn = true
         return view
     }()
     
     private let useTestNetworkToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = "Use Test Network"
+        view.titleLabel.text = Text.Onboarding.useTestNetwork.text
+        view.subtitleLabel.text = Text.Onboarding.useTestNetworkDescription.text
         #if DEBUG
         view.toggle.isOn = true
         #else
@@ -67,9 +69,16 @@ class DoneOnboardingStep: OnboardingStep {
         Layout.fillSouth(of: view.hintLabel, with: analyticsToggle, insets: insets)
         Layout.fillSouth(of: analyticsToggle, with: followPlanetaryToggle)
         Layout.fillSouth(of: followPlanetaryToggle, with: publicWebHostingToggle)
-//        Layout.fillSouth(of: publicWebHostingToggle, with: joinPlanetarySystemToggle)
+        Layout.fillSouth(of: publicWebHostingToggle, with: joinPlanetarySystemToggle)
         #if DEBUG
         Layout.fillSouth(of: joinPlanetarySystemToggle, with: useTestNetworkToggle)
+        useTestNetworkToggle.bottomAnchor.constraint(
+            lessThanOrEqualTo: view.buttonStack.topAnchor
+        ).isActive = true
+        #else
+        joinPlanetarySystemToggle.bottomAnchor.constraint(
+            lessThanOrEqualTo: view.buttonStack.topAnchor
+        ).isActive = true
         #endif
 
         self.view.hintLabel.text = Text.Onboarding.thanksForTrying.text

@@ -351,6 +351,12 @@ extension Text {
         case welcomeMessage = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:"
         case welcomeBotName = "Planetary Help"
         case welcomeBotBio = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help."
+        
+        case joinPlanetarySystem = "Join Planetary Network"
+        case joinPlanetarySystemDescription = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users."
+        
+        case useTestNetwork = "Use Test Network"
+        case useTestNetworkDescription = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later."
     }
 }
 

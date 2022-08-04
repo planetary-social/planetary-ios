@@ -214,6 +214,10 @@
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
 "Onboarding.welcomeBotName" = "Planetary Help";
 "Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
+"Onboarding.joinPlanetarySystem" = "Join Planetary System";
+"Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
+"Onboarding.useTestNetwork" = "Use Test Network";
+"Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
 
 "OnboardingStepTitle.backup" = "OK, ya creamos tu identidad. ¿Querés respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";

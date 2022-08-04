@@ -127,7 +127,7 @@ class AppConfigurationViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: "Joined Planetary System",
+                title: "Joined Planetary Network",
                 cellReuseIdentifier: DebugValueTableViewCell.className,
                 valueClosure: { cell in
                     cell.detailTextLabel?.text = String(self.configuration.joinedPlanetarySystem)
