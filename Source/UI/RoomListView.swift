@@ -26,6 +26,9 @@ import SwiftUI
     /// Tries to add a room to the database from an invitation link or multiserver address string.
     func addRoom(from: String)
     
+    /// Tells the coordinator that the user wants to open the given room.
+    func open(_ room: Room)
+    
     /// Called when the user dismisses the shown error message. Should clear `errorMessage`.
     func didDismissError()
     
@@ -76,11 +79,14 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
             // Joined Rooms
             Section {
                 ForEach(viewModel.rooms) { room in
-                    HStack {
+                    Button {
+                        viewModel.open(room)
+                    } label: {
                         SwiftUI.Text(room.address.host)
                     }
                     .foregroundColor(Color("mainText"))
                     .listRowBackground(Color("cardBackground"))
+
                 }
                 .onDelete(perform: { viewModel.deleteRooms(at: $0) })
             } header: {
@@ -178,6 +184,8 @@ fileprivate class PreviewViewModel: RoomListViewModel {
             errorMessage = "Error joining room"
         }
     }
+    
+    func open(_ room: Room) {}
     
     func didDismissError() {
         errorMessage = nil

@@ -242,6 +242,8 @@
 "ManageRelays.pasteAddress" = "Paste the address here";
 "ManageRelays.joinedRooms" = "Joined Rooms";
 "ManageRelays.addRooms" = "Add Rooms";
+"ManageRelays.loadingRooms" = "Loading rooms...";
+"ManageRelays.invalidRoomURL" = "Invalid room URL";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
 "Preview.title" = "Advanced Settings";

@@ -369,6 +369,8 @@ extension Text {
         case pasteAddress = "Paste the address here"
         case joinedRooms = "Joined Rooms"
         case addRooms = "Add Rooms"
+        case loadingRooms = "Loading rooms..."
+        case invalidRoomURL = "Invalid room URL"
         case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
     }
 }

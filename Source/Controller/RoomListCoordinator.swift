@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import UIKit
 
 /// A coordinator for the `RoomListView`. Manages CRUD operations for a list of joined room servers.
 @MainActor class RoomListCoordinator: RoomListViewModel {
@@ -74,6 +75,15 @@ import Logger
     
     func refresh() {
         loadRooms()
+    }
+    
+    func open(_ room: Room) {
+        guard let url = URL(string: "https://\(room.address.host)") else {
+            errorMessage = Text.ManageRelays.invalidRoomURL.text
+            return
+        }
+        
+        UIApplication.shared.open(url)
     }
     
     // MARK: Helpers
