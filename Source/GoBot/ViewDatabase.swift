@@ -755,7 +755,7 @@ class ViewDatabase {
     }
     
     /// Returns true if the given message is on the ban list.
-  func messageMatchesBanList(_ message: KeyValue) throws -> Bool {
+    func messageMatchesBanList(_ message: KeyValue) throws -> Bool {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
         return try db.scalar(banList.filter(colHash == message.key.sha256hash).exists)
     }

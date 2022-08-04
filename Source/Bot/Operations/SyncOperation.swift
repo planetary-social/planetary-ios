@@ -50,7 +50,10 @@ class SyncOperation: AsynchronousOperation {
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
         if self.notificationsOnly {
-            Bots.current.syncNotifications(queue: queue, peers: pubs) { [weak self] (error, timeInterval, newMessages) in
+            Bots.current.syncNotifications(
+                queue: queue,
+                peers: pubs
+            ) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
                                           numberOfMessages: newMessages)
                 Log.optional(error)

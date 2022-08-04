@@ -38,8 +38,9 @@ class SendMissionOperation: AsynchronousOperation {
         
         let bot = Bots.current
         guard let appConfiguration = AppConfiguration.current,
-              let loggedInIdentity = bot.identity,
-              loggedInIdentity == appConfiguration.identity else {
+            let loggedInIdentity = bot.identity,
+            loggedInIdentity == appConfiguration.identity else {
+            
             Log.info("Not logged in. SendMissionOperation finished.")
             self.result = .failure(BotError.notLoggedIn)
             self.finish()

@@ -194,9 +194,9 @@ class SettingsViewController: DebugTableViewController {
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
-                actionClosure: { [unowned self] _ in
+                actionClosure: { [weak self] _ in
                     let controller = ManagePubsViewController()
-                    self.navigationController?.pushViewController(controller, animated: true)
+                    self?.navigationController?.pushViewController(controller, animated: true)
                 }
             )
         ]

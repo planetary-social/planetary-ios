@@ -202,5 +202,4 @@ enum RoomInvitationRedeemer {
             )
         }
     }
-        
 }

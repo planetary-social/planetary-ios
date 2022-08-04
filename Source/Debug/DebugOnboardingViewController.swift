@@ -230,7 +230,7 @@ class DebugOnboardingViewController: DebugTableViewController {
             do {
                 try await Bots.current.logout()
                 let data = OnboardingStepData()
-                data.name = nameTextField.text!
+                data.name = nameTextField.text
                 data.birthdate = birthdate
                 self.context = try await Onboarding.createProfile(from: data)
             } catch {

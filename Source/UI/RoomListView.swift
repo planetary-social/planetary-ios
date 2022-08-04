@@ -88,7 +88,6 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         }
                         .foregroundColor(Color("mainText"))
                         .listRowBackground(Color("cardBackground"))
-                        
                     }
                     .onDelete(perform: { viewModel.deleteRooms(at: $0) })
                 } header: {
