@@ -15,8 +15,11 @@ import CrashReporting
 /// SendMissionOperation instead.
 class SyncOperation: AsynchronousOperation {
     
+    /// List of available rooms to establish connection. All will be connected to.
+    var rooms: [MultiserverAddress]
+    
     /// List of available peers to establish connection. Only a subset will be actually be connected to.
-    var peerPool: [MultiserverAddress]
+    var pubs: [MultiserverAddress]
     
     /// If true, only will sync to one peer with no retries
     var notificationsOnly = false
@@ -26,8 +29,9 @@ class SyncOperation: AsynchronousOperation {
     
     private(set) var error: Error?
     
-    init(peerPool: [MultiserverAddress]) {
-        self.peerPool = peerPool
+    init(rooms: [MultiserverAddress], pubs: [MultiserverAddress]) {
+        self.rooms = rooms
+        self.pubs = pubs
         super.init()
     }
      
@@ -46,7 +50,10 @@ class SyncOperation: AsynchronousOperation {
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
         if self.notificationsOnly {
-            Bots.current.syncNotifications(queue: queue, peers: peerPool) { [weak self] (error, timeInterval, newMessages) in
+            Bots.current.syncNotifications(
+                queue: queue,
+                peers: pubs
+            ) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
                                           numberOfMessages: newMessages)
                 Log.optional(error)
@@ -59,12 +66,16 @@ class SyncOperation: AsynchronousOperation {
                 self?.finish()
             }
         } else {
-            Bots.current.sync(queue: queue, peers: peerPool) { [weak self] (error, timeInterval, newMessages) in
+            Bots.current.sync(queue: queue, peers: pubs) { [weak self] (error, timeInterval, newMessages) in
                 Analytics.shared.trackBotDidSync(duration: timeInterval,
                                           numberOfMessages: newMessages)
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 Log.info("SyncOperation finished with \(newMessages) new messages. Took \(timeInterval) seconds to sync.")
+                Log.info("Dialing rooms")
+                self?.rooms.forEach {
+                    Bots.current.connect(to: $0)
+                }
                 if let strongSelf = self, !strongSelf.isCancelled {
                     self?.newMessages = newMessages
                     self?.error = error
