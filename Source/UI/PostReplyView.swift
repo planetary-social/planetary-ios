@@ -12,9 +12,13 @@ import UIKit
 /// Composite view of the PostCellView, a ReplyTextView, and a bottom separator.
 class PostReplyView: KeyValueView {
 
+    let headerView = ContactHeaderView()
+
     let postView = PostCellView()
 
     let repliesView = RepliesView()
+
+    let replyView = PostCellView()
 
     // In this case the view is mostly used a big button to
     // navigate into a thread and start replying.  The tap
@@ -64,10 +68,14 @@ class PostReplyView: KeyValueView {
             color: .appBackground
         )
 
+        replyView.displayHeader = false
+
         Layout.fill(view: self, with: stackView)
         stackView.addArrangedSubview(topBorder)
+        stackView.addArrangedSubview(headerView)
         stackView.addArrangedSubview(postView)
         stackView.addArrangedSubview(repliesView)
+        stackView.addArrangedSubview(replyView)
         stackView.addArrangedSubview(replyTextView)
         stackView.addArrangedSubview(bottomBorder)
         stackView.addArrangedSubview(degrade)
@@ -79,14 +87,45 @@ class PostReplyView: KeyValueView {
     }
 
     override func update(with keyValue: KeyValue) {
-        self.postView.update(with: keyValue)
-        self.repliesView.update(with: keyValue)
-        if !keyValue.metadata.replies.isEmpty {
-            self.degrade.heightConstraint?.constant = 12.33
-        } else {
-            self.degrade.heightConstraint?.constant = 0
+        let updatePostView = { [weak self] (keyValue: KeyValue) in
+            self?.postView.update(with: keyValue)
+            self?.repliesView.update(with: keyValue)
+            if !keyValue.metadata.replies.isEmpty {
+                self?.degrade.heightConstraint?.constant = 12.33
+            } else {
+                self?.degrade.heightConstraint?.constant = 0
+            }
         }
-        
+        if let rootIdentifier = keyValue.value.content.post?.root {
+            headerView.isHidden = false
+            headerView.update(with: keyValue)
+            replyView.isHidden = false
+            replyView.update(with: keyValue)
+            Task {
+                do {
+                    let rootKeyValue = try Bots.current.post(from: rootIdentifier)
+                    updatePostView(rootKeyValue)
+                } catch {
+
+                }
+            }
+        } else if let linkIdentifier = keyValue.value.content.vote?.root {
+            headerView.isHidden = false
+            headerView.update(with: keyValue)
+            replyView.isHidden = true
+            Task {
+                do {
+                    let linkKeyValue = try Bots.current.post(from: linkIdentifier)
+                    updatePostView(linkKeyValue)
+                } catch {
+
+                }
+            }
+        } else {
+            headerView.isHidden = true
+            replyView.isHidden = true
+            updatePostView(keyValue)
+        }
         replyTextView.isHidden = keyValue.offChain == true
     }
 }

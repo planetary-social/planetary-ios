@@ -40,7 +40,7 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
           LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
           LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
         WHERE
-          messages.type IN ('post', 'contact')
+          messages.type IN ('post', 'contact', 'vote')
           AND messages.is_decrypted = false
           AND messages.hidden = false
           AND (
@@ -148,6 +148,7 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
           messagekeys.*,
           authors.*,
           author_about.*,
+          votes.*,
           contact_author.author AS contact_identifier,
           EXISTS (
             SELECT
@@ -203,8 +204,9 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
           LEFT JOIN abouts AS author_about ON author_about.about_id = messages.author_id
           LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
           LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
+          LEFT JOIN votes AS votes ON messages.msg_id = votes.msg_ref
         WHERE
-          type IN ('post', 'contact')
+          type IN ('post', 'contact', 'vote')
           AND is_decrypted = false
           AND hidden = false
           AND (
