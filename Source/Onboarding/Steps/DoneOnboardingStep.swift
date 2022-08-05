@@ -73,11 +73,13 @@ class DoneOnboardingStep: OnboardingStep {
         #if DEBUG
         Layout.fillSouth(of: joinPlanetarySystemToggle, with: useTestNetworkToggle)
         useTestNetworkToggle.bottomAnchor.constraint(
-            lessThanOrEqualTo: view.buttonStack.topAnchor
+            lessThanOrEqualTo: view.buttonStack.topAnchor,
+            constant: -Layout.verticalSpacing
         ).isActive = true
         #else
         joinPlanetarySystemToggle.bottomAnchor.constraint(
-            lessThanOrEqualTo: view.buttonStack.topAnchor
+            lessThanOrEqualTo: view.buttonStack.topAnchor,
+            constant: -Layout.verticalSpacing
         ).isActive = true
         #endif
 
