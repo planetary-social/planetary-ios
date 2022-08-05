@@ -66,7 +66,7 @@ class PostViewController: ContentViewController {
     }
 
     // MARK: Actions
-
+    // check here for switching to posting using blob instead of post type
     func didPressPostButton() {
         guard let text = self.replyTextView.textView.attributedText, text.length > 0 else { return }
         let branches = [self.keyValue.key]

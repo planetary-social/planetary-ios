@@ -32,6 +32,7 @@ extension ContentCodable {
                                                                        { return try JSONEncoder().encode(encodable) }
             case .pub:      if let encodable = self as? Pub { return try JSONEncoder().encode(encodable) }
             case .post:     if let encodable = self as? Post { return try JSONEncoder().encode(encodable) }
+            case .blog:     if let encodable = self as? Blog { return try JSONEncoder().encode(encodable) }
             case .vote:     if let encodable = self as? ContentVote { return try JSONEncoder().encode(encodable) }
 
             // models that SHOULD NOT be published

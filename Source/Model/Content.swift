@@ -36,33 +36,42 @@ struct Content: Codable {
     var dropContentRequest: DropContentRequest?
     var post: Post?
     var vote: ContentVote?
+    var blog: Blog?
 
     init(from post: Post) {
+        self.post = post
         self.type = .post
         self.typeString = "post"
         self.typeException = nil
-        self.post = post
     }
+
+    init(from blog: Blog) {
+        self.blog = blog
+        self.type = .blog
+        self.typeString = "blog"
+        self.typeException = nil
+    }
+
     
     init(from vote: ContentVote) {
+        self.vote = vote
         self.type = .vote
         self.typeString = "vote"
         self.typeException = nil
-        self.vote = vote
     }
 
     init(from contact: Contact) {
         self.type = .contact
+        self.contact = contact
         self.typeString = "contact"
         self.typeException = nil
-        self.contact = contact
     }
     
     init(from about: About) {
         self.type = .about
+        self.about = about
         self.typeString = "about"
         self.typeException = nil
-        self.about = about
     }
 
     /// The first responsibility of this decoder is to ensure that
@@ -122,6 +131,7 @@ struct Content: Codable {
                 case .dropContentRequest: self.dropContentRequest = try DropContentRequest(from: decoder)
                 case .pub: self.pub = try Pub(from: decoder)
                 case .post: self.post = try Post(from: decoder)
+                case .blog: self.blog = try Blog(from: decoder)
                 case .vote: self.vote = try ContentVote(from: decoder)
                 default: ()
             }
@@ -143,6 +153,7 @@ struct Content: Codable {
     var isAddress: Bool { self.isValid && self.type == .address && self.address != nil }
     var isContact: Bool { self.isValid && self.type == .contact && self.contact != nil }
     var isPost: Bool { self.isValid && self.type == .post && self.post != nil }
+    var isBlog: Bool { self.isValid && self.type == .blog && self.blog != nil }
     var isVote: Bool { self.isValid && self.type == .vote && self.vote != nil }
 }
 

@@ -34,6 +34,7 @@ enum ViewDatabaseTableNames: String {
     case channelsAssigned = "channel_assignments"
     case contacts
     case banList = "ban_list"
+    case blogs
     case posts
     case postBlobs = "post_blobs"
     case privates
@@ -130,7 +131,13 @@ class ViewDatabase {
     let colMetaHeight = Expression<Int?>("meta_height")
     let colMetaMimeType = Expression<String?>("meta_mime_type")
     let colMetaAverageColorRGB = Expression<Int?>("meta_average_color_rgb")
-
+    
+    // blogs
+    let blogs = Table(ViewDatabaseTableNames.blogs.rawValue)
+    let colSummary = Expression<String>("summary")
+    let colTitle = Expression<String>("title")
+    let colBlog = Expression<String>("blog")
+    
     let mentions_feed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
     // msg_ref
     let colFeedID = Expression<Int64>("feed_id")
@@ -338,6 +345,25 @@ class ViewDatabase {
                     """
                 )
                 db.userVersion = 17
+            }
+            
+            
+            if db.userVersion == 17 {
+                try db.execute(
+                    """
+                    CREATE TABLE
+                        blogs (
+                            msg_ref              integer not null,
+                            is_root              boolean default false,
+                            title                varchar(255),
+                            
+                            PRIMARY KEY (msg_ref)
+                        );
+                    CREATE INDEX blogss_msgrefs on blogs (msg_ref);
+                    CREATE INDEX blogss_roots on blogs (is_root);
+                    """
+                )
+                db.userVersion = 18
             }
         }
     }
@@ -822,6 +848,7 @@ class ViewDatabase {
         let messageTables = [
             self.posts,
             self.post_blobs,
+            self.blogs,
             self.tangles,
             self.mentions_msg,
             self.mentions_feed,
@@ -2198,6 +2225,52 @@ class ViewDatabase {
         }
     }
     
+    // needs to be update, this is just a copy o fillPost
+    private func fillBlog(msgID: Int64, msg: KeyValue, pms: Bool) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        guard let p = msg.value.content.post else {
+            Log.info("[viewdb/fill] broken post message: \(msg.key)")
+            return
+        }
+        
+        if pms { // TODO: move this to all message types
+            try self.insertPrivateRecps(msgID: msgID, recps: p.recps)
+        }
+        
+        try db.run(
+            self.posts.insert(
+                colMessageRef <- msgID,
+                colIsRoot <- p.root == nil,
+                colText <- p.text
+            )
+        )
+        
+        try db.run(
+            postSearch.insert(
+                colMessageRef <- msgID,
+                colText <- p.text.lowercased()
+            )
+        )
+
+        try self.insertBranches(msgID: msgID, root: p.root, branches: p.branch)
+        
+        if let m = p.mentions {
+            try self.insertMentions(msgID: msgID, mentions: m)
+        }
+        
+        if let b = p.mentions?.asBlobs() {
+            try self.insertBlobs(msgID: msgID, blobs: b)
+        }
+
+        if let htags = p.mentions?.asHashtags() {
+            try self.insertHashtags(msgID: msgID, tags: htags)
+        }
+    }
+    
+
+    
     private func fillVote(msgID: Int64, msg: KeyValue, pms: Bool) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -2381,6 +2454,8 @@ class ViewDatabase {
             break
         case .pub:
             break
+        case .blog: //need to flush this out. blog.
+            break
         case .unknown:
             break
         case .unsupported:
@@ -2544,6 +2619,9 @@ class ViewDatabase {
                 case .post:
                     try self.fillPost(msgID: msgKeyID, msg: msg, pms: pms)
                     
+                case .blog:
+                    try self.fillBlog(msgID: msgKeyID, msg: msg, pms: pms)
+                
                 case .vote:
                     try self.fillVote(msgID: msgKeyID, msg: msg, pms: pms)
                     

@@ -13,7 +13,8 @@ import Logger
 typealias PublishBlobsCompletion = ((Blobs, Error?) -> Void)
 
 extension Bot {
-
+    
+    // add post Blog type here
     func publish(_ post: Post, with images: [UIImage] = [], completion: @escaping PublishCompletion) {
         Thread.assertIsMainThread()
 
