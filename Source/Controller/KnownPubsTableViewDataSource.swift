@@ -92,9 +92,9 @@ extension KnownPubsTableViewDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return Text.ManagePubs.addingPubs.text
+            return Text.ManageRelays.addingPubs.text
         }
-        return Text.ManagePubs.yourPubs.text
+        return Text.ManageRelays.yourPubs.text
     }
 }
 

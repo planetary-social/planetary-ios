@@ -12,7 +12,7 @@ extension Text {
             Text.Offboarding.self,
             Text.Onboarding.self,
             Text.Onboarding.StepTitle.self,
-            Text.ManagePubs.self,
+            Text.ManageRelays.self,
             Text.Preview.self,
             Text.FeedAlgorithm.self,
             Text.PublicWebHosting.self,
@@ -104,8 +104,8 @@ enum Text: String, Localizable, CaseIterable {
     case likesThis = "likes this"
     case dislikesThis = "dislikes this"
 
-    case block = "Block"
-    case blocked = "Blocked"
+    case block = "Ignore"
+    case blocked = "Ignored"
 
     case deleteSecretAndIdentity = "Delete this secret and identity"
 
@@ -137,8 +137,8 @@ enum Text: String, Localizable, CaseIterable {
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
 
-    case blockUser = "Block this user"
-    case unblockUser = "Unblock this user"
+    case blockUser = "Ignore this user"
+    case unblockUser = "Unignore this user"
 
     case reportPost = "Report this post"
     case reportUser = "Report this user"
@@ -178,6 +178,9 @@ enum Text: String, Localizable, CaseIterable {
     case join = "Join"
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
+    case invitationRedeemed = "Invitation redeemed!"
+    case addRoomAddressOrInvitation = "paste address or invitation"
+    case joiningRoom = "Joining room..."
     
     case refreshSingular = "{{ count }} unread post!"
     case refreshPlural = "{{ count }} unread posts!"
@@ -243,6 +246,7 @@ extension Text {
     enum NewPost: String, Localizable, CaseIterable {
         case confirmRemove = "Remove this image from the post?  You can always add it back again."
         case remove = "Remove"
+        case publishing = "Publishing..."
     }
 }
 
@@ -348,21 +352,33 @@ extension Text {
         case welcomeMessage = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:"
         case welcomeBotName = "Planetary Help"
         case welcomeBotBio = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help."
+        
+        case joinPlanetarySystem = "Join Planetary Network"
+        case joinPlanetarySystemDescription = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users."
+        
+        case useTestNetwork = "Use Test Network"
+        case useTestNetworkDescription = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later."
     }
 }
 
-// MARK: - Manage Pubs
+// MARK: - Manage Relays
 
 extension Text {
-
-    enum ManagePubs: String, Localizable, CaseIterable {
-        case header = "Pubs"
-        case title = "Manage Pubs"
-        case footer = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself."
+    
+    enum ManageRelays: String, Localizable, CaseIterable {
+        case relayServers = "Relay Servers"
+        case managePubs = "Manage Pubs"
+        case manageRooms = "Manage Rooms (beta)"
+        case footer = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself."
         case addingPubs = "Adding Pubs"
         case yourPubs = "Your Pubs"
         case lastWorked = "Last worked on"
         case pasteAddress = "Paste the address here"
+        case joinedRooms = "Joined Rooms"
+        case addRooms = "Add Rooms"
+        case loadingRooms = "Loading rooms..."
+        case invalidRoomURL = "Invalid room URL"
+        case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
     }
 }
 
@@ -446,12 +462,12 @@ extension Text {
 extension Text {
 
     enum Blocking: String, Localizable, CaseIterable {
-        case alertTitle = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other."
-        case buttonTitle = "Yes, block {{ name }}"
-        case blockedUsers = "Blocked Users"
-        case footer = "Blocked users cannot see your posts or contact you, and you will need to unblock them before you can see their posts or contact them. It may take some time to see users and content once they have been unblocked."
+        case alertTitle = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible."
+        case buttonTitle = "Yes, ignore {{ name }}"
+        case blockedUsers = "Ignored Users"
+        case footer = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored."
         case thisUser = "this user"
-        case usersYouHaveBlocked = "Users that you have blocked"
+        case usersYouHaveBlocked = "Users that you have ignored"
     }
 }
 
@@ -475,10 +491,14 @@ extension Text {
         case unexpected = "Something unexpected happened."
         case supportNotConfigured = "Support is not configured."
         case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
+        case invitationRedemptionFailedWithReason = "Invitation redemption failed with message: {{ reason }}."
         case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
         case restoring = "Planetary is currently restoring your data from the network."
         case invalidAppConfiguration = "Invalid app configuration"
         case couldNotGenerateLink = "Could not generate link."
+        case invalidRoomURL = "Could not parse invitation."
+        case invalidRoomInvitationOrAddress = "Planetary does not recognize this as a valid room invitation or address."
+        case notLoggedIn = "The operation could not be completed because no user is logged in."
     }
 }
 

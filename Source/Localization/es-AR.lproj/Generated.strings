@@ -58,8 +58,8 @@
 "Text.seeMore" = "Ver más";
 "Text.likesThis" = "likes this";
 "Text.dislikesThis" = "dislikes this";
-"Text.block" = "Bloquear";
-"Text.blocked" = "Bloqueado";
+"Text.block" = "Ignore";
+"Text.blocked" = "Ignored";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
 "Text.follow" = "Seguir";
 "Text.following" = "Siguiendo";
@@ -80,8 +80,8 @@
 "Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar amigos";
-"Text.blockUser" = "Bloquear este usuario";
-"Text.unblockUser" = "Desbloquear este usuario";
+"Text.blockUser" = "Ignore this user";
+"Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Reportar este post";
 "Text.reportUser" = "Reportar este usuario";
 "Text.noReplies" = "Sin respuestas";
@@ -114,6 +114,9 @@
 "Text.join" = "Unite";
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
+"Text.invitationRedeemed" = "Invitation redeemed!";
+"Text.addRoomAddressOrInvitation" = "paste address or invitation";
+"Text.joiningRoom" = "Joining room...";
 "Text.refreshSingular" = "{{ count }} publicación sin leer!";
 "Text.refreshPlural" = "{{ count }} publicaciones sin leer!";
 "Text.markdownSupported" = "Markdown soportado";
@@ -140,12 +143,12 @@
 "Text.areYouSure" = "Are you sure?";
 "Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 
-"Blocking.alertTitle" = "¿Estás seguro de que querés bloquear a {{ name }}? No vas a poder ver su contenido mutuamente ni tampoco volver a contactarse.";
-"Blocking.buttonTitle" = "Sí, bloquear a {{ name }}";
-"Blocking.blockedUsers" = "Usuarios Bloqueados";
-"Blocking.footer" = "Los usuarios bloqueados no pueden ver tus posts ni contactarte, y vas a tener que desbloquearlos para ver sus publicaciones o contactarlos. Podría tomar un tiempo volver a ver usuarios y contenido una vez que han sido desbloqueados.";
+"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
+"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
+"Blocking.blockedUsers" = "Ignored Users";
+"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
 "Blocking.thisUser" = "este usuario";
-"Blocking.usersYouHaveBlocked" = "Usuarios que has bloqueado";
+"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
 
 "ImagePicker.camera" = "Cámara";
 "ImagePicker.cameraNotAvailable" = "La cámara no está disponible en este dispositivo";
@@ -157,6 +160,7 @@
 
 "NewPost.confirmRemove" = "¿Querés eliminar esta imagen de la publicación? La podés volver a agregar si te arrepentís.";
 "NewPost.remove" = "Eliminar";
+"NewPost.publishing" = "Publishing...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";
@@ -211,6 +215,10 @@
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
 "Onboarding.welcomeBotName" = "Planetary Help";
 "Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
+"Onboarding.joinPlanetarySystem" = "Join Planetary Network";
+"Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
+"Onboarding.useTestNetwork" = "Use Test Network";
+"Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
 
 "OnboardingStepTitle.backup" = "OK, ya creamos tu identidad. ¿Querés respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
@@ -229,13 +237,19 @@
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
 
-"ManagePubs.header" = "Pubs";
-"ManagePubs.title" = "Administrar Pubs";
-"ManagePubs.footer" = "Los pubs son servidores de retransmisión que distribuyen mensajes a través de la red Scuttlebutt. Te conectamos automáticamente a pubs de Planetary, pero te podés conectar a otros si preferís, o incluso gestionar uno vos mismo.";
-"ManagePubs.addingPubs" = "Agregar Pubs";
-"ManagePubs.yourPubs" = "Tus Pubs";
-"ManagePubs.lastWorked" = "Última conexión";
-"ManagePubs.pasteAddress" = "Pegá acá la invitación";
+"ManageRelays.relayServers" = "Relay Servers";
+"ManageRelays.managePubs" = "Manage Pubs";
+"ManageRelays.manageRooms" = "Manage Rooms (beta)";
+"ManageRelays.footer" = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
+"ManageRelays.addingPubs" = "Adding Pubs";
+"ManageRelays.yourPubs" = "Your Pubs";
+"ManageRelays.lastWorked" = "Last worked on";
+"ManageRelays.pasteAddress" = "Paste the address here";
+"ManageRelays.joinedRooms" = "Joined Rooms";
+"ManageRelays.addRooms" = "Add Rooms";
+"ManageRelays.loadingRooms" = "Loading rooms...";
+"ManageRelays.invalidRoomURL" = "Invalid room URL";
+"ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
 "Preview.title" = "Configuración avanzada";
 "Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
@@ -280,10 +294,14 @@
 "Error.unexpected" = "Something unexpected happened.";
 "Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
 "Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
+"Error.invalidRoomURL" = "Could not parse invitation.";
+"Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
+"Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
 
 "Channel.one" = "hashtag";
 "Channel.many" = "hashtags";

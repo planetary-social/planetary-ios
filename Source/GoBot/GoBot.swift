@@ -326,7 +326,7 @@ class GoBot: Bot {
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         userInitiatedQueue.async {
             do {
-                let pubs = try self.database.getRedeemedPubs()
+                let pubs = try self.database.getJoinedPubs()
                 queue.async {
                     completion(pubs, nil)
                 }
@@ -336,6 +336,27 @@ class GoBot: Bot {
                 }
             }
         }
+    }
+    
+    func joinedRooms() async throws -> [Room] {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.getJoinedRooms()
+        }
+        return try await task.value
+    }
+    
+    func insert(room: Room) async throws {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.insert(room: room)
+        }
+        return try await task.value
+    }
+    
+    func delete(room: Room) async throws {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.delete(room: room)
+        }
+        return try await task.value
     }
 
     private var _isSyncing = false
@@ -382,6 +403,16 @@ class GoBot: Bot {
                     completion: completion
                 )
             }
+        }
+    }
+    
+    func connect(to address: MultiserverAddress) {
+        guard self.bot.isRunning else {
+            return
+        }
+        
+        utilityQueue.async {
+            _ = self.bot.dialOne(peer: address)
         }
     }
     
@@ -825,7 +856,10 @@ class GoBot: Bot {
                 #endif
                 completion(.failure(error ?? GoBotError.unexpectedFault("updateReceive failed")))
             } catch {
-                let encapsulatedError = GoBotError.duringProcessing("viewDB: message filling failed", error)
+                let encapsulatedError = GoBotError.duringProcessing(
+                    "viewDB: message filling failed: \(error.localizedDescription)",
+                    error
+                )
                 Log.optional(encapsulatedError)
                 CrashReporting.shared.reportIfNeeded(error: encapsulatedError)
                 completion(.failure(encapsulatedError))

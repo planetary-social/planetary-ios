@@ -50,6 +50,9 @@ extension AppDelegate {
         // table footers and headers
         let footerColor = UIColor.secondaryText
         UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = footerColor
+        
+        // table views
+        UITableView.appearance().backgroundColor = UIColor.appBackground
     }
 }
 

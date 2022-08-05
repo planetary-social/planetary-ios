@@ -75,14 +75,7 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
                         RedeemInviteOperation(star: $0, shouldFollow: false)
                     }
                     
-                    // Sync with stars after following
-                    let peerPool = randomSampleOfStars.compactMap { $0.toPeer().multiserverAddress }
-                    
-                    let syncOperation = SyncOperation(peerPool: peerPool)
-                    redeemInviteOperations.forEach { syncOperation.addDependency($0) }
-                    
-                    let operations = redeemInviteOperations + [syncOperation]
-                    self.operationQueue.addOperations(operations, waitUntilFinished: true)
+                    self.operationQueue.addOperations(redeemInviteOperations, waitUntilFinished: true)
                 }
             } catch {
                 Log.optional(error)

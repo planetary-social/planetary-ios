@@ -22,13 +22,6 @@ import CrashReporting
     }
 
     override func didStart() {
-
-        // TODO if this fails they get stuck
-        guard let birthdate = self.data.birthdate else { return }
-        // guard let phone = self.data.phone else { return }
-        let phone = "800-555-1212"
-        let name = self.data.name 
-
         self.view.lookBusy(after: 0)
 
         // SIMULATE ONBOARDING
@@ -44,7 +37,7 @@ import CrashReporting
             var context: Onboarding.Context?
             
             do {
-                context = try await Onboarding.createProfile(birthdate: birthdate, phone: phone, name: name)
+                context = try await Onboarding.createProfile(from: data)
                 self?.view.lookReady()
             } catch {
                 Log.optional(error)
@@ -55,7 +48,7 @@ import CrashReporting
             }
             
             self?.data.context = context
-            if name != nil {
+            if data.name != nil {
                 // Proceed to bio + photo steps
                 self?.next()
             } else {

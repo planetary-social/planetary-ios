@@ -18,8 +18,8 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
     // MARK: Lifecycle
     
     convenience init() {
-        self.init(style: .grouped)
-        self.title = Text.ManagePubs.title.text
+        self.init(style: .insetGrouped)
+        self.title = Text.ManageRelays.managePubs.text
     }
 
     override func viewWillAppear(_ animated: Bool) {
