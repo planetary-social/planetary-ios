@@ -243,6 +243,7 @@ extension Text {
     enum NewPost: String, Localizable, CaseIterable {
         case confirmRemove = "Remove this image from the post?  You can always add it back again."
         case remove = "Remove"
+        case publishing = "Publishing..."
     }
 }
 

@@ -157,6 +157,7 @@
 
 "NewPost.confirmRemove" = "Usunąć ten obraz z posta? Zawsze możesz dodać go ponownie.";
 "NewPost.remove" = "Usuń";
+"NewPost.publishing" = "Publishing...";
 
 "Offboarding.reset" = "Usuń";
 "Offboarding.resetIdentity" = "Usuń moją tożsamość";
