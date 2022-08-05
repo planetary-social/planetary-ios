@@ -114,6 +114,9 @@
 "Text.join" = "Aderir";
 "Text.redeemInvitation" = "Resgatar um convite";
 "Text.pasteAddress" = "Token";
+"Text.invitationRedeemed" = "Invitation redeemed!";
+"Text.addRoomAddressOrInvitation" = "paste address or invitation";
+"Text.joiningRoom" = "Joining room...";
 "Text.refreshSingular" = "{{ count }} postagens não lidas!";
 "Text.refreshPlural" = "{{ count }} postagens não lidas!";
 "Text.markdownSupported" = "Pré-visualização de markdown";
@@ -212,6 +215,10 @@
 "Onboarding.welcomeMessage" = "Bem-vindo ao Planetary! Prazer em recebê-lo. Eis algumas dicas para ajudá-lo na sua jornada:";
 "Onboarding.welcomeBotName" = "Ajuda no Planetary";
 "Onboarding.welcomeBotBio" = "Esta é uma conta falsa utilizada para exibir mensagens de boas-vindas aos novos usuários. Para obter ajuda, abra um protocolo de atendimento no menu lateral ou faça uma postagem com a hashtag #planetary-help.";
+"Onboarding.joinPlanetarySystem" = "Join Planetary Network";
+"Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
+"Onboarding.useTestNetwork" = "Use Test Network";
+"Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
 
 "OnboardingStepTitle.backup" = "Tudo bem, criamos a sua identidade — gostaria de fazer um backup dela?";
 "OnboardingStepTitle.benefits" = "O Planetary é uma maneira mais saudável de ser sociável";
@@ -230,13 +237,19 @@
 "OnboardingStepTitle.resume" = "Retomando a criação da sua identidade no Planetary...";
 "OnboardingStepTitle.start" = "\nRedes sociais para seres humanos, não para algoritmos.";
 
-"ManagePubs.header" = "Servidores públicos";
-"ManagePubs.title" = "Gerenciar servidores públicos";
-"ManagePubs.footer" = "Os servidores públicos são servidores de retransmissão que distribuem as mensagens através da rede Scuttlebutt. Você se conecta automaticamente aos servidores públicos do Planetary, mas pode se conectar a outros, se quiser, ou até mesmo administrar um você mesmo.";
-"ManagePubs.addingPubs" = "Adicionando servidores públicos";
-"ManagePubs.yourPubs" = "Seus servidores públicos";
-"ManagePubs.lastWorked" = "Último trabalho em";
-"ManagePubs.pasteAddress" = "Cole o endereço aqui";
+"ManageRelays.relayServers" = "Relay Servers";
+"ManageRelays.managePubs" = "Manage Pubs";
+"ManageRelays.manageRooms" = "Manage Rooms (beta)";
+"ManageRelays.footer" = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
+"ManageRelays.addingPubs" = "Adding Pubs";
+"ManageRelays.yourPubs" = "Your Pubs";
+"ManageRelays.lastWorked" = "Last worked on";
+"ManageRelays.pasteAddress" = "Paste the address here";
+"ManageRelays.joinedRooms" = "Joined Rooms";
+"ManageRelays.addRooms" = "Add Rooms";
+"ManageRelays.loadingRooms" = "Loading rooms...";
+"ManageRelays.invalidRoomURL" = "Invalid room URL";
+"ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
 "Preview.title" = "Configurações avançadas";
 "Preview.footer" = "São novos recursos que estão sendo desenvolvidos e testados e ainda não encontraram um lar permanente no aplicativo.";
@@ -281,10 +294,14 @@
 "Error.unexpected" = "Ocorreu um imprevisto.";
 "Error.supportNotConfigured" = "O suporte não está configurado.";
 "Error.invitationRedemptionFailed" = "Não foi possível entrar em {{ starName }}. Tente novamente ou entre em contato com o suporte.";
+"Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
 "Error.cannotPublishBecauseRestoring" = "O Planetary está restaurando seus dados da rede e, no momento, não pode publicar novas postagens.";
 "Error.restoring" = "O Planetary está restaurando seus dados da rede.";
 "Error.invalidAppConfiguration" = "Configuração inválida do aplicativo";
 "Error.couldNotGenerateLink" = "Não foi possível gerar o link.";
+"Error.invalidRoomURL" = "Could not parse invitation.";
+"Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
+"Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
 
 "Channel.one" = "canal";
 "Channel.many" = "canais";
