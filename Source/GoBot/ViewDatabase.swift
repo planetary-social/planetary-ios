@@ -46,6 +46,7 @@ enum ViewDatabaseTableNames: String {
     case mentionsImage = "mention_image"
     case reports
     case pubs
+    case rooms
     case readMessages = "read_messages"
 }
 
@@ -191,6 +192,9 @@ class ViewDatabase {
     let colHost = Expression<String>("host")
     let colPort = Expression<Int>("port")
     // colKey
+    
+    // Rooms
+    let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
     
     // Search
     private let postSearch = VirtualTable("post_search")
@@ -345,10 +349,24 @@ class ViewDatabase {
                         CREATE INDEX tangles_idx_87132823 ON tangles(root, msg_ref);
                         CREATE INDEX read_messages_idx_7c47714e ON read_messages(is_read, msg_id);
                         CREATE INDEX contacts_idx_03e709db ON contacts(msg_ref);
+                    CREATE TABLE rooms (
+                        address TEXT UNIQUE NOT NULL
+                    );
                     """
                 )
                 db.userVersion = 18
             }
+            if db.userVersion == 18 {
+                try db.execute(
+                    """
+                        CREATE INDEX tangles_idx_87132823 ON tangles(root, msg_ref);
+                        CREATE INDEX read_messages_idx_7c47714e ON read_messages(is_read, msg_id);
+                        CREATE INDEX contacts_idx_03e709db ON contacts(msg_ref);
+                     """
+                )
+                db.userVersion = 19
+            }
+
         }
     }
 
@@ -564,7 +582,7 @@ class ViewDatabase {
         return try post(with: msgId)
     }
     
-    // MARK: pubs
+    // MARK: pubs & rooms
 
     func getAllKnownPubs() throws -> [KnownPub] {
         guard let db = self.openDB else {
@@ -599,18 +617,18 @@ class ViewDatabase {
         }
     }
     
-    func getRedeemedPubs() throws -> [Pub] {
+    func getJoinedPubs() throws -> [Pub] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
-        let qry = self.msgs
+        let query = self.msgs
             .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
             .where(self.msgs[colAuthorID] == currentUserID)
             .where(self.msgs[colMsgType] == "pub")
             .order(colSequence.desc)
         
-        let pubs: [Pub] = try db.prepare(qry).map { row in
+        let pubs: [Pub] = try db.prepare(query).map { row in
             let host = try row.get(colHost)
             let port = try row.get(colPort)
             let key: Identifier = try row.get(colKey)
@@ -630,6 +648,35 @@ class ViewDatabase {
         return pubs
             .filter { $0.address.key.isValidIdentifier }
             .filter { seenIDs.insert($0.address).inserted }
+    }
+    
+    func getJoinedRooms() throws -> [Room] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        return try db.prepare(rooms).map { row in
+            guard let address = MultiserverAddress(string: row[colAddress]) else {
+                throw ViewDatabaseError.invalidAddress(row[colAddress])
+            }
+            return Room(address: address)
+        }
+    }
+    
+    func insert(room: Room) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        try db.run(rooms.insert(colAddress <- room.address.string))
+    }
+    
+    func delete(room: Room) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        try db.run(rooms.filter(colAddress == room.address.string).delete())
     }
     
     // MARK: moderation / delete
@@ -722,7 +769,7 @@ class ViewDatabase {
     }
     
     /// Returns true if the given message is on the ban list.
-  func messageMatchesBanList(_ message: KeyValue) throws -> Bool {
+    func messageMatchesBanList(_ message: KeyValue) throws -> Bool {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
         return try db.scalar(banList.filter(colHash == message.key.sha256hash).exists)
     }
@@ -799,18 +846,21 @@ class ViewDatabase {
         let msgIDs = try allMessages.map { row in
             try row.get(colMessageID)
         }
-        for tbl in messageTables {
-            let qry = tbl.filter(msgIDs.contains(colMessageRef)).delete()
-            try db.run(qry)
+        
+        for chunk in msgIDs.chunked(into: 500) {
+            for table in messageTables {
+                let query = table.filter(chunk.contains(colMessageRef)).delete()
+                try db.run(query)
+            }
+
+            // delete reply branches
+            // refactor idea: could rename 'branch' column to msgRef
+            // then branches can be part of messageTables
+            try db.run(self.branches.filter(chunk.contains(colBranch)).delete())
+
+            // delete the base messages
+            try db.run(self.msgs.filter(chunk.contains(colMessageID)).delete())
         }
-
-        // delete reply branches
-        // refactor idea: could rename 'branch' column to msgRef
-        // then branches can be part of messageTables
-        try db.run(self.branches.filter(msgIDs.contains(colBranch)).delete())
-
-        // delete the base messages
-        try db.run(self.msgs.filter(msgIDs.contains(colMessageID)).delete())
     }
 
     func delete(message: MessageIdentifier) throws {

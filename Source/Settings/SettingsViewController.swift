@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
 
 // It turns out that DebugTableViewController works really well
 // for the design of the settings, so we're just gonna use it for now.
@@ -34,7 +35,7 @@ class SettingsViewController: DebugTableViewController {
             publicWebHosting(),
             push(),
             usage(),
-            managePubs(),
+            manageRelays(),
             preview()
         ]
         super.updateSettings()
@@ -182,25 +183,41 @@ class SettingsViewController: DebugTableViewController {
         return (Text.usageData.text, settings, nil)
     }
     
-    // MARK: Manage Pubs
+    // MARK: Manage Relay Servers
     
-    private func managePubs() -> DebugTableViewController.Settings {
+    private func manageRelays() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
         
-        settings += [DebugTableViewCellModel(title: Text.ManagePubs.title.text,
-                                         valueClosure: {
-            cell in
-            cell.accessoryType = .disclosureIndicator
-        },
-                                         actionClosure: {
-            [unowned self] _ in
-            let controller = ManagePubsViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-        })]
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.ManageRelays.managePubs.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let controller = ManagePubsViewController()
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
         
-        return (Text.ManagePubs.header.text, settings, Text.ManagePubs.footer.text)
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.ManageRelays.manageRooms.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let viewModel = RoomListCoordinator(bot: Bots.current)
+                    let controller = UIHostingController(rootView: RoomListView(viewModel: viewModel))
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        return (Text.ManageRelays.relayServers.text, settings, Text.ManageRelays.footer.text)
     }
-
+    
     // MARK: Preview
 
     private func preview() -> DebugTableViewController.Settings {

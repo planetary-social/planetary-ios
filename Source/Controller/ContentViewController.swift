@@ -39,7 +39,7 @@ import UIKit
 class ContentViewController: UIViewController, KeyboardHandling {
 
     let scrollable: Bool
-    private let scrollView = UIScrollView.default()
+    let scrollView = UIScrollView.default()
     var contentView = UIView.forAutoLayout()
     private var contentViewBottomConstraint: NSLayoutConstraint!
 
