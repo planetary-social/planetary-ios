@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Logger
 
 class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
 
@@ -231,7 +232,17 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
         self.addSubview(self.buttonStack)
         let sideInset: CGFloat = self.buttonStyle == .verticalStack ? 48 : Layout.horizontalSpacing
         let insets = UIEdgeInsets(top: 0, left: sideInset, bottom: -10, right: -sideInset)
-        Layout.fillBottom(of: self, with: self.buttonStack, insets: insets, respectSafeArea: true)
+        let topConstraint = buttonStack.topAnchor.constraint(equalTo: hintLabel.bottomAnchor)
+        topConstraint.isActive = true
+        topConstraint.priority = .defaultLow
+        
+        let (_, bottomConstraint, _) = Layout.fillBottom(
+            of: self,
+            with: self.buttonStack,
+            insets: insets,
+            respectSafeArea: true
+        )
+        bottomConstraint.priority = .defaultHigh
     }
 
     // MARK: UITextViewDelegate

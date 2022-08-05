@@ -88,12 +88,15 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         step.data = self.stepData
         step.customizeView()
         step.delegate = self
-        let controller = ContentViewController(scrollable: false)
+        let controller = ContentViewController(scrollable: true)
 
         controller.isKeyboardHandlingEnabled = true
         controller.navigationItem.title = step.name.title.text
         controller.view?.backgroundColor = .appBackground
         Layout.fill(view: controller.contentView, with: step.view)
+        controller.contentView.heightAnchor.constraint(
+            greaterThanOrEqualTo: controller.scrollView.heightAnchor
+        ).isActive = true
 
         step.customizeController(controller: controller)
 

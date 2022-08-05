@@ -10,4 +10,5 @@ import Foundation
 
 extension URL {
     static let planetaryScheme = "planetary"
+    static let ssbScheme = "ssb"
 }

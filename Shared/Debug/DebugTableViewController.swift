@@ -9,7 +9,7 @@ class DebugTableViewController: UITableViewController {
     var settings: [Settings] = []
 
     convenience init() {
-        self.init(style: .grouped)
+        self.init(style: .insetGrouped)
     }
 
     /// Subclasses are encouraged to register their own custom UITableViewCells.
