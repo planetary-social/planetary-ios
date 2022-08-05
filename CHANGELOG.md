@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Add community pubs for french and chinese communities. #760
+
+## [1.2.5] 2022-08-01
+
+- Fixed a race condition that could prevent blobs from loading. #767
 - Add a more obvious dismissal button to the migration screen. #765
 - Added a pressed state to the Mark all notifications as read button. #761
 - Updated the Directory to show useful information like the number of followers and hashtags the user has used recently.
