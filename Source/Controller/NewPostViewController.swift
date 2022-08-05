@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Combine
 
 class NewPostViewController: ContentViewController {
 
@@ -35,16 +36,23 @@ class NewPostViewController: ContentViewController {
     }()
 
     private let imagePicker = ImagePicker()
+    
+    private let draftStore = UserDefaults.standard
+    private let draftKey = "com.planetary.ios.draft." + (Bots.current.identity ?? "")
+    private let queue = DispatchQueue.global(qos: .userInitiated)
+    private var cancellables = [AnyCancellable]()
 
     // MARK: Lifecycle
 
     init(images: [UIImage] = []) {
         super.init(scrollable: false, title: .newPost)
-        self.isKeyboardHandlingEnabled = true
-        self.view.backgroundColor = .cardBackground
-        self.addActions()
+        isKeyboardHandlingEnabled = true
+        view.backgroundColor = .cardBackground
+        addActions()
+        setupDrafts()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -52,19 +60,15 @@ class NewPostViewController: ContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let item = UIBarButtonItem(image: UIImage.verse.dismiss,
-                                   style: .plain,
-                                   target: self,
-                                   action: #selector(dismissWithoutPost))
+        let item = UIBarButtonItem(
+            image: UIImage.verse.dismiss,
+            style: .plain,
+            target: self,
+            action: #selector(dismissWithoutPost)
+        )
         item.tintColor = .secondaryAction
         item.accessibilityLabel = Text.done.text
         self.navigationItem.leftBarButtonItem = item
-        
-        if let draft = Draft.current {
-            self.textView.attributedText = draft.attributedText
-            self.galleryView.add(draft.images)
-            print("Restored draft")
-        }
     }
     
     override func willMove(toParent parent: UIViewController?) {
@@ -83,6 +87,53 @@ class NewPostViewController: ContentViewController {
         self.buttonsView.pinTop(toBottomOf: self.galleryView)
         self.buttonsView.constrainHeight(to: PostButtonsView.viewHeight)
     }
+    
+    // MARK: - Drafts
+    
+    /// Configures the view to save and load draft posts from NSUserDefaults.
+    private func setupDrafts() {
+        
+        if let draft = loadDraft() {
+            if let text = draft.attributedText {
+                textView.attributedText = text
+            }
+            galleryView.add(draft.images)
+            Log.info("Restored draft")
+        }
+        
+        textView
+            .textPublisher
+            .throttle(for: 3, scheduler: queue, latest: true)
+            .sink { [weak self] newText in
+                if let newText = newText {
+                    self?.save(draft: newText)
+                } else {
+                    self?.clearDraft()
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func loadDraft() -> Draft? {
+        if let draftData = draftStore.data(forKey: draftKey),
+            let draft = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(draftData) as? Draft {
+            return draft
+        }
+        
+        return nil
+    }
+    
+    private func save(draft string: NSAttributedString?) {
+        let draft = Draft(attributedText: string, images: galleryView.images)
+        let data = try? NSKeyedArchiver.archivedData(withRootObject: draft, requiringSecureCoding: false)
+        draftStore.set(data, forKey: draftKey)
+        draftStore.synchronize()
+    }
+    
+    private func clearDraft() {
+        draftStore.removeObject(forKey: draftKey)
+        draftStore.synchronize()
+    }
 
     // MARK: Actions
 
@@ -92,17 +143,18 @@ class NewPostViewController: ContentViewController {
         self.buttonsView.postButton.action = didPressPostButton
     }
 
-    @objc private func photoButtonTouchUpInside(sender: AnyObject) {
+    @objc
+    private func photoButtonTouchUpInside(sender: AnyObject) {
         
         Analytics.shared.trackDidTapButton(buttonName: "attach_photo")
-        self.imagePicker.present(from: sender, controller: self) {
-            [weak self] image in
+        self.imagePicker.present(from: sender, controller: self) { [weak self] image in
             if let image = image { self?.galleryView.add(image) }
             self?.imagePicker.dismiss()
         }
     }
 
-    @objc private func previewToggled() {
+    @objc
+    private func previewToggled() {
         Analytics.shared.trackDidTapButton(buttonName: "preview")
         self.textView.previewActive = self.buttonsView.previewToggle.isOn
     }
@@ -123,8 +175,8 @@ class NewPostViewController: ContentViewController {
         let images = self.galleryView.images
 
         self.lookBusy()
-        Bots.current.publish(post, with: images) {
-            [weak self] _, error in
+        save(draft: text)
+        Bots.current.publish(post, with: images) { [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             if let error = error {
@@ -138,20 +190,21 @@ class NewPostViewController: ContentViewController {
     }
 
     private func dismiss(didPublish post: Post) {
-        Draft.current = nil
+        clearDraft()
         self.didPublish?(post)
         self.dismiss(animated: true)
     }
     
-    @objc private func dismissWithoutPost() {
-        Draft.current = nil
+    @objc
+    private func dismissWithoutPost() {
+        save(draft: textView.attributedText)
         self.dismiss(animated: true)
     }
 
     // MARK: Animations
 
     private func lookBusy() {
-        AppController.shared.showProgress()
+        AppController.shared.showProgress(after: 0.2, statusText: Text.NewPost.publishing.text)
         self.buttonsView.photoButton.isEnabled = false
         self.buttonsView.postButton.isEnabled = false
         self.buttonsView.previewToggle.isEnabled = false
@@ -173,11 +226,14 @@ extension NewPostViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
+        save(draft: textView.attributedText)
     }
 
-    func imageGalleryView(_ view: ImageGalleryView,
-                          didSelect image: UIImage,
-                          at indexPath: IndexPath) {
+    func imageGalleryView(
+        _ view: ImageGalleryView,
+        didSelect image: UIImage,
+        at indexPath: IndexPath
+    ) {
         self.confirm(
             message: Text.NewPost.confirmRemove.text,
             isDestructive: true,
@@ -196,8 +252,7 @@ extension NewPostViewController: UIAdaptivePresentationControllerDelegate {
         let hasImages = !self.galleryView.images.isEmpty
 
         if hasText || hasImages {
-            Draft.current = Draft(attributedText: self.textView.attributedText, images: self.galleryView.images)
-            print("Saved draft")
+            save(draft: textView.attributedText)
         }
     }
 }

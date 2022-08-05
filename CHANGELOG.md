@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Save and restore drafts of posts. #785
+
 ## [1.2.5] 2022-08-01
 
 - Fixed a race condition that could prevent blobs from loading. #767

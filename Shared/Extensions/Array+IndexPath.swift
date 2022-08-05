@@ -10,7 +10,11 @@ import Foundation
 
 extension Array {
 
-    func indexPathForLast() -> IndexPath {
-        IndexPath(row: Swift.max(0, self.count - 1), section: 0)
+    func indexPathForLast() -> IndexPath? {
+        guard self.count > 0 else {
+            return nil
+        }
+        
+        return IndexPath(row: self.count - 1, section: 0)
     }
 }
