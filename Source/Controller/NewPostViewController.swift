@@ -175,6 +175,7 @@ class NewPostViewController: ContentViewController {
         let images = self.galleryView.images
 
         self.lookBusy()
+        save(draft: text)
         Bots.current.publish(post, with: images) { [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
