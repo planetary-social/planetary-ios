@@ -15,6 +15,7 @@ extension Text {
             Text.ManageRelays.self,
             Text.Preview.self,
             Text.FeedAlgorithm.self,
+            Text.DiscoveryFeedAlgorithm.self,
             Text.PublicWebHosting.self,
             Text.Push.self,
             Text.Reporting.self,
@@ -398,7 +399,7 @@ extension Text {
 
     enum FeedAlgorithm: String, Localizable, CaseIterable {
         case algorithms = "Algorithms"
-        case feedAlgorithmTitle = "Home Feed"
+        case feedAlgorithmTitle = "Home Feed Algorithm"
         case feedAlgorithmDescription = "Choose the algorithm used to sort and filter your Home Feed."
         case recentPostsAlgorithm = "Recent posts"
         case recentPostsAlgorithmDescription = "Shows posts from the people you follow in the order they were posted."
@@ -409,6 +410,16 @@ extension Text {
         case viewAlgorithmSource = "View Source Code"
         case sourceCode = "Source Code"
         case sourceCodeDescription = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above."
+    }
+    
+    enum DiscoveryFeedAlgorithm: String, Localizable, CaseIterable {
+        case algorithms = "Algorithms"
+        case feedAlgorithmTitle = "Discovery Feed"
+        case feedAlgorithmDescription = "Choose the algorithm used to sort and filter posts from your broader network."
+        case recentPostsAlgorithm = "Recent Posts"
+        case recentPostsAlgorithmDescription = "Shows posts from people you don't follow in your boader network sorted chronologically."
+        case randomPostsAlgorithm = "Random Unread Posts"
+        case randomPostsAlgorithmDescription = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see."
     }
 }
 

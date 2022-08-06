@@ -93,7 +93,12 @@ public extension Analytics {
         let params = ["strategy": strategyName]
         service.track(event: .did, element: .bot, name: "changeHomeFeedStrategy", params: params)
     }
-    
+
+    func trackBotDidChangeDiscoveryFeedStrategy(to strategyName: String) {
+        let params = ["strategy": strategyName]
+        service.track(event: .did, element: .bot, name: "changeHomeFeedStrategy", params: params)
+    }
+
     func trackBotDidOptimizeSQLite() {
         service.track(event: .did, element: .bot, name: "optimizeSQLite")
     }

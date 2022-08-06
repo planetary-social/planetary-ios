@@ -267,6 +267,14 @@
 "FeedAlgorithm.sourceCode" = "Source Code";
 "FeedAlgorithm.sourceCodeDescription" = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above.";
 
+"DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed";
+"DiscoveryFeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithm used to sort and filter posts from your broader network.";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
+
 "PublicWebHosting.enabled" = "Activado";
 "PublicWebHosting.title" = "Web Pública";
 "PublicWebHosting.footer" = "Indica que deseas que tus publicaciones aparezcan en sitios web públicos. Los cambios pueden tardar un par de horas en ser efectuados.";

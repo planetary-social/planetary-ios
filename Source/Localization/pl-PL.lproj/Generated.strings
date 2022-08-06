@@ -255,7 +255,7 @@
 "Preview.footer" = "Nowe funkcje w fazie rozwoju i testów, które nie znalazły jeszcze stałego miejsca w aplikacji.";
 
 "FeedAlgorithm.algorithms" = "Algorithms";
-"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed";
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
 "FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithm used to sort and filter your Home Feed.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Recent posts";
 "FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted.";
@@ -266,6 +266,14 @@
 "FeedAlgorithm.viewAlgorithmSource" = "View Source Code";
 "FeedAlgorithm.sourceCode" = "Source Code";
 "FeedAlgorithm.sourceCodeDescription" = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above.";
+
+"DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed";
+"DiscoveryFeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithm used to sort and filter posts from your broader network.";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
 
 "PublicWebHosting.enabled" = "Aktywny";
 "PublicWebHosting.title" = "Publiczny Web-hosting";

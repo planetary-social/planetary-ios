@@ -255,7 +255,7 @@
 "Preview.footer" = "São novos recursos que estão sendo desenvolvidos e testados e ainda não encontraram um lar permanente no aplicativo.";
 
 "FeedAlgorithm.algorithms" = "Algoritmos";
-"FeedAlgorithm.feedAlgorithmTitle" = "Página inicial";
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
 "FeedAlgorithm.feedAlgorithmDescription" = "Escolha o algoritmo utilizado para classificar e filtrar sua página inicial.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Postagens recentes";
 "FeedAlgorithm.recentPostsAlgorithmDescription" = "Exibir postagens das pessoas que você segue por ordem de publicação.";
@@ -266,6 +266,14 @@
 "FeedAlgorithm.viewAlgorithmSource" = "Visualizar código-fonte";
 "FeedAlgorithm.sourceCode" = "Código-fonte";
 "FeedAlgorithm.sourceCodeDescription" = "O código do Planetary é aberto para que nossos algoritmos possam ser auditados e até mesmo modificados por nossos usuários. É possível visualizar o código-fonte desses algoritmos ao tocar no botão acima.";
+
+"DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed";
+"DiscoveryFeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithm used to sort and filter posts from your broader network.";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
 
 "PublicWebHosting.enabled" = "Habilitado";
 "PublicWebHosting.title" = "Hospedagem pública na web";
