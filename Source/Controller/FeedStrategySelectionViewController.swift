@@ -57,7 +57,9 @@ class FeedStrategySelectionViewController: DebugTableViewController {
         let cell = DebugTableViewCellModel(
             title: Text.FeedAlgorithm.randomPostsAlgorithm.text,
             valueClosure: { cell in
-                if let randomAlgorithm = self.selectedStrategy() as? RandomAlgorithm {
+                if let postsAlgorithm = self.selectedStrategy() as? PostsAlgorithm,
+                    postsAlgorithm.onlyFollowed == true,
+                    postsAlgorithm.wantPrivate == false {
                     cell.accessoryType = .checkmark
                 } else {
                     cell.accessoryType = .none
@@ -68,7 +70,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.FeedAlgorithm.randomPostsAlgorithmDescription.text)
+        return (nil, [cell], Text.FeedAlgorithm.recentPostsAlgorithmDescription.text)
     }
     
     private func recentlyActivePostsWithFollows() -> Settings {
