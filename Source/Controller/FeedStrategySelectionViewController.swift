@@ -25,6 +25,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             recentPostsWithFollows(),
             recentPosts(),
             recentlyActivePostsWithFollows(),
+            randomPosts(),
             viewSource()
         ]
         super.updateSettings()
@@ -54,11 +55,9 @@ class FeedStrategySelectionViewController: DebugTableViewController {
     
     private func recentPosts() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.recentPostsAlgorithm.text,
+            title: Text.FeedAlgorithm.randomPostsAlgorithm.text,
             valueClosure: { cell in
-                if let postsAlgorithm = self.selectedStrategy() as? PostsAlgorithm,
-                    postsAlgorithm.onlyFollowed == true,
-                    postsAlgorithm.wantPrivate == false {
+                if let randomAlgorithm = self.selectedStrategy() as? RandomAlgorithm {
                     cell.accessoryType = .checkmark
                 } else {
                     cell.accessoryType = .none
@@ -69,7 +68,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.FeedAlgorithm.recentPostsAlgorithmDescription.text)
+        return (nil, [cell], Text.FeedAlgorithm.randomPostsAlgorithmDescription.text)
     }
     
     private func recentlyActivePostsWithFollows() -> Settings {
@@ -88,6 +87,25 @@ class FeedStrategySelectionViewController: DebugTableViewController {
         )
         
         return (nil, [cell], Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription.text)
+    }
+    
+    private func randomPosts() -> Settings {
+        let cell = DebugTableViewCellModel(
+            title: Text.DiscoveryFeedAlgorithm.randomPostsAlgorithm.text,
+            valueClosure: { cell in
+                // not sure quite how to clean this up -rabble
+                if let randomAlgorithm = self.selectedStrategy() as? RandomAlgorithm {
+                    cell.accessoryType = .checkmark
+                } else {
+                    cell.accessoryType = .none
+                }
+            },
+            actionClosure: { [weak self] _ in
+                self?.save(strategy: RandomAlgorithm())
+            }
+        )
+        
+        return (nil, [cell], Text.DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription.text)
     }
     
     private func viewSource() -> Settings {
