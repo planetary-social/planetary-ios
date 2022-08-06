@@ -78,7 +78,7 @@ class WelcomeServiceAdapter: WelcomeService {
         try db.fillMessages(msgs: newMesgs)
     }
     
-    private func hasBeenWelcomedKey(for user: FeedIdentifier) -> String {
+    func hasBeenWelcomedKey(for user: FeedIdentifier) -> String {
         "\(welcomeFlagV1)-\(user)"
     }
     
