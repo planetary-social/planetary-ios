@@ -13,6 +13,7 @@ extension Text {
             Text.Onboarding.self,
             Text.Onboarding.StepTitle.self,
             Text.ManageRelays.self,
+            Text.Alias.self,
             Text.Preview.self,
             Text.FeedAlgorithm.self,
             Text.PublicWebHosting.self,
@@ -136,6 +137,8 @@ enum Text: String, Localizable, CaseIterable {
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
+    
+    case manageAliases = "Manage aliases"
 
     case blockUser = "Ignore this user"
     case unblockUser = "Unignore this user"
@@ -379,6 +382,17 @@ extension Text {
         case loadingRooms = "Loading rooms..."
         case invalidRoomURL = "Invalid room URL"
         case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
+    }
+}
+
+// MARK: - Manage Aliases
+
+extension Text {
+    
+    enum Alias: String, Localizable, CaseIterable {
+        case addAlias = "Register a new alias"
+        case manageAliases = "Manage Aliases (beta)"
+        case aliases = "Aliases"
     }
 }
 

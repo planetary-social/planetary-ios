@@ -353,6 +353,33 @@ class ViewDatabase {
                 )
                 db.userVersion = 18
             }
+            if db.userVersion == 18 {
+                try db.execute(
+                    """
+                    -- oops
+                    -- can't add a primary key directly so create a new table and copy
+                    CREATE TABLE tmp_rooms (
+                        id INTEGER PRIMARY KEY,
+                        address TEXT UNIQUE NOT NULL
+                    );
+                    INSERT INTO tmp_rooms (address) SELECT address FROM rooms;
+                    DROP TABLE rooms;
+                    CREATE TABLE rooms (
+                        id INTEGER PRIMARY KEY,
+                        address TEXT UNIQUE NOT NULL
+                    );
+                    INSERT INTO rooms (id, address) SELECT id, address FROM rooms;
+                    DROP TABLE tmp_rooms;
+                    CREATE TABLE room_aliases (
+                        id INTEGER PRIMARY KEY,
+                        room_id INTEGER NOT NULL,
+                        alias_url TEXT UNIQUE NOT NULL,
+                        FOREIGN KEY ( room_id ) REFERENCES rooms( "id" )
+                    );
+                    """
+                )
+                db.userVersion = 19
+            }
         }
     }
 

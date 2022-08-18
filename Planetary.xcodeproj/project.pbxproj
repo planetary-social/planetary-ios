@@ -711,6 +711,10 @@
 		C93F6087285D234900A7D269 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F6086285D234900A7D269 /* Either.swift */; };
 		C93F6088285D234900A7D269 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F6086285D234900A7D269 /* Either.swift */; };
 		C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E341FD224FF9EE002BB5F4 /* UIImage+Verse.swift */; };
+		C9412AEA28AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9412AE928AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift */; };
+		C9412AEB28AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9412AE928AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift */; };
+		C9412AEE28AEE9F400F791A7 /* RoomAliasCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9412AED28AEE9F400F791A7 /* RoomAliasCoordinator.swift */; };
+		C9412AEF28AEE9F400F791A7 /* RoomAliasCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9412AED28AEE9F400F791A7 /* RoomAliasCoordinator.swift */; };
 		C941A6E427ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */; };
 		C9421EAD28889ECB00A4C86D /* Text+Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9421EAC28889ECB00A4C86D /* Text+Gradient.swift */; };
@@ -992,6 +996,10 @@
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
+		C9A1632228ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
+		C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
+		C9A1632628AE88DC00ACDCC5 /* AddAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */; };
+		C9A1632728AE88DC00ACDCC5 /* AddAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */; };
 		C9A2DE2927CFCB5F00EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
 		C9A2DE2A27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
 		C9A2DE2B27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
@@ -1630,6 +1638,8 @@
 		C93A4B3B2798B711009F963D /* KeyValueWithReceivedSeq.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = KeyValueWithReceivedSeq.json; sourceTree = "<group>"; };
 		C93A4B3D2798C68B009F963D /* KeyValueFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueFixtures.swift; sourceTree = "<group>"; };
 		C93F6086285D234900A7D269 /* Either.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
+		C9412AE928AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomAliasRegistrationCoordinator.swift; sourceTree = "<group>"; };
+		C9412AED28AEE9F400F791A7 /* RoomAliasCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomAliasCoordinator.swift; sourceTree = "<group>"; };
 		C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedBlobService.swift; sourceTree = "<group>"; };
 		C9421EAC28889ECB00A4C86D /* Text+Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text+Gradient.swift"; sourceTree = "<group>"; };
 		C9421EB128889F2400A4C86D /* FancySectionTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySectionTitle.swift; sourceTree = "<group>"; };
@@ -1667,6 +1677,8 @@
 		C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UnitTests.debug.xcconfig; sourceTree = "<group>"; };
 		C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
 		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = text; path = Feed_big.sqlite; sourceTree = "<group>"; };
+		C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAliasView.swift; sourceTree = "<group>"; };
+		C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAliasView.swift; sourceTree = "<group>"; };
 		C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Async.swift"; sourceTree = "<group>"; };
 		C9A2DE2C27CFD61800EAFA73 /* ConnectedPeerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerCell.swift; sourceTree = "<group>"; };
 		C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeerConnectionInfo+Preview.swift"; sourceTree = "<group>"; };
@@ -2092,6 +2104,8 @@
 				C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */,
 				C9EBE0462880C2C900A2CF51 /* HelpDrawerCoordinator.swift */,
 				C9313A77289A89580093AC47 /* RoomListCoordinator.swift */,
+				C9412AE928AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift */,
+				C9412AED28AEE9F400F791A7 /* RoomAliasCoordinator.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2438,6 +2452,8 @@
 				530F01B322E0D3E7007EBAE2 /* TitledToggle.swift */,
 				C9F5381E286B78240015A146 /* UniversalSearchResultsView.swift */,
 				535754FE22694AAA002A6989 /* UnsupportedView.swift */,
+				C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */,
+				C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3864,6 +3880,7 @@
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
 				C9724B4D2809D58A000EBCCD /* UIView+Stroke.swift in Sources */,
 				C9724BD92809EE2D000EBCCD /* BlobViewController.swift in Sources */,
+				C9412AEF28AEE9F400F791A7 /* RoomAliasCoordinator.swift in Sources */,
 				C9724BB02809EBFA000EBCCD /* NSAttributedString+Empty.swift in Sources */,
 				C9724B822809E92F000EBCCD /* UIViewTapGesture.swift in Sources */,
 				C9724BC12809ED1A000EBCCD /* UITableView+VisibleIndexPath.swift in Sources */,
@@ -3965,6 +3982,7 @@
 				230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */,
 				C9724B512809D5A6000EBCCD /* AppDelegate+UIAppearance.swift in Sources */,
 				C9724B122809D2CC000EBCCD /* MainViewController.swift in Sources */,
+				C9A1632728AE88DC00ACDCC5 /* AddAliasView.swift in Sources */,
 				C949E96F28119B47006C5F18 /* ProgressButton.swift in Sources */,
 				C9724B742809E7A6000EBCCD /* UIFont+Verse.swift in Sources */,
 				C969F0E12899CFEE00081615 /* Room.swift in Sources */,
@@ -4078,6 +4096,7 @@
 				C9724B5F2809D664000EBCCD /* UIScreen+Sizes.swift in Sources */,
 				53631EF623A9A93F009C6999 /* Blob+String.swift in Sources */,
 				C9724BC42809ED5B000EBCCD /* Blob+UIColor.swift in Sources */,
+				C9412AEB28AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift in Sources */,
 				C9724B782809E7C1000EBCCD /* AppController+Push.swift in Sources */,
 				C9134DDB28184AF700595D49 /* (null) in Sources */,
 				C9724B262809D426000EBCCD /* HomeViewController.swift in Sources */,
@@ -4120,6 +4139,7 @@
 				C9724B6A2809D71D000EBCCD /* ImageGalleryView.swift in Sources */,
 				C9724BBC2809ECBB000EBCCD /* UIViewController+Report.swift in Sources */,
 				C9724B6D2809E72E000EBCCD /* KeyValueUpdateable.swift in Sources */,
+				C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */,
 				0A38800F2475ACF000777843 /* PubAPI.swift in Sources */,
 				533EDBE92385F7E7008B3565 /* Cache.swift in Sources */,
 				5336611422D9669E00100707 /* UIColor+Random.swift in Sources */,
@@ -4404,6 +4424,7 @@
 				23C744392200B12000FB554A /* Bot.swift in Sources */,
 				5BAE9C8C281F5226008AEA84 /* ContactCellView.swift in Sources */,
 				0A387FFE2474E67900777843 /* NullPhoneVerificationAPI.swift in Sources */,
+				C9412AEE28AEE9F400F791A7 /* RoomAliasCoordinator.swift in Sources */,
 				C9FBE36C288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */,
 				C9421EAD28889ECB00A4C86D /* Text+Gradient.swift in Sources */,
 				539FD4C522C3D6CC005A4DF2 /* String+Whitespace.swift in Sources */,
@@ -4459,6 +4480,7 @@
 				1B5DB7D024AE5C8E008DCB81 /* FollowerTableViewController.swift in Sources */,
 				1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */,
 				53E341FC224FF87D002BB5F4 /* NewPostViewController.swift in Sources */,
+				C9A1632628AE88DC00ACDCC5 /* AddAliasView.swift in Sources */,
 				5319257E22F286FC00B44FA3 /* URL+Verse.swift in Sources */,
 				0ACE91A2243D740C00EFB4E9 /* GoBotError.swift in Sources */,
 				539FD4C822C43FC8005A4DF2 /* ImageButton.swift in Sources */,
@@ -4469,6 +4491,7 @@
 				5396A6352248377900C57A4B /* UIColor+Verse.swift in Sources */,
 				53C2B1342295AC000018D0A8 /* AppConfiguration+Data.swift in Sources */,
 				53E26C5A23039597009240B2 /* Dictionary+Transform.swift in Sources */,
+				C9412AEA28AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift in Sources */,
 				530F01AC22DEAE6F007EBAE2 /* BioOnboardingStep.swift in Sources */,
 				0ABCA8F92436769400D7F39C /* APIError.swift in Sources */,
 				535CD37F2267F2C60039BCF2 /* ContentCodable.swift in Sources */,
@@ -4756,6 +4779,7 @@
 				C9F5E477288891DC000BCF03 /* HighlightedText.swift in Sources */,
 				535B6A0623712D79008C248E /* UIViewController+Block.swift in Sources */,
 				53362F6A2209108F007264CB /* SSBNetwork.swift in Sources */,
+				C9A1632228ADE33800ACDCC5 /* ManageAliasView.swift in Sources */,
 				C9F5E473288883BF000BCF03 /* AppDelegate+URLScheme.swift in Sources */,
 				0A56ABDD24E32F8000D30649 /* Star.swift in Sources */,
 				C9C3788427C6940C00238B58 /* IdentityFixtures.swift in Sources */,

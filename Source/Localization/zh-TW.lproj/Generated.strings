@@ -80,6 +80,7 @@
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
+"Text.manageAliases" = "Manage aliases";
 "Text.blockUser" = "Ignore this user";
 "Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Report this post";
@@ -250,6 +251,10 @@
 "ManageRelays.loadingRooms" = "Loading rooms...";
 "ManageRelays.invalidRoomURL" = "Invalid room URL";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
+
+"Alias.addAlias" = "Register a new alias";
+"Alias.manageAliases" = "Manage Aliases (beta)";
+"Alias.aliases" = "Aliases";
 
 "Preview.title" = "Advanced Settings";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
