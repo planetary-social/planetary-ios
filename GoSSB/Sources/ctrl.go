@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"go.cryptoscope.co/muxrpc/v2"
 	"go.cryptoscope.co/ssb/client"
+	"go.cryptoscope.co/ssb/rooms"
 	refs "go.mindeco.de/ssb-refs"
 	"math"
 	"runtime"
@@ -475,4 +477,156 @@ func getAuthorID(ref refs.FeedRef) (int64, error) {
 		peerID = newID
 	}
 	return peerID, nil
+}
+
+//export ssbRoomsAliasRegister
+func ssbRoomsAliasRegister(address, alias string) bool {
+	defer logPanic()
+
+	var retErr error
+	defer func() {
+		if retErr != nil {
+			level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
+		}
+	}()
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot == nil {
+		retErr = ErrNotInitialized
+		return false
+	}
+
+	ctx, cancel := context.WithCancel(longCtx)
+	defer cancel()
+
+	opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
+
+	netAddress, err := multiserver.ParseNetAddress([]byte(address))
+	if err != nil {
+		retErr = errors.Wrap(err, "could not parse the address")
+		return false
+	}
+
+	inviteClient, err := client.NewTCP(sbot.KeyPair, &netAddress.Addr, opts...)
+	if err != nil {
+		retErr = errors.Wrap(err, "failed to create a tcp client")
+		return false
+	}
+	defer inviteClient.Close()
+
+	registration := rooms.Registration{
+		Alias:  alias,
+		UserID: sbot.KeyPair.ID(),
+		RoomID: netAddress.Ref,
+	}
+
+	signedRegistrationString := registration.Sign(sbot.KeyPair.Secret())
+
+	var ret string
+
+	params := []interface{}{
+		alias,
+		signedRegistrationString,
+	}
+
+	err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"room", "registerAlias"}, params...)
+	if err != nil {
+		retErr = errors.Wrap(err, "async call failed")
+		return false
+	}
+
+	return true
+}
+
+//export ssbRoomsAliasRevoke
+func ssbRoomsAliasRevoke(address, alias string) bool {
+	defer logPanic()
+
+	var retErr error
+	defer func() {
+		if retErr != nil {
+			level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
+		}
+	}()
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot == nil {
+		retErr = ErrNotInitialized
+		return false
+	}
+
+	ctx, cancel := context.WithCancel(longCtx)
+	defer cancel()
+
+	opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
+
+	netAddress, err := multiserver.ParseNetAddress([]byte(address))
+	if err != nil {
+		retErr = errors.Wrap(err, "could not parse the address")
+		return false
+	}
+
+	inviteClient, err := client.NewTCP(sbot.KeyPair, &netAddress.Addr, opts...)
+	if err != nil {
+		retErr = errors.Wrap(err, "failed to create a tcp client")
+		return false
+	}
+	defer inviteClient.Close()
+
+	var ret string
+	err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"room", "revokeAlias"}, alias)
+	if err != nil {
+		retErr = errors.Wrap(err, "async call failed")
+		return false
+	}
+
+	return true
+}
+
+//export ssbRoomsListAliases
+func ssbRoomsListAliases(address string) *C.char {
+	defer logPanic()
+
+	var retErr error
+	defer func() {
+		if retErr != nil {
+			level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
+		}
+	}()
+
+	lock.Lock()
+	defer lock.Unlock()
+	if sbot == nil {
+		retErr = ErrNotInitialized
+		return nil
+	}
+
+	ctx, cancel := context.WithCancel(longCtx)
+	defer cancel()
+
+	opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
+
+	netAddress, err := multiserver.ParseNetAddress([]byte(address))
+	if err != nil {
+		retErr = errors.Wrap(err, "could not parse the address")
+		return nil
+	}
+
+	inviteClient, err := client.NewTCP(sbot.KeyPair, &netAddress.Addr, opts...)
+	if err != nil {
+		retErr = errors.Wrap(err, "failed to create a tcp client")
+		return nil
+	}
+	defer inviteClient.Close()
+
+	var ret string
+	err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"room", "listAliases"}, sbot.KeyPair.ID())
+	if err != nil {
+		retErr = errors.Wrap(err, "list aliases rpc call error")
+		return nil
+	}
+
+	return C.CString(ret)
 }
