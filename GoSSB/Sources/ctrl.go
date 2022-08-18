@@ -592,7 +592,7 @@ func ssbRoomsListAliases(address string) *C.char {
 	var retErr error
 	defer func() {
 		if retErr != nil {
-			level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
+			level.Error(log).Log("where", "ssbRoomsListAliases", "err", retErr)
 		}
 	}()
 
