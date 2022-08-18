@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"go.cryptoscope.co/muxrpc/v2"
 	"go.cryptoscope.co/ssb/client"
@@ -508,7 +509,7 @@ func ssbRoomsAliasRegister(address, alias string) bool {
 		return false
 	}
 
-	inviteClient, err := client.NewTCP(sbot.KeyPair, &netAddress.Addr, opts...)
+	inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
 	if err != nil {
 		retErr = errors.Wrap(err, "failed to create a tcp client")
 		return false
@@ -521,16 +522,16 @@ func ssbRoomsAliasRegister(address, alias string) bool {
 		RoomID: netAddress.Ref,
 	}
 
-	signedRegistrationString := registration.Sign(sbot.KeyPair.Secret())
+	signatureString := base64.StdEncoding.EncodeToString(registration.Sign(sbot.KeyPair.Secret()).Signature) + ".sig.ed25519"
 
 	var ret string
 
 	params := []interface{}{
 		alias,
-		signedRegistrationString,
+		signatureString,
 	}
 
-	err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"room", "registerAlias"}, params...)
+	err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "registerAlias"}, params...)
 	if err != nil {
 		retErr = errors.Wrap(err, "async call failed")
 		return false
@@ -568,7 +569,7 @@ func ssbRoomsAliasRevoke(address, alias string) bool {
 		return false
 	}
 
-	inviteClient, err := client.NewTCP(sbot.KeyPair, &netAddress.Addr, opts...)
+	inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
 	if err != nil {
 		retErr = errors.Wrap(err, "failed to create a tcp client")
 		return false
@@ -576,7 +577,7 @@ func ssbRoomsAliasRevoke(address, alias string) bool {
 	defer inviteClient.Close()
 
 	var ret string
-	err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"room", "revokeAlias"}, alias)
+	err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "revokeAlias"}, alias)
 	if err != nil {
 		retErr = errors.Wrap(err, "async call failed")
 		return false
@@ -614,7 +615,7 @@ func ssbRoomsListAliases(address string) *C.char {
 		return nil
 	}
 
-	inviteClient, err := client.NewTCP(sbot.KeyPair, &netAddress.Addr, opts...)
+	inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
 	if err != nil {
 		retErr = errors.Wrap(err, "failed to create a tcp client")
 		return nil
