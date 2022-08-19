@@ -45,6 +45,7 @@
 		C9570F49278640CA0095EFFF /* GoSSB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GoSSB.h; path = include/GoSSB.h; sourceTree = "<group>"; };
 		C9570F55278641B00095EFFF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		C9570F5D27864D850095EFFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C95E7454289EBE66005999D1 /* go.mod */ = {isa = PBXFileReference; explicitFileType = text; path = go.mod; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -115,6 +116,7 @@
 				C93DE36827E8C9E700C0E93D /* utils.go */,
 				C9570F49278640CA0095EFFF /* GoSSB.h */,
 				0A26524D278A7492008F9EAA /* module.modulemap */,
+				C95E7454289EBE66005999D1 /* go.mod */,
 				C93DE35627E8C9E700C0E93D /* go.sum */,
 				C93DE36927E8C9E700C0E93D /* include */,
 				C93DE35827E8C9E700C0E93D /* migrations */,

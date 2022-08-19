@@ -2475,7 +2475,6 @@ class ViewDatabase {
                 (msg.value.content.type != .contact &&
                 msg.value.content.type != .about &&
                 msg.value.author != currentUser) {
-                // TODO: might need to mark viewdb if all messags are skipped... current bypass: just incease the receive batch size (to 15k)
                 skipped += 1
                 print("Skipped(\(msg.value.content.type) \(msg.key)%)")
                 continue

@@ -23,6 +23,8 @@ extension String {
 
 private let refreshDelay = DispatchTimeInterval.milliseconds(125)
 
+let greatestRequestedSequenceNumberFromGoBotKey = "greatestRequestedSequenceNumberFromGoBot"
+
 /// This class abstracts the SSB protocol implementation with support for SSB functions like publishing, replicating,
 /// fetching posts & threads, etc.
 ///
@@ -723,7 +725,14 @@ class GoBot: Bot {
     func needsViewFill() throws -> (Int64, Int) {
         var lastRxSeq: Int64 = 0
         do {
-            lastRxSeq = try self.database.largestSeqNotFromPublishedLog()
+            let lastRxSeqFromDB = try self.database.largestSeqNotFromPublishedLog()
+            var lastRxSeqFromDisk: Int64 = -1
+            if let userDefaultsValue = userDefaults.object(
+                forKey: greatestRequestedSequenceNumberFromGoBotKey
+            ) as? Int64 {
+                lastRxSeqFromDisk = userDefaultsValue
+            }
+            lastRxSeq = max(lastRxSeqFromDB, lastRxSeqFromDisk)
         } catch {
             throw GoBotError.duringProcessing("view query failed", error)
         }
@@ -736,7 +745,9 @@ class GoBot: Bot {
             let diff = Int(Int64(repoStats.messages) - 1 - lastRxSeq)
             if diff < 0 {
                 let errorMessage = "needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))"
-                throw GoBotError.unexpectedFault(errorMessage)
+                let error = GoBotError.unexpectedFault(errorMessage)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                throw error
             }
             
             return (lastRxSeq, diff)
@@ -815,16 +826,29 @@ class GoBot: Bot {
         // TOOD: redo until diff==0
         do {
             Log.debug("[rx log] asking go-ssb for new messages.")
-            let msgs = try self.bot.getReceiveLog(startSeq: UInt64(max(0, current + 1)), limit: limit)
+            
+            // If the go log is empty we need to request 0. Otherwise request the next seq number.
+            let startSeq = UInt64(current <= 0 ? 0 : current + 1)
+            let msgs = try self.bot.getReceiveLog(startSeq: startSeq, limit: limit)
             
             guard !msgs.isEmpty else {
                 print("warning: triggered update but got no messages from receive log")
+                // If the bot's log from startSeq to startSeq+limit is full of nulled messages then no messages will
+                // be returned. In this case we need to artificially bump up our sequence number so we don't get
+                // stuck requesting the same messages again and again.
+                userDefaults.set(startSeq + UInt64(limit), forKey: greatestRequestedSequenceNumberFromGoBotKey)
+                userDefaults.synchronize()
                 completion(.success(true))
                 return
             }
             
             do {
                 try self.database.fillMessages(msgs: msgs)
+        
+                if let lastReceivedSeq = msgs.last?.receivedSeq {
+                    userDefaults.set(lastReceivedSeq, forKey: greatestRequestedSequenceNumberFromGoBotKey)
+                    userDefaults.synchronize()
+                }
 
                 Analytics.shared.trackBotDidUpdateDatabase(
                     count: msgs.count,

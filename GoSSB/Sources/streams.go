@@ -235,7 +235,7 @@ func newLogDrain(sourceLog margaret.Log, seq int64, limit int) (*bytes.Buffer, e
 	src, err := sourceLog.Query(
 		margaret.SeqWrap(true),
 		margaret.Gte(seq),
-		margaret.Limit(limit*3)) // HACK: we know we will get less because we skip a lot of stuff but it's dangerous
+		margaret.Limit(limit))
 	if err != nil {
 		return nil, errors.Wrapf(err, "drainLog: failed to open query")
 	}
