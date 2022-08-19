@@ -56,6 +56,8 @@ class PostHeaderView: UIView {
         return stackView
     }()
 
+    var shouldShowTimestamp: Bool
+
     convenience init(with keyValue: KeyValue) {
         self.init()
         update(with: keyValue)
@@ -63,15 +65,18 @@ class PostHeaderView: UIView {
     
     /// Initializes the view with the given parameters.
     /// - Parameter showTimestamp: Will show the claimed post time if true, author id if false.
-    init(showTimestamp: Bool = false) {
+    init(showTimestamp: Bool = false, compactHeader: Bool = false) {
+        self.shouldShowTimestamp = showTimestamp
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
 
+        let identityButtonSize = compactHeader ? Layout.contactThumbSize : Layout.profileThumbSize
+
         Layout.fillLeft(of: self, with: self.identityButton, respectSafeArea: false)
-        self.identityButton.constrainSize(to: Layout.profileThumbSize)
+        self.identityButton.constrainSize(to: identityButtonSize)
 
         Layout.fillRight(of: self, with: self.rightButtonContainer, respectSafeArea: false)
-        self.rightButtonContainer.widthAnchor.constraint(lessThanOrEqualToConstant: Layout.profileThumbSize).isActive = true
+        rightButtonContainer.widthAnchor.constraint(lessThanOrEqualToConstant: identityButtonSize).isActive = true
 
         addSubview(labelStackView)
         labelStackView.pinTopToSuperview()
@@ -80,10 +85,10 @@ class PostHeaderView: UIView {
         labelStackView.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
         labelStackView.constrainTrailing(toLeadingOf: self.rightButtonContainer, constant: -6)
         labelStackView.addArrangedSubview(nameButton)
-        
-        labelStackView.addArrangedSubview(self.nameButton)
 
-        if showTimestamp {
+        if compactHeader {
+            rightButtonContainer.isHidden = true
+        } else if showTimestamp {
             labelStackView.addArrangedSubview(dateLabel)
             self.dateLabel.pinTop(toBottomOf: self.nameButton)
             self.dateLabel.constrainLeading(to: self.nameButton)

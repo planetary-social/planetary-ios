@@ -18,8 +18,6 @@ class PostReplyView: KeyValueView {
 
     let repliesView = RepliesView()
 
-    let replyView = PostCellView()
-
     // In this case the view is mostly used a big button to
     // navigate into a thread and start replying.  The tap
     // gesture that comes with the KeyValueView is applied
@@ -31,7 +29,6 @@ class PostReplyView: KeyValueView {
         view.isUserInteractionEnabled = false
         view.topSeparator.isHidden = true
         view.addGestureRecognizer(view.tapGesture.recognizer)
-        view.isSkeletonable = true
         view.backgroundColor = .cardBackground
         return view
     }()
@@ -47,8 +44,10 @@ class PostReplyView: KeyValueView {
     }()
     
     let stackView: UIStackView = {
-        let stackView = UIStackView()
+        let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.isSkeletonable = true
         return stackView
     }()
 
@@ -68,14 +67,11 @@ class PostReplyView: KeyValueView {
             color: .appBackground
         )
 
-        replyView.displayHeader = false
-
         Layout.fill(view: self, with: stackView)
         stackView.addArrangedSubview(topBorder)
         stackView.addArrangedSubview(headerView)
         stackView.addArrangedSubview(postView)
         stackView.addArrangedSubview(repliesView)
-        stackView.addArrangedSubview(replyView)
         stackView.addArrangedSubview(replyTextView)
         stackView.addArrangedSubview(bottomBorder)
         stackView.addArrangedSubview(degrade)
@@ -86,47 +82,39 @@ class PostReplyView: KeyValueView {
         nil
     }
 
+    override func reset() {
+        super.reset()
+        replyTextView.isHidden = true
+        headerView.isHidden = true
+        postView.displayHeader = true
+        postView.isHidden = false
+        repliesView.isHidden = false
+        postView.reset()
+    }
+
     override func update(with keyValue: KeyValue) {
-        let updatePostView = { [weak self] (keyValue: KeyValue) in
-            self?.postView.update(with: keyValue)
-            self?.repliesView.update(with: keyValue)
-            if !keyValue.metadata.replies.isEmpty {
-                self?.degrade.heightConstraint?.constant = 12.33
-            } else {
-                self?.degrade.heightConstraint?.constant = 0
-            }
-        }
-        if let rootIdentifier = keyValue.value.content.post?.root {
+        let isReply = keyValue.value.content.post?.root != nil
+        let isVote = keyValue.value.content.vote?.root != nil
+        if isReply || isVote {
+            postView.isHidden = false
+            postView.displayHeader = false
             headerView.isHidden = false
             headerView.update(with: keyValue)
-            replyView.isHidden = false
-            replyView.update(with: keyValue)
-            Task {
-                do {
-                    let rootKeyValue = try Bots.current.post(from: rootIdentifier)
-                    updatePostView(rootKeyValue)
-                } catch {
-
-                }
-            }
-        } else if let linkIdentifier = keyValue.value.content.vote?.root {
-            headerView.isHidden = false
-            headerView.update(with: keyValue)
-            replyView.isHidden = true
-            Task {
-                do {
-                    let linkKeyValue = try Bots.current.post(from: linkIdentifier)
-                    updatePostView(linkKeyValue)
-                } catch {
-
-                }
-            }
+            repliesView.isHidden = true
+            degrade.heightConstraint?.constant = 0
         } else {
+            postView.isHidden = false
             headerView.isHidden = true
-            replyView.isHidden = true
-            updatePostView(keyValue)
+            replyTextView.isHidden = keyValue.offChain == true
+            repliesView.isHidden = false
+            repliesView.update(with: keyValue)
+            if !keyValue.metadata.replies.isEmpty {
+                degrade.heightConstraint?.constant = 12.33
+            } else {
+                degrade.heightConstraint?.constant = 0
+            }
         }
-        replyTextView.isHidden = keyValue.offChain == true
+        postView.update(with: keyValue)
     }
 }
 

@@ -1,8 +1,8 @@
 //
-//  ProfilePostsAlgorithm.swift
+//  OneHopFeedAlgorithm.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 28/7/22.
+//  Created by Martin Dutra on 18/8/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
@@ -13,7 +13,7 @@ import Logger
 /// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
 ///
 /// It doesn't include pubs follows and posts in the feed
-class ProfilePostsAlgorithm: NSObject, FeedStrategy {
+class OneHopFeedAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     /// SQL query to count the total number of items in the feed
@@ -30,6 +30,24 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
     /// - Discard posts and follows from pubs
     /// - Discard posts and follows from the future
     private let countNumberOfKeysQuery = """
+        WITH
+          following_list AS (
+            SELECT
+              followings.author
+            FROM
+              contacts
+              JOIN authors AS followers ON contacts.author_id = followers.id
+              JOIN authors AS followings ON contacts.contact_id = followings.id
+            WHERE
+              contacts.state = 1 AND
+              followers.author = :identity_key
+          ),
+          pub_list AS (
+            SELECT
+              key
+            FROM
+              pubs
+          )
         SELECT
           COUNT(*)
         FROM
@@ -37,17 +55,19 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
           JOIN authors ON authors.id = messages.author_id
           LEFT JOIN posts ON messages.msg_id = posts.msg_ref
           LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
-          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
-          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
         WHERE
-          messages.type IN ('post', 'contact', 'vote')
+          messages.type IN ('post')
           AND messages.is_decrypted = false
           AND messages.hidden = false
           AND (
-            type <> 'contact'
-            OR contact_about.about_id IS NOT NULL
+            type <> 'post'
+            OR posts.is_root = true
           )
-          AND authors.author = ?
+          AND (
+            authors.author IN following_list
+            OR authors.author = :identity_key
+          )
+          AND authors.author NOT IN pub_list
           AND claimed_at < STRFTIME('%s') * 1000;
     """
     // swiftlint:enable indentation_width
@@ -70,13 +90,32 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
     /// The result is sorted by  date
     private let countNumberOfKeysSinceQuery = """
         WITH
-          last_post AS (
+          last_message AS (
             SELECT
-              m.claimed_at as claimed_at,
-              mk.key as key
+              m.claimed_at as claimed_at
             FROM
               messages m
               JOIN messagekeys mk ON mk.id = m.msg_id
+            WHERE
+              mk.key = :message_key
+            LIMIT
+              1
+          ), following_list AS (
+            SELECT
+              followings.author
+            FROM
+              contacts
+              JOIN authors AS followers ON contacts.author_id = followers.id
+              JOIN authors AS followings ON contacts.contact_id = followings.id
+            WHERE
+              contacts.state = 1
+              AND followers.author = :identity_key
+          ),
+          pub_list AS (
+            SELECT
+              key
+            FROM
+              pubs
           )
         SELECT
           COUNT(*)
@@ -85,28 +124,24 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
           JOIN authors ON authors.id = messages.author_id
           LEFT JOIN posts ON messages.msg_id = posts.msg_ref
           LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
-          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
-          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
         WHERE
-          messages.type IN ('post', 'contact')
+          messages.type IN ('post')
           AND messages.is_decrypted = false
           AND messages.hidden = false
           AND (
-            type <> 'contact'
-            OR
-              contact_about.about_id IS NOT NULL
-
+            type <> 'post'
+            OR posts.is_root = true
           )
-          AND authors.author = ?
+          AND (
+            authors.author IN following_list
+            OR authors.id = :identity_key
+          )
+          AND authors.author NOT IN pub_list
           AND claimed_at BETWEEN (
             SELECT
-              last_post.claimed_at + 1
+              claimed_at + 1
             FROM
-              last_post
-            WHERE
-              last_post.key = ?
-            LIMIT
-              1
+              last_message
           )
           AND STRFTIME('%s') * 1000;
         """
@@ -139,17 +174,32 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
     ///
     /// The result is sorted by  date
     private let fetchKeyValuesQuery = """
+        WITH
+          following_list AS (
+            SELECT
+              followings.author
+            FROM
+              contacts
+              JOIN authors AS followers ON contacts.author_id = followers.id
+              JOIN authors AS followings ON contacts.contact_id = followings.id
+            WHERE
+              contacts.state = 1
+              AND followers.author = :identity_key
+          ),
+          pub_list AS (
+            SELECT
+              key
+            FROM
+              pubs
+          )
         SELECT
           messages.*,
           posts.*,
           contacts.*,
-          contact_about.about_id,
           tangles.*,
           messagekeys.*,
           authors.*,
           author_about.*,
-          votes.*,
-          contact_author.author AS contact_identifier,
           EXISTS (
             SELECT
               1
@@ -202,25 +252,26 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
           JOIN messagekeys ON messagekeys.id = messages.msg_id
           JOIN authors ON authors.id = messages.author_id
           LEFT JOIN abouts AS author_about ON author_about.about_id = messages.author_id
-          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
-          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
-          LEFT JOIN votes AS votes ON messages.msg_id = votes.msg_ref
         WHERE
-          type IN ('post', 'contact', 'vote')
+          type IN ('post')
           AND is_decrypted = false
           AND hidden = false
           AND (
-            type <> 'contact'
-            OR contact_about.about_id IS NOT NULL
+            type <> 'post'
+            OR posts.is_root = true
           )
-          AND authors.author = ?
+          AND (
+            authors.author IN following_list
+            OR authors.id = :identity_key
+          )
+          AND authors.author NOT IN pub_list
           AND claimed_at < STRFTIME('%s') * 1000
         ORDER BY
           claimed_at DESC
         LIMIT
-          ?
+            :limit
         OFFSET
-          ?;
+            :offset;
     """
     // swiftlint:enable indentation_width
 
@@ -241,8 +292,8 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
         let query = try connection.prepare(countNumberOfKeysQuery)
 
-        let bindings: [Binding?] = [
-            identity
+        let bindings: [String: Binding?] = [
+            ":identity_key": identity
         ]
 
         if let count = try query.scalar(bindings) as? Int64 {
@@ -254,9 +305,9 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
     func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
         let query = try connection.prepare(countNumberOfKeysSinceQuery)
 
-        let bindings: [Binding?] = [
-            identity,
-            message
+        let bindings: [String: Binding?] = [
+            ":identity_key": identity,
+            ":message_key": message
         ]
 
         if let count = try query.scalar(bindings) as? Int64 {
@@ -272,7 +323,13 @@ class ProfilePostsAlgorithm: NSObject, FeedStrategy {
         }
 
         let query = try connection.prepare(fetchKeyValuesQuery)
-        let bindings: [Binding?] = [identity, limit, offset ?? 0]
+
+        let bindings: [String: Binding?] = [
+            ":identity_key": identity,
+            ":limit": limit,
+            ":offset": offset ?? 0
+        ]
+
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, database: database)
         }
