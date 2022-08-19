@@ -47,7 +47,6 @@ class PostReplyView: KeyValueView {
         let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
         stackView.distribution = .fill
-        stackView.isSkeletonable = true
         return stackView
     }()
 

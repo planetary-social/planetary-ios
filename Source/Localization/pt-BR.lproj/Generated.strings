@@ -28,6 +28,8 @@
 "Text.usersInYourNetwork" = "Usuários na sua rede";
 "Text.goToYourNetwork" = "Acesse sua rede";
 "Text.emptyHomeFeedMessage" = "Está um tanto quanto vazio por aqui! Já pensou em seguir alguns usuários ou tópicos?";
+"Text.replied" = "{{somebody}} replied";
+"Text.liked" = "{{somebody}} liked";
 "Text.startedFollowing" = "{{somebody}} começou a seguir";
 "Text.stoppedFollowing" = "{{somebody}} deixou de seguir";
 "Text.followStats" = "Seguindo {{numberOfFollows}} • Seguido por {{numberOfFollowers}}";
