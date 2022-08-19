@@ -68,16 +68,18 @@ class ImageGalleryView: UIView {
     func add(_ image: UIImage) {
         self._images += [image]
         self.collectionView.reloadData()
-        let indexPath = self.images.indexPathForLast()
-        self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        if let indexPath = images.indexPathForLast() {
+            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        }
         self.delegate?.imageGalleryViewDidChange(self)
     }
 
     func add(_ images: [UIImage]) {
         self._images += images
         self.collectionView.reloadData()
-        let indexPath = self.images.indexPathForLast()
-        self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        if let indexPath = images.indexPathForLast() {
+            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        }
         self.delegate?.imageGalleryViewDidChange(self)
     }
 

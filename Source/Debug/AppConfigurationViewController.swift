@@ -21,7 +21,7 @@ class AppConfigurationViewController: DebugTableViewController {
 
     init(with configuration: AppConfiguration) {
         self.configuration = configuration
-        super.init(style: .grouped)
+        super.init(style: .insetGrouped)
         self.navigationItem.title = self.configuration.name
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Select",
                                                                  style: .plain,
@@ -124,6 +124,16 @@ class AppConfigurationViewController: DebugTableViewController {
             cell.detailTextLabel?.text = Onboarding.status(for: self.configuration.identity).rawValue
             },
                                              actionClosure: nil)]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: "Joined Planetary Network",
+                cellReuseIdentifier: DebugValueTableViewCell.className,
+                valueClosure: { cell in
+                    cell.detailTextLabel?.text = String(self.configuration.joinedPlanetarySystem)
+                }
+            )
+        ]
 
         return ("Onboarding", settings, nil)
     }

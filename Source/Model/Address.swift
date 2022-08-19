@@ -66,7 +66,7 @@ struct PubAddress: Codable, Hashable {
 ///
 /// Currently this model only supports net (TCP) and shs protocols, although in general the multiserver address format
 /// supports other ways of connecting.
-struct MultiserverAddress: Codable, Hashable {
+struct MultiserverAddress: Codable, Hashable, Equatable {
     
     /// The key part of the peer's identifier. Note: this does not include the sigil or feed format identifier.
     let keyID: KeyID
