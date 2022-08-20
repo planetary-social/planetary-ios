@@ -61,7 +61,7 @@ class SettingsViewController: DebugTableViewController {
                     cell.accessoryType = .disclosureIndicator
                 },
                 actionClosure: { [weak self] _ in
-                    let controller = DiscoveryFeedStrategySelectionViewController()
+                    let controller = DiscoveryFeedStrategyViewController()
                     self?.navigationController?.pushViewController(controller, animated: true)
                 }
             )

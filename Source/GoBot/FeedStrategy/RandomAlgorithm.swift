@@ -31,11 +31,10 @@ class RandomAlgorithm: NSObject, FeedStrategy {
     private let countNumberOfKeysQuery = """
         SELECT COUNT(*)
         FROM messages
-        JOIN authors ON authors.id == messages.author_id
-        LEFT JOIN posts ON messages.msg_id == posts.msg_ref
+        JOIN authors ON authors.id = messages.author_id
         WHERE messages.type IN ('post')
-        AND messages.is_decrypted == false
-        AND messages.hidden == false;
+        AND messages.is_decrypted = false
+        AND messages.hidden = false;
     """
 
     // swiftlint:disable indentation_width
@@ -292,30 +291,12 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         return 0
     }
     
-    func countNumberOfKeys(connection: Connection) throws -> Int {
-        let query = try connection.prepare(countNumberOfKeysQuery)
-        
-        if let count = try query.scalar() as? Int64 {
-            return Int(truncatingIfNeeded: count)
-        }
-        return 0
-    }
-    
     // because we sort randomly, there is no new message since 'x message'
     func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
         0
     }
-    
-    func countNumberOfKeys(connection: Connection, since message: MessageIdentifier) throws -> Int {
-        0
-    }
-    
-    func fetchKeyValues(
-        database: ViewDatabase,
-        userId: Int64,
-        limit: Int,
-        offset: Int?
-    ) throws -> [KeyValue] {
+
+    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
         try fetchKeyValues(database: database, userId: userId, limit: limit, offset: offset, onlyUnread: true)
     }
     
@@ -347,7 +328,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         var compactKeyValues = keyValues.compactMap { $0 }
         
         // if we don't have any unread messages we get some already read messages to display.
-        if compactKeyValues.count < limit && onlyUnread == false {
+        if compactKeyValues.count < limit && onlyUnread == true {
             compactKeyValues += try fetchKeyValues(
                 database: database,
                 userId: userId,

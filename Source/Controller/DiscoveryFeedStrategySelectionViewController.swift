@@ -1,5 +1,5 @@
 //
-//  DiscoveryFeedStrategySelectionViewController.swift
+//  DiscoveryFeedStrategyViewController.swift
 //  Planetary
 //
 //  Created by Rabble on 8/6/22.
@@ -12,7 +12,7 @@ import Analytics
 import SafariServices
 
 /// Allows the user to choose the algorithm used to fetch the Discover Feed.
-class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
+class DiscoveryFeedStrategyViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
