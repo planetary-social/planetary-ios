@@ -6,6 +6,9 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased] 2022-08-19
+- Added support for random algorithm for sorting home and discover feeds. #759
+
 ## [1.2.6] 2022-08-03
 
 - Added beta support for replicating via room servers. #783
