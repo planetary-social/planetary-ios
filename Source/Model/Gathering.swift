@@ -1,14 +1,17 @@
 //
-//  Blog.swift
+//  Gathering.swift
 //  Planetary
 //
-//  Created by Rabble on 8/5/22.
+//  Created by Rabble on 8/20/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
+// This is a messy WIP. - rabble
+
+
 import Foundation
 
-class Blog: ContentCodable {
+class Gathering: Codable {
 
     enum CodingKeys: String, CodingKey {
         case branch
@@ -16,27 +19,18 @@ class Blog: ContentCodable {
         case recps
         case reply
         case root
-        case title
-        case summary
+        case description
         case type
-        case blog
     }
 
     let branch: [Identifier]?
     let mentions: [Mention]?
     let recps: [RecipientElement]?
-    let reply: [Identifier: Identifier]?
     let root: MessageIdentifier?
-    let title: String
-    let summary: String
-    let blog: Identifier
+    let description: String
     let type: ContentType
     
-    /// Returns blobs extracted from the blog's markdown.
-    /// This is expensive to calculate so we lazy load it as an optimiation
-    fileprivate(set) lazy var inlineBlobs: Blobs = {
-        self.summary.blobs()
-    }()
+
 
     // MARK: Calculated temporal unserialized properties
 
@@ -52,7 +46,7 @@ class Blog: ContentCodable {
         // required
         self.branch = branches
         self.root = root
-        self.summary = attributedText.markdown
+        self.description = attributedText.markdown
         self.type = .blog
 
         var mentionsFromHashtags = attributedText.string.hashtags().map {
@@ -65,9 +59,7 @@ class Blog: ContentCodable {
 
         // unused
         self.recps = nil
-        self.reply = nil
-        self.blog  = ""
-        self.title = ""
+
     }
 
     /// Intended to be used to create models in the view database or unit tests.
@@ -82,10 +74,7 @@ class Blog: ContentCodable {
         // required
         self.branch = branches
         self.root = root
-        self.title = title
-        self.summary = summary
-        self.blog = blog
-        self.type = .blog
+        self.description = description
         
         var m: Mentions = []
         if let mentions = mentions {
@@ -106,21 +95,18 @@ class Blog: ContentCodable {
 
         // unused
         self.recps = nil
-        self.reply = nil
     }
 
     /// Intended to be used to decode a model from JSON.
     required init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        branch     = Blog.decodeBranch(from: values)
-        mentions   = try? values.decode([Mention].self, forKey: .mentions)
-        recps      = try? values.decode([RecipientElement].self, forKey: .recps)
-        reply      = try? values.decode([Identifier: Identifier].self, forKey: .reply)
-        root       = try? values.decode(Identifier.self, forKey: .root)
-        title      = try values.decode(String.self, forKey: .title)
-        summary    = try values.decode(String.self, forKey: .summary)
-        blog       = try values.decode(Identifier.self, forKey: .blog)
-        type       = try values.decode(ContentType.self, forKey: .type)
+        let values  = try decoder.container(keyedBy: CodingKeys.self)
+        //branch      = Gathering.decodeBranch(from: values)
+        mentions    = try? values.decode([Mention].self, forKey: .mentions)
+        recps       = try? values.decode([RecipientElement].self, forKey: .recps)
+        //reply      = try? values.decode([Identifier: Identifier].self, forKey: .reply)
+        root        = try? values.decode(Identifier.self, forKey: .root)
+        description = try values.decode(String.self, forKey: .description)
+        type        = try values.decode(ContentType.self, forKey: .type)
     }
 
     private static func decodeBranch(from values: KeyedDecodingContainer<Blog.CodingKeys>) -> [Identifier]? {
@@ -132,7 +118,6 @@ class Blog: ContentCodable {
     }
 }
 
-/*
 extension Blog {
 
     var isRoot: Bool {
@@ -143,8 +128,7 @@ extension Blog {
         guard let identity = identity else { return false }
         return self.mentions?.contains(where: { $0.identity == identity }) ?? false
     }
-}*/
-
+}
 
 /* code to handle both kinds of recpients:
  patchcore publishes this object instead of just the key as a string
@@ -155,7 +139,7 @@ extension Blog {
 */
 
 /*
- Re-used from Post... doesn't need to be here. 
+ Re-used from Post... doesn't need to be here.
  
 struct RecipientNamedKey: Codable {
     let link: Identity

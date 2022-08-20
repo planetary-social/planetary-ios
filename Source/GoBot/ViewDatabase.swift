@@ -35,6 +35,7 @@ enum ViewDatabaseTableNames: String {
     case contacts
     case banList = "ban_list"
     case blogs
+    case gatherings
     case posts
     case postBlobs = "post_blobs"
     case privates
@@ -138,6 +139,15 @@ class ViewDatabase {
     let colSummary = Expression<String>("summary")
     let colTitle = Expression<String>("title")
     let colBlog = Expression<String>("blog")
+    
+    // gatherings
+    let gatherings = Table(ViewDatabaseTableNames.gatherings.rawValue)
+    let colStartDateTimeBias = Expression<Int>("bias")
+    let colStartDateTimeEpoch = Expression<Int>("epoch")
+    let colStartDateTimeTZ = Expression<String>("tz")
+    let colStartDateTimeValid = Expression<Bool>("valid")
+    // also description
+    
     
     let mentions_feed = Table(ViewDatabaseTableNames.mentionsFeed.rawValue)
     // msg_ref
@@ -380,6 +390,29 @@ class ViewDatabase {
                 )
                 db.userVersion = 19
             }
+            if db.userVersion == 19 {
+                try db.execute(
+                    """
+                    CREATE TABLE
+                        gatherings (
+                            msg_ref              integer not null,
+                            is_root              boolean default false,
+                            bias                 int,
+                            eoch                 bigint,
+                            tz                   varchar(255),
+                            valid                boolean,
+                            description          text,
+                            
+                            PRIMARY KEY (msg_ref)
+                        );
+                    CREATE INDEX gatherings_msgrefs on blogs (msg_ref);
+                    CREATE INDEX gatherings_roots on blogs (is_root);
+                    """
+                )
+                db.userVersion = 20
+            }
+            
+            
         }
     }
 
@@ -896,6 +929,7 @@ class ViewDatabase {
             self.posts,
             self.post_blobs,
             self.blogs,
+            self.gatherings,
             self.tangles,
             self.mentions_msg,
             self.mentions_feed,
@@ -2047,9 +2081,16 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
+        
+        // check for if this about is actually a gathering....
         guard let a = msg.value.content.about else {
-            Log.info("[viewdb/fill] broken about message: \(msg.key)")
-            return
+            // gatherings aren't labeled but they do
+            if msg.value.content.startDateTime {
+                
+            } else {
+                Log.info("[viewdb/fill] broken about message: \(msg.key)")
+                return
+            }
         }
         
         if a.about.sigil == .message {
@@ -2316,6 +2357,12 @@ class ViewDatabase {
         }
     }
     
+    // needs to be update, this is just a copy o fillPost
+    private func fillGathering(msgID: Int64, msg: KeyValue, pms: Bool) throws {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+    }
 
     
     private func fillVote(msgID: Int64, msg: KeyValue, pms: Bool) throws {
@@ -2503,6 +2550,8 @@ class ViewDatabase {
             break
         case .blog: //need to flush this out. blog.
             break
+        case .gathering:
+            break
         case .unknown:
             break
         case .unsupported:
@@ -2668,7 +2717,10 @@ class ViewDatabase {
                     
                 case .blog:
                     try self.fillBlog(msgID: msgKeyID, msg: msg, pms: pms)
-                
+                    
+                case .gathering:
+                    try self.fillGathering(msgID: msgKeyID, msg: msg, pms: pms)
+
                 case .vote:
                     try self.fillVote(msgID: msgKeyID, msg: msg, pms: pms)
                     

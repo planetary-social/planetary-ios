@@ -18,6 +18,7 @@ enum ContentType: String, CaseIterable, Codable {
     case pub
     case vote
     case blog
+    case gathering
 
     // known but unhandled
     //    case position                         // these are poll-votes (think doodle or _what kind of pizza do you like_)

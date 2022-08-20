@@ -37,6 +37,8 @@ struct Content: Codable {
     var post: Post?
     var vote: ContentVote?
     var blog: Blog?
+    var gathering: Gathering?
+    
 
     init(from post: Post) {
         self.post = post

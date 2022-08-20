@@ -229,6 +229,12 @@
 		23EF5AB0249D185E00469977 /* BearerBanListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */; };
 		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
+		2DE70FD228B1952E004B23A3 /* Blog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE70FD128B1952E004B23A3 /* Blog.swift */; };
+		2DE70FD328B1952E004B23A3 /* Blog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE70FD128B1952E004B23A3 /* Blog.swift */; };
+		2DE70FD428B1952E004B23A3 /* Blog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE70FD128B1952E004B23A3 /* Blog.swift */; };
+		2DE70FD628B1955C004B23A3 /* Gathering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE70FD528B1955C004B23A3 /* Gathering.swift */; };
+		2DE70FD728B1955C004B23A3 /* Gathering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE70FD528B1955C004B23A3 /* Gathering.swift */; };
+		2DE70FD828B1955C004B23A3 /* Gathering.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE70FD528B1955C004B23A3 /* Gathering.swift */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
 		53033E9F2383322B004609F8 /* Onboarding+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9E2383322B004609F8 /* Onboarding+AppConfiguration.swift */; };
@@ -1272,6 +1278,8 @@
 		23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearerBanListAPI.swift; sourceTree = "<group>"; };
 		2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryOnboardingStep.swift; sourceTree = "<group>"; };
 		2DBA7C96263DB1FA008B646F /* zh-CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-CN"; path = Generated.strings; sourceTree = "<group>"; };
+		2DE70FD128B1952E004B23A3 /* Blog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blog.swift; sourceTree = "<group>"; };
+		2DE70FD528B1955C004B23A3 /* Gathering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gathering.swift; sourceTree = "<group>"; };
 		2DFBECE325E1542A00803075 /* development.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = development.entitlements; sourceTree = "<group>"; };
 		2DFBECE425E1545000803075 /* production.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = production.entitlements; sourceTree = "<group>"; };
 		316D716D251CC0B347E630DA /* Pods-Planetary.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.appstore.xcconfig"; sourceTree = "<group>"; };
@@ -2577,6 +2585,7 @@
 				5316E96621FFED620053832E /* About.swift */,
 				53B4F5F222B73E0000027C6A /* About+NSMutableAttributedString.swift */,
 				23D8CE262253DB29001EB7D5 /* Address.swift */,
+				2DE70FD128B1952E004B23A3 /* Blog.swift */,
 				531EC4112310C9EE001A25AD /* Blob.swift */,
 				531EC40F2310C274001A25AD /* Blob+NSAttributedString.swift */,
 				53631EF423A9A1AA009C6999 /* Blob+String.swift */,
@@ -2586,11 +2595,15 @@
 				531A8A3D21F7DDB400D5C8C0 /* Content.swift */,
 				535CD37E2267F2C60039BCF2 /* ContentCodable.swift */,
 				535754F32268E248002A6989 /* ContentType.swift */,
+				0A674A28253F3C4400698CF7 /* Draft.swift */,
 				2356500A2369C6CB00C3DBC0 /* DropContentRequest.swift */,
+				2DE70FD528B1955C004B23A3 /* Gathering.swift */,
 				53E29CD722D7DF84008A2CB1 /* Hashtag.swift */,
 				53E29CDE22D7EE1C008A2CB1 /* Hashtag+NSAttributedString.swift */,
 				53E29CDC22D7EC6F008A2CB1 /* Hashtag+String.swift */,
+				0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */,
 				531A8A4121F7DE0D00D5C8C0 /* Identifier.swift */,
+				1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */,
 				8D35CEC42347E370004A4191 /* Identity+Bot.swift */,
 				53CF2A4C22026B1700F0A2CC /* ImageMetadata.swift */,
 				53211CE32283717C007FB785 /* Image+UIImage.swift */,
@@ -2601,25 +2614,22 @@
 				0A7C5D5124EEC21C005E5035 /* MissionControlCenter.swift */,
 				53B4F5FB22B8732800027C6A /* NSAttributedString+Markdownable.swift */,
 				8D4EC14A23394ABE00D46403 /* NSAttributedString+Truncation.swift */,
+				0A07AB21242AC66D00EFD47F /* Notification+About.swift */,
+				C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */,
 				5316E95E21FFEB130053832E /* Post.swift */,
 				53BD748723235A450060E47E /* Post+Blob.swift */,
 				531A8A2E21F18C4600D5C8C0 /* Profile.swift */,
+				0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */,
 				8D8105812346A9740029C72E /* Relationship.swift */,
 				53EE01F32204F66200DFDF16 /* Secret.swift */,
 				53E341F3224D9E3B002BB5F4 /* URL+Identifier.swift */,
-				53AD3FE422735C7B005228F9 /* Value.swift */,
-				5316E96021FFED2E0053832E /* Vote.swift */,
-				0A07AB21242AC66D00EFD47F /* Notification+About.swift */,
-				1BA1FECD2432805C00FBD5E5 /* Identity+Link.swift */,
-				0AF2DEED247C3EE6003F457D /* Hashtag+Link.swift */,
 				0AF9966B24D8A0B6001113BE /* Report.swift */,
+				C969F0DE2899CED100081615 /* Room.swift */,
 				53362F692209108F007264CB /* SSBNetwork.swift */,
 				0A56ABDC24E32F8000D30649 /* Star.swift */,
-				0A1CA4C624EB097B006CAC43 /* PubArray+Constellation.swift */,
-				0A674A28253F3C4400698CF7 /* Draft.swift */,
-				C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */,
 				5BC3DE6028299CB900F6A363 /* SocialStats.swift */,
-				C969F0DE2899CED100081615 /* Room.swift */,
+				53AD3FE422735C7B005228F9 /* Value.swift */,
+				5316E96021FFED2E0053832E /* Vote.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -4189,6 +4199,7 @@
 				C9724B692809D717000EBCCD /* PostTextEditorView.swift in Sources */,
 				C9C3789127C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift in Sources */,
 				238ED6B2232282D600E054A3 /* Blob.swift in Sources */,
+				2DE70FD828B1955C004B23A3 /* Gathering.swift in Sources */,
 				C9724B8E2809E9B2000EBCCD /* UIViewController+ApplicationWillEnterForeground.swift in Sources */,
 				C9724B762809E7B2000EBCCD /* BlockButton.swift in Sources */,
 				535754F522692B29002A6989 /* ContentType.swift in Sources */,
@@ -4220,6 +4231,7 @@
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */,
 				5BEE741C2880502100897ACC /* ContentVote+ViewDatabase.swift in Sources */,
+				2DE70FD428B1952E004B23A3 /* Blog.swift in Sources */,
 				53211CE522838107007FB785 /* UIImage+Resize.swift in Sources */,
 				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				C9724B712809E782000EBCCD /* CGSize+Square.swift in Sources */,
@@ -4286,6 +4298,7 @@
 				23EF5AA9249D177F00469977 /* BanListAPI.swift in Sources */,
 				5314EF6E22EA2BC20065D02A /* Image+UIImage.swift in Sources */,
 				533EDBDB23844A71008B3565 /* Onboarding+AppConfiguration.swift in Sources */,
+				2DE70FD728B1955C004B23A3 /* Gathering.swift in Sources */,
 				23EF5A9A249CDCF900469977 /* BanListAPIService.swift in Sources */,
 				0ABCA8F624366CC800D7F39C /* AppError.swift in Sources */,
 				53E26C63230461E0009240B2 /* Dictionary+Transform.swift in Sources */,
@@ -4385,6 +4398,7 @@
 				23EF5A9F249CDD5400469977 /* TokenStore.swift in Sources */,
 				5314EF6C22EA2B9B0065D02A /* String+HashtagSubstrings.swift in Sources */,
 				0A3880292475BD8F00777843 /* OnboardingStep.swift in Sources */,
+				2DE70FD328B1952E004B23A3 /* Blog.swift in Sources */,
 				230F4FD222F8729700F93B14 /* TestAPI.swift in Sources */,
 				5314EF5A22EA298D0065D02A /* Thread+Assert.swift in Sources */,
 				0ABCA9072437C16100D7F39C /* NSAttributedString+Markdown.swift in Sources */,
@@ -4526,6 +4540,7 @@
 				53A4763923A19D7D003814DC /* Offboarding.swift in Sources */,
 				C9313A78289A89580093AC47 /* RoomListCoordinator.swift in Sources */,
 				5363A23422B058A5009154B7 /* URLResponse+APIError.swift in Sources */,
+				2DE70FD228B1952E004B23A3 /* Blog.swift in Sources */,
 				536255DC23AC090D001007D0 /* RemoteNotificationUserInfo.swift in Sources */,
 				53631EEA23A8704F009C6999 /* KeyValueTableViewDataSourcePrefetching.swift in Sources */,
 				C931927C2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */,
@@ -4574,6 +4589,7 @@
 				53EAB39A239B106900DF5530 /* CachesViewController.swift in Sources */,
 				53B634B6221627CC00400403 /* UIView+AutoLayout.swift in Sources */,
 				53BD748823235A450060E47E /* Post+Blob.swift in Sources */,
+				2DE70FD628B1955C004B23A3 /* Gathering.swift in Sources */,
 				23C7443E2200B12000FB554A /* Mention.swift in Sources */,
 				0AF9E0AA246B23C700910575 /* SuspendOperation.swift in Sources */,
 				5319F06B234EDC8000F4D3C1 /* UIView+HeaderView.swift in Sources */,
