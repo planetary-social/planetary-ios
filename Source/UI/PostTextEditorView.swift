@@ -9,13 +9,18 @@
 import Foundation
 import Down
 import UIKit
+import Combine
 
 class PostTextEditorView: UIView {
     private let font = UIFont.systemFont(ofSize: 19, weight: .regular)
     private lazy var fontAttribute = [NSAttributedString.Key.font: self.font]
 
-    private let mentionDelegate = MentionTextViewDelegate(font: UIFont.verse.newPost,
-                                                          color: UIColor.text.default)
+    private let mentionDelegate = MentionTextViewDelegate(
+        font: UIFont.verse.newPost,
+        color: UIColor.text.default
+    )
+    
+    var textPublisher: AnyPublisher<NSAttributedString?, Never> = Just(nil).eraseToAnyPublisher()
 
     private lazy var sourceTextView: UITextView = {
         let view = UITextView.forPostsAndReplies()
@@ -76,6 +81,11 @@ class PostTextEditorView: UIView {
 
     init() {
         super.init(frame: .zero)
+        
+        textPublisher = NotificationCenter.default
+            .publisher(for: UITextView.textDidChangeNotification, object: sourceTextView)
+            .map { ($0.object as? UITextView)?.attributedText }
+            .eraseToAnyPublisher()
 
         useAutoLayout()
         backgroundColor = .cardBackground

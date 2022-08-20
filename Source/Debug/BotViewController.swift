@@ -21,7 +21,7 @@ class BotViewController: DebugTableViewController {
     init(bot: Bot, configuration: AppConfiguration? = nil) {
         self.bot = bot
         self.configuration = configuration
-        super.init(style: .grouped)
+        super.init(style: .insetGrouped)
         self.navigationItem.title = bot.name
     }
     

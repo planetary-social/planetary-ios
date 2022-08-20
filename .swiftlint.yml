@@ -135,6 +135,8 @@ identifier_name:
     - row
     - tab
     - app
+    - at
+    - bio
 number_separator:
   minimum_length: 5
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, codeclimate, junit, html, emoji, sonarqube, markdown, github-actions-logging)

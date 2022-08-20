@@ -57,11 +57,11 @@ GOEXTRAFLAGS=-trimpath
 GOBUILDTAGS = nommio x509omitbundledroots
 # ifdef DEBUG <  this var is not set when the Build Step script is called  by Xcode
 # ifeq ($(ENABLE_TESTABILITY),YES) < also works, not sure what the difference is
-ifeq ($(CONFIGURATION),Debug)
+#ifeq ($(CONFIGURATION),Debug)
     GOBUILDTAGS += testing
-else
+#else
     GOEXTRAFLAGS += -ldflags="-s -w"
-endif
+#endif
 
 # this builds multiple lib.a files for different ARCHS_PHONE
 define libssb-go-phone-a

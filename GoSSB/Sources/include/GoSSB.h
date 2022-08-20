@@ -45,12 +45,10 @@ extern void ssbFeedBlock(gostring_t feed, bool yes);
 extern char* ssbPublish(gostring_t content);
 extern char* ssbPublishPrivate(gostring_t content, gostring_t recipients);
 
-#ifdef DEBUG
 extern int ssbTestingMakeNamedKey(gostring_t nick);
 extern char* ssbTestingAllNamedKeypairs();
 extern char* ssbTestingPublishAs(gostring_t nick, gostring_t content);
 extern char* ssbTestingPublishPrivateAs(gostring_t nick, gostring_t content, gostring_t recipients);
-#endif
 
 extern char* ssbRepoStats(void);
 extern int ssbReplicateUpTo(void);

@@ -38,6 +38,26 @@ class DoneOnboardingStep: OnboardingStep {
         return view
     }()
 
+    private let joinPlanetarySystemToggle: TitledToggle = {
+        let view = TitledToggle.forAutoLayout()
+        view.titleLabel.text = Text.Onboarding.joinPlanetarySystem.text
+        view.subtitleLabel.text = Text.Onboarding.joinPlanetarySystemDescription.text
+        view.toggle.isOn = true
+        return view
+    }()
+    
+    private let useTestNetworkToggle: TitledToggle = {
+        let view = TitledToggle.forAutoLayout()
+        view.titleLabel.text = Text.Onboarding.useTestNetwork.text
+        view.subtitleLabel.text = Text.Onboarding.useTestNetworkDescription.text
+        #if DEBUG
+        view.toggle.isOn = true
+        #else
+        view.toggle.isOn = false
+        #endif
+        return view
+    }()
+    
     init() {
         super.init(.done)
     }
@@ -49,6 +69,19 @@ class DoneOnboardingStep: OnboardingStep {
         Layout.fillSouth(of: view.hintLabel, with: analyticsToggle, insets: insets)
         Layout.fillSouth(of: analyticsToggle, with: followPlanetaryToggle)
         Layout.fillSouth(of: followPlanetaryToggle, with: publicWebHostingToggle)
+        Layout.fillSouth(of: publicWebHostingToggle, with: joinPlanetarySystemToggle)
+        #if DEBUG
+        Layout.fillSouth(of: joinPlanetarySystemToggle, with: useTestNetworkToggle)
+        useTestNetworkToggle.bottomAnchor.constraint(
+            lessThanOrEqualTo: view.buttonStack.topAnchor,
+            constant: -Layout.verticalSpacing
+        ).isActive = true
+        #else
+        joinPlanetarySystemToggle.bottomAnchor.constraint(
+            lessThanOrEqualTo: view.buttonStack.topAnchor,
+            constant: -Layout.verticalSpacing
+        ).isActive = true
+        #endif
 
         self.view.hintLabel.text = Text.Onboarding.thanksForTrying.text
 
@@ -57,9 +90,11 @@ class DoneOnboardingStep: OnboardingStep {
     }
 
     override func performPrimaryAction(sender button: UIButton) {
+        self.data.joinPlanetarySystem = self.joinPlanetarySystemToggle.toggle.isOn
         self.data.publicWebHosting = self.publicWebHostingToggle.toggle.isOn
         self.data.analytics = self.analyticsToggle.toggle.isOn
         self.data.followPlanetary = self.followPlanetaryToggle.toggle.isOn
+        self.data.useTestNetwork = self.followPlanetaryToggle.toggle.isOn
         let data = self.data
         
         // SIMULATE ONBOARDING
