@@ -1320,10 +1320,8 @@ class GoBot: Bot {
             return strategy
         }
         
-        return RandomAlgorithm()
+        return RandomAlgorithm(onlyFollowed: false)
     }
-    
-    
     
     // old recent
     func recent(completion: @escaping PaginatedCompletion) {

@@ -41,6 +41,7 @@ extension Notification.Name {
     static let didRefresh = Notification.Name("didRefresh")
     static let didSync = Notification.Name("didSync")
     static let didChangeHomeFeedAlgorithm = Notification.Name("didChangeHomeFeedAlgorithm")
+    static let didChangeDiscoverFeedAlgorithm = Notification.Name("didChangeDiscoverFeedAlgorithm")
     static let didUpdateReportReadStatus = Notification.Name("didUpdateReportReadStatus")
 }
 

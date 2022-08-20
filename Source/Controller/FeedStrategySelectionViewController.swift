@@ -103,7 +103,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
                 }
             },
             actionClosure: { [weak self] _ in
-                self?.save(strategy: RandomAlgorithm())
+                self?.save(strategy: RandomAlgorithm(onlyFollowed: true))
             }
         )
         

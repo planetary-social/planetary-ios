@@ -256,9 +256,9 @@
 
 "FeedAlgorithm.algorithms" = "Algoritmos";
 "FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
-"FeedAlgorithm.feedAlgorithmDescription" = "Elegí el algoritmo usado para ordenar y filtrar tu Home Feed.";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Posts recientes";
-"FeedAlgorithm.recentPostsAlgorithmDescription" = "Muestra posts de la gente que seguís en el orden en el que fueron publicados.";
+"FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Posts y follows recientes (por defecto)";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Muestra posts y mensajes de follow de la gente que seguís en el orden en que fueron publicados.";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Posts y follows recientes";
@@ -270,8 +270,7 @@
 "FeedAlgorithm.sourceCodeDescription" = "El código fuente de Planetary es abierto, por lo que nuestros algoritmos pueden ser auditados y hasta modificados por nuestros usuarios. Vos podés ver el código fuente haciendo tap en el botón de arriba.";
 
 "DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
-"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed";
-"DiscoveryFeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithm used to sort and filter posts from your broader network.";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed Algorithm";
 "DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
 "DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
 "DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";

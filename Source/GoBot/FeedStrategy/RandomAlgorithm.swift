@@ -43,51 +43,6 @@ class RandomAlgorithm: NSObject, FeedStrategy {
     """
     // swiftlint:enable indentation_width
 
-    // swiftlint:disable indentation_width
-    /// SQL query to return the feed's keys
-    ///
-    /// This query should be as fast as possible so only required joins and where clauses where used.
-    /// The result should be the same as the number of items returned by the other two queries in this class.
-    /// The where clauses are as follows:
-    /// - Only posts and follows (contacts) are considered
-    /// - Discard private messages
-    /// - Discard hidden messages
-    /// - Only root posts
-    /// - Only follows (contacts) to people we know something about and discard follows to pubs
-    /// - Only posts and follows from user's follows or from user itsef
-    /// - Discard posts and follows from pubs
-    /// - Discard posts and follows from the future
-    ///
-    /// The result is sorted by  date
-    private let countNumberOfKeysSinceQuery = """
-        WITH
-          last_post AS (
-            SELECT
-              m.claimed_at as claimed_at,
-              mk.key as key
-            FROM
-              messages m
-              JOIN messagekeys mk ON mk.id = m.msg_id
-          )
-        SELECT
-          COUNT(*)
-        FROM
-          messages
-          JOIN authors ON authors.id = messages.author_id
-          LEFT JOIN posts ON messages.msg_id = posts.msg_ref
-          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
-          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
-        WHERE
-          messages.type IN ('post')
-          AND messages.is_decrypted = false
-          AND messages.hidden = false
-          AND is_root = true
-          LIMIT
-            1
-          )
-          AND STRFTIME('%s') * 1000;
-        """
-    // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
     /// SQL query to return the feed's keyvalues
@@ -310,7 +265,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
             FROM
               pubs
           )
-          AND STRFTIME('%s') * 1000
+          AND claimed_at < STRFTIME('%s') * 1000
         ORDER BY
           RANDOM()
         LIMIT
@@ -318,20 +273,20 @@ class RandomAlgorithm: NSObject, FeedStrategy {
     """
     // swiftlint:enable indentation_width
 
-    var identity = Identity.null
+    var onlyFollowed: Bool
 
-    override init() {
+    init(onlyFollowed: Bool) {
+        self.onlyFollowed = onlyFollowed
         super.init()
     }
 
-    init(identity: Identity) {
-        super.init()
-        self.identity = identity
+    required init?(coder: NSCoder) {
+        onlyFollowed = coder.decodeBool(forKey: "onlyFollowed")
     }
-
-    required init?(coder: NSCoder) {}
-    func encode(with coder: NSCoder) {}
     
+    func encode(with coder: NSCoder) {
+        coder.encode(onlyFollowed, forKey: "onlyFollowed")
+    }
     
     // we don't care what the user id is in this algorithm.
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
@@ -354,31 +309,58 @@ class RandomAlgorithm: NSObject, FeedStrategy {
     
     // because we sort randomly, there is no new message since 'x message'
     func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
-        return 0
+        0
     }
     
     func countNumberOfKeys(connection: Connection, since message: MessageIdentifier) throws -> Int {
-        return 0
+        0
     }
     
-
-    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?, is_read: Bool?) throws -> [KeyValue] {
+    func fetchKeyValues(
+        database: ViewDatabase,
+        userId: Int64,
+        limit: Int,
+        offset: Int?
+    ) throws -> [KeyValue] {
+        try fetchKeyValues(database: database, userId: userId, limit: limit, offset: offset, onlyUnread: true)
+    }
+    
+    /// - parameter isRead: if false or nil then only unread messages will be fetched.
+    private func fetchKeyValues(
+        database: ViewDatabase,
+        userId: Int64,
+        limit: Int,
+        offset: Int?,
+        onlyUnread: Bool
+    ) throws -> [KeyValue] {
         guard let connection = database.getOpenDB() else {
             Log.error("db is closed")
             return []
         }
         
-        let is_read: Bool = is_read ?? false
-        let query = try connection.prepare(fetchKeyValuesQuery)
-        let bindings: [Binding?] = [is_read, limit]
+        var query: Statement
+        var bindings: [Binding]
+        if onlyFollowed {
+            query = try connection.prepare(fetchKeyValuesFollowersQuery)
+            bindings = [onlyUnread, userId, userId, limit]
+        } else {
+            query = try connection.prepare(fetchKeyValuesQuery)
+            bindings = [onlyUnread, limit]
+        }
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, database: database)
         }
         var compactKeyValues = keyValues.compactMap { $0 }
         
-        //if we don't have any unread messages we get some already read messages to display. 
-        if compactKeyValues.count < limit && is_read == false {
-            compactKeyValues += try fetchKeyValues(database: database, userId: userId, limit: limit - compactKeyValues.count, offset: offset, is_read: true)
+        // if we don't have any unread messages we get some already read messages to display.
+        if compactKeyValues.count < limit && onlyUnread == false {
+            compactKeyValues += try fetchKeyValues(
+                database: database,
+                userId: userId,
+                limit: limit - compactKeyValues.count,
+                offset: offset,
+                onlyUnread: true
+            )
         }
         return compactKeyValues
     }

@@ -400,9 +400,9 @@ extension Text {
     enum FeedAlgorithm: String, Localizable, CaseIterable {
         case algorithms = "Algorithms"
         case feedAlgorithmTitle = "Home Feed Algorithm"
-        case feedAlgorithmDescription = "Choose the algorithm used to sort and filter your Home Feed."
+        case feedAlgorithmDescription = "Choose the algorithms used to sort and filter your feeds."
         case recentPostsAlgorithm = "Recent posts"
-        case recentPostsAlgorithmDescription = "Shows posts from the people you follow in the order they were posted."
+        case recentPostsAlgorithmDescription = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows."
         case recentPostsWithFollowsAlgorithm = "Recent posts and follows (default)"
         case recentPostsWithFollowsAlgorithmDescription = "Shows posts and follow messages from the people you follow in the order they were posted."
         case recentlyActivePostsWithFollowsAlgorithm = "Recently active posts and follows"
@@ -416,8 +416,7 @@ extension Text {
     
     enum DiscoveryFeedAlgorithm: String, Localizable, CaseIterable {
         case algorithms = "Algorithms"
-        case feedAlgorithmTitle = "Discovery Feed"
-        case feedAlgorithmDescription = "Choose the algorithm used to sort and filter posts from your broader network."
+        case feedAlgorithmTitle = "Discovery Feed Algorithm"
         case recentPostsAlgorithm = "Recent Posts"
         case recentPostsAlgorithmDescription = "Shows posts from people you don't follow in your boader network sorted chronologically."
         case randomPostsAlgorithm = "Random Unread Posts"

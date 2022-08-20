@@ -1,5 +1,5 @@
 //
-//  DiscoveryFeedStrategySectionViewController.swift
+//  DiscoveryFeedStrategySelectionViewController.swift
 //  Planetary
 //
 //  Created by Rabble on 8/6/22.
@@ -11,7 +11,7 @@ import Logger
 import Analytics
 import SafariServices
 
-/// Allows the user to choose the algorithm used to fetch the Home Feed.
+/// Allows the user to choose the algorithm used to fetch the Discover Feed.
 class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
 
     override func viewDidLoad() {
@@ -29,13 +29,12 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
         super.updateSettings()
     }
 
-
     private func recentPosts() -> Settings {
         let cell = DebugTableViewCellModel(
             title: Text.DiscoveryFeedAlgorithm.recentPostsAlgorithm.text,
             valueClosure: { cell in
                 if let postsAlgorithm = self.selectedStrategy() as? PostsAlgorithm,
-                    postsAlgorithm.onlyFollowed == true,
+                    postsAlgorithm.onlyFollowed == false,
                     postsAlgorithm.wantPrivate == false {
                     cell.accessoryType = .checkmark
                 } else {
@@ -43,7 +42,7 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
                 }
             },
             actionClosure: { [weak self] _ in
-                self?.save(strategy: PostsAlgorithm(wantPrivate: false, onlyFollowed: true))
+                self?.save(strategy: PostsAlgorithm(wantPrivate: false, onlyFollowed: false))
             }
         )
         
@@ -54,15 +53,14 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
         let cell = DebugTableViewCellModel(
             title: Text.DiscoveryFeedAlgorithm.randomPostsAlgorithm.text,
             valueClosure: { cell in
-                // not sure quite how to clean this up -rabble
-                if let randomAlgorithm = self.selectedStrategy() as? RandomAlgorithm {
+                if self.selectedStrategy() is RandomAlgorithm {
                     cell.accessoryType = .checkmark
                 } else {
                     cell.accessoryType = .none
                 }
             },
             actionClosure: { [weak self] _ in
-                self?.save(strategy: RandomAlgorithm())
+                self?.save(strategy: RandomAlgorithm(onlyFollowed: false))
             }
         )
         
@@ -109,7 +107,7 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
             UserDefaults.standard.set(encodedStrategy, forKey: UserDefaults.discoveryFeedStrategy)
             UserDefaults.standard.synchronize()
             updateSettings()
-            NotificationCenter.default.post(name: .didChangeHomeFeedAlgorithm, object: nil)
+            NotificationCenter.default.post(name: .didChangeDiscoverFeedAlgorithm, object: nil)
             Analytics.shared.trackBotDidChangeDiscoveryFeedStrategy(to: String(describing: type(of: strategy)))
         } catch {
             Log.optional(error)
