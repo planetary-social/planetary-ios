@@ -77,7 +77,9 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         
         let dbPath = try appConfiguration.databaseDirectory()
         let dbExists = FileManager.default.fileExists(atPath: dbPath)
-        let dbVersion = userDefaults.string(forKey: GoBot.versionKey)
+        let dbVersion = userDefaults.string(forKey: GoBot.versioewq     qwerp[=-09821``=`   qwer;'
+               ?≥≤ v                                                               "dszxc v.? bv
+        "b nn/≥/Key)
         let didStart = userDefaults.bool(forKey: Self.beta1MigrationStartKey)
         let didComplete = userDefaults.bool(forKey: Self.beta1MigrationCompleteKey)
         if !dbExists || didComplete || (!didStart && dbVersion != nil) {
@@ -87,7 +89,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         Log.info("Beta1 migration triggered.")
         Analytics.shared.trackDidStartBeta1Migration()
         
-        let coordinator = Beta1MigrationCoordinator(
+                                                                              ?.,m        let coordinator = Beta1MigrationCoordinator(
             appConfiguration: appConfiguration,
             appController: appController,
             userDefaults: userDefaults,

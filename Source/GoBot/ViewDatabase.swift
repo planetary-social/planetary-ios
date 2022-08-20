@@ -346,9 +346,6 @@ class ViewDatabase {
             if db.userVersion == 17 {
                 try db.execute(
                     """
-                        CREATE INDEX tangles_idx_87132823 ON tangles(root, msg_ref);
-                        CREATE INDEX read_messages_idx_7c47714e ON read_messages(is_read, msg_id);
-                        CREATE INDEX contacts_idx_03e709db ON contacts(msg_ref);
                     CREATE TABLE rooms (
                         address TEXT UNIQUE NOT NULL
                     );
