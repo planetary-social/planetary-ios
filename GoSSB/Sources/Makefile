@@ -42,9 +42,14 @@ export CGO_ENABLED := 1
 # main build targets
 build: $(BUILD_DIR)/$(PLATFORM_PHONE)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64/libssb-go.a
 
+.PHONY: build
+.PHONY: $(BUILD_DIR)/$(PLATFORM_PHONE)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64/libssb-go.a
+
 $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64/libssb-go.a: $(foreach ARCH,$(ARCHS_SIM), $(BUILD_DIR)/$(PLATFORM_SIM)-$(ARCH)/libssb-go.a)
 	@mkdir -vp $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64
 	$(LIPO) -create -output "$@" $^
+
+.PHONY: $(foreach ARCH,$(ARCHS_SIM), $(BUILD_DIR)/$(PLATFORM_SIM)-$(ARCH)/libssb-go.a)
 
 
 GOROOT ?= $(TEMP_ROOT)/.goroot
@@ -77,6 +82,8 @@ $(BUILD_DIR)/$(PLATFORM_PHONE)-$(1)/libssb-go.a: *.go **/*.go go.mod go.sum
 endef
 $(foreach ARCH,$(ARCHS_PHONE),$(eval $(call libssb-go-phone-a,$(ARCH))))
 
+.PHONY: $(foreach ARCH,$(ARCHS_PHONE),$(eval $(call libssb-go-phone-a,$(ARCH))))
+
 # build for sim with correct cflags
 define libssb-go-sim-a
 $(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a: *.go **/*.go go.mod go.sum
@@ -90,6 +97,8 @@ $(BUILD_DIR)/$(PLATFORM_SIM)-$(1)/libssb-go.a: *.go **/*.go go.mod go.sum
 	exit $$$$ret
 endef
 $(foreach ARCH,$(ARCHS_SIM),$(eval $(call libssb-go-sim-a,$(ARCH))))
+
+.PHONY: $(foreach ARCH,$(ARCHS_SIM),$(eval $(call libssb-go-sim-a,$(ARCH))))
 
 # link all the archives for all the arches into the .a file
 #$(DESTDIR)/libssb-go.a: $(foreach ARCH,$(ACTIVE_ARCHS),$(BUILDDIR)/libssb-go-$(ACTIVE_PLATFORM)-$(ARCH).a)
