@@ -514,7 +514,6 @@ class GoBotOrderedTests: XCTestCase {
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
         XCTAssertNotNil(proxy.keyValueBy(index: 99))
         XCTAssertNil(proxy.keyValueBy(index: 100))
-
     }
 
     // MARK: threads

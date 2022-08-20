@@ -10,24 +10,18 @@ import Foundation
 import SQLite
 import Logger
 
-/// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
-///
-/// It doesn't include pubs follows and posts in the feed
+/// This algorithm returns a feed with user's posts, replies and follows
 class NoHopFeedAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     /// SQL query to count the total number of items in the feed
     ///
-    /// This query should be as fast as possible so only required joins and where clauses where used.
-    /// The result should be the same as the number of items returned by the other two queries in this class.
-    /// The where clauses are as follows:
-    /// - Only posts and follows (contacts) are considered
+    /// The WHERE clauses are as follows:
+    /// - Only posts and follows (contacts)
     /// - Discard private messages
     /// - Discard hidden messages
-    /// - Only root posts
-    /// - Only follows (contacts) to people we know something about and discard follows to pubs
-    /// - Only posts and follows from user's follows or from user itsef
-    /// - Discard posts and follows from pubs
+    /// - Only follows (contacts) to people we know something about
+    /// - Only posts and follows from user itsef
     /// - Discard posts and follows from the future
     private let countNumberOfKeysQuery = """
         SELECT
@@ -53,21 +47,15 @@ class NoHopFeedAlgorithm: NSObject, FeedStrategy {
     // swiftlint:enable indentation_width
 
     // swiftlint:disable indentation_width
-    /// SQL query to return the feed's keys
+    /// SQL query to return the number of items in the feed after a certain message
     ///
-    /// This query should be as fast as possible so only required joins and where clauses where used.
-    /// The result should be the same as the number of items returned by the other two queries in this class.
-    /// The where clauses are as follows:
-    /// - Only posts and follows (contacts) are considered
+    /// The WHERE clauses are as follows:
+    /// - Only posts and follows (contacts)
     /// - Discard private messages
     /// - Discard hidden messages
-    /// - Only root posts
-    /// - Only follows (contacts) to people we know something about and discard follows to pubs
-    /// - Only posts and follows from user's follows or from user itsef
-    /// - Discard posts and follows from pubs
-    /// - Discard posts and follows from the future
-    ///
-    /// The result is sorted by  date
+    /// - Only follows (contacts) to people we know something about
+    /// - Only posts and follows from user itsef
+    /// - Discard posts and follows from the future or before the message
     private let countNumberOfKeysSinceQuery = """
         WITH
           last_message AS (
@@ -112,11 +100,7 @@ class NoHopFeedAlgorithm: NSObject, FeedStrategy {
     // swiftlint:disable indentation_width
     /// SQL query to return the feed's keyvalues
     ///
-    /// This query should be as fast as possible and contain just the minimum data
-    /// to display it in the Home or Discover feed. The result should be the same as the number of items
-    /// returned by the other two queries in this class.
-    ///
-    /// The select clauses are as follows:
+    /// The SELECT clauses are as follows:
     /// - All data from message, post, contact, tangle, messagekey, author and about of the author
     /// - The identified of the followed author if the message is a follow (contact)
     /// - A bool column indicating if the message has blobs
@@ -124,15 +108,13 @@ class NoHopFeedAlgorithm: NSObject, FeedStrategy {
     /// - A bool column indicating if the message has message mentions
     /// - The number of replies to the message
     ///
-    /// The where clauses are as follows:
-    /// - Only posts and follows (contacts) are considered
+    /// The WHERE clauses are as follows:
+    /// - Only posts and follows (contacts)
     /// - Discard private messages
     /// - Discard hidden messages
-    /// - Only root posts
-    /// - Only follows (contacts) to people we know something about and discard follows to pubs
-    /// - Only posts and follows from user's follows or from user itsef
-    /// - Discard posts and follows from pubs
-    /// - Discard posts and follows from the future
+    /// - Only follows (contacts) to people we know something about
+    /// - Only posts and follows from user itsef
+    /// - Discard posts and follows from the future or before the message
     ///
     /// The result is sorted by  date
     private let fetchKeyValuesQuery = """
