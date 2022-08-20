@@ -23,6 +23,10 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// typedef struct ssbRoomsAliasRegisterReturn {
+// char* alias;
+// int err;
+// } ssbRoomsAliasRegisterReturn_t;
 import "C"
 
 //export ssbConnectPeer
@@ -480,8 +484,14 @@ func getAuthorID(ref refs.FeedRef) (int64, error) {
 	return peerID, nil
 }
 
+const (
+	SsbRoomsAliasRegisterNone              = 0
+	SsbRoomsAliasRegisterUnknown           = 1
+	SsbRoomsAliasRegisterAliasAlreadyTaken = 2
+)
+
 //export ssbRoomsAliasRegister
-func ssbRoomsAliasRegister(address, alias string) bool {
+func ssbRoomsAliasRegister(address, alias string) C.ssbRoomsAliasRegisterReturn_t {
 	defer logPanic()
 
 	var retErr error
@@ -495,7 +505,7 @@ func ssbRoomsAliasRegister(address, alias string) bool {
 	defer lock.Unlock()
 	if sbot == nil {
 		retErr = ErrNotInitialized
-		return false
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 
 	ctx, cancel := context.WithCancel(longCtx)
@@ -506,13 +516,13 @@ func ssbRoomsAliasRegister(address, alias string) bool {
 	netAddress, err := multiserver.ParseNetAddress([]byte(address))
 	if err != nil {
 		retErr = errors.Wrap(err, "could not parse the address")
-		return false
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 
 	inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
 	if err != nil {
 		retErr = errors.Wrap(err, "failed to create a tcp client")
-		return false
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 	defer inviteClient.Close()
 
@@ -524,20 +534,22 @@ func ssbRoomsAliasRegister(address, alias string) bool {
 
 	signatureString := base64.StdEncoding.EncodeToString(registration.Sign(sbot.KeyPair.Secret()).Signature) + ".sig.ed25519"
 
-	var ret string
-
 	params := []interface{}{
 		alias,
 		signatureString,
 	}
 
+	var ret string
 	err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "registerAlias"}, params...)
 	if err != nil {
 		retErr = errors.Wrap(err, "async call failed")
-		return false
+		if strings.Contains(err.Error(), "is already taken") {
+			return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterAliasAlreadyTaken}
+		}
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 
-	return true
+	return C.ssbRoomsAliasRegisterReturn_t{alias: C.CString(ret)}
 }
 
 //export ssbRoomsAliasRevoke

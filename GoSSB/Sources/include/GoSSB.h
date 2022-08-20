@@ -14,6 +14,15 @@
 
 typedef struct { const char *p; size_t n; } gostring_t;
 
+// err is one of:
+// 0 - no error
+// 1 - unknown error
+// 2 - alias is already taken
+typedef struct ssbRoomsAliasRegisterReturn {
+  char* alias;
+  int err;
+} ssbRoomsAliasRegisterReturn_t;
+
 typedef bool (notifyBlobHandle_t)(int64_t, const char*);
 
 typedef void (notifyNewBearertokenHandle_t)(const char*, int64_t);
@@ -69,7 +78,7 @@ extern int ssbBlobsGet(gostring_t ref);
 extern char* ssbBlobsAdd(int32_t fd);
 
 extern char* ssbRoomsListAliases(gostring_t address);
-extern bool ssbRoomsAliasRegister(gostring_t address, gostring_t alias);
+extern ssbRoomsAliasRegisterReturn_t ssbRoomsAliasRegister(gostring_t address, gostring_t alias);
 extern bool ssbRoomsAliasRevoke(gostring_t address, gostring_t alias);
 
 #endif
