@@ -264,7 +264,7 @@
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Recently active posts and follows";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Shows posts and follow messages from the people you follow. If a message receives a reply it will be pushed back up to the top of the feed.";
 "FeedAlgorithm.randomPostsAlgorithm" = "Random unread posts";
-"FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people you follow, prioritizing ones you haven't seen before. ";
+"FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
 "FeedAlgorithm.viewAlgorithmSource" = "View Source Code";
 "FeedAlgorithm.sourceCode" = "Source Code";
 "FeedAlgorithm.sourceCodeDescription" = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above.";
