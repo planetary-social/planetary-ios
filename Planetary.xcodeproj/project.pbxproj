@@ -231,6 +231,7 @@
 		2D1C46EF289DCA08003ED254 /* DiscoveryFeedStrategySectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySectionViewController.swift */; };
 		2D1C46F0289DCA08003ED254 /* DiscoveryFeedStrategySectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySectionViewController.swift */; };
 		2D1F3F9E2894E81200742C45 /* RandomAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */; };
+		2D5DC59E28B05A6F00E064A6 /* RandomAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */; };
 		2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
@@ -4131,6 +4132,7 @@
 				0A38800F2475ACF000777843 /* PubAPI.swift in Sources */,
 				533EDBE92385F7E7008B3565 /* Cache.swift in Sources */,
 				5336611422D9669E00100707 /* UIColor+Random.swift in Sources */,
+				2D5DC59E28B05A6F00E064A6 /* RandomAlgorithm.swift in Sources */,
 				C9724B9D2809EAA4000EBCCD /* RedeemInviteViewController.swift in Sources */,
 				0A4870F82492C05D00BCD063 /* AsynchronousBlockOperation.swift in Sources */,
 				5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */,

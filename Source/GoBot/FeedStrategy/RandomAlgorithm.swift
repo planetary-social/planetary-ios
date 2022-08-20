@@ -1,5 +1,5 @@
 //
-//  ProfilePostsAlgorithm.swift
+//  RandomAlgorithm.swift
 //  Planetary
 //
 //  Created by Rabble on 7/27/22.
