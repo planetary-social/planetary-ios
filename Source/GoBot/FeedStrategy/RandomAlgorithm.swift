@@ -15,7 +15,6 @@ import Logger
 /// It doesn't include pubs follows and posts in the feed
 class RandomAlgorithm: NSObject, FeedStrategy {
 
-    // swiftlint:disable indentation_width
     /// SQL query to count the total number of items in the feed
     ///
     /// This query should be as fast as possible so only required joins and where clauses where used.
@@ -34,15 +33,10 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         FROM messages
         JOIN authors ON authors.id == messages.author_id
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref
-        LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
-        LEFT JOIN abouts AS contact_about ON contact_about.about_id == contacts.contact_id
-        LEFT JOIN authors AS contact_author ON contact_author.id == contacts.contact_id
         WHERE messages.type IN ('post')
         AND messages.is_decrypted == false
         AND messages.hidden == false;
     """
-    // swiftlint:enable indentation_width
-
 
     // swiftlint:disable indentation_width
     /// SQL query to return the feed's keyvalues
@@ -74,12 +68,10 @@ class RandomAlgorithm: NSObject, FeedStrategy {
           messages.*,
           posts.*,
           contacts.*,
-          contact_about.about_id,
           tangles.*,
           messagekeys.*,
           authors.*,
           author_about.*,
-          contact_author.author AS contact_identifier,
           EXISTS (
             SELECT
               1
@@ -130,17 +122,17 @@ class RandomAlgorithm: NSObject, FeedStrategy {
           LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
           LEFT JOIN tangles ON tangles.msg_ref = messages.msg_id
           JOIN messagekeys ON messagekeys.id = messages.msg_id
-          JOIN read_messages ON messagekeys.id = read_messages.msg_id
           JOIN authors ON authors.id = messages.author_id
           LEFT JOIN abouts AS author_about ON author_about.about_id = messages.author_id
-          LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
-          LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
+          LEFT OUTER JOIN read_messages ON (
+              (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = ?)
+          )
         WHERE
           type IN ('post')
           AND is_decrypted = false
           AND hidden = false
           AND is_root = true
-          AND is_read = ?
+          AND COALESCE(is_read, false) = ?
           AND claimed_at < STRFTIME('%s') * 1000
         ORDER BY
           RANDOM()
@@ -235,7 +227,9 @@ class RandomAlgorithm: NSObject, FeedStrategy {
           LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
           LEFT JOIN tangles ON tangles.msg_ref = messages.msg_id
           JOIN messagekeys ON messagekeys.id = messages.msg_id
-          JOIN read_messages ON messagekeys.id = read_messages.msg_id
+          LEFT OUTER JOIN read_messages ON (
+              (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = ?)
+          )
           JOIN authors ON authors.id = messages.author_id
           LEFT JOIN abouts AS author_about ON author_about.about_id = messages.author_id
           LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
@@ -245,7 +239,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
           AND is_decrypted = false
           AND hidden = false
           AND is_root = true
-          AND is_read = ?
+          AND COALESCE(is_read, false) = ?
           AND (
             authors.author IN (
               SELECT
@@ -342,10 +336,10 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         var bindings: [Binding]
         if onlyFollowed {
             query = try connection.prepare(fetchKeyValuesFollowersQuery)
-            bindings = [onlyUnread, userId, userId, limit]
+            bindings = [userId, !onlyUnread, userId, userId, limit]
         } else {
             query = try connection.prepare(fetchKeyValuesQuery)
-            bindings = [onlyUnread, limit]
+            bindings = [userId, !onlyUnread, limit]
         }
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, database: database)
@@ -359,7 +353,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
                 userId: userId,
                 limit: limit - compactKeyValues.count,
                 offset: offset,
-                onlyUnread: true
+                onlyUnread: false
             )
         }
         return compactKeyValues
