@@ -370,6 +370,7 @@ class ViewDatabase {
                             title                varchar(255),
                             summary              varchar(255),
                             blob                 varchar(255),
+                            thumbnail            varchar(255),
                             
                             PRIMARY KEY (msg_ref)
                         );
