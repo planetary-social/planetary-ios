@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.7] 2022-08-19
 
-- Fixed an issue where onboarding could get stuck on the bio step
+- Fixed an issue where onboarding could get stuck on the bio step. #804
 
 ## [1.2.6] 2022-08-03
 
