@@ -96,6 +96,8 @@ protocol Bot: AnyObject {
     ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
     
+    func replicate(feed: FeedIdentifier)
+    
     /// Connect to the SSB peer at the given address.
     func connect(to address: MultiserverAddress)
 

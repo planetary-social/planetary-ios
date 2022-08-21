@@ -138,7 +138,9 @@ class FakeBot: Bot {
     func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) { }
 
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
-
+    
+    func replicate(feed: FeedIdentifier) { }
+    
     required init() {}
     static let shared = FakeBot()
 
