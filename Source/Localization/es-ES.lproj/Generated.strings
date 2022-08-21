@@ -255,17 +255,26 @@
 "Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
 
 "FeedAlgorithm.algorithms" = "Algoritmos";
-"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed";
-"FeedAlgorithm.feedAlgorithmDescription" = "Elige el algoritmo usado para ordenar y filtrar tu Home Feed.";
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Posts recientes";
-"FeedAlgorithm.recentPostsAlgorithmDescription" = "Muestra posts de la gente que sigues en el orden en que fueron publicados.";
+"FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Posts y Follows recientes (por defecto)";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Muestra posts y mensajes de follow de la gente que sigues en el orden en que fueron publicados.";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Posts y follows recientes";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Muestra posts y mensajes de follow de la gente que sigues. Si un mensaje recibe una respuesta, esta será mostrada al principio del feed.";
+"FeedAlgorithm.randomPostsAlgorithm" = "Random unread posts";
+"FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
 "FeedAlgorithm.viewAlgorithmSource" = "Ver Código Fuente";
 "FeedAlgorithm.sourceCode" = "Código Fuente";
 "FeedAlgorithm.sourceCodeDescription" = "El código de Planetary es abierto, así que nuestros algoritmos pueden ser auditados e incluso modificados por nuestros usuarios. Puedes ver el código fuente para estos algoritmos haciendo tap en el botón de aquí arriba.";
+
+"DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed Algorithm";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
 
 "PublicWebHosting.enabled" = "Activado";
 "PublicWebHosting.title" = "Web Pública";

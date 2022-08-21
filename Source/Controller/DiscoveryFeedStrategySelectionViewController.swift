@@ -1,8 +1,8 @@
 //
-//  FeedStrategySelectionViewController.swift
+//  DiscoveryFeedStrategySelectionViewController.swift
 //  Planetary
 //
-//  Created by Matthew Lorentz on 5/17/22.
+//  Created by Rabble on 8/6/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
@@ -11,54 +11,30 @@ import Logger
 import Analytics
 import SafariServices
 
-/// Allows the user to choose the algorithm used to fetch the Home Feed.
-class FeedStrategySelectionViewController: DebugTableViewController {
+/// Allows the user to choose the algorithm used to fetch the Discover Feed.
+class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = Text.FeedAlgorithm.feedAlgorithmTitle.text
+        self.navigationItem.title = Text.DiscoveryFeedAlgorithm.feedAlgorithmTitle.text
         self.updateSettings()
     }
 
     override internal func updateSettings() {
         self.settings = [
-            recentPostsWithFollows(),
             recentPosts(),
-            recentlyActivePostsWithFollows(),
             randomPosts(),
             viewSource()
         ]
         super.updateSettings()
     }
 
-    private func recentPostsWithFollows() -> Settings {
-        let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.recentPostsWithFollowsAlgorithm.text,
-            valueClosure: { cell in
-                if self.selectedStrategy() is PostsAndContactsAlgorithm {
-                    cell.accessoryType = .checkmark
-                } else {
-                    cell.accessoryType = .none
-                }
-            },
-            actionClosure: { [weak self] _ in
-                self?.save(strategy: PostsAndContactsAlgorithm())
-            }
-        )
-        
-        return (
-            Text.FeedAlgorithm.algorithms.text,
-            [cell],
-            Text.FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription.text
-        )
-    }
-    
     private func recentPosts() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.recentPostsAlgorithm.text,
+            title: Text.DiscoveryFeedAlgorithm.recentPostsAlgorithm.text,
             valueClosure: { cell in
                 if let postsAlgorithm = self.selectedStrategy() as? PostsAlgorithm,
-                    postsAlgorithm.onlyFollowed == true,
+                    postsAlgorithm.onlyFollowed == false,
                     postsAlgorithm.wantPrivate == false {
                     cell.accessoryType = .checkmark
                 } else {
@@ -66,31 +42,13 @@ class FeedStrategySelectionViewController: DebugTableViewController {
                 }
             },
             actionClosure: { [weak self] _ in
-                self?.save(strategy: PostsAlgorithm(wantPrivate: false, onlyFollowed: true))
+                self?.save(strategy: PostsAlgorithm(wantPrivate: false, onlyFollowed: false))
             }
         )
         
-        return (nil, [cell], Text.FeedAlgorithm.recentPostsAlgorithmDescription.text)
+        return (nil, [cell], Text.DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription.text)
     }
-    
-    private func recentlyActivePostsWithFollows() -> Settings {
-        let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm.text,
-            valueClosure: { cell in
-                if self.selectedStrategy() is RecentlyActivePostsAndContactsAlgorithm {
-                    cell.accessoryType = .checkmark
-                } else {
-                    cell.accessoryType = .none
-                }
-            },
-            actionClosure: { [weak self] _ in
-                self?.save(strategy: RecentlyActivePostsAndContactsAlgorithm())
-            }
-        )
-        
-        return (nil, [cell], Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription.text)
-    }
-    
+
     private func randomPosts() -> Settings {
         let cell = DebugTableViewCellModel(
             title: Text.DiscoveryFeedAlgorithm.randomPostsAlgorithm.text,
@@ -102,7 +60,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
                 }
             },
             actionClosure: { [weak self] _ in
-                self?.save(strategy: RandomAlgorithm(onlyFollowed: true))
+                self?.save(strategy: RandomAlgorithm(onlyFollowed: false))
             }
         )
         
@@ -132,7 +90,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
     // MARK: - Helpers
     
     private func selectedStrategy() -> FeedStrategy {
-        if let data = UserDefaults.standard.object(forKey: UserDefaults.homeFeedStrategy) as? Data,
+        if let data = UserDefaults.standard.object(forKey: UserDefaults.discoveryFeedStrategy) as? Data,
             let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
             let strategy = decodedObject as? FeedStrategy {
             return strategy
@@ -146,11 +104,11 @@ class FeedStrategySelectionViewController: DebugTableViewController {
                 withRootObject: strategy,
                 requiringSecureCoding: false
             )
-            UserDefaults.standard.set(encodedStrategy, forKey: UserDefaults.homeFeedStrategy)
+            UserDefaults.standard.set(encodedStrategy, forKey: UserDefaults.discoveryFeedStrategy)
             UserDefaults.standard.synchronize()
             updateSettings()
-            NotificationCenter.default.post(name: .didChangeHomeFeedAlgorithm, object: nil)
-            Analytics.shared.trackBotDidChangeHomeFeedStrategy(to: String(describing: type(of: strategy)))
+            NotificationCenter.default.post(name: .didChangeDiscoverFeedAlgorithm, object: nil)
+            Analytics.shared.trackBotDidChangeDiscoveryFeedStrategy(to: String(describing: type(of: strategy)))
         } catch {
             Log.optional(error)
         }
