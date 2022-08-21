@@ -160,13 +160,36 @@ enum RoomInvitationRedeemer {
         await post(inviteCode, to: postToURL, controller: controller, bot: bot)
     }
     
+    static func redeem(token: String, at host: String, bot: Bot) async throws {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = host
+        components.queryItems = [URLQueryItem(name: "token", value: token)]
+        components.path = "/invite/consume"
+        guard let url = components.url else {
+            throw RoomInvitationError.invalidURL
+        }
+        try await post(token, to: url, bot: bot)
+    }
+    
     /// Posts the invite token to the given URL, storing the room data in the given `bot` and displaying the result
     /// of the operation in the `controller`.
     private static func post(_ token: String, to url: URL, controller: AppController, bot: Bot) async {
+        do {
+            try await post(token, to: url, bot: bot)
+            await controller.showToast(Text.invitationRedeemed.text)
+        } catch {
+            Log.optional(error)
+            await controller.topViewController.alert(error: error)
+        }
+    }
+    
+    /// Posts the invite token to the given URL, storing the room data in the given `bot` and displaying the result
+    /// of the operation in the `controller`.
+    private static func post(_ token: String, to url: URL, bot: Bot) async throws {
         guard let identity = bot.identity else {
             Log.error("missing identity for room invitation redemption: \(url.absoluteURL)")
-            await controller.topViewController.alert(error: RoomInvitationError.notLoggedIn)
-            return
+            throw RoomInvitationError.notLoggedIn
         }
         
         do {
@@ -184,22 +207,17 @@ enum RoomInvitationRedeemer {
                 
                 let room = Room(address: address)
                 try await bot.insert(room: room)
-                await controller.showToast(Text.invitationRedeemed.text)
+                return
             } else {
                 Log.error("Got failure response from room: \(String(describing: responseData.string))")
                 if let errorMessage = response.error {
-                    await controller.topViewController.alert(
-                        error: RoomInvitationError.invitationRedemptionFailedWithReason(errorMessage)
-                    )
+                    throw RoomInvitationError.invitationRedemptionFailedWithReason(errorMessage)
                 } else {
-                    await controller.topViewController.alert(error: RoomInvitationError.invitationRedemptionFailed)
+                    throw RoomInvitationError.invitationRedemptionFailed
                 }
             }
         } catch {
-            Log.optional(error)
-            await controller.topViewController.alert(
-                error: RoomInvitationError.invitationRedemptionFailedWithReason(error.localizedDescription)
-            )
+            throw RoomInvitationError.invitationRedemptionFailedWithReason(error.localizedDescription)
         }
     }
 }

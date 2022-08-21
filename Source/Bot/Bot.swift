@@ -85,6 +85,10 @@ protocol Bot: AnyObject {
     func joinedRooms() async throws -> [Room]
     func insert(room: Room) async throws
     func delete(room: Room) async throws
+    
+    func registeredAliases() async throws -> [RoomAlias]
+    func register(alias: String, in: Room) async throws -> RoomAlias
+    func revoke(alias: RoomAlias) async throws
 
     var isSyncing: Bool { get }
     

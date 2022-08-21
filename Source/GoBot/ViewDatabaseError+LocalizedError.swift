@@ -34,6 +34,10 @@ extension ViewDatabaseError: LocalizedError {
             return "Message constraint violation: \(identity), \(sqlError)"
         case .invalidAddress(let address):
             return "Invalid multiserver address: \(address)"
+        case .invalidAliasURL(let url):
+            return "Invalid alias url: \(url)"
+        case .invalidRoom:
+            return "Invalid room"
         }
     }
 }

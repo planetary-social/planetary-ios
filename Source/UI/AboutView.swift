@@ -67,7 +67,9 @@ class AboutView: KeyValueView {
         button.stroke(color: .avatarRing)
         return button
     }()
-
+    
+    lazy var aliasCell = AliasCell()
+    
     var descriptionContainerZeroHeightConstraint: NSLayoutConstraint?
 
     private lazy var descriptionTextView: UITextView = {
@@ -143,8 +145,10 @@ class AboutView: KeyValueView {
         Layout.fillSouth(of: separator, with: descriptionContainer)
 
         self.descriptionContainerZeroHeightConstraint = descriptionContainer.constrainHeight(to: 0)
+        
+        Layout.fillSouth(of: descriptionContainer, with: aliasCell)
 
-        Layout.fillSouth(of: descriptionContainer, with: self.followedByView)
+        Layout.fillSouth(of: aliasCell, with: self.followedByView)
         self.followedByView.constrainHeight(to: 50)
 
         separator = Layout.addSeparator(southOf: self.followedByView)
@@ -222,6 +226,10 @@ class AboutView: KeyValueView {
                     identity: person.identity)
 
         self.imageView.load(for: person, animate: true)
+    }
+    
+    func update(with aliases: [RoomAlias]) {
+        aliasCell.aliases = aliases
     }
 
     var relationship: Relationship?

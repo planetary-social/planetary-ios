@@ -80,7 +80,6 @@
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
-"Text.manageAliases" = "Manage aliases";
 "Text.blockUser" = "Ignore this user";
 "Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Report this post";
@@ -252,9 +251,11 @@
 "ManageRelays.invalidRoomURL" = "Invalid room URL";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
-"Alias.addAlias" = "Register a new alias";
 "Alias.manageAliases" = "Manage Aliases (beta)";
+"Alias.addAlias" = "Register a new alias";
+"Alias.roomAliases" = "Room Aliases (beta)";
 "Alias.aliases" = "Aliases";
+"Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
 
 "Preview.title" = "Advanced Settings";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
@@ -272,9 +273,10 @@
 "FeedAlgorithm.sourceCode" = "Source Code";
 "FeedAlgorithm.sourceCodeDescription" = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above.";
 
-"PublicWebHosting.enabled" = "Enabled";
-"PublicWebHosting.title" = "Public Web Hosting";
-"PublicWebHosting.footer" = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible.";
+"WebServices.title" = "Web Services";
+"WebServices.publicWebHosting" = "Public Web Hosting";
+"WebServices.aliases" = "Aliases (beta)";
+"WebServices.footer" = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible.";
 
 "Push.enabled" = "Enabled";
 "Push.title" = "Push Notifications";

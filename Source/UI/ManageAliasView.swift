@@ -7,9 +7,10 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct RoomAlias: Identifiable {
-    var id: Int
+    var id: Int64
     var aliasURL: URL
     var string: String {
         aliasURL.absoluteString
@@ -33,9 +34,6 @@ struct RoomAlias: Identifiable {
     var registrationViewModel: RegistrationViewModelType { get }
     
     func deleteAliases(at: IndexSet)
-    
-    /// Tries to add a room to the database from an invitation link or multiserver address string.
-    func addAlias(from: String)
     
     /// Tells the coordinator that the user wants to open the given room.
     func open(_ alias: RoomAlias)
@@ -88,6 +86,14 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
     
     var body: some View {
         List {
+            // Help Text
+            Section {} footer: {
+                Text.Alias.introText.view
+                    .foregroundColor(Color("secondaryText"))
+                    .font(.subheadline)
+                    .padding(.top, 4)
+            }
+            
             // Joined Rooms
             if !viewModel.aliases.isEmpty {
                 Section {
@@ -95,8 +101,22 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                         Button {
                             viewModel.open(alias)
                         } label: {
-                            SwiftUI.Text(alias.string)
+                            HStack {
+                                SwiftUI.Text(alias.string.replacingOccurrences(of: "https://", with: ""))
+                                Spacer()
+                                Button {
+                                    UIPasteboard.general.setValue(
+                                        alias.aliasURL,
+                                        forPasteboardType: UTType.url.identifier
+                                    )
+                                } label: {
+                                    Image(systemName: "doc.on.doc")
+                                }
+                                .padding(9)
+                                .background(Color("menuBorderColor").clipShape(Circle()))
+                            }
                         }
+                        
                         .foregroundColor(Color("mainText"))
                         .listRowBackground(Color("cardBackground"))
                     }
@@ -128,7 +148,10 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .refreshable {
             viewModel.refresh()
         }
-        .navigationBarTitle(Text.Alias.manageAliases.text, displayMode: .inline)
+        .onAppear() {
+            viewModel.refresh()
+        }
+        .navigationBarTitle(Text.Alias.roomAliases.text, displayMode: .inline)
         .toolbar {
 //            ToolbarItem(placement: .navigationBarTrailing) {
 //                EditButton()
@@ -190,6 +213,11 @@ struct ManageAliasView_Previews: PreviewProvider {
     ]
     
     static var previews: some View {
+        NavigationView {
+            ManageAliasView(viewModel: PreviewViewModel(aliases: []))
+        }
+        .preferredColorScheme(.dark)
+        
         NavigationView {
             ManageAliasView(viewModel: PreviewViewModel(aliases: aliases))
         }

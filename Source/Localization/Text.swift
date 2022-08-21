@@ -16,7 +16,7 @@ extension Text {
             Text.Alias.self,
             Text.Preview.self,
             Text.FeedAlgorithm.self,
-            Text.PublicWebHosting.self,
+            Text.WebServices.self,
             Text.Push.self,
             Text.Reporting.self,
             Text.Debug.self,
@@ -138,8 +138,6 @@ enum Text: String, Localizable, CaseIterable {
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
     
-    case manageAliases = "Manage aliases"
-
     case blockUser = "Ignore this user"
     case unblockUser = "Unignore this user"
 
@@ -390,9 +388,11 @@ extension Text {
 extension Text {
     
     enum Alias: String, Localizable, CaseIterable {
-        case addAlias = "Register a new alias"
         case manageAliases = "Manage Aliases (beta)"
+        case addAlias = "Register a new alias"
+        case roomAliases = "Room Aliases (beta)"
         case aliases = "Aliases"
+        case introText = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app."
     }
 }
 
@@ -430,10 +430,11 @@ extension Text {
 
 extension Text {
 
-    enum PublicWebHosting: String, Localizable, CaseIterable {
-        case enabled = "Enabled"
-        case title = "Public Web Hosting"
-        case footer = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible."
+    enum WebServices: String, Localizable, CaseIterable {
+        case title = "Web Services"
+        case publicWebHosting = "Public Web Hosting"
+        case aliases = "Aliases (beta)"
+        case footer = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible."
     }
 }
 

@@ -996,6 +996,8 @@
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
+		C997F3E028B1D86D00DAC117 /* AliasCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C997F3DF28B1D86D00DAC117 /* AliasCell.swift */; };
+		C997F3E128B1D86D00DAC117 /* AliasCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C997F3DF28B1D86D00DAC117 /* AliasCell.swift */; };
 		C9A1632228ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
 		C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
 		C9A1632628AE88DC00ACDCC5 /* AddAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */; };
@@ -1677,6 +1679,7 @@
 		C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = UnitTests.debug.xcconfig; sourceTree = "<group>"; };
 		C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
 		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = text; path = Feed_big.sqlite; sourceTree = "<group>"; };
+		C997F3DF28B1D86D00DAC117 /* AliasCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliasCell.swift; sourceTree = "<group>"; };
 		C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAliasView.swift; sourceTree = "<group>"; };
 		C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAliasView.swift; sourceTree = "<group>"; };
 		C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Async.swift"; sourceTree = "<group>"; };
@@ -2427,6 +2430,7 @@
 				5BC297472804A22500C0CD81 /* ExtendedAboutView.swift */,
 				0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */,
 				8D6D2E63236387C800E7B0EC /* FollowCountView.swift */,
+				C997F3DF28B1D86D00DAC117 /* AliasCell.swift */,
 				53375F802321757C00610932 /* GalleryView.swift */,
 				539FD4C722C43FC8005A4DF2 /* ImageButton.swift */,
 				53BD748923289B3F0060E47E /* ImageGalleryView.swift */,
@@ -4010,6 +4014,7 @@
 				C9724B9B2809EA93000EBCCD /* ChannelViewController.swift in Sources */,
 				C9724BEA2809EEF6000EBCCD /* AboutTableViewController.swift in Sources */,
 				C978D35327BF053B00842458 /* Environment.swift in Sources */,
+				C997F3E128B1D86D00DAC117 /* AliasCell.swift in Sources */,
 				8DB041FD234FA994006AC35B /* Identity+Bot.swift in Sources */,
 				C9724B9A2809EA8C000EBCCD /* Array+IndexPath.swift in Sources */,
 				C9F1C84827C9283A005A3228 /* Text.swift in Sources */,
@@ -4561,6 +4566,7 @@
 				1B32D378249AAA4800811DC9 /* SmallPostHeaderView.swift in Sources */,
 				23EF5A99249CDCF900469977 /* BanListAPIService.swift in Sources */,
 				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
+				C997F3E028B1D86D00DAC117 /* AliasCell.swift in Sources */,
 				0AF9E0A42465D7D000910575 /* ThreadReplyView.swift in Sources */,
 				0A64A83C247353CE009A5EBF /* VersePushAPI.swift in Sources */,
 				53EE01F42204F66200DFDF16 /* Secret.swift in Sources */,

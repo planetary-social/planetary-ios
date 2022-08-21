@@ -7,8 +7,10 @@
 //
 
 import Foundation
+import Logger
+import UIKit
 
-class RoomAliasCoordinator: ManageAliasViewModel {
+@MainActor class RoomAliasCoordinator: ManageAliasViewModel {
     
     @Published var aliases: [RoomAlias] = []
     
@@ -27,23 +29,28 @@ class RoomAliasCoordinator: ManageAliasViewModel {
     }
     
     func deleteRooms(at: IndexSet) {
-            
-    }
-    
-    func addAlias(from: String) {
-        
+        errorMessage = "not implemented"
     }
     
     func open(_ alias: RoomAlias) {
-        
+        UIApplication.shared.open(alias.aliasURL)
     }
     
     func didDismissError() {
-        
+        errorMessage = nil
     }
     
     func refresh() {
-        
+        loadingMessage = Text.loading.text
+        Task {
+            do {
+                self.aliases = try await bot.registeredAliases()
+            } catch {
+                Log.optional(error)
+                self.errorMessage = error.localizedDescription
+            }
+            self.loadingMessage = nil
+        }
     }
     
     func deleteAliases(at: IndexSet) {
