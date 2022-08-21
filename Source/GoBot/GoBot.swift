@@ -474,6 +474,16 @@ class GoBot: Bot {
         completion(nil, elapsed, numberOfMessages)
         NotificationCenter.default.post(name: .didSync, object: nil)
     }
+    
+    // refresh specific feed - when we view a profile we should ask gobot to refresh that feed. It might not get back in time
+    // to update what the user sees but it'll help. In particular this will happen with pubs.
+    
+    func replicate(feed: FeedIdentifier) {
+        userInitiatedQueue.async {
+            self.bot.replicate(feed: feed)
+        }
+    }
+    
 
     // MARK: Refresh
 
