@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for random algorithm for sorting home and discover feeds. #759
 - Show content from follows when looking for a pub's profile. #790
 - Show replies when displaying a profile. #681
+- Added support for registering room aliases #808
 
 ## [1.2.7] 2022-08-19
 
