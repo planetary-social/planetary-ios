@@ -102,7 +102,15 @@ class AboutViewController: ContentViewController {
     }
 
     private func loadFeed() {
-        Bots.current.feed(identity: self.identity) { [weak self] proxy, error in
+        let communityPubs = AppConfiguration.current?.communityPubs ?? []
+        let communityPubIdentities = Set(communityPubs.map { $0.feed })
+        let strategy: FeedStrategy
+        if communityPubIdentities.contains(identity) {
+            strategy = OneHopFeedAlgorithm(identity: identity)
+        } else {
+            strategy = NoHopFeedAlgorithm(identity: identity)
+        }
+        Bots.current.feed(strategy: strategy) { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             guard error == nil else {

@@ -465,26 +465,6 @@ class ViewDatabase {
         }
         return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID)
     }
-
-    // posts for a feed
-    func stats(for feed: FeedIdentifier) throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        do {
-            let authorID = try self.authorID(of: feed, make: false)
-            let theirRootPosts = try db.scalar(self.posts
-                .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
-                .filter(colAuthorID == authorID)
-                .filter(colIsRoot == true)
-                .count)
-
-            return theirRootPosts
-        } catch {
-            Log.optional(GoBotError.duringProcessing("stats for feed failed", error))
-            return 0
-        }
-    }
     
     func lastReceivedTimestamp() throws -> Double {
         guard let db = self.openDB else {
@@ -1268,11 +1248,6 @@ class ViewDatabase {
     func paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedKeyValueDataProxy) {
         let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
-    }
-
-    func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedPrefetchDataProxy(with: src!)
     }
 
     // MARK: recent

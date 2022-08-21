@@ -45,11 +45,11 @@ class ContactHeaderView: UIView {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
 
-        Layout.fillLeft(of: self, with: self.identityButton, respectSafeArea: false)
+        Layout.fillLeft(of: self, with: self.identityButton, insets: .topLeftRight, respectSafeArea: false)
         self.identityButton.constrainSize(to: Layout.contactThumbSize)
 
         self.addSubview(self.nameButton)
-        self.nameButton.pinTopToSuperview()
+        self.nameButton.centerYAnchor.constraint(equalTo: identityButton.centerYAnchor).isActive = true
         self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: 10)
         self.nameButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 
@@ -71,7 +71,7 @@ class ContactHeaderView: UIView {
     }
 
     func reset() {
-        update(with: Identity.null, about: nil)
+        update(with: Identity.null, about: nil, text: Text.startedFollowing)
         showSkeleton()
     }
 
@@ -79,12 +79,23 @@ class ContactHeaderView: UIView {
         let identity = keyValue.value.author
         self.identity = identity
         let about = keyValue.metadata.author.about
-        self.update(with: identity, about: about)
+        var text: Text
+        switch keyValue.contentType {
+        case .post:
+            text = .replied
+        case .vote:
+            text = .liked
+        case .contact:
+            text = .startedFollowing
+        default:
+            text = .startedFollowing
+        }
+        self.update(with: identity, about: about, text: text)
     }
 
-    private func update(with identity: Identity, about: About?) {
+    private func update(with identity: Identity, about: About?, text: Text) {
         let name = about?.nameOrIdentity ?? identity
-        var string = Text.startedFollowing.text(["somebody": name])
+        var string = text.text(["somebody": name])
         if identity == .null {
             string = "all above the baseline"
             // because otherwise they stick out under the skeleton

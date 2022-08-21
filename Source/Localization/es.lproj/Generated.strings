@@ -28,6 +28,8 @@
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.replied" = "{{somebody}} replied";
+"Text.liked" = "{{somebody}} liked";
 "Text.startedFollowing" = "{{somebody}} empezó a seguir a";
 "Text.stoppedFollowing" = "{{somebody}} dejo de seguir a";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";

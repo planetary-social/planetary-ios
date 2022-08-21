@@ -31,11 +31,13 @@ class PostCellView: KeyValueView {
         }
     }
 
+    var compactHeader: Bool
+
     var allowSpaceUnderGallery = true
     var showTimestamp: Bool
 
     var keyValue: KeyValue?
-    private lazy var headerView = PostHeaderView(showTimestamp: showTimestamp)
+    private lazy var headerView = PostHeaderView(showTimestamp: showTimestamp, compactHeader: compactHeader)
 
     private lazy var textView: UITextView = {
         let view = UITextView.forAutoLayout()
@@ -47,6 +49,8 @@ class PostCellView: KeyValueView {
         view.isSkeletonable = true
         view.linesCornerRadius = 30
         view.backgroundColor = .cardBackground
+        view.isSkeletonable = true
+        view.backgroundColor = .clear
         return view
     }()
 
@@ -58,9 +62,13 @@ class PostCellView: KeyValueView {
 
     var textViewTopInset: CGFloat {
         if self.displayHeader {
-            return Layout.profileThumbSize + Layout.verticalSpacing + self.verticalSpace
+            if compactHeader {
+                return Layout.contactThumbSize + Layout.verticalSpacing + self.verticalSpace
+            } else {
+                return Layout.profileThumbSize + Layout.verticalSpacing + self.verticalSpace
+            }
         } else {
-            return self.verticalSpace
+            return 0
         }
     }
 
@@ -174,8 +182,9 @@ class PostCellView: KeyValueView {
 
     /// Initializes the view with the given parameters.
     /// - Parameter showTimestamp: Will show the claimed post time if true, author id if false.
-    init(showTimestamp: Bool = false) {
+    init(showTimestamp: Bool = false, compactHeader: Bool = false) {
         self.showTimestamp = showTimestamp
+        self.compactHeader = compactHeader
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
         
@@ -222,6 +231,11 @@ class PostCellView: KeyValueView {
     }
 
     // MARK: KeyValueUpdateable
+
+    override func reset() {
+        super.reset()
+        textView.text = ""
+    }
 
     override func update(with keyValue: KeyValue) {
         self.keyValue = keyValue
