@@ -32,8 +32,8 @@ class DoneOnboardingStep: OnboardingStep {
     
     private let publicWebHostingToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.PublicWebHosting.title.text
-        view.subtitleLabel.text = Text.PublicWebHosting.footer.text
+        view.titleLabel.text = Text.WebServices.publicWebHosting.text
+        view.subtitleLabel.text = Text.WebServices.footer.text
         view.toggle.isOn = true
         return view
     }()

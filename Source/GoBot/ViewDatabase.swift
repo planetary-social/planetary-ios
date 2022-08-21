@@ -47,6 +47,7 @@ enum ViewDatabaseTableNames: String {
     case reports
     case pubs
     case rooms
+    case roomAliases = "room_aliases"
     case readMessages = "read_messages"
 }
 
@@ -195,6 +196,9 @@ class ViewDatabase {
     
     // Rooms
     let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
+    let roomAliases = Table(ViewDatabaseTableNames.roomAliases.rawValue)
+    let colAliasURL = Expression<String>("alias_url")
+    let colRoomID = Expression<Int64>("room_id")
     
     // Search
     private let postSearch = VirtualTable("post_search")
@@ -363,7 +367,33 @@ class ViewDatabase {
                 )
                 db.userVersion = 19
             }
-
+            if db.userVersion == 19 {
+                try db.execute(
+                    """
+                    -- oops
+                    -- can't add a primary key directly so create a new table and copy
+                    CREATE TABLE tmp_rooms (
+                        id INTEGER PRIMARY KEY,
+                        address TEXT UNIQUE NOT NULL
+                    );
+                    INSERT INTO tmp_rooms (address) SELECT address FROM rooms;
+                    DROP TABLE rooms;
+                    CREATE TABLE rooms (
+                        id INTEGER PRIMARY KEY,
+                        address TEXT UNIQUE NOT NULL
+                    );
+                    INSERT INTO rooms (id, address) SELECT id, address FROM rooms;
+                    DROP TABLE tmp_rooms;
+                    CREATE TABLE room_aliases (
+                        id INTEGER PRIMARY KEY,
+                        room_id INTEGER NOT NULL,
+                        alias_url TEXT UNIQUE NOT NULL,
+                        FOREIGN KEY ( room_id ) REFERENCES rooms( "id" )
+                    );
+                    """
+                )
+                db.userVersion = 20
+            }
         }
     }
 
@@ -654,6 +684,33 @@ class ViewDatabase {
         }
         
         try db.run(rooms.filter(colAddress == room.address.string).delete())
+    }
+    
+    func getRegisteredAliases() throws -> [RoomAlias] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        return try db.prepare(roomAliases).map { row in
+            guard let url = URL(string: row[colAliasURL]) else {
+                throw ViewDatabaseError.invalidAliasURL(row[colAliasURL])
+            }
+            
+            return RoomAlias(id: row[colID], aliasURL: url)
+        }
+    }
+    
+    func insertRoomAlias(url: URL, room: Room) throws -> RoomAlias {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        guard let roomID = try db.pluck(rooms.filter(colAddress == room.address.string))?.get(colID) else {
+            throw ViewDatabaseError.invalidRoom
+        }
+        
+        let aliasID = try db.run(roomAliases.insert(colAliasURL <- url.absoluteString, colRoomID <- roomID))
+        return RoomAlias(id: aliasID, aliasURL: url)
     }
     
     // MARK: moderation / delete

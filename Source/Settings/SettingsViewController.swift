@@ -33,9 +33,9 @@ class SettingsViewController: DebugTableViewController {
         self.settings = [
             feedStrategies(),
             publicWebHosting(),
+            manageRelays(),
             push(),
             usage(),
-            manageRelays(),
             preview()
         ]
         super.updateSettings()
@@ -92,11 +92,30 @@ class SettingsViewController: DebugTableViewController {
         }
 
         var settings: [DebugTableViewCellModel] = []
-        settings += [DebugTableViewCellModel(title: Text.PublicWebHosting.enabled.text,
-                                             valueClosure: valueClosure,
-                                             actionClosure: nil)]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.WebServices.aliases.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let viewModel = RoomAliasCoordinator(bot: Bots.current)
+                    let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.WebServices.publicWebHosting.text,
+                valueClosure: valueClosure,
+                actionClosure: nil
+            )
+        ]
 
-        return (Text.PublicWebHosting.title.text, settings, Text.PublicWebHosting.footer.text)
+        return (Text.WebServices.title.text, settings, Text.WebServices.footer.text)
     }
 
     @objc private func publicWebHostingToggleValueChanged(toggle: UISwitch) {
