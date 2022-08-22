@@ -265,13 +265,14 @@ protocol Bot: AnyObject {
     // MARK: Blob publishing
 
     func addBlob(data: Data, completion: @escaping BlobsAddCompletion)
-
+    
+    @available(*, renamed: "addBlob(jpegOf:largestDimension:)")
     func addBlob(
         jpegOf image: UIImage,
         largestDimension: UInt?,
         completion: @escaping AddImageCompletion
     )
-
+    
     // MARK: Blob loading
 
     func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
@@ -547,4 +548,37 @@ extension Bot {
     func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
+    
+    @MainActor
+    func addBlob(data: Data) async throws -> BlobIdentifier{
+        try await withCheckedThrowingContinuation { continuation in
+            addBlob(data: data) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    @MainActor
+    func addBlob(
+        jpegOf image: UIImage,
+        largestDimension: UInt?
+    ) async throws -> ImageMetadata {
+            try await withCheckedThrowingContinuation { continuation in
+                addBlob(jpegOf: image, largestDimension: largestDimension) { result, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    guard let result = result else {
+                        continuation.resume(throwing: GoBotError.unexpectedFault("Expected non-nil image"))
+                        return
+                    }
+                    continuation.resume(returning: result)
+                }
+            }
+        }
 }

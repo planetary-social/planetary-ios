@@ -95,7 +95,7 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
             let strategy = decodedObject as? FeedStrategy {
             return strategy
         }
-        return PostsAndContactsAlgorithm()
+        return RandomAlgorithm(onlyFollowed: false)
     }
     
     private func save(strategy: FeedStrategy) {
