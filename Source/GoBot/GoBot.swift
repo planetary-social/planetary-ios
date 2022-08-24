@@ -480,6 +480,7 @@ class GoBot: Bot {
     
     func replicate(feed: FeedIdentifier) {
         userInitiatedQueue.async {
+            Log.debug("Requesting one off feed of: " + feed)
             self.bot.replicate(feed: feed)
         }
     }
@@ -1062,6 +1063,11 @@ class GoBot: Bot {
                 let about = try self.database.getAbout(for: identity)
                 queue.async {
                     if about?.identity == self._identity { self._about = about }
+                    
+                    // if we don't have the about message we tell go-bot that we want to get it from peers
+                    if about == nil || about?.name == nil {
+                        self.replicate(feed: identity)
+                    }
                     completion(about, nil)
                 }
             } catch {
@@ -1077,6 +1083,9 @@ class GoBot: Bot {
             for identity in identities {
                 if let about = try? self.database.getAbout(for: identity) {
                     abouts += [about]
+                } else {
+                    // if we don't have the about message we tell go-bot that we want to get it from peers
+                    self.replicate(feed: identity)
                 }
             }
             DispatchQueue.main.async { completion(abouts, nil) }
@@ -1087,6 +1096,13 @@ class GoBot: Bot {
         userInitiatedQueue.async {
             do {
                 let abouts = try self.database.getAbouts()
+                self.queue.async {
+                    for about in abouts {
+                        if about.name == nil {
+                            self.replicate(feed: about.identity)
+                        }
+                    }
+                }
                 queue.async {
                     completion(abouts, nil)
                 }
