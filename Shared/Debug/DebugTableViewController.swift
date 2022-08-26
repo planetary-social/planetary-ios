@@ -62,9 +62,7 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
         cell.textLabel?.textColor = UIColor.mainText
         cell.textLabel?.text = model.title
         cell.backgroundColor = UIColor.cardBackground
-        Task {
-            await model.valueClosure?(cell)
-        }
+        model.valueClosure?(cell)
         return cell
     }
 
@@ -74,10 +72,8 @@ override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexP
 
         let model = self.settings[indexPath.section].cellModels[indexPath.row]
         if let cell = tableView.cellForRow(at: indexPath) {
-            Task {
-                await model.actionClosure?(cell)
-                await model.valueClosure?(cell)
-            }
+            model.actionClosure?(cell)
+            model.valueClosure?(cell)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)

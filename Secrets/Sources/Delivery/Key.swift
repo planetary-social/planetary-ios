@@ -29,6 +29,9 @@ public enum Key: String {
     
     /// Token used to authenticate with Planetary's cloud services.
     case planetaryCloudAPISecret
+    
+    /// Token used to join the Planetary room
+    case planetaryRoomToken
 
     /// Zendesk App ID
     case zendeskAppID

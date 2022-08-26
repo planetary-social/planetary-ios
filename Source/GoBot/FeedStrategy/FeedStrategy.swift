@@ -28,6 +28,7 @@ protocol FeedStrategy: NSObjectProtocol, NSCoding {
     /// - parameter limit: the number of items that should be returned
     /// - parameter offset: the offset, offset=10 will return the 10th item onwards,
     /// offset=nil will return the first item onwards
+    /// func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue]
     func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue]
 
     /// Returns the total number of items in the feed since a specific message

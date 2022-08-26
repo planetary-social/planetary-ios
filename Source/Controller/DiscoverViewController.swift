@@ -158,6 +158,13 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         self.load()
         
         self.registerDidRefresh()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didChangeDiscoverFeedAlgorithm(notification:)),
+            name: .didChangeDiscoverFeedAlgorithm,
+            object: nil
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -195,6 +202,11 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         }
         self.dataSource.update(source: proxy)
         self.collectionView.reloadData()
+    }
+    
+    @objc
+    func didChangeDiscoverFeedAlgorithm(notification: Notification) {
+        load(animated: true)
     }
     
     // MARK: Search

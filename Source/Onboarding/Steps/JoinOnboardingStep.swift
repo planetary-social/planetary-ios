@@ -48,13 +48,8 @@ import CrashReporting
             }
             
             self?.data.context = context
-            if data.name != nil {
-                // Proceed to bio + photo steps
-                self?.next()
-            } else {
-                // Skip bio + photo
-                self?.next(.done)
-            }
+            Onboarding.set(status: .completed, for: context!.identity)
+            self?.next()
         }
     }
 

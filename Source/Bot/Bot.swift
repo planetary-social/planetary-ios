@@ -85,6 +85,10 @@ protocol Bot: AnyObject {
     func joinedRooms() async throws -> [Room]
     func insert(room: Room) async throws
     func delete(room: Room) async throws
+    
+    func registeredAliases() async throws -> [RoomAlias]
+    func register(alias: String, in: Room) async throws -> RoomAlias
+    func revoke(alias: RoomAlias) async throws
 
     var isSyncing: Bool { get }
     
@@ -95,6 +99,8 @@ protocol Bot: AnyObject {
     ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
     ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
+    
+    func replicate(feed: FeedIdentifier)
     
     /// Connect to the SSB peer at the given address.
     func connect(to address: MultiserverAddress)
@@ -209,7 +215,10 @@ protocol Bot: AnyObject {
     /// posts the user has not yet seen in the Home Feed.
     /// - parameter message: The identifier of the message to account for the offset.
     func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion)
-    
+
+    /// Builds a feed of posts using a strategy object
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion)
+
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.
@@ -256,13 +265,14 @@ protocol Bot: AnyObject {
     // MARK: Blob publishing
 
     func addBlob(data: Data, completion: @escaping BlobsAddCompletion)
-
+    
+    @available(*, renamed: "addBlob(jpegOf:largestDimension:)")
     func addBlob(
         jpegOf image: UIImage,
         largestDimension: UInt?,
         completion: @escaping AddImageCompletion
     )
-
+    
     // MARK: Blob loading
 
     func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
@@ -538,4 +548,37 @@ extension Bot {
     func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
     }
+    
+    @MainActor
+    func addBlob(data: Data) async throws -> BlobIdentifier{
+        try await withCheckedThrowingContinuation { continuation in
+            addBlob(data: data) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    @MainActor
+    func addBlob(
+        jpegOf image: UIImage,
+        largestDimension: UInt?
+    ) async throws -> ImageMetadata {
+            try await withCheckedThrowingContinuation { continuation in
+                addBlob(jpegOf: image, largestDimension: largestDimension) { result, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    guard let result = result else {
+                        continuation.resume(throwing: GoBotError.unexpectedFault("Expected non-nil image"))
+                        return
+                    }
+                    continuation.resume(returning: result)
+                }
+            }
+        }
 }

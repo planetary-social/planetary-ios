@@ -11,6 +11,7 @@ import UIKit
 
 enum FakeBotError: Error {
     case runtimeError(String)
+    case notImplemented
 }
 
 class FakeBot: Bot {
@@ -66,6 +67,16 @@ class FakeBot: Bot {
     }
     func insert(room: Room) async throws { }
     func delete(room: Room) async throws { }
+    
+    func registeredAliases() async throws -> [RoomAlias] {
+        throw FakeBotError.notImplemented
+    }
+    
+    func register(alias: String, in: Room) async throws -> RoomAlias {
+        throw FakeBotError.notImplemented
+    }
+    
+    func revoke(alias: RoomAlias) async throws {}
     
     func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion) {
         completionQueue.async { completion(nil) }
@@ -138,7 +149,9 @@ class FakeBot: Bot {
     func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) { }
 
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
-
+    
+    func replicate(feed: FeedIdentifier) { }
+    
     required init() {}
     static let shared = FakeBot()
 
@@ -288,7 +301,11 @@ class FakeBot: Bot {
             completion(StaticDataProxy(), nil)
         }
     }
-    
+
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
+        completion(StaticDataProxy(), nil)
+    }
+
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
     }

@@ -307,7 +307,11 @@ class DebugViewController: DebugTableViewController {
                 title: "Export database",
                 cellReuseIdentifier: DebugValueTableViewCell.className,
                 valueClosure: nil,
-                actionClosure: self.shareDatabase(cell:)
+                actionClosure: { [weak self] _ in
+                    Task {
+                        await self?.shareDatabase(cell:)
+                    }
+                }
             )
         ]
         

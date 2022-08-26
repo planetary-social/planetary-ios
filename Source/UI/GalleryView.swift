@@ -19,7 +19,7 @@ class GalleryView: UIView, KeyValueUpdateable {
         view.circular = true
         view.contentScaleMode = .scaleAspectFill
         view.pageIndicator = UIPageControl.default()
-        view.preload = .all
+//        view.preload = .all
         view.activityIndicator = DefaultActivityIndicator(
             style: UIActivityIndicatorView.Style.medium,
             color: UIColor.loadingIcon
