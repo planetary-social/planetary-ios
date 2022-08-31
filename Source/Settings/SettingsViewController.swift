@@ -31,11 +31,11 @@ class SettingsViewController: DebugTableViewController {
 
     override internal func updateSettings() {
         self.settings = [
-            feedStrategy(),
+            feedStrategies(),
             publicWebHosting(),
+            manageRelays(),
             push(),
             usage(),
-            manageRelays(),
             preview()
         ]
         super.updateSettings()
@@ -43,7 +43,7 @@ class SettingsViewController: DebugTableViewController {
     
     // MARK: Feed Algorithm Selection
     
-    private func feedStrategy() -> DebugTableViewController.Settings {
+    private func feedStrategies() -> DebugTableViewController.Settings {
         let settings = [
             DebugTableViewCellModel(
                 title: Text.FeedAlgorithm.feedAlgorithmTitle.text,
@@ -54,10 +54,20 @@ class SettingsViewController: DebugTableViewController {
                     let controller = FeedStrategySelectionViewController()
                     self?.navigationController?.pushViewController(controller, animated: true)
                 }
+            ),
+            DebugTableViewCellModel(
+                title: Text.DiscoveryFeedAlgorithm.feedAlgorithmTitle.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let controller = DiscoveryFeedStrategySelectionViewController()
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
             )
         ]
         
-        return (Text.FeedAlgorithm.algorithms.text, settings, Text.FeedAlgorithm.feedAlgorithmDescription.text)
+        return (Text.FeedAlgorithm.algorithms.text, settings, nil)
     }
 
     // MARK: Public web hosting
@@ -82,11 +92,30 @@ class SettingsViewController: DebugTableViewController {
         }
 
         var settings: [DebugTableViewCellModel] = []
-        settings += [DebugTableViewCellModel(title: Text.PublicWebHosting.enabled.text,
-                                             valueClosure: valueClosure,
-                                             actionClosure: nil)]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.WebServices.aliases.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let viewModel = RoomAliasCoordinator(bot: Bots.current)
+                    let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Text.WebServices.publicWebHosting.text,
+                valueClosure: valueClosure,
+                actionClosure: nil
+            )
+        ]
 
-        return (Text.PublicWebHosting.title.text, settings, Text.PublicWebHosting.footer.text)
+        return (Text.WebServices.title.text, settings, Text.WebServices.footer.text)
     }
 
     @objc private func publicWebHostingToggleValueChanged(toggle: UISwitch) {

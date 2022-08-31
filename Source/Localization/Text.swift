@@ -13,9 +13,11 @@ extension Text {
             Text.Onboarding.self,
             Text.Onboarding.StepTitle.self,
             Text.ManageRelays.self,
+            Text.Alias.self,
             Text.Preview.self,
             Text.FeedAlgorithm.self,
-            Text.PublicWebHosting.self,
+            Text.DiscoveryFeedAlgorithm.self,
+            Text.WebServices.self,
             Text.Push.self,
             Text.Reporting.self,
             Text.Debug.self,
@@ -69,6 +71,8 @@ enum Text: String, Localizable, CaseIterable {
     case usersInYourNetwork = "Users in your network"
     case goToYourNetwork = "Go to Your Network"
     case emptyHomeFeedMessage = "And it is rather bare! Have you considered following a few users or topics?"
+    case replied = "{{somebody}} replied"
+    case liked = "{{somebody}} liked"
     case startedFollowing = "{{somebody}} started following"
     case stoppedFollowing = "{{somebody}} stopped following"
     case followStats = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}"
@@ -136,7 +140,7 @@ enum Text: String, Localizable, CaseIterable {
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
-
+    
     case blockUser = "Ignore this user"
     case unblockUser = "Unignore this user"
 
@@ -382,6 +386,19 @@ extension Text {
     }
 }
 
+// MARK: - Manage Aliases
+
+extension Text {
+    
+    enum Alias: String, Localizable, CaseIterable {
+        case manageAliases = "Manage Aliases (beta)"
+        case addAlias = "Register a new alias"
+        case roomAliases = "Room Aliases (beta)"
+        case aliases = "Aliases"
+        case introText = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app."
+    }
+}
+
 // MARK: - Preview
 
 extension Text {
@@ -398,17 +415,28 @@ extension Text {
 
     enum FeedAlgorithm: String, Localizable, CaseIterable {
         case algorithms = "Algorithms"
-        case feedAlgorithmTitle = "Home Feed"
-        case feedAlgorithmDescription = "Choose the algorithm used to sort and filter your Home Feed."
+        case feedAlgorithmTitle = "Home Feed Algorithm"
+        case feedAlgorithmDescription = "Choose the algorithms used to sort and filter your feeds."
         case recentPostsAlgorithm = "Recent posts"
-        case recentPostsAlgorithmDescription = "Shows posts from the people you follow in the order they were posted."
+        case recentPostsAlgorithmDescription = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows."
         case recentPostsWithFollowsAlgorithm = "Recent posts and follows (default)"
         case recentPostsWithFollowsAlgorithmDescription = "Shows posts and follow messages from the people you follow in the order they were posted."
         case recentlyActivePostsWithFollowsAlgorithm = "Recently active posts and follows"
         case recentlyActivePostsWithFollowsAlgorithmDescription = "Shows posts and follow messages from the people you follow. If a message receives a reply it will be pushed back up to the top of the feed."
+        case randomPostsAlgorithm = "Random unread posts"
+        case randomPostsAlgorithmDescription = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. "
         case viewAlgorithmSource = "View Source Code"
         case sourceCode = "Source Code"
         case sourceCodeDescription = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above."
+    }
+    
+    enum DiscoveryFeedAlgorithm: String, Localizable, CaseIterable {
+        case algorithms = "Algorithms"
+        case feedAlgorithmTitle = "Discovery Feed Algorithm"
+        case recentPostsAlgorithm = "Recent Posts"
+        case recentPostsAlgorithmDescription = "Shows posts from people you don't follow in your boader network sorted chronologically."
+        case randomPostsAlgorithm = "Random Unread Posts"
+        case randomPostsAlgorithmDescription = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see."
     }
 }
 
@@ -416,10 +444,11 @@ extension Text {
 
 extension Text {
 
-    enum PublicWebHosting: String, Localizable, CaseIterable {
-        case enabled = "Enabled"
-        case title = "Public Web Hosting"
-        case footer = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible."
+    enum WebServices: String, Localizable, CaseIterable {
+        case title = "Web Services"
+        case publicWebHosting = "Public Web Hosting"
+        case aliases = "Aliases (beta)"
+        case footer = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible."
     }
 }
 

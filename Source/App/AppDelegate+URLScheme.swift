@@ -29,6 +29,16 @@ extension AppDelegate {
                 }
                 return true
             }
+            
+            if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                components.path == "experimental",
+                let queryParams = components.queryItems,
+                let actionParam = queryParams.first(where: { $0.name == "action" }),
+                actionParam.value == "consume-alias",
+                let userIDParam = queryParams.first(where: { $0.name == "userId" })?.value {
+                
+                AppController.shared.pushViewController(for: .about, with: userIDParam)
+            }
         }
         
         return false

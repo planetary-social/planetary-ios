@@ -47,6 +47,7 @@ enum ViewDatabaseTableNames: String {
     case reports
     case pubs
     case rooms
+    case roomAliases = "room_aliases"
     case readMessages = "read_messages"
 }
 
@@ -195,6 +196,9 @@ class ViewDatabase {
     
     // Rooms
     let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
+    let roomAliases = Table(ViewDatabaseTableNames.roomAliases.rawValue)
+    let colAliasURL = Expression<String>("alias_url")
+    let colRoomID = Expression<Int64>("room_id")
     
     // Search
     private let postSearch = VirtualTable("post_search")
@@ -230,7 +234,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        //db.trace { print("\n\n\ntSQL: \($0)\n\n\n") } // print all the statements
         
         try checkAndRunMigrations(on: db)
         
@@ -329,7 +333,7 @@ class ViewDatabase {
                 )
                 db.userVersion = 16
             }
-            if db.userVersion == 16 {
+             if db.userVersion == 16 {
                 try db.execute(
                     """
                     ALTER TABLE authors ADD banned INTEGER NOT NULL DEFAULT (0);
@@ -352,6 +356,43 @@ class ViewDatabase {
                     """
                 )
                 db.userVersion = 18
+            }
+            if db.userVersion == 18 {
+                try db.execute(
+                    """
+                    CREATE INDEX tangles_idx_87132823 ON tangles(root, msg_ref);
+                    CREATE INDEX read_messages_idx_7c47714e ON read_messages(is_read, msg_id);
+                    CREATE INDEX contacts_idx_03e709db ON contacts(msg_ref);
+                    """
+                )
+                db.userVersion = 19
+            }
+            if db.userVersion == 19 {
+                try db.execute(
+                    """
+                    -- oops
+                    -- can't add a primary key directly so create a new table and copy
+                    CREATE TABLE tmp_rooms (
+                        id INTEGER PRIMARY KEY,
+                        address TEXT UNIQUE NOT NULL
+                    );
+                    INSERT INTO tmp_rooms (address) SELECT address FROM rooms;
+                    DROP TABLE rooms;
+                    CREATE TABLE rooms (
+                        id INTEGER PRIMARY KEY,
+                        address TEXT UNIQUE NOT NULL
+                    );
+                    INSERT INTO rooms (id, address) SELECT id, address FROM rooms;
+                    DROP TABLE tmp_rooms;
+                    CREATE TABLE room_aliases (
+                        id INTEGER PRIMARY KEY,
+                        room_id INTEGER NOT NULL,
+                        alias_url TEXT UNIQUE NOT NULL,
+                        FOREIGN KEY ( room_id ) REFERENCES rooms( "id" )
+                    );
+                    """
+                )
+                db.userVersion = 20
             }
         }
     }
@@ -453,26 +494,6 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID)
-    }
-
-    // posts for a feed
-    func stats(for feed: FeedIdentifier) throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        do {
-            let authorID = try self.authorID(of: feed, make: false)
-            let theirRootPosts = try db.scalar(self.posts
-                .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
-                .filter(colAuthorID == authorID)
-                .filter(colIsRoot == true)
-                .count)
-
-            return theirRootPosts
-        } catch {
-            Log.optional(GoBotError.duringProcessing("stats for feed failed", error))
-            return 0
-        }
     }
     
     func lastReceivedTimestamp() throws -> Double {
@@ -663,6 +684,33 @@ class ViewDatabase {
         }
         
         try db.run(rooms.filter(colAddress == room.address.string).delete())
+    }
+    
+    func getRegisteredAliases() throws -> [RoomAlias] {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+
+        return try db.prepare(roomAliases).map { row in
+            guard let url = URL(string: row[colAliasURL]) else {
+                throw ViewDatabaseError.invalidAliasURL(row[colAliasURL])
+            }
+            
+            return RoomAlias(id: row[colID], aliasURL: url)
+        }
+    }
+    
+    func insertRoomAlias(url: URL, room: Room) throws -> RoomAlias {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        guard let roomID = try db.pluck(rooms.filter(colAddress == room.address.string))?.get(colID) else {
+            throw ViewDatabaseError.invalidRoom
+        }
+        
+        let aliasID = try db.run(roomAliases.insert(colAliasURL <- url.absoluteString, colRoomID <- roomID))
+        return RoomAlias(id: aliasID, aliasURL: url)
     }
     
     // MARK: moderation / delete
@@ -1257,11 +1305,6 @@ class ViewDatabase {
     func paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedKeyValueDataProxy) {
         let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
-    }
-
-    func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedPrefetchDataProxy(with: src!)
     }
 
     // MARK: recent

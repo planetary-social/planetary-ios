@@ -28,6 +28,8 @@
 "Text.usersInYourNetwork" = "Usuários na sua rede";
 "Text.goToYourNetwork" = "Acesse sua rede";
 "Text.emptyHomeFeedMessage" = "Está um tanto quanto vazio por aqui! Já pensou em seguir alguns usuários ou tópicos?";
+"Text.replied" = "{{somebody}} replied";
+"Text.liked" = "{{somebody}} liked";
 "Text.startedFollowing" = "{{somebody}} começou a seguir";
 "Text.stoppedFollowing" = "{{somebody}} deixou de seguir";
 "Text.followStats" = "Seguindo {{numberOfFollows}} • Seguido por {{numberOfFollowers}}";
@@ -251,25 +253,41 @@
 "ManageRelays.invalidRoomURL" = "Invalid room URL";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
+"Alias.manageAliases" = "Manage Aliases (beta)";
+"Alias.addAlias" = "Register a new alias";
+"Alias.roomAliases" = "Room Aliases (beta)";
+"Alias.aliases" = "Aliases";
+"Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
+
 "Preview.title" = "Configurações avançadas";
 "Preview.footer" = "São novos recursos que estão sendo desenvolvidos e testados e ainda não encontraram um lar permanente no aplicativo.";
 
 "FeedAlgorithm.algorithms" = "Algoritmos";
-"FeedAlgorithm.feedAlgorithmTitle" = "Página inicial";
-"FeedAlgorithm.feedAlgorithmDescription" = "Escolha o algoritmo utilizado para classificar e filtrar sua página inicial.";
+"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Postagens recentes";
-"FeedAlgorithm.recentPostsAlgorithmDescription" = "Exibir postagens das pessoas que você segue por ordem de publicação.";
+"FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Postagens recentes e contas seguidas recentemente (padrão)";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Exibe as postagens e as mensagens das pessoas que você segue por ordem de publicação.";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Postagens e contas seguidas com atividade recente";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Exibe as postagens e as mensagens das pessoas que você segue. Se uma mensagem receber uma resposta, ela será enviada ao topo do feed.";
+"FeedAlgorithm.randomPostsAlgorithm" = "Random unread posts";
+"FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
 "FeedAlgorithm.viewAlgorithmSource" = "Visualizar código-fonte";
 "FeedAlgorithm.sourceCode" = "Código-fonte";
 "FeedAlgorithm.sourceCodeDescription" = "O código do Planetary é aberto para que nossos algoritmos possam ser auditados e até mesmo modificados por nossos usuários. É possível visualizar o código-fonte desses algoritmos ao tocar no botão acima.";
 
-"PublicWebHosting.enabled" = "Habilitado";
-"PublicWebHosting.title" = "Hospedagem pública na web";
-"PublicWebHosting.footer" = "Escolha esta opção para indicar que deseja que seu feed apareça em gateways públicos. Talvez sejam necessárias algumas horas até que as alterações sejam visíveis.";
+"DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed Algorithm";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
+
+"WebServices.title" = "Web Services";
+"WebServices.publicWebHosting" = "Public Web Hosting";
+"WebServices.aliases" = "Aliases (beta)";
+"WebServices.footer" = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible.";
 
 "Push.enabled" = "Habilitado";
 "Push.title" = "Notificações push";

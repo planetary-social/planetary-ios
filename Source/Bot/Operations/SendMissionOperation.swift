@@ -47,12 +47,12 @@ class SendMissionOperation: AsynchronousOperation {
             return
         }
         
-        Task {
-            let joinPlanetaryOperation = createJoinPlanetaryOperation(
+        Task.detached {
+            let joinPlanetaryOperation = self.createJoinPlanetaryOperation(
                 config: appConfiguration,
                 queue: self.operationQueue
             )
-            let syncOperation = await createSyncOperation(bot: bot, config: appConfiguration)
+            let syncOperation = await self.createSyncOperation(bot: bot, config: appConfiguration)
             
             var operations: [Operation] = [syncOperation]
             if let joinPlanetaryOperation = joinPlanetaryOperation {

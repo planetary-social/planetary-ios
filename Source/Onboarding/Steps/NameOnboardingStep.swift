@@ -41,6 +41,8 @@ class NameOnboardingStep: OnboardingStep {
     }
     
     override func performSecondaryAction(sender button: UIButton) {
-        self.next()
+        self.data.name = nil
+        // Skip bio + photo steps
+        self.next(.done)
     }
 }

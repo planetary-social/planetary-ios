@@ -47,7 +47,7 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
             return
         }
         
-        Task {
+        Task.detached {
             do {
                 let allJoinedPubs = try await bot.joinedPubs()
                 let systemPubs = Set(AppConfiguration.current?.systemPubs ?? [])

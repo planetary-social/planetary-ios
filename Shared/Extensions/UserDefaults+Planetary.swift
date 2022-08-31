@@ -10,4 +10,5 @@ import Foundation
 
 extension UserDefaults {
     static let homeFeedStrategy = "PLHomeFeedStrategy"
+    static let discoveryFeedStrategy = "PLDiscoveryFeedStrategy"
 }

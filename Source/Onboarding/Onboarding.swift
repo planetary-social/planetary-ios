@@ -123,10 +123,28 @@ class Onboarding {
             throw StartError.botError(error)
         }
         
+        // publish image
+        var profileImageMetadata: ImageMetadata?
+        if let image = data.image {
+            do {
+                profileImageMetadata = try await context.bot.addBlob(jpegOf: image, largestDimension: 1000)
+            } catch {
+                // We log but don't throw because we don't want
+                // to prevent the user from completing onboarding
+                Log.error("Error setting profile picture: \(error.localizedDescription)")
+            }
+        }
+        
         // publish about
         if let name = data.name {
             do {
-                let about = About(about: secret.identity, name: name)
+                let about = About(
+                    identity: secret.identity,
+                    name: name,
+                    description: data.bio,
+                    image: profileImageMetadata,
+                    publicWebHosting: data.publicWebHosting
+                )
                 _ = try await context.bot.publish(content: about)
                 context.about = about
             } catch {
@@ -148,6 +166,26 @@ class Onboarding {
                 network: network.string
             )
         }
+        
+        var operations = [Operation]()
+
+        if data.followPlanetary {
+            let followPlanetaryOperation = FollowOperation(identity: Environment.PlanetarySystem.planetaryIdentity)
+            operations.append(followPlanetaryOperation)
+        }
+        
+        let bundle = Bundle(path: Bundle.main.path(forResource: "Preload", ofType: "bundle")!)!
+        let preloadOperation = LoadBundleOperation(bundle: bundle)
+        
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
+        refreshOperation.addDependency(preloadOperation)
+        
+        operations += [
+            preloadOperation,
+            refreshOperation,
+        ]
+        await AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
+
         
         // done
         Onboarding.didStart(configuration: configuration, secret: secret)

@@ -45,7 +45,8 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
         }
     }
     
-    private let communityPubs = AppConfiguration.current?.communityPubs ?? []
+    private let communityPubs = (AppConfiguration.current?.communityPubs ?? []) +
+        (AppConfiguration.current?.systemPubs ?? [])
     private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
     
     /// A post that was loaded when the user put its ID in the search bar.

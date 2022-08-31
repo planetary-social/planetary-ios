@@ -32,8 +32,8 @@ class DoneOnboardingStep: OnboardingStep {
     
     private let publicWebHostingToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.PublicWebHosting.title.text
-        view.subtitleLabel.text = Text.PublicWebHosting.footer.text
+        view.titleLabel.text = Text.WebServices.publicWebHosting.text
+        view.subtitleLabel.text = Text.WebServices.footer.text
         view.toggle.isOn = true
         return view
     }()
@@ -107,75 +107,17 @@ class DoneOnboardingStep: OnboardingStep {
         if !data.analytics {
             Analytics.shared.optOut()
         }
-
+        
         guard let me = data.context?.identity else {
             Log.unexpected(.missingValue, "Was expecting self.data.context.person.identity, skipping step")
             Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
             self.next()
             return
         }
-        
-        var operations = [Operation]()
-        
-        let startOperation = BlockOperation { [weak self] in
-            DispatchQueue.main.async { [weak self] in
-                if let primaryButton = self?.view.primaryButton {
-                    self?.view.lookBusy(after: 0, disable: primaryButton)
-                } else {
-                    self?.view.lookBusy(after: 0)
-                }
-            }
-        }
-        
-        if data.followPlanetary {
-            let followPlanetaryOperation = FollowOperation(identity: Environment.PlanetarySystem.planetaryIdentity)
-            followPlanetaryOperation.addDependency(startOperation)
-            operations.append(followPlanetaryOperation)
-        }
-        
-        let publicWebHostingOperation = BlockOperation {
-            let semaphore = DispatchSemaphore(value: 0)
-            let about = About(about: me, publicWebHosting: data.publicWebHosting)
-            let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .background)
-            Bots.current.publish(content: about, completionQueue: queue) { (_, error) in
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                semaphore.signal()
-            }
-            semaphore.wait()
-        }
-        publicWebHostingOperation.addDependency(startOperation)
-        
-        let bundle = Bundle(path: Bundle.main.path(forResource: "Preload", ofType: "bundle")!)!
-        let preloadOperation = LoadBundleOperation(bundle: bundle)
-        preloadOperation.addDependency(publicWebHostingOperation)
-        
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        refreshOperation.addDependency(preloadOperation)
-        
-        let completionOperation = BlockOperation { [weak self] in
-            DispatchQueue.main.async { [weak self] in
-                self?.view.lookReady()
-                Analytics.shared.trackOnboardingComplete(data.analyticsData)
-                Analytics.shared.trackOnboardingEnd()
-                self?.next()
-            }
-        }
-        completionOperation.addDependency(refreshOperation)
-        
-        operations += [
-            startOperation,
-            publicWebHostingOperation,
-            preloadOperation,
-            refreshOperation,
-            completionOperation
-        ]
-        AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 
     override func didStart() {
         if self.data.simulated { return }
         guard let identity = self.data.context?.identity else { return }
-        Onboarding.set(status: .completed, for: identity)
     }
 }

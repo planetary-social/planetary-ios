@@ -12,6 +12,7 @@ import Logger
 import Analytics
 import CrashReporting
 import Support
+import SwiftUI
 
 class AboutViewController: ContentViewController {
 
@@ -48,7 +49,11 @@ class AboutViewController: ContentViewController {
         self.about = about
         super.init(scrollable: false)
         self.aboutView.update(with: about)
-        self.addActions()
+        self.addActions() 
+        self.triggerRefresh()
+        if identity.isCurrentUser {
+            loadAliases()
+        }
     }
 
     convenience init(with about: About) {
@@ -100,9 +105,22 @@ class AboutViewController: ContentViewController {
             self?.update(with: about)
         }
     }
+    
+    // tells the go-bot to do a one time request to refresh this identity from peers.
+    private func triggerRefresh(){
+        Bots.current.replicate(feed: self.identity)
+    }
 
     private func loadFeed() {
-        Bots.current.feed(identity: self.identity) { [weak self] proxy, error in
+        let communityPubs = AppConfiguration.current?.communityPubs ?? []
+        let communityPubIdentities = Set(communityPubs.map { $0.feed })
+        let strategy: FeedStrategy
+        if communityPubIdentities.contains(identity) {
+            strategy = OneHopFeedAlgorithm(identity: identity)
+        } else {
+            strategy = NoHopFeedAlgorithm(identity: identity)
+        }
+        Bots.current.feed(strategy: strategy) { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             guard error == nil else {
@@ -128,6 +146,17 @@ class AboutViewController: ContentViewController {
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.followers = abouts
             self?.updateFollows()
+        }
+    }
+    
+    private func loadAliases() {
+        Task { [weak self] in
+            do {
+                let aliases = try await Bots.current.registeredAliases()
+                self?.aboutView.update(with: aliases)
+            } catch {
+                Log.optional(error)
+            }
         }
     }
 
@@ -250,6 +279,13 @@ class AboutViewController: ContentViewController {
                 handler: self.didSelectReportAction(action:)
             )
             actions.append(report)
+        } else {
+            let manageAliases = UIAlertAction(
+                title: Text.Alias.manageAliases.text,
+                style: .default,
+                handler: self.didSelectManageAliasesAction(actionName:)
+            )
+            actions.append(manageAliases)
         }
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
@@ -406,6 +442,12 @@ class AboutViewController: ContentViewController {
             return
         }
         AppController.shared.push(controller)
+    }
+    
+    private func didSelectManageAliasesAction(actionName: UIAlertAction) {
+        let viewModel = RoomAliasCoordinator(bot: Bots.current)
+        let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 
     // MARK: Notifications
