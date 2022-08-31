@@ -6,7 +6,7 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.1] 2022-08-27
+## [1.3.2] 2022-08-27
 
 - Fixed a bug where new profiles were being created on the test network.
 
