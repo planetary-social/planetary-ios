@@ -77,8 +77,13 @@ class ViewDatabase {
     let colID = Expression<Int64>("id")
     
     let authors = Table(ViewDatabaseTableNames.authors.rawValue)
+    /// The `Identifier` for this author.
     let colAuthor = Expression<Identity>("author")
     let colBanned = Expression<Bool>("banned")
+    
+    /// An alias for the authors table we use when trying to get information about the target of a contact message.
+    /// If Alice follows Bob, then Bob would be the target of the contact message Alice publishes.
+    let contactTarget = Table(ViewDatabaseTableNames.authors.rawValue).alias("contact_target")
     
     let msgKeys = Table(ViewDatabaseTableNames.messagekeys.rawValue)
     let colKey = Expression<MessageIdentifier>("key")
@@ -1822,6 +1827,61 @@ class ViewDatabase {
         print("\(#function) took \(timeDone - timeStart)")
         return msgs
     }
+    
+    func publishedMessagesForCurrentUser() throws -> KeyValues {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let query = msgs
+            .join(.leftOuter, posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, abouts, on: self.abouts[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, votes, on: self.votes[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, contacts, on: self.contacts[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, contactTarget, on: contacts[colContactID] == contactTarget[colID])
+            .join(.leftOuter, tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
+            .join(.leftOuter, pubs, on: pubs[colMessageRef] == self.msgs[colMessageID])
+            .join(msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
+            .join(.leftOuter, authors, on: self.authors[colID] == self.msgs[colAuthorID])
+            .filter(msgs[colAuthorID] == currentUserID)
+            .filter(msgs[colOffChain] == false)
+            .order(colClaimedAt.asc)
+        
+        return try db.prepare(query).compactMap { row in
+            do {
+                return try KeyValue(
+                    row: row,
+                    database: self,
+                    useNamespacedTables: true,
+                    hasMentionColumns: false,
+                    hasReplies: false
+                )
+            } catch {
+                Log.optional(error)
+                return nil
+            }
+        }
+
+        return try mapQueryToKeyValue(qry: query, useNamespacedTables: true)
+    }
+    
+    func currentUserCreatedDate() throws -> Date? {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        if let row = try db.pluck(
+            msgs
+                .select(colClaimedAt)
+                .filter(msgs[colAuthorID] == currentUserID)
+                .order(colClaimedAt.asc)
+                .limit(1)
+        ) {
+            return Date(milliseconds: row[colClaimedAt])
+        } else {
+            return nil
+        }
+    }
 
     func getAuthorOf(key: MessageIdentifier) throws -> Int64? {
         let msgId = try self.msgID(of: key, make: false)
@@ -2751,7 +2811,7 @@ class ViewDatabase {
         ))
     }
     
-    private func author(from id: Int64) throws -> Identity {
+    func author(from id: Int64) throws -> Identity {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }

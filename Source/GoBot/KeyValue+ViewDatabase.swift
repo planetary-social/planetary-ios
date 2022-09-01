@@ -37,10 +37,22 @@ extension KeyValue {
         
         let db = database
         
-        let msgKey = try row.get(db.colKey)
-        let msgAuthor = try row.get(db.colAuthor)
+        let msgKey: MessageIdentifier
+        let msgAuthor: Identity
+        if useNamespacedTables {
+            msgKey = try row.get(db.msgKeys[db.colKey])
+            msgAuthor = try row.get(db.authors[db.colAuthor])
+        } else {
+            msgKey = try row.get(db.colKey)
+            msgAuthor = try row.get(db.colAuthor)
+        }
 
-        guard let value = try Value(row: row, db: db, hasMentionColumns: hasMentionColumns) else {
+        guard let value = try Value(
+            row: row,
+            db: db,
+            useNamespacedTables: useNamespacedTables,
+            hasMentionColumns: hasMentionColumns
+        ) else {
             return nil
         }
 

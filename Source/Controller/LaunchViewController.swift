@@ -65,7 +65,7 @@ class LaunchViewController: UIViewController {
         }
 
         // if no configuration then onboard
-        guard let configuration = appConfiguration else {
+        guard var configuration = appConfiguration else {
             self.launchIntoOnboarding()
             return
         }
@@ -97,16 +97,22 @@ class LaunchViewController: UIViewController {
         Log.info("Launching with configuration '\(configuration.name)'")
         
         Task {
-            do {
-                let isMigrating = try await self.migrateIfNeeded(using: configuration)
-                
-                if !isMigrating {
-                    // note that hmac key can be nil to switch it off
-                    guard configuration.network != nil else { return }
-                    guard let bot = configuration.bot else { return }
-                    
-                    try await bot.login(config: configuration)
+            login: do {
+                if let newConfiguration = try await self.fix814AccountsIfNecessary(using: configuration) {
+                    configuration = newConfiguration
+                    break login
                 }
+                
+                let isMigrating = try await self.migrateIfNeeded(using: configuration)
+                if isMigrating {
+                    break login
+                }
+                
+                // note that hmac key can be nil to switch it off
+                guard configuration.network != nil else { return }
+                guard let bot = configuration.bot else { return }
+                
+                try await bot.login(config: configuration)
             } catch {
                 self.handleLoginFailure(with: error, configuration: configuration)
             }
@@ -223,8 +229,16 @@ class LaunchViewController: UIViewController {
     }
     
     private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
-        return try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
             appConfiguration: configuration,
+            appController: appController,
+            userDefaults: userDefaults
+        )
+    }
+    
+    private func fix814AccountsIfNecessary(using configuration: AppConfiguration) async throws -> AppConfiguration? {
+        try await Fix814AccountsHelper.fix814Account(
+            configuration,
             appController: appController,
             userDefaults: userDefaults
         )
