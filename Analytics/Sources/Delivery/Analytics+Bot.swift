@@ -101,8 +101,8 @@ public extension Analytics {
         service.track(
             event: .did,
             element: .bot,
-            name: "814_fix_complete",
-            params: ["error": error.localizedDescription]
+            name: "814_fix_error",
+            params: ["message": error.localizedDescription]
         )
     }
     

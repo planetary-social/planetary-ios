@@ -1828,6 +1828,8 @@ class ViewDatabase {
         return msgs
     }
     
+    /// Fetches all published messages for the current user in chronological order. If the message is not a supported
+    /// message type it will not show up in the returned array.
     func publishedMessagesForCurrentUser() throws -> KeyValues {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -1861,10 +1863,9 @@ class ViewDatabase {
                 return nil
             }
         }
-
-        return try mapQueryToKeyValue(qry: query, useNamespacedTables: true)
     }
     
+    /// Returns the claimed post date of the current user's first published message, or nil if they have none.
     func currentUserCreatedDate() throws -> Date? {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen

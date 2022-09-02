@@ -233,12 +233,7 @@ extension AppConfiguration {
     }
     
     var isCurrent: Bool {
-        self.identity == AppConfiguration.current?.identity
-    }
-
-    static func isCurrent(_ identity: Identity) -> Bool {
-        guard let configuration = self.current else { return false }
-        return configuration.identity == identity
+        self.id == AppConfiguration.current?.id
     }
 }
 

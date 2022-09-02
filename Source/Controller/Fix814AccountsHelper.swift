@@ -30,11 +30,14 @@ enum Fix814AccountsHelper {
         let hasPromptedKey = "hasPromptedFor814Fix-\(configuration.id)"
         let hasPromptedAlready = userDefaults.bool(forKey: hasPromptedKey)
         
+        guard !hasPromptedAlready else {
+            return nil
+        }
+        
         try await bot.login(config: configuration)
         
         // Check if account was created on the test network between the given dates.
-        guard !hasPromptedAlready,
-            configuration.network == Environment.Networks.test.key,
+        guard configuration.network == Environment.Networks.test.key,
             let identityCreationDate = try? bot.database.currentUserCreatedDate(),
             identityCreationDate > Date(timeIntervalSince1970: 1_661_265_000), // 2022-08-23 10:30am
             identityCreationDate < Date(timeIntervalSince1970: 1_662_587_210), // 2022-09-07
@@ -88,7 +91,7 @@ enum Fix814AccountsHelper {
                 }
             }
             
-            Log.info("Finished copying messages. Applying configuration.")
+            Log.info("Finished copying \(newConfiguration.numberOfPublishedMessages) messages. Applying configuration.")
             
             newConfiguration.apply()
             
