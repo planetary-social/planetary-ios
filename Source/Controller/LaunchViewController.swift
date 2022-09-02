@@ -98,13 +98,13 @@ class LaunchViewController: UIViewController {
         
         Task {
             login: do {
-                if let newConfiguration = try await self.fix814AccountsIfNecessary(using: configuration) {
-                    configuration = newConfiguration
+                let isMigrating = try await self.migrateIfNeeded(using: configuration)
+                if isMigrating {
                     break login
                 }
                 
-                let isMigrating = try await self.migrateIfNeeded(using: configuration)
-                if isMigrating {
+                if let newConfiguration = try await self.fix814AccountsIfNecessary(using: configuration) {
+                    configuration = newConfiguration
                     break login
                 }
                 
