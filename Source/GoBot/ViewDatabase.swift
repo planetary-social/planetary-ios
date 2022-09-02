@@ -1857,7 +1857,7 @@ class ViewDatabase {
                     hasReplies: false
                 )
             } catch {
-                Log.optional(error)
+                Log.error("Error parsing published message \(row[colKey]): \(error.localizedDescription)")
                 return nil
             }
         }

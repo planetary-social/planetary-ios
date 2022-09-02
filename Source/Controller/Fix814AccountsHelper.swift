@@ -43,7 +43,7 @@ enum Fix814AccountsHelper {
             return nil
         }
         
-        Log.info("Running 814 fix. Found \(publishedMessages.count) published messages")
+        Log.info("Prompting for 814 fix. Found \(publishedMessages.count) published messages")
         
         try await bot.logout()
         
@@ -56,10 +56,12 @@ enum Fix814AccountsHelper {
             message: Text.confirmCopyToMainNetwork.text
         )
         if !confirmed {
-            let areYouSure = await appController.confirm(
-                message: Text.confirmSkipCopyToMainNetwork.text
+            let secondConfirm = await appController.confirm(
+                message: Text.confirmSkipCopyToMainNetwork.text,
+                cancelTitle: Text.yes.text,
+                confirmTitle: Text.no.text
             )
-            if areYouSure {
+            if !secondConfirm {
                 Log.info("User opted out of 814 fix")
                 Analytics.shared.trackDidSkip814Fix()
                 return nil
