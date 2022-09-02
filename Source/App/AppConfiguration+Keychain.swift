@@ -16,7 +16,7 @@ extension AppConfigurations {
 
     static func add(_ configuration: AppConfiguration) {
         if let existingIndex = Keychain.configurations.firstIndex(where: {
-            configuration.identity == $0.identity}) {
+            configuration.id == $0.id }) {
             Keychain.configurations[existingIndex] = configuration
         } else {
             Keychain.configurations += [configuration]

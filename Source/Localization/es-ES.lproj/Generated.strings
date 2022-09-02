@@ -144,6 +144,8 @@
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 "Text.areYouSure" = "¿Estás seguro?";
 "Text.dismissMigrationEarlyMessage" = "Esta pantalla se cerrará y podrás usar Planetary mientras tus datos se descargan en segundo plano. ¿Estás seguro?";
+"Text.confirmCopyToMainNetwork" = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network.";
+"Text.confirmSkipCopyToMainNetwork" = "You will not be prompted to run this fix again. Are you sure you want to skip it?";
 
 "Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
 "Blocking.buttonTitle" = "Yes, ignore {{ name }}";

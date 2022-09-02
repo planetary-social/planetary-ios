@@ -64,6 +64,13 @@ struct Content: Codable {
         self.typeException = nil
         self.about = about
     }
+    
+    init(from pub: Pub) {
+        self.type = .pub
+        self.typeString = "pub"
+        self.typeException = nil
+        self.pub = pub
+    }
 
     /// The first responsibility of this decoder is to ensure that
     /// it never throws even when the supplied data does not contain
@@ -123,7 +130,7 @@ struct Content: Codable {
                 case .pub: self.pub = try Pub(from: decoder)
                 case .post: self.post = try Post(from: decoder)
                 case .vote: self.vote = try ContentVote(from: decoder)
-                default: ()
+                case .unknown, .unsupported: ()
             }
         } catch {
             self.contentException = error.localizedDescription
@@ -144,6 +151,19 @@ struct Content: Codable {
     var isContact: Bool { self.isValid && self.type == .contact && self.contact != nil }
     var isPost: Bool { self.isValid && self.type == .post && self.post != nil }
     var isVote: Bool { self.isValid && self.type == .vote && self.vote != nil }
+    
+    var codableContent: ContentCodable? {
+        switch type {
+        case .about: return about
+        case .address: return address
+        case .contact: return contact
+        case .dropContentRequest: return dropContentRequest
+        case .pub: return pub
+        case .post: return post
+        case .vote: return vote
+        case .unknown, .unsupported: return nil
+        }
+    }
 }
 
 // TODO it seems valuable to perform operations on [Content]

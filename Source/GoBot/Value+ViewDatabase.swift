@@ -10,26 +10,38 @@ import Foundation
 import SQLite
 
 extension Value {
-    init?(row: Row, db: ViewDatabase, hasMentionColumns: Bool) throws {
+    init?(row: Row, db: ViewDatabase, useNamespacedTables: Bool = false, hasMentionColumns: Bool) throws {
         var content: Content
         let type = try row.get(db.colMsgType)
-        switch type {
-        case ContentType.post.rawValue:
+        switch ContentType(rawValue: type) {
+        case .post:
             content = Content(from: try Post(row: row, db: db, hasMentionColumns: hasMentionColumns))
-        case ContentType.vote.rawValue:
+        case .vote:
             content = Content(from: try ContentVote(row: row, db: db))
-        case ContentType.contact.rawValue:
-            guard let contact = try Contact(row: row, db: db) else {
+        case .contact:
+            guard let contact = try Contact(row: row, db: db, useNamespacedTables: useNamespacedTables) else {
                 // Contacts stores only the latest message
                 // So, an old follow that was later unfollowed won't appear here.
                 return nil
             }
             content = Content(from: contact)
-        default:
+        case .about:
+            content = Content(from: try About(row: row, db: db))
+        case .pub:
+            content = Content(from: try Pub(row: row, db: db))
+        case .dropContentRequest, .address, .unknown, .unsupported, .none:
             throw ViewDatabaseError.unexpectedContentType(type)
         }
+        
+        var author: Identity
+        if useNamespacedTables {
+            author = try row.get(db.authors[db.colAuthor])
+        } else {
+            author = try row.get(db.colAuthor)
+        }
+        
         self.init(
-            author: try row.get(db.colAuthor),
+            author: author,
             content: content,
             hash: "sha256",
             previous: nil,

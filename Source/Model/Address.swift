@@ -13,7 +13,7 @@ import Logger
 /// Replaces the old 'pub' message type (`Pub` in Planetary code.
 ///
 /// https://github.com/ssbc/ssb-device-address
-struct Address: Codable {
+struct Address: ContentCodable {
     
     let type: ContentType
     

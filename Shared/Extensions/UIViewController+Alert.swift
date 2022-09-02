@@ -108,6 +108,35 @@ extension UIViewController: AlertRouter {
 
         self.choose(from: [confirm, cancel], title: title, message: message, sourceView: sourceView)
     }
+    
+    /// An async version of `confirm(...)` that returns `true` if the user confirmed the action and false otherwise.
+    @MainActor
+    func confirm(
+        from sourceView: UIView? = nil,
+        title: String? = nil,
+        message: String,
+        isDestructive: Bool = false,
+        cancelTitle: String = Text.cancel.text,
+        confirmTitle: String = Text.ok.text
+    ) async -> Bool {
+        
+        await withCheckedContinuation { continuation in
+            confirm(
+                from: sourceView,
+                title: title,
+                message: message,
+                isDestructive: isDestructive,
+                cancelTitle: cancelTitle,
+                cancelClosure: {
+                    continuation.resume(with: .success(false))
+                },
+                confirmTitle: confirmTitle,
+                confirmClosure: {
+                    continuation.resume(with: .success(true))
+                }
+            )
+        }
+    }
 
     /// Convenience func to present multiple alert actions in an iPhone
     /// and iPad compatible way.  UIAlertController management can be tedious
