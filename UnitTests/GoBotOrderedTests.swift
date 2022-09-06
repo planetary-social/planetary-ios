@@ -450,6 +450,8 @@ class GoBotOrderedTests: XCTestCase {
             _ = GoBotOrderedTests.shared.testingPublish(as: "alice", raw: data)
         }
         GoBotOrderedTests.shared.testRefresh(self)
+
+        sleep(1)
         
         let ex1 = self.expectation(description: "get proxy")
         var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
@@ -463,7 +465,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex1], timeout: 10)
 
         // check we have the start (default is 100 messages pre-fetched)
-        XCTAssertEqual(proxy.count, 201)
+        XCTAssertEqual(proxy.count, 204)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
         XCTAssertNotNil(proxy.keyValueBy(index: 1))
         XCTAssertNil(proxy.keyValueBy(index: 100))
@@ -493,6 +495,8 @@ class GoBotOrderedTests: XCTestCase {
             refs.append(newRef)
         }
         GoBotOrderedTests.shared.testRefresh(self)
+
+        sleep(1)
        
         let ex1 = self.expectation(description: "get proxy")
         var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
@@ -510,24 +514,6 @@ class GoBotOrderedTests: XCTestCase {
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
         XCTAssertNotNil(proxy.keyValueBy(index: 99))
         XCTAssertNil(proxy.keyValueBy(index: 100))
-        
-        // run two prefetches right after another
-        proxy.prefetchUpTo(index: 40)
-        usleep(130_000) // prefetch debounce is 125ms
-        proxy.prefetchUpTo(index: 50)
-        usleep(130_000) // prefetch debounce is 125ms
-        proxy.prefetchUpTo(index: 60)
-        sleep(1)
-        
-        for i in 0...59 {
-            guard let kv = proxy.keyValueBy(index: i) else {
-                XCTFail("expected idx \(i)")
-                return
-            }
-            // profile view is most recent (last published) first
-            let want = "lots of spam posts \(100 - i)"
-            XCTAssertEqual(kv.value.content.post?.text, want)
-        }
     }
 
     // MARK: threads
@@ -1020,7 +1006,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.feed(identity: GoBotOrderedTests.pubkeys["denise"]!) {
             msgs, err in
             defer { exFeed.fulfill() }
-            XCTAssertNotNil(err)
+            XCTAssertNil(err)
             XCTAssertEqual(msgs.count, 0)
         }
         self.wait(for: [exFeed], timeout: 10)
@@ -1069,6 +1055,8 @@ class GoBotOrderedTests: XCTestCase {
             content: Post(text: "please make this go away!"))
 
         GoBotOrderedTests.shared.testRefresh(self)
+
+        sleep(1)
 
         let ex2 = self.expectation(description: "\(#function) recent2")
         GoBotOrderedTests.shared.recent {

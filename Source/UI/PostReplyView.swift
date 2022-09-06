@@ -12,6 +12,8 @@ import UIKit
 /// Composite view of the PostCellView, a ReplyTextView, and a bottom separator.
 class PostReplyView: KeyValueView {
 
+    let headerView = ContactHeaderView()
+
     let postView = PostCellView()
 
     let repliesView = RepliesView()
@@ -27,7 +29,6 @@ class PostReplyView: KeyValueView {
         view.isUserInteractionEnabled = false
         view.topSeparator.isHidden = true
         view.addGestureRecognizer(view.tapGesture.recognizer)
-        view.isSkeletonable = true
         view.backgroundColor = .cardBackground
         return view
     }()
@@ -43,8 +44,9 @@ class PostReplyView: KeyValueView {
     }()
     
     let stackView: UIStackView = {
-        let stackView = UIStackView()
+        let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
+        stackView.distribution = .fill
         return stackView
     }()
 
@@ -66,6 +68,7 @@ class PostReplyView: KeyValueView {
 
         Layout.fill(view: self, with: stackView)
         stackView.addArrangedSubview(topBorder)
+        stackView.addArrangedSubview(headerView)
         stackView.addArrangedSubview(postView)
         stackView.addArrangedSubview(repliesView)
         stackView.addArrangedSubview(replyTextView)
@@ -78,16 +81,39 @@ class PostReplyView: KeyValueView {
         nil
     }
 
+    override func reset() {
+        super.reset()
+        replyTextView.isHidden = true
+        headerView.isHidden = true
+        postView.displayHeader = true
+        postView.isHidden = false
+        repliesView.isHidden = false
+        postView.reset()
+    }
+
     override func update(with keyValue: KeyValue) {
-        self.postView.update(with: keyValue)
-        self.repliesView.update(with: keyValue)
-        if !keyValue.metadata.replies.isEmpty {
-            self.degrade.heightConstraint?.constant = 12.33
+        let isReply = keyValue.value.content.post?.root != nil
+        let isVote = keyValue.value.content.vote?.root != nil
+        if isReply || isVote {
+            postView.isHidden = false
+            postView.displayHeader = false
+            headerView.isHidden = false
+            headerView.update(with: keyValue)
+            repliesView.isHidden = true
+            degrade.heightConstraint?.constant = 0
         } else {
-            self.degrade.heightConstraint?.constant = 0
+            postView.isHidden = false
+            headerView.isHidden = true
+            replyTextView.isHidden = keyValue.offChain == true
+            repliesView.isHidden = false
+            repliesView.update(with: keyValue)
+            if !keyValue.metadata.replies.isEmpty {
+                degrade.heightConstraint?.constant = 12.33
+            } else {
+                degrade.heightConstraint?.constant = 0
+            }
         }
-        
-        replyTextView.isHidden = keyValue.offChain == true
+        postView.update(with: keyValue)
     }
 }
 

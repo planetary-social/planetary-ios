@@ -1500,16 +1500,21 @@ class GoBot: Bot {
         }
     }
 
-    func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
-        Thread.assertIsMainThread()
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {
             do {
-                let proxy = try self.database.paginated(feed: identity)
+                let strategyString = String(describing: type(of: strategy))
+                Log.debug("GoBot fetching posts with strategy: \(strategyString)")
+                let proxy = try self.database.paginatedFeed(with: strategy)
                 DispatchQueue.main.async { completion(proxy, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
+    }
+
+    func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
+        feed(strategy: NoHopFeedAlgorithm(identity: identity), completion: completion)
     }
     
     func post(from key: MessageIdentifier) throws -> KeyValue {
