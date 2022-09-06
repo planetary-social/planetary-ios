@@ -228,6 +228,10 @@
 		23EF5AAF249D185E00469977 /* BearerBanListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */; };
 		23EF5AB0249D185E00469977 /* BearerBanListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */; };
 		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
+		2D1C46EF289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */; };
+		2D1C46F0289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */; };
+		2D1F3F9E2894E81200742C45 /* RandomAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */; };
+		2D5DC59E28B05A6F00E064A6 /* RandomAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */; };
 		2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
@@ -1271,6 +1275,8 @@
 		23EF5AA7249D177F00469977 /* BanListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BanListAPI.swift; sourceTree = "<group>"; };
 		23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearerBanListAPI.swift; sourceTree = "<group>"; };
 		2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryOnboardingStep.swift; sourceTree = "<group>"; };
+		2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryFeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
+		2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomAlgorithm.swift; sourceTree = "<group>"; };
 		2DBA7C96263DB1FA008B646F /* zh-CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-CN"; path = Generated.strings; sourceTree = "<group>"; };
 		2DFBECE325E1542A00803075 /* development.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = development.entitlements; sourceTree = "<group>"; };
 		2DFBECE425E1545000803075 /* production.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = production.entitlements; sourceTree = "<group>"; };
@@ -2092,6 +2098,7 @@
 				C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */,
 				C9EBE0462880C2C900A2CF51 /* HelpDrawerCoordinator.swift */,
 				C9313A77289A89580093AC47 /* RoomListCoordinator.swift */,
+				2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2636,6 +2643,7 @@
 		5BC297572806021500C0CD81 /* FeedStrategy */ = {
 			isa = PBXGroup;
 			children = (
+				2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */,
 				5BC297532805F4A800C0CD81 /* FeedStrategy.swift */,
 				5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */,
 				5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */,
@@ -2841,15 +2849,15 @@
 			isa = PBXGroup;
 			children = (
 				C98A01472790B9F200E29A97 /* Environment.swift */,
-				C98A01422790B9EE00E29A97 /* Planetary.debug.xcconfig */,
-				C98A01462790B9F100E29A97 /* Planetary.release.xcconfig */,
 				C98A01442790B9F000E29A97 /* APITests.debug.xcconfig */,
 				C98A01432790B9EF00E29A97 /* APITests.release.xcconfig */,
-				C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */,
-				C98A01452790B9F100E29A97 /* UnitTests.release.xcconfig */,
+				C98A01422790B9EE00E29A97 /* Planetary.debug.xcconfig */,
+				C98A01462790B9F100E29A97 /* Planetary.release.xcconfig */,
 				C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */,
 				C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */,
 				C98A01412790B9ED00E29A97 /* UITests.debug.xcconfig */,
+				C98A01482790B9F300E29A97 /* UnitTests.debug.xcconfig */,
+				C98A01452790B9F100E29A97 /* UnitTests.release.xcconfig */,
 			);
 			path = Configs;
 			sourceTree = "<group>";
@@ -3916,6 +3924,7 @@
 				C9724B202809D3F7000EBCCD /* UIViewController+Block.swift in Sources */,
 				C93A4B3A279894AC009F963D /* GoBotTestExtensions.swift in Sources */,
 				C9724B732809E7A0000EBCCD /* AvatarImageView.swift in Sources */,
+				2D1C46F0289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift in Sources */,
 				C9724BE62809EE9C000EBCCD /* FollowerTableViewController.swift in Sources */,
 				C9724B2A2809D47D000EBCCD /* BackupOnboardingStep.swift in Sources */,
 				C9724B2B2809D47D000EBCCD /* BenefitsOnboardingStep.swift in Sources */,
@@ -4123,6 +4132,7 @@
 				0A38800F2475ACF000777843 /* PubAPI.swift in Sources */,
 				533EDBE92385F7E7008B3565 /* Cache.swift in Sources */,
 				5336611422D9669E00100707 /* UIColor+Random.swift in Sources */,
+				2D5DC59E28B05A6F00E064A6 /* RandomAlgorithm.swift in Sources */,
 				C9724B9D2809EAA4000EBCCD /* RedeemInviteViewController.swift in Sources */,
 				0A4870F82492C05D00BCD063 /* AsynchronousBlockOperation.swift in Sources */,
 				5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */,
@@ -4486,6 +4496,7 @@
 				0AC10DE6246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift in Sources */,
 				5306F770228E65240058D67A /* RepeatingTimer.swift in Sources */,
 				5BC2975D2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */,
+				2D1F3F9E2894E81200742C45 /* RandomAlgorithm.swift in Sources */,
 				5396A62F2245A50300C57A4B /* LaunchViewController.swift in Sources */,
 				5376FADF228CF83A00411F5B /* Saveable.swift in Sources */,
 				0A387FFA2474E65300777843 /* PhoneVerificationAPI.swift in Sources */,
@@ -4599,6 +4610,7 @@
 				8DA9567D230DA46C00A334EB /* UIButton+Text.swift in Sources */,
 				53B4F5F122B7123900027C6A /* NotificationsViewController.swift in Sources */,
 				C9C3787827C6881000238B58 /* ConnectedPeerListCoordinator.swift in Sources */,
+				2D1C46EF289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift in Sources */,
 				5B373838288B09A30017756B /* ExtendedAboutCellView.swift in Sources */,
 				C955CABB27D272F3005146F2 /* ExitOperation.swift in Sources */,
 				53E29CD622D542B5008A2CB1 /* Dictionary+JSONSerialization.swift in Sources */,

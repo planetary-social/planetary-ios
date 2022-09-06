@@ -1127,8 +1127,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.everyone {
             msgs, err in
             XCTAssertNil(err)
-            // we should have 100 posts from page (as is the only one we don't follow)
-            XCTAssertEqual(msgs.count, 100)
+            XCTAssertEqual(msgs.count, 333)
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)

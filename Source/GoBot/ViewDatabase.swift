@@ -230,7 +230,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        // db.trace { print("\n\n\ntSQL: \($0)\n\n\n") } // print all the statements
         
         try checkAndRunMigrations(on: db)
         
@@ -352,6 +352,16 @@ class ViewDatabase {
                     """
                 )
                 db.userVersion = 18
+            }
+            if db.userVersion == 18 {
+                try db.execute(
+                    """
+                    CREATE INDEX tangles_idx_87132823 ON tangles(root, msg_ref);
+                    CREATE INDEX read_messages_idx_7c47714e ON read_messages(is_read, msg_id);
+                    CREATE INDEX contacts_idx_03e709db ON contacts(msg_ref);
+                    """
+                )
+                db.userVersion = 19
             }
         }
     }
