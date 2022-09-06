@@ -11,6 +11,7 @@ import UIKit
 
 enum FakeBotError: Error {
     case runtimeError(String)
+    case notImplemented
 }
 
 class FakeBot: Bot {
@@ -66,6 +67,16 @@ class FakeBot: Bot {
     }
     func insert(room: Room) async throws { }
     func delete(room: Room) async throws { }
+    
+    func registeredAliases() async throws -> [RoomAlias] {
+        throw FakeBotError.notImplemented
+    }
+    
+    func register(alias: String, in: Room) async throws -> RoomAlias {
+        throw FakeBotError.notImplemented
+    }
+    
+    func revoke(alias: RoomAlias) async throws {}
     
     func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion) {
         completionQueue.async { completion(nil) }

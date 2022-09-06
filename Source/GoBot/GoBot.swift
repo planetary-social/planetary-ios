@@ -358,6 +358,30 @@ class GoBot: Bot {
         }
         return try await task.value
     }
+    
+    func registeredAliases() async throws -> [RoomAlias] {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.getRegisteredAliases()
+        }
+        return try await task.value
+    }
+    
+    func register(alias: String, in room: Room) async throws -> RoomAlias {
+        let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
+            if self.bot.register(alias: alias, in: room) {
+                return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room)
+            } else {
+                // TODO: localize, better error messages i.e. in case of conflicts.
+                throw GoBotError.unexpectedFault("Failed to register room alias")
+            }
+        }
+        return try await task.value
+    }
+    
+    func revoke(alias: RoomAlias) async throws {
+        
+    }
+    
 
     private var _isSyncing = false
     var isSyncing: Bool { self._isSyncing }

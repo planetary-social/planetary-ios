@@ -253,6 +253,12 @@
 "ManageRelays.invalidRoomURL" = "Invalid room URL";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
+"Alias.manageAliases" = "Manage Aliases (beta)";
+"Alias.addAlias" = "Register a new alias";
+"Alias.roomAliases" = "Room Aliases (beta)";
+"Alias.aliases" = "Aliases";
+"Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
+
 "Preview.title" = "Configuración avanzada";
 "Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
 
@@ -278,9 +284,10 @@
 "DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
 "DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
 
-"PublicWebHosting.enabled" = "Activado";
-"PublicWebHosting.title" = "Web Pública";
-"PublicWebHosting.footer" = "Indicá que querés que tus posts se muestren en sitios web públicos. Los cambios pueden tomar un par de horas en ser efectuados.";
+"WebServices.title" = "Web Services";
+"WebServices.publicWebHosting" = "Public Web Hosting";
+"WebServices.aliases" = "Aliases (beta)";
+"WebServices.footer" = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible.";
 
 "Push.enabled" = "Activado";
 "Push.title" = "Notificaciones Push";
