@@ -49,6 +49,7 @@ class AboutViewController: ContentViewController {
         super.init(scrollable: false)
         self.aboutView.update(with: about)
         self.addActions()
+        self.triggerRefresh()
     }
 
     convenience init(with about: About) {
@@ -99,6 +100,11 @@ class AboutViewController: ContentViewController {
             self?.about = about
             self?.update(with: about)
         }
+    }
+    
+    // tells the go-bot to do a one time request to refresh this identity from peers.
+    private func triggerRefresh(){
+        Bots.current.replicate(feed: self.identity)
     }
 
     private func loadFeed() {
