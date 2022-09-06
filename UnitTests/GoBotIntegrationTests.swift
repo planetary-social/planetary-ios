@@ -232,6 +232,7 @@ class GoBotIntegrationTests: XCTestCase {
     }
 
     func testLoginLogoutLoop() async throws {
+        XCTExpectFailure("go-ssb sometimes hangs when logging out")
         try await sut.login(config: appConfig)
 
         await sut.exit()
