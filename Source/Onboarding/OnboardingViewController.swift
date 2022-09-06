@@ -21,18 +21,10 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         BenefitsOnboardingStep(),
         BirthdateOnboardingStep(),
         NameOnboardingStep(),
-        // disabling phone verification due to twillio bug
-//        PhoneOnboardingStep(),
-//        PhoneVerifyOnboardingStep(),
-        JoinOnboardingStep(),           // Bot and API calls
-        // disabled until we work on these again
-//        BackupOnboardingStep(),
-//        ContactsOnboardingStep(),
-//        DirectoryOnboardingStep(),      // Bot and API calls
         PhotoOnboardingStep(),
         PhotoConfirmOnboardingStep(),   // Bot and API calls
-//        BioOnboardingStep(),            // Bot and API calls
         DoneOnboardingStep(),           // Bot and API calls
+        JoinOnboardingStep(),           // Bot and API calls
     ]
 
     private let resumeSteps = [

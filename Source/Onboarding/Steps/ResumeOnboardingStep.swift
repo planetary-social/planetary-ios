@@ -72,6 +72,7 @@ class ResumeOnboardingStep: OnboardingStep {
                 if let configuration = configuration {
                     AppConfigurations.delete(configuration)
                 }
+                self.view.lookReady()
                 await AppController.shared.relaunch()
             }
         }
