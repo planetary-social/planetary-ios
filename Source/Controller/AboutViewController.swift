@@ -49,7 +49,7 @@ class AboutViewController: ContentViewController {
         self.about = about
         super.init(scrollable: false)
         self.aboutView.update(with: about)
-        self.addActions()
+        self.addActions() 
         self.triggerRefresh()
         if identity.isCurrentUser {
             loadAliases()

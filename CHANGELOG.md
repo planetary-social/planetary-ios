@@ -7,13 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.3.0] 2022-08-19
+
 - Added support for random algorithm for sorting home and discover feeds. #759
 - Show content from follows when looking for a pub's profile. #790
 - Show replies when displaying a profile. #681
+- Added support for registering room aliases #808
 
 ## [1.2.7] 2022-08-19
 
-- Fixed an issue where onboarding could get stuck on the bio step
+- Fixed an issue where onboarding could get stuck on the bio step. #804
 
 ## [1.2.6] 2022-08-03
 
