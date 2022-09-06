@@ -1314,7 +1314,13 @@ class GoBot: Bot {
 
     /// The algorithm we use to filter and sort the discover tab feed.
     var discoverFeedStrategy: FeedStrategy {
-        PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
+        if let data = userDefaults.object(forKey: UserDefaults.discoveryFeedStrategy) as? Data,
+            let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
+            let strategy = decodedObject as? FeedStrategy {
+            return strategy
+        }
+        
+        return RandomAlgorithm(onlyFollowed: false)
     }
     
     // old recent
