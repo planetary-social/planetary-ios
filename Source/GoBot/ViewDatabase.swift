@@ -234,7 +234,7 @@ class ViewDatabase {
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
         
-        // db.trace { print("\tSQL: \($0)") } // print all the statements
+        // db.trace { print("\n\n\ntSQL: \($0)\n\n\n") } // print all the statements
         
         try checkAndRunMigrations(on: db)
         
@@ -360,6 +360,16 @@ class ViewDatabase {
             if db.userVersion == 18 {
                 try db.execute(
                     """
+                    CREATE INDEX tangles_idx_87132823 ON tangles(root, msg_ref);
+                    CREATE INDEX read_messages_idx_7c47714e ON read_messages(is_read, msg_id);
+                    CREATE INDEX contacts_idx_03e709db ON contacts(msg_ref);
+                    """
+                )
+                db.userVersion = 19
+            }
+            if db.userVersion == 19 {
+                try db.execute(
+                    """
                     -- oops
                     -- can't add a primary key directly so create a new table and copy
                     CREATE TABLE tmp_rooms (
@@ -382,7 +392,7 @@ class ViewDatabase {
                     );
                     """
                 )
-                db.userVersion = 19
+                db.userVersion = 20
             }
         }
     }
@@ -484,26 +494,6 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID)
-    }
-
-    // posts for a feed
-    func stats(for feed: FeedIdentifier) throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
-        do {
-            let authorID = try self.authorID(of: feed, make: false)
-            let theirRootPosts = try db.scalar(self.posts
-                .join(self.msgs, on: self.msgs[colMessageID] == self.posts[colMessageRef])
-                .filter(colAuthorID == authorID)
-                .filter(colIsRoot == true)
-                .count)
-
-            return theirRootPosts
-        } catch {
-            Log.optional(GoBotError.duringProcessing("stats for feed failed", error))
-            return 0
-        }
     }
     
     func lastReceivedTimestamp() throws -> Double {
@@ -1315,11 +1305,6 @@ class ViewDatabase {
     func paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedKeyValueDataProxy) {
         let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
-    }
-
-    func paginated(feed: Identity) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try FeedKeyValueSource(with: self, feed: feed)
-        return try PaginatedPrefetchDataProxy(with: src!)
     }
 
     // MARK: recent

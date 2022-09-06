@@ -498,6 +498,16 @@ class GoBot: Bot {
         completion(nil, elapsed, numberOfMessages)
         NotificationCenter.default.post(name: .didSync, object: nil)
     }
+    
+    // refresh specific feed - when we view a profile we should ask gobot to refresh that feed. It might not get back in time
+    // to update what the user sees but it'll help. In particular this will happen with pubs.
+    
+    func replicate(feed: FeedIdentifier) {
+        userInitiatedQueue.async {
+            self.bot.replicate(feed: feed)
+        }
+    }
+    
 
     // MARK: Refresh
 
@@ -1338,7 +1348,13 @@ class GoBot: Bot {
 
     /// The algorithm we use to filter and sort the discover tab feed.
     var discoverFeedStrategy: FeedStrategy {
-        PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
+        if let data = userDefaults.object(forKey: UserDefaults.discoveryFeedStrategy) as? Data,
+            let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
+            let strategy = decodedObject as? FeedStrategy {
+            return strategy
+        }
+        
+        return RandomAlgorithm(onlyFollowed: false)
     }
     
     // old recent
@@ -1518,16 +1534,21 @@ class GoBot: Bot {
         }
     }
 
-    func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
-        Thread.assertIsMainThread()
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {
             do {
-                let proxy = try self.database.paginated(feed: identity)
+                let strategyString = String(describing: type(of: strategy))
+                Log.debug("GoBot fetching posts with strategy: \(strategyString)")
+                let proxy = try self.database.paginatedFeed(with: strategy)
                 DispatchQueue.main.async { completion(proxy, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
+    }
+
+    func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
+        feed(strategy: NoHopFeedAlgorithm(identity: identity), completion: completion)
     }
     
     func post(from key: MessageIdentifier) throws -> KeyValue {

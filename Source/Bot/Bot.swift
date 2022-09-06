@@ -100,6 +100,8 @@ protocol Bot: AnyObject {
     ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
     
+    func replicate(feed: FeedIdentifier)
+    
     /// Connect to the SSB peer at the given address.
     func connect(to address: MultiserverAddress)
 
@@ -213,7 +215,10 @@ protocol Bot: AnyObject {
     /// posts the user has not yet seen in the Home Feed.
     /// - parameter message: The identifier of the message to account for the offset.
     func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion)
-    
+
+    /// Builds a feed of posts using a strategy object
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion)
+
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.

@@ -149,7 +149,9 @@ class FakeBot: Bot {
     func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) { }
 
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
-
+    
+    func replicate(feed: FeedIdentifier) { }
+    
     required init() {}
     static let shared = FakeBot()
 
@@ -299,7 +301,11 @@ class FakeBot: Bot {
             completion(StaticDataProxy(), nil)
         }
     }
-    
+
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
+        completion(StaticDataProxy(), nil)
+    }
+
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
     }

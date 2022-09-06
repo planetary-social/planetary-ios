@@ -49,7 +49,7 @@ class ContactCellView: KeyValueView {
 
         self.backgroundColor = .cardBackground
 
-        Layout.fillTop(of: self, with: self.headerView, insets: .topLeftRight)
+        Layout.fillTop(of: self, with: self.headerView)
 
         let (topConstraint, _, _, _) = Layout.fill(
             view: self,

@@ -59,7 +59,7 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
     }
 
     override func performSecondaryAction(sender button: UIButton) {
-        self.next(.bio)
+        self.next(.done)
     }
 
     @objc override func performPrimaryAction(sender button: UIButton) {

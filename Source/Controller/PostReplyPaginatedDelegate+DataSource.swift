@@ -87,6 +87,8 @@ class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
                 return nil
             }
             return AboutViewController(with: identity)
+        case .vote:
+            return nil
         default:
             return ThreadViewController(with: keyValue, startReplying: false)
         }
