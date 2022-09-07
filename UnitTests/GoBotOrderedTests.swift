@@ -10,6 +10,8 @@
 
 import XCTest
 
+// swiftlint:disable force_unwrapping
+
 let botTestsKey = Secret(from: """
 {"curve":"ed25519","id":"@shwQGai09Tv+Pjbgde6lmhQhc34NURtP2iwnI0xsKtQ=.ed25519","private":"RdUdi8VQFb38R3Tyv9/iWZwRmCy1L1GfbR6JVrTLHkKyHBAZqLT1O/4+NuB17qWaFCFzfg1RG0/aLCcjTGwq1A==.ed25519","public":"shwQGai09Tv+Pjbgde6lmhQhc34NURtP2iwnI0xsKtQ=.ed25519"}
 """)!
@@ -33,9 +35,13 @@ class GoBotOrderedTests: XCTestCase {
     static let shared = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
     
     static let userDefaults = { () -> UserDefaults in
-        let defaults = UserDefaults()
+        let userDefaultsSuiteName = "GoBotOrderedTests"
+        UserDefaults().removePersistentDomain(forName: userDefaultsSuiteName)
+        let defaults = UserDefaults(suiteName: userDefaultsSuiteName)!
+
+        let welcomeService = WelcomeServiceAdapter(userDefaults: defaults)
+        defaults.set(true, forKey: welcomeService.hasBeenWelcomedKey(for: botTestsKey.id))
         defaults.set(false, forKey: "prevent_feed_from_forks")
-        defaults.synchronize()
         return defaults
     }()
 

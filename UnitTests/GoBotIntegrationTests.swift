@@ -19,6 +19,8 @@ class GoBotIntegrationTests: XCTestCase {
     var userDefaults: UserDefaults!
     var appConfig: AppConfiguration!
     let fileManager = FileManager.default
+    let userDefaultsSuiteName = "GoBotIntegrationTests"
+
 
     override func setUpWithError() throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
@@ -30,7 +32,10 @@ class GoBotIntegrationTests: XCTestCase {
         // start fresh
         do { try fileManager.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
         
-        userDefaults = UserDefaults()
+        UserDefaults().removePersistentDomain(forName: userDefaultsSuiteName)
+        userDefaults = UserDefaults(suiteName: userDefaultsSuiteName)
+        let welcomeService = WelcomeServiceAdapter(userDefaults: userDefaults)
+        userDefaults.set(true, forKey: welcomeService.hasBeenWelcomedKey(for: botTestsKey.id))
         
         sut = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
         
