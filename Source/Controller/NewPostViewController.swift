@@ -37,14 +37,16 @@ class NewPostViewController: ContentViewController {
 
     private let imagePicker = ImagePicker()
     
-    private let draftStore = UserDefaults.standard
-    private let draftKey = "com.planetary.ios.draft." + (Bots.current.identity ?? "")
+    private let draftStore: DraftStore
+    private let draftKey: String
     private let queue = DispatchQueue.global(qos: .userInitiated)
     private var cancellables = [AnyCancellable]()
 
     // MARK: Lifecycle
 
     init(images: [UIImage] = []) {
+        self.draftKey = "com.planetary.ios.draft." + (Bots.current.identity ?? "")
+        self.draftStore = DraftStore(draftKey: draftKey)
         super.init(scrollable: false, title: .newPost)
         isKeyboardHandlingEnabled = true
         view.backgroundColor = .cardBackground
@@ -92,8 +94,7 @@ class NewPostViewController: ContentViewController {
     
     /// Configures the view to save and load draft posts from NSUserDefaults.
     private func setupDrafts() {
-        
-        if let draft = loadDraft() {
+        if let draft = draftStore.loadDraft() {
             if let text = draft.attributedText {
                 textView.attributedText = text
             }
@@ -106,35 +107,14 @@ class NewPostViewController: ContentViewController {
             .throttle(for: 3, scheduler: queue, latest: true)
             .sink { [weak self] newText in
                 if let newText = newText {
-                    self?.save(draft: newText)
+                    self?.draftStore.save(draft: newText, images: self?.galleryView.images ?? [])
                 } else {
-                    self?.clearDraft()
+                    self?.draftStore.clearDraft()
                 }
             }
             .store(in: &cancellables)
     }
     
-    private func loadDraft() -> Draft? {
-        if let draftData = draftStore.data(forKey: draftKey),
-            let draft = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(draftData) as? Draft {
-            return draft
-        }
-        
-        return nil
-    }
-    
-    private func save(draft string: NSAttributedString?) {
-        let draft = Draft(attributedText: string, images: galleryView.images)
-        let data = try? NSKeyedArchiver.archivedData(withRootObject: draft, requiringSecureCoding: false)
-        draftStore.set(data, forKey: draftKey)
-        draftStore.synchronize()
-    }
-    
-    private func clearDraft() {
-        draftStore.removeObject(forKey: draftKey)
-        draftStore.synchronize()
-    }
-
     // MARK: Actions
 
     private func addActions() {
@@ -175,7 +155,7 @@ class NewPostViewController: ContentViewController {
         let images = self.galleryView.images
 
         self.lookBusy()
-        save(draft: text)
+        draftStore.save(draft: text, images: galleryView.images)
         Bots.current.publish(post, with: images) { [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -190,14 +170,14 @@ class NewPostViewController: ContentViewController {
     }
 
     private func dismiss(didPublish post: Post) {
-        clearDraft()
+        draftStore.clearDraft()
         self.didPublish?(post)
         self.dismiss(animated: true)
     }
     
     @objc
     private func dismissWithoutPost() {
-        save(draft: textView.attributedText)
+        draftStore.save(draft: textView.attributedText, images: galleryView.images)
         self.dismiss(animated: true)
     }
 
@@ -226,7 +206,7 @@ extension NewPostViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
-        save(draft: textView.attributedText)
+        draftStore.save(draft: textView.attributedText, images: galleryView.images)
     }
 
     func imageGalleryView(
@@ -246,13 +226,11 @@ extension NewPostViewController: ImageGalleryViewDelegate {
 extension NewPostViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        print("didDIsmisssss")
-        
         let hasText = self.textView.attributedText.length > 0
         let hasImages = !self.galleryView.images.isEmpty
 
         if hasText || hasImages {
-            save(draft: textView.attributedText)
+            draftStore.save(draft: textView.attributedText, images: galleryView.images)
         }
     }
 }

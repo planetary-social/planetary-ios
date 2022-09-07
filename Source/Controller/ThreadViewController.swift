@@ -11,11 +11,19 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Combine
 
 class ThreadViewController: ContentViewController {
 
     private let post: KeyValue
-    private var root: KeyValue?
+    private var root: KeyValue? {
+        didSet {
+            let key = root?.key ?? ""
+            let identity = Bots.current.identity ?? ""
+            draftKey = "com.planetary.ios.draft.reply." + key + identity
+            draftStore = DraftStore(draftKey: draftKey)
+        }
+    }
     
     private lazy var dataSource: ThreadReplyPaginatedTableViewDataSource = {
         var dataSource = ThreadReplyPaginatedTableViewDataSource()
@@ -27,6 +35,11 @@ class ThreadViewController: ContentViewController {
                                                           color: UIColor.text.reply,
                                                           placeholderText: .postAReply,
                                                           placeholderColor: UIColor.text.placeholder)
+    
+    private var draftKey = ""
+    private var draftStore = DraftStore(draftKey: "")
+    private let queue = DispatchQueue.global(qos: .userInitiated)
+    private var cancellables = [AnyCancellable]()
 
     private var branchKey: Identifier {
         self.rootKey
@@ -174,6 +187,7 @@ class ThreadViewController: ContentViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         headerView.removeFromSuperview()
+        draftStore.save(draft: replyTextView.attributedText, images: galleryView.images)
     }
 
     private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -190,6 +204,28 @@ class ThreadViewController: ContentViewController {
                 completion?()
             }
         }
+    }
+    
+    private func setUpDrafts() {
+        if let draft = draftStore.loadDraft() {
+            if let text = draft.attributedText {
+                replyTextView.attributedText = text
+            }
+            galleryView.add(draft.images)
+            Log.info("Restored draft")
+        }
+        
+        replyTextView
+            .textPublisher
+            .throttle(for: 3, scheduler: queue, latest: true)
+            .sink { [weak self] newText in
+                if let newText = newText {
+                    self?.draftStore.save(draft: newText, images: self?.galleryView.images ?? [])
+                } else {
+                    self?.draftStore.clearDraft()
+                }
+            }
+            .store(in: &cancellables)
     }
 
     private func refresh() {
@@ -226,6 +262,7 @@ class ThreadViewController: ContentViewController {
         self.interactionView.replies = replies as? StaticDataProxy
         self.interactionView.update()
         replyTextView.isHidden = root.offChain == true
+        setUpDrafts()
     }
 
     override func viewDidLayoutSubviews() {
@@ -331,6 +368,7 @@ class ThreadViewController: ContentViewController {
         
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
+        draftStore.save(draft: text, images: galleryView.images)
         AppController.shared.showProgress()
         Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
@@ -349,6 +387,7 @@ class ThreadViewController: ContentViewController {
                 self?.load()
             }
             self?.buttonsView.postButton.isEnabled = true
+            self?.draftStore.clearDraft()
         }
     }
     
@@ -457,6 +496,7 @@ extension ThreadViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
+        draftStore.save(draft: replyTextView.attributedText, images: view.images)
     }
 
     func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {
