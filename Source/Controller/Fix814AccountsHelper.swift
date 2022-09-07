@@ -34,47 +34,48 @@ enum Fix814AccountsHelper {
             return nil
         }
         
-        try await bot.login(config: configuration)
+        let db = ViewDatabase()
+        try db.open(path: try configuration.databaseDirectory(), user: configuration.identity)
         
         // Check if account was created on the test network between the given dates.
         guard configuration.network == Environment.Networks.test.key,
-            let identityCreationDate = try? bot.database.currentUserCreatedDate(),
+            let identityCreationDate = try? db.currentUserCreatedDate(),
             identityCreationDate > Date(timeIntervalSince1970: 1_661_265_000), // 2022-08-23 10:30am
-            identityCreationDate < Date(timeIntervalSince1970: 1_662_587_210), // 2022-09-07
-            let publishedMessages = try? bot.database.publishedMessagesForCurrentUser() else {
-            try await bot.logout()
+            identityCreationDate < Date(timeIntervalSince1970: 1_662_587_210) else { // 2022-09-07
+            db.close()
+            userDefaults.set(true, forKey: hasPromptedKey)
+            userDefaults.synchronize()
             return nil
         }
         
-        Log.info("Prompting for 814 fix. Found \(publishedMessages.count) published messages")
-        
-        try await bot.logout()
-        
-        // Confirm with the user
-        defer {
-            userDefaults.set(true, forKey: hasPromptedKey)
-            userDefaults.synchronize()
-        }
-        let confirmed = await appController.confirm(
-            message: Text.confirmCopyToMainNetwork.text
-        )
-        if !confirmed {
-            let secondConfirm = await appController.confirm(
-                message: Text.confirmSkipCopyToMainNetwork.text,
-                cancelTitle: Text.yes.text,
-                confirmTitle: Text.no.text
-            )
-            if !secondConfirm {
-                Log.info("User opted out of 814 fix")
-                Analytics.shared.trackDidSkip814Fix()
-                return nil
-            }
-        }
-        
-        Log.info("User opted into 814 fix")
-        Analytics.shared.trackDidStart814Fix()
-        
         do {
+            // Confirm with the user
+            let confirmed = await appController.confirm(
+                message: Text.confirmCopyToMainNetwork.text
+            )
+            if !confirmed {
+                let secondConfirm = await appController.confirm(
+                    message: Text.confirmSkipCopyToMainNetwork.text,
+                    cancelTitle: Text.yes.text,
+                    confirmTitle: Text.no.text
+                )
+                if !secondConfirm {
+                    Log.info("User opted out of 814 fix")
+                    Analytics.shared.trackDidSkip814Fix()
+                    userDefaults.set(true, forKey: hasPromptedKey)
+                    userDefaults.synchronize()
+                    return nil
+                }
+            }
+            
+            Log.info("User opted into 814 fix")
+            Analytics.shared.trackDidStart814Fix()
+                     
+            let publishedMessages = try db.publishedMessagesForCurrentUser()
+            db.close()
+            Log.info("Prompting for 814 fix.")
+            Log.info("Found \(publishedMessages.count) published messages")
+            
             // create new configuration on the main network
             let newConfiguration = AppConfiguration(with: configuration.secret)
             newConfiguration.name = configuration.name + "-814fixed"
@@ -95,6 +96,8 @@ enum Fix814AccountsHelper {
             
             newConfiguration.apply()
             
+            userDefaults.set(true, forKey: hasPromptedKey)
+            userDefaults.synchronize()
             Log.info("814 fix complete.")
             Analytics.shared.trackDidComplete814Fix()
             return newConfiguration
