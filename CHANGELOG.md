@@ -6,6 +6,10 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- Split Serbian localization into separate Latin and Cyrillic versions #831
+
 ## [1.3.1] 2022-08-23
 - Fixed a bug where new users would not sync with the Planetary System Pubs if they had opted in.
 
