@@ -3414,6 +3414,7 @@
 				"es-ES",
 				"sr-Cyrl",
 				sr,
+				"sr-Latn",
 			);
 			mainGroup = 5344D82221C4649700704A34;
 			packageReferences = (
