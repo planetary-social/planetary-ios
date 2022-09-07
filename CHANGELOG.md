@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for EBT replication algorithm. #721
 - Added a migration script for a small number of users whose accounts were created on the test network. #817
+- Fixed a bug where feeds two hops away wouldn't always be fetched. #833
 
 ## [1.3.2] 2022-08-27
 
