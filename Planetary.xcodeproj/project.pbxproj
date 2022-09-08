@@ -1647,7 +1647,6 @@
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
 		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
-		C915923F28C7F080004152E0 /* sr-Cyrl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sr-Cyrl"; path = Generated.strings; sourceTree = "<group>"; };
 		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
 		C920A3A2289AFB88009C83F3 /* PlaceholderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderModifier.swift; sourceTree = "<group>"; };
 		C920A3A5289B1525009C83F3 /* Array+Chunked.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Chunked.swift"; sourceTree = "<group>"; };
@@ -1684,6 +1683,7 @@
 		C969F438282C7A3700FF6FE3 /* bouncing_ellipse.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bouncing_ellipse.json; sourceTree = "<group>"; };
 		C969F43A282C7AB000FF6FE3 /* LottieAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieAnimation.swift; sourceTree = "<group>"; };
 		C9724B0B28089499000EBCCD /* Beta1MigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beta1MigrationTests.swift; sourceTree = "<group>"; };
+		C974DEE828CA8C3F0057C160 /* sr-SP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sr-SP"; path = "../sr-SP.lproj/Generated.strings"; sourceTree = "<group>"; };
 		C978D35027BF018600842458 /* OperationQueue+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Async.swift"; sourceTree = "<group>"; };
 		C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
 		C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentlyActivePostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
@@ -3425,7 +3425,6 @@
 				"es-UY",
 				"es-ES",
 				"sr-Cyrl",
-				sr,
 				"sr-Latn",
 			);
 			mainGroup = 5344D82221C4649700704A34;
@@ -4980,7 +4979,7 @@
 		C915923E28C7F080004152E0 /* Generated.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C915923F28C7F080004152E0 /* sr-Cyrl */,
+				C974DEE828CA8C3F0057C160 /* sr-SP */,
 			);
 			name = Generated.strings;
 			sourceTree = "<group>";
