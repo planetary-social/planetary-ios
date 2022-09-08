@@ -94,7 +94,7 @@ class DoneOnboardingStep: OnboardingStep {
         self.data.publicWebHosting = self.publicWebHostingToggle.toggle.isOn
         self.data.analytics = self.analyticsToggle.toggle.isOn
         self.data.followPlanetary = self.followPlanetaryToggle.toggle.isOn
-        self.data.useTestNetwork = self.followPlanetaryToggle.toggle.isOn
+        self.data.useTestNetwork = self.useTestNetworkToggle.toggle.isOn
         let data = self.data
         
         // SIMULATE ONBOARDING

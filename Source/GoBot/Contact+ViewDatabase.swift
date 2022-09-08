@@ -10,9 +10,15 @@ import Foundation
 import SQLite
 
 extension Contact {
-    init?(row: Row, db: ViewDatabase) throws {
+    init?(row: Row, db: ViewDatabase, useNamespacedTables: Bool = false) throws {
         if let state = try? row.get(db.colContactState) {
-            let identifier = try row.get(Expression<Identifier>("contact_identifier"))
+            
+            var identifier: Identifier
+            if useNamespacedTables {
+                identifier = try row.get(db.contactTarget[db.colAuthor])
+            } else {
+                identifier = try row.get(Expression<Identifier>("contact_identifier"))
+            }
             if state == 1 {
                 self.init(contact: identifier, following: true)
             } else if state == -1 {
