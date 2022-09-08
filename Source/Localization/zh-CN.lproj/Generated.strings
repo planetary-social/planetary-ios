@@ -163,6 +163,7 @@
 "NewPost.confirmRemove" = "从帖子中删除此图像？您总是可以重新添加。";
 "NewPost.remove" = "移除";
 "NewPost.publishing" = "Publishing...";
+"NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";

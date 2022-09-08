@@ -31,14 +31,23 @@ class Draft: NSObject, NSCoding {
         coder.encode(images, forKey: "images")
     }
     // swiftlint:enable legacy_objc_type
+    
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let otherDraft = object as? Draft else {
+            return false
+        }
+        
+        return otherDraft.attributedText == attributedText && otherDraft.images == images
+    }
 }
 
-class DraftStore {
+actor DraftStore {
     
-    var userDefaults: UserDefaults = .standard
-    var draftKey: String
+    let userDefaults: UserDefaults
+    let draftKey: String
+    var lastSavedDraft: Draft?
     
-    internal init(userDefaults: UserDefaults = .standard, draftKey: String) {
+    init(userDefaults: UserDefaults = .standard, draftKey: String) {
         self.userDefaults = userDefaults
         self.draftKey = draftKey
     }
@@ -46,20 +55,29 @@ class DraftStore {
     func loadDraft() -> Draft? {
         if let draftData = userDefaults.data(forKey: draftKey),
             let draft = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(draftData) as? Draft {
+            lastSavedDraft = draft
             return draft
         }
         
         return nil
     }
     
-    func save(draft string: NSAttributedString?, images: [UIImage]) {
+    func save(text string: NSAttributedString?, images: [UIImage]) {
         let draft = Draft(attributedText: string, images: images)
+        
+        // optimization since encoding is expensive
+        guard draft != lastSavedDraft else {
+            return
+        }
+        
+        lastSavedDraft = draft
         let data = try? NSKeyedArchiver.archivedData(withRootObject: draft, requiringSecureCoding: false)
         userDefaults.set(data, forKey: draftKey)
         userDefaults.synchronize()
     }
     
     func clearDraft() {
+        lastSavedDraft = nil
         userDefaults.removeObject(forKey: draftKey)
         userDefaults.synchronize()
     }

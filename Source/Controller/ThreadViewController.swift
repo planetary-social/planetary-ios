@@ -119,6 +119,10 @@ class ThreadViewController: ContentViewController {
         view.backgroundColor = .cardBackground
         return view
     }()
+    
+    var images: [UIImage] {
+        galleryView.images
+    }
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
@@ -187,7 +191,9 @@ class ThreadViewController: ContentViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         headerView.removeFromSuperview()
-        draftStore.save(draft: replyTextView.attributedText, images: galleryView.images)
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: self.replyTextView.attributedText, images: self.images)
+        }
     }
 
     private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -207,25 +213,25 @@ class ThreadViewController: ContentViewController {
     }
     
     private func setUpDrafts() {
-        if let draft = draftStore.loadDraft() {
-            if let text = draft.attributedText {
-                replyTextView.attributedText = text
-            }
-            galleryView.add(draft.images)
-            Log.info("Restored draft")
-        }
-        
-        replyTextView
-            .textPublisher
-            .throttle(for: 3, scheduler: queue, latest: true)
-            .sink { [weak self] newText in
-                if let newText = newText {
-                    self?.draftStore.save(draft: newText, images: self?.galleryView.images ?? [])
-                } else {
-                    self?.draftStore.clearDraft()
+        Task {
+            if let draft = await self.draftStore.loadDraft() {
+                if let text = draft.attributedText {
+                    replyTextView.attributedText = text
                 }
+                galleryView.add(draft.images)
+                Log.info("Restored draft")
             }
-            .store(in: &cancellables)
+            
+            replyTextView
+                .textPublisher
+                .throttle(for: 3, scheduler: queue, latest: true)
+                .sink { [weak self] newText in
+                    Task(priority: .userInitiated) {
+                        await self?.draftStore.save(text: newText, images: self?.images ?? [])
+                    }
+                }
+                .store(in: &cancellables)
+        }
     }
 
     private func refresh() {
@@ -366,10 +372,12 @@ class ThreadViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "reply")
         self.buttonsView.postButton.isEnabled = false
         
+        AppController.shared.showProgress()
+        
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
-        draftStore.save(draft: text, images: galleryView.images)
-        AppController.shared.showProgress()
+        let draftStore = draftStore
+        Task.detached(priority: .userInitiated) { await draftStore.save(text: text, images: images) }
         Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -387,7 +395,7 @@ class ThreadViewController: ContentViewController {
                 self?.load()
             }
             self?.buttonsView.postButton.isEnabled = true
-            self?.draftStore.clearDraft()
+            Task.detached(priority: .userInitiated) { await draftStore.clearDraft() }
         }
     }
     
@@ -496,7 +504,9 @@ extension ThreadViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
-        draftStore.save(draft: replyTextView.attributedText, images: view.images)
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: self.replyTextView.attributedText, images: view.images)
+        }
     }
 
     func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {

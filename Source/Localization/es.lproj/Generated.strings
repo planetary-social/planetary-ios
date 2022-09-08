@@ -163,6 +163,7 @@
 "NewPost.confirmRemove" = "¿Eliminar esta imagen de la publicación? Podrás volver a añadirla si te arrepientes.";
 "NewPost.remove" = "Quitar";
 "NewPost.publishing" = "Publishing...";
+"NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";

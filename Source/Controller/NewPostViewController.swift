@@ -27,6 +27,10 @@ class NewPostViewController: ContentViewController {
         view.backgroundColor = .cardBackground
         return view
     }()
+    
+    var images: [UIImage] {
+        galleryView.images
+    }
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
@@ -73,6 +77,10 @@ class NewPostViewController: ContentViewController {
         self.navigationItem.leftBarButtonItem = item
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     override func willMove(toParent parent: UIViewController?) {
         super.willMove(toParent: parent)
         self.parent?.presentationController?.delegate = self
@@ -94,25 +102,25 @@ class NewPostViewController: ContentViewController {
     
     /// Configures the view to save and load draft posts from NSUserDefaults.
     private func setupDrafts() {
-        if let draft = draftStore.loadDraft() {
-            if let text = draft.attributedText {
-                textView.attributedText = text
-            }
-            galleryView.add(draft.images)
-            Log.info("Restored draft")
-        }
-        
-        textView
-            .textPublisher
-            .throttle(for: 3, scheduler: queue, latest: true)
-            .sink { [weak self] newText in
-                if let newText = newText {
-                    self?.draftStore.save(draft: newText, images: self?.galleryView.images ?? [])
-                } else {
-                    self?.draftStore.clearDraft()
+        Task {
+            if let draft = await draftStore.loadDraft() {
+                if let text = draft.attributedText {
+                    textView.attributedText = text
                 }
+                galleryView.add(draft.images)
+                Log.info("Restored draft")
             }
-            .store(in: &cancellables)
+            
+            textView
+                .textPublisher
+                .throttle(for: 3, scheduler: queue, latest: true)
+                .sink { [weak self] newText in
+                    Task(priority: .userInitiated) {
+                        await self?.draftStore.save(text: newText, images: self?.images ?? [])
+                    }
+                }
+                .store(in: &cancellables)
+        }
     }
     
     // MARK: Actions
@@ -140,6 +148,7 @@ class NewPostViewController: ContentViewController {
     }
 
     func didPressPostButton(sender: AnyObject) {
+        self.lookBusy(message: Text.NewPost.publishing)
         Analytics.shared.trackDidTapButton(buttonName: "post")
         self.buttonsView.postButton.isHidden = true
         
@@ -147,6 +156,7 @@ class NewPostViewController: ContentViewController {
         let hasImages = !self.galleryView.images.isEmpty
         
         guard hasText || hasImages else {
+            self.lookReady()
             return
         }
         
@@ -154,8 +164,10 @@ class NewPostViewController: ContentViewController {
         let post = Post(attributedText: text)
         let images = self.galleryView.images
 
-        self.lookBusy()
-        draftStore.save(draft: text, images: galleryView.images)
+        let draftStore = draftStore
+        Task.detached(priority: .userInitiated) {
+            await draftStore.save(text: text, images: self.galleryView.images)
+        }
         Bots.current.publish(post, with: images) { [weak self] _, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -170,21 +182,25 @@ class NewPostViewController: ContentViewController {
     }
 
     private func dismiss(didPublish post: Post) {
-        draftStore.clearDraft()
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.clearDraft()
+        }
         self.didPublish?(post)
         self.dismiss(animated: true)
     }
     
     @objc
     private func dismissWithoutPost() {
-        draftStore.save(draft: textView.attributedText, images: galleryView.images)
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: self.textView.attributedText, images: self.images)
+        }
         self.dismiss(animated: true)
     }
 
     // MARK: Animations
 
-    private func lookBusy() {
-        AppController.shared.showProgress(after: 0.2, statusText: Text.NewPost.publishing.text)
+    private func lookBusy(message: Localizable? = nil) {
+        AppController.shared.showProgress(after: 0.2, statusText: message?.text)
         self.buttonsView.photoButton.isEnabled = false
         self.buttonsView.postButton.isEnabled = false
         self.buttonsView.previewToggle.isEnabled = false
@@ -206,7 +222,9 @@ extension NewPostViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
-        draftStore.save(draft: textView.attributedText, images: galleryView.images)
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: self.textView.attributedText, images: view.images)
+        }
     }
 
     func imageGalleryView(
@@ -230,7 +248,9 @@ extension NewPostViewController: UIAdaptivePresentationControllerDelegate {
         let hasImages = !self.galleryView.images.isEmpty
 
         if hasText || hasImages {
-            draftStore.save(draft: textView.attributedText, images: galleryView.images)
+            Task.detached(priority: .userInitiated) {
+                await self.draftStore.save(text: self.textView.attributedText, images: self.images)
+            }
         }
     }
 }
