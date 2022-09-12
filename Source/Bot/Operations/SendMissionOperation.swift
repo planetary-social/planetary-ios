@@ -59,7 +59,8 @@ class SendMissionOperation: AsynchronousOperation {
                 syncOperation.addDependency(joinPlanetaryOperation)
                 operations.append(joinPlanetaryOperation)
             }
-            self.operationQueue.addOperations(operations, waitUntilFinished: true)
+            operationQueue.addOperations(operations, waitUntilFinished: false)
+            try await operationQueue.drain()
             
             Log.info("SendMissionOperation finished.")
             self.result = .success(())

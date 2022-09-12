@@ -10,13 +10,13 @@ import Foundation
 
 extension OperationQueue {
 
-    /// Allows you to await the completion of all operations currently in a serial queue. Behavior is undefined for
-    /// concurrent queues.
-    func drainQueue() async {
-        await withUnsafeContinuation { continuation in
-            addOperation {
-                continuation.resume()
-            }
+    /// Allows you to await the completion of all operations currently in a queue. This should be used instead of
+    /// `addOperations(operations, waitUntilFinished: true)` which deadlocks all structured concurrency tasks.
+    ///
+    /// - Parameter pollTime: The time between checks for an empty queue, in nanoseconds.
+    func drain(pollTime: UInt64 = 1_000_000) async throws {
+        while operationCount > 0 {
+            try await Task.sleep(nanoseconds: pollTime)
         }
     }
 }

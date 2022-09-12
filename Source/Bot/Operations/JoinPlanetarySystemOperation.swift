@@ -75,7 +75,12 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
                         RedeemInviteOperation(star: $0, shouldFollow: false)
                     }
                     
-                    self.operationQueue.addOperations(redeemInviteOperations, waitUntilFinished: true)
+                    operationQueue.addOperations(redeemInviteOperations, waitUntilFinished: false)
+                    try await operationQueue.drain()
+                    
+                    while operationQueue.operationCount > 0 {
+                        try await Task.sleep(nanoseconds: 1_000_000)
+                    }
                 }
             } catch {
                 Log.optional(error)
