@@ -1096,7 +1096,6 @@ class GoBot: Bot {
     }
 
     func about(completion: @escaping AboutCompletion) {
-        Thread.assertIsMainThread()
         guard let user = self._identity else {
             completion(nil, BotError.notLoggedIn)
             return

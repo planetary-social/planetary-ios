@@ -56,6 +56,7 @@ class LaunchViewController: UIViewController {
 
     // MARK: Actions
 
+    @MainActor
     private func launch() {
 
         // if simulating then onboard
