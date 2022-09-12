@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Split Serbian localization into separate Latin and Cyrillic versions #831
 
+## [1.3.3] 2022-09-05
+
+- Added support for EBT replication algorithm. #721
+- Added a migration script for a small number of users whose accounts were created on the test network. #817
+- Fixed a bug where feeds two hops away wouldn't always be fetched. #833
+
+## [1.3.2] 2022-08-27
+
+- Fixed a bug where new profiles were being created on the test network.
+
 ## [1.3.1] 2022-08-23
 - Fixed a bug where new users would not sync with the Planetary System Pubs if they had opted in.
 

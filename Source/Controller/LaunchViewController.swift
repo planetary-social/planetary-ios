@@ -65,7 +65,7 @@ class LaunchViewController: UIViewController {
         }
 
         // if no configuration then onboard
-        guard let configuration = appConfiguration else {
+        guard var configuration = appConfiguration else {
             self.launchIntoOnboarding()
             return
         }
@@ -97,16 +97,22 @@ class LaunchViewController: UIViewController {
         Log.info("Launching with configuration '\(configuration.name)'")
         
         Task {
-            do {
+            login: do {
                 let isMigrating = try await self.migrateIfNeeded(using: configuration)
-                
-                if !isMigrating {
-                    // note that hmac key can be nil to switch it off
-                    guard configuration.network != nil else { return }
-                    guard let bot = configuration.bot else { return }
-                    
-                    try await bot.login(config: configuration)
+                if isMigrating {
+                    break login
                 }
+                
+                if let newConfiguration = try await self.fix814AccountsIfNecessary(using: configuration) {
+                    configuration = newConfiguration
+                    break login
+                }
+                
+                // note that hmac key can be nil to switch it off
+                guard configuration.network != nil else { return }
+                guard let bot = configuration.bot else { return }
+                
+                try await bot.login(config: configuration)
             } catch {
                 self.handleLoginFailure(with: error, configuration: configuration)
             }
@@ -136,30 +142,30 @@ class LaunchViewController: UIViewController {
     }
 
     func handleLoginFailure(with error: Error, configuration: AppConfiguration) {
-        guard let network = configuration.network else { return }
-        guard let bot = configuration.bot else { return }
-        let secret = configuration.secret
-        
         Log.error("Bot.login failed")
         Log.optional(error)
         CrashReporting.shared.reportIfNeeded(
             error: error,
             metadata: [
                 "action": "login-from-launch",
-                "network": network,
-                "identity": secret.identity
+                "network": configuration.network?.string ?? "",
+                "identity": configuration.secret.identity
             ]
         )
         
-        let controller = UIAlertController(title: Text.error.text,
-                                           message: Text.Error.login.text,
-                                           preferredStyle: .alert)
+        guard let bot = configuration.bot else { return }
+        
+        let controller = UIAlertController(
+            title: Text.error.text,
+            message: Text.Error.login.text,
+            preferredStyle: .alert
+        )
         let action = UIAlertAction(title: "Restart", style: .default) { _ in
             Log.debug("Restarting launch...")
-            bot.logout { err in
+            bot.logout { error in
                 // Don't report error here becuase the normal path is to actually receive
                 // a notLoggedIn error
-                Log.optional(err)
+                Log.optional(error)
                 
                 ssbDropIndexData()
                 
@@ -223,8 +229,16 @@ class LaunchViewController: UIViewController {
     }
     
     private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
-        return try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
             appConfiguration: configuration,
+            appController: appController,
+            userDefaults: userDefaults
+        )
+    }
+    
+    private func fix814AccountsIfNecessary(using configuration: AppConfiguration) async throws -> AppConfiguration? {
+        try await Fix814AccountsHelper.fix814Account(
+            configuration,
             appController: appController,
             userDefaults: userDefaults
         )

@@ -199,7 +199,7 @@ class DebugViewController: DebugTableViewController {
                                                  valueClosure: {
                     cell in
                     cell.detailTextLabel?.text = configuration.network?.name
-                    let selected = (configuration.identity == AppConfiguration.current?.identity)
+                    let selected = (configuration.id == AppConfiguration.current?.id)
                     cell.accessoryType = selected ? .checkmark : .disclosureIndicator
                 },
                                                  actionClosure: {

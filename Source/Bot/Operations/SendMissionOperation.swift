@@ -47,7 +47,7 @@ class SendMissionOperation: AsynchronousOperation {
             return
         }
         
-        Task.detached {
+        Task {
             let joinPlanetaryOperation = self.createJoinPlanetaryOperation(
                 config: appConfiguration,
                 queue: self.operationQueue
