@@ -128,7 +128,7 @@ extension AppDelegate {
             operationQueue.maxConcurrentOperationCount = 1
             operationQueue.qualityOfService = .background
             operationQueue.addOperations([sendMissionOperation], waitUntilFinished: false)
-            await operationQueue.drainQueue()
+            try await operationQueue.drain()
                 
             let sleepStartTime = Date().timeIntervalSince1970
             let sleepSeconds: TimeInterval = 25
@@ -153,7 +153,7 @@ extension AppDelegate {
             
             operationQueue.addOperations([refreshOperation, statisticsOperation], waitUntilFinished: false)
             
-            await operationQueue.drainQueue()
+            try await operationQueue.drain()
         
             Analytics.shared.trackDidBackgroundFetch()
 
