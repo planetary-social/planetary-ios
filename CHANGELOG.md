@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Split Serbian localization into separate Latin and Cyrillic versions #831
+- Split Serbian localization into separate Latin and Cyrillic versions. #831
+- Fix notification badges not updating in the background. #825
+- Fix loading indicator overlapping cells on the notifications tab. #750
 
 ## [1.3.3] 2022-09-05
 
