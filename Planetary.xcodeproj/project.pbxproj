@@ -3608,6 +3608,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		1CB03AF84C66F1D3D7DBE245 /* Upload Bugsnag dSYM */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 8;
 			files = (
 			);
@@ -3668,6 +3669,7 @@
 		};
 		5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 8;
 			files = (
 			);
@@ -3699,6 +3701,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/($CONTENTS_FOLDER_PATH)/Secrets.plist",
+				"",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3718,7 +3722,6 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3802,6 +3805,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Source/Localization/*.lproj",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5558,8 +5562,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 367;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -5590,8 +5596,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 367;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
