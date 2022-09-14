@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Combine
 
 class ReplyTextView: KeyValueView {
 
@@ -35,6 +36,8 @@ class ReplyTextView: KeyValueView {
             self.textViewDelegate?.styleTextView(textView: self.sourceTextView)
         }
     }
+    
+    var textPublisher: AnyPublisher<NSAttributedString?, Never> = Just(nil).eraseToAnyPublisher()
 
     var previewActive: Bool {
         get {
@@ -96,6 +99,11 @@ class ReplyTextView: KeyValueView {
         self.backgroundColor = .appBackground
         self.useAutoLayout()
         self.clipsToBounds = false
+        
+        textPublisher = NotificationCenter.default
+            .publisher(for: UITextView.textDidChangeNotification, object: sourceTextView)
+            .map { ($0.object as? UITextView)?.attributedText }
+            .eraseToAnyPublisher()
 
         let textViewHeight = Layout.profileThumbSize
 

@@ -165,6 +165,7 @@
 "NewPost.confirmRemove" = "Remover esta imagem da postagem? Será possível readicioná-la.";
 "NewPost.remove" = "Remover";
 "NewPost.publishing" = "Publishing...";
+"NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Excluir";
 "Offboarding.resetIdentity" = "Excluir minha identidade";

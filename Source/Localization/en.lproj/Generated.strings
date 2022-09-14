@@ -165,6 +165,7 @@
 "NewPost.confirmRemove" = "Remove this image from the post?  You can always add it back again.";
 "NewPost.remove" = "Remove";
 "NewPost.publishing" = "Publishing...";
+"NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";

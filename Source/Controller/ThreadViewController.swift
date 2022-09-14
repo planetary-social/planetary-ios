@@ -11,11 +11,19 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Combine
 
 class ThreadViewController: ContentViewController {
 
     private let post: KeyValue
-    private var root: KeyValue?
+    private var root: KeyValue? {
+        didSet {
+            let key = root?.key ?? ""
+            let identity = Bots.current.identity ?? ""
+            draftKey = "com.planetary.ios.draft.reply." + key + identity
+            draftStore = DraftStore(draftKey: draftKey)
+        }
+    }
     
     private lazy var dataSource: ThreadReplyPaginatedTableViewDataSource = {
         var dataSource = ThreadReplyPaginatedTableViewDataSource()
@@ -27,6 +35,11 @@ class ThreadViewController: ContentViewController {
                                                           color: UIColor.text.reply,
                                                           placeholderText: .postAReply,
                                                           placeholderColor: UIColor.text.placeholder)
+    
+    private var draftKey = ""
+    private var draftStore = DraftStore(draftKey: "")
+    private let queue = DispatchQueue.global(qos: .userInitiated)
+    private var cancellables = [AnyCancellable]()
 
     private var branchKey: Identifier {
         self.rootKey
@@ -106,6 +119,10 @@ class ThreadViewController: ContentViewController {
         view.backgroundColor = .cardBackground
         return view
     }()
+    
+    var images: [UIImage] {
+        galleryView.images
+    }
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
@@ -174,6 +191,9 @@ class ThreadViewController: ContentViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         headerView.removeFromSuperview()
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: self.replyTextView.attributedText, images: self.images)
+        }
     }
 
     private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -189,6 +209,28 @@ class ThreadViewController: ContentViewController {
                 self?.update(with: root ?? post, replies: replies, animated: animated)
                 completion?()
             }
+        }
+    }
+    
+    private func setUpDrafts() {
+        Task {
+            if let draft = await self.draftStore.loadDraft() {
+                if let text = draft.attributedText {
+                    replyTextView.attributedText = text
+                }
+                galleryView.add(draft.images)
+                Log.info("Restored draft")
+            }
+            
+            replyTextView
+                .textPublisher
+                .throttle(for: 3, scheduler: queue, latest: true)
+                .sink { [weak self] newText in
+                    Task(priority: .userInitiated) {
+                        await self?.draftStore.save(text: newText, images: self?.images ?? [])
+                    }
+                }
+                .store(in: &cancellables)
         }
     }
 
@@ -226,6 +268,7 @@ class ThreadViewController: ContentViewController {
         self.interactionView.replies = replies as? StaticDataProxy
         self.interactionView.update()
         replyTextView.isHidden = root.offChain == true
+        setUpDrafts()
     }
 
     override func viewDidLayoutSubviews() {
@@ -329,9 +372,12 @@ class ThreadViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "reply")
         self.buttonsView.postButton.isEnabled = false
         
+        AppController.shared.showProgress()
+        
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
-        AppController.shared.showProgress()
+        let draftStore = draftStore
+        Task.detached(priority: .userInitiated) { await draftStore.save(text: text, images: images) }
         Bots.current.publish(post, with: images) { [weak self] key, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -349,6 +395,7 @@ class ThreadViewController: ContentViewController {
                 self?.load()
             }
             self?.buttonsView.postButton.isEnabled = true
+            Task.detached(priority: .userInitiated) { await draftStore.clearDraft() }
         }
     }
     
@@ -457,6 +504,9 @@ extension ThreadViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: self.replyTextView.attributedText, images: view.images)
+        }
     }
 
     func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {
