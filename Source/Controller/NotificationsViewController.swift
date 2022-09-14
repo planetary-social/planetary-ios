@@ -80,9 +80,14 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
         self.floatingRefreshButton.layout(in: self.view, below: self.tableView)
-        self.addLoadingAnimation()
-        self.load()
         registerNotifications()
+        
+        if dataSource.reports.isEmpty {
+            // Sometimes the reports get loaded before the user opens this view, triggered by `fillMessages` posting
+            // a notification
+            self.addLoadingAnimation()
+            self.load()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
