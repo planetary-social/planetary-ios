@@ -332,6 +332,10 @@ class FakeBot: Bot {
     var mockStatistics = [BotStatistics]()
     var statistics: BotStatistics { mockStatistics.popLast() ?? _statistics }
     
+    func numberOfNewMessages(since: Date) throws -> Int {
+        0
+    }
+    
     var mockRecentlyDownloadedPostData = (0, 0)
     func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
         mockRecentlyDownloadedPostData

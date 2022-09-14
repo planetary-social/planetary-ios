@@ -12,4 +12,5 @@ enum GoBotError: Error {
     case alreadyStarted
     case duringProcessing(String, Error)
     case unexpectedFault(String)
+    case deadlock
 }

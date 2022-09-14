@@ -286,6 +286,9 @@ protocol Bot: AnyObject {
 
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion)
     
+    /// Returns the number of messages that have been written to our SQLite database since the given date.
+    func numberOfNewMessages(since: Date) throws -> Int
+        
     func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int)
     
     func lastReceivedTimestam() throws -> Double

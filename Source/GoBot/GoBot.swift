@@ -1690,6 +1690,10 @@ class GoBot: Bot {
         }
     }
     
+    func numberOfNewMessages(since: Date) throws -> Int {
+        try self.database.receivedMessageCount(since: since)
+    }
+    
     func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
         let recentlyDownloadedPostDuration = 15 // minutes
         var recentlyDownloadedPostCount = 0
@@ -1715,6 +1719,28 @@ class GoBot: Bot {
     
     func lastReceivedTimestam() throws -> Double {
         Double(try self.database.lastReceivedTimestamp())
+    }
+    
+    /// Verifies that the bot is still responding to function calls. #727
+    func isBotStuck() async throws -> Bool {
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let task = Task.detached(priority: .high) {
+            guard ssbRepoStats() != nil else {
+                throw GoBotError.unexpectedFault("failed to get repo counts")
+            }
+            semaphore.signal()
+        }
+        
+        if semaphore.wait(timeout: .now() + .seconds(15)) == .timedOut {
+            return true
+        }
+        
+        if case .failure(let error) = await task.result {
+            throw error
+        }
+        
+        return false
     }
     
     // MARK: Preloading
