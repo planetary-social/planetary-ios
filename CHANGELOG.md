@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Filter posts from followed users in the Discover feed when the Random algorithm is selected. #822
 - Split Serbian localization into separate Latin and Cyrillic versions #831
 
 ## [1.3.3] 2022-09-05
