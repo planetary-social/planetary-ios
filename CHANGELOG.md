@@ -6,10 +6,13 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.4]
 
 - Filter posts from followed users in the Discover feed when the Random algorithm is selected. #822
+- Automatically save and restore drafts of replies. #835
 - Split Serbian localization into separate Latin and Cyrillic versions #831
+- Fix notification badges not updating in the background. #825
+- Fix loading indicator overlapping cells on the notifications tab. #750
 
 ## [1.3.3] 2022-09-05
 

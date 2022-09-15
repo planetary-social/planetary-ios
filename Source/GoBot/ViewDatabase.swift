@@ -1572,7 +1572,7 @@ class ViewDatabase {
 
     // MARK: - Reports
 
-    /// Returns the total number of unread reports
+    /// Returns the total number of unread reports for the current user.
     func countNumberOfUnreadReports() throws -> Int {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
@@ -2720,7 +2720,8 @@ class ViewDatabase {
         if !reports.isEmpty {
             NotificationCenter.default.post(
                 name: Notification.Name("didCreateReport"),
-                object: nil
+                object: nil,
+                userInfo: ["reports": reports]
             )
         }
 
