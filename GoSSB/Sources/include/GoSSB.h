@@ -81,4 +81,6 @@ extern char* ssbRoomsListAliases(gostring_t address);
 extern ssbRoomsAliasRegisterReturn_t ssbRoomsAliasRegister(gostring_t address, gostring_t alias);
 extern bool ssbRoomsAliasRevoke(gostring_t address, gostring_t alias);
 
+extern char* ssbGetRawMessage(gostring_t feedRef, uint64_t seq);
+
 #endif
