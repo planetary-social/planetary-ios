@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.4]
 
+- Filter posts from followed users in the Discover feed when the Random algorithm is selected. #822
 - Automatically save and restore drafts of replies. #835
 - Split Serbian localization into separate Latin and Cyrillic versions #831
 - Fix notification badges not updating in the background. #825
