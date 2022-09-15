@@ -14,8 +14,6 @@ import CrashReporting
 
 class NotificationsViewController: ContentViewController, HelpDrawerHost {
 
-    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-    
     private let dataSource = NotificationsTableViewDataSource()
     private lazy var delegate = NotificationsTableViewDelegate(on: self)
 
@@ -116,40 +114,6 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
         }
     }
 
-    func refreshAndLoad(animated: Bool = false) {
-        if NotificationsViewController.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
-        }
-
-        Log.info("Pull down to refresh triggering a short refresh")
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "NotificationsPullDownToRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
-            NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
-        }
-        NotificationsViewController.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = { [weak self] in
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-            
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
-            }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.load(animated: animated)
-            }
-        }
-        let operations = [refreshOperation]
-        AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
-    }
-
     private func update(with reports: [Report], animated: Bool = true) {
         self.dataSource.reports = reports
         lastTimeNewReportsUpdatesWasChecked = Date()
@@ -192,7 +156,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     @objc
     func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refreshAndLoad()
+        load()
     }
 
     @objc

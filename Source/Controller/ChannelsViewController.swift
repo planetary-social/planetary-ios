@@ -14,8 +14,6 @@ import CrashReporting
 
 class ChannelsViewController: ContentViewController, HelpDrawerHost {
     
-    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-
     // unfiltered collection
     private var allChannels = [Hashtag]() {
         didSet {
@@ -115,39 +113,6 @@ class ChannelsViewController: ContentViewController, HelpDrawerHost {
         }
     }
 
-    func refreshAndLoad(animated: Bool = false) {
-        if ChannelsViewController.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(ChannelsViewController.refreshBackgroundTaskIdentifier)
-        }
-        
-        Log.info("Pull down to refresh triggering a short refresh")
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "ChannelsPullDownToRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(ChannelsViewController.refreshBackgroundTaskIdentifier)
-            ChannelsViewController.refreshBackgroundTaskIdentifier = .invalid
-        }
-        ChannelsViewController.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = { [weak self] in
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-            
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                ChannelsViewController.refreshBackgroundTaskIdentifier = .invalid
-            }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.load(animated: animated)
-            }
-        }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
-    }
-
     private func update(with hashtags: [Hashtag], animated: Bool = true) {
         self.allChannels = hashtags
         self.tableView.reloadData()
@@ -169,7 +134,7 @@ class ChannelsViewController: ContentViewController, HelpDrawerHost {
     @objc
     func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refreshAndLoad()
+        load()
     }
     
     // MARK: Notifications

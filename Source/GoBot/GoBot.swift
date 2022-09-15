@@ -231,10 +231,8 @@ class GoBot: Bot {
 
         // spawn go-bot in the background to return early
         userInitiatedQueue.async {
-            #if DEBUG
             // used for locating the files in the simulator
-            print("===> starting gobot with prefix: \(repoPrefix)")
-            #endif
+            Log.shared.info("===> starting gobot with prefix: \(repoPrefix)")
             let loginErr = self.bot.login(
                 network: network,
                 hmacKey: hmacKey,
@@ -268,6 +266,8 @@ class GoBot: Bot {
             Task.detached(priority: .background) {
                 await self.fetchAndApplyBanList(for: secret.identity)
             }
+            
+            Log.shared.info("Finished login")
         }
     }
     
@@ -1726,9 +1726,7 @@ class GoBot: Bot {
         let semaphore = DispatchSemaphore(value: 0)
         
         let task = Task.detached(priority: .high) {
-            guard ssbRepoStats() != nil else {
-                throw GoBotError.unexpectedFault("failed to get repo counts")
-            }
+            _ = try self.bot.repoStatus()
             semaphore.signal()
         }
         
