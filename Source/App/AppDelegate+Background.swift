@@ -138,7 +138,7 @@ extension AppDelegate {
             
             // Wait for login
             // this is terrible!
-            try await Task.sleep(nanoseconds: 5_000_000_000)
+            try await Task.sleep(nanoseconds: 3_000_000_000)
             
             AppController.shared.missionControlCenter.sendMission()
             
