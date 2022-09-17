@@ -99,7 +99,7 @@ class MissionControlCenter {
     }
     
     private func sendMissions() {
-        guard operationQueue.operations.contains(where: { $0 is SendMissionOperation }) else {
+        guard !operationQueue.operations.contains(where: { $0 is SendMissionOperation }) else {
             Log.info("Mission Controller Center skipped a mission as there is one in progress.")
             return
         }
@@ -110,7 +110,7 @@ class MissionControlCenter {
     }
     
     func pokeRefresh() {
-        guard operationQueue.operations.contains(where: { $0 is RefreshOperation }) else {
+        guard !operationQueue.operations.contains(where: { $0 is RefreshOperation }) else {
             Log.info("Mission Controller Center skipped a refresh as there is one in progress.")
             return
         }
