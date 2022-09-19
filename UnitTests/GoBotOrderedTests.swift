@@ -436,7 +436,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex1], timeout: 10)
 
         // check we have the start (default is 100 messages pre-fetched)
-        XCTAssertEqual(proxy.count, 204)
+        XCTAssertEqual(proxy.count, 203)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
         XCTAssertNotNil(proxy.keyValueBy(index: 1))
         XCTAssertNil(proxy.keyValueBy(index: 100))
