@@ -48,10 +48,7 @@ class SendMissionOperation: AsynchronousOperation {
         }
         
         Task {
-            let joinPlanetaryOperation = self.createJoinPlanetaryOperation(
-                config: appConfiguration,
-                queue: self.operationQueue
-            )
+            let joinPlanetaryOperation = self.createJoinPlanetaryOperation(config: appConfiguration)
             let syncOperation = await self.createSyncOperation(bot: bot, config: appConfiguration)
             
             var operations: [Operation] = [syncOperation]
@@ -68,11 +65,8 @@ class SendMissionOperation: AsynchronousOperation {
         }
     }
     
-    func createJoinPlanetaryOperation(
-        config: AppConfiguration,
-        queue: OperationQueue
-    ) -> JoinPlanetarySystemOperation? {
-        JoinPlanetarySystemOperation(appConfiguration: config, operationQueue: queue)
+    func createJoinPlanetaryOperation(config: AppConfiguration) -> JoinPlanetarySystemOperation? {
+        JoinPlanetarySystemOperation(appConfiguration: config)
     }
     
     func createSyncOperation(bot: Bot, config: AppConfiguration) async -> SyncOperation {
