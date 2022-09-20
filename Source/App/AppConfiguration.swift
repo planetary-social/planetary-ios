@@ -37,13 +37,7 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
     /// The number of messages this user has published. This number is used to prevent the user from publishing before
     /// their feed has fully synced, which "forks" or breaks it forever.
     /// Should be kept up-to-date by the `Bot`.
-    var numberOfPublishedMessages: Int = 0 {
-        didSet {
-            if numberOfPublishedMessages > oldValue {
-                print("id: \(self.id), numberOfPublishedMessages: \(numberOfPublishedMessages)")
-            }
-        }
-    }
+    var numberOfPublishedMessages: Int = 0
     
     /// A bool indicating whether the user has opted to join the "Planetary System". Joining the Planetary System means
     /// the system pubs will follow you automatically.
