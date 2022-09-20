@@ -93,12 +93,9 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     private func load() {
         Task { [weak self] in
             do {
-                guard let about = try await Bots.current.about() else {
-                    return
-                }
-            
+                let about = try await Bots.current.about()
                 self?.menuView.profileView.update(with: about)
-                self?.menuView.label.text = about.nameOrIdentity
+                self?.menuView.label.text = about?.nameOrIdentity
             } catch {
                 Log.optional(error)
             }
@@ -348,8 +345,8 @@ private class ProfileImageView: UIView {
         self.circleView.round()
     }
 
-    func update(with about: About) {
-        self.imageView.set(image: about.image)
+    func update(with about: About?) {
+        self.imageView.set(image: about?.image)
     }
 }
 
