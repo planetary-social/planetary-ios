@@ -1159,7 +1159,7 @@ class ViewDatabase {
             .join(self.msgs, on: self.msgs[colMessageID] == self.contacts[colMessageRef])
             .join(self.msgKeys, on: self.msgKeys[colID] == self.contacts[colMessageRef])
             .join(self.authors, on: self.authors[colID] == self.contacts[colAuthorID])
-            .join(self.abouts, on: self.abouts[colAboutID] == self.contacts[colAuthorID])
+            .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.contacts[colAuthorID])
             .filter(colContactID == feedID)
             .filter(colContactState == 1)
             .order(colClaimedAt.desc)
@@ -1421,6 +1421,10 @@ class ViewDatabase {
 
     // turns an array of messages into an array of (msg, #people replied)
     private func addNumberOfPeopleReplied(msgs: [KeyValue]) throws -> KeyValues {
+        guard let db = self.openDB else {
+            throw ViewDatabaseError.notOpen
+        }
+        
         var r: KeyValues = []
         for (index, _) in msgs.enumerated() {
             var msg = msgs[index]
@@ -1430,14 +1434,14 @@ class ViewDatabase {
                 .select(colAuthorID.distinct, colAuthor, colName, colDescr, colImage)
                 .join(self.msgs, on: self.msgs[colMessageID] == self.tangles[colMessageRef])
                 .join(self.authors, on: self.msgs[colAuthorID] == self.authors[colID])
-                .join(self.abouts, on: self.authors[colID] == self.abouts[colAboutID])
+                .join(.leftOuter, self.abouts, on: self.authors[colID] == self.abouts[colAboutID])
                 .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue)
                 .filter(colRoot == msgID)
 
-            let count = try self.openDB!.scalar(replies.count)
+            let count = try db.scalar(replies.count)
 
             var abouts: [About] = []
-            for row in try self.openDB!.prepare(replies.limit(3, offset: 0)) {
+            for row in try db.prepare(replies) {
                 let about = About(about: row[colAuthor],
                                   name: row[colName],
                                   description: row[colDescr],
@@ -1446,7 +1450,7 @@ class ViewDatabase {
             }
 
             msg.metadata.replies.count = count
-            msg.metadata.replies.abouts = abouts
+            msg.metadata.replies.abouts = Set(abouts)
             r.append(msg)
         }
         return r
@@ -1465,7 +1469,7 @@ class ViewDatabase {
             .join(self.msgKeys, on: self.msgKeys[colID] == self.tangles[colMessageRef])
             .join(self.msgs, on: self.msgs[colMessageID] == self.tangles[colMessageRef])
             .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
-            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
+            .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.tangles[colMessageRef])
             .join(.leftOuter, self.votes, on: self.votes[colMessageRef] == self.tangles[colMessageRef])
             .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue )
@@ -1559,7 +1563,7 @@ class ViewDatabase {
             .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
             .join(self.msgKeys, on: self.msgKeys[colID] == self.msgs[colMessageID])
             .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
-            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
+            .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
             .filter(colFeedID == self.currentUserID)
             .filter(colAuthorID != self.currentUserID)
@@ -1674,7 +1678,7 @@ class ViewDatabase {
             LEFT OUTER JOIN votes ON (votes.msg_ref = messages.msg_id)
             INNER JOIN messagekeys ON (messagekeys.id = messages.msg_id)
             INNER JOIN authors ON (authors.id = messages.author_id)
-            INNER JOIN abouts ON (abouts.about_id = messages.author_id)
+            LEFT JOIN abouts ON (abouts.about_id = messages.author_id)
             LEFT OUTER JOIN tangles ON (tangles.msg_ref = messages.msg_id)
             LEFT OUTER JOIN read_messages ON (
                 (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
@@ -1732,7 +1736,7 @@ class ViewDatabase {
             LEFT OUTER JOIN votes ON (votes.msg_ref = messages.msg_id)
             INNER JOIN messagekeys ON (messagekeys.id = messages.msg_id)
             INNER JOIN authors ON (authors.id = messages.author_id)
-            INNER JOIN abouts ON (abouts.about_id = messages.author_id)
+            LEFT JOIN abouts ON (abouts.about_id = messages.author_id)
             LEFT OUTER JOIN tangles ON (tangles.msg_ref = messages.msg_id)
             LEFT OUTER JOIN read_messages ON (
                 (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
@@ -2082,7 +2086,7 @@ class ViewDatabase {
             .join(self.msgKeys, on: self.msgKeys[colID] == self.channelAssigned[colMessageRef])
             .join(self.msgs, on: self.msgs[colMessageID] == self.channelAssigned[colMessageRef])
             .join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
-            .join(self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
+            .join(.leftOuter, self.abouts, on: self.abouts[colAboutID] == self.msgs[colAuthorID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.channelAssigned[colMessageRef])
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.channelAssigned[colMessageRef])
             .order(colMessageID.desc)
