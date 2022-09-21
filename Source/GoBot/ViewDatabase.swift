@@ -1578,21 +1578,33 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let queryString = """
+            WITH
+                block_list AS (
+                    SELECT
+                        contacts.contact_id
+                    FROM
+                        contacts
+                    WHERE
+                        contacts.author_id = :author_id
+                        AND contacts.state = -1
+                )
             SELECT
                 COUNT(*)
             FROM
                 reports r
+                JOIN messages m ON r.msg_ref = m.msg_id
                 LEFT JOIN read_messages rm ON r.msg_ref = rm.msg_id
                 AND r.author_id = rm.author_id
             WHERE
-                r.author_id = ?
+                r.author_id = :author_id
+                AND m.author_id NOT IN block_list
                 AND (
                     rm.is_read = false
                     OR rm.is_read IS NULL
                 );
         """
         let query = try connection.prepare(queryString)
-        if let count = try query.scalar(currentUserID) as? Int64 {
+        if let count = try query.scalar([":author_id": currentUserID]) as? Int64 {
             return Int(truncatingIfNeeded: count)
         }
         return 0
@@ -1688,6 +1700,16 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         let queryString = """
+        WITH
+            block_list AS (
+                SELECT
+                    contacts.contact_id
+                FROM
+                    contacts
+                WHERE
+                    contacts.author_id = :author_id
+                    AND contacts.state = -1
+            )
         SELECT
             reports.type AS report_type,
             reports.created_at AS created_at,
@@ -1716,14 +1738,18 @@ class ViewDatabase {
                 (read_messages.msg_id = messages.msg_id) AND (read_messages.author_id = reports.author_id)
             )
         WHERE
-            reports.author_id = ?
-            AND messages.hidden == false
+            reports.author_id = :author_id
+            AND messages.hidden = false
+            AND messages.author_id NOT IN block_list
         ORDER BY
             created_at DESC
         LIMIT
-            ?
+            :limit
         """
-        let reports = try connection.prepare(queryString, currentUserID, limit).prepareRowIterator().map { row in
+        let reports = try connection.prepare(queryString, [
+            ":author_id": currentUserID,
+            ":limit": limit
+        ]).prepareRowIterator().map { row in
             try buildReport(from: row)
         }
         return reports.compactMap { $0 }
@@ -1779,18 +1805,33 @@ class ViewDatabase {
 
         // swiftlint:disable indentation_width
         let queryString = """
+        WITH
+          block_list AS (
+            SELECT
+              contacts.contact_id
+            FROM
+              contacts
+            WHERE
+              contacts.author_id = :author_id
+              AND contacts.state = -1
+          )
         SELECT
           COUNT(*)
         FROM
           reports
+        JOIN messages ON messages.msg_id = reports.msg_ref
         WHERE
-          reports.author_id = ?
-          AND created_at > ? + 1;
+          reports.author_id = :author_id
+          AND messages.author_id NOT IN block_list
+          AND created_at > :timestamp + 1
         """
         // swiftlint:enable indentation_width
 
         let query = try connection.prepare(queryString)
-        if let count = try query.scalar(currentUserID, report.createdAt.millisecondsSince1970) as? Int64 {
+        if let count = try query.scalar([
+            ":author_id": currentUserID,
+            ":timestamp": report.createdAt.millisecondsSince1970
+        ]) as? Int64 {
             return Int(truncatingIfNeeded: count)
         }
         return 0
