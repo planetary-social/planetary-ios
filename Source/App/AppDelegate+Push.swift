@@ -193,13 +193,18 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // Update the application badge number
         updateApplicationBadgeNumber()
 
-        reports.forEach { report in
-            guard report.authorIdentity == currentIdentity else {
-                return
+        Bots.current.blocks(identity: currentIdentity) { [weak self] blockedIdentities, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            reports.forEach { [weak self] report in
+                let notifyingIdentity = report.keyValue.value.author
+                let notifiedIdentity = report.authorIdentity
+                guard notifiedIdentity == currentIdentity, !blockedIdentities.contains(notifyingIdentity) else {
+                    return
+                }
+                // Display a local notification so the user is aware of a new report
+                self?.scheduleLocalNotification(report)
             }
-            
-            // Display a local notification so the user is aware of a new report
-            scheduleLocalNotification(report)
         }
     }
 
