@@ -11,32 +11,35 @@ import XCTest
 class SBBTests: XCTestCase {
 
     /// The system under test
-    var sut: GoBot!
-    var workingDirectory: String!
-    var userDefaults: UserDefaults!
-    var appConfig: AppConfiguration!
+    var sut = GoBot()
+    var workingDirectory: String?
     let fileManager = FileManager.default
     let userDefaultsSuiteName = "GoBotIntegrationTests"
-
 
     override func setUpWithError() throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
         // run the unit tests. For now this will have to do.
-        workingDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-            .first!
-            .appending("/FBTT")
+        let workingDirectory = try XCTUnwrap(
+            NSSearchPathForDirectoriesInDomains(
+                .applicationSupportDirectory,
+                .userDomainMask,
+                true
+            ).first?.appending("/FBTT")
+        )
 
         // start fresh
         do { try fileManager.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
 
+        self.workingDirectory = workingDirectory
+
         UserDefaults().removePersistentDomain(forName: userDefaultsSuiteName)
-        userDefaults = UserDefaults(suiteName: userDefaultsSuiteName)
+        let userDefaults = try XCTUnwrap(UserDefaults(suiteName: userDefaultsSuiteName))
         let welcomeService = WelcomeServiceAdapter(userDefaults: userDefaults)
         userDefaults.set(true, forKey: welcomeService.hasBeenWelcomedKey(for: botTestsKey.id))
 
         sut = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
 
-        appConfig = AppConfiguration(with: botTestsKey)
+        let appConfig = AppConfiguration(with: botTestsKey)
         appConfig.network = botTestNetwork
         appConfig.hmacKey = botTestHMAC
         appConfig.bot = sut
@@ -66,33 +69,30 @@ class SBBTests: XCTestCase {
             }
         }
         await sut.exit()
-        do {
-            try fileManager.removeItem(atPath: workingDirectory)
-        } catch {
-            print(error)
+        if let workingDirectory = workingDirectory {
+            do {
+                try fileManager.removeItem(atPath: workingDirectory)
+            } catch {
+                print(error)
+            }
         }
     }
 
     func testGetRawMessage() throws {
         let keypairs = try sut.testingGetNamedKeypairs()
         let alice = try XCTUnwrap(keypairs["alice"])
-        let bob = try XCTUnwrap(keypairs["bob"])
-        let msg = sut.testingPublish(as: "alice", content: Post(text: "Hello, World"))
-        var raw: String?
+        sut.testingPublish(as: "alice", content: Post(text: "Hello, World"))
+        var source: String?
         alice.withGoString { gostr in
             if let rawPointer = ssbGetRawMessage(gostr, 1) {
-                raw = String(cString: rawPointer)
+                source = String(cString: rawPointer)
                 free(rawPointer)
             }
         }
-        XCTAssertNotNil(raw)
+        XCTAssertNotNil(source)
+        let data = try XCTUnwrap(try XCTUnwrap(source).data(using: .utf8))
+        let json = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        XCTAssertEqual(json["sequence"] as? Int, 1)
+        XCTAssertEqual(json["author"] as? String, alice)
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }
