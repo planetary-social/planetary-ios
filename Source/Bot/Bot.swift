@@ -411,9 +411,17 @@ extension Bot {
             }
         }
     }
-    
-    func reports(completion: @escaping (([Report], Error?) -> Void)) {
-        self.reports(queue: .main, completion: completion)
+
+    func reports() async throws -> [Report] {
+        try await withCheckedThrowingContinuation { continuation in
+            reports(queue: DispatchQueue.global(qos: .background)) { reports, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: reports)
+                }
+            }
+        }
     }
 
     /// Returns the number of reports newer than a particular report (offset).
