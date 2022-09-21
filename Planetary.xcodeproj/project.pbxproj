@@ -606,7 +606,6 @@
 		5B0A4658286E0CA60050D6AC /* NumberOfReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0A4656286E0CA60050D6AC /* NumberOfReportsOperation.swift */; };
 		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
 		5B0D585227BEAE9E002F927D /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Support */; };
-		5B1FF5DE28D89FFC008F3A85 /* SBBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5DD28D89FFC008F3A85 /* SBBTests.swift */; };
 		5B1FF5E228D8A67C008F3A85 /* RawMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */; };
 		5B1FF5E328D8A67C008F3A85 /* RawMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */; };
 		5B1FF5E528D8AA25008F3A85 /* RawMessageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */; };
@@ -1594,7 +1593,6 @@
 		5B0A4656286E0CA60050D6AC /* NumberOfReportsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfReportsOperation.swift; sourceTree = "<group>"; };
 		5B0D585327BEE1F1002F927D /* Secrets.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.release.plist; sourceTree = "<group>"; };
 		5B0D585827BEE4FC002F927D /* Secrets.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.debug.plist; sourceTree = "<group>"; };
-		5B1FF5DD28D89FFC008F3A85 /* SBBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBBTests.swift; sourceTree = "<group>"; };
 		5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawMessageView.swift; sourceTree = "<group>"; };
 		5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawMessageCoordinator.swift; sourceTree = "<group>"; };
 		5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableText.swift; sourceTree = "<group>"; };
@@ -2005,7 +2003,6 @@
 				C93A4B3727987BCB009F963D /* GoBotIntegrationTests.swift */,
 				2370620723CFC53B0070712C /* GoBotReproductionHelper.swift */,
 				C9724B0B28089499000EBCCD /* Beta1MigrationTests.swift */,
-				5B1FF5DD28D89FFC008F3A85 /* SBBTests.swift */,
 			);
 			path = UnitTests;
 			sourceTree = "<group>";
@@ -4116,7 +4113,6 @@
 				C93A4B3827987BCB009F963D /* GoBotIntegrationTests.swift in Sources */,
 				C9724B9F2809EAB1000EBCCD /* FollowOperation.swift in Sources */,
 				533EDBF62389BDD4008B3565 /* UIImage+AverageColor.swift in Sources */,
-				5B1FF5DE28D89FFC008F3A85 /* SBBTests.swift in Sources */,
 				533DAFA5223AD2D600229EB3 /* XCTest+Test.swift in Sources */,
 				535CD3802267F5F90039BCF2 /* ContentCodable.swift in Sources */,
 				C9724BD12809EDE2000EBCCD /* CommunityCellView.swift in Sources */,
