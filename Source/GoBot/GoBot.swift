@@ -1754,4 +1754,26 @@ class GoBot: Bot {
             }
         }
     }
+
+    // MARK: Raw messages
+
+    func raw(of keyValue: KeyValue, completion: @escaping RawCompletion) {
+        userInitiatedQueue.async {
+            let identity = keyValue.value.author
+            let sequence = keyValue.value.sequence
+            guard sequence >= UInt64.min, sequence <= UInt64.max else {
+                completion(.failure(AppError.unexpected))
+                return
+            }
+            identity.withGoString { feedRef in
+                guard let pointer = ssbGetRawMessage(feedRef, UInt64(sequence)) else {
+                    completion(.failure(GoBotError.unexpectedFault("failed to get raw message")))
+                    return
+                }
+                let string = String(cString: pointer)
+                free(pointer)
+                completion(.success(string))
+            }
+        }
+    }
 }

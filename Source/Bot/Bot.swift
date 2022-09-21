@@ -22,6 +22,7 @@ typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias CountCompletion = ((Result<Int, Error>) -> Void)
 typealias VoidCompletion = ((Result<Void, Error>) -> Void)
+typealias RawCompletion = ((Result<String, Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -293,6 +294,10 @@ protocol Bot: AnyObject {
     // MARK: Preloading
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
+
+    // MARK: Raw message
+
+    func raw(of keyValue: KeyValue, completion: @escaping RawCompletion)
 }
 
 extension Bot {
@@ -581,4 +586,17 @@ extension Bot {
                 }
             }
         }
+
+    func raw(of keyValue: KeyValue) async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            raw(of: keyValue) { result in
+                switch result {
+                case .success(let string):
+                    continuation.resume(returning: string)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
 }

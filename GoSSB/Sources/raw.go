@@ -10,6 +10,7 @@ import (
 
 // ssbGetRawMessage returns a raw message JSON for the specified feed and sequence number. Feed is in the @-notation,
 // sequence starts at 1.
+//export ssbGetRawMessage
 func ssbGetRawMessage(feedRef string, seq int64) *C.char {
 	defer logPanic()
 

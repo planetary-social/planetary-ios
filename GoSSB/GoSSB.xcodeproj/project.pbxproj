@@ -25,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		0A26524D278A7492008F9EAA /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = include/module.modulemap; sourceTree = "<group>"; };
+		5B1FF5E028D8A3F2008F3A85 /* raw.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = raw.go; sourceTree = "<group>"; };
 		C93DE35627E8C9E700C0E93D /* go.sum */ = {isa = PBXFileReference; lastKnownFileType = text; path = go.sum; sourceTree = "<group>"; };
 		C93DE35727E8C9E700C0E93D /* api-ios.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = "api-ios.go"; sourceTree = "<group>"; };
 		C93DE35A27E8C9E700C0E93D /* encode.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = encode.go; sourceTree = "<group>"; };
@@ -111,6 +112,7 @@
 				C93DE36527E8C9E700C0E93D /* ctrl.go */,
 				C93DE36727E8C9E700C0E93D /* debug.go */,
 				C93DE36427E8C9E700C0E93D /* publish.go */,
+				5B1FF5E028D8A3F2008F3A85 /* raw.go */,
 				C93DE36627E8C9E700C0E93D /* streams.go */,
 				C93DE35D27E8C9E700C0E93D /* testing.go */,
 				C93DE36827E8C9E700C0E93D /* utils.go */,

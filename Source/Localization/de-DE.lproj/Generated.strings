@@ -80,6 +80,7 @@
 "Text.shareThisMessage" = "Diese Nachricht teilen";
 "Text.shareThisProfileText" = "Finde {{ who }} auf Planetary unter {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} hat gepostet: {{ what }} {{ link }}";
+"Text.viewSource" = "View source";
 "Text.addFriend" = "Freund hinzufügen";
 "Text.removeFriend" = "Freund entfernen";
 "Text.blockUser" = "Ignore this user";
