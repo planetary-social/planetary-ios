@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Fix the thread view when repliers do not have a name published. #850
+- Filter blocked users from the notifications screen. #824
 
 ## [1.3.4]
 
