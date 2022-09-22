@@ -3,23 +3,23 @@
 "Text.planetary" = "Planetary";
 "Text.error" = "Ups";
 "Text.cancel" = "Cancelar";
-"Text.skip" = "Saltear";
+"Text.skip" = "Omitir";
 "Text.ok" = "OK";
 "Text.next" = "Siguiente";
 "Text.done" = "Hecho";
 "Text.save" = "Guardar";
 "Text.yes" = "Sí";
 "Text.no" = "No";
-"Text.tryAgain" = "Intenta De Nuevo";
+"Text.tryAgain" = "Prueba de nuevo";
 "Text.loading" = "Cargando...";
 "Text.today" = "Hoy";
 "Text.yesterday" = "Ayer";
 "Text.recently" = "Recientemente";
 "Text.future" = "En el futuro";
-"Text.daysAgo" = "hace {{ days }} días";
+"Text.daysAgo" = "Hace {{ days }} días";
 "Text.atDayTime" = "{{ day }} a las {{ time }}";
 "Text.minutesAbbreviated" = "{{ numberOfMinutes }} minutos";
-"Text.yourProfile" = "Tu Perfil";
+"Text.yourProfile" = "Tu perfil";
 "Text.helpAndSupport" = "Ayuda y Soporte";
 "Text.reportBug" = "Reportar una falla";
 "Text.settings" = "Configuración";
@@ -28,8 +28,8 @@
 "Text.usersInYourNetwork" = "Usuarios en tu red";
 "Text.goToYourNetwork" = "Ir a Tu Red";
 "Text.emptyHomeFeedMessage" = "Y está vacío! ¿Has considerado seguir unos cuántos usuarios o tópicos?";
-"Text.replied" = "{{somebody}} replied";
-"Text.liked" = "{{somebody}} liked";
+"Text.replied" = "{{somebody}} respondió";
+"Text.liked" = "A {{somebody}} le gustó";
 "Text.startedFollowing" = "{{somebody}} empezó a seguirte";
 "Text.stoppedFollowing" = "{{somebody}} dejó de seguirte";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
@@ -60,8 +60,8 @@
 "Text.seeMore" = "Ver más";
 "Text.likesThis" = "le gusta esto";
 "Text.dislikesThis" = "no le gusta esto";
-"Text.block" = "Ignore";
-"Text.blocked" = "Ignored";
+"Text.block" = "Ignorar";
+"Text.blocked" = "Ignorado";
 "Text.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
 "Text.follow" = "Seguir";
 "Text.following" = "Siguiendo";
@@ -82,8 +82,8 @@
 "Text.shareThisMessageText" = "{{ who }} publicó: {{ what }} {{ link }}";
 "Text.addFriend" = "Añadir amigo";
 "Text.removeFriend" = "Eliminar de amigos";
-"Text.blockUser" = "Ignore this user";
-"Text.unblockUser" = "Unignore this user";
+"Text.blockUser" = "Ignorar a este usuario";
+"Text.unblockUser" = "Dejar de ignorar a este usuario";
 "Text.reportPost" = "Reportar esta publicación";
 "Text.reportUser" = "Reportar este usuario";
 "Text.noReplies" = "Sin respuestas";
@@ -118,7 +118,7 @@
 "Text.pasteAddress" = "Token";
 "Text.invitationRedeemed" = "Invitation redeemed!";
 "Text.addRoomAddressOrInvitation" = "paste address or invitation";
-"Text.joiningRoom" = "Joining room...";
+"Text.joiningRoom" = "Uniéndose a la sala...";
 "Text.refreshSingular" = "{{ count }} unread post!";
 "Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown soportado";
@@ -127,11 +127,11 @@
 "Text.postNotFound" = "No se han encontrado publicaciones con ese ID.";
 "Text.users" = "Usuarios";
 "Text.posts" = "Publicaciones";
-"Text.search" = "Search";
+"Text.search" = "Buscar";
 "Text.searching" = "Buscando";
-"Text.searchForUsers" = "Filter users by name or ID";
+"Text.searchForUsers" = "Filtrar usuarios por nombre o ID";
 "Text.searchingLocally" = "Searching for posts in your local database";
-"Text.noResultsFound" = "No results found.";
+"Text.noResultsFound" = "No se encontraron resultados.";
 "Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Text.upgradingAndRestoring" = "Planetary esta recuperando tus datos de la red.";
 "Text.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
@@ -148,11 +148,11 @@
 "Text.confirmSkipCopyToMainNetwork" = "You will not be prompted to run this fix again. Are you sure you want to skip it?";
 
 "Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
-"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
-"Blocking.blockedUsers" = "Ignored Users";
+"Blocking.buttonTitle" = "Sí, ignorar a {{ name }}";
+"Blocking.blockedUsers" = "Usuarios ignorados";
 "Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
 "Blocking.thisUser" = "este usuario";
-"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
+"Blocking.usersYouHaveBlocked" = "Usuarios a los que has ignorado";
 
 "ImagePicker.camera" = "Cámara";
 "ImagePicker.cameraNotAvailable" = "La cámara no está disponible en este dispositivo";
@@ -164,11 +164,11 @@
 
 "NewPost.confirmRemove" = "¿Eliminar esta imagen de la publicación? Podrás volver a añadirla si te arrepientes.";
 "NewPost.remove" = "Quitar";
-"NewPost.publishing" = "Publishing...";
-"NewPost.restoring" = "Restoring...";
+"NewPost.publishing" = "Publicando...";
+"NewPost.restoring" = "Restaurando...";
 
-"Offboarding.reset" = "Delete";
-"Offboarding.resetIdentity" = "Delete My Identity";
+"Offboarding.reset" = "Eliminar";
+"Offboarding.resetIdentity" = "Eliminar mi identidad";
 "Offboarding.resetConfirmTitle" = "Cuidado";
 "Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetConfirmAgainTitle" = "¿Estás seguro?";
