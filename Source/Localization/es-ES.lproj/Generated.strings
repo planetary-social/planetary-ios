@@ -32,8 +32,8 @@
 "Text.liked" = "A {{somebody}} le gustó";
 "Text.startedFollowing" = "{{somebody}} empezó a seguirte";
 "Text.stoppedFollowing" = "{{somebody}} dejó de seguirte";
-"Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
-"Text.userOusideNetwork" = "This user is outside your network";
+"Text.followStats" = "Siguiendo a {{numberOfFollows}} • Seguido por {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "Este usuario está fuera de tu red";
 "Text.showMeInDirectory" = "Mostrarme en el directorio";
 "Text.showMeInUserDirectory" = "Mostrarme en el directorio de usuarios";
 "Text.hideMeFromUserDirectory" = "Ocultarme del directorio de usuarios";
@@ -117,10 +117,10 @@
 "Text.redeemInvitation" = "Canjear una invitación";
 "Text.pasteAddress" = "Token";
 "Text.invitationRedeemed" = "Invitation redeemed!";
-"Text.addRoomAddressOrInvitation" = "paste address or invitation";
+"Text.addRoomAddressOrInvitation" = "pega la dirección o invitación";
 "Text.joiningRoom" = "Uniéndose a la sala...";
-"Text.refreshSingular" = "{{ count }} unread post!";
-"Text.refreshPlural" = "{{ count }} unread posts!";
+"Text.refreshSingular" = "¡{{ count }} publicación sin leer!";
+"Text.refreshPlural" = "¡{{ count }} publicaciones sin leer!";
 "Text.markdownSupported" = "Markdown soportado";
 "Text.loggingOut" = "Cerrando sesión...";
 "Text.openPost" = "Abrir publicación {{ postID }}";
@@ -130,7 +130,7 @@
 "Text.search" = "Buscar";
 "Text.searching" = "Buscando";
 "Text.searchForUsers" = "Filtrar usuarios por nombre o ID";
-"Text.searchingLocally" = "Searching for posts in your local database";
+"Text.searchingLocally" = "Buscando publicaciones en tu base de datos local";
 "Text.noResultsFound" = "No se encontraron resultados.";
 "Text.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Text.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
@@ -243,23 +243,23 @@
 "OnboardingStepTitle.start" = "\nRedes sociales para humanos, no para algoritmos.";
 
 "ManageRelays.relayServers" = "Relay Servers";
-"ManageRelays.managePubs" = "Manage Pubs";
-"ManageRelays.manageRooms" = "Manage Rooms (beta)";
+"ManageRelays.managePubs" = "Administrar pubs";
+"ManageRelays.manageRooms" = "Administrar salas (beta)";
 "ManageRelays.footer" = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
-"ManageRelays.addingPubs" = "Adding Pubs";
-"ManageRelays.yourPubs" = "Your Pubs";
-"ManageRelays.lastWorked" = "Last worked on";
-"ManageRelays.pasteAddress" = "Paste the address here";
-"ManageRelays.joinedRooms" = "Joined Rooms";
-"ManageRelays.addRooms" = "Add Rooms";
-"ManageRelays.loadingRooms" = "Loading rooms...";
-"ManageRelays.invalidRoomURL" = "Invalid room URL";
+"ManageRelays.addingPubs" = "Añadiendo pubs";
+"ManageRelays.yourPubs" = "Tus pubs";
+"ManageRelays.lastWorked" = "Último trabajo en";
+"ManageRelays.pasteAddress" = "Pega la dirección aquí";
+"ManageRelays.joinedRooms" = "Salas unidas";
+"ManageRelays.addRooms" = "Añadir salas";
+"ManageRelays.loadingRooms" = "Cargando salas...";
+"ManageRelays.invalidRoomURL" = "URL de sala inválido";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 
-"Alias.manageAliases" = "Manage Aliases (beta)";
-"Alias.addAlias" = "Register a new alias";
-"Alias.roomAliases" = "Room Aliases (beta)";
-"Alias.aliases" = "Aliases";
+"Alias.manageAliases" = "Administrar alias (beta)";
+"Alias.addAlias" = "Registrar un nuevo alias";
+"Alias.roomAliases" = "Alias de sala (beta)";
+"Alias.aliases" = "Alias";
 "Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
 
 "Preview.title" = "Configuración avanzada";
@@ -274,22 +274,22 @@
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Muestra posts y mensajes de follow de la gente que sigues en el orden en que fueron publicados.";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Posts y follows recientes";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Muestra posts y mensajes de follow de la gente que sigues. Si un mensaje recibe una respuesta, esta será mostrada al principio del feed.";
-"FeedAlgorithm.randomPostsAlgorithm" = "Random unread posts";
+"FeedAlgorithm.randomPostsAlgorithm" = "Publicaciones sin leer aleatorias";
 "FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
 "FeedAlgorithm.viewAlgorithmSource" = "Ver Código Fuente";
 "FeedAlgorithm.sourceCode" = "Código Fuente";
 "FeedAlgorithm.sourceCodeDescription" = "El código de Planetary es abierto, así que nuestros algoritmos pueden ser auditados e incluso modificados por nuestros usuarios. Puedes ver el código fuente para estos algoritmos haciendo tap en el botón de aquí arriba.";
 
-"DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
+"DiscoveryFeedAlgorithm.algorithms" = "Algoritmos";
 "DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed Algorithm";
-"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Publicaciones recientes";
 "DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
-"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Publicaciones sin leer aleatorias";
 "DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
 
-"WebServices.title" = "Web Services";
-"WebServices.publicWebHosting" = "Public Web Hosting";
-"WebServices.aliases" = "Aliases (beta)";
+"WebServices.title" = "Servicios web";
+"WebServices.publicWebHosting" = "Alojamiento web público";
+"WebServices.aliases" = "Alias (beta)";
 "WebServices.footer" = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible.";
 
 "Push.enabled" = "Activado";
@@ -336,14 +336,14 @@
 "Report.feedMentioned" = "%@ te mencionó en una publicación";
 "Report.messageLiked" = "A %@ le gustó tu publicación";
 
-"Notifications.markAllAsRead" = "Mark all as read";
+"Notifications.markAllAsRead" = "Marcar todo como leído";
 
-"Help.help" = "Help";
+"Help.help" = "Ayuda";
 "Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
 
 "Home.title" = "See posts from users and topics you follow";
 "Home.body" = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed.";
-"Home.highlightedWord" = "Discover";
+"Home.highlightedWord" = "Descubrir";
 
 "Discover.title" = "See what's new and grow your network";
 "Discover.body" = "See posts from users and topics followed by your friends. Follow them to see their content in your Home Feed!";
@@ -354,7 +354,7 @@
 
 "Hashtags.title" = "What the community is talking about";
 "Hashtags.body" = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network.";
-"Hashtags.highlightedWord" = "Your Network";
+"Hashtags.highlightedWord" = "Tu red";
 
 "YourNetwork.title" = "Your friends, connections and pubs";
 "YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
