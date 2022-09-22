@@ -100,18 +100,23 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
 
     // MARK: Load and refresh
 
+    @MainActor
     func load(animated: Bool = false) {
-        Bots.current.reports { [weak self] reports, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            self?.removeLoadingAnimation()
-            self?.refreshControl.endRefreshing()
-            self?.floatingRefreshButton.hide()
-            
-            if let error = error {
-                self?.alert(error: error)
-            } else {
-                self?.update(with: reports, animated: animated)
+        Task {
+            let clean = { [weak self] in
+                self?.removeLoadingAnimation()
+                self?.refreshControl.endRefreshing()
+                self?.floatingRefreshButton.hide()
+            }
+            do {
+                let reports = try await Bots.current.reports()
+                clean()
+                update(with: reports, animated: animated)
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                clean()
+                alert(error: error)
             }
         }
     }

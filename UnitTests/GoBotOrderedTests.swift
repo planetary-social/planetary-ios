@@ -412,41 +412,6 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
     }
 
-    // MARK: notifications
-
-    func test121_first_notification_empty() {
-        let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.reports {
-            reports, err in
-            XCTAssertNil(err)
-            XCTAssertEqual(reports.count, 0)
-            ex.fulfill()
-        }
-        self.wait(for: [ex], timeout: 10)
-    }
-
-    func test122_first_notification() {
-        let followRef = GoBotOrderedTests.shared.testingPublish(
-            as: "alice",
-            content: Contact(contact: botTestsKey.identity, following: true))
-
-        GoBotOrderedTests.shared.testRefresh(self)
-
-        let ex = self.expectation(description: "\(#function) notify")
-        GoBotOrderedTests.shared.reports {
-            reports, err in
-            defer { ex.fulfill() }
-            XCTAssertNil(err)
-            guard reports.count == 1 else {
-                XCTFail("expected 1 message in notification")
-                return
-            }
-            XCTAssertEqual(reports[0].messageIdentifier, followRef)
-            XCTAssertEqual(reports[0].keyValue.value.author, GoBotOrderedTests.pubkeys["alice"]!)
-        }
-        self.wait(for: [ex], timeout: 10)
-    }
-
     // MARK: recent
     
     func test135_recent_paginated_feed() {
@@ -471,7 +436,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex1], timeout: 10)
 
         // check we have the start (default is 100 messages pre-fetched)
-        XCTAssertEqual(proxy.count, 204)
+        XCTAssertEqual(proxy.count, 203)
         XCTAssertNotNil(proxy.keyValueBy(index: 0))
         XCTAssertNotNil(proxy.keyValueBy(index: 1))
         XCTAssertNil(proxy.keyValueBy(index: 100))
