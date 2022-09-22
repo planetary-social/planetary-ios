@@ -37,27 +37,38 @@ import Logger
         didDismiss()
     }
 
+    private func updateRawMessage(_ rawMessage: String) {
+        self.rawMessage = rawMessage
+        self.loadingMessage = nil
+    }
+
+    private func updateErrorMessage(_ errorMessage: String) {
+        self.errorMessage = errorMessage
+        self.loadingMessage = nil
+    }
+
     private func loadRawMessage() {
         loadingMessage = Text.loading.text
-        Task {
+        Task.detached { [bot, keyValue, weak self] in
             do {
+                var rawMessage: String
                 let rawString = try await bot.raw(of: keyValue)
                 if let rawData = rawString.data(using: .utf8) {
                     do {
                         let json = try JSONSerialization.jsonObject(with: rawData)
                         let data = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted])
-                        rawMessage = String(data: data, encoding: .utf8)
+                        rawMessage = String(data: data, encoding: .utf8) ?? rawString
                     } catch {
                         rawMessage = rawString
                     }
                 } else {
                     rawMessage = rawString
                 }
+                await self?.updateRawMessage(rawMessage)
             } catch {
                 Log.optional(error)
-                errorMessage = error.localizedDescription
+                await self?.updateErrorMessage(error.localizedDescription)
             }
-            loadingMessage = nil
         }
     }
 }

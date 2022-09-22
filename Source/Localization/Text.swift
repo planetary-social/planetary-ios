@@ -138,6 +138,7 @@ enum Text: String, Localizable, CaseIterable {
     case shareThisProfileText = "Find {{ who }} on Planetary at {{ link }}"
     case shareThisMessageText = "{{ who }} posted: {{ what }} {{ link }}"
     case viewSource = "View source"
+    case messageSource = "Message Source"
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"

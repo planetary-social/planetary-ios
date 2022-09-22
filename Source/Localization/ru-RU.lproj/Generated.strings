@@ -81,6 +81,7 @@
 "Text.shareThisProfileText" = "Find {{ who }} on Planetary at {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
 "Text.viewSource" = "View source";
+"Text.messageSource" = "Message Source";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
 "Text.blockUser" = "Ignore this user";

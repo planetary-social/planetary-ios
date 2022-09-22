@@ -595,6 +595,13 @@ extension Bot {
             }
         }
 
+    /// Fetch the message source of the given message
+    ///
+    /// - parameter keyValue: The KeyValue that holds the feed and the sequence number of the message to
+    /// retrieve its source.
+    /// - returns: A String object containing the JSON SSB message
+    ///
+    /// This function will throw if it cannot access the database
     func raw(of keyValue: KeyValue) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
             raw(of: keyValue) { result in

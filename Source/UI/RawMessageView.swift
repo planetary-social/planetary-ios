@@ -78,6 +78,7 @@ struct RawMessageView<ViewModel>: View where ViewModel: RawMessageViewModel {
                 }
             }
         }
+        .navigationTitle(Text.messageSource.text)
         .disabled(showProgress)
         .overlay(loadingIndicator)
         .alert(isPresented: showAlert) {
