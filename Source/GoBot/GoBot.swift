@@ -1106,7 +1106,11 @@ class GoBot: Bot {
     func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
         userInitiatedQueue.async {
             do {
-                let about = try self.database.getAbout(for: identity)
+                var about = try self.database.getAbout(for: identity)
+                if about == nil {
+                    about = About(about: identity)
+                }
+                
                 queue.async {
                     if about?.identity == self._identity { self._about = about }
                     completion(about, nil)

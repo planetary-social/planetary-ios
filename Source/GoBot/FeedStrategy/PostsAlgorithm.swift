@@ -254,14 +254,14 @@ class PostsAlgorithm: NSObject, FeedStrategy {
                 .select(colAuthorID.distinct, colAuthor, colName, colDescr, colImage)
                 .join(messages, on: messages[colMessageID] == tangles[colMessageRef])
                 .join(authors, on: messages[colAuthorID] == authors[colID])
-                .join(abouts, on: authors[colID] == abouts[colAboutID])
+                .join(.leftOuter, abouts, on: authors[colID] == abouts[colAboutID])
                 .filter(colMsgType == ContentType.post.rawValue || colMsgType == ContentType.vote.rawValue)
                 .filter(colRoot == msgID)
 
             let count = try connection.scalar(replies.count)
 
             var abouts: [About] = []
-            for replyRow in try connection.prepare(replies.limit(3, offset: 0)) {
+            for replyRow in try connection.prepare(replies) {
                 let about = About(
                     about: replyRow[colAuthor],
                     name: replyRow[colName],
@@ -272,7 +272,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             }
 
             message.metadata.replies.count = count
-            message.metadata.replies.abouts = abouts
+            message.metadata.replies.abouts = Set(abouts)
             keyValues.append(message)
         }
         return keyValues

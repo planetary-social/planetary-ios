@@ -57,8 +57,13 @@ struct KeyValue: Codable {
         var author = Author()
 
         struct Replies {
+            
+            /// The number of replies to this message
             var count: Int = 0
-            var abouts: [About] = []
+            
+            /// Metadata about the authors of the replies.
+            var abouts: Set<About> = Set([])
+            
             var isEmpty: Bool {
                 // swiftlint:disable empty_count
                 count <= 0
