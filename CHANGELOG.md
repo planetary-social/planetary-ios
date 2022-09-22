@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Show the underlying SSB message for posts, replies and likes. #662
+- Fix the profile picture and name fields being empty when the user had not set a name. #852
+- Fix the thread view when repliers do not have a name published. #850
 - Filter blocked users from the notifications screen. #824
+- Fix an issue where the user could get stuck on the name screen during onboarding. #844 (thanks @quickdudley)
+- Added the bio screen back to onboarding. #805
 
 ## [1.3.4]
 

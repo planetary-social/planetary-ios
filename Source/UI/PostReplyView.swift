@@ -162,7 +162,7 @@ class RepliesView: KeyValueView {
         self.label.constrainHeight(to: self.avatarImageView.height)
 
         Layout.fillTopLeft(of: self, with: self.avatarImageView, insets: .left(Layout.horizontalSpacing))
-        Layout.fillTopRight(of: self, with: self.label, insets: .right(Layout.horizontalSpacing))
+        Layout.fillTopRight(of: self, with: self.label, insets: .right(-Layout.horizontalSpacing))
 
         self.label.constrainLeading(toTrailingOf: self.avatarImageView, constant: Layout.horizontalSpacing)
 
@@ -177,13 +177,18 @@ class RepliesView: KeyValueView {
     // MARK: KeyValueUpdateable
 
     override func update(with keyValue: KeyValue) {
-        let uniqueAbouts = Array(Set(keyValue.metadata.replies.abouts))
+        let uniqueAbouts = keyValue.metadata.replies.abouts
 
         if !uniqueAbouts.isEmpty {
-            Bots.current.abouts(identities: uniqueAbouts.map { $0.identity }) { abouts, _ in
+            Bots.current.abouts(identities: uniqueAbouts.map { $0.identity }) { detailedAbouts, _ in
+                let allAbouts = Set(detailedAbouts).union(keyValue.metadata.replies.abouts)
                 DispatchQueue.main.async {
-                    self.avatarImageView.abouts = abouts
-                    self.updateLabel(from: abouts, total: keyValue.metadata.replies.count)
+                    self.avatarImageView.abouts = detailedAbouts
+                    self.updateLabel(
+                        from: allAbouts,
+                        authorsWithDetails: detailedAbouts,
+                        totalReplyCount: keyValue.metadata.replies.count
+                    )
                 }
             }
         }
@@ -191,20 +196,21 @@ class RepliesView: KeyValueView {
         self.heightConstraint?.constant = uniqueAbouts.isEmpty ? 0 : self.expandedHeight
     }
 
-    private func updateLabel(from abouts: [About], total: Int) {
-        let count = abouts.count
+    private func updateLabel(from authors: Set<About>, authorsWithDetails: [About], totalReplyCount: Int) {
+        let count = authorsWithDetails.count
         if count == 1 {
-            let replyFrom = total > 1 ? Text.repliesFrom.text : Text.oneReplyFrom.text
+            let replyFrom = totalReplyCount > 1 ? Text.repliesFrom.text : Text.oneReplyFrom.text
             let text = NSMutableAttributedString(replyFrom, font: self.textFont, color: .secondaryText)
-            if let name = abouts.first?.name {
+            if let name = authorsWithDetails.first?.name {
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
             } else {
                 text.append(NSAttributedString(Text.oneOther.text, font: self.textFont, color: .reactionUser))
             }
             self.label.attributedText = text
         } else {
-            let text = NSMutableAttributedString(Text.repliesFrom.text, font: self.textFont, color: .secondaryText)
-            if let name = abouts.first?.name {
+            var text: NSMutableAttributedString
+            if let name = authorsWithDetails.first?.name {
+                text = NSMutableAttributedString(Text.repliesFrom.text, font: self.textFont, color: .secondaryText)
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
                 let others = count > 2 ? Text.andCountOthers : Text.andOneOther
                 text.append(
@@ -215,7 +221,20 @@ class RepliesView: KeyValueView {
                     )
                 )
             } else {
-                text.append(NSAttributedString(Text.countOthers.text, font: self.textFont, color: .reactionUser))
+                // We don't have details from any authors, so just show the number of replies.
+                if totalReplyCount == 1 {
+                    text = NSMutableAttributedString(
+                        Text.oneReply.text,
+                        font: self.textFont,
+                        color: .secondaryText
+                    )
+                } else {
+                    text = NSMutableAttributedString(
+                        Text.replyCount.text(["count": String(totalReplyCount)]),
+                        font: self.textFont,
+                        color: .secondaryText
+                    )
+                }
             }
             self.label.attributedText = text
         }

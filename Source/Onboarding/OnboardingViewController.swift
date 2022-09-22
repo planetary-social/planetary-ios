@@ -23,6 +23,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         NameOnboardingStep(),
         PhotoOnboardingStep(),
         PhotoConfirmOnboardingStep(),   // Bot and API calls
+        BioOnboardingStep(),            // Bot and API calls
         DoneOnboardingStep(),           // Bot and API calls
         JoinOnboardingStep(),           // Bot and API calls
     ]
@@ -32,7 +33,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         // DirectoryOnboardingStep(),      // Bot and API calls
         // PhotoOnboardingStep(),
         // PhotoConfirmOnboardingStep(),   // Bot and API calls
-//        BioOnboardingStep(),            // Bot and API calls
+        BioOnboardingStep(),            // Bot and API calls
         DoneOnboardingStep(),           // Bot and API calls
     ]
 
