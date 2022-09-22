@@ -155,12 +155,13 @@ class ViewDatabase {
     let colValue = Expression<Int>("value")
     let colExpression = Expression<String?>("expression")
 
+    /// A list of every channel, or hashtag, we have seen in processed messages.
     let channels = Table(ViewDatabaseTableNames.channels.rawValue)
     // id
     // name
     let colLegacy = Expression<Bool>("legacy")
     
-    // what messages are in a channel?
+    /// A table that creates a one-to-many relationship from messages to the channels, or hashtags, used in those messages.
     let channelAssigned = Table(ViewDatabaseTableNames.channelsAssigned.rawValue)
     // msg_ref
     let colChanRef = Expression<Int64>("chan_ref")
@@ -1205,23 +1206,23 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
 
-        // swiftlint:disable indentation_width
-        let queryString = """
-        SELECT SUM(CASE WHEN follow.author = ? THEN 1 ELSE 0 END) as followers_count,
-               SUM(CASE WHEN follower.author = ? THEN 1 ELSE 0 END) as follows_count
-        FROM contacts
-        JOIN authors follower ON follower.id = contacts.author_id
-        JOIN authors follow ON follow.id = contacts.contact_id
-        WHERE contacts.state = 1;
-        """
-        // swiftlint:enable indentation_width
+        let authorID = try authorID(of: feed)
 
-        let query = try connection.prepare(queryString)
-        return try query.bind(feed, feed).prepareRowIterator().map { countsRow -> SocialStats in
-            let followersCount = try countsRow.get(Expression<Int>("followers_count"))
-            let followsCount = try countsRow.get(Expression<Int>("follows_count"))
-            return SocialStats(numberOfFollowers: followersCount, numberOfFollows: followsCount)
-        }.first ?? SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
+        let followingCount = try connection.scalar(
+            contacts
+                .filter(contacts[colAuthorID] == authorID)
+                .filter(contacts[colContactState] == 1)
+                .count
+        )
+
+        let followerCount = try connection.scalar(
+            contacts
+                .filter(contacts[colContactID] == authorID)
+                .filter(contacts[colContactState] == 1)
+                .count
+        )
+
+        return SocialStats(numberOfFollowers: followerCount, numberOfFollows: followingCount)
     }
 
     // who is this feed blocking
