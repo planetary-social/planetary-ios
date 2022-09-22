@@ -147,7 +147,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     
     func testCountNumberOfFollowersAndFollows() {
         resetSmallDBAndMeasure {
-            for __ in 0..<100 {
+            for _ in 0..<100 {
                 _ = try? self.viewDatabase.countNumberOfFollowersAndFollows(feed: testFeed.identities[0])
             }
         }
