@@ -204,6 +204,7 @@ class RelationshipButton: IconButton {
         self.configureImage()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         nil
     }
