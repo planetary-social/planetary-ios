@@ -63,7 +63,7 @@ class FakeBot: Bot {
     }
     
     func joinedRooms() async throws -> [Room] {
-        return []
+        []
     }
     func insert(room: Room) async throws { }
     func delete(room: Room) async throws { }
@@ -103,7 +103,7 @@ class FakeBot: Bot {
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) { }
     
     func posts(matching filter: String) async throws -> [KeyValue] {
-        return []
+        []
     }
 
     func uiimage(for identity: Identity, completion: @escaping UIImageCompletion) { }
@@ -222,7 +222,7 @@ class FakeBot: Bot {
     }
     
     func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
-        return false
+        false
     }
 
     // MARK: About content
@@ -271,7 +271,7 @@ class FakeBot: Bot {
     }
     
     func abouts(matching filter: String) async throws -> [About] {
-        return []
+        []
     }
 
     // MARK: Feed content
@@ -348,5 +348,9 @@ class FakeBot: Bot {
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion) {
         completion(nil)
+    }
+
+    func raw(of keyValue: KeyValue, completion: @escaping RawCompletion) {
+        completion(.success(""))
     }
 }

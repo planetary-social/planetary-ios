@@ -1045,6 +1045,26 @@ class GoBotIntegrationTests: XCTestCase {
         let proxy = try await sut.recent()
         XCTAssertEqual(proxy.count, 2)
     }
+
+    // Raw messages
+
+    func testGetRawMessage() throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        sut.testingPublish(as: "alice", content: Post(text: "Hello, World"))
+        var source: String?
+        alice.withGoString { gostr in
+            if let rawPointer = ssbGetRawMessage(gostr, 1) {
+                source = String(cString: rawPointer)
+                free(rawPointer)
+            }
+        }
+        XCTAssertNotNil(source)
+        let data = try XCTUnwrap(try XCTUnwrap(source).data(using: .utf8))
+        let json = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        XCTAssertEqual(json["sequence"] as? Int, 1)
+        XCTAssertEqual(json["author"] as? String, alice)
+    }
 }
 
 class MockPreloadedPubService: PreloadedPubService {

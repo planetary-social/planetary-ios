@@ -606,6 +606,12 @@
 		5B0A4658286E0CA60050D6AC /* NumberOfReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0A4656286E0CA60050D6AC /* NumberOfReportsOperation.swift */; };
 		5B0D585027BEAE93002F927D /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D584F27BEAE93002F927D /* Secrets */; };
 		5B0D585227BEAE9E002F927D /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0D585127BEAE9E002F927D /* Support */; };
+		5B1FF5E228D8A67C008F3A85 /* RawMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */; };
+		5B1FF5E328D8A67C008F3A85 /* RawMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */; };
+		5B1FF5E528D8AA25008F3A85 /* RawMessageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */; };
+		5B1FF5E628D8AA25008F3A85 /* RawMessageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */; };
+		5B1FF5FC28DA42BA008F3A85 /* SelectableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */; };
+		5B1FF60128DB7B21008F3A85 /* SelectableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */; };
 		5B2A4F9928205C8900A5BE48 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
 		5B2A4F9A28205C8C00A5BE48 /* FeedStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297532805F4A800C0CD81 /* FeedStrategy.swift */; };
 		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
@@ -1587,6 +1593,9 @@
 		5B0A4656286E0CA60050D6AC /* NumberOfReportsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfReportsOperation.swift; sourceTree = "<group>"; };
 		5B0D585327BEE1F1002F927D /* Secrets.release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.release.plist; sourceTree = "<group>"; };
 		5B0D585827BEE4FC002F927D /* Secrets.debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Secrets.debug.plist; sourceTree = "<group>"; };
+		5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawMessageView.swift; sourceTree = "<group>"; };
+		5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawMessageCoordinator.swift; sourceTree = "<group>"; };
+		5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableText.swift; sourceTree = "<group>"; };
 		5B373837288B09A30017756B /* ExtendedAboutCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutCellView.swift; sourceTree = "<group>"; };
 		5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfRecentItemsOperation.swift; sourceTree = "<group>"; };
 		5B6C333C2832D512001F10D6 /* swiftlint_diffonly.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = swiftlint_diffonly.sh; sourceTree = "<group>"; };
@@ -2135,6 +2144,7 @@
 				C9412AE928AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift */,
 				2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */,
 				C9412AED28AEE9F400F791A7 /* RoomAliasCoordinator.swift */,
+				5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2486,6 +2496,8 @@
 				535754FE22694AAA002A6989 /* UnsupportedView.swift */,
 				C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */,
 				C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */,
+				5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */,
+				5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3976,6 +3988,7 @@
 				C9724B912809EA08000EBCCD /* AvatarButton.swift in Sources */,
 				C9724B142809D2DF000EBCCD /* OnboardingViewController.swift in Sources */,
 				53211CF0228522B2007FB785 /* FakeBot.swift in Sources */,
+				5B1FF60128DB7B21008F3A85 /* SelectableText.swift in Sources */,
 				C9F53826286CCF410015A146 /* WelcomeService.swift in Sources */,
 				C9724B622809D6BB000EBCCD /* UISwitch+Verse.swift in Sources */,
 				C9724B252809D41E000EBCCD /* FeatureViewController.swift in Sources */,
@@ -4252,6 +4265,7 @@
 				C9724B4C2809D57E000EBCCD /* ImagePicker.swift in Sources */,
 				0ACE91A4243D741300EFB4E9 /* GoBotError.swift in Sources */,
 				C9724B172809D300000EBCCD /* String+IsValid.swift in Sources */,
+				5B1FF5E328D8A67C008F3A85 /* RawMessageView.swift in Sources */,
 				C9724B482809D549000EBCCD /* NSObject+Classname.swift in Sources */,
 				C9724B132809D2D6000EBCCD /* DirectoryViewController.swift in Sources */,
 				C9724BB62809EC61000EBCCD /* DebugPostsViewController.swift in Sources */,
@@ -4351,6 +4365,7 @@
 				C9724B5A2809D60B000EBCCD /* UIViewController+Sync.swift in Sources */,
 				238793E4246EC34D00C9AD36 /* RepeatingTimer.swift in Sources */,
 				2367615B2450681800A97140 /* ViewDatabase+Pagination.swift in Sources */,
+				5B1FF5E628D8AA25008F3A85 /* RawMessageCoordinator.swift in Sources */,
 				C9724B922809EA13000EBCCD /* MentionTextViewDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4609,6 +4624,7 @@
 				5363A23422B058A5009154B7 /* URLResponse+APIError.swift in Sources */,
 				536255DC23AC090D001007D0 /* RemoteNotificationUserInfo.swift in Sources */,
 				53631EEA23A8704F009C6999 /* KeyValueTableViewDataSourcePrefetching.swift in Sources */,
+				5B1FF5E228D8A67C008F3A85 /* RawMessageView.swift in Sources */,
 				C931927C2811CBC80001FD92 /* Beta1MigrationDescriptionText.swift in Sources */,
 				53E26C5023023074009240B2 /* UISwitch+Verse.swift in Sources */,
 				53211CCE227BF068007FB785 /* Array+ElementsAtIndexes.swift in Sources */,
@@ -4744,6 +4760,7 @@
 				0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */,
 				531EC4122310C9EE001A25AD /* Blob.swift in Sources */,
 				535754FF22694AAA002A6989 /* UnsupportedView.swift in Sources */,
+				5B1FF5FC28DA42BA008F3A85 /* SelectableText.swift in Sources */,
 				53C2B1382295AE080018D0A8 /* Keychain.swift in Sources */,
 				539FD4B122C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				C9421EB42888A0EF00A4C86D /* String+Substring.swift in Sources */,
@@ -4878,6 +4895,7 @@
 				0A64A82324734EC2009A5EBF /* PubAPIService.swift in Sources */,
 				53211CE42283717C007FB785 /* Image+UIImage.swift in Sources */,
 				53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */,
+				5B1FF5E528D8AA25008F3A85 /* RawMessageCoordinator.swift in Sources */,
 				53211CE022827B58007FB785 /* UIImage+Resize.swift in Sources */,
 				5BEE74212880534000897ACC /* Contact+ViewDatabase.swift in Sources */,
 				5319EBD722F22BA700EC7583 /* MenuViewController.swift in Sources */,
