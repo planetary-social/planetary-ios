@@ -100,6 +100,9 @@ class ViewDatabase {
     let colReceivedAt = Expression<Double>("received_at")
     let colWrittenAt = Expression<Double>("written_at")
     let colClaimedAt = Expression<Double>("claimed_at")
+    /// The latest activity time is used to sort posts by when they were last replied to. The column is an optimization
+    /// for sorting in `RecentlyActivePostsAndContactsAlgorithm`.
+    let colLastActivityTime = Expression<Double>("last_activity_time")
     let colDecrypted = Expression<Bool>("is_decrypted")
     /// A flag that is true if this message is not from a real feed. The `WelcomeService` inserts "fake" messages
     /// into SQLite to help with onboarding.
@@ -398,6 +401,16 @@ class ViewDatabase {
                     """
                 )
                 db.userVersion = 20
+            }
+            if db.userVersion == 20 {
+                try db.execute(
+                    """
+                    ALTER TABLE messages ADD last_activity_time REAL;
+                    UPDATE messages SET last_activity_time = claimed_at;
+                    CREATE INDEX last_activity_time_idx ON messages(last_activity_time);
+                    """
+                )
+                db.userVersion = 21
             }
         }
     }
@@ -2378,7 +2391,7 @@ class ViewDatabase {
             )
         )
 
-        try self.insertBranches(msgID: msgID, root: p.root, branches: p.branch)
+        try self.insertBranches(msgID: msgID, message: msg, root: p.root, branches: p.branch)
         
         if let m = p.mentions {
             try self.insertMentions(msgID: msgID, mentions: m)
@@ -2419,7 +2432,7 @@ class ViewDatabase {
             colValue <- v.vote.value
         ))
         
-        try self.insertBranches(msgID: msgID, root: v.vote.link, branches: [v.vote.link])
+        try self.insertBranches(msgID: msgID, message: msg, root: v.vote.link, branches: [v.vote.link])
     }
     
     private func fillReportIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws -> [Report] {
@@ -2698,6 +2711,7 @@ class ViewDatabase {
                         colReceivedAt <- msg.timestamp,
                         colClaimedAt <- claimed,
                         colWrittenAt <- Date().millisecondsSince1970,
+                        colLastActivityTime <- claimed,
                         colOffChain <- msg.offChain ?? false
                     ))
                 } catch Result.error(let errMsg, let errCode, _) {
@@ -2942,7 +2956,12 @@ class ViewDatabase {
         }
     }
    
-    private func insertBranches(msgID: Int64, root: MessageIdentifier?, branches: [MessageIdentifier]?) throws {
+    private func insertBranches(
+        msgID: Int64,
+        message: KeyValue,
+        root: MessageIdentifier?,
+        branches: [MessageIdentifier]?
+    ) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2954,10 +2973,12 @@ class ViewDatabase {
         if r.sigil != .message {
             return
         }
+        
+        let rootID = try self.msgID(of: r, make: true)
 
         let tangleID = try db.run(self.tangles.insert(
             colMessageRef <- msgID,
-            colRoot <- try self.msgID(of: r, make: true)
+            colRoot <- rootID
         ))
     
         for branch in br {
@@ -2965,6 +2986,16 @@ class ViewDatabase {
                 colTangleID <- tangleID,
                 colBranch <- try self.msgID(of: branch, make: true)
             ))
+        }
+        
+        // Cache the time of the last reply on the root message to make sorting faster later.
+        if message.value.content.isPost {
+            let rootMessageQuery = msgs.filter(colMessageID == rootID)
+            let replyTime = message.value.timestamp
+            let lastActivityTime = try db.scalar(rootMessageQuery.select(colLastActivityTime))
+            if lastActivityTime < replyTime, replyTime <= Date.now.millisecondsSince1970 {
+                try db.run(rootMessageQuery.update(colLastActivityTime <- replyTime))
+            }
         }
     }
     
