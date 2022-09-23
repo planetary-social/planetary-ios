@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Optimized the "Patchwork" home feed algorithm (RecentlyActivePostsAndContactsAlgorithm) and made it the new default. This algorithm brings posts back up to the top of your home feed when they receive a new reply. #860
 - Fix the profile picture and name fields being empty when the user had not set a name. #852
 - Fix the thread view when repliers do not have a name published. #850
 - Filter blocked users from the notifications screen. #824
