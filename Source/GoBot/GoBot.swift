@@ -1368,7 +1368,7 @@ class GoBot: Bot {
             return strategy
         }
         
-        return PostsAndContactsAlgorithm()
+        return RecentlyActivePostsAndContactsAlgorithm()
     }
 
     /// The algorithm we use to filter and sort the discover tab feed.
