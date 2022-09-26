@@ -161,7 +161,8 @@ class ViewDatabase {
     // name
     let colLegacy = Expression<Bool>("legacy")
     
-    /// A table that creates a one-to-many relationship from messages to the channels, or hashtags, used in those messages.
+    /// A table that creates a one-to-many relationship from messages to the channels, or hashtags, used in
+    /// those messages.
     let channelAssigned = Table(ViewDatabaseTableNames.channelsAssigned.rawValue)
     // msg_ref
     let colChanRef = Expression<Int64>("chan_ref")
