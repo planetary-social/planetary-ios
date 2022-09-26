@@ -102,7 +102,7 @@ class ViewDatabase {
     let colClaimedAt = Expression<Double>("claimed_at")
     /// The latest activity time is used to sort posts by when they were last replied to. The column is an optimization
     /// for sorting in `RecentlyActivePostsAndContactsAlgorithm`.
-    let colLastActivityTime = Expression<Double>("last_activity_time")
+    let colLastActivityTime = Expression<Double?>("last_activity_time")
     let colDecrypted = Expression<Bool>("is_decrypted")
     /// A flag that is true if this message is not from a real feed. The `WelcomeService` inserts "fake" messages
     /// into SQLite to help with onboarding.
@@ -2992,8 +2992,8 @@ class ViewDatabase {
         if message.value.content.isPost {
             let rootMessageQuery = msgs.filter(colMessageID == rootID)
             let replyTime = message.value.timestamp
-            let lastActivityTime = try db.scalar(rootMessageQuery.select(colLastActivityTime))
-            if lastActivityTime < replyTime, replyTime <= Date.now.millisecondsSince1970 {
+            if let lastActivityTime = try db.scalar(rootMessageQuery.select(colLastActivityTime)),
+                lastActivityTime < replyTime, replyTime <= Date.now.millisecondsSince1970 {
                 try db.run(rootMessageQuery.update(colLastActivityTime <- replyTime))
             }
         }
