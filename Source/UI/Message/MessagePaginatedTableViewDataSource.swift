@@ -51,7 +51,7 @@ class MessagePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UITa
     // have a way get data from prefetches that were too late
     func latePrefetch(idx: Int) {
 //
-//        let c = self.cell(at: IndexPath.init(row: idx, section: 0), for: kv.value.content.type)
+//        let c = self.cell(at: IndexPath.init(row: idx, section: 0), for: kv.content.type)
 //        self.loadMessage(kv, in: c)
     }
 
@@ -63,7 +63,7 @@ class MessagePaginatedTableViewDataSource: NSObject, UITableViewDataSource, UITa
     private func dequeueReusuableCell(in tableView: UITableView,
                                      at indexPath: IndexPath,
                                      for message: Message) -> MessageTableViewCell {
-        let type = message.value.content.type
+        let type = message.content.type
         let cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? MessageTableViewCell
         return cell ?? self.cell(at: indexPath, for: type)
     }

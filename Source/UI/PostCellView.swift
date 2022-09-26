@@ -111,7 +111,7 @@ class PostCellView: MessageView {
 
     private func updateFullPostText() {
         guard self.textIsExpanded else { return }
-        guard let message = self.message, message.value.content.isPost else { return }
+        guard let message = self.message, message.content.isPost else { return }
         let string = Caches.text.from(message).mutable()
         self.fullPostText = string
     }
@@ -121,11 +121,11 @@ class PostCellView: MessageView {
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
         
         // not so clean but it gest likes displaying.
-        if self.textView.attributedText.string.isSingleEmoji && self.message?.value.content.type == ContentType.vote {
+        if self.textView.attributedText.string.isSingleEmoji && self.message?.content.type == ContentType.vote {
             self.textView.font = UIFont.post.body.withSize(16)
             self.textView.textAlignment = .natural
         } else if self.textView.attributedText.string.isSingleEmoji,
-             let post = self.message?.value.content.post,
+             let post = self.message?.content.post,
               !post.hasBlobs {
               self.textView.font = UIFont.post.body.withSize(100)
               self.textView.textAlignment = .center
@@ -221,7 +221,7 @@ class PostCellView: MessageView {
     }
 
     convenience init(message: Message) {
-        assert(message.value.content.isPost)
+        assert(message.content.isPost)
         self.init()
         self.update(with: message)
     }
@@ -241,7 +241,7 @@ class PostCellView: MessageView {
         self.message = message
         self.headerView.update(with: message)
 
-        if let vote = message.value.content.vote {
+        if let vote = message.content.vote {
             var expression: String 
             if let explicitExpression = vote.vote.expression,
                 explicitExpression.isSingleEmoji {
@@ -262,7 +262,7 @@ class PostCellView: MessageView {
             self.galleryViewFullHeightConstraint.isActive = false
             self.galleryViewZeroHeightConstraint.isActive = true
             self.galleryViewBottomConstraint?.constant = 0
-        } else if let post = message.value.content.post {
+        } else if let post = message.content.post {
             let text = self.shouldTruncate ? Caches.truncatedText.from(message) : Caches.text.from(message)
             
             self.fullPostText = text

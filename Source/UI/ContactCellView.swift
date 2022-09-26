@@ -88,7 +88,7 @@ class ContactCellView: MessageView {
 
     override func update(with message: Message) {
         self.message = message
-        if let contact = message.value.content.contact {
+        if let contact = message.content.contact {
             let identity = contact.identity
             showAnimatedSkeleton()
             currentTask = Task.detached { [weak self] in

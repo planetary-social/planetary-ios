@@ -43,13 +43,15 @@ fileprivate extension Message {
         let string = "We\'re at #data_terra_nemo and Dominic is giving his keynote.\n\n![Dominic Talking at Data Terra Nemo](&AmeGz5CnJqvXTX7P6xGKnvCWtc6biFgKryg71swDtPg=.sha256)\n\nTesting posting a message with attachments.\n\n![rabble_foocamp_headshot.jpg](&nV+TeSZBIDQrcOO5ClvfkvQ+XCXjf7yVHF19j2Jk3xI=.sha256)\n"
         let post = Post(text: string)
         let content = Content(from: post)
-        let value = Value(author: Environment.PlanetarySystem.systemPubs.first!.feed,
-                          content: content,
-                          hash: "",
-                          previous: nil,
-                          sequence: 0,
-                          signature: Identifier.null,
-                          timestamp: Date().millisecondsSince1970)
+        let value = MessageValue(
+            author: Environment.PlanetarySystem.systemPubs.first!.feed,
+            content: content,
+            hash: "",
+            previous: nil,
+            sequence: 0,
+            signature: Identifier.null,
+            claimedTimestamp: Date().millisecondsSince1970
+        )
         let message = Message(key: Identifier.null, value: value, timestamp: 0)
         return message
     }
@@ -58,13 +60,15 @@ fileprivate extension Message {
         let string = "Testing posting a message with attachments.\n\n![rabble_foocamp_headshot.jpg](&nV+TeSZBIDQrcOO5ClvfkvQ+XCXjf7yVHF19j2Jk3xI=.sha256)\n\n"
         let post = Post(text: string)
         let content = Content(from: post)
-        let value = Value(author: "@njMfLnYyzBoKsaESjIK6UZLa9Ky0+PkUJz7Mi4ri8Mg=.ed25519",
-                          content: content,
-                          hash: "sha256",
-                          previous: nil,
-                          sequence: 234,
-                          signature: "verified_by_go-ssb",
-                          timestamp: Date().millisecondsSince1970)
+        let value = MessageValue(
+            author: "@njMfLnYyzBoKsaESjIK6UZLa9Ky0+PkUJz7Mi4ri8Mg=.ed25519",
+            content: content,
+            hash: "sha256",
+            previous: nil,
+            sequence: 234,
+            signature: "verified_by_go-ssb",
+            claimedTimestamp: Date().millisecondsSince1970
+        )
         let message = Message(key: Identifier.null, value: value, timestamp: 0)
         return message
     }

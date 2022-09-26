@@ -816,7 +816,7 @@ class ViewDatabase {
     /// Returns true if the author of the given message is on the ban list.
     func authorMatchesBanList(_ message: Message) throws -> Bool {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
-        return try db.scalar(banList.filter(colHash == message.value.author.sha256hash).exists)
+        return try db.scalar(banList.filter(colHash == message.author.sha256hash).exists)
     }
 
     func hide(allFrom author: FeedIdentifier) throws {
@@ -1173,14 +1173,14 @@ class ViewDatabase {
             let msgAuthor = try row.get(colAuthor)
             let c = Contact(contact: feed, following: true)
 
-            let v = Value(
+            let v = MessageValue(
                 author: msgAuthor,
                 content: Content(from: c),
                 hash: "sha256", // only currently supported
                 previous: nil, // TODO: .. needed at this level?
                 sequence: try row.get(colSequence),
                 signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
+                claimedTimestamp: try row.get(colClaimedAt)
             )
 
             var message = Message(
@@ -1528,14 +1528,14 @@ class ViewDatabase {
                 throw ViewDatabaseError.unexpectedContentType(tipe)
             }
          
-            let v = Value(
+            let v = MessageValue(
                 author: msgAuthor,
                 content: c,
                 hash: "sha256", // only currently supported
                 previous: nil, // TODO: .. needed at this level?
                 sequence: try row.get(colSequence),
                 signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
+                claimedTimestamp: try row.get(colClaimedAt)
             )
             var kv = Message(
                 key: msgKey,
@@ -1763,7 +1763,7 @@ class ViewDatabase {
     private func buildReport(from row: Row) throws -> Report? {
         let msgKey = try row.get(colKey)
         let msgAuthor = try row.get(colAuthor)
-        guard let value = try Value(row: row, db: self, hasMentionColumns: false) else {
+        guard let value = try MessageValue(row: row, db: self, hasMentionColumns: false) else {
             return nil
         }
         var message = Message(
@@ -2137,13 +2137,13 @@ class ViewDatabase {
     
     private func fillAddress(msgID: Int64, msg: Message) throws {
         
-        guard let address = msg.value.content.address,
+        guard let address = msg.content.address,
               let multiserverAddress = address.multiserver else {
             Log.info("[viewdb/fill] broken addr message: \(msg.key)")
             return
         }
         
-        let author = msg.value.author
+        let author = msg.author
         try saveAddress(feed: author, address: multiserverAddress, redeemed: nil)
     }
     
@@ -2168,7 +2168,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
-        guard let a = msg.value.content.about else {
+        guard let a = msg.content.about else {
             Log.info("[viewdb/fill] broken about message: \(msg.key)")
             return
         }
@@ -2195,7 +2195,7 @@ class ViewDatabase {
             ))
         }
         
-        if a.about != msg.value.author {
+        if a.about != msg.author {
             // ignoring all abouts that are not self
             // TODO: breaks gatherings but we don't use them yet
             return
@@ -2258,12 +2258,12 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
-        guard let c = msg.value.content.contact else {
+        guard let c = msg.content.contact else {
             Log.info("[viewdb/fill] broken contact message: \(msg.key)")
             return
         }
         
-        let authorID = try self.authorID(of: msg.value.author, make: false)
+        let authorID = try self.authorID(of: msg.author, make: false)
         let contactID = try self.authorID(of: c.contact, make: true)
         
         var state: Int = 0
@@ -2304,8 +2304,8 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
 
-        guard let dcr = msg.value.content.dropContentRequest else {
-            throw ViewDatabaseError.unhandledContentType(msg.value.content.type)
+        guard let dcr = msg.content.dropContentRequest else {
+            throw ViewDatabaseError.unhandledContentType(msg.content.type)
         }
 
         var claimedMsg: Message?
@@ -2321,11 +2321,11 @@ class ViewDatabase {
             throw GoBotError.unexpectedFault("dcr handling error: should have thrown already")
         }
 
-        guard targetMsg.value.author == msg.value.author else {
+        guard targetMsg.author == msg.author else {
             return // ignore invalid
         }
 
-        guard targetMsg.value.sequence == dcr.sequence else {
+        guard targetMsg.sequence == dcr.sequence else {
             return // ignore invalid
         }
 
@@ -2337,7 +2337,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
 
-        guard let p = msg.value.content.pub,
+        guard let p = msg.content.pub,
             p.address.key.isValidIdentifier else {
             Log.info("[viewdb/fill] broken pub message: \(msg.key)")
             return
@@ -2354,7 +2354,7 @@ class ViewDatabase {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        guard let p = msg.value.content.post else {
+        guard let p = msg.content.post else {
             Log.info("[viewdb/fill] broken post message: \(msg.key)")
             return
         }
@@ -2398,7 +2398,7 @@ class ViewDatabase {
             throw ViewDatabaseError.notOpen
         }
         
-        guard let v = msg.value.content.vote else {
+        guard let v = msg.content.vote else {
             Log.info("[viewdb/fill] broken vote message: \(msg.key)")
             return
         }
@@ -2429,9 +2429,9 @@ class ViewDatabase {
         
         let createdAt = Date().timeIntervalSince1970 * 1_000
         
-        switch msg.value.content.type { // insert individual message types
+        switch msg.content.type { // insert individual message types
         case .contact:
-            guard let c = msg.value.content.contact else {
+            guard let c = msg.content.contact else {
                 return []
             }
             guard c.isFollowing else {
@@ -2454,7 +2454,7 @@ class ViewDatabase {
                 return [report]
             }
         case .post:
-            guard let p = msg.value.content.post else {
+            guard let p = msg.content.post else {
                 return []
             }
             var reportsIdentities = [Identity]()
@@ -2467,7 +2467,7 @@ class ViewDatabase {
                     let repliedAuthor = repliedMsg[colAuthorID]
                     let repliedIdentity = try self.author(from: repliedAuthor)
                     
-                    if repliedIdentity != msg.value.author {
+                    if repliedIdentity != msg.author {
                         try db.run(self.reports.insert(
                             colMessageRef <- msgID,
                             colAuthorID <- repliedAuthor,
@@ -2486,8 +2486,8 @@ class ViewDatabase {
                     
                     let otherReplies = try self.getRepliesTo(thread: identifier)
                     for reply in otherReplies {
-                        let replyAuthorIdentity = reply.value.author
-                        if !reportsIdentities.contains(replyAuthorIdentity), let replyAuthorID = try? self.authorID(of: replyAuthorIdentity), replyAuthorIdentity != msg.value.author {
+                        let replyAuthorIdentity = reply.author
+                        if !reportsIdentities.contains(replyAuthorIdentity), let replyAuthorID = try? self.authorID(of: replyAuthorIdentity), replyAuthorIdentity != msg.author {
                             try db.run(self.reports.insert(
                                 colMessageRef <- msgID,
                                 colAuthorID <- replyAuthorID,
@@ -2537,7 +2537,7 @@ class ViewDatabase {
             }
             return reports
         case .vote:
-            guard let v = msg.value.content.vote, v.vote.link.id != .unsupported else {
+            guard let v = msg.content.vote, v.vote.link.id != .unsupported else {
                 return []
             }
             guard v.vote.value > 0 else {
@@ -2586,7 +2586,7 @@ class ViewDatabase {
     
     private func isOldMessage(message: Message) -> Bool {
         let now = Date()
-        let claimed = Date(timeIntervalSince1970: message.value.timestamp / 1000)
+        let claimed = message.claimedDate
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
     }
@@ -2621,19 +2621,19 @@ class ViewDatabase {
             
             /* This is the don't put older than 6 months in the db. */
             if isOldMessage(message: msg) &&
-                (msg.value.content.type != .contact &&
-                msg.value.content.type != .about &&
-                msg.value.author != currentUser) {
+                (msg.content.type != .contact &&
+                msg.content.type != .about &&
+                msg.author != currentUser) {
                 skipped += 1
-                print("Skipped(\(msg.value.content.type) \(msg.key)%)")
+                print("Skipped(\(msg.content.type) \(msg.key)%)")
                 continue
             }
             
-            if !pms && !msg.value.content.isValid {
+            if !pms && !msg.content.isValid {
                 // cant ignore PMs right now. they need to be there to be replaced with unboxed content.
 #if SSB_MSGDEBUG
-                let cnt = (unsupported[msg.value.content.typeString] ?? 0) + 1
-                unsupported[msg.value.content.typeString] = cnt
+                let cnt = (unsupported[msg.content.typeString] ?? 0) + 1
+                unsupported[msg.content.typeString] = cnt
 #endif
                 skipped += 1
                 continue
@@ -2641,16 +2641,16 @@ class ViewDatabase {
                         
             if try authorMatchesBanList(msg) {
                 // Insert the author into the authors table so we can tell the GoBot to ban them.
-                _ = try self.authorID(of: msg.value.author, make: true)
-                try ban(authors: [msg.value.author])
+                _ = try self.authorID(of: msg.author, make: true)
+                try ban(authors: [msg.author])
                 skipped += 1
-                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                print("Skipped banned (\(msg.content.type) \(msg.key)%)")
                 continue
             }
 
             if try messageMatchesBanList(msg) {
                 skipped += 1
-                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                print("Skipped banned (\(msg.content.type) \(msg.key)%)")
                 continue
             }
             
@@ -2664,25 +2664,25 @@ class ViewDatabase {
             
             // make sure we dont have messages from the future
             // and force them to the _received_ timestamp so that they are not pinned to the top of the views
-            var claimed = msg.value.timestamp
+            var claimed = msg.claimedTimestamp
             if claimed > loopStart {
-                claimed = msg.timestamp
+                claimed = msg.receivedTimestamp
             }
             
             // can only insert PMs when the unencrypted was inserted before
             let msgKeyID = try self.msgID(of: msg.key, make: !pms)
-            let authorID = try self.authorID(of: msg.value.author, make: true)
+            let authorID = try self.authorID(of: msg.author, make: true)
             
             // insert core message
             if pms {
                 let pm = self.msgs
                     .filter(colMessageID == msgKeyID)
                     .filter(colAuthorID == authorID)
-                    .filter(colSequence == msg.value.sequence)
+                    .filter(colSequence == msg.sequence)
                 try db.run(pm.update(
                     colDecrypted <- true,
-                    colMsgType <- msg.value.content.type.rawValue,
-                    colReceivedAt <- msg.timestamp,
+                    colMsgType <- msg.content.type.rawValue,
+                    colReceivedAt <- msg.receivedTimestamp,
                     colClaimedAt <- claimed,
                     colWrittenAt <- Date().millisecondsSince1970,
                     colOffChain <- msg.offChain ?? false
@@ -2693,9 +2693,9 @@ class ViewDatabase {
                         colRXseq <- lastRxSeq,
                         colMessageID <- msgKeyID,
                         colAuthorID <- authorID,
-                        colSequence <- msg.value.sequence,
-                        colMsgType <- msg.value.content.type.rawValue,
-                        colReceivedAt <- msg.timestamp,
+                        colSequence <- msg.sequence,
+                        colMsgType <- msg.content.type.rawValue,
+                        colReceivedAt <- msg.receivedTimestamp,
                         colClaimedAt <- claimed,
                         colWrittenAt <- Date().millisecondsSince1970,
                         colOffChain <- msg.offChain ?? false
@@ -2718,7 +2718,7 @@ class ViewDatabase {
             }
             
             do { // identifies which message failed
-                switch msg.value.content.type { // insert individual message types
+                switch msg.content.type { // insert individual message types
                     
                 case .address:
                     try self.fillAddress(msgID: msgKeyID, msg: msg)

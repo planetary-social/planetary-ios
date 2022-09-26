@@ -76,7 +76,7 @@ class ContactHeaderView: UIView {
     }
 
     func update(with message: Message) {
-        let identity = message.value.author
+        let identity = message.author
         self.identity = identity
         let about = message.metadata.author.about
         var text: Text

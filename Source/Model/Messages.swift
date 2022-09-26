@@ -24,15 +24,15 @@ extension Messages {
     // MARK: - Compound filters
 
     func rootPosts() -> Messages {
-        self.filter { $0.contentType == .post && $0.value.content.post?.root == nil }
+        self.filter { $0.contentType == .post && $0.content.post?.root == nil }
     }
 
     func replyPosts() -> Messages {
-        self.filter { $0.contentType == .post && $0.value.content.post?.root != nil }
+        self.filter { $0.contentType == .post && $0.content.post?.root != nil }
     }
 
     func mentions(of identity: Identity) -> Messages {
-        self.filter { $0.value.content.post?.mentions?.contains { $0.link == identity } ?? false }
+        self.filter { $0.content.post?.mentions?.contains { $0.link == identity } ?? false }
     }
 
     // MARK: - Trim by message identifier
@@ -72,20 +72,20 @@ extension Messages {
     // MARK: - Filter by author
 
     func excluding(_ author: Identifier) -> Messages {
-        self.filter { $0.value.author != author }
+        self.filter { $0.author != author }
     }
 
     func only(from author: Identifier) -> Messages {
-        self.filter { $0.value.author == author }
+        self.filter { $0.author == author }
     }
 
     // MARK: - Messages sorting
 
     func sortedByDateAscending() -> Messages {
-        self.sorted { $0.userDate < $1.userDate }
+        self.sorted { $0.claimedDate < $1.claimedDate }
     }
 
     func sortedByDateDescending() -> Messages {
-        self.sorted { $0.userDate > $1.userDate }
+        self.sorted { $0.claimedDate > $1.claimedDate }
     }
 }

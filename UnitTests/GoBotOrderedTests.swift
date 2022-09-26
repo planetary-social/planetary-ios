@@ -592,7 +592,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
 
         let postedMsg = try! GoBotOrderedTests.shared.database.post(with: msgRef)
-        guard let m = postedMsg.value.content.post?.mentions else { XCTFail("not a post?"); return }
+        guard let m = postedMsg.content.post?.mentions else { XCTFail("not a post?"); return }
         guard m.count == 1 else { XCTFail("no mentions?"); return }
 
         let b = m.asBlobs()
@@ -683,7 +683,7 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertTrue(root?.metadata.isPrivate ?? false)
-            XCTAssertEqual(root?.value.author, GoBotTests.pubkeys["alice"]!)
+            XCTAssertEqual(root?.author, GoBotTests.pubkeys["alice"]!)
             XCTAssertEqual(msgs.count, 1)
             guard msgs.count > 0 else {
                 XCTFail("expected at least one message. got \(msgs.count)")
@@ -694,7 +694,7 @@ class GoBotOrderedTests: XCTestCase {
                 return
             }
             XCTAssertNotNil(kv0.key, privReply)
-            XCTAssertEqual(kv0.value.author, GoBotTests.pubkeys["barbara"]!)
+            XCTAssertEqual(kv0.author, GoBotTests.pubkeys["barbara"]!)
         }
         self.wait(for: [ex], timeout: 10)
     }
@@ -1058,7 +1058,7 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertEqual(kv0.key, mistakeRef)
 
             let delContent = DropContentRequest(
-                sequence: UInt(kv0.value.sequence),
+                sequence: UInt(kv0.sequence),
                     hash: mistakeRef)
             _ = GoBotOrderedTests.shared.testingPublish(
                 as: "alice",

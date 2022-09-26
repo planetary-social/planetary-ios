@@ -166,7 +166,7 @@ class RelationshipButton: IconButton {
 
     func blockUser() {
         Analytics.shared.trackDidSelectAction(actionName: "block_identity")
-        AppController.shared.promptToBlock(self.content.value.author, name: self.otherUserName)
+        AppController.shared.promptToBlock(self.content.author, name: self.otherUserName)
     }
 
     func reportUser() {

@@ -51,7 +51,7 @@ class MessageTableViewDataSource: NSObject, UITableViewDataSource {
         at indexPath: IndexPath,
         for message: Message
     ) -> MessageTableViewCell {
-        let type = message.value.content.type
+        let type = message.content.type
         let cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? MessageTableViewCell
         return cell ?? self.cell(at: indexPath, for: type, tableView: tableView)
     }
@@ -118,7 +118,7 @@ extension UITableView {
 
     func indexPaths(forMessagesBy author: Identity) -> [IndexPath] {
         guard let source = self.messageDataSource else { return [] }
-        let messages = source.messages.filter { $0.value.author == author }
+        let messages = source.messages.filter { $0.author == author }
         let indexPaths = messages.compactMap { self.indexPath(for: $0) }
         return indexPaths
     }

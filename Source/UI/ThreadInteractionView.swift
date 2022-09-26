@@ -98,7 +98,7 @@ class ThreadInteractionView: UIView {
         
         if replies.count - 1 >= 0 {
             for index in 0...replies.count - 1 {
-                if replies.messageBy(index: index)?.value.content.type == ContentType.vote {
+                if replies.messageBy(index: index)?.content.type == ContentType.vote {
                     let likeIdentity = replies.messageBy(index: index)?.metadata.author.about?.about
                     if me == likeIdentity {
                         self.userLikes = true

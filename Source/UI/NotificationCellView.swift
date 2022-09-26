@@ -66,7 +66,7 @@ class NotificationCellView: MessageView {
     override func update(with message: Message) {
 
         // remember the author identity
-        let identity = message.value.author
+        let identity = message.author
         self.identity = identity
 
         // avatar button
@@ -79,7 +79,7 @@ class NotificationCellView: MessageView {
 
         // action
         let shouldHideFollowButton: Bool
-        if let doesMention = message.value.content.post?.doesMention(Bots.current.identity) {
+        if let doesMention = message.content.post?.doesMention(Bots.current.identity) {
             text.append(NSAttributedString(doesMention ? " mentioned you" : " replied",
                                            font: self.actionFont))
 
@@ -96,12 +96,12 @@ class NotificationCellView: MessageView {
         text.addColorAttribute(UIColor.text.default)
 
         // timestamp
-        text.append(NSAttributedString(" • \(message.userDate.elapsedTimeFromNowString())",
+        text.append(NSAttributedString(" • \(message.claimedDate.elapsedTimeFromNowString())",
                                        font: self.timestampFont,
                                        color: UIColor.text.notificationTimestamp))
 
         // content snippet
-        if message.value.content.isPost {
+        if message.content.isPost {
             let flattened = Caches.truncatedText.from(message).flattenedString()
             text.append(NSAttributedString("\n\(flattened)",
                                            font: self.contentFont,

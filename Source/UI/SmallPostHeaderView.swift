@@ -70,11 +70,11 @@ class SmallPostHeaderView: UIView {
     }
 
     func update(with message: Message) {
-        let identity = message.value.author
+        let identity = message.author
         self.identity = identity
 
         let about = message.metadata.author.about
-        let name = about?.nameOrIdentity ?? message.value.author
+        let name = about?.nameOrIdentity ?? message.author
         self.nameButton.setTitle(name, for: .normal)
         self.avatarButton.setImage(for: about)
     }

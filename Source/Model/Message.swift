@@ -17,20 +17,24 @@ import Foundation
 ///
 /// You can read more about the structure of feeds and messages in the protocol guide:
 /// https://ssbc.github.io/scuttlebutt-protocol-guide/#feeds
-struct Message: Codable {
+struct Message: Codable, Identifiable {
 
     enum CodingKeys: String, CodingKey {
         case key
         case value
-        case timestamp
+        case receivedTimestamp = "timestamp"
         case receivedSeq = "ReceiveLogSeq"
         case hashedKey = "HashedKey"
         case offChain = "off_chain"
     }
-
+    
+    var id: MessageIdentifier { key }
     let key: MessageIdentifier
-    let value: Value
-    let timestamp: Float64 // received time in milliseconds since the unix epoch
+    fileprivate let value: MessageValue
+    
+    /// received time in milliseconds since the unix epoch
+    let receivedTimestamp: Float64
+    
     // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
     let receivedSeq: Int64?
     let hashedKey: String?
@@ -41,7 +45,7 @@ struct Message: Codable {
     
     init(
         key: Identifier,
-        value: Value,
+        value: MessageValue,
         timestamp: Float64,
         receivedSeq: Int64 = -1,
         hashedKey: String? = nil,
@@ -49,7 +53,7 @@ struct Message: Codable {
     ) {
         self.key = key
         self.value = value
-        self.timestamp = timestamp
+        self.receivedTimestamp = timestamp
         self.receivedSeq = receivedSeq
         self.hashedKey = hashedKey
         self.offChain = offChain
@@ -102,36 +106,45 @@ extension Message: Hashable {
 }
 
 extension Message {
-
-    // Convenience var to return the embedded content's type
-    var contentType: ContentType {
-        self.value.content.type
-    }
+    
+    // MARK: Convenience Accessors
+    
+    var author: FeedIdentifier { value.author }
+    var content: Content { value.content }
+    var hash: String { value.hash }
+    var previous: MessageIdentifier? { value.previous }
+    var sequence: Int { value.sequence }
+    var signature: Identifier { value.signature }
+    var claimedTimestamp: Float64 { value.claimedTimestamp }
+    var contentType: ContentType { value.content.type }
 
     // Convenience var for received time as Date
     var receivedDate: Date {
-        Date(timeIntervalSince1970: self.timestamp)
+        Date(milliseconds: receivedTimestamp)
     }
 
     var receivedDateString: String {
-        DateFormatter.localizedString(from: self.receivedDate,
-                                             dateStyle: .short,
-                                             timeStyle: .short)
+        DateFormatter.localizedString(
+            from: receivedDate,
+            dateStyle: .short,
+            timeStyle: .short
+        )
     }
     
     // Convenience var for user time as Date
-    var userDate: Date {
-        let ud = Date(timeIntervalSince1970: self.value.timestamp / 1_000)
-        let now = Date(timeIntervalSinceNow: 0)
-        if ud > now {
-            return Date(timeIntervalSince1970: self.timestamp / 1_000)
+    var claimedDate: Date {
+        let claimedDate = Date(milliseconds: claimedTimestamp)
+        if claimedDate > Date.now {
+            return Date(milliseconds: receivedTimestamp)
         }
-        return ud
+        return claimedDate
     }
 
-    var userDateString: String {
-        DateFormatter.localizedString(from: self.userDate,
-                                             dateStyle: .short,
-                                             timeStyle: .short)
+    var claimedDateString: String {
+        DateFormatter.localizedString(
+            from: claimedDate,
+            dateStyle: .short,
+            timeStyle: .short
+        )
     }
 }

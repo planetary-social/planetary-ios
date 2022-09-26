@@ -53,7 +53,7 @@ class GalleryView: UIView, MessageUpdateable {
     // MARK: MessageUpdateable
 
     func update(with message: Message) {
-        guard let post = message.value.content.post else { return }
+        guard let post = message.content.post else { return }
         self.update(with: post)
     }
 

@@ -1,5 +1,5 @@
 //
-//  Value+ViewDatabase.swift
+//  MessageValue+ViewDatabase.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 14/7/22.
@@ -9,7 +9,7 @@
 import Foundation
 import SQLite
 
-extension Value {
+extension MessageValue {
     init?(row: Row, db: ViewDatabase, useNamespacedTables: Bool = false, hasMentionColumns: Bool) throws {
         var content: Content
         let type = try row.get(db.colMsgType)
@@ -47,7 +47,7 @@ extension Value {
             previous: nil,
             sequence: try row.get(db.colSequence),
             signature: "verified_by_go-ssb",
-            timestamp: try row.get(db.colClaimedAt)
+            claimedTimestamp: try row.get(db.colClaimedAt)
         )
     }
 }

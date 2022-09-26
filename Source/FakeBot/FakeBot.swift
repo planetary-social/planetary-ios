@@ -283,7 +283,7 @@ class FakeBot: Bot {
     func recent(completion: PaginatedCompletion) {
         let data = Data.fromJSON(resource: "Feed.json")
         var feed = try? JSONDecoder().decode(Messages.self, from: data)
-        feed?.sort { $0.value.timestamp < $1.value.timestamp }
+        feed?.sort { $0.claimedTimestamp < $1.claimedTimestamp }
         if let feed = feed {
             completion(StaticDataProxy(with: feed), nil)
         } else {
@@ -294,7 +294,7 @@ class FakeBot: Bot {
     func everyone(completion: PaginatedCompletion) {
         let data = Data.fromJSON(resource: "Feed.json")
         var feed = try? JSONDecoder().decode(Messages.self, from: data)
-        feed?.sort { $0.value.timestamp < $1.value.timestamp }
+        feed?.sort { $0.claimedTimestamp < $1.claimedTimestamp }
         if let feed = feed {
             completion(StaticDataProxy(with: feed), nil)
         } else {

@@ -322,7 +322,7 @@ private class NotificationsTableViewDelegate: MessageTableViewDelegate {
 
         if message.contentType == .contact {
             Analytics.shared.trackDidSelectItem(kindName: "identity")
-            let controller = AboutViewController(with: message.value.author)
+            let controller = AboutViewController(with: message.author)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         } else if message.contentType == .post {
             Analytics.shared.trackDidSelectItem(kindName: "post")

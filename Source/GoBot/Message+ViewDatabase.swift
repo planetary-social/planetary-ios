@@ -47,7 +47,7 @@ extension Message {
             msgAuthor = try row.get(db.colAuthor)
         }
 
-        guard let value = try Value(
+        guard let value = try MessageValue(
             row: row,
             db: db,
             useNamespacedTables: useNamespacedTables,

@@ -171,7 +171,7 @@ class AboutView: MessageView {
     // MARK: MessageUpdateable
 
     override func update(with message: Message) {
-        guard let about = message.value.content.about else { return }
+        guard let about = message.content.about else { return }
         self.update(with: about)
     }
 

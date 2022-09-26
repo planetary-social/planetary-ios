@@ -25,7 +25,7 @@ class PostReplyDataSource: MessageTableViewDataSource {
 
     private func truncationLimitForPost(at indexPath: IndexPath) -> TruncationSettings? {
         let message = self.message(at: indexPath)
-        guard let post = message.value.content.post else { return nil }
+        guard let post = message.content.post else { return nil }
         let settings: TruncationSettings = post.hasBlobs ? (over: 8, to: 5) : (over: 10, to: 8)
         return settings
     }

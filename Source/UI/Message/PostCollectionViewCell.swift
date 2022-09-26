@@ -125,7 +125,7 @@ class PostCollectionViewCell: UICollectionViewCell {
     }
     
     func update(message: Message) {
-        guard let post = message.value.content.post else {
+        guard let post = message.content.post else {
             return
         }
         if post.hasBlobs {

@@ -701,7 +701,7 @@ class GoBot: Bot {
             return
         }
         
-        if targetMessage.value.author != self._identity {
+        if targetMessage.author != self._identity {
             // drop from view regardless of format
             do {
                 try self.database.delete(message: message)
@@ -711,7 +711,7 @@ class GoBot: Bot {
             }
         }
 
-        guard targetMessage.value.author.algorithm == .ggfeed else {
+        guard targetMessage.author.algorithm == .ggfeed else {
             completion(GoBotError.unexpectedFault("unsupported feed format for deletion"))
             return
         }
@@ -722,12 +722,12 @@ class GoBot: Bot {
             return
         }
         
-        guard targetMessage.value.author == self._identity else {
+        guard targetMessage.author == self._identity else {
             // drop content directly / can't request others to do so
             do {
                 try self.bot.nullContent(
-                    author: targetMessage.value.author,
-                    sequence: UInt(targetMessage.value.sequence)
+                    author: targetMessage.author,
+                    sequence: UInt(targetMessage.sequence)
                 )
             } catch {
                 completion(GoBotError.duringProcessing("failed to null content", error))
@@ -739,7 +739,7 @@ class GoBot: Bot {
         
         // publish signed drop-content-request for other peers
         let dropContentRequest = DropContentRequest(
-            sequence: UInt(targetMessage.value.sequence),
+            sequence: UInt(targetMessage.sequence),
             hash: message
         )
 
@@ -886,8 +886,8 @@ class GoBot: Bot {
 
                 Analytics.shared.trackBotDidUpdateDatabase(
                     count: msgs.count,
-                    firstTimestamp: msgs[0].timestamp,
-                    lastTimestamp: msgs[msgs.count - 1].timestamp,
+                    firstTimestamp: msgs[0].receivedTimestamp,
+                    lastTimestamp: msgs[msgs.count - 1].receivedTimestamp,
                     lastHash: msgs[msgs.count - 1].key
                 )
                 if diff < limit { // view is up2date now
@@ -1426,10 +1426,10 @@ class GoBot: Bot {
     }
 
     func thread(message: Message, completion: @escaping ThreadCompletion) {
-        assert(message.value.content.isPost)
+        assert(message.content.isPost)
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
-            if let rootKey = message.value.content.post?.root {
+            if let rootKey = message.content.post?.root {
                 do {
                     let root = try self.database.post(with: rootKey)
                     let replies = try self.database.getRepliesTo(thread: root.key)
@@ -1736,8 +1736,16 @@ class GoBot: Bot {
                         lastRxSeq -= 1
                         return Message(
                             key: message.key,
-                            value: message.value,
-                            timestamp: message.timestamp,
+                            value: MessageValue(
+                                author: message.author,
+                                content: message.content,
+                                hash: message.hash,
+                                previous: message.previous,
+                                sequence: message.sequence,
+                                signature: message.signature,
+                                claimedTimestamp: message.receivedTimestamp
+                            ),
+                            timestamp: message.receivedTimestamp,
                             receivedSeq: lastRxSeq,
                             hashedKey: message.key.sha256hash
                         )
@@ -1763,8 +1771,8 @@ class GoBot: Bot {
 
     func raw(of message: Message, completion: @escaping RawCompletion) {
         userInitiatedQueue.async {
-            let identity = message.value.author
-            let sequence = message.value.sequence
+            let identity = message.author
+            let sequence = message.sequence
             guard sequence >= UInt64.min, sequence <= UInt64.max else {
                 completion(.failure(AppError.unexpected))
                 return

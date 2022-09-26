@@ -67,7 +67,15 @@ class WelcomeServiceAdapter: WelcomeService {
             
             return Message(
                 key: message.key,
-                value: message.value,
+                value: MessageValue(
+                    author: message.author,
+                    content: message.content,
+                    hash: message.hash,
+                    previous: message.previous,
+                    sequence: message.sequence,
+                    signature: message.signature,
+                    claimedTimestamp: message.receivedTimestamp
+                ),
                 timestamp: now,
                 receivedSeq: lastRxSeq,
                 hashedKey: message.key.sha256hash,
@@ -103,7 +111,7 @@ class WelcomeServiceAdapter: WelcomeService {
         let timestamp: Double = 1_657_210_389_000 // 2022-07-07
         return Message(
             key: "%0mkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
-            value: Value(
+            value: MessageValue(
                 author: welcomeFeedID,
                 content: Content(
                     from: About(
@@ -118,7 +126,7 @@ class WelcomeServiceAdapter: WelcomeService {
                 previous: nil,
                 sequence: 0,
                 signature: "nop",
-                timestamp: timestamp
+                claimedTimestamp: timestamp
             ),
             timestamp: timestamp,
             receivedSeq: 0,
@@ -131,14 +139,14 @@ class WelcomeServiceAdapter: WelcomeService {
         let now = Date.now.millisecondsSince1970 - 1000 // -1 to make sure this shows below the welcome message
         return Message(
             key: fakeMessageID(from: "followWelcomeAccount" + author + welcomeFeedID),
-            value: Value(
+            value: MessageValue(
                 author: author,
                 content: Content(from: Contact(contact: welcomeFeedID, following: true)),
                 hash: "nop",
                 previous: nil,
                 sequence: -1,
                 signature: "nop",
-                timestamp: now
+                claimedTimestamp: now
             ),
             timestamp: now,
             receivedSeq: 0,
@@ -151,7 +159,7 @@ class WelcomeServiceAdapter: WelcomeService {
         let now = Date.now.millisecondsSince1970
         return Message(
             key: fakeMessageID(from: "welcomeMessage" + user + welcomeFeedID),
-            value: Value(
+            value: MessageValue(
                 author: welcomeFeedID,
                 content: Content(
                     from: Post(
@@ -173,7 +181,7 @@ class WelcomeServiceAdapter: WelcomeService {
                 previous: nil,
                 sequence: 2,
                 signature: "nop",
-                timestamp: now
+                claimedTimestamp: now
             ),
             timestamp: now,
             receivedSeq: 0,

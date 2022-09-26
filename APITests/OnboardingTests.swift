@@ -365,7 +365,7 @@ class OnboardingTests: XCTestCase {
             }
             guard let msg = msgs.last else { XCTFail("expected msg"); return }
             XCTAssertEqual(msg.contentType, .post)
-            XCTAssertTrue(msg.value.content.post?.text.hasPrefix("Setup init:") ?? false)
+            XCTAssertTrue(msg.content.post?.text.hasPrefix("Setup init:") ?? false)
         }
 
         self.wait(for: [expectation], timeout: 30)

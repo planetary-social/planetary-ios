@@ -92,8 +92,8 @@ class PostReplyView: MessageView {
     }
 
     override func update(with message: Message) {
-        let isReply = message.value.content.post?.root != nil
-        let isVote = message.value.content.vote?.root != nil
+        let isReply = message.content.post?.root != nil
+        let isVote = message.content.vote?.root != nil
         if isReply || isVote {
             postView.isHidden = false
             postView.displayHeader = false
@@ -129,7 +129,7 @@ extension PostReplyView {
         // starting height based for all non-zero height subviews
         // header + text + reply box
         var height = CGFloat(300)
-        guard let post = message.value.content.post else { return height }
+        guard let post = message.content.post else { return height }
 
         // add gallery view if necessary
         // note that gallery view is square so likely the same

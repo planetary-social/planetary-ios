@@ -115,15 +115,15 @@ class PostHeaderView: UIView {
     }
 
     func update(with message: Message) {
-        let identity = message.value.author
+        let identity = message.author
         self.identity = identity
 
         let about = message.metadata.author.about
-        let name = about?.name ?? message.value.author
+        let name = about?.name ?? message.author
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
         self.dateLabel.text = message.timestampString
-        if name != message.value.author {
+        if name != message.author {
             identifierLabel.text = String(identity.prefix(7))
             identifierLabel.isHidden = false
         } else {
@@ -157,9 +157,9 @@ class PostHeaderView: UIView {
 fileprivate extension Message {
 
     var timestampString: String {
-        let ud = self.userDate
-        let day = ud.todayYesterdayDayOfWeekOrNumberOfDaysAgo
-        let time = ud.timeOfDay
+        let claimedDate = self.claimedDate
+        let day = claimedDate.todayYesterdayDayOfWeekOrNumberOfDaysAgo
+        let time = claimedDate.timeOfDay
         let text = Text.atDayTime.text(["day": day, "time": time])
         return text.prefix(1).capitalized + text.dropFirst()
     }

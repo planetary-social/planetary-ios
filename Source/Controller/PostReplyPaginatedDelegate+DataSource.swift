@@ -43,7 +43,7 @@ class PostReplyPaginatedDataSource: MessagePaginatedTableViewDataSource {
     }
     
     private func truncationLimitForPost(message: Message) -> TruncationSettings? {
-        guard let post = message.value.content.post else { return nil }
+        guard let post = message.content.post else { return nil }
         let settings: TruncationSettings = post.hasBlobs ? (over: 8, to: 5) : (over: 10, to: 8)
         return settings
     }
@@ -83,7 +83,7 @@ class PostReplyPaginatedDelegate: MessagePaginatedTableViewDelegate {
     override func viewController(for message: Message) -> UIViewController? {
         switch message.contentType {
         case .contact:
-            guard let identity = message.value.content.contact?.identity else {
+            guard let identity = message.content.contact?.identity else {
                 return nil
             }
             return AboutViewController(with: identity)

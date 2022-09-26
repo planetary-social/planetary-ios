@@ -144,7 +144,7 @@ class ThreadViewController: ContentViewController {
     private var replyTextViewBecomeFirstResponder = false
 
     init(with message: Message, startReplying: Bool = false) {
-        assert(message.value.content.isPost)
+        assert(message.content.isPost)
         self.post = message
         self.onNextUpdateScrollToPostWithMessageKey = message.key
         // self.interactionView.postIdentifier = Identity
@@ -422,7 +422,7 @@ class ThreadViewController: ContentViewController {
         guard let identity = notification.object as? Identity else { return }
 
         // if identity is root post author then pop off
-        if self.root?.value.author == identity {
+        if self.root?.author == identity {
             self.navigationController?.remove(viewController: self)
         }
 

@@ -17,7 +17,7 @@ class PostTextCache: AttributedStringCache {
     @discardableResult
     func from(_ post: Message) -> NSAttributedString {
 
-        guard let innerPost = post.value.content.post else {
+        guard let innerPost = post.content.post else {
             assertionFailure("Message is not a Post")
             return NSAttributedString(string: "Message is not a Post")
         }

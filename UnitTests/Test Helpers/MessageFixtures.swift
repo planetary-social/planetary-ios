@@ -25,14 +25,14 @@ enum MessageFixtures {
     ) -> Message {
         Message(
             key: key,
-            value: Value(
+            value: MessageValue(
                 author: author,
                 content: content,
                 hash: "hash",
                 previous: nil,
                 sequence: sequence,
                 signature: Identifier("signature"),
-                timestamp: timestamp 
+                claimedTimestamp: timestamp 
             ),
             timestamp: receivedTimestamp,
             receivedSeq: receivedSeq,
