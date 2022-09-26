@@ -6,7 +6,7 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.4]
 
 - Show the underlying SSB message for posts, replies and likes. #662
 - Fix the profile picture and name fields being empty when the user had not set a name. #852
@@ -14,9 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Filter blocked users from the notifications screen. #824
 - Fix an issue where the user could get stuck on the name screen during onboarding. #844 (thanks @quickdudley)
 - Added the bio screen back to onboarding. #805
-
-## [1.3.4]
-
 - Filter posts from followed users in the Discover feed when the Random algorithm is selected. #822
 - Automatically save and restore drafts of replies. #835
 - Split Serbian localization into separate Latin and Cyrillic versions #831
