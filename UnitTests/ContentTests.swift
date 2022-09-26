@@ -10,17 +10,17 @@ import XCTest
 
 class ContentTests: XCTestCase {
 
-    func test_keyValue() throws {
-        let data = self.data(for: "KeyValue.json")
-        let keyValue = try JSONDecoder().decode(KeyValue.self, from: data)
-        XCTAssertNotNil(keyValue)
-        XCTAssertEqual(keyValue.value.content.type, .post)
-        XCTAssertEqual(keyValue.value.content.isValid, true)
+    func test_message() throws {
+        let data = self.data(for: "Message.json")
+        let message = try JSONDecoder().decode(Message.self, from: data)
+        XCTAssertNotNil(message)
+        XCTAssertEqual(message.value.content.type, .post)
+        XCTAssertEqual(message.value.content.isValid, true)
     }
     
     func test_firstAndEnc() throws {
         let data = self.data(for: "FirstAndEncrypted.json")
-        let keyVals = try JSONDecoder().decode([KeyValue].self, from: data)
+        let keyVals = try JSONDecoder().decode([Message].self, from: data)
         XCTAssertNotNil(keyVals)
         XCTAssertTrue(keyVals.count == 2)
         XCTAssertNil(keyVals[0].value.previous)
@@ -58,19 +58,19 @@ class ContentTests: XCTestCase {
         }
     }
 
-    func test_KeyValueVote() throws {
-        let data = self.data(for: "KeyValueVote.json")
-        let keyValue = try JSONDecoder().decode(KeyValue.self, from: data)
-        XCTAssertTrue(keyValue.value.content.type == .vote)
-        XCTAssertEqual(keyValue.value.content.isValid, true)
-        guard let vote = keyValue.value.content.vote else { XCTFail(); return }
+    func test_MessageVote() throws {
+        let data = self.data(for: "MessageVote.json")
+        let message = try JSONDecoder().decode(Message.self, from: data)
+        XCTAssertTrue(message.value.content.type == .vote)
+        XCTAssertEqual(message.value.content.isValid, true)
+        guard let vote = message.value.content.vote else { XCTFail(); return }
         XCTAssertFalse(vote.vote.link.isEmpty)
         XCTAssertTrue(vote.vote.value == 1)
     }
     
-    func test_KeyValueFeed() throws {
+    func test_MessageFeed() throws {
         let data = self.data(for: "Feed_cryptix2.json")
-        let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+        let msgs = try JSONDecoder().decode([Message].self, from: data)
         XCTAssertNotNil(msgs)
         XCTAssertEqual(msgs.count, 961)
         for m in msgs {
@@ -202,7 +202,7 @@ class ContentTests: XCTestCase {
     
     func testPubParsing() throws {
         let data = self.data(for: "Pub.json")
-        let msg = try JSONDecoder().decode(KeyValue.self, from: data)
+        let msg = try JSONDecoder().decode(Message.self, from: data)
         XCTAssertEqual(msg.value.content.type, .pub)
         XCTAssertEqual(msg.value.content.isValid, true)
         XCTAssertEqual(msg.value.content.contentException, nil)
@@ -259,7 +259,7 @@ class ContentTests: XCTestCase {
  */
 
         let data = self.data(for: "PostWithAltText.json")
-        let kv = try JSONDecoder().decode(KeyValue.self, from: data)
+        let kv = try JSONDecoder().decode(Message.self, from: data)
         let content = kv.value.content
         XCTAssertEqual(content.type, .post)
         XCTAssertEqual(content.typeString, "post")
@@ -319,7 +319,7 @@ class ContentTests: XCTestCase {
         let val = try JSONDecoder().decode(Value.self, from: data)
         XCTAssertTrue(val.content.type == .vote)
         XCTAssertEqual(val.timestamp, 1_573_673_656_588.015_9)
-        let kv = KeyValue(key: "%test.msg", value: val, timestamp: 0)
+        let kv = Message(key: "%test.msg", value: val, timestamp: 0)
         XCTAssertEqual(kv.userDate, Date(timeIntervalSince1970: 1_573_673_656.588_015_9))
     }
 

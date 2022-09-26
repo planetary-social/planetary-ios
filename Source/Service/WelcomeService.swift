@@ -46,7 +46,7 @@ class WelcomeServiceAdapter: WelcomeService {
         
         Log.info("Preloading welcome messages")
         
-        var messages = [KeyValue]()
+        var messages = [Message]()
         messages.append(welcomeAccountAboutMessage())
         messages.append(followWelcomeAccountMessages(author: currentUser))
         messages.append(welcomeMessage(for: currentUser))
@@ -58,14 +58,14 @@ class WelcomeServiceAdapter: WelcomeService {
     
     // MARK: - Helpers
     
-    private func save(messages: [KeyValue], to db: ViewDatabase) throws {
+    private func save(messages: [Message], to db: ViewDatabase) throws {
         let now = Date.now.millisecondsSince1970
         var lastRxSeq: Int64 = try db.minimumReceivedSeq()
         
-        let newMesgs = messages.map { (message: KeyValue) -> KeyValue in
+        let newMesgs = messages.map { (message: Message) -> Message in
             lastRxSeq -= 1
             
-            return KeyValue(
+            return Message(
                 key: message.key,
                 value: message.value,
                 timestamp: now,
@@ -99,9 +99,9 @@ class WelcomeServiceAdapter: WelcomeService {
     
     // MARK: - Message Data
     
-    private func welcomeAccountAboutMessage() -> KeyValue {
+    private func welcomeAccountAboutMessage() -> Message {
         let timestamp: Double = 1_657_210_389_000 // 2022-07-07
-        return KeyValue(
+        return Message(
             key: "%0mkZjslKxE4e4j4b+bdMF+x46VQpSVbsJA9RTayRoR4=.sha256",
             value: Value(
                 author: welcomeFeedID,
@@ -127,9 +127,9 @@ class WelcomeServiceAdapter: WelcomeService {
         )
     }
     
-    private func followWelcomeAccountMessages(author: FeedIdentifier) -> KeyValue {
+    private func followWelcomeAccountMessages(author: FeedIdentifier) -> Message {
         let now = Date.now.millisecondsSince1970 - 1000 // -1 to make sure this shows below the welcome message
-        return KeyValue(
+        return Message(
             key: fakeMessageID(from: "followWelcomeAccount" + author + welcomeFeedID),
             value: Value(
                 author: author,
@@ -147,9 +147,9 @@ class WelcomeServiceAdapter: WelcomeService {
         )
     }
     
-    private func welcomeMessage(for user: FeedIdentifier) -> KeyValue {
+    private func welcomeMessage(for user: FeedIdentifier) -> Message {
         let now = Date.now.millisecondsSince1970
-        return KeyValue(
+        return Message(
             key: fakeMessageID(from: "welcomeMessage" + user + welcomeFeedID),
             value: Value(
                 author: welcomeFeedID,

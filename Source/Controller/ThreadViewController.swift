@@ -15,8 +15,8 @@ import Combine
 
 class ThreadViewController: ContentViewController {
 
-    private let post: KeyValue
-    private var root: KeyValue? {
+    private let post: Message
+    private var root: Message? {
         didSet {
             let key = root?.key ?? ""
             let identity = Bots.current.identity ?? ""
@@ -73,7 +73,7 @@ class ThreadViewController: ContentViewController {
     }()
 
     private lazy var rootPostView: PostCellView = {
-        let view = PostCellView(keyValue: self.root ?? self.post)
+        let view = PostCellView(message: self.root ?? self.post)
         view.displayHeader = false
         view.allowSpaceUnderGallery = false
         return view
@@ -139,21 +139,21 @@ class ThreadViewController: ContentViewController {
     
     private let imagePicker = ImagePicker()
 
-    private var onNextUpdateScrollToPostWithKeyValueKey: Identifier?
+    private var onNextUpdateScrollToPostWithMessageKey: Identifier?
     private var indexPathToScrollToOnKeyboardDidShow: IndexPath?
     private var replyTextViewBecomeFirstResponder = false
 
-    init(with keyValue: KeyValue, startReplying: Bool = false) {
-        assert(keyValue.value.content.isPost)
-        self.post = keyValue
-        self.onNextUpdateScrollToPostWithKeyValueKey = keyValue.key
+    init(with message: Message, startReplying: Bool = false) {
+        assert(message.value.content.isPost)
+        self.post = message
+        self.onNextUpdateScrollToPostWithMessageKey = message.key
         // self.interactionView.postIdentifier = Identity
         super.init(scrollable: false)
         self.isKeyboardHandlingEnabled = true
         self.showsTabBarBorder = false
         self.addActions()
         self.replyTextViewBecomeFirstResponder = startReplying
-        self.update(with: keyValue)
+        self.update(with: message)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -198,7 +198,7 @@ class ThreadViewController: ContentViewController {
 
     private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
         let post = self.post
-        Bots.current.thread(keyValue: post) { [weak self] root, replies, error in
+        Bots.current.thread(message: post) { [weak self] root, replies, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
@@ -238,7 +238,7 @@ class ThreadViewController: ContentViewController {
         self.load()
     }
 
-    private func update(with root: KeyValue) {
+    private func update(with root: Message) {
         self.root = root
 
         self.headerView.update(with: root)
@@ -250,7 +250,7 @@ class ThreadViewController: ContentViewController {
         replyTextView.isHidden = root.offChain == true
     }
 
-    private func update(with root: KeyValue, replies: PaginatedKeyValueDataProxy, animated: Bool = true) {
+    private func update(with root: Message, replies: PaginatedMessageDataProxy, animated: Bool = true) {
         self.root = root
 
         self.headerView.update(with: root)
@@ -296,9 +296,9 @@ class ThreadViewController: ContentViewController {
     // MARK: Animations
 
     private func scrollIfNecessary(animated: Bool = true) {
-        guard let key = self.onNextUpdateScrollToPostWithKeyValueKey else { return }
-        self.onNextUpdateScrollToPostWithKeyValueKey = nil
-        self.tableView.scroll(toKeyValueWith: key, animated: animated)
+        guard let key = self.onNextUpdateScrollToPostWithMessageKey else { return }
+        self.onNextUpdateScrollToPostWithMessageKey = nil
+        self.tableView.scroll(toMessageWith: key, animated: animated)
     }
 
     /// Scrolls to `indexPathToScrollToOnKeyboardDidShow` which is typically
@@ -391,7 +391,7 @@ class ThreadViewController: ContentViewController {
                 self?.buttonsView.minimize()
                 self?.galleryView.removeAll()
                 self?.galleryView.close()
-                self?.onNextUpdateScrollToPostWithKeyValueKey = key
+                self?.onNextUpdateScrollToPostWithMessageKey = key
                 self?.load()
             }
             self?.buttonsView.postButton.isEnabled = true
@@ -428,7 +428,7 @@ class ThreadViewController: ContentViewController {
 
         // otherwise clean up data source
         else {
-            self.tableView.deleteKeyValues(by: identity)
+            self.tableView.deleteMessages(by: identity)
         }
     }
 }
@@ -447,16 +447,16 @@ extension ThreadViewController: UITableViewDelegate {
 
 extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate {
     
-    func threadReplyView(view: ThreadReplyView, didLoad keyValue: KeyValue) {
+    func threadReplyView(view: ThreadReplyView, didLoad message: Message) {
         view.tapGesture.tap = { [weak self] in
             self?.tableView.beginUpdates()
             view.toggleExpanded()
             self?.tableView.endUpdates()
 
             if view.textIsExpanded {
-                self?.dataSource.expandedPosts.insert(keyValue.key)
+                self?.dataSource.expandedPosts.insert(message.key)
             } else {
-                self?.dataSource.expandedPosts.remove(keyValue.key)
+                self?.dataSource.expandedPosts.remove(message.key)
             }
         }
     }
@@ -464,7 +464,7 @@ extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate 
 
 extension ThreadViewController: ThreadInteractionViewDelegate {
     
-    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue) {
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: Message) {
         let vote = ContentVote(link: self.rootKey,
                                value: 1,
                                expression: "💜",

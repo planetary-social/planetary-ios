@@ -62,7 +62,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
     /// - Discard posts and follows from the future
     ///
     /// The result is sorted by  date
-    private let fetchKeyValuesQuery = """
+    private let fetchMessagesQuery = """
         SELECT
           messages.*,
           posts.*,
@@ -177,7 +177,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
     /// - Discard posts and follows from the future
     ///
     /// The result is sorted by  date
-    private let fetchKeyValuesFollowersQuery = """
+    private let fetchMessagesFollowersQuery = """
         SELECT
           messages.*,
           posts.*,
@@ -308,18 +308,18 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         0
     }
 
-    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
-        try fetchKeyValues(database: database, userId: userId, limit: limit, offset: offset, onlyUnread: true)
+    func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message] {
+        try fetchMessages(database: database, userId: userId, limit: limit, offset: offset, onlyUnread: true)
     }
     
     /// - parameter isRead: if false or nil then only unread messages will be fetched.
-    private func fetchKeyValues(
+    private func fetchMessages(
         database: ViewDatabase,
         userId: Int64,
         limit: Int,
         offset: Int?,
         onlyUnread: Bool
-    ) throws -> [KeyValue] {
+    ) throws -> [Message] {
         guard let connection = database.getOpenDB() else {
             Log.error("db is closed")
             return []
@@ -328,31 +328,31 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         var query: Statement
         var bindings: [Binding]
         if onlyFollowed {
-            query = try connection.prepare(fetchKeyValuesFollowersQuery)
+            query = try connection.prepare(fetchMessagesFollowersQuery)
             bindings = [userId, !onlyUnread, userId, userId, limit]
         } else {
-            query = try connection.prepare(fetchKeyValuesQuery)
+            query = try connection.prepare(fetchMessagesQuery)
             bindings = [userId, !onlyUnread, userId, limit]
         }
-        let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
-            try buildKeyValue(keyValueRow: keyValueRow, database: database)
+        let messages = try query.bind(bindings).prepareRowIterator().map { messageRow -> Message? in
+            try buildMessage(messageRow: messageRow, database: database)
         }
-        var compactKeyValues = keyValues.compactMap { $0 }
+        var compactMessages = messages.compactMap { $0 }
         
         // if we don't have any unread messages we get some already read messages to display.
-        if compactKeyValues.count < limit && onlyUnread == true {
-            compactKeyValues += try fetchKeyValues(
+        if compactMessages.count < limit && onlyUnread == true {
+            compactMessages += try fetchMessages(
                 database: database,
                 userId: userId,
-                limit: limit - compactKeyValues.count,
+                limit: limit - compactMessages.count,
                 offset: offset,
                 onlyUnread: false
             )
         }
-        return compactKeyValues
+        return compactMessages
     }
 
-    private func buildKeyValue(keyValueRow: Row, database: ViewDatabase) throws -> KeyValue? {
-        try KeyValue(row: keyValueRow, database: database)
+    private func buildMessage(messageRow: Row, database: ViewDatabase) throws -> Message? {
+        try Message(row: messageRow, database: database)
     }
 }

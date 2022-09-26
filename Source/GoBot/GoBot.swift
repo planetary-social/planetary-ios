@@ -686,7 +686,7 @@ class GoBot: Bot {
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
-        var targetMessage: KeyValue?
+        var targetMessage: Message?
         do {
             targetMessage = try self.database.post(with: message)
         } catch {
@@ -1425,11 +1425,11 @@ class GoBot: Bot {
         }
     }
 
-    func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
-        assert(keyValue.value.content.isPost)
+    func thread(message: Message, completion: @escaping ThreadCompletion) {
+        assert(message.value.content.isPost)
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
-            if let rootKey = keyValue.value.content.post?.root {
+            if let rootKey = message.value.content.post?.root {
                 do {
                     let root = try self.database.post(with: rootKey)
                     let replies = try self.database.getRepliesTo(thread: root.key)
@@ -1442,7 +1442,7 @@ class GoBot: Bot {
                     }
                 }
             } else {
-                self.internalThread(rootKey: keyValue.key, completion: completion)
+                self.internalThread(rootKey: message.key, completion: completion)
             }
         }
     }
@@ -1578,7 +1578,7 @@ class GoBot: Bot {
         feed(strategy: NoHopFeedAlgorithm(identity: identity), completion: completion)
     }
     
-    func post(from key: MessageIdentifier) throws -> KeyValue {
+    func post(from key: MessageIdentifier) throws -> Message {
         try self.database.post(with: key)
     }
 
@@ -1615,8 +1615,8 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
-                let keyValues = try self.database.messagesForHashtag(name: hashtag.name)
-                let proxy = StaticDataProxy(with: keyValues)
+                let messages = try self.database.messagesForHashtag(name: hashtag.name)
+                let proxy = StaticDataProxy(with: messages)
                 DispatchQueue.main.async { completion(proxy, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
@@ -1624,7 +1624,7 @@ class GoBot: Bot {
         }
     }
     
-    func posts(matching filter: String) async throws -> [KeyValue] {
+    func posts(matching filter: String) async throws -> [Message] {
         let task = Task.detached(priority: .high) {
             return try self.database.posts(matching: filter)
         }
@@ -1728,13 +1728,13 @@ class GoBot: Bot {
             do {
                 let data = try Data(contentsOf: url, options: .mappedIfSafe)
                 do {
-                    let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+                    let msgs = try JSONDecoder().decode([Message].self, from: data)
 
                     var lastRxSeq: Int64 = try self.database.minimumReceivedSeq()
                     
-                    let newMesgs = msgs.map { (message: KeyValue) -> KeyValue in
+                    let newMesgs = msgs.map { (message: Message) -> Message in
                         lastRxSeq -= 1
-                        return KeyValue(
+                        return Message(
                             key: message.key,
                             value: message.value,
                             timestamp: message.timestamp,
@@ -1761,10 +1761,10 @@ class GoBot: Bot {
 
     // MARK: Raw messages
 
-    func raw(of keyValue: KeyValue, completion: @escaping RawCompletion) {
+    func raw(of message: Message, completion: @escaping RawCompletion) {
         userInitiatedQueue.async {
-            let identity = keyValue.value.author
-            let sequence = keyValue.value.sequence
+            let identity = message.value.author
+            let sequence = message.value.sequence
             guard sequence >= UInt64.min, sequence <= UInt64.max else {
                 completion(.failure(AppError.unexpected))
                 return

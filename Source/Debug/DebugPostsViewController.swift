@@ -12,7 +12,7 @@ import UIKit
 class DebugPostsViewController: ContentViewController {
 
     private let dataSource = DebugPostsTableViewDataSource()
-    private lazy var delegate = KeyValueTableViewDelegate(on: self)
+    private lazy var delegate = MessageTableViewDelegate(on: self)
     private let tableView = UITableView.forVerse()
 
     init() {
@@ -32,14 +32,14 @@ class DebugPostsViewController: ContentViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.dataSource.keyValues = [KeyValue.postMultipleImages(), KeyValue.postSingleImage()]
+        self.dataSource.messages = [Message.postMultipleImages(), Message.postSingleImage()]
         self.tableView.reloadData()
     }
 }
 
-fileprivate extension KeyValue {
+fileprivate extension Message {
 
-    static func postMultipleImages() -> KeyValue {
+    static func postMultipleImages() -> Message {
         let string = "We\'re at #data_terra_nemo and Dominic is giving his keynote.\n\n![Dominic Talking at Data Terra Nemo](&AmeGz5CnJqvXTX7P6xGKnvCWtc6biFgKryg71swDtPg=.sha256)\n\nTesting posting a message with attachments.\n\n![rabble_foocamp_headshot.jpg](&nV+TeSZBIDQrcOO5ClvfkvQ+XCXjf7yVHF19j2Jk3xI=.sha256)\n"
         let post = Post(text: string)
         let content = Content(from: post)
@@ -50,11 +50,11 @@ fileprivate extension KeyValue {
                           sequence: 0,
                           signature: Identifier.null,
                           timestamp: Date().millisecondsSince1970)
-        let keyValue = KeyValue(key: Identifier.null, value: value, timestamp: 0)
-        return keyValue
+        let message = Message(key: Identifier.null, value: value, timestamp: 0)
+        return message
     }
 
-    static func postSingleImage() -> KeyValue {
+    static func postSingleImage() -> Message {
         let string = "Testing posting a message with attachments.\n\n![rabble_foocamp_headshot.jpg](&nV+TeSZBIDQrcOO5ClvfkvQ+XCXjf7yVHF19j2Jk3xI=.sha256)\n\n"
         let post = Post(text: string)
         let content = Content(from: post)
@@ -65,18 +65,18 @@ fileprivate extension KeyValue {
                           sequence: 234,
                           signature: "verified_by_go-ssb",
                           timestamp: Date().millisecondsSince1970)
-        let keyValue = KeyValue(key: Identifier.null, value: value, timestamp: 0)
-        return keyValue
+        let message = Message(key: Identifier.null, value: value, timestamp: 0)
+        return message
     }
 }
 
-private class DebugPostsTableViewDataSource: KeyValueTableViewDataSource {
+private class DebugPostsTableViewDataSource: MessageTableViewDataSource {
 
     override func cell(at indexPath: IndexPath,
                        for type: ContentType,
-                       tableView: UITableView) -> KeyValueTableViewCell {
+                       tableView: UITableView) -> MessageTableViewCell {
         let view = PostReplyView()
-        let cell = KeyValueTableViewCell(for: .post, with: view)
+        let cell = MessageTableViewCell(for: .post, with: view)
         return cell
     }
 }

@@ -1,5 +1,5 @@
 //
-//  KeyValueFixtures.swift
+//  MessageFixtures.swift
 //  UnitTests
 //
 //  Created by Matthew Lorentz on 1/19/22.
@@ -10,11 +10,11 @@ import Foundation
 
 // swiftlint:disable force_unwrapping force_try
 
-/// Easy access to `KeyValue` data for testing.
-enum KeyValueFixtures {
-    static let keyValueWithReceivedSeq = keyValue(fromFixture: "KeyValueWithReceivedSeq.json")
+/// Easy access to `Message` data for testing.
+enum MessageFixtures {
+    static let messageWithReceivedSeq = message(fromFixture: "MessageWithReceivedSeq.json")
     
-    static func keyValue(
+    static func message(
         key: MessageIdentifier = "TestPostId=.ed25519",
         sequence: Int,
         content: Content,
@@ -22,8 +22,8 @@ enum KeyValueFixtures {
         receivedTimestamp: Float64 = 2_684_029_486_000, // 2055
         receivedSeq: Int64 = 0, // largest in example feed is 77
         author: Identity
-    ) -> KeyValue {
-        KeyValue(
+    ) -> Message {
+        Message(
             key: key,
             value: Value(
                 author: author,
@@ -48,9 +48,9 @@ enum KeyValueFixtures {
         receivedSeq: Int64 = 0, // largest in example feed is 77
         post: Post = Post(text: "post"),
         author: Identity
-    ) -> KeyValue {
+    ) -> Message {
             
-        keyValue(
+        message(
             key: key,
             sequence: sequence,
             content: Content(from: post),
@@ -62,9 +62,9 @@ enum KeyValueFixtures {
     }
     
     // Convenience func to load and return JSON resource file as Data.
-    static func keyValue(fromFixture jsonResourceName: String) -> KeyValue {
+    static func message(fromFixture jsonResourceName: String) -> Message {
         let url = Bundle.current.url(forResource: jsonResourceName, withExtension: nil)!
         let data = try! Data(contentsOf: url)
-        return try! JSONDecoder().decode(KeyValue.self, from: data)
+        return try! JSONDecoder().decode(Message.self, from: data)
     }
 }

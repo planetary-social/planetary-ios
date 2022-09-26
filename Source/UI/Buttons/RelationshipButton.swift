@@ -17,9 +17,9 @@ class RelationshipButton: IconButton {
 
     private var relationship: Relationship
     private var otherUserName: String
-    private var content: KeyValue
+    private var content: Message
 
-    init(with relationship: Relationship, name: String, content: KeyValue) {
+    init(with relationship: Relationship, name: String, content: Message) {
 
         self.relationship = relationship
         self.otherUserName = name
@@ -158,7 +158,7 @@ class RelationshipButton: IconButton {
 
     func viewSource() {
         Analytics.shared.trackDidSelectAction(actionName: "view_source")
-        let viewModel = RawMessageCoordinator(keyValue: content, bot: Bots.current)
+        let viewModel = RawMessageCoordinator(message: content, bot: Bots.current)
         let controller = UIHostingController(rootView: RawMessageView(viewModel: viewModel))
         let navController = UINavigationController(rootViewController: controller)
         AppController.shared.present(navController, animated: true)

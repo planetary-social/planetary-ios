@@ -1,5 +1,5 @@
 //
-//  KeyValue.swift
+//  Message.swift
 //  FBTT
 //
 //  Created by Christoph on 1/22/19.
@@ -8,7 +8,16 @@
 
 import Foundation
 
-struct KeyValue: Codable {
+/// The basic building block of a Scuttlebutt feed. Messages are data containers (usually JSON) of keys and values that
+/// encode some content that the user has posted. Each message is signed by the user's cryptographic key and contains a
+/// pointer to the previous message in the feed.
+///
+/// The type of the message is generally encoded in a "type" field. You can read more about common messages types
+/// here: https://patchfox.org/#/message_types/
+///
+/// You can read more about the structure of feeds and messages in the protocol guide:
+/// https://ssbc.github.io/scuttlebutt-protocol-guide/#feeds
+struct Message: Codable {
 
     enum CodingKeys: String, CodingKey {
         case key
@@ -19,7 +28,7 @@ struct KeyValue: Codable {
         case offChain = "off_chain"
     }
 
-    let key: Identifier
+    let key: MessageIdentifier
     let value: Value
     let timestamp: Float64 // received time in milliseconds since the unix epoch
     // optional, only needed for copy from gobot to viewdb TODO: find a way to stuff this in metadata? i think this requries a custom decoder
@@ -79,20 +88,20 @@ struct KeyValue: Codable {
     var metadata = Metadata()
 }
 
-extension KeyValue: Equatable {
+extension Message: Equatable {
 
-    static func == (lhs: KeyValue, rhs: KeyValue) -> Bool {
+    static func == (lhs: Message, rhs: Message) -> Bool {
         lhs.key == rhs.key
     }
 }
 
-extension KeyValue: Hashable {
+extension Message: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(self.key)
     }
 }
 
-extension KeyValue {
+extension Message {
 
     // Convenience var to return the embedded content's type
     var contentType: ContentType {

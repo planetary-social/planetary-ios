@@ -27,11 +27,11 @@ class PostTruncatedTextCache: AttributedStringCache {
     private let lengthToTruncate = Int(700)
 
     @discardableResult
-    func from(_ kv: KeyValue) -> NSAttributedString {
+    func from(_ kv: Message) -> NSAttributedString {
 
         guard let post = kv.value.content.post else {
-            assertionFailure("KeyValue is not a Post")
-            return NSAttributedString(string: "KeyValue is not a Post")
+            assertionFailure("Message is not a Post")
+            return NSAttributedString(string: "Message is not a Post")
         }
 
         // truncate the text and generate the string
@@ -55,7 +55,7 @@ class PostTruncatedTextCache: AttributedStringCache {
 
     /// Convenience func to transform an array of `Post` into the
     /// lower level `KeyMarkdown`.
-    func prefill(_ posts: KeyValues) {
+    func prefill(_ posts: Messages) {
         let markdowns: [KeyMarkdown] = posts.compactMap {
             guard let post = $0.value.content.post else { return nil }
             let truncated = self.truncate(post.hasBlobs ? post.text.withoutGallery() : post.text)

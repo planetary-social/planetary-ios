@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /// Composite view of the PostCellView, a ReplyTextView, and a bottom separator.
-class PostReplyView: KeyValueView {
+class PostReplyView: MessageView {
 
     let headerView = ContactHeaderView()
 
@@ -20,7 +20,7 @@ class PostReplyView: KeyValueView {
 
     // In this case the view is mostly used a big button to
     // navigate into a thread and start replying.  The tap
-    // gesture that comes with the KeyValueView is applied
+    // gesture that comes with the MessageView is applied
     // to the whole view, and the button and text view are
     // disabled.
     let replyTextView: ReplyTextView = {
@@ -91,29 +91,29 @@ class PostReplyView: KeyValueView {
         postView.reset()
     }
 
-    override func update(with keyValue: KeyValue) {
-        let isReply = keyValue.value.content.post?.root != nil
-        let isVote = keyValue.value.content.vote?.root != nil
+    override func update(with message: Message) {
+        let isReply = message.value.content.post?.root != nil
+        let isVote = message.value.content.vote?.root != nil
         if isReply || isVote {
             postView.isHidden = false
             postView.displayHeader = false
             headerView.isHidden = false
-            headerView.update(with: keyValue)
+            headerView.update(with: message)
             repliesView.isHidden = true
             degrade.heightConstraint?.constant = 0
         } else {
             postView.isHidden = false
             headerView.isHidden = true
-            replyTextView.isHidden = keyValue.offChain == true
+            replyTextView.isHidden = message.offChain == true
             repliesView.isHidden = false
-            repliesView.update(with: keyValue)
-            if !keyValue.metadata.replies.isEmpty {
+            repliesView.update(with: message)
+            if !message.metadata.replies.isEmpty {
                 degrade.heightConstraint?.constant = 12.33
             } else {
                 degrade.heightConstraint?.constant = 0
             }
         }
-        postView.update(with: keyValue)
+        postView.update(with: message)
     }
 }
 
@@ -121,15 +121,15 @@ extension PostReplyView {
 
     /// Returns a CGFloat suitable to be used as a `UITableView.estimatedRowHeight` or
     /// `UITableViewDelegate.estimatedRowHeightAtIndexPath()`.  If the specified
-    /// `KeyValue` has images, height for the `GalleryView` is included.  If there are replies
+    /// `Message` has images, height for the `GalleryView` is included.  If there are replies
     /// height for the `RepliesView` is added.  This does require some knowledge of the heights
     /// for the various subviews, but this needs to be a very fast call so no complicated calculations
     /// should be done.  Instead, some magic numbers are used based on the various constraints.
-    static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
+    static func estimatedHeight(with message: Message, in superview: UIView) -> CGFloat {
         // starting height based for all non-zero height subviews
         // header + text + reply box
         var height = CGFloat(300)
-        guard let post = keyValue.value.content.post else { return height }
+        guard let post = message.value.content.post else { return height }
 
         // add gallery view if necessary
         // note that gallery view is square so likely the same
@@ -137,14 +137,14 @@ extension PostReplyView {
         if post.hasBlobs { height += superview.bounds.size.width }
 
         // add replies view if necessary
-        if !keyValue.metadata.replies.isEmpty { height += 35 }
+        if !message.metadata.replies.isEmpty { height += 35 }
 
         // done
         return height
     }
 }
 
-class RepliesView: KeyValueView {
+class RepliesView: MessageView {
 
     private let textFont = UIFont.systemFont(ofSize: 14, weight: .regular)
 
@@ -174,20 +174,20 @@ class RepliesView: KeyValueView {
         nil
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    override func update(with keyValue: KeyValue) {
-        let uniqueAbouts = keyValue.metadata.replies.abouts
+    override func update(with message: Message) {
+        let uniqueAbouts = message.metadata.replies.abouts
 
         if !uniqueAbouts.isEmpty {
             Bots.current.abouts(identities: uniqueAbouts.map { $0.identity }) { detailedAbouts, _ in
-                let allAbouts = Set(detailedAbouts).union(keyValue.metadata.replies.abouts)
+                let allAbouts = Set(detailedAbouts).union(message.metadata.replies.abouts)
                 DispatchQueue.main.async {
                     self.avatarImageView.abouts = detailedAbouts
                     self.updateLabel(
                         from: allAbouts,
                         authorsWithDetails: detailedAbouts,
-                        totalReplyCount: keyValue.metadata.replies.count
+                        totalReplyCount: message.metadata.replies.count
                     )
                 }
             }

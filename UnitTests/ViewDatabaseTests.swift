@@ -32,7 +32,7 @@ class ViewDatabaseTests: XCTestCase {
             try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+            let msgs = try JSONDecoder().decode([Message].self, from: data)
             XCTAssertNotNil(msgs)
             // +1 to fake-cause the duplication bug
             XCTAssertEqual(msgs.count, expMsgCount + 1)
@@ -469,7 +469,7 @@ class ViewDatabaseTests: XCTestCase {
 
     func test71_notifications_follows() {
         do {
-            let msgs: [KeyValue] = try self.vdb.followedBy(feed: testFeeds[0])
+            let msgs: [Message] = try self.vdb.followedBy(feed: testFeeds[0])
             XCTAssertEqual(msgs.count, 2)
             if msgs.count != 2 {
                 return
@@ -488,7 +488,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `testLargestSeqFromReceiveLog()` excludes posts published by the current user.
     func testLargestSeqFromReceiveLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
         
         // Assert
@@ -504,7 +504,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqNotFromPublishedLog()` excludes posts published by the current user.
     func testLargestSeqNotFromPublishedLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
 
         // Assert
@@ -520,7 +520,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqFromPublishedLog()` only looks at posts published by the current user.
     func testLargestSeqFromPublishedLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestPublishedSeqInDbAtStart: Int64 = 77
         
         // Assert
@@ -538,19 +538,19 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let sinceTime = Date(timeIntervalSinceNow: -1)
         let postTime = Date().millisecondsSince1970
-        let ownerMessage = KeyValueFixtures.post(
+        let ownerMessage = MessageFixtures.post(
             key: "1",
             receivedTimestamp: postTime,
             receivedSeq: 778,
             author: fixture.owner
         )
-        let friendMessageOne = KeyValueFixtures.post(
+        let friendMessageOne = MessageFixtures.post(
             key: "2",
             receivedTimestamp: postTime,
             receivedSeq: 779,
             author: fixture.identities[0]
         )
-        let friendMessageTwo = KeyValueFixtures.post(
+        let friendMessageTwo = MessageFixtures.post(
             key: "3",
             receivedTimestamp: postTime,
             receivedSeq: 780,
@@ -571,7 +571,7 @@ class ViewDatabaseTests: XCTestCase {
     func testFillMessagesGivenDuplicateInsert() throws {
         // Arrange
         let messageCount = try vdb.messageCount()
-        let testMessage = KeyValueFixtures.keyValueWithReceivedSeq
+        let testMessage = MessageFixtures.messageWithReceivedSeq
         
         // Act
         try vdb.fillMessages(msgs: [testMessage, testMessage])
@@ -586,7 +586,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let messageCount = try vdb.messageCount()
         let oldDate = Date(timeIntervalSince1970: 5)
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             timestamp: oldDate.millisecondsSince1970,
             receivedSeq: 800,
             author: IdentityFixture.alice
@@ -604,7 +604,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let messageCount = try vdb.messageCount()
         let oldDate = Date(timeIntervalSince1970: 1_619_037_184)
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             timestamp: oldDate.millisecondsSince1970,
             receivedSeq: 800,
             author: currentUser
@@ -639,7 +639,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let startingMessageCount = try vdb.messageCount()
         let bannedAuthor = "@banme"
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -660,7 +660,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let bannedAuthor = "@banme"
         let startingMessageCount = try vdb.messageCount()
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -681,7 +681,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let bannedAuthor = "@banme"
         let startingMessageCount = try vdb.messageCount()
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -702,7 +702,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let startingMessageCount = try vdb.messageCount()
         let bannedAuthor = "@banme"
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -723,7 +723,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let startingMessageCount = try vdb.messageCount()
         let bannedAuthor = "@banme"
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -776,7 +776,7 @@ class ViewDatabasePreloadTest: XCTestCase {
             try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: preloadData)
+            let msgs = try JSONDecoder().decode([Message].self, from: preloadData)
             XCTAssertNotNil(msgs)
             XCTAssertEqual(msgs.count, preloadExpMsgCount)
             
@@ -811,7 +811,7 @@ class ViewDatabasePreloadTest: XCTestCase {
         
         do {
             // get test messages from JSON
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+            let msgs = try JSONDecoder().decode([Message].self, from: data)
             XCTAssertNotNil(msgs)
             // +1 to fake-cause the duplication bug
             XCTAssertEqual(msgs.count, expMsgCount + 1)
@@ -833,7 +833,7 @@ class ViewDatabasePreloadTest: XCTestCase {
         }
     }
     
-    /// Loads up the preloaded feeds from Preload.bundle and verifies that we can parse them into [KeyValue] and that
+    /// Loads up the preloaded feeds from Preload.bundle and verifies that we can parse them into [Message] and that
     /// they are not empty.
     func testPreloadedFeedsAreParseable() throws {
         let testingBundle = try XCTUnwrap(Bundle(for: type(of: self)))
@@ -853,7 +853,7 @@ class ViewDatabasePreloadTest: XCTestCase {
         XCTAssertEqual(allJSONURLs.count, 3)
         try allJSONURLs.forEach { url in
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+            let msgs = try JSONDecoder().decode([Message].self, from: data)
             XCTAssertEqual(msgs.isEmpty, false)
         }
     }

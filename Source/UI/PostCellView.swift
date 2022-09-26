@@ -11,7 +11,7 @@ import ImageSlideshow
 import UIKit
 import SkeletonView
 
-class PostCellView: KeyValueView {
+class PostCellView: MessageView {
 
     let verticalSpace: CGFloat = 5
 
@@ -36,7 +36,7 @@ class PostCellView: KeyValueView {
     var allowSpaceUnderGallery = true
     var showTimestamp: Bool
 
-    var keyValue: KeyValue?
+    var message: Message?
     private lazy var headerView = PostHeaderView(showTimestamp: showTimestamp, compactHeader: compactHeader)
 
     private lazy var textView: UITextView = {
@@ -111,8 +111,8 @@ class PostCellView: KeyValueView {
 
     private func updateFullPostText() {
         guard self.textIsExpanded else { return }
-        guard let keyValue = self.keyValue, keyValue.value.content.isPost else { return }
-        let string = Caches.text.from(keyValue).mutable()
+        guard let message = self.message, message.value.content.isPost else { return }
+        let string = Caches.text.from(message).mutable()
         self.fullPostText = string
     }
 
@@ -121,11 +121,11 @@ class PostCellView: KeyValueView {
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
         
         // not so clean but it gest likes displaying.
-        if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == ContentType.vote {
+        if self.textView.attributedText.string.isSingleEmoji && self.message?.value.content.type == ContentType.vote {
             self.textView.font = UIFont.post.body.withSize(16)
             self.textView.textAlignment = .natural
         } else if self.textView.attributedText.string.isSingleEmoji,
-             let post = self.keyValue?.value.content.post,
+             let post = self.message?.value.content.post,
               !post.hasBlobs {
               self.textView.font = UIFont.post.body.withSize(100)
               self.textView.textAlignment = .center
@@ -220,28 +220,28 @@ class PostCellView: KeyValueView {
         self.galleryViewZeroHeightConstraint.isActive = true
     }
 
-    convenience init(keyValue: KeyValue) {
-        assert(keyValue.value.content.isPost)
+    convenience init(message: Message) {
+        assert(message.value.content.isPost)
         self.init()
-        self.update(with: keyValue)
+        self.update(with: message)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
     override func reset() {
         super.reset()
         textView.text = ""
     }
 
-    override func update(with keyValue: KeyValue) {
-        self.keyValue = keyValue
-        self.headerView.update(with: keyValue)
+    override func update(with message: Message) {
+        self.message = message
+        self.headerView.update(with: message)
 
-        if let vote = keyValue.value.content.vote {
+        if let vote = message.value.content.vote {
             var expression: String 
             if let explicitExpression = vote.vote.expression,
                 explicitExpression.isSingleEmoji {
@@ -262,8 +262,8 @@ class PostCellView: KeyValueView {
             self.galleryViewFullHeightConstraint.isActive = false
             self.galleryViewZeroHeightConstraint.isActive = true
             self.galleryViewBottomConstraint?.constant = 0
-        } else if let post = keyValue.value.content.post {
-            let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
+        } else if let post = message.value.content.post {
+            let text = self.shouldTruncate ? Caches.truncatedText.from(message) : Caches.text.from(message)
             
             self.fullPostText = text
             self.configureTruncatedState()

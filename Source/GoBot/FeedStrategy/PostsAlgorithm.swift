@@ -70,7 +70,7 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         return try connection.scalar(query.count)
     }
 
-    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
+    func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message] {
         guard let connection = database.getOpenDB() else {
             Log.error("db is closed")
             return []
@@ -87,9 +87,9 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             query = filterNotFollowingPeople(query: query, connection: connection, userId: userId)
         }
 
-        let feedOfMsgs = try self.mapQueryToKeyValue(query: query, database: database)
+        let feedOfMsgs = try self.mapQueryToMessage(query: query, database: database)
 
-        return try self.addNumberOfPeopleReplied(msgs: feedOfMsgs, connection: connection)
+        return try self.addNumberOfPeopleReplied(to: feedOfMsgs, connection: connection)
     }
 
     func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
@@ -218,18 +218,18 @@ class PostsAlgorithm: NSObject, FeedStrategy {
             )
     }
 
-    private func mapQueryToKeyValue(query: Table, database: ViewDatabase) throws -> [KeyValue] {
+    private func mapQueryToMessage(query: Table, database: ViewDatabase) throws -> [Message] {
         guard let connection = database.getOpenDB() else {
             Log.error("db is closed")
             return []
         }
         
-        return try connection.prepare(query).compactMap { keyValueRow in
-            return try KeyValue(row: keyValueRow, database: database, hasMentionColumns: false, hasReplies: false)
+        return try connection.prepare(query).compactMap { messageRow in
+            return try Message(row: messageRow, database: database, hasMentionColumns: false, hasReplies: false)
         }
     }
 
-    private func addNumberOfPeopleReplied(msgs: [KeyValue], connection: Connection) throws -> KeyValues {
+    private func addNumberOfPeopleReplied(to rootMessages: [Message], connection: Connection) throws -> Messages {
         let messages = Table(ViewDatabaseTableNames.messages.rawValue)
         let tangles = Table(ViewDatabaseTableNames.tangles.rawValue)
         let authors = Table(ViewDatabaseTableNames.authors.rawValue)
@@ -246,8 +246,8 @@ class PostsAlgorithm: NSObject, FeedStrategy {
         let colRoot = Expression<Int64>("root")
         let colAboutID = Expression<Int64>("about_id")
 
-        var keyValues: KeyValues = []
-        for var message in msgs {
+        var messagesWithReplies: Messages = []
+        for var message in rootMessages {
             let msgID = try self.msgID(of: message.key, connection: connection)
 
             let replies = tangles
@@ -273,9 +273,9 @@ class PostsAlgorithm: NSObject, FeedStrategy {
 
             message.metadata.replies.count = count
             message.metadata.replies.abouts = Set(abouts)
-            keyValues.append(message)
+            messagesWithReplies.append(message)
         }
-        return keyValues
+        return messagesWithReplies
     }
 
     private func msgID(of key: MessageIdentifier, make: Bool = false, connection: Connection) throws -> Int64 {

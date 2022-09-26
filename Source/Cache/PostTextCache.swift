@@ -15,11 +15,11 @@ import Logger
 class PostTextCache: AttributedStringCache {
 
     @discardableResult
-    func from(_ post: KeyValue) -> NSAttributedString {
+    func from(_ post: Message) -> NSAttributedString {
 
         guard let innerPost = post.value.content.post else {
-            assertionFailure("KeyValue is not a Post")
-            return NSAttributedString(string: "KeyValue is not a Post")
+            assertionFailure("Message is not a Post")
+            return NSAttributedString(string: "Message is not a Post")
         }
 
         return self.attributedString(for: post.key, markdown: innerPost.hasBlobs ? innerPost.text.withoutGallery() : innerPost.text)

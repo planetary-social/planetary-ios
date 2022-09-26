@@ -425,7 +425,7 @@ class GoBotOrderedTests: XCTestCase {
         sleep(1)
         
         let ex1 = self.expectation(description: "get proxy")
-        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        var proxy: PaginatedMessageDataProxy = StaticDataProxy()
         GoBotOrderedTests.shared.feed(identity: GoBotOrderedTests.pubkeys["alice"]!) {
             p, err in
             XCTAssertNotNil(p)
@@ -437,24 +437,24 @@ class GoBotOrderedTests: XCTestCase {
 
         // check we have the start (default is 100 messages pre-fetched)
         XCTAssertEqual(proxy.count, 203)
-        XCTAssertNotNil(proxy.keyValueBy(index: 0))
-        XCTAssertNotNil(proxy.keyValueBy(index: 1))
-        XCTAssertNil(proxy.keyValueBy(index: 100))
+        XCTAssertNotNil(proxy.messageBy(index: 0))
+        XCTAssertNotNil(proxy.messageBy(index: 1))
+        XCTAssertNil(proxy.messageBy(index: 100))
 
         // fetch more
         proxy.prefetchUpTo(index: 110)
         sleep(1)
-        XCTAssertNotNil(proxy.keyValueBy(index: 105))
-        XCTAssertNotNil(proxy.keyValueBy(index: 110))
-        XCTAssertNil(proxy.keyValueBy(index: 111))
+        XCTAssertNotNil(proxy.messageBy(index: 105))
+        XCTAssertNotNil(proxy.messageBy(index: 110))
+        XCTAssertNil(proxy.messageBy(index: 111))
         
         // simulate bunch of calls (de-bounce)
         proxy.prefetchUpTo(index: 160)
         proxy.prefetchUpTo(index: 170)
         proxy.prefetchUpTo(index: 180)
         sleep(1)
-        XCTAssertNotNil(proxy.keyValueBy(index: 180))
-        XCTAssertNil(proxy.keyValueBy(index: 181))
+        XCTAssertNotNil(proxy.messageBy(index: 180))
+        XCTAssertNil(proxy.messageBy(index: 181))
     }
     
     // fire another prefetch while one is in-flight and check for duplicates
@@ -470,7 +470,7 @@ class GoBotOrderedTests: XCTestCase {
         sleep(1)
        
         let ex1 = self.expectation(description: "get proxy")
-        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        var proxy: PaginatedMessageDataProxy = StaticDataProxy()
         GoBotOrderedTests.shared.feed(identity: GoBotOrderedTests.pubkeys["page"]!) {
             p, err in
             XCTAssertNotNil(p)
@@ -482,9 +482,9 @@ class GoBotOrderedTests: XCTestCase {
 
         // check we have the start (default is 2 messages pre-fetched)
         XCTAssertEqual(proxy.count, 100)
-        XCTAssertNotNil(proxy.keyValueBy(index: 0))
-        XCTAssertNotNil(proxy.keyValueBy(index: 99))
-        XCTAssertNil(proxy.keyValueBy(index: 100))
+        XCTAssertNotNil(proxy.messageBy(index: 0))
+        XCTAssertNotNil(proxy.messageBy(index: 99))
+        XCTAssertNil(proxy.messageBy(index: 100))
     }
 
     // MARK: threads
@@ -514,7 +514,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
 
         var ex = self.expectation(description: "\(#function) thread")
-        var msgMaybe: KeyValue?
+        var msgMaybe: Message?
         GoBotOrderedTests.shared.thread(rootKey: root) {
             rootMsg, replies, err in
             XCTAssertNil(err)
@@ -532,9 +532,9 @@ class GoBotOrderedTests: XCTestCase {
             return
         }
 
-        // open the same thread but with the KeyValue method
+        // open the same thread but with the Message method
         ex = self.expectation(description: "\(#function) ask k-v")
-        GoBotOrderedTests.shared.thread(keyValue: msg) {
+        GoBotOrderedTests.shared.thread(message: msg) {
             rootMsg, replies, err in
             XCTAssertNil(err)
             XCTAssertNotNil(rootMsg)
@@ -689,7 +689,7 @@ class GoBotOrderedTests: XCTestCase {
                 XCTFail("expected at least one message. got \(msgs.count)")
                 return
             }
-            guard let kv0 = msgs.keyValueBy(index: 0) else {
+            guard let kv0 = msgs.messageBy(index: 0) else {
                 XCTFail("failed to get msg[0]")
                 return
             }
@@ -1050,7 +1050,7 @@ class GoBotOrderedTests: XCTestCase {
                 return
             }
 
-            guard let kv0 = msgs.keyValueBy(index: 0) else {
+            guard let kv0 = msgs.messageBy(index: 0) else {
                 XCTFail("failed to get msg[0]")
                 return
             }
@@ -1117,15 +1117,15 @@ fileprivate extension UIImage {
   }
 }
 
-fileprivate extension PaginatedKeyValueDataProxy {
-    func getAllMessages() -> KeyValues {
+fileprivate extension PaginatedMessageDataProxy {
+    func getAllMessages() -> Messages {
         self.prefetchUpTo(index: self.count - 1)
         
         // TODO
         sleep(5)
         /* TODO: wait for prefetch
         let done = DispatchSemaphore(value: 0)
-        _ = self.keyValueBy(index: self.count-1, late: {
+        _ = self.messageBy(index: self.count-1, late: {
             idx, _ in
             done.signal()
             print("prefetch done \(idx)")
@@ -1135,9 +1135,9 @@ fileprivate extension PaginatedKeyValueDataProxy {
         done.wait()
         */
 
-        var kvs = KeyValues()
+        var kvs = Messages()
         for i in 0...self.count - 1 {
-            guard let kv = self.keyValueBy(index: i) else {
+            guard let kv = self.messageBy(index: i) else {
                 XCTFail("failed to get item \(i) of \(self.count)")
                 continue
             }

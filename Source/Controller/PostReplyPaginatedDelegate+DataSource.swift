@@ -10,87 +10,87 @@ import UIKit
 
 protocol PostReplyPaginatedDataSourceDelegate: AnyObject {
     
-    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue)
+    func postReplyView(view: PostReplyView, didLoad message: Message)
 }
 
-class PostReplyPaginatedDataSource: KeyValuePaginatedTableViewDataSource {
+class PostReplyPaginatedDataSource: MessagePaginatedTableViewDataSource {
     
     weak var delegate: PostReplyPaginatedDataSourceDelegate?
     
-    override func emptyCell() -> KeyValueTableViewCell {
+    override func emptyCell() -> MessageTableViewCell {
         let view = PostReplyView()
         view.postView.truncationLimit = TruncationSettings(over: 8, to: 5)
-        return KeyValueTableViewCell(for: .post, with: view)
+        return MessageTableViewCell(for: .post, with: view)
     }
     
-    override func cell(at indexPath: IndexPath, for type: ContentType) -> KeyValueTableViewCell {
+    override func cell(at indexPath: IndexPath, for type: ContentType) -> MessageTableViewCell {
         switch type {
         case .contact:
             let view = ContactReplyView()
-            return KeyValueTableViewCell(for: .contact, with: view)
+            return MessageTableViewCell(for: .contact, with: view)
         default:
             let view = PostReplyView()
             view.postView.truncationLimit = self.truncationLimitForPost(at: indexPath)
-            return KeyValueTableViewCell(for: .post, with: view)
+            return MessageTableViewCell(for: .post, with: view)
         }
     }
     
     private func truncationLimitForPost(at indexPath: IndexPath) -> TruncationSettings? {
-        guard let keyValue = self.data.keyValueBy(index: indexPath.row, late: noop) else {
+        guard let message = self.data.messageBy(index: indexPath.row, late: noop) else {
             return TruncationSettings(over: 8, to: 5)
         }
-        return truncationLimitForPost(keyValue: keyValue)
+        return truncationLimitForPost(message: message)
     }
     
-    private func truncationLimitForPost(keyValue: KeyValue) -> TruncationSettings? {
-        guard let post = keyValue.value.content.post else { return nil }
+    private func truncationLimitForPost(message: Message) -> TruncationSettings? {
+        guard let post = message.value.content.post else { return nil }
         let settings: TruncationSettings = post.hasBlobs ? (over: 8, to: 5) : (over: 10, to: 8)
         return settings
     }
     
-    override func loadKeyValue(_ keyValue: KeyValue, in cell: KeyValueTableViewCell) {
-        switch keyValue.contentType {
+    override func loadMessage(_ message: Message, in cell: MessageTableViewCell) {
+        switch message.contentType {
         case .contact:
-            super.loadKeyValue(keyValue, in: cell)
+            super.loadMessage(message, in: cell)
         default:
-            guard let postReplyView = cell.keyValueView as? PostReplyView else {
+            guard let postReplyView = cell.messageView as? PostReplyView else {
                 return
             }
-            postReplyView.postView.truncationLimit = self.truncationLimitForPost(keyValue: keyValue)
-            super.loadKeyValue(keyValue, in: cell)
-            self.delegate?.postReplyView(view: postReplyView, didLoad: keyValue)
+            postReplyView.postView.truncationLimit = self.truncationLimitForPost(message: message)
+            super.loadMessage(message, in: cell)
+            self.delegate?.postReplyView(view: postReplyView, didLoad: message)
         }
     }
 }
 
-class PostReplyPaginatedDelegate: KeyValuePaginatedTableViewDelegate {
+class PostReplyPaginatedDelegate: MessagePaginatedTableViewDelegate {
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let dataSource = tableView.dataSource as? KeyValuePaginatedTableViewDataSource else {
+        guard let dataSource = tableView.dataSource as? MessagePaginatedTableViewDataSource else {
             return tableView.bounds.size.width
         }
-        guard let keyValue = dataSource.data.keyValueBy(index: indexPath.row) else {
+        guard let message = dataSource.data.messageBy(index: indexPath.row) else {
             return tableView.bounds.size.width
         }
-        switch keyValue.contentType {
+        switch message.contentType {
         case .contact:
-            return ContactReplyView.estimatedHeight(with: keyValue, in: tableView)
+            return ContactReplyView.estimatedHeight(with: message, in: tableView)
         default:
-            return PostReplyView.estimatedHeight(with: keyValue, in: tableView)
+            return PostReplyView.estimatedHeight(with: message, in: tableView)
         }
     }
     
-    override func viewController(for keyValue: KeyValue) -> UIViewController? {
-        switch keyValue.contentType {
+    override func viewController(for message: Message) -> UIViewController? {
+        switch message.contentType {
         case .contact:
-            guard let identity = keyValue.value.content.contact?.identity else {
+            guard let identity = message.value.content.contact?.identity else {
                 return nil
             }
             return AboutViewController(with: identity)
         case .vote:
             return nil
         default:
-            return ThreadViewController(with: keyValue, startReplying: false)
+            return ThreadViewController(with: message, startReplying: false)
         }
     }
 }
