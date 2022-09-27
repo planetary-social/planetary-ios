@@ -54,7 +54,11 @@ enum ViewDatabaseTableNames: String {
 class ViewDatabase {
     var currentPath: String { get { self.dbPath } }
     private var dbPath: String = "/tmp/unset"
-    private var openDB: Connection?
+    private var openDB: Connection? {
+        let db = try! Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
+        db.busyTimeout = 10
+        return db
+    }
 
     // TODO: use this to trigger fill on update and wipe previous versions
     // https://app.asana.com/0/914798787098068/1151842364054322/f
@@ -226,19 +230,16 @@ class ViewDatabase {
     // will force a rebuild on next launch.
 
     func open(path: String, user: Identity) throws {
-        if self.isOpen() {
-            throw ViewDatabaseError.alreadyOpen
-        }
+//        if self.isOpen() {
+//            throw ViewDatabaseError.alreadyOpen
+//        }
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
         self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
         
-        db.busyTimeout = 1
-        db.busyHandler { (tries) -> Bool in
-            tries < 4
-        }
+        db.busyTimeout = 10
         
-        self.openDB = db
+//        self.openDB = db
         try db.execute("PRAGMA journal_mode = WAL;")
         try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
         
@@ -457,7 +458,7 @@ class ViewDatabase {
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
         }
-        self.openDB = nil
+//        self.openDB = nil
         self.currentUser = nil
         self.currentUserID = -1
     }

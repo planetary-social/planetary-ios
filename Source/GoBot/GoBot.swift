@@ -214,9 +214,9 @@ class GoBot: Bot {
         var repoPrefix: String
 
         do {
-            if database.isOpen() {
-                database.close()
-            }
+//            if database.isOpen() {
+//                database.close()
+//            }
             
             repoPrefix = try config.databaseDirectory()
             
