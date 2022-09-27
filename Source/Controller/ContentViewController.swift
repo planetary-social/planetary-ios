@@ -144,13 +144,13 @@ class ContentViewController: UIViewController, KeyboardHandling {
         }
     }
 
-    func setKeyboardTopConstraint(constant: CGFloat,
-                                  duration: TimeInterval,
-                                  curve: UIView.AnimationCurve) {
+    func setKeyboardTopConstraint(
+        constant: CGFloat,
+        duration: TimeInterval,
+        curve: UIView.AnimationCurve
+    ) {
         let animator = UIViewPropertyAnimator(duration: duration, curve: curve) { [weak self] in
             self?.contentViewBottomConstraint.constant = constant
-            self?.view.setNeedsLayout()
-            self?.view.layoutIfNeeded()
         }
         animator.startAnimation()
     }
