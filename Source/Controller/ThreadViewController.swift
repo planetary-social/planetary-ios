@@ -377,25 +377,28 @@ class ThreadViewController: ContentViewController {
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
         let draftStore = draftStore
-        Task.detached(priority: .userInitiated) { await draftStore.save(text: text, images: images) }
-        Bots.current.publish(post, with: images) { [weak self] key, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            AppController.shared.hideProgress()
-            if let error = error {
-                self?.alert(error: error)
-            } else {
+        Task.detached(priority: .userInitiated) {
+            await draftStore.save(text: text, images: images)
+            do {
+                let messageID = try await Bots.current.publish(post, with: images)
                 Analytics.shared.trackDidReply()
-                self?.replyTextView.clear()
-                self?.replyTextView.resignFirstResponder()
-                self?.buttonsView.minimize()
-                self?.galleryView.removeAll()
-                self?.galleryView.close()
-                self?.onNextUpdateScrollToPostWithKeyValueKey = key
-                self?.load()
+                await MainActor.run {
+                    self.replyTextView.clear()
+                    self.replyTextView.resignFirstResponder()
+                    self.buttonsView.minimize()
+                    self.galleryView.removeAll()
+                    self.galleryView.close()
+                    self.onNextUpdateScrollToPostWithKeyValueKey = messageID
+                    self.load()
+                }
+                await draftStore.clearDraft()
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
             }
-            self?.buttonsView.postButton.isEnabled = true
-            Task.detached(priority: .userInitiated) { await draftStore.clearDraft() }
+            
+            await MainActor.run { self.buttonsView.postButton.isEnabled = true }
+            await AppController.shared.hideProgress()
         }
     }
     
