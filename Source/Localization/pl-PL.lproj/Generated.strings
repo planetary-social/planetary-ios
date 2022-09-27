@@ -44,7 +44,7 @@
 "Text.dontSendAnalytics" = "Nie wysyłaj żadnych statystyk";
 "Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "Planetary szuka aktualności\nw rozproszonej sieci bezpośredniej.";
-"Text.post" = "Post";
+"Text.postAction" = "Post";
 "Text.preview" = "Podgąd";
 "Text.newPost" = "Nowy Post";
 "Text.deletePost" = "Usuń ten post";
