@@ -80,9 +80,14 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
         super.viewDidLoad()
         Layout.fill(view: self.view, with: self.tableView)
         self.floatingRefreshButton.layout(in: self.view, below: self.tableView)
-        self.addLoadingAnimation()
-        self.load()
         registerNotifications()
+        
+        if dataSource.reports.isEmpty {
+            // Sometimes the reports get loaded before the user opens this view, triggered by `fillMessages` posting
+            // a notification
+            self.addLoadingAnimation()
+            self.load()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -95,18 +100,23 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
 
     // MARK: Load and refresh
 
+    @MainActor
     func load(animated: Bool = false) {
-        Bots.current.reports { [weak self] reports, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            self?.removeLoadingAnimation()
-            self?.refreshControl.endRefreshing()
-            self?.floatingRefreshButton.hide()
-            
-            if let error = error {
-                self?.alert(error: error)
-            } else {
-                self?.update(with: reports, animated: animated)
+        Task {
+            let clean = { [weak self] in
+                self?.removeLoadingAnimation()
+                self?.refreshControl.endRefreshing()
+                self?.floatingRefreshButton.hide()
+            }
+            do {
+                let reports = try await Bots.current.reports()
+                clean()
+                update(with: reports, animated: animated)
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                clean()
+                alert(error: error)
             }
         }
     }

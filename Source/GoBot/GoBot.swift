@@ -1106,7 +1106,11 @@ class GoBot: Bot {
     func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
         userInitiatedQueue.async {
             do {
-                let about = try self.database.getAbout(for: identity)
+                var about = try self.database.getAbout(for: identity)
+                if about == nil {
+                    about = About(about: identity)
+                }
+                
                 queue.async {
                     if about?.identity == self._identity { self._about = about }
                     completion(about, nil)
@@ -1751,6 +1755,28 @@ class GoBot: Bot {
                 print(error) // shows error
                 print("Unable to read file")// local message
                 completion(error)
+            }
+        }
+    }
+
+    // MARK: Raw messages
+
+    func raw(of keyValue: KeyValue, completion: @escaping RawCompletion) {
+        userInitiatedQueue.async {
+            let identity = keyValue.value.author
+            let sequence = keyValue.value.sequence
+            guard sequence >= UInt64.min, sequence <= UInt64.max else {
+                completion(.failure(AppError.unexpected))
+                return
+            }
+            identity.withGoString { feedRef in
+                guard let pointer = ssbGetRawMessage(feedRef, UInt64(sequence)) else {
+                    completion(.failure(GoBotError.unexpectedFault("failed to get raw message")))
+                    return
+                }
+                let string = String(cString: pointer)
+                free(pointer)
+                completion(.success(string))
             }
         }
     }

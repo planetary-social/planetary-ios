@@ -9,6 +9,7 @@
 import UIKit
 import Analytics
 import Support
+import SwiftUI
 
 class EditPostButton: IconButton {
     let post: KeyValue
@@ -40,6 +41,14 @@ class EditPostButton: IconButton {
             }
             AppController.shared.present(activityController, animated: true)
         }
+
+        let viewSource = UIAlertAction(title: Text.viewSource.text, style: .default) { [post] _ in
+            Analytics.shared.trackDidSelectAction(actionName: "view_source")
+            let viewModel = RawMessageCoordinator(keyValue: post, bot: Bots.current)
+            let controller = UIHostingController(rootView: RawMessageView(viewModel: viewModel))
+            let navController = UINavigationController(rootViewController: controller)
+            AppController.shared.present(navController, animated: true)
+        }
         
         let delete = UIAlertAction(title: Text.deletePost.text, style: .destructive) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "delete_post")
@@ -51,21 +60,16 @@ class EditPostButton: IconButton {
                 )
                 return
             }
-            let nc = UINavigationController(rootViewController: controller)
-            AppController.shared.present(nc, animated: true)
+            let navController = UINavigationController(rootViewController: controller)
+            AppController.shared.present(navController, animated: true)
         }
-
-        // TODO: Reenable edit later
-//        let edit = UIAlertAction(title: Text.editPost.text, style: .default) { _ in
-//            AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement post edit interface.", cancelTitle: Text.ok.text)
-//        }
 
         let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
 
-        AppController.shared.choose(from: [copy, share, delete, cancel], sourceView: self)
+        AppController.shared.choose(from: [copy, share, viewSource, delete, cancel], sourceView: self)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 }

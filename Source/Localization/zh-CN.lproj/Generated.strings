@@ -80,6 +80,8 @@
 "Text.shareThisMessage" = "Share This Message";
 "Text.shareThisProfileText" = "Find {{ who }} on Planetary at {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
+"Text.viewSource" = "View source";
+"Text.messageSource" = "Message Source";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
 "Text.blockUser" = "Ignore this user";
@@ -165,6 +167,7 @@
 "NewPost.confirmRemove" = "从帖子中删除此图像？您总是可以重新添加。";
 "NewPost.remove" = "移除";
 "NewPost.publishing" = "Publishing...";
+"NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";

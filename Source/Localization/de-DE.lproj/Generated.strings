@@ -80,6 +80,8 @@
 "Text.shareThisMessage" = "Diese Nachricht teilen";
 "Text.shareThisProfileText" = "Finde {{ who }} auf Planetary unter {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} hat gepostet: {{ what }} {{ link }}";
+"Text.viewSource" = "View source";
+"Text.messageSource" = "Message Source";
 "Text.addFriend" = "Freund hinzufügen";
 "Text.removeFriend" = "Freund entfernen";
 "Text.blockUser" = "Ignore this user";
@@ -165,6 +167,7 @@
 "NewPost.confirmRemove" = "Dieses Bild aus dem Beitrag entfernen? Du kannst es immer wieder hinzufügen.";
 "NewPost.remove" = "Entfernen";
 "NewPost.publishing" = "Publishing...";
+"NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";

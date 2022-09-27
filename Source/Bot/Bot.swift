@@ -22,6 +22,7 @@ typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias CountCompletion = ((Result<Int, Error>) -> Void)
 typealias VoidCompletion = ((Result<Void, Error>) -> Void)
+typealias RawCompletion = ((Result<String, Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -293,6 +294,10 @@ protocol Bot: AnyObject {
     // MARK: Preloading
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
+
+    // MARK: Raw message
+
+    func raw(of keyValue: KeyValue, completion: @escaping RawCompletion)
 }
 
 extension Bot {
@@ -406,9 +411,17 @@ extension Bot {
             }
         }
     }
-    
-    func reports(completion: @escaping (([Report], Error?) -> Void)) {
-        self.reports(queue: .main, completion: completion)
+
+    func reports() async throws -> [Report] {
+        try await withCheckedThrowingContinuation { continuation in
+            reports(queue: DispatchQueue.global(qos: .background)) { reports, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: reports)
+                }
+            }
+        }
     }
 
     /// Returns the number of reports newer than a particular report (offset).
@@ -581,4 +594,24 @@ extension Bot {
                 }
             }
         }
+
+    /// Fetch the message source of the given message
+    ///
+    /// - parameter keyValue: The KeyValue that holds the feed and the sequence number of the message to
+    /// retrieve its source.
+    /// - returns: A String object containing the JSON SSB message
+    ///
+    /// This function will throw if it cannot access the database
+    func raw(of keyValue: KeyValue) async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            raw(of: keyValue) { result in
+                switch result {
+                case .success(let string):
+                    continuation.resume(returning: string)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
 }

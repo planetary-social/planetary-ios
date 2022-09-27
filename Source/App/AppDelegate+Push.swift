@@ -174,7 +174,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     @objc
     func didCreateReportHandler(notification: Notification) {
-        guard let report = notification.userInfo?["report"] as? Report else {
+        guard let reports = notification.userInfo?["reports"] as? [Report] else {
             return
         }
         guard let currentIdentity = Bots.current.identity else {
@@ -185,16 +185,27 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             // Suppress notifications if the user is restoring
             return
         }
-        guard report.authorIdentity == currentIdentity else {
-            // Don't do anything if report is not for the logged in user
+        guard reports.contains(where: { $0.authorIdentity == currentIdentity }) else {
+            // Don't do anything if none of the reports are for the logged in user
             return
         }
 
         // Update the application badge number
         updateApplicationBadgeNumber()
 
-        // Display a local notification so the user is aware of a new report
-        scheduleLocalNotification(report)
+        Bots.current.blocks(identity: currentIdentity) { [weak self] blockedIdentities, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            reports.forEach { [weak self] report in
+                let notifyingIdentity = report.keyValue.value.author
+                let notifiedIdentity = report.authorIdentity
+                guard notifiedIdentity == currentIdentity, !blockedIdentities.contains(notifyingIdentity) else {
+                    return
+                }
+                // Display a local notification so the user is aware of a new report
+                self?.scheduleLocalNotification(report)
+            }
+        }
     }
 
     @objc

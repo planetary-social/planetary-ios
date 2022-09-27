@@ -132,6 +132,18 @@ class RandomAlgorithm: NSObject, FeedStrategy {
           AND hidden = false
           AND is_root = true
           AND COALESCE(is_read, false) = ?
+          AND (
+            authors.author NOT IN (
+              SELECT
+                followed_and_blocked_authors.author
+              FROM
+                contacts
+                JOIN authors AS followed_and_blocked_authors ON contacts.contact_id = followed_and_blocked_authors.id
+              WHERE
+                contacts.author_id = ?
+                AND (contacts.state = -1 OR contacts.state = 1)
+            )
+          )
           AND claimed_at < STRFTIME('%s') * 1000
         ORDER BY
           RANDOM()
@@ -320,7 +332,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
             bindings = [userId, !onlyUnread, userId, userId, limit]
         } else {
             query = try connection.prepare(fetchKeyValuesQuery)
-            bindings = [userId, !onlyUnread, limit]
+            bindings = [userId, !onlyUnread, userId, limit]
         }
         let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
             try buildKeyValue(keyValueRow: keyValueRow, database: database)

@@ -72,7 +72,7 @@ extension KeyValue {
         if hasReplies {
             let numberOfReplies = try row.get(Expression<Int>("replies_count"))
             let replies = try row.get(Expression<String?>("replies"))
-            let abouts = replies?.split(separator: ";").map { About(about: String($0)) } ?? []
+            let abouts = Set(replies?.split(separator: ";").map { About(about: String($0)) } ?? [])
             keyValue.metadata.replies.count = numberOfReplies
             keyValue.metadata.replies.abouts = abouts
         }

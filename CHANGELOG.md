@@ -9,7 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Update to Xcode 14. #839
+
+## [1.3.4]
+
+- Show the underlying SSB message for posts, replies and likes. #662
+- Fix the profile picture and name fields being empty when the user had not set a name. #852
+- Fix the thread view when repliers do not have a name published. #850
+- Filter blocked users from the notifications screen. #824
+- Fix an issue where the user could get stuck on the name screen during onboarding. #844 (thanks @quickdudley)
+- Added the bio screen back to onboarding. #805
+- Filter posts from followed users in the Discover feed when the Random algorithm is selected. #822
+- Automatically save and restore drafts of replies. #835
 - Split Serbian localization into separate Latin and Cyrillic versions #831
+- Fix notification badges not updating in the background. #825
+- Fix loading indicator overlapping cells on the notifications tab. #750
 
 ## [1.3.3] 2022-09-05
 

@@ -137,6 +137,8 @@ enum Text: String, Localizable, CaseIterable {
     case shareThisMessage = "Share This Message"
     case shareThisProfileText = "Find {{ who }} on Planetary at {{ link }}"
     case shareThisMessageText = "{{ who }} posted: {{ what }} {{ link }}"
+    case viewSource = "View source"
+    case messageSource = "Message Source"
 
     case addFriend = "Add friend"
     case removeFriend = "Remove from friends"
@@ -255,6 +257,7 @@ extension Text {
         case confirmRemove = "Remove this image from the post?  You can always add it back again."
         case remove = "Remove"
         case publishing = "Publishing..."
+        case restoring = "Restoring..."
     }
 }
 

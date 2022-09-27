@@ -80,6 +80,8 @@
 "Text.shareThisMessage" = "Share This Message";
 "Text.shareThisProfileText" = "Find {{ who }} on Planetary at {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
+"Text.viewSource" = "View source";
+"Text.messageSource" = "Message Source";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
 "Text.blockUser" = "Ignore this user";
@@ -165,6 +167,7 @@
 "NewPost.confirmRemove" = "Remove this image from the post?  You can always add it back again.";
 "NewPost.remove" = "Remove";
 "NewPost.publishing" = "Publishing...";
+"NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";
