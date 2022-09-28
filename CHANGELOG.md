@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fixed an issue where drafts might not be cleared after posting. #868
+
+## [1.3.4]
+
 - Optimized the "Patchwork" home feed algorithm (RecentlyActivePostsAndContactsAlgorithm) and made it the new default. This algorithm brings posts back up to the top of your home feed when they receive a new reply. #860
 - Show the underlying SSB message for posts, replies and likes. #662
 

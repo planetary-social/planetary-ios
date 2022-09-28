@@ -167,24 +167,21 @@ class NewPostViewController: ContentViewController {
         let draftStore = draftStore
         Task.detached(priority: .userInitiated) {
             await draftStore.save(text: text, images: self.galleryView.images)
-        }
-        Bots.current.publish(post, with: images) { [weak self] _, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if let error = error {
-                self?.alert(error: error)
-            } else {
+            do {
+                _ = try await Bots.current.publish(post, with: images)
                 Analytics.shared.trackDidPost()
-                self?.dismiss(didPublish: post)
+                await self.dismiss(didPublish: post)
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await self.alert(error: error)
             }
-            self?.lookReady()
+            await self.lookReady()
         }
     }
 
-    private func dismiss(didPublish post: Post) {
-        Task.detached(priority: .userInitiated) {
-            await self.draftStore.clearDraft()
-        }
+    private func dismiss(didPublish post: Post) async {
+        await self.draftStore.clearDraft()
         self.didPublish?(post)
         self.dismiss(animated: true)
     }
