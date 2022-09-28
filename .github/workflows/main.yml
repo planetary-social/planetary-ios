@@ -4,7 +4,7 @@ on:
   push:
     branches: main
 env:
-  SIMULATOR: platform=iOS Simulator,name=iPhone 14,OS=16
+  SIMULATOR: platform=iOS Simulator,name=iPhone 14,OS=16.1
   DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
     
 jobs:
