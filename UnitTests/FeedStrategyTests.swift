@@ -50,7 +50,7 @@ class FeedStrategyTests: XCTestCase {
         let alice = DatabaseFixture.exampleFeed.identities[1]
         let bob = DatabaseFixture.exampleFeed.identities[2]
         
-        let post0 = KeyValueFixtures.post(
+        let post0 = MessageFixtures.post(
             key: "%0",
             sequence: 0,
             timestamp: referenceDate + 0,
@@ -58,7 +58,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 0,
             author: testAuthor
         )
-        let follow1 = KeyValueFixtures.keyValue(
+        let follow1 = MessageFixtures.message(
             key: "%1",
             sequence: 1,
             content: Content(from: Contact(contact: alice, following: true)),
@@ -67,7 +67,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 1,
             author: testAuthor
         )
-        let about2 = KeyValueFixtures.keyValue(
+        let about2 = MessageFixtures.message(
             key: "%2",
             sequence: 2,
             content: Content(from: About(about: alice, name: "Alice")),
@@ -76,7 +76,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 2,
             author: alice
         )
-        let post3 = KeyValueFixtures.post(
+        let post3 = MessageFixtures.post(
             key: "%3",
             sequence: 3,
             timestamp: referenceDate + 3,
@@ -84,7 +84,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 3,
             author: testAuthor
         )
-        let reply4 = KeyValueFixtures.keyValue(
+        let reply4 = MessageFixtures.message(
             key: "%4",
             sequence: 4,
             content: Content(
@@ -95,7 +95,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 4,
             author: bob
         )
-        let post5 = KeyValueFixtures.post(
+        let post5 = MessageFixtures.post(
             key: "%5",
             sequence: 5,
             timestamp: referenceDate + 5,
@@ -110,10 +110,10 @@ class FeedStrategyTests: XCTestCase {
         let proxy = try db.paginatedFeed(with: strategy)
         
         XCTAssertEqual(proxy.count, 4)
-        XCTAssertEqual(proxy.keyValueBy(index: 0), post5)
-        XCTAssertEqual(proxy.keyValueBy(index: 1), post0)
-        XCTAssertEqual(proxy.keyValueBy(index: 2), post3)
-        XCTAssertEqual(proxy.keyValueBy(index: 3), follow1)
+        XCTAssertEqual(proxy.messageBy(index: 0), post5)
+        XCTAssertEqual(proxy.messageBy(index: 1), post0)
+        XCTAssertEqual(proxy.messageBy(index: 2), post3)
+        XCTAssertEqual(proxy.messageBy(index: 3), follow1)
 
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%5"), 0)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%0"), 1)
@@ -127,7 +127,7 @@ class FeedStrategyTests: XCTestCase {
         let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis
         let receivedDate: Double = 1_652_813_515_000 // May 17, 2022 in millis
         
-        let post1 = KeyValueFixtures.post(
+        let post1 = MessageFixtures.post(
             key: "%1",
             sequence: 1,
             timestamp: referenceDate + 1,
@@ -135,7 +135,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 1,
             author: testAuthor
         )
-        let post2 = KeyValueFixtures.post(
+        let post2 = MessageFixtures.post(
             key: "%2",
             sequence: 2,
             timestamp: referenceDate + 2,
@@ -144,7 +144,7 @@ class FeedStrategyTests: XCTestCase {
             author: testAuthor
         )
         // Vote on post 1, to verify it doesn't come to the top.
-        let vote3 = KeyValueFixtures.keyValue(
+        let vote3 = MessageFixtures.message(
             sequence: 3,
             content: Content(from: ContentVote(
                 link: "%1",
@@ -165,8 +165,8 @@ class FeedStrategyTests: XCTestCase {
         let proxy = try db.paginatedFeed(with: strategy)
         
         XCTAssertEqual(proxy.count, 2)
-        XCTAssertEqual(proxy.keyValueBy(index: 0), post2)
-        XCTAssertEqual(proxy.keyValueBy(index: 1), post1)
+        XCTAssertEqual(proxy.messageBy(index: 0), post2)
+        XCTAssertEqual(proxy.messageBy(index: 1), post1)
     }
 
     func testPostsAndContactsAlgorithm() throws {
@@ -175,7 +175,7 @@ class FeedStrategyTests: XCTestCase {
         let alice = DatabaseFixture.exampleFeed.identities[1]
         let bob = DatabaseFixture.exampleFeed.identities[2]
 
-        let post0 = KeyValueFixtures.post(
+        let post0 = MessageFixtures.post(
             key: "%0",
             sequence: 0,
             timestamp: referenceDate + 0,
@@ -183,7 +183,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 0,
             author: testAuthor
         )
-        let follow1 = KeyValueFixtures.keyValue(
+        let follow1 = MessageFixtures.message(
             key: "%1",
             sequence: 1,
             content: Content(from: Contact(contact: alice, following: true)),
@@ -192,7 +192,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 1,
             author: testAuthor
         )
-        let about2 = KeyValueFixtures.keyValue(
+        let about2 = MessageFixtures.message(
             key: "%2",
             sequence: 2,
             content: Content(from: About(about: alice, name: "Alice")),
@@ -201,7 +201,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 2,
             author: alice
         )
-        let post3 = KeyValueFixtures.post(
+        let post3 = MessageFixtures.post(
             key: "%3",
             sequence: 3,
             timestamp: referenceDate + 3,
@@ -209,7 +209,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 3,
             author: testAuthor
         )
-        let reply4 = KeyValueFixtures.keyValue(
+        let reply4 = MessageFixtures.message(
             key: "%4",
             sequence: 4,
             content: Content(
@@ -220,7 +220,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 4,
             author: bob
         )
-        let post5 = KeyValueFixtures.post(
+        let post5 = MessageFixtures.post(
             key: "%5",
             sequence: 5,
             timestamp: referenceDate + 5,
@@ -235,10 +235,10 @@ class FeedStrategyTests: XCTestCase {
         let proxy = try db.paginatedFeed(with: strategy)
 
         XCTAssertEqual(proxy.count, 4)
-        XCTAssertEqual(proxy.keyValueBy(index: 0), post5)
-        XCTAssertEqual(proxy.keyValueBy(index: 1), post3)
-        XCTAssertEqual(proxy.keyValueBy(index: 2), follow1)
-        XCTAssertEqual(proxy.keyValueBy(index: 3), post0)
+        XCTAssertEqual(proxy.messageBy(index: 0), post5)
+        XCTAssertEqual(proxy.messageBy(index: 1), post3)
+        XCTAssertEqual(proxy.messageBy(index: 2), follow1)
+        XCTAssertEqual(proxy.messageBy(index: 3), post0)
 
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%5"), 0)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 1)
@@ -252,7 +252,7 @@ class FeedStrategyTests: XCTestCase {
         let alice = DatabaseFixture.exampleFeed.identities[1]
         let bob = DatabaseFixture.exampleFeed.identities[2]
 
-        let post0 = KeyValueFixtures.post(
+        let post0 = MessageFixtures.post(
             key: "%0",
             sequence: 0,
             timestamp: referenceDate + 0,
@@ -260,7 +260,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 0,
             author: testAuthor
         )
-        let follow1 = KeyValueFixtures.keyValue(
+        let follow1 = MessageFixtures.message(
             key: "%1",
             sequence: 1,
             content: Content(from: Contact(contact: alice, blocking: false)),
@@ -269,7 +269,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 1,
             author: testAuthor
         )
-        let about2 = KeyValueFixtures.keyValue(
+        let about2 = MessageFixtures.message(
             key: "%2",
             sequence: 2,
             content: Content(from: About(about: alice, name: "Alice")),
@@ -278,7 +278,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 2,
             author: alice
         )
-        let post3 = KeyValueFixtures.post(
+        let post3 = MessageFixtures.post(
             key: "%3",
             sequence: 3,
             timestamp: referenceDate + 3,
@@ -286,7 +286,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 3,
             author: testAuthor
         )
-        let reply4 = KeyValueFixtures.keyValue(
+        let reply4 = MessageFixtures.message(
             key: "%4",
             sequence: 4,
             content: Content(
@@ -297,7 +297,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 4,
             author: bob
         )
-        let post5 = KeyValueFixtures.post(
+        let post5 = MessageFixtures.post(
             key: "%5",
             sequence: 5,
             timestamp: referenceDate + 5,
@@ -312,9 +312,9 @@ class FeedStrategyTests: XCTestCase {
         let proxy = try db.paginatedFeed(with: strategy)
 
         XCTAssertEqual(proxy.count, 3)
-        XCTAssertEqual(proxy.keyValueBy(index: 0), post5)
-        XCTAssertEqual(proxy.keyValueBy(index: 1), post3)
-        XCTAssertEqual(proxy.keyValueBy(index: 2), post0)
+        XCTAssertEqual(proxy.messageBy(index: 0), post5)
+        XCTAssertEqual(proxy.messageBy(index: 1), post3)
+        XCTAssertEqual(proxy.messageBy(index: 2), post0)
 
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%5"), 0)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 1)
@@ -330,7 +330,7 @@ class FeedStrategyTests: XCTestCase {
         let receivedDate = Date().millisecondsSince1970 // May 17, 2022 in millis
         let alice = DatabaseFixture.exampleFeed.identities[1]
         
-        let alicePost = KeyValueFixtures.post(
+        let alicePost = MessageFixtures.post(
             key: "%1",
             sequence: 1,
             timestamp: referenceDate + 1,
@@ -338,7 +338,7 @@ class FeedStrategyTests: XCTestCase {
             receivedSeq: 1,
             author: alice
         )
-        let blockAlice = KeyValueFixtures.keyValue(
+        let blockAlice = MessageFixtures.message(
             key: "%2",
             sequence: 2,
             content: Content(from: Contact(contact: alice, blocking: true)),

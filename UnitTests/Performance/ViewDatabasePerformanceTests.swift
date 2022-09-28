@@ -75,7 +75,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         let data = self.data(for: DatabaseFixture.bigFeed.fileName)
 
         // get test messages from JSON
-        let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+        let msgs = try JSONDecoder().decode([Message].self, from: data)
         XCTAssertNotNil(msgs)
         XCTAssertEqual(msgs.count, 2500)
         
@@ -92,8 +92,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
             startMeasuring()
-            let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues?.count, 100)
+            let messages = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(messages?.count, 100)
             stopMeasuring()
         }
     }
@@ -103,8 +103,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
             startMeasuring()
-            let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues?.count, 91)
+            let messages = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(messages?.count, 91)
             stopMeasuring()
         }
     }
@@ -115,8 +115,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
             startMeasuring()
-            let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues?.count, 100)
+            let messages = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(messages?.count, 100)
             stopMeasuring()
         }
     }
@@ -177,7 +177,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     /// reading (see ADR #4).
     func testSimultanousReadsAndWrites() throws {
         let data = self.data(for: DatabaseFixture.bigFeed.fileName)
-        let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+        let msgs = try JSONDecoder().decode([Message].self, from: data)
         
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()

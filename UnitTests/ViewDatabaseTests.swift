@@ -32,7 +32,7 @@ class ViewDatabaseTests: XCTestCase {
             try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+            let msgs = try JSONDecoder().decode([Message].self, from: data)
             XCTAssertNotNil(msgs)
             // +1 to fake-cause the duplication bug
             XCTAssertEqual(msgs.count, expMsgCount + 1)
@@ -274,45 +274,45 @@ class ViewDatabaseTests: XCTestCase {
             let replies = try self.vdb.getRepliesTo(thread: "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWs=.sha256")
             XCTAssertEqual(replies.count, 7)
             for (i, kv) in replies.enumerated() {
-                XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
+                XCTAssertNil(kv.content.typeException, "type exception on reply \(i)")
                 
                 switch i {
                 case 0:
                     XCTAssertEqual(kv.key, "%A779Qiywc+HJoMT1xfmuqGymyS9pnjNal+WfHBgk2GQ=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[0])
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "here is a reply")
+                    XCTAssertEqual(kv.author, testFeeds[0])
+                    XCTAssertEqual(kv.content.type, .post)
+                    XCTAssertEqual(kv.content.post?.text, "here is a reply")
                 case 1:
                     XCTAssertEqual(kv.key, "%2q0+HuVVun2LWCb/uQVQThFAA65VHxrzDIwRYuljoSY=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "hello you!")
+                    XCTAssertEqual(kv.author, testFeeds[1])
+                    XCTAssertEqual(kv.content.type, .post)
+                    XCTAssertEqual(kv.content.post?.text, "hello you!")
                 case 2:
                     XCTAssertEqual(kv.key, "%he1uimaQ3D7i2dIEsGkaNlCk31QfjV6C0FBIU5iBCUY=.sha256")
-                    XCTAssertEqual(kv.value.author, "@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519")
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "nice meeting you all!")
+                    XCTAssertEqual(kv.author, "@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519")
+                    XCTAssertEqual(kv.content.type, .post)
+                    XCTAssertEqual(kv.content.post?.text, "nice meeting you all!")
                 case 3:
                     XCTAssertEqual(kv.key, "%ytHCZiyd7MJ6F4vHjQwliGZx/vnm98URcF390KmQluE=.sha256")
-                    XCTAssertEqual(kv.value.author, "@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519")
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "[@realUserThree](@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519) who are you?!")
+                    XCTAssertEqual(kv.author, "@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519")
+                    XCTAssertEqual(kv.content.type, .post)
+                    XCTAssertEqual(kv.content.post?.text, "[@realUserThree](@TiCSZy2ICusS4RbL3H0I7tyrDFkucAVqTp6cjw2PETI=.ed25519) who are you?!")
                 case 4:
                     XCTAssertEqual(kv.key, "%M44KTcFtA0HuBAMqnZmLHgmJDj/XnE5a3KdgCosfnSU=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[3])
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "hello people!")
+                    XCTAssertEqual(kv.author, testFeeds[3])
+                    XCTAssertEqual(kv.content.type, .post)
+                    XCTAssertEqual(kv.content.post?.text, "hello people!")
                 case 5:
                     XCTAssertEqual(kv.key, "%YGZ8L7iAv3b50k3/Nks7Jm//2v6t9Jd/di1l6q/eIe8=.sha256")
-                    XCTAssertEqual(kv.value.author, testFeeds[1])
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "[@userFour](@27PkouhQuhr9Ffn+rgSnN0zabcfoE31qD3ZMkCs3c+0=.ed25519) hey you!\n\n[@userOne](@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519) i don\'t know either..")
+                    XCTAssertEqual(kv.author, testFeeds[1])
+                    XCTAssertEqual(kv.content.type, .post)
+                    XCTAssertEqual(kv.content.post?.text, "[@userFour](@27PkouhQuhr9Ffn+rgSnN0zabcfoE31qD3ZMkCs3c+0=.ed25519) hey you!\n\n[@userOne](@gIBNiimNRlGPP0Ob2jV6cpiVukfbHoIvGlkYIidHpKY=.ed25519) i don\'t know either..")
                     // TODO: decode & check mentions
                 case 6:
                     XCTAssertEqual(kv.key, "%ruVFSar2PMCK1WZdz0AL7JIOgxjbFuwcHL8zWrqw9Ig=.sha256")
-                    XCTAssertEqual(kv.value.author, DatabaseFixture.exampleFeed.secret.identity)
-                    XCTAssertEqual(kv.value.content.type, .post)
-                    XCTAssertEqual(kv.value.content.post?.text, "new reply to old thread.")
+                    XCTAssertEqual(kv.author, DatabaseFixture.exampleFeed.secret.identity)
+                    XCTAssertEqual(kv.content.type, .post)
+                    XCTAssertEqual(kv.content.post?.text, "new reply to old thread.")
                 default:
                     XCTFail("unhandled reply: \(i)")
                 }
@@ -350,9 +350,9 @@ class ViewDatabaseTests: XCTestCase {
         do {
             let replies = try self.vdb.feed(for: currentUser)
             for (i, kv) in replies.enumerated() {
-                XCTAssertNil(kv.value.content.typeException, "type exception on reply \(i)")
-                XCTAssertEqual(kv.value.author, currentUser)
-                XCTAssertEqual(kv.value.content.type, .post)
+                XCTAssertNil(kv.content.typeException, "type exception on reply \(i)")
+                XCTAssertEqual(kv.author, currentUser)
+                XCTAssertEqual(kv.content.type, .post)
                 switch i {
                 case 0:
                     XCTAssertEqual(kv.key, "%mGqnXFLLANmscYjQCafniOTbnTC4RoRP8lZNlswaCdc=.sha256")
@@ -376,8 +376,8 @@ class ViewDatabaseTests: XCTestCase {
         do {
             let post = try self.vdb.post(with: k)
             XCTAssertEqual(post.key, k)
-            XCTAssertEqual(post.value.content.post?.mentions?.count, 4)
-            if let m = post.value.content.post?.mentions {
+            XCTAssertEqual(post.content.post?.mentions?.count, 4)
+            if let m = post.content.post?.mentions {
                 XCTAssertEqual(m[0].name, "userOne")
                 XCTAssertEqual(m[1].name, "userTwo")
                 XCTAssertEqual(m[2].name, "realUserThree")
@@ -393,8 +393,8 @@ class ViewDatabaseTests: XCTestCase {
         do {
             let post = try self.vdb.post(with: k)
             XCTAssertEqual(post.key, k)
-            XCTAssertEqual(post.value.content.post?.mentions?.count, 1)
-            if let m = post.value.content.post?.mentions {
+            XCTAssertEqual(post.content.post?.mentions?.count, 1)
+            if let m = post.content.post?.mentions {
                 XCTAssertEqual(m[0].link, "&iPoiwMJzpTfYSyoyEVpZabvXFUXqC9UHlC1Sm/F9vG0=.sha256")
                 XCTAssertEqual(m[0].name, "exp.jpg")
                 // TODO: fille type
@@ -410,7 +410,7 @@ class ViewDatabaseTests: XCTestCase {
         do {
             let post = try self.vdb.post(with: k)
             XCTAssertEqual(post.key, k)
-            guard let p = post.value.content.post else {
+            guard let p = post.content.post else {
                 XCTFail("not a post")
                 return
             }
@@ -457,11 +457,11 @@ class ViewDatabaseTests: XCTestCase {
             if msgs.count < 1 {
                 return
             }
-            XCTAssertEqual(msgs[0].value.content.type, .post)
-            XCTAssertNotEqual(msgs[0].value.author, DatabaseFixture.exampleFeed.secret.identity)
-            XCTAssertEqual(msgs[0].value.author, testFeeds[1])
-            XCTAssertEqual(msgs[0].value.content.post?.text, "hey [@privateUser](@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519)! how is it going? (mentions test)")
-            XCTAssertEqual(msgs[0].value.content.post?.mentions?.count, 1)
+            XCTAssertEqual(msgs[0].content.type, .post)
+            XCTAssertNotEqual(msgs[0].author, DatabaseFixture.exampleFeed.secret.identity)
+            XCTAssertEqual(msgs[0].author, testFeeds[1])
+            XCTAssertEqual(msgs[0].content.post?.text, "hey [@privateUser](@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519)! how is it going? (mentions test)")
+            XCTAssertEqual(msgs[0].content.post?.mentions?.count, 1)
         } catch {
             XCTFail("\(error)")
         }
@@ -469,17 +469,17 @@ class ViewDatabaseTests: XCTestCase {
 
     func test71_notifications_follows() {
         do {
-            let msgs: [KeyValue] = try self.vdb.followedBy(feed: testFeeds[0])
+            let msgs: [Message] = try self.vdb.followedBy(feed: testFeeds[0])
             XCTAssertEqual(msgs.count, 2)
             if msgs.count != 2 {
                 return
             }
-            XCTAssertEqual(msgs[0].value.author, testFeeds[4])
-            XCTAssertNotEqual(msgs[0].timestamp, 0)
-            XCTAssertNotEqual(msgs[0].value.timestamp, 0)
-            XCTAssertEqual(msgs[1].value.author, testFeeds[1])
-            XCTAssertNotEqual(msgs[1].timestamp, 0)
-            XCTAssertNotEqual(msgs[1].value.timestamp, 0)
+            XCTAssertEqual(msgs[0].author, testFeeds[4])
+            XCTAssertNotEqual(msgs[0].receivedTimestamp, 0)
+            XCTAssertNotEqual(msgs[0].claimedTimestamp, 0)
+            XCTAssertEqual(msgs[1].author, testFeeds[1])
+            XCTAssertNotEqual(msgs[1].receivedTimestamp, 0)
+            XCTAssertNotEqual(msgs[1].claimedTimestamp, 0)
         } catch {
             XCTFail("\(error)")
         }
@@ -488,7 +488,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `testLargestSeqFromReceiveLog()` excludes posts published by the current user.
     func testLargestSeqFromReceiveLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
         
         // Assert
@@ -504,7 +504,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqNotFromPublishedLog()` excludes posts published by the current user.
     func testLargestSeqNotFromPublishedLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
 
         // Assert
@@ -520,7 +520,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqFromPublishedLog()` only looks at posts published by the current user.
     func testLargestSeqFromPublishedLog() throws {
         // Arrange
-        let testMessage = KeyValueFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
         let largestPublishedSeqInDbAtStart: Int64 = 77
         
         // Assert
@@ -538,19 +538,19 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let sinceTime = Date(timeIntervalSinceNow: -1)
         let postTime = Date().millisecondsSince1970
-        let ownerMessage = KeyValueFixtures.post(
+        let ownerMessage = MessageFixtures.post(
             key: "1",
             receivedTimestamp: postTime,
             receivedSeq: 778,
             author: fixture.owner
         )
-        let friendMessageOne = KeyValueFixtures.post(
+        let friendMessageOne = MessageFixtures.post(
             key: "2",
             receivedTimestamp: postTime,
             receivedSeq: 779,
             author: fixture.identities[0]
         )
-        let friendMessageTwo = KeyValueFixtures.post(
+        let friendMessageTwo = MessageFixtures.post(
             key: "3",
             receivedTimestamp: postTime,
             receivedSeq: 780,
@@ -571,7 +571,7 @@ class ViewDatabaseTests: XCTestCase {
     func testFillMessagesGivenDuplicateInsert() throws {
         // Arrange
         let messageCount = try vdb.messageCount()
-        let testMessage = KeyValueFixtures.keyValueWithReceivedSeq
+        let testMessage = MessageFixtures.messageWithReceivedSeq
         
         // Act
         try vdb.fillMessages(msgs: [testMessage, testMessage])
@@ -586,7 +586,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let messageCount = try vdb.messageCount()
         let oldDate = Date(timeIntervalSince1970: 5)
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             timestamp: oldDate.millisecondsSince1970,
             receivedSeq: 800,
             author: IdentityFixture.alice
@@ -604,7 +604,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let messageCount = try vdb.messageCount()
         let oldDate = Date(timeIntervalSince1970: 1_619_037_184)
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             timestamp: oldDate.millisecondsSince1970,
             receivedSeq: 800,
             author: currentUser
@@ -639,7 +639,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let startingMessageCount = try vdb.messageCount()
         let bannedAuthor = "@banme"
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -660,7 +660,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let bannedAuthor = "@banme"
         let startingMessageCount = try vdb.messageCount()
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -681,7 +681,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let bannedAuthor = "@banme"
         let startingMessageCount = try vdb.messageCount()
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -702,7 +702,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let startingMessageCount = try vdb.messageCount()
         let bannedAuthor = "@banme"
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -723,7 +723,7 @@ class ViewDatabaseTests: XCTestCase {
         // Arrange
         let startingMessageCount = try vdb.messageCount()
         let bannedAuthor = "@banme"
-        let testMessage = KeyValueFixtures.post(
+        let testMessage = MessageFixtures.post(
             receivedSeq: 800,
             author: bannedAuthor
         )
@@ -776,7 +776,7 @@ class ViewDatabasePreloadTest: XCTestCase {
             try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
             
             // get test messages from JSON
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: preloadData)
+            let msgs = try JSONDecoder().decode([Message].self, from: preloadData)
             XCTAssertNotNil(msgs)
             XCTAssertEqual(msgs.count, preloadExpMsgCount)
             
@@ -811,7 +811,7 @@ class ViewDatabasePreloadTest: XCTestCase {
         
         do {
             // get test messages from JSON
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+            let msgs = try JSONDecoder().decode([Message].self, from: data)
             XCTAssertNotNil(msgs)
             // +1 to fake-cause the duplication bug
             XCTAssertEqual(msgs.count, expMsgCount + 1)
@@ -833,7 +833,7 @@ class ViewDatabasePreloadTest: XCTestCase {
         }
     }
     
-    /// Loads up the preloaded feeds from Preload.bundle and verifies that we can parse them into [KeyValue] and that
+    /// Loads up the preloaded feeds from Preload.bundle and verifies that we can parse them into [Message] and that
     /// they are not empty.
     func testPreloadedFeedsAreParseable() throws {
         let testingBundle = try XCTUnwrap(Bundle(for: type(of: self)))
@@ -853,7 +853,7 @@ class ViewDatabasePreloadTest: XCTestCase {
         XCTAssertEqual(allJSONURLs.count, 3)
         try allJSONURLs.forEach { url in
             let data = try Data(contentsOf: url, options: .mappedIfSafe)
-            let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+            let msgs = try JSONDecoder().decode([Message].self, from: data)
             XCTAssertEqual(msgs.isEmpty, false)
         }
     }
