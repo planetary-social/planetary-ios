@@ -384,7 +384,7 @@ class ThreadViewController: ContentViewController {
                 Analytics.shared.trackDidReply()
                 await MainActor.run {
                     self.replyTextView.clear()
-                    self.replyTextView.resignFirstResponder()
+                    _ = self.replyTextView.resignFirstResponder()
                     self.buttonsView.minimize()
                     self.galleryView.removeAll()
                     self.galleryView.close()

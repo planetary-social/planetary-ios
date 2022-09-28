@@ -184,7 +184,10 @@ class Onboarding {
             preloadOperation,
             refreshOperation,
         ]
-        await AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
+        
+        for operation in operations {
+            await AppController.shared.operationQueue.addOperation(operation)
+        }
 
         
         // done

@@ -38,7 +38,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     .foregroundColor(Color("defaultTint"))
                     .scaledToFit()
                     .minimumScaleFactor(0.5)
-                    .animation(.default)
+                    .animation(.default, value: count)
             }
             .padding(.top, 11)
             .padding(.bottom, 0)
@@ -54,7 +54,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     } label: {
                         ConnectedPeerCell(peer: peer)
                     }
-                    .animation(.spring())
+                    .animation(.spring(), value: peer)
                     .transition(.move(edge: .top))
                 }
             }
