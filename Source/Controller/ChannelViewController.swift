@@ -90,7 +90,7 @@ class ChannelViewController: ContentViewController {
         self.load()
     }
 
-    private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool = true) {
+    private func update(with proxy: PaginatedMessageDataProxy, animated: Bool = true) {
         self.dataSource.update(source: proxy)
         if animated {
             self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
@@ -111,34 +111,34 @@ class ChannelViewController: ContentViewController {
 
     override func didBlockUser(notification: Notification) {
         guard let identity = notification.object as? Identity else { return }
-        self.tableView.deleteKeyValues(by: identity)
+        self.tableView.deleteMessages(by: identity)
     }
 }
 
 extension ChannelViewController: PostReplyPaginatedDataSourceDelegate {
     
-    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+    func postReplyView(view: PostReplyView, didLoad message: Message) {
         view.postView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue, startReplying: true)
+            self?.pushThreadViewController(with: message, startReplying: true)
         }
     }
     
-    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
-        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+    private func pushThreadViewController(with message: Message, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: message, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

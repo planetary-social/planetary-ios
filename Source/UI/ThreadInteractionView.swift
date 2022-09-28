@@ -11,7 +11,7 @@ import Analytics
 
 protocol ThreadInteractionViewDelegate: AnyObject {
     
-    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue)
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: Message)
 }
 
 class ThreadInteractionView: UIView {
@@ -30,7 +30,7 @@ class ThreadInteractionView: UIView {
     
     weak var delegate: ThreadInteractionViewDelegate?
     
-    var post: KeyValue?
+    var post: Message?
     var replies: StaticDataProxy?
     var userLikes = false
     
@@ -98,8 +98,8 @@ class ThreadInteractionView: UIView {
         
         if replies.count - 1 >= 0 {
             for index in 0...replies.count - 1 {
-                if replies.keyValueBy(index: index)?.value.content.type == ContentType.vote {
-                    let likeIdentity = replies.keyValueBy(index: index)?.metadata.author.about?.about
+                if replies.messageBy(index: index)?.content.type == ContentType.vote {
+                    let likeIdentity = replies.messageBy(index: index)?.metadata.author.about?.about
                     if me == likeIdentity {
                         self.userLikes = true
                     }

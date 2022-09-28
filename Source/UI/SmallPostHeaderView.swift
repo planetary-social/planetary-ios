@@ -33,9 +33,9 @@ class SmallPostHeaderView: UIView {
         return button
     }()
 
-    convenience init(with keyValue: KeyValue) {
+    convenience init(with message: Message) {
         self.init()
-        update(with: keyValue)
+        update(with: message)
     }
 
     init() {
@@ -69,12 +69,12 @@ class SmallPostHeaderView: UIView {
         self.avatarButton.round()
     }
 
-    func update(with keyValue: KeyValue) {
-        let identity = keyValue.value.author
+    func update(with message: Message) {
+        let identity = message.author
         self.identity = identity
 
-        let about = keyValue.metadata.author.about
-        let name = about?.nameOrIdentity ?? keyValue.value.author
+        let about = message.metadata.author.about
+        let name = about?.nameOrIdentity ?? message.author
         self.nameButton.setTitle(name, for: .normal)
         self.avatarButton.setImage(for: about)
     }

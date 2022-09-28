@@ -24,7 +24,7 @@ struct Report {
     var createdAt: Date
     
     /// Message that generated this report
-    var keyValue: KeyValue
+    var message: Message
 
     var isRead: Bool
 
@@ -37,13 +37,13 @@ struct Report {
         messageIdentifier: MessageIdentifier,
         reportType: ReportType,
         createdAt: Date,
-        keyValue: KeyValue
+        message: Message
     ) {
         self.authorIdentity = authorIdentity
         self.messageIdentifier = messageIdentifier
         self.reportType = reportType
         self.createdAt = createdAt
-        self.keyValue = keyValue
+        self.message = message
         self.isRead = false
     }
 }

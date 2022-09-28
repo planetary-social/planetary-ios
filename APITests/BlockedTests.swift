@@ -117,7 +117,7 @@ class BlockedTests: XCTestCase {
                 return
             }
             XCTAssertEqual(msgs[0].contentType, .post)
-            XCTAssertTrue(msgs[0].value.content.post?.text.hasPrefix("Setup init:") ?? false)
+            XCTAssertTrue(msgs[0].content.post?.text.hasPrefix("Setup init:") ?? false)
         }
         self.wait(for: [feedExpectation], timeout: 30)
     }
@@ -190,7 +190,7 @@ class BlockedTests: XCTestCase {
             }
             XCTAssertEqual(msgs.count, 20)
             XCTAssertEqual(msgs[0].contentType, .post)
-            XCTAssertTrue(msgs[0].value.content.post?.text.hasPrefix("spam:") ?? false)
+            XCTAssertTrue(msgs[0].content.post?.text.hasPrefix("spam:") ?? false)
         }
         self.wait(for: [feedExpectation], timeout: 30)
     }
@@ -228,7 +228,7 @@ class BlockedTests: XCTestCase {
                 return
             }
             XCTAssertEqual(msgs[0].key, postAfterBlock)
-            latestSeq = msgs[0].value.sequence
+            latestSeq = msgs[0].sequence
         }
         self.wait(for: [feedExpectation], timeout: 30)
         if latestSeq == -1 { XCTFail("should have the published msg"); return }
@@ -295,7 +295,7 @@ class BlockedTests: XCTestCase {
                 XCTFail("no root message?!")
                 return
             }
-            latestSeq = r.value.sequence
+            latestSeq = r.sequence
         }
         self.wait(for: [threadExpectation], timeout: 30)
         if latestSeq == -1 {

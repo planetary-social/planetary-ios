@@ -139,8 +139,8 @@ extension Identifier {
  ...
  let rowid = try db.run(self.msgs.insert(
  key <- m.key.asBytes(),
- author <- m.value.author.asBytes(),
- seq <- m.value.sequence,
+ author <- m.author.asBytes(),
+ seq <- m.sequence,
  rxt <- m.timestamp,
  claimedt <- m.value.timestamp
  ))
@@ -151,8 +151,8 @@ extension Identifier {
  ...
  let rowid = try db.run(self.msgs.insert(
  key <- m.key,
-author <- m.value.author,
- seq <- m.value.sequence,
+author <- m.author,
+ seq <- m.sequence,
  rxt <- m.timestamp,
  claimedt <- m.value.timestamp
  ))
