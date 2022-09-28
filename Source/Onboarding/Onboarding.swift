@@ -74,7 +74,7 @@ class Onboarding {
     /// name that the API will reject with a 500 error.  This is useful to simulate the
     /// API failing and to test the reset and resume mechanisms.
     /// X5GBl8BzsRaQ
-    static func createProfile(from data: OnboardingStepData) async throws -> Context {
+    @MainActor static func createProfile(from data: OnboardingStepData) async throws -> Context {
         
         guard let birthdate = data.birthdate, birthdate.olderThan(yearsAgo: 16) else {
             throw StartError.invalidBirthdate
@@ -186,9 +186,8 @@ class Onboarding {
         ]
         
         for operation in operations {
-            await AppController.shared.operationQueue.addOperation(operation)
+            AppController.shared.addOperation(operation)
         }
-
         
         // done
         Onboarding.didStart(configuration: configuration, secret: secret)
