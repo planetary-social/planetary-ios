@@ -5,6 +5,7 @@ on:
     branches: main
 env:
   SIMULATOR: platform=iOS Simulator,name=iPhone 14,OS=16
+  DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
     
 jobs:
   unit_test:
@@ -19,8 +20,6 @@ jobs:
       run: gem install cocoapods-keys
     - name: Dependencies
       run: pod install --no-repo-update
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_14.app/Contents/Developer
     - name: Build Planetary
       run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "$SIMULATOR" | xcpretty
     - name: Run Tests
