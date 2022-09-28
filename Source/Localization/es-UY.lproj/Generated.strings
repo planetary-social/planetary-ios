@@ -272,9 +272,9 @@
 "FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Posts recientes";
 "FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
-"FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Posts y follows recientes (por defecto)";
+"FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Recent posts and follows";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Muestra posts y mensajes de follow de la gente que seguís en el orden en que fueron publicados.";
-"FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Posts y follows recientes";
+"FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Recently active posts and follows (default)";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Muestra posts y mensajes de follow de la gente que seguís. Si un post recibe una respuesta, esta se va a mostrar en el principio del feed.";
 "FeedAlgorithm.randomPostsAlgorithm" = "Random unread posts";
 "FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
