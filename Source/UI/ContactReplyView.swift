@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /// Composite view of the PostCellView, a ReplyTextView, and a bottom separator.
-class ContactReplyView: KeyValueView {
+class ContactReplyView: MessageView {
 
     let contactView = ContactCellView()
 
@@ -62,8 +62,8 @@ class ContactReplyView: KeyValueView {
         layoutIfNeeded()
     }
 
-    override func update(with keyValue: KeyValue) {
-        self.contactView.update(with: keyValue)
+    override func update(with message: Message) {
+        self.contactView.update(with: message)
         setNeedsLayout()
         layoutIfNeeded()
     }
@@ -73,7 +73,7 @@ extension ContactReplyView {
 
     /// Returns a CGFloat suitable to be used as a `UITableView.estimatedRowHeight` or
     /// `UITableViewDelegate.estimatedRowHeightAtIndexPath()`.
-    static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
+    static func estimatedHeight(with message: Message, in superview: UIView) -> CGFloat {
         2
     }
 }

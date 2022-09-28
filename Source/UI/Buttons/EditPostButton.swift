@@ -12,9 +12,9 @@ import Support
 import SwiftUI
 
 class EditPostButton: IconButton {
-    let post: KeyValue
+    let post: Message
 
-    init(post: KeyValue) {
+    init(post: Message) {
         self.post = post
         super.init(icon: UIImage.verse.optionsOff)
         self.highlightedImage = UIImage.verse.optionsOn
@@ -44,7 +44,7 @@ class EditPostButton: IconButton {
 
         let viewSource = UIAlertAction(title: Text.viewSource.text, style: .default) { [post] _ in
             Analytics.shared.trackDidSelectAction(actionName: "view_source")
-            let viewModel = RawMessageCoordinator(keyValue: post, bot: Bots.current)
+            let viewModel = RawMessageCoordinator(message: post, bot: Bots.current)
             let controller = UIHostingController(rootView: RawMessageView(viewModel: viewModel))
             let navController = UINavigationController(rootViewController: controller)
             AppController.shared.present(navController, animated: true)

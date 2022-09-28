@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class AboutView: KeyValueView {
+class AboutView: MessageView {
 
     private let circleView: UIView = {
         let view = UIView.forAutoLayout()
@@ -168,10 +168,10 @@ class AboutView: KeyValueView {
         self.editPhotoButton.round()
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    override func update(with keyValue: KeyValue) {
-        guard let about = keyValue.value.content.about else { return }
+    override func update(with message: Message) {
+        guard let about = message.content.about else { return }
         self.update(with: about)
     }
 

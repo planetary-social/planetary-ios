@@ -102,7 +102,7 @@ class FakeBot: Bot {
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) { }
     
-    func posts(matching filter: String) async throws -> [KeyValue] {
+    func posts(matching filter: String) async throws -> [Message] {
         []
     }
 
@@ -282,8 +282,8 @@ class FakeBot: Bot {
     
     func recent(completion: PaginatedCompletion) {
         let data = Data.fromJSON(resource: "Feed.json")
-        var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
-        feed?.sort { $0.value.timestamp < $1.value.timestamp }
+        var feed = try? JSONDecoder().decode(Messages.self, from: data)
+        feed?.sort { $0.claimedTimestamp < $1.claimedTimestamp }
         if let feed = feed {
             completion(StaticDataProxy(with: feed), nil)
         } else {
@@ -293,8 +293,8 @@ class FakeBot: Bot {
 
     func everyone(completion: PaginatedCompletion) {
         let data = Data.fromJSON(resource: "Feed.json")
-        var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
-        feed?.sort { $0.value.timestamp < $1.value.timestamp }
+        var feed = try? JSONDecoder().decode(Messages.self, from: data)
+        feed?.sort { $0.claimedTimestamp < $1.claimedTimestamp }
         if let feed = feed {
             completion(StaticDataProxy(with: feed), nil)
         } else {
@@ -310,11 +310,11 @@ class FakeBot: Bot {
         completion(StaticDataProxy(), nil)
     }
     
-    func post(from key: MessageIdentifier) throws -> KeyValue {
+    func post(from key: MessageIdentifier) throws -> Message {
         throw FakeBotError.runtimeError("not implemented")
     }
 
-    func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
+    func thread(message: Message, completion: @escaping ThreadCompletion) {
         completion(nil, StaticDataProxy(), nil)
     }
     
@@ -350,7 +350,7 @@ class FakeBot: Bot {
         completion(nil)
     }
 
-    func raw(of keyValue: KeyValue, completion: @escaping RawCompletion) {
+    func raw(of message: Message, completion: @escaping RawCompletion) {
         completion(.success(""))
     }
 }

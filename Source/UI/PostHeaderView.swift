@@ -58,9 +58,9 @@ class PostHeaderView: UIView {
 
     var shouldShowTimestamp: Bool
 
-    convenience init(with keyValue: KeyValue) {
+    convenience init(with message: Message) {
         self.init()
-        update(with: keyValue)
+        update(with: message)
     }
     
     /// Initializes the view with the given parameters.
@@ -114,16 +114,16 @@ class PostHeaderView: UIView {
         self.identityButton.round()
     }
 
-    func update(with keyValue: KeyValue) {
-        let identity = keyValue.value.author
+    func update(with message: Message) {
+        let identity = message.author
         self.identity = identity
 
-        let about = keyValue.metadata.author.about
-        let name = about?.name ?? keyValue.value.author
+        let about = message.metadata.author.about
+        let name = about?.name ?? message.author
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
-        self.dateLabel.text = keyValue.timestampString
-        if name != keyValue.value.author {
+        self.dateLabel.text = message.timestampString
+        if name != message.author {
             identifierLabel.text = String(identity.prefix(7))
             identifierLabel.isHidden = false
         } else {
@@ -132,10 +132,10 @@ class PostHeaderView: UIView {
         if let me = Bots.current.identity {
             let button: UIButton
             if identity.isCurrentUser {
-                button = EditPostButton(post: keyValue)
+                button = EditPostButton(post: message)
             } else {
                 let relationship = Relationship(from: me, to: identity)
-                button = RelationshipButton(with: relationship, name: name, content: keyValue)
+                button = RelationshipButton(with: relationship, name: name, content: message)
             }
             self.rightButtonContainer.subviews.forEach { $0.removeFromSuperview() }
             Layout.fill(view: self.rightButtonContainer, with: button)
@@ -154,12 +154,12 @@ class PostHeaderView: UIView {
 
 // MARK: - Date formatting
 
-fileprivate extension KeyValue {
+fileprivate extension Message {
 
     var timestampString: String {
-        let ud = self.userDate
-        let day = ud.todayYesterdayDayOfWeekOrNumberOfDaysAgo
-        let time = ud.timeOfDay
+        let claimedDate = self.claimedDate
+        let day = claimedDate.todayYesterdayDayOfWeekOrNumberOfDaysAgo
+        let time = claimedDate.timeOfDay
         let text = Text.atDayTime.text(["day": day, "time": time])
         return text.prefix(1).capitalized + text.dropFirst()
     }

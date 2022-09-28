@@ -36,9 +36,9 @@ class ContactHeaderView: UIView {
         return button
     }()
 
-    convenience init(with keyValue: KeyValue) {
+    convenience init(with message: Message) {
         self.init()
-        update(with: keyValue)
+        update(with: message)
     }
 
     init() {
@@ -75,12 +75,12 @@ class ContactHeaderView: UIView {
         showSkeleton()
     }
 
-    func update(with keyValue: KeyValue) {
-        let identity = keyValue.value.author
+    func update(with message: Message) {
+        let identity = message.author
         self.identity = identity
-        let about = keyValue.metadata.author.about
+        let about = message.metadata.author.about
         var text: Text
-        switch keyValue.contentType {
+        switch message.contentType {
         case .post:
             text = .replied
         case .vote:

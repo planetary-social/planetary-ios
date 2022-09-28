@@ -9,15 +9,15 @@
 import Foundation
 import UIKit
 
-class PostReplyDataSourcePrefetching: KeyValueTableViewDataSourcePrefetching {
+class PostReplyDataSourcePrefetching: MessageTableViewDataSourcePrefetching {
 
-    override func prefetchRows(withKeyValues keyValues: KeyValues) {
-        let posts = keyValues.filter(by: .post)
+    override func prefetchRows(withMessages messages: Messages) {
+        let posts = messages.filter(by: .post)
         Caches.truncatedText.prefill(posts)
     }
 
-    override func cancelPrefetchingForRows(withKeyValues keyValues: KeyValues) {
-        let posts = keyValues.filter(by: .post)
+    override func cancelPrefetchingForRows(withMessages messages: Messages) {
+        let posts = messages.filter(by: .post)
         let keys = posts.map { $0.key }
         Caches.truncatedText.cancel(markdownsWithKeys: keys)
     }

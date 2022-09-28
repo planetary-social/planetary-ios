@@ -87,7 +87,7 @@ enum Fix814AccountsHelper {
             
             // copy published messages
             for message in publishedMessages {
-                if let codableMessage = message.value.content.codableContent {
+                if let codableMessage = message.content.codableContent {
                     _ = try await bot.publish(content: codableMessage)
                 }
             }

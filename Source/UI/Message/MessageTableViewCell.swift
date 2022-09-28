@@ -1,5 +1,5 @@
 //
-//  KeyValueTableViewCell.swift
+//  MessageTableViewCell.swift
 //  FBTT
 //
 //  Created by Christoph on 4/18/19.
@@ -9,46 +9,46 @@
 import Foundation
 import UIKit
 
-class KeyValueTableViewCell: UITableViewCell, KeyValueUpdateable {
+class MessageTableViewCell: UITableViewCell, MessageUpdateable {
 
     let type: ContentType
-    let keyValueView: KeyValueView
+    let messageView: MessageView
 
-    init(for type: ContentType, with view: KeyValueView? = nil, height: CGFloat? = nil) {
+    init(for type: ContentType, with view: MessageView? = nil, height: CGFloat? = nil) {
         self.type = type
-        self.keyValueView = view ?? KeyValueView.for(type)
+        self.messageView = view ?? MessageView.for(type)
         super.init(style: .default, reuseIdentifier: type.reuseIdentifier)
-        self.constrainKeyValueViewToContentView(height)
+        self.constrainMessageViewToContentView(height)
         self.selectionStyle = .none
         backgroundColor = .clear
-        self.keyValueView.showAnimatedSkeleton()
+        self.messageView.showAnimatedSkeleton()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func constrainKeyValueViewToContentView(_ height: CGFloat? = nil) {
+    private func constrainMessageViewToContentView(_ height: CGFloat? = nil) {
         let (_, _, bottomConstraint, _) = Layout.fill(
             view: self.contentView,
-            with: self.keyValueView,
+            with: self.messageView,
             respectSafeArea: false
         )
         bottomConstraint.priority = .required
         guard let height = height else { return }
-        let constraint = self.keyValueView.heightAnchor.constraint(lessThanOrEqualToConstant: height)
+        let constraint = self.messageView.heightAnchor.constraint(lessThanOrEqualToConstant: height)
         constraint.priority = .defaultHigh
         constraint.isActive = true
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        keyValueView.reset()
+        messageView.reset()
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    func update(with keyValue: KeyValue) {
-        self.keyValueView.update(with: keyValue)
+    func update(with message: Message) {
+        self.messageView.update(with: message)
     }
 }

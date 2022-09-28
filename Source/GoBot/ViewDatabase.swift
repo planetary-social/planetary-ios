@@ -100,6 +100,9 @@ class ViewDatabase {
     let colReceivedAt = Expression<Double>("received_at")
     let colWrittenAt = Expression<Double>("written_at")
     let colClaimedAt = Expression<Double>("claimed_at")
+    /// The latest activity time is used to sort posts by when they were last replied to. The column is an optimization
+    /// for sorting in `RecentlyActivePostsAndContactsAlgorithm`.
+    let colLastActivityTime = Expression<Double?>("last_activity_time")
     let colDecrypted = Expression<Bool>("is_decrypted")
     /// A flag that is true if this message is not from a real feed. The `WelcomeService` inserts "fake" messages
     /// into SQLite to help with onboarding.
@@ -401,6 +404,16 @@ class ViewDatabase {
                 )
                 db.userVersion = 20
             }
+            if db.userVersion == 20 {
+                try db.execute(
+                    """
+                    ALTER TABLE messages ADD last_activity_time REAL;
+                    UPDATE messages SET last_activity_time = claimed_at;
+                    CREATE INDEX last_activity_time_idx ON messages(last_activity_time);
+                    """
+                )
+                db.userVersion = 21
+            }
         }
     }
 
@@ -591,7 +604,7 @@ class ViewDatabase {
         }
     }
     
-    func message(with id: MessageIdentifier) throws -> KeyValue {
+    func message(with id: MessageIdentifier) throws -> Message {
         let msgId = try self.msgID(of: id, make: false)
         return try post(with: msgId)
     }
@@ -810,15 +823,15 @@ class ViewDatabase {
     }
     
     /// Returns true if the given message is on the ban list.
-    func messageMatchesBanList(_ message: KeyValue) throws -> Bool {
+    func messageMatchesBanList(_ message: Message) throws -> Bool {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
         return try db.scalar(banList.filter(colHash == message.key.sha256hash).exists)
     }
     
     /// Returns true if the author of the given message is on the ban list.
-    func authorMatchesBanList(_ message: KeyValue) throws -> Bool {
+    func authorMatchesBanList(_ message: Message) throws -> Bool {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
-        return try db.scalar(banList.filter(colHash == message.value.author.sha256hash).exists)
+        return try db.scalar(banList.filter(colHash == message.author.sha256hash).exists)
     }
 
     func hide(allFrom author: FeedIdentifier) throws {
@@ -1148,8 +1161,8 @@ class ViewDatabase {
     }
     
     // returns the same (who follows this feed) list as above
-    // but returns a [KeyValue] (with timestamp) instead of just the public key reference
-    func followedBy(feed: Identity, limit: Int = 100) throws -> [KeyValue] {
+    // but returns a [Message] (with timestamp) instead of just the public key reference
+    func followedBy(feed: Identity, limit: Int = 100) throws -> [Message] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1175,29 +1188,29 @@ class ViewDatabase {
             let msgAuthor = try row.get(colAuthor)
             let c = Contact(contact: feed, following: true)
 
-            let v = Value(
+            let v = MessageValue(
                 author: msgAuthor,
                 content: Content(from: c),
                 hash: "sha256", // only currently supported
                 previous: nil, // TODO: .. needed at this level?
                 sequence: try row.get(colSequence),
                 signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
+                claimedTimestamp: try row.get(colClaimedAt)
             )
 
-            var keyValue = KeyValue(
+            var message = Message(
                 key: try row.get(colKey),
                 value: v,
                 timestamp: try row.get(colReceivedAt)
             )
 
-            keyValue.metadata.author.about = About(
+            message.metadata.author.about = About(
                     about: msgAuthor,
                     name: try row.get(self.abouts[colName]),
                     description: try row.get(colDescr),
                     imageLink: try row.get(colImage)
             )
-            return keyValue
+            return message
         }
     }
     
@@ -1309,14 +1322,14 @@ class ViewDatabase {
 
     // MARK: pagination
     // returns a pagination proxy for the home (or recent) view
-    func paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedKeyValueDataProxy) {
-        let src = try RecentViewKeyValueSource(with: self, feedStrategy: feedStrategy)
+    func paginatedFeed(with feedStrategy: FeedStrategy) throws -> (PaginatedMessageDataProxy) {
+        let src = try RecentViewMessageSource(with: self, feedStrategy: feedStrategy)
         return try PaginatedPrefetchDataProxy(with: src)
     }
 
     // MARK: recent
-    func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> KeyValues {
-        return try strategy.fetchKeyValues(database: self, userId: currentUserID, limit: limit, offset: offset)
+    func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> Messages {
+        return try strategy.fetchMessages(database: self, userId: currentUserID, limit: limit, offset: offset)
     }
 
     func numberOfRecentPosts(with strategy: FeedStrategy, since message: MessageIdentifier) throws -> Int {
@@ -1403,13 +1416,13 @@ class ViewDatabase {
     }
     // table.filter(!(array.contains(id)))
 
-    private func mapQueryToKeyValue(qry: Table, useNamespacedTables: Bool = false) throws -> [KeyValue] {
+    private func mapQueryToMessage(qry: Table, useNamespacedTables: Bool = false) throws -> [Message] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
         return try db.prepare(qry).compactMap { row in
-            return try KeyValue(
+            return try Message(
                 row: row,
                 database: self,
                 useNamespacedTables: true,
@@ -1422,12 +1435,12 @@ class ViewDatabase {
     // MARK: replies
 
     // turns an array of messages into an array of (msg, #people replied)
-    private func addNumberOfPeopleReplied(msgs: [KeyValue]) throws -> KeyValues {
+    private func addNumberOfPeopleReplied(msgs: [Message]) throws -> Messages {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        var r: KeyValues = []
+        var r: Messages = []
         for (index, _) in msgs.enumerated() {
             var msg = msgs[index]
             let msgID = try self.msgID(of: msg.key)
@@ -1461,7 +1474,7 @@ class ViewDatabase {
     // get all messages that replied to msg
     // TODO: ensure order by sorting by tangle heads
     // bug: currently squashing multiple branches
-    func getRepliesTo(thread msg: MessageIdentifier) throws -> [KeyValue] {
+    func getRepliesTo(thread msg: MessageIdentifier) throws -> [Message] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1481,7 +1494,7 @@ class ViewDatabase {
         
         // making this a two-pass query until i can figure out how to dynamlicly join based on type
 
-        let msgs: [KeyValue] = try db.prepare(qry).map { row in
+        let msgs: [Message] = try db.prepare(qry).map { row in
             // tried 'return try row.decode()'
             // but failed - see https://github.com/VerseApp/ios/issues/29
             
@@ -1530,16 +1543,16 @@ class ViewDatabase {
                 throw ViewDatabaseError.unexpectedContentType(tipe)
             }
          
-            let v = Value(
+            let v = MessageValue(
                 author: msgAuthor,
                 content: c,
                 hash: "sha256", // only currently supported
                 previous: nil, // TODO: .. needed at this level?
                 sequence: try row.get(colSequence),
                 signature: "verified_by_go-ssb",
-                timestamp: try row.get(colClaimedAt)
+                claimedTimestamp: try row.get(colClaimedAt)
             )
-            var kv = KeyValue(
+            var kv = Message(
                 key: msgKey,
                 value: v,
                 timestamp: try row.get(colReceivedAt)
@@ -1556,7 +1569,7 @@ class ViewDatabase {
         return msgs
     }
 
-    func mentions(limit: Int = 200, wantPrivate: Bool = false, onlyImages: Bool = true) throws -> KeyValues {
+    func mentions(limit: Int = 200, wantPrivate: Bool = false, onlyImages: Bool = true) throws -> Messages {
         guard let _ = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1573,7 +1586,7 @@ class ViewDatabase {
             .order(colMessageID.desc)
             .limit(limit)
         
-        return try self.mapQueryToKeyValue(qry: qry, useNamespacedTables: true)
+        return try self.mapQueryToMessage(qry: qry, useNamespacedTables: true)
     }
 
     // MARK: - Reports
@@ -1765,21 +1778,21 @@ class ViewDatabase {
     private func buildReport(from row: Row) throws -> Report? {
         let msgKey = try row.get(colKey)
         let msgAuthor = try row.get(colAuthor)
-        guard let value = try Value(row: row, db: self, hasMentionColumns: false) else {
+        guard let value = try MessageValue(row: row, db: self, hasMentionColumns: false) else {
             return nil
         }
-        var keyValue = KeyValue(
+        var message = Message(
             key: msgKey,
             value: value,
             timestamp: try row.get(colReceivedAt)
         )
-        keyValue.metadata.author.about = About(
+        message.metadata.author.about = About(
             about: msgAuthor,
             name: try row.get(colName),
             description: try row.get(colDescr),
             imageLink: try row.get(colImage)
         )
-        keyValue.metadata.isPrivate = try row.get(colDecrypted)
+        message.metadata.isPrivate = try row.get(colDecrypted)
 
         let rawReportType = try row.get(Expression<String>("report_type"))
         let reportType = ReportType(rawValue: rawReportType) ?? ReportType.messageLiked
@@ -1793,7 +1806,7 @@ class ViewDatabase {
             messageIdentifier: msgKey,
             reportType: reportType,
             createdAt: createdAt,
-            keyValue: keyValue
+            message: message
         )
         report.isRead = isRead
         return report
@@ -1843,7 +1856,7 @@ class ViewDatabase {
         return 0
     }
 
-    func feed(for identity: Identity, limit: Int = 5, offset: Int? = nil) throws -> KeyValues {
+    func feed(for identity: Identity, limit: Int = 5, offset: Int? = nil) throws -> Messages {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1868,7 +1881,7 @@ class ViewDatabase {
             .filter(colClaimedAt <= Date().millisecondsSince1970)
             .filter(colHidden == false)
 
-        let feedOfMsgs = try self.mapQueryToKeyValue(qry: postsQry)
+        let feedOfMsgs = try self.mapQueryToMessage(qry: postsQry)
         let msgs = try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
         let timeDone = CFAbsoluteTimeGetCurrent()
         print("\(#function) took \(timeDone - timeStart)")
@@ -1877,7 +1890,7 @@ class ViewDatabase {
     
     /// Fetches all published messages for the current user in chronological order. If the message is not a supported
     /// message type it will not show up in the returned array.
-    func publishedMessagesForCurrentUser() throws -> KeyValues {
+    func publishedMessagesForCurrentUser() throws -> Messages {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1898,7 +1911,7 @@ class ViewDatabase {
         
         return try db.prepare(query).compactMap { row in
             do {
-                return try KeyValue(
+                return try Message(
                     row: row,
                     database: self,
                     useNamespacedTables: true,
@@ -1963,12 +1976,12 @@ class ViewDatabase {
     
     // MARK: - Fetching Posts
     
-    func post(with id: MessageIdentifier) throws -> KeyValue {
+    func post(with id: MessageIdentifier) throws -> Message {
         let msgId = try self.msgID(of: id, make: false)
         return try post(with: msgId)
     }
     
-    func post(with messageRef: Int64) throws -> KeyValue {
+    func post(with messageRef: Int64) throws -> Message {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -1982,7 +1995,7 @@ class ViewDatabase {
         //     return self.get(msgID: msgID)
         // }
         //
-        // func get(msgID: Int64) throws -> KeyValue {
+        // func get(msgID: Int64) throws -> Message {
         
         let colTypeMaybe = Expression<String?>("type")
         let typeMaybe = try db.scalar(self.msgs
@@ -2011,7 +2024,7 @@ class ViewDatabase {
                     .filter(colMessageID == messageRef)
                     .limit(1)
                 
-                let kv = try self.mapQueryToKeyValue(qry: qry)
+                let kv = try self.mapQueryToMessage(qry: qry)
                 
                 if kv.count != 1 {
                     Log.unexpected(.botError, "[viewdb] could not find post after we had the type!?")
@@ -2024,13 +2037,13 @@ class ViewDatabase {
         }
     }
     
-    func posts(matching text: String) throws -> [KeyValue] {
+    func posts(matching text: String) throws -> [Message] {
         guard let connection = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
         // probably need to escape some characters here
-        var messages = [KeyValue]()
+        var messages = [Message]()
         let query = try connection.prepare(
             postSearch
                 .filter(colText.match(text))
@@ -2080,7 +2093,7 @@ class ViewDatabase {
     }
     
     // TODO: pagination
-    func messagesForHashtag(name: String) throws -> [KeyValue] {
+    func messagesForHashtag(name: String) throws -> [Message] {
         let cID = try self.channelID(from: name)
 
         let qry = self.channelAssigned
@@ -2093,7 +2106,7 @@ class ViewDatabase {
             .join(.leftOuter, self.posts, on: self.posts[colMessageRef] == self.channelAssigned[colMessageRef])
             .order(colMessageID.desc)
 
-        return try self.mapQueryToKeyValue(qry: qry)
+        return try self.mapQueryToMessage(qry: qry)
     }
     
     private func channelID(from name: String, make: Bool = false) throws -> Int64 {
@@ -2137,15 +2150,15 @@ class ViewDatabase {
 
     // MARK: fill new messages
     
-    private func fillAddress(msgID: Int64, msg: KeyValue) throws {
+    private func fillAddress(msgID: Int64, msg: Message) throws {
         
-        guard let address = msg.value.content.address,
+        guard let address = msg.content.address,
               let multiserverAddress = address.multiserver else {
             Log.info("[viewdb/fill] broken addr message: \(msg.key)")
             return
         }
         
-        let author = msg.value.author
+        let author = msg.author
         try saveAddress(feed: author, address: multiserverAddress, redeemed: nil)
     }
     
@@ -2165,12 +2178,12 @@ class ViewDatabase {
         ))
     }
     
-    private func fillAbout(msgID: Int64, msg: KeyValue) throws {
+    private func fillAbout(msgID: Int64, msg: Message) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        guard let a = msg.value.content.about else {
+        guard let a = msg.content.about else {
             Log.info("[viewdb/fill] broken about message: \(msg.key)")
             return
         }
@@ -2197,7 +2210,7 @@ class ViewDatabase {
             ))
         }
         
-        if a.about != msg.value.author {
+        if a.about != msg.author {
             // ignoring all abouts that are not self
             // TODO: breaks gatherings but we don't use them yet
             return
@@ -2255,17 +2268,17 @@ class ViewDatabase {
         }
     }
     
-    private func fillContact(msgID: Int64, msg: KeyValue) throws {
+    private func fillContact(msgID: Int64, msg: Message) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        guard let c = msg.value.content.contact else {
+        guard let c = msg.content.contact else {
             Log.info("[viewdb/fill] broken contact message: \(msg.key)")
             return
         }
         
-        let authorID = try self.authorID(of: msg.value.author, make: false)
+        let authorID = try self.authorID(of: msg.author, make: false)
         let contactID = try self.authorID(of: c.contact, make: true)
         
         var state: Int = 0
@@ -2301,16 +2314,16 @@ class ViewDatabase {
          */
     }
     
-    private func checkAndExecuteDCR(msgID: Int64, msg: KeyValue) throws {
+    private func checkAndExecuteDCR(msgID: Int64, msg: Message) throws {
         guard self.openDB != nil else {
             throw ViewDatabaseError.notOpen
         }
 
-        guard let dcr = msg.value.content.dropContentRequest else {
-            throw ViewDatabaseError.unhandledContentType(msg.value.content.type)
+        guard let dcr = msg.content.dropContentRequest else {
+            throw ViewDatabaseError.unhandledContentType(msg.content.type)
         }
 
-        var claimedMsg: KeyValue?
+        var claimedMsg: Message?
         do {
             claimedMsg = try self.post(with: dcr.hash)
         } catch ViewDatabaseError.unknownMessage(_) {
@@ -2323,23 +2336,23 @@ class ViewDatabase {
             throw GoBotError.unexpectedFault("dcr handling error: should have thrown already")
         }
 
-        guard targetMsg.value.author == msg.value.author else {
+        guard targetMsg.author == msg.author else {
             return // ignore invalid
         }
 
-        guard targetMsg.value.sequence == dcr.sequence else {
+        guard targetMsg.sequence == dcr.sequence else {
             return // ignore invalid
         }
 
         try self.deleteNoTransact(message: dcr.hash)
     }
     
-    private func fillPub(msgID: Int64, msg: KeyValue) throws {
+    private func fillPub(msgID: Int64, msg: Message) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
-        guard let p = msg.value.content.pub,
+        guard let p = msg.content.pub,
             p.address.key.isValidIdentifier else {
             Log.info("[viewdb/fill] broken pub message: \(msg.key)")
             return
@@ -2352,11 +2365,11 @@ class ViewDatabase {
                                     colKey <- p.address.key))
     }
     
-    private func fillPost(msgID: Int64, msg: KeyValue, pms: Bool) throws {
+    private func fillPost(msgID: Int64, msg: Message, pms: Bool) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
-        guard let p = msg.value.content.post else {
+        guard let p = msg.content.post else {
             Log.info("[viewdb/fill] broken post message: \(msg.key)")
             return
         }
@@ -2380,7 +2393,7 @@ class ViewDatabase {
             )
         )
 
-        try self.insertBranches(msgID: msgID, root: p.root, branches: p.branch)
+        try self.insertBranches(msgID: msgID, message: msg, root: p.root, branches: p.branch)
         
         if let m = p.mentions {
             try self.insertMentions(msgID: msgID, mentions: m)
@@ -2395,12 +2408,12 @@ class ViewDatabase {
         }
     }
     
-    private func fillVote(msgID: Int64, msg: KeyValue, pms: Bool) throws {
+    private func fillVote(msgID: Int64, msg: Message, pms: Bool) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
-        guard let v = msg.value.content.vote else {
+        guard let v = msg.content.vote else {
             Log.info("[viewdb/fill] broken vote message: \(msg.key)")
             return
         }
@@ -2421,19 +2434,19 @@ class ViewDatabase {
             colValue <- v.vote.value
         ))
         
-        try self.insertBranches(msgID: msgID, root: v.vote.link, branches: [v.vote.link])
+        try self.insertBranches(msgID: msgID, message: msg, root: v.vote.link, branches: [v.vote.link])
     }
     
-    private func fillReportIfNeeded(msgID: Int64, msg: KeyValue, pms: Bool) throws -> [Report] {
+    private func fillReportIfNeeded(msgID: Int64, msg: Message, pms: Bool) throws -> [Report] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
         
         let createdAt = Date().timeIntervalSince1970 * 1_000
         
-        switch msg.value.content.type { // insert individual message types
+        switch msg.content.type { // insert individual message types
         case .contact:
-            guard let c = msg.value.content.contact else {
+            guard let c = msg.content.contact else {
                 return []
             }
             guard c.isFollowing else {
@@ -2452,11 +2465,11 @@ class ViewDatabase {
                                     messageIdentifier: msg.key,
                                     reportType: .feedFollowed,
                                     createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
-                                    keyValue: msg)
+                                    message: msg)
                 return [report]
             }
         case .post:
-            guard let p = msg.value.content.post else {
+            guard let p = msg.content.post else {
                 return []
             }
             var reportsIdentities = [Identity]()
@@ -2469,7 +2482,7 @@ class ViewDatabase {
                     let repliedAuthor = repliedMsg[colAuthorID]
                     let repliedIdentity = try self.author(from: repliedAuthor)
                     
-                    if repliedIdentity != msg.value.author {
+                    if repliedIdentity != msg.author {
                         try db.run(self.reports.insert(
                             colMessageRef <- msgID,
                             colAuthorID <- repliedAuthor,
@@ -2481,15 +2494,15 @@ class ViewDatabase {
                                             messageIdentifier: msg.key,
                                             reportType: .postReplied,
                                             createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
-                                            keyValue: msg)
+                                            message: msg)
                         reports.append(report)
                         reportsIdentities.append(repliedIdentity)
                     }
                     
                     let otherReplies = try self.getRepliesTo(thread: identifier)
                     for reply in otherReplies {
-                        let replyAuthorIdentity = reply.value.author
-                        if !reportsIdentities.contains(replyAuthorIdentity), let replyAuthorID = try? self.authorID(of: replyAuthorIdentity), replyAuthorIdentity != msg.value.author {
+                        let replyAuthorIdentity = reply.author
+                        if !reportsIdentities.contains(replyAuthorIdentity), let replyAuthorID = try? self.authorID(of: replyAuthorIdentity), replyAuthorIdentity != msg.author {
                             try db.run(self.reports.insert(
                                 colMessageRef <- msgID,
                                 colAuthorID <- replyAuthorID,
@@ -2501,7 +2514,7 @@ class ViewDatabase {
                                                 messageIdentifier: msg.key,
                                                 reportType: .postReplied,
                                                 createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
-                                                keyValue: msg)
+                                                message: msg)
                             reports.append(report)
                             reportsIdentities.append(replyAuthorIdentity)
                         }
@@ -2526,7 +2539,7 @@ class ViewDatabase {
                                                 messageIdentifier: msg.key,
                                                 reportType: .feedMentioned,
                                                 createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
-                                                keyValue: msg)
+                                                message: msg)
                             reports.append(report)
                             reportsIdentities.append(identifier)
                         }
@@ -2539,7 +2552,7 @@ class ViewDatabase {
             }
             return reports
         case .vote:
-            guard let v = msg.value.content.vote, v.vote.link.id != .unsupported else {
+            guard let v = msg.content.vote, v.vote.link.id != .unsupported else {
                 return []
             }
             guard v.vote.value > 0 else {
@@ -2562,7 +2575,7 @@ class ViewDatabase {
                                         messageIdentifier: msg.key,
                                         reportType: .messageLiked,
                                         createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
-                                        keyValue: msg)
+                                        message: msg)
                     return [report]
                 }
             case .feed, .blob:
@@ -2586,14 +2599,14 @@ class ViewDatabase {
         return []
     }
     
-    private func isOldMessage(message: KeyValue) -> Bool {
+    private func isOldMessage(message: Message) -> Bool {
         let now = Date()
-        let claimed = Date(timeIntervalSince1970: message.value.timestamp / 1000)
+        let claimed = message.claimedDate
         let since = claimed.timeIntervalSince(now)
         return since < self.temporaryMessageExpireDate
     }
     
-    func fillMessages(msgs: [KeyValue], pms: Bool = false) throws {
+    func fillMessages(msgs: [Message], pms: Bool = false) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2623,19 +2636,19 @@ class ViewDatabase {
             
             /* This is the don't put older than 6 months in the db. */
             if isOldMessage(message: msg) &&
-                (msg.value.content.type != .contact &&
-                msg.value.content.type != .about &&
-                msg.value.author != currentUser) {
+                (msg.content.type != .contact &&
+                msg.content.type != .about &&
+                msg.author != currentUser) {
                 skipped += 1
-                print("Skipped(\(msg.value.content.type) \(msg.key)%)")
+                print("Skipped(\(msg.content.type) \(msg.key)%)")
                 continue
             }
             
-            if !pms && !msg.value.content.isValid {
+            if !pms && !msg.content.isValid {
                 // cant ignore PMs right now. they need to be there to be replaced with unboxed content.
 #if SSB_MSGDEBUG
-                let cnt = (unsupported[msg.value.content.typeString] ?? 0) + 1
-                unsupported[msg.value.content.typeString] = cnt
+                let cnt = (unsupported[msg.content.typeString] ?? 0) + 1
+                unsupported[msg.content.typeString] = cnt
 #endif
                 skipped += 1
                 continue
@@ -2643,16 +2656,16 @@ class ViewDatabase {
                         
             if try authorMatchesBanList(msg) {
                 // Insert the author into the authors table so we can tell the GoBot to ban them.
-                _ = try self.authorID(of: msg.value.author, make: true)
-                try ban(authors: [msg.value.author])
+                _ = try self.authorID(of: msg.author, make: true)
+                try ban(authors: [msg.author])
                 skipped += 1
-                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                print("Skipped banned (\(msg.content.type) \(msg.key)%)")
                 continue
             }
 
             if try messageMatchesBanList(msg) {
                 skipped += 1
-                print("Skipped banned (\(msg.value.content.type) \(msg.key)%)")
+                print("Skipped banned (\(msg.content.type) \(msg.key)%)")
                 continue
             }
             
@@ -2666,25 +2679,25 @@ class ViewDatabase {
             
             // make sure we dont have messages from the future
             // and force them to the _received_ timestamp so that they are not pinned to the top of the views
-            var claimed = msg.value.timestamp
+            var claimed = msg.claimedTimestamp
             if claimed > loopStart {
-                claimed = msg.timestamp
+                claimed = msg.receivedTimestamp
             }
             
             // can only insert PMs when the unencrypted was inserted before
             let msgKeyID = try self.msgID(of: msg.key, make: !pms)
-            let authorID = try self.authorID(of: msg.value.author, make: true)
+            let authorID = try self.authorID(of: msg.author, make: true)
             
             // insert core message
             if pms {
                 let pm = self.msgs
                     .filter(colMessageID == msgKeyID)
                     .filter(colAuthorID == authorID)
-                    .filter(colSequence == msg.value.sequence)
+                    .filter(colSequence == msg.sequence)
                 try db.run(pm.update(
                     colDecrypted <- true,
-                    colMsgType <- msg.value.content.type.rawValue,
-                    colReceivedAt <- msg.timestamp,
+                    colMsgType <- msg.content.type.rawValue,
+                    colReceivedAt <- msg.receivedTimestamp,
                     colClaimedAt <- claimed,
                     colWrittenAt <- Date().millisecondsSince1970,
                     colOffChain <- msg.offChain ?? false
@@ -2695,11 +2708,12 @@ class ViewDatabase {
                         colRXseq <- lastRxSeq,
                         colMessageID <- msgKeyID,
                         colAuthorID <- authorID,
-                        colSequence <- msg.value.sequence,
-                        colMsgType <- msg.value.content.type.rawValue,
-                        colReceivedAt <- msg.timestamp,
+                        colSequence <- msg.sequence,
+                        colMsgType <- msg.content.type.rawValue,
+                        colReceivedAt <- msg.receivedTimestamp,
                         colClaimedAt <- claimed,
                         colWrittenAt <- Date().millisecondsSince1970,
+                        colLastActivityTime <- claimed,
                         colOffChain <- msg.offChain ?? false
                     ))
                 } catch Result.error(let errMsg, let errCode, _) {
@@ -2720,7 +2734,7 @@ class ViewDatabase {
             }
             
             do { // identifies which message failed
-                switch msg.value.content.type { // insert individual message types
+                switch msg.content.type { // insert individual message types
                     
                 case .address:
                     try self.fillAddress(msgID: msgKeyID, msg: msg)
@@ -2814,7 +2828,7 @@ class ViewDatabase {
         ))
     }
 
-    private func msgID(of msg: KeyValue, make: Bool = false) throws -> Int64 {
+    private func msgID(of msg: Message, make: Bool = false) throws -> Int64 {
         guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
 
         if let msgKeysRow = try db.pluck(self.msgKeys.filter(colKey == msg.key)) {
@@ -2944,7 +2958,12 @@ class ViewDatabase {
         }
     }
    
-    private func insertBranches(msgID: Int64, root: MessageIdentifier?, branches: [MessageIdentifier]?) throws {
+    private func insertBranches(
+        msgID: Int64,
+        message: Message,
+        root: MessageIdentifier?,
+        branches: [MessageIdentifier]?
+    ) throws {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
@@ -2956,10 +2975,12 @@ class ViewDatabase {
         if r.sigil != .message {
             return
         }
+        
+        let rootID = try self.msgID(of: r, make: true)
 
         let tangleID = try db.run(self.tangles.insert(
             colMessageRef <- msgID,
-            colRoot <- try self.msgID(of: r, make: true)
+            colRoot <- rootID
         ))
     
         for branch in br {
@@ -2967,6 +2988,16 @@ class ViewDatabase {
                 colTangleID <- tangleID,
                 colBranch <- try self.msgID(of: branch, make: true)
             ))
+        }
+        
+        // Cache the time of the last reply on the root message to make sorting faster later.
+        if message.content.isPost {
+            let rootMessageQuery = msgs.filter(colMessageID == rootID)
+            let replyTime = message.claimedTimestamp
+            if let lastActivityTime = try db.scalar(rootMessageQuery.select(colLastActivityTime)),
+                lastActivityTime < replyTime, replyTime <= Date.now.millisecondsSince1970 {
+                try db.run(rootMessageQuery.update(colLastActivityTime <- replyTime))
+            }
         }
     }
     
