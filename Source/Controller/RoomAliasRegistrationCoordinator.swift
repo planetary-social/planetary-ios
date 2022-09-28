@@ -59,7 +59,7 @@ import Secrets
         loadingMessage = Text.loading.text
         Task {
             do {
-                try await self.bot.register(alias: desiredAlias, in: room)
+                _ = try await self.bot.register(alias: desiredAlias, in: room)
                 self.shouldDismiss = true
             } catch {
                 Log.optional(error)
