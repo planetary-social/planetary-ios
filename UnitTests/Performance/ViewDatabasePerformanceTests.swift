@@ -121,6 +121,33 @@ class ViewDatabasePerformanceTests: XCTestCase {
         }
     }
     
+    func testRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
+        viewDatabase.close()
+        let strategy = RecentlyActivePostsAndContactsAlgorithm()
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            try! resetSmallDB()
+            startMeasuring()
+            let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(keyValues?.count, 100)
+            stopMeasuring()
+        }
+    }
+    
+    func testCountNumberOfKeysSinceUsingRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
+        viewDatabase.close()
+        try! resetSmallDB()
+        let strategy = RecentlyActivePostsAndContactsAlgorithm()
+        let messages = try self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+        let earliestMessage = try XCTUnwrap(messages.last)
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            try! resetSmallDB()
+            startMeasuring()
+            let newMessageCount = try? self.viewDatabase.numberOfRecentPosts(with: strategy, since: earliestMessage.key)
+            XCTAssertEqual(newMessageCount, 100)
+            stopMeasuring()
+        }
+    }
+    
     func testGetFollows() {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()

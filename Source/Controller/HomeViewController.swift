@@ -265,9 +265,6 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
                 }
             }
             AppController.shared.operationQueue.addOperation(operation)
-        } else {
-            // If the feed is empty, we just try to fetch the new updates and show them
-            load(animated: false)
         }
     }
     
