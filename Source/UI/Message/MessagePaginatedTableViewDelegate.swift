@@ -1,5 +1,5 @@
 //
-//  KeyValuePaginatedTableViewDelegate.swift
+//  MessagePaginatedTableViewDelegate.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 5/5/20.
@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-class KeyValuePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
+class MessagePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
     
     /// View controller that will be used for navigating
-    /// when the keyValue is selected.
+    /// when the message is selected.
     weak var viewController: UIViewController?
 
     init(on viewController: UIViewController) {
@@ -22,17 +22,17 @@ class KeyValuePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
     // MARK: Handle tap event elsewhere in the `cell.contentView`
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let dataSource = tableView.dataSource as? KeyValuePaginatedTableViewDataSource else {
+        guard let dataSource = tableView.dataSource as? MessagePaginatedTableViewDataSource else {
             return
         }
-        guard let keyValue = dataSource.data.keyValueBy(index: indexPath.row) else {
+        guard let message = dataSource.data.messageBy(index: indexPath.row) else {
             return
         }
-        self.tableView(tableView, didSelect: keyValue)
+        self.tableView(tableView, didSelect: message)
     }
 
-    func tableView(_ tableView: UITableView, didSelect keyValue: KeyValue) {
-        self.pushViewController(for: keyValue)
+    func tableView(_ tableView: UITableView, didSelect message: Message) {
+        self.pushViewController(for: message)
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -40,27 +40,27 @@ class KeyValuePaginatedTableViewDelegate: NSObject, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard let dataSource = tableView.dataSource as? KeyValuePaginatedTableViewDataSource else {
+        guard let dataSource = tableView.dataSource as? MessagePaginatedTableViewDataSource else {
             return
         }
-        guard let keyValue = dataSource.data.keyValueBy(index: indexPath.row) else {
+        guard let message = dataSource.data.messageBy(index: indexPath.row) else {
             return
         }
-        Bots.current.markMessageAsRead(keyValue.key)
+        Bots.current.markMessageAsRead(message.key)
     }
     
     // MARK: Navigating with controller
 
-    private func pushViewController(for keyValue: KeyValue) {
-        guard let controller = self.viewController(for: keyValue) else { return }
+    private func pushViewController(for message: Message) {
+        guard let controller = self.viewController(for: message) else { return }
         self.viewController?.navigationController?.pushViewController(controller, animated: true)
     }
     
     // MARK: Controller for ContentType
 
     // Override in subclass
-    func viewController(for keyValue: KeyValue) -> UIViewController? {
-        switch keyValue.contentType {
+    func viewController(for message: Message) -> UIViewController? {
+        switch message.contentType {
         default:
             return nil
         }

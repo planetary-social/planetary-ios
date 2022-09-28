@@ -1,5 +1,5 @@
 //
-//  KeyValueUpdateable.swift
+//  MessageUpdateable.swift
 //  FBTT
 //
 //  Created by Christoph on 4/25/19.
@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol KeyValueUpdateable {
-    func update(with keyValue: KeyValue)
+protocol MessageUpdateable {
+    func update(with message: Message)
 }

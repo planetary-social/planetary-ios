@@ -12,7 +12,7 @@ import UIKit
 import SkeletonView
 import Logger
 
-class ContactCellView: KeyValueView {
+class ContactCellView: MessageView {
 
     let verticalSpace: CGFloat = Layout.verticalSpacing
 
@@ -25,7 +25,7 @@ class ContactCellView: KeyValueView {
 
     var currentTask: Task<Void, Error>?
 
-    var keyValue: KeyValue?
+    var message: Message?
 
     private lazy var headerView = ContactHeaderView()
 
@@ -67,16 +67,16 @@ class ContactCellView: KeyValueView {
         isSkeletonable = true
     }
 
-    convenience init(keyValue: KeyValue) {
+    convenience init(message: Message) {
         self.init()
-        self.update(with: keyValue)
+        self.update(with: message)
     }
 
     required init?(coder aDecoder: NSCoder) {
         nil
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
     override func reset() {
         super.reset()
@@ -86,9 +86,9 @@ class ContactCellView: KeyValueView {
         hideSkeleton()
     }
 
-    override func update(with keyValue: KeyValue) {
-        self.keyValue = keyValue
-        if let contact = keyValue.value.content.contact {
+    override func update(with message: Message) {
+        self.message = message
+        if let contact = message.content.contact {
             let identity = contact.identity
             showAnimatedSkeleton()
             currentTask = Task.detached { [weak self] in
@@ -103,7 +103,7 @@ class ContactCellView: KeyValueView {
                 }
                 try Task.checkCancellation()
                 await self?.aboutView.update(with: identity, about: about)
-                await self?.headerView.update(with: keyValue)
+                await self?.headerView.update(with: message)
                 
                 var stats = SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
                 do {

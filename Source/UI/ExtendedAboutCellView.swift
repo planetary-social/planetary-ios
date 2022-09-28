@@ -53,7 +53,7 @@ class ExtendedAboutCellView: UIView {
         nil
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
     func reset() {
         currentTask?.cancel()

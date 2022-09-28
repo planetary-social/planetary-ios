@@ -12,7 +12,7 @@ import Support
 
 extension UIViewController {
 
-    func report(_ post: KeyValue,
+    func report(_ post: Message,
                 in view: UIView? = nil,
                 from reporter: Identity) {
         var actions: [UIAlertAction] = []
@@ -30,7 +30,7 @@ extension UIViewController {
                                     title: Text.Reporting.whyAreYouReportingThisPost.text)
     }
 
-    private func report(_ post: KeyValue,
+    private func report(_ post: Message,
                         in view: UIView? = nil,
                         reason: SupportReason,
                         from reporter: Identity) {

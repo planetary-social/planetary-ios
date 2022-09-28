@@ -12,7 +12,7 @@ import Logger
 /// A coordinator for the `RawMessageView`
 @MainActor class RawMessageCoordinator: RawMessageViewModel {
 
-    private var keyValue: KeyValue
+    private var message: Message
 
     private var bot: Bot
 
@@ -22,8 +22,8 @@ import Logger
 
     @Published var errorMessage: String?
 
-    init(keyValue: KeyValue, bot: Bot) {
-        self.keyValue = keyValue
+    init(message: Message, bot: Bot) {
+        self.message = message
         self.bot = bot
         loadRawMessage()
     }
@@ -49,10 +49,10 @@ import Logger
 
     private func loadRawMessage() {
         loadingMessage = Text.loading.text
-        Task.detached { [bot, keyValue, weak self] in
+        Task.detached { [bot, message, weak self] in
             do {
                 var rawMessage: String
-                let rawString = try await bot.raw(of: keyValue)
+                let rawString = try await bot.raw(of: message)
                 if let rawData = rawString.data(using: .utf8) {
                     do {
                         let json = try JSONSerialization.jsonObject(with: rawData)
