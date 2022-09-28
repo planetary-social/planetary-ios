@@ -16,7 +16,7 @@ struct Value: Codable {
     let sequence: Int
     let signature: Identifier
     
-    /// The time that the poster claims to have posted this message. Should not be trusted.
-    /// Note that this is time in milliseconds, not seconds.
+    /// The time that the poster claims to have posted this message. Should not be trusted, unless it's from someone
+    /// we follow/trust. Note that this is time in milliseconds, not seconds.
     let timestamp: Float64
 }

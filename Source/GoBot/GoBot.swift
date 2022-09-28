@@ -1265,7 +1265,6 @@ class GoBot: Bot {
     // MARK: Blocks & Bans
     
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
                 let identities = try self.database.getBlocks(feed: identity)
@@ -1281,7 +1280,6 @@ class GoBot: Bot {
     }
     
     func blockedBy(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
                 let identities = try self.database.blockedBy(feed: identity)
@@ -1370,7 +1368,7 @@ class GoBot: Bot {
             return strategy
         }
         
-        return PostsAndContactsAlgorithm()
+        return RecentlyActivePostsAndContactsAlgorithm()
     }
 
     /// The algorithm we use to filter and sort the discover tab feed.

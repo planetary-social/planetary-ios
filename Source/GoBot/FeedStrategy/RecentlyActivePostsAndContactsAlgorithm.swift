@@ -48,38 +48,12 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     private let countNumberOfKeysSinceQuery = """
-        WITH
-          last_reply AS (
-            SELECT
-              COALESCE(
-                (
-                  SELECT
-                    tangled_message.claimed_at
-                  FROM
-                    tangles
-                    JOIN messages AS tangled_message ON tangles.msg_ref = tangled_message.msg_id
-                  WHERE
-                    tangles.root = messages.msg_id
-                    AND tangled_message.claimed_at < STRFTIME('%s') * 1000
-                    AND tangled_message.type = 'post'
-                  ORDER BY
-                    tangled_message.claimed_at DESC
-                  LIMIT
-                    1
-                ), messages.claimed_at
-              ) as replied_at,
-              messagekeys.key AS key
-            FROM
-              messages
-              JOIN messagekeys ON messagekeys.id = messages.msg_id
-          )
         SELECT
-          COUNT(messagekeys.key)
+          COUNT(messages.msg_id),
+          (SELECT :since_time) as since_time
         FROM
           messages
-          JOIN last_reply ON last_reply.key = messagekeys.key
           JOIN authors ON authors.id = messages.author_id
-          JOIN messagekeys ON messagekeys.id = messages.msg_id
           LEFT JOIN posts ON messages.msg_id = posts.msg_ref
           LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
           LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
@@ -112,25 +86,13 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 contacts
                 JOIN authors ON contacts.contact_id = authors.id
               WHERE
-                contacts.author_id = ?
+                contacts.author_id = :user_id
                 AND contacts.state = 1
             )
-            OR authors.id = ?
+            OR authors.id = :user_id
           )
-          AND authors.author NOT IN (
-            SELECT
-              key
-            FROM
-              pubs
-          )
-          AND last_reply.replied_at BETWEEN (
-            SELECT
-              last_reply.replied_at + 1
-            FROM
-              last_reply
-            WHERE
-              last_reply.key = ?
-          ) AND STRFTIME('%s') * 1000;
+          AND authors.author NOT IN (SELECT key FROM pubs)
+          AND last_activity_time > since_time;
     """
     // swiftlint:enable indentation_width
 
@@ -161,17 +123,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 JOIN messages AS tangled_message ON tangled_message.msg_id == tangles.msg_ref
                 JOIN authors ON authors.id == tangled_message.author_id
                 WHERE tangles.root == messages.msg_id LIMIT 3
-               ) as replies,
-               (SELECT COALESCE(
-                    (SELECT tangled_message.claimed_at
-                    FROM tangles
-                    JOIN messages AS tangled_message ON tangles.msg_ref == tangled_message.msg_id
-                    WHERE tangles.root == messages.msg_id
-                    AND tangled_message.claimed_at < ?
-                    AND tangled_message.type = 'post'
-                    ORDER BY tangled_message.claimed_at DESC LIMIT 1),
-                    messages.claimed_at
-               )) as last_reply
+               ) as replies
         FROM messages
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref
         LEFT JOIN contacts ON messages.msg_id == contacts.msg_ref
@@ -196,7 +148,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
              OR authors.id == ?)
         AND authors.author NOT IN (SELECT key FROM pubs)
         AND claimed_at < ?
-        ORDER BY last_reply DESC
+        ORDER BY last_activity_time DESC
         LIMIT ? OFFSET ?;
     """
     // swiftlint:enable indentation_width
@@ -222,16 +174,26 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         return 0
     }
 
-    func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
-        let query = try connection.prepare(countNumberOfKeysSinceQuery)
-
-        let bindings: [Binding?] = [
-            userId,
-            userId,
-            message
+    func countNumberOfKeys(connection: Connection, userId: Int64, since messageKey: MessageIdentifier) throws -> Int {
+        /// Fetch the last active time of the `since` message
+        let lastActiveTimeQuery = try connection.prepare(
+            """
+            SELECT last_activity_time
+            FROM messages
+            JOIN messagekeys ON messagekeys.id == messages.msg_id
+            WHERE messagekeys.key = :message_key;
+            """
+        )
+        let lastActiveTime = try lastActiveTimeQuery.scalar([":message_key": messageKey]) as? Float64
+        
+        let countQuery = try connection.prepare(countNumberOfKeysSinceQuery)
+        
+        let bindings: [String: Binding?] = [
+            ":since_time": lastActiveTime,
+            ":user_id": userId,
         ]
 
-        if let count = try query.scalar(bindings) as? Int64 {
+        if let count = try countQuery.scalar(bindings) as? Int64 {
             return Int(truncatingIfNeeded: count)
         }
         return 0
@@ -245,7 +207,6 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
         
         let query = try connection.prepare(fetchKeyValuesQuery)
         let bindings: [Binding?] = [
-            Date().millisecondsSince1970,
             userId,
             userId,
             Date().millisecondsSince1970,

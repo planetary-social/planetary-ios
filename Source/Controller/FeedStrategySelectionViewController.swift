@@ -137,7 +137,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             let strategy = decodedObject as? FeedStrategy {
             return strategy
         }
-        return PostsAndContactsAlgorithm()
+        return RecentlyActivePostsAndContactsAlgorithm()
     }
     
     private func save(strategy: FeedStrategy) {
