@@ -2958,7 +2958,7 @@ class ViewDatabase {
    
     private func insertBranches(
         msgID: Int64,
-        message: KeyValue,
+        message: Message,
         root: MessageIdentifier?,
         branches: [MessageIdentifier]?
     ) throws {
@@ -2989,9 +2989,9 @@ class ViewDatabase {
         }
         
         // Cache the time of the last reply on the root message to make sorting faster later.
-        if message.value.content.isPost {
+        if message.content.isPost {
             let rootMessageQuery = msgs.filter(colMessageID == rootID)
-            let replyTime = message.value.timestamp
+            let replyTime = message.claimedTimestamp
             if let lastActivityTime = try db.scalar(rootMessageQuery.select(colLastActivityTime)),
                 lastActivityTime < replyTime, replyTime <= Date.now.millisecondsSince1970 {
                 try db.run(rootMessageQuery.update(colLastActivityTime <- replyTime))
