@@ -250,5 +250,3 @@ class LaunchViewController: UIViewController {
         )
     }
 }
-
-
