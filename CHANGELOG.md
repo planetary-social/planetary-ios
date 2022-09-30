@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Fixed an issue where drafts might not be cleared after posting. #868
+- Fixed go-ssb not falling back to legacy replication when a peer does not support EBTs. #877
 
 ## [1.3.4]
 
