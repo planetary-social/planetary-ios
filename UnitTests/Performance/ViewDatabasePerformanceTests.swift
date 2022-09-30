@@ -171,7 +171,15 @@ class ViewDatabasePerformanceTests: XCTestCase {
             stopMeasuring()
         }
     }
-
+    
+    func testCountNumberOfFollowersAndFollows() {
+        resetSmallDBAndMeasure {
+            for _ in 0..<100 {
+                _ = try? self.viewDatabase.countNumberOfFollowersAndFollows(feed: testFeed.identities[0])
+            }
+        }
+    }
+    
     /// This test performs a lot of feed loading (reads) while another thread is writing to the SQLite database. The
     /// reader threads are expected to finish before the long write does, verifying that we are optimizing for
     /// reading (see ADR #4).
@@ -221,6 +229,15 @@ class ViewDatabasePerformanceTests: XCTestCase {
             }
             
             waitForExpectations(timeout: 10)
+            stopMeasuring()
+        }
+    }
+    
+    private func resetSmallDBAndMeasure(_ block: () -> Void) {
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            try! resetSmallDB()
+            startMeasuring()
+            block()
             stopMeasuring()
         }
     }
