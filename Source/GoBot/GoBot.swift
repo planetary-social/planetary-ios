@@ -942,7 +942,7 @@ class GoBot: Bot {
                 print("[private log] private log filled with \(msgs.count) msgs (started at \(count))")
             }
             
-            completion(.success(false))
+            completion(.success(msgs.count < 1000))
         } catch {
             completion(.failure(error))
         }
