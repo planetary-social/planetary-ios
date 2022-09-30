@@ -166,7 +166,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
     /// - Discard posts and follows from the future
     ///
     /// The result is sorted by  date
-    private let fetchKeyValuesQuery = """
+    private let fetchMessagesQuery = """
         SELECT messages.*,
                posts.*,
                contacts.*,
@@ -258,22 +258,22 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
         return 0
     }
 
-    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue] {
+    func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message] {
         guard let connection = database.getOpenDB() else {
             Log.error("db is closed")
             return []
         }
         
-        let query = try connection.prepare(fetchKeyValuesQuery)
+        let query = try connection.prepare(fetchMessagesQuery)
         let bindings: [Binding?] = [userId, userId, Date().millisecondsSince1970, limit, offset ?? 0]
-        let keyValues = try query.bind(bindings).prepareRowIterator().map { keyValueRow -> KeyValue? in
-            try buildKeyValue(keyValueRow: keyValueRow, database: database)
+        let messages = try query.bind(bindings).prepareRowIterator().map { messageRow -> Message? in
+            try buildMessage(messageRow: messageRow, database: database)
         }
-        let compactKeyValues = keyValues.compactMap { $0 }
-        return compactKeyValues
+        let compactMessages = messages.compactMap { $0 }
+        return compactMessages
     }
 
-    private func buildKeyValue(keyValueRow: Row, database: ViewDatabase) throws -> KeyValue? {
-        try KeyValue(row: keyValueRow, database: database)
+    private func buildMessage(messageRow: Row, database: ViewDatabase) throws -> Message? {
+        try Message(row: messageRow, database: database)
     }
 }

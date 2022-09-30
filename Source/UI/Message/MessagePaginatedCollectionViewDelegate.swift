@@ -1,5 +1,5 @@
 //
-//  KeyValuePaginatedCollectionViewDelegate.swift
+//  MessagePaginatedCollectionViewDelegate.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 6/19/20.
@@ -9,10 +9,10 @@
 import Foundation
 import UIKit
 
-class KeyValuePaginatedCollectionViewDelegate: NSObject {
+class MessagePaginatedCollectionViewDelegate: NSObject {
     
     /// View controller that will be used for navigating
-    /// when the keyValue is selected.
+    /// when the message is selected.
     weak var viewController: UIViewController?
 
     init(on viewController: UIViewController) {
@@ -20,16 +20,16 @@ class KeyValuePaginatedCollectionViewDelegate: NSObject {
     }
 }
 
-extension KeyValuePaginatedCollectionViewDelegate: UICollectionViewDelegate {
+extension MessagePaginatedCollectionViewDelegate: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let dataSource = collectionView.dataSource as? KeyValuePaginatedCollectionViewDataSource else {
+        guard let dataSource = collectionView.dataSource as? MessagePaginatedCollectionViewDataSource else {
             return
         }
-        guard let keyValue = dataSource.data.keyValueBy(index: indexPath.row) else {
+        guard let message = dataSource.data.messageBy(index: indexPath.row) else {
             return
         }
-        let controller = ThreadViewController(with: keyValue)
+        let controller = ThreadViewController(with: message)
         self.viewController?.navigationController?.pushViewController(controller, animated: true)
     }
 }

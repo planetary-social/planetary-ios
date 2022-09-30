@@ -124,8 +124,8 @@ class PostCollectionViewCell: UICollectionViewCell {
         self.contentView.setNeedsDisplay()
     }
     
-    func update(keyValue: KeyValue) {
-        guard let post = keyValue.value.content.post else {
+    func update(message: Message) {
+        guard let post = message.content.post else {
             return
         }
         if post.hasBlobs {
@@ -136,7 +136,7 @@ class PostCollectionViewCell: UICollectionViewCell {
         }
 
         self.headerView.stopSkeletonAnimation()
-        self.headerView.update(with: keyValue)
+        self.headerView.update(with: message)
 
         let textWithoutGallery = post.text.withoutGallery()
         if textWithoutGallery.withoutSpacesOrNewlines.isEmpty {

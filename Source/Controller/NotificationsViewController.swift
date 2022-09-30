@@ -206,7 +206,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     }
 }
 
-private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
+private class NotificationsTableViewDataSource: MessageTableViewDataSource {
 
     var reports: [Report] = [] {
         didSet {
@@ -232,7 +232,7 @@ private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
             if earlier.count > 0 { sections += [(.recently, earlier)] }
             self.sectionedReports = sections
             
-            self.keyValues = reports.map { $0.keyValue }
+            self.messages = reports.map { $0.message }
         }
     }
 
@@ -243,8 +243,8 @@ private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
 
     fileprivate var sectionedReports: [(Text, [Report])] = []
 
-    override func keyValue(at indexPath: IndexPath) -> KeyValue {
-        report(at: indexPath).keyValue
+    override func message(at indexPath: IndexPath) -> Message {
+        report(at: indexPath).message
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -260,10 +260,10 @@ private class NotificationsTableViewDataSource: KeyValueTableViewDataSource {
         at indexPath: IndexPath,
         for type: ContentType,
         tableView: UITableView
-    ) -> KeyValueTableViewCell {
+    ) -> MessageTableViewCell {
         let view = NotificationCellView()
         view.constrainHeight(greaterThanOrEqualTo: 64)
-        let cell = KeyValueTableViewCell(for: type, with: view)
+        let cell = MessageTableViewCell(for: type, with: view)
         return cell
     }
 }
@@ -274,7 +274,7 @@ extension NotificationsViewController: TopScrollable {
     }
 }
 
-private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
+private class NotificationsTableViewDelegate: MessageTableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let source = tableView.dataSource as? NotificationsTableViewDataSource else { return nil }
@@ -282,15 +282,15 @@ private class NotificationsTableViewDelegate: KeyValueTableViewDelegate {
         return HeaderView(title: title.text, showClearNotificationsButton: section == 0)
     }
 
-    override func tableView(_ tableView: UITableView, didSelect keyValue: KeyValue) {
+    override func tableView(_ tableView: UITableView, didSelect message: Message) {
 
-        if keyValue.contentType == .contact {
+        if message.contentType == .contact {
             Analytics.shared.trackDidSelectItem(kindName: "identity")
-            let controller = AboutViewController(with: keyValue.value.author)
+            let controller = AboutViewController(with: message.author)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
-        } else if keyValue.contentType == .post {
+        } else if message.contentType == .post {
             Analytics.shared.trackDidSelectItem(kindName: "post")
-            let controller = ThreadViewController(with: keyValue)
+            let controller = ThreadViewController(with: message)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         }
     }

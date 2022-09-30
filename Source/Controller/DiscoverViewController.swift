@@ -34,12 +34,12 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         return control
     }()
     
-    private lazy var dataSource: KeyValuePaginatedCollectionViewDataSource = {
-        let dataSource = KeyValuePaginatedCollectionViewDataSource()
+    private lazy var dataSource: MessagePaginatedCollectionViewDataSource = {
+        let dataSource = MessagePaginatedCollectionViewDataSource()
         return dataSource
     }()
     
-    private lazy var delegate = KeyValuePaginatedCollectionViewDelegate(on: self)
+    private lazy var delegate = MessagePaginatedCollectionViewDelegate(on: self)
     
     private lazy var floatingRefreshButton: FloatingRefreshButton = {
         let button = FloatingRefreshButton()
@@ -191,7 +191,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         }
     }
     
-    func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
+    func update(with proxy: PaginatedMessageDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.collectionView.backgroundView = self.emptyDiscoverView
         } else {
@@ -285,12 +285,12 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
 
     override func didBlockUser(notification: Notification) {
         // guard let identity = notification.object as? Identity else { return }
-        // self.collectionView.deleteKeyValues(by: identity)
+        // self.collectionView.deleteMessages(by: identity)
     }
     
     override func didRefresh(notification: Notification) {
 //        let currentProxy = self.dataSource.data
-//        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
+//        let currentKeyAtTop = currentProxy.messageBy(index: 0)?.key
 //        Bots.current.keyAtEveryoneTop { [weak self] (key) in
 //            guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
 //                return
@@ -318,8 +318,8 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
         let contentWidth = collectionView.bounds.width - (insets.left + insets.right)
         let cellPadding: CGFloat = 5
         let columnWidth = contentWidth / CGFloat(collectionViewLayout.numberOfColumns) - cellPadding * 2
-        if let keyValue = dataSource.data.keyValueBy(index: indexPath.row) {
-            if let post = keyValue.value.content.post, post.hasBlobs {
+        if let message = dataSource.data.messageBy(index: indexPath.row) {
+            if let post = message.content.post, post.hasBlobs {
                 if post.text.withoutGallery().withoutSpacesOrNewlines.isEmpty {
                     return columnWidth
                 } else {

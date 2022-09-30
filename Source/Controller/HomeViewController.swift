@@ -181,7 +181,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
         }
     }
     
-    private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
+    private func update(with proxy: PaginatedMessageDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
         } else {
@@ -237,7 +237,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
 
     override func didBlockUser(notification: Notification) {
         guard let identity = notification.object as? Identity else { return }
-        self.tableView.deleteKeyValues(by: identity)
+        self.tableView.deleteMessages(by: identity)
     }
     
     override func didRefresh(notification: Notification) {
@@ -247,7 +247,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
             return
         }
         let currentProxy = self.dataSource.data
-        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
+        let currentKeyAtTop = currentProxy.messageBy(index: 0)?.key
         if let message = currentKeyAtTop {
             let operation = NumberOfRecentItemsOperation(lastMessage: message)
             operation.completionBlock = { [weak self] in
@@ -263,9 +263,6 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
                 }
             }
             AppController.shared.operationQueue.addOperation(operation)
-        } else {
-            // If the feed is empty, we just try to fetch the new updates and show them
-            load(animated: false)
         }
     }
     
@@ -283,28 +280,28 @@ extension HomeViewController: TopScrollable {
 
 extension HomeViewController: PostReplyPaginatedDataSourceDelegate {
     
-    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+    func postReplyView(view: PostReplyView, didLoad message: Message) {
         view.postView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue, startReplying: true)
+            self?.pushThreadViewController(with: message, startReplying: true)
         }
     }
     
-    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
-        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+    private func pushThreadViewController(with message: Message, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: message, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }
