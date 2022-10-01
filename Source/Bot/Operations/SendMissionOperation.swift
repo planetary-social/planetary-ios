@@ -89,7 +89,7 @@ class SendMissionOperation: AsynchronousOperation {
             
             // If we don't have enough peers, supplement with the Planetary pubs
             let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
-            if joinedPubs.count < 1 {
+            if joinedPubs.count < minPeers && config.joinedPlanetarySystem {
                 let systemPubs = Set(config.systemPubs).map { $0.address.multiserver }
                 let someSystemPubs = systemPubs.randomSample(UInt(minPeers - joinedPubs.count))
                 joinedPubs += someSystemPubs

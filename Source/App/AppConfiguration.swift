@@ -158,18 +158,6 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
             .appending("/FBTT")
             .appending("/\(networkKey.hexEncodedString())")
     }
-    
-    override var description: String {
-        """
-        id: \(id)
-        name: \(name)
-        identity: \(identity)
-        joinedPlanetarySystem: \(joinedPlanetarySystem)
-        numberOfPublishedMessages: \(numberOfPublishedMessages)
-        networkKey: \(String(describing: network?.string))
-        networkHMAC: -omitted-
-        """
-    }
 
     // MARK: Lifecycle
 
