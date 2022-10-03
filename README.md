@@ -1,4 +1,6 @@
-# Planetary
+# Planetary iOS
+
+[Website](https://planetary.social) | [Wiki](https://github.com/planetary-social/planetary-ios/wiki) | [Matrix](https://matrix.to/#/#planetary:matrix.org) | [Discord](https://discord.gg/aNgVthyHac)
 
 ![Unit Tests](https://github.com/planetary-social/planetary-ios/actions/workflows/main.yml/badge.svg) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/10d7934ffe4a46f380ff35951cc482e8)](https://www.codacy.com/gh/planetary-social/planetary-ios/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=planetary-social/planetary-ios&amp;utm_campaign=Badge_Grade) [![Crowdin](https://badges.crowdin.net/planetary/localized.svg)](https://crowdin.com/project/planetary)
 
