@@ -18,7 +18,11 @@ Unlike most social media, Planetary:
 
 No one company should own the Internet’s public spaces, which is why we’re building on —and contributing back to— the open source [Secure Scuttlebutt](https://scuttlebutt.nz/) ecosystem. Their core technologies let us recreate a social network experience, but in a decentralized way that no one organization can dominate.
 
-Check our website [planetary.social](https://planetary.social/) for more info!
+Check our website [planetary.social](https://planetary.social/) for more info! You can also find us on [Matrix](https://matrix.to/#/#planetary:matrix.org) and [Discord](https://discord.gg/aNgVthyHac).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Current Planetary Functionality:
 * Create a user
@@ -88,10 +92,6 @@ Check our website [planetary.social](https://planetary.social/) for more info!
 * New installs fail to initialize correctly rarely
 * Connection information is only displayed on debug screens
 * Sometimes users need to pull to refresh to see new content
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
