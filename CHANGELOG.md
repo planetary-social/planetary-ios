@@ -6,15 +6,13 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.5] 2022-10-03
 
+- Show the underlying SSB message for posts, replies and likes. #662
 - Fixed an issue where drafts might not be cleared after posting. #868
 - Fixed go-ssb not falling back to legacy replication when a peer does not support EBTs. #877
-
-## [1.3.4]
-
 - Optimized the "Patchwork" home feed algorithm (RecentlyActivePostsAndContactsAlgorithm) and made it the new default. This algorithm brings posts back up to the top of your home feed when they receive a new reply. #860
-- Show the underlying SSB message for posts, replies and likes. #662
+- Optimize loading of follow message cells. #859
 
 ## [1.3.4] 2022-09-26
 
