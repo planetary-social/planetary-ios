@@ -44,7 +44,7 @@
 "Text.dontSendAnalytics" = "Keine Analysedaten senden";
 "Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "Planetary sucht nach Updates\nim dezentralisierten Peer-to-Peer-Web.";
-"Text.post" = "Posten";
+"Text.postAction" = "Post";
 "Text.preview" = "Vorschau";
 "Text.newPost" = "Neuer Beitrag";
 "Text.deletePost" = "Diesen Beitrag löschen";
