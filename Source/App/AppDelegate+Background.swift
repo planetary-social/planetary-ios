@@ -162,7 +162,7 @@ extension AppDelegate {
             async let isBotStuck = goBot?.isBotStuck() ?? false
             
             // Sleep to allow time for syncing.
-            let sleepSeconds: TimeInterval = isLongSync ? 120 : 20
+            let sleepSeconds: TimeInterval = isLongSync ? 180 : 20
             let sleepEndTime = Date(timeIntervalSince1970: startDate.timeIntervalSince1970 + sleepSeconds)
             Log.info("Background sync: sleeping \(sleepSeconds) seconds for replication.")
             try await Task.cancellableSleep(until: sleepEndTime, cancellationCheckInterval: 100_000_000)
