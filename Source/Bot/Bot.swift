@@ -29,7 +29,7 @@ typealias RawCompletion = ((Result<String, Error>) -> Void)
 /// - Bool: True if the view database is fully up to date with the backing store.
 typealias RefreshCompletion = ((Result<Bool, Error>, TimeInterval) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
-typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
+typealias SyncCompletion = ((Error?) -> Void)
 typealias ThreadCompletion = ((Message?, PaginatedMessageDataProxy, Error?) -> Void)
 typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
@@ -105,8 +105,6 @@ protocol Bot: AnyObject {
     
     /// Connect to the SSB peer at the given address.
     func connect(to address: MultiserverAddress)
-
-    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 

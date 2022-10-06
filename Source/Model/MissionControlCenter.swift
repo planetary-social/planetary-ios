@@ -119,4 +119,8 @@ class MissionControlCenter {
         let refreshOperation = RefreshOperation(refreshLoad: .short)
         operationQueue.addOperation(refreshOperation)
     }
+    
+    func cancelAll() {
+        operationQueue.operations.forEach { $0.cancel() }
+    }
 }

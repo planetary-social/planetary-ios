@@ -193,7 +193,7 @@ class GoBotViewController: DebugTableViewController {
     private func repoInfo() -> DebugTableViewController.Settings {
         var stats: ScuttlegobotRepoCounts
         do {
-           stats = try GoBot.shared.bot.repoStatus()
+           stats = try GoBot.shared.bot.repoStats()
         } catch {
             Log.unexpected(.apiError, "repo Info stats failed")
             Log.optional(error)

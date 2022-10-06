@@ -191,19 +191,12 @@ class FakeBot: Bot {
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
-            completion(nil, 0, 0)
+            completion(nil)
         }
     }
     
     func connect(to address: MultiserverAddress) { }
     
-    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
-        self._statistics.lastSyncDate = Date()
-        queue.async {
-            completion(nil, 0, 0)
-        }
-    }
-
     // MARK: Refresh
 
     let isRefreshing = false
