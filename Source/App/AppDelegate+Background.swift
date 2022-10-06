@@ -153,8 +153,6 @@ extension AppDelegate {
             
             // Wait for login
             // this is terrible!
-            operationQueue.qualityOfService = .background
-            operationQueue.addOperation(sendMissionOperation)
             try await Task.sleep(nanoseconds: 2_000_000_000)
             
             Log.info("Background sync: sending mission.")
@@ -186,7 +184,7 @@ extension AppDelegate {
                 }
             }
             
-            try await AppController.shared.operationQueue.drain()
+            try await AppController.shared.missionControlCenter.waitForCompletion()
         
             let newMessageCount = (try? Bots.current.numberOfNewMessages(since: startDate)) ?? 0
 

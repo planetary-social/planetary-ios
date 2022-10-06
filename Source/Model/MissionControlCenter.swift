@@ -123,4 +123,8 @@ class MissionControlCenter {
     func cancelAll() {
         operationQueue.operations.forEach { $0.cancel() }
     }
+    
+    func waitForCompletion() async throws {
+        try await operationQueue.drain()
+    }
 }
