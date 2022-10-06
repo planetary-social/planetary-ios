@@ -44,7 +44,7 @@
 "Text.dontSendAnalytics" = "完全不要发送分析";
 "Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "行星正在通过对等端网络搜索更新\n。";
-"Text.post" = "张贴";
+"Text.postAction" = "Post";
 "Text.preview" = "预览";
 "Text.newPost" = "新建日志";
 "Text.deletePost" = "删除此帖子";
