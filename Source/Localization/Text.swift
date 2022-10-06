@@ -90,7 +90,7 @@ enum Text: String, Localizable, CaseIterable {
     
     case loadingUpdates = "Planetary is searching for updates\non the peer to peer decentralized web."
 
-    case post = "Post"
+    case postAction = "Post"
     case preview = "Preview"
     case newPost = "New Post"
     case deletePost = "Delete this post"
