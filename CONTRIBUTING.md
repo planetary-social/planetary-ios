@@ -1,12 +1,8 @@
 # Contributing
 
-Planetary is an open-source project, as such, we openly welcome contributions of any sort: code improvement, bug fixes, translations, new features, bug reports...
+Planetary is an open-source project, as such, we openly welcome contributions of any sort: code improvement, bug fixes, translations, new features, bug reports, etc.
 
-We encourage you to read this guide first or contact any of us.
-
-## Bug Reports
-
-Feel free to open an [issue on Github](https://github.com/planetary-social/planetary-ios/issues), be sure to include a good description of the bug you found.
+We encourage you to read this guide first or contact any of us. We have a public [Discord server](https://discord.gg/aNgVthyHac) which is also bridged to this [Matrix room](https://matrix.to/#/#planetary:matrix.org). Feel free to also ask a question by opening a [Github issue](https://github.com/planetary-social/planetary-ios/issues).
 
 ## Translations
 
