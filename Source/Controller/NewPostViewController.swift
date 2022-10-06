@@ -183,6 +183,9 @@ class NewPostViewController: ContentViewController {
     }
 
     private func dismiss(didPublish post: Post) async {
+        // Clear UI buffers so they don't get saved as a draft on dismiss
+        textView.clear()
+        galleryView.removeAll()
         await self.draftStore.clearDraft()
         self.didPublish?(post)
         self.dismiss(animated: true)
@@ -244,7 +247,7 @@ extension NewPostViewController: ImageGalleryViewDelegate {
 
 extension NewPostViewController: UIAdaptivePresentationControllerDelegate {
     
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+    func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
         let hasText = self.textView.attributedText.length > 0
         let hasImages = !self.galleryView.images.isEmpty
 

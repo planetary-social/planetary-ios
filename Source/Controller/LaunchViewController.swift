@@ -100,7 +100,7 @@ class LaunchViewController: UIViewController {
         // TODO this should be an analytics track()
         // TODO include app installation UUID
         // Analytics.shared.app(launch)
-        Log.info("Launching with configuration '\(configuration.name)'")
+        Log.info("Launching with configuration:\n\(configuration)")
         
         Task {
             login: do {
