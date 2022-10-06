@@ -153,6 +153,8 @@ extension AppDelegate {
             
             // Wait for login
             // this is terrible!
+            operationQueue.qualityOfService = .background
+            operationQueue.addOperation(sendMissionOperation)
             try await Task.sleep(nanoseconds: 2_000_000_000)
             
             Log.info("Background sync: sending mission.")

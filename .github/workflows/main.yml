@@ -1,10 +1,16 @@
 name: CI
 on:
   pull_request:
+    # The specific activity types are listed here to include "labeled" and "unlabeled"
+    # (which are not included by default for the "pull_request" trigger).
+    # This is needed to allow skipping enforcement of the changelog in PRs with specific labels,
+    # as defined in the (optional) "skipLabels" property.
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
   push:
     branches: main
 env:
-  SIMULATOR: platform=iOS Simulator,name=iPhone 13,OS=15.5
+  SIMULATOR: platform=iOS Simulator,name=iPhone 14,OS=16.0
+  DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
     
 jobs:
   unit_test:
@@ -19,19 +25,6 @@ jobs:
       run: gem install cocoapods-keys
     - name: Dependencies
       run: pod install --no-repo-update
-      env:
-        DEVELOPER_DIR: /Applications/Xcode_13.2.1.app/Contents/Developer
-        MixpanelAnalyticsToken: nil
-        AuthyPhoneVerificationAPIToken: nil
-        BugsnagCrashReportingToken: nil
-        ZendeskAppID: nil
-        ZendeskClientID: nil
-        VersePushAPIToken: nil
-        VersePubAPIToken: nil
-        VerseDirectoryAPIToken: nil
-        VerseBlobToken: nil
-        PostHogAPIKey: nil
-        PostHogHost: nil
     - name: Build Planetary
       run: set -o pipefail && xcodebuild build-for-testing -workspace Planetary.xcworkspace -scheme UnitTests -destination "$SIMULATOR" | xcpretty
     - name: Run Tests

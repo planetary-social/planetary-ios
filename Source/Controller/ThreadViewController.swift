@@ -191,8 +191,9 @@ class ThreadViewController: ContentViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         headerView.removeFromSuperview()
+        let textValue = AttributedString(replyTextView.attributedText)
         Task.detached(priority: .userInitiated) {
-            await self.draftStore.save(text: self.replyTextView.attributedText, images: self.images)
+            await self.draftStore.save(text: textValue, images: self.images)
         }
     }
 
@@ -226,8 +227,9 @@ class ThreadViewController: ContentViewController {
                 .textPublisher
                 .throttle(for: 3, scheduler: queue, latest: true)
                 .sink { [weak self] newText in
+                    let newTextValue = newText.map { AttributedString($0) }
                     Task(priority: .userInitiated) {
-                        await self?.draftStore.save(text: newText, images: self?.images ?? [])
+                        await self?.draftStore.save(text: newTextValue, images: self?.images ?? [])
                     }
                 }
                 .store(in: &cancellables)
@@ -377,14 +379,15 @@ class ThreadViewController: ContentViewController {
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
         let draftStore = draftStore
+        let textValue = AttributedString(text)
         Task.detached(priority: .userInitiated) {
-            await draftStore.save(text: text, images: images)
+            await draftStore.save(text: textValue, images: images)
             do {
                 let messageID = try await Bots.current.publish(post, with: images)
                 Analytics.shared.trackDidReply()
                 await MainActor.run {
                     self.replyTextView.clear()
-                    self.replyTextView.resignFirstResponder()
+                    _ = self.replyTextView.resignFirstResponder()
                     self.buttonsView.minimize()
                     self.galleryView.removeAll()
                     self.galleryView.close()
@@ -507,8 +510,9 @@ extension ThreadViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
+        let textValue = AttributedString(replyTextView.attributedText)
         Task.detached(priority: .userInitiated) {
-            await self.draftStore.save(text: self.replyTextView.attributedText, images: view.images)
+            await self.draftStore.save(text: textValue, images: view.images)
         }
     }
 

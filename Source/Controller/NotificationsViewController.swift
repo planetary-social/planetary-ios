@@ -119,6 +119,39 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
         }
     }
 
+    func refreshAndLoad(animated: Bool = false) {
+        if NotificationsViewController.refreshBackgroundTaskIdentifier != .invalid {
+            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
+        }
+
+        Log.info("Pull down to refresh triggering a short refresh")
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
+        
+        let taskName = "NotificationsPullDownToRefresh"
+        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
+            // Expiry handler, iOS will call this shortly before ending the task
+            refreshOperation.cancel()
+            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
+            NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
+        }
+        NotificationsViewController.refreshBackgroundTaskIdentifier = taskIdentifier
+        
+        refreshOperation.completionBlock = { [weak self] in
+            Log.optional(refreshOperation.error)
+            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
+            
+            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
+                UIApplication.shared.endBackgroundTask(taskIdentifier)
+                NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.load(animated: animated)
+            }
+        }
+        AppController.shared.addOperation(refreshOperation)
+    }
+
     private func update(with reports: [Report], animated: Bool = true) {
         self.dataSource.reports = reports
         lastTimeNewReportsUpdatesWasChecked = Date()
@@ -149,7 +182,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
                     }
                 }
             }
-            AppController.shared.operationQueue.addOperation(operation)
+            AppController.shared.addOperation(operation)
         } else {
             // If the feed is empty, we just try to fetch the new updates and show them
             load(animated: false)
@@ -371,6 +404,6 @@ private class HeaderView: UITableViewHeaderFooterView {
     func clearNotificationsButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
         let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
-        AppController.shared.operationQueue.addOperation(clearUnreadNotificationsOperation)
+        AppController.shared.addOperation(clearUnreadNotificationsOperation)
     }
 }

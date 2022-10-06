@@ -78,7 +78,9 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
                         RedeemInviteOperation(star: $0, shouldFollow: false)
                     }
                     
-                    internalQueue.addOperations(redeemInviteOperations, waitUntilFinished: false)
+                    for operation in redeemInviteOperations {
+                        internalQueue.addOperation(operation)
+                    }
                     try await internalQueue.drain()
                 }
             } catch {

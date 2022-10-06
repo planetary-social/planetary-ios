@@ -188,7 +188,7 @@ fileprivate class PreviewViewModel: ManageAliasViewModel {
     func refresh() {}
     
     func addAlias(from: String) {
-        if let address = MultiserverAddress(string: from) {
+        if MultiserverAddress(string: from) != nil {
             loadingMessage = "Registering alias..."
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
                 self.aliases.append(RoomAlias(id: 0, aliasURL: URL(string: "https://bob.civic.room")!))

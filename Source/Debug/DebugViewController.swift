@@ -309,7 +309,7 @@ class DebugViewController: DebugTableViewController {
                 valueClosure: nil,
                 actionClosure: { [weak self] _ in
                     Task {
-                        await self?.shareDatabase(cell:)
+                        self?.shareDatabase(cell:)
                     }
                 }
             )

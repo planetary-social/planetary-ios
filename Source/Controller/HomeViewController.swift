@@ -262,7 +262,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
                     }
                 }
             }
-            AppController.shared.operationQueue.addOperation(operation)
+            AppController.shared.addOperation(operation)
         }
     }
     

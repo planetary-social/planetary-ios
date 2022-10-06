@@ -21,7 +21,7 @@ class AppController: UIViewController {
     var missionControlCenter = MissionControlCenter()
     
     /// Queue to handle background operations
-    var operationQueue = OperationQueue()
+    private var operationQueue = OperationQueue()
     
     private var didStartDatabaseProcessingObserver: NSObjectProtocol?
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
@@ -196,5 +196,10 @@ class AppController: UIViewController {
         }
         
         return getPresentedController(self)
+    }
+    
+    // MARK: Operations
+    func addOperation(_ operation: Operation) {
+        operationQueue.addOperation(operation)
     }
 }
