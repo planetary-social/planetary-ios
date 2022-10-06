@@ -12,6 +12,11 @@ import Logger
 import Analytics
 import CrashReporting
 
+// Mark UserDefaults as @Sendable for now, because docs say it's thread safe and I can't find another good alternative.
+#if compiler(>=5.5) && canImport(_Concurrency)
+extension UserDefaults: @unchecked Sendable {}
+#endif
+
 class LaunchViewController: UIViewController {
 
     // MARK: Lifecycle

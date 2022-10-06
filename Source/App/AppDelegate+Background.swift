@@ -127,7 +127,7 @@ extension AppDelegate {
             operationQueue.name = "Background Sync Queue"
             operationQueue.maxConcurrentOperationCount = 1
             operationQueue.qualityOfService = .background
-            operationQueue.addOperations([sendMissionOperation], waitUntilFinished: false)
+            operationQueue.addOperation(sendMissionOperation)
             try await operationQueue.drain()
                 
             let sleepStartTime = Date().timeIntervalSince1970
@@ -151,7 +151,8 @@ extension AppDelegate {
             }
             Log.info("Done sleeping")
             
-            operationQueue.addOperations([refreshOperation, statisticsOperation], waitUntilFinished: false)
+            operationQueue.addOperation(refreshOperation)
+            operationQueue.addOperation(statisticsOperation)
             
             try await operationQueue.drain()
         

@@ -3359,7 +3359,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1320;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = "Verse Communications Inc";
 				TargetAttributes = {
 					0A3880172475BB4500777843 = {
@@ -3618,6 +3618,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		1CB03AF84C66F1D3D7DBE245 /* Upload Bugsnag dSYM */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 8;
 			files = (
 			);
@@ -3678,6 +3679,7 @@
 		};
 		5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 8;
 			files = (
 			);
@@ -3709,6 +3711,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/($CONTENTS_FOLDER_PATH)/Secrets.plist",
+				"",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3728,7 +3732,6 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3812,6 +3815,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Source/Localization/*.lproj",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -5503,6 +5507,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = targeted;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -5560,6 +5565,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = targeted;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -5574,8 +5580,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 376;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -5606,8 +5614,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 376;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -5635,6 +5645,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -5653,6 +5664,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_HARDENED_RUNTIME = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;

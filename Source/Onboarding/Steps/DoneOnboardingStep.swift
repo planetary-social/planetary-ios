@@ -108,7 +108,7 @@ class DoneOnboardingStep: OnboardingStep {
             Analytics.shared.optOut()
         }
         
-        guard let me = data.context?.identity else {
+        guard data.context?.identity != nil else {
             Log.unexpected(.missingValue, "Was expecting self.data.context.person.identity, skipping step")
             Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
             self.next()
@@ -118,6 +118,6 @@ class DoneOnboardingStep: OnboardingStep {
 
     override func didStart() {
         if self.data.simulated { return }
-        guard let identity = self.data.context?.identity else { return }
+        guard data.context?.identity != nil else { return }
     }
 }

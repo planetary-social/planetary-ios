@@ -14,7 +14,7 @@ If you want to contribute by translating the app to another language, you can he
 
 ## Building
 
-Planetary iOS is built using Xcode. To build it yourself you can follow the steps below. These steps assume you have installed Xcode, Homebrew, and have some familiarity with the Terminal app.
+Planetary iOS is built using Xcode. To build it yourself you can follow the steps below. These steps assume you have installed Xcode, Homebrew, and have some familiarity with the Terminal app. You can see what version of Xcode our team is using in the .xcode-version file in this repository.
 
 From the Terminal: 
 
