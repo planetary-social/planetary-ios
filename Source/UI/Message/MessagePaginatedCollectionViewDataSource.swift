@@ -1,5 +1,5 @@
 //
-//  KeyValuePaginatedCollectionViewDataSource.swift
+//  MessagePaginatedCollectionViewDataSource.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 6/15/20.
@@ -8,16 +8,16 @@
 
 import UIKit
 
-class KeyValuePaginatedCollectionViewDataSource: NSObject {
+class MessagePaginatedCollectionViewDataSource: NSObject {
     
-    var data: PaginatedKeyValueDataProxy = StaticDataProxy()
+    var data: PaginatedMessageDataProxy = StaticDataProxy()
     
-    func update(source: PaginatedKeyValueDataProxy) {
+    func update(source: PaginatedMessageDataProxy) {
         self.data = source
     }
 }
 
-extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSource {
+extension MessagePaginatedCollectionViewDataSource: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         self.data.count
@@ -25,21 +25,21 @@ extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSource 
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Post", for: indexPath) as! PostCollectionViewCell
-        let latePrefetch = { (_: Int, keyValue: KeyValue) -> Void in
+        let latePrefetch = { (_: Int, message: Message) -> Void in
           DispatchQueue.main.async {
-            cell.update(keyValue: keyValue)
+            cell.update(message: message)
             collectionView.collectionViewLayout.invalidateLayout()
           }
         }
-        if let keyValue = self.data.keyValueBy(index: indexPath.row, late: latePrefetch) {
-            cell.update(keyValue: keyValue)
+        if let message = self.data.messageBy(index: indexPath.row, late: latePrefetch) {
+            cell.update(message: message)
             collectionView.collectionViewLayout.invalidateLayout()
         }
         return cell
     }
 }
 
-extension KeyValuePaginatedCollectionViewDataSource: UICollectionViewDataSourcePrefetching {
+extension MessagePaginatedCollectionViewDataSource: UICollectionViewDataSourcePrefetching {
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         if let biggest = indexPaths.max()?.row {

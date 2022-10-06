@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-protocol AddAliasViewModel: ObservableObject {
+@MainActor protocol AddAliasViewModel: ObservableObject {
     func register(_ desiredAlias: String, in room: Room?)
     var rooms: [Room] { get }
     

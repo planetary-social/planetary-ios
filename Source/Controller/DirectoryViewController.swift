@@ -50,7 +50,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
     private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
     
     /// A post that was loaded when the user put its ID in the search bar.
-    private var searchedPost: KeyValue?
+    private var searchedPost: Message?
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
     var helpDrawerType: HelpDrawer { .network }
@@ -175,7 +175,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
     func loadAndDisplayMessage(with msgID: MessageIdentifier) {
         AppController.shared.showProgress(after: 0.3, statusText: Text.searching.text)
         Task.detached(priority: .high) { [weak self] in
-            var result: Either<KeyValue, MessageIdentifier>
+            var result: Either<Message, MessageIdentifier>
             do {
                 result = .left(try Bots.current.post(from: msgID))
             } catch {
@@ -188,7 +188,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
         }
     }
     
-    func displayLoadedSearchResult(_ result: Either<KeyValue, MessageIdentifier>) {
+    func displayLoadedSearchResult(_ result: Either<Message, MessageIdentifier>) {
         switch result {
         case .left(let message):
             guard searchFilter == message.key else {

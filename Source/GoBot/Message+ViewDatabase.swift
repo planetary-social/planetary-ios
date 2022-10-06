@@ -1,5 +1,5 @@
 //
-//  KeyValue+ViewDatabase.swift
+//  Message+ViewDatabase.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 6/30/22.
@@ -9,14 +9,14 @@
 import Foundation
 import SQLite
 
-extension KeyValue {
+extension Message {
     
-    /// Creates a KeyValue from a database row. Copied from ViewDatabase.swift, still very messy. It's unclear what
+    /// Creates a Message from a database row. Copied from ViewDatabase.swift, still very messy. It's unclear what
     /// columns are required for this function to succeed, but in general I think it's messages joined with message keys
     /// joined with the post type (i.e posts) joined with authors. See `ViewDatabase.fillMessages` for a working
     /// example.
     /// - Parameters:
-    ///   - row: The SQLite row that should be used to make the KeyValue.
+    ///   - row: The SQLite row that should be used to make the Message.
     ///   - database: A database instance that will be used to fetch supplementary information.
     ///   - useNamespacedTables: A boolean that tells the initializer to include table names before some common column
     ///     names that appear in multiple tables like `name`.
@@ -47,7 +47,7 @@ extension KeyValue {
             msgAuthor = try row.get(db.colAuthor)
         }
 
-        guard let value = try Value(
+        guard let value = try MessageValue(
             row: row,
             db: db,
             useNamespacedTables: useNamespacedTables,
@@ -56,14 +56,14 @@ extension KeyValue {
             return nil
         }
 
-        var keyValue = KeyValue(
+        var message = Message(
             key: msgKey,
             value: value,
             timestamp: try row.get(db.colReceivedAt),
             offChain: try row.get(db.colOffChain)
         )
         let aboutName = useNamespacedTables ? db.abouts[db.colName] : db.colName
-        keyValue.metadata.author.about = About(
+        message.metadata.author.about = About(
             about: msgAuthor,
             name: try row.get(aboutName),
             description: try row.get(db.colDescr),
@@ -73,10 +73,10 @@ extension KeyValue {
             let numberOfReplies = try row.get(Expression<Int>("replies_count"))
             let replies = try row.get(Expression<String?>("replies"))
             let abouts = Set(replies?.split(separator: ";").map { About(about: String($0)) } ?? [])
-            keyValue.metadata.replies.count = numberOfReplies
-            keyValue.metadata.replies.abouts = abouts
+            message.metadata.replies.count = numberOfReplies
+            message.metadata.replies.abouts = abouts
         }
-        keyValue.metadata.isPrivate = try row.get(db.colDecrypted)
-        self = keyValue
+        message.metadata.isPrivate = try row.get(db.colDecrypted)
+        self = message
     }
 }

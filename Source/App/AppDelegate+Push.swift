@@ -76,7 +76,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// Transforms a report into a scheduled `UNNotificationRequest` that the human
     /// can interact with.
     func scheduleLocalNotification(_ report: Report) {
-        Bots.current.about(queue: .global(qos: .background), identity: report.keyValue.value.author) { (about, error) in
+        Bots.current.about(queue: .global(qos: .background), identity: report.message.author) { (about, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
@@ -96,7 +96,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     forKey: Text.Report.postReplied.text,
                     arguments: [nameToShow]
                 )
-                if let what = report.keyValue.value.content.post?.text {
+                if let what = report.message.content.post?.text {
                     content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .feedMentioned:
@@ -104,7 +104,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     forKey: Text.Report.feedMentioned.text,
                     arguments: [nameToShow]
                 )
-                if let what = report.keyValue.value.content.post?.text {
+                if let what = report.message.content.post?.text {
                     content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .messageLiked:
@@ -197,7 +197,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             reports.forEach { [weak self] report in
-                let notifyingIdentity = report.keyValue.value.author
+                let notifyingIdentity = report.message.author
                 let notifiedIdentity = report.authorIdentity
                 guard notifiedIdentity == currentIdentity, !blockedIdentities.contains(notifyingIdentity) else {
                     return
@@ -217,6 +217,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
     private func updateApplicationBadgeNumber() {
         let operation = CountUnreadNotificationsOperation()
-        AppController.shared.operationQueue.addOperation(operation)
+        AppController.shared.addOperation(operation)
     }
 }

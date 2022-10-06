@@ -56,7 +56,10 @@ class SendMissionOperation: AsynchronousOperation {
                 syncOperation.addDependency(joinPlanetaryOperation)
                 operations.append(joinPlanetaryOperation)
             }
-            operationQueue.addOperations(operations, waitUntilFinished: false)
+            
+            for operation in operations {
+                operationQueue.addOperation(operation)
+            }
             try await operationQueue.drain()
             
             Log.info("SendMissionOperation finished.")
@@ -89,7 +92,7 @@ class SendMissionOperation: AsynchronousOperation {
             
             // If we don't have enough peers, supplement with the Planetary pubs
             let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
-            if joinedPubs.count < minPeers && config.joinedPlanetarySystem {
+            if joinedPubs.count < 1 {
                 let systemPubs = Set(config.systemPubs).map { $0.address.multiserver }
                 let someSystemPubs = systemPubs.randomSample(UInt(minPeers - joinedPubs.count))
                 joinedPubs += someSystemPubs
