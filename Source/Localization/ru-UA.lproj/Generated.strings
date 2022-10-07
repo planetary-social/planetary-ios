@@ -44,7 +44,7 @@
 "Text.dontSendAnalytics" = "Don't send analytics at all";
 "Text.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Text.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
-"Text.post" = "Post";
+"Text.postAction" = "Post";
 "Text.preview" = "Preview";
 "Text.newPost" = "New Post";
 "Text.deletePost" = "Delete this post";
@@ -80,6 +80,8 @@
 "Text.shareThisMessage" = "Share This Message";
 "Text.shareThisProfileText" = "Find {{ who }} on Planetary at {{ link }}";
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
+"Text.viewSource" = "View source";
+"Text.messageSource" = "Message Source";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
 "Text.blockUser" = "Ignore this user";
@@ -270,9 +272,9 @@
 "FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Recent posts";
 "FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
-"FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Recent posts and follows (default)";
+"FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Recent posts and follows";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Shows posts and follow messages from the people you follow in the order they were posted.";
-"FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Recently active posts and follows";
+"FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Recently active posts and follows (default)";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Shows posts and follow messages from the people you follow. If a message receives a reply it will be pushed back up to the top of the feed.";
 "FeedAlgorithm.randomPostsAlgorithm" = "Random unread posts";
 "FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
