@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class AboutView: MessageView {
+class AboutView: MessageUIView {
 
     private let circleView: UIView = {
         let view = UIView.forAutoLayout()

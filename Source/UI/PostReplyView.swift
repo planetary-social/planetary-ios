@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /// Composite view of the PostCellView, a ReplyTextView, and a bottom separator.
-class PostReplyView: MessageView {
+class PostReplyView: MessageUIView {
 
     let headerView = ContactHeaderView()
 
@@ -144,7 +144,7 @@ extension PostReplyView {
     }
 }
 
-class RepliesView: MessageView {
+class RepliesView: MessageUIView {
 
     private let textFont = UIFont.systemFont(ofSize: 14, weight: .regular)
 

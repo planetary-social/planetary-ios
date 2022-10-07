@@ -30,7 +30,7 @@ class MessageTableViewDelegate: NSObject, UITableViewDelegate {
         self.pushViewController(for: message)
     }
 
-    // MARK: Configure MessageView.tapGesture
+    // MARK: Configure MessageUIView.tapGesture
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard let cell = cell as? MessageTableViewCell else { return }

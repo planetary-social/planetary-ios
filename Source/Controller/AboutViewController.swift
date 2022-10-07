@@ -459,7 +459,7 @@ class AboutViewController: ContentViewController {
     }
 }
 
-private class AboutPostView: MessageView {
+private class AboutPostView: MessageUIView {
 
     lazy var view = PostCellView()
 

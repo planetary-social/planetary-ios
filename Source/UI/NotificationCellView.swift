@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class NotificationCellView: MessageView {
+class NotificationCellView: MessageUIView {
 
     private let nameFont = UIFont.systemFont(ofSize: 15, weight: .semibold)
     private let actionFont = UIFont.systemFont(ofSize: 15, weight: .regular)
@@ -130,7 +130,7 @@ class NotificationCellView: MessageView {
         self.forceNeedsLayout()
     }
 
-    // TODO move to MessageView? or UIView?
+    // TODO move to MessageUIView? or UIView?
     private func forceNeedsLayout() {
         self.setNeedsLayout()
         self.layoutIfNeeded()

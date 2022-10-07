@@ -1,5 +1,5 @@
 //
-//  MessageView.swift
+//  MessageUIView.swift
 //  FBTT
 //
 //  Created by Christoph on 4/18/19.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class MessageView: UIView, MessageUpdateable {
+class MessageUIView: UIView, MessageUpdateable {
 
     /// Default tap gesture for any MessageView.  Subclasses
     /// can overload and assign to any UIView child.  A good
@@ -27,11 +27,11 @@ class MessageView: UIView, MessageUpdateable {
     func reset() {}
 }
 
-extension MessageView {
+extension MessageUIView {
 
-    /// Factory method to return a MessageView instance
+    /// Factory method to return a MessageUIView instance
     /// best suited to the specified `ContentType`.
-    static func `for`(_ type: ContentType) -> MessageView {
+    static func `for`(_ type: ContentType) -> MessageUIView {
         switch type {
         case .about:
             return AboutView()

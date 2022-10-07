@@ -31,6 +31,9 @@ protocol PaginatedMessageDataProxy {
 
 // StaticDataProxy only has a fixed set of messages from the start and cant prefetch
 class StaticDataProxy: PaginatedMessageDataProxy {
+    typealias Element = Message
+    typealias Index = Int
+    
     let kvs: Messages
     let count: Int
 
@@ -56,6 +59,30 @@ class StaticDataProxy: PaginatedMessageDataProxy {
 
     func prefetchUpTo(index: Int) { /* noop */ }
 }
+
+extension StaticDataProxy: RandomAccessCollection {
+    
+    var startIndex: Int {
+        return 0
+    }
+    
+    var endIndex: Int {
+        return count - 1
+    }
+    
+    func index(after i: Index) -> Index {
+        i + 1
+    }
+    
+    func index(before i: Index) -> Index {
+        i - 1
+    }
+    
+    subscript(position: Index) -> Message {
+        return messageBy(index: position)!
+    }
+}
+
 
 class PaginatedPrefetchDataProxy: PaginatedMessageDataProxy {
     private let backgroundQueue = DispatchQueue(label: "planetary.view.prefetches") // simple, serial queue
