@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Analytics
 import Logger
+import SwiftUI
 
 enum MainTab {
     case home, discover, notifications, hashtags, network
@@ -58,7 +59,7 @@ enum MainTab {
         case .home:
             return {
                 tabBar?.selectedViewController?.dismiss(animated: true)
-                let featureVC = tabBar?.homeFeatureViewController
+                let featureVC = tabBar?.oldHomeFeatureViewController
                 tabBar?.selectedViewController = featureVC
             }
         case .discover:
@@ -92,14 +93,16 @@ enum MainTab {
 class MainViewController: UITabBarController {
 
     var homeViewController: HomeViewController? {
-        self.homeFeatureViewController.viewControllers.first as? HomeViewController
+        self.oldHomeFeatureViewController.viewControllers.first as? HomeViewController
     }
 
-    let homeFeatureViewController = FeatureViewController(
+    let oldHomeFeatureViewController = FeatureViewController(
         rootViewController: HomeViewController(),
         tabBarItemImageName: "tab-icon-home"
     )
-
+    
+    @AssignedOnce var homeFeedViewController: UIViewController!
+    
     let notificationsFeatureViewController = FeatureViewController(
         rootViewController: NotificationsViewController(),
         tabBarItemImageName: "tab-icon-notifications"
@@ -124,14 +127,24 @@ class MainViewController: UITabBarController {
     private var topBorder: UIView?
 
     convenience init() {
+        let homeFeedViewController = UIViewController()
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 500, height: 500))
+        label.text = "new home feed"
+        homeFeedViewController.view.addSubview(label)
         self.init(nibName: nil, bundle: nil)
         self.delegate = self
         self.view.backgroundColor = .cardBackground
         self.tabBar.configureAppearance()
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
         setNotificationsTabBarIcon()
-        let controllers = [
-            self.homeFeatureViewController,
+        
+        let homeController = MessageListController(bot: Bots.current)
+        let homeView = MessageListView(viewModel: homeController)
+        self.homeFeedViewController = UIHostingController(rootView: homeView)
+        
+        let controllers: [UIViewController] = [
+            self.homeFeedViewController,
+            self.oldHomeFeatureViewController,
             self.everyoneViewController,
             self.notificationsFeatureViewController,
             self.channelsFeatureViewController,

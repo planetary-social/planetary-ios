@@ -126,7 +126,7 @@ enum HelpDrawerCoordinator {
         case .home:
             return {
                 viewController.dismiss(animated: true) {
-                    let featureVC = tabBar?.homeFeatureViewController
+                    let featureVC = tabBar?.oldHomeFeatureViewController
                     let helpHost = featureVC?.viewControllers.first as? HomeViewController
                     tabBar?.selectedViewController = featureVC
                     // Yield so we don't end up presenting on a view that hasn't loaded yet.

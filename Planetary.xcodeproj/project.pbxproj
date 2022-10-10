@@ -1038,6 +1038,10 @@
 		C9A2DE3527D0038700EAFA73 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62822444D9D00C57A4B /* UIViewController+Alert.swift */; };
 		C9A2DE3627D003EF00EAFA73 /* UIColor+Verse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A6342248377900C57A4B /* UIColor+Verse.swift */; };
 		C9B5BBFD285A21CF00AEA9B9 /* BanListAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5A98249CDCF900469977 /* BanListAPIService.swift */; };
+		C9BF622328F4685C00FD69A3 /* AssignedOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BF622228F4685C00FD69A3 /* AssignedOnce.swift */; };
+		C9BF622428F4685C00FD69A3 /* AssignedOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BF622228F4685C00FD69A3 /* AssignedOnce.swift */; };
+		C9BF622728F4738100FD69A3 /* MessageListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BF622628F4738100FD69A3 /* MessageListController.swift */; };
+		C9BF622828F4738100FD69A3 /* MessageListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9BF622628F4738100FD69A3 /* MessageListController.swift */; };
 		C9C3787627C5956200238B58 /* PeerConnectionAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */; };
 		C9C3787827C6881000238B58 /* ConnectedPeerListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787727C6881000238B58 /* ConnectedPeerListCoordinator.swift */; };
 		C9C3787C27C68DE900238B58 /* ConnectedPeersCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3787B27C68DE800238B58 /* ConnectedPeersCoordinatorTests.swift */; };
@@ -1725,6 +1729,8 @@
 		C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Async.swift"; sourceTree = "<group>"; };
 		C9A2DE2C27CFD61800EAFA73 /* ConnectedPeerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerCell.swift; sourceTree = "<group>"; };
 		C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeerConnectionInfo+Preview.swift"; sourceTree = "<group>"; };
+		C9BF622228F4685C00FD69A3 /* AssignedOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignedOnce.swift; sourceTree = "<group>"; };
+		C9BF622628F4738100FD69A3 /* MessageListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListController.swift; sourceTree = "<group>"; };
 		C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnectionAnimationView.swift; sourceTree = "<group>"; };
 		C9C3787727C6881000238B58 /* ConnectedPeerListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListCoordinator.swift; sourceTree = "<group>"; };
 		C9C3787B27C68DE800238B58 /* ConnectedPeersCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeersCoordinatorTests.swift; sourceTree = "<group>"; };
@@ -2153,6 +2159,7 @@
 				2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */,
 				C9412AED28AEE9F400F791A7 /* RoomAliasCoordinator.swift */,
 				5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */,
+				C9BF622628F4738100FD69A3 /* MessageListController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2546,6 +2553,7 @@
 				0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */,
 				0A4870F62492BF6700BCD063 /* AsynchronousBlockOperation.swift */,
 				C93F6086285D234900A7D269 /* Either.swift */,
+				C9BF622228F4685C00FD69A3 /* AssignedOnce.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -4219,6 +4227,7 @@
 				C9724B6A2809D71D000EBCCD /* ImageGalleryView.swift in Sources */,
 				C9724BBC2809ECBB000EBCCD /* UIViewController+Report.swift in Sources */,
 				C9724B6D2809E72E000EBCCD /* MessageUpdateable.swift in Sources */,
+				C9BF622428F4685C00FD69A3 /* AssignedOnce.swift in Sources */,
 				C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */,
 				0A38800F2475ACF000777843 /* PubAPI.swift in Sources */,
 				533EDBE92385F7E7008B3565 /* Cache.swift in Sources */,
@@ -4316,6 +4325,7 @@
 				C9724B702809E77A000EBCCD /* AvatarStackView.swift in Sources */,
 				C9724BA02809EAB8000EBCCD /* UnfollowOperation.swift in Sources */,
 				C9724B5B2809D614000EBCCD /* NewPostViewController.swift in Sources */,
+				C9BF622828F4738100FD69A3 /* MessageListController.swift in Sources */,
 				C9724B422809D4E9000EBCCD /* Layout+FillSuperview.swift in Sources */,
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				C9724BEF2809EF45000EBCCD /* UIViewController+TopViewController.swift in Sources */,
@@ -4516,6 +4526,7 @@
 				C9FBE36C288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */,
 				C9421EAD28889ECB00A4C86D /* Text+Gradient.swift in Sources */,
 				539FD4C522C3D6CC005A4DF2 /* String+Whitespace.swift in Sources */,
+				C9BF622328F4685C00FD69A3 /* AssignedOnce.swift in Sources */,
 				531B92BB22CD1383005D5255 /* NSMutableAttributedString+Attributes.swift in Sources */,
 				5369D2AA220BAFC600A65622 /* Messages.swift in Sources */,
 				5B67FFDD2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift in Sources */,
@@ -4654,6 +4665,7 @@
 				23EF5A99249CDCF900469977 /* BanListAPIService.swift in Sources */,
 				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				5BAD727D2892C4C5001494B4 /* NoHopFeedAlgorithm.swift in Sources */,
+				C9BF622728F4738100FD69A3 /* MessageListController.swift in Sources */,
 				C997F3E028B1D86D00DAC117 /* AliasCell.swift in Sources */,
 				0AF9E0A42465D7D000910575 /* ThreadReplyView.swift in Sources */,
 				0A64A83C247353CE009A5EBF /* VersePushAPI.swift in Sources */,

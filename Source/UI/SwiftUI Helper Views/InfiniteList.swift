@@ -8,45 +8,46 @@
 
 import SwiftUI
 
+protocol InfiniteList: ObservableObject where CachedCollection.Element: Hashable, CachedCollection.Element: Identifiable {
+    associatedtype CachedCollection: RandomAccessCollection
+    var cache: CachedCollection { get }
+    var isLoading: Bool { get set }
+    func loadMore()
+}
+
 /// https://swiftuirecipes.com/blog/infinite-scroll-list-in-swiftui
-struct InfiniteList<Data, Content>: View where Data: RandomAccessCollection, Data.Element: Hashable, Content: View {
-    @Binding var data: Data
-    @Binding var isLoading: Bool
-    let loadMore: () -> Void
-    let content: (Data.Element) -> Content
+struct InfiniteListView<DataSource, Content>: View where DataSource: InfiniteList, Content: View {
+    
+    @ObservedObject var dataSource: DataSource
+    let content: (DataSource.CachedCollection.Element) -> Content
     
     init(
-        data: Binding<Data>,
-        isLoading: Binding<Bool>,
-        loadMore: @escaping () -> Void,
-        @ViewBuilder content: @escaping (Data.Element) -> Content
+        dataSource: DataSource,
+        @ViewBuilder content: @escaping (DataSource.CachedCollection.Element) -> Content
     ) {
-        _data = data
-        _isLoading = isLoading
-        self.loadMore = loadMore
+        self.dataSource = dataSource
         self.content = content
     }
     
     var body: some View {
         ScrollView {
             LazyVStack {
-                ForEach(data, id: \.self) { item in
+                ForEach(dataSource.cache, id: \.self) { item in
                     content(item)
                         .onAppear {
-                            if item == data.last { 
-                                loadMore()
+                            if item == dataSource.cache.last {
+                                dataSource.loadMore()
                             }
                         }
                 }
-                if isLoading {
-                    HStack {
-                        
-                    }.overlay(
-                        ProgressView()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    )
+                if dataSource.isLoading {
+                    HStack {}
+                        .overlay(
+                            ProgressView()
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        )
                 }
-            }.onAppear(perform: loadMore)
+            }.onAppear(perform: dataSource.loadMore)
         }
     }
 }

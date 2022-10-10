@@ -9,6 +9,7 @@ typealias PrefetchCompletion = (Int, Message) -> Void
 
 /// An object that serves `Message`s. This proxy keeps a cache of `Message`s that are sometimes pre-fetched from a
 /// slower database.
+// TODO: Probably need to make this Sendable
 protocol PaginatedMessageDataProxy {
     /// The total number of messages in the view
     /// TODO: needs to be invalidated by insertLoop (maybe through notification center?)
@@ -27,6 +28,20 @@ protocol PaginatedMessageDataProxy {
 
     // notify the proxy to fetch more messages (up to and including index)
     func prefetchUpTo(index: Int)
+}
+
+extension PaginatedMessageDataProxy {
+    func messageBy(index: Int) async -> Message {
+        await withCheckedContinuation { continuation in
+            let cachedMessage = messageBy(index: index) { _, message in
+                continuation.resume(returning: message)
+            }
+            
+            if let cachedMessage {
+                continuation.resume(returning: cachedMessage)
+            }
+        }
+    }
 }
 
 // StaticDataProxy only has a fixed set of messages from the start and cant prefetch
