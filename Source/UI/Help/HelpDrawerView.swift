@@ -134,7 +134,7 @@ struct HelpDrawerView: View {
                                 )
                                 
                                 // Title
-                                SwiftUI.Text(helpTitle)
+                                Text(helpTitle)
                                     .multilineTextAlignment(.leading)
                                     .foregroundColor(Color("mainText"))
                                     .font(.title.weight(.medium))
@@ -166,7 +166,7 @@ struct HelpDrawerView: View {
                             .opacity(previousTipAction == nil ? 0.3 : 1.0)
                             
                             Spacer()
-                            SwiftUI.Text(
+                            Text(
                                 Localized.Help.indexOfTip.text(
                                     [
                                         "tipIndex": String(tipIndex),

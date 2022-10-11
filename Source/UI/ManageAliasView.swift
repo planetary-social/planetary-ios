@@ -55,7 +55,7 @@ struct LoadingOverlay: View {
             if let loadingMessage = message {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(loadingMessage)
+                    Text(loadingMessage)
                         .foregroundColor(Color("mainText"))
                 }
                 .padding(16)
@@ -102,7 +102,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                             viewModel.open(alias)
                         } label: {
                             HStack {
-                                SwiftUI.Text(alias.string.replacingOccurrences(of: "https://", with: ""))
+                                Text(alias.string.replacingOccurrences(of: "https://", with: ""))
                                 Spacer()
                                 Button {
                                     UIPasteboard.general.setValue(
@@ -142,7 +142,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
             // Error alert
             Alert(
                 title: Localized.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .refreshable {

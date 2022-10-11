@@ -62,7 +62,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
             if showProgress, let loadingMessage = viewModel.loadingMessage {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(loadingMessage)
+                    Text(loadingMessage)
                         .foregroundColor(Color("mainText"))
                 }
                 .padding(16)
@@ -84,7 +84,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         Button {
                             viewModel.open(room)
                         } label: {
-                            SwiftUI.Text(room.address.host)
+                            Text(room.address.host)
                         }
                         .foregroundColor(Color("mainText"))
                         .listRowBackground(Color("cardBackground"))
@@ -138,7 +138,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
             // Error alert
             Alert(
                 title: Localized.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .refreshable {

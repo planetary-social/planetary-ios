@@ -1022,6 +1022,8 @@
 		C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
 		C9A1632628AE88DC00ACDCC5 /* AddAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */; };
 		C9A1632728AE88DC00ACDCC5 /* AddAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */; };
+		C9A2894528F5C97200B347B7 /* SwiftUI+Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2894428F5C97200B347B7 /* SwiftUI+Localized.swift */; };
+		C9A2894628F5C97200B347B7 /* SwiftUI+Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2894428F5C97200B347B7 /* SwiftUI+Localized.swift */; };
 		C9A2DE2927CFCB5F00EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
 		C9A2DE2A27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
 		C9A2DE2B27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */; };
@@ -1713,6 +1715,7 @@
 		C997F3DF28B1D86D00DAC117 /* AliasCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliasCell.swift; sourceTree = "<group>"; };
 		C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAliasView.swift; sourceTree = "<group>"; };
 		C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAliasView.swift; sourceTree = "<group>"; };
+		C9A2894428F5C97200B347B7 /* SwiftUI+Localized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUI+Localized.swift"; sourceTree = "<group>"; };
 		C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Async.swift"; sourceTree = "<group>"; };
 		C9A2DE2C27CFD61800EAFA73 /* ConnectedPeerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerCell.swift; sourceTree = "<group>"; };
 		C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeerConnectionInfo+Preview.swift"; sourceTree = "<group>"; };
@@ -2414,6 +2417,7 @@
 				C9F1C85427C9875A005A3228 /* Color+Hex.swift */,
 				C9EADA8827D178D5002066D9 /* View+RoundedCorner.swift */,
 				C920A3A5289B1525009C83F3 /* Array+Chunked.swift */,
+				C9A2894428F5C97200B347B7 /* SwiftUI+Localized.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -4240,6 +4244,7 @@
 				C9724BA62809EB09000EBCCD /* DebugViewController.swift in Sources */,
 				C9724BF12809EFBE000EBCCD /* EditValueView.swift in Sources */,
 				53C2B1362295ACFE0018D0A8 /* AppConfiguration+Keychain.swift in Sources */,
+				C9A2894628F5C97200B347B7 /* SwiftUI+Localized.swift in Sources */,
 				C9724B162809D2F3000EBCCD /* SettingsViewController.swift in Sources */,
 				C9724BF02809EF4D000EBCCD /* UIView+Superview.swift in Sources */,
 				531A8A4A21FA3C6400D5C8C0 /* Message.swift in Sources */,
@@ -4675,6 +4680,7 @@
 				53EAB39A239B106900DF5530 /* CachesViewController.swift in Sources */,
 				53B634B6221627CC00400403 /* UIView+AutoLayout.swift in Sources */,
 				53BD748823235A450060E47E /* Post+Blob.swift in Sources */,
+				C9A2894528F5C97200B347B7 /* SwiftUI+Localized.swift in Sources */,
 				23C7443E2200B12000FB554A /* Mention.swift in Sources */,
 				0AF9E0AA246B23C700910575 /* SuspendOperation.swift in Sources */,
 				5319F06B234EDC8000F4D3C1 /* UIView+HeaderView.swift in Sources */,

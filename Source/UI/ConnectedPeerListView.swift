@@ -33,7 +33,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                 
                 // Online Peers count
                 let count = viewModel.connectedPeersCount.map { String($0) } ?? "~"
-                SwiftUI.Text(count)
+                Text(count)
                     .font(.body)
                     .foregroundColor(Color("defaultTint"))
                     .scaledToFit()

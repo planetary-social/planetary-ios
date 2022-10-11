@@ -26,7 +26,7 @@ struct FancySectionTitle: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(maxHeight: .infinity)
                 .fixedSize(horizontal: true, vertical: false)
-            SwiftUI.Text(text)
+            Text(text)
                 .font(.subheadline.smallCaps())
                 .foregroundLinearGradient(gradient)
                 .frame(maxHeight: .infinity)

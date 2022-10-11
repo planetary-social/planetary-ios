@@ -25,7 +25,7 @@ struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel 
             if viewModel.progress < 0.995 {
                 HStack(alignment: .bottom, spacing: 3) {
                     Spacer()
-                    SwiftUI.Text(
+                    Text(
                         String(
                             format: "%.0f%% \(Localized.percentComplete.text)",
                             viewModel.progress * 100

@@ -32,7 +32,7 @@ struct ConnectedPeerCell: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                 )
-            SwiftUI.Text(peer.name ?? peer.id)
+            Text(peer.name ?? peer.id)
                 .font(.callout)
                 .foregroundColor(Color("mainText"))
                 .lineLimit(1)

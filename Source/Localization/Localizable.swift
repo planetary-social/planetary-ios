@@ -12,7 +12,7 @@ protocol Localizable {
     static var namespace: String { get }
     
     /// Creates a SwiftUI Text view for this text.
-    var view: SwiftUI.Text { get }
+    var view: Text { get }
 
     static func exportForStringsFile() -> String
 }
@@ -78,12 +78,12 @@ extension Localizable {
         String(describing: self)
     }
     
-    var view: SwiftUI.Text {
-        SwiftUI.Text(text)
+    var view: Text {
+        Text(text)
     }
     
-    func view(_ arguments: [String: String]) -> SwiftUI.Text {
-        SwiftUI.Text(text(arguments))
+    func view(_ arguments: [String: String]) -> Text {
+        Text(text(arguments))
     }
 
     var key: String {
