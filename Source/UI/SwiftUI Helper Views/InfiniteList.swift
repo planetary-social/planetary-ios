@@ -30,10 +30,13 @@ struct InfiniteListView<DataSource, Content>: View where DataSource: InfiniteLis
     }
     
     var body: some View {
-        ScrollView {
-            LazyVStack {
+//        ScrollView {
+        if #available(iOS 16.0, *) {
+            List {
                 ForEach(dataSource.cache, id: \.self) { item in
                     content(item)
+                        .listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 10))
+                        .listRowSeparator(.hidden)
                         .onAppear {
                             if item == dataSource.cache.last {
                                 dataSource.loadMore()
@@ -42,12 +45,20 @@ struct InfiniteListView<DataSource, Content>: View where DataSource: InfiniteLis
                 }
                 if dataSource.isLoading {
                     HStack {}
+                        .listRowSeparator(.hidden)
                         .overlay(
                             ProgressView()
                                 .frame(maxWidth: .infinity, alignment: .center)
                         )
                 }
-            }.onAppear(perform: dataSource.loadMore)
+            }
+            .onAppear(perform: dataSource.loadMore)
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#1f172f"))
+        } else {
+            EmptyView()
+            // Fallback on earlier versions
         }
+//        }
     }
 }
