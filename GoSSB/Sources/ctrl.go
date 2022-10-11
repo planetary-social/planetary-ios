@@ -3,6 +3,10 @@ package main
 import "C"
 import (
 	"context"
+	"github.com/planetary-social/scuttlego/service/domain/network"
+	"github.com/planetary-social/scuttlego/service/domain/refs"
+	"github.com/planetary-social/scuttlego/service/domain/rooms/aliases"
+	multiserver "go.mindeco.de/ssb-multiserver"
 	"time"
 
 	"github.com/pkg/errors"
@@ -427,55 +431,45 @@ const (
 )
 
 //export ssbRoomsAliasRegister
-func ssbRoomsAliasRegister(address, alias string) C.ssbRoomsAliasRegisterReturn_t {
-	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	//defer logPanic()
-	//
-	//var retErr error
-	//defer func() {
-	//	if retErr != nil {
-	//		level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
-	//	}
-	//}()
-	//
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot == nil {
-	//	retErr = ErrNotInitialized
-	//	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	//}
-	//
-	//ctx, cancel := context.WithCancel(longCtx)
-	//defer cancel()
-	//
-	//opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
-	//
-	//netAddress, err := multiserver.ParseNetAddress([]byte(address))
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "could not parse the address")
-	//	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	//}
-	//
-	//inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "failed to create a tcp client")
-	//	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	//}
-	//defer inviteClient.Close()
-	//
-	//registration := rooms.Registration{
-	//	Alias:  alias,
-	//	UserID: sbot.KeyPair.ID(),
-	//	RoomID: netAddress.Ref,
-	//}
-	//
-	//signatureString := base64.StdEncoding.EncodeToString(registration.Sign(sbot.KeyPair.Secret()).Signature) + ".sig.ed25519"
-	//
-	//params := []interface{}{
-	//	alias,
-	//	signatureString,
-	//}
-	//
+func ssbRoomsAliasRegister(addressString, aliasString string) C.ssbRoomsAliasRegisterReturn_t {
+	var err error
+	defer logError("ssbRoomsAliasRegister", &err)
+
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	addr, identity, err := multiserverAddressToAddressAndRef(addressString)
+	if err != nil {
+		err = errors.Wrap(err, "error parsing the address")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	alias, err := aliases.NewAlias(aliasString)
+	if err != nil {
+		err = errors.Wrap(err, "could not create an alias")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	cmd, err := commands.NewRoomsAliasRegister(identity, addr, alias)
+	if err != nil {
+		err = errors.Wrap(err, "could not create the command")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second)
+	defer cancel()
+
+	aliasURL, err := service.App.Commands.RoomsAliasRegister.Handle(ctx, cmd)
+	if err != nil {
+		err = errors.Wrap(err, "error calling the handler")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	// todo alias already registered
+
 	//var ret string
 	//err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "registerAlias"}, params...)
 	//if err != nil {
@@ -486,11 +480,50 @@ func ssbRoomsAliasRegister(address, alias string) C.ssbRoomsAliasRegisterReturn_
 	//	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	//}
 	//
-	//return C.ssbRoomsAliasRegisterReturn_t{alias: C.CString(ret)}
+
+	return C.ssbRoomsAliasRegisterReturn_t{alias: C.CString(aliasURL.String())}
 }
 
 //export ssbRoomsAliasRevoke
-func ssbRoomsAliasRevoke(address, alias string) bool {
+func ssbRoomsAliasRevoke(addressString, aliasString string) bool {
+	var err error
+	defer logError("ssbRoomsAliasRevoke", &err)
+
+	//service, err := node.Get()
+	//if err != nil {
+	//	err = errors.Wrap(err, "could not get the node")
+	//	return false
+	//}
+	//
+	//addr, identity, err := multiserverAddressToAddressAndRef(addressString)
+	//if err != nil {
+	//	err = errors.Wrap(err, "error parsing the address")
+	//	return false
+	//}
+	//
+	//alias, err := aliases.NewAlias(aliasString)
+	//if err != nil {
+	//	err = errors.Wrap(err, "could not create an alias")
+	//	return false
+	//}
+	//
+	//cmd, err := commands.NewRoomsAliasRevoke(identity, addr, alias)
+	//if err != nil {
+	//	err = errors.Wrap(err, "could not create the command")
+	//	return false
+	//}
+	//
+	//ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second)
+	//defer cancel()
+
+	//r := service.App.Commands.RoomsAliasRegister.Handle(ctx, cmd)
+	//if err != nil {
+	//	err = errors.Wrap(err, "error calling the handler")
+	//	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	//}
+
+	// todo command is not exposed
+
 	return false
 	//defer logPanic()
 	//
@@ -581,4 +614,20 @@ func ssbRoomsListAliases(address string) *C.char {
 	//}
 	//
 	//return C.CString(ret)
+}
+
+func multiserverAddressToAddressAndRef(multiserverAddress string) (network.Address, refs.Identity, error) {
+	netAddress, err := multiserver.ParseNetAddress([]byte(multiserverAddress))
+	if err != nil {
+		return network.Address{}, refs.Identity{}, errors.Wrap(err, "could not parse the address")
+	}
+
+	addr := network.NewAddress(netAddress.Addr.String())
+
+	identity, err := refs.NewIdentity(netAddress.Ref.String())
+	if err != nil {
+		return network.Address{}, refs.Identity{}, errors.Wrap(err, "error creating an identity ref")
+	}
+
+	return addr, identity, nil
 }
