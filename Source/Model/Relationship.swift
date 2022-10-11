@@ -48,7 +48,7 @@ class Relationship {
         }
 
         group.enter()
-        Bots.current.blocks(identity: self.identity) { contacts, _ in
+        Bots.current.blocks(identity: self.identity, queue: .main) { contacts, _ in
             self.isBlocking = contacts.contains(where: { $0 == self.other })
             group.leave()
         }

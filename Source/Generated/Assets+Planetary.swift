@@ -40,6 +40,12 @@ extension Color {
        static let textInputBackground = Color("textInputBackground", bundle: Bundle.current)
        static let textInputBorder = Color("textInputBorder", bundle: Bundle.current)
        static let unselectedTab = Color("unselectedTab", bundle: Bundle.current)
+       static let appBg = Color("app-bg", bundle: Bundle.current)
+       static let hashtagBg = Color("hashtag-bg", bundle: Bundle.current)
+       static let primaryTxt = Color("primary-txt", bundle: Bundle.current)
+       static let profileBgBottom = Color("profile-bg-bottom", bundle: Bundle.current)
+       static let profileBgTop = Color("profile-bg-top", bundle: Bundle.current)
+       static let secondaryTxt = Color("secondary-txt", bundle: Bundle.current)
 }
 
 extension UIColor {
@@ -76,6 +82,12 @@ extension UIColor {
        static let textInputBackground = UIColor(named: "textInputBackground", in: Bundle.current, compatibleWith: nil)!
        static let textInputBorder = UIColor(named: "textInputBorder", in: Bundle.current, compatibleWith: nil)!
        static let unselectedTab = UIColor(named: "unselectedTab", in: Bundle.current, compatibleWith: nil)!
+       static let appBg = UIColor(named: "app-bg", in: Bundle.current, compatibleWith: nil)!
+       static let hashtagBg = UIColor(named: "hashtag-bg", in: Bundle.current, compatibleWith: nil)!
+       static let primaryTxt = UIColor(named: "primary-txt", in: Bundle.current, compatibleWith: nil)!
+       static let profileBgBottom = UIColor(named: "profile-bg-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let profileBgTop = UIColor(named: "profile-bg-top", in: Bundle.current, compatibleWith: nil)!
+       static let secondaryTxt = UIColor(named: "secondary-txt", in: Bundle.current, compatibleWith: nil)!
 }
 
 extension Image {

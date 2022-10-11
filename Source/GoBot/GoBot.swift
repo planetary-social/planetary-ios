@@ -339,6 +339,21 @@ class GoBot: Bot {
             }
         }
     }
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion) {
+        userInitiatedQueue.async {
+            do {
+                let pubs = try self.database.getJoinedPubs(identity: identity)
+                queue.async {
+                    completion(.success(pubs))
+                }
+            } catch let error {
+                queue.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
     
     func joinedRooms() async throws -> [Room] {
         let task = Task.detached(priority: .userInitiated) {
@@ -1264,15 +1279,15 @@ class GoBot: Bot {
     
     // MARK: Blocks & Bans
     
-    func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
+    func blocks(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let identities = try self.database.getBlocks(feed: identity)
-                DispatchQueue.main.async {
+                queue.async {
                     completion(identities, nil)
                 }
             } catch {
-                DispatchQueue.main.async {
+                queue.async {
                     completion([], error)
                 }
             }

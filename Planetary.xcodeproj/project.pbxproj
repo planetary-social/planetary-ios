@@ -623,6 +623,19 @@
 		5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */; };
 		5B67FFDD2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */; };
 		5B67FFDE2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */; };
+		5B7AB66528DE3C19007DCCF1 /* IdentityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */; };
+		5B7AB66628DE3C19007DCCF1 /* IdentityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */; };
+		5B7AB66A28E4B14A007DCCF1 /* Development Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B7AB66928E4B14A007DCCF1 /* Development Assets.xcassets */; };
+		5B7AB66D28E733BC007DCCF1 /* IdentityCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB66C28E733BC007DCCF1 /* IdentityCoordinator.swift */; };
+		5B7AB66F28E74692007DCCF1 /* ExtendedSocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB66E28E74692007DCCF1 /* ExtendedSocialStats.swift */; };
+		5B7AB67528ECAA9B007DCCF1 /* IdentityHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB67428ECAA9B007DCCF1 /* IdentityHeaderView.swift */; };
+		5B7AB67628ECAA9B007DCCF1 /* IdentityHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB67428ECAA9B007DCCF1 /* IdentityHeaderView.swift */; };
+		5B7AB67A28F0926B007DCCF1 /* String+LoremIpsum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB67928F0926B007DCCF1 /* String+LoremIpsum.swift */; };
+		5B7AB67B28F0926B007DCCF1 /* String+LoremIpsum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB67928F0926B007DCCF1 /* String+LoremIpsum.swift */; };
+		5B7AB67F28F46EB1007DCCF1 /* SocialStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB67E28F46EB1007DCCF1 /* SocialStatsView.swift */; };
+		5B7AB68028F46EB1007DCCF1 /* SocialStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB67E28F46EB1007DCCF1 /* SocialStatsView.swift */; };
+		5B7AB68228F4946D007DCCF1 /* HashtagSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */; };
+		5B7AB68328F4946D007DCCF1 /* HashtagSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */; };
 		5B8F2F5328AEA24F005EE536 /* OneHopFeedAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */; };
 		5B8F2F5528B044EA005EE536 /* NoHopFeedAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD727C2892C4C5001494B4 /* NoHopFeedAlgorithm.swift */; };
 		5B8F2F5628B044EE005EE536 /* OneHopFeedAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */; };
@@ -1603,6 +1616,14 @@
 		5B373837288B09A30017756B /* ExtendedAboutCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutCellView.swift; sourceTree = "<group>"; };
 		5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfRecentItemsOperation.swift; sourceTree = "<group>"; };
 		5B6C333C2832D512001F10D6 /* swiftlint_diffonly.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = swiftlint_diffonly.sh; sourceTree = "<group>"; };
+		5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityView.swift; sourceTree = "<group>"; };
+		5B7AB66928E4B14A007DCCF1 /* Development Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Development Assets.xcassets"; sourceTree = "<group>"; };
+		5B7AB66C28E733BC007DCCF1 /* IdentityCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityCoordinator.swift; sourceTree = "<group>"; };
+		5B7AB66E28E74692007DCCF1 /* ExtendedSocialStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedSocialStats.swift; sourceTree = "<group>"; };
+		5B7AB67428ECAA9B007DCCF1 /* IdentityHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityHeaderView.swift; sourceTree = "<group>"; };
+		5B7AB67928F0926B007DCCF1 /* String+LoremIpsum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+LoremIpsum.swift"; sourceTree = "<group>"; };
+		5B7AB67E28F46EB1007DCCF1 /* SocialStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialStatsView.swift; sourceTree = "<group>"; };
+		5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagSliderView.swift; sourceTree = "<group>"; };
 		5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneHopFeedAlgorithm.swift; sourceTree = "<group>"; };
 		5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategyTests.swift; sourceTree = "<group>"; };
 		5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategy.swift; sourceTree = "<group>"; };
@@ -2153,6 +2174,7 @@
 				2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */,
 				C9412AED28AEE9F400F791A7 /* RoomAliasCoordinator.swift */,
 				5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */,
+				5B7AB66C28E733BC007DCCF1 /* IdentityCoordinator.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2314,6 +2336,7 @@
 				5344D83A21C4649A00704A34 /* Info.plist */,
 				5344D83721C4649A00704A34 /* LaunchScreen.storyboard */,
 				530816A721C46E68005C48ED /* Settings.bundle */,
+				5B7AB66928E4B14A007DCCF1 /* Development Assets.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2453,6 +2476,7 @@
 		5396A63622483B7900C57A4B /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				5B7AB67D28F46E90007DCCF1 /* About */,
 				8DE093D6234651AD009E505D /* Buttons */,
 				C923DBAE288057E900569AAB /* Help */,
 				53631EEB23A87169009C6999 /* Message */,
@@ -2509,6 +2533,8 @@
 				C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */,
 				5B1FF5E128D8A67C008F3A85 /* RawMessageView.swift */,
 				5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */,
+				5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */,
+				5B7AB67428ECAA9B007DCCF1 /* IdentityHeaderView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -2619,6 +2645,7 @@
 				C9421EAC28889ECB00A4C86D /* Text+Gradient.swift */,
 				C9421EB32888A0EF00A4C86D /* String+Substring.swift */,
 				C9421EB52888A19200A4C86D /* LinearGradient+Planetary.swift */,
+				5B7AB67928F0926B007DCCF1 /* String+LoremIpsum.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2691,8 +2718,18 @@
 				C9C3787E27C691EA00238B58 /* PeerConnectionInfo.swift */,
 				5BC3DE6028299CB900F6A363 /* SocialStats.swift */,
 				C969F0DE2899CED100081615 /* Room.swift */,
+				5B7AB66E28E74692007DCCF1 /* ExtendedSocialStats.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		5B7AB67D28F46E90007DCCF1 /* About */ = {
+			isa = PBXGroup;
+			children = (
+				5B7AB67E28F46EB1007DCCF1 /* SocialStatsView.swift */,
+				5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */,
+			);
+			path = About;
 			sourceTree = "<group>";
 		};
 		5B92E278284A7A70003127F2 /* HashtagListStrategy */ = {
@@ -3637,6 +3674,7 @@
 				0A30F86F2589253E002B281D /* Generated.strings in Resources */,
 				C9F0B68327E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B68127E2728800BE2F0E /* Generated.strings in Resources */,
+				5B7AB66A28E4B14A007DCCF1 /* Development Assets.xcassets in Resources */,
 				5344D83621C4649A00704A34 /* Assets.xcassets in Resources */,
 				C9F0B67B27E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B6A327E2728800BE2F0E /* Generated.strings in Resources */,
@@ -4014,6 +4052,7 @@
 				C9724B442809D4FC000EBCCD /* LoadBundleOperation.swift in Sources */,
 				C9724B0E2809D1BE000EBCCD /* Layout.swift in Sources */,
 				53B4F5FD22B8732800027C6A /* NSAttributedString+Markdownable.swift in Sources */,
+				5B7AB67628ECAA9B007DCCF1 /* IdentityHeaderView.swift in Sources */,
 				C9D1EACA2832A0230092E098 /* AttributedStringTests.swift in Sources */,
 				5B2A4F9928205C8900A5BE48 /* PostsAndContactsAlgorithm.swift in Sources */,
 				5369D2AF220CF39E00A65622 /* Data+JSON.swift in Sources */,
@@ -4154,6 +4193,7 @@
 				C9724BD62809EE12000EBCCD /* ConnectedPeerListView.swift in Sources */,
 				2358696224A0FB9100F4FC1D /* URLRequest+APIHeaders.swift in Sources */,
 				53211CEF228522A0007FB785 /* Bots.swift in Sources */,
+				5B7AB66628DE3C19007DCCF1 /* IdentityView.swift in Sources */,
 				C9724B882809E967000EBCCD /* PostTextCache.swift in Sources */,
 				C9724B672809D6F4000EBCCD /* PostReplyPaginatedDelegate+DataSource.swift in Sources */,
 				53E29CCB22D292A3008A2CB1 /* String+Whitespace.swift in Sources */,
@@ -4254,6 +4294,7 @@
 				C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */,
 				C9724B222809D403000EBCCD /* Layout+Center.swift in Sources */,
 				53CF2A4D22026B1700F0A2CC /* ImageMetadata.swift in Sources */,
+				5B7AB67B28F0926B007DCCF1 /* String+LoremIpsum.swift in Sources */,
 				C9724B6A2809D71D000EBCCD /* ImageGalleryView.swift in Sources */,
 				C9724BBC2809ECBB000EBCCD /* UIViewController+Report.swift in Sources */,
 				C9724B6D2809E72E000EBCCD /* MessageUpdateable.swift in Sources */,
@@ -4278,12 +4319,14 @@
 				C9724B8C2809E985000EBCCD /* AboutsMenu.swift in Sources */,
 				C9724BA32809EACD000EBCCD /* IconButton.swift in Sources */,
 				C9724BAD2809EBAE000EBCCD /* RelationshipButton.swift in Sources */,
+				5B7AB68328F4946D007DCCF1 /* HashtagSliderView.swift in Sources */,
 				C9A2DE2B27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */,
 				2356500D2369C6CB00C3DBC0 /* DropContentRequest.swift in Sources */,
 				C9724B282809D435000EBCCD /* UIScrollView+Default.swift in Sources */,
 				C9D1EAD12832A0230092E098 /* MultiserverAddressTests.swift in Sources */,
 				C9724B412809D4E2000EBCCD /* TitledToggle.swift in Sources */,
 				236BCB7222689406006DF05B /* Address.swift in Sources */,
+				5B7AB68028F46EB1007DCCF1 /* SocialStatsView.swift in Sources */,
 				C9D1EAD02832A0230092E098 /* MarkdownTests.swift in Sources */,
 				53C2B13D2295BCC10018D0A8 /* Bundle+Version.swift in Sources */,
 				C9724BCE2809EDD4000EBCCD /* AppDelegate+Repair.swift in Sources */,
@@ -4722,6 +4765,7 @@
 				C9EDA3D727BC16E8001A6CD8 /* Environment.swift in Sources */,
 				8D8105822346A9740029C72E /* Relationship.swift in Sources */,
 				0AD8D631240EC38600D87A95 /* ManagePubsViewController.swift in Sources */,
+				5B7AB66D28E733BC007DCCF1 /* IdentityCoordinator.swift in Sources */,
 				53211CDC228230D6007FB785 /* UIView+Round.swift in Sources */,
 				C9A2DE2D27CFD61900EAFA73 /* ConnectedPeerCell.swift in Sources */,
 				53EAB39A239B106900DF5530 /* CachesViewController.swift in Sources */,
@@ -4766,6 +4810,7 @@
 				C9421EB228889F2400A4C86D /* FancySectionTitle.swift in Sources */,
 				531EC4102310C274001A25AD /* Blob+NSAttributedString.swift in Sources */,
 				0A143A7B242E6714008745C6 /* AppDelegate+UniversalLink.swift in Sources */,
+				5B7AB67A28F0926B007DCCF1 /* String+LoremIpsum.swift in Sources */,
 				0AE5EDBB25826FD7008BDA0C /* String+Emoji.swift in Sources */,
 				53E26C5723037927009240B2 /* Date+ISO8601.swift in Sources */,
 				C9421EB62888A19200A4C86D /* LinearGradient+Planetary.swift in Sources */,
@@ -4780,11 +4825,13 @@
 				0A674A29253F3C4400698CF7 /* Draft.swift in Sources */,
 				0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */,
 				53211CD62281D567007FB785 /* EditAboutView.swift in Sources */,
+				5B7AB66F28E74692007DCCF1 /* ExtendedSocialStats.swift in Sources */,
 				8D6D2E64236387C800E7B0EC /* FollowCountView.swift in Sources */,
 				53211CDA2281EB22007FB785 /* AppController+Progress.swift in Sources */,
 				8D8A7B17231944030087895B /* CGSize+Square.swift in Sources */,
 				0A1CA4CA24EB2353006CAC43 /* SendMissionOperation.swift in Sources */,
 				0ACE91AA243D74A900EFB4E9 /* ViewDatabaseError.swift in Sources */,
+				5B7AB67F28F46EB1007DCCF1 /* SocialStatsView.swift in Sources */,
 				53B4F5F622B85BF200027C6A /* Markdownable.swift in Sources */,
 				5357550322694BCC002A6989 /* AboutView.swift in Sources */,
 				53E29CD822D7DF84008A2CB1 /* Hashtag.swift in Sources */,
@@ -4842,6 +4889,7 @@
 				53C422B621C476B000A314AD /* UserDefaults+Debug.swift in Sources */,
 				539246DA22A82F9000D01EEC /* API.swift in Sources */,
 				C9F53825286CCF410015A146 /* WelcomeService.swift in Sources */,
+				5B7AB68228F4946D007DCCF1 /* HashtagSliderView.swift in Sources */,
 				8DB042022355ECC6006AC35B /* AboutTableViewDataSource.swift in Sources */,
 				53E34200225000D4002BB5F4 /* UIViewController+Keyboard.swift in Sources */,
 				C9EADA8927D178D5002066D9 /* View+RoundedCorner.swift in Sources */,
@@ -4916,6 +4964,7 @@
 				C9A1632228ADE33800ACDCC5 /* ManageAliasView.swift in Sources */,
 				C9F5E473288883BF000BCF03 /* AppDelegate+URLScheme.swift in Sources */,
 				0A56ABDD24E32F8000D30649 /* Star.swift in Sources */,
+				5B7AB66528DE3C19007DCCF1 /* IdentityView.swift in Sources */,
 				C9C3788427C6940C00238B58 /* IdentityFixtures.swift in Sources */,
 				53E341F4224D9E3B002BB5F4 /* URL+Identifier.swift in Sources */,
 				8DD985D22329B94600FA2F1A /* ThreadInteractionView.swift in Sources */,
@@ -4972,6 +5021,7 @@
 				53EAB398239AD0D700DF5530 /* AttributedStringCache.swift in Sources */,
 				C9C3787F27C691EA00238B58 /* PeerConnectionInfo.swift in Sources */,
 				53E26C4E23022482009240B2 /* AppDelegate+Push.swift in Sources */,
+				5B7AB67528ECAA9B007DCCF1 /* IdentityHeaderView.swift in Sources */,
 				C923DBB1288057EB00569AAB /* HelpDrawerView.swift in Sources */,
 				531B92BD22CD65ED005D5255 /* UIFont+Verse.swift in Sources */,
 				5B92E27A284A7A8F003127F2 /* HashtagListStrategy.swift in Sources */,

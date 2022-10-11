@@ -61,6 +61,12 @@ class FakeBot: Bot {
             completion([], nil)
         }
     }
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion) {
+        queue.async {
+            completion(.success([]))
+        }
+    }
     
     func joinedRooms() async throws -> [Room] {
         []
@@ -132,7 +138,7 @@ class FakeBot: Bot {
 
     func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void)) { }
     
-    func blocks(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func blocks(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
     
     func blockedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
 

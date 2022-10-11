@@ -110,6 +110,7 @@ enum Localized: String, Localizable, CaseIterable {
 
     case block = "Ignore"
     case blocked = "Ignored"
+    case blocking = "Ignoring"
 
     case deleteSecretAndIdentity = "Delete this secret and identity"
 

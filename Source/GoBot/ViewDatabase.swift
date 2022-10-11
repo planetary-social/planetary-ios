@@ -644,16 +644,20 @@ class ViewDatabase {
         }
     }
     
-    func getJoinedPubs() throws -> [Pub] {
+    func getJoinedPubs(identity: Identity? = nil) throws -> [Pub] {
         guard let db = self.openDB else {
             throw ViewDatabaseError.notOpen
         }
 
-        let query = self.msgs
-            .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
-            .where(self.msgs[colAuthorID] == currentUserID)
-            .where(self.msgs[colMsgType] == "pub")
-            .order(colSequence.desc)
+        var query = self.msgs.join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
+
+        if let identity = identity {
+            query = query.join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
+                .where(self.authors[colAuthor] == identity)
+        } else {
+            query = query.where(self.msgs[colAuthorID] == currentUserID)
+        }
+        query = query.where(self.msgs[colMsgType] == "pub").order(colSequence.desc)
         
         let pubs: [Pub] = try db.prepare(query).map { row in
             let host = try row.get(colHost)

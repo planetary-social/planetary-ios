@@ -23,6 +23,7 @@ typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias CountCompletion = ((Result<Int, Error>) -> Void)
 typealias VoidCompletion = ((Result<Void, Error>) -> Void)
 typealias RawCompletion = ((Result<String, Error>) -> Void)
+typealias PubsCompletion = ((Result<[Pub], Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -82,6 +83,8 @@ protocol Bot: AnyObject {
     
     /// Retrieves a list of all pubs the current user is currently a member of.
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion)
     
     func joinedRooms() async throws -> [Room]
     func insert(room: Room) async throws
@@ -180,7 +183,7 @@ protocol Bot: AnyObject {
 
     // MARK: Block
 
-    func blocks(identity: Identity, completion:  @escaping ContactsCompletion)
+    func blocks(identity: Identity, queue: DispatchQueue, completion:  @escaping ContactsCompletion)
     func blockedBy(identity: Identity, completion:  @escaping ContactsCompletion)
     func block(_ identity: Identity, completion: @escaping PublishCompletion)
     func unblock(_ identity: Identity, completion: @escaping PublishCompletion)
@@ -396,8 +399,44 @@ extension Bot {
         self.followers(identity: identity, queue: .main, completion: completion)
     }
 
+    func followers(identity: Identity) async throws -> [About] {
+        try await withCheckedThrowingContinuation { continuation in
+            followers(identity: identity, queue: .global(qos: .background)) { abouts, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: abouts)
+                }
+            }
+        }
+    }
+
     func followings(identity: Identity, completion:  @escaping AboutsCompletion) {
         self.followings(identity: identity, queue: .main, completion: completion)
+    }
+
+    func followings(identity: Identity) async throws -> [About] {
+        try await withCheckedThrowingContinuation { continuation in
+            followings(identity: identity, queue: .global(qos: .background)) { abouts, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: abouts)
+                }
+            }
+        }
+    }
+
+    func blocks(identity: Identity) async throws -> [Identity] {
+        try await withCheckedThrowingContinuation { continuation in
+            blocks(identity: identity, queue: .global(qos: .background)) { identities, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: identities)
+                }
+            }
+        }
     }
 
     func statistics(completion: @escaping StatisticsCompletion) {
@@ -472,6 +511,15 @@ extension Bot {
             }
         }
     }
+
+    func abouts(identities: [Identity]) async throws -> [About?] {
+        var abouts = [About?]()
+        for identity in identities {
+            let about = try await about(identity: identity)
+            abouts.append(about)
+        }
+        return abouts
+    }
     
     func about() async throws -> About? {
         try await withCheckedThrowingContinuation { continuation in
@@ -481,6 +529,19 @@ extension Bot {
                     return
                 }
                 continuation.resume(returning: about)
+            }
+        }
+    }
+
+    func pubs(joinedBy identity: Identity) async throws -> [Pub] {
+        try await withCheckedThrowingContinuation { continuation in
+            pubs(joinedBy: identity, queue: .global(qos: .background)) { result in
+                switch result {
+                case .success(let pubs):
+                    continuation.resume(returning: pubs)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }

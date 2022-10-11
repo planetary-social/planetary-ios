@@ -8,6 +8,7 @@
 
 import UIKit
 import Analytics
+import SwiftUI
 
 class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
 
@@ -111,7 +112,8 @@ class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
         let about = self.filteredAbouts[indexPath.row]
         let targetController = self.navigationController
 
-        let controller = AboutViewController(with: about)
+        let view = IdentityView(viewModel: IdentityCoordinator(identity: about.identity, bot: Bots.current))
+        let controller = UIHostingController(rootView: view)
         targetController?.pushViewController(controller, animated: true)
     }
 

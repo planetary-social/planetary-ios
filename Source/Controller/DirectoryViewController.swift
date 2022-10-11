@@ -10,6 +10,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
 
 class DirectoryViewController: ContentViewController, AboutTableViewDelegate, HelpDrawerHost {
     
@@ -348,7 +349,8 @@ extension DirectoryViewController: UITableViewDelegate {
             self.navigationController?.pushViewController(controller, animated: true)
         case .users:
             let identity = searchFilter
-            let controller = AboutViewController(with: identity)
+            let view = IdentityView(viewModel: IdentityCoordinator(identity: identity, bot: Bots.current))
+            let controller = UIHostingController(rootView: view)
             self.navigationController?.pushViewController(controller, animated: true)
         case .posts:
             guard let post = searchedPost else {
@@ -360,7 +362,9 @@ extension DirectoryViewController: UITableViewDelegate {
                 ThreadViewController(with: post, startReplying: false), animated: true
             )
         case .network:
-            let controller = AboutViewController(with: self.people[indexPath.row])
+            let identity = self.people[indexPath.row].identity
+            let view = IdentityView(viewModel: IdentityCoordinator(identity: identity, bot: Bots.current))
+            let controller = UIHostingController(rootView: view)
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }

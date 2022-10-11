@@ -95,7 +95,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
                 Task { await appController.dismiss(animated: true) }
             }
         )
-        let view = Beta1MigrationView(viewModel: coordinator)
+        let view = await Beta1MigrationView(viewModel: coordinator)
         let hostingController = await UIHostingController(rootView: view)
         await MainActor.run {
             hostingController.modalPresentationStyle = .fullScreen

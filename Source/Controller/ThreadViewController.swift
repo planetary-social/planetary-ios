@@ -399,7 +399,6 @@ class ThreadViewController: ContentViewController {
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
-            
             await MainActor.run { self.buttonsView.postButton.isEnabled = true }
             await AppController.shared.hideProgress()
         }

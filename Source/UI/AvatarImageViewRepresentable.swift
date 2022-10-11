@@ -18,11 +18,14 @@ struct AvatarImageViewRepresentable: UIViewRepresentable {
     func makeUIView(context: Context) -> AvatarImageView {
         let view = AvatarImageView()
         view.set(image: metadata, animated: animated)
-        view.contentMode = .scaleAspectFit
+        view.contentMode = .scaleAspectFill
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         return view
     }
 
-    func updateUIView(_ uiView: AvatarImageView, context: Context) {}
+    func updateUIView(_ uiView: AvatarImageView, context: Context) {
+        uiView.set(image: metadata, animated: false)
+        uiView.setNeedsLayout()
+    }
 }

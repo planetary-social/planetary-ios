@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import SwiftUI
 
 extension AppController {
 
@@ -113,7 +114,8 @@ extension AppController {
     func pushViewController(for contentType: ContentType,
                             with identity: Identity) {
         guard contentType == .about else { return }
-        let controller = AboutViewController(with: identity)
+        let view = IdentityView(viewModel: IdentityCoordinator(identity: identity, bot: Bots.current))
+        let controller = UIHostingController(rootView: view)
         self.push(controller, animated: true)
     }
 

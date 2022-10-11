@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 protocol PostReplyPaginatedDataSourceDelegate: AnyObject {
     
@@ -86,7 +87,9 @@ class PostReplyPaginatedDelegate: MessagePaginatedTableViewDelegate {
             guard let identity = message.content.contact?.identity else {
                 return nil
             }
-            return AboutViewController(with: identity)
+            let view = IdentityView(viewModel: IdentityCoordinator(identity: identity, bot: Bots.current))
+            let controller = UIHostingController(rootView: view)
+            return controller
         case .vote:
             return nil
         default:
