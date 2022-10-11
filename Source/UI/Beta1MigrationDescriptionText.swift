@@ -19,7 +19,7 @@ struct Beta1MigrationDescriptionText<ViewModel>: View where ViewModel: Beta1Migr
     /// The height for the wrapped UITextView
     @State private var textLabelHeight: CGFloat = 0
     
-    var textColor = Color("subheadlineText")
+    var textColor = Color.subheadlineText
     var textUIColor = UIColor(named: "subheadlineText")
     
     var startUsingPlanetaryString: NSMutableAttributedString {
@@ -241,6 +241,6 @@ struct Beta1MigrationDescriptionText_Previews: PreviewProvider {
                 .frame(maxWidth: 287)
                 .previewLayout(.sizeThatFits)
         }
-        .background(Color("appBackground"))
+        .background(Color.appBackground)
     }
 }
