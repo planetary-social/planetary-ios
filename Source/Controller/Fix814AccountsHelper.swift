@@ -51,13 +51,13 @@ enum Fix814AccountsHelper {
         do {
             // Confirm with the user
             let confirmed = await appController.confirm(
-                message: Text.confirmCopyToMainNetwork.text
+                message: Localized.confirmCopyToMainNetwork.text
             )
             if !confirmed {
                 let secondConfirm = await appController.confirm(
-                    message: Text.confirmSkipCopyToMainNetwork.text,
-                    cancelTitle: Text.yes.text,
-                    confirmTitle: Text.no.text
+                    message: Localized.confirmSkipCopyToMainNetwork.text,
+                    cancelTitle: Localized.yes.text,
+                    confirmTitle: Localized.no.text
                 )
                 if !secondConfirm {
                     Log.info("User opted out of 814 fix")

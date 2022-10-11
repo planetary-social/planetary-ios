@@ -22,7 +22,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                 // Animation
                 PeerConnectionAnimationView(peerCount: viewModel.connectedPeersCount ?? 1)
                     .padding(.trailing, 2)
-                Text.connectedPeers.view
+                Localized.connectedPeers.view
                     .font(.body)
                     .foregroundColor(Color("menuUnselectedItemText"))
                     .lineLimit(1)
@@ -68,7 +68,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                    let duration = viewModel.recentlyDownloadedPostDuration {
 
                     HStack {
-                        Text.syncingMessages.view
+                        Localized.syncingMessages.view
                             .font(.caption)
                             .foregroundColor(Color("mainText"))
                             .minimumScaleFactor(0.5)
@@ -76,7 +76,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     }
                                         
                     HStack {
-                        Text.recentlyDownloaded.view([
+                        Localized.recentlyDownloaded.view([
                             "postCount": String(postCount),
                             "duration": String(duration)
                         ])
@@ -90,7 +90,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                 } else {
                     // Loading message
                     HStack {
-                        Text.loading.view
+                        Localized.loading.view
                             .font(.caption)
                             .foregroundColor(Color("mainText"))
                             .minimumScaleFactor(0.5)

@@ -40,7 +40,7 @@ class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINa
         label.numberOfLines = 2
         label.textAlignment = .center
         label.textColor = UIColor.tint.default
-        label.text = Text.Onboarding.chooseProfileImage.text
+        label.text = Localized.Onboarding.chooseProfileImage.text
         return label
     }()
 

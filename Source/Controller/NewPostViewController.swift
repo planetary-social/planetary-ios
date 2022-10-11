@@ -73,7 +73,7 @@ class NewPostViewController: ContentViewController {
             action: #selector(dismissWithoutPost)
         )
         item.tintColor = .secondaryAction
-        item.accessibilityLabel = Text.done.text
+        item.accessibilityLabel = Localized.done.text
         self.navigationItem.leftBarButtonItem = item
     }
     
@@ -149,7 +149,7 @@ class NewPostViewController: ContentViewController {
     }
 
     func didPressPostButton(sender: AnyObject) {
-        self.lookBusy(message: Text.NewPost.publishing)
+        self.lookBusy(message: Localized.NewPost.publishing)
         Analytics.shared.trackDidTapButton(buttonName: "post")
         self.buttonsView.postButton.isHidden = true
         
@@ -237,9 +237,9 @@ extension NewPostViewController: ImageGalleryViewDelegate {
         at indexPath: IndexPath
     ) {
         self.confirm(
-            message: Text.NewPost.confirmRemove.text,
+            message: Localized.NewPost.confirmRemove.text,
             isDestructive: true,
-            confirmTitle: Text.NewPost.remove.text,
+            confirmTitle: Localized.NewPost.remove.text,
             confirmClosure: { view.remove(at: indexPath) }
         )
     }

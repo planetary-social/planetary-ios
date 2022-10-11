@@ -88,7 +88,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         List {
             // Help Text
             Section {} footer: {
-                Text.Alias.introText.view
+                Localized.Alias.introText.view
                     .foregroundColor(Color("secondaryText"))
                     .font(.subheadline)
                     .padding(.top, 4)
@@ -122,7 +122,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                     }
                     .onDelete(perform: { viewModel.deleteAliases(at: $0) })
                 } header: {
-                    Text.Alias.aliases.view
+                    Localized.Alias.aliases.view
                         .foregroundColor(Color("secondaryText"))
                         .font(.body.smallCaps())
                 }
@@ -141,7 +141,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
+                title: Localized.error.view,
                 message: SwiftUI.Text(viewModel.errorMessage ?? "")
             )
         }
@@ -151,7 +151,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .onAppear() {
             viewModel.refresh()
         }
-        .navigationBarTitle(Text.Alias.roomAliases.text, displayMode: .inline)
+        .navigationBarTitle(Localized.Alias.roomAliases.text, displayMode: .inline)
         .toolbar {
 //            ToolbarItem(placement: .navigationBarTrailing) {
 //                EditButton()

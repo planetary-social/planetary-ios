@@ -66,7 +66,7 @@ class PillButton: AppButton {
         }
     }
 
-    func setTitle(_ normal: Text, selected: Text? = nil) {
+    func setTitle(_ normal: Localized, selected: Localized? = nil) {
         self.setTitle(normal.text, for: .normal)
         self.setTitle(selected?.text, for: .selected)
     }

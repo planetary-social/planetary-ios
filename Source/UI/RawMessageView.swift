@@ -74,16 +74,16 @@ struct RawMessageView<ViewModel>: View where ViewModel: RawMessageViewModel {
                 Button {
                     viewModel.didDismiss()
                 } label: {
-                    SwiftUI.Text(Text.cancel.text)
+                    SwiftUI.Text(Localized.cancel.text)
                 }
             }
         }
-        .navigationTitle(Text.messageSource.text)
+        .navigationTitle(Localized.messageSource.text)
         .disabled(showProgress)
         .overlay(loadingIndicator)
         .alert(isPresented: showAlert) {
             Alert(
-                title: Text.error.view,
+                title: Localized.error.view,
                 message: SwiftUI.Text(viewModel.errorMessage ?? "")
             )
         }

@@ -100,7 +100,7 @@ class SecretViewController: UIViewController {
     // MARK: Actions
 
     private func addActions() {
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: Text.next.text,
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: Localized.next.text,
                                                                  style: .plain,
                                                                  target: self,
                                                                  action: #selector(nextButtonTouchUpInside))

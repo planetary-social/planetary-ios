@@ -100,7 +100,7 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
+                title: Localized.error.view,
                 message: SwiftUI.Text(viewModel.errorMessage ?? "")
             )
         }

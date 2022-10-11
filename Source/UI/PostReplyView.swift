@@ -199,20 +199,20 @@ class RepliesView: MessageView {
     private func updateLabel(from authors: Set<About>, authorsWithDetails: [About], totalReplyCount: Int) {
         let count = authorsWithDetails.count
         if count == 1 {
-            let replyFrom = totalReplyCount > 1 ? Text.repliesFrom.text : Text.oneReplyFrom.text
+            let replyFrom = totalReplyCount > 1 ? Localized.repliesFrom.text : Localized.oneReplyFrom.text
             let text = NSMutableAttributedString(replyFrom, font: self.textFont, color: .secondaryText)
             if let name = authorsWithDetails.first?.name {
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
             } else {
-                text.append(NSAttributedString(Text.oneOther.text, font: self.textFont, color: .reactionUser))
+                text.append(NSAttributedString(Localized.oneOther.text, font: self.textFont, color: .reactionUser))
             }
             self.label.attributedText = text
         } else {
             var text: NSMutableAttributedString
             if let name = authorsWithDetails.first?.name {
-                text = NSMutableAttributedString(Text.repliesFrom.text, font: self.textFont, color: .secondaryText)
+                text = NSMutableAttributedString(Localized.repliesFrom.text, font: self.textFont, color: .secondaryText)
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
-                let others = count > 2 ? Text.andCountOthers : Text.andOneOther
+                let others = count > 2 ? Localized.andCountOthers : Localized.andOneOther
                 text.append(
                     NSAttributedString(
                         others.text(["count": String(count - 1)]),
@@ -224,13 +224,13 @@ class RepliesView: MessageView {
                 // We don't have details from any authors, so just show the number of replies.
                 if totalReplyCount == 1 {
                     text = NSMutableAttributedString(
-                        Text.oneReply.text,
+                        Localized.oneReply.text,
                         font: self.textFont,
                         color: .secondaryText
                     )
                 } else {
                     text = NSMutableAttributedString(
-                        Text.replyCount.text(["count": String(totalReplyCount)]),
+                        Localized.replyCount.text(["count": String(totalReplyCount)]),
                         font: self.textFont,
                         color: .secondaryText
                     )

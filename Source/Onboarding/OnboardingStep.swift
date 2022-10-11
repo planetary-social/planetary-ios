@@ -75,7 +75,7 @@ class OnboardingStepData {
         case resume
         case start
 
-        var title: Text.Onboarding.StepTitle {
+        var title: Localized.Onboarding.StepTitle {
             switch self {
                 case .backup: return .backup
                 case .benefits: return .benefits

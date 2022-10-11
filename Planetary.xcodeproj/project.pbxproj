@@ -203,7 +203,7 @@
 		23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD4B022C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift */; };
 		23CF345722099E5D00F46A54 /* InvalidVoteMissingIdentifier.json in Resources */ = {isa = PBXBuildFile; fileRef = 23CF345622099E5D00F46A54 /* InvalidVoteMissingIdentifier.json */; };
 		23D8CE272253DB29001EB7D5 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D8CE262253DB29001EB7D5 /* Address.swift */; };
-		23D8E2C022033D31004776EA /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		23D8E2C022033D31004776EA /* (null) in Resources */ = {isa = PBXBuildFile; };
 		23E76A5623F2F0F70074F424 /* ValueTimestamp.json in Resources */ = {isa = PBXBuildFile; fileRef = 23E76A5523F2F0F70074F424 /* ValueTimestamp.json */; };
 		23E8805E22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
 		23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
@@ -264,7 +264,7 @@
 		530F01B222DFCEED007EBAE2 /* String+IsValid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B122DFCEED007EBAE2 /* String+IsValid.swift */; };
 		530F01B422E0D3E7007EBAE2 /* TitledToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B322E0D3E7007EBAE2 /* TitledToggle.swift */; };
 		530F01B622E0D930007EBAE2 /* JoinOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B522E0D930007EBAE2 /* JoinOnboardingStep.swift */; };
-		5314EF3A22EA276A0065D02A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		5314EF3A22EA276A0065D02A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		5314EF3B22EA27840065D02A /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62A22445BE900C57A4B /* AppConfiguration.swift */; };
 		5314EF3C22EA27920065D02A /* SSBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* SSBNetwork.swift */; };
 		5314EF3D22EA27980065D02A /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01F32204F66200DFDF16 /* Secret.swift */; };
@@ -683,7 +683,7 @@
 		8D8A7B17231944030087895B /* CGSize+Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8A7B16231944030087895B /* CGSize+Square.swift */; };
 		8D8A7B19231995670087895B /* PostHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D8A7B18231995670087895B /* PostHeaderView.swift */; };
 		8D9143F6230C5F4E0075BC8A /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EE230C5F4E0075BC8A /* Localizable.swift */; };
-		8D9143F7230C5F4E0075BC8A /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EF230C5F4E0075BC8A /* Text.swift */; };
+		8D9143F7230C5F4E0075BC8A /* Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EF230C5F4E0075BC8A /* Localized.swift */; };
 		8DA9567D230DA46C00A334EB /* UIButton+Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9567C230DA46C00A334EB /* UIButton+Text.swift */; };
 		8DB041FD234FA994006AC35B /* Identity+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D35CEC42347E370004A4191 /* Identity+Bot.swift */; };
 		8DB041FE234FAA48006AC35B /* Identity+Bot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D35CEC42347E370004A4191 /* Identity+Bot.swift */; };
@@ -700,9 +700,9 @@
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
 		C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
-		C9134DDB28184AF700595D49 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		C9134DDB28184AF700595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9134DE228184C2700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE128184C2700595D49 /* Support */; };
-		C9134DE328184D4200595D49 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		C9134DE328184D4200595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9134DE6281854E700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE5281854E700595D49 /* Support */; };
 		C915924028C7F080004152E0 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = C915923E28C7F080004152E0 /* Generated.strings */; };
 		C915924128C7F080004152E0 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = C915923E28C7F080004152E0 /* Generated.strings */; };
@@ -938,7 +938,7 @@
 		C9724BB42809EC4F000EBCCD /* DebugOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B1229F33F00004E2B1 /* DebugOnboardingViewController.swift */; };
 		C9724BB52809EC57000EBCCD /* DebugUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533F4050225E9E010060B4B9 /* DebugUIViewController.swift */; };
 		C9724BB62809EC61000EBCCD /* DebugPostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531EC40B230F6B9E001A25AD /* DebugPostsViewController.swift */; };
-		C9724BB72809EC68000EBCCD /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		C9724BB72809EC68000EBCCD /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9724BB82809EC77000EBCCD /* SecretViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FCAFDD22051C88009E9E82 /* SecretViewController.swift */; };
 		C9724BB92809EC7B000EBCCD /* BotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62622444A1500C57A4B /* BotViewController.swift */; };
 		C9724BBA2809ECA2000EBCCD /* StatisticsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */; };
@@ -1134,7 +1134,7 @@
 		C9F0B6C227E2728800BE2F0E /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9F0B67427E2728700BE2F0E /* Generated.strings */; };
 		C9F0B6C327E2728800BE2F0E /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9F0B67727E2728700BE2F0E /* Generated.strings */; };
 		C9F0B6C427E2728800BE2F0E /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9F0B67727E2728700BE2F0E /* Generated.strings */; };
-		C9F1C84827C9283A005A3228 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EF230C5F4E0075BC8A /* Text.swift */; };
+		C9F1C84827C9283A005A3228 /* Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EF230C5F4E0075BC8A /* Localized.swift */; };
 		C9F1C84927C92842005A3228 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D9143EE230C5F4E0075BC8A /* Localizable.swift */; };
 		C9F1C84B27C932A8005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0AC10DD9246C43DC00CCA22A /* Generated.strings */; };
 		C9F1C84C27C932AF005A3228 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A04D8B62477220F00DD37B7 /* Generated.strings */; };
@@ -1640,7 +1640,7 @@
 		8D8A7B16231944030087895B /* CGSize+Square.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Square.swift"; sourceTree = "<group>"; };
 		8D8A7B18231995670087895B /* PostHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostHeaderView.swift; sourceTree = "<group>"; };
 		8D9143EE230C5F4E0075BC8A /* Localizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
-		8D9143EF230C5F4E0075BC8A /* Text.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
+		8D9143EF230C5F4E0075BC8A /* Localized.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localized.swift; sourceTree = "<group>"; };
 		8DA9567C230DA46C00A334EB /* UIButton+Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Text.swift"; sourceTree = "<group>"; };
 		8DB041FF235539F5006AC35B /* DirectoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryViewController.swift; sourceTree = "<group>"; };
 		8DB042012355ECC6006AC35B /* AboutTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutTableViewDataSource.swift; sourceTree = "<group>"; };
@@ -1829,7 +1829,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC2974C2804B9DE00C0CD81 /* SQLite in Frameworks */,
-				5314EF3A22EA276A0065D02A /* BuildFile in Frameworks */,
+				5314EF3A22EA276A0065D02A /* (null) in Frameworks */,
 				664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2735,7 +2735,7 @@
 				C9F0B61127E2728500BE2F0E /* ExportStrings.sh */,
 				C9F0B61227E2728500BE2F0E /* ExportStrings.swift */,
 				8D9143EE230C5F4E0075BC8A /* Localizable.swift */,
-				8D9143EF230C5F4E0075BC8A /* Text.swift */,
+				8D9143EF230C5F4E0075BC8A /* Localized.swift */,
 				C9F0B61327E2728500BE2F0E /* af-ZA.lproj */,
 				C9F0B64C27E2728700BE2F0E /* ar-SA.lproj */,
 				C9F0B64F27E2728700BE2F0E /* ca-ES.lproj */,
@@ -3440,7 +3440,7 @@
 			mainGroup = 5344D82221C4649700704A34;
 			packageReferences = (
 				C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */,
 				5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
@@ -3528,7 +3528,7 @@
 				5316E95B21FFD4980053832E /* InvalidChannel.json in Resources */,
 				C924412F278DDECE00592E5E /* Preload.bundle in Resources */,
 				5316E95721FFCDFF0053832E /* UnsupportedType.json in Resources */,
-				23D8E2C022033D31004776EA /* BuildFile in Resources */,
+				23D8E2C022033D31004776EA /* (null) in Resources */,
 				5316E95921FFD19F0053832E /* Invalid.json in Resources */,
 				C9F0B6A027E2728800BE2F0E /* Generated.strings in Resources */,
 				C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */,
@@ -4078,7 +4078,7 @@
 				C997F3E128B1D86D00DAC117 /* AliasCell.swift in Sources */,
 				8DB041FD234FA994006AC35B /* Identity+Bot.swift in Sources */,
 				C9724B9A2809EA8C000EBCCD /* Array+IndexPath.swift in Sources */,
-				C9F1C84827C9283A005A3228 /* Text.swift in Sources */,
+				C9F1C84827C9283A005A3228 /* Localized.swift in Sources */,
 				C982CBE428353E7400D8963F /* Support+GoBot.swift in Sources */,
 				5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */,
 				C9724BAE2809EBE4000EBCCD /* MarkdownStyler.swift in Sources */,
@@ -4122,7 +4122,7 @@
 				C9724B642809D6DC000EBCCD /* NotificationCellView.swift in Sources */,
 				C9724BBE2809ECCC000EBCCD /* UITextView+Verse.swift in Sources */,
 				53E29CE022D80424008A2CB1 /* Hashtag+String.swift in Sources */,
-				C9724BB72809EC68000EBCCD /* BuildFile in Sources */,
+				C9724BB72809EC68000EBCCD /* (null) in Sources */,
 				0A64A84024735520009A5EBF /* NullPushAPI.swift in Sources */,
 				23EF5AAA249D177F00469977 /* BanListAPI.swift in Sources */,
 				53E26C5E23045D34009240B2 /* Data+Person.swift in Sources */,
@@ -4138,7 +4138,7 @@
 				C9724B182809D350000EBCCD /* AppController+Progress.swift in Sources */,
 				53B4F5FA22B8602F00027C6A /* Mention+NSAttributedString.swift in Sources */,
 				0A64A84824735717009A5EBF /* PhoneVerificationAPIService.swift in Sources */,
-				C9134DE328184D4200595D49 /* BuildFile in Sources */,
+				C9134DE328184D4200595D49 /* (null) in Sources */,
 				C9724BE72809EEA4000EBCCD /* SimplePublishView.swift in Sources */,
 				C9724B432809D4F1000EBCCD /* UIButton+Text.swift in Sources */,
 				535754F722692B59002A6989 /* BotError.swift in Sources */,
@@ -4165,7 +4165,7 @@
 				C9724BC42809ED5B000EBCCD /* Blob+UIColor.swift in Sources */,
 				C9412AEB28AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift in Sources */,
 				C9724B782809E7C1000EBCCD /* AppController+Push.swift in Sources */,
-				C9134DDB28184AF700595D49 /* BuildFile in Sources */,
+				C9134DDB28184AF700595D49 /* (null) in Sources */,
 				C9724B262809D426000EBCCD /* HomeViewController.swift in Sources */,
 				C9724BE02809EE5A000EBCCD /* Tappable.swift in Sources */,
 				C9F1C84927C92842005A3228 /* Localizable.swift in Sources */,
@@ -4513,7 +4513,7 @@
 				0AAF8C4725C704B500FD8D0F /* UnfollowOperation.swift in Sources */,
 				0AF2DEEE247C3EE6003F457D /* Hashtag+Link.swift in Sources */,
 				5396A6232244356600C57A4B /* Layout+ContentView.swift in Sources */,
-				8D9143F7230C5F4E0075BC8A /* Text.swift in Sources */,
+				8D9143F7230C5F4E0075BC8A /* Localized.swift in Sources */,
 				53E26C4C230223F8009240B2 /* AppController+Push.swift in Sources */,
 				530F01B422E0D3E7007EBAE2 /* TitledToggle.swift in Sources */,
 				53AD3FD1226F736A005228F9 /* UIViewTapGesture.swift in Sources */,
@@ -5743,7 +5743,7 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+		5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
 			requirement = {
@@ -5794,17 +5794,17 @@
 		};
 		5BC2974528048AD800C0CD81 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
 			productName = SQLite;
 		};
 		5BC297492804B98C00C0CD81 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
 			productName = SQLite;
 		};
 		5BC2974B2804B9DE00C0CD81 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
 			productName = SQLite;
 		};
 		5BE28DFC27CD7BA1004D7D27 /* Analytics */ = {

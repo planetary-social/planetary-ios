@@ -28,7 +28,7 @@ class EditValueView: UIView {
         return view
     }()
 
-    init(label: Text, value: String = "") {
+    init(label: Localized, value: String = "") {
         super.init(frame: .zero)
         self.backgroundColor = .appBackground
         self.label.text = label.text

@@ -182,8 +182,8 @@ struct HighlightedText_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             HighlightedText(
-                Text.Help.Discover.body.text,
-                highlightedWord: Text.Help.Discover.highlightedWord.text,
+                Localized.Help.Discover.body.text,
+                highlightedWord: Localized.Help.Discover.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: URL(string: "https://planetary.social")!
             )

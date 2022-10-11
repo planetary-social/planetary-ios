@@ -91,7 +91,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                     }
                     .onDelete(perform: { viewModel.deleteRooms(at: $0) })
                 } header: {
-                    Text.ManageRelays.joinedRooms.view
+                    Localized.ManageRelays.joinedRooms.view
                         .foregroundColor(Color("secondaryText"))
                         .font(.body.smallCaps())
                 }
@@ -102,7 +102,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                 HStack {
                     TextField("", text: $newRoomString)
                         .placeholder(when: newRoomString.isEmpty) {
-                            Text.addRoomAddressOrInvitation.view
+                            Localized.addRoomAddressOrInvitation.view
                                 .foregroundColor(Color("secondaryText"))
                         }
                         .disableAutocorrection(true)
@@ -122,11 +122,11 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                 }
                 .listRowBackground(Color("cardBackground"))
             } header: {
-                Text.ManageRelays.addRooms.view
+                Localized.ManageRelays.addRooms.view
                     .foregroundColor(Color("secondaryText"))
                     .font(.body.smallCaps())
             } footer: {
-                Text.ManageRelays.roomHelpText.view
+                Localized.ManageRelays.roomHelpText.view
                     .foregroundColor(Color("secondaryText"))
                     .font(.subheadline)
                     .padding(.top, 4)
@@ -137,14 +137,14 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
+                title: Localized.error.view,
                 message: SwiftUI.Text(viewModel.errorMessage ?? "")
             )
         }
         .refreshable {
             viewModel.refresh()
         }
-        .navigationBarTitle(Text.ManageRelays.manageRooms.text, displayMode: .inline)
+        .navigationBarTitle(Localized.ManageRelays.manageRooms.text, displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()

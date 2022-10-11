@@ -82,18 +82,18 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             
             let content = UNMutableNotificationContent()
             
-            let nameToShow = about?.nameOrIdentity ?? Text.Report.somebody.text
+            let nameToShow = about?.nameOrIdentity ?? Localized.Report.somebody.text
 
             // swiftlint:disable legacy_objc_type
             switch report.reportType {
             case .feedFollowed:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.feedFollowed.text,
+                    forKey: Localized.Report.feedFollowed.text,
                     arguments: [nameToShow]
                 )
             case .postReplied:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.postReplied.text,
+                    forKey: Localized.Report.postReplied.text,
                     arguments: [nameToShow]
                 )
                 if let what = report.message.content.post?.text {
@@ -101,7 +101,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
             case .feedMentioned:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.feedMentioned.text,
+                    forKey: Localized.Report.feedMentioned.text,
                     arguments: [nameToShow]
                 )
                 if let what = report.message.content.post?.text {
@@ -109,7 +109,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
             case .messageLiked:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.messageLiked.text,
+                    forKey: Localized.Report.messageLiked.text,
                     arguments: [nameToShow]
                 )
             }
