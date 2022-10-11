@@ -50,13 +50,13 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                     Picker("Room", selection: $selectedRoom) {
                         ForEach(viewModel.rooms) { room in
                             Text(room.address.host)
-                                .foregroundColor(Color("mainText"))
+                                .foregroundColor(.mainText)
                                 .tag(Optional(room))
                         }
                     }
                     
                     TextField("Alias (lowercase letters only)", text: $desiredAlias)
-                        .foregroundColor(Color("mainText"))
+                        .foregroundColor(.mainText)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                         .onSubmit {
@@ -66,16 +66,16 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                     if let selectedRoom = selectedRoom, desiredAlias.isEmpty == false {
                         HStack {
                             Text("https://\(desiredAlias).\(selectedRoom.address.host)")
-                                .foregroundColor(Color("mainText"))
+                                .foregroundColor(.mainText)
                         }
                     }
                     
                     Button("Register") {
                         handleSubmit()
                     }
-                    .foregroundColor(Color("primaryAction"))
+                    .foregroundColor(.primaryAction)
                 }
-                .listRowBackground(Color("cardBackground"))
+                .listRowBackground(Color.cardBackground)
                 .disabled(viewModel.rooms.isEmpty)
                 
                 if viewModel.showJoinPlanetaryRoomButton {
@@ -83,14 +83,14 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                         Button("Join Planetary Room") {
                             viewModel.joinPlanetaryRoom()
                         }
-                        .foregroundColor(Color("primaryAction"))
+                        .foregroundColor(.primaryAction)
                         Text("Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room.")
-                            .foregroundColor(Color("secondaryText"))
+                            .foregroundColor(.secondaryText)
                             .font(.subheadline)
                             .padding(.top, 4)
                             .lineLimit(5)
                     }
-                    .listRowBackground(Color("cardBackground"))
+                    .listRowBackground(Color.cardBackground)
                 }
             }
         }

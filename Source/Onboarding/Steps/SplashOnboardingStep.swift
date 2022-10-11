@@ -57,7 +57,7 @@ class StartOnboardingStep: OnboardingStep {
         // rather than try to position the logo and subtitle text
         // keep the existing attributed title but with a clear
         // and center the logo image view on top
-        let logoImageView = UIImageView(image: UIImage(named: "splash"))
+        let logoImageView = UIImageView(image: UIImage.splash)
         logoImageView.contentMode = .center
         Layout.center(logoImageView, in: self.view.titleLabel)
 

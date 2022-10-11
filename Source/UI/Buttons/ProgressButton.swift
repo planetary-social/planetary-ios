@@ -156,7 +156,7 @@ struct ProgressButton_Previews: PreviewProvider {
             ProgressButton(viewModel: PreviewViewModel(progress: 1))
         }
         .padding(30)
-        .background(Color("appBackground"))
+        .background(Color.appBackground)
         .preferredColorScheme(.dark)
         .previewLayout(.sizeThatFits)
     }

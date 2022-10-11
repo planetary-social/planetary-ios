@@ -34,7 +34,7 @@ struct ConnectedPeerCell: View {
                 )
             Text(peer.name ?? peer.id)
                 .font(.callout)
-                .foregroundColor(Color("mainText"))
+                .foregroundColor(.mainText)
                 .lineLimit(1)
             Spacer()
         }

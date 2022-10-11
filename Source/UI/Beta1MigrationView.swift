@@ -26,7 +26,7 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
             ZStack {
                 // Blurred background
                 VStack {
-                    Image("icon-planetary-2")
+                    Image.iconPlanetary2
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                     Spacer()
@@ -41,14 +41,14 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
                         VStack(spacing: 30) {
                             Color.clear.frame(width: 0, height: 40)
                             HStack {
-                                Image("icon-planetary-2")
+                                Image.iconPlanetary2
                                     .resizable()
                                     .frame(width: 72.11, height: 88)
                                 Spacer()
                             }
                             Localized.upgradingAndRestoring.view
                                 .font(.title)
-                                .foregroundColor(Color("mainText"))
+                                .foregroundColor(.mainText)
                                 .multilineTextAlignment(.leading)
                             
                             Beta1MigrationDescriptionText(viewModel: viewModel)
@@ -94,7 +94,7 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
             )
         })
         .background(
-            Color("appBackground").edgesIgnoringSafeArea(.all)
+            Color.appBackground.edgesIgnoringSafeArea(.all)
         )
     }
 }

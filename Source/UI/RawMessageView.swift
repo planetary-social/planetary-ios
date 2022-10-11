@@ -38,11 +38,11 @@ struct RawMessageView<ViewModel>: View where ViewModel: RawMessageViewModel {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
                     Text(loadingMessage)
-                        .foregroundColor(Color("mainText"))
+                        .foregroundColor(.mainText)
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color("cardBackground").cornerRadius(8))
+                .background(Color.cardBackground.cornerRadius(8))
             } else {
                 EmptyView()
             }

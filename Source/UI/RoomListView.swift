@@ -63,11 +63,11 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
                     Text(loadingMessage)
-                        .foregroundColor(Color("mainText"))
+                        .foregroundColor(.mainText)
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color("cardBackground").cornerRadius(8))
+                .background(Color.cardBackground.cornerRadius(8))
             } else {
                 EmptyView()
             }
@@ -86,13 +86,13 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         } label: {
                             Text(room.address.host)
                         }
-                        .foregroundColor(Color("mainText"))
-                        .listRowBackground(Color("cardBackground"))
+                        .foregroundColor(.mainText)
+                        .listRowBackground(Color.cardBackground)
                     }
                     .onDelete(perform: { viewModel.deleteRooms(at: $0) })
                 } header: {
                     Localized.ManageRelays.joinedRooms.view
-                        .foregroundColor(Color("secondaryText"))
+                        .foregroundColor(.secondaryText)
                         .font(.body.smallCaps())
                 }
             }
@@ -103,7 +103,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                     TextField("", text: $newRoomString)
                         .placeholder(when: newRoomString.isEmpty) {
                             Localized.addRoomAddressOrInvitation.view
-                                .foregroundColor(Color("secondaryText"))
+                                .foregroundColor(.secondaryText)
                         }
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
@@ -116,18 +116,18 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         newRoomString = ""
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(Color("primaryAction"))
+                            .foregroundColor(.primaryAction)
                     }
                     .disabled(newRoomString.isEmpty || showProgress)
                 }
-                .listRowBackground(Color("cardBackground"))
+                .listRowBackground(Color.cardBackground)
             } header: {
                 Localized.ManageRelays.addRooms.view
-                    .foregroundColor(Color("secondaryText"))
+                    .foregroundColor(.secondaryText)
                     .font(.body.smallCaps())
             } footer: {
                 Localized.ManageRelays.roomHelpText.view
-                    .foregroundColor(Color("secondaryText"))
+                    .foregroundColor(.secondaryText)
                     .font(.subheadline)
                     .padding(.top, 4)
             }
@@ -150,7 +150,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                 EditButton()
             }
         }
-        .accentColor(Color("primaryAction"))
+        .accentColor(.primaryAction)
     }
 }
 

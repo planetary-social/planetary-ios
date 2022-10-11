@@ -86,7 +86,7 @@ struct HighlightedText: View {
                 textView(markdown: string).foregroundColor(.clear)
             },
             bodyBuilder: { string in
-                textView(markdown: string).foregroundColor(Color("secondaryText"))
+                textView(markdown: string).foregroundColor(.secondaryText)
             }
         )
     }
@@ -189,7 +189,7 @@ struct HighlightedText_Previews: PreviewProvider {
             )
             .padding()
         }
-        .background(Color("menuBorderColor"))
+        .background(Color.menuBorderColor)
         .previewLayout(.sizeThatFits)
         .preferredColorScheme(.dark)
     }
