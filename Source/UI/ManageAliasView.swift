@@ -56,11 +56,11 @@ struct LoadingOverlay: View {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
                     SwiftUI.Text(loadingMessage)
-                        .foregroundColor(Color("mainText"))
+                        .foregroundColor(.mainText)
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color("cardBackground").cornerRadius(8))
+                .background(Color.cardBackground.cornerRadius(8))
             } else {
                 EmptyView()
             }
@@ -89,7 +89,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
             // Help Text
             Section {} footer: {
                 Text.Alias.introText.view
-                    .foregroundColor(Color("secondaryText"))
+                    .foregroundColor(.secondaryText)
                     .font(.subheadline)
                     .padding(.top, 4)
             }
@@ -113,17 +113,17 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                                     Image(systemName: "doc.on.doc")
                                 }
                                 .padding(9)
-                                .background(Color("menuBorderColor").clipShape(Circle()))
+                                .background(Color.menuBorderColor.clipShape(Circle()))
                             }
                         }
                         
-                        .foregroundColor(Color("mainText"))
-                        .listRowBackground(Color("cardBackground"))
+                        .foregroundColor(.mainText)
+                        .listRowBackground(Color.cardBackground)
                     }
                     .onDelete(perform: { viewModel.deleteAliases(at: $0) })
                 } header: {
                     Text.Alias.aliases.view
-                        .foregroundColor(Color("secondaryText"))
+                        .foregroundColor(.secondaryText)
                         .font(.body.smallCaps())
                 }
             }
@@ -133,7 +133,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                 NavigationLink("Register a new alias") {
                     AddAliasView(viewModel: viewModel.registrationViewModel)
                 }
-                .listRowBackground(Color("cardBackground"))
+                .listRowBackground(Color.cardBackground)
             }
         }
         .disabled(viewModel.loadingMessage?.isEmpty == false)
@@ -157,7 +157,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
 //                EditButton()
 //            }
         }
-        .accentColor(Color("primaryAction"))
+        .accentColor(.primaryAction)
     }
 }
 
