@@ -19,7 +19,7 @@ class SettingsViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = Text.settings.text
+        self.navigationItem.title = Localized.settings.text
         self.addDismissBarButtonItem()
     }
     
@@ -46,7 +46,7 @@ class SettingsViewController: DebugTableViewController {
     private func feedStrategies() -> DebugTableViewController.Settings {
         let settings = [
             DebugTableViewCellModel(
-                title: Text.FeedAlgorithm.feedAlgorithmTitle.text,
+                title: Localized.FeedAlgorithm.feedAlgorithmTitle.text,
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
@@ -56,7 +56,7 @@ class SettingsViewController: DebugTableViewController {
                 }
             ),
             DebugTableViewCellModel(
-                title: Text.DiscoveryFeedAlgorithm.feedAlgorithmTitle.text,
+                title: Localized.DiscoveryFeedAlgorithm.feedAlgorithmTitle.text,
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
@@ -67,7 +67,7 @@ class SettingsViewController: DebugTableViewController {
             )
         ]
         
-        return (Text.FeedAlgorithm.algorithms.text, settings, nil)
+        return (Localized.FeedAlgorithm.algorithms.text, settings, nil)
     }
 
     // MARK: Public web hosting
@@ -95,7 +95,7 @@ class SettingsViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: Text.WebServices.aliases.text,
+                title: Localized.WebServices.aliases.text,
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
@@ -109,13 +109,13 @@ class SettingsViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: Text.WebServices.publicWebHosting.text,
+                title: Localized.WebServices.publicWebHosting.text,
                 valueClosure: valueClosure,
                 actionClosure: nil
             )
         ]
 
-        return (Text.WebServices.title.text, settings, Text.WebServices.footer.text)
+        return (Localized.WebServices.title.text, settings, Localized.WebServices.footer.text)
     }
 
     @objc private func publicWebHostingToggleValueChanged(toggle: UISwitch) {
@@ -164,7 +164,7 @@ class SettingsViewController: DebugTableViewController {
     private func push() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.Push.enabled.text,
+        settings += [DebugTableViewCellModel(title: Localized.Push.enabled.text,
                                              valueClosure: {
                 [unowned self] cell in
                 cell.showActivityIndicator()
@@ -178,7 +178,7 @@ class SettingsViewController: DebugTableViewController {
             },
                                              actionClosure: nil)]
 
-        return (Text.Push.title.text, settings, Text.Push.footer.text)
+        return (Localized.Push.title.text, settings, Localized.Push.footer.text)
     }
 
     /// Asks the AppController to prompt for push notification permissions.  The returned status
@@ -197,7 +197,7 @@ class SettingsViewController: DebugTableViewController {
     private func usage() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.analyticsAndCrash.text,
+        settings += [DebugTableViewCellModel(title: Localized.analyticsAndCrash.text,
                                              valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
@@ -209,7 +209,7 @@ class SettingsViewController: DebugTableViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
-        return (Text.usageData.text, settings, nil)
+        return (Localized.usageData.text, settings, nil)
     }
     
     // MARK: Manage Relay Servers
@@ -219,7 +219,7 @@ class SettingsViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: Text.ManageRelays.managePubs.text,
+                title: Localized.ManageRelays.managePubs.text,
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
@@ -232,7 +232,7 @@ class SettingsViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: Text.ManageRelays.manageRooms.text,
+                title: Localized.ManageRelays.manageRooms.text,
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
@@ -244,7 +244,7 @@ class SettingsViewController: DebugTableViewController {
             )
         ]
         
-        return (Text.ManageRelays.relayServers.text, settings, Text.ManageRelays.footer.text)
+        return (Localized.ManageRelays.relayServers.text, settings, Localized.ManageRelays.footer.text)
     }
     
     // MARK: Preview
@@ -252,7 +252,7 @@ class SettingsViewController: DebugTableViewController {
     private func preview() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.Preview.title.text,
+        settings += [DebugTableViewCellModel(title: Localized.Preview.title.text,
                                              valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
@@ -263,6 +263,6 @@ class SettingsViewController: DebugTableViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
-        return (Text.Preview.title.text, settings, Text.Preview.footer.text)
+        return (Localized.Preview.title.text, settings, Localized.Preview.footer.text)
     }
 }

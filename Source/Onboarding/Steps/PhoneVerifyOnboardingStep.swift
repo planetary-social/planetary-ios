@@ -39,22 +39,22 @@ class PhoneVerifyOnboardingStep: OnboardingStep {
 
     @objc private func retryButtonTouchUpInside() {
 
-        let reenter = UIAlertAction(title: Text.Onboarding.reenter.text, style: .default) {
+        let reenter = UIAlertAction(title: Localized.Onboarding.reenter.text, style: .default) {
             [unowned self] _ in
             self.back()
         }
 
-        let retry = UIAlertAction(title: Text.Onboarding.resendSMS.text, style: .cancel) {
+        let retry = UIAlertAction(title: Localized.Onboarding.resendSMS.text, style: .cancel) {
             [unowned self] _ in
             self.resend()
         }
 
         let phone = self.data.phone ?? ""
-        let title = Text.Onboarding.youEnteredNumber.text(["phone": phone])
+        let title = Localized.Onboarding.youEnteredNumber.text(["phone": phone])
 
         AppController.shared.choose(from: [reenter, retry],
                                     title: title,
-                                    message: Text.Onboarding.confirmNumber.text)
+                                    message: Localized.Onboarding.confirmNumber.text)
     }
 
     private func resend() {

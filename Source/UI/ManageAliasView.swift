@@ -55,12 +55,12 @@ struct LoadingOverlay: View {
             if let loadingMessage = message {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(loadingMessage)
-                        .foregroundColor(Color("mainText"))
+                    Text(loadingMessage)
+                        .foregroundColor(.mainText)
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color("cardBackground").cornerRadius(8))
+                .background(Color.cardBackground.cornerRadius(8))
             } else {
                 EmptyView()
             }
@@ -88,8 +88,8 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         List {
             // Help Text
             Section {} footer: {
-                Text.Alias.introText.view
-                    .foregroundColor(Color("secondaryText"))
+                Localized.Alias.introText.view
+                    .foregroundColor(.secondaryText)
                     .font(.subheadline)
                     .padding(.top, 4)
             }
@@ -102,7 +102,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                             viewModel.open(alias)
                         } label: {
                             HStack {
-                                SwiftUI.Text(alias.string.replacingOccurrences(of: "https://", with: ""))
+                                Text(alias.string.replacingOccurrences(of: "https://", with: ""))
                                 Spacer()
                                 Button {
                                     UIPasteboard.general.setValue(
@@ -113,17 +113,17 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                                     Image(systemName: "doc.on.doc")
                                 }
                                 .padding(9)
-                                .background(Color("menuBorderColor").clipShape(Circle()))
+                                .background(Color.menuBorderColor.clipShape(Circle()))
                             }
                         }
                         
-                        .foregroundColor(Color("mainText"))
-                        .listRowBackground(Color("cardBackground"))
+                        .foregroundColor(.mainText)
+                        .listRowBackground(Color.cardBackground)
                     }
                     .onDelete(perform: { viewModel.deleteAliases(at: $0) })
                 } header: {
-                    Text.Alias.aliases.view
-                        .foregroundColor(Color("secondaryText"))
+                    Localized.Alias.aliases.view
+                        .foregroundColor(.secondaryText)
                         .font(.body.smallCaps())
                 }
             }
@@ -133,7 +133,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                 NavigationLink("Register a new alias") {
                     AddAliasView(viewModel: viewModel.registrationViewModel)
                 }
-                .listRowBackground(Color("cardBackground"))
+                .listRowBackground(Color.cardBackground)
             }
         }
         .disabled(viewModel.loadingMessage?.isEmpty == false)
@@ -141,8 +141,8 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                title: Localized.error.view,
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .refreshable {
@@ -151,13 +151,13 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .onAppear() {
             viewModel.refresh()
         }
-        .navigationBarTitle(Text.Alias.roomAliases.text, displayMode: .inline)
+        .navigationBarTitle(Localized.Alias.roomAliases.text, displayMode: .inline)
         .toolbar {
 //            ToolbarItem(placement: .navigationBarTrailing) {
 //                EditButton()
 //            }
         }
-        .accentColor(Color("primaryAction"))
+        .accentColor(.primaryAction)
     }
 }
 

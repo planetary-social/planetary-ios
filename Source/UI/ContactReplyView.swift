@@ -18,7 +18,7 @@ class ContactReplyView: MessageUIView {
         let backgroundView = UIView.forAutoLayout()
         backgroundView.constrainHeight(to: 0)
         let colorView = UIImageView.forAutoLayout()
-        colorView.image = UIImage(named: "Thread")
+        colorView.image = UIImage.thread
         colorView.contentMode = .scaleToFill
         let (_, _, bottomConstraint, _) = Layout.fill(view: backgroundView, with: colorView)
         bottomConstraint.priority = .required

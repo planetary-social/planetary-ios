@@ -206,7 +206,7 @@ class ExtendedAboutView: MessageUIView {
 
         guard let socialStats = socialStats else {
             let attributedString = NSMutableAttributedString(
-                string: Text.userOusideNetwork.text,
+                string: Localized.userOusideNetwork.text,
                 attributes: secondaryColor
             )
             followerCountLabel.attributedText = attributedString
@@ -215,7 +215,7 @@ class ExtendedAboutView: MessageUIView {
         }
         let numberOfFollowers = socialStats.numberOfFollowers
         let numberOfFollows = socialStats.numberOfFollows
-        let string = Text.followStats.text
+        let string = Localized.followStats.text
 
         let attributedString = NSMutableAttributedString(string: string, attributes: secondaryColor)
         attributedString.replaceCharacters(

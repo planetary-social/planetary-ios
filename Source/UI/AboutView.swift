@@ -192,7 +192,7 @@ class AboutView: MessageUIView {
         self.editPhotoButton.isHidden = self.editButton.isHidden
 
         if identity.isCurrentUser {
-            self.followingLabel.text = Text.thisIsYou.text
+            self.followingLabel.text = Localized.thisIsYou.text
             self.followButton.isHidden = true
         } else {
             loadRelationship(identity: identity)
@@ -260,7 +260,7 @@ class AboutView: MessageUIView {
         self.followButton.isSelected = relationship.isFollowing
 
         if relationship.isFollowedBy {
-            self.followingLabel.text = Text.isFollowingYou.text
+            self.followingLabel.text = Localized.isFollowingYou.text
         }
     }
 
@@ -295,7 +295,7 @@ class AboutView: MessageUIView {
         let view = UILabel.forAutoLayout()
         view.textAlignment = .center
         view.numberOfLines = 2
-        view.text = Text.loadingUpdates.text
+        view.text = Localized.loadingUpdates.text
         view.textColor = UIColor.tint.default
         return view
     }()

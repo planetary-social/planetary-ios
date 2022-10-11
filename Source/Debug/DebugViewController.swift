@@ -23,7 +23,7 @@ class DebugViewController: DebugTableViewController {
         if shouldAddDismissButton {
             self.addDismissBarButtonItem()
         }
-        self.navigationItem.title = Text.debug.text
+        self.navigationItem.title = Localized.debug.text
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -133,7 +133,7 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure: {
                 _ in
                 guard let controller = Support.shared.mainViewController() else {
-                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    self.alert(message: Localized.Error.supportNotConfigured.text)
                     return
                 }
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -148,7 +148,7 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure: {
                 _ in
                 guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
-                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    self.alert(message: Localized.Error.supportNotConfigured.text)
                     return
                 }
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -163,7 +163,7 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure: {
                 _ in
                 guard let controller = Support.shared.newTicketViewController() else {
-                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    self.alert(message: Localized.Error.supportNotConfigured.text)
                     return
                 }
                 self.navigationController?.pushViewController(controller, animated: true)

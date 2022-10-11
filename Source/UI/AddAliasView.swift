@@ -49,14 +49,14 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                 Section {
                     Picker("Room", selection: $selectedRoom) {
                         ForEach(viewModel.rooms) { room in
-                            SwiftUI.Text(room.address.host)
-                                .foregroundColor(Color("mainText"))
+                            Text(room.address.host)
+                                .foregroundColor(.mainText)
                                 .tag(Optional(room))
                         }
                     }
                     
                     TextField("Alias (lowercase letters only)", text: $desiredAlias)
-                        .foregroundColor(Color("mainText"))
+                        .foregroundColor(.mainText)
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                         .onSubmit {
@@ -65,17 +65,17 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                     
                     if let selectedRoom = selectedRoom, desiredAlias.isEmpty == false {
                         HStack {
-                            SwiftUI.Text("https://\(desiredAlias).\(selectedRoom.address.host)")
-                                .foregroundColor(Color("mainText"))
+                            Text("https://\(desiredAlias).\(selectedRoom.address.host)")
+                                .foregroundColor(.mainText)
                         }
                     }
                     
                     Button("Register") {
                         handleSubmit()
                     }
-                    .foregroundColor(Color("primaryAction"))
+                    .foregroundColor(.primaryAction)
                 }
-                .listRowBackground(Color("cardBackground"))
+                .listRowBackground(Color.cardBackground)
                 .disabled(viewModel.rooms.isEmpty)
                 
                 if viewModel.showJoinPlanetaryRoomButton {
@@ -83,14 +83,14 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                         Button("Join Planetary Room") {
                             viewModel.joinPlanetaryRoom()
                         }
-                        .foregroundColor(Color("primaryAction"))
-                        SwiftUI.Text("Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room.")
-                            .foregroundColor(Color("secondaryText"))
+                        .foregroundColor(.primaryAction)
+                        Text("Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room.")
+                            .foregroundColor(.secondaryText)
                             .font(.subheadline)
                             .padding(.top, 4)
                             .lineLimit(5)
                     }
-                    .listRowBackground(Color("cardBackground"))
+                    .listRowBackground(Color.cardBackground)
                 }
             }
         }
@@ -100,8 +100,8 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                title: Localized.error.view,
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .onAppear {

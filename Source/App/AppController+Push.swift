@@ -74,11 +74,11 @@ extension AppController {
     ) {
         let controller = viewController ?? self
         controller.confirm(
-            title: Text.Push.title.text,
-            message: Text.Push.prompt.text,
+            title: Localized.Push.title.text,
+            message: Localized.Push.prompt.text,
             isDestructive: false,
             cancelClosure: { completion?(status) },
-            confirmTitle: Text.settings.text,
+            confirmTitle: Localized.settings.text,
             confirmClosure: AppController.shared.openOSSettings
         )
     }

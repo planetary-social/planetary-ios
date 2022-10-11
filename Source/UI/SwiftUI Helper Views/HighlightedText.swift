@@ -79,14 +79,14 @@ struct HighlightedText: View {
     }
     
     /// A layer that has the body text colored in, but the highlighted word is clear.
-    private var bodyText: SwiftUI.Text {
+    private var bodyText: Text {
         buildTextFromSegments(
             segments: segments,
             highlightBuilder: { string in
                 textView(markdown: string).foregroundColor(.clear)
             },
             bodyBuilder: { string in
-                textView(markdown: string).foregroundColor(Color("secondaryText"))
+                textView(markdown: string).foregroundColor(.secondaryText)
             }
         )
     }
@@ -112,7 +112,7 @@ struct HighlightedText: View {
         buildTextFromSegments(
             segments: segments,
             highlightBuilder: { string in
-                var view: SwiftUI.Text
+                var view: Text
                 if let link = link {
                     let linkMarkdown = "[\(string)](\(link.absoluteURL))"
                     view = textView(markdown: linkMarkdown)
@@ -136,10 +136,10 @@ struct HighlightedText: View {
     /// - Returns: A single `Text` view representing the whole paragraph.
     private func buildTextFromSegments(
         segments: [Segment],
-        highlightBuilder: (String) -> SwiftUI.Text,
-        bodyBuilder: (String) -> SwiftUI.Text
-    ) -> SwiftUI.Text {
-        var textView = SwiftUI.Text("")
+        highlightBuilder: (String) -> Text,
+        bodyBuilder: (String) -> Text
+    ) -> Text {
+        var textView = Text("")
         for segment in segments {
             // swiftlint:disable shorthand_operator
             switch segment {
@@ -148,7 +148,7 @@ struct HighlightedText: View {
             case .highlighted(let string):
                 textView = textView + highlightBuilder(string)
             case .space:
-                textView = textView + SwiftUI.Text(" ")
+                textView = textView + Text(" ")
             }
             // swiftlint:enable shorthand_operator
         }
@@ -156,7 +156,7 @@ struct HighlightedText: View {
     }
     
     /// Convenience function to make a `Text` from raw markdown and fail gracefully.
-    private func textView(markdown: String) -> SwiftUI.Text {
+    private func textView(markdown: String) -> Text {
         var attributedString: AttributedString
         do {
             attributedString = try AttributedString(markdown: markdown)
@@ -164,7 +164,7 @@ struct HighlightedText: View {
             Log.optional(error)
             attributedString = AttributedString(markdown)
         }
-        return SwiftUI.Text(attributedString)
+        return Text(attributedString)
     }
     
     var body: some View {
@@ -182,14 +182,14 @@ struct HighlightedText_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             HighlightedText(
-                Text.Help.Discover.body.text,
-                highlightedWord: Text.Help.Discover.highlightedWord.text,
+                Localized.Help.Discover.body.text,
+                highlightedWord: Localized.Help.Discover.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: URL(string: "https://planetary.social")!
             )
             .padding()
         }
-        .background(Color("menuBorderColor"))
+        .background(Color.menuBorderColor)
         .previewLayout(.sizeThatFits)
         .preferredColorScheme(.dark)
     }

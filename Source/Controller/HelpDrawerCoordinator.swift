@@ -108,7 +108,7 @@ enum HelpDrawerCoordinator {
     static func helpBarButton(for host: HelpDrawerHost) -> UIBarButtonItem {
         let image = UIImage(systemName: "questionmark.circle")
         return UIBarButtonItem(
-            title: Text.Help.help.text,
+            title: Localized.Help.help.text,
             image: image,
             primaryAction: UIAction(handler: { _ in
                 host.helpButtonTouchUpInside()
@@ -192,12 +192,12 @@ enum HelpDrawerCoordinator {
         switch viewController.helpDrawerType {
         case .home:
             return HelpDrawerView(
-                tabName: Text.home.text,
+                tabName: Localized.home.text,
                 tabImageName: "tab-icon-home",
                 heroImageName: nil,
-                helpTitle: Text.Help.Home.title.text,
-                bodyText: Text.Help.Home.body.text,
-                highlightedWord: Text.Help.Home.highlightedWord.text,
+                helpTitle: Localized.Help.Home.title.text,
+                bodyText: Localized.Help.Home.body.text,
+                highlightedWord: Localized.Help.Home.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: MainTab.discover.url,
                 inDrawer: inDrawer,
@@ -208,12 +208,12 @@ enum HelpDrawerCoordinator {
             )
         case .discover:
             return HelpDrawerView(
-                tabName: Text.explore.text,
+                tabName: Localized.explore.text,
                 tabImageName: "tab-icon-everyone",
                 heroImageName: "help-hero-discover",
-                helpTitle: Text.Help.Discover.title.text,
-                bodyText: Text.Help.Discover.body.text,
-                highlightedWord: Text.Help.Discover.highlightedWord.text,
+                helpTitle: Localized.Help.Discover.title.text,
+                bodyText: Localized.Help.Discover.body.text,
+                highlightedWord: Localized.Help.Discover.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: MainTab.home.url,
                 inDrawer: inDrawer,
@@ -224,11 +224,11 @@ enum HelpDrawerCoordinator {
             )
         case .notifications:
             return HelpDrawerView(
-                tabName: Text.notifications.text,
+                tabName: Localized.notifications.text,
                 tabImageName: "tab-icon-notifications",
                 heroImageName: "help-hero-notifications",
-                helpTitle: Text.Help.Notifications.title.text,
-                bodyText: Text.Help.Notifications.body.text,
+                helpTitle: Localized.Help.Notifications.title.text,
+                bodyText: Localized.Help.Notifications.body.text,
                 highlightedWord: nil,
                 highlight: .diagonalAccent,
                 link: nil,
@@ -240,12 +240,12 @@ enum HelpDrawerCoordinator {
             )
         case .hashtags:
             return HelpDrawerView(
-                tabName: Text.channels.text,
+                tabName: Localized.channels.text,
                 tabImageName: "tab-icon-channels",
                 heroImageName: "help-hero-hashtags",
-                helpTitle: Text.Help.Hashtags.title.text,
-                bodyText: Text.Help.Hashtags.body.text,
-                highlightedWord: Text.Help.Hashtags.highlightedWord.text,
+                helpTitle: Localized.Help.Hashtags.title.text,
+                bodyText: Localized.Help.Hashtags.body.text,
+                highlightedWord: Localized.Help.Hashtags.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: MainTab.network.url,
                 inDrawer: inDrawer,
@@ -256,12 +256,12 @@ enum HelpDrawerCoordinator {
             )
         case .network:
             return HelpDrawerView(
-                tabName: Text.yourNetwork.text,
+                tabName: Localized.yourNetwork.text,
                 tabImageName: "tab-icon-directory",
                 heroImageName: "help-hero-network",
-                helpTitle: Text.Help.YourNetwork.title.text,
-                bodyText: Text.Help.YourNetwork.body.text,
-                highlightedWord: Text.Help.YourNetwork.highlightedWord.text,
+                helpTitle: Localized.Help.YourNetwork.title.text,
+                bodyText: Localized.Help.YourNetwork.body.text,
+                highlightedWord: Localized.Help.YourNetwork.highlightedWord.text,
                 highlight: .solidBlack,
                 link: nil,
                 inDrawer: inDrawer,

@@ -32,7 +32,7 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
 
     init(with about: About? = nil) {
         self._about = about ?? About()
-        let title: Text = about == nil ? .createProfile : .editProfile
+        let title: Localized = about == nil ? .createProfile : .editProfile
         super.init(title: title)
         self.aboutView.update(with: self._about)
     }
