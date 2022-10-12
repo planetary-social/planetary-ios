@@ -106,7 +106,7 @@ struct HelpDrawerView: View {
             LinearGradient.diagonalAccent
             
             // Background color
-            Color("menuBorderColor")
+            Color.menuBorderColor
                 .cornerRadius(cornerRadius, corners: inDrawer ? [.topLeft, .topRight] : [.allCorners])
                 .padding(.top, borderWidth)
                 .padding(.horizontal, borderWidth)
@@ -136,7 +136,7 @@ struct HelpDrawerView: View {
                                 // Title
                                 SwiftUI.Text(helpTitle)
                                     .multilineTextAlignment(.leading)
-                                    .foregroundColor(Color("mainText"))
+                                    .foregroundColor(.mainText)
                                     .font(.title.weight(.medium))
                                 
                                 // Body text
@@ -151,7 +151,7 @@ struct HelpDrawerView: View {
                             .padding(.horizontal, 25)
                             .padding(.bottom, 25)
                         }
-                        .background(Color("menuBorderColor").padding(.horizontal, -100))
+                        .background(Color.menuBorderColor.padding(.horizontal, -100))
                         .fixedSize(horizontal: false, vertical: true)
                         
                         // Tip navigation section
@@ -160,7 +160,7 @@ struct HelpDrawerView: View {
                                 previousTipAction?()
                             } label: {
                                 Image(systemName: "arrow.backward")
-                                    .foregroundColor(Color("mainText"))
+                                    .foregroundColor(.mainText)
                             }
                             .disabled(previousTipAction == nil)
                             .opacity(previousTipAction == nil ? 0.3 : 1.0)
@@ -181,7 +181,7 @@ struct HelpDrawerView: View {
                                 nextTipAction?()
                             } label: {
                                 Image(systemName: "arrow.forward")
-                                    .foregroundColor(Color("mainText"))
+                                    .foregroundColor(.mainText)
                             }
                             .disabled(nextTipAction == nil)
                             .opacity(nextTipAction == nil ? 0.3 : 1.0)
@@ -189,7 +189,7 @@ struct HelpDrawerView: View {
                         }
                         .padding(.bottom, 25)
                         .padding(.horizontal, 25)
-                        .background(Color("menuBorderColor"))
+                        .background(Color.menuBorderColor)
                     }
                     .clipped()
                     

@@ -24,7 +24,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     .padding(.trailing, 2)
                 Text.connectedPeers.view
                     .font(.body)
-                    .foregroundColor(Color("menuUnselectedItemText"))
+                    .foregroundColor(.menuUnselectedItemText)
                     .lineLimit(1)
                     .scaledToFit()
                     .minimumScaleFactor(0.5)
@@ -35,7 +35,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                 let count = viewModel.connectedPeersCount.map { String($0) } ?? "~"
                 SwiftUI.Text(count)
                     .font(.body)
-                    .foregroundColor(Color("defaultTint"))
+                    .foregroundColor(.defaultTint)
                     .scaledToFit()
                     .minimumScaleFactor(0.5)
                     .animation(.default, value: count)
@@ -44,7 +44,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
             .padding(.bottom, 0)
             .padding(.horizontal, 14)
             
-            Color("menuBackgroundColor").frame(height: 1)
+            Color.menuBackgroundColor.frame(height: 1)
 
             // Peer List
             ScrollView {
@@ -70,7 +70,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     HStack {
                         Text.syncingMessages.view
                             .font(.caption)
-                            .foregroundColor(Color("mainText"))
+                            .foregroundColor(.mainText)
                             .minimumScaleFactor(0.5)
                         Spacer()
                     }
@@ -81,7 +81,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                             "duration": String(duration)
                         ])
                             .font(.caption)
-                            .foregroundColor(Color("secondaryText"))
+                            .foregroundColor(.secondaryText)
                             .scaledToFit()
                             .minimumScaleFactor(0.5)
                         
@@ -92,7 +92,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
                     HStack {
                         Text.loading.view
                             .font(.caption)
-                            .foregroundColor(Color("mainText"))
+                            .foregroundColor(.mainText)
                             .minimumScaleFactor(0.5)
                         Spacer()
                     }
@@ -105,7 +105,7 @@ struct ConnectedPeerListView<ViewModel>: View where ViewModel: ConnectedPeerList
         }
         .onAppear(perform: viewModel.viewDidAppear)
         .onDisappear(perform: viewModel.viewDidDisappear)
-        .background(Color("menuBorderColor"))
+        .background(Color.menuBorderColor)
         .cornerRadius(10, corners: [.topLeft, .topRight, .bottomRight])
         .cornerRadius(20, corners: [.bottomLeft])
         .padding(14)
@@ -144,11 +144,11 @@ struct ConnectedPeersView_Previews: PreviewProvider {
     static var previews: some View {
         ConnectedPeerListView(viewModel: PreviewViewModel())
             .previewLayout(.fixed(width: 254, height: 310))
-            .background(Color("menuBackgroundColor"))
+            .background(Color.menuBackgroundColor)
         
         // iPhone SE Size
         ConnectedPeerListView(viewModel: PreviewViewModel())
-            .background(Color("menuBackgroundColor"))
+            .background(Color.menuBackgroundColor)
             .previewLayout(.fixed(width: 254, height: 175))
             .preferredColorScheme(.dark)
         

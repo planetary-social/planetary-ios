@@ -203,7 +203,7 @@
 		23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD4B022C19F66005A4DF2 /* UITextView+NSMutableAttributedString.swift */; };
 		23CF345722099E5D00F46A54 /* InvalidVoteMissingIdentifier.json in Resources */ = {isa = PBXBuildFile; fileRef = 23CF345622099E5D00F46A54 /* InvalidVoteMissingIdentifier.json */; };
 		23D8CE272253DB29001EB7D5 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D8CE262253DB29001EB7D5 /* Address.swift */; };
-		23D8E2C022033D31004776EA /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		23D8E2C022033D31004776EA /* (null) in Resources */ = {isa = PBXBuildFile; };
 		23E76A5623F2F0F70074F424 /* ValueTimestamp.json in Resources */ = {isa = PBXBuildFile; fileRef = 23E76A5523F2F0F70074F424 /* ValueTimestamp.json */; };
 		23E8805E22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
 		23E8805F22F894650074D399 /* Collection+RandomSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E8805D22F894650074D399 /* Collection+RandomSample.swift */; };
@@ -264,7 +264,7 @@
 		530F01B222DFCEED007EBAE2 /* String+IsValid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B122DFCEED007EBAE2 /* String+IsValid.swift */; };
 		530F01B422E0D3E7007EBAE2 /* TitledToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B322E0D3E7007EBAE2 /* TitledToggle.swift */; };
 		530F01B622E0D930007EBAE2 /* JoinOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F01B522E0D930007EBAE2 /* JoinOnboardingStep.swift */; };
-		5314EF3A22EA276A0065D02A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		5314EF3A22EA276A0065D02A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		5314EF3B22EA27840065D02A /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62A22445BE900C57A4B /* AppConfiguration.swift */; };
 		5314EF3C22EA27920065D02A /* SSBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53362F692209108F007264CB /* SSBNetwork.swift */; };
 		5314EF3D22EA27980065D02A /* Secret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EE01F32204F66200DFDF16 /* Secret.swift */; };
@@ -700,9 +700,9 @@
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
 		C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
-		C9134DDB28184AF700595D49 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		C9134DDB28184AF700595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9134DE228184C2700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE128184C2700595D49 /* Support */; };
-		C9134DE328184D4200595D49 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		C9134DE328184D4200595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9134DE6281854E700595D49 /* Support in Frameworks */ = {isa = PBXBuildFile; productRef = C9134DE5281854E700595D49 /* Support */; };
 		C915924028C7F080004152E0 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = C915923E28C7F080004152E0 /* Generated.strings */; };
 		C915924128C7F080004152E0 /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = C915923E28C7F080004152E0 /* Generated.strings */; };
@@ -938,7 +938,7 @@
 		C9724BB42809EC4F000EBCCD /* DebugOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B1229F33F00004E2B1 /* DebugOnboardingViewController.swift */; };
 		C9724BB52809EC57000EBCCD /* DebugUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533F4050225E9E010060B4B9 /* DebugUIViewController.swift */; };
 		C9724BB62809EC61000EBCCD /* DebugPostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531EC40B230F6B9E001A25AD /* DebugPostsViewController.swift */; };
-		C9724BB72809EC68000EBCCD /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		C9724BB72809EC68000EBCCD /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9724BB82809EC77000EBCCD /* SecretViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FCAFDD22051C88009E9E82 /* SecretViewController.swift */; };
 		C9724BB92809EC7B000EBCCD /* BotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5396A62622444A1500C57A4B /* BotViewController.swift */; };
 		C9724BBA2809ECA2000EBCCD /* StatisticsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */; };
@@ -1020,6 +1020,9 @@
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
 		C997F3E028B1D86D00DAC117 /* AliasCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C997F3DF28B1D86D00DAC117 /* AliasCell.swift */; };
 		C997F3E128B1D86D00DAC117 /* AliasCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C997F3DF28B1D86D00DAC117 /* AliasCell.swift */; };
+		C99DC1B728F5C13E00880A2E /* custom-xcassets.stencil in Resources */ = {isa = PBXBuildFile; fileRef = C99DC1B528F5C13E00880A2E /* custom-xcassets.stencil */; };
+		C99DC1BA28F5C21300880A2E /* Assets+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */; };
+		C99DC1BB28F5C41600880A2E /* Assets+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */; };
 		C9A1632228ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
 		C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
 		C9A1632628AE88DC00ACDCC5 /* AddAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */; };
@@ -1714,11 +1717,14 @@
 		C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
 		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = text; path = Feed_big.sqlite; sourceTree = "<group>"; };
 		C997F3DF28B1D86D00DAC117 /* AliasCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliasCell.swift; sourceTree = "<group>"; };
+		C99DC1B528F5C13E00880A2E /* custom-xcassets.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "custom-xcassets.stencil"; sourceTree = "<group>"; };
+		C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Assets+Planetary.swift"; sourceTree = "<group>"; };
 		C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAliasView.swift; sourceTree = "<group>"; };
 		C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAliasView.swift; sourceTree = "<group>"; };
 		C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Async.swift"; sourceTree = "<group>"; };
 		C9A2DE2C27CFD61800EAFA73 /* ConnectedPeerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerCell.swift; sourceTree = "<group>"; };
 		C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeerConnectionInfo+Preview.swift"; sourceTree = "<group>"; };
+		C9BF623428F5B54700FD69A3 /* swiftgen.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
 		C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnectionAnimationView.swift; sourceTree = "<group>"; };
 		C9C3787727C6881000238B58 /* ConnectedPeerListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListCoordinator.swift; sourceTree = "<group>"; };
 		C9C3787B27C68DE800238B58 /* ConnectedPeersCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeersCoordinatorTests.swift; sourceTree = "<group>"; };
@@ -1832,7 +1838,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC2974C2804B9DE00C0CD81 /* SQLite in Frameworks */,
-				5314EF3A22EA276A0065D02A /* BuildFile in Frameworks */,
+				5314EF3A22EA276A0065D02A /* (null) in Frameworks */,
 				664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2235,6 +2241,7 @@
 		5344D82221C4649700704A34 = {
 			isa = PBXGroup;
 			children = (
+				C9BF623428F5B54700FD69A3 /* swiftgen.yml */,
 				C9489999278CCC3A009BE021 /* README.md */,
 				C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */,
 				C9570F652788E2280095EFFF /* Architecture */,
@@ -2276,6 +2283,7 @@
 				53C422AB21C4769900A314AD /* Debug */,
 				5376FAE0228D001E00411F5B /* Extension */,
 				5369D2A0220B55DA00A65622 /* FakeBot */,
+				C9BF623028F5AE7100FD69A3 /* Generated */,
 				531D0A1121EACBEE008E40A8 /* GoBot */,
 				8D9143EA230C5BF60075BC8A /* Localization */,
 				0ACA5740243CFA94001C5E37 /* Markdown */,
@@ -2293,6 +2301,7 @@
 		5344D84021C464C500704A34 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C97BBBCB28F5B68600C83B8E /* SwiftGen Stencils */,
 				C9D62CC12880595000CB8BAA /* Videos */,
 				C969F437282C79F100FF6FE3 /* Lottie Animations */,
 				0A41F56C2488078F005BB1DE /* Preload.bundle */,
@@ -2852,6 +2861,14 @@
 			path = "Lottie Animations";
 			sourceTree = "<group>";
 		};
+		C97BBBCB28F5B68600C83B8E /* SwiftGen Stencils */ = {
+			isa = PBXGroup;
+			children = (
+				C99DC1B528F5C13E00880A2E /* custom-xcassets.stencil */,
+			);
+			path = "SwiftGen Stencils";
+			sourceTree = "<group>";
+		};
 		C98A013627907F9200E29A97 /* Performance */ = {
 			isa = PBXGroup;
 			children = (
@@ -2934,6 +2951,14 @@
 				C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */,
 			);
 			path = "SwiftUI Previews";
+			sourceTree = "<group>";
+		};
+		C9BF623028F5AE7100FD69A3 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */,
+			);
+			path = Generated;
 			sourceTree = "<group>";
 		};
 		C9C3787927C68DBD00238B58 /* Service */ = {
@@ -3325,6 +3350,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C9BF622B28F5AB9E00FD69A3 /* PBXTargetDependency */,
 			);
 			name = Planetary;
 			packageProductDependencies = (
@@ -3444,8 +3470,9 @@
 			mainGroup = 5344D82221C4649700704A34;
 			packageReferences = (
 				C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */,
 				5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */,
+				C9BF622F28F5AE1700FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
@@ -3532,7 +3559,7 @@
 				5316E95B21FFD4980053832E /* InvalidChannel.json in Resources */,
 				C924412F278DDECE00592E5E /* Preload.bundle in Resources */,
 				5316E95721FFCDFF0053832E /* UnsupportedType.json in Resources */,
-				23D8E2C022033D31004776EA /* BuildFile in Resources */,
+				23D8E2C022033D31004776EA /* (null) in Resources */,
 				5316E95921FFD19F0053832E /* Invalid.json in Resources */,
 				C9F0B6A027E2728800BE2F0E /* Generated.strings in Resources */,
 				C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */,
@@ -3576,6 +3603,7 @@
 				C9F0B6A727E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B69B27E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B68D27E2728800BE2F0E /* Generated.strings in Resources */,
+				C99DC1B728F5C13E00880A2E /* custom-xcassets.stencil in Resources */,
 				C9F0B69D27E2728800BE2F0E /* Generated.strings in Resources */,
 				C969F439282C7A3700FF6FE3 /* bouncing_ellipse.json in Resources */,
 				C9F0B69327E2728800BE2F0E /* Generated.strings in Resources */,
@@ -4126,7 +4154,7 @@
 				C9724B642809D6DC000EBCCD /* NotificationCellView.swift in Sources */,
 				C9724BBE2809ECCC000EBCCD /* UITextView+Verse.swift in Sources */,
 				53E29CE022D80424008A2CB1 /* Hashtag+String.swift in Sources */,
-				C9724BB72809EC68000EBCCD /* BuildFile in Sources */,
+				C9724BB72809EC68000EBCCD /* (null) in Sources */,
 				0A64A84024735520009A5EBF /* NullPushAPI.swift in Sources */,
 				23EF5AAA249D177F00469977 /* BanListAPI.swift in Sources */,
 				53E26C5E23045D34009240B2 /* Data+Person.swift in Sources */,
@@ -4142,7 +4170,7 @@
 				C9724B182809D350000EBCCD /* AppController+Progress.swift in Sources */,
 				53B4F5FA22B8602F00027C6A /* Mention+NSAttributedString.swift in Sources */,
 				0A64A84824735717009A5EBF /* PhoneVerificationAPIService.swift in Sources */,
-				C9134DE328184D4200595D49 /* BuildFile in Sources */,
+				C9134DE328184D4200595D49 /* (null) in Sources */,
 				C9724BE72809EEA4000EBCCD /* SimplePublishView.swift in Sources */,
 				C9724B432809D4F1000EBCCD /* UIButton+Text.swift in Sources */,
 				535754F722692B59002A6989 /* BotError.swift in Sources */,
@@ -4157,6 +4185,7 @@
 				C9724B772809E7B8000EBCCD /* GalleryView.swift in Sources */,
 				C9724BA12809EABE000EBCCD /* UIView+Shake.swift in Sources */,
 				53AD3FEC22776A4C005228F9 /* Date+millisecs.swift in Sources */,
+				C99DC1BB28F5C41600880A2E /* Assets+Planetary.swift in Sources */,
 				C9724BD82809EE21000EBCCD /* Notification+About.swift in Sources */,
 				C9B5BBFD285A21CF00AEA9B9 /* BanListAPIService.swift in Sources */,
 				23E8806022F894650074D399 /* Collection+RandomSample.swift in Sources */,
@@ -4169,7 +4198,7 @@
 				C9724BC42809ED5B000EBCCD /* Blob+UIColor.swift in Sources */,
 				C9412AEB28AEE8EB00F791A7 /* RoomAliasRegistrationCoordinator.swift in Sources */,
 				C9724B782809E7C1000EBCCD /* AppController+Push.swift in Sources */,
-				C9134DDB28184AF700595D49 /* BuildFile in Sources */,
+				C9134DDB28184AF700595D49 /* (null) in Sources */,
 				C9724B262809D426000EBCCD /* HomeViewController.swift in Sources */,
 				C9724BE02809EE5A000EBCCD /* Tappable.swift in Sources */,
 				C9F1C84927C92842005A3228 /* Localizable.swift in Sources */,
@@ -4917,6 +4946,7 @@
 				C9F5381F286B78240015A146 /* UniversalSearchResultsView.swift in Sources */,
 				531B92B922CD128F005D5255 /* UITextView+Mention.swift in Sources */,
 				533EDBF42389BBE8008B3565 /* Blob+UIColor.swift in Sources */,
+				C99DC1BA28F5C21300880A2E /* Assets+Planetary.swift in Sources */,
 				C937883328C154BF003FCCC2 /* Pub+ViewDatabase.swift in Sources */,
 				8D180359234F5E77004E30AA /* IconButton.swift in Sources */,
 				0A487105249D1B3600BCD063 /* MessagePaginatedCollectionViewDelegate.swift in Sources */,
@@ -4950,6 +4980,10 @@
 			isa = PBXTargetDependency;
 			target = 5344D82A21C4649700704A34 /* Planetary */;
 			targetProxy = 0AD00E7323FC5C71006BF017 /* PBXContainerItemProxy */;
+		};
+		C9BF622B28F5AB9E00FD69A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = C9BF622A28F5AB9E00FD69A3 /* SwiftGenPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -5749,7 +5783,7 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+		5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
 			requirement = {
@@ -5763,6 +5797,22 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;
+			};
+		};
+		C9BF622928F5AB4400FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftGen/SwiftGenPlugin";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		C9BF622F28F5AE1700FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BookBeat/SwiftGenPlugin";
+			requirement = {
+				branch = "xcodeproject-support";
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -5800,17 +5850,17 @@
 		};
 		5BC2974528048AD800C0CD81 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
 			productName = SQLite;
 		};
 		5BC297492804B98C00C0CD81 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
 			productName = SQLite;
 		};
 		5BC2974B2804B9DE00C0CD81 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			package = 5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */;
 			productName = SQLite;
 		};
 		5BE28DFC27CD7BA1004D7D27 /* Analytics */ = {
@@ -5846,6 +5896,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		C9BF622A28F5AB9E00FD69A3 /* SwiftGenPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9BF622928F5AB4400FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */;
+			productName = "plugin:SwiftGenPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -21,7 +21,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     private var lastTimeNewReportsUpdatesWasChecked = Date()
 
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
