@@ -185,6 +185,11 @@ extension AppDelegate {
             }
             
             try await AppController.shared.missionControlCenter.waitForCompletion()
+            
+            // Wait 10 more seconds to let push notification routine finish if we have time
+            if isLongSync {
+                try await Task.sleep(nanoseconds: 10_000_000_000)
+            }
         
             let newMessageCount = (try? Bots.current.numberOfNewMessages(since: startDate)) ?? 0
 
