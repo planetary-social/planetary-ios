@@ -22,13 +22,13 @@ enum RoomInvitationRedeemer {
         var errorDescription: String? {
             switch self {
             case .invalidURL:
-                return Text.Error.invalidRoomURL.text
+                return Localized.Error.invalidRoomURL.text
             case .invitationRedemptionFailedWithReason(let reason):
-                return Text.Error.invitationRedemptionFailedWithReason.text(["reason": reason])
+                return Localized.Error.invitationRedemptionFailedWithReason.text(["reason": reason])
             case .invitationRedemptionFailed:
-                return Text.Error.invitationRedemptionFailed.text
+                return Localized.Error.invitationRedemptionFailed.text
             case .notLoggedIn:
-                return Text.Error.notLoggedIn.text
+                return Localized.Error.notLoggedIn.text
             }
         }
     }
@@ -177,7 +177,7 @@ enum RoomInvitationRedeemer {
     private static func post(_ token: String, to url: URL, controller: AppController, bot: Bot) async {
         do {
             try await post(token, to: url, bot: bot)
-            await controller.showToast(Text.invitationRedeemed.text)
+            await controller.showToast(Localized.invitationRedeemed.text)
         } catch {
             Log.optional(error)
             await controller.topViewController.alert(error: error)

@@ -55,7 +55,7 @@ struct LoadingOverlay: View {
             if let loadingMessage = message {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(loadingMessage)
+                    Text(loadingMessage)
                         .foregroundColor(.mainText)
                 }
                 .padding(16)
@@ -88,7 +88,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         List {
             // Help Text
             Section {} footer: {
-                Text.Alias.introText.view
+                Localized.Alias.introText.view
                     .foregroundColor(.secondaryText)
                     .font(.subheadline)
                     .padding(.top, 4)
@@ -102,7 +102,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                             viewModel.open(alias)
                         } label: {
                             HStack {
-                                SwiftUI.Text(alias.string.replacingOccurrences(of: "https://", with: ""))
+                                Text(alias.string.replacingOccurrences(of: "https://", with: ""))
                                 Spacer()
                                 Button {
                                     UIPasteboard.general.setValue(
@@ -122,7 +122,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
                     }
                     .onDelete(perform: { viewModel.deleteAliases(at: $0) })
                 } header: {
-                    Text.Alias.aliases.view
+                    Localized.Alias.aliases.view
                         .foregroundColor(.secondaryText)
                         .font(.body.smallCaps())
                 }
@@ -141,8 +141,8 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                title: Localized.error.view,
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .refreshable {
@@ -151,7 +151,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .onAppear() {
             viewModel.refresh()
         }
-        .navigationBarTitle(Text.Alias.roomAliases.text, displayMode: .inline)
+        .navigationBarTitle(Localized.Alias.roomAliases.text, displayMode: .inline)
         .toolbar {
 //            ToolbarItem(placement: .navigationBarTrailing) {
 //                EditButton()

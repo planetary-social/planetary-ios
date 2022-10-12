@@ -18,16 +18,16 @@ class StartOnboardingStep: OnboardingStep {
         view.backgroundColor = .appBackground
         view.delegate = self
         view.isEditable = false
-        let text = NSMutableAttributedString(Text.Onboarding.policyStatement.text,
+        let text = NSMutableAttributedString(Localized.Onboarding.policyStatement.text,
                                              font: UIFont.systemFont(ofSize: 13, weight: .medium),
                                              color: UIColor.text.detail)
         text.addLinkAttribute(
             value: SupportArticle.termsOfService.rawValue,
-            to: Text.Onboarding.termsOfService.text
+            to: Localized.Onboarding.termsOfService.text
         )
         text.addLinkAttribute(
             value: SupportArticle.privacyPolicy.rawValue,
-            to: Text.Onboarding.privacyPolicy.text
+            to: Localized.Onboarding.privacyPolicy.text
         )
         view.attributedText = text
         return view
@@ -40,7 +40,7 @@ class StartOnboardingStep: OnboardingStep {
 
     override func customizeView() {
 
-        let title = NSAttributedString("\n\(Text.planetary.text)\n\n\n",
+        let title = NSAttributedString("\n\(Localized.planetary.text)\n\n\n",
                                        font: UIFont.systemFont(ofSize: 50, weight: .semibold),
                                        color: .clear)
 
@@ -76,9 +76,9 @@ extension StartOnboardingStep: UITextViewDelegate {
         guard let article = SupportArticle(rawValue: URL.absoluteString) else { return false }
         guard let controller = Support.shared.articleViewController(article) else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return false
         }

@@ -40,13 +40,13 @@ enum BotError: Error, LocalizedError {
         case .notLoggedIn:
             return "Not logged in"
         case .forkProtection:
-            return Text.Error.cannotPublishBecauseRestoring.text
+            return Localized.Error.cannotPublishBecauseRestoring.text
         case .invalidAppConfiguration:
-            return Text.Error.invalidAppConfiguration.text
+            return Localized.Error.invalidAppConfiguration.text
         case .restoring:
-            return Text.Error.restoring.text
+            return Localized.Error.restoring.text
         case .internalError:
-            return Text.Error.unexpected.text
+            return Localized.Error.unexpected.text
         }
     }
 }
