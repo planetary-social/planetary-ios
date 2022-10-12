@@ -52,7 +52,7 @@ class FloatingRefreshButton: UIButton {
         ]
         let countString = "\(count)"
         let arguments = ["count": countString]
-        let string = count == 1 ? Text.refreshSingular.text(arguments) : Text.refreshPlural.text(arguments)
+        let string = count == 1 ? Localized.refreshSingular.text(arguments) : Localized.refreshPlural.text(arguments)
         let attributedTitle = NSMutableAttributedString(string: string, attributes: titleAttributes)
         let stringRange = string.startIndex ..< string.endIndex
         string.enumerateSubstrings(in: stringRange, options: .byWords) { (substring, substringRange, _, _) in

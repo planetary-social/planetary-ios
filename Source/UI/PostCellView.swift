@@ -16,10 +16,10 @@ class PostCellView: MessageView {
     let verticalSpace: CGFloat = 5
 
     private lazy var seeMoreString: NSAttributedString = {
-        let seeMore = NSMutableAttributedString(string: "... \(Text.seeMore.text)")
+        let seeMore = NSMutableAttributedString(string: "... \(Localized.seeMore.text)")
         let styler = MarkdownStyler()
         styler.style(seeMore: seeMore)
-        let range = (seeMore.string as NSString).range(of: Text.seeMore.text)
+        let range = (seeMore.string as NSString).range(of: Localized.seeMore.text)
         seeMore.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.tint.default], range: range)
         return seeMore
     }()
@@ -247,9 +247,9 @@ class PostCellView: MessageView {
                 explicitExpression.isSingleEmoji {
                 expression = explicitExpression
             } else if vote.vote.value > 0 {
-                expression = "\(Text.likesThis.text)"
+                expression = "\(Localized.likesThis.text)"
             } else {
-                expression = "\(Text.dislikesThis.text)"
+                expression = "\(Localized.dislikesThis.text)"
             }
 
             let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.italicSystemFont(ofSize: 16),

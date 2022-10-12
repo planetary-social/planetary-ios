@@ -17,7 +17,7 @@ extension UIViewController {
     
     func addDismissBarButtonItem() {
         let item = UIBarButtonItem(image: UIImage.verse.dismiss, style: .plain, target: self, action: #selector(didPressDismiss))
-        item.accessibilityLabel = Text.done.text
+        item.accessibilityLabel = Localized.done.text
         self.navigationItem.leftBarButtonItem = item
     }
 
