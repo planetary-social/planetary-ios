@@ -334,7 +334,7 @@
 
 "Report.somebody" = "Jemand";
 "Report.feedFollowed" = "%@ folgt dir jetzt";
-"Report.postReplied" = "%@ antwortete auf deinen Beitrag";
+"Report.postReplied" = "%@ replied to a post you commented on";
 "Report.feedMentioned" = "%@ hat dich in einem Beitrag erwähnt";
 "Report.messageLiked" = "%@ gefällt dein Beitrag";
 

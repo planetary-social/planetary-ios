@@ -334,7 +334,7 @@
 
 "Report.somebody" = "某人";
 "Report.feedFollowed" = "%@ 关注了你!";
-"Report.postReplied" = "%@ 回复了你的动态";
+"Report.postReplied" = "%@ replied to a post you commented on";
 "Report.feedMentioned" = "%@ 提到你的评论";
 "Report.messageLiked" = "%@ X点赞了你";
 
