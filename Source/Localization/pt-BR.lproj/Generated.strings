@@ -44,7 +44,7 @@
 "Text.dontSendAnalytics" = "Não enviar análise alguma";
 "Text.analyticsMessage" = "Permita-nos coletar dados sobre o uso que faz do aplicativo para que possamos aprimorá-lo.";
 "Text.loadingUpdates" = "O Planetary busca atualizações\n na web descentralizada peer-to-peer.";
-"Text.post" = "Publicar";
+"Text.postAction" = "Publicar";
 "Text.preview" = "Pré-visualizar";
 "Text.newPost" = "Nova postagem";
 "Text.deletePost" = "Excluir esta postagem";

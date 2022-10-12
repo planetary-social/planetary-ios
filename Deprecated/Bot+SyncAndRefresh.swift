@@ -23,7 +23,7 @@ extension Bot {
 
         self.sync {
             error, _, numberOfMessages in
-            if let error = error {
+            if let error {
                 Log.unexpected(.botError, "failed to sync with pubs")
                 Log.optional(error)
             }

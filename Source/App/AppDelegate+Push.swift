@@ -217,6 +217,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
     private func updateApplicationBadgeNumber() {
         let operation = CountUnreadNotificationsOperation()
-        AppController.shared.operationQueue.addOperation(operation)
+        AppController.shared.addOperation(operation)
     }
 }

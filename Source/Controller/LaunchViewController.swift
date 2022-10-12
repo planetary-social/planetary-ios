@@ -12,6 +12,11 @@ import Logger
 import Analytics
 import CrashReporting
 
+// Mark UserDefaults as @Sendable for now, because docs say it's thread safe and I can't find another good alternative.
+#if compiler(>=5.5) && canImport(_Concurrency)
+extension UserDefaults: @unchecked Sendable {}
+#endif
+
 class LaunchViewController: UIViewController {
 
     // MARK: Lifecycle
@@ -41,7 +46,7 @@ class LaunchViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.splashBackground
 
-        let splashImageView = UIImageView(image: UIImage(named: "launch"))
+        let splashImageView = UIImageView(image: UIImage.launch)
         splashImageView.contentMode = .scaleAspectFit
         Layout.center(splashImageView, in: self.view, size: CGSize(width: 188, height: 248))
         
@@ -95,7 +100,7 @@ class LaunchViewController: UIViewController {
         // TODO this should be an analytics track()
         // TODO include app installation UUID
         // Analytics.shared.app(launch)
-        Log.info("Launching with configuration '\(configuration.name)'")
+        Log.info("Launching with configuration:\n\(configuration)")
         
         Task {
             login: do {

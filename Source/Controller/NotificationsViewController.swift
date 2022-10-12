@@ -23,7 +23,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     private var lastTimeNewReportsUpdatesWasChecked = Date()
 
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -151,8 +151,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
                 self?.load(animated: animated)
             }
         }
-        let operations = [refreshOperation]
-        AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
+        AppController.shared.addOperation(refreshOperation)
     }
 
     private func update(with reports: [Report], animated: Bool = true) {
@@ -185,7 +184,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
                     }
                 }
             }
-            AppController.shared.operationQueue.addOperation(operation)
+            AppController.shared.addOperation(operation)
         } else {
             // If the feed is empty, we just try to fetch the new updates and show them
             load(animated: false)
@@ -407,6 +406,6 @@ private class HeaderView: UITableViewHeaderFooterView {
     func clearNotificationsButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
         let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
-        AppController.shared.operationQueue.addOperation(clearUnreadNotificationsOperation)
+        AppController.shared.addOperation(clearUnreadNotificationsOperation)
     }
 }

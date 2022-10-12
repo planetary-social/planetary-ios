@@ -1018,6 +1018,9 @@
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
 		C997F3E028B1D86D00DAC117 /* AliasCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C997F3DF28B1D86D00DAC117 /* AliasCell.swift */; };
 		C997F3E128B1D86D00DAC117 /* AliasCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C997F3DF28B1D86D00DAC117 /* AliasCell.swift */; };
+		C99DC1B728F5C13E00880A2E /* custom-xcassets.stencil in Resources */ = {isa = PBXBuildFile; fileRef = C99DC1B528F5C13E00880A2E /* custom-xcassets.stencil */; };
+		C99DC1BA28F5C21300880A2E /* Assets+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */; };
+		C99DC1BB28F5C41600880A2E /* Assets+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */; };
 		C9A1632228ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
 		C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */; };
 		C9A1632628AE88DC00ACDCC5 /* AddAliasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */; };
@@ -1711,11 +1714,14 @@
 		C98A01492790B9F400E29A97 /* Shared.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.debug.xcconfig; sourceTree = "<group>"; };
 		C98A014A2790C5A800E29A97 /* Feed_big.sqlite */ = {isa = PBXFileReference; lastKnownFileType = text; path = Feed_big.sqlite; sourceTree = "<group>"; };
 		C997F3DF28B1D86D00DAC117 /* AliasCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliasCell.swift; sourceTree = "<group>"; };
+		C99DC1B528F5C13E00880A2E /* custom-xcassets.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "custom-xcassets.stencil"; sourceTree = "<group>"; };
+		C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Assets+Planetary.swift"; sourceTree = "<group>"; };
 		C9A1632128ADE33800ACDCC5 /* ManageAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAliasView.swift; sourceTree = "<group>"; };
 		C9A1632528AE88DC00ACDCC5 /* AddAliasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAliasView.swift; sourceTree = "<group>"; };
 		C9A2DE2827CFCB5F00EAFA73 /* Publisher+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Async.swift"; sourceTree = "<group>"; };
 		C9A2DE2C27CFD61800EAFA73 /* ConnectedPeerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerCell.swift; sourceTree = "<group>"; };
 		C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeerConnectionInfo+Preview.swift"; sourceTree = "<group>"; };
+		C9BF623428F5B54700FD69A3 /* swiftgen.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
 		C9C3787527C5956200238B58 /* PeerConnectionAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerConnectionAnimationView.swift; sourceTree = "<group>"; };
 		C9C3787727C6881000238B58 /* ConnectedPeerListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListCoordinator.swift; sourceTree = "<group>"; };
 		C9C3787B27C68DE800238B58 /* ConnectedPeersCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeersCoordinatorTests.swift; sourceTree = "<group>"; };
@@ -2232,6 +2238,7 @@
 		5344D82221C4649700704A34 = {
 			isa = PBXGroup;
 			children = (
+				C9BF623428F5B54700FD69A3 /* swiftgen.yml */,
 				C9489999278CCC3A009BE021 /* README.md */,
 				C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */,
 				C9570F652788E2280095EFFF /* Architecture */,
@@ -2273,6 +2280,7 @@
 				53C422AB21C4769900A314AD /* Debug */,
 				5376FAE0228D001E00411F5B /* Extension */,
 				5369D2A0220B55DA00A65622 /* FakeBot */,
+				C9BF623028F5AE7100FD69A3 /* Generated */,
 				531D0A1121EACBEE008E40A8 /* GoBot */,
 				8D9143EA230C5BF60075BC8A /* Localization */,
 				0ACA5740243CFA94001C5E37 /* Markdown */,
@@ -2290,6 +2298,7 @@
 		5344D84021C464C500704A34 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C97BBBCB28F5B68600C83B8E /* SwiftGen Stencils */,
 				C9D62CC12880595000CB8BAA /* Videos */,
 				C969F437282C79F100FF6FE3 /* Lottie Animations */,
 				0A41F56C2488078F005BB1DE /* Preload.bundle */,
@@ -2848,6 +2857,14 @@
 			path = "Lottie Animations";
 			sourceTree = "<group>";
 		};
+		C97BBBCB28F5B68600C83B8E /* SwiftGen Stencils */ = {
+			isa = PBXGroup;
+			children = (
+				C99DC1B528F5C13E00880A2E /* custom-xcassets.stencil */,
+			);
+			path = "SwiftGen Stencils";
+			sourceTree = "<group>";
+		};
 		C98A013627907F9200E29A97 /* Performance */ = {
 			isa = PBXGroup;
 			children = (
@@ -2930,6 +2947,14 @@
 				C9A2DE3127CFD66000EAFA73 /* PeerConnectionInfo+Preview.swift */,
 			);
 			path = "SwiftUI Previews";
+			sourceTree = "<group>";
+		};
+		C9BF623028F5AE7100FD69A3 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				C99DC1B928F5C21300880A2E /* Assets+Planetary.swift */,
+			);
+			path = Generated;
 			sourceTree = "<group>";
 		};
 		C9C3787927C68DBD00238B58 /* Service */ = {
@@ -3321,6 +3346,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C9BF622B28F5AB9E00FD69A3 /* PBXTargetDependency */,
 			);
 			name = Planetary;
 			packageProductDependencies = (
@@ -3359,7 +3385,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1320;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1400;
 				ORGANIZATIONNAME = "Verse Communications Inc";
 				TargetAttributes = {
 					0A3880172475BB4500777843 = {
@@ -3442,6 +3468,7 @@
 				C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */,
 				5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */,
+				C9BF622F28F5AE1700FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
@@ -3572,6 +3599,7 @@
 				C9F0B6A727E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B69B27E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B68D27E2728800BE2F0E /* Generated.strings in Resources */,
+				C99DC1B728F5C13E00880A2E /* custom-xcassets.stencil in Resources */,
 				C9F0B69D27E2728800BE2F0E /* Generated.strings in Resources */,
 				C969F439282C7A3700FF6FE3 /* bouncing_ellipse.json in Resources */,
 				C9F0B69327E2728800BE2F0E /* Generated.strings in Resources */,
@@ -3618,6 +3646,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		1CB03AF84C66F1D3D7DBE245 /* Upload Bugsnag dSYM */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 8;
 			files = (
 			);
@@ -3678,6 +3707,7 @@
 		};
 		5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 8;
 			files = (
 			);
@@ -3709,6 +3739,8 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/($CONTENTS_FOLDER_PATH)/Secrets.plist",
+				"",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3728,7 +3760,6 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				$CONFIGURATION_BUILD_DIR/$CONTENTS_FOLDER_PATH/Secrets.plist,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -3812,6 +3843,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Source/Localization/*.lproj",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -4149,6 +4181,7 @@
 				C9724B772809E7B8000EBCCD /* GalleryView.swift in Sources */,
 				C9724BA12809EABE000EBCCD /* UIView+Shake.swift in Sources */,
 				53AD3FEC22776A4C005228F9 /* Date+millisecs.swift in Sources */,
+				C99DC1BB28F5C41600880A2E /* Assets+Planetary.swift in Sources */,
 				C9724BD82809EE21000EBCCD /* Notification+About.swift in Sources */,
 				C9B5BBFD285A21CF00AEA9B9 /* BanListAPIService.swift in Sources */,
 				23E8806022F894650074D399 /* Collection+RandomSample.swift in Sources */,
@@ -4907,6 +4940,7 @@
 				C9F5381F286B78240015A146 /* UniversalSearchResultsView.swift in Sources */,
 				531B92B922CD128F005D5255 /* UITextView+Mention.swift in Sources */,
 				533EDBF42389BBE8008B3565 /* Blob+UIColor.swift in Sources */,
+				C99DC1BA28F5C21300880A2E /* Assets+Planetary.swift in Sources */,
 				C937883328C154BF003FCCC2 /* Pub+ViewDatabase.swift in Sources */,
 				8D180359234F5E77004E30AA /* IconButton.swift in Sources */,
 				0A487105249D1B3600BCD063 /* MessagePaginatedCollectionViewDelegate.swift in Sources */,
@@ -4940,6 +4974,10 @@
 			isa = PBXTargetDependency;
 			target = 5344D82A21C4649700704A34 /* Planetary */;
 			targetProxy = 0AD00E7323FC5C71006BF017 /* PBXContainerItemProxy */;
+		};
+		C9BF622B28F5AB9E00FD69A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = C9BF622A28F5AB9E00FD69A3 /* SwiftGenPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -5503,6 +5541,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = targeted;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -5560,6 +5599,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RELEASE;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = targeted;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -5572,10 +5612,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 371;
+				CURRENT_PROJECT_VERSION = 376;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -5585,7 +5627,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.3.4;
+				MARKETING_VERSION = 1.3.5;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -5604,10 +5646,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 371;
+				CURRENT_PROJECT_VERSION = 376;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
+				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FUSE_BUILD_SCRIPT_PHASES = YES;
 				GENERATE_PROFILING_CODE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -5617,7 +5661,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.3.4;
+				MARKETING_VERSION = 1.3.5;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -5635,6 +5679,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -5653,6 +5698,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				ENABLE_HARDENED_RUNTIME = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -5747,6 +5793,22 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		C9BF622928F5AB4400FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftGen/SwiftGenPlugin";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		C9BF622F28F5AE1700FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BookBeat/SwiftGenPlugin";
+			requirement = {
+				branch = "xcodeproject-support";
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5828,6 +5890,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		C9BF622A28F5AB9E00FD69A3 /* SwiftGenPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9BF622928F5AB4400FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */;
+			productName = "plugin:SwiftGenPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

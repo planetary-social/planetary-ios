@@ -145,7 +145,7 @@ class ChannelsViewController: ContentViewController, HelpDrawerHost {
                 self?.load(animated: animated)
             }
         }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
+        AppController.shared.addOperation(refreshOperation)
     }
 
     private func update(with hashtags: [Hashtag], animated: Bool = true) {

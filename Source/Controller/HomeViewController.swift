@@ -17,7 +17,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -264,7 +264,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
                     }
                 }
             }
-            AppController.shared.operationQueue.addOperation(operation)
+            AppController.shared.addOperation(operation)
         }
     }
     

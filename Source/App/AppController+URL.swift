@@ -102,7 +102,7 @@ extension AppController {
                     }
                 }
             }
-            self?.operationQueue.addOperation(operation)
+            self?.addOperation(operation)
         }
         controller.addAction(action)
         featureController.present(alertController: controller, animated: true)
