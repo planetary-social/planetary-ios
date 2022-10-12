@@ -307,7 +307,7 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the LaunchViewController starts the migration for a user with a SQLite database version older
     /// than 20.
     func testLaunchViewControllerTriggersMigrationForOldSQLite() throws {
-        XCTExpectFailure("This test fails intermittently. See #907")
+        XCTExpectFailure("This test fails intermittently. See #907", strict: false)
         // Arrange
         try touchSQLiteDatabase(version: 1)
         Onboarding.set(status: .completed, for: appConfig.identity)
