@@ -168,8 +168,8 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         
         let controller = UIAlertController(
-            title: Text.error.text,
-            message: Text.Error.login.text,
+            title: Localized.error.text,
+            message: Localized.Error.login.text,
             preferredStyle: .alert
         )
         let action = UIAlertAction(title: "Restart", style: .default) { _ in

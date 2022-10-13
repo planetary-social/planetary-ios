@@ -26,7 +26,7 @@ class ContactsViewController: ContentViewController, AboutTableViewDelegate {
         return view
     }()
 
-    init(title: Text, identity: Identity, identities: [Identity] = []) {
+    init(title: Localized, identity: Identity, identities: [Identity] = []) {
         self.identity = identity
         self.dataSource = AboutTableViewDataSource(identities: identities)
         super.init(scrollable: false, dynamicTitle: title.text(["count": "\(identities.count)"]))

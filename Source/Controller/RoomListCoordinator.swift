@@ -47,14 +47,14 @@ import UIKit
     func addRoom(from string: String) {
         // Check if this is an invitation
         if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
-            loadingMessage = Text.joiningRoom.text
+            loadingMessage = Localized.joiningRoom.text
             Task {
                 await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
                 self.finishAddingRoom()
             }
         // Check if this is an address
         } else if let address = MultiserverAddress(string: string) {
-            loadingMessage = Text.joiningRoom.text
+            loadingMessage = Localized.joiningRoom.text
             Task {
                 do {
                     try await self.bot.insert(room: Room(address: address))
@@ -65,7 +65,7 @@ import UIKit
                 }
             }
         } else {
-            errorMessage = Text.Error.invalidRoomInvitationOrAddress.text
+            errorMessage = Localized.Error.invalidRoomInvitationOrAddress.text
         }
     }
     
@@ -79,7 +79,7 @@ import UIKit
     
     func open(_ room: Room) {
         guard let url = URL(string: "https://\(room.address.host)") else {
-            errorMessage = Text.ManageRelays.invalidRoomURL.text
+            errorMessage = Localized.ManageRelays.invalidRoomURL.text
             return
         }
         

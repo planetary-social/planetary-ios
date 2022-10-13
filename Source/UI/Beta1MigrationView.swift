@@ -46,7 +46,7 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
                                     .frame(width: 72.11, height: 88)
                                 Spacer()
                             }
-                            Text.upgradingAndRestoring.view
+                            Localized.upgradingAndRestoring.view
                                 .font(.title)
                                 .foregroundColor(.mainText)
                                 .multilineTextAlignment(.leading)
@@ -59,7 +59,7 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
                                 Button {
                                     viewModel.confirmDismissal()
                                 } label: {
-                                    Text.dismissAndStartUsingPlanetary.view
+                                    Localized.dismissAndStartUsingPlanetary.view
                                         .foregroundColor(Color(UIColor.linkColor))
                                         .font(.callout)
                                         .underline()
@@ -83,12 +83,12 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
         }
         .alert(isPresented: $viewModel.shouldConfirmDismissal, content: {
             Alert(
-                title: Text.areYouSure.view,
-                message: Text.dismissMigrationEarlyMessage.view,
-                primaryButton: .default(Text.yes.view, action: {
+                title: Localized.areYouSure.view,
+                message: Localized.dismissMigrationEarlyMessage.view,
+                primaryButton: .default(Localized.yes.view, action: {
                     viewModel.dismissPressed()
                 }),
-                secondaryButton: .destructive(Text.cancel.view, action: {
+                secondaryButton: .destructive(Localized.cancel.view, action: {
                     viewModel.shouldConfirmDismissal = false
                 })
             )

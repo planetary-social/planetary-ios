@@ -2,43 +2,43 @@
 
 // provide the types of any new Localizable enums
 // in order to automatically export their strings to the localization files
-extension Text {
+extension Localized {
     static var localizableTypes: [Localizable.Type] {
         [
-            Text.self,
-            Text.Blocking.self,
-            Text.ImagePicker.self,
-            Text.NewPost.self,
-            Text.Offboarding.self,
-            Text.Onboarding.self,
-            Text.Onboarding.StepTitle.self,
-            Text.ManageRelays.self,
-            Text.Alias.self,
-            Text.Preview.self,
-            Text.FeedAlgorithm.self,
-            Text.DiscoveryFeedAlgorithm.self,
-            Text.WebServices.self,
-            Text.Push.self,
-            Text.Reporting.self,
-            Text.Debug.self,
-            Text.Error.self,
-            Text.Channel.self,
-            Text.Post.self,
-            Text.Report.self,
-            Text.Notifications.self,
-            Text.Help.self,
-            Text.Help.Home.self,
-            Text.Help.Discover.self,
-            Text.Help.Notifications.self,
-            Text.Help.Hashtags.self,
-            Text.Help.YourNetwork.self,
+            Localized.self,
+            Localized.Blocking.self,
+            Localized.ImagePicker.self,
+            Localized.NewPost.self,
+            Localized.Offboarding.self,
+            Localized.Onboarding.self,
+            Localized.Onboarding.StepTitle.self,
+            Localized.ManageRelays.self,
+            Localized.Alias.self,
+            Localized.Preview.self,
+            Localized.FeedAlgorithm.self,
+            Localized.DiscoveryFeedAlgorithm.self,
+            Localized.WebServices.self,
+            Localized.Push.self,
+            Localized.Reporting.self,
+            Localized.Debug.self,
+            Localized.Error.self,
+            Localized.Channel.self,
+            Localized.Post.self,
+            Localized.Report.self,
+            Localized.Notifications.self,
+            Localized.Help.self,
+            Localized.Help.Home.self,
+            Localized.Help.Discover.self,
+            Localized.Help.Notifications.self,
+            Localized.Help.Hashtags.self,
+            Localized.Help.YourNetwork.self,
         ]
     }
 }
 
 // MARK: - Generic
 
-enum Text: String, Localizable, CaseIterable {
+enum Localized: String, Localizable, CaseIterable {
 
     case planetary = "Planetary"
 
@@ -236,7 +236,7 @@ start using Planetary right away, but:
 
 // MARK: - ImagePicker
 
-extension Text {
+extension Localized {
 
     enum ImagePicker: String, Localizable, CaseIterable {
         case camera = "Camera"
@@ -251,7 +251,7 @@ extension Text {
 
 // MARK: - New post
 
-extension Text {
+extension Localized {
 
     enum NewPost: String, Localizable, CaseIterable {
         case confirmRemove = "Remove this image from the post?  You can always add it back again."
@@ -263,7 +263,7 @@ extension Text {
 
 // MARK: - Offboarding
 
-extension Text {
+extension Localized {
 
     enum Offboarding: String, Localizable, CaseIterable {
         case reset = "Delete"
@@ -280,7 +280,7 @@ extension Text {
 
 // MARK: - Onboarding
 
-extension Text {
+extension Localized {
 
     enum Onboarding: String, Localizable, CaseIterable {
         enum StepTitle: String, Localizable, CaseIterable {
@@ -374,7 +374,7 @@ extension Text {
 
 // MARK: - Manage Relays
 
-extension Text {
+extension Localized {
     
     enum ManageRelays: String, Localizable, CaseIterable {
         case relayServers = "Relay Servers"
@@ -395,7 +395,7 @@ extension Text {
 
 // MARK: - Manage Aliases
 
-extension Text {
+extension Localized {
     
     enum Alias: String, Localizable, CaseIterable {
         case manageAliases = "Manage Aliases (beta)"
@@ -408,7 +408,7 @@ extension Text {
 
 // MARK: - Preview
 
-extension Text {
+extension Localized {
 
     enum Preview: String, Localizable, CaseIterable {
         case title = "Advanced Settings"
@@ -418,7 +418,7 @@ extension Text {
 
 // MARK: - Feed Algorithms
 
-extension Text {
+extension Localized {
 
     enum FeedAlgorithm: String, Localizable, CaseIterable {
         case algorithms = "Algorithms"
@@ -449,7 +449,7 @@ extension Text {
 
 // MARK: - Public Web Hosting
 
-extension Text {
+extension Localized {
 
     enum WebServices: String, Localizable, CaseIterable {
         case title = "Web Services"
@@ -461,7 +461,7 @@ extension Text {
 
 // MARK: - Push
 
-extension Text {
+extension Localized {
 
     enum Push: String, Localizable, CaseIterable {
         case enabled = "Enabled"
@@ -473,7 +473,7 @@ extension Text {
 
 // MARK: - Notifications
 
-extension Text {
+extension Localized {
 
     enum Notifications: String, Localizable, CaseIterable {
         case markAllAsRead = "Mark all as read"
@@ -482,7 +482,7 @@ extension Text {
 
 // MARK: - Report
 
-extension Text {
+extension Localized {
 
     enum Reporting: String, Localizable, CaseIterable {
         case abusive = "Abusive to me or someone else"
@@ -495,7 +495,7 @@ extension Text {
 
 // MARK: - Block
 
-extension Text {
+extension Localized {
 
     enum Blocking: String, Localizable, CaseIterable {
         case alertTitle = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible."
@@ -507,7 +507,7 @@ extension Text {
     }
 }
 
-extension Text {
+extension Localized {
     
     enum Debug: String, Localizable, CaseIterable {
         case debugTitle = "Hacker Mode"
@@ -520,7 +520,7 @@ extension Text {
     }
 }
 
-extension Text {
+extension Localized {
     
     enum Error: String, Localizable, CaseIterable {
         case login = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device."
@@ -538,21 +538,21 @@ extension Text {
     }
 }
 
-extension Text {
+extension Localized {
     enum Channel: String, Localizable, CaseIterable {
         case one = "channel"
         case many = "channels"
     }
 }
 
-extension Text {
+extension Localized {
     enum Post: String, Localizable, CaseIterable {
         case one = "post"
         case many = "posts"
     }
 }
 
-extension Text {
+extension Localized {
     enum Report: String, Localizable, CaseIterable {
         case somebody = "Somebody"
         case feedFollowed = "%@ started following you"
@@ -563,7 +563,7 @@ extension Text {
 }
 
 // MARK: Help
-extension Text {
+extension Localized {
     enum Help: String, Localizable, CaseIterable {
         
         case help = "Help"

@@ -156,7 +156,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         let titleLabel = UILabel.forAutoLayout()
         titleLabel.numberOfLines = 0
         titleLabel.font = UIFont.preferredFont(forTextStyle: .title2)
-        titleLabel.text = Text.noResultsFound.text
+        titleLabel.text = Localized.noResultsFound.text
         titleLabel.textColor = UIColor.text.default
         titleLabel.textAlignment = .center
         Layout.center(titleLabel, atTopOf: view, inset: 100)
@@ -164,7 +164,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         let detailLabel = UILabel.forAutoLayout()
         detailLabel.numberOfLines = 0
         detailLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        detailLabel.text = Text.noResultsHelp.text
+        detailLabel.text = Localized.noResultsHelp.text
         detailLabel.textColor = UIColor.text.detail
         detailLabel.textAlignment = .left
         view.addSubview(detailLabel)
@@ -194,7 +194,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         let view = UILabel.forAutoLayout()
         view.textAlignment = .center
         view.numberOfLines = 2
-        view.text = Text.searchingLocally.text
+        view.text = Localized.searchingLocally.text
         view.textColor = UIColor.tint.default
         return view
     }()
@@ -381,11 +381,11 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         
         switch section {
         case .users:
-            return Text.users.text
+            return Localized.users.text
         case .posts:
-            return Text.posts.text
+            return Localized.posts.text
         case .network:
-            return Text.usersInYourNetwork.text
+            return Localized.usersInYourNetwork.text
         }
     }
     

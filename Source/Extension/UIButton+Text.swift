@@ -9,11 +9,11 @@
 import UIKit
 
 extension UIButton {
-    func setText(_ text: Text) {
+    func setText(_ text: Localized) {
         setTitle(text.text, for: .normal)
     }
 
-    func setText(_ text: Text.Onboarding) {
+    func setText(_ text: Localized.Onboarding) {
         setTitle(text.text, for: .normal)
     }
 }

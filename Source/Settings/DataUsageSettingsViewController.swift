@@ -12,7 +12,7 @@ import Analytics
 
 class DataUsageSettingsViewController: DebugTableViewController {
 
-    private lazy var on = DebugTableViewCellModel(title: Text.sendAnalytics.text,
+    private lazy var on = DebugTableViewCellModel(title: Localized.sendAnalytics.text,
                                                   valueClosure: {
             cell in
             cell.accessoryType = Analytics.shared.isEnabled ? .checkmark : .none
@@ -22,7 +22,7 @@ class DataUsageSettingsViewController: DebugTableViewController {
             self.toggle(enabled: true)
         })
 
-    private lazy var off = DebugTableViewCellModel(title: Text.dontSendAnalytics.text,
+    private lazy var off = DebugTableViewCellModel(title: Localized.dontSendAnalytics.text,
                                                    valueClosure: {
             cell in
             cell.accessoryType = Analytics.shared.isEnabled ? .none : .checkmark
@@ -34,12 +34,12 @@ class DataUsageSettingsViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = Text.analyticsAndCrash.text
+        self.navigationItem.title = Localized.analyticsAndCrash.text
         self.updateSettings()
     }
 
     override internal func updateSettings() {
-        self.settings = [("", [self.on, self.off], Text.analyticsMessage.text)]
+        self.settings = [("", [self.on, self.off], Localized.analyticsMessage.text)]
         super.updateSettings()
     }
 

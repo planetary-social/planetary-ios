@@ -134,7 +134,7 @@ struct HelpDrawerView: View {
                                 )
                                 
                                 // Title
-                                SwiftUI.Text(helpTitle)
+                                Text(helpTitle)
                                     .multilineTextAlignment(.leading)
                                     .foregroundColor(.mainText)
                                     .font(.title.weight(.medium))
@@ -166,8 +166,8 @@ struct HelpDrawerView: View {
                             .opacity(previousTipAction == nil ? 0.3 : 1.0)
                             
                             Spacer()
-                            SwiftUI.Text(
-                                Text.Help.indexOfTip.text(
+                            Text(
+                                Localized.Help.indexOfTip.text(
                                     [
                                         "tipIndex": String(tipIndex),
                                         "totalTipCount": "5"
@@ -233,12 +233,12 @@ struct HomeHelpView_Previews: PreviewProvider {
     
     static var iPadPreview: some View {
         let view = HelpDrawerView(
-            tabName: Text.home.text,
+            tabName: Localized.home.text,
             tabImageName: "tab-icon-home",
             heroImageName: nil,
-            helpTitle: Text.Help.Home.title.text,
-            bodyText: Text.Help.Home.body.text,
-            highlightedWord: Text.Help.Home.highlightedWord.text,
+            helpTitle: Localized.Help.Home.title.text,
+            bodyText: Localized.Help.Home.body.text,
+            highlightedWord: Localized.Help.Home.highlightedWord.text,
             highlight: .diagonalAccent,
             link: nil,
             inDrawer: false,
@@ -254,12 +254,12 @@ struct HomeHelpView_Previews: PreviewProvider {
     
     static var homeTabPreview: some View {
         HelpDrawerView(
-            tabName: Text.home.text,
+            tabName: Localized.home.text,
             tabImageName: "tab-icon-home",
             heroImageName: nil,
-            helpTitle: Text.Help.Home.title.text,
-            bodyText: Text.Help.Home.body.text,
-            highlightedWord: Text.Help.Home.highlightedWord.text,
+            helpTitle: Localized.Help.Home.title.text,
+            bodyText: Localized.Help.Home.body.text,
+            highlightedWord: Localized.Help.Home.highlightedWord.text,
             highlight: .diagonalAccent,
             link: URL(string: "https://planetary.social"),
             inDrawer: true,
@@ -272,11 +272,11 @@ struct HomeHelpView_Previews: PreviewProvider {
     
     static var notificationsTabPreview: some View {
         HelpDrawerView(
-            tabName: Text.notifications.text,
+            tabName: Localized.notifications.text,
             tabImageName: "tab-icon-notifications",
             heroImageName: "help-hero-notifications",
-            helpTitle: Text.Help.Notifications.title.text,
-            bodyText: Text.Help.Notifications.body.text,
+            helpTitle: Localized.Help.Notifications.title.text,
+            bodyText: Localized.Help.Notifications.body.text,
             highlightedWord: nil,
             highlight: .diagonalAccent,
             link: nil,

@@ -18,7 +18,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.text.detail
-        label.text = Text.ManageRelays.pasteAddress.text.uppercased()
+        label.text = Localized.ManageRelays.pasteAddress.text.uppercased()
         return label
     }()
     
@@ -40,7 +40,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        self.title = Text.redeemInvitation.text
+        self.title = Localized.redeemInvitation.text
     }
     
     required init?(coder aDecoder: NSCoder) {

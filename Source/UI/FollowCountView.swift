@@ -18,8 +18,8 @@ class FollowCountView: UIView {
 
     var action: () -> Void = {}
 
-    let text: Text
-    let secondaryText: Text
+    let text: Localized
+    let secondaryText: Localized
     let avatarView = AvatarStackView()
 
     let label: UILabel = {
@@ -30,7 +30,7 @@ class FollowCountView: UIView {
         return view
     }()
 
-    init(text: Text, secondaryText: Text) {
+    init(text: Localized, secondaryText: Localized) {
         self.text = text
         self.secondaryText = secondaryText
 

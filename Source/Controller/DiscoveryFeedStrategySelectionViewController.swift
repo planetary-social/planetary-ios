@@ -16,7 +16,7 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = Text.DiscoveryFeedAlgorithm.feedAlgorithmTitle.text
+        self.navigationItem.title = Localized.DiscoveryFeedAlgorithm.feedAlgorithmTitle.text
         self.updateSettings()
     }
 
@@ -31,7 +31,7 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
 
     private func recentPosts() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.DiscoveryFeedAlgorithm.recentPostsAlgorithm.text,
+            title: Localized.DiscoveryFeedAlgorithm.recentPostsAlgorithm.text,
             valueClosure: { cell in
                 if let postsAlgorithm = self.selectedStrategy() as? PostsAlgorithm,
                     postsAlgorithm.onlyFollowed == false,
@@ -46,12 +46,12 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription.text)
+        return (nil, [cell], Localized.DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription.text)
     }
 
     private func randomPosts() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.DiscoveryFeedAlgorithm.randomPostsAlgorithm.text,
+            title: Localized.DiscoveryFeedAlgorithm.randomPostsAlgorithm.text,
             valueClosure: { cell in
                 if self.selectedStrategy() is RandomAlgorithm {
                     cell.accessoryType = .checkmark
@@ -64,12 +64,12 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription.text)
+        return (nil, [cell], Localized.DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription.text)
     }
     
     private func viewSource() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.viewAlgorithmSource.text,
+            title: Localized.FeedAlgorithm.viewAlgorithmSource.text,
             valueClosure: { cell in
                 cell.textLabel?.textColor = .systemBlue
             },
@@ -84,7 +84,7 @@ class DiscoveryFeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (Text.FeedAlgorithm.sourceCode.text, [cell], Text.FeedAlgorithm.sourceCodeDescription.text)
+        return (Localized.FeedAlgorithm.sourceCode.text, [cell], Localized.FeedAlgorithm.sourceCodeDescription.text)
     }
     
     // MARK: - Helpers

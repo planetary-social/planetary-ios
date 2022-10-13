@@ -202,7 +202,7 @@ extension ChannelsViewController: UITableViewDataSource {
         cell.selectionStyle = .none
         cell.backgroundColor = .cardBackground
         
-        let postText = (hashtag.count == 1) ? Text.Post.one.text : Text.Post.many.text
+        let postText = (hashtag.count == 1) ? Localized.Post.one.text : Localized.Post.many.text
         
         cell.detailTextLabel?.text = "\(hashtag.count) \(postText)"
         

@@ -41,19 +41,19 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
 
     private func promptForPhotoLibraryOrCamera(from sourceView: AnyObject) {
 
-        let library = UIAlertAction(title: Text.ImagePicker.selectFrom.text, style: .default) {
+        let library = UIAlertAction(title: Localized.ImagePicker.selectFrom.text, style: .default) {
             [weak self] _ in
             Analytics.shared.trackDidSelectAction(actionName: "photo_library")
             self?.openPhotoLibrary()
         }
 
-        let camera = UIAlertAction(title: Text.ImagePicker.takePhoto.text, style: .default) {
+        let camera = UIAlertAction(title: Localized.ImagePicker.takePhoto.text, style: .default) {
             [weak self] _ in
             Analytics.shared.trackDidSelectAction(actionName: "camera")
             self?.openCamera()
         }
 
-        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in
+        let cancel = UIAlertAction(title: Localized.cancel.text, style: .cancel) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "cancel")
         }
 
@@ -62,10 +62,10 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
 
     private func promptToOpenSettings(for title: String) {
         self.presentingViewController?.confirm(
-            title: Text.ImagePicker.permissionsRequired.text(["title": title]),
-            message: Text.ImagePicker.openSettingsMessage.text,
+            title: Localized.ImagePicker.permissionsRequired.text(["title": title]),
+            message: Localized.ImagePicker.openSettingsMessage.text,
             isDestructive: false,
-            confirmTitle: Text.settings.text,
+            confirmTitle: Localized.settings.text,
             confirmClosure: AppController.shared.openOSSettings
         )
     }
@@ -77,7 +77,7 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
         // denied
         let status = PHPhotoLibrary.authorizationStatus()
         if status == .denied || status == .restricted {
-            self.promptToOpenSettings(for: Text.ImagePicker.photoLibrary.text)
+            self.promptToOpenSettings(for: Localized.ImagePicker.photoLibrary.text)
             return
         }
 
@@ -99,15 +99,15 @@ class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationContro
 
         // simulator
         if UIDevice.isSimulator {
-            self.presentingViewController?.alert(message: Text.ImagePicker.cameraNotAvailable.text,
-                                                 cancelTitle: Text.ok.text)
+            self.presentingViewController?.alert(message: Localized.ImagePicker.cameraNotAvailable.text,
+                                                 cancelTitle: Localized.ok.text)
             return
         }
 
         // denied
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         if status == .denied || status == .restricted {
-            self.promptToOpenSettings(for: Text.ImagePicker.camera.text)
+            self.promptToOpenSettings(for: Localized.ImagePicker.camera.text)
             return
         }
 
