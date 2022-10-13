@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Update to Xcode 14. #839
-
+- Speed up database using a many connections instead of one. #884
 
 ## [1.3.5] 2022-10-03
 
