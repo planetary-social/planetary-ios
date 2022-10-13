@@ -25,9 +25,9 @@ struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel 
             if viewModel.progress < 0.995 {
                 HStack(alignment: .bottom, spacing: 3) {
                     Spacer()
-                    SwiftUI.Text(
+                    Text(
                         String(
-                            format: "%.0f%% \(Text.percentComplete.text)",
+                            format: "%.0f%% \(Localized.percentComplete.text)",
                             viewModel.progress * 100
                         )
                     )
@@ -40,7 +40,7 @@ struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel 
                     Spacer()
                 }
             } else {
-                Text.startUsingPlanetaryTitle.view
+                Localized.startUsingPlanetaryTitle.view
                     .transition(.opacity)
                     .animation(.easeIn, value: viewModel.progress)
                     .font(.headline)
@@ -156,7 +156,7 @@ struct ProgressButton_Previews: PreviewProvider {
             ProgressButton(viewModel: PreviewViewModel(progress: 1))
         }
         .padding(30)
-        .background(Color("appBackground"))
+        .background(Color.appBackground)
         .preferredColorScheme(.dark)
         .previewLayout(.sizeThatFits)
     }

@@ -44,7 +44,7 @@ class BirthdateOnboardingStep: OnboardingStep, UITextFieldDelegate, UIPickerView
     }
 
     override func customizeView() {
-        self.view.hintLabel.text = Text.Onboarding.ageLimit.text
+        self.view.hintLabel.text = Localized.Onboarding.ageLimit.text
         self.view.textField.inputView = datePicker
         self.view.textField.delegate = self
         // hide the cursor, since we disable direct text editing anyway

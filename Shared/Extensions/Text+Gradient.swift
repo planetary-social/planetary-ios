@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension SwiftUI.Text {
+extension Text {
     
     /// Colors the text with the given gradient
     public func foregroundLinearGradient(colors: [Color], startPoint: UnitPoint, endPoint: UnitPoint) -> some View {

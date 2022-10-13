@@ -41,7 +41,7 @@ import UIKit
     }
     
     func refresh() {
-        loadingMessage = Text.loading.text
+        loadingMessage = Localized.loading.text
         Task {
             do {
                 self.aliases = try await bot.registeredAliases()

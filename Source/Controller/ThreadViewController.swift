@@ -518,9 +518,9 @@ extension ThreadViewController: ImageGalleryViewDelegate {
 
     func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {
         self.confirm(
-            message: Text.NewPost.confirmRemove.text,
+            message: Localized.NewPost.confirmRemove.text,
             isDestructive: true,
-            confirmTitle: Text.NewPost.remove.text,
+            confirmTitle: Localized.NewPost.remove.text,
             confirmClosure: { view.remove(at: indexPath) }
         )
     }
