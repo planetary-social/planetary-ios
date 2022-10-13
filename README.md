@@ -56,6 +56,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 * Planetary can prevent users from seeing banned messages or accounts
 * Planetary can define who is in the initial directory and content upon installing the app
 * Users can migrate their identity off of Planetary to access blacklisted content in other ssb apps
+* Room Support (tunneling connections)
+* Room Aliases
 
 ## Functionality Implemented in Planetary with only debug or api interface:
 * Private Messaging up to 8 people
@@ -78,7 +80,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 * Routing traffic over tor / anonymizing networks
 * TrustNet transitive abuse moderation algorithm
 * Suggest new people to follow
-* Room Support (tunneling connections)
 * Direct serverless DHT Invite generation and redemption. 
 * Log in to web services using scuttlebutt identity through QR code.
 * Metafeeds (single identity key writer for multiple feeds for a single user)
