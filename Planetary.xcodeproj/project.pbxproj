@@ -3337,6 +3337,7 @@
 			buildConfigurationList = 5344D83D21C4649A00704A34 /* Build configuration list for PBXNativeTarget "Planetary" */;
 			buildPhases = (
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
+				E08B98F028F85984003E4B83 /* Run SwiftGen */,
 				5B6C333B2832D4FE001F10D6 /* Run swiftlint on modified files */,
 				8D9143FB230C6B670075BC8A /* Generate Localized Strings */,
 				5B0D584E27BAAE69002F927D /* Make Acknowledgments.plist */,
@@ -3350,7 +3351,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C9BF622B28F5AB9E00FD69A3 /* PBXTargetDependency */,
 			);
 			name = Planetary;
 			packageProductDependencies = (
@@ -3472,7 +3472,6 @@
 				C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				5BC2974428048AD800C0CD81 /* XCRemoteSwiftPackageReference "SQLite" */,
 				5B5BB8DB283E8BFC00D99AB8 /* XCRemoteSwiftPackageReference "SkeletonView" */,
-				C9BF622F28F5AE1700FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 			);
 			productRefGroup = 5344D82C21C4649700704A34 /* Products */;
 			projectDirPath = "";
@@ -3910,6 +3909,25 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		E08B98F028F85984003E4B83 /* Run SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftGen";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ -f \"${PODS_ROOT}/SwiftGen/bin/swiftgen\" ]]; then\n  \"${PODS_ROOT}/SwiftGen/bin/swiftgen\"\nelse\n  echo \"warning: SwiftGen is not installed. Run 'pod install --repo-update' to install it.\"\nfi\n";
 		};
 		F03FDAAC62494C507A69A807 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4981,10 +4999,6 @@
 			target = 5344D82A21C4649700704A34 /* Planetary */;
 			targetProxy = 0AD00E7323FC5C71006BF017 /* PBXContainerItemProxy */;
 		};
-		C9BF622B28F5AB9E00FD69A3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = C9BF622A28F5AB9E00FD69A3 /* SwiftGenPlugin */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -5799,22 +5813,6 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		C9BF622928F5AB4400FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftGen/SwiftGenPlugin";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
-			};
-		};
-		C9BF622F28F5AE1700FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/BookBeat/SwiftGenPlugin";
-			requirement = {
-				branch = "xcodeproject-support";
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5896,11 +5894,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C969F434282C79CC00FF6FE3 /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
-		};
-		C9BF622A28F5AB9E00FD69A3 /* SwiftGenPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C9BF622928F5AB4400FD69A3 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */;
-			productName = "plugin:SwiftGenPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
