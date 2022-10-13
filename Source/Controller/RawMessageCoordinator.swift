@@ -48,7 +48,7 @@ import Logger
     }
 
     private func loadRawMessage() {
-        loadingMessage = Text.loading.text
+        loadingMessage = Localized.loading.text
         Task.detached { [bot, message, weak self] in
             do {
                 var rawMessage: String

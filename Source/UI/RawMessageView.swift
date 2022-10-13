@@ -37,12 +37,12 @@ struct RawMessageView<ViewModel>: View where ViewModel: RawMessageViewModel {
             if showProgress, let loadingMessage = viewModel.loadingMessage {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(loadingMessage)
-                        .foregroundColor(Color("mainText"))
+                    Text(loadingMessage)
+                        .foregroundColor(.mainText)
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color("cardBackground").cornerRadius(8))
+                .background(Color.cardBackground.cornerRadius(8))
             } else {
                 EmptyView()
             }
@@ -74,17 +74,17 @@ struct RawMessageView<ViewModel>: View where ViewModel: RawMessageViewModel {
                 Button {
                     viewModel.didDismiss()
                 } label: {
-                    SwiftUI.Text(Text.cancel.text)
+                    Text(.cancel)
                 }
             }
         }
-        .navigationTitle(Text.messageSource.text)
+        .navigationTitle(Localized.messageSource.text)
         .disabled(showProgress)
         .overlay(loadingIndicator)
         .alert(isPresented: showAlert) {
             Alert(
-                title: Text.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                title: Localized.error.view,
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
     }

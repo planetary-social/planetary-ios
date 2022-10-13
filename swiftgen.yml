@@ -1,0 +1,7 @@
+input_dir: Resources/
+output_dir: Source/Generated/
+xcassets:
+    - inputs: Assets.xcassets
+      outputs:
+        - templatePath: Resources/SwiftGen Stencils/custom-xcassets.stencil
+          output: Assets+Planetary.swift

@@ -25,7 +25,7 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
 
     // TODO this is duplicated from AboutView
     private let imageView: UIImageView = {
-        let image = UIImage(named: "missing-about-icon")
+        let image = UIImage.missingAboutIcon
         let view = UIImageView(image: image)
         view.contentMode = .scaleAspectFill
         return view

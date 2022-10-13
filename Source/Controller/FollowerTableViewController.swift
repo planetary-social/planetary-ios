@@ -29,10 +29,10 @@ class FollowerTableViewController: AboutTableViewController {
         super.viewDidLoad()
 
         if let abouts = self.startingAbouts, !abouts.isEmpty {
-            self.title = Text.followedByShortCount.text(["count": "\(abouts.count)"])
+            self.title = Localized.followedByShortCount.text(["count": "\(abouts.count)"])
             self.allAbouts = abouts.sorted()
         } else {
-            self.title = Text.followedByShortCount.text(["count": "0"])
+            self.title = Localized.followedByShortCount.text(["count": "0"])
             self.load { }
         }
     }
@@ -41,7 +41,7 @@ class FollowerTableViewController: AboutTableViewController {
         Bots.current.followers(identity: self.identity) { (abouts: [About], error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
-            self.title = Text.followedByShortCount.text(["count": "\(abouts.count)"])
+            self.title = Localized.followedByShortCount.text(["count": "\(abouts.count)"])
             self.allAbouts = abouts.sorted()
             completion()
         }

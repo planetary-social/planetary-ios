@@ -62,12 +62,12 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
             if showProgress, let loadingMessage = viewModel.loadingMessage {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(loadingMessage)
-                        .foregroundColor(Color("mainText"))
+                    Text(loadingMessage)
+                        .foregroundColor(.mainText)
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color("cardBackground").cornerRadius(8))
+                .background(Color.cardBackground.cornerRadius(8))
             } else {
                 EmptyView()
             }
@@ -84,15 +84,15 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         Button {
                             viewModel.open(room)
                         } label: {
-                            SwiftUI.Text(room.address.host)
+                            Text(room.address.host)
                         }
-                        .foregroundColor(Color("mainText"))
-                        .listRowBackground(Color("cardBackground"))
+                        .foregroundColor(.mainText)
+                        .listRowBackground(Color.cardBackground)
                     }
                     .onDelete(perform: { viewModel.deleteRooms(at: $0) })
                 } header: {
-                    Text.ManageRelays.joinedRooms.view
-                        .foregroundColor(Color("secondaryText"))
+                    Localized.ManageRelays.joinedRooms.view
+                        .foregroundColor(.secondaryText)
                         .font(.body.smallCaps())
                 }
             }
@@ -102,8 +102,8 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                 HStack {
                     TextField("", text: $newRoomString)
                         .placeholder(when: newRoomString.isEmpty) {
-                            Text.addRoomAddressOrInvitation.view
-                                .foregroundColor(Color("secondaryText"))
+                            Localized.addRoomAddressOrInvitation.view
+                                .foregroundColor(.secondaryText)
                         }
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
@@ -116,18 +116,18 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         newRoomString = ""
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(Color("primaryAction"))
+                            .foregroundColor(.primaryAction)
                     }
                     .disabled(newRoomString.isEmpty || showProgress)
                 }
-                .listRowBackground(Color("cardBackground"))
+                .listRowBackground(Color.cardBackground)
             } header: {
-                Text.ManageRelays.addRooms.view
-                    .foregroundColor(Color("secondaryText"))
+                Localized.ManageRelays.addRooms.view
+                    .foregroundColor(.secondaryText)
                     .font(.body.smallCaps())
             } footer: {
-                Text.ManageRelays.roomHelpText.view
-                    .foregroundColor(Color("secondaryText"))
+                Localized.ManageRelays.roomHelpText.view
+                    .foregroundColor(.secondaryText)
                     .font(.subheadline)
                     .padding(.top, 4)
             }
@@ -137,20 +137,20 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                title: Localized.error.view,
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .refreshable {
             viewModel.refresh()
         }
-        .navigationBarTitle(Text.ManageRelays.manageRooms.text, displayMode: .inline)
+        .navigationBarTitle(Localized.ManageRelays.manageRooms.text, displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()
             }
         }
-        .accentColor(Color("primaryAction"))
+        .accentColor(.primaryAction)
     }
 }
 

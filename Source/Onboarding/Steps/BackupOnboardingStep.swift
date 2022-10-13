@@ -16,7 +16,7 @@ class BackupOnboardingStep: OnboardingStep {
     }
 
     override func customizeView() {
-        self.view.hintLabel.text = Text.Onboarding.backupHint.text
+        self.view.hintLabel.text = Localized.Onboarding.backupHint.text
         self.view.secondaryButton.setText(.notNow)
         self.view.primaryButton.setText(.backUp)
     }
