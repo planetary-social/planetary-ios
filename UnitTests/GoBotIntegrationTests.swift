@@ -236,19 +236,17 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10)
     }
 
-    func testLoginLogoutLoop() async throws {
-        // These failure expectations are only good for one use each, so here are a bunch
-        XCTExpectFailure("go-ssb sometimes hangs when logging out", strict: false)
-        XCTExpectFailure("go-ssb sometimes hangs when logging out", strict: false)
-        XCTExpectFailure("go-ssb sometimes hangs when logging out", strict: false)
-        XCTExpectFailure("go-ssb sometimes hangs when logging out", strict: false)
-        try await sut.login(config: appConfig)
-
-        await sut.exit()
-        try await sut.logout()
-        
-        try await sut.login(config: appConfig)
-    }
+    // Disabled until scuttlego #908
+//    func testLoginLogoutLoop() async throws {
+//        // These failure expectations are only good for one use each, so here are a bunch
+//        XCTExpectFailure("go-ssb sometimes hangs when logging out", strict: false)
+//        try await sut.login(config: appConfig)
+//
+//        await sut.exit()
+//        try await sut.logout()
+//
+//        try await sut.login(config: appConfig)
+//    }
 
     // MARK: - Publishing
     
