@@ -126,15 +126,6 @@
           "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
           "version": "1.4.2"
         }
-      },
-      {
-        "package": "SwiftGenPlugin",
-        "repositoryURL": "https://github.com/BookBeat/SwiftGenPlugin",
-        "state": {
-          "branch": "xcodeproject-support",
-          "revision": "1228d5a43ca791db0719d42f641c34a00b9c32f3",
-          "version": null
-        }
       }
     ]
   },
