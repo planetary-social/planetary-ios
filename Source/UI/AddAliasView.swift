@@ -49,7 +49,7 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                 Section {
                     Picker("Room", selection: $selectedRoom) {
                         ForEach(viewModel.rooms) { room in
-                            SwiftUI.Text(room.address.host)
+                            Text(room.address.host)
                                 .foregroundColor(.mainText)
                                 .tag(Optional(room))
                         }
@@ -65,7 +65,7 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                     
                     if let selectedRoom = selectedRoom, desiredAlias.isEmpty == false {
                         HStack {
-                            SwiftUI.Text("https://\(desiredAlias).\(selectedRoom.address.host)")
+                            Text("https://\(desiredAlias).\(selectedRoom.address.host)")
                                 .foregroundColor(.mainText)
                         }
                     }
@@ -84,7 +84,7 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
                             viewModel.joinPlanetaryRoom()
                         }
                         .foregroundColor(.primaryAction)
-                        SwiftUI.Text("Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room.")
+                        Text("Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room.")
                             .foregroundColor(.secondaryText)
                             .font(.subheadline)
                             .padding(.top, 4)
@@ -100,8 +100,8 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                title: Localized.error.view,
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .onAppear {

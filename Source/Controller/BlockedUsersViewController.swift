@@ -31,7 +31,7 @@ class BlockedUsersViewController: ContentViewController, AboutTableViewDelegate 
     // MARK: Lifecycle
 
     init() {
-        super.init(scrollable: false, dynamicTitle: Text.Blocking.blockedUsers.text)
+        super.init(scrollable: false, dynamicTitle: Localized.Blocking.blockedUsers.text)
     }
 
     required init?(coder aDecoder: NSCoder) {

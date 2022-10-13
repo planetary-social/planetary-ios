@@ -154,7 +154,7 @@ class AppConfigurationViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: Text.Debug.resetForkedFeedProtection.text,
+                title: Localized.Debug.resetForkedFeedProtection.text,
                 cellReuseIdentifier: DebugValueTableViewCell.className,
                 valueClosure: { [weak self] cell in
                     let enabled = AppConfiguration.current == self?.configuration
@@ -165,13 +165,13 @@ class AppConfigurationViewController: DebugTableViewController {
                 actionClosure: { [weak self] cell in
                     self?.confirm(
                         from: cell,
-                        message: Text.Debug.resetForkedFeedProtectionDescription.text,
+                        message: Localized.Debug.resetForkedFeedProtectionDescription.text,
                         isDestructive: true,
-                        confirmTitle: Text.Debug.reset.text
+                        confirmTitle: Localized.Debug.reset.text
                     ) {
                         guard let self = self,
                             let bot = self.configuration.bot else {
-                            self?.alert(message: Text.Debug.noBotConfigured.text)
+                            self?.alert(message: Localized.Debug.noBotConfigured.text)
                             return
                         }
                         
@@ -370,7 +370,7 @@ class AppConfigurationViewController: DebugTableViewController {
     // MARK: Actions
 
     @objc private func selectConfiguration() {
-        AppController.shared.showProgress(after: 0, statusText: Text.loggingOut.text)
+        AppController.shared.showProgress(after: 0, statusText: Localized.loggingOut.text)
         guard let name = self.nameField.text else { return }
         guard self.configuration.canLaunch else { return }
         self.configuration.name = name

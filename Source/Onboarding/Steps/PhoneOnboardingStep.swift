@@ -22,7 +22,7 @@ class PhoneOnboardingStep: OnboardingStep {
         view.layer.borderColor = UIColor.border.text.cgColor
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 10
-        view.placeholder = Text.Onboarding.phoneNumber.text
+        view.placeholder = Localized.Onboarding.phoneNumber.text
         view.textAlignment = .center
         view.textContentType = .telephoneNumber
         return view
@@ -36,7 +36,7 @@ class PhoneOnboardingStep: OnboardingStep {
         self.view.addSubview(self.phoneNumberField)
         self.phoneNumberField.constrain(to: self.view.textField)
         self.view.textField.isHidden = true
-        self.view.hintLabel.text = Text.Onboarding.phoneNumberConfirmationMessage.text
+        self.view.hintLabel.text = Localized.Onboarding.phoneNumberConfirmationMessage.text
         self.view.primaryButton.isEnabled = false
     }
 

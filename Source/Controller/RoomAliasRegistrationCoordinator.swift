@@ -32,7 +32,7 @@ import Secrets
     init(bot: Bot) {
         self.bot = bot
         
-        loadingMessage = Text.loading.text
+        loadingMessage = Localized.loading.text
         Task {
             await refresh()
             self.loadingMessage = nil
@@ -56,7 +56,7 @@ import Secrets
             return
         }
         
-        loadingMessage = Text.loading.text
+        loadingMessage = Localized.loading.text
         Task {
             do {
                 _ = try await self.bot.register(alias: desiredAlias, in: room)
@@ -70,13 +70,13 @@ import Secrets
     }
     
     func joinPlanetaryRoom() {
-        loadingMessage = Text.loading.text
+        loadingMessage = Localized.loading.text
         Task {
             do {
                 let token = Keys.shared.get(key: .planetaryRoomToken)!
                 try await RoomInvitationRedeemer.redeem(token: token, at: "planetary.name", bot: bot)
                 await refresh()
-                self.errorMessage = Text.invitationRedeemed.text
+                self.errorMessage = Localized.invitationRedeemed.text
             } catch {
                 Log.optional(error)
                 self.errorMessage = error.localizedDescription

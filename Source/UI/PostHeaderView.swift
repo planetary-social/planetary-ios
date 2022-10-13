@@ -160,7 +160,7 @@ fileprivate extension Message {
         let claimedDate = self.claimedDate
         let day = claimedDate.todayYesterdayDayOfWeekOrNumberOfDaysAgo
         let time = claimedDate.timeOfDay
-        let text = Text.atDayTime.text(["day": day, "time": time])
+        let text = Localized.atDayTime.text(["day": day, "time": time])
         return text.prefix(1).capitalized + text.dropFirst()
     }
 }
@@ -169,13 +169,13 @@ fileprivate extension Date {
 
     var todayYesterdayDayOfWeekOrNumberOfDaysAgo: String {
         let calendar = Calendar.current
-        if calendar.isDateInToday(self) { return Text.today.text }
-        if calendar.isDateInYesterday(self) { return Text.yesterday.text }
+        if calendar.isDateInToday(self) { return Localized.today.text }
+        if calendar.isDateInYesterday(self) { return Localized.yesterday.text }
         let components = calendar.dateComponents([.day], from: self, to: Date())
         let daysApart = components.day ?? -1
-        if daysApart < 0 { return Text.future.text }
+        if daysApart < 0 { return Localized.future.text }
         if daysApart <= 7 { return DateFormatter.dayOfWeek.string(from: self) }
-        return Text.daysAgo.text(["days": String(daysApart)])
+        return Localized.daysAgo.text(["days": String(daysApart)])
     }
 
     var timeOfDay: String {
