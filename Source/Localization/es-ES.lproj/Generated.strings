@@ -135,9 +135,9 @@
 "Localized.searchingLocally" = "Buscando publicaciones en tu base de datos local";
 "Localized.noResultsFound" = "No se encontraron resultados.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
-"Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
-"Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
-"Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
+"Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
+"Localized.beta1MigrationComplete" = "Toca en el siguiente botón para cerrar esta pantalla y volver a tu feed.";
+"Localized.beta1MigrationPleaseLeaveAppOpen" = "Puede que esto lleve un rato.\n\nPor favor deja la aplicación abierta hasta que termine.\n";
 "Localized.beta1StartUsingPlanetary" = "Si no quieres esperar, puedes\ncomenzar a usar Planetary ahora mismo, pero:";
 "Localized.startUsingPlanetary" = "comenzar a usar Planetary";
 "Localized.startUsingPlanetaryTitle" = "Comenzar a usar Planetary";
