@@ -19,6 +19,7 @@ class AvatarImageView: ImageView {
         }
         set {
             super.image = newValue ?? UIImage.verse.missingAbout
+            self.contentMode = .scaleAspectFill
         }
     }
     
