@@ -186,6 +186,7 @@ class GoBot: Bot {
         Log.info("Dropping GoBot SQL ViewDatabase...")
         let databaseDirectory = try config.databaseDirectory()
         try database.dropDatabase(at: databaseDirectory)
+        userDefaults.set(0, forKey: greatestRequestedSequenceNumberFromGoBotKey)
         try self.database.open(
             path: databaseDirectory,
             user: config.secret.identity

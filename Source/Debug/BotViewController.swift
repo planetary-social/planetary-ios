@@ -125,6 +125,7 @@ class BotViewController: DebugTableViewController {
                 }
             })]
         
+        let bot = bot
         settings += [
             DebugTableViewCellModel(
                 title: "Delete View Database",
@@ -132,23 +133,22 @@ class BotViewController: DebugTableViewController {
                 valueClosure: { cell in
                     cell.textLabel?.textColor = .systemRed
                 },
-                actionClosure: { [unowned self] cell in
-                    self.confirm(
-                        message: "This will delete the SQL database. It will be several minutes before you see posts" +
-                            "again. Are you sure?"
+                actionClosure: { [weak self] _ in
+                    self?.confirm(
+                        message: "This will delete the SQL database. It will be several minutes before you see " +
+                        "posts again. Are you sure?"
                     ) {
                         AppController.shared.showProgress()
                         Task {
                             do {
-                                try await self.bot.dropViewDatabase()
-                                self.alert(
-                                    message: "View Database deleted successfully. It will take some time before you" +
-                                        "see posts again.",
+                                try await bot.dropViewDatabase()
+                                self?.alert(
+                                    message: "View Database deleted successfully. It will take some time before " +
+                                    "you see posts again.",
                                     cancelTitle: "Ok"
                                 )
                             } catch {
-                                self.alert(error: error)
-                                
+                                self?.alert(error: error)
                             }
                             AppController.shared.hideProgress()
                         }
