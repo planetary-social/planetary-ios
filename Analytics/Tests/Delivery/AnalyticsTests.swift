@@ -70,13 +70,8 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.tracked)
     }
 
-    func testTrackDidBackgroundFetch() {
-        analytics.trackDidBackgroundFetch()
-        XCTAssertTrue(service.tracked)
-    }
-
     func testTrackDidBackgroundTask() {
-        analytics.trackDidBackgroundTask(taskIdentifier: "test")
+        analytics.trackDidStartBackgroundTask(taskIdentifier: "test")
         XCTAssertTrue(service.tracked)
     }
 
