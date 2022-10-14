@@ -19,14 +19,44 @@
 		</dict>
 		<key>ViewDatabasePerformanceTests</key>
 		<dict>
+			<key>testCurrentPostsAlgorithmGivenSmallDb()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.152286</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Sep 27, 2022 at 2:14:48 PM</string>
+				</dict>
+			</dict>
+			<key>testDiscoverAlgorithmGivenSmallDb()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.137287</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Sep 27, 2022 at 2:14:48 PM</string>
+				</dict>
+			</dict>
 			<key>testFeedForIdentity()</key>
 			<dict>
 				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
 				<dict>
 					<key>baselineAverage</key>
-					<real>0.146236</real>
+					<real>0.010480</real>
 					<key>baselineIntegrationDisplayName</key>
-					<string>Jan 17, 2022 at 2:45:41 PM</string>
+					<string>Sep 27, 2022 at 2:14:48 PM</string>
+				</dict>
+			</dict>
+			<key>testFillMessagesGivenSmallDB()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.229490</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Sep 27, 2022 at 2:14:48 PM</string>
 				</dict>
 			</dict>
 			<key>testGetFollows()</key>
@@ -34,9 +64,9 @@
 				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
 				<dict>
 					<key>baselineAverage</key>
-					<real>0.125950</real>
+					<real>0.157553</real>
 					<key>baselineIntegrationDisplayName</key>
-					<string>Jan 17, 2022 at 2:45:41 PM</string>
+					<string>Sep 27, 2022 at 2:14:48 PM</string>
 				</dict>
 			</dict>
 			<key>testInsertBig()</key>
@@ -49,14 +79,24 @@
 					<string>Jan 17, 2022 at 2:45:41 PM</string>
 				</dict>
 			</dict>
+			<key>testPostsAndContactsAlgorithmGivenSmallDB()</key>
+			<dict>
+				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
+				<dict>
+					<key>baselineAverage</key>
+					<real>0.375271</real>
+					<key>baselineIntegrationDisplayName</key>
+					<string>Sep 27, 2022 at 2:14:48 PM</string>
+				</dict>
+			</dict>
 			<key>testSimultanousReadsAndWrites()</key>
 			<dict>
 				<key>com.apple.XCTPerformanceMetric_WallClockTime</key>
 				<dict>
 					<key>baselineAverage</key>
-					<real>2.046612</real>
+					<real>0.908602</real>
 					<key>baselineIntegrationDisplayName</key>
-					<string>Jan 17, 2022 at 2:45:41 PM</string>
+					<string>Sep 27, 2022 at 2:14:48 PM</string>
 				</dict>
 			</dict>
 		</dict>

@@ -252,9 +252,12 @@ extension GoBotViewController {
                 if GoBot.shared.bot.isRunning {
                     _ = GoBot.shared.bot.logout()
                 }
-                let dbPath = GoBot.shared.database.currentPath
-                GoBot.shared.database.close()
-                try FileManager.default.removeItem(atPath: dbPath)
+                if let dbPath = GoBot.shared.database.currentPath {
+                    GoBot.shared.database.close()
+                    try FileManager.default.removeItem(atPath: dbPath)
+                } else {
+                    throw ViewDatabaseError.notOpen
+                }
             } catch {
                 Log.unexpected(.apiError, "purge error")
                 Log.optional(error)
