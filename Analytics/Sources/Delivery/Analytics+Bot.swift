@@ -88,12 +88,38 @@ public extension Analytics {
         ]
         service.track(event: .did, element: .bot, name: "beta1_migration_dismiss", params: params)
     }
+    
+    func trackDidStart814Fix() {
+        service.track(event: .did, element: .bot, name: "814_fix_start")
+    }
+    
+    func trackDidComplete814Fix() {
+        service.track(event: .did, element: .bot, name: "814_fix_complete")
+    }
+    
+    func trackDidFail814Fix(error: Error) {
+        service.track(
+            event: .did,
+            element: .bot,
+            name: "814_fix_error",
+            params: ["message": error.localizedDescription]
+        )
+    }
+    
+    func trackDidSkip814Fix() {
+        service.track(event: .did, element: .bot, name: "814_fix_skip")
+    }
 
     func trackBotDidChangeHomeFeedStrategy(to strategyName: String) {
         let params = ["strategy": strategyName]
         service.track(event: .did, element: .bot, name: "changeHomeFeedStrategy", params: params)
     }
-    
+
+    func trackBotDidChangeDiscoveryFeedStrategy(to strategyName: String) {
+        let params = ["strategy": strategyName]
+        service.track(event: .did, element: .bot, name: "changeDiscoverFeedStrategy", params: params)
+    }
+
     func trackBotDidOptimizeSQLite() {
         service.track(event: .did, element: .bot, name: "optimizeSQLite")
     }

@@ -5,33 +5,33 @@ import Logger
 
 // the Int index might not be necessary but could be handy if one handler get's all the completions instead of
 // individual UI elements
-typealias PrefetchCompletion = (Int, KeyValue) -> Void
+typealias PrefetchCompletion = (Int, Message) -> Void
 
-/// An object that serves `KeyValue`s. This proxy keeps a cache of `KeyValue`s that are sometimes pre-fetched from a
+/// An object that serves `Message`s. This proxy keeps a cache of `Message`s that are sometimes pre-fetched from a
 /// slower database.
-protocol PaginatedKeyValueDataProxy {
+protocol PaginatedMessageDataProxy {
     /// The total number of messages in the view
     /// TODO: needs to be invalidated by insertLoop (maybe through notification center?)
     var count: Int { get }
     
-    /// Fetches the `KeyValue` at the given index.
-    /// If the `KeyValue` is in the cache, then it is returned immediately and `late` is not called.
-    /// If the `KeyValue` is not in the cache then `nil` is returned and the `late` block will be called later with
-    /// the `KeyValue`.
-    func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue?
+    /// Fetches the `Message` at the given index.
+    /// If the `Message` is in the cache, then it is returned immediately and `late` is not called.
+    /// If the `Message` is not in the cache then `nil` is returned and the `late` block will be called later with
+    /// the `Message`.
+    func messageBy(index: Int, late: @escaping PrefetchCompletion) -> Message?
     
-    /// Attempts to fetch the `KeyValue` at the given index from this proxy's cache. If the `KeyValue` is not in the
+    /// Attempts to fetch the `Message` at the given index from this proxy's cache. If the `Message` is not in the
     /// cache then `nil` is returned.
     // TODO: i'm unable to make the above late: optional
-    func keyValueBy(index: Int) -> KeyValue?
+    func messageBy(index: Int) -> Message?
 
     // notify the proxy to fetch more messages (up to and including index)
     func prefetchUpTo(index: Int)
 }
 
 // StaticDataProxy only has a fixed set of messages from the start and cant prefetch
-class StaticDataProxy: PaginatedKeyValueDataProxy {
-    let kvs: KeyValues
+class StaticDataProxy: PaginatedMessageDataProxy {
+    let kvs: Messages
     let count: Int
 
     init() {
@@ -39,14 +39,14 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
         self.count = 0
     }
 
-    init(with kvs: KeyValues) {
+    init(with kvs: Messages) {
         self.kvs = kvs
         self.count = kvs.count
     }
     
-    func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? { self.kvs[index] }
+    func messageBy(index: Int, late: @escaping PrefetchCompletion) -> Message? { self.kvs[index] }
     
-    func keyValueBy(index: Int) -> KeyValue? {
+    func messageBy(index: Int) -> Message? {
         if self.kvs.isEmpty {
             return nil
         } else {
@@ -57,7 +57,7 @@ class StaticDataProxy: PaginatedKeyValueDataProxy {
     func prefetchUpTo(index: Int) { /* noop */ }
 }
 
-class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
+class PaginatedPrefetchDataProxy: PaginatedMessageDataProxy {
     private let backgroundQueue = DispatchQueue(label: "planetary.view.prefetches") // simple, serial queue
 
     // store _late_ completions for when background finishes
@@ -67,24 +67,24 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
     // total number of messages that could be viewed
     let count: Int
     
-    private var source: KeyValueSource
-    private var msgs: [KeyValue] = []
+    private var source: MessageSource
+    private var msgs: [Message] = []
     
-    init(with src: KeyValueSource) throws {
+    init(with src: MessageSource) throws {
         self.source = src
         self.count = self.source.total
         self.msgs = try self.source.retreive(limit: 100, offset: 0)
         self.lastPrefetch = self.msgs.count
     }
 
-    func keyValueBy(index: Int) -> KeyValue? {
+    func messageBy(index: Int) -> Message? {
         if index >= self.count { return nil }
         guard index < self.msgs.count else { return nil }
         return self.msgs[index]
     }
 
     // we don't plan to spoort growing the backing list beyond it's initialisation
-    func keyValueBy(index: Int, late: @escaping PrefetchCompletion) -> KeyValue? {
+    func messageBy(index: Int, late: @escaping PrefetchCompletion) -> Message? {
         if index >= self.count { fatalError("FeedDataProxy #\(index) out-of-bounds") }
         if index > self.msgs.count - 1 {
             self.inflightSema.wait()
@@ -136,9 +136,9 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
             proxy.msgs.append(contentsOf: moreMessages)
             let newCount = proxy.msgs.count
 
-            // notify calls to keyValueBy that happend to soon
+            // notify calls to messageBy that happend to soon
             for (idx, lateCompletions) in proxy.inflight {
-                // handle calls to keyValueBy() for data right after the prefetch window
+                // handle calls to messageBy() for data right after the prefetch window
                 if idx > newCount - 1 {
                     proxy.prefetchUpTo(index: idx)
                     print("WARNING: prefetching again for \(idx)!")
@@ -162,12 +162,12 @@ class PaginatedPrefetchDataProxy: PaginatedKeyValueDataProxy {
 // MARK: sources
 
 // abastract the data retreival for the proxy
-protocol KeyValueSource {
+protocol MessageSource {
     var total: Int { get }
-    func retreive(limit: Int, offset: Int) throws -> [KeyValue]
+    func retreive(limit: Int, offset: Int) throws -> [Message]
 }
 
-class RecentViewKeyValueSource: KeyValueSource {
+class RecentViewMessageSource: MessageSource {
 
     let view: ViewDatabase
     let total: Int
@@ -182,38 +182,8 @@ class RecentViewKeyValueSource: KeyValueSource {
         self.total = try db.statsForRootPosts(strategy: strategy)
     }
 
-    func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
+    func retreive(limit: Int, offset: Int) throws -> [Message] {
         try self.view.recentPosts(strategy: strategy, limit: limit, offset: offset)
     }
 }
 
-class FeedKeyValueSource: KeyValueSource {
-    let view: ViewDatabase
-    let feed: FeedIdentifier
-
-    let total: Int
-
-    init?(with vdb: ViewDatabase, feed: FeedIdentifier) throws {
-        self.view = vdb
-        // we should find a better way of handling errors than intentionally crashing.
-        if feed.isValidIdentifier {
-            self.feed = feed
-
-            self.total = try self.view.stats(for: self.feed)
-        } else {
-            self.feed = feed
-            self.total = 0
-            print("invalid feed handle: \(feed)")
-            // assertionFailure("invalid feed handle: \(feed)")
-        }
-    }
-
-    func retreive(limit: Int, offset: Int) throws -> [KeyValue] {
-        // TODO: timing dependant test
-        /// This is a bit annoying.. The new test test136_paginate_quickly only tests the functionality
-        /// if the retreival process takes a long time, we need to find a better way to simulate that.
-//        usleep(500_000)
-//        print("WARNING: simulate slow query...")
-        return try self.view.feed(for: self.feed, limit: limit, offset: offset)
-    }
-}

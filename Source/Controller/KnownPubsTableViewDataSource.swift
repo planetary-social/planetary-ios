@@ -73,7 +73,7 @@ extension KnownPubsTableViewDataSource: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell") ?? UITableViewCell(style: .default, reuseIdentifier: "defaultCell")
-            cell.textLabel?.text = Text.redeemInvitation.text
+            cell.textLabel?.text = Localized.redeemInvitation.text
             cell.accessoryType = .disclosureIndicator
             return cell
         } else {
@@ -92,9 +92,9 @@ extension KnownPubsTableViewDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return Text.ManagePubs.addingPubs.text
+            return Localized.ManageRelays.addingPubs.text
         }
-        return Text.ManagePubs.yourPubs.text
+        return Localized.ManageRelays.yourPubs.text
     }
 }
 

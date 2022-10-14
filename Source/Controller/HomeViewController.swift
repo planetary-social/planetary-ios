@@ -12,12 +12,12 @@ import Logger
 import Analytics
 import CrashReporting
 
-class HomeViewController: ContentViewController {
+class HomeViewController: ContentViewController, HelpDrawerHost {
 
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -26,6 +26,9 @@ class HomeViewController: ContentViewController {
         )
         return item
     }()
+    
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .home }
 
     private lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()
@@ -91,7 +94,7 @@ class HomeViewController: ContentViewController {
         let detailLabel = UILabel.forAutoLayout()
         detailLabel.numberOfLines = 0
         detailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        detailLabel.text = Text.emptyHomeFeedMessage.text
+        detailLabel.text = Localized.emptyHomeFeedMessage.text
         detailLabel.textColor = UIColor.text.default
         detailLabel.textAlignment = .center
         view.addSubview(detailLabel)
@@ -105,7 +108,7 @@ class HomeViewController: ContentViewController {
         button.addTarget(self, action: #selector(directoryButtonTouchUpInside), for: .touchUpInside)
         let image = UIColor.tint.default.image().resizableImage(withCapInsets: .zero)
         button.setBackgroundImage(image, for: .normal)
-        button.setTitle(Text.goToYourNetwork.text, for: .normal)
+        button.setTitle(Localized.goToYourNetwork.text, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         button.contentEdgeInsets = .pillButton
@@ -125,14 +128,14 @@ class HomeViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .home)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
         nil
     }
     
-    override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+    override init(scrollable: Bool = true, title: Localized? = nil, dynamicTitle: String? = nil) {
         super.init(scrollable: scrollable, title: title, dynamicTitle: dynamicTitle)
     }
 
@@ -158,6 +161,7 @@ class HomeViewController: ContentViewController {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Home")
         Analytics.shared.trackDidShowScreen(screenName: "home")
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
 
     // MARK: Load and refresh
@@ -179,7 +183,7 @@ class HomeViewController: ContentViewController {
         }
     }
     
-    private func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
+    private func update(with proxy: PaginatedMessageDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.tableView.backgroundView = self.emptyView
         } else {
@@ -235,7 +239,7 @@ class HomeViewController: ContentViewController {
 
     override func didBlockUser(notification: Notification) {
         guard let identity = notification.object as? Identity else { return }
-        self.tableView.deleteKeyValues(by: identity)
+        self.tableView.deleteMessages(by: identity)
     }
     
     override func didRefresh(notification: Notification) {
@@ -245,7 +249,7 @@ class HomeViewController: ContentViewController {
             return
         }
         let currentProxy = self.dataSource.data
-        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
+        let currentKeyAtTop = currentProxy.messageBy(index: 0)?.key
         if let message = currentKeyAtTop {
             let operation = NumberOfRecentItemsOperation(lastMessage: message)
             operation.completionBlock = { [weak self] in
@@ -260,10 +264,7 @@ class HomeViewController: ContentViewController {
                     }
                 }
             }
-            AppController.shared.operationQueue.addOperation(operation)
-        } else {
-            // If the feed is empty, we just try to fetch the new updates and show them
-            load(animated: false)
+            AppController.shared.addOperation(operation)
         }
     }
     
@@ -281,28 +282,28 @@ extension HomeViewController: TopScrollable {
 
 extension HomeViewController: PostReplyPaginatedDataSourceDelegate {
     
-    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+    func postReplyView(view: PostReplyView, didLoad message: Message) {
         view.postView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue, startReplying: true)
+            self?.pushThreadViewController(with: message, startReplying: true)
         }
     }
     
-    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
-        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+    private func pushThreadViewController(with message: Message, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: message, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

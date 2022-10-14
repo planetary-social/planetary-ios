@@ -20,9 +20,9 @@ protocol UniversalSearchDelegate: AnyObject {
 /// A model for all the different types of results that can be displayed.
 fileprivate struct SearchResults {
     enum ResultData {
-        case universal(people: [About], posts: [KeyValue])
+        case universal(people: [About], posts: [Message])
         case feedID(Either<About, FeedIdentifier>)
-        case messageID(Either<KeyValue, MessageIdentifier>)
+        case messageID(Either<Message, MessageIdentifier>)
         case loading
         case none
     }
@@ -49,7 +49,7 @@ fileprivate struct SearchResults {
         }
     }
     
-    var posts: [KeyValue]? {
+    var posts: [Message]? {
         switch data {
         case .universal(_, let posts):
             return posts
@@ -156,7 +156,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         let titleLabel = UILabel.forAutoLayout()
         titleLabel.numberOfLines = 0
         titleLabel.font = UIFont.preferredFont(forTextStyle: .title2)
-        titleLabel.text = Text.noResultsFound.text
+        titleLabel.text = Localized.noResultsFound.text
         titleLabel.textColor = UIColor.text.default
         titleLabel.textAlignment = .center
         Layout.center(titleLabel, atTopOf: view, inset: 100)
@@ -164,7 +164,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         let detailLabel = UILabel.forAutoLayout()
         detailLabel.numberOfLines = 0
         detailLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        detailLabel.text = Text.noResultsHelp.text
+        detailLabel.text = Localized.noResultsHelp.text
         detailLabel.textColor = UIColor.text.detail
         detailLabel.textAlignment = .left
         view.addSubview(detailLabel)
@@ -194,7 +194,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         let view = UILabel.forAutoLayout()
         view.textAlignment = .center
         view.numberOfLines = 2
-        view.text = Text.searchingLocally.text
+        view.text = Localized.searchingLocally.text
         view.textColor = UIColor.tint.default
         return view
     }()
@@ -295,7 +295,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         }
     }
     
-    func loadPosts(matching filter: String) async -> [KeyValue] {
+    func loadPosts(matching filter: String) async -> [Message] {
         do {
             return try await Bots.current.posts(matching: filter)
         } catch {
@@ -305,8 +305,8 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
     }
     
     /// Loads the message with the given id from the database and displays it if it's still valid.
-    func loadMessage(with msgID: MessageIdentifier) async -> Either<KeyValue, MessageIdentifier> {
-        var result: Either<KeyValue, MessageIdentifier>
+    func loadMessage(with msgID: MessageIdentifier) async -> Either<Message, MessageIdentifier> {
+        var result: Either<Message, MessageIdentifier>
         do {
             result = .left(try Bots.current.post(from: msgID))
         } catch {
@@ -381,11 +381,11 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         
         switch section {
         case .users:
-            return Text.users.text
+            return Localized.users.text
         case .posts:
-            return Text.posts.text
+            return Localized.posts.text
         case .network:
-            return Text.usersInYourNetwork.text
+            return Localized.usersInYourNetwork.text
         }
     }
     
@@ -422,11 +422,11 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             }
             let post = posts[indexPath.row]
             let type = post.contentType
-            var cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? KeyValueTableViewCell
+            var cell = tableView.dequeueReusableCell(withIdentifier: type.reuseIdentifier) as? MessageTableViewCell
             if cell == nil {
-                cell = KeyValueTableViewCell(for: type, height: 300)
+                cell = MessageTableViewCell(for: type, height: 300)
             }
-            if let postView = cell?.keyValueView as? PostCellView {
+            if let postView = cell?.messageView as? PostCellView {
                 postView.truncationLimit = (over: 10, to: 8)
                 postView.tapGesture.tap = { [weak self] in
                     guard let self = self else {

@@ -295,8 +295,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pkg/profile v1.2.1/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6JUPA=
 github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7 h1:1S33MMjKxP3XvQATW0N28OnY3Y02L5/21lrx1pwdc0Q=
 github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7/go.mod h1:dZty08izAk/rSX8wSLen4gMR4WDPYmA6vUTE0QtepHA=
-github.com/planetary-social/ssb v0.2.2-0.20220525183356-8347cfac9d43 h1:r3nfkKISS3g6dabh6i28hGr4zIdc4rmr3GQvV+U79Sw=
-github.com/planetary-social/ssb v0.2.2-0.20220525183356-8347cfac9d43/go.mod h1:aVHa4tYy6ucGATXL2YvKGFR7nFrzqKuhFeMyA0XRI0s=
+github.com/planetary-social/ssb v0.2.2-0.20221003135325-7f4aeeac1e84 h1:PrfCDrWIlMlFcaBq3DDyGoOTvntzSUB8YZT6YiuZnjg=
+github.com/planetary-social/ssb v0.2.2-0.20221003135325-7f4aeeac1e84/go.mod h1:aVHa4tYy6ucGATXL2YvKGFR7nFrzqKuhFeMyA0XRI0s=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=

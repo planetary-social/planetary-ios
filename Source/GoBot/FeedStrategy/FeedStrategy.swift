@@ -19,16 +19,17 @@ protocol FeedStrategy: NSObjectProtocol, NSCoding {
     /// - parameter connection: the database connection needed to run queries in the database
     /// - parameter userId: the ID of the user for which the feed will be calculated from
     ///
-    /// It must be the same number of items that fetchKeyValues and fetchKeys returns.
+    /// It must be the same number of items that fetchMessages and fetchKeys returns.
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int
 
-    /// Returns the items (key values) in the feed
+    /// Returns the messages in the feed
     /// - parameter database: the database needed to run queries in the database
     /// - parameter userId: the ID of the user for which the feed will be calculated from
     /// - parameter limit: the number of items that should be returned
     /// - parameter offset: the offset, offset=10 will return the 10th item onwards,
     /// offset=nil will return the first item onwards
-    func fetchKeyValues(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [KeyValue]
+    /// func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message]
+    func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message]
 
     /// Returns the total number of items in the feed since a specific message
     /// - parameter connection: the database connection needed to run queries in the database

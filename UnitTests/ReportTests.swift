@@ -51,8 +51,14 @@ class ReportTests: XCTestCase {
 
         XCTAssertEqual(try db.countNumberOfUnreadReports(), 2)
 
+        XCTAssertNil(try db.isMessageForReportRead(for: "%0"))
+        XCTAssertNil(try db.isMessageForReportRead(for: "%1"))
+        XCTAssertFalse(try XCTUnwrap(try db.isMessageForReportRead(for: "%2")))
+        XCTAssertFalse(try XCTUnwrap(try db.isMessageForReportRead(for: "%3")))
+
         try db.markMessageAsRead(identifier: "%2")
 
+        XCTAssertTrue(try XCTUnwrap(try db.isMessageForReportRead(for: "%2")))
         XCTAssertEqual(try db.countNumberOfUnreadReports(), 1)
 
         let firstReport = try XCTUnwrap(try db.report(for: "%3"))
@@ -68,7 +74,7 @@ class ReportTests: XCTestCase {
         let alice = DatabaseFixture.exampleFeed.identities[1]
         let bob = DatabaseFixture.exampleFeed.identities[2]
 
-        let about0 = KeyValueFixtures.keyValue(
+        let about0 = MessageFixtures.message(
             key: "%0",
             sequence: 0,
             content: Content(from: About(about: alice, name: "Alice")),
@@ -77,7 +83,7 @@ class ReportTests: XCTestCase {
             receivedSeq: 0,
             author: alice
         )
-        let about1 = KeyValueFixtures.keyValue(
+        let about1 = MessageFixtures.message(
             key: "%1",
             sequence: 1,
             content: Content(from: About(about: bob, name: "Bob")),
@@ -86,7 +92,7 @@ class ReportTests: XCTestCase {
             receivedSeq: 1,
             author: bob
         )
-        let follow1 = KeyValueFixtures.keyValue(
+        let follow1 = MessageFixtures.message(
             key: "%2",
             sequence: 2,
             content: Content(from: Contact(contact: testAuthor, following: true)),
@@ -97,7 +103,7 @@ class ReportTests: XCTestCase {
         )
         try db.fillMessages(msgs: [about0, about1, follow1])
 
-        let feedMention1 = KeyValueFixtures.keyValue(
+        let feedMention1 = MessageFixtures.message(
             key: "%3",
             sequence: 3,
             content: Content(from: Post(mentions: [Mention(link: testAuthor)], text: "Hey")),

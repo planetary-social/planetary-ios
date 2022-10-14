@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CryptoKit
 
 /// Represents the set of high-level properties governing the app, like the user's identity, network key, etc.
 /// These configurations can be switched out at runtime much like logging in/out of an account.
@@ -16,7 +17,18 @@ import Foundation
 /// one can be in use at a time.
 ///
 /// The AppConfiguration is also used to prevent feed forks in some cases by storing the number of published messages.
-class AppConfiguration: NSObject, NSCoding {
+class AppConfiguration: NSObject, NSCoding, Identifiable {
+    
+    var id: String {
+        let idComponents: [String] = [
+            secret.identity,
+            name,
+            hmacKey?.string ?? "null",
+            network?.string ?? "null",
+        ]
+        let idString = idComponents.joined(separator: "&@!(#$*")
+        return SHA256.hash(data: idString.data(using: .utf8)!).description
+    }
 
     // MARK: Editable properties
 
@@ -146,6 +158,18 @@ class AppConfiguration: NSObject, NSCoding {
             .appending("/FBTT")
             .appending("/\(networkKey.hexEncodedString())")
     }
+    
+    override var description: String {
+        """
+        id: \(id)
+        name: \(name)
+        identity: \(identity)
+        joinedPlanetarySystem: \(joinedPlanetarySystem)
+        numberOfPublishedMessages: \(numberOfPublishedMessages)
+        networkKey: \(String(describing: network?.string))
+        networkHMAC: -omitted-
+        """
+    }
 
     // MARK: Lifecycle
 
@@ -221,12 +245,7 @@ extension AppConfiguration {
     }
     
     var isCurrent: Bool {
-        self.identity == AppConfiguration.current?.identity
-    }
-
-    static func isCurrent(_ identity: Identity) -> Bool {
-        guard let configuration = self.current else { return false }
-        return configuration.identity == identity
+        self.id == AppConfiguration.current?.id
     }
 }
 

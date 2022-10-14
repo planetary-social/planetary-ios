@@ -14,16 +14,19 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
     
     private var appConfiguration: AppConfiguration
     
-    private var operationQueue: OperationQueue
+    /// A queue we will use to wait on multiple JoinPlanetarySystemOperations.
+    private var internalQueue: OperationQueue
     
     /// Minimum number of Planetary's pubs that should be followng the user for them to be considered in the system.
     static let minNumberOfStars = 3
     
     let userDefaults = UserDefaults.standard
     
-    init(appConfiguration: AppConfiguration, operationQueue: OperationQueue) {
+    init(appConfiguration: AppConfiguration) {
         self.appConfiguration = appConfiguration
-        self.operationQueue = operationQueue
+        self.internalQueue = OperationQueue()
+        super.init()
+        internalQueue.qualityOfService = qualityOfService
     }
     
     override func main() {
@@ -75,14 +78,10 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
                         RedeemInviteOperation(star: $0, shouldFollow: false)
                     }
                     
-                    // Sync with stars after following
-                    let peerPool = randomSampleOfStars.compactMap { $0.toPeer().multiserverAddress }
-                    
-                    let syncOperation = SyncOperation(peerPool: peerPool)
-                    redeemInviteOperations.forEach { syncOperation.addDependency($0) }
-                    
-                    let operations = redeemInviteOperations + [syncOperation]
-                    self.operationQueue.addOperations(operations, waitUntilFinished: true)
+                    for operation in redeemInviteOperations {
+                        internalQueue.addOperation(operation)
+                    }
+                    try await internalQueue.drain()
                 }
             } catch {
                 Log.optional(error)

@@ -12,12 +12,12 @@ import Analytics
 import CrashReporting
 
 class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate,
-    UniversalSearchDelegate {
+    UniversalSearchDelegate, HelpDrawerHost {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -27,18 +27,21 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         return item
     }()
     
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .discover }
+    
     lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl.forAutoLayout()
         control.addTarget(self, action: #selector(refreshControlValueChanged(control:)), for: .valueChanged)
         return control
     }()
     
-    private lazy var dataSource: KeyValuePaginatedCollectionViewDataSource = {
-        let dataSource = KeyValuePaginatedCollectionViewDataSource()
+    private lazy var dataSource: MessagePaginatedCollectionViewDataSource = {
+        let dataSource = MessagePaginatedCollectionViewDataSource()
         return dataSource
     }()
     
-    private lazy var delegate = KeyValuePaginatedCollectionViewDelegate(on: self)
+    private lazy var delegate = MessagePaginatedCollectionViewDelegate(on: self)
     
     private lazy var floatingRefreshButton: FloatingRefreshButton = {
         let button = FloatingRefreshButton()
@@ -75,7 +78,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         controller.searchResultsUpdater = self
         controller.searchBar.delegate = self
         controller.searchBar.isTranslucent = false
-        controller.searchBar.placeholder = Text.search.text
+        controller.searchBar.placeholder = Localized.search.text
         controller.obscuresBackgroundDuringPresentation = false
         controller.hidesNavigationBarDuringPresentation = false
         return controller
@@ -134,14 +137,14 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
 
     init() {
         super.init(scrollable: false, title: .explore)
-        self.navigationItem.rightBarButtonItems = [self.newPostBarButtonItem]
+        self.navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
         nil
     }
     
-    override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+    override init(scrollable: Bool = true, title: Localized? = nil, dynamicTitle: String? = nil) {
         super.init(scrollable: scrollable, title: title, dynamicTitle: dynamicTitle)
     }
     
@@ -155,12 +158,20 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         self.load()
         
         self.registerDidRefresh()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didChangeDiscoverFeedAlgorithm(notification:)),
+            name: .didChangeDiscoverFeedAlgorithm,
+            object: nil
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Discover")
         Analytics.shared.trackDidShowScreen(screenName: "discover")
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
     
     // MARK: Load and refresh
@@ -182,7 +193,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         }
     }
     
-    func update(with proxy: PaginatedKeyValueDataProxy, animated: Bool) {
+    func update(with proxy: PaginatedMessageDataProxy, animated: Bool) {
         if proxy.count == 0 {
             self.collectionView.backgroundView = self.emptyDiscoverView
         } else {
@@ -191,6 +202,11 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         }
         self.dataSource.update(source: proxy)
         self.collectionView.reloadData()
+    }
+    
+    @objc
+    func didChangeDiscoverFeedAlgorithm(notification: Notification) {
+        load(animated: true)
     }
     
     // MARK: Search
@@ -266,17 +282,17 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         let navController = UINavigationController(rootViewController: controller)
         self.present(navController, animated: true, completion: nil)
     }
-
+    
     // MARK: Notifications
 
     override func didBlockUser(notification: Notification) {
         // guard let identity = notification.object as? Identity else { return }
-        // self.collectionView.deleteKeyValues(by: identity)
+        // self.collectionView.deleteMessages(by: identity)
     }
     
     override func didRefresh(notification: Notification) {
 //        let currentProxy = self.dataSource.data
-//        let currentKeyAtTop = currentProxy.keyValueBy(index: 0)?.key
+//        let currentKeyAtTop = currentProxy.messageBy(index: 0)?.key
 //        Bots.current.keyAtEveryoneTop { [weak self] (key) in
 //            guard let newKeyAtTop = key, currentKeyAtTop != newKeyAtTop else {
 //                return
@@ -304,8 +320,8 @@ extension DiscoverViewController: PinterestCollectionViewLayoutDelegate {
         let contentWidth = collectionView.bounds.width - (insets.left + insets.right)
         let cellPadding: CGFloat = 5
         let columnWidth = contentWidth / CGFloat(collectionViewLayout.numberOfColumns) - cellPadding * 2
-        if let keyValue = dataSource.data.keyValueBy(index: indexPath.row) {
-            if let post = keyValue.value.content.post, post.hasBlobs {
+        if let message = dataSource.data.messageBy(index: indexPath.row) {
+            if let post = message.content.post, post.hasBlobs {
                 if post.text.withoutGallery().withoutSpacesOrNewlines.isEmpty {
                     return columnWidth
                 } else {

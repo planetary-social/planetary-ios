@@ -12,6 +12,7 @@ PODS:
   - PhoneNumberKit/UIKit (3.2.0):
     - PhoneNumberKit/PhoneNumberKitCore
   - SVProgressHUD (2.2.5)
+  - SwiftGen (6.6.2)
 
 DEPENDENCIES:
   - Down (= 0.9.2)
@@ -20,6 +21,7 @@ DEPENDENCIES:
   - Multipart (= 0.1.0)
   - PhoneNumberKit (= 3.2.0)
   - SVProgressHUD (= 2.2.5)
+  - SwiftGen (= 6.6.2)
 
 SPEC REPOS:
   trunk:
@@ -29,6 +31,7 @@ SPEC REPOS:
     - Multipart
     - PhoneNumberKit
     - SVProgressHUD
+    - SwiftGen
 
 SPEC CHECKSUMS:
   Down: 1f6a14846dff45ae8e7e4334b4e386a5fd3b2412
@@ -37,7 +40,8 @@ SPEC CHECKSUMS:
   Multipart: b480ccb6d74264ea69e7f37133c70597cc0ca87e
   PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
 
-PODFILE CHECKSUM: 3a3b8965439f97056d40f746cb553ee8e400e141
+PODFILE CHECKSUM: 57b3f6191bdcc255bf30d7c969980713ece21f95
 
 COCOAPODS: 1.11.3

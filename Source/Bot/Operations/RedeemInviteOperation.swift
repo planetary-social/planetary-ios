@@ -46,7 +46,7 @@ class RedeemInviteOperation: AsynchronousOperation {
                 // Construct a better error message before returning
                 Bots.current.about(identity: self.star.feed) { about, _ in
                     let starName = about?.name ?? self.star.feed
-                    let localizedMessage = Text.Error.invitationRedemptionFailed.text(["starName": starName])
+                    let localizedMessage = Localized.Error.invitationRedemptionFailed.text(["starName": starName])
                     let userError = NSError(
                         domain: String(describing: type(of: self)),
                         code: 0,

@@ -56,22 +56,27 @@ class PostHeaderView: UIView {
         return stackView
     }()
 
-    convenience init(with keyValue: KeyValue) {
+    var shouldShowTimestamp: Bool
+
+    convenience init(with message: Message) {
         self.init()
-        update(with: keyValue)
+        update(with: message)
     }
     
     /// Initializes the view with the given parameters.
     /// - Parameter showTimestamp: Will show the claimed post time if true, author id if false.
-    init(showTimestamp: Bool = false) {
+    init(showTimestamp: Bool = false, compactHeader: Bool = false) {
+        self.shouldShowTimestamp = showTimestamp
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
 
+        let identityButtonSize = compactHeader ? Layout.contactThumbSize : Layout.profileThumbSize
+
         Layout.fillLeft(of: self, with: self.identityButton, respectSafeArea: false)
-        self.identityButton.constrainSize(to: Layout.profileThumbSize)
+        self.identityButton.constrainSize(to: identityButtonSize)
 
         Layout.fillRight(of: self, with: self.rightButtonContainer, respectSafeArea: false)
-        self.rightButtonContainer.widthAnchor.constraint(lessThanOrEqualToConstant: Layout.profileThumbSize).isActive = true
+        rightButtonContainer.widthAnchor.constraint(lessThanOrEqualToConstant: identityButtonSize).isActive = true
 
         addSubview(labelStackView)
         labelStackView.pinTopToSuperview()
@@ -80,10 +85,10 @@ class PostHeaderView: UIView {
         labelStackView.constrainLeading(toTrailingOf: self.identityButton, constant: Layout.horizontalSpacing)
         labelStackView.constrainTrailing(toLeadingOf: self.rightButtonContainer, constant: -6)
         labelStackView.addArrangedSubview(nameButton)
-        
-        labelStackView.addArrangedSubview(self.nameButton)
 
-        if showTimestamp {
+        if compactHeader {
+            rightButtonContainer.isHidden = true
+        } else if showTimestamp {
             labelStackView.addArrangedSubview(dateLabel)
             self.dateLabel.pinTop(toBottomOf: self.nameButton)
             self.dateLabel.constrainLeading(to: self.nameButton)
@@ -109,29 +114,28 @@ class PostHeaderView: UIView {
         self.identityButton.round()
     }
 
-    func update(with keyValue: KeyValue) {
-        let identity = keyValue.value.author
+    func update(with message: Message) {
+        let identity = message.author
         self.identity = identity
 
-        let about = keyValue.metadata.author.about
-        let name = about?.name ?? keyValue.value.author
+        let about = message.metadata.author.about
+        let name = about?.name ?? message.author
         self.nameButton.setTitle(name, for: .normal)
         self.identityButton.setImage(for: about)
-        self.dateLabel.text = keyValue.timestampString
-        if name != keyValue.value.author {
+        self.dateLabel.text = message.timestampString
+        if name != message.author {
             identifierLabel.text = String(identity.prefix(7))
             identifierLabel.isHidden = false
         } else {
             identifierLabel.isHidden = true
         }
-
         if let me = Bots.current.identity {
             let button: UIButton
             if identity.isCurrentUser {
-                button = EditPostButton(post: keyValue)
+                button = EditPostButton(post: message)
             } else {
                 let relationship = Relationship(from: me, to: identity)
-                button = RelationshipButton(with: relationship, name: name, content: keyValue)
+                button = RelationshipButton(with: relationship, name: name, content: message)
             }
             self.rightButtonContainer.subviews.forEach { $0.removeFromSuperview() }
             Layout.fill(view: self.rightButtonContainer, with: button)
@@ -150,13 +154,13 @@ class PostHeaderView: UIView {
 
 // MARK: - Date formatting
 
-fileprivate extension KeyValue {
+fileprivate extension Message {
 
     var timestampString: String {
-        let ud = self.userDate
-        let day = ud.todayYesterdayDayOfWeekOrNumberOfDaysAgo
-        let time = ud.timeOfDay
-        let text = Text.atDayTime.text(["day": day, "time": time])
+        let claimedDate = self.claimedDate
+        let day = claimedDate.todayYesterdayDayOfWeekOrNumberOfDaysAgo
+        let time = claimedDate.timeOfDay
+        let text = Localized.atDayTime.text(["day": day, "time": time])
         return text.prefix(1).capitalized + text.dropFirst()
     }
 }
@@ -165,13 +169,13 @@ fileprivate extension Date {
 
     var todayYesterdayDayOfWeekOrNumberOfDaysAgo: String {
         let calendar = Calendar.current
-        if calendar.isDateInToday(self) { return Text.today.text }
-        if calendar.isDateInYesterday(self) { return Text.yesterday.text }
+        if calendar.isDateInToday(self) { return Localized.today.text }
+        if calendar.isDateInYesterday(self) { return Localized.yesterday.text }
         let components = calendar.dateComponents([.day], from: self, to: Date())
         let daysApart = components.day ?? -1
-        if daysApart < 0 { return Text.future.text }
+        if daysApart < 0 { return Localized.future.text }
         if daysApart <= 7 { return DateFormatter.dayOfWeek.string(from: self) }
-        return Text.daysAgo.text(["days": String(daysApart)])
+        return Localized.daysAgo.text(["days": String(daysApart)])
     }
 
     var timeOfDay: String {

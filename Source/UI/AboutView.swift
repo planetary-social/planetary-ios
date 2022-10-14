@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class AboutView: KeyValueView {
+class AboutView: MessageView {
 
     private let circleView: UIView = {
         let view = UIView.forAutoLayout()
@@ -67,7 +67,9 @@ class AboutView: KeyValueView {
         button.stroke(color: .avatarRing)
         return button
     }()
-
+    
+    lazy var aliasCell = AliasCell()
+    
     var descriptionContainerZeroHeightConstraint: NSLayoutConstraint?
 
     private lazy var descriptionTextView: UITextView = {
@@ -143,8 +145,10 @@ class AboutView: KeyValueView {
         Layout.fillSouth(of: separator, with: descriptionContainer)
 
         self.descriptionContainerZeroHeightConstraint = descriptionContainer.constrainHeight(to: 0)
+        
+        Layout.fillSouth(of: descriptionContainer, with: aliasCell)
 
-        Layout.fillSouth(of: descriptionContainer, with: self.followedByView)
+        Layout.fillSouth(of: aliasCell, with: self.followedByView)
         self.followedByView.constrainHeight(to: 50)
 
         separator = Layout.addSeparator(southOf: self.followedByView)
@@ -164,10 +168,10 @@ class AboutView: KeyValueView {
         self.editPhotoButton.round()
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    override func update(with keyValue: KeyValue) {
-        guard let about = keyValue.value.content.about else { return }
+    override func update(with message: Message) {
+        guard let about = message.content.about else { return }
         self.update(with: about)
     }
 
@@ -188,13 +192,14 @@ class AboutView: KeyValueView {
         self.editPhotoButton.isHidden = self.editButton.isHidden
 
         if identity.isCurrentUser {
-            self.followingLabel.text = Text.thisIsYou.text
+            self.followingLabel.text = Localized.thisIsYou.text
             self.followButton.isHidden = true
         } else {
             loadRelationship(identity: identity)
         }
         
-        let communityPubs = AppConfiguration.current?.communityPubs ?? []
+        let communityPubs = (AppConfiguration.current?.communityPubs ?? []) +
+            (AppConfiguration.current?.systemPubs ?? [])
         if let star = communityPubs.first(where: { $0.feed == identity }) {
             followButton.star = star
         } else {
@@ -222,6 +227,10 @@ class AboutView: KeyValueView {
                     identity: person.identity)
 
         self.imageView.load(for: person, animate: true)
+    }
+    
+    func update(with aliases: [RoomAlias]) {
+        aliasCell.aliases = aliases
     }
 
     var relationship: Relationship?
@@ -251,7 +260,7 @@ class AboutView: KeyValueView {
         self.followButton.isSelected = relationship.isFollowing
 
         if relationship.isFollowedBy {
-            self.followingLabel.text = Text.isFollowingYou.text
+            self.followingLabel.text = Localized.isFollowingYou.text
         }
     }
 
@@ -286,7 +295,7 @@ class AboutView: KeyValueView {
         let view = UILabel.forAutoLayout()
         view.textAlignment = .center
         view.numberOfLines = 2
-        view.text = Text.loadingUpdates.text
+        view.text = Localized.loadingUpdates.text
         view.textColor = UIColor.tint.default
         return view
     }()

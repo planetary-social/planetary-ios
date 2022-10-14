@@ -12,7 +12,7 @@ import Support
 
 extension UIViewController {
 
-    func report(_ post: KeyValue,
+    func report(_ post: Message,
                 in view: UIView? = nil,
                 from reporter: Identity) {
         var actions: [UIAlertAction] = []
@@ -27,10 +27,10 @@ extension UIViewController {
         actions += [UIAlertAction.cancel()]
 
         AppController.shared.choose(from: actions,
-                                    title: Text.Reporting.whyAreYouReportingThisPost.text)
+                                    title: Localized.Reporting.whyAreYouReportingThisPost.text)
     }
 
-    private func report(_ post: KeyValue,
+    private func report(_ post: Message,
                         in view: UIView? = nil,
                         reason: SupportReason,
                         from reporter: Identity) {
@@ -50,9 +50,9 @@ extension UIViewController {
         let controller = Support.shared.newTicketViewController(reporter: reporter, content: content)
         guard let controller = controller else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }

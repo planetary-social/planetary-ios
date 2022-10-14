@@ -255,18 +255,18 @@ class Beta1MigrationTests: XCTestCase {
     // MARK: - Launch View Controller
     
     /// Verifies that the LaunchViewController starts the migration for a user with an old go-ssb database.
-    func testLaunchViewControllerTriggersMigration() async throws {
+    func testLaunchViewControllerTriggersMigration() throws {
         // Arrange
         Onboarding.set(status: .completed, for: appConfig.identity)
         try touchSQLiteDatabase()
-        let sut = await LaunchViewController(
+        let sut = LaunchViewController(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
         )
         
         // Act
-        _ = await sut.view
+        _ = sut.view
         
         // Assert
         let expectation = XCTBlockExpectation {
@@ -306,18 +306,19 @@ class Beta1MigrationTests: XCTestCase {
 
     /// Verifies that the LaunchViewController starts the migration for a user with a SQLite database version older
     /// than 20.
-    func testLaunchViewControllerTriggersMigrationForOldSQLite() async throws {
+    func testLaunchViewControllerTriggersMigrationForOldSQLite() throws {
+        XCTExpectFailure("This test fails intermittently. See #907", strict: false)
         // Arrange
         try touchSQLiteDatabase(version: 1)
         Onboarding.set(status: .completed, for: appConfig.identity)
-        let sut = await LaunchViewController(
+        let sut = LaunchViewController(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
         )
         
         // Act
-        _ = await sut.view
+        _ = sut.view
         
         // Assert
         let expectation = XCTBlockExpectation {

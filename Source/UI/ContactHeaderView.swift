@@ -31,24 +31,25 @@ class ContactHeaderView: UIView {
         button.titleLabel?.numberOfLines = 1
         button.titleLabel?.linesCornerRadius = 7
         button.titleLabel?.isSkeletonable = true
+        button.titleLabel?.lastLineFillPercent = 100
         button.isSkeletonable = true
         return button
     }()
 
-    convenience init(with keyValue: KeyValue) {
+    convenience init(with message: Message) {
         self.init()
-        update(with: keyValue)
+        update(with: message)
     }
 
     init() {
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
 
-        Layout.fillLeft(of: self, with: self.identityButton, respectSafeArea: false)
+        Layout.fillLeft(of: self, with: self.identityButton, insets: .topLeftRight, respectSafeArea: false)
         self.identityButton.constrainSize(to: Layout.contactThumbSize)
 
         self.addSubview(self.nameButton)
-        self.nameButton.pinTopToSuperview()
+        self.nameButton.centerYAnchor.constraint(equalTo: identityButton.centerYAnchor).isActive = true
         self.nameButton.constrainLeading(toTrailingOf: self.identityButton, constant: 10)
         self.nameButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 
@@ -65,24 +66,41 @@ class ContactHeaderView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.identityButton.round()
+        identityButton.round()
+        layoutSkeletonIfNeeded()
     }
 
     func reset() {
-        update(with: Identity.null, about: nil)
+        update(with: Identity.null, about: nil, text: Localized.startedFollowing)
         showSkeleton()
     }
 
-    func update(with keyValue: KeyValue) {
-        let identity = keyValue.value.author
+    func update(with message: Message) {
+        let identity = message.author
         self.identity = identity
-        let about = keyValue.metadata.author.about
-        self.update(with: identity, about: about)
+        let about = message.metadata.author.about
+        var text: Localized
+        switch message.contentType {
+        case .post:
+            text = .replied
+        case .vote:
+            text = .liked
+        case .contact:
+            text = .startedFollowing
+        default:
+            text = .startedFollowing
+        }
+        self.update(with: identity, about: about, text: text)
     }
 
-    private func update(with identity: Identity, about: About?) {
+    private func update(with identity: Identity, about: About?, text: Localized) {
         let name = about?.nameOrIdentity ?? identity
-        let string = Text.startedFollowing.text(["somebody": name])
+        var string = text.text(["somebody": name])
+        if identity == .null {
+            string = "all above the baseline"
+            // because otherwise they stick out under the skeleton
+        }
+        
         let primaryAttributes = [
             NSAttributedString.Key.foregroundColor: UIColor.text.default,
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15, weight: .semibold)

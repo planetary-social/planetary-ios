@@ -36,68 +36,73 @@ class SendMissionOperation: AsynchronousOperation {
     override func main() {
         Log.info("SendMissionOperation started.")
         
-        let configuredIdentity = AppConfiguration.current?.identity
-        let loggedInIdentity = Bots.current.identity
-        guard loggedInIdentity != nil, loggedInIdentity == configuredIdentity else {
+        let bot = Bots.current
+        guard let appConfiguration = AppConfiguration.current,
+            let loggedInIdentity = bot.identity,
+            loggedInIdentity == appConfiguration.identity else {
+            
             Log.info("Not logged in. SendMissionOperation finished.")
             self.result = .failure(BotError.notLoggedIn)
             self.finish()
             return
         }
         
-        let queue = OperationQueue.current?.underlyingQueue ?? .global(qos: .utility)
-        
-        Log.info("Retreiving all joined pubs from database.")
-        Bots.current.joinedPubs(queue: queue) { (allJoinedPubs, error) in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
+        Task {
+            let joinPlanetaryOperation = self.createJoinPlanetaryOperation(config: appConfiguration)
+            let syncOperation = await self.createSyncOperation(bot: bot, config: appConfiguration)
             
-            let systemPubs = Set(AppConfiguration.current?.systemPubs ?? [])
-            let allPubAddresses = Array(Set(systemPubs.map { $0.address } + allJoinedPubs.map { $0.address }))
-            Log.info("Sending all joined pubs & system pubs to bot (\(allPubAddresses.count)).")
-            
-            Bots.current.seedPubAddresses(addresses: allPubAddresses, queue: queue) { [weak self] result in
-                if case .failure(let error) = result {
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                }
-                
-                guard let self = self, let appConfiguration = AppConfiguration.current else {
-                    return
-                }
-                
-                let joinPlanetarySystemOperation = JoinPlanetarySystemOperation(
-                    appConfiguration: appConfiguration,
-                    operationQueue: self.operationQueue
-                )
-                
-                var peerPool = allJoinedPubs.compactMap {
-                    $0.toPeer().multiserverAddress
-                }
-                
-                // If we don't have enough peers, supplement with the Planetary pubs
-                let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
-                if peerPool.count < minPeers {
-                    let someSystemPubs = systemPubs.randomSample(UInt(minPeers - peerPool.count))
-                    peerPool += someSystemPubs.map { $0.address.multiserver }
-                }
-                
-                let syncOperation = SyncOperation(peerPool: peerPool)
-                switch self.quality {
-                case .low:
-                    syncOperation.notificationsOnly = true
-                case .high:
-                    syncOperation.notificationsOnly = false
-                }
-                syncOperation.addDependency(joinPlanetarySystemOperation)
-                
-                let operations = [joinPlanetarySystemOperation, syncOperation]
-                self.operationQueue.addOperations(operations, waitUntilFinished: true)
-                
-                Log.info("SendMissionOperation finished.")
-                self.result = .success(())
-                self.finish()
+            var operations: [Operation] = [syncOperation]
+            if let joinPlanetaryOperation = joinPlanetaryOperation {
+                syncOperation.addDependency(joinPlanetaryOperation)
+                operations.append(joinPlanetaryOperation)
             }
+            
+            for operation in operations {
+                operationQueue.addOperation(operation)
+            }
+            try await operationQueue.drain()
+            
+            Log.info("SendMissionOperation finished.")
+            self.result = .success(())
+            self.finish()
+        }
+    }
+    
+    func createJoinPlanetaryOperation(config: AppConfiguration) -> JoinPlanetarySystemOperation? {
+        JoinPlanetarySystemOperation(appConfiguration: config)
+    }
+    
+    func createSyncOperation(bot: Bot, config: AppConfiguration) async -> SyncOperation {
+        async let (rooms, pubs) = loadPeerPool(from: bot, config: config)
+        let syncOperation = await SyncOperation(rooms: rooms, pubs: pubs)
+        switch self.quality {
+        case .low:
+            syncOperation.notificationsOnly = true
+        case .high:
+            syncOperation.notificationsOnly = false
+        }
+        
+        return syncOperation
+    }
+    
+    func loadPeerPool(from bot: Bot, config: AppConfiguration) async -> ([MultiserverAddress], [MultiserverAddress]) {
+        do {
+            async let joinedRooms = bot.joinedRooms().map { $0.address }
+            var joinedPubs = try await bot.joinedPubs().map { $0.address.multiserver }
+            
+            // If we don't have enough peers, supplement with the Planetary pubs
+            let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
+            if joinedPubs.count < 1 {
+                let systemPubs = Set(config.systemPubs).map { $0.address.multiserver }
+                let someSystemPubs = systemPubs.randomSample(UInt(minPeers - joinedPubs.count))
+                joinedPubs += someSystemPubs
+            }
+            
+            return (try await joinedRooms, joinedPubs)
+        } catch {
+            Log.error("Error fetching joined rooms and pubs: \(error.localizedDescription)")
+            CrashReporting.shared.reportIfNeeded(error: error)
+            return ([], [])
         }
     }
 }

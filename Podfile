@@ -12,6 +12,7 @@ target 'Planetary' do
     pod 'PhoneNumberKit', '3.2.0'
     pod 'SVProgressHUD', '2.2.5'
     pod 'Down', '0.9.2'
+    pod 'SwiftGen', '6.6.2'
 end
 
 target 'APITests' do

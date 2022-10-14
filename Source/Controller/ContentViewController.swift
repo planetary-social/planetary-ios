@@ -39,7 +39,7 @@ import UIKit
 class ContentViewController: UIViewController, KeyboardHandling {
 
     let scrollable: Bool
-    private let scrollView = UIScrollView.default()
+    let scrollView = UIScrollView.default()
     var contentView = UIView.forAutoLayout()
     private var contentViewBottomConstraint: NSLayoutConstraint!
 
@@ -49,7 +49,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
 
     // `dynamicTitle` is used to provide a string at runtime instead of the strongly-typed `title` Text object.
     // it will not be used if `title` is also provided
-    init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+    init(scrollable: Bool = true, title: Localized? = nil, dynamicTitle: String? = nil) {
         self.scrollable = scrollable
         super.init(nibName: nil, bundle: nil)
         self.title = title?.text ?? dynamicTitle
@@ -84,6 +84,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
         let (_, _, bottom, _) = Layout.fill(view: self.view,
                                             with: scrollView,
                                             respectSafeArea: false)
+        bottom.priority = .required
         self.contentViewBottomConstraint = bottom
     }
 
@@ -143,13 +144,13 @@ class ContentViewController: UIViewController, KeyboardHandling {
         }
     }
 
-    func setKeyboardTopConstraint(constant: CGFloat,
-                                  duration: TimeInterval,
-                                  curve: UIView.AnimationCurve) {
+    func setKeyboardTopConstraint(
+        constant: CGFloat,
+        duration: TimeInterval,
+        curve: UIView.AnimationCurve
+    ) {
         let animator = UIViewPropertyAnimator(duration: duration, curve: curve) { [weak self] in
             self?.contentViewBottomConstraint.constant = constant
-            self?.view.setNeedsLayout()
-            self?.view.layoutIfNeeded()
         }
         animator.startAnimation()
     }
@@ -203,7 +204,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
         let view = UILabel.forAutoLayout()
         view.textAlignment = .center
         view.numberOfLines = 2
-        view.text = Text.loadingUpdates.text
+        view.text = Localized.loadingUpdates.text
         view.textColor = UIColor.tint.default
         return view
     }()

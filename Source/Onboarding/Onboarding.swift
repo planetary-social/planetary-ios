@@ -74,16 +74,16 @@ class Onboarding {
     /// name that the API will reject with a 500 error.  This is useful to simulate the
     /// API failing and to test the reset and resume mechanisms.
     /// X5GBl8BzsRaQ
-    static func createProfile(birthdate: Date, phone: String, name: String?) async throws -> Context {
+    @MainActor static func createProfile(from data: OnboardingStepData) async throws -> Context {
         
-        guard birthdate.olderThan(yearsAgo: 16) else {
+        guard let birthdate = data.birthdate, birthdate.olderThan(yearsAgo: 16) else {
             throw StartError.invalidBirthdate
         }
         
         // Phone verification is not used anymore
         // guard phone.isValidPhoneNumber else { completion(nil, .invalidPhoneNumber); return }
         
-        if let name = name {
+        if let name = data.name {
             guard name.isValidName else {
                 throw StartError.invalidName
                 
@@ -104,15 +104,14 @@ class Onboarding {
         
         // create app configuration with name and time stamp
         let configuration = AppConfiguration(with: secret)
-        configuration.name = "\(name ?? secret.identity) (\(Date().shortDateTimeString))"
-        // We will add this as an option in the UI in the future #494
-        configuration.joinedPlanetarySystem = true
+        configuration.name = "\(data.name ?? secret.identity) (\(Date().shortDateTimeString))"
+        configuration.joinedPlanetarySystem = data.joinPlanetarySystem
         
-        #if DEBUG
-        configuration.ssbNetwork = Environment.Networks.test
-        #else
-        configuration.ssbNetwork = Environment.Networks.mainNet
-        #endif
+        if data.useTestNetwork {
+            configuration.ssbNetwork = Environment.Networks.test
+        } else {
+            configuration.ssbNetwork = Environment.Networks.mainNet
+        }
         
         // Safe to unwrap as configuration has secret, network and bot
         var context = Context(from: configuration)!
@@ -124,10 +123,28 @@ class Onboarding {
             throw StartError.botError(error)
         }
         
-        // publish about
-        if let name = name {
+        // publish image
+        var profileImageMetadata: ImageMetadata?
+        if let image = data.image {
             do {
-                let about = About(about: secret.identity, name: name)
+                profileImageMetadata = try await context.bot.addBlob(jpegOf: image, largestDimension: 1000)
+            } catch {
+                // We log but don't throw because we don't want
+                // to prevent the user from completing onboarding
+                Log.error("Error setting profile picture: \(error.localizedDescription)")
+            }
+        }
+        
+        // publish about
+        if let name = data.name {
+            do {
+                let about = About(
+                    identity: secret.identity,
+                    name: name,
+                    description: data.bio,
+                    image: profileImageMetadata,
+                    publicWebHosting: data.publicWebHosting
+                )
                 _ = try await context.bot.publish(content: about)
                 context.about = about
             } catch {
@@ -139,15 +156,37 @@ class Onboarding {
         if let network = configuration.network {
             CrashReporting.shared.identify(
                 identifier: secret.identity,
-                name: name,
+                name: data.name,
                 networkKey: network.string,
                 networkName: network.name
             )
             Analytics.shared.identify(
                 identifier: secret.identity,
-                name: name,
+                name: data.name,
                 network: network.string
             )
+        }
+        
+        var operations = [Operation]()
+
+        if data.followPlanetary {
+            let followPlanetaryOperation = FollowOperation(identity: Environment.PlanetarySystem.planetaryIdentity)
+            operations.append(followPlanetaryOperation)
+        }
+        
+        let bundle = Bundle(path: Bundle.main.path(forResource: "Preload", ofType: "bundle")!)!
+        let preloadOperation = LoadBundleOperation(bundle: bundle)
+        
+        let refreshOperation = RefreshOperation(refreshLoad: .short)
+        refreshOperation.addDependency(preloadOperation)
+        
+        operations += [
+            preloadOperation,
+            refreshOperation,
+        ]
+        
+        for operation in operations {
+            AppController.shared.addOperation(operation)
         }
         
         // done

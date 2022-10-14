@@ -7,7 +7,6 @@
 //
 
 import XCTest
-@testable import Planetary
 
 // swiftlint:disable implicitly_unwrapped_optional force_try
 
@@ -76,7 +75,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         let data = self.data(for: DatabaseFixture.bigFeed.fileName)
 
         // get test messages from JSON
-        let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+        let msgs = try JSONDecoder().decode([Message].self, from: data)
         XCTAssertNotNil(msgs)
         XCTAssertEqual(msgs.count, 2500)
         
@@ -93,8 +92,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
             startMeasuring()
-            let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues?.count, 100)
+            let messages = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(messages?.count, 100)
             stopMeasuring()
         }
     }
@@ -104,8 +103,8 @@ class ViewDatabasePerformanceTests: XCTestCase {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
             startMeasuring()
-            let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
-            XCTAssertEqual(keyValues?.count, 91)
+            let messages = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(messages?.count, 91)
             stopMeasuring()
         }
     }
@@ -116,8 +115,35 @@ class ViewDatabasePerformanceTests: XCTestCase {
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
             startMeasuring()
+            let messages = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+            XCTAssertEqual(messages?.count, 100)
+            stopMeasuring()
+        }
+    }
+    
+    func testRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
+        viewDatabase.close()
+        let strategy = RecentlyActivePostsAndContactsAlgorithm()
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            try! resetSmallDB()
+            startMeasuring()
             let keyValues = try? self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
             XCTAssertEqual(keyValues?.count, 100)
+            stopMeasuring()
+        }
+    }
+    
+    func testCountNumberOfKeysSinceUsingRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
+        viewDatabase.close()
+        try! resetSmallDB()
+        let strategy = RecentlyActivePostsAndContactsAlgorithm()
+        let messages = try self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
+        let earliestMessage = try XCTUnwrap(messages.last)
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            try! resetSmallDB()
+            startMeasuring()
+            let newMessageCount = try? self.viewDatabase.numberOfRecentPosts(with: strategy, since: earliestMessage.key)
+            XCTAssertEqual(newMessageCount, 100)
             stopMeasuring()
         }
     }
@@ -145,13 +171,21 @@ class ViewDatabasePerformanceTests: XCTestCase {
             stopMeasuring()
         }
     }
-
+    
+    func testCountNumberOfFollowersAndFollows() {
+        resetSmallDBAndMeasure {
+            for _ in 0..<100 {
+                _ = try? self.viewDatabase.countNumberOfFollowersAndFollows(feed: testFeed.identities[0])
+            }
+        }
+    }
+    
     /// This test performs a lot of feed loading (reads) while another thread is writing to the SQLite database. The
     /// reader threads are expected to finish before the long write does, verifying that we are optimizing for
     /// reading (see ADR #4).
     func testSimultanousReadsAndWrites() throws {
         let data = self.data(for: DatabaseFixture.bigFeed.fileName)
-        let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+        let msgs = try JSONDecoder().decode([Message].self, from: data)
         
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
@@ -195,6 +229,15 @@ class ViewDatabasePerformanceTests: XCTestCase {
             }
             
             waitForExpectations(timeout: 10)
+            stopMeasuring()
+        }
+    }
+    
+    private func resetSmallDBAndMeasure(_ block: () -> Void) {
+        measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
+            try! resetSmallDB()
+            startMeasuring()
+            block()
             stopMeasuring()
         }
     }

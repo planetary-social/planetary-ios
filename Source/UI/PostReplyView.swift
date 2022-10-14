@@ -10,7 +10,9 @@ import Foundation
 import UIKit
 
 /// Composite view of the PostCellView, a ReplyTextView, and a bottom separator.
-class PostReplyView: KeyValueView {
+class PostReplyView: MessageView {
+
+    let headerView = ContactHeaderView()
 
     let postView = PostCellView()
 
@@ -18,7 +20,7 @@ class PostReplyView: KeyValueView {
 
     // In this case the view is mostly used a big button to
     // navigate into a thread and start replying.  The tap
-    // gesture that comes with the KeyValueView is applied
+    // gesture that comes with the MessageView is applied
     // to the whole view, and the button and text view are
     // disabled.
     let replyTextView: ReplyTextView = {
@@ -27,7 +29,6 @@ class PostReplyView: KeyValueView {
         view.isUserInteractionEnabled = false
         view.topSeparator.isHidden = true
         view.addGestureRecognizer(view.tapGesture.recognizer)
-        view.isSkeletonable = true
         view.backgroundColor = .cardBackground
         return view
     }()
@@ -36,15 +37,16 @@ class PostReplyView: KeyValueView {
         let backgroundView = UIView.forAutoLayout()
         backgroundView.constrainHeight(to: 0)
         let colorView = UIImageView.forAutoLayout()
-        colorView.image = UIImage(named: "Thread")
+        colorView.image = UIImage.thread
         colorView.contentMode = .scaleToFill
         Layout.fill(view: backgroundView, with: colorView)
         return backgroundView
     }()
     
     let stackView: UIStackView = {
-        let stackView = UIStackView()
+        let stackView = UIStackView.forAutoLayout()
         stackView.axis = .vertical
+        stackView.distribution = .fill
         return stackView
     }()
 
@@ -66,6 +68,7 @@ class PostReplyView: KeyValueView {
 
         Layout.fill(view: self, with: stackView)
         stackView.addArrangedSubview(topBorder)
+        stackView.addArrangedSubview(headerView)
         stackView.addArrangedSubview(postView)
         stackView.addArrangedSubview(repliesView)
         stackView.addArrangedSubview(replyTextView)
@@ -78,16 +81,39 @@ class PostReplyView: KeyValueView {
         nil
     }
 
-    override func update(with keyValue: KeyValue) {
-        self.postView.update(with: keyValue)
-        self.repliesView.update(with: keyValue)
-        if !keyValue.metadata.replies.isEmpty {
-            self.degrade.heightConstraint?.constant = 12.33
+    override func reset() {
+        super.reset()
+        replyTextView.isHidden = true
+        headerView.isHidden = true
+        postView.displayHeader = true
+        postView.isHidden = false
+        repliesView.isHidden = false
+        postView.reset()
+    }
+
+    override func update(with message: Message) {
+        let isReply = message.content.post?.root != nil
+        let isVote = message.content.vote?.root != nil
+        if isReply || isVote {
+            postView.isHidden = false
+            postView.displayHeader = false
+            headerView.isHidden = false
+            headerView.update(with: message)
+            repliesView.isHidden = true
+            degrade.heightConstraint?.constant = 0
         } else {
-            self.degrade.heightConstraint?.constant = 0
+            postView.isHidden = false
+            headerView.isHidden = true
+            replyTextView.isHidden = message.offChain == true
+            repliesView.isHidden = false
+            repliesView.update(with: message)
+            if !message.metadata.replies.isEmpty {
+                degrade.heightConstraint?.constant = 12.33
+            } else {
+                degrade.heightConstraint?.constant = 0
+            }
         }
-        
-        replyTextView.isHidden = keyValue.offChain == true
+        postView.update(with: message)
     }
 }
 
@@ -95,15 +121,15 @@ extension PostReplyView {
 
     /// Returns a CGFloat suitable to be used as a `UITableView.estimatedRowHeight` or
     /// `UITableViewDelegate.estimatedRowHeightAtIndexPath()`.  If the specified
-    /// `KeyValue` has images, height for the `GalleryView` is included.  If there are replies
+    /// `Message` has images, height for the `GalleryView` is included.  If there are replies
     /// height for the `RepliesView` is added.  This does require some knowledge of the heights
     /// for the various subviews, but this needs to be a very fast call so no complicated calculations
     /// should be done.  Instead, some magic numbers are used based on the various constraints.
-    static func estimatedHeight(with keyValue: KeyValue, in superview: UIView) -> CGFloat {
+    static func estimatedHeight(with message: Message, in superview: UIView) -> CGFloat {
         // starting height based for all non-zero height subviews
         // header + text + reply box
         var height = CGFloat(300)
-        guard let post = keyValue.value.content.post else { return height }
+        guard let post = message.content.post else { return height }
 
         // add gallery view if necessary
         // note that gallery view is square so likely the same
@@ -111,14 +137,14 @@ extension PostReplyView {
         if post.hasBlobs { height += superview.bounds.size.width }
 
         // add replies view if necessary
-        if !keyValue.metadata.replies.isEmpty { height += 35 }
+        if !message.metadata.replies.isEmpty { height += 35 }
 
         // done
         return height
     }
 }
 
-class RepliesView: KeyValueView {
+class RepliesView: MessageView {
 
     private let textFont = UIFont.systemFont(ofSize: 14, weight: .regular)
 
@@ -136,7 +162,7 @@ class RepliesView: KeyValueView {
         self.label.constrainHeight(to: self.avatarImageView.height)
 
         Layout.fillTopLeft(of: self, with: self.avatarImageView, insets: .left(Layout.horizontalSpacing))
-        Layout.fillTopRight(of: self, with: self.label, insets: .right(Layout.horizontalSpacing))
+        Layout.fillTopRight(of: self, with: self.label, insets: .right(-Layout.horizontalSpacing))
 
         self.label.constrainLeading(toTrailingOf: self.avatarImageView, constant: Layout.horizontalSpacing)
 
@@ -148,16 +174,21 @@ class RepliesView: KeyValueView {
         nil
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    override func update(with keyValue: KeyValue) {
-        let uniqueAbouts = Array(Set(keyValue.metadata.replies.abouts))
+    override func update(with message: Message) {
+        let uniqueAbouts = message.metadata.replies.abouts
 
         if !uniqueAbouts.isEmpty {
-            Bots.current.abouts(identities: uniqueAbouts.map { $0.identity }) { abouts, _ in
+            Bots.current.abouts(identities: uniqueAbouts.map { $0.identity }) { detailedAbouts, _ in
+                let allAbouts = Set(detailedAbouts).union(message.metadata.replies.abouts)
                 DispatchQueue.main.async {
-                    self.avatarImageView.abouts = abouts
-                    self.updateLabel(from: abouts, total: keyValue.metadata.replies.count)
+                    self.avatarImageView.abouts = detailedAbouts
+                    self.updateLabel(
+                        from: allAbouts,
+                        authorsWithDetails: detailedAbouts,
+                        totalReplyCount: message.metadata.replies.count
+                    )
                 }
             }
         }
@@ -165,22 +196,23 @@ class RepliesView: KeyValueView {
         self.heightConstraint?.constant = uniqueAbouts.isEmpty ? 0 : self.expandedHeight
     }
 
-    private func updateLabel(from abouts: [About], total: Int) {
-        let count = abouts.count
+    private func updateLabel(from authors: Set<About>, authorsWithDetails: [About], totalReplyCount: Int) {
+        let count = authorsWithDetails.count
         if count == 1 {
-            let replyFrom = total > 1 ? Text.repliesFrom.text : Text.oneReplyFrom.text
+            let replyFrom = totalReplyCount > 1 ? Localized.repliesFrom.text : Localized.oneReplyFrom.text
             let text = NSMutableAttributedString(replyFrom, font: self.textFont, color: .secondaryText)
-            if let name = abouts.first?.name {
+            if let name = authorsWithDetails.first?.name {
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
             } else {
-                text.append(NSAttributedString(Text.oneOther.text, font: self.textFont, color: .reactionUser))
+                text.append(NSAttributedString(Localized.oneOther.text, font: self.textFont, color: .reactionUser))
             }
             self.label.attributedText = text
         } else {
-            let text = NSMutableAttributedString(Text.repliesFrom.text, font: self.textFont, color: .secondaryText)
-            if let name = abouts.first?.name {
+            var text: NSMutableAttributedString
+            if let name = authorsWithDetails.first?.name {
+                text = NSMutableAttributedString(Localized.repliesFrom.text, font: self.textFont, color: .secondaryText)
                 text.append(NSAttributedString(name, font: self.textFont, color: .reactionUser))
-                let others = count > 2 ? Text.andCountOthers : Text.andOneOther
+                let others = count > 2 ? Localized.andCountOthers : Localized.andOneOther
                 text.append(
                     NSAttributedString(
                         others.text(["count": String(count - 1)]),
@@ -189,7 +221,20 @@ class RepliesView: KeyValueView {
                     )
                 )
             } else {
-                text.append(NSAttributedString(Text.countOthers.text, font: self.textFont, color: .reactionUser))
+                // We don't have details from any authors, so just show the number of replies.
+                if totalReplyCount == 1 {
+                    text = NSMutableAttributedString(
+                        Localized.oneReply.text,
+                        font: self.textFont,
+                        color: .secondaryText
+                    )
+                } else {
+                    text = NSMutableAttributedString(
+                        Localized.replyCount.text(["count": String(totalReplyCount)]),
+                        font: self.textFont,
+                        color: .secondaryText
+                    )
+                }
             }
             self.label.attributedText = text
         }

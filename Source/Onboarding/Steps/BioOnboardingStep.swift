@@ -21,7 +21,7 @@ class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
         self.view.textView.becomeFirstResponder()
         self.view.textView.delegate = self
         self.view.textView.backgroundColor = .appBackground
-        self.view.hintLabel.text = Text.Onboarding.bioHint.text
+        self.view.hintLabel.text = Localized.Onboarding.bioHint.text
         self.view.secondaryButton.setText(.skip)
         self.view.titleLabelTopConstraint?.constant = UIScreen.main.isShort ? Layout.verticalSpacing : Layout.verticalSpacing * 2
         if UIScreen.main.isShort {
@@ -41,40 +41,5 @@ class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
 
     override func performSecondaryAction(sender button: UIButton) {
         self.next()
-    }
-
-    override func performPrimaryAction(sender button: UIButton) {
-
-        // not requiring any bio right now
-        guard let bio = self.data.bio else {
-            self.next()
-            return
-        }
-
-        // SIMULATE ONBOARDING
-        if self.data.simulated { self.next(); return }
-
-        guard let context = self.data.context else {
-            Log.unexpected(.missingValue, "Was expecting self.data.context, skipping step")
-            self.next()
-            return
-        }
-
-        guard let identity = self.data.context?.about?.identity else {
-            Log.unexpected(.missingValue, "Was expecting self.data.context.about.identity, skipping step")
-            self.next()
-            return
-        }
-
-        self.view.lookBusy(disable: self.view.primaryButton)
-
-        let about = About(about: identity, descr: bio)
-        context.bot.publish(content: about) {
-            [weak self] _, error in
-            self?.view.lookReady()
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            if error == nil { self?.next() }
-        }
     }
 }

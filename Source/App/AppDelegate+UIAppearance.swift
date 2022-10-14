@@ -24,7 +24,7 @@ extension AppDelegate {
         // nav bar
         // we have to set the image because setting the backgroundColor
         // ends up with a slightly different color for some reason
-        let image = UIImage(named: "back-chevron")
+        let image = UIImage.backChevron
         let appearance = UINavigationBar.appearance()
         appearance.backIndicatorImage = image
         appearance.backIndicatorTransitionMaskImage = image
@@ -50,6 +50,9 @@ extension AppDelegate {
         // table footers and headers
         let footerColor = UIColor.secondaryText
         UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = footerColor
+        
+        // table views
+        UITableView.appearance().backgroundColor = .appBackground
     }
 }
 

@@ -11,6 +11,7 @@ import UIKit
 
 enum FakeBotError: Error {
     case runtimeError(String)
+    case notImplemented
 }
 
 class FakeBot: Bot {
@@ -64,6 +65,23 @@ class FakeBot: Bot {
             completion([], nil)
         }
     }
+    
+    func joinedRooms() async throws -> [Room] {
+        []
+    }
+    func insert(room: Room) async throws { }
+    func delete(room: Room) async throws { }
+    
+    func registeredAliases() async throws -> [RoomAlias] {
+        throw FakeBotError.notImplemented
+    }
+    
+    func register(alias: String, in: Room) async throws -> RoomAlias {
+        throw FakeBotError.notImplemented
+    }
+    
+    func revoke(alias: RoomAlias) async throws {}
+    
     func redeemInvitation(to: Star, completionQueue: DispatchQueue, completion: @escaping ErrorCompletion) {
         completionQueue.async { completion(nil) }
     }
@@ -88,8 +106,8 @@ class FakeBot: Bot {
 
     func posts(with hashtag: Hashtag, completion: @escaping PaginatedCompletion) { }
     
-    func posts(matching filter: String) async throws -> [KeyValue] {
-        return []
+    func posts(matching filter: String) async throws -> [Message] {
+        []
     }
 
     func uiimage(for identity: Identity, completion: @escaping UIImageCompletion) { }
@@ -132,8 +150,12 @@ class FakeBot: Bot {
 
     func markMessageAsRead(_ message: MessageIdentifier) { }
 
-    func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) { }
 
+    func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion) { }
+    
+    func replicate(feed: FeedIdentifier) { }
+    
     required init() {}
     static let shared = FakeBot()
 
@@ -177,6 +199,8 @@ class FakeBot: Bot {
         }
     }
     
+    func connect(to address: MultiserverAddress) { }
+    
     func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
@@ -191,7 +215,7 @@ class FakeBot: Bot {
     func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
         queue.async {
-            completion(nil, 0, false)
+            completion(.success(true), 0)
         }
     }
 
@@ -202,7 +226,7 @@ class FakeBot: Bot {
     }
     
     func publishingWouldFork(feed: FeedIdentifier) throws -> Bool {
-        return false
+        false
     }
 
     // MARK: About content
@@ -251,7 +275,7 @@ class FakeBot: Bot {
     }
     
     func abouts(matching filter: String) async throws -> [About] {
-        return []
+        []
     }
 
     // MARK: Feed content
@@ -262,8 +286,8 @@ class FakeBot: Bot {
     
     func recent(completion: PaginatedCompletion) {
         let data = Data.fromJSON(resource: "Feed.json")
-        var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
-        feed?.sort { $0.value.timestamp < $1.value.timestamp }
+        var feed = try? JSONDecoder().decode(Messages.self, from: data)
+        feed?.sort { $0.claimedTimestamp < $1.claimedTimestamp }
         if let feed = feed {
             completion(StaticDataProxy(with: feed), nil)
         } else {
@@ -273,24 +297,28 @@ class FakeBot: Bot {
 
     func everyone(completion: PaginatedCompletion) {
         let data = Data.fromJSON(resource: "Feed.json")
-        var feed = try? JSONDecoder().decode(KeyValues.self, from: data)
-        feed?.sort { $0.value.timestamp < $1.value.timestamp }
+        var feed = try? JSONDecoder().decode(Messages.self, from: data)
+        feed?.sort { $0.claimedTimestamp < $1.claimedTimestamp }
         if let feed = feed {
             completion(StaticDataProxy(with: feed), nil)
         } else {
             completion(StaticDataProxy(), nil)
         }
     }
-    
+
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
+        completion(StaticDataProxy(), nil)
+    }
+
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
     }
     
-    func post(from key: MessageIdentifier) throws -> KeyValue {
+    func post(from key: MessageIdentifier) throws -> Message {
         throw FakeBotError.runtimeError("not implemented")
     }
 
-    func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
+    func thread(message: Message, completion: @escaping ThreadCompletion) {
         completion(nil, StaticDataProxy(), nil)
     }
     
@@ -324,5 +352,9 @@ class FakeBot: Bot {
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion) {
         completion(nil)
+    }
+
+    func raw(of message: Message, completion: @escaping RawCompletion) {
+        completion(.success(""))
     }
 }

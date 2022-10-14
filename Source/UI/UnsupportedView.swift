@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class UnsupportedView: KeyValueView {
+class UnsupportedView: MessageView {
 
     let label: UILabel = {
         let label = UILabel()
@@ -26,8 +26,8 @@ class UnsupportedView: KeyValueView {
         Layout.fill(view: self, with: self.label)
     }
 
-    override func update(with keyValue: KeyValue) {
-        let text = "'\(keyValue.contentType.rawValue.capitalized)' is an unsupported content type"
+    override func update(with message: Message) {
+        let text = "'\(message.contentType.rawValue.capitalized)' is an unsupported content type"
         self.label.text = text
     }
 }

@@ -26,7 +26,7 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
             ZStack {
                 // Blurred background
                 VStack {
-                    Image("icon-planetary-2")
+                    Image.iconPlanetary2
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                     Spacer()
@@ -41,20 +41,32 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
                         VStack(spacing: 30) {
                             Color.clear.frame(width: 0, height: 40)
                             HStack {
-                                Image("icon-planetary-2")
+                                Image.iconPlanetary2
                                     .resizable()
                                     .frame(width: 72.11, height: 88)
                                 Spacer()
                             }
-                            Text.upgradingAndRestoring.view
+                            Localized.upgradingAndRestoring.view
                                 .font(.title)
-                                .foregroundColor(Color("mainText"))
+                                .foregroundColor(.mainText)
                                 .multilineTextAlignment(.leading)
                             
                             Beta1MigrationDescriptionText(viewModel: viewModel)
                             
                             Spacer()
                             
+                            if viewModel.progress < 0.995 {
+                                Button {
+                                    viewModel.confirmDismissal()
+                                } label: {
+                                    Localized.dismissAndStartUsingPlanetary.view
+                                        .foregroundColor(Color(UIColor.linkColor))
+                                        .font(.callout)
+                                        .underline()
+                                        .bold()
+                                }
+                            }
+
                             ProgressButton(viewModel: viewModel)
                             
                             Color.clear.frame(width: 0, height: 10)
@@ -71,18 +83,18 @@ struct Beta1MigrationView<ViewModel>: View where ViewModel: Beta1MigrationViewMo
         }
         .alert(isPresented: $viewModel.shouldConfirmDismissal, content: {
             Alert(
-                title: Text.areYouSure.view,
-                message: Text.dismissMigrationEarlyMessage.view,
-                primaryButton: .default(Text.yes.view, action: {
+                title: Localized.areYouSure.view,
+                message: Localized.dismissMigrationEarlyMessage.view,
+                primaryButton: .default(Localized.yes.view, action: {
                     viewModel.dismissPressed()
                 }),
-                secondaryButton: .destructive(Text.cancel.view, action: {
+                secondaryButton: .destructive(Localized.cancel.view, action: {
                     viewModel.shouldConfirmDismissal = false
                 })
             )
         })
         .background(
-            Color("appBackground").edgesIgnoringSafeArea(.all)
+            Color.appBackground.edgesIgnoringSafeArea(.all)
         )
     }
 }

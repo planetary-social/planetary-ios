@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class NotificationCellView: KeyValueView {
+class NotificationCellView: MessageView {
 
     private let nameFont = UIFont.systemFont(ofSize: 15, weight: .semibold)
     private let actionFont = UIFont.systemFont(ofSize: 15, weight: .regular)
@@ -61,25 +61,25 @@ class NotificationCellView: KeyValueView {
         AppController.shared.pushViewController(for: .about, with: identity)
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    override func update(with keyValue: KeyValue) {
+    override func update(with message: Message) {
 
         // remember the author identity
-        let identity = keyValue.value.author
+        let identity = message.author
         self.identity = identity
 
         // avatar button
-        self.button.setImage(for: keyValue.metadata.author.about)
+        self.button.setImage(for: message.metadata.author.about)
 
         // name
-        let name = keyValue.metadata.author.about?.nameOrIdentity ?? identity
+        let name = message.metadata.author.about?.nameOrIdentity ?? identity
         let text = NSMutableAttributedString(name,
                                              font: self.nameFont)
 
         // action
         let shouldHideFollowButton: Bool
-        if let doesMention = keyValue.value.content.post?.doesMention(Bots.current.identity) {
+        if let doesMention = message.content.post?.doesMention(Bots.current.identity) {
             text.append(NSAttributedString(doesMention ? " mentioned you" : " replied",
                                            font: self.actionFont))
 
@@ -96,13 +96,13 @@ class NotificationCellView: KeyValueView {
         text.addColorAttribute(UIColor.text.default)
 
         // timestamp
-        text.append(NSAttributedString(" • \(keyValue.userDate.elapsedTimeFromNowString())",
+        text.append(NSAttributedString(" • \(message.claimedDate.elapsedTimeFromNowString())",
                                        font: self.timestampFont,
                                        color: UIColor.text.notificationTimestamp))
 
         // content snippet
-        if keyValue.value.content.isPost {
-            let flattened = Caches.truncatedText.from(keyValue).flattenedString()
+        if message.content.isPost {
+            let flattened = Caches.truncatedText.from(message).flattenedString()
             text.append(NSAttributedString("\n\(flattened)",
                                            font: self.contentFont,
                                            color: UIColor.text.notificationContent))
@@ -130,7 +130,7 @@ class NotificationCellView: KeyValueView {
         self.forceNeedsLayout()
     }
 
-    // TODO move to KeyValueView? or UIView?
+    // TODO move to MessageView? or UIView?
     private func forceNeedsLayout() {
         self.setNeedsLayout()
         self.layoutIfNeeded()

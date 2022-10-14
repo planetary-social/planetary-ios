@@ -18,7 +18,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.text.detail
-        label.text = Text.ManagePubs.pasteAddress.text.uppercased()
+        label.text = Localized.ManageRelays.pasteAddress.text.uppercased()
         return label
     }()
     
@@ -40,7 +40,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        self.title = Text.redeemInvitation.text
+        self.title = Localized.redeemInvitation.text
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -52,7 +52,7 @@ class RedeemInviteViewController: UIViewController, Saveable, SaveableDelegate, 
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem.for(self)
         
-        self.view.backgroundColor = UIColor.systemGroupedBackground
+        self.view.backgroundColor = UIColor.appBackground
         
         let spacer = Layout.addSpacerView(toTopOf: self.view, height: 58)
         var separator = Layout.addSeparator(southOf: spacer)

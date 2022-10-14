@@ -25,7 +25,7 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
 
     // TODO this is duplicated from AboutView
     private let imageView: UIImageView = {
-        let image = UIImage(named: "missing-about-icon")
+        let image = UIImage.missingAboutIcon
         let view = UIImageView(image: image)
         view.contentMode = .scaleAspectFill
         return view
@@ -57,52 +57,6 @@ class PhotoConfirmOnboardingStep: OnboardingStep {
             self.data.image = image
             self.imagePicker.dismiss()
             self.view.lookReady()
-        }
-    }
-
-    override func performPrimaryAction(sender button: UIButton) {
-
-        // SIMULATE ONBOARDING
-        if self.data.simulated { self.next(); return }
-
-        guard let image = self.data.image else {
-            Log.unexpected(.missingValue, "Expected self.data.image, skipping step")
-            self.next()
-            return
-        }
-
-        guard let context = self.data.context else {
-            Log.unexpected(.missingValue, "Was expecting self.data.context, skipping step")
-            self.next()
-            return
-        }
-
-        self.view.lookBusy(disable: self.view.primaryButton)
-
-        // TODO could be a composite func that does all of this
-        context.bot.addBlob(jpegOf: image, largestDimension: 1_000) {
-            [weak self] image, error in
-
-            CrashReporting.shared.reportIfNeeded(error: error)
-            
-            if Log.optional(error) {
-                self?.view.lookReady()
-                return
-            }
-
-            guard let about = context.about?.mutatedCopy(image: image) else {
-                Log.unexpected(.missingValue, "Expected context.about, will have to retry")
-                self?.view.lookReady()
-                return
-            }
-
-            context.bot.publish(content: about) {
-                _, error in
-                self?.view.lookReady()
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                if error == nil { self?.next() }
-            }
         }
     }
 }

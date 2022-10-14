@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
 
 // It turns out that DebugTableViewController works really well
 // for the design of the settings, so we're just gonna use it for now.
@@ -18,7 +19,7 @@ class SettingsViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = Text.settings.text
+        self.navigationItem.title = Localized.settings.text
         self.addDismissBarButtonItem()
     }
     
@@ -30,11 +31,11 @@ class SettingsViewController: DebugTableViewController {
 
     override internal func updateSettings() {
         self.settings = [
-            feedStrategy(),
+            feedStrategies(),
             publicWebHosting(),
+            manageRelays(),
             push(),
             usage(),
-            managePubs(),
             preview()
         ]
         super.updateSettings()
@@ -42,10 +43,10 @@ class SettingsViewController: DebugTableViewController {
     
     // MARK: Feed Algorithm Selection
     
-    private func feedStrategy() -> DebugTableViewController.Settings {
+    private func feedStrategies() -> DebugTableViewController.Settings {
         let settings = [
             DebugTableViewCellModel(
-                title: Text.FeedAlgorithm.feedAlgorithmTitle.text,
+                title: Localized.FeedAlgorithm.feedAlgorithmTitle.text,
                 valueClosure: { cell in
                     cell.accessoryType = .disclosureIndicator
                 },
@@ -53,10 +54,20 @@ class SettingsViewController: DebugTableViewController {
                     let controller = FeedStrategySelectionViewController()
                     self?.navigationController?.pushViewController(controller, animated: true)
                 }
+            ),
+            DebugTableViewCellModel(
+                title: Localized.DiscoveryFeedAlgorithm.feedAlgorithmTitle.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let controller = DiscoveryFeedStrategySelectionViewController()
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
             )
         ]
         
-        return (Text.FeedAlgorithm.algorithms.text, settings, Text.FeedAlgorithm.feedAlgorithmDescription.text)
+        return (Localized.FeedAlgorithm.algorithms.text, settings, nil)
     }
 
     // MARK: Public web hosting
@@ -81,11 +92,30 @@ class SettingsViewController: DebugTableViewController {
         }
 
         var settings: [DebugTableViewCellModel] = []
-        settings += [DebugTableViewCellModel(title: Text.PublicWebHosting.enabled.text,
-                                             valueClosure: valueClosure,
-                                             actionClosure: nil)]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Localized.WebServices.aliases.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let viewModel = RoomAliasCoordinator(bot: Bots.current)
+                    let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        settings += [
+            DebugTableViewCellModel(
+                title: Localized.WebServices.publicWebHosting.text,
+                valueClosure: valueClosure,
+                actionClosure: nil
+            )
+        ]
 
-        return (Text.PublicWebHosting.title.text, settings, Text.PublicWebHosting.footer.text)
+        return (Localized.WebServices.title.text, settings, Localized.WebServices.footer.text)
     }
 
     @objc private func publicWebHostingToggleValueChanged(toggle: UISwitch) {
@@ -134,7 +164,7 @@ class SettingsViewController: DebugTableViewController {
     private func push() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.Push.enabled.text,
+        settings += [DebugTableViewCellModel(title: Localized.Push.enabled.text,
                                              valueClosure: {
                 [unowned self] cell in
                 cell.showActivityIndicator()
@@ -148,7 +178,7 @@ class SettingsViewController: DebugTableViewController {
             },
                                              actionClosure: nil)]
 
-        return (Text.Push.title.text, settings, Text.Push.footer.text)
+        return (Localized.Push.title.text, settings, Localized.Push.footer.text)
     }
 
     /// Asks the AppController to prompt for push notification permissions.  The returned status
@@ -167,7 +197,7 @@ class SettingsViewController: DebugTableViewController {
     private func usage() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.analyticsAndCrash.text,
+        settings += [DebugTableViewCellModel(title: Localized.analyticsAndCrash.text,
                                              valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
@@ -179,34 +209,50 @@ class SettingsViewController: DebugTableViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
-        return (Text.usageData.text, settings, nil)
+        return (Localized.usageData.text, settings, nil)
     }
     
-    // MARK: Manage Pubs
+    // MARK: Manage Relay Servers
     
-    private func managePubs() -> DebugTableViewController.Settings {
+    private func manageRelays() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
         
-        settings += [DebugTableViewCellModel(title: Text.ManagePubs.title.text,
-                                         valueClosure: {
-            cell in
-            cell.accessoryType = .disclosureIndicator
-        },
-                                         actionClosure: {
-            [unowned self] _ in
-            let controller = ManagePubsViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-        })]
+        settings += [
+            DebugTableViewCellModel(
+                title: Localized.ManageRelays.managePubs.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let controller = ManagePubsViewController()
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
         
-        return (Text.ManagePubs.header.text, settings, Text.ManagePubs.footer.text)
+        settings += [
+            DebugTableViewCellModel(
+                title: Localized.ManageRelays.manageRooms.text,
+                valueClosure: { cell in
+                    cell.accessoryType = .disclosureIndicator
+                },
+                actionClosure: { [weak self] _ in
+                    let viewModel = RoomListCoordinator(bot: Bots.current)
+                    let controller = UIHostingController(rootView: RoomListView(viewModel: viewModel))
+                    self?.navigationController?.pushViewController(controller, animated: true)
+                }
+            )
+        ]
+        
+        return (Localized.ManageRelays.relayServers.text, settings, Localized.ManageRelays.footer.text)
     }
-
+    
     // MARK: Preview
 
     private func preview() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.Preview.title.text,
+        settings += [DebugTableViewCellModel(title: Localized.Preview.title.text,
                                              valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
@@ -217,6 +263,6 @@ class SettingsViewController: DebugTableViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
-        return (Text.Preview.title.text, settings, Text.Preview.footer.text)
+        return (Localized.Preview.title.text, settings, Localized.Preview.footer.text)
     }
 }

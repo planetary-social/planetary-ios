@@ -93,12 +93,9 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     private func load() {
         Task { [weak self] in
             do {
-                guard let about = try await Bots.current.about() else {
-                    return
-                }
-            
+                let about = try await Bots.current.about()
                 self?.menuView.profileView.update(with: about)
-                self?.menuView.label.text = about.nameOrIdentity
+                self?.menuView.label.text = about?.nameOrIdentity
             } catch {
                 Log.optional(error)
             }
@@ -145,9 +142,9 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         Analytics.shared.trackDidTapButton(buttonName: "support")
         guard let controller = Support.shared.mainViewController() else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
@@ -160,9 +157,9 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         Analytics.shared.trackDidTapButton(buttonName: "report_bug")
         guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
@@ -348,14 +345,14 @@ private class ProfileImageView: UIView {
         self.circleView.round()
     }
 
-    func update(with about: About) {
-        self.imageView.set(image: about.image)
+    func update(with about: About?) {
+        self.imageView.set(image: about?.image)
     }
 }
 
 private class MenuButton: UIButton {
 
-    init(title: Text, image: UIImage? = nil) {
+    init(title: Localized, image: UIImage? = nil) {
 
         super.init(frame: .zero)
         self.contentHorizontalAlignment = .left

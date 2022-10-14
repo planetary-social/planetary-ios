@@ -32,15 +32,16 @@ class RefreshOperation: AsynchronousOperation {
             return
         }
         
-        let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .utility)
-        Bots.current.refresh(load: refreshLoad, queue: queue) { [weak self, refreshLoad] (error, timeInterval, _) in
-            Analytics.shared.trackBotDidRefresh(load: refreshLoad.rawValue,
-                                                duration: timeInterval,
-                                                error: error)
+        Bots.current.refresh(load: refreshLoad, queue: dispatchQueue) { [weak self, refreshLoad] (refreshResult, timeElapsed) in
+            var error: Error?
+            if case .failure(let actualError) = refreshResult {
+                error = actualError
+            }
+            Analytics.shared.trackBotDidRefresh(load: refreshLoad.rawValue, duration: timeElapsed, error: error)
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
-            Log.info("RefreshOperation finished. Took \(timeInterval) seconds to refresh.")
+            Log.info("RefreshOperation finished. Took \(timeElapsed) seconds to refresh.")
             if let strongSelf = self, !strongSelf.isCancelled {
                 self?.error = error
             }

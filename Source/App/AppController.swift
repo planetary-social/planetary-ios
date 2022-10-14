@@ -18,7 +18,7 @@ class AppController: UIViewController {
     var missionControlCenter = MissionControlCenter()
     
     /// Queue to handle background operations
-    var operationQueue = OperationQueue()
+    private var operationQueue = OperationQueue()
     
     private var didStartDatabaseProcessingObserver: NSObjectProtocol?
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
@@ -167,5 +167,36 @@ class AppController: UIViewController {
         if let progress = self.didUpdateDatabaseProgressObserver {
             notificationCenter.removeObserver(progress)
         }
+    }
+    
+    /// Returns the view controller at the top of this AppController's hierarchy.
+    var topViewController: UIViewController {
+        
+        var getPresentedController: (UIViewController) -> UIViewController = { $0 }
+        
+        getPresentedController = { (controller: UIViewController) in
+            if let navigationController = controller as? UINavigationController,
+                let visibleViewController = navigationController.visibleViewController {
+                return getPresentedController(visibleViewController)
+            }
+            
+            if let tabController = controller as? UITabBarController,
+                let selected = tabController.selectedViewController {
+                return getPresentedController(selected)
+            }
+            
+            if let presented = controller.presentedViewController {
+                return getPresentedController(presented)
+            }
+            
+            return controller
+        }
+        
+        return getPresentedController(self)
+    }
+    
+    // MARK: Operations
+    func addOperation(_ operation: Operation) {
+        operationQueue.addOperation(operation)
     }
 }

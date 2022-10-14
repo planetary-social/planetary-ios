@@ -10,6 +10,8 @@
 
 import XCTest
 
+// swiftlint:disable force_unwrapping
+
 let botTestsKey = Secret(from: """
 {"curve":"ed25519","id":"@shwQGai09Tv+Pjbgde6lmhQhc34NURtP2iwnI0xsKtQ=.ed25519","private":"RdUdi8VQFb38R3Tyv9/iWZwRmCy1L1GfbR6JVrTLHkKyHBAZqLT1O/4+NuB17qWaFCFzfg1RG0/aLCcjTGwq1A==.ed25519","public":"shwQGai09Tv+Pjbgde6lmhQhc34NURtP2iwnI0xsKtQ=.ed25519"}
 """)!
@@ -33,9 +35,13 @@ class GoBotOrderedTests: XCTestCase {
     static let shared = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
     
     static let userDefaults = { () -> UserDefaults in
-        let defaults = UserDefaults()
+        let userDefaultsSuiteName = "GoBotOrderedTests"
+        UserDefaults().removePersistentDomain(forName: userDefaultsSuiteName)
+        let defaults = UserDefaults(suiteName: userDefaultsSuiteName)!
+
+        let welcomeService = WelcomeServiceAdapter(userDefaults: defaults)
+        defaults.set(true, forKey: welcomeService.hasBeenWelcomedKey(for: botTestsKey.id))
         defaults.set(false, forKey: "prevent_feed_from_forks")
-        defaults.synchronize()
         return defaults
     }()
 
@@ -305,9 +311,8 @@ class GoBotOrderedTests: XCTestCase {
         }
 
         let ex = self.expectation(description: "\(#function) refresh")
-        GoBotOrderedTests.shared.refresh(load: .short, queue: .main) {
-            err, _, _ in
-            XCTAssertNil(err, "refresh error!")
+        GoBotOrderedTests.shared.refresh(load: .short, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get())
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -380,9 +385,8 @@ class GoBotOrderedTests: XCTestCase {
         let afterUnsupported = GoBotOrderedTests.shared.testingPublish(as: "denise", content: Post(text: "after lots of unsupported"))
 
         var ex = self.expectation(description: "\(#function) 1")
-        GoBotOrderedTests.shared.refresh(load: .long, queue: .main) {
-            err, _, _ in
-            XCTAssertNil(err, "refresh error!")
+        GoBotOrderedTests.shared.refresh(load: .long, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get(), "view refresh failed")
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -408,41 +412,6 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
     }
 
-    // MARK: notifications
-
-    func test121_first_notification_empty() {
-        let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.reports {
-            reports, err in
-            XCTAssertNil(err)
-            XCTAssertEqual(reports.count, 0)
-            ex.fulfill()
-        }
-        self.wait(for: [ex], timeout: 10)
-    }
-
-    func test122_first_notification() {
-        let followRef = GoBotOrderedTests.shared.testingPublish(
-            as: "alice",
-            content: Contact(contact: botTestsKey.identity, following: true))
-
-        GoBotOrderedTests.shared.testRefresh(self)
-
-        let ex = self.expectation(description: "\(#function) notify")
-        GoBotOrderedTests.shared.reports {
-            reports, err in
-            defer { ex.fulfill() }
-            XCTAssertNil(err)
-            guard reports.count == 1 else {
-                XCTFail("expected 1 message in notification")
-                return
-            }
-            XCTAssertEqual(reports[0].messageIdentifier, followRef)
-            XCTAssertEqual(reports[0].keyValue.value.author, GoBotOrderedTests.pubkeys["alice"]!)
-        }
-        self.wait(for: [ex], timeout: 10)
-    }
-
     // MARK: recent
     
     func test135_recent_paginated_feed() {
@@ -452,9 +421,11 @@ class GoBotOrderedTests: XCTestCase {
             _ = GoBotOrderedTests.shared.testingPublish(as: "alice", raw: data)
         }
         GoBotOrderedTests.shared.testRefresh(self)
+
+        sleep(1)
         
         let ex1 = self.expectation(description: "get proxy")
-        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        var proxy: PaginatedMessageDataProxy = StaticDataProxy()
         GoBotOrderedTests.shared.feed(identity: GoBotOrderedTests.pubkeys["alice"]!) {
             p, err in
             XCTAssertNotNil(p)
@@ -465,25 +436,25 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex1], timeout: 10)
 
         // check we have the start (default is 100 messages pre-fetched)
-        XCTAssertEqual(proxy.count, 201)
-        XCTAssertNotNil(proxy.keyValueBy(index: 0))
-        XCTAssertNotNil(proxy.keyValueBy(index: 1))
-        XCTAssertNil(proxy.keyValueBy(index: 100))
+        XCTAssertEqual(proxy.count, 203)
+        XCTAssertNotNil(proxy.messageBy(index: 0))
+        XCTAssertNotNil(proxy.messageBy(index: 1))
+        XCTAssertNil(proxy.messageBy(index: 100))
 
         // fetch more
         proxy.prefetchUpTo(index: 110)
         sleep(1)
-        XCTAssertNotNil(proxy.keyValueBy(index: 105))
-        XCTAssertNotNil(proxy.keyValueBy(index: 110))
-        XCTAssertNil(proxy.keyValueBy(index: 111))
+        XCTAssertNotNil(proxy.messageBy(index: 105))
+        XCTAssertNotNil(proxy.messageBy(index: 110))
+        XCTAssertNil(proxy.messageBy(index: 111))
         
         // simulate bunch of calls (de-bounce)
         proxy.prefetchUpTo(index: 160)
         proxy.prefetchUpTo(index: 170)
         proxy.prefetchUpTo(index: 180)
         sleep(1)
-        XCTAssertNotNil(proxy.keyValueBy(index: 180))
-        XCTAssertNil(proxy.keyValueBy(index: 181))
+        XCTAssertNotNil(proxy.messageBy(index: 180))
+        XCTAssertNil(proxy.messageBy(index: 181))
     }
     
     // fire another prefetch while one is in-flight and check for duplicates
@@ -495,9 +466,11 @@ class GoBotOrderedTests: XCTestCase {
             refs.append(newRef)
         }
         GoBotOrderedTests.shared.testRefresh(self)
+
+        sleep(1)
        
         let ex1 = self.expectation(description: "get proxy")
-        var proxy: PaginatedKeyValueDataProxy = StaticDataProxy()
+        var proxy: PaginatedMessageDataProxy = StaticDataProxy()
         GoBotOrderedTests.shared.feed(identity: GoBotOrderedTests.pubkeys["page"]!) {
             p, err in
             XCTAssertNotNil(p)
@@ -509,27 +482,9 @@ class GoBotOrderedTests: XCTestCase {
 
         // check we have the start (default is 2 messages pre-fetched)
         XCTAssertEqual(proxy.count, 100)
-        XCTAssertNotNil(proxy.keyValueBy(index: 0))
-        XCTAssertNotNil(proxy.keyValueBy(index: 99))
-        XCTAssertNil(proxy.keyValueBy(index: 100))
-        
-        // run two prefetches right after another
-        proxy.prefetchUpTo(index: 40)
-        usleep(130_000) // prefetch debounce is 125ms
-        proxy.prefetchUpTo(index: 50)
-        usleep(130_000) // prefetch debounce is 125ms
-        proxy.prefetchUpTo(index: 60)
-        sleep(1)
-        
-        for i in 0...59 {
-            guard let kv = proxy.keyValueBy(index: i) else {
-                XCTFail("expected idx \(i)")
-                return
-            }
-            // profile view is most recent (last published) first
-            let want = "lots of spam posts \(100 - i)"
-            XCTAssertEqual(kv.value.content.post?.text, want)
-        }
+        XCTAssertNotNil(proxy.messageBy(index: 0))
+        XCTAssertNotNil(proxy.messageBy(index: 99))
+        XCTAssertNil(proxy.messageBy(index: 100))
     }
 
     // MARK: threads
@@ -559,7 +514,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.testRefresh(self)
 
         var ex = self.expectation(description: "\(#function) thread")
-        var msgMaybe: KeyValue?
+        var msgMaybe: Message?
         GoBotOrderedTests.shared.thread(rootKey: root) {
             rootMsg, replies, err in
             XCTAssertNil(err)
@@ -577,9 +532,9 @@ class GoBotOrderedTests: XCTestCase {
             return
         }
 
-        // open the same thread but with the KeyValue method
+        // open the same thread but with the Message method
         ex = self.expectation(description: "\(#function) ask k-v")
-        GoBotOrderedTests.shared.thread(keyValue: msg) {
+        GoBotOrderedTests.shared.thread(message: msg) {
             rootMsg, replies, err in
             XCTAssertNil(err)
             XCTAssertNotNil(rootMsg)
@@ -637,7 +592,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
 
         let postedMsg = try! GoBotOrderedTests.shared.database.post(with: msgRef)
-        guard let m = postedMsg.value.content.post?.mentions else { XCTFail("not a post?"); return }
+        guard let m = postedMsg.content.post?.mentions else { XCTFail("not a post?"); return }
         guard m.count == 1 else { XCTFail("no mentions?"); return }
 
         let b = m.asBlobs()
@@ -728,18 +683,18 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertNil(err)
             XCTAssertNotNil(root)
             XCTAssertTrue(root?.metadata.isPrivate ?? false)
-            XCTAssertEqual(root?.value.author, GoBotTests.pubkeys["alice"]!)
+            XCTAssertEqual(root?.author, GoBotTests.pubkeys["alice"]!)
             XCTAssertEqual(msgs.count, 1)
             guard msgs.count > 0 else {
                 XCTFail("expected at least one message. got \(msgs.count)")
                 return
             }
-            guard let kv0 = msgs.keyValueBy(index: 0) else {
+            guard let kv0 = msgs.messageBy(index: 0) else {
                 XCTFail("failed to get msg[0]")
                 return
             }
             XCTAssertNotNil(kv0.key, privReply)
-            XCTAssertEqual(kv0.value.author, GoBotTests.pubkeys["barbara"]!)
+            XCTAssertEqual(kv0.author, GoBotTests.pubkeys["barbara"]!)
         }
         self.wait(for: [ex], timeout: 10)
     }
@@ -1022,7 +977,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.feed(identity: GoBotOrderedTests.pubkeys["denise"]!) {
             msgs, err in
             defer { exFeed.fulfill() }
-            XCTAssertNotNil(err)
+            XCTAssertNil(err)
             XCTAssertEqual(msgs.count, 0)
         }
         self.wait(for: [exFeed], timeout: 10)
@@ -1072,6 +1027,8 @@ class GoBotOrderedTests: XCTestCase {
 
         GoBotOrderedTests.shared.testRefresh(self)
 
+        sleep(1)
+
         let ex2 = self.expectation(description: "\(#function) recent2")
         GoBotOrderedTests.shared.recent {
             msgs, err in
@@ -1093,7 +1050,7 @@ class GoBotOrderedTests: XCTestCase {
                 return
             }
 
-            guard let kv0 = msgs.keyValueBy(index: 0) else {
+            guard let kv0 = msgs.messageBy(index: 0) else {
                 XCTFail("failed to get msg[0]")
                 return
             }
@@ -1101,7 +1058,7 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertEqual(kv0.key, mistakeRef)
 
             let delContent = DropContentRequest(
-                sequence: UInt(kv0.value.sequence),
+                sequence: UInt(kv0.sequence),
                     hash: mistakeRef)
             _ = GoBotOrderedTests.shared.testingPublish(
                 as: "alice",
@@ -1129,8 +1086,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.everyone {
             msgs, err in
             XCTAssertNil(err)
-            // we should have 100 posts from page (as is the only one we don't follow)
-            XCTAssertEqual(msgs.count, 100)
+            XCTAssertEqual(msgs.count, 333)
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -1161,15 +1117,15 @@ fileprivate extension UIImage {
   }
 }
 
-fileprivate extension PaginatedKeyValueDataProxy {
-    func getAllMessages() -> KeyValues {
+fileprivate extension PaginatedMessageDataProxy {
+    func getAllMessages() -> Messages {
         self.prefetchUpTo(index: self.count - 1)
         
         // TODO
         sleep(5)
         /* TODO: wait for prefetch
         let done = DispatchSemaphore(value: 0)
-        _ = self.keyValueBy(index: self.count-1, late: {
+        _ = self.messageBy(index: self.count-1, late: {
             idx, _ in
             done.signal()
             print("prefetch done \(idx)")
@@ -1179,9 +1135,9 @@ fileprivate extension PaginatedKeyValueDataProxy {
         done.wait()
         */
 
-        var kvs = KeyValues()
+        var kvs = Messages()
         for i in 0...self.count - 1 {
-            guard let kv = self.keyValueBy(index: i) else {
+            guard let kv = self.messageBy(index: i) else {
                 XCTFail("failed to get item \(i) of \(self.count)")
                 continue
             }

@@ -21,12 +21,12 @@ protocol AlertRouter {
 extension UIViewController: AlertRouter {
     
     func alert(error: Error) {
-        let controller = UIAlertController(title: Text.error.text,
+        let controller = UIAlertController(title: Localized.error.text,
                                            message: error.localizedDescription,
                                            preferredStyle: .alert)
         controller.view.tintColor = UIColor.tint.system
 
-        let cancelAction = UIAlertAction(title: Text.cancel.text,
+        let cancelAction = UIAlertAction(title: Localized.cancel.text,
                                          style: .cancel) { _ in
                                             controller.dismiss(animated: true)
         }
@@ -48,7 +48,7 @@ extension UIViewController: AlertRouter {
     func alert(from sourceView: AnyObject? = nil,
                title: String? = nil,
                message: String,
-               cancelTitle: String = Text.cancel.text,
+               cancelTitle: String = Localized.cancel.text,
                cancelClosure: (() -> Void)? = nil) {
         
         let cancel = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
@@ -65,7 +65,7 @@ extension UIViewController: AlertRouter {
         from sourceView: AnyObject? = nil,
         title: String? = nil,
         message: String,
-        cancelTitle: String = Text.cancel.text
+        cancelTitle: String = Localized.cancel.text
     ) async {
         
         await withCheckedContinuation { continuation in
@@ -92,9 +92,9 @@ extension UIViewController: AlertRouter {
                  title: String? = nil,
                  message: String,
                  isDestructive: Bool = false,
-                 cancelTitle: String = Text.cancel.text,
+                 cancelTitle: String = Localized.cancel.text,
                  cancelClosure: (() -> Void)? = nil,
-                 confirmTitle: String = Text.ok.text,
+                 confirmTitle: String = Localized.ok.text,
                  confirmClosure: @escaping (() -> Void)) {
         
         let confirm = UIAlertAction(title: confirmTitle,
@@ -107,6 +107,35 @@ extension UIViewController: AlertRouter {
         }
 
         self.choose(from: [confirm, cancel], title: title, message: message, sourceView: sourceView)
+    }
+    
+    /// An async version of `confirm(...)` that returns `true` if the user confirmed the action and false otherwise.
+    @MainActor
+    func confirm(
+        from sourceView: UIView? = nil,
+        title: String? = nil,
+        message: String,
+        isDestructive: Bool = false,
+        cancelTitle: String = Localized.cancel.text,
+        confirmTitle: String = Localized.ok.text
+    ) async -> Bool {
+        
+        await withCheckedContinuation { continuation in
+            confirm(
+                from: sourceView,
+                title: title,
+                message: message,
+                isDestructive: isDestructive,
+                cancelTitle: cancelTitle,
+                cancelClosure: {
+                    continuation.resume(with: .success(false))
+                },
+                confirmTitle: confirmTitle,
+                confirmClosure: {
+                    continuation.resume(with: .success(true))
+                }
+            )
+        }
     }
 
     /// Convenience func to present multiple alert actions in an iPhone

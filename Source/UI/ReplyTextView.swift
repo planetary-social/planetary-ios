@@ -8,8 +8,9 @@
 
 import Foundation
 import UIKit
+import Combine
 
-class ReplyTextView: KeyValueView {
+class ReplyTextView: MessageView {
 
     // The max height of the view is based on the max number
     // of lines the text view should have before scrolling.
@@ -35,6 +36,8 @@ class ReplyTextView: KeyValueView {
             self.textViewDelegate?.styleTextView(textView: self.sourceTextView)
         }
     }
+    
+    var textPublisher: AnyPublisher<NSAttributedString?, Never> = Just(nil).eraseToAnyPublisher()
 
     var previewActive: Bool {
         get {
@@ -64,7 +67,7 @@ class ReplyTextView: KeyValueView {
 
         // this styling is redundant, but needed for when the view is used with no delegate. Could be refactored
         view.font = UIFont.verse.reply
-        view.text = Text.postAReply.text
+        view.text = Localized.postAReply.text
         view.textColor = UIColor.text.placeholder
         view.layer.borderWidth = 1 / UIScreen.main.scale
         view.layer.borderColor = UIColor.textInputBorder.cgColor
@@ -96,6 +99,11 @@ class ReplyTextView: KeyValueView {
         self.backgroundColor = .appBackground
         self.useAutoLayout()
         self.clipsToBounds = false
+        
+        textPublisher = NotificationCenter.default
+            .publisher(for: UITextView.textDidChangeNotification, object: sourceTextView)
+            .map { ($0.object as? UITextView)?.attributedText }
+            .eraseToAnyPublisher()
 
         let textViewHeight = Layout.profileThumbSize
 
@@ -177,7 +185,7 @@ class ReplyTextView: KeyValueView {
     }
 
     func clear() {
-        self.sourceTextView.text = Text.postAReply.text
+        self.sourceTextView.text = Localized.postAReply.text
         self.sourceTextView.textColor = UIColor.text.placeholder
         self.renderedTextView.alpha = 0
         self.sourceTextView.alpha = 1

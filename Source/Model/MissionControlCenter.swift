@@ -38,7 +38,7 @@ class MissionControlCenter {
     
     /// Timer for the SendMissionOperation
     private lazy var sendMissionTimer: RepeatingTimer = {
-        RepeatingTimer(interval: 120) { [weak self] in self?.sendMissions() }
+        RepeatingTimer(interval: 60) { [weak self] in self?.sendMissions() }
     }()
     
     /// Timer for the RefreshOperation

@@ -11,14 +11,15 @@ import Logger
 import Analytics
 import CrashReporting
 import Support
+import SwiftUI
 
 class RelationshipButton: IconButton {
 
     private var relationship: Relationship
     private var otherUserName: String
-    private var content: KeyValue
+    private var content: Message
 
-    init(with relationship: Relationship, name: String, content: KeyValue) {
+    init(with relationship: Relationship, name: String, content: Message) {
 
         self.relationship = relationship
         self.otherUserName = name
@@ -28,10 +29,12 @@ class RelationshipButton: IconButton {
 
         self.configureImage()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(relationshipDidChange(notification:)),
-                                               name: relationship.notificationName,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(relationshipDidChange(notification:)),
+            name: relationship.notificationName,
+            object: nil
+        )
     }
 
     func configureImage() {
@@ -39,7 +42,7 @@ class RelationshipButton: IconButton {
         self.highlightedImage = UIImage.verse.optionsOn
     }
 
-    typealias ActionData = (title: Text, style: UIAlertAction.Style, action: () -> Void)
+    typealias ActionData = (title: Localized, style: UIAlertAction.Style, action: () -> Void)
 
     override func defaultAction() {
         Analytics.shared.trackDidTapButton(buttonName: "options")
@@ -49,25 +52,20 @@ class RelationshipButton: IconButton {
                 (.unfollow, .default, self.unfollow),
                 (.copyMessageIdentifier, .default, self.copyMessageIdentifier),
                 (.shareThisMessage, .default, self.shareMessage),
-
-//                (.addFriend,    .default,     self.follow),
-//                (.removeFriend, .destructive, self.unfollow),
-
+                (.viewSource, .default, self.viewSource),
                 (.blockUser, .destructive, self.blockUser),
-//                (.unblockUser, .default,     self.unblockUser),
-
                 (.reportPost, .destructive, self.reportPost),
                 (.reportUser, .destructive, self.reportUser),
 
                 (.cancel, .cancel, {})
             ]
 
-            let actions: [UIAlertAction] = actionData.compactMap {
-
-                (title, style, action) in
-                let alertAction = UIAlertAction(title: title.text,
-                                                style: style,
-                                                handler: { _ in action() })
+            let actions: [UIAlertAction] = actionData.compactMap { (title, style, action) in
+                let alertAction = UIAlertAction(
+                    title: title.text,
+                    style: style,
+                    handler: { _ in action() }
+                )
 
                 // here we can return nil for any actions we don't want to appear for the current state.
                 if self.relationship.isFollowing {
@@ -139,25 +137,15 @@ class RelationshipButton: IconButton {
         }
     }
 
-    func addFriend() {
-        Analytics.shared.trackDidSelectAction(actionName: "add_friend")
-        AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement add friend.", cancelTitle: Text.ok.text)
-    }
-
-    func removeFriend() {
-        Analytics.shared.trackDidSelectAction(actionName: "remove_friend")
-        AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement remove friend.", cancelTitle: Text.ok.text)
-    }
-    
     func copyMessageIdentifier() {
         Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
         UIPasteboard.general.string = content.key
-        AppController.shared.showToast(Text.identifierCopied.text)
+        AppController.shared.showToast(Localized.identifierCopied.text)
     }
     
     func shareMessage() {
         guard let publicLink = content.key.publicLink else {
-            AppController.shared.alert(message: Text.Error.couldNotGenerateLink.text)
+            AppController.shared.alert(message: Localized.Error.couldNotGenerateLink.text)
             return
         }
         Analytics.shared.trackDidSelectAction(actionName: "share_message")
@@ -168,14 +156,17 @@ class RelationshipButton: IconButton {
         AppController.shared.present(activityController, animated: true)
     }
 
-    func blockUser() {
-        Analytics.shared.trackDidSelectAction(actionName: "block_identity")
-        AppController.shared.promptToBlock(self.content.value.author, name: self.otherUserName)
+    func viewSource() {
+        Analytics.shared.trackDidSelectAction(actionName: "view_source")
+        let viewModel = RawMessageCoordinator(message: content, bot: Bots.current)
+        let controller = UIHostingController(rootView: RawMessageView(viewModel: viewModel))
+        let navController = UINavigationController(rootViewController: controller)
+        AppController.shared.present(navController, animated: true)
     }
 
-    func unblockUser() {
-        Analytics.shared.trackDidSelectAction(actionName: "unblock_identity")
-        AppController.shared.alert(title: "Unimplemented", message: "TODO: Implement unblock user.", cancelTitle: Text.ok.text)
+    func blockUser() {
+        Analytics.shared.trackDidSelectAction(actionName: "block_identity")
+        AppController.shared.promptToBlock(self.content.author, name: self.otherUserName)
     }
 
     func reportUser() {
@@ -184,9 +175,9 @@ class RelationshipButton: IconButton {
         let profile = AbusiveProfile(identifier: relationship.other, name: otherUserName)
         guard let controller = Support.shared.newTicketViewController(reporter: reporter, profile: profile) else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
@@ -195,14 +186,17 @@ class RelationshipButton: IconButton {
 
     func reportPost() {
         Analytics.shared.trackDidSelectAction(actionName: "report_post")
-        AppController.shared.report(self.content,
-                                    in: self.superview(of: UITableViewCell.self),
-                                    from: self.relationship.identity)
+        AppController.shared.report(
+            self.content,
+            in: self.superview(of: UITableViewCell.self),
+            from: self.relationship.identity
+        )
     }
 
     // this allows other Relationship objects to notify redundant Relationship objects
     // of any changes, so they can all respond to changes together.
-    @objc func relationshipDidChange(notification: Notification) {
+    @objc
+    func relationshipDidChange(notification: Notification) {
         guard let relationship = notification.userInfo?[Relationship.infoKey] as? Relationship else {
             return
         }
@@ -210,8 +204,9 @@ class RelationshipButton: IconButton {
         self.configureImage()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 }
 
@@ -219,10 +214,10 @@ extension SupportReason {
 
     var string: String {
         switch self {
-            case .abusive: return Text.Reporting.abusive.text
-            case .copyright: return Text.Reporting.copyright.text
-            case .offensive: return Text.Reporting.offensive.text
-            case .other: return Text.Reporting.other.text
+        case .abusive: return Localized.Reporting.abusive.text
+        case .copyright: return Localized.Reporting.copyright.text
+        case .offensive: return Localized.Reporting.offensive.text
+        case .other: return Localized.Reporting.other.text
         }
     }
 }
@@ -230,8 +225,10 @@ extension SupportReason {
 extension UIAlertAction {
 
     static func cancel() -> UIAlertAction {
-        UIAlertAction(title: Text.cancel.text,
-                             style: .cancel,
-                             handler: nil)
+        UIAlertAction(
+            title: Localized.cancel.text,
+            style: .cancel,
+            handler: nil
+        )
     }
 }

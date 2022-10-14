@@ -27,6 +27,8 @@ class OnboardingStepData {
     var following: [Identity] = []
     var image: UIImage?
     var joinedDirectory = false
+    var joinPlanetarySystem = false
+    var useTestNetwork = false
     var publicWebHosting = false
     var analytics = false
     var followPlanetary = false
@@ -42,6 +44,8 @@ class OnboardingStepData {
             followingCount: following.count,
             hasImage: image != nil,
             joinedDirectory: joinedDirectory,
+            joinPlanetarySystem: joinPlanetarySystem,
+            useTestNetwork: useTestNetwork,
             publicWebHosting: publicWebHosting,
             analytics: analytics,
             followPlanetary: followPlanetary,
@@ -71,7 +75,7 @@ class OnboardingStepData {
         case resume
         case start
 
-        var title: Text.Onboarding.StepTitle {
+        var title: Localized.Onboarding.StepTitle {
             switch self {
                 case .backup: return .backup
                 case .benefits: return .benefits

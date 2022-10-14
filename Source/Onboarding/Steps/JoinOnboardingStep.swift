@@ -22,13 +22,6 @@ import CrashReporting
     }
 
     override func didStart() {
-
-        // TODO if this fails they get stuck
-        guard let birthdate = self.data.birthdate else { return }
-        // guard let phone = self.data.phone else { return }
-        let phone = "800-555-1212"
-        let name = self.data.name 
-
         self.view.lookBusy(after: 0)
 
         // SIMULATE ONBOARDING
@@ -44,7 +37,7 @@ import CrashReporting
             var context: Onboarding.Context?
             
             do {
-                context = try await Onboarding.createProfile(birthdate: birthdate, phone: phone, name: name)
+                context = try await Onboarding.createProfile(from: data)
                 self?.view.lookReady()
             } catch {
                 Log.optional(error)
@@ -55,13 +48,8 @@ import CrashReporting
             }
             
             self?.data.context = context
-            if name != nil {
-                // Proceed to bio + photo steps
-                self?.next()
-            } else {
-                // Skip bio + photo
-                self?.next(.done)
-            }
+            Onboarding.set(status: .completed, for: context!.identity)
+            self?.next()
         }
     }
 
@@ -69,7 +57,7 @@ import CrashReporting
 
         // this will try Onboarding.start() again, creating a new
         // configuration and such
-        let tryAgain = UIAlertAction(title: Text.tryAgain.text,
+        let tryAgain = UIAlertAction(title: Localized.tryAgain.text,
                                      style: .default) {
             [weak self] _ in
             self?.tryAgain()
@@ -77,15 +65,15 @@ import CrashReporting
 
         // this will delete the current configuration (if it matches the
         // context's identity) and start at the beginning of onboarding
-        let startOver = UIAlertAction(title: Text.Onboarding.startOver.text,
+        let startOver = UIAlertAction(title: Localized.Onboarding.startOver.text,
                                       style: .destructive) {
             [weak self] _ in
             self?.startOver()
         }
 
         AppController.shared.choose(from: [tryAgain, startOver],
-                                    title: Text.Onboarding.somethingWentWrong.text,
-                                    message: error?.localizedDescription ?? Text.Onboarding.errorRetryMessage.text)
+                                    title: Localized.Onboarding.somethingWentWrong.text,
+                                    message: error?.localizedDescription ?? Localized.Onboarding.errorRetryMessage.text)
     }
 
     /// If `Onboarding.createProfile()` fails, this will reset onboarding and try again

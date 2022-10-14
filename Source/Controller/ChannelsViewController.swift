@@ -12,7 +12,7 @@ import Logger
 import Analytics
 import CrashReporting
 
-class ChannelsViewController: ContentViewController {
+class ChannelsViewController: ContentViewController, HelpDrawerHost {
     
     private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
 
@@ -32,6 +32,9 @@ class ChannelsViewController: ContentViewController {
 
     // for a bug fix — see note in Search extension below
     private var searchEditBeginDate = Date()
+    
+    lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
+    var helpDrawerType: HelpDrawer { .hashtags }
 
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
@@ -73,6 +76,7 @@ class ChannelsViewController: ContentViewController {
 
     init() {
         super.init(scrollable: false, title: .channels)
+        navigationItem.rightBarButtonItems = [helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -91,6 +95,7 @@ class ChannelsViewController: ContentViewController {
         super.viewDidAppear(animated)
         CrashReporting.shared.record("Did Show Channels")
         Analytics.shared.trackDidShowScreen(screenName: "channels")
+        HelpDrawerCoordinator.showFirstTimeHelp(for: self)
     }
 
     // MARK: Load and refresh
@@ -140,7 +145,7 @@ class ChannelsViewController: ContentViewController {
                 self?.load(animated: animated)
             }
         }
-        AppController.shared.operationQueue.addOperation(refreshOperation)
+        AppController.shared.addOperation(refreshOperation)
     }
 
     private func update(with hashtags: [Hashtag], animated: Bool = true) {
@@ -152,9 +157,9 @@ class ChannelsViewController: ContentViewController {
         if self.searchFilter.isEmpty {
             self.channels = allChannels
         } else {
-            let filter = searchFilter.lowercased()
+            let filter = searchFilter.replacingOccurrences(of: "#", with: "").lowercased()
             channels = allChannels.filter { channel in
-                return channel.name.lowercased().contains(filter)
+                channel.name.lowercased().contains(filter)
             }
         }
     }
@@ -232,7 +237,7 @@ extension ChannelsViewController: UITableViewDataSource {
         cell.selectionStyle = .none
         cell.backgroundColor = .cardBackground
         
-        let postText = (hashtag.count == 1) ? Text.Post.one.text : Text.Post.many.text
+        let postText = (hashtag.count == 1) ? Localized.Post.one.text : Localized.Post.many.text
         
         cell.detailTextLabel?.text = "\(hashtag.count) \(postText)"
         

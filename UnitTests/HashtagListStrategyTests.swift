@@ -45,7 +45,7 @@ class HashtagListStrategyTests: XCTestCase {
         let receivedDate: Double = 1_652_813_515_000 // May 17, 2022 in millis
         let author = testAuthor
         let createPost = { (sequence: Int, hashtag: Hashtag) in
-            KeyValueFixtures.post(
+            MessageFixtures.post(
                 key: "%\(sequence)",
                 sequence: sequence,
                 timestamp: referenceDate,

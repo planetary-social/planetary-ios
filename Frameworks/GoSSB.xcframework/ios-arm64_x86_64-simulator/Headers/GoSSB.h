@@ -14,6 +14,15 @@
 
 typedef struct { const char *p; size_t n; } gostring_t;
 
+// err is one of:
+// 0 - no error
+// 1 - unknown error
+// 2 - alias is already taken
+typedef struct ssbRoomsAliasRegisterReturn {
+  char* alias;
+  int err;
+} ssbRoomsAliasRegisterReturn_t;
+
 typedef bool (notifyBlobHandle_t)(int64_t, const char*);
 
 typedef void (notifyNewBearertokenHandle_t)(const char*, int64_t);
@@ -45,12 +54,10 @@ extern void ssbFeedBlock(gostring_t feed, bool yes);
 extern char* ssbPublish(gostring_t content);
 extern char* ssbPublishPrivate(gostring_t content, gostring_t recipients);
 
-#ifdef DEBUG
 extern int ssbTestingMakeNamedKey(gostring_t nick);
 extern char* ssbTestingAllNamedKeypairs();
 extern char* ssbTestingPublishAs(gostring_t nick, gostring_t content);
 extern char* ssbTestingPublishPrivateAs(gostring_t nick, gostring_t content, gostring_t recipients);
-#endif
 
 extern char* ssbRepoStats(void);
 extern int ssbReplicateUpTo(void);
@@ -69,5 +76,11 @@ extern uint ssbOpenConnections(void);
 extern bool ssbBlobsWant(gostring_t ref);
 extern int ssbBlobsGet(gostring_t ref);
 extern char* ssbBlobsAdd(int32_t fd);
+
+extern char* ssbRoomsListAliases(gostring_t address);
+extern ssbRoomsAliasRegisterReturn_t ssbRoomsAliasRegister(gostring_t address, gostring_t alias);
+extern bool ssbRoomsAliasRevoke(gostring_t address, gostring_t alias);
+
+extern char* ssbGetRawMessage(gostring_t feedRef, uint64_t seq);
 
 #endif

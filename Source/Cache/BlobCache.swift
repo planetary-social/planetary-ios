@@ -83,10 +83,10 @@ class BlobCache: DictionaryCache {
         
         Task.detached {
             // otherwise schedule the completion
-            await self.requestManager.add(completion, for: identifier, uuid: requestUUID)
+            let isFirstRequest = await self.requestManager.add(completion, for: identifier, uuid: requestUUID)
             
             // start request if there is not a pending one
-            if await self.requestManager.numberOfCompletions(for: identifier) == 1 {
+            if isFirstRequest {
                 await MainActor.run {
                     self.loadImage(for: identifier)
                 }
@@ -314,12 +314,13 @@ class BlobCache: DictionaryCache {
             completions[identifier]?.count ?? 0
         }
         
-        /// Adds a single completion for a specific blob identifier.  Returns a UUID which can
-        /// be used to forget a pending completion later.
-        func add(_ completion: @escaping UIImageCompletion, for identifier: BlobIdentifier, uuid: UUID) {
+        /// Adds a single completion for a specific blob identifier. Returns true if this is the first request
+        /// for the given blob.
+        func add(_ completion: @escaping UIImageCompletion, for identifier: BlobIdentifier, uuid: UUID) -> Bool {
             var completions = self.completions[identifier] ?? [:]
             completions[uuid] = completion
             self.completions[identifier] = completions
+            return completions.count == 1
         }
         
         /// Removes the completion handlers for the given blob from storage and returns them.
@@ -492,8 +493,8 @@ class BlobCache: DictionaryCache {
     }
 
     private func didLoadBlob(_ notification: Notification) {
+        guard let identifier = notification.blobIdentifier else { return }
         Task {
-            guard let identifier = notification.blobIdentifier else { return }
             await MainActor.run {
                 self.loadImage(for: identifier)
             }

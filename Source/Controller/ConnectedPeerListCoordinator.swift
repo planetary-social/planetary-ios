@@ -35,7 +35,7 @@ enum ConnectedPeerListError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .identityNotFound:
-            return Text.identityNotFound.text
+            return Localized.identityNotFound.text
         }
     }
 }
@@ -155,6 +155,8 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             return newPeer
         }
         
+        let roomServers = (try? await bot.joinedRooms()) ?? []
+        
         // Walk through peer statistics and create new connection info
         for (_, publicKey) in peerStatistics.currentOpen {
             peerConnectionInfo.removeAll(where: { $0.id == publicKey })
@@ -162,14 +164,13 @@ class ConnectedPeerListCoordinator: ConnectedPeerListViewModel {
             // See https://github.com/planetary-social/planetary-ios/issues/400
             let identity = "@\(publicKey).ed25519"
             
-            let about = try? await bot.about(identity: identity)
-            
-            guard let about = about else {
+            if let about = try? await bot.about(identity: identity) {
+                peerConnectionInfo.append(PeerConnectionInfo(about: about))
+            } else if let room = roomServers.first(where: { $0.address.keyID == publicKey }) {
+                peerConnectionInfo.append(PeerConnectionInfo(id: publicKey, name: room.address.host))
+            } else {
                 peerConnectionInfo.append(PeerConnectionInfo(id: publicKey, name: publicKey))
-                continue
             }
-            
-            peerConnectionInfo.append(PeerConnectionInfo(about: about))
         }
         
         return peerConnectionInfo.sorted { lhs, rhs in

@@ -19,6 +19,8 @@ class GoBotIntegrationTests: XCTestCase {
     var userDefaults: UserDefaults!
     var appConfig: AppConfiguration!
     let fileManager = FileManager.default
+    let userDefaultsSuiteName = "GoBotIntegrationTests"
+
 
     override func setUpWithError() throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
@@ -30,7 +32,10 @@ class GoBotIntegrationTests: XCTestCase {
         // start fresh
         do { try fileManager.removeItem(atPath: workingDirectory) } catch { /* this is fine */ }
         
-        userDefaults = UserDefaults()
+        UserDefaults().removePersistentDomain(forName: userDefaultsSuiteName)
+        userDefaults = UserDefaults(suiteName: userDefaultsSuiteName)
+        let welcomeService = WelcomeServiceAdapter(userDefaults: userDefaults)
+        userDefaults.set(true, forKey: welcomeService.hasBeenWelcomedKey(for: botTestsKey.id))
         
         sut = GoBot(userDefaults: userDefaults, preloadedPubService: MockPreloadedPubService())
         
@@ -90,8 +95,8 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         
         let refreshExpectation = self.expectation(description: "refresh completed")
-        sut.refresh(load: .long, queue: .main) { error, _, _ in
-            XCTAssertNil(error)
+        sut.refresh(load: .long, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get())
             refreshExpectation.fulfill()
         }
         waitForExpectations(timeout: 10, handler: nil)
@@ -231,14 +236,17 @@ class GoBotIntegrationTests: XCTestCase {
         waitForExpectations(timeout: 10)
     }
 
-    func testLoginLogoutLoop() async throws {
-        try await sut.login(config: appConfig)
-
-        await sut.exit()
-        try await sut.logout()
-        
-        try await sut.login(config: appConfig)
-    }
+    // Disabled until scuttlego #908
+//    func testLoginLogoutLoop() async throws {
+//        // These failure expectations are only good for one use each, so here are a bunch
+//        XCTExpectFailure("go-ssb sometimes hangs when logging out", strict: false)
+//        try await sut.login(config: appConfig)
+//
+//        await sut.exit()
+//        try await sut.logout()
+//
+//        try await sut.login(config: appConfig)
+//    }
 
     // MARK: - Publishing
     
@@ -316,7 +324,7 @@ class GoBotIntegrationTests: XCTestCase {
         userDefaults.set(false, forKey: "prevent_feed_from_forks")
         let author = try XCTUnwrap(appConfig.identity)
         let nowFloat = Date().millisecondsSince1970
-        let existingMessage = KeyValueFixtures.post(
+        let existingMessage = MessageFixtures.post(
             timestamp: nowFloat,
             receivedTimestamp: nowFloat,
             receivedSeq: -1,
@@ -579,6 +587,320 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertEqual(hashtags.count, 2)
     }
 
+    // MARK: Reports
+
+    func testReportsWithoutFollows() async throws {
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+        XCTAssertEqual(reports.count, 0)
+        XCTAssertEqual(numberOfUnreadReports, 0)
+    }
+
+    func testReportsWithOneFollow() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let testingIdentity = botTestsKey.identity
+
+        // Publish follow
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+        sut.testingPublish(as: "alice", content: Contact(contact: testingIdentity, following: true))
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+        XCTAssertEqual(reports.count, 1)
+        XCTAssertEqual(numberOfUnreadReports, 1)
+    }
+
+    func testReportsWithOneFollowFromABlockedUser() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let myself = botTestsKey.identity
+
+        // Publish an about for Alice
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        // Publish block
+        try sut.testingBlock(nick: "alice")
+
+        // Publish follow
+        sut.testingPublish(as: "alice", content: Contact(contact: myself, following: true))
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+        XCTAssertEqual(reports.count, 0)
+        XCTAssertEqual(numberOfUnreadReports, 0)
+    }
+
+    func testReportsWithOneMention() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let testingIdentity = botTestsKey.identity
+
+        // Publish mention
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+        sut.testingPublish(
+            as: "alice",
+            content: Post(
+                blobs: nil,
+                branches: nil,
+                hashtags: nil,
+                mentions: [Mention(link: testingIdentity)],
+                root: nil,
+                text: "Hello \(testingIdentity)"
+            )
+        )
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+
+        XCTAssertEqual(reports.count, 1)
+        XCTAssertEqual(numberOfUnreadReports, 1)
+    }
+
+    func testReportsWithOneMentionFromABlockedUser() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let myself = botTestsKey.identity
+
+        // Publish an about for Alice
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        // Publish block
+        try sut.testingBlock(nick: "alice")
+
+        // Publish mention
+        sut.testingPublish(
+            as: "alice",
+            content: Post(
+                blobs: nil,
+                branches: nil,
+                hashtags: nil,
+                mentions: [Mention(link: myself)],
+                root: nil,
+                text: "Hello \(myself)"
+            )
+        )
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+
+        XCTAssertEqual(reports.count, 0)
+        XCTAssertEqual(numberOfUnreadReports, 0)
+    }
+    
+    func testReportsWithManyMentions() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let bob = try XCTUnwrap(keypairs["bob"])
+        let myself = botTestsKey.identity
+
+        // Publish an about for myself, Alice and Bob
+        _ = try await sut.publish(content: About(about: myself, name: "Myself"))
+        sut.testingPublish(as: "bob", content: About(about: bob, name: "Bob"))
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        // Publish block
+        try sut.testingBlock(nick: "alice")
+
+        // Create a mention to myself
+        let mention = Post(
+            blobs: nil,
+            branches: nil,
+            hashtags: nil,
+            mentions: [Mention(link: myself)],
+            root: nil,
+            text: "Hello \(myself)"
+        )
+
+        // Publish two mentions from Bob
+        sut.testingPublish(as: "bob", content: mention)
+        try await sut.refresh(load: .short)
+        sleep(1)
+        sut.testingPublish(as: "bob", content: mention)
+        try await sut.refresh(load: .short)
+        sleep(1)
+        // Publish one mention from Alice
+        sut.testingPublish(as: "alice", content: mention)
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+        XCTAssertEqual(reports.count, 2)
+        XCTAssertEqual(numberOfUnreadReports, 2)
+
+        let firstReport = reports[1]
+        let numerOfReportsSinceTheFirstOne = try await sut.numberOfReports(since: firstReport)
+        XCTAssertEqual(numerOfReportsSinceTheFirstOne, 1)
+
+        let secondReport = reports[0]
+        let numerOfReportsSinceTheSecondOne = try await sut.numberOfReports(since: secondReport)
+        XCTAssertEqual(numerOfReportsSinceTheSecondOne, 0)
+    }
+
+    func testReportsWithOneReply() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let myself = botTestsKey.identity
+
+        // Publish a post
+        let root = try await sut.publish(Post(text: "Hello, World!"))
+
+        // Publish an about for Alice
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        // Publish a reply
+        sut.testingPublish(
+            as: "alice",
+            content: Post(
+                blobs: nil,
+                branches: [root],
+                hashtags: nil,
+                mentions: [Mention(link: myself)],
+                root: root,
+                text: "Hello \(myself)"
+            )
+        )
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+
+        XCTAssertEqual(reports.count, 1)
+        XCTAssertEqual(numberOfUnreadReports, 1)
+    }
+
+    func testReportsWithOneReplyFromABlockedUser() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let myself = botTestsKey.identity
+
+        // Publish a post
+        let root = try await sut.publish(Post(text: "Hello, World!"))
+
+        // Publish an about for Alice
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+
+        // Publish block
+        try sut.testingBlock(nick: "alice")
+
+        // Publish a reply
+        sut.testingPublish(
+            as: "alice",
+            content: Post(
+                blobs: nil,
+                branches: [root],
+                hashtags: nil,
+                mentions: [Mention(link: myself)],
+                root: root,
+                text: "Hello \(myself)"
+            )
+        )
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+
+        XCTAssertEqual(reports.count, 0)
+        XCTAssertEqual(numberOfUnreadReports, 0)
+    }
+
+    func testReportsWithOneComment() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let bob = try XCTUnwrap(keypairs["bob"])
+        let myself = botTestsKey.identity
+
+        // Publish an about for myself, Alice and Bob
+        _ = try await sut.publish(content: About(about: myself, name: "Myself"))
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+        sut.testingPublish(as: "bob", content: About(about: bob, name: "Bob"))
+
+        // Bob publishes a post
+        let root = sut.testingPublish(as: "bob", content: Post(text: "Hello, World!"))
+
+        // I reply to it
+        _ = try await sut.publish(
+            content: Post(blobs: nil, branches: [root], hashtags: nil, mentions: nil, root: root, text: "Hello Bob")
+        )
+
+        // Alice also replies to Bob
+        sut.testingPublish(
+            as: "alice",
+            content: Post(
+                blobs: nil,
+                branches: [root],
+                hashtags: nil,
+                mentions: nil,
+                root: root,
+                text: "Hello Bob and Myself"
+            )
+        )
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+
+        XCTAssertEqual(reports.count, 1)
+        XCTAssertEqual(numberOfUnreadReports, 1)
+    }
+
+    func testReportsWithOneCommentFromABlockedUser() async throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        let bob = try XCTUnwrap(keypairs["bob"])
+        let myself = botTestsKey.identity
+
+        // Publish an about for myself, Alice and Bob
+        _ = try await sut.publish(
+            content: About(about: myself, name: "Myself")
+        )
+        sut.testingPublish(as: "alice", content: About(about: alice, name: "Alice"))
+        sut.testingPublish(as: "bob", content: About(about: bob, name: "Bob"))
+
+        // Bob publishes a post
+        let root = sut.testingPublish(as: "bob", content: Post(text: "Hello, World!"))
+
+        // I reply to it
+        _ = try await sut.publish(
+            content: Post(blobs: nil, branches: [root], hashtags: nil, mentions: nil, root: root, text: "Hello Bob")
+        )
+
+        // Publish block
+        try sut.testingBlock(nick: "alice")
+
+        // Alice also replies to Bob
+        sut.testingPublish(
+            as: "alice",
+            content: Post(
+                blobs: nil,
+                branches: [root],
+                hashtags: nil,
+                mentions: nil,
+                root: root,
+                text: "Hello Bob and Myself"
+            )
+        )
+
+        try await sut.refresh(load: .short)
+
+        let reports = try await sut.reports()
+        let numberOfUnreadReports = try await sut.numberOfUnreadReports()
+
+        XCTAssertEqual(reports.count, 0)
+        XCTAssertEqual(numberOfUnreadReports, 0)
+    }
+
     // MARK: Number of followers
 
     func testNumberOfFollowers() async throws {
@@ -724,6 +1046,26 @@ class GoBotIntegrationTests: XCTestCase {
         // Home feed should have Alice follow message
         let proxy = try await sut.recent()
         XCTAssertEqual(proxy.count, 2)
+    }
+
+    // Raw messages
+
+    func testGetRawMessage() throws {
+        let keypairs = try sut.testingGetNamedKeypairs()
+        let alice = try XCTUnwrap(keypairs["alice"])
+        sut.testingPublish(as: "alice", content: Post(text: "Hello, World"))
+        var source: String?
+        alice.withGoString { gostr in
+            if let rawPointer = ssbGetRawMessage(gostr, 1) {
+                source = String(cString: rawPointer)
+                free(rawPointer)
+            }
+        }
+        XCTAssertNotNil(source)
+        let data = try XCTUnwrap(try XCTUnwrap(source).data(using: .utf8))
+        let json = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        XCTAssertEqual(json["sequence"] as? Int, 1)
+        XCTAssertEqual(json["author"] as? String, alice)
     }
 }
 

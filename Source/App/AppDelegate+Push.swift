@@ -76,40 +76,40 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// Transforms a report into a scheduled `UNNotificationRequest` that the human
     /// can interact with.
     func scheduleLocalNotification(_ report: Report) {
-        Bots.current.about(queue: .global(qos: .utility), identity: report.keyValue.value.author) { (about, error) in
+        Bots.current.about(queue: .global(qos: .utility), identity: report.message.author) { (about, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
             let content = UNMutableNotificationContent()
             
-            let nameToShow = about?.nameOrIdentity ?? Text.Report.somebody.text
+            let nameToShow = about?.nameOrIdentity ?? Localized.Report.somebody.text
 
             // swiftlint:disable legacy_objc_type
             switch report.reportType {
             case .feedFollowed:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.feedFollowed.text,
+                    forKey: Localized.Report.feedFollowed.text,
                     arguments: [nameToShow]
                 )
             case .postReplied:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.postReplied.text,
+                    forKey: Localized.Report.postReplied.text,
                     arguments: [nameToShow]
                 )
-                if let what = report.keyValue.value.content.post?.text {
+                if let what = report.message.content.post?.text {
                     content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .feedMentioned:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.feedMentioned.text,
+                    forKey: Localized.Report.feedMentioned.text,
                     arguments: [nameToShow]
                 )
-                if let what = report.keyValue.value.content.post?.text {
+                if let what = report.message.content.post?.text {
                     content.body = what.withoutGallery().decodeMarkdown().string
                 }
             case .messageLiked:
                 content.title = NSString.localizedUserNotificationString(
-                    forKey: Text.Report.messageLiked.text,
+                    forKey: Localized.Report.messageLiked.text,
                     arguments: [nameToShow]
                 )
             }
@@ -174,7 +174,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     @objc
     func didCreateReportHandler(notification: Notification) {
-        guard let report = notification.userInfo?["report"] as? Report else {
+        guard let reports = notification.userInfo?["reports"] as? [Report] else {
             return
         }
         guard let currentIdentity = Bots.current.identity else {
@@ -185,16 +185,27 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             // Suppress notifications if the user is restoring
             return
         }
-        guard report.authorIdentity == currentIdentity else {
-            // Don't do anything if report is not for the logged in user
+        guard reports.contains(where: { $0.authorIdentity == currentIdentity }) else {
+            // Don't do anything if none of the reports are for the logged in user
             return
         }
 
         // Update the application badge number
         updateApplicationBadgeNumber()
 
-        // Display a local notification so the user is aware of a new report
-        scheduleLocalNotification(report)
+        Bots.current.blocks(identity: currentIdentity) { [weak self] blockedIdentities, error in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            reports.forEach { [weak self] report in
+                let notifyingIdentity = report.message.author
+                let notifiedIdentity = report.authorIdentity
+                guard notifiedIdentity == currentIdentity, !blockedIdentities.contains(notifyingIdentity) else {
+                    return
+                }
+                // Display a local notification so the user is aware of a new report
+                self?.scheduleLocalNotification(report)
+            }
+        }
     }
 
     @objc
@@ -205,14 +216,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 
     private func updateApplicationBadgeNumber() {
-        Task {
-            do {
-                let count = try await Bots.current.numberOfUnreadReports()
-                UIApplication.shared.applicationIconBadgeNumber = count
-                AppController.shared.mainViewController?.setNotificationsTabBarIcon()
-            } catch {
-                Log.optional(error)
-            }
-        }
+        let operation = CountUnreadNotificationsOperation()
+        AppController.shared.addOperation(operation)
     }
 }

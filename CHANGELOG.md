@@ -6,12 +6,83 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- Update to Xcode 14. #839
+
+
+## [1.3.5] 2022-10-03
+
+- Show the underlying SSB message for posts, replies and likes. #662
+- Fixed an issue where drafts might not be cleared after posting. #868
+- Fixed go-ssb not falling back to legacy replication when a peer does not support EBTs. #877
+- Optimized the "Patchwork" home feed algorithm (RecentlyActivePostsAndContactsAlgorithm) and made it the new default. This algorithm brings posts back up to the top of your home feed when they receive a new reply. #860
+- Optimize loading of follow message cells. #859
+
+## [1.3.4] 2022-09-26
+
+- Fix the profile picture and name fields being empty when the user had not set a name. #852
+- Fix the thread view when repliers do not have a name published. #850
+- Filter blocked users from the notifications screen. #824
+- Fix an issue where the user could get stuck on the name screen during onboarding. #844 (thanks @quickdudley)
+- Added the bio screen back to onboarding. #805
+- Filter posts from followed users in the Discover feed when the Random algorithm is selected. #822
+- Automatically save and restore drafts of replies. #835
+- Split Serbian localization into separate Latin and Cyrillic versions #831
+- Fix notification badges not updating in the background. #825
+- Fix loading indicator overlapping cells on the notifications tab. #750
+
+## [1.3.3] 2022-09-05
+
+- Added support for EBT replication algorithm. #721
+- Added a migration script for a small number of users whose accounts were created on the test network. #817
+- Fixed a bug where feeds two hops away wouldn't always be fetched. #833
+
+## [1.3.2] 2022-08-27
+
+- Fixed a bug where new profiles were being created on the test network.
+
+## [1.3.1] 2022-08-23
+- Fixed a bug where new users would not sync with the Planetary System Pubs if they had opted in.
+
+## [1.3.0] 2022-08-19
+
+- Added support for random algorithm for sorting home and discover feeds. #759
+- Show content from follows when looking for a pub's profile. #790
+- Show replies when displaying a profile. #681
+- Added support for registering room aliases #808
+
+## [1.2.7] 2022-08-19
+
+- Fixed an issue where onboarding could get stuck on the bio step. #804
+
+## [1.2.6] 2022-08-03
+
+- Added beta support for replicating via room servers. #783
+- Fixed an issue where the ban service could fail to delete messages. #783
+- Added a toggle during onboarding to opt out of syncing with Planetary pubs. #783
+- Add community pubs for french and chinese communities. #760
+- Save and restore drafts of posts. #785
+- Fixed an issue where the database could get stuck and no new messages would be written. #789
+
+## [1.2.5] 2022-08-01
+
+- Fixed a race condition that could prevent blobs from loading. #767
+- Add a more obvious dismissal button to the migration screen. #765
+- Added a pressed state to the Mark all notifications as read button. #761
+- Updated the Directory to show useful information like the number of followers and hashtags the user has used recently.
+- Updated the design of follow messages to display a smaller follow button. #743
+- Fixed a case where tapping the Reset Forked Feed Protection button would cause the app to hang. #758
+
 ## [1.2.4] 2022-07-18
 
 - Added queer.family pub #726
 - Max-Rai contributed a fix to the onboarding layout for smaller iOS screen sizes #703 (thanks @Max-Rai!)
 - Show the number of unread notifications in the application badge #725
-- Added SQL indexes to speed up feed loading. #702
+- Fixed the shadow on the new post toast message. #741
+- Fixed an issue where follow message cells could be too tall. #708
+- Add help buttons to the main tabs with basic descriptions info about the tab. #740
+- Fixed an issue where searching for hashtags wouldn't work if you included the hashtag character in your query. #736
 
 ## [1.2.3] 2022-07-11
 

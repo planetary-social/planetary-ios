@@ -11,15 +11,15 @@ import ImageSlideshow
 import UIKit
 import SkeletonView
 
-class PostCellView: KeyValueView {
+class PostCellView: MessageView {
 
     let verticalSpace: CGFloat = 5
 
     private lazy var seeMoreString: NSAttributedString = {
-        let seeMore = NSMutableAttributedString(string: "... \(Text.seeMore.text)")
+        let seeMore = NSMutableAttributedString(string: "... \(Localized.seeMore.text)")
         let styler = MarkdownStyler()
         styler.style(seeMore: seeMore)
-        let range = (seeMore.string as NSString).range(of: Text.seeMore.text)
+        let range = (seeMore.string as NSString).range(of: Localized.seeMore.text)
         seeMore.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.tint.default], range: range)
         return seeMore
     }()
@@ -31,11 +31,13 @@ class PostCellView: KeyValueView {
         }
     }
 
+    var compactHeader: Bool
+
     var allowSpaceUnderGallery = true
     var showTimestamp: Bool
 
-    var keyValue: KeyValue?
-    private lazy var headerView = PostHeaderView(showTimestamp: showTimestamp)
+    var message: Message?
+    private lazy var headerView = PostHeaderView(showTimestamp: showTimestamp, compactHeader: compactHeader)
 
     private lazy var textView: UITextView = {
         let view = UITextView.forAutoLayout()
@@ -47,6 +49,8 @@ class PostCellView: KeyValueView {
         view.isSkeletonable = true
         view.linesCornerRadius = 30
         view.backgroundColor = .cardBackground
+        view.isSkeletonable = true
+        view.backgroundColor = .clear
         return view
     }()
 
@@ -58,9 +62,13 @@ class PostCellView: KeyValueView {
 
     var textViewTopInset: CGFloat {
         if self.displayHeader {
-            return Layout.profileThumbSize + Layout.verticalSpacing + self.verticalSpace
+            if compactHeader {
+                return Layout.contactThumbSize + Layout.verticalSpacing + self.verticalSpace
+            } else {
+                return Layout.profileThumbSize + Layout.verticalSpacing + self.verticalSpace
+            }
         } else {
-            return self.verticalSpace
+            return 0
         }
     }
 
@@ -103,8 +111,8 @@ class PostCellView: KeyValueView {
 
     private func updateFullPostText() {
         guard self.textIsExpanded else { return }
-        guard let keyValue = self.keyValue, keyValue.value.content.isPost else { return }
-        let string = Caches.text.from(keyValue).mutable()
+        guard let message = self.message, message.content.isPost else { return }
+        let string = Caches.text.from(message).mutable()
         self.fullPostText = string
     }
 
@@ -113,11 +121,11 @@ class PostCellView: KeyValueView {
         self.textView.attributedText = self.truncationData?.text ?? self.fullPostText
         
         // not so clean but it gest likes displaying.
-        if self.textView.attributedText.string.isSingleEmoji && self.keyValue?.value.content.type == ContentType.vote {
+        if self.textView.attributedText.string.isSingleEmoji && self.message?.content.type == ContentType.vote {
             self.textView.font = UIFont.post.body.withSize(16)
             self.textView.textAlignment = .natural
         } else if self.textView.attributedText.string.isSingleEmoji,
-             let post = self.keyValue?.value.content.post,
+             let post = self.message?.content.post,
               !post.hasBlobs {
               self.textView.font = UIFont.post.body.withSize(100)
               self.textView.textAlignment = .center
@@ -174,8 +182,9 @@ class PostCellView: KeyValueView {
 
     /// Initializes the view with the given parameters.
     /// - Parameter showTimestamp: Will show the claimed post time if true, author id if false.
-    init(showTimestamp: Bool = false) {
+    init(showTimestamp: Bool = false, compactHeader: Bool = false) {
         self.showTimestamp = showTimestamp
+        self.compactHeader = compactHeader
         super.init(frame: CGRect.zero)
         self.useAutoLayout()
         
@@ -211,31 +220,36 @@ class PostCellView: KeyValueView {
         self.galleryViewZeroHeightConstraint.isActive = true
     }
 
-    convenience init(keyValue: KeyValue) {
-        assert(keyValue.value.content.isPost)
+    convenience init(message: Message) {
+        assert(message.content.isPost)
         self.init()
-        self.update(with: keyValue)
+        self.update(with: message)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    override func update(with keyValue: KeyValue) {
-        self.keyValue = keyValue
-        self.headerView.update(with: keyValue)
+    override func reset() {
+        super.reset()
+        textView.text = ""
+    }
 
-        if let vote = keyValue.value.content.vote {
+    override func update(with message: Message) {
+        self.message = message
+        self.headerView.update(with: message)
+
+        if let vote = message.content.vote {
             var expression: String 
             if let explicitExpression = vote.vote.expression,
                 explicitExpression.isSingleEmoji {
                 expression = explicitExpression
             } else if vote.vote.value > 0 {
-                expression = "\(Text.likesThis.text)"
+                expression = "\(Localized.likesThis.text)"
             } else {
-                expression = "\(Text.dislikesThis.text)"
+                expression = "\(Localized.dislikesThis.text)"
             }
 
             let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.italicSystemFont(ofSize: 16),
@@ -248,8 +262,8 @@ class PostCellView: KeyValueView {
             self.galleryViewFullHeightConstraint.isActive = false
             self.galleryViewZeroHeightConstraint.isActive = true
             self.galleryViewBottomConstraint?.constant = 0
-        } else if let post = keyValue.value.content.post {
-            let text = self.shouldTruncate ? Caches.truncatedText.from(keyValue) : Caches.text.from(keyValue)
+        } else if let post = message.content.post {
+            let text = self.shouldTruncate ? Caches.truncatedText.from(message) : Caches.text.from(message)
             
             self.fullPostText = text
             self.configureTruncatedState()

@@ -15,20 +15,22 @@ typealias BlobsStoreCompletion = ((URL?, Error?) -> Void)
 typealias ContactCompletion = ((Contact?, Error?) -> Void)
 typealias ContactsCompletion = (([Identity], Error?) -> Void)
 typealias ErrorCompletion = ((Error?) -> Void)
-typealias KeyValuesCompletion = ((KeyValues, Error?) -> Void)
-typealias PaginatedCompletion = ((PaginatedKeyValueDataProxy, Error?) -> Void)
+typealias MessagesCompletion = ((Messages, Error?) -> Void)
+typealias PaginatedCompletion = ((PaginatedMessageDataProxy, Error?) -> Void)
 typealias HashtagCompletion = ((Hashtag?, Error?) -> Void)
 typealias HashtagsCompletion = (([Hashtag], Error?) -> Void)
 typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias CountCompletion = ((Result<Int, Error>) -> Void)
+typealias VoidCompletion = ((Result<Void, Error>) -> Void)
+typealias RawCompletion = ((Result<String, Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
 /// - Bool: True if the view database is fully up to date with the backing store.
-typealias RefreshCompletion = ((Error?, TimeInterval, Bool) -> Void)
+typealias RefreshCompletion = ((Result<Bool, Error>, TimeInterval) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
 typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
-typealias ThreadCompletion = ((KeyValue?, PaginatedKeyValueDataProxy, Error?) -> Void)
+typealias ThreadCompletion = ((Message?, PaginatedMessageDataProxy, Error?) -> Void)
 typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
 typealias StatisticsCompletion = ((BotStatistics) -> Void)
@@ -85,6 +87,14 @@ protocol Bot: AnyObject {
     
     /// Retrieves a list of all pubs the current user is currently a member of.
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
+    
+    func joinedRooms() async throws -> [Room]
+    func insert(room: Room) async throws
+    func delete(room: Room) async throws
+    
+    func registeredAliases() async throws -> [RoomAlias]
+    func register(alias: String, in: Room) async throws -> RoomAlias
+    func revoke(alias: RoomAlias) async throws
 
     var isSyncing: Bool { get }
     
@@ -95,6 +105,11 @@ protocol Bot: AnyObject {
     ///   - peers: a list of peers to gossip with. Only a subset of this list will be used.
     ///   - completion: a handler called with the result of the operation.
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
+    
+    func replicate(feed: FeedIdentifier)
+    
+    /// Connect to the SSB peer at the given address.
+    func connect(to address: MultiserverAddress)
 
     func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
@@ -190,8 +205,8 @@ protocol Bot: AnyObject {
     
     /// This fetches posts whose text contains the given filter string.
     /// - Parameter filter: A substring that you would like to search for in Posts.
-    /// - Returns: The matching KeyValues. All will by of type .post.
-    func posts(matching filter: String) async throws -> [KeyValue]
+    /// - Returns: The matching Messages. All will by of type .post.
+    func posts(matching filter: String) async throws -> [Message]
     
     // MARK: Feed
     
@@ -206,18 +221,21 @@ protocol Bot: AnyObject {
     /// posts the user has not yet seen in the Home Feed.
     /// - parameter message: The identifier of the message to account for the offset.
     func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion)
-    
+
+    /// Builds a feed of posts using a strategy object
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion)
+
     /// Returns all the messages created by the specified Identity.
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.
     func feed(identity: Identity, completion: @escaping PaginatedCompletion)
     
     /// Fetches the post with the given ID from the database.
-    func post(from key: MessageIdentifier) throws -> KeyValue
+    func post(from key: MessageIdentifier) throws -> Message
     
     /// Returns the thread of messages related to the specified message.  The root
     /// of the thread will be returned if it is not the specified message.
-    func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion)
+    func thread(message: Message, completion: @escaping ThreadCompletion)
     func thread(rootKey: MessageIdentifier, completion: @escaping ThreadCompletion)
 
     /// Returns all the messages in a feed that mention the active identity.
@@ -227,6 +245,10 @@ protocol Bot: AnyObject {
     ///
     /// - parameter message: The message to mark as read
     func markMessageAsRead(_ message: MessageIdentifier)
+
+    /// Mark all messages as read
+    /// - parameter queue: A queue in which the completion handler will be called in
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion)
 
     /// Reports (unifies mentions, replies, follows) for the active identity.
     ///
@@ -242,20 +264,21 @@ protocol Bot: AnyObject {
     ///
     /// - parameter queue: A queue in which the completion handler will be called in
     ///
-    /// Each report is associated to a single KeyValue so an unread report is defined by the read status
+    /// Each report is associated to a single Message so an unread report is defined by the read status
     /// of the associated message.
     func numberOfUnreadReports(queue: DispatchQueue, completion: @escaping CountCompletion)
 
     // MARK: Blob publishing
 
     func addBlob(data: Data, completion: @escaping BlobsAddCompletion)
-
+    
+    @available(*, renamed: "addBlob(jpegOf:largestDimension:)")
     func addBlob(
         jpegOf image: UIImage,
         largestDimension: UInt?,
         completion: @escaping AddImageCompletion
     )
-
+    
     // MARK: Blob loading
 
     func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void))
@@ -276,6 +299,10 @@ protocol Bot: AnyObject {
     // MARK: Preloading
     
     func preloadFeed(at url: URL, completion: @escaping ErrorCompletion)
+
+    // MARK: Raw message
+
+    func raw(of message: Message, completion: @escaping RawCompletion)
 }
 
 extension Bot {
@@ -330,17 +357,18 @@ extension Bot {
         queue: DispatchQueue = .main
     ) async throws -> (TimeInterval, Bool) {
         try await withCheckedThrowingContinuation { continuation in
-            refresh(load: load, queue: queue) { error, result2, result3 in
-                if let error = error {
+            refresh(load: load, queue: queue) { refreshResult, timeElapsed in
+                do {
+                    let finished = try refreshResult.get()
+                    continuation.resume(returning: (timeElapsed, finished))
+                } catch {
                     continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: (result2, result3))
                 }
             }
         }
     }
 
-    func recent() async throws -> PaginatedKeyValueDataProxy {
+    func recent() async throws -> PaginatedMessageDataProxy {
         try await withCheckedThrowingContinuation { continuation in
             recent { proxy, error in
                 if let error = error {
@@ -388,9 +416,17 @@ extension Bot {
             }
         }
     }
-    
-    func reports(completion: @escaping (([Report], Error?) -> Void)) {
-        self.reports(queue: .main, completion: completion)
+
+    func reports() async throws -> [Report] {
+        try await withCheckedThrowingContinuation { continuation in
+            reports(queue: DispatchQueue.global(qos: .background)) { reports, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: reports)
+                }
+            }
+        }
     }
 
     /// Returns the number of reports newer than a particular report (offset).
@@ -411,7 +447,7 @@ extension Bot {
 
     /// Returns the number of all unread reports.
     ///
-    /// Each report is associated to a single KeyValue so an unread report is defined by the read status
+    /// Each report is associated to a single Message so an unread report is defined by the read status
     /// of the associated message.
     func numberOfUnreadReports() async throws -> Int {
         try await withCheckedThrowingContinuation { continuation in
@@ -529,5 +565,58 @@ extension Bot {
     
     func seedPubAddresses(addresses: [PubAddress], completion: @escaping (Result<Void, Error>) -> Void) {
         self.seedPubAddresses(addresses: addresses, queue: .main, completion: completion)
+    }
+    
+    @MainActor
+    func addBlob(data: Data) async throws -> BlobIdentifier{
+        try await withCheckedThrowingContinuation { continuation in
+            addBlob(data: data) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    @MainActor
+    func addBlob(
+        jpegOf image: UIImage,
+        largestDimension: UInt?
+    ) async throws -> ImageMetadata {
+            try await withCheckedThrowingContinuation { continuation in
+                addBlob(jpegOf: image, largestDimension: largestDimension) { result, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    guard let result = result else {
+                        continuation.resume(throwing: GoBotError.unexpectedFault("Expected non-nil image"))
+                        return
+                    }
+                    continuation.resume(returning: result)
+                }
+            }
+        }
+
+    /// Fetch the message source of the given message
+    ///
+    /// - parameter message: The Message that holds the feed and the sequence number of the message to
+    /// retrieve its source.
+    /// - returns: A String object containing the JSON SSB message
+    ///
+    /// This function will throw if it cannot access the database
+    func raw(of message: Message) async throws -> String {
+        try await withCheckedThrowingContinuation { continuation in
+            raw(of: message) { result in
+                switch result {
+                case .success(let string):
+                    continuation.resume(returning: string)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
     }
 }

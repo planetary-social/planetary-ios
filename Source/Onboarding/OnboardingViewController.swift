@@ -21,18 +21,11 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         BenefitsOnboardingStep(),
         BirthdateOnboardingStep(),
         NameOnboardingStep(),
-        // disabling phone verification due to twillio bug
-//        PhoneOnboardingStep(),
-//        PhoneVerifyOnboardingStep(),
-        JoinOnboardingStep(),           // Bot and API calls
-        // disabled until we work on these again
-//        BackupOnboardingStep(),
-//        ContactsOnboardingStep(),
-//        DirectoryOnboardingStep(),      // Bot and API calls
         PhotoOnboardingStep(),
         PhotoConfirmOnboardingStep(),   // Bot and API calls
         BioOnboardingStep(),            // Bot and API calls
         DoneOnboardingStep(),           // Bot and API calls
+        JoinOnboardingStep(),           // Bot and API calls
     ]
 
     private let resumeSteps = [
@@ -88,12 +81,15 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         step.data = self.stepData
         step.customizeView()
         step.delegate = self
-        let controller = ContentViewController(scrollable: false)
+        let controller = ContentViewController(scrollable: true)
 
         controller.isKeyboardHandlingEnabled = true
         controller.navigationItem.title = step.name.title.text
         controller.view?.backgroundColor = .appBackground
         Layout.fill(view: controller.contentView, with: step.view)
+        controller.contentView.heightAnchor.constraint(
+            greaterThanOrEqualTo: controller.scrollView.heightAnchor
+        ).isActive = true
 
         step.customizeController(controller: controller)
 
@@ -135,6 +131,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
     private func done() {
         // AppController.shared.showDirectoryViewController()
+        Analytics.shared.trackOnboardingEnd()
         AppController.shared.showMainViewController()
     }
 

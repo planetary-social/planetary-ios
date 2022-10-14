@@ -11,11 +11,19 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import Combine
 
 class ThreadViewController: ContentViewController {
 
-    private let post: KeyValue
-    private var root: KeyValue?
+    private let post: Message
+    private var root: Message? {
+        didSet {
+            let key = root?.key ?? ""
+            let identity = Bots.current.identity ?? ""
+            draftKey = "com.planetary.ios.draft.reply." + key + identity
+            draftStore = DraftStore(draftKey: draftKey)
+        }
+    }
     
     private lazy var dataSource: ThreadReplyPaginatedTableViewDataSource = {
         var dataSource = ThreadReplyPaginatedTableViewDataSource()
@@ -27,6 +35,11 @@ class ThreadViewController: ContentViewController {
                                                           color: UIColor.text.reply,
                                                           placeholderText: .postAReply,
                                                           placeholderColor: UIColor.text.placeholder)
+    
+    private var draftKey = ""
+    private var draftStore = DraftStore(draftKey: "")
+    private let queue = DispatchQueue.global(qos: .userInitiated)
+    private var cancellables = [AnyCancellable]()
 
     private var branchKey: Identifier {
         self.rootKey
@@ -60,7 +73,7 @@ class ThreadViewController: ContentViewController {
     }()
 
     private lazy var rootPostView: PostCellView = {
-        let view = PostCellView(keyValue: self.root ?? self.post)
+        let view = PostCellView(message: self.root ?? self.post)
         view.displayHeader = false
         view.allowSpaceUnderGallery = false
         return view
@@ -106,6 +119,10 @@ class ThreadViewController: ContentViewController {
         view.backgroundColor = .cardBackground
         return view
     }()
+    
+    var images: [UIImage] {
+        galleryView.images
+    }
 
     private lazy var buttonsView: PostButtonsView = {
         let view = PostButtonsView()
@@ -122,21 +139,21 @@ class ThreadViewController: ContentViewController {
     
     private let imagePicker = ImagePicker()
 
-    private var onNextUpdateScrollToPostWithKeyValueKey: Identifier?
+    private var onNextUpdateScrollToPostWithMessageKey: Identifier?
     private var indexPathToScrollToOnKeyboardDidShow: IndexPath?
     private var replyTextViewBecomeFirstResponder = false
 
-    init(with keyValue: KeyValue, startReplying: Bool = false) {
-        assert(keyValue.value.content.isPost)
-        self.post = keyValue
-        self.onNextUpdateScrollToPostWithKeyValueKey = keyValue.key
+    init(with message: Message, startReplying: Bool = false) {
+        assert(message.content.isPost)
+        self.post = message
+        self.onNextUpdateScrollToPostWithMessageKey = message.key
         // self.interactionView.postIdentifier = Identity
         super.init(scrollable: false)
         self.isKeyboardHandlingEnabled = true
         self.showsTabBarBorder = false
         self.addActions()
         self.replyTextViewBecomeFirstResponder = startReplying
-        self.update(with: keyValue)
+        self.update(with: message)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -174,11 +191,15 @@ class ThreadViewController: ContentViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         headerView.removeFromSuperview()
+        let textValue = AttributedString(replyTextView.attributedText)
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: textValue, images: self.images)
+        }
     }
 
     private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
         let post = self.post
-        Bots.current.thread(keyValue: post) { [weak self] root, replies, error in
+        Bots.current.thread(message: post) { [weak self] root, replies, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.refreshControl.endRefreshing()
@@ -191,12 +212,35 @@ class ThreadViewController: ContentViewController {
             }
         }
     }
+    
+    private func setUpDrafts() {
+        Task {
+            if let draft = await self.draftStore.loadDraft() {
+                if let text = draft.attributedText {
+                    replyTextView.attributedText = text
+                }
+                galleryView.add(draft.images)
+                Log.info("Restored draft")
+            }
+            
+            replyTextView
+                .textPublisher
+                .throttle(for: 3, scheduler: queue, latest: true)
+                .sink { [weak self] newText in
+                    let newTextValue = newText.map { AttributedString($0) }
+                    Task(priority: .userInitiated) {
+                        await self?.draftStore.save(text: newTextValue, images: self?.images ?? [])
+                    }
+                }
+                .store(in: &cancellables)
+        }
+    }
 
     private func refresh() {
         self.load()
     }
 
-    private func update(with root: KeyValue) {
+    private func update(with root: Message) {
         self.root = root
 
         self.headerView.update(with: root)
@@ -208,7 +252,7 @@ class ThreadViewController: ContentViewController {
         replyTextView.isHidden = root.offChain == true
     }
 
-    private func update(with root: KeyValue, replies: PaginatedKeyValueDataProxy, animated: Bool = true) {
+    private func update(with root: Message, replies: PaginatedMessageDataProxy, animated: Bool = true) {
         self.root = root
 
         self.headerView.update(with: root)
@@ -226,6 +270,7 @@ class ThreadViewController: ContentViewController {
         self.interactionView.replies = replies as? StaticDataProxy
         self.interactionView.update()
         replyTextView.isHidden = root.offChain == true
+        setUpDrafts()
     }
 
     override func viewDidLayoutSubviews() {
@@ -253,9 +298,9 @@ class ThreadViewController: ContentViewController {
     // MARK: Animations
 
     private func scrollIfNecessary(animated: Bool = true) {
-        guard let key = self.onNextUpdateScrollToPostWithKeyValueKey else { return }
-        self.onNextUpdateScrollToPostWithKeyValueKey = nil
-        self.tableView.scroll(toKeyValueWith: key, animated: animated)
+        guard let key = self.onNextUpdateScrollToPostWithMessageKey else { return }
+        self.onNextUpdateScrollToPostWithMessageKey = nil
+        self.tableView.scroll(toMessageWith: key, animated: animated)
     }
 
     /// Scrolls to `indexPathToScrollToOnKeyboardDidShow` which is typically
@@ -329,26 +374,34 @@ class ThreadViewController: ContentViewController {
         Analytics.shared.trackDidTapButton(buttonName: "reply")
         self.buttonsView.postButton.isEnabled = false
         
+        AppController.shared.showProgress()
+        
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
-        AppController.shared.showProgress()
-        Bots.current.publish(post, with: images) { [weak self] key, error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            AppController.shared.hideProgress()
-            if let error = error {
-                self?.alert(error: error)
-            } else {
+        let draftStore = draftStore
+        let textValue = AttributedString(text)
+        Task.detached(priority: .userInitiated) {
+            await draftStore.save(text: textValue, images: images)
+            do {
+                let messageID = try await Bots.current.publish(post, with: images)
                 Analytics.shared.trackDidReply()
-                self?.replyTextView.clear()
-                self?.replyTextView.resignFirstResponder()
-                self?.buttonsView.minimize()
-                self?.galleryView.removeAll()
-                self?.galleryView.close()
-                self?.onNextUpdateScrollToPostWithKeyValueKey = key
-                self?.load()
+                await MainActor.run {
+                    self.replyTextView.clear()
+                    _ = self.replyTextView.resignFirstResponder()
+                    self.buttonsView.minimize()
+                    self.galleryView.removeAll()
+                    self.galleryView.close()
+                    self.onNextUpdateScrollToPostWithMessageKey = messageID
+                    self.load()
+                }
+                await draftStore.clearDraft()
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
             }
-            self?.buttonsView.postButton.isEnabled = true
+            
+            await MainActor.run { self.buttonsView.postButton.isEnabled = true }
+            await AppController.shared.hideProgress()
         }
     }
     
@@ -375,13 +428,13 @@ class ThreadViewController: ContentViewController {
         guard let identity = notification.object as? Identity else { return }
 
         // if identity is root post author then pop off
-        if self.root?.value.author == identity {
+        if self.root?.author == identity {
             self.navigationController?.remove(viewController: self)
         }
 
         // otherwise clean up data source
         else {
-            self.tableView.deleteKeyValues(by: identity)
+            self.tableView.deleteMessages(by: identity)
         }
     }
 }
@@ -400,16 +453,16 @@ extension ThreadViewController: UITableViewDelegate {
 
 extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate {
     
-    func threadReplyView(view: ThreadReplyView, didLoad keyValue: KeyValue) {
+    func threadReplyView(view: ThreadReplyView, didLoad message: Message) {
         view.tapGesture.tap = { [weak self] in
             self?.tableView.beginUpdates()
             view.toggleExpanded()
             self?.tableView.endUpdates()
 
             if view.textIsExpanded {
-                self?.dataSource.expandedPosts.insert(keyValue.key)
+                self?.dataSource.expandedPosts.insert(message.key)
             } else {
-                self?.dataSource.expandedPosts.remove(keyValue.key)
+                self?.dataSource.expandedPosts.remove(message.key)
             }
         }
     }
@@ -417,7 +470,7 @@ extension ThreadViewController: ThreadReplyPaginatedTableViewDataSourceDelegate 
 
 extension ThreadViewController: ThreadInteractionViewDelegate {
     
-    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue) {
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: Message) {
         let vote = ContentVote(link: self.rootKey,
                                value: 1,
                                expression: "💜",
@@ -457,13 +510,17 @@ extension ThreadViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
+        let textValue = AttributedString(replyTextView.attributedText)
+        Task.detached(priority: .userInitiated) {
+            await self.draftStore.save(text: textValue, images: view.images)
+        }
     }
 
     func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {
         self.confirm(
-            message: Text.NewPost.confirmRemove.text,
+            message: Localized.NewPost.confirmRemove.text,
             isDestructive: true,
-            confirmTitle: Text.NewPost.remove.text,
+            confirmTitle: Localized.NewPost.remove.text,
             confirmClosure: { view.remove(at: indexPath) }
         )
     }

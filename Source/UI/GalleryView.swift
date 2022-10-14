@@ -11,7 +11,7 @@ import ImageSlideshow
 import Logger
 import UIKit
 
-class GalleryView: UIView, KeyValueUpdateable {
+class GalleryView: UIView, MessageUpdateable {
 
     private let slideshow: ImageSlideshow = {
         let view = ImageSlideshow.forAutoLayout()
@@ -19,7 +19,7 @@ class GalleryView: UIView, KeyValueUpdateable {
         view.circular = true
         view.contentScaleMode = .scaleAspectFill
         view.pageIndicator = UIPageControl.default()
-        view.preload = .all
+//        view.preload = .all
         view.activityIndicator = DefaultActivityIndicator(
             style: UIActivityIndicatorView.Style.medium,
             color: UIColor.loadingIcon
@@ -50,10 +50,10 @@ class GalleryView: UIView, KeyValueUpdateable {
         self.slideshow.presentFullScreenController(from: AppController.shared)
     }
 
-    // MARK: KeyValueUpdateable
+    // MARK: MessageUpdateable
 
-    func update(with keyValue: KeyValue) {
-        guard let post = keyValue.value.content.post else { return }
+    func update(with message: Message) {
+        guard let post = message.content.post else { return }
         self.update(with: post)
     }
 

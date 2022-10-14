@@ -12,6 +12,7 @@ import Logger
 import Analytics
 import CrashReporting
 import Support
+import SwiftUI
 
 class AboutViewController: ContentViewController {
 
@@ -48,7 +49,11 @@ class AboutViewController: ContentViewController {
         self.about = about
         super.init(scrollable: false)
         self.aboutView.update(with: about)
-        self.addActions()
+        self.addActions() 
+        self.triggerRefresh()
+        if identity.isCurrentUser {
+            loadAliases()
+        }
     }
 
     convenience init(with about: About) {
@@ -100,9 +105,22 @@ class AboutViewController: ContentViewController {
             self?.update(with: about)
         }
     }
+    
+    // tells the go-bot to do a one time request to refresh this identity from peers.
+    private func triggerRefresh(){
+        Bots.current.replicate(feed: self.identity)
+    }
 
     private func loadFeed() {
-        Bots.current.feed(identity: self.identity) { [weak self] proxy, error in
+        let communityPubs = AppConfiguration.current?.communityPubs ?? []
+        let communityPubIdentities = Set(communityPubs.map { $0.feed })
+        let strategy: FeedStrategy
+        if communityPubIdentities.contains(identity) {
+            strategy = OneHopFeedAlgorithm(identity: identity)
+        } else {
+            strategy = NoHopFeedAlgorithm(identity: identity)
+        }
+        Bots.current.feed(strategy: strategy) { [weak self] proxy, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             guard error == nil else {
@@ -128,6 +146,17 @@ class AboutViewController: ContentViewController {
             CrashReporting.shared.reportIfNeeded(error: error)
             self?.followers = abouts
             self?.updateFollows()
+        }
+    }
+    
+    private func loadAliases() {
+        Task { [weak self] in
+            do {
+                let aliases = try await Bots.current.registeredAliases()
+                self?.aboutView.update(with: aliases)
+            } catch {
+                Log.optional(error)
+            }
         }
     }
 
@@ -204,7 +233,7 @@ class AboutViewController: ContentViewController {
         
         var actions = [UIAlertAction]()
 
-        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+        let sharePublicIdentifier = UIAlertAction(title: Localized.sharePublicIdentifier.text, style: .default) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
             let activityController = UIActivityViewController(
@@ -217,11 +246,11 @@ class AboutViewController: ContentViewController {
         actions.append(sharePublicIdentifier)
 
         if let publicLink = self.identity.publicLink {
-            let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
+            let share = UIAlertAction(title: Localized.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
 
                 let nameOrIdentity = self.about?.name ?? self.identity
-                let text = Text.shareThisProfileText.text([
+                let text = Localized.shareThisProfileText.text([
                     "who": nameOrIdentity,
                     "link": publicLink.absoluteString
                 ])
@@ -238,21 +267,28 @@ class AboutViewController: ContentViewController {
 
         if !identity.isCurrentUser {
             let block = UIAlertAction(
-                title: Text.blockUser.text,
+                title: Localized.blockUser.text,
                 style: .destructive,
                 handler: self.didSelectBlockAction(action:)
             )
             actions.append(block)
 
             let report = UIAlertAction(
-                title: Text.reportUser.text,
+                title: Localized.reportUser.text,
                 style: .destructive,
                 handler: self.didSelectReportAction(action:)
             )
             actions.append(report)
+        } else {
+            let manageAliases = UIAlertAction(
+                title: Localized.Alias.manageAliases.text,
+                style: .default,
+                handler: self.didSelectManageAliasesAction(actionName:)
+            )
+            actions.append(manageAliases)
         }
 
-        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        let cancel = UIAlertAction(title: Localized.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
         AppController.shared.choose(from: actions, sourceView: sender)
@@ -335,7 +371,7 @@ class AboutViewController: ContentViewController {
 
         var actions = [UIAlertAction]()
 
-        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+        let sharePublicIdentifier = UIAlertAction(title: Localized.sharePublicIdentifier.text, style: .default) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
             let activityController = UIActivityViewController(
@@ -348,11 +384,11 @@ class AboutViewController: ContentViewController {
         actions.append(sharePublicIdentifier)
 
         if let publicLink = self.identity.publicLink {
-            let sharePublicLink = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
+            let sharePublicLink = UIAlertAction(title: Localized.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
 
                 let nameOrIdentity = self.about?.name ?? self.identity
-                let text = Text.shareThisProfileText.text([
+                let text = Localized.shareThisProfileText.text([
                     "who": nameOrIdentity,
                     "link": publicLink.absoluteString
                 ])
@@ -367,7 +403,7 @@ class AboutViewController: ContentViewController {
             actions.append(sharePublicLink)
         }
 
-        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        let cancel = UIAlertAction(title: Localized.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
         AppController.shared.choose(from: actions, sourceView: sender)
@@ -399,13 +435,19 @@ class AboutViewController: ContentViewController {
         let newTicketVC = Support.shared.newTicketViewController(reporter: currentIdentity, profile: profile)
         guard let controller = newTicketVC else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
         AppController.shared.push(controller)
+    }
+    
+    private func didSelectManageAliasesAction(actionName: UIAlertAction) {
+        let viewModel = RoomAliasCoordinator(bot: Bots.current)
+        let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 
     // MARK: Notifications
@@ -417,7 +459,7 @@ class AboutViewController: ContentViewController {
     }
 }
 
-private class AboutPostView: KeyValueView {
+private class AboutPostView: MessageView {
 
     lazy var view = PostCellView()
 
@@ -435,35 +477,35 @@ private class AboutPostView: KeyValueView {
         Layout.addSeparator(toBottomOf: self)
     }
 
-    override func update(with keyValue: KeyValue) {
-        self.view.update(with: keyValue)
+    override func update(with message: Message) {
+        self.view.update(with: message)
     }
 }
 
 extension AboutViewController: PostReplyPaginatedDataSourceDelegate {
     
-    func postReplyView(view: PostReplyView, didLoad keyValue: KeyValue) {
+    func postReplyView(view: PostReplyView, didLoad message: Message) {
         view.postView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
         view.repliesView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "replies")
-            self?.pushThreadViewController(with: keyValue)
+            self?.pushThreadViewController(with: message)
         }
 
         // open thread and start reply
         view.replyTextView.tapGesture.tap = {
             [weak self] in
             Analytics.shared.trackDidSelectItem(kindName: "post", param: "area", value: "post")
-            self?.pushThreadViewController(with: keyValue, startReplying: true)
+            self?.pushThreadViewController(with: message, startReplying: true)
         }
     }
     
-    private func pushThreadViewController(with keyValue: KeyValue, startReplying: Bool = false) {
-        let controller = ThreadViewController(with: keyValue, startReplying: startReplying)
+    private func pushThreadViewController(with message: Message, startReplying: Bool = false) {
+        let controller = ThreadViewController(with: message, startReplying: startReplying)
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }

@@ -122,18 +122,13 @@ extension Identifier {
     // TODO: this is a iOS13 specific way to do sha25 hashing....
     // TODO: also it retuns a hex string but i have spent to much time on this already
     var sha256hash: String {
-        if #available(iOS 13.0, *) {
-            let input = self.data(using: .utf8)!
-            let hashed = SHA256.hash(data: input)
-            // using description is silly but i couldnt figure out https://developer.apple.com/documentation/cryptokit/sha256digest Accessing Underlying Storage
-            let descr = hashed.description
-            let prefix = "SHA256 digest: "
-            guard descr.hasPrefix(prefix) else { fatalError("oh gawd whhyyyy") }
-            return String(descr.dropFirst(prefix.count))
-        } else {
-            // https://augmentedcode.io/2018/04/29/hashing-data-using-commoncrypto/ ?
-            fatalError("TODO: get CommonCrypto method to work or find another swift 5 method")
-        }
+        let input = self.data(using: .utf8)!
+        let hashed = SHA256.hash(data: input)
+        // using description is silly but i couldnt figure out https://developer.apple.com/documentation/cryptokit/sha256digest Accessing Underlying Storage
+        let descr = hashed.description
+        let prefix = "SHA256 digest: "
+        guard descr.hasPrefix(prefix) else { fatalError("oh gawd whhyyyy") }
+        return String(descr.dropFirst(prefix.count))
     }
 }
 
@@ -144,8 +139,8 @@ extension Identifier {
  ...
  let rowid = try db.run(self.msgs.insert(
  key <- m.key.asBytes(),
- author <- m.value.author.asBytes(),
- seq <- m.value.sequence,
+ author <- m.author.asBytes(),
+ seq <- m.sequence,
  rxt <- m.timestamp,
  claimedt <- m.value.timestamp
  ))
@@ -156,8 +151,8 @@ extension Identifier {
  ...
  let rowid = try db.run(self.msgs.insert(
  key <- m.key,
-author <- m.value.author,
- seq <- m.value.sequence,
+author <- m.author,
+ seq <- m.sequence,
  rxt <- m.timestamp,
  claimedt <- m.value.timestamp
  ))

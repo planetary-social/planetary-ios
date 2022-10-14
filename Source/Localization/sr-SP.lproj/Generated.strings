@@ -1,5 +1,4 @@
-// This file is auto-generated at build time
-// Existing translations are left in place, and new keys are added as needed
+// This file is auto-generated at build time and should not be modified by hand
 
 "Text.planetary" = "Planetary";
 "Text.error" = "Oops";
@@ -29,9 +28,12 @@
 "Text.usersInYourNetwork" = "Users in your network";
 "Text.goToYourNetwork" = "Go to Your Network";
 "Text.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?\n\nYou can find them on the Network tab.";
+"Text.replied" = "{{somebody}} replied";
+"Text.liked" = "{{somebody}} liked";
 "Text.startedFollowing" = "{{somebody}} started following";
 "Text.stoppedFollowing" = "{{somebody}} stopped following";
 "Text.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
+"Text.userOusideNetwork" = "This user is outside your network";
 "Text.showMeInDirectory" = "Show me in the directory";
 "Text.showMeInUserDirectory" = "Show me in the user directory";
 "Text.hideMeFromUserDirectory" = "Hide me from the user directory";
@@ -58,8 +60,8 @@
 "Text.seeMore" = "See more";
 "Text.likesThis" = "likes this";
 "Text.dislikesThis" = "dislikes this";
-"Text.block" = "Block";
-"Text.blocked" = "Blocked";
+"Text.block" = "Ignore";
+"Text.blocked" = "Ignored";
 "Text.deleteSecretAndIdentity" = "Delete this secret and identity";
 "Text.follow" = "Follow";
 "Text.following" = "Following";
@@ -80,8 +82,8 @@
 "Text.shareThisMessageText" = "{{ who }} posted: {{ what }} {{ link }}";
 "Text.addFriend" = "Add friend";
 "Text.removeFriend" = "Remove from friends";
-"Text.blockUser" = "Block this user";
-"Text.unblockUser" = "Unblock this user";
+"Text.blockUser" = "Ignore this user";
+"Text.unblockUser" = "Unignore this user";
 "Text.reportPost" = "Report this post";
 "Text.reportUser" = "Report this user";
 "Text.noReplies" = "No replies";
@@ -114,6 +116,9 @@
 "Text.join" = "Join";
 "Text.redeemInvitation" = "Redeem an invitation";
 "Text.pasteAddress" = "Token";
+"Text.invitationRedeemed" = "Invitation redeemed!";
+"Text.addRoomAddressOrInvitation" = "paste address or invitation";
+"Text.joiningRoom" = "Joining room...";
 "Text.refreshSingular" = "{{ count }} unread post!";
 "Text.refreshPlural" = "{{ count }} unread posts!";
 "Text.markdownSupported" = "Markdown preview";
@@ -134,17 +139,20 @@
 "Text.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
 "Text.startUsingPlanetary" = "start using Planetary";
 "Text.startUsingPlanetaryTitle" = "Start Using Planetary";
+"Text.dismissAndStartUsingPlanetary" = "Dismiss and start using Planetary";
 "Text.percentComplete" = "complete";
 "Text.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 "Text.areYouSure" = "Are you sure?";
 "Text.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
+"Text.confirmCopyToMainNetwork" = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network.";
+"Text.confirmSkipCopyToMainNetwork" = "You will not be prompted to run this fix again. Are you sure you want to skip it?";
 
-"Blocking.alertTitle" = "Are you sure you want to block {{ name }}? You will no longer see each other's content or be able to contact each other.";
-"Blocking.buttonTitle" = "Yes, block {{ name }}";
-"Blocking.blockedUsers" = "Blocked Users";
-"Blocking.footer" = "Blocked users cannot see your posts or contact you, and you will need to unblock them before you can see their posts or contact them. It may take some time to see users and content once they have been unblocked.";
+"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
+"Blocking.buttonTitle" = "Yes, ignore {{ name }}";
+"Blocking.blockedUsers" = "Ignored Users";
+"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
 "Blocking.thisUser" = "this user";
-"Blocking.usersYouHaveBlocked" = "Users that you have blocked";
+"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
 
 "ImagePicker.camera" = "Camera";
 "ImagePicker.cameraNotAvailable" = "Camera is not available on this device";
@@ -156,6 +164,7 @@
 
 "NewPost.confirmRemove" = "Remove this image from the post?  You can always add it back again.";
 "NewPost.remove" = "Remove";
+"NewPost.publishing" = "Publishing...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";
@@ -210,6 +219,10 @@
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
 "Onboarding.welcomeBotName" = "Planetary Help";
 "Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
+"Onboarding.joinPlanetarySystem" = "Join Planetary Network";
+"Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
+"Onboarding.useTestNetwork" = "Use Test Network";
+"Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
@@ -228,33 +241,55 @@
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
 
-"ManagePubs.header" = "Pubs";
-"ManagePubs.title" = "Manage Pubs";
-"ManagePubs.footer" = "Pubs are relay servers that distribute messages through the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
-"ManagePubs.addingPubs" = "Adding Pubs";
-"ManagePubs.yourPubs" = "Your Pubs";
-"ManagePubs.lastWorked" = "Last worked on";
-"ManagePubs.pasteAddress" = "Paste the address here";
+"ManageRelays.relayServers" = "Relay Servers";
+"ManageRelays.managePubs" = "Manage Pubs";
+"ManageRelays.manageRooms" = "Manage Rooms (beta)";
+"ManageRelays.footer" = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
+"ManageRelays.addingPubs" = "Adding Pubs";
+"ManageRelays.yourPubs" = "Your Pubs";
+"ManageRelays.lastWorked" = "Last worked on";
+"ManageRelays.pasteAddress" = "Paste the address here";
+"ManageRelays.joinedRooms" = "Joined Rooms";
+"ManageRelays.addRooms" = "Add Rooms";
+"ManageRelays.loadingRooms" = "Loading rooms...";
+"ManageRelays.invalidRoomURL" = "Invalid room URL";
+"ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
+
+"Alias.manageAliases" = "Manage Aliases (beta)";
+"Alias.addAlias" = "Register a new alias";
+"Alias.roomAliases" = "Room Aliases (beta)";
+"Alias.aliases" = "Aliases";
+"Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
 
 "Preview.title" = "Advanced Settings";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
 
 "FeedAlgorithm.algorithms" = "Algorithms";
 "FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
-"FeedAlgorithm.feedAlgorithmDescription" = "Choose the way your Home Feed is sorted and filtered.";
+"FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Recent posts";
-"FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted.";
+"FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Recent posts and follows";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Shows posts and follow messages from the people you follow in the order they were posted.";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Recently active posts and follows";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Shows posts and follow messages from the people you follow. If a message receives a reply it will be pushed back up to the top of the feed.";
+"FeedAlgorithm.randomPostsAlgorithm" = "Random unread posts";
+"FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
 "FeedAlgorithm.viewAlgorithmSource" = "View Source Code";
 "FeedAlgorithm.sourceCode" = "Source Code";
 "FeedAlgorithm.sourceCodeDescription" = "Planetary's code is open source so our algorithms can be audited and even modified by our users. You can view the source code for these algorithms by tapping the button above.";
 
-"PublicWebHosting.enabled" = "Enabled";
-"PublicWebHosting.title" = "Public Web Hosting";
-"PublicWebHosting.footer" = "Opt-in to indicate you want your feed to appear on public gateways. It may take a couple of hours for the changes to be visible.";
+"DiscoveryFeedAlgorithm.algorithms" = "Algorithms";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Discovery Feed Algorithm";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Recent Posts";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Random Unread Posts";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
+
+"WebServices.title" = "Web Services";
+"WebServices.publicWebHosting" = "Public Web Hosting";
+"WebServices.aliases" = "Aliases (beta)";
+"WebServices.footer" = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible.";
 
 "Push.enabled" = "Enabled";
 "Push.title" = "Push Notifications";
@@ -279,10 +314,14 @@
 "Error.unexpected" = "Something unexpected happened.";
 "Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
+"Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
 "Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
+"Error.invalidRoomURL" = "Could not parse invitation.";
+"Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
+"Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";
@@ -295,3 +334,27 @@
 "Report.postReplied" = "%@ replied to your post";
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";
+
+"Notifications.markAllAsRead" = "Mark all as read";
+
+"Help.help" = "Help";
+"Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
+
+"Home.title" = "See posts from users and topics you follow";
+"Home.body" = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed.";
+"Home.highlightedWord" = "Discover";
+
+"Discover.title" = "See what's new and grow your network";
+"Discover.body" = "See posts from users and topics followed by your friends. Follow them to see their content in your Home Feed!";
+"Discover.highlightedWord" = "Home Feed";
+
+"Notifications.title" = "Keep up-to-date in all your conversations";
+"Notifications.body" = "Check this screen for replies and reactions to your posts as well as conversations you participate in. We'll also notify you when someone mentions you.";
+
+"Hashtags.title" = "What the community is talking about";
+"Hashtags.body" = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network.";
+"Hashtags.highlightedWord" = "Your Network";
+
+"YourNetwork.title" = "Your friends, connections and pubs";
+"YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
+"YourNetwork.highlightedWord" = "*gossip*";

@@ -11,7 +11,7 @@ import Analytics
 
 protocol ThreadInteractionViewDelegate: AnyObject {
     
-    func threadInteractionView(_ view: ThreadInteractionView, didLike post: KeyValue)
+    func threadInteractionView(_ view: ThreadInteractionView, didLike post: Message)
 }
 
 class ThreadInteractionView: UIView {
@@ -19,18 +19,18 @@ class ThreadInteractionView: UIView {
     var replyCount: Int = 0 {
         didSet {
             if self.replyCount == 0 {
-                self.replyCountLabel.text = Text.noReplies.text
+                self.replyCountLabel.text = Localized.noReplies.text
             } else if self.replyCount == 1 {
-                self.replyCountLabel.text = Text.oneReply.text
+                self.replyCountLabel.text = Localized.oneReply.text
             } else {
-                self.replyCountLabel.text = Text.replyCount.text(["count": "\(self.replyCount)"])
+                self.replyCountLabel.text = Localized.replyCount.text(["count": "\(self.replyCount)"])
             }
         }
     }
     
     weak var delegate: ThreadInteractionViewDelegate?
     
-    var post: KeyValue?
+    var post: Message?
     var replies: StaticDataProxy?
     var userLikes = false
     
@@ -52,7 +52,7 @@ class ThreadInteractionView: UIView {
     private lazy var shareButton: UIButton = {
         let button = UIButton.init(type: .custom)
         button.setImage(UIImage.verse.share, for: .normal)
-        button.accessibilityHint = Text.share.text
+        button.accessibilityHint = Localized.share.text
         button.addTarget(self, action: #selector(didPressShare(sender:)), for: .touchUpInside)
         return button
     }()
@@ -60,7 +60,7 @@ class ThreadInteractionView: UIView {
     private lazy var likeButton: UIButton = {
         let button = UIButton.init(type: .custom)
         button.setImage(UIImage.verse.like, for: .normal)
-        button.accessibilityHint = Text.like.text
+        button.accessibilityHint = Localized.like.text
         button.addTarget(self, action: #selector(didPressLike(sender:)), for: .touchUpInside)
         return button
     }()
@@ -98,8 +98,8 @@ class ThreadInteractionView: UIView {
         
         if replies.count - 1 >= 0 {
             for index in 0...replies.count - 1 {
-                if replies.keyValueBy(index: index)?.value.content.type == ContentType.vote {
-                    let likeIdentity = replies.keyValueBy(index: index)?.metadata.author.about?.about
+                if replies.messageBy(index: index)?.content.type == ContentType.vote {
+                    let likeIdentity = replies.messageBy(index: index)?.metadata.author.about?.about
                     if me == likeIdentity {
                         self.userLikes = true
                     }
@@ -128,16 +128,16 @@ class ThreadInteractionView: UIView {
         
         var actions = [UIAlertAction]()
 
-        let copyMessageIdentifier = UIAlertAction(title: Text.copyMessageIdentifier.text, style: .default) { _ in
+        let copyMessageIdentifier = UIAlertAction(title: Localized.copyMessageIdentifier.text, style: .default) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
             UIPasteboard.general.string = post.key
-            AppController.shared.showToast(Text.identifierCopied.text)
+            AppController.shared.showToast(Localized.identifierCopied.text)
         }
         actions.append(copyMessageIdentifier)
         
-        let copyMesssageLink = UIAlertAction(title: Text.shareThisMessage.text, style: .default) { _ in
+        let copyMesssageLink = UIAlertAction(title: Localized.shareThisMessage.text, style: .default) { _ in
             guard let publicLink = post.key.publicLink else {
-                AppController.shared.alert(message: Text.Error.couldNotGenerateLink.text)
+                AppController.shared.alert(message: Localized.Error.couldNotGenerateLink.text)
                 return
             }
             Analytics.shared.trackDidSelectAction(actionName: "share_message")
@@ -149,7 +149,7 @@ class ThreadInteractionView: UIView {
         }
         actions.append(copyMesssageLink)
 
-        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        let cancel = UIAlertAction(title: Localized.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
         AppController.shared.choose(from: actions, sourceView: sender)

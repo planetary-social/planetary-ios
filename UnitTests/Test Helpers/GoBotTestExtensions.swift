@@ -22,9 +22,8 @@ extension GoBot {
 //        tc.wait(for: [syncExpectation], timeout: 30)
 
         let refreshExpectation = tc.expectation(description: "Refresh")
-        self.refresh(load: .short, queue: .main) {
-            error, _, _ in
-            XCTAssertNil(error, "view refresh failed")
+        self.refresh(load: .short, queue: .main) { result, _ in
+            XCTAssertNotNil(try? result.get(), "view refresh failed")
             refreshExpectation.fulfill()
         }
         tc.wait(for: [refreshExpectation], timeout: 30)
@@ -111,6 +110,32 @@ extension GoBot {
         return id
     }
 
+    @discardableResult
+    func testingBlock(nick: String) throws -> MessageIdentifier {
+        guard let keypairs = try? testingGetNamedKeypairs() else {
+            return MessageIdentifier.null
+        }
+        guard let keypair = keypairs[nick] else {
+            return MessageIdentifier.null
+        }
+        let contact = Contact(contact: keypair, blocking: true)
+        let content = try XCTUnwrap(contact.encodeToData().string())
+        var identifier: MessageIdentifier?
+        content.withGoString { goStrContent in
+            guard let refCstr = ssbPublish(goStrContent) else {
+                XCTFail("publish failed!")
+                return
+            }
+            identifier = String(cString: refCstr)
+        }
+        let id = try XCTUnwrap(identifier)
+        XCTAssertTrue(id.hasPrefix("%"))
+        XCTAssertTrue(id.hasSuffix(".sha256"))
+        print(content)
+        return id
+    }
+
+    @discardableResult
     func testingPublish(as nick: String, recipients: [Identity]? = nil, content: ContentCodable) -> MessageIdentifier {
         let c = try! content.encodeToData().string()!
         var identifier: MessageIdentifier?

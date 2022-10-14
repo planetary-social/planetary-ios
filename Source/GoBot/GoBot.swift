@@ -23,6 +23,8 @@ extension String {
 
 private let refreshDelay = DispatchTimeInterval.milliseconds(125)
 
+let greatestRequestedSequenceNumberFromGoBotKey = "greatestRequestedSequenceNumberFromGoBot"
+
 /// This class abstracts the SSB protocol implementation with support for SSB functions like publishing, replicating,
 /// fetching posts & threads, etc.
 ///
@@ -278,7 +280,7 @@ class GoBot: Bot {
             }
             self.preloadedPubService?.preloadPubs(in: self, from: nil)
             
-            Task.detached(priority: .utility) {
+            Task.detached(priority: .background) {
                 await self.fetchAndApplyBanList(for: secret.identity)
             }
         }
@@ -341,7 +343,7 @@ class GoBot: Bot {
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         userInitiatedQueue.async {
             do {
-                let pubs = try self.database.getRedeemedPubs()
+                let pubs = try self.database.getJoinedPubs()
                 queue.async {
                     completion(pubs, nil)
                 }
@@ -352,6 +354,51 @@ class GoBot: Bot {
             }
         }
     }
+    
+    func joinedRooms() async throws -> [Room] {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.getJoinedRooms()
+        }
+        return try await task.value
+    }
+    
+    func insert(room: Room) async throws {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.insert(room: room)
+        }
+        return try await task.value
+    }
+    
+    func delete(room: Room) async throws {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.delete(room: room)
+        }
+        return try await task.value
+    }
+    
+    func registeredAliases() async throws -> [RoomAlias] {
+        let task = Task.detached(priority: .userInitiated) {
+            return try self.database.getRegisteredAliases()
+        }
+        return try await task.value
+    }
+    
+    func register(alias: String, in room: Room) async throws -> RoomAlias {
+        let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
+            if self.bot.register(alias: alias, in: room) {
+                return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room)
+            } else {
+                // TODO: localize, better error messages i.e. in case of conflicts.
+                throw GoBotError.unexpectedFault("Failed to register room alias")
+            }
+        }
+        return try await task.value
+    }
+    
+    func revoke(alias: RoomAlias) async throws {
+        
+    }
+    
 
     private var _isSyncing = false
     var isSyncing: Bool { self._isSyncing }
@@ -397,6 +444,16 @@ class GoBot: Bot {
                     completion: completion
                 )
             }
+        }
+    }
+    
+    func connect(to address: MultiserverAddress) {
+        guard self.bot.isRunning else {
+            return
+        }
+        
+        utilityQueue.async {
+            _ = self.bot.dialOne(peer: address)
         }
     }
     
@@ -458,6 +515,16 @@ class GoBot: Bot {
         completion(nil, elapsed, numberOfMessages)
         NotificationCenter.default.post(name: .didSync, object: nil)
     }
+    
+    // refresh specific feed - when we view a profile we should ask gobot to refresh that feed. It might not get back in time
+    // to update what the user sees but it'll help. In particular this will happen with pubs.
+    
+    func replicate(feed: FeedIdentifier) {
+        userInitiatedQueue.async {
+            self.bot.replicate(feed: feed)
+        }
+    }
+    
 
     // MARK: Refresh
 
@@ -477,7 +544,7 @@ class GoBot: Bot {
     private func internalRefresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         guard self._isRefreshing == false else {
             queue.async {
-                completion(nil, 0, false)
+                completion(.success(false), 0)
             }
             return
         }
@@ -486,22 +553,11 @@ class GoBot: Bot {
         
         let elapsed = Date()
         self.utilityQueue.async {
-            self.updateReceive(limit: load.rawValue) { [weak self] error in
-                
-                // Figure out if the refresh got the ViewDatabase fully synced with the backing store.
-                var finished = false
-                do {
-                    let (_, numberOfRemainingMessages) = try self?.needsViewFill() ?? (0, -1)
-                    finished = numberOfRemainingMessages == 0
-                } catch {
-                    Log.optional(error)
-                }
-                
+            self.updateReceive(limit: load.rawValue) { [weak self] result in
                 queue.async {
                     self?.notifyRefreshComplete(
                         in: -elapsed.timeIntervalSinceNow,
-                        error: error,
-                        finished: finished,
+                        result: result,
                         completion: completion
                     )
                 }
@@ -511,8 +567,7 @@ class GoBot: Bot {
 
     private func notifyRefreshComplete(
         in elapsed: TimeInterval,
-        error: Error?,
-        finished: Bool,
+        result: Result<Bool, Error>,
         completion: @escaping RefreshCompletion
     ) {
         self._isRefreshing = false
@@ -520,7 +575,7 @@ class GoBot: Bot {
             self._statistics.lastRefreshDate = Date()
             self._statistics.lastRefreshDuration = elapsed
         }
-        completion(error, elapsed, finished)
+        completion(result, elapsed)
         NotificationCenter.default.post(name: .didRefresh, object: nil)
     }
     
@@ -646,7 +701,7 @@ class GoBot: Bot {
     }
 
     func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
-        var targetMessage: KeyValue?
+        var targetMessage: Message?
         do {
             targetMessage = try self.database.post(with: message)
         } catch {
@@ -661,7 +716,7 @@ class GoBot: Bot {
             return
         }
         
-        if targetMessage.value.author != self._identity {
+        if targetMessage.author != self._identity {
             // drop from view regardless of format
             do {
                 try self.database.delete(message: message)
@@ -671,7 +726,7 @@ class GoBot: Bot {
             }
         }
 
-        guard targetMessage.value.author.algorithm == .ggfeed else {
+        guard targetMessage.author.algorithm == .ggfeed else {
             completion(GoBotError.unexpectedFault("unsupported feed format for deletion"))
             return
         }
@@ -682,12 +737,12 @@ class GoBot: Bot {
             return
         }
         
-        guard targetMessage.value.author == self._identity else {
+        guard targetMessage.author == self._identity else {
             // drop content directly / can't request others to do so
             do {
                 try self.bot.nullContent(
-                    author: targetMessage.value.author,
-                    sequence: UInt(targetMessage.value.sequence)
+                    author: targetMessage.author,
+                    sequence: UInt(targetMessage.sequence)
                 )
             } catch {
                 completion(GoBotError.duringProcessing("failed to null content", error))
@@ -699,7 +754,7 @@ class GoBot: Bot {
         
         // publish signed drop-content-request for other peers
         let dropContentRequest = DropContentRequest(
-            sequence: UInt(targetMessage.value.sequence),
+            sequence: UInt(targetMessage.sequence),
             hash: message
         )
 
@@ -719,7 +774,14 @@ class GoBot: Bot {
     func needsViewFill() throws -> (Int64, Int) {
         var lastRxSeq: Int64 = 0
         do {
-            lastRxSeq = try self.database.largestSeqNotFromPublishedLog()
+            let lastRxSeqFromDB = try self.database.largestSeqNotFromPublishedLog()
+            var lastRxSeqFromDisk: Int64 = -1
+            if let userDefaultsValue = userDefaults.object(
+                forKey: greatestRequestedSequenceNumberFromGoBotKey
+            ) as? Int64 {
+                lastRxSeqFromDisk = userDefaultsValue
+            }
+            lastRxSeq = max(lastRxSeqFromDB, lastRxSeqFromDisk)
         } catch {
             throw GoBotError.duringProcessing("view query failed", error)
         }
@@ -733,7 +795,9 @@ class GoBot: Bot {
             let diff = Int(Int64(repoStats.messages) - 1 - lastRxSeq)
             if diff < 0 {
                 let errorMessage = "needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))"
-                throw GoBotError.unexpectedFault(errorMessage)
+                let error = GoBotError.unexpectedFault(errorMessage)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                throw error
             }
             
             return (lastRxSeq, diff)
@@ -789,14 +853,14 @@ class GoBot: Bot {
     }
     
     // should only be called by refresh() (which does the proper completion on mainthread)
-    private func updateReceive(limit: Int32 = 15_000, completion: @escaping ErrorCompletion) {
+    private func updateReceive(limit: Int32 = 15_000, completion: @escaping (Result<Bool, Error>) -> Void) {
         var current: Int64 = 0
         var diff: Int = 0
 
         do {
             (current, diff) = try self.needsViewFill()
         } catch {
-            completion(error)
+            completion(.failure(error))
             return
         }
         
@@ -812,36 +876,49 @@ class GoBot: Bot {
         // TOOD: redo until diff==0
         do {
             Log.debug("[rx log] asking go-ssb for new messages.")
-            let msgs = try self.bot.getReceiveLog(startSeq: UInt64(max(0, current + 1)), limit: limit)
+            
+            // If the go log is empty we need to request 0. Otherwise request the next seq number.
+            let startSeq = UInt64(current <= 0 ? 0 : current + 1)
+            let msgs = try self.bot.getReceiveLog(startSeq: startSeq, limit: limit)
             
             guard !msgs.isEmpty else {
                 print("warning: triggered update but got no messages from receive log")
-                completion(nil)
+                // If the bot's log from startSeq to startSeq+limit is full of nulled messages then no messages will
+                // be returned. In this case we need to artificially bump up our sequence number so we don't get
+                // stuck requesting the same messages again and again.
+                userDefaults.set(startSeq + UInt64(limit), forKey: greatestRequestedSequenceNumberFromGoBotKey)
+                userDefaults.synchronize()
+                completion(.success(true))
                 return
             }
             
             do {
                 try self.database.fillMessages(msgs: msgs)
+        
+                if let lastReceivedSeq = msgs.last?.receivedSeq {
+                    userDefaults.set(lastReceivedSeq, forKey: greatestRequestedSequenceNumberFromGoBotKey)
+                    userDefaults.synchronize()
+                }
 
                 Analytics.shared.trackBotDidUpdateDatabase(
                     count: msgs.count,
-                    firstTimestamp: msgs[0].timestamp,
-                    lastTimestamp: msgs[msgs.count - 1].timestamp,
+                    firstTimestamp: msgs[0].receivedTimestamp,
+                    lastTimestamp: msgs[msgs.count - 1].receivedTimestamp,
                     lastHash: msgs[msgs.count - 1].key
                 )
                 if diff < limit { // view is up2date now
-                    completion(nil)
+                    completion(.success(true))
                     // disable private messages until there is UI for it AND ADD SQLCYPHER!!!111
                     // self.updatePrivate(completion: completion)
                 } else {
                     #if DEBUG
                     print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
                     #endif
-                    completion(nil)
+                    completion(.success(false))
                 }
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
                 let (repair, error) = self.repairViewConstraints21012020(with: author, current: current)
-
+    
                 Analytics.shared.trackBotDidRepair(
                     databaseError: sqlErr,
                     error: error?.localizedDescription,
@@ -851,19 +928,22 @@ class GoBot: Bot {
                 #if DEBUG
                 print("[rx log] viewdb fill of aborted and repaired.")
                 #endif
-                completion(error)
+                completion(.failure(error ?? GoBotError.unexpectedFault("updateReceive failed")))
             } catch {
-                let encapsulatedError = GoBotError.duringProcessing("viewDB: message filling failed", error)
+                let encapsulatedError = GoBotError.duringProcessing(
+                    "viewDB: message filling failed: \(error.localizedDescription)",
+                    error
+                )
                 Log.optional(encapsulatedError)
                 CrashReporting.shared.reportIfNeeded(error: encapsulatedError)
-                completion(encapsulatedError)
+                completion(.failure(encapsulatedError))
             }
         } catch {
-            completion(error)
+            completion(.failure(error))
         }
     }
     
-    private func updatePrivate(completion: @escaping ErrorCompletion) {
+    private func updatePrivate(completion: @escaping (Result<Bool, Error>) -> Void) {
         var count: Int64 = 0
         do {
             let rawCount = try self.database.stats(table: .privates)
@@ -878,9 +958,9 @@ class GoBot: Bot {
                 print("[private log] private log filled with \(msgs.count) msgs (started at \(count))")
             }
             
-            completion(nil)
+            completion(.success(msgs.count < 1000))
         } catch {
-            completion(error)
+            completion(.failure(error))
         }
     }
     
@@ -1032,7 +1112,6 @@ class GoBot: Bot {
     }
 
     func about(completion: @escaping AboutCompletion) {
-        Thread.assertIsMainThread()
         guard let user = self._identity else {
             completion(nil, BotError.notLoggedIn)
             return
@@ -1043,7 +1122,11 @@ class GoBot: Bot {
     func about(queue: DispatchQueue, identity: Identity, completion: @escaping AboutCompletion) {
         userInitiatedQueue.async {
             do {
-                let about = try self.database.getAbout(for: identity)
+                var about = try self.database.getAbout(for: identity)
+                if about == nil {
+                    about = About(about: identity)
+                }
+                
                 queue.async {
                     if about?.identity == self._identity { self._about = about }
                     completion(about, nil)
@@ -1198,7 +1281,6 @@ class GoBot: Bot {
     // MARK: Blocks & Bans
     
     func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
                 let identities = try self.database.getBlocks(feed: identity)
@@ -1214,7 +1296,6 @@ class GoBot: Bot {
     }
     
     func blockedBy(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
                 let identities = try self.database.blockedBy(feed: identity)
@@ -1276,22 +1357,20 @@ class GoBot: Bot {
             return
         }
             
-        var authors: [FeedIdentifier] = []
         do {
-            authors = try self.database.applyBanList(banList)
-        } catch {
-            Log.unexpected(.botError, "viewdb failed to update banned content: \(error)")
-        }
-        
-        // add as blocked peers to bot (those dont have contact messages)
-        do {
-            for a in authors {
-                // TODO: Maybe private blocks here?
-                try self.bot.nullFeed(author: a)
-                self.bot.block(feed: a)
+            let (bannedAuthors, unbannedAuthors) = try self.database.applyBanList(banList)
+            
+            // add as blocked peers to bot (those dont have contact messages)
+            for author in bannedAuthors {
+                try bot.nullFeed(author: author)
+                bot.ban(feed: author)
+            }
+            
+            for author in unbannedAuthors {
+                bot.unban(feed: author)
             }
         } catch {
-            Log.unexpected(.botError, "failed to drop and banned content: \(error)")
+            Log.unexpected(.botError, "failed to apply ban list: \(error)")
         }
     }
 
@@ -1305,12 +1384,18 @@ class GoBot: Bot {
             return strategy
         }
         
-        return PostsAndContactsAlgorithm()
+        return RecentlyActivePostsAndContactsAlgorithm()
     }
 
     /// The algorithm we use to filter and sort the discover tab feed.
     var discoverFeedStrategy: FeedStrategy {
-        PostsAlgorithm(wantPrivate: false, onlyFollowed: false)
+        if let data = userDefaults.object(forKey: UserDefaults.discoveryFeedStrategy) as? Data,
+            let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
+            let strategy = decodedObject as? FeedStrategy {
+            return strategy
+        }
+        
+        return RandomAlgorithm(onlyFollowed: false)
     }
     
     // old recent
@@ -1354,11 +1439,11 @@ class GoBot: Bot {
         }
     }
 
-    func thread(keyValue: KeyValue, completion: @escaping ThreadCompletion) {
-        assert(keyValue.value.content.isPost)
+    func thread(message: Message, completion: @escaping ThreadCompletion) {
+        assert(message.content.isPost)
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
-            if let rootKey = keyValue.value.content.post?.root {
+            if let rootKey = message.content.post?.root {
                 do {
                     let root = try self.database.post(with: rootKey)
                     let replies = try self.database.getRepliesTo(thread: root.key)
@@ -1371,7 +1456,7 @@ class GoBot: Bot {
                     }
                 }
             } else {
-                self.internalThread(rootKey: keyValue.key, completion: completion)
+                self.internalThread(rootKey: message.key, completion: completion)
             }
         }
     }
@@ -1413,17 +1498,34 @@ class GoBot: Bot {
     func markMessageAsRead(_ message: MessageIdentifier) {
         userInitiatedQueue.async {
             do {
-                let report = try self.database.report(for: message)
+                let wasAlreadRead = try self.database.isMessageForReportRead(for: message)
                 try self.database.markMessageAsRead(identifier: message, isRead: true)
-                if let report = report, report.isUnread {
+                let shouldPostReadReportNotification = wasAlreadRead == false
+                if shouldPostReadReportNotification {
                     NotificationCenter.default.post(
                         name: .didUpdateReportReadStatus,
                         object: nil,
-                        userInfo: ["report": report]
+                        userInfo: nil
                     )
                 }
             } catch {
                 Log.optional(error)
+            }
+        }
+    }
+
+    func markAllMessageAsRead(queue: DispatchQueue, completion: @escaping VoidCompletion) {
+        userInitiatedQueue.async {
+            do {
+                self.database.needsToSetAllMessagesAsRead = true
+                try self.database.setAllMessagesAsReadIfNeeded()
+                queue.async {
+                    completion(.success(()))
+                }
+            } catch {
+                queue.async {
+                    completion(.failure(error))
+                }
             }
         }
     }
@@ -1473,19 +1575,24 @@ class GoBot: Bot {
         }
     }
 
-    func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
-        Thread.assertIsMainThread()
+    func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {
             do {
-                let proxy = try self.database.paginated(feed: identity)
+                let strategyString = String(describing: type(of: strategy))
+                Log.debug("GoBot fetching posts with strategy: \(strategyString)")
+                let proxy = try self.database.paginatedFeed(with: strategy)
                 DispatchQueue.main.async { completion(proxy, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
             }
         }
     }
+
+    func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
+        feed(strategy: NoHopFeedAlgorithm(identity: identity), completion: completion)
+    }
     
-    func post(from key: MessageIdentifier) throws -> KeyValue {
+    func post(from key: MessageIdentifier) throws -> Message {
         try self.database.post(with: key)
     }
 
@@ -1522,8 +1629,8 @@ class GoBot: Bot {
         Thread.assertIsMainThread()
         userInitiatedQueue.async {
             do {
-                let keyValues = try self.database.messagesForHashtag(name: hashtag.name)
-                let proxy = StaticDataProxy(with: keyValues)
+                let messages = try self.database.messagesForHashtag(name: hashtag.name)
+                let proxy = StaticDataProxy(with: messages)
                 DispatchQueue.main.async { completion(proxy, nil) }
             } catch {
                 DispatchQueue.main.async { completion(StaticDataProxy(), error) }
@@ -1531,12 +1638,12 @@ class GoBot: Bot {
         }
     }
     
-    func posts(matching filter: String) async throws -> [KeyValue] {
+    func posts(matching filter: String) async throws -> [Message] {
         let task = Task.detached(priority: .high) {
             return try self.database.posts(matching: filter)
         }
         
-        return try await task.getResult().get()
+        return try await task.result.get()
     }
 
     // MARK: Statistics
@@ -1635,16 +1742,24 @@ class GoBot: Bot {
             do {
                 let data = try Data(contentsOf: url, options: .mappedIfSafe)
                 do {
-                    let msgs = try JSONDecoder().decode([KeyValue].self, from: data)
+                    let msgs = try JSONDecoder().decode([Message].self, from: data)
 
                     var lastRxSeq: Int64 = try self.database.minimumReceivedSeq()
                     
-                    let newMesgs = msgs.map { (message: KeyValue) -> KeyValue in
+                    let newMesgs = msgs.map { (message: Message) -> Message in
                         lastRxSeq -= 1
-                        return KeyValue(
+                        return Message(
                             key: message.key,
-                            value: message.value,
-                            timestamp: message.timestamp,
+                            value: MessageValue(
+                                author: message.author,
+                                content: message.content,
+                                hash: message.hash,
+                                previous: message.previous,
+                                sequence: message.sequence,
+                                signature: message.signature,
+                                claimedTimestamp: message.receivedTimestamp
+                            ),
+                            timestamp: message.receivedTimestamp,
                             receivedSeq: lastRxSeq,
                             hashedKey: message.key.sha256hash
                         )
@@ -1662,6 +1777,28 @@ class GoBot: Bot {
                 print(error) // shows error
                 print("Unable to read file")// local message
                 completion(error)
+            }
+        }
+    }
+
+    // MARK: Raw messages
+
+    func raw(of message: Message, completion: @escaping RawCompletion) {
+        userInitiatedQueue.async {
+            let identity = message.author
+            let sequence = message.sequence
+            guard sequence >= UInt64.min, sequence <= UInt64.max else {
+                completion(.failure(AppError.unexpected))
+                return
+            }
+            identity.withGoString { feedRef in
+                guard let pointer = ssbGetRawMessage(feedRef, UInt64(sequence)) else {
+                    completion(.failure(GoBotError.unexpectedFault("failed to get raw message")))
+                    return
+                }
+                let string = String(cString: pointer)
+                free(pointer)
+                completion(.success(string))
             }
         }
     }

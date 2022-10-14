@@ -20,7 +20,7 @@ class NameOnboardingStep: OnboardingStep {
         self.view.textField.autocapitalizationType = .words
         self.view.textField.autocorrectionType = .no
 
-        self.view.hintLabel.text = Text.Onboarding.useRealName.text
+        self.view.hintLabel.text = Localized.Onboarding.useRealName.text
         self.view.primaryButton.isEnabled = false
         self.view.secondaryButton.setText(.doItLater)
     }
@@ -41,6 +41,8 @@ class NameOnboardingStep: OnboardingStep {
     }
     
     override func performSecondaryAction(sender button: UIButton) {
-        self.next()
+        self.data.name = nil
+        // Skip bio + photo steps
+        self.next(.done)
     }
 }
