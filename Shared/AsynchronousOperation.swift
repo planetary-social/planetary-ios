@@ -37,6 +37,11 @@ class AsynchronousOperation: Operation {
         state == .finished
     }
     
+    /// The queue this operation is runnign in.
+    var dispatchQueue: DispatchQueue {
+        OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: qualityOfService.dispatchQOS)
+    }
+    
     override class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
         if ["isReady", "isFinished", "isExecuting"].contains(key) {
             return [#keyPath(state)]
@@ -59,6 +64,25 @@ class AsynchronousOperation: Operation {
     final func finish() {
         if isExecuting {
             state = .finished
+        }
+    }
+}
+
+extension QualityOfService {
+    var dispatchQOS: DispatchQoS.QoSClass {
+        switch self {
+        case .userInteractive:
+            return .userInteractive
+        case .userInitiated:
+            return .userInitiated
+        case .utility:
+            return .utility
+        case .background:
+            return .background
+        case .default:
+            return .default
+        @unknown default:
+            return .default
         }
     }
 }

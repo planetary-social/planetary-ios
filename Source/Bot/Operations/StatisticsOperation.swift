@@ -24,8 +24,7 @@ class StatisticsOperation: AsynchronousOperation {
             self.finish()
             return
         }
-        let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .utility)
-        Bots.current.statistics(queue: queue) { [weak self] statistics in
+        Bots.current.statistics(queue: dispatchQueue) { [weak self] statistics in
             Log.info("StatisticsOperation finished.")
             if let lastSyncDate = statistics.lastSyncDate {
                 let minutesSinceLastSync = floor(lastSyncDate.timeIntervalSinceNow / 60)
