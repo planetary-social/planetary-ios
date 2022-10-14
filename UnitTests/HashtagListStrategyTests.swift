@@ -17,7 +17,7 @@ class HashtagListStrategyTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        db.close()
+        db.close(andOptimize: false)
 
         // get random location for the new
         tmpURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/viewDBtest-feedFill2"))
@@ -37,7 +37,7 @@ class HashtagListStrategyTests: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
-        db.close()
+        db.close(andOptimize: false)
     }
 
     func testPopularHashtagsStrategy() throws {

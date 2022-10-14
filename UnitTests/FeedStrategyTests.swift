@@ -19,7 +19,7 @@ class FeedStrategyTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        db.close()
+        db.close(andOptimize: false)
         
         // get random location for the new db
         self.tmpURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/viewDBtest-feedFill2"))
@@ -39,7 +39,7 @@ class FeedStrategyTests: XCTestCase {
     
     override func tearDown() {
         super.tearDown()
-        db.close()
+        db.close(andOptimize: false)
     }
     
     // MARK: - RecentlyActivePostsAndContactsAlgorithm

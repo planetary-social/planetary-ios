@@ -25,13 +25,13 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     override func tearDownWithError() throws {
-        viewDatabase.close()
+        viewDatabase.close(andOptimize: false)
         try FileManager.default.removeItem(at: self.dbURL)
         try super.tearDownWithError()
     }
     
     func setUpEmptyDB(user: Identity) throws {
-        viewDatabase.close()
+        viewDatabase.close(andOptimize: false)
         viewDatabase = ViewDatabase()
         let dbDir = FileManager.default.temporaryDirectory.appendingPathComponent("ViewDatabaseBenchmarkTests")
         dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
@@ -49,7 +49,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func loadDB(named dbName: String, user: Identity) throws {
-        viewDatabase.close()
+        viewDatabase.close(andOptimize: false)
         viewDatabase = ViewDatabase()
         let dbDir = FileManager.default.temporaryDirectory.appendingPathComponent("ViewDatabaseBenchmarkTests")
         dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
@@ -110,7 +110,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func testPostsAndContactsAlgorithmGivenSmallDB() throws {
-        viewDatabase.close()
+        viewDatabase.close(andOptimize: false)
         let strategy = PostsAndContactsAlgorithm()
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
@@ -122,7 +122,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func testRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
-        viewDatabase.close()
+        viewDatabase.close(andOptimize: false)
         let strategy = RecentlyActivePostsAndContactsAlgorithm()
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
@@ -134,7 +134,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func testCountNumberOfKeysSinceUsingRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
-        viewDatabase.close()
+        viewDatabase.close(andOptimize: false)
         try! resetSmallDB()
         let strategy = RecentlyActivePostsAndContactsAlgorithm()
         let messages = try self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
