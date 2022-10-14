@@ -201,7 +201,7 @@
 "Onboarding.contactsWIP" = "Disculpas, esta funcionalidad no está terminada. Toca 'OK' para ver una lista de usuarios que te recomendamos seguir.";
 "Onboarding.listMeTitle" = "Listarme en el directorio de usuarios";
 "Onboarding.listMeMessage" = "Esto le permite a la gente encontrarte si saben tu nombre o número de teléfono";
-"Onboarding.thanksForTrying" = "Gracias por probar Planetary. Le recomendamos que utilice el hashtag #newpeople para presentarse.";
+"Onboarding.thanksForTrying" = "¡Gracias por probar Planetary! Te recomendamos que utilices el hashtag #newpeople para presentarte.";
 "Onboarding.doneOnboarding" = "¡Uf! ¡Ya terminé!";
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes ásperas en la interfaz. ¡Anímate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
@@ -318,8 +318,8 @@
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
 "Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
-"Error.cannotPublishBecauseRestoring" = "Planetary está restableciendo tus datos de la red, y no puede publicar nuevos mensajes en este momento.";
-"Error.restoring" = "Planetary esta recuperando tus datos de la red.";
+"Error.cannotPublishBecauseRestoring" = "Planetary está restaurando tus datos de la red y no puede publicar nuevos mensajes en este momento.";
+"Error.restoring" = "Planetary está restaurando tus datos de la red.";
 "Error.invalidAppConfiguration" = "Configuración de app inválida";
 "Error.couldNotGenerateLink" = "No pudo generar el enlace.";
 "Error.invalidRoomURL" = "No se pudo analizar tu invitación.";
