@@ -80,6 +80,12 @@ body: MIT License
 Copyrig…
 version: 2.2.5
 
+name: SwiftGen, nameSpecified: 
+body: MIT Licence
+
+Copyrig…
+version: 6.6.2
+
 name: bugsnag-cocoa, nameSpecified: Bugsnag, owner: bugsnag, version: 6.16.7
 
 name: CocoaLumberjack, nameSpecified: CocoaLumberjack, owner: CocoaLumberjack, version: 3.7.4
