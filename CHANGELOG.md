@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update to Xcode 14. #839
 - Speed up database using a many connections instead of one. #884
+- Fixed incorrect aspect ratio of avatar images. #753
+
 
 ## [1.3.5] 2022-10-03
 
