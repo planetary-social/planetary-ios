@@ -21,7 +21,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     private var lastTimeNewReportsUpdatesWasChecked = Date()
 
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -226,7 +226,7 @@ private class NotificationsTableViewDataSource: MessageTableViewDataSource {
             }
 
             // label each section
-            var sections: [(Text, [Report])] = []
+            var sections: [(Localized, [Report])] = []
             if today.count > 0 { sections += [(.today, today)] }
             if yesterday.count > 0 { sections += [(.yesterday, yesterday)] }
             if earlier.count > 0 { sections += [(.recently, earlier)] }
@@ -241,7 +241,7 @@ private class NotificationsTableViewDataSource: MessageTableViewDataSource {
         return reports[indexPath.row]
     }
 
-    fileprivate var sectionedReports: [(Text, [Report])] = []
+    fileprivate var sectionedReports: [(Localized, [Report])] = []
 
     override func message(at indexPath: IndexPath) -> Message {
         report(at: indexPath).message
@@ -318,7 +318,7 @@ private class HeaderView: UITableViewHeaderFooterView {
             .font: UIFont.systemFont(ofSize: 15, weight: .semibold)
         ])
         let attributedTitle = AttributedString(
-            Text.Notifications.markAllAsRead.text,
+            Localized.Notifications.markAllAsRead.text,
             attributes: attributeContainer
         )
         var configuration = UIButton.Configuration.plain()

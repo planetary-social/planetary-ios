@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improved background syncing #833
 - Update to Xcode 14. #839
+- Fixed incorrect aspect ratio of avatar images. #753
 
 
 ## [1.3.5] 2022-10-03

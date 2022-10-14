@@ -57,7 +57,7 @@ import CrashReporting
 
         // this will try Onboarding.start() again, creating a new
         // configuration and such
-        let tryAgain = UIAlertAction(title: Text.tryAgain.text,
+        let tryAgain = UIAlertAction(title: Localized.tryAgain.text,
                                      style: .default) {
             [weak self] _ in
             self?.tryAgain()
@@ -65,15 +65,15 @@ import CrashReporting
 
         // this will delete the current configuration (if it matches the
         // context's identity) and start at the beginning of onboarding
-        let startOver = UIAlertAction(title: Text.Onboarding.startOver.text,
+        let startOver = UIAlertAction(title: Localized.Onboarding.startOver.text,
                                       style: .destructive) {
             [weak self] _ in
             self?.startOver()
         }
 
         AppController.shared.choose(from: [tryAgain, startOver],
-                                    title: Text.Onboarding.somethingWentWrong.text,
-                                    message: error?.localizedDescription ?? Text.Onboarding.errorRetryMessage.text)
+                                    title: Localized.Onboarding.somethingWentWrong.text,
+                                    message: error?.localizedDescription ?? Localized.Onboarding.errorRetryMessage.text)
     }
 
     /// If `Onboarding.createProfile()` fails, this will reset onboarding and try again

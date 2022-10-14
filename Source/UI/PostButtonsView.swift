@@ -25,7 +25,7 @@ class PostButtonsView: UIView {
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.text.detail
-        label.text = Text.markdownSupported.text
+        label.text = Localized.markdownSupported.text
         return label
     }()
 

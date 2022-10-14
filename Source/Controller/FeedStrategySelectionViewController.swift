@@ -16,7 +16,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = Text.FeedAlgorithm.feedAlgorithmTitle.text
+        self.navigationItem.title = Localized.FeedAlgorithm.feedAlgorithmTitle.text
         self.updateSettings()
     }
 
@@ -33,7 +33,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
 
     private func recentPostsWithFollows() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.recentPostsWithFollowsAlgorithm.text,
+            title: Localized.FeedAlgorithm.recentPostsWithFollowsAlgorithm.text,
             valueClosure: { cell in
                 if self.selectedStrategy() is PostsAndContactsAlgorithm {
                     cell.accessoryType = .checkmark
@@ -47,15 +47,15 @@ class FeedStrategySelectionViewController: DebugTableViewController {
         )
         
         return (
-            Text.FeedAlgorithm.algorithms.text,
+            Localized.FeedAlgorithm.algorithms.text,
             [cell],
-            Text.FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription.text
+            Localized.FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription.text
         )
     }
     
     private func recentPosts() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.recentPostsAlgorithm.text,
+            title: Localized.FeedAlgorithm.recentPostsAlgorithm.text,
             valueClosure: { cell in
                 if let postsAlgorithm = self.selectedStrategy() as? PostsAlgorithm,
                     postsAlgorithm.onlyFollowed == true,
@@ -70,12 +70,12 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.FeedAlgorithm.recentPostsAlgorithmDescription.text)
+        return (nil, [cell], Localized.FeedAlgorithm.recentPostsAlgorithmDescription.text)
     }
     
     private func recentlyActivePostsWithFollows() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm.text,
+            title: Localized.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm.text,
             valueClosure: { cell in
                 if self.selectedStrategy() is RecentlyActivePostsAndContactsAlgorithm {
                     cell.accessoryType = .checkmark
@@ -88,12 +88,12 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription.text)
+        return (nil, [cell], Localized.FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription.text)
     }
     
     private func randomPosts() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.DiscoveryFeedAlgorithm.randomPostsAlgorithm.text,
+            title: Localized.DiscoveryFeedAlgorithm.randomPostsAlgorithm.text,
             valueClosure: { cell in
                 if self.selectedStrategy() is RandomAlgorithm {
                     cell.accessoryType = .checkmark
@@ -106,12 +106,12 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (nil, [cell], Text.DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription.text)
+        return (nil, [cell], Localized.DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription.text)
     }
     
     private func viewSource() -> Settings {
         let cell = DebugTableViewCellModel(
-            title: Text.FeedAlgorithm.viewAlgorithmSource.text,
+            title: Localized.FeedAlgorithm.viewAlgorithmSource.text,
             valueClosure: { cell in
                 cell.textLabel?.textColor = .systemBlue
             },
@@ -126,7 +126,7 @@ class FeedStrategySelectionViewController: DebugTableViewController {
             }
         )
         
-        return (Text.FeedAlgorithm.sourceCode.text, [cell], Text.FeedAlgorithm.sourceCodeDescription.text)
+        return (Localized.FeedAlgorithm.sourceCode.text, [cell], Localized.FeedAlgorithm.sourceCodeDescription.text)
     }
     
     // MARK: - Helpers

@@ -35,7 +35,7 @@ enum ConnectedPeerListError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .identityNotFound:
-            return Text.identityNotFound.text
+            return Localized.identityNotFound.text
         }
     }
 }

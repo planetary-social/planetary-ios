@@ -18,9 +18,9 @@ extension UIViewController {
 
     func promptToBlock(_ identity: Identity, name: String? = nil) {
 
-        let name = name ?? Text.Blocking.thisUser.text
-        let buttonTitle = Text.Blocking.buttonTitle.text(["name": name])
-        let alertTitle = Text.Blocking.alertTitle.text(["name": name])
+        let name = name ?? Localized.Blocking.thisUser.text
+        let buttonTitle = Localized.Blocking.buttonTitle.text(["name": name])
+        let alertTitle = Localized.Blocking.alertTitle.text(["name": name])
 
         var actions: [UIAlertAction] = []
         let action = UIAlertAction(title: buttonTitle, style: .destructive) {

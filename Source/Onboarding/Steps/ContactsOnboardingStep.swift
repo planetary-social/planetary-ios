@@ -16,7 +16,7 @@ class ContactsOnboardingStep: OnboardingStep {
     }
 
     override func customizeView() {
-        self.view.hintLabel.text = Text.Onboarding.contactsHint.text
+        self.view.hintLabel.text = Localized.Onboarding.contactsHint.text
         self.view.secondaryButton.setText(.notNow)
         self.view.primaryButton.setText(.connect)
     }
@@ -28,8 +28,8 @@ class ContactsOnboardingStep: OnboardingStep {
     override func performPrimaryAction(sender button: UIButton) {
         self.data.allowedContacts = true
         AppController.shared.alert(
-            title: Text.ok.text,
-            message: Text.Onboarding.contactsWIP.text
+            title: Localized.ok.text,
+            message: Localized.Onboarding.contactsWIP.text
         ) {
             [unowned self] in
             self.next()
