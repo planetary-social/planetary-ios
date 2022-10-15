@@ -207,7 +207,7 @@
 "Onboarding.iUnderstand" = "Sí, entiendo";
 "Onboarding.followPlanetaryToggleTitle" = "Sigue a Planetary";
 "Onboarding.followPlanetaryToggleDescription" = "Sigue la cuenta de Planetary para ver publicaciones de nuestro equipo.";
-"Onboarding.somethingWentWrong" = "¡Uh no! ¡Algo salió mal!";
+"Onboarding.somethingWentWrong" = "¡Oh no! ¡Algo salió mal!";
 "Onboarding.errorRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. Puedes volver a intentar o comenzar de nuevo, y por favor ven a contarnos sobre ello.";
 "Onboarding.resumeRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. En algunos casos, puede significar que tu dispositivo no se puede conectar a la red, por lo que intentar de nuevo puede ayudar.";
 "Onboarding.backupHint" = "Planetary no usa contraseñas - tienes una llave secreta que debes que guardar de forma segura. Si puedes, deberías respaldarla. Nota: esta funcionalidad está todavía en desarrollo.";
@@ -217,7 +217,7 @@
 "Onboarding.findOutMore" = "Aprende más";
 "Onboarding.thatSoundsGreat" = "¡Eso suena muy bien!";
 "Onboarding.policyStatement" = "Si continúas, confirmas que estás de acuerdo con los Términos del Servicio y Política de Privacidad";
-"Onboarding.termsOfService" = "Términos del Servicio";
+"Onboarding.termsOfService" = "Términos de Servicio";
 "Onboarding.privacyPolicy" = "Política de Privacidad";
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
 "Onboarding.welcomeBotName" = "Planetary Help";
