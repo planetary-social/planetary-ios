@@ -53,7 +53,7 @@ enum ViewDatabaseTableNames: String {
 
 class ViewDatabase {
     
-    var currentPath: String? { get { self.dbPath } }
+    var currentPath: String? { self.dbPath }
     
     private var dbPath: String?
     
@@ -1005,7 +1005,7 @@ class ViewDatabase {
     
     // who is this feed following?
     func getFollows(feed: Identity) throws -> [Identity] {
-       let db = try checkoutConnection()
+        let db = try checkoutConnection()
         
         let authorID = try self.authorID(of: feed, make: false)
         
