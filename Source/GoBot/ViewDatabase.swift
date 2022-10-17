@@ -234,12 +234,7 @@ class ViewDatabase {
         let dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(dbPath)
         
-        db.busyTimeout = 10
-        
-        try db.execute("PRAGMA journal_mode = WAL;")
-        try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
-        
-        // db.trace { print("\n\n\ntSQL: \($0)\n\n\n") } // print all the statements
+        try setUpConnection(db)
         
         try checkAndRunMigrations(on: db)
         
@@ -248,6 +243,16 @@ class ViewDatabase {
         self.currentUserID = try self.authorID(of: user, make: true)
 
         try setAllMessagesAsReadIfNeeded()
+    }
+    
+    /// Gets a db connection ready to accept commands
+    private func setUpConnection(_ connection: Connection) throws {
+        connection.busyTimeout = 30
+        try connection.execute("PRAGMA journal_mode = WAL;")
+        try connection.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
+        
+        // uncomment to print all statements
+        // connection.trace { print("\n\n\ntSQL: \($0)\n\n\n") }
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -465,7 +470,7 @@ class ViewDatabase {
         }
         
         let db = try Connection(dbPath)
-        db.busyTimeout = 30
+        try setUpConnection(db)
         return db
     }
     
