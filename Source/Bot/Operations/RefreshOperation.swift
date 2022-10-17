@@ -32,7 +32,10 @@ class RefreshOperation: AsynchronousOperation {
             return
         }
         
-        Bots.current.refresh(load: refreshLoad, queue: dispatchQueue) { [weak self, refreshLoad] (refreshResult, timeElapsed) in
+        Bots.current.refresh(
+            load: refreshLoad,
+            queue: dispatchQueue
+        ) { [weak self, refreshLoad] (refreshResult, timeElapsed) in
             var error: Error?
             if case .failure(let actualError) = refreshResult {
                 error = actualError
