@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update to Xcode 14. #839
 - Fixed incorrect aspect ratio of avatar images. #753
-
+- Fixed an issue that could cause the home feed to load slowly. #921
 
 ## [1.3.5] 2022-10-03
 
