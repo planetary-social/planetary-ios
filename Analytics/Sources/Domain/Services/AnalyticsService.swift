@@ -27,8 +27,8 @@ extension AnalyticsService {
             params[param] = value
         }
         switch event.rawValue {
-            case "did": params["type"] = "bot"
-            default: params["type"] = "user"
+        case "did": params["type"] = "bot"
+        default: params["type"] = "user"
         }
         
         self.track(event: event, element: element, name: name, params: params)
