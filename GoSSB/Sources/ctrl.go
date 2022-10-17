@@ -3,6 +3,8 @@ package main
 import "C"
 import (
 	"context"
+	"encoding/json"
+	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain/network"
 	"github.com/planetary-social/scuttlego/service/domain/refs"
 	"github.com/planetary-social/scuttlego/service/domain/rooms/aliases"
@@ -392,7 +394,7 @@ func ssbDropIndexData() bool {
 
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
-	return true
+	return true // todo
 	var err error
 	defer logError("ssbInviteAccept", &err)
 
@@ -489,131 +491,86 @@ func ssbRoomsAliasRevoke(addressString, aliasString string) bool {
 	var err error
 	defer logError("ssbRoomsAliasRevoke", &err)
 
-	//service, err := node.Get()
-	//if err != nil {
-	//	err = errors.Wrap(err, "could not get the node")
-	//	return false
-	//}
-	//
-	//addr, identity, err := multiserverAddressToAddressAndRef(addressString)
-	//if err != nil {
-	//	err = errors.Wrap(err, "error parsing the address")
-	//	return false
-	//}
-	//
-	//alias, err := aliases.NewAlias(aliasString)
-	//if err != nil {
-	//	err = errors.Wrap(err, "could not create an alias")
-	//	return false
-	//}
-	//
-	//cmd, err := commands.NewRoomsAliasRevoke(identity, addr, alias)
-	//if err != nil {
-	//	err = errors.Wrap(err, "could not create the command")
-	//	return false
-	//}
-	//
-	//ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second)
-	//defer cancel()
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return false
+	}
 
-	//r := service.App.Commands.RoomsAliasRegister.Handle(ctx, cmd)
-	//if err != nil {
-	//	err = errors.Wrap(err, "error calling the handler")
-	//	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	//}
+	addr, identity, err := multiserverAddressToAddressAndRef(addressString)
+	if err != nil {
+		err = errors.Wrap(err, "error parsing the address")
+		return false
+	}
 
-	// todo command is not exposed
+	alias, err := aliases.NewAlias(aliasString)
+	if err != nil {
+		err = errors.Wrap(err, "could not create an alias")
+		return false
+	}
 
-	return false
-	//defer logPanic()
-	//
-	//var retErr error
-	//defer func() {
-	//	if retErr != nil {
-	//		level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
-	//	}
-	//}()
-	//
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot == nil {
-	//	retErr = ErrNotInitialized
-	//	return false
-	//}
-	//
-	//ctx, cancel := context.WithCancel(longCtx)
-	//defer cancel()
-	//
-	//opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
-	//
-	//netAddress, err := multiserver.ParseNetAddress([]byte(address))
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "could not parse the address")
-	//	return false
-	//}
-	//
-	//inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "failed to create a tcp client")
-	//	return false
-	//}
-	//defer inviteClient.Close()
-	//
-	//var ret string
-	//err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "revokeAlias"}, alias)
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "async call failed")
-	//	return false
-	//}
-	//
-	//return true
+	cmd, err := commands.NewRoomsAliasRevoke(identity, addr, alias)
+	if err != nil {
+		err = errors.Wrap(err, "could not create the command")
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second) // todo
+	defer cancel()
+
+	err = service.App.Commands.RoomsAliasRevoke.Handle(ctx, cmd)
+	if err != nil {
+		err = errors.Wrap(err, "error calling the handler")
+		return false
+	}
+
+	return true
 }
 
 //export ssbRoomsListAliases
-func ssbRoomsListAliases(address string) *C.char {
-	return nil
-	//defer logPanic()
-	//
-	//var retErr error
-	//defer func() {
-	//	if retErr != nil {
-	//		level.Error(log).Log("where", "ssbRoomsListAliases", "err", retErr)
-	//	}
-	//}()
-	//
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot == nil {
-	//	retErr = ErrNotInitialized
-	//	return nil
-	//}
-	//
-	//ctx, cancel := context.WithCancel(longCtx)
-	//defer cancel()
-	//
-	//opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
-	//
-	//netAddress, err := multiserver.ParseNetAddress([]byte(address))
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "could not parse the address")
-	//	return nil
-	//}
-	//
-	//inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "failed to create a tcp client")
-	//	return nil
-	//}
-	//defer inviteClient.Close()
-	//
-	//var ret string
-	//err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"room", "listAliases"}, sbot.KeyPair.ID())
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "list aliases rpc call error")
-	//	return nil
-	//}
-	//
-	//return C.CString(ret)
+func ssbRoomsListAliases(addressString string) *C.char {
+	var err error
+	defer logError("ssbRoomsListAliases", &err)
+
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return nil
+	}
+
+	addr, identity, err := multiserverAddressToAddressAndRef(addressString)
+	if err != nil {
+		err = errors.Wrap(err, "error parsing the address")
+		return nil
+	}
+
+	query, err := queries.NewRoomsListAliases(identity, addr)
+	if err != nil {
+		err = errors.Wrap(err, "could not create the command")
+		return nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second) // todo
+	defer cancel()
+
+	aliases, err := service.App.Queries.RoomsListAliases.Handle(ctx, query)
+	if err != nil {
+		err = errors.Wrap(err, "error calling the handler")
+		return nil
+	}
+
+	result := make([]string, 0)
+	for _, alias := range aliases {
+		result = append(result, alias.String())
+	}
+
+	j, err := json.Marshal(result)
+	if err != nil {
+		err = errors.Wrap(err, "error marshaling the result")
+		return nil
+	}
+
+	return C.CString(string(j))
 }
 
 func multiserverAddressToAddressAndRef(multiserverAddress string) (network.Address, refs.Identity, error) {
