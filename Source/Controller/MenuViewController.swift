@@ -30,7 +30,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     
     private lazy var connectedPeersViewController: UIViewController = {
         let bot = Bots.current
-        let viewModel = ConnectedPeerListCoordinator(
+        let viewModel = ConnectedPeerListController(
             bot: bot,
             statisticsService: BotStatisticsServiceAdaptor(bot: bot),
             router: self

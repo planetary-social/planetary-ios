@@ -100,7 +100,7 @@ class SettingsViewController: DebugTableViewController {
                     cell.accessoryType = .disclosureIndicator
                 },
                 actionClosure: { [weak self] _ in
-                    let viewModel = RoomAliasCoordinator(bot: Bots.current)
+                    let viewModel = RoomAliasController(bot: Bots.current)
                     let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
                     self?.navigationController?.pushViewController(controller, animated: true)
                 }
@@ -237,7 +237,7 @@ class SettingsViewController: DebugTableViewController {
                     cell.accessoryType = .disclosureIndicator
                 },
                 actionClosure: { [weak self] _ in
-                    let viewModel = RoomListCoordinator(bot: Bots.current)
+                    let viewModel = RoomListController(bot: Bots.current)
                     let controller = UIHostingController(rootView: RoomListView(viewModel: viewModel))
                     self?.navigationController?.pushViewController(controller, animated: true)
                 }
