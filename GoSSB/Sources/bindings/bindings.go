@@ -163,12 +163,12 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 
 	messageHMACBytes, err := base64.StdEncoding.DecodeString(swiftConfig.HMACKey)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to decode network key")
+		return di.Config{}, errors.Wrap(err, "failed to decode message hmac")
 	}
 
 	messageHMAC, err := formats.NewMessageHMAC(messageHMACBytes)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to create network key")
+		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
 	dataDirectory := path.Join(swiftConfig.Repo, "raptor")
