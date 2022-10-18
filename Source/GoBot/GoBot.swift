@@ -1641,13 +1641,6 @@ class GoBot: Bot {
             let sequence = try? self.database.stats(table: .messagekeys)
 
             var ownMessages = -1
-            self.numberOfPublishedMessagesLock.lock()
-            if let identity = self._identity, let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
-                ownMessages = ownMessageCount
-                self.saveNumberOfPublishedMessages(from: self._statistics.repo)
-            }
-            self.numberOfPublishedMessagesLock.unlock()
-            
             var feedCount: Int = -1
             if let rawFeedCount = counts?.feeds {
                 feedCount = Int(rawFeedCount)
@@ -1663,6 +1656,12 @@ class GoBot: Bot {
                 numberOfPublishedMessages: ownMessages,
                 lastHash: counts?.lastHash ?? ""
             )
+            self.numberOfPublishedMessagesLock.lock()
+            if let identity = self._identity, let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
+                ownMessages = ownMessageCount
+                self.saveNumberOfPublishedMessages(from: self._statistics.repo)
+            }
+            self.numberOfPublishedMessagesLock.unlock()
 
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()
