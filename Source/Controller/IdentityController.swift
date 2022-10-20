@@ -11,6 +11,7 @@ import UIKit
 import Analytics
 import Logger
 import CrashReporting
+import Support
 
 /// A coordinator for `IdentityView`
 @MainActor class IdentityController: IdentityViewModel {
@@ -64,6 +65,29 @@ import CrashReporting
                 await self?.updateErrorMessage(error.localizedDescription)
             }
         }
+    }
+
+    func block() {
+        Analytics.shared.trackDidSelectAction(actionName: "block_identity")
+        AppController.shared.promptToBlock(identity, name: about?.name)
+    }
+
+    func report() {
+        guard let currentIdentity = bot.identity else {
+            return
+        }
+        Analytics.shared.trackDidSelectAction(actionName: "report_user")
+        let profile = AbusiveProfile(identifier: identity, name: about?.name)
+        let newTicketVC = Support.shared.newTicketViewController(reporter: currentIdentity, profile: profile)
+        guard let controller = newTicketVC else {
+            AppController.shared.alert(
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
+            )
+            return
+        }
+        AppController.shared.push(controller)
     }
 
     func hashtagTapped(_ hashtag: Hashtag) {

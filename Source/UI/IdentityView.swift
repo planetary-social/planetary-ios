@@ -32,6 +32,10 @@ import SwiftUI
 
     func followButtonTapped()
 
+    func block()
+
+    func report()
+
     func hashtagTapped(_ hashtag: Hashtag)
 
     func socialTraitTapped(_ trait: SocialStatsView.Trait)
@@ -218,10 +222,10 @@ struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
                 }
                 .confirmationDialog(Localized.share.text, isPresented: $showingActionOptions) {
                     Button(Localized.blockUser.text, role: .destructive) {
-                        viewModel.sharePublicIdentifier()
+                        viewModel.block()
                     }
                     Button(Localized.reportUser.text, role: .destructive) {
-                        viewModel.shareThisProfile()
+                        viewModel.report()
                     }
                 }
             }
@@ -294,6 +298,8 @@ fileprivate class PreviewViewModel: IdentityViewModel {
     func hashtagTapped(_ hashtag: Hashtag) { }
     func followButtonTapped() { }
     func shareThisProfile() { }
+    func block() { }
+    func report() { }
     func sharePublicIdentifier() { }
     func socialTraitTapped(_ trait: SocialStatsView.Trait) { }
 }
