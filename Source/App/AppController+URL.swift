@@ -114,7 +114,7 @@ extension AppController {
     func pushViewController(for contentType: ContentType,
                             with identity: Identity) {
         guard contentType == .about else { return }
-        let view = IdentityView(viewModel: IdentityCoordinator(identity: identity, bot: Bots.current))
+        let view = IdentityView(viewModel: IdentityController(identity: identity, bot: Bots.current))
         let controller = UIHostingController(rootView: view)
         self.push(controller, animated: true)
     }

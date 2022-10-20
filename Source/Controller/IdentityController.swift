@@ -1,5 +1,5 @@
 //
-//  IdentityCoordinator.swift
+//  IdentityController.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 30/9/22.
@@ -12,8 +12,8 @@ import Analytics
 import Logger
 import CrashReporting
 
-/// A coordinator for the `RawMessageView`
-@MainActor class IdentityCoordinator: IdentityViewModel {
+/// A coordinator for `IdentityView`
+@MainActor class IdentityController: IdentityViewModel {
 
     @Published var identity: Identity
 

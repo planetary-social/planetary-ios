@@ -87,7 +87,7 @@ class PostReplyPaginatedDelegate: MessagePaginatedTableViewDelegate {
             guard let identity = message.content.contact?.identity else {
                 return nil
             }
-            let view = IdentityView(viewModel: IdentityCoordinator(identity: identity, bot: Bots.current))
+            let view = IdentityView(viewModel: IdentityController(identity: identity, bot: Bots.current))
             let controller = UIHostingController(rootView: view)
             return controller
         case .vote:
