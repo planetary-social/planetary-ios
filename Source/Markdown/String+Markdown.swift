@@ -12,17 +12,22 @@ import Logger
 import CrashReporting
 
 extension String {
-    
-    func decodeMarkdown(small: Bool = false) -> NSAttributedString {
+
+    func parseMarkdown() -> AttributedString {
+        AttributedString(decodeMarkdown(host: "planetary://planetary.link/"))
+    }
+
+    func decodeMarkdown(small: Bool = false, host: String = "") -> NSAttributedString {
         let down = Down(markdownString: self)
         let styler = MarkdownStyler(small: small)
         do {
             let attributedString = try down.toAttributedString(.default,
                                                                styler: styler)
             let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
-            addHashtagsLinks(in: mutableAttributedString, styler: styler)
+            fixFormattedLinks(in: mutableAttributedString, styler: styler, host: host)
+            addHashtagsLinks(in: mutableAttributedString, styler: styler, host: host)
             addUnformattedLinks(in: mutableAttributedString, styler: styler)
-            addUnformattedMentions(in: mutableAttributedString, styler: styler)
+            addUnformattedMentions(in: mutableAttributedString, styler: styler, host: host)
             return mutableAttributedString
         } catch {
             Log.optional(error)
@@ -31,12 +36,25 @@ extension String {
         }
     }
 
-    func addHashtagsLinks(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler) {
+    func fixFormattedLinks(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler, host: String = "") {
+        let wholeRange = NSRange(mutableAttributedString.string.startIndex..., in: mutableAttributedString.string)
+        mutableAttributedString.enumerateAttribute(.link, in: wholeRange) { value, range, pointee in
+            guard let url = value as? String else {
+                return
+            }
+            if url.isValidIdentifier {
+                mutableAttributedString.removeAttribute(.link, range: range)
+                mutableAttributedString.addAttribute(.link, value: url.deepLink, range: range)
+            }
+        }
+    }
+
+    func addHashtagsLinks(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler, host: String = "") {
         let hashtags = mutableAttributedString.string.hashtagsWithRanges()
         for (hashtag, range) in hashtags.reversed() {
             let attributedHashtag = mutableAttributedString.attributedSubstring(from: range)
             let mutableAttributedHashtag = NSMutableAttributedString(attributedString: attributedHashtag)
-            styler.style(link: mutableAttributedHashtag, title: hashtag.string, url: hashtag.string)
+            styler.style(link: mutableAttributedHashtag, title: hashtag.string, url: host + hashtag.string)
             mutableAttributedString.replaceCharacters(in: range, with: mutableAttributedHashtag)
         }
     }
@@ -70,7 +88,7 @@ extension String {
         }
     }
     
-    func addUnformattedMentions(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler) {
+    func addUnformattedMentions(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler, host: String = "") {
         let string = mutableAttributedString.string
         let range = NSRange(location: 0, length: string.utf16.count)
         let pattern = "[@%&][a-zA-Z0-9+/=]{44}\\.[a-z0-9]+"
@@ -92,7 +110,7 @@ extension String {
             }
             let attributedLink = mutableAttributedString.attributedSubstring(from: range)
             let mutableAttributedLink = NSMutableAttributedString(attributedString: attributedLink)
-            styler.style(link: mutableAttributedLink, title: nil, url: attributedLink.string)
+            styler.style(link: mutableAttributedLink, title: nil, url: host + attributedLink.string)
             mutableAttributedString.replaceCharacters(in: range, with: mutableAttributedLink)
         }
     }

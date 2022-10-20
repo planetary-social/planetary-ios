@@ -126,11 +126,11 @@ class FakeBot: Bot {
 
     func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) { }
     
-    func follows(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func follows(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
     
     func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     
-    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func followedBy(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
 
     func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     

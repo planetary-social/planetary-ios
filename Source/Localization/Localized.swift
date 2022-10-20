@@ -114,6 +114,7 @@ enum Localized: String, Localizable, CaseIterable {
 
     case deleteSecretAndIdentity = "Delete this secret and identity"
 
+    case followBack = "Follow back"
     case follow = "Follow"
     case following = "Following"
     case followedBy = "Followed By"

@@ -330,7 +330,7 @@ class GoBotOrderedTests: XCTestCase {
 
         for tc in whoFollowsWho {
             let ex = self.expectation(description: "\(#function) follow \(tc)")
-            GoBotOrderedTests.shared.follows(identity: GoBotOrderedTests.pubkeys[tc.key]!) {
+            GoBotOrderedTests.shared.follows(identity: GoBotOrderedTests.pubkeys[tc.key]!, queue: .main) {
                 contacts, err in
                 XCTAssertNil(err, "err for \(tc.key)")
                 XCTAssertEqual(contacts.count, tc.value.count, "wrong number of follows for \(tc.key)")
@@ -352,7 +352,7 @@ class GoBotOrderedTests: XCTestCase {
         ]
         for tc in whoIsFollowedByWho {
             let ex = self.expectation(description: "\(#function) check \(tc)")
-            GoBotOrderedTests.shared.followedBy(identity: GoBotOrderedTests.pubkeys[tc.key]!) {
+            GoBotOrderedTests.shared.followedBy(identity: GoBotOrderedTests.pubkeys[tc.key]!, queue: .main) {
                 contacts, err in
                 XCTAssertNil(err, "err for \(tc.key)")
                 XCTAssertEqual(contacts.count, tc.value.count, "wrong number of follows for \(tc.key)")

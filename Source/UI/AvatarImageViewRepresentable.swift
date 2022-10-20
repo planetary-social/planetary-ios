@@ -27,5 +27,6 @@ struct AvatarImageViewRepresentable: UIViewRepresentable {
     func updateUIView(_ uiView: AvatarImageView, context: Context) {
         uiView.set(image: metadata, animated: false)
         uiView.setNeedsLayout()
+        uiView.layoutIfNeeded()
     }
 }

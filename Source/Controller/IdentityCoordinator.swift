@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Analytics
 import Logger
+import CrashReporting
 
 /// A coordinator for the `RawMessageView`
 @MainActor class IdentityCoordinator: IdentityViewModel {
@@ -37,11 +38,49 @@ import Logger
     }
 
     func followButtonTapped() {
-
+        guard let relationship = relationship else {
+            return
+        }
+        Task.detached { [bot, identity, weak self] in
+            Analytics.shared.trackDidTapButton(buttonName: "follow")
+            do {
+                if relationship.isBlocking {
+                    try await bot.block(identity: identity)
+                    Analytics.shared.trackDidBlockIdentity()
+                    relationship.isBlocking = false
+                } else {
+                    if relationship.isFollowing {
+                        try await bot.unfollow(identity: identity)
+                        Analytics.shared.trackDidUnfollowIdentity()
+                        relationship.isFollowing = false
+                    } else {
+                        try await bot.follow(identity: identity)
+                        Analytics.shared.trackDidFollowIdentity()
+                        relationship.isFollowing = true
+                    }
+                }
+                await self?.updateRelationship(relationship)
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await self?.updateErrorMessage(error.localizedDescription)
+            }
+        }
     }
 
     func hashtagTapped(_ hashtag: Hashtag) {
+        AppController.shared.open(string: hashtag.string)
+    }
 
+    func socialTraitTapped(_ trait: SocialStatsView.Trait) {
+        switch trait {
+        case .followers:
+            AppController.shared.push(FollowerTableViewController(identity: identity))
+        case .follows:
+            AppController.shared.push(FollowingTableViewController(identity: identity))
+        default:
+            break
+        }
     }
 
     func didDismiss() {
@@ -55,6 +94,16 @@ import Logger
 
     func shareThisProfile() {
         Analytics.shared.trackDidSelectAction(actionName: "share_profile")
+
+        if let imageMetadata = about?.image, let image = Caches.blobs.image(for: imageMetadata.link) {
+            let activityController = UIActivityViewController(
+                activityItems: [image],
+                applicationActivities: nil
+            )
+            activityController.configurePopover(from: nil)
+            AppController.shared.present(activityController, animated: true)
+            return
+        }
 
         let nameOrIdentity = about?.name ?? identity
         let text = Localized.shareThisProfileText.text([
@@ -116,34 +165,37 @@ import Logger
 
             if let currentIdentity = Bots.current.identity {
                 do {
-                    let followers = try await Bots.current.followers(identity: currentIdentity)
-                    let followings = try await Bots.current.followings(identity: currentIdentity)
+                    let followers: [Identity] = try await Bots.current.followers(identity: currentIdentity)
+                    let followings: [Identity] = try await Bots.current.followings(identity: currentIdentity)
                     let blocks = try await Bots.current.blocks(identity: currentIdentity)
                     let relationship = Relationship(from: currentIdentity, to: identity)
-                    relationship.isFollowing = followings.contains(where: { $0.identity == identity })
+                    relationship.isFollowing = followings.contains(identity)
                     relationship.isBlocking = blocks.contains(identity)
-                    relationship.isFollowedBy = false
+                    relationship.isFollowedBy = followers.contains(identity)
                     await self?.updateRelationship(relationship)
                 } catch {
 
                 }
             }
+
             do {
-                let followers = try await Bots.current.followers(identity: identity)
-                let followings = try await Bots.current.followings(identity: identity)
+                let followers: [Identity] = try await Bots.current.followers(identity: identity)
+                let someFollowers = try await Bots.current.abouts(identities: Array(followers.prefix(2)))
+                let followings: [Identity] = try await Bots.current.followings(identity: identity)
+                let someFollowings = try await Bots.current.abouts(identities: Array(followings.prefix(2)))
                 let blocks = try await Bots.current.blocks(identity: identity)
                 let someBlocks = try await Bots.current.abouts(identities: Array(blocks.prefix(2)))
-                let pubs = try await Bots.current.pubs(joinedBy: identity)
-                let somePubs = try await Bots.current.abouts(identities: pubs.prefix(2).map { $0.address.key })
+                let pubs = try await Bots.current.pubs(joinedBy: identity).map { $0.address.key }
+                let somePubs = try await Bots.current.abouts(identities: Array(pubs.prefix(2)))
                 await self?.updateSocialStats(ExtendedSocialStats(
                     numberOfFollowers: followers.count,
-                    followers: followers.prefix(2).compactMap { $0.image },
+                    followers: someFollowers.map { $0?.image },
                     numberOfFollows: followings.count,
-                    follows: followings.prefix(2).compactMap { $0.image },
+                    follows: someFollowings.map { $0?.image },
                     numberOfBlocks: blocks.count,
-                    blocks: someBlocks.compactMap { $0?.image },
+                    blocks: someBlocks.map { $0?.image },
                     numberOfPubServers: pubs.count,
-                    pubServers: somePubs.compactMap { $0?.image }
+                    pubServers: somePubs.map { $0?.image }
                 ))
             } catch {
 

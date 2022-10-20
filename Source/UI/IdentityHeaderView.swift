@@ -27,9 +27,10 @@ struct IdentityHeaderView<ViewModel>: View where ViewModel: IdentityViewModel {
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                     .frame(width: 92, height: 92)
                     .overlay(
-                        AvatarImageViewRepresentable(metadata: viewModel.about?.image, animated: true)
-                            .scaledToFit()
+                        ImageMetadataView(metadata: viewModel.about?.image)
+                            .cornerRadius(99)
                             .frame(width: 87, height: 87)
+                            .scaledToFill()
                     )
                 VStack(alignment: .leading, spacing: 6) {
                     SwiftUI.Text(viewModel.about?.nameOrIdentity ?? viewModel.identity)
@@ -40,47 +41,22 @@ struct IdentityHeaderView<ViewModel>: View where ViewModel: IdentityViewModel {
                             .font(.system(size: 12))
                             .foregroundColor(Color("secondary-txt"))
                     }
-                    if let relationship = viewModel.relationship {
-                        Button {
-                            viewModel.followButtonTapped()
-                        } label: {
-                            Label(Localized.follow.text, image: "button-follow")
-                                .font(.system(size: 13))
-                                .foregroundColor(Color.white)
-                                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                                .background(
-                                    LinearGradient(
-                                        colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                    .cornerRadius(17)
-                                )
-                        }
-                        .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                    } else {
-                        Rectangle().fill(
-                            LinearGradient(
-                                colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: 96, height: 33)
-                        .cornerRadius(17)
-                        .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    RelationshipView(relationship: viewModel.relationship) {
+                        viewModel.followButtonTapped()
                     }
+                    .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 }
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .topLeading)
             if extended {
                 if let bio = viewModel.about?.description {
-                    SwiftUI.Text(bio)
+                    SwiftUI.Text(bio.parseMarkdown())
                         .font(.system(size: 14))
                         .foregroundColor(Color("primary-txt"))
                         .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
+                        .lineLimit(10)
                 } else if viewModel.about == nil {
                     SwiftUI.Text(String.loremIpsum(1))
                         .font(.system(size: 14))
@@ -105,7 +81,9 @@ struct IdentityHeaderView<ViewModel>: View where ViewModel: IdentityViewModel {
                     .redacted(reason: viewModel.hashtags == nil ? .placeholder : [])
                 }
 
-                SocialStatsView(socialStats: viewModel.socialStats ?? .zero)
+                SocialStatsView(socialStats: viewModel.socialStats ?? .zero) { trait in
+                    viewModel.socialTraitTapped(trait)
+                }
                 .frame(maxWidth: .infinity)
                 .redacted(reason: viewModel.socialStats == nil ? .placeholder : [])
             }
@@ -205,6 +183,10 @@ fileprivate class PreviewViewModel: IdentityViewModel {
     func didDismiss() {}
 
     func hashtagTapped(_ hashtag: Hashtag) { }
+
+    func socialTraitTapped(_ trait: SocialStatsView.Trait) {
+
+    }
 
     func followButtonTapped() { }
 

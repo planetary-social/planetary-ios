@@ -167,8 +167,8 @@ protocol Bot: AnyObject {
     func follow(_ identity: Identity, completion: @escaping ContactCompletion)
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion)
 
-    func follows(identity: Identity, completion:  @escaping ContactsCompletion)
-    func followedBy(identity: Identity, completion:  @escaping ContactsCompletion)
+    func follows(identity: Identity, queue: DispatchQueue, completion:  @escaping ContactsCompletion)
+    func followedBy(identity: Identity, queue: DispatchQueue, completion:  @escaping ContactsCompletion)
     
     func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
     func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
@@ -395,6 +395,54 @@ extension Bot {
         self.abouts(queue: .main, completion: completion)
     }
 
+    func follow(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            follow(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func unfollow(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            unfollow(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func block(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            block(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func unblock(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            unblock(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
     func followers(identity: Identity, completion:  @escaping AboutsCompletion) {
         self.followers(identity: identity, queue: .main, completion: completion)
     }
@@ -411,6 +459,18 @@ extension Bot {
         }
     }
 
+    func followers(identity: Identity) async throws -> [Identity] {
+        try await withCheckedThrowingContinuation { continuation in
+            followedBy(identity: identity, queue: .global(qos: .background)) { identities, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: identities)
+                }
+            }
+        }
+    }
+
     func followings(identity: Identity, completion:  @escaping AboutsCompletion) {
         self.followings(identity: identity, queue: .main, completion: completion)
     }
@@ -422,6 +482,18 @@ extension Bot {
                     continuation.resume(throwing: error)
                 } else {
                     continuation.resume(returning: abouts)
+                }
+            }
+        }
+    }
+
+    func followings(identity: Identity) async throws -> [Identity] {
+        try await withCheckedThrowingContinuation { continuation in
+            follows(identity: identity, queue: .global(qos: .background)) { identities, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: identities)
                 }
             }
         }

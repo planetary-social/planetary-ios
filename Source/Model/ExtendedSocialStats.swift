@@ -17,22 +17,22 @@ struct ExtendedSocialStats {
     /// The total number of followers of an identity
     var numberOfFollowers: Int
 
-    var followers: [ImageMetadata]
+    var followers: [ImageMetadata?]
 
     /// The total number of follows of an identity
     var numberOfFollows: Int
 
-    var follows: [ImageMetadata]
+    var follows: [ImageMetadata?]
 
     /// The total number of blocks of an identity
     var numberOfBlocks: Int
 
-    var blocks: [ImageMetadata]
+    var blocks: [ImageMetadata?]
 
     /// The total number of pub servers an identity joined
     var numberOfPubServers: Int
 
-    var pubServers: [ImageMetadata]
+    var pubServers: [ImageMetadata?]
 
     static var zero: ExtendedSocialStats {
         ExtendedSocialStats(

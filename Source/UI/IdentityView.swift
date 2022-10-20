@@ -37,6 +37,8 @@ import SwiftUI
 
     func hashtagTapped(_ hashtag: Hashtag)
 
+    func socialTraitTapped(_ trait: SocialStatsView.Trait)
+
     func sharePublicIdentifier()
 
     func shareThisProfile()
@@ -54,7 +56,8 @@ struct ScrollViewOffsetPreferenceKey: PreferenceKey {
 
 struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
     @ObservedObject var viewModel: ViewModel
-    @State private var showingOptions = false
+    @State private var showingShareOptions = false
+    @State private var showingActionOptions = false
     @State private var extendedHeader = true
     @State private var oldScrollViewOffset = ScrollViewOffsetPreferenceKey.defaultValue
 
@@ -140,11 +143,11 @@ struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
-                    showingOptions = true
+                    showingShareOptions = true
                 } label: {
                     Image("icon-share")
                 }
-                .confirmationDialog(Localized.share.text, isPresented: $showingOptions) {
+                .confirmationDialog(Localized.share.text, isPresented: $showingShareOptions) {
                     Button(Localized.sharePublicIdentifier.text) {
                         viewModel.sharePublicIdentifier()
                     }
@@ -153,9 +156,18 @@ struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
                     }
                 }
                 Button {
-                    viewModel.didDismiss()
+                    showingActionOptions = true
                 } label: {
                     Image("icon-options-off")
+                }
+                .confirmationDialog(Localized.share.text, isPresented: $showingActionOptions) {
+                    Button(Localized.blockUser.text, role: .destructive) {
+                        viewModel.sharePublicIdentifier()
+                    }
+
+                    Button(Localized.reportUser.text, role: .destructive) {
+                        viewModel.shareThisProfile()
+                    }
                 }
             }
         }
@@ -238,6 +250,8 @@ fileprivate class PreviewViewModel: IdentityViewModel {
     func sharePublicIdentifier() {
 
     }
+
+    func socialTraitTapped(_ trait: SocialStatsView.Trait) { }
 
 
 }

@@ -1192,26 +1192,24 @@ class GoBot: Bot {
         }
     }
 
-    func follows(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+    func follows(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let follows: [Identity] = try self.database.getFollows(feed: identity)
-                DispatchQueue.main.async { completion(follows, nil) }
+                queue.async { completion(follows, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                queue.async { completion([], error) }
             }
         }
     }
     
-    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+    func followedBy(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
-                DispatchQueue.main.async { completion(follows, nil) }
+                queue.async { completion(follows, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                queue.async { completion([], error) }
             }
         }
     }

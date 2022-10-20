@@ -12,27 +12,38 @@ struct SocialStatsView: View {
 
     var socialStats: ExtendedSocialStats
 
+    var onTraitTapHandler: ((SocialStatsView.Trait) -> Void)?
+
+    enum Trait {
+        case followers
+        case follows
+        case ignores
+        case pubs
+    }
+
     var body: some View {
         HStack(alignment: .center, spacing: 18) {
             tab(
                 label: .followedBy,
                 value: socialStats.numberOfFollowers,
-                avatars: socialStats.followers
-            )
+                avatars: socialStats.followers.map { $0 ?? ImageMetadata(link: .null) }
+            ).onTapGesture {
+                onTraitTapHandler?(.followers)
+            }
             tab(
                 label: .following,
                 value: socialStats.numberOfFollows,
-                avatars: socialStats.follows
+                avatars: socialStats.follows.map { $0 ?? ImageMetadata(link: .null) }
             )
             tab(
                 label: .blocking,
                 value: socialStats.numberOfBlocks,
-                avatars: socialStats.blocks
+                avatars: socialStats.blocks.map { $0 ?? ImageMetadata(link: .null) }
             )
             tab(
                 label: .pubServers,
                 value: socialStats.numberOfPubServers,
-                avatars: socialStats.pubServers
+                avatars: socialStats.pubServers.map { $0 ?? ImageMetadata(link: .null) }
             )
         }
         .padding(EdgeInsets(top: 9, leading: 18, bottom: 18, trailing: 18))
@@ -41,8 +52,9 @@ struct SocialStatsView: View {
     private func tab(label: Localized, value: Int, avatars: [ImageMetadata]) -> some View {
         VStack {
             ZStack(alignment: .leading) {
-                ForEach(avatars.indices) { index in
-                    AvatarImageViewRepresentable(metadata: avatars[index], animated: true)
+                ForEach(Array(zip(avatars.indices, avatars)), id: \.0) { index, avatar in
+                    ImageMetadataView(metadata: avatar)
+                        .cornerRadius(99)
                         .scaledToFit()
                         .frame(width: 26, height: 26)
                         .offset(x: matrix(avatars.count)[index] * 8.0, y: 0)

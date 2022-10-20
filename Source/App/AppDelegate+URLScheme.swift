@@ -14,11 +14,15 @@ extension AppDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        if url.scheme == URL.planetaryScheme,
-            let tab = MainTab(urlPath: url.path) {
-            let show = MainTab.createShowClosure(for: tab)
-            show()
-            return true
+        if url.scheme == URL.planetaryScheme {
+            if let tab = MainTab(urlPath: url.path) {
+                let show = MainTab.createShowClosure(for: tab)
+                show()
+                return true
+            } else if let deepURL = URL(string: String(url.path.dropFirst())) {
+                AppController.shared.open(url: deepURL)
+                return true
+            }
         }
         
         if url.scheme == URL.ssbScheme {

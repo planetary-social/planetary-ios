@@ -36,13 +36,13 @@ class Relationship {
         let group = DispatchGroup()
 
         group.enter()
-        Bots.current.follows(identity: self.identity) { (contacts: [Identity], _) in
+        Bots.current.follows(identity: self.identity, queue: .main) { (contacts: [Identity], _) in
             self.isFollowing = contacts.contains(where: { $0 == self.other })
             group.leave()
         }
 
         group.enter()
-        Bots.current.followedBy(identity: self.identity) { contacts, _ in
+        Bots.current.followedBy(identity: self.identity, queue: .main) { contacts, _ in
             self.isFollowedBy = contacts.contains(where: { $0 == self.other })
             group.leave()
         }
