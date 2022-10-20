@@ -76,13 +76,15 @@ struct RepoStatistics: Equatable {
     /// Last message in the repo
     let lastHash: String
 
-    init(path: String? = nil,
-		 identity: Identity? = nil,
-         feedCount: Int = -1,
-         messageCount: Int = 0,
-         numberOfPublishedMessages: Int = 0,
-         lastHash: String = "") {
-		self.identity = identity
+    init(
+        path: String? = nil,
+        identity: Identity? = nil,
+        feedCount: Int = -1,
+        messageCount: Int = 0,
+        numberOfPublishedMessages: Int = 0,
+        lastHash: String = ""
+    ) {
+        self.identity = identity
         self.path = path ?? "unknown"
         self.feedCount = feedCount
         self.messageCount = messageCount
