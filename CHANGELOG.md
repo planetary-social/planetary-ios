@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update to Xcode 14. #839
 - Fixed incorrect aspect ratio of avatar images. #753
+- Fixes bug where the number of published messages is calculated incorrectly which causes a forked feed protection error message to be displayed. #611 #923
 
 
 ## [1.3.5] 2022-10-03
