@@ -27,8 +27,6 @@ import CrashReporting
 
     @Published var relationship: Relationship?
 
-    @Published var loadingMessage: String?
-
     @Published var errorMessage: String?
 
     init(identity: Identity, bot: Bot) {
@@ -132,7 +130,6 @@ import CrashReporting
     
     private func updateAbout(_ about: About?) {
         self.about = about
-        self.loadingMessage = nil
     }
 
     private func updateSocialStats(_ socialStats: ExtendedSocialStats) {
@@ -149,17 +146,16 @@ import CrashReporting
 
     private func updateErrorMessage(_ errorMessage: String) {
         self.errorMessage = errorMessage
-        self.loadingMessage = nil
     }
 
     private func loadAbout() {
-        loadingMessage = Localized.loading.text
         Task.detached { [bot, identity, weak self] in
             do {
                 let about = try await bot.about(identity: identity)
                 await self?.updateAbout(about)
             } catch {
                 Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 await self?.updateErrorMessage(error.localizedDescription)
             }
 
@@ -174,7 +170,9 @@ import CrashReporting
                     relationship.isFollowedBy = followers.contains(identity)
                     await self?.updateRelationship(relationship)
                 } catch {
-
+                    Log.optional(error)
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    await self?.updateErrorMessage(error.localizedDescription)
                 }
             }
 
@@ -198,7 +196,9 @@ import CrashReporting
                     pubServers: somePubs.map { $0?.image }
                 ))
             } catch {
-
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await self?.updateErrorMessage(error.localizedDescription)
             }
 
             var hashtags = [Hashtag]()
@@ -206,7 +206,9 @@ import CrashReporting
                 hashtags = try await Bots.current.hashtags(usedBy: identity, limit: 3)
                 await self?.updateHashtags(hashtags)
             } catch {
-
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await self?.updateErrorMessage(error.localizedDescription)
             }
         }
     }
