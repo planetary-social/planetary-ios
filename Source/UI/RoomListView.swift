@@ -26,7 +26,7 @@ import SwiftUI
     /// Tries to add a room to the database from an invitation link or multiserver address string.
     func addRoom(from: String)
     
-    /// Tells the coordinator that the user wants to open the given room.
+    /// Tells the controller that the user wants to open the given room.
     func open(_ room: Room)
     
     /// Called when the user dismisses the shown error message. Should clear `errorMessage`.

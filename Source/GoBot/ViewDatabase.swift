@@ -414,6 +414,12 @@ class ViewDatabase {
                 )
                 db.userVersion = 21
             }
+            if db.userVersion == 21 {
+                try db.execute(
+                    "CREATE INDEX posts_by_activity ON messages(last_activity_time, type, is_decrypted, claimed_at)"
+                )
+                db.userVersion = 22
+            }
         }
     }
 
