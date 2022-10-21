@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Improved background syncing #833
 - Update to Xcode 14. #839
+- Fixed the Share Database button in the debug settings. #918
 - Fixed incorrect aspect ratio of avatar images. #753
 - Fixed an issue that could cause the home feed to load slowly. #921
+- Added a button to delete the SQL database in the debug settings. #738
 
 ## [1.3.5] 2022-10-03
 

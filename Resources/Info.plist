@@ -4,8 +4,8 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.planetary.sync</string>
-		<string>com.planetary.refresh</string>
+		<string>com.planetary.short_sync</string>
+		<string>com.planetary.long_sync</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

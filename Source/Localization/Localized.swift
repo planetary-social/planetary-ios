@@ -556,7 +556,7 @@ extension Localized {
     enum Report: String, Localizable, CaseIterable {
         case somebody = "Somebody"
         case feedFollowed = "%@ started following you"
-        case postReplied = "%@ replied to your post"
+        case postReplied = "%@ replied to a post you commented on"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
     }

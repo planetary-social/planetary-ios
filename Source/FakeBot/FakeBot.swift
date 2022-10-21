@@ -191,19 +191,12 @@ class FakeBot: Bot {
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
-            completion(nil, 0, 0)
+            completion(nil)
         }
     }
     
     func connect(to address: MultiserverAddress) { }
     
-    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
-        self._statistics.lastSyncDate = Date()
-        queue.async {
-            completion(nil, 0, 0)
-        }
-    }
-
     // MARK: Refresh
 
     let isRefreshing = false
@@ -331,6 +324,10 @@ class FakeBot: Bot {
     private var _statistics = BotStatistics()
     var mockStatistics = [BotStatistics]()
     var statistics: BotStatistics { mockStatistics.popLast() ?? _statistics }
+    
+    func numberOfNewMessages(since: Date) throws -> Int {
+        0
+    }
     
     var mockRecentlyDownloadedPostData = (0, 0)
     func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
