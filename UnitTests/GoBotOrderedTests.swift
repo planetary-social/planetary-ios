@@ -105,11 +105,8 @@ class GoBotOrderedTests: XCTestCase {
         for i in 1...20 {
             let ex = self.expectation(description: "\(#function) cant sync")
             let peers = Environment.TestNetwork.systemPubs.map { $0.toPeer().multiserverAddress! }
-            GoBotOrderedTests.shared.sync(queue: .main, peers: peers) {
-                err, ts, numberOfMessages in
+            GoBotOrderedTests.shared.sync(queue: .main, peers: peers) { err in
                 XCTAssertNotNil(err, "try\(i): should get an error")
-                XCTAssertEqual(ts, 0)
-                XCTAssertEqual(numberOfMessages, 0)
                 ex.fulfill()
             }
             self.wait(for: [ex], timeout: 10)

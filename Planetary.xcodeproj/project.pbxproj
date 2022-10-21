@@ -1000,6 +1000,8 @@
 		C97270932832A47100EBF023 /* GoSSB.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C933908F27FB5498007B5FD8 /* GoSSB.xcframework */; };
 		C978D35127BF051700842458 /* OperationQueue+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = C978D35027BF018600842458 /* OperationQueue+Async.swift */; };
 		C978D35327BF053B00842458 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A01472790B9F200E29A97 /* Environment.swift */; };
+		C97A826528D256D00064848A /* Task+CancellableSleep.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97A826428D256D00064848A /* Task+CancellableSleep.swift */; };
+		C97A826628D256D00064848A /* Task+CancellableSleep.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97A826428D256D00064848A /* Task+CancellableSleep.swift */; };
 		C982CBD12833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
 		C982CBD42833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
 		C982CBD52833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
@@ -1698,6 +1700,7 @@
 		C9724B0B28089499000EBCCD /* Beta1MigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beta1MigrationTests.swift; sourceTree = "<group>"; };
 		C974DEE828CA8C3F0057C160 /* sr-SP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sr-SP"; path = "../sr-SP.lproj/Generated.strings"; sourceTree = "<group>"; };
 		C978D35027BF018600842458 /* OperationQueue+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Async.swift"; sourceTree = "<group>"; };
+		C97A826428D256D00064848A /* Task+CancellableSleep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+CancellableSleep.swift"; sourceTree = "<group>"; };
 		C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
 		C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentlyActivePostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
 		C982CBD62834233700D8963F /* FeedStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyTests.swift; sourceTree = "<group>"; };
@@ -2426,6 +2429,7 @@
 				C9F1C85427C9875A005A3228 /* Color+Hex.swift */,
 				C9EADA8827D178D5002066D9 /* View+RoundedCorner.swift */,
 				C920A3A5289B1525009C83F3 /* Array+Chunked.swift */,
+				C97A826428D256D00064848A /* Task+CancellableSleep.swift */,
 				C9A2894428F5C97200B347B7 /* SwiftUI+Localized.swift */,
 			);
 			path = Extension;
@@ -4260,6 +4264,7 @@
 				C9A1632328ADE33800ACDCC5 /* ManageAliasView.swift in Sources */,
 				0A38800F2475ACF000777843 /* PubAPI.swift in Sources */,
 				533EDBE92385F7E7008B3565 /* Cache.swift in Sources */,
+				C97A826628D256D00064848A /* Task+CancellableSleep.swift in Sources */,
 				5336611422D9669E00100707 /* UIColor+Random.swift in Sources */,
 				2D5DC59E28B05A6F00E064A6 /* RandomAlgorithm.swift in Sources */,
 				C9724B9D2809EAA4000EBCCD /* RedeemInviteViewController.swift in Sources */,
@@ -4714,6 +4719,7 @@
 				530F01A622DEAE1E007EBAE2 /* BackupOnboardingStep.swift in Sources */,
 				0A3880052475AAB200777843 /* NullPushAPI.swift in Sources */,
 				2346ECBA22144D61009A94CB /* SimplePublishView.swift in Sources */,
+				C97A826528D256D00064848A /* Task+CancellableSleep.swift in Sources */,
 				53E341F2224D9B9D002BB5F4 /* UIColor+Debug.swift in Sources */,
 				23C7443D2200B12000FB554A /* Message.swift in Sources */,
 				1BA1FECE2432805C00FBD5E5 /* Identity+Link.swift in Sources */,
