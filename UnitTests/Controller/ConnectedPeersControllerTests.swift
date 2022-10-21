@@ -1,5 +1,5 @@
 //
-//  ConnectedPeersViewCoordinatorTests.swift
+//  ConnectedPeerListControllerTests.swift
 //  UnitTests
 //
 //  Created by Matthew Lorentz on 2/23/22.
@@ -9,10 +9,10 @@
 import XCTest
 import Combine
 
-class ConnectedPeerListCoordinatorTests: XCTestCase {
+class ConnectedPeerListControllerTests: XCTestCase {
     
     /// The system under test
-    var sut: ConnectedPeerListCoordinator!
+    var sut: ConnectedPeerListController!
     
     var mockStatistics: BotStatisticsServiceMock!
     
@@ -73,11 +73,11 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         mockBot = FakeBot()
         mockStatistics = BotStatisticsServiceMock()
         mockRouter = ConnectedPeerListRouterMock()
-        sut = ConnectedPeerListCoordinator(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
+        sut = ConnectedPeerListController(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
         sut.viewDidAppear()
     }
 
-    /// Verifies that when the statistics service publishes the coordinator also publishes peer.
+    /// Verifies that when the statistics service publishes the controller also publishes peer.
     func testPublishingNewStatisticsUpdatesPeers() async throws {
         // Arrange
         XCTAssertEqual(sut.peers, nil)
@@ -179,7 +179,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(publishedPeers.first, secondExpectedPeers)
     }
     
-    /// Verifies that the coordinator publishes the latest recentPostCount from the Bot
+    /// Verifies that the controller publishes the latest recentPostCount from the Bot
     func testRecentlyDownloadedPostCount() async throws {
         // Arrange
         let recentlyDownloadedPostCountPublisher = await makeAwaitable(
@@ -194,7 +194,7 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(recentlyDownloadedPostCounts, 888)
     }
     
-    /// Verifies that the coordinators passes through the recentlyDownloadedPostDuration from the Bot
+    /// Verifies that the controller passes through the recentlyDownloadedPostDuration from the Bot
     func testRecentlyDownloadedPostDuration() async throws {
         // Arrange
         let recentlyDownloadedPostDurationPublisher = await makeAwaitable(
@@ -209,10 +209,10 @@ class ConnectedPeerListCoordinatorTests: XCTestCase {
         XCTAssertEqual(recentlyDownloadedPostDuration, 999)
     }
     
-    /// Tests that the coordinator stops publishing peers when the view is not visible.
+    /// Tests that the controller stops publishing peers when the view is not visible.
     func testPeersDoNotUpdateWhenViewNotVisible() async throws {
         // Arrange
-        sut = ConnectedPeerListCoordinator(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
+        sut = ConnectedPeerListController(bot: mockBot, statisticsService: mockStatistics, router: mockRouter)
         var publishedPeers = [[PeerConnectionInfo]?]()
         
         // Act
