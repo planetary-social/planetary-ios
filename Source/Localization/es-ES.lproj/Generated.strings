@@ -285,7 +285,7 @@
 "DiscoveryFeedAlgorithm.algorithms" = "Algoritmos";
 "DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Algoritmo de descubrimiento de Feed";
 "DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Publicaciones recientes";
-"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Muestra las publicaciones de la gente que no sigues en tu red más amplia ordenadas cronológicamente.";
 "DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Publicaciones sin leer aleatorias";
 "DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Muestra las publicaciones que son nuevas para ti, que no has leído, pero ordenadas aleatoriamente, así que siempre hay algo nuevo que ver.";
 
@@ -334,7 +334,7 @@
 
 "Report.somebody" = "Alguien";
 "Report.feedFollowed" = "%@ comenzó a seguirte";
-"Report.postReplied" = "%@ replied to a post you commented on";
+"Report.postReplied" = "%@ respondió a una publicación en la que comentaste";
 "Report.feedMentioned" = "%@ te mencionó en una publicación";
 "Report.messageLiked" = "A %@ le gustó tu publicación";
 
