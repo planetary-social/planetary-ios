@@ -223,16 +223,22 @@ func ssbConnectPeers(count uint32) bool {
 
 //export ssbDisconnectAllPeers
 func ssbDisconnectAllPeers() bool {
-	//	lock.Lock()
-	//	defer lock.Unlock()
-	//	if sbot == nil {
-	//		return false
-	//	}
-	//
-	//	sbot.Network.GetConnTracker().CloseAll()
-	//	level.Debug(log).Log("event", "disconnect")
-	//	runtime.GC()
-	return true // todo
+	var err error
+	defer logError("ssbDisconnectAllPeers", &err)
+
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return false
+	}
+
+	err = service.App.Commands.DisconnectAll.Handle()
+	if err != nil {
+		err = errors.Wrap(err, "command error")
+		return false
+	}
+
+	return true
 }
 
 //export ssbFeedReplicate
