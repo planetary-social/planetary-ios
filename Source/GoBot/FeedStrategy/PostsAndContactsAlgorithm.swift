@@ -259,7 +259,7 @@ class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
     }
 
     func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message] {
-        guard let connection = database.getOpenDB() else {
+        guard let connection = try? database.checkoutConnection() else {
             Log.error("db is closed")
             return []
         }
