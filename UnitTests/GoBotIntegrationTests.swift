@@ -110,7 +110,7 @@ class GoBotIntegrationTests: XCTestCase {
         }
         waitForExpectations(timeout: 10)
         XCTAssertEqual(statistics.repo.messageCount, 11)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 15.0) {
             XCTAssertEqual(statistics.repo.numberOfPublishedMessages, 1)
         }
         XCTAssertEqual(try sut.database.messageCount(), 11)

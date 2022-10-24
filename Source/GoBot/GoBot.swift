@@ -1600,6 +1600,7 @@ class GoBot: Bot {
             }
             self._statistics.repo = RepoStatistics(
                 path: self.bot.currentRepoPath,
+                identity: self.identity,
                 feedCount: feedCount,
                 messageCount: messageCount,
                 numberOfPublishedMessages: ownMessages,
