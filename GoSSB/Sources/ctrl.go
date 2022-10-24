@@ -24,48 +24,33 @@ import "C"
 
 //export ssbConnectPeer
 func ssbConnectPeer(quasiMs string) bool {
-	//var err error
-	//defer func() {
-	//	if err != nil {
-	//		level.Error(log).Log("where", "ssbConnectPeer", "err", err)
-	//	}
-	//}()
-	//lock.Lock()
-	//if sbot == nil {
-	//	lock.Unlock()
-	//	err = ErrNotInitialized
-	//	return false
-	//}
-	//lock.Unlock()
-	//
-	//msAddr, err := multiserver.ParseNetAddress([]byte(quasiMs))
-	//if err != nil {
-	//	err = errors.Wrapf(err, "parsing passed address failed")
-	//	return false
-	//}
-	//
-	//err = sbot.Network.Connect(longCtx, msAddr.WrappedAddr())
-	//if err != nil {
-	//	err = errors.Wrapf(err, "connecting to %q failed", msAddr.String())
-	//	return false
-	//}
-	//level.Debug(log).Log("event", "dialed", "addr", msAddr.String())
-	//
-	//if servicePlug == nil {
-	//	return true
-	//}
-	//
-	//go func() {
-	//	time.Sleep(10 * time.Second)
-	//	tok, ok := servicePlug.HasValidToken()
-	//	if !ok {
-	//		log.Log("noToken", "service plugin: token expired or not retreived yet.")
-	//		return
-	//	}
-	//	log.Log("hasToken", tok)
-	//}()
-	//
-	return true // todo
+	var err error
+	defer logError("ssbConnectPeer", &err)
+
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return false
+	}
+
+	addr, identity, err := multiserverAddressToAddressAndRef(quasiMs)
+	if err != nil {
+		err = errors.Wrapf(err, "error parsing the address '%s'", quasiMs)
+		return false
+	}
+
+	cmd := commands.Connect{
+		Remote:  identity.Identity(),
+		Address: addr,
+	}
+
+	err = service.App.Commands.Connect.Handle(cmd)
+	if err != nil {
+		err = errors.Wrapf(err, "connecting to '%s' failed", quasiMs)
+		return false
+	}
+
+	return true
 }
 
 //export ssbConnectPeers
