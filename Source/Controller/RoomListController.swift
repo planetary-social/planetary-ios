@@ -1,5 +1,5 @@
 //
-//  RoomListCoordinator.swift
+//  RoomListController.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 8/3/22.
@@ -10,8 +10,8 @@ import Foundation
 import Logger
 import UIKit
 
-/// A coordinator for the `RoomListView`. Manages CRUD operations for a list of joined room servers.
-@MainActor class RoomListCoordinator: RoomListViewModel {
+/// A controller for the `RoomListView`. Manages CRUD operations for a list of joined room servers.
+@MainActor class RoomListController: RoomListViewModel {
     
     @Published var rooms = [Room]()
     
@@ -95,7 +95,7 @@ import UIKit
         AppController.shared.missionControlCenter.sendMission()
     }
     
-    /// Loads rooms from the db into this coordinator's `rooms` array.
+    /// Loads rooms from the db into this controller's `rooms` array.
     private func loadRooms() {
         loadingMessage = "Loading rooms..."
         Task {

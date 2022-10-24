@@ -1,5 +1,5 @@
 //
-//  RawMessageCoordinator.swift
+//  RawMessageController.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 19/9/22.
@@ -9,8 +9,8 @@
 import Foundation
 import Logger
 
-/// A coordinator for the `RawMessageView`
-@MainActor class RawMessageCoordinator: RawMessageViewModel {
+/// A controller for the `RawMessageView`
+@MainActor class RawMessageController: RawMessageViewModel {
 
     private var message: Message
 

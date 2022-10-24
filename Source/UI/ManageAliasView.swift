@@ -35,7 +35,7 @@ struct RoomAlias: Identifiable {
     
     func deleteAliases(at: IndexSet)
     
-    /// Tells the coordinator that the user wants to open the given room.
+    /// Tells the controller that the user wants to open the given room.
     func open(_ alias: RoomAlias)
     
     /// Called when the user dismisses the shown error message. Should clear `errorMessage`.
