@@ -312,84 +312,17 @@ func ssbFeedBlock(ref string, yes bool) {
 
 //export ssbNullContent
 func ssbNullContent(author string, sequence uint64) int {
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot == nil {
-	//	level.Error(log).Log("event", "null content failed", "err", ErrNotInitialized)
-	//	return -1
-	//}
-	//
-	//ref, err := refs.ParseFeedRef(author)
-	//if err != nil {
-	//	level.Error(log).Log("event", "null content failed", "err", err)
-	//	return -1
-	//}
-	//
-	//if sequence > math.MaxUint32 {
-	//	level.Warn(log).Log("event", "null content failed", "whops", "this is a very long feed")
-	//}
-	//
-	//err = sbot.NullContent(ref, uint(sequence))
-	//if err != nil {
-	//	level.Error(log).Log("event", "null content failed", "err", err)
-	//	return -1
-	//}
-
-	return 0 // todo
+	return 0
 }
 
 //export ssbNullFeed
 func ssbNullFeed(ref string) int {
-	//var err error
-	//defer func() {
-	//	if err != nil {
-	//		level.Error(log).Log("where", "ssbNullFeed", "err", err)
-	//	}
-	//}()
-	//
-	//fr, err := refs.ParseFeedRef(ref)
-	//if err != nil {
-	//	err = errors.Wrapf(err, "NullFeed: invalid feed reference")
-	//	return -1
-	//}
-	//
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot == nil {
-	//	err = ErrNotInitialized
-	//	return -1
-	//}
-	//
-	//if nullErr := sbot.NullFeed(fr); nullErr != nil {
-	//	err = errors.Wrap(nullErr, "NullFeed: bot action failed")
-	//	return -1
-	//}
-
-	return 0 // todo
+	return 0
 }
 
 //export ssbDropIndexData
 func ssbDropIndexData() bool {
-	//var retErr error
-	//defer func() {
-	//	if retErr != nil {
-	//		level.Error(log).Log("where", "ssbDropIndexData", "err", retErr)
-	//	}
-	//}()
-	//
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot != nil {
-	//	retErr = fmt.Errorf("sbot still running")
-	//	return false
-	//}
-	//
-	//if err := mksbot.DropIndicies(repo.New(repoDir)); err != nil {
-	//	retErr = errors.Wrap(err, "failed to drop index data")
-	//	return false
-	//}
-
-	return true // todo
+	return true
 }
 
 //export ssbInviteAccept
