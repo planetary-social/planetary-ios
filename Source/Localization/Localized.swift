@@ -71,6 +71,7 @@ enum Localized: String, Localizable, CaseIterable {
     case usersInYourNetwork = "Users in your network"
     case goToYourNetwork = "Go to Your Network"
     case emptyHomeFeedMessage = "And it is rather bare! Have you considered following a few users or topics?"
+    case posted = "{{somebody}} posted"
     case replied = "{{somebody}} replied"
     case liked = "{{somebody}} liked"
     case startedFollowing = "{{somebody}} started following"

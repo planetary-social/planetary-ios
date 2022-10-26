@@ -28,6 +28,7 @@
 "Localized.usersInYourNetwork" = "Usuarios en tu red";
 "Localized.goToYourNetwork" = "Ir a tu red";
 "Localized.emptyHomeFeedMessage" = "¡Está vacío! ¿Has considerado seguir a algunos usuarios o temas?";
+"Localized.posted" = "{{somebody}} posted";
 "Localized.replied" = "{{somebody}} respondió";
 "Localized.liked" = "A {{somebody}} le gustó";
 "Localized.startedFollowing" = "{{somebody}} empezó a seguirte";
