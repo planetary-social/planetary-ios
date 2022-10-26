@@ -227,6 +227,11 @@ protocol Bot: AnyObject {
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.
     func feed(identity: Identity, completion: @escaping PaginatedCompletion)
+
+    /// Returns all the messages created by the specified Identity.
+    /// This is useful for showing all the posts from a particular
+    /// person, like in an About screen.
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion)
     
     /// Fetches the post with the given ID from the database.
     func post(from key: MessageIdentifier) throws -> Message
@@ -743,6 +748,21 @@ extension Bot {
                     continuation.resume(returning: string)
                 case .failure(let error):
                     continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    /// Returns all the messages created by the specified Identity.
+    /// This is useful for showing all the posts from a particular
+    /// person, like in an About screen.
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?) async throws -> [Message] {
+        try await withCheckedThrowingContinuation { continuation in
+            feed(strategy: strategy, limit: limit, offset: offset) { messages, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: messages)
                 }
             }
         }

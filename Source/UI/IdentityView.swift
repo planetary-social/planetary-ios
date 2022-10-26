@@ -70,92 +70,6 @@ struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
         }
     }
 
-    var header: some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .top, spacing: 18) {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                            startPoint: .bottomLeading,
-                            endPoint: .topTrailing
-                        )
-                    )
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                    .frame(width: 92, height: 92)
-                    .overlay(
-                        ImageMetadataView(metadata: viewModel.about?.image)
-                            .cornerRadius(99)
-                            .frame(width: 87, height: 87)
-                            .scaledToFill()
-                    )
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(viewModel.about?.nameOrIdentity ?? viewModel.identity)
-                        .foregroundColor(Color("primary-txt"))
-                        .font(.system(size: 20, weight: .semibold))
-                    HStack {
-                        Text(viewModel.identity.prefix(7))
-                            .font(.system(size: 12))
-                            .foregroundColor(Color("secondary-txt"))
-                    }
-                    RelationshipView(relationship: viewModel.relationship) {
-                        viewModel.followButtonTapped()
-                    }
-                    .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                }
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            if extendedHeader {
-                if let bio = viewModel.about?.description {
-                    Text(bio.parseMarkdown())
-                        .font(.system(size: 14))
-                        .foregroundColor(Color("primary-txt"))
-                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
-                        .lineLimit(10)
-                } else if viewModel.about == nil {
-                    Text(String.loremIpsum(1))
-                        .font(.system(size: 14))
-                        .foregroundColor(Color("primary-txt"))
-                        .redacted(reason: .placeholder)
-                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
-                }
-                Text("Last active: 3 days ago")
-                    .font(.system(size: 10))
-                    .foregroundColor(Color("secondary-txt"))
-                    .padding(EdgeInsets(top: 2, leading: 5, bottom: 3, trailing: 5))
-                    .background(Color("hashtag-bg"))
-                    .cornerRadius(3)
-                    .padding(EdgeInsets(top: 0, leading: 18, bottom: 7, trailing: 18))
-                    .redacted(reason: viewModel.relationship == nil ? .placeholder : [])
-
-                if !(viewModel.hashtags?.isEmpty ?? false) {
-                    HashtagSliderView(hashtags: viewModel.hashtags ?? []) { hashtag in
-                        viewModel.hashtagTapped(hashtag)
-                    }
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
-                    .redacted(reason: viewModel.hashtags == nil ? .placeholder : [])
-                }
-
-                SocialStatsView(socialStats: viewModel.socialStats ?? .zero) { trait in
-                    viewModel.socialTraitTapped(trait)
-                }
-                .frame(maxWidth: .infinity)
-                .redacted(reason: viewModel.socialStats == nil ? .placeholder : [])
-            }
-        }
-        .background(
-            LinearGradient(
-                colors: [Color("profile-bg-top"), Color("profile-bg-bottom")],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        .compositingGroup()
-        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-    }
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -168,15 +82,90 @@ struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
                     .frame(height: 0)
                     .border(Color.red)
                 }.frame(height: 0)
-                LazyVStack(pinnedViews: [.sectionHeaders]) {
-                    Section(
-                        header: header,
-                        content: {
-                            ForEach((0...100).reversed(), id: \.self) {_ in
-                                Text("Hello").background(.clear).frame(maxWidth: .infinity, maxHeight: .infinity)
+                MessageListView(strategy: NoHopFeedAlgorithm(identity: viewModel.identity)) {
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top, spacing: 18) {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
+                                        startPoint: .bottomLeading,
+                                        endPoint: .topTrailing
+                                    )
+                                )
+                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                                .frame(width: 92, height: 92)
+                                .overlay(
+                                    ImageMetadataView(metadata: viewModel.about?.image)
+                                        .cornerRadius(99)
+                                        .frame(width: 87, height: 87)
+                                        .scaledToFill()
+                                )
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(viewModel.about?.nameOrIdentity ?? viewModel.identity)
+                                    .foregroundColor(Color("primary-txt"))
+                                    .font(.system(size: 20, weight: .semibold))
+                                HStack {
+                                    Text(viewModel.identity.prefix(7))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(Color("secondary-txt"))
+                                }
+                                RelationshipView(relationship: viewModel.relationship) {
+                                    viewModel.followButtonTapped()
+                                }
+                                .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                             }
                         }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        if extendedHeader {
+                            if let bio = viewModel.about?.description {
+                                Text(bio.parseMarkdown())
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Color("primary-txt"))
+                                    .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
+                                    .lineLimit(10)
+                            } else if viewModel.about == nil {
+                                Text(String.loremIpsum(1))
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Color("primary-txt"))
+                                    .redacted(reason: .placeholder)
+                                    .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
+                            }
+                            Text("Last active: 3 days ago")
+                                .font(.system(size: 10))
+                                .foregroundColor(Color("secondary-txt"))
+                                .padding(EdgeInsets(top: 2, leading: 5, bottom: 3, trailing: 5))
+                                .background(Color("hashtag-bg"))
+                                .cornerRadius(3)
+                                .padding(EdgeInsets(top: 0, leading: 18, bottom: 7, trailing: 18))
+                                .redacted(reason: viewModel.relationship == nil ? .placeholder : [])
+
+                            if !(viewModel.hashtags?.isEmpty ?? false) {
+                                HashtagSliderView(hashtags: viewModel.hashtags ?? []) { hashtag in
+                                    viewModel.hashtagTapped(hashtag)
+                                }
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
+                                .redacted(reason: viewModel.hashtags == nil ? .placeholder : [])
+                            }
+
+                            SocialStatsView(socialStats: viewModel.socialStats ?? .zero) { trait in
+                                viewModel.socialTraitTapped(trait)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .redacted(reason: viewModel.socialStats == nil ? .placeholder : [])
+                        }
+                    }
+                    .background(
+                        LinearGradient(
+                            colors: [Color("profile-bg-top"), Color("profile-bg-bottom")],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     )
+                    .compositingGroup()
+                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 }
             }
         }

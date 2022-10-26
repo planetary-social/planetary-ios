@@ -14,7 +14,53 @@ import CrashReporting
 extension String {
 
     func parseMarkdown() -> AttributedString {
-        AttributedString(decodeMarkdown(host: "planetary://planetary.link/"))
+        func findHashtags(in markdown: String) throws -> String {
+            let regex = "(?:^|\\s)(?<hashtag>#[a-z0-9]+|#[a-z0-9]+$)"
+            let regularExpression = try NSRegularExpression(pattern: regex)
+            if let match = regularExpression.firstMatch(in: markdown, range: NSRange(location: 0, length: markdown.utf16.count)) {
+                if let range = Range(match.range(withName: "hashtag"), in: markdown) {
+                    let replacement = "planetary://planetary.link/\(markdown[range])"
+                    return try findHashtags(in: markdown.replacingCharacters(in: range, with: replacement))
+                }
+            }
+            return markdown
+        }
+
+        func findMentions(in markdown: String) throws -> String {
+            let regex = "(?:^|\\s)(?<mention>[@%&][a-zA-Z0-9+/=]{44}\\.[a-z0-9]+)"
+            let regularExpression = try NSRegularExpression(pattern: regex)
+            if let match = regularExpression.firstMatch(in: markdown, range: NSRange(location: 0, length: markdown.utf16.count)) {
+                if let range = Range(match.range(withName: "mention"), in: markdown) {
+                    let replacement = "planetary://planetary.link/\(markdown[range])"
+                    return try findMentions(in: markdown.replacingCharacters(in: range, with: replacement))
+                }
+            }
+            return markdown
+        }
+
+        func findUnformattedLinks(in markdown: String) -> String {
+            do {
+                var result = try findMentions(in: markdown)
+                result = try findHashtags(in: result)
+                return result
+            } catch {
+                return markdown
+            }
+        }
+
+        do {
+            var attributed = try AttributedString(markdown: findUnformattedLinks(in: self))
+            for run in attributed.runs {
+                if let link = run.attributes.link {
+                    if let url = URL(string: findUnformattedLinks(in: link.absoluteString)) {
+                        attributed[run.range].link = url
+                    }
+                }
+            }
+            return attributed
+        } catch {
+            return AttributedString()
+        }
     }
 
     func decodeMarkdown(small: Bool = false, host: String = "") -> NSAttributedString {

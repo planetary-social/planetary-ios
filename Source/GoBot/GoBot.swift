@@ -1572,6 +1572,17 @@ class GoBot: Bot {
         }
     }
 
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
+        userInitiatedQueue.async { [database] in
+            do {
+                let messages = try strategy.fetchMessages(database: database, userId: 0, limit: limit, offset: offset)
+                completion(messages, nil)
+            } catch {
+                completion([], error)
+            }
+        }
+    }
+
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {
             do {

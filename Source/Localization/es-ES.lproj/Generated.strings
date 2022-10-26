@@ -64,6 +64,7 @@
 "Localized.blocked" = "Ignorado";
 "Localized.blocking" = "Ignoring";
 "Localized.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
+"Localized.followBack" = "Follow back";
 "Localized.follow" = "Seguir";
 "Localized.following" = "Siguiendo";
 "Localized.followedBy" = "Seguido por";
