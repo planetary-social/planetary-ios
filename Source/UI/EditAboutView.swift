@@ -29,14 +29,21 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
 
     init() {
         super.init(frame: .zero)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
         self.backgroundColor = .cardBackground
         let spacer = Layout.addSpacerView(toTopOf: self)
         spacer.backgroundColor = .appBackground
-        var separator = Layout.addSeparator(southOf: spacer)
+        let separator = Layout.addSeparator(southOf: spacer)
         Layout.fillSouth(of: separator, with: self.nameView)
-        separator = Layout.addSeparator(southOf: self.nameView)
-        Layout.fillSouth(of: separator, with: self.bioView)
+        Layout.fillSouth(of: self.nameView, with: self.bioView)
+        bioView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
     }
+    
+    deinit {
+         NotificationCenter.default.removeObserver(self)
+       }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -45,6 +52,22 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
     func update(with about: About) {
         self.nameView.textView.text = about.name
         self.bioView.textView.text = about.description
+    }
+    
+    @objc func keyboardWillShow(notification: Notification) {
+        guard let keyboardFrame = notification.keyboardFrameEnd else {
+            return
+        }
+        let bottomOfTextView = bioView.convert(bioView.bounds, to: self).maxY
+        let visibleArea = self.frame.height - keyboardFrame.height
+        
+        if bottomOfTextView > visibleArea {
+            bioView.bottomConstraint?.constant = -keyboardFrame.height - Layout.verticalSpacing
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: Notification) {
+        bioView.bottomConstraint?.constant = -Layout.verticalSpacing
     }
 
     // MARK: First responding
@@ -55,7 +78,7 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
     }
 
     func resignFirstResponders() {
-        self.nameView.textView.resignFirstResponder()
+        self.nameView.textField.resignFirstResponder()
         self.bioView.textView.resignFirstResponder()
     }
 
