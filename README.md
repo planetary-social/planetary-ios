@@ -73,28 +73,28 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 
 ## Functionality in Libraries but not in the app
-* Private groups
-* Editing content
-* Tombstoning content
-* Partial feed replication
-* Routing traffic over tor / anonymizing networks
-* TrustNet transitive abuse moderation algorithm
-* Suggest new people to follow
+* Private groups.
+* Editing content.
+* Tombstoning content.
+* Partial feed replication.
+* Routing traffic over tor / anonymizing networks.
+* TrustNet transitive abuse moderation algorithm.
+* Suggest new people to follow.
 * Direct serverless DHT Invite generation and redemption. 
 * Log in to web services using scuttlebutt identity through QR code.
-* Metafeeds (single identity key writer for multiple feeds for a single user)
+* Metafeeds (single identity key writer for multiple feeds for a single user).
 
 ## Functionality in a prototyping and spec stage
-* Partial feed replication
-* Multiple device for a single user (fusion identities) 
-* Feed fork detection and recovery
+* Partial feed replication.
+* Multiple device for a single user (fusion identities). 
+* Feed fork detection and recovery.
 * Serverless Messaging Layer Security (MLS) for group messaging. 
-* Known Bugs
+* Known Bugs.
 * A current list of known bugs in Planetary’s iOS app is in github issues. 
-* Database on device occasionally gets corrupted
-* New installs fail to initialize correctly rarely
-* Connection information is only displayed on debug screens
-* Sometimes users need to pull to refresh to see new content
+* Database on device occasionally gets corrupted.
+* New installs fail to initialize correctly rarely.
+* Connection information is only displayed on debug screens.
+* Sometimes users need to pull to refresh to see new content.
 
 ## License
 
