@@ -18,6 +18,7 @@ enum RoomInvitationRedeemer {
         case invitationRedemptionFailedWithReason(String)
         case invitationRedemptionFailed
         case notLoggedIn
+        case alreadyJoinedRoom
         
         var errorDescription: String? {
             switch self {
@@ -29,6 +30,8 @@ enum RoomInvitationRedeemer {
                 return Localized.Error.invitationRedemptionFailed.text
             case .notLoggedIn:
                 return Localized.Error.notLoggedIn.text
+            case .alreadyJoinedRoom:
+                return Localized.Error.alreadyJoinedRoom.text
             }
         }
     }
@@ -217,7 +220,11 @@ enum RoomInvitationRedeemer {
                 let address = MultiserverAddress(string: addressString) {
                 
                 let room = Room(address: address)
-                try await bot.insert(room: room)
+                do {
+                    try await bot.insert(room: room)
+                } catch {
+                    throw RoomInvitationError.alreadyJoinedRoom
+                }
                 return
             } else {
                 Log.error("Got failure response from room: \(String(describing: responseData.string))")
