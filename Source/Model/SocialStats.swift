@@ -20,4 +20,8 @@ struct SocialStats {
 
     /// The total number of followes of an identity
     var numberOfFollows: Int
+
+    static var zero: SocialStats {
+        return SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
+    }
 }

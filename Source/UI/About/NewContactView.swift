@@ -14,6 +14,32 @@ struct NewContactView: View {
 
     @State fileprivate var about: About?
     @State fileprivate var relationship: Relationship?
+    @State fileprivate var socialStats: SocialStats?
+    @State fileprivate var hashtags: [Hashtag]?
+
+    func attributedSocialStats(from socialStats: SocialStats) -> AttributedString {
+        let numberOfFollowers = socialStats.numberOfFollowers
+        let numberOfFollows = socialStats.numberOfFollows
+        let string = Localized.followStats.text
+
+        var attributeContainer = AttributeContainer()
+        attributeContainer.foregroundColor = .primaryTxt
+
+        var attributedString = AttributedString(string)
+        if let range = attributedString.range(of: "{{numberOfFollows}}") {
+            attributedString.replaceSubrange(
+                range,
+                with: AttributedString("\(numberOfFollows)", attributes: attributeContainer)
+            )
+        }
+        if let range = attributedString.range(of: "{{numberOfFollowers}}") {
+            attributedString.replaceSubrange(
+                range,
+                with: AttributedString("\(numberOfFollowers)", attributes: attributeContainer)
+            )
+        }
+        return attributedString
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 18) {
@@ -34,19 +60,34 @@ struct NewContactView: View {
                         .scaledToFill()
                 )
             VStack(alignment: .leading, spacing: 6) {
-                Text(about?.nameOrIdentity ?? identity)
-                    .foregroundColor(Color("primary-txt"))
-                    .font(.system(size: 20, weight: .semibold))
-                HStack {
-                    Text(identity.prefix(7))
-                        .font(.system(size: 12))
-                        .foregroundColor(Color("secondary-txt"))
-                }
-                RelationshipView(relationship: relationship) {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading) {
+                        Text(about?.nameOrIdentity ?? identity)
+                            .foregroundColor(Color("primary-txt"))
+                            .font(.headline)
+                        Text(identity.prefix(7))
+                            .font(.system(size: 12))
+                            .foregroundColor(Color("secondary-txt"))
+                    }
+                    Spacer()
+                    RelationshipView(relationship: relationship, compact: true) {
 
+                    }
+                    .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 }
-                .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                Text(attributedSocialStats(from: socialStats ?? .zero))
+                    .font(.caption)
+                    .foregroundColor(Color.secondaryTxt)
+                    .redacted(reason: socialStats == nil ? .placeholder : [])
+                if let hashtags = hashtags, !hashtags.isEmpty {
+                    Text(hashtags.map{$0.string}.joined(separator: " ").parseMarkdown())
+                        .foregroundLinearGradient(LinearGradient(
+                            colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                }
             }
         }
         .padding()
@@ -65,7 +106,16 @@ struct NewContactView: View {
 
                     }
                 }
-
+                do {
+                    socialStats = try await Bots.current.socialStats(for: identity)
+                } catch {
+                    socialStats = .zero
+                }
+                do {
+                    hashtags = try await Bots.current.hashtags(usedBy: identity, limit: 3)
+                } catch {
+                    hashtags = []
+                }
             }
 
         }
@@ -97,7 +147,10 @@ struct NewContactView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        NewContactView(identity: .null).previewLayout(.sizeThatFits).preferredColorScheme(.light)
+        NewContactView(identity: .null)
+            .previewLayout(.sizeThatFits)
+            .preferredColorScheme(.light)
+
 
     }
 }

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct RelationshipView: View {
     var relationship: Relationship?
+    var compact = false
     var onButtonTapHandler: (() -> Void)?
 
     var body: some View {
@@ -27,15 +28,17 @@ struct RelationshipView: View {
                         .aspectRatio(contentMode: .fit)
                 }
                 .frame(width: 18, height: 18)
-                SwiftUI.Text(title)
-                    .font(.system(size: 13))
-                    .foregroundLinearGradient(
-                        LinearGradient(
-                            colors: foregroundColors,
-                            startPoint: .leading,
-                            endPoint: .trailing
+                if !compact {
+                    SwiftUI.Text(title)
+                        .font(.system(size: 13))
+                        .foregroundLinearGradient(
+                            LinearGradient(
+                                colors: foregroundColors,
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
-                    )
+                }
             }
             .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             .background(
@@ -62,13 +65,13 @@ struct RelationshipView: View {
                     endPoint: .trailing
                 )
             )
-            .frame(width: 96, height: 33)
+            .frame(width: compact ? 50 : 96, height: 33)
             .cornerRadius(17)
         }
     }
 
     var title: String {
-        guard let relationship = relationship else {
+        guard let relationship = relationship, !compact else {
             return ""
         }
         if relationship.isFollowing {
@@ -127,7 +130,8 @@ struct RelationshipView_Previews: PreviewProvider {
     }
     static var previews: some View {
         VStack {
-            RelationshipView(relationship: nil)
+            RelationshipView(relationship: nil, compact: true)
+            RelationshipView(relationship: followRelationship, compact: true)
             RelationshipView(relationship: followRelationship)
             RelationshipView(relationship: followBackRelationship)
             RelationshipView(relationship: followingRelationship)

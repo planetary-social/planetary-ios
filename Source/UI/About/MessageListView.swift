@@ -24,9 +24,6 @@ struct MessageListView<Header>: View where Header: View {
                 if let messages = messages {
                     ForEach(messages, id: \.self) { message in
                         NewMessageView(message: message)
-                            .onTapGesture {
-                                AppController.shared.open(string: message.id)
-                            }
                             .onAppear {
                                 if message == messages.last {
                                     loadMore()

@@ -14,6 +14,7 @@ import CrashReporting
 extension String {
 
     func parseMarkdown() -> AttributedString {
+        return AttributedString(decodeMarkdown(small: true))
         func findHashtags(in markdown: String) throws -> String {
             let regex = "(?:^|\\s)(?<hashtag>#[a-z0-9]+|#[a-z0-9]+$)"
             let regularExpression = try NSRegularExpression(pattern: regex)

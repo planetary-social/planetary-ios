@@ -58,31 +58,33 @@ struct NewMessageView: View {
                     .scaledToFill()
                 if let header = attributedHeader {
                     Text(header)
-                        .font(Font.caption)
+                        .font(.caption)
                         .foregroundColor(Color.secondaryTxt)
                 }
             }
             .padding(10)
             Divider().background(Color(hex: "#a68782").opacity(0.15))
-            if let post = message.content.post {
-                PostView(post: post)
-            } else if let contact = message.content.contact {
+            if let contact = message.content.contact {
                 NewContactView(identity: contact.contact)
-            }
-            HStack {
+                    .onTapGesture {
+                        AppController.shared.open(identity: contact.contact)
+                    }
+            } else {
                 HStack {
-                    Text("Post a reply")
-                        .foregroundColor(Color.secondaryTxt)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Image.navIconCamera
-                        .renderingMode(.template)
-                        .foregroundColor(.secondaryTxt)
-                }
-                .frame(maxWidth: .infinity, idealHeight: 35)
-                .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                .background(Color(hex: "#F4EBEA"))
-                .cornerRadius(18)
-            }.padding(15)
+                    HStack {
+                        Text("Post a reply")
+                            .foregroundColor(Color.secondaryTxt)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Image.navIconCamera
+                            .renderingMode(.template)
+                            .foregroundColor(.secondaryTxt)
+                    }
+                    .frame(maxWidth: .infinity, idealHeight: 35)
+                    .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                    .background(Color(hex: "#F4EBEA"))
+                    .cornerRadius(18)
+                }.padding(15)
+            }
         }
         .background(
             LinearGradient(

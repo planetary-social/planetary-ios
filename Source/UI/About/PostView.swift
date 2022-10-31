@@ -18,7 +18,6 @@ struct PostView: View {
                 .font(.body)
                 .foregroundColor(Color.primaryTxt)
                 .accentColor(Color.accentTxt)
-                .lineLimit(5)
                 .padding(15)
             if let blobs = post.anyBlobs {
                 TabView {
