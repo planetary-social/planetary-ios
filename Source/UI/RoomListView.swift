@@ -99,13 +99,8 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                     }
                     .alert(isPresented: $showingDeleteAlert) {
                         Alert(
-                            title: Text(
-                            """
-                            Note: This will only remove the room from your local Planetary database.\
-                            It does not remove you as a member of the room."
-                            """
-                            ),
-                            primaryButton: .destructive(Text("Delete")) {
+                            title: Text(Localized.ManageRelays.deleteRoomConfirmation.text),
+                            primaryButton: .destructive(Text(Localized.ManageRelays.deleteRoom.text)) {
                                 if let indexSetToDelete {
                                     viewModel.deleteRooms(at: indexSetToDelete)
                                 }
