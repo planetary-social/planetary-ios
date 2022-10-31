@@ -516,6 +516,17 @@ extension Bot {
         }
     }
 
+    func relationship(from source: Identity, to target: Identity) async throws -> Relationship {
+        let followers: [Identity] = try await followers(identity: source)
+        let followings: [Identity] = try await followings(identity: source)
+        let blocks: [Identity] = try await blocks(identity: source)
+        let relationship = Relationship(from: source, to: target)
+        relationship.isFollowing = followings.contains(target)
+        relationship.isFollowedBy = followers.contains(target)
+        relationship.isBlocking = blocks.contains(target)
+        return relationship
+    }
+
     func statistics(completion: @escaping StatisticsCompletion) {
         self.statistics(queue: .main, completion: completion)
     }

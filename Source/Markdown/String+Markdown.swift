@@ -49,11 +49,18 @@ extension String {
         }
 
         do {
-            var attributed = try AttributedString(markdown: findUnformattedLinks(in: self))
+            var attributed = try AttributedString(
+                markdown: findUnformattedLinks(in: self)
+            )
             for run in attributed.runs {
                 if let link = run.attributes.link {
                     if let url = URL(string: findUnformattedLinks(in: link.absoluteString)) {
                         attributed[run.range].link = url
+                    }
+                }
+                if let intent = run.attributes.presentationIntent {
+                    if intent.components.contains(where: { $0.kind == .header(level: 1) }) {
+                        attributed[run.range].font = .headline
                     }
                 }
             }

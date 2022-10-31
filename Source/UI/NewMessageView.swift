@@ -1,5 +1,5 @@
 //
-//  NewMesssageView.swift
+//  NewMessageView.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 25/10/22.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct NewMesssageView: View {
+struct NewMessageView: View {
 
     var message: Message
 
@@ -50,7 +50,7 @@ struct NewMesssageView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {
                 ImageMetadataView(metadata: message.metadata.author.about?.image)
                     .cornerRadius(99)
@@ -58,27 +58,30 @@ struct NewMesssageView: View {
                     .scaledToFill()
                 if let header = attributedHeader {
                     Text(header)
-                        .font(.body)
-                        .foregroundColor(Color.primaryTxt)
+                        .font(Font.caption)
+                        .foregroundColor(Color.secondaryTxt)
                 }
             }
             .padding(10)
             Divider().background(Color(hex: "#a68782").opacity(0.15))
-            Text(message.content.post?.text.parseMarkdown() ?? "This is not a post")
-                .font(.body)
-                .foregroundColor(Color.primaryTxt)
-                .lineLimit(5)
-                .padding(15)
-            if let blob = message.content.post?.anyBlobs.first {
-                ImageMetadataView(metadata: ImageMetadata(link: blob.identifier))
-                    .aspectRatio(1, contentMode: .fill)
-                    .onTapGesture {
-                        AppController.shared.open(string: blob.identifier)
-                    }
+            if let post = message.content.post {
+                PostView(post: post)
+            } else if let contact = message.content.contact {
+                NewContactView(identity: contact.contact)
             }
             HStack {
-                Text("Post a reply")
-                    .foregroundColor(Color.primaryTxt).padding(8).frame(maxWidth: .infinity, idealHeight: 35).background(Color(hex: "#F4EBEA")).cornerRadius(18)
+                HStack {
+                    Text("Post a reply")
+                        .foregroundColor(Color.secondaryTxt)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Image.navIconCamera
+                        .renderingMode(.template)
+                        .foregroundColor(.secondaryTxt)
+                }
+                .frame(maxWidth: .infinity, idealHeight: 35)
+                .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                .background(Color(hex: "#F4EBEA"))
+                .cornerRadius(18)
             }.padding(15)
         }
         .background(
@@ -92,9 +95,27 @@ struct NewMesssageView: View {
     }
 }
 
-struct NewMesssageView_Previews: PreviewProvider {
+struct NewMessageView_Previews: PreviewProvider {
     static let message: Message = {
-        let post = Post(text: "Hello")
+        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
+        Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
+        Caches.blobs.update(UIImage(named: "avatar3") ?? .remove, for: "&avatar3")
+        Caches.blobs.update(UIImage(named: "avatar4") ?? .remove, for: "&avatar4")
+        Caches.blobs.update(UIImage(named: "avatar5") ?? .remove, for: "&avatar5")
+        let post = Post(
+            blobs: [
+                Blob(identifier: "&avatar1"),
+                Blob(identifier: "&avatar2"),
+                Blob(identifier: "&avatar3"),
+                Blob(identifier: "&avatar4"),
+                Blob(identifier: "&avatar5")
+            ],
+            branches: nil,
+            hashtags: nil,
+            mentions: nil,
+            root: nil,
+            text: "Hello"
+        )
         let content = Content(from: post)
         let value = MessageValue(
             author: .null,
@@ -119,7 +140,7 @@ struct NewMesssageView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        NewMesssageView(message: message).preferredColorScheme(.light)
+        NewMessageView(message: message).preferredColorScheme(.light)
 
     }
 }

@@ -23,7 +23,7 @@ struct MessageListView<Header>: View where Header: View {
             Section(content: {
                 if let messages = messages {
                     ForEach(messages, id: \.self) { message in
-                        NewMesssageView(message: message)
+                        NewMessageView(message: message)
                             .onTapGesture {
                                 AppController.shared.open(string: message.id)
                             }

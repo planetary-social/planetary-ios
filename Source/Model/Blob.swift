@@ -56,6 +56,15 @@ extension Blob {
     }
 }
 
+extension Blob: Equatable, Hashable {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+    func hash(into hasher: inout Hasher) {
+        identifier.hash(into: &hasher)
+    }
+}
+
 extension Blobs {
     func asMentions() -> Mentions {
         self.map {

@@ -40,6 +40,7 @@ extension Color {
        static let textInputBackground = Color("textInputBackground", bundle: Bundle.current)
        static let textInputBorder = Color("textInputBorder", bundle: Bundle.current)
        static let unselectedTab = Color("unselectedTab", bundle: Bundle.current)
+       static let accentTxt = Color("accent-txt", bundle: Bundle.current)
        static let appBg = Color("app-bg", bundle: Bundle.current)
        static let hashtagBg = Color("hashtag-bg", bundle: Bundle.current)
        static let primaryTxt = Color("primary-txt", bundle: Bundle.current)
@@ -82,6 +83,7 @@ extension UIColor {
        static let textInputBackground = UIColor(named: "textInputBackground", in: Bundle.current, compatibleWith: nil)!
        static let textInputBorder = UIColor(named: "textInputBorder", in: Bundle.current, compatibleWith: nil)!
        static let unselectedTab = UIColor(named: "unselectedTab", in: Bundle.current, compatibleWith: nil)!
+       static let accentTxt = UIColor(named: "accent-txt", in: Bundle.current, compatibleWith: nil)!
        static let appBg = UIColor(named: "app-bg", in: Bundle.current, compatibleWith: nil)!
        static let hashtagBg = UIColor(named: "hashtag-bg", in: Bundle.current, compatibleWith: nil)!
        static let primaryTxt = UIColor(named: "primary-txt", in: Bundle.current, compatibleWith: nil)!
