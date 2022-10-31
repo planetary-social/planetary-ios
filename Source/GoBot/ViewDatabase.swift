@@ -53,7 +53,7 @@ enum ViewDatabaseTableNames: String {
 
 class ViewDatabase {
     
-    var currentPath: String? { get { self.dbPath } }
+    var currentPath: String? { self.dbPath }
     
     private var dbPath: String?
     
@@ -234,12 +234,7 @@ class ViewDatabase {
         let dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(dbPath)
         
-        db.busyTimeout = 10
-        
-        try db.execute("PRAGMA journal_mode = WAL;")
-        try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
-        
-        // db.trace { print("\n\n\ntSQL: \($0)\n\n\n") } // print all the statements
+        try setUpConnection(db)
         
         try checkAndRunMigrations(on: db)
         
@@ -248,6 +243,16 @@ class ViewDatabase {
         self.currentUserID = try self.authorID(of: user, make: true)
 
         try setAllMessagesAsReadIfNeeded()
+    }
+
+    /// Gets a db connection ready to accept commands
+    private func setUpConnection(_ connection: Connection) throws {
+        connection.busyTimeout = 30
+        try connection.execute("PRAGMA journal_mode = WAL;")
+        try connection.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
+
+        // uncomment to print all statements
+        // connection.trace { print("\n\n\ntSQL: \($0)\n\n\n") }
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -410,6 +415,12 @@ class ViewDatabase {
                 )
                 db.userVersion = 21
             }
+            if db.userVersion == 21 {
+                try db.execute(
+                    "CREATE INDEX posts_by_activity ON messages(last_activity_time, type, is_decrypted, claimed_at)"
+                )
+                db.userVersion = 22
+            }
         }
     }
 
@@ -465,7 +476,7 @@ class ViewDatabase {
         }
         
         let db = try Connection(dbPath)
-        db.busyTimeout = 30
+        try setUpConnection(db)
         return db
     }
     
@@ -1000,7 +1011,7 @@ class ViewDatabase {
     
     // who is this feed following?
     func getFollows(feed: Identity) throws -> [Identity] {
-       let db = try checkoutConnection()
+        let db = try checkoutConnection()
         
         let authorID = try self.authorID(of: feed, make: false)
         
