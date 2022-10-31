@@ -57,6 +57,5 @@ extension AppController {
     override func didReceiveMemoryWarning() {
         Log.info("AppController.didReceivingMemoryWarning() - invalidating caches")
         Caches.invalidate()
-        ssbDisconnectAllPeers()
     }
 }

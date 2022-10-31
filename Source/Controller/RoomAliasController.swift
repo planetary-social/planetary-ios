@@ -1,5 +1,5 @@
 //
-//  RoomAliasCoordinator.swift
+//  RoomAliasController.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 8/18/22.
@@ -10,7 +10,7 @@ import Foundation
 import Logger
 import UIKit
 
-@MainActor class RoomAliasCoordinator: ManageAliasViewModel {
+@MainActor class RoomAliasController: ManageAliasViewModel {
     
     @Published var aliases: [RoomAlias] = []
     
@@ -20,8 +20,8 @@ import UIKit
     
     var bot: Bot
     
-    var registrationViewModel: RoomAliasRegistrationCoordinator {
-        RoomAliasRegistrationCoordinator(bot: bot)
+    var registrationViewModel: RoomAliasRegistrationController {
+        RoomAliasRegistrationController(bot: bot)
     }
     
     internal init(bot: Bot) {

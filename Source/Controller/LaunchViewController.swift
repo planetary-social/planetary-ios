@@ -241,7 +241,7 @@ class LaunchViewController: UIViewController {
     }
     
     private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
-        try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: configuration,
             appController: appController,
             userDefaults: userDefaults

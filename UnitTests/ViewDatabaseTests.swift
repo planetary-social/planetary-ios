@@ -557,14 +557,13 @@ class ViewDatabaseTests: XCTestCase {
             author: fixture.identities[1]
         )
         
-        // Assert
-        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 49)
+        let startingCount = try vdb.receivedMessageCount(since: sinceTime)
         
         // Rearrange
         try vdb.fillMessages(msgs: [ownerMessage, friendMessageOne, friendMessageTwo])
         
-        // Reassert
-        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), 51)
+        // Assert
+        XCTAssertEqual(try vdb.receivedMessageCount(since: sinceTime), startingCount + 2)
     }
     
     /// Verify that fillMessages deduplicates records.
