@@ -8,7 +8,6 @@
 
 import StoreKit
 import Logger
-import Analytics
 import CrashReporting
 
 /// SKStoreReviewController facade which masks suitability checks to show App Store review prompt.
