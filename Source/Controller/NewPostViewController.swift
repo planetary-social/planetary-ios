@@ -171,6 +171,7 @@ class NewPostViewController: ContentViewController {
                 _ = try await Bots.current.publish(post, with: images)
                 Analytics.shared.trackDidPost()
                 await self.dismiss(didPublish: post)
+                try StoreReviewController.promptIfConditionsMet()
             } catch {
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
