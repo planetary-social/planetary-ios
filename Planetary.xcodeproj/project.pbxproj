@@ -118,6 +118,7 @@
 		0AF9E0A42465D7D000910575 /* ThreadReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A32465D7D000910575 /* ThreadReplyView.swift */; };
 		0AF9E0AA246B23C700910575 /* SuspendOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0A9246B23C700910575 /* SuspendOperation.swift */; };
 		110CA7EB290E5C95003BF90A /* TextFieldWithInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110CA7EA290E5C95003BF90A /* TextFieldWithInsets.swift */; };
+		110CA7F62910DEBB003BF90A /* TextFieldWithInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110CA7EA290E5C95003BF90A /* TextFieldWithInsets.swift */; };
 		1B32D378249AAA4800811DC9 /* SmallPostHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */; };
 		1B5DB7CC24AC01DA008DCB81 /* StatisticsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CB24AC01D9008DCB81 /* StatisticsOperation.swift */; };
 		1B5DB7CE24AE598E008DCB81 /* AboutTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5DB7CD24AE598E008DCB81 /* AboutTableViewController.swift */; };
@@ -3997,6 +3998,7 @@
 				C937883428C154BF003FCCC2 /* Pub+ViewDatabase.swift in Sources */,
 				C9724B682809D70F000EBCCD /* AppController+URL.swift in Sources */,
 				C9724B952809EA6D000EBCCD /* Bool+YesOrNo.swift in Sources */,
+				110CA7F62910DEBB003BF90A /* TextFieldWithInsets.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
 				C9724B4D2809D58A000EBCCD /* UIView+Stroke.swift in Sources */,
 				C9724BD92809EE2D000EBCCD /* BlobViewController.swift in Sources */,
