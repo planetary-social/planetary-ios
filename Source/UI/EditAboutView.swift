@@ -9,11 +9,11 @@
 import Foundation
 import UIKit
 
-class EditAboutView: UIView, Saveable, UITextViewDelegate {
+class EditAboutView: UIView, Saveable, UITextFieldDelegate {
 
     lazy var nameView: EditValueView = {
         let view = EditValueView(label: .name)
-        view.textView.delegate = self
+        view.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         view.backgroundColor = .cardBackground
         view.textView.backgroundColor = .cardBackground
         return view
@@ -21,7 +21,6 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
 
     lazy var bioView: EditValueView = {
         let view = EditValueView(label: .bio)
-        view.textView.delegate = self
         view.backgroundColor = .cardBackground
         view.textView.backgroundColor = .cardBackground
         return view
@@ -50,8 +49,8 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
     }
 
     func update(with about: About) {
-        self.nameView.textView.text = about.name
-        self.bioView.textView.text = about.description
+        self.nameView.text = about.name ?? ""
+        self.bioView.text = about.description ?? ""
     }
     
     @objc func keyboardWillShow(notification: Notification) {
@@ -82,16 +81,16 @@ class EditAboutView: UIView, Saveable, UITextViewDelegate {
         self.bioView.textView.resignFirstResponder()
     }
 
-    // MARK: UITextViewDelegate
+    // MARK: UITextField editing changed action
 
-    func textViewDidChange(_ textView: UITextView) {
+    @objc private func textFieldDidChange(_ textField: UITextField) {
         self.delegate?.saveable(self, isReadyToSave: self.isReadyToSave)
     }
 
     // MARK: Saveable
 
     var isReadyToSave: Bool {
-        self.nameView.textView.text.isValidName
+        self.nameView.text.isValidName
     }
 
     // TODO bah protocol requires this, wish is could be defaulted somehow

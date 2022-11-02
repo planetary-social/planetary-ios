@@ -43,13 +43,32 @@ class EditValueView: UIView {
     private let inputType: Localized
     
     var bottomConstraint: NSLayoutConstraint?
+    
+    var text: String {
+        get {
+            switch inputType {
+                case .name:
+                    return textField.text ?? ""
+                default:
+                    return textView.text
+            }
+        }
+        set {
+            switch inputType {
+                case .name:
+                    self.textField.text = newValue
+                default:
+                    self.textView.text = newValue
+            }
+        }
+    }
 
     init(label: Localized, value: String = "") {
         self.inputType = label
         super.init(frame: .zero)
         self.backgroundColor = .appBackground
         self.label.text = label.text
-        self.textView.text = value
+        self.text = value
         self.addSubviews()
     }
 
