@@ -45,7 +45,7 @@ enum RefreshLoad: Int32, CaseIterable {
 
 /// Abstract interface to any SSB bot implementation.
 /// - SeeAlso: `GoBot`
-protocol Bot: AnyObject {
+protocol Bot {
 
     // MARK: Name
     var name: String { get }

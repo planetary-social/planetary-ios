@@ -8,14 +8,25 @@
 
 import SwiftUI
 
+@MainActor
 struct NewContactView: View {
+
+    @EnvironmentObject
+    var botRepository: BotRepository
 
     var identity: Identity
 
-    @State fileprivate var about: About?
-    @State fileprivate var relationship: Relationship?
-    @State fileprivate var socialStats: SocialStats?
-    @State fileprivate var hashtags: [Hashtag]?
+    @State
+    private var about: About?
+
+    @State
+    private var relationship: Relationship?
+
+    @State
+    private var socialStats: SocialStats?
+
+    @State
+    private var hashtags: [Hashtag]?
 
     func attributedSocialStats(from socialStats: SocialStats) -> AttributedString {
         let numberOfFollowers = socialStats.numberOfFollowers
@@ -94,27 +105,44 @@ struct NewContactView: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .task {
             Task.detached {
+                let bot = await botRepository.current
                 do {
-                    about = try await Bots.current.about(identity: identity)
+                    let result = try await bot.about(identity: identity)
+                    await MainActor.run {
+                        about = result
+                    }
                 } catch {
 
                 }
-                if let currentIdentity = Bots.current.identity {
+                if let currentIdentity = bot.identity {
                     do {
-                        relationship = try await Bots.current.relationship(from: currentIdentity, to: identity)
+                        let result = try await bot.relationship(from: currentIdentity, to: identity)
+                        await MainActor.run {
+                            relationship = result
+                        }
                     } catch {
 
                     }
                 }
                 do {
-                    socialStats = try await Bots.current.socialStats(for: identity)
+                    let result = try await bot.socialStats(for: identity)
+                    await MainActor.run {
+                        socialStats = result
+                    }
                 } catch {
-                    socialStats = .zero
+                    await MainActor.run {
+                        socialStats = .zero
+                    }
                 }
                 do {
-                    hashtags = try await Bots.current.hashtags(usedBy: identity, limit: 3)
+                    let result = try await bot.hashtags(usedBy: identity, limit: 3)
+                    await MainActor.run {
+                        hashtags = result
+                    }
                 } catch {
-                    hashtags = []
+                    await MainActor.run {
+                        hashtags = []
+                    }
                 }
             }
 

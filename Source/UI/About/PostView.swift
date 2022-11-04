@@ -12,36 +12,91 @@ struct PostView: View {
 
     var post: Post
 
+    @State
+    private var shouldShowReadMore = false
+
+    @State
+    private var intrinsicSize = CGSize.zero
+
+    @State
+    private var truncatedSize = CGSize.zero
+
+    func updateShouldShowReadMore() {
+        shouldShowReadMore = intrinsicSize != truncatedSize
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(post.text.parseMarkdown())
+                .lineLimit(5)
                 .font(.body)
                 .foregroundColor(Color.primaryTxt)
                 .accentColor(Color.accentTxt)
                 .padding(15)
-            if let blobs = post.anyBlobs {
-                TabView {
-                    ForEach(blobs, id: \.self) { blob in
-                        ImageMetadataView(metadata: ImageMetadata(link: blob.identifier))
-                            .onTapGesture {
-                                AppController.shared.open(string: blob.identifier)
-                            }
+                .background {
+                    GeometryReader { geometryProxy in
+                        Color.clear.preference(key: TruncatedSizePreferenceKey.self, value: geometryProxy.size)
                     }
                 }
-                .tabViewStyle(.page)
-                .aspectRatio(1, contentMode: .fit)
+                .onPreferenceChange(TruncatedSizePreferenceKey.self) { newSize in
+                    truncatedSize = newSize
+                    updateShouldShowReadMore()
+                }
+                .background {
+                    Text(post.text.parseMarkdown())
+                        .font(.body)
+                        .padding(15)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .hidden()
+                        .background {
+                            GeometryReader { geometryProxy in
+                                Color.clear.preference(key: IntrinsicSizePreferenceKey.self, value: geometryProxy.size)
+                            }
+                        }
+                        .onPreferenceChange(IntrinsicSizePreferenceKey.self) { newSize in
+                            intrinsicSize = newSize
+                            updateShouldShowReadMore()
+                        }
+                }
+            if shouldShowReadMore {
+                ZStack(alignment: .center) {
+                    Text("Read more".uppercased())
+                        .font(.caption)
+                        .foregroundColor(.secondaryTxt)
+                        .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
+                        .background(Color.hashtagBg)
+                        .cornerRadius(4)
+                }
+                .frame(maxWidth: .infinity)
             }
+//            if !blobs.isEmpty {
+//                TabView {
+//                    ForEach(blobs) { blob in
+//                        ImageMetadataView(metadata: ImageMetadata(link: blob.identifier))
+//                            .onTapGesture {
+//                                AppController.shared.open(string: blob.identifier)
+//                            }
+//                    }
+//                }
+//                .tabViewStyle(.page)
+//                .aspectRatio(1, contentMode: .fit)
+//            }
         }
     }
 }
 
+fileprivate struct IntrinsicSizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+}
+
+fileprivate struct TruncatedSizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+}
+
 struct PostView_Previews: PreviewProvider {
     static let post: Post = {
-        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
-        Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
-        Caches.blobs.update(UIImage(named: "avatar3") ?? .remove, for: "&avatar3")
-        Caches.blobs.update(UIImage(named: "avatar4") ?? .remove, for: "&avatar4")
-        Caches.blobs.update(UIImage(named: "avatar5") ?? .remove, for: "&avatar5")
         let post = Post(
             blobs: [
                 Blob(identifier: "&avatar1"),
@@ -54,7 +109,7 @@ struct PostView_Previews: PreviewProvider {
             hashtags: nil,
             mentions: nil,
             root: nil,
-            text: "Hello"
+            text: .loremIpsum(5)
         )
         return post
     }()

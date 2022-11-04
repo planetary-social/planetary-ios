@@ -10,7 +10,7 @@ import UIKit
 
 /// Represents a relationship between two identities. To query the relationship between `identity` and `other`
 /// instantiate a `Relationship` with them and call `load(reload:completion)`.
-class Relationship {
+class Relationship: Sendable {
 
     let identity: Identity
     let other: Identity

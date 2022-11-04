@@ -60,7 +60,9 @@ struct NewMessageView: View {
                     Text(header)
                         .font(.caption)
                         .foregroundColor(Color.secondaryTxt)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                MessageOptionsView(message: message)
             }
             .padding(10)
             Divider().background(Color(hex: "#a68782").opacity(0.15))
@@ -69,7 +71,11 @@ struct NewMessageView: View {
                     .onTapGesture {
                         AppController.shared.open(identity: contact.contact)
                     }
-            } else {
+            } else if let post = message.content.post {
+                PostView(post: post)
+                    .onTapGesture {
+                        AppController.shared.open(identifier: message.id)
+                    }
                 HStack {
                     HStack {
                         Text("Post a reply")
@@ -116,7 +122,7 @@ struct NewMessageView_Previews: PreviewProvider {
             hashtags: nil,
             mentions: nil,
             root: nil,
-            text: "Hello"
+            text: .loremIpsum(6)
         )
         let content = Content(from: post)
         let value = MessageValue(

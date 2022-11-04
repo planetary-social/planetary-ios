@@ -10,6 +10,9 @@ import SwiftUI
 
 struct MessageListView<Header>: View where Header: View {
 
+    @EnvironmentObject
+    var bot: BotRepository
+
     @State var messages = [Message]()
     var strategy: FeedStrategy
     @ViewBuilder var header: () -> Header
@@ -46,10 +49,10 @@ struct MessageListView<Header>: View where Header: View {
             return
         }
         isLoading = true
-        Task.detached {
+        Task {
             let pageSize = 10
             do {
-                let newMessages = try await Bots.current.feed(strategy: strategy, limit: pageSize, offset: offset)
+                let newMessages = try await bot.current.feed(strategy: strategy, limit: pageSize, offset: offset)
                 messages.append(contentsOf: newMessages)
                 offset += newMessages.count
                 noMoreMessages = newMessages.count < pageSize
