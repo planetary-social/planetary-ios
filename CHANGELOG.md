@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.7] 2022-10-31
 
 - Stability fix
+## [Unreleased]
+
+- Update the tap target on the Edit profile page #936
 
 ## [1.3.6] 2022-10-25
 
