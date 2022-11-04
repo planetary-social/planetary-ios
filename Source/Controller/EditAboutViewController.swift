@@ -66,8 +66,8 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
     @objc func save() {
         Analytics.shared.trackDidTapButton(buttonName: "save")
         self.aboutView.resignFirstResponders()
-        let name = self.aboutView.nameView.textView.text
-        let description = self.aboutView.bioView.textView.text
+        let name = self.aboutView.nameView.text
+        let description = self.aboutView.bioView.text
         self._about = about.mutatedCopy(name: name, description: description)
         self.saveCompletion?(self)
     }
