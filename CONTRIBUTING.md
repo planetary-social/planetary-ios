@@ -16,17 +16,19 @@ From the Terminal:
 
 1. `brew install git-lfs swiftlint`
 
-2. `git clone git@github.com:planetary-social/planetary-ios.git`
+2. `git lfs install`
 
-3. `cd planetary-ios`
+3. `git clone git@github.com:planetary-social/planetary-ios.git`
 
-4. Prevent git from commiting your API keys (see below, The Secrets.plist configuration file) in the public repository
+4. `cd planetary-ios`
+
+5. Prevent git from commiting your API keys (see below, The Secrets.plist configuration file) in the public repository
 
 ```sh
 git update-index --skip-worktree Resources/Secrets.debug.plist
 ```
 
-5. Open the Planetary project in Xcode:
+6. Open the Planetary project in Xcode:
 
 ```sh
 open Planetary.xcworkspace
@@ -34,7 +36,7 @@ open Planetary.xcworkspace
 
 In Xcode:
 
-6. In the menu bar choose Product -> Build
+7. In the menu bar choose Product -> Build
 
 ## Running
 
