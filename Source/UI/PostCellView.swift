@@ -11,7 +11,7 @@ import ImageSlideshow
 import UIKit
 import SkeletonView
 
-class PostCellView: MessageView {
+class PostCellView: MessageUIView {
 
     let verticalSpace: CGFloat = 5
 

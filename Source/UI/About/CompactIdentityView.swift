@@ -1,5 +1,5 @@
 //
-//  NewContactView.swift
+//  CompactIdentityView.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 28/10/22.
@@ -9,7 +9,7 @@
 import SwiftUI
 
 @MainActor
-struct NewContactView: View {
+struct CompactIdentityView: View {
 
     @EnvironmentObject
     var botRepository: BotRepository
@@ -150,7 +150,7 @@ struct NewContactView: View {
     }
 }
 
-struct NewContactView_Previews: PreviewProvider {
+struct CompactIdentityView_Previews: PreviewProvider {
     static let post: Post = {
         Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
         Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
@@ -175,10 +175,8 @@ struct NewContactView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        NewContactView(identity: .null)
+        CompactIdentityView(identity: .null)
             .previewLayout(.sizeThatFits)
             .preferredColorScheme(.light)
-
-
     }
 }

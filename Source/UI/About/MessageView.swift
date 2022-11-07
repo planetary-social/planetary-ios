@@ -1,5 +1,5 @@
 //
-//  NewMessageView.swift
+//  MessageView.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 25/10/22.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct NewMessageView: View {
+struct MessageView: View {
 
     var message: Message
 
@@ -67,12 +67,12 @@ struct NewMessageView: View {
             .padding(10)
             Divider().background(Color(hex: "#a68782").opacity(0.15))
             if let contact = message.content.contact {
-                NewContactView(identity: contact.contact)
+                CompactIdentityView(identity: contact.contact)
                     .onTapGesture {
                         AppController.shared.open(identity: contact.contact)
                     }
             } else if let post = message.content.post {
-                PostView(post: post)
+                CompactPostView(post: post)
                     .onTapGesture {
                         AppController.shared.open(identifier: message.id)
                     }
@@ -103,7 +103,7 @@ struct NewMessageView: View {
     }
 }
 
-struct NewMessageView_Previews: PreviewProvider {
+struct MessageView_Previews: PreviewProvider {
     static let message: Message = {
         Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
         Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
@@ -148,7 +148,7 @@ struct NewMessageView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        NewMessageView(message: message).preferredColorScheme(.light)
+        MessageView(message: message).preferredColorScheme(.light)
 
     }
 }

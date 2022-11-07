@@ -1,5 +1,5 @@
 //
-//  PostView.swift
+//  CompactPostView.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 28/10/22.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct PostView: View {
+struct CompactPostView: View {
 
     var post: Post
 
@@ -95,7 +95,7 @@ fileprivate struct TruncatedSizePreferenceKey: PreferenceKey {
     static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }
 
-struct PostView_Previews: PreviewProvider {
+struct CompactPostView_Previews: PreviewProvider {
     static let post: Post = {
         let post = Post(
             blobs: [
@@ -115,7 +115,6 @@ struct PostView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        PostView(post: post).previewLayout(.sizeThatFits).preferredColorScheme(.light)
-
+        CompactPostView(post: post).previewLayout(.sizeThatFits).preferredColorScheme(.light)
     }
 }

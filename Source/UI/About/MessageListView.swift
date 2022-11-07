@@ -26,7 +26,7 @@ struct MessageListView<Header>: View where Header: View {
             Section(content: {
                 if let messages = messages {
                     ForEach(messages, id: \.self) { message in
-                        NewMessageView(message: message)
+                        MessageView(message: message)
                             .onAppear {
                                 if message == messages.last {
                                     loadMore()
