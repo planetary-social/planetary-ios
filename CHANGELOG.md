@@ -6,12 +6,14 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.8] 2022-11-04
+
+- Update the tap target on the Edit profile page #936
+- Update the Pubs invite codes
+
 ## [1.3.7] 2022-10-31
 
 - Stability fix
-## [Unreleased]
-
-- Update the tap target on the Edit profile page #936
 
 ## [1.3.6] 2022-10-25
 
