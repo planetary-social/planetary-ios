@@ -72,6 +72,8 @@
 "Localized.isFollowingYou" = "está siguiéndote actualmente";
 "Localized.followedByCount" = "Seguido por {{ count }}";
 "Localized.followingCount" = "Siguiendo {{ count }}";
+"Localized.blockingCount" = "Blocking {{ count }}";
+"Localized.joinedCount" = "Joined {{ count }}";
 "Localized.inYourNetwork" = " en tu red";
 "Localized.followedByShortCount" = "{{ count }} Seguidores";
 "Localized.unfollow" = "Dejar de seguir";
