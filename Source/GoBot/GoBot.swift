@@ -1575,7 +1575,7 @@ class GoBot: Bot {
     private var _statistics = BotStatistics()
 
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
-        let repoIdentity = self._statistics.repo.identity
+        let repoIdentity = identity
         serialQueue.async {
             let counts: ScuttlegobotRepoCounts? = try? self.bot.repoStats()
             let sequence = try? self.database.stats(table: .messagekeys)
