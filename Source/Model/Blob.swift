@@ -58,10 +58,10 @@ extension Blob {
 
 extension Blob: Equatable, Hashable, Identifiable {
     static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.identifier == rhs.identifier
+        lhs.identifier == rhs.identifier
     }
     func hash(into hasher: inout Hasher) {
-        identifier.hash(into: &hasher)
+        hasher.combine(identifier)
     }
     var id: String {
         identifier

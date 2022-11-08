@@ -12,39 +12,76 @@ struct SocialStatsView: View {
 
     var socialStats: ExtendedSocialStats
 
-    var onTraitTapHandler: ((SocialStatsView.Trait) -> Void)?
+    @State
+    private var showingFollowers = false
 
-    enum Trait {
-        case followers
-        case follows
-        case ignores
-        case pubs
-    }
+    @State
+    private var showingFollows = false
+
+    @State
+    private var showingBlocks = false
+
+    @State
+    private var showingPubServers = false
 
     var body: some View {
         HStack(alignment: .center, spacing: 18) {
             tab(
                 label: .followedBy,
-                value: socialStats.numberOfFollowers,
-                avatars: socialStats.followers.map { $0 ?? ImageMetadata(link: .null) }
-            ).onTapGesture {
-                onTraitTapHandler?(.followers)
+                value: socialStats.followers.count,
+                avatars: socialStats.someFollowersAvatars.map { $0 ?? ImageMetadata(link: .null) }
+            )
+            .onTapGesture {
+                showingFollowers = true
+            }
+            .sheet(isPresented: $showingFollowers) {
+                NavigationView {
+                    IdentityListView(identities: socialStats.followers)
+                        .navigationTitle(Localized.followedByCount.text(["count": "\(socialStats.followers.count)"]))
+                }
             }
             tab(
                 label: .following,
-                value: socialStats.numberOfFollows,
-                avatars: socialStats.follows.map { $0 ?? ImageMetadata(link: .null) }
+                value: socialStats.follows.count,
+                avatars: socialStats.someFollowsAvatars.map { $0 ?? ImageMetadata(link: .null) }
             )
+            .onTapGesture {
+                showingFollows = true
+            }
+            .sheet(isPresented: $showingFollows) {
+                NavigationView {
+                    IdentityListView(identities: socialStats.follows)
+                        .navigationTitle(Localized.followingCount.text(["count": "\(socialStats.follows.count)"]))
+                }
+            }
             tab(
                 label: .blocking,
-                value: socialStats.numberOfBlocks,
-                avatars: socialStats.blocks.map { $0 ?? ImageMetadata(link: .null) }
+                value: socialStats.blocks.count,
+                avatars: socialStats.someBlocksAvatars.map { $0 ?? ImageMetadata(link: .null) }
             )
+            .onTapGesture {
+                showingBlocks = true
+            }
+            .sheet(isPresented: $showingBlocks) {
+                NavigationView {
+                    IdentityListView(identities: socialStats.blocks)
+                        .navigationTitle(Localized.blockingCount.text(["count": "\(socialStats.blocks.count)"]))
+                }
+            }
             tab(
                 label: .pubServers,
-                value: socialStats.numberOfPubServers,
-                avatars: socialStats.pubServers.map { $0 ?? ImageMetadata(link: .null) }
+                value: socialStats.pubServers.count,
+                avatars: socialStats.somePubServersAvatars.map { $0 ?? ImageMetadata(link: .null) }
             )
+            .onTapGesture {
+                showingPubServers = true
+            }
+            .sheet(isPresented: $showingPubServers) {
+                NavigationView {
+                    IdentityListView(identities: socialStats.pubServers)
+                        .navigationTitle(Localized.joinedCount.text(["count": "\(socialStats.pubServers.count)"]))
+                }
+            }
         }
         .padding(EdgeInsets(top: 9, leading: 18, bottom: 18, trailing: 18))
     }
@@ -104,14 +141,14 @@ struct SocialStatsView_Previews: PreviewProvider {
             .previewLayout(.sizeThatFits)
 
         let socialStats = ExtendedSocialStats(
-            numberOfFollowers: 2,
-            followers: [ImageMetadata(link: .null), ImageMetadata(link: .null)],
-            numberOfFollows: 1,
-            follows: [ImageMetadata(link: .null)],
-            numberOfBlocks: 3,
-            blocks: [ImageMetadata(link: .null), ImageMetadata(link: .null), ImageMetadata(link: .null)],
-            numberOfPubServers: 0,
-            pubServers: []
+            followers: [.null, .null],
+            someFollowersAvatars: [ImageMetadata(link: "&avatar1"), ImageMetadata(link: "&avatar3")],
+            follows: [.null],
+            someFollowsAvatars: [ImageMetadata(link: "&avatar4")],
+            blocks: [.null, .null, .null],
+            someBlocksAvatars: [ImageMetadata(link: "&avatar1"), ImageMetadata(link: "&avatar3"), ImageMetadata(link: "&avatar4")],
+            pubServers: [],
+            somePubServersAvatars: []
         )
         SocialStatsView(socialStats: socialStats)
             .previewLayout(.sizeThatFits)

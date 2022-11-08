@@ -15,35 +15,35 @@ import Foundation
 /// to encapsulate this requirement.
 struct ExtendedSocialStats {
     /// The total number of followers of an identity
-    var numberOfFollowers: Int
+    var followers: [Identity]
 
-    var followers: [ImageMetadata?]
+    var someFollowersAvatars: [ImageMetadata?]
 
     /// The total number of follows of an identity
-    var numberOfFollows: Int
+    var follows: [Identity]
 
-    var follows: [ImageMetadata?]
+    var someFollowsAvatars: [ImageMetadata?]
 
     /// The total number of blocks of an identity
-    var numberOfBlocks: Int
+    var blocks: [Identity]
 
-    var blocks: [ImageMetadata?]
+    var someBlocksAvatars: [ImageMetadata?]
 
     /// The total number of pub servers an identity joined
-    var numberOfPubServers: Int
+    var pubServers: [Identity]
 
-    var pubServers: [ImageMetadata?]
+    var somePubServersAvatars: [ImageMetadata?]
 
     static var zero: ExtendedSocialStats {
         ExtendedSocialStats(
-            numberOfFollowers: 0,
             followers: [],
-            numberOfFollows: 0,
+            someFollowersAvatars: [],
             follows: [],
-            numberOfBlocks: 0,
+            someFollowsAvatars: [],
             blocks: [],
-            numberOfPubServers: 0,
-            pubServers: []
+            someBlocksAvatars: [],
+            pubServers: [],
+            somePubServersAvatars: []
         )
     }
 }

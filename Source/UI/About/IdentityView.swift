@@ -32,17 +32,7 @@ import SwiftUI
 
     func followButtonTapped()
 
-    func block()
-
-    func report()
-
     func hashtagTapped(_ hashtag: Hashtag)
-
-    func socialTraitTapped(_ trait: SocialStatsView.Trait)
-
-    func sharePublicIdentifier()
-
-    func shareThisProfile()
 }
 
 struct ScrollViewOffsetPreferenceKey: PreferenceKey {
@@ -57,8 +47,6 @@ struct ScrollViewOffsetPreferenceKey: PreferenceKey {
 
 struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
     @ObservedObject var viewModel: ViewModel
-    @State private var showingShareOptions = false
-    @State private var showingActionOptions = false
     @State private var extendedHeader = true
     @State private var oldScrollViewOffset = ScrollViewOffsetPreferenceKey.defaultValue
 
@@ -150,9 +138,7 @@ struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
                                 .redacted(reason: viewModel.hashtags == nil ? .placeholder : [])
                             }
 
-                            SocialStatsView(socialStats: viewModel.socialStats ?? .zero) { trait in
-                                viewModel.socialTraitTapped(trait)
-                            }
+                            SocialStatsView(socialStats: viewModel.socialStats ?? .zero)
                             .frame(maxWidth: .infinity)
                             .redacted(reason: viewModel.socialStats == nil ? .placeholder : [])
                         }
@@ -191,32 +177,8 @@ struct IdentityView<ViewModel>: View where ViewModel: IdentityViewModel {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button {
-                    showingShareOptions = true
-                } label: {
-                    Image("icon-share")
-                }
-                .confirmationDialog(Localized.share.text, isPresented: $showingShareOptions) {
-                    Button(Localized.sharePublicIdentifier.text) {
-                        viewModel.sharePublicIdentifier()
-                    }
-                    Button(Localized.shareThisProfile.text) {
-                        viewModel.shareThisProfile()
-                    }
-                }
-                Button {
-                    showingActionOptions = true
-                } label: {
-                    Image("icon-options-off")
-                }
-                .confirmationDialog(Localized.share.text, isPresented: $showingActionOptions) {
-                    Button(Localized.blockUser.text, role: .destructive) {
-                        viewModel.block()
-                    }
-                    Button(Localized.reportUser.text, role: .destructive) {
-                        viewModel.report()
-                    }
-                }
+                IdentityShareView(identity: viewModel.identity)
+                IdentityOptionsView(identity: viewModel.identity, name: viewModel.about?.name)
             }
         }
         .alert(isPresented: showAlert) {
@@ -269,14 +231,14 @@ fileprivate class PreviewViewModel: IdentityViewModel {
             publicWebHosting: nil
         )
         viewModel.socialStats = ExtendedSocialStats(
-            numberOfFollowers: 2,
-            followers: [ImageMetadata(link: "&avatar1"), ImageMetadata(link: "&avatar3")],
-            numberOfFollows: 1,
-            follows: [ImageMetadata(link: "&avatar4")],
-            numberOfBlocks: 3,
-            blocks: [ImageMetadata(link: "&avatar1"), ImageMetadata(link: "&avatar3"), ImageMetadata(link: "&avatar4")],
-            numberOfPubServers: 0,
-            pubServers: []
+            followers: [.null, .null],
+            someFollowersAvatars: [ImageMetadata(link: "&avatar1"), ImageMetadata(link: "&avatar3")],
+            follows: [.null],
+            someFollowsAvatars: [ImageMetadata(link: "&avatar4")],
+            blocks: [.null, .null, .null],
+            someBlocksAvatars: [ImageMetadata(link: "&avatar1"), ImageMetadata(link: "&avatar3"), ImageMetadata(link: "&avatar4")],
+            pubServers: [],
+            somePubServersAvatars: []
         )
         viewModel.relationship = Relationship(from: .null, to: .null)
         return viewModel
@@ -286,27 +248,25 @@ fileprivate class PreviewViewModel: IdentityViewModel {
     func didDismiss() {}
     func hashtagTapped(_ hashtag: Hashtag) { }
     func followButtonTapped() { }
-    func shareThisProfile() { }
-    func block() { }
-    func report() { }
-    func sharePublicIdentifier() { }
-    func socialTraitTapped(_ trait: SocialStatsView.Trait) { }
 }
 
 struct IdentityView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             IdentityView(viewModel: PreviewViewModel.zero)
+                .environmentObject(BotRepository.shared)
         }
         .preferredColorScheme(.light)
 
         NavigationView {
             IdentityView(viewModel: PreviewViewModel.sample)
+                .environmentObject(BotRepository.shared)
         }
         .preferredColorScheme(.light)
 
         NavigationView {
             IdentityView(viewModel: PreviewViewModel.sample)
+                .environmentObject(BotRepository.shared)
         }
         .preferredColorScheme(.dark)
     }

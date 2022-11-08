@@ -10,7 +10,19 @@ import SwiftUI
 
 struct CompactPostView: View {
 
-    var post: Post
+    var post: Post {
+        didSet {
+            blobs = post.anyBlobs
+        }
+    }
+
+    init(post: Post) {
+        self.post = post
+        self.blobs = post.anyBlobs
+    }
+
+    @State
+    private var blobs: [Blob]
 
     @State
     private var shouldShowReadMore = false
@@ -68,19 +80,11 @@ struct CompactPostView: View {
                         .cornerRadius(4)
                 }
                 .frame(maxWidth: .infinity)
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
             }
-//            if !blobs.isEmpty {
-//                TabView {
-//                    ForEach(blobs) { blob in
-//                        ImageMetadataView(metadata: ImageMetadata(link: blob.identifier))
-//                            .onTapGesture {
-//                                AppController.shared.open(string: blob.identifier)
-//                            }
-//                    }
-//                }
-//                .tabViewStyle(.page)
-//                .aspectRatio(1, contentMode: .fit)
-//            }
+            if !blobs.isEmpty {
+                BlobGalleryView(blobs: blobs)
+            }
         }
     }
 }

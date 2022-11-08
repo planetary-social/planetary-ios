@@ -123,6 +123,8 @@ enum Localized: String, Localizable, CaseIterable {
     
     case followedByCount = "Followed by {{ count }}"
     case followingCount = "Following {{ count }}"
+    case blockingCount = "Blocking {{ count }}"
+    case joinedCount = "Joined {{ count }}"
     case inYourNetwork = " in your network"
     
     case followedByShortCount = "{{ count }} Followers"

@@ -66,43 +66,9 @@ import Support
             }
         }
     }
-
-    func block() {
-        Analytics.shared.trackDidSelectAction(actionName: "block_identity")
-        AppController.shared.promptToBlock(identity, name: about?.name)
-    }
-
-    func report() {
-        guard let currentIdentity = bot.identity else {
-            return
-        }
-        Analytics.shared.trackDidSelectAction(actionName: "report_user")
-        let profile = AbusiveProfile(identifier: identity, name: about?.name)
-        let newTicketVC = Support.shared.newTicketViewController(reporter: currentIdentity, profile: profile)
-        guard let controller = newTicketVC else {
-            AppController.shared.alert(
-                title: Localized.error.text,
-                message: Localized.Error.supportNotConfigured.text,
-                cancelTitle: Localized.ok.text
-            )
-            return
-        }
-        AppController.shared.push(controller)
-    }
-
+    
     func hashtagTapped(_ hashtag: Hashtag) {
         AppController.shared.open(string: hashtag.string)
-    }
-
-    func socialTraitTapped(_ trait: SocialStatsView.Trait) {
-        switch trait {
-        case .followers:
-            AppController.shared.push(FollowerTableViewController(identity: identity))
-        case .follows:
-            AppController.shared.push(FollowingTableViewController(identity: identity))
-        default:
-            break
-        }
     }
 
     func didDismiss() {
@@ -114,44 +80,6 @@ import Support
         didDismiss()
     }
 
-    func shareThisProfile() {
-        Analytics.shared.trackDidSelectAction(actionName: "share_profile")
-
-        if let imageMetadata = about?.image, let image = Caches.blobs.image(for: imageMetadata.link) {
-            let activityController = UIActivityViewController(
-                activityItems: [image],
-                applicationActivities: nil
-            )
-            activityController.configurePopover(from: nil)
-            AppController.shared.present(activityController, animated: true)
-            return
-        }
-
-        let nameOrIdentity = about?.name ?? identity
-        let text = Localized.shareThisProfileText.text([
-            "who": nameOrIdentity,
-            "link": identity.publicLink?.absoluteString ?? ""
-        ])
-
-        let activityController = UIActivityViewController(
-            activityItems: [text],
-            applicationActivities: nil
-        )
-        activityController.configurePopover(from: nil)
-        AppController.shared.present(activityController, animated: true)
-    }
-
-    func sharePublicIdentifier() {
-        Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
-
-        let activityController = UIActivityViewController(
-            activityItems: [self.identity],
-            applicationActivities: nil
-        )
-        activityController.configurePopover(from: nil)
-        AppController.shared.present(activityController, animated: true)
-    }
-    
     private func updateAbout(_ about: About?) {
         self.about = about
     }
@@ -185,13 +113,7 @@ import Support
 
             if let currentIdentity = Bots.current.identity {
                 do {
-                    let followers: [Identity] = try await Bots.current.followers(identity: currentIdentity)
-                    let followings: [Identity] = try await Bots.current.followings(identity: currentIdentity)
-                    let blocks = try await Bots.current.blocks(identity: currentIdentity)
-                    let relationship = Relationship(from: currentIdentity, to: identity)
-                    relationship.isFollowing = followings.contains(identity)
-                    relationship.isBlocking = blocks.contains(identity)
-                    relationship.isFollowedBy = followers.contains(identity)
+                    let relationship = try await Bots.current.relationship(from: currentIdentity, to: identity)
                     await self?.updateRelationship(relationship)
                 } catch {
                     Log.optional(error)
@@ -201,23 +123,23 @@ import Support
             }
 
             do {
-                let followers: [Identity] = try await Bots.current.followers(identity: identity)
+                let followers: [Identity] = try await Bots.current.followers(identity: identity).reversed()
                 let someFollowers = try await Bots.current.abouts(identities: Array(followers.prefix(2)))
-                let followings: [Identity] = try await Bots.current.followings(identity: identity)
+                let followings: [Identity] = try await Bots.current.followings(identity: identity).reversed()
                 let someFollowings = try await Bots.current.abouts(identities: Array(followings.prefix(2)))
-                let blocks = try await Bots.current.blocks(identity: identity)
+                let blocks: [Identity] = try await Bots.current.blocks(identity: identity).reversed()
                 let someBlocks = try await Bots.current.abouts(identities: Array(blocks.prefix(2)))
-                let pubs = try await Bots.current.pubs(joinedBy: identity).map { $0.address.key }
+                let pubs: [Identity] = try await Bots.current.pubs(joinedBy: identity).map { $0.address.key }.reversed()
                 let somePubs = try await Bots.current.abouts(identities: Array(pubs.prefix(2)))
                 await self?.updateSocialStats(ExtendedSocialStats(
-                    numberOfFollowers: followers.count,
-                    followers: someFollowers.map { $0?.image },
-                    numberOfFollows: followings.count,
-                    follows: someFollowings.map { $0?.image },
-                    numberOfBlocks: blocks.count,
-                    blocks: someBlocks.map { $0?.image },
-                    numberOfPubServers: pubs.count,
-                    pubServers: somePubs.map { $0?.image }
+                    followers: followers,
+                    someFollowersAvatars: someFollowers.map { $0?.image },
+                    follows: followings,
+                    someFollowsAvatars: someFollowings.map { $0?.image },
+                    blocks: blocks,
+                    someBlocksAvatars: someBlocks.map { $0?.image },
+                    pubServers: pubs,
+                    somePubServersAvatars: somePubs.map { $0?.image }
                 ))
             } catch {
                 Log.optional(error)

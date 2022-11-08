@@ -686,6 +686,14 @@
 		5BC3DE6128299CB900F6A363 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE28DFC27CD7BA1004D7D27 /* Analytics */; };
 		5BE69B0D27CEA1B70013D51D /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE69B0C27CEA1B70013D51D /* Analytics */; };
+		5BE8A30929193ECE00C4A38E /* BlobGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */; };
+		5BE8A30A29193ECE00C4A38E /* BlobGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */; };
+		5BE8A30D2919C9E800C4A38E /* IdentityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */; };
+		5BE8A30E2919C9E800C4A38E /* IdentityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */; };
+		5BE8A310291A96FE00C4A38E /* IdentityOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30F291A96FE00C4A38E /* IdentityOptionsView.swift */; };
+		5BE8A311291A96FE00C4A38E /* IdentityOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30F291A96FE00C4A38E /* IdentityOptionsView.swift */; };
+		5BE8A313291A986200C4A38E /* IdentityShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A312291A986200C4A38E /* IdentityShareView.swift */; };
+		5BE8A314291A986200C4A38E /* IdentityShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A312291A986200C4A38E /* IdentityShareView.swift */; };
 		5BEC5CB028FD8637009C2812 /* RelationshipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEC5CAF28FD8637009C2812 /* RelationshipView.swift */; };
 		5BEC5CB128FD8637009C2812 /* RelationshipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEC5CAF28FD8637009C2812 /* RelationshipView.swift */; };
 		5BEE741B2880502100897ACC /* ContentVote+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEE741A2880502100897ACC /* ContentVote+ViewDatabase.swift */; };
@@ -1666,6 +1674,10 @@
 		5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAlgorithm.swift; sourceTree = "<group>"; };
 		5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
 		5BC3DE6028299CB900F6A363 /* SocialStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialStats.swift; sourceTree = "<group>"; };
+		5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobGalleryView.swift; sourceTree = "<group>"; };
+		5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityListView.swift; sourceTree = "<group>"; };
+		5BE8A30F291A96FE00C4A38E /* IdentityOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityOptionsView.swift; sourceTree = "<group>"; };
+		5BE8A312291A986200C4A38E /* IdentityShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityShareView.swift; sourceTree = "<group>"; };
 		5BEC5CAF28FD8637009C2812 /* RelationshipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipView.swift; sourceTree = "<group>"; };
 		5BEE741A2880502100897ACC /* ContentVote+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentVote+ViewDatabase.swift"; sourceTree = "<group>"; };
 		5BEE741D2880515800897ACC /* Post+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Post+ViewDatabase.swift"; sourceTree = "<group>"; };
@@ -2755,12 +2767,16 @@
 				5B7AB67E28F46EB1007DCCF1 /* SocialStatsView.swift */,
 				5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */,
 				5B7786D728F876190081B1C6 /* ImageMetadataView.swift */,
+				5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */,
 				5BEC5CAF28FD8637009C2812 /* RelationshipView.swift */,
 				5B929DA929086954007922AB /* MessageListView.swift */,
 				5B929DA3290857DB007922AB /* MessageView.swift */,
 				5BAB1840290C2634009F8F90 /* CompactPostView.swift */,
+				5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */,
 				5BAB1844290C2767009F8F90 /* CompactIdentityView.swift */,
 				5B8E8058291547D9005009FC /* MessageOptionsView.swift */,
+				5BE8A30F291A96FE00C4A38E /* IdentityOptionsView.swift */,
+				5BE8A312291A986200C4A38E /* IdentityShareView.swift */,
 			);
 			path = About;
 			sourceTree = "<group>";
@@ -4113,6 +4129,7 @@
 				C9724B3E2809D481000EBCCD /* OnboardingStep.swift in Sources */,
 				C9724B3F2809D481000EBCCD /* OnboardingStepView.swift in Sources */,
 				C9724B912809EA08000EBCCD /* AvatarButton.swift in Sources */,
+				5BE8A311291A96FE00C4A38E /* IdentityOptionsView.swift in Sources */,
 				C9724B142809D2DF000EBCCD /* OnboardingViewController.swift in Sources */,
 				53211CF0228522B2007FB785 /* FakeBot.swift in Sources */,
 				5B1FF60128DB7B21008F3A85 /* SelectableText.swift in Sources */,
@@ -4201,6 +4218,7 @@
 				C9724B462809D50D000EBCCD /* AppController+Lifecycle.swift in Sources */,
 				C9724B9B2809EA93000EBCCD /* ChannelViewController.swift in Sources */,
 				C9724BEA2809EEF6000EBCCD /* AboutTableViewController.swift in Sources */,
+				5BE8A314291A986200C4A38E /* IdentityShareView.swift in Sources */,
 				C978D35327BF053B00842458 /* Environment.swift in Sources */,
 				C997F3E128B1D86D00DAC117 /* AliasCell.swift in Sources */,
 				8DB041FD234FA994006AC35B /* Identity+Bot.swift in Sources */,
@@ -4212,6 +4230,7 @@
 				23EF5AAF249D185E00469977 /* BearerBanListAPI.swift in Sources */,
 				C9724B832809E934000EBCCD /* AboutView.swift in Sources */,
 				53E26C5B23039631009240B2 /* Dictionary+Transform.swift in Sources */,
+				5BE8A30E2919C9E800C4A38E /* IdentityListView.swift in Sources */,
 				C9724B632809D6CE000EBCCD /* MessageTableViewDataSource.swift in Sources */,
 				C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */,
 				C9D1EACD2832A0230092E098 /* NetworkKeyTests.swift in Sources */,
@@ -4391,6 +4410,7 @@
 				C9724BDF2809EE4B000EBCCD /* Layout+SpacerView.swift in Sources */,
 				5BEC5CB128FD8637009C2812 /* RelationshipView.swift in Sources */,
 				C9421EBC2888A51600A4C86D /* String+Substring.swift in Sources */,
+				5BE8A30A29193ECE00C4A38E /* BlobGalleryView.swift in Sources */,
 				C9724BE82809EEA9000EBCCD /* OperationQueue+Async.swift in Sources */,
 				533D0A692389BEE400E5A374 /* ColorTests.swift in Sources */,
 				531A8A4921FA382400D5C8C0 /* Mention.swift in Sources */,
@@ -4775,6 +4795,7 @@
 				53211CCA227BA725007FB785 /* Array+SafeSubscript.swift in Sources */,
 				533EDBED238603D8008B3565 /* BlobCache.swift in Sources */,
 				8DE093D52344CA10009E505D /* RelationshipButton.swift in Sources */,
+				5BE8A310291A96FE00C4A38E /* IdentityOptionsView.swift in Sources */,
 				1B32D378249AAA4800811DC9 /* SmallPostHeaderView.swift in Sources */,
 				23EF5A99249CDCF900469977 /* BanListAPIService.swift in Sources */,
 				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
@@ -4874,6 +4895,7 @@
 				0AF2DEF0247D9DB4003F457D /* FloatingRefreshButton.swift in Sources */,
 				53211CD62281D567007FB785 /* EditAboutView.swift in Sources */,
 				5B7AB66F28E74692007DCCF1 /* ExtendedSocialStats.swift in Sources */,
+				5BE8A30D2919C9E800C4A38E /* IdentityListView.swift in Sources */,
 				5B7786D828F876190081B1C6 /* ImageMetadataView.swift in Sources */,
 				8D6D2E64236387C800E7B0EC /* FollowCountView.swift in Sources */,
 				5BAB1845290C2767009F8F90 /* CompactIdentityView.swift in Sources */,
@@ -4940,6 +4962,7 @@
 				53C422B621C476B000A314AD /* UserDefaults+Debug.swift in Sources */,
 				539246DA22A82F9000D01EEC /* API.swift in Sources */,
 				C9F53825286CCF410015A146 /* WelcomeService.swift in Sources */,
+				5BE8A313291A986200C4A38E /* IdentityShareView.swift in Sources */,
 				5B7AB68228F4946D007DCCF1 /* HashtagSliderView.swift in Sources */,
 				8DB042022355ECC6006AC35B /* AboutTableViewDataSource.swift in Sources */,
 				53E34200225000D4002BB5F4 /* UIViewController+Keyboard.swift in Sources */,
@@ -4998,6 +5021,7 @@
 				23EF5AAD249D185E00469977 /* BearerBanListAPI.swift in Sources */,
 				53AD3FD5226FBD91005228F9 /* AppDelegate+UIAppearance.swift in Sources */,
 				53E26C6923062AC3009240B2 /* Layout+Fill.swift in Sources */,
+				5BE8A30929193ECE00C4A38E /* BlobGalleryView.swift in Sources */,
 				531B92C722D125DA005D5255 /* ChannelsViewController.swift in Sources */,
 				536255D523AB16A6001007D0 /* Date+Holidays.swift in Sources */,
 				533F4055225FB3B40060B4B9 /* Layout+SpacerView.swift in Sources */,
