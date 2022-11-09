@@ -257,6 +257,8 @@
 "ManageRelays.loadingRooms" = "Cargando salas...";
 "ManageRelays.invalidRoomURL" = "URL de sala inválido";
 "ManageRelays.roomHelpText" = "Los servidores de sala permiten a los miembros conectarse entre ellos y susurrarse directamente, usando el servidor como un túnel. Para añadir una sala necesitas preguntar a un miembro de una sala existente por una invitación o ejecutar la tuya propia.";
+"ManageRelays.deleteRoom" = "Delete";
+"ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
 
 "Alias.manageAliases" = "Administrar alias (beta)";
 "Alias.addAlias" = "Registrar un nuevo alias";
