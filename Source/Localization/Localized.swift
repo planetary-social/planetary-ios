@@ -537,6 +537,7 @@ extension Localized {
         case invalidRoomURL = "Could not parse invitation."
         case invalidRoomInvitationOrAddress = "Planetary does not recognize this as a valid room invitation or address."
         case notLoggedIn = "The operation could not be completed because no user is logged in."
+        case alreadyJoinedRoom = "You are already a member of this room"
     }
 }
 

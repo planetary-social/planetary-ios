@@ -18,6 +18,7 @@ enum RoomInvitationRedeemer {
         case invitationRedemptionFailedWithReason(String)
         case invitationRedemptionFailed
         case notLoggedIn
+        case alreadyJoinedRoom
         
         var errorDescription: String? {
             switch self {
@@ -29,6 +30,8 @@ enum RoomInvitationRedeemer {
                 return Localized.Error.invitationRedemptionFailed.text
             case .notLoggedIn:
                 return Localized.Error.notLoggedIn.text
+            case .alreadyJoinedRoom:
+                return Localized.Error.alreadyJoinedRoom.text
             }
         }
     }
@@ -187,6 +190,17 @@ enum RoomInvitationRedeemer {
     /// Posts the invite token to the given URL, storing the room data in the given `bot` and displaying the result
     /// of the operation in the `controller`.
     private static func post(_ token: String, to url: URL, bot: Bot) async throws {
+
+        // If app isn't running, the bot must log in before redeeming room invite.
+        if bot.identity == nil, let appConfiguration = AppConfiguration.current {
+            do {
+                try await bot.login(config: appConfiguration)
+            } catch {
+                Log.error("Bot is unable to log in to redeem invitation.")
+                throw RoomInvitationError.notLoggedIn
+            }
+        }
+
         guard let identity = bot.identity else {
             Log.error("missing identity for room invitation redemption: \(url.absoluteURL)")
             throw RoomInvitationError.notLoggedIn
@@ -206,7 +220,11 @@ enum RoomInvitationRedeemer {
                 let address = MultiserverAddress(string: addressString) {
                 
                 let room = Room(address: address)
-                try await bot.insert(room: room)
+                do {
+                    try await bot.insert(room: room)
+                } catch {
+                    throw RoomInvitationError.alreadyJoinedRoom
+                }
                 return
             } else {
                 Log.error("Got failure response from room: \(String(describing: responseData.string))")
