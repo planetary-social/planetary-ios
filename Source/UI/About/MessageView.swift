@@ -58,14 +58,14 @@ struct MessageView: View {
                     .scaledToFill()
                 if let header = attributedHeader {
                     Text(header)
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundColor(Color.secondaryTxt)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 MessageOptionsView(message: message)
             }
             .padding(10)
-            Divider().background(Color(hex: "#a68782").opacity(0.15))
+            Divider().background(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
             if let contact = message.content.contact {
                 CompactIdentityView(identity: contact.contact)
                     .onTapGesture {
@@ -78,23 +78,26 @@ struct MessageView: View {
                     }
                 HStack {
                     HStack {
-                        Text("Post a reply")
+                        Text(Localized.postAReply.text)
+                            .font(.subheadline)
                             .foregroundColor(Color.secondaryTxt)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Image.navIconCamera
                             .renderingMode(.template)
-                            .foregroundColor(.secondaryTxt)
+                            .foregroundColor(.accentTxt)
                     }
-                    .frame(maxWidth: .infinity, idealHeight: 35)
                     .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                    .background(Color(hex: "#F4EBEA"))
+                    .frame(maxWidth: .infinity, idealHeight: 35)
+                    .background(Color.postareplyBackground)
                     .cornerRadius(18)
+                    .shadow(color: .postareplyShadowTop, radius: 0, x: 0, y: -1)
+                    .shadow(color: .postareplyShadowBottom, radius: 0, x: 0, y: 1)
                 }.padding(15)
             }
         }
         .background(
             LinearGradient(
-                colors: [Color(hex: "#fff8f7"), Color(hex: "#fdf7f6")],
+                colors: [Color.cardBgTop, Color.cardBgBottom],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -148,7 +151,11 @@ struct MessageView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        MessageView(message: message).preferredColorScheme(.light)
-
+        MessageView(message: message)
+            .environmentObject(BotRepository.shared)
+            .preferredColorScheme(.light)
+        MessageView(message: message)
+            .environmentObject(BotRepository.shared)
+            .preferredColorScheme(.dark)
     }
 }

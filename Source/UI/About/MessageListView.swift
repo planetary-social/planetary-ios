@@ -32,7 +32,10 @@ struct MessageListView<Header>: View where Header: View {
                                     loadMore()
                                 }
                             }
-                            .padding()
+                            .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
+                            .compositingGroup()
+                            .shadow(color: Color.cardBorderBottom, radius: 0, x: 0, y: 4)
+                            .shadow(color: Color.cardShadowBottom, radius: 10, x: 0, y: 4)
                     }
                 }
                 if isLoading, !noMoreMessages {
@@ -83,11 +86,33 @@ let sampleMessage = Message(
     offChain: false
 )
 
+let anotherSampleMessage = Message(
+    key: "%12346",
+    value: MessageValue(
+        author: "@4Wxraodifldsjf=.ed25519",
+        content: Content(
+            from: Post(text: "Hello, world")
+        ),
+        hash: "akldsjfa",
+        previous: nil,
+        sequence: 0,
+        signature: "%alksdjfadsfi",
+        claimedTimestamp: 345
+    ),
+    timestamp: 356,
+    receivedSeq: 0,
+    hashedKey: nil,
+    offChain: false
+)
+
 struct MessageListView_Previews: PreviewProvider {
 
     static var previews: some View {
+        MessageListView(messages: [sampleMessage, anotherSampleMessage], strategy: NoHopFeedAlgorithm(identity: .null)) {
+
+        }.background(Color(hex: "eae1e0")).environmentObject(BotRepository.shared)
         MessageListView(messages: [sampleMessage], strategy: NoHopFeedAlgorithm(identity: .null)) {
 
-        }
+        }.background(Color(hex: "221736")).environmentObject(BotRepository.shared).preferredColorScheme(.dark).previewLayout(.sizeThatFits)
     }
 }
