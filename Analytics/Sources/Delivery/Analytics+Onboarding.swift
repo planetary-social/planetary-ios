@@ -27,6 +27,8 @@ public extension Analytics {
         case photoConfirm
         case resume
         case start
+        case rooms
+        case alias
 
         /// Used for safeguarding. Each onboarding step should be identified accordingly
         case unknown

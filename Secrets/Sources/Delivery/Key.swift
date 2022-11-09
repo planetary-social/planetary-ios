@@ -33,6 +33,12 @@ public enum Key: String {
     /// Token used to join the Planetary room
     case planetaryRoomToken
 
+    /// Token used to join the Scuttle ID room
+    case scuttleRoomToken
+    
+    /// Token used to join the Twit room
+    case twitRoomToken
+    
     /// Zendesk App ID
     case zendeskAppID
 

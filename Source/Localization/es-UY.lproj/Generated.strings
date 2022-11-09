@@ -135,6 +135,7 @@
 "Localized.searchingLocally" = "Searching for posts in your local database";
 "Localized.noResultsFound" = "No results found.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
+"Localized.rooms" = "Rooms";
 "Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -226,6 +227,14 @@
 "Onboarding.joinPlanetarySystemDescription" = "Unirse significa que usarás los servidores de repetición de Planetary para intercambiar mensajes con otros. Recomendado para nuevos usuarios.";
 "Onboarding.useTestNetwork" = "Usar Red de Prueba";
 "Onboarding.useTestNetworkDescription" = "Esto creará su identidad con una clave de red alternativa que no se replicará con la red SSB principal. Esto no se puede cambiar más tarde.";
+"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
+"Onboarding.aliasServerInformationParagraph1" = "Alias servers are like email servers, where you can define how others will find you on Planetary.";
+"Onboarding.aliasServerInformationParagraph2" = "youralias.planetary.name is a great start, but you can choose your alias on other servers:";
+"Onboarding.yourAlias" = "youralias";
+"Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
+"Onboarding.aliasSkip" = "Skip choosing an alias";
+"Onboarding.aliasTaken" = "This alias is taken already";
+"Onboarding.typeYourAlias" = "Type your alias";
 
 "OnboardingStepTitle.backup" = "OK, ya creamos tu identidad. ¿Querés respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary es una forma más saludable de ser social";
@@ -243,6 +252,8 @@
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil añadida";
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
 "OnboardingStepTitle.start" = "\nRedes sociales para humanos, no para algoritmos.";
+"OnboardingStepTitle.joinedRoom" = "Choose a server";
+"OnboardingStepTitle.alias" = "Now choose your alias";
 
 "ManageRelays.relayServers" = "Retransmitir servidores";
 "ManageRelays.managePubs" = "Administrar pubs";
@@ -327,7 +338,7 @@
 "Error.invalidRoomURL" = "No se pudo interpretar la invitación.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary no reconoce esto como una invitación o dirección válida de la sala.";
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room";
 
 "Channel.one" = "hashtag";
 "Channel.many" = "hashtags";

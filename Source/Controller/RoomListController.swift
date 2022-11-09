@@ -44,7 +44,7 @@ import UIKit
         }
     }
     
-    func addRoom(from string: String) {
+    func addRoom(from string: String, token: String?) {
         // Check if this is an invitation
         if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
             loadingMessage = Localized.joiningRoom.text
@@ -57,8 +57,13 @@ import UIKit
             loadingMessage = Localized.joiningRoom.text
             Task {
                 do {
-                    try await self.bot.insert(room: Room(address: address))
-                    self.finishAddingRoom()
+                    if let token {
+                        await RoomInvitationRedeemer.redeem(address: address, token: token, in: AppController.shared, bot: Bots.current)
+                        self.finishAddingRoom()
+                    } else {
+                        try await self.bot.insert(room: Room(address: address))
+                        self.finishAddingRoom()
+                    }
                 } catch {
                     Log.optional(error)
                     self.errorMessage = error.localizedDescription
