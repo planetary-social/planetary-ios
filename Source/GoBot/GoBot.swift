@@ -1627,7 +1627,9 @@ class GoBot: Bot {
             queue.async {
                 completion(statistics)
             }
-            Analytics.shared.trackStatistics(statistics.analyticsStatistics)
+            
+            //commenting out because we don't need to be logging this much information - rabble Nov 9 2022
+            //Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
     }
     
