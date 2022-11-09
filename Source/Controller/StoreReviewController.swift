@@ -45,11 +45,7 @@ enum StoreReviewController {
     }
     
     private static var isYearlyPromptCountExceeded: Bool {
-        guard var yearlyPrompts = yearlyPrompts else {
-            return false
-        }
-        
-        guard let promptsThisYear = yearlyPrompts[thisYearKey] else {
+        guard let promptsThisYear = yearlyPrompts?[thisYearKey] else {
             return false
         }
         
@@ -89,6 +85,7 @@ enum StoreReviewController {
             
             do {
                 try presentAppStoreReviewPrompt()
+                incrementYearlyPromptCount()
             } catch {
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
@@ -106,6 +103,5 @@ enum StoreReviewController {
         }
         
         SKStoreReviewController.requestReview(in: scene)
-        incrementYearlyPromptCount()
     }
 }
