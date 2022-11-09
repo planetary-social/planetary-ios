@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Update the tap target on the Edit profile page #936
+- Removed logging for regular bot actions #952
 
 ## [1.3.6] 2022-10-25
 
