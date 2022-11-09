@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Ensure bot is logged in when redeeming room invites. #895
+- Add confirmation message when deleting room #893
+- Update the tap target on the Edit profile page #936
 
 ## [1.3.6] 2022-10-25
 

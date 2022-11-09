@@ -390,6 +390,8 @@ extension Localized {
         case loadingRooms = "Loading rooms..."
         case invalidRoomURL = "Invalid room URL"
         case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
+        case deleteRoom = "Delete"
+        case deleteRoomConfirmation = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room."
     }
 }
 

@@ -23,16 +23,52 @@ class EditValueView: UIView {
         view.backgroundColor = .appBackground
         view.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         view.isEditable = true
-        view.isScrollEnabled = false
         view.textColor = UIColor.text.default
+        view.layer.borderColor = UIColor.border.text.cgColor
+        view.layer.borderWidth = 1
+        view.roundedCorners(radius: 8)
+        view.textContainerInset = .defaultText
         return view
     }()
+    
+    let textField: TextFieldWithInsets = {
+        let textField = TextFieldWithInsets()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor.border.text.cgColor
+        textField.roundedCorners(radius: 8)
+        return textField
+    }()
+    
+    private let inputType: Localized
+    
+    var bottomConstraint: NSLayoutConstraint?
+    
+    var text: String {
+        get {
+            switch inputType {
+                case .name:
+                    return textField.text ?? ""
+                default:
+                    return textView.text
+            }
+        }
+        set {
+            switch inputType {
+                case .name:
+                    self.textField.text = newValue
+                default:
+                    self.textView.text = newValue
+            }
+        }
+    }
 
     init(label: Localized, value: String = "") {
+        self.inputType = label
         super.init(frame: .zero)
         self.backgroundColor = .appBackground
         self.label.text = label.text
-        self.textView.text = value
+        self.text = value
         self.addSubviews()
     }
 
@@ -43,15 +79,23 @@ class EditValueView: UIView {
     private func addSubviews() {
 
         self.useAutoLayout()
-        self.constrainHeight(greaterThanOrEqualTo: 46)
 
-        var insets = UIEdgeInsets(top: 0, left: 21, bottom: 0, right: 0)
-        Layout.fillTopLeft(of: self, with: self.label, insets: insets)
-        self.label.constrainHeight(to: 46)
-
-        // note that 114 is arbitrary and does not take into account different screen widths
-        insets = UIEdgeInsets(top: 10, left: 114, bottom: 0, right: -8)
-        Layout.fill(view: self, with: self.textView, insets: insets)
-        self.textView.contentInset = .top(-5)
+        let labelInsets = UIEdgeInsets.topLeft
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        Layout.fillTop(of: self, with: label, insets: labelInsets)
+        
+        let textInputInsets = UIEdgeInsets.topLeftRight
+        switch inputType {
+            case .name:
+                textField.setContentHuggingPriority(.defaultHigh, for: .vertical)
+                Layout.fillSouth(of: label, with: textField, insets: textInputInsets)
+                bottomConstraint = textField.pinBottomToSuperviewBottom(constant: -Layout.verticalSpacing, respectSafeArea: false)
+            case .bio:
+                textView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+                Layout.fillSouth(of: label, with: textView, insets: textInputInsets)
+                bottomConstraint = textView.pinBottomToSuperviewBottom(constant: -Layout.verticalSpacing, respectSafeArea: false)
+            default:
+                break
+        }
     }
 }

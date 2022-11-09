@@ -75,6 +75,8 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         }
     }
     
+    @State private var showingDeleteAlert = false
+    @State private var indexSetToDelete: IndexSet?
     var body: some View {
         List {
             // Joined Rooms
@@ -89,7 +91,23 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         .foregroundColor(.mainText)
                         .listRowBackground(Color.cardBackground)
                     }
-                    .onDelete(perform: { viewModel.deleteRooms(at: $0) })
+                    .onDelete { indexSet in
+                        self.indexSetToDelete = indexSet
+                        withAnimation {
+                            showingDeleteAlert = true
+                        }
+                    }
+                    .alert(isPresented: $showingDeleteAlert) {
+                        Alert(
+                            title: Text(Localized.ManageRelays.deleteRoomConfirmation.text),
+                            primaryButton: .destructive(Text(Localized.ManageRelays.deleteRoom.text)) {
+                                if let indexSetToDelete {
+                                    viewModel.deleteRooms(at: indexSetToDelete)
+                                }
+                            },
+                            secondaryButton: .cancel()
+                        )
+                    }
                 } header: {
                     Localized.ManageRelays.joinedRooms.view
                         .foregroundColor(.secondaryText)
