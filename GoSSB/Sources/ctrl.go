@@ -318,7 +318,6 @@ func ssbDropIndexData() bool {
 
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
-	return true // todo
 	var err error
 	defer logError("ssbInviteAccept", &err)
 
@@ -390,22 +389,12 @@ func ssbRoomsAliasRegister(addressString, aliasString string) C.ssbRoomsAliasReg
 
 	aliasURL, err := service.App.Commands.RoomsAliasRegister.Handle(ctx, cmd)
 	if err != nil {
+		if errors.Is(err, commands.ErrRoomAliasAlreadyTaken) {
+			return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterAliasAlreadyTaken}
+		}
 		err = errors.Wrap(err, "error calling the handler")
 		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
-
-	// todo alias already registered
-
-	//var ret string
-	//err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "registerAlias"}, params...)
-	//if err != nil {
-	//	retErr = errors.Wrap(err, "async call failed")
-	//	if strings.Contains(err.Error(), "is already taken") {
-	//		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterAliasAlreadyTaken}
-	//	}
-	//	return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	//}
-	//
 
 	return C.ssbRoomsAliasRegisterReturn_t{alias: C.CString(aliasURL.String())}
 }
