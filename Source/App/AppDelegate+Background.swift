@@ -126,8 +126,11 @@ extension AppDelegate {
     
     // MARK: Handling
     
+    // swiftlint:disable line_length
     // To test this, run on a real device, hit pause in the debugger, then paste in this command:
     // e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"com.planetary.long_sync"]
+    //
+    // swiftlint:enable line_length
     private func handleSyncTask(task: BGTask) {
         Log.info("Handling task \(task.identifier)")
         Analytics.shared.trackDidStartBackgroundTask(taskIdentifier: task.identifier)
