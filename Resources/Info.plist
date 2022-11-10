@@ -6,6 +6,7 @@
 	<array>
 		<string>com.planetary.short_sync</string>
 		<string>com.planetary.long_sync</string>
+		<string>com.planetary.db_maintenance</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
