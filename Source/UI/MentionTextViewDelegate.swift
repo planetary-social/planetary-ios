@@ -33,7 +33,7 @@ class MentionTextViewDelegate: NSObject, UITextViewDelegate {
     // handling pasted text or keyboard suggestions twice.
     internal var ignoreTextViewDelegateWhileReplacingText = false
 
-    init(font: UIFont, color: UIColor, placeholderText: Text? = nil, placeholderColor: UIColor? = nil) {
+    init(font: UIFont, color: UIColor, placeholderText: Localized? = nil, placeholderColor: UIColor? = nil) {
         self.font = font
         self.color = color
         self.placeholder = placeholderText?.text

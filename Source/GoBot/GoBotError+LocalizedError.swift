@@ -18,6 +18,8 @@ extension GoBotError: LocalizedError {
             return "\(string): \(error.localizedDescription)"
         case .unexpectedFault(let string):
             return "Unexpected fault: \(string)"
+        case .deadlock:
+            return "Detected GoBot deadlock"
         }
     }
 }

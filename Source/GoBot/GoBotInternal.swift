@@ -284,18 +284,13 @@ class GoBotInternal {
             Log.error("Failed to disconnect peers")
         }
         
-        let connectToHealthy = ssbConnectPeers(2)
-        if !connectToHealthy {
-            Log.error("Failed to connect to healthy peers")
-        }
-        
         // Also connect to two random peers
         let connectToRandom = self.dial(from: peers, atLeast: 2, tries: 10)
         if !connectToRandom {
             Log.error("Failed to connect to random peers")
         }
         
-        return disconnectSuccess && connectToHealthy && connectToRandom
+        return disconnectSuccess && connectToRandom
     }
     
     func dialOne(peer: MultiserverAddress) -> Bool {
@@ -321,7 +316,9 @@ class GoBotInternal {
 
     // MARK: Status / repo stats
 
-    func repoStatus() throws -> ScuttlegobotRepoCounts {
+    /// Fetches some metadata about the go-ssb log including how many messages it has.
+    /// This should only be called on the `serialQueue`.
+    func repoStats() throws -> ScuttlegobotRepoCounts {
         guard let counts = ssbRepoStats() else {
             throw GoBotError.unexpectedFault("failed to get repo counts")
         }
@@ -329,6 +326,16 @@ class GoBotInternal {
         free(counts)
         let dec = JSONDecoder()
         return try dec.decode(ScuttlegobotRepoCounts.self, from: countData)
+    }
+    
+    /// Fetches some metadata about the go-ssb log including how many messages it has.
+    /// This should only be called on the `serialQueue`.
+    func repoStats() -> Result<ScuttlegobotRepoCounts, Error> {
+        do {
+            return .success(try repoStats())
+        } catch {
+            return .failure(error)
+        }
     }
     
     // repoFSCK returns true if the repo is fine and otherwise false

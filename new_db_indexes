@@ -1,0 +1,17 @@
+CREATE INDEX pubs_idx_03e7039db1 ON pubs(msg_ref);
+CREATE INDEX contacts_idx_03e3709d1b ON contacts(msg_ref);
+CREATE INDEX contacts_idx3_14 ON contacts(state, author_id);
+CREATE INDEX posts_idx_3e2743671e ON posts(is_root, msg_ref);
+CREATE INDEX tangles_idx_8713328123 ON tangles(root, msg_ref);
+CREATE INDEX channel_assignments_idx_0039db ON channel_assignments(msg_ref);
+CREATE INDEX reports_idx_14b8e58e ON reports(author_id, created_at DESC);
+
+CREATE INDEX messages_idx_d50c1d3a1 ON messages(type, claimed_at);
+CREATE INDEX messages_idx_b6bd388ad ON messages(author_id, received_at DESC);
+CREATE INDEX messages_idx_d213333109 ON messages(author_id, type, sequence DESC);
+CREATE INDEX messages_idx_3f793c881e ON messages(is_decrypted, hidden, claimed_at);
+CREATE INDEX messages_idx_144439fa0 ON messages(type, is_decrypted, hidden, author_id);
+CREATE INDEX messages_idx_c81b390cc1 ON messages(type, is_decrypted, hidden, claimed_at);
+CREATE INDEX messages_idx_bfe9132811 ON messages(is_decrypted, hidden, author_id, claimed_at);
+
+

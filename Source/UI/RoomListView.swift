@@ -26,7 +26,7 @@ import SwiftUI
     /// Tries to add a room to the database from an invitation link or multiserver address string.
     func addRoom(from: String)
     
-    /// Tells the coordinator that the user wants to open the given room.
+    /// Tells the controller that the user wants to open the given room.
     func open(_ room: Room)
     
     /// Called when the user dismisses the shown error message. Should clear `errorMessage`.
@@ -62,12 +62,12 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
             if showProgress, let loadingMessage = viewModel.loadingMessage {
                 VStack {
                     PeerConnectionAnimationView(peerCount: 5)
-                    SwiftUI.Text(loadingMessage)
-                        .foregroundColor(Color("mainText"))
+                    Text(loadingMessage)
+                        .foregroundColor(.mainText)
                 }
                 .padding(16)
                 .cornerRadius(8)
-                .background(Color("cardBackground").cornerRadius(8))
+                .background(Color.cardBackground.cornerRadius(8))
             } else {
                 EmptyView()
             }
@@ -75,6 +75,8 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         }
     }
     
+    @State private var showingDeleteAlert = false
+    @State private var indexSetToDelete: IndexSet?
     var body: some View {
         List {
             // Joined Rooms
@@ -84,15 +86,31 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         Button {
                             viewModel.open(room)
                         } label: {
-                            SwiftUI.Text(room.address.host)
+                            Text(room.address.host)
                         }
-                        .foregroundColor(Color("mainText"))
-                        .listRowBackground(Color("cardBackground"))
+                        .foregroundColor(.mainText)
+                        .listRowBackground(Color.cardBackground)
                     }
-                    .onDelete(perform: { viewModel.deleteRooms(at: $0) })
+                    .onDelete { indexSet in
+                        self.indexSetToDelete = indexSet
+                        withAnimation {
+                            showingDeleteAlert = true
+                        }
+                    }
+                    .alert(isPresented: $showingDeleteAlert) {
+                        Alert(
+                            title: Text(Localized.ManageRelays.deleteRoomConfirmation.text),
+                            primaryButton: .destructive(Text(Localized.ManageRelays.deleteRoom.text)) {
+                                if let indexSetToDelete {
+                                    viewModel.deleteRooms(at: indexSetToDelete)
+                                }
+                            },
+                            secondaryButton: .cancel()
+                        )
+                    }
                 } header: {
-                    Text.ManageRelays.joinedRooms.view
-                        .foregroundColor(Color("secondaryText"))
+                    Localized.ManageRelays.joinedRooms.view
+                        .foregroundColor(.secondaryText)
                         .font(.body.smallCaps())
                 }
             }
@@ -102,8 +120,8 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                 HStack {
                     TextField("", text: $newRoomString)
                         .placeholder(when: newRoomString.isEmpty) {
-                            Text.addRoomAddressOrInvitation.view
-                                .foregroundColor(Color("secondaryText"))
+                            Localized.addRoomAddressOrInvitation.view
+                                .foregroundColor(.secondaryText)
                         }
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
@@ -116,18 +134,18 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         newRoomString = ""
                     } label: {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(Color("primaryAction"))
+                            .foregroundColor(.primaryAction)
                     }
                     .disabled(newRoomString.isEmpty || showProgress)
                 }
-                .listRowBackground(Color("cardBackground"))
+                .listRowBackground(Color.cardBackground)
             } header: {
-                Text.ManageRelays.addRooms.view
-                    .foregroundColor(Color("secondaryText"))
+                Localized.ManageRelays.addRooms.view
+                    .foregroundColor(.secondaryText)
                     .font(.body.smallCaps())
             } footer: {
-                Text.ManageRelays.roomHelpText.view
-                    .foregroundColor(Color("secondaryText"))
+                Localized.ManageRelays.roomHelpText.view
+                    .foregroundColor(.secondaryText)
                     .font(.subheadline)
                     .padding(.top, 4)
             }
@@ -137,20 +155,20 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Text.error.view,
-                message: SwiftUI.Text(viewModel.errorMessage ?? "")
+                title: Localized.error.view,
+                message: Text(viewModel.errorMessage ?? "")
             )
         }
         .refreshable {
             viewModel.refresh()
         }
-        .navigationBarTitle(Text.ManageRelays.manageRooms.text, displayMode: .inline)
+        .navigationBarTitle(Localized.ManageRelays.manageRooms.text, displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 EditButton()
             }
         }
-        .accentColor(Color("primaryAction"))
+        .accentColor(.primaryAction)
     }
 }
 

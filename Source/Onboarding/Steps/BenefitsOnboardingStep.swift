@@ -18,18 +18,18 @@ class BenefitsOnboardingStep: OnboardingStep {
 
     override func customizeView() {
         let text = (try? NSMutableAttributedString(
-            markdown: Text.Onboarding.benefits.text,
+            markdown: Localized.Onboarding.benefits.text,
             options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        )) ?? NSMutableAttributedString(string: Text.Onboarding.benefits.text)
+        )) ?? NSMutableAttributedString(string: Localized.Onboarding.benefits.text)
         text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.menuUnselectedItemText)
         text.addLinkAttribute(
             value: SupportArticle.whatIsPlanetary.rawValue,
-            to: Text.Onboarding.findOutMore.text
+            to: Localized.Onboarding.findOutMore.text
         )
         text.addParagraphAlignLeft()
         let centerStyle = NSMutableParagraphStyle()
         centerStyle.alignment = .center
-        text.addAttributes([.paragraphStyle: centerStyle], to: Text.Onboarding.findOutMore.text)
+        text.addAttributes([.paragraphStyle: centerStyle], to: Localized.Onboarding.findOutMore.text)
         self.view.textView.isEditable = false
         self.view.textView.attributedText = text
         self.view.textView.delegate = self
@@ -50,9 +50,9 @@ extension BenefitsOnboardingStep: UITextViewDelegate {
         guard let article = SupportArticle(rawValue: URL.absoluteString) else { return false }
         guard let controller = Support.shared.articleViewController(article) else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return false
         }

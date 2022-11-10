@@ -74,13 +74,13 @@ extension AppController {
         let controller = UIAlertController(title: "This is an invite to a Pub",
                                            message: "Are you sure you want to redeem this invite?",
                                            preferredStyle: .alert)
-        var action = UIAlertAction(title: Text.cancel.text, style: .cancel) {
+        var action = UIAlertAction(title: Localized.cancel.text, style: .cancel) {
             _ in
             controller.dismiss(animated: true, completion: nil)
         }
         controller.addAction(action)
 
-        action = UIAlertAction(title: Text.yes.text, style: .default) { [weak self] _ in
+        action = UIAlertAction(title: Localized.yes.text, style: .default) { [weak self] _ in
             controller.dismiss(animated: false, completion: nil)
             self?.showProgress()
             let star = Star(invite: invite)
@@ -102,7 +102,7 @@ extension AppController {
                     }
                 }
             }
-            self?.operationQueue.addOperation(operation)
+            self?.addOperation(operation)
         }
         controller.addAction(action)
         featureController.present(alertController: controller, animated: true)

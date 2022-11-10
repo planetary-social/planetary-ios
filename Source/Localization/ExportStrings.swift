@@ -6,7 +6,7 @@
 typealias TranslationKey = String
 typealias Translation = String
 
-extension Text {
+extension Localized {
     static func writeFiles(to path: String, locale primaryLocale: String = "en", translations: [String] = []) {
         let stringsFileName = "Generated.strings"
         let dir = NSURL(fileURLWithPath: FileManager().currentDirectoryPath + path, isDirectory: true)
@@ -125,7 +125,7 @@ func changedKeys(from oldStrings: String, to newStrings: String) -> Set<Translat
     return changedKeys
 }
 
-Text.writeFiles(to: "/Source/Localization", locale: "en", translations: [
+Localized.writeFiles(to: "/Source/Localization", locale: "en", translations: [
     "af-ZA",
     "ar-SA",
     "ca-ES",

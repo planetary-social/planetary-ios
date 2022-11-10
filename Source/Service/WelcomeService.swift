@@ -116,8 +116,8 @@ class WelcomeServiceAdapter: WelcomeService {
                 content: Content(
                     from: About(
                         about: welcomeFeedID,
-                        name: Text.Onboarding.welcomeBotName.text,
-                        description: Text.Onboarding.welcomeBotBio.text,
+                        name: Localized.Onboarding.welcomeBotName.text,
+                        description: Localized.Onboarding.welcomeBotBio.text,
                         imageLink: "&XD6l9T+dbtFqlZDbqFHf5Nixo8V7lE8VseArbpZbBwU=.sha256",
                         publicWebHosting: false
                     )
@@ -174,7 +174,7 @@ class WelcomeServiceAdapter: WelcomeService {
                         hashtags: nil,
                         mentions: nil,
                         root: nil,
-                        text: Text.Onboarding.welcomeMessage.text
+                        text: Localized.Onboarding.welcomeMessage.text
                     )
                 ),
                 hash: "nop",

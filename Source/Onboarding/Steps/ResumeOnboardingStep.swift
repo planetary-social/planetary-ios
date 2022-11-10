@@ -51,14 +51,14 @@ class ResumeOnboardingStep: OnboardingStep {
 
         // this will try Onboarding.start() again, creating a new
         // configuration and such
-        let tryAgain = UIAlertAction(title: Text.tryAgain.text,
+        let tryAgain = UIAlertAction(title: Localized.tryAgain.text,
                                      style: .default) {
             [weak self] _ in
             self?.didStart()
         }
         
         let reset = UIAlertAction(
-            title: Text.Onboarding.startOver.text,
+            title: Localized.Onboarding.startOver.text,
             style: .destructive
         ) { _ in
             Task(priority: .userInitiated) {
@@ -78,7 +78,7 @@ class ResumeOnboardingStep: OnboardingStep {
         }
 
         AppController.shared.choose(from: [tryAgain, reset],
-                                    title: Text.Onboarding.somethingWentWrong.text,
-                                    message: Text.Onboarding.resumeRetryMessage.text)
+                                    title: Localized.Onboarding.somethingWentWrong.text,
+                                    message: Localized.Onboarding.resumeRetryMessage.text)
     }
 }

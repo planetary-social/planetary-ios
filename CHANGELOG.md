@@ -8,12 +8,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Fixed an issue where drafts might not be cleared after posting. #868
+- Ensure bot is logged in when redeeming room invites. #895
+- Add confirmation message when deleting room #893
+- Update the tap target on the Edit profile page #936
+- Removed logging for regular bot actions #952
 
-## [1.3.4]
+## [1.3.6] 2022-10-25
 
-- Optimized the "Patchwork" home feed algorithm (RecentlyActivePostsAndContactsAlgorithm) and made it the new default. This algorithm brings posts back up to the top of your home feed when they receive a new reply. #860
+- Improved background syncing #833
+- Update to Xcode 14. #839
+- Speed up database using a many connections instead of one. #884
+- Fixed the Share Database button in the debug settings. #918
+- Fixed incorrect aspect ratio of avatar images. #753
+- Fixed an issue that could potentially freeze the UI on startup. #865
+- Fixed an issue that could cause the home feed to load slowly. #921
+- Added a button to delete the SQL database in the debug settings. #738
+- Changelog merge strategy by @mplorentz in #863
+- Make it more clear that Text.post is the verb form of the word by @mplorentz in #867
+- Add Discord and Matrix links by @mplorentz in #881
+- New Crowdin updates by @martindsq in #862
+- Add SwiftGen tool to generate color and image extensions from xcassets by @mplorentz in #904
+- Rename Text to Localized by @mplorentz in #905
+- skip plugin verification by @mplorentz in #906
+- Remove SwiftGenPlugin and add SwiftGen as a CocoaPod by @wsarles in #913
+- Fix avatar image aspect ratio by @wsarles in #917
+- New Crowdin updates by @martindsq in #885
+- Kill bot when stuck by @mplorentz in #883
+- Add another index to speed up the home feed by @mplorentz in #921
+- Rename Coordinators to Controllers by @mplorentz in #924
+- Don't call bot on main thread by @mplorentz in #925
+- add type to posthog events to separate bot from user actions by @rabble in #903
+- Multithread db by @mplorentz in #915
+
+## [1.3.5] 2022-10-03
+
 - Show the underlying SSB message for posts, replies and likes. #662
+- Fixed an issue where drafts might not be cleared after posting. #868
+- Fixed go-ssb not falling back to legacy replication when a peer does not support EBTs. #877
+- Optimized the "Patchwork" home feed algorithm (RecentlyActivePostsAndContactsAlgorithm) and made it the new default. This algorithm brings posts back up to the top of your home feed when they receive a new reply. #860
+- Optimize loading of follow message cells. #859
 
 ## [1.3.4] 2022-09-26
 

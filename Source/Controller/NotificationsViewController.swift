@@ -14,8 +14,6 @@ import CrashReporting
 
 class NotificationsViewController: ContentViewController, HelpDrawerHost {
 
-    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-    
     private let dataSource = NotificationsTableViewDataSource()
     private lazy var delegate = NotificationsTableViewDelegate(on: self)
 
@@ -23,7 +21,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     private var lastTimeNewReportsUpdatesWasChecked = Date()
 
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -121,40 +119,6 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
         }
     }
 
-    func refreshAndLoad(animated: Bool = false) {
-        if NotificationsViewController.refreshBackgroundTaskIdentifier != .invalid {
-            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
-        }
-
-        Log.info("Pull down to refresh triggering a short refresh")
-        let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "NotificationsPullDownToRefresh"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(NotificationsViewController.refreshBackgroundTaskIdentifier)
-            NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
-        }
-        NotificationsViewController.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = { [weak self] in
-            Log.optional(refreshOperation.error)
-            CrashReporting.shared.reportIfNeeded(error: refreshOperation.error)
-            
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                NotificationsViewController.refreshBackgroundTaskIdentifier = .invalid
-            }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.load(animated: animated)
-            }
-        }
-        let operations = [refreshOperation]
-        AppController.shared.operationQueue.addOperations(operations, waitUntilFinished: false)
-    }
-
     private func update(with reports: [Report], animated: Bool = true) {
         self.dataSource.reports = reports
         lastTimeNewReportsUpdatesWasChecked = Date()
@@ -185,7 +149,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
                     }
                 }
             }
-            AppController.shared.operationQueue.addOperation(operation)
+            AppController.shared.addOperation(operation)
         } else {
             // If the feed is empty, we just try to fetch the new updates and show them
             load(animated: false)
@@ -197,7 +161,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerHost {
     @objc
     func refreshControlValueChanged(control: UIRefreshControl) {
         control.beginRefreshing()
-        self.refreshAndLoad()
+        load()
     }
 
     @objc
@@ -262,7 +226,7 @@ private class NotificationsTableViewDataSource: MessageTableViewDataSource {
             }
 
             // label each section
-            var sections: [(Text, [Report])] = []
+            var sections: [(Localized, [Report])] = []
             if today.count > 0 { sections += [(.today, today)] }
             if yesterday.count > 0 { sections += [(.yesterday, yesterday)] }
             if earlier.count > 0 { sections += [(.recently, earlier)] }
@@ -277,7 +241,7 @@ private class NotificationsTableViewDataSource: MessageTableViewDataSource {
         return reports[indexPath.row]
     }
 
-    fileprivate var sectionedReports: [(Text, [Report])] = []
+    fileprivate var sectionedReports: [(Localized, [Report])] = []
 
     override func message(at indexPath: IndexPath) -> Message {
         report(at: indexPath).message
@@ -354,7 +318,7 @@ private class HeaderView: UITableViewHeaderFooterView {
             .font: UIFont.systemFont(ofSize: 15, weight: .semibold)
         ])
         let attributedTitle = AttributedString(
-            Text.Notifications.markAllAsRead.text,
+            Localized.Notifications.markAllAsRead.text,
             attributes: attributeContainer
         )
         var configuration = UIButton.Configuration.plain()
@@ -407,6 +371,6 @@ private class HeaderView: UITableViewHeaderFooterView {
     func clearNotificationsButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
         let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
-        AppController.shared.operationQueue.addOperation(clearUnreadNotificationsOperation)
+        AppController.shared.addOperation(clearUnreadNotificationsOperation)
     }
 }

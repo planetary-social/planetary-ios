@@ -129,6 +129,11 @@ class PostTextEditorView: UIView {
     override func becomeFirstResponder() -> Bool {
         sourceTextView.becomeFirstResponder()
     }
+    
+    func clear() {
+        sourceTextView.text = ""
+        renderedTextView.text = ""
+    }
 
     private func animateToPreview() {
         UIView.animate(withDuration: 0.2, animations: {

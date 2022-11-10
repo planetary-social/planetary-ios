@@ -71,7 +71,7 @@ class ContactHeaderView: UIView {
     }
 
     func reset() {
-        update(with: Identity.null, about: nil, text: Text.startedFollowing)
+        update(with: Identity.null, about: nil, text: Localized.startedFollowing)
         showSkeleton()
     }
 
@@ -79,7 +79,7 @@ class ContactHeaderView: UIView {
         let identity = message.author
         self.identity = identity
         let about = message.metadata.author.about
-        var text: Text
+        var text: Localized
         switch message.contentType {
         case .post:
             text = .replied
@@ -93,7 +93,7 @@ class ContactHeaderView: UIView {
         self.update(with: identity, about: about, text: text)
     }
 
-    private func update(with identity: Identity, about: About?, text: Text) {
+    private func update(with identity: Identity, about: About?, text: Localized) {
         let name = about?.nameOrIdentity ?? identity
         var string = text.text(["somebody": name])
         if identity == .null {

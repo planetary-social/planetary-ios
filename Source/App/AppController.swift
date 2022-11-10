@@ -9,6 +9,9 @@
 import Foundation
 import UIKit
 
+/// The AppController is the root view controller of Planetary. It manages app-level scene transitions, like showing
+/// the main tabs or presenting global alerts. It also does some non-view management of global app state by starting
+/// and stopping the `MissionControlCenter`.
 class AppController: UIViewController {
 
     static let shared = AppController()
@@ -18,7 +21,7 @@ class AppController: UIViewController {
     var missionControlCenter = MissionControlCenter()
     
     /// Queue to handle background operations
-    var operationQueue = OperationQueue()
+    private var operationQueue = OperationQueue()
     
     private var didStartDatabaseProcessingObserver: NSObjectProtocol?
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
@@ -193,5 +196,10 @@ class AppController: UIViewController {
         }
         
         return getPresentedController(self)
+    }
+    
+    // MARK: Operations
+    func addOperation(_ operation: Operation) {
+        operationQueue.addOperation(operation)
     }
 }

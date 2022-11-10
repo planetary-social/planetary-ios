@@ -16,40 +16,40 @@ class DoneOnboardingStep: OnboardingStep {
     
     private let analyticsToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.sendAnalytics.text
-        view.subtitleLabel.text = Text.analyticsMessage.text
+        view.titleLabel.text = Localized.sendAnalytics.text
+        view.subtitleLabel.text = Localized.analyticsMessage.text
         view.toggle.isOn = true
         return view
     }()
     
     private let followPlanetaryToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.Onboarding.followPlanetaryToggleTitle.text
-        view.subtitleLabel.text = Text.Onboarding.followPlanetaryToggleDescription.text
+        view.titleLabel.text = Localized.Onboarding.followPlanetaryToggleTitle.text
+        view.subtitleLabel.text = Localized.Onboarding.followPlanetaryToggleDescription.text
         view.toggle.isOn = true
         return view
     }()
     
     private let publicWebHostingToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.WebServices.publicWebHosting.text
-        view.subtitleLabel.text = Text.WebServices.footer.text
+        view.titleLabel.text = Localized.WebServices.publicWebHosting.text
+        view.subtitleLabel.text = Localized.WebServices.footer.text
         view.toggle.isOn = true
         return view
     }()
 
     private let joinPlanetarySystemToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.Onboarding.joinPlanetarySystem.text
-        view.subtitleLabel.text = Text.Onboarding.joinPlanetarySystemDescription.text
+        view.titleLabel.text = Localized.Onboarding.joinPlanetarySystem.text
+        view.subtitleLabel.text = Localized.Onboarding.joinPlanetarySystemDescription.text
         view.toggle.isOn = true
         return view
     }()
     
     private let useTestNetworkToggle: TitledToggle = {
         let view = TitledToggle.forAutoLayout()
-        view.titleLabel.text = Text.Onboarding.useTestNetwork.text
-        view.subtitleLabel.text = Text.Onboarding.useTestNetworkDescription.text
+        view.titleLabel.text = Localized.Onboarding.useTestNetwork.text
+        view.subtitleLabel.text = Localized.Onboarding.useTestNetworkDescription.text
         #if DEBUG
         view.toggle.isOn = true
         #else
@@ -83,7 +83,7 @@ class DoneOnboardingStep: OnboardingStep {
         ).isActive = true
         #endif
 
-        self.view.hintLabel.text = Text.Onboarding.thanksForTrying.text
+        self.view.hintLabel.text = Localized.Onboarding.thanksForTrying.text
 
         self.view.primaryButton.setText(.doneOnboarding)
         self.view.bringSubviewToFront(view.buttonStack)
@@ -108,7 +108,7 @@ class DoneOnboardingStep: OnboardingStep {
             Analytics.shared.optOut()
         }
         
-        guard let me = data.context?.identity else {
+        guard data.context?.identity != nil else {
             Log.unexpected(.missingValue, "Was expecting self.data.context.person.identity, skipping step")
             Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
             self.next()
@@ -118,6 +118,6 @@ class DoneOnboardingStep: OnboardingStep {
 
     override func didStart() {
         if self.data.simulated { return }
-        guard let identity = self.data.context?.identity else { return }
+        guard data.context?.identity != nil else { return }
     }
 }

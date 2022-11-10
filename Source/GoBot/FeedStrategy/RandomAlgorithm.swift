@@ -320,7 +320,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
         offset: Int?,
         onlyUnread: Bool
     ) throws -> [Message] {
-        guard let connection = database.getOpenDB() else {
+        guard let connection = try? database.checkoutConnection() else {
             Log.error("db is closed")
             return []
         }

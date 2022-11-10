@@ -9,6 +9,12 @@
 import Foundation
 import UIKit
 
+// Mark AttributedString as @Sendable for now, because it just hasn't been in the standard library yet, but it's a
+// value type so it shoudl be safe.
+#if compiler(>=5.5) && canImport(_Concurrency)
+extension AttributedString: @unchecked Sendable {}
+#endif
+
 /// A class representing a drafted post. Supports NSCoding so it can be saved to disk.
 class Draft: NSObject, NSCoding {
     
@@ -62,8 +68,11 @@ actor DraftStore {
         return nil
     }
     
-    func save(text string: NSAttributedString?, images: [UIImage]) {
-        let draft = Draft(attributedText: string, images: images)
+    func save(text string: AttributedString?, images: [UIImage]) {
+        let draft = Draft(
+            attributedText: string.map { NSAttributedString($0) },
+            images: images
+        )
         
         // optimization since encoding is expensive
         guard draft != lastSavedDraft else {

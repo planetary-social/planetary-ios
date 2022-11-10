@@ -32,7 +32,7 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
 
     init(with about: About? = nil) {
         self._about = about ?? About()
-        let title: Text = about == nil ? .createProfile : .editProfile
+        let title: Localized = about == nil ? .createProfile : .editProfile
         super.init(title: title)
         self.aboutView.update(with: self._about)
     }
@@ -66,8 +66,8 @@ class EditAboutViewController: ContentViewController, Saveable, SaveableDelegate
     @objc func save() {
         Analytics.shared.trackDidTapButton(buttonName: "save")
         self.aboutView.resignFirstResponders()
-        let name = self.aboutView.nameView.textView.text
-        let description = self.aboutView.bioView.textView.text
+        let name = self.aboutView.nameView.text
+        let description = self.aboutView.bioView.text
         self._about = about.mutatedCopy(name: name, description: description)
         self.saveCompletion?(self)
     }
