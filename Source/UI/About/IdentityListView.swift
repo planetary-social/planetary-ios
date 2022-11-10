@@ -31,6 +31,7 @@ struct IdentityListView: View {
             }.listRowSeparator(.visible, edges: .all)
         }
         .listStyle(.plain)
+        .background(Color.appBg)
     }
 }
 

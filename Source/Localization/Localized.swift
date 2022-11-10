@@ -62,6 +62,7 @@ enum Localized: String, Localizable, CaseIterable {
     case atDayTime = "{{ day }} at {{ time }}"
     case minutesAbbreviated = "{{ numberOfMinutes }} mins"
 
+    case profile = "Profile"
     case yourProfile = "Your Profile"
     case helpAndSupport = "Help and Support"
     case reportBug = "Report a Bug"
@@ -187,6 +188,7 @@ enum Localized: String, Localizable, CaseIterable {
     case debug = "Debug"
     
     case join = "Join"
+    case joined = "Joined"
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
     case invitationRedeemed = "Invitation redeemed!"

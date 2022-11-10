@@ -6,16 +6,35 @@
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
+import Analytics
+import CrashReporting
+import Logger
 import SwiftUI
 
+@MainActor
 struct RelationshipView: View {
-    var relationship: Relationship?
+
+    var identity: Identity
     var compact = false
-    var onButtonTapHandler: (() -> Void)?
+
+    @EnvironmentObject
+    private var botRepository: BotRepository
+
+    @State
+    var isLoading = true
+
+    @State
+    var isFollowing = false
+
+    @State
+    var isFollowedBy = false
+
+    @State
+    var isBlocking = false
 
     var body: some View {
         Button {
-            onButtonTapHandler?()
+            didTapButton()
         } label: {
             HStack(alignment: .center) {
                 LinearGradient(
@@ -57,7 +76,7 @@ struct RelationshipView: View {
                     )
             )
         }
-        .placeholder(when: relationship == nil) {
+        .placeholder(when: isLoading) {
             Rectangle().fill(
                 LinearGradient(
                     colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
@@ -68,28 +87,78 @@ struct RelationshipView: View {
             .frame(width: compact ? 50 : 96, height: 33)
             .cornerRadius(17)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .didBlockUser)) { output in
+            guard let notifiedIdentity = output.object as? Identity, notifiedIdentity == identity else {
+                return
+            }
+            isBlocking = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didUnblockUser)) { output in
+            guard let notifiedIdentity = output.object as? Identity, notifiedIdentity == identity else {
+                return
+            }
+            isBlocking = false
+        }
+        .task {
+            Task.detached {
+                let bot = await botRepository.current
+                if let currentIdentity = bot.identity {
+                    do {
+                        let result = try await bot.relationship(from: currentIdentity, to: identity)
+                        await MainActor.run {
+                            isFollowing = result.isFollowing
+                            isFollowedBy = result.isFollowedBy
+                            isBlocking = result.isBlocking
+                            isLoading = false
+                        }
+                    } catch {
+
+                    }
+                }
+            }
+        }
+    }
+
+    var star: Star? {
+        let pubs = (AppConfiguration.current?.communityPubs ?? []) +
+            (AppConfiguration.current?.systemPubs ?? [])
+        return pubs.first { $0.feed == identity }
+    }
+
+    var isStar: Bool {
+        star != nil
     }
 
     var title: String {
-        guard let relationship = relationship, !compact else {
+        guard !isLoading, !compact else {
             return ""
         }
-        if relationship.isFollowing {
-            return Localized.following.text
-        } else {
-            if relationship.isFollowedBy {
-                return Localized.followBack.text
+        if isBlocking {
+            return Localized.unblockUser.text
+        } else if isFollowing {
+            if isStar {
+                return Localized.joined.text
             } else {
-                return Localized.follow.text
+                return Localized.following.text
+            }
+        } else {
+            if isStar {
+                return Localized.join.text
+            } else {
+                if isFollowedBy {
+                    return Localized.followBack.text
+                } else {
+                    return Localized.follow.text
+                }
             }
         }
     }
 
     var image: String {
-        guard let relationship = relationship else {
+        guard !isLoading else {
             return ""
         }
-        if relationship.isFollowing {
+        if isFollowing {
             return "button-following"
         } else {
             return "button-follow"
@@ -97,20 +166,63 @@ struct RelationshipView: View {
     }
 
     var backgroundColors: [Color] {
-        guard let relationship = relationship else {
+        guard !isLoading else {
             return []
         }
-        return relationship.isFollowing ? [.clear] : [Color(hex: "#F08508"), Color(hex: "#F43F75")]
+        return isFollowing ? [.clear] : [Color(hex: "#F08508"), Color(hex: "#F43F75")]
     }
 
     var foregroundColors: [Color] {
-        guard let relationship = relationship else {
+        guard !isLoading else {
             return []
         }
-        return relationship.isFollowing ? [Color(hex: "#F08508"), Color(hex: "#F43F75")] : [.white]
+        return isFollowing ? [Color(hex: "#F08508"), Color(hex: "#F43F75")] : [.white]
     }
 
-    
+    func didTapButton() {
+        guard !isLoading else {
+            return
+        }
+        Task.detached { [identity] in
+            let bot = await botRepository.current
+            Analytics.shared.trackDidTapButton(buttonName: "follow")
+            do {
+                if let star = await star {
+                    try await bot.join(star: star)
+                    Analytics.shared.trackDidFollowPub()
+                    await MainActor.run {
+                        isFollowing = true
+                    }
+                } else if await isBlocking {
+                    try await bot.unblock(identity: identity)
+                    Analytics.shared.trackDidUnblockIdentity()
+                    await MainActor.run {
+                        isBlocking = false
+                    }
+                } else {
+                    if await isFollowing {
+                        try await bot.unfollow(identity: identity)
+                        Analytics.shared.trackDidUnfollowIdentity()
+                        await MainActor.run {
+                            isFollowing = false
+                        }
+                    } else {
+                        try await bot.follow(identity: identity)
+                        Analytics.shared.trackDidFollowIdentity()
+                        await MainActor.run {
+                            isFollowing = true
+                        }
+                    }
+                }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    AppController.shared.alert(error: error)
+                }
+            }
+        }
+    }
 }
 
 struct RelationshipView_Previews: PreviewProvider {
@@ -130,11 +242,8 @@ struct RelationshipView_Previews: PreviewProvider {
     }
     static var previews: some View {
         VStack {
-            RelationshipView(relationship: nil, compact: true)
-            RelationshipView(relationship: followRelationship, compact: true)
-            RelationshipView(relationship: followRelationship)
-            RelationshipView(relationship: followBackRelationship)
-            RelationshipView(relationship: followingRelationship)
-        }.padding().previewLayout(.sizeThatFits)
+            RelationshipView(identity: .null)
+            RelationshipView(identity: .null, compact: true)
+        }.padding().previewLayout(.sizeThatFits).environmentObject(BotRepository.shared)
     }
 }

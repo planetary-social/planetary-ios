@@ -1341,6 +1341,7 @@ class GoBot: Bot {
                 return
             }
             completion(messageIdentifier, nil)
+            NotificationCenter.default.post(name: .didUnblockUser, object: identity)
         }
     }
     

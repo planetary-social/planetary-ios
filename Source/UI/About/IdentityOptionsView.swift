@@ -20,10 +20,10 @@ struct IdentityOptionsView: View {
     private var botRepository: BotRepository
 
     @State
-    fileprivate var showingOptions = false
+    private var showingOptions = false
 
     @State
-    fileprivate var showingShare = false
+    private var showingShare = false
 
     var body: some View {
         Button {

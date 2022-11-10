@@ -20,9 +20,6 @@ struct CompactIdentityView: View {
     private var about: About?
 
     @State
-    private var relationship: Relationship?
-
-    @State
     private var socialStats: SocialStats?
 
     @State
@@ -81,9 +78,7 @@ struct CompactIdentityView: View {
                             .foregroundColor(Color("secondary-txt"))
                     }
                     Spacer()
-                    RelationshipView(relationship: relationship, compact: true) {
-
-                    }
+                    RelationshipView(identity: identity, compact: true)
                     .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 }
@@ -114,16 +109,6 @@ struct CompactIdentityView: View {
                 } catch {
 
                 }
-                if let currentIdentity = bot.identity {
-                    do {
-                        let result = try await bot.relationship(from: currentIdentity, to: identity)
-                        await MainActor.run {
-                            relationship = result
-                        }
-                    } catch {
-
-                    }
-                }
                 do {
                     let result = try await bot.socialStats(for: identity)
                     await MainActor.run {
@@ -145,7 +130,6 @@ struct CompactIdentityView: View {
                     }
                 }
             }
-
         }
     }
 }

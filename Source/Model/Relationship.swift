@@ -15,9 +15,16 @@ class Relationship: Sendable {
     let identity: Identity
     let other: Identity
 
+    @Published
     var isFollowing = false
+
+    @Published
     var isFollowedBy = false
+
+    @Published
     var isFriend = false
+
+    @Published
     var isBlocking = false
 
     private var dataCached = false

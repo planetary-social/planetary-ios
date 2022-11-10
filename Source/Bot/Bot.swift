@@ -674,6 +674,30 @@ extension Bot {
     func redeemInvitation(to star: Star, completion: @escaping ErrorCompletion) {
         self.redeemInvitation(to: star, completionQueue: .main, completion: completion)
     }
+
+    func redeemInvitation(to star: Star) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            redeemInvitation(to: star, completionQueue: .global(qos: .background)) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func join(star: Star, shouldFollow: Bool = true) async throws {
+        try await redeemInvitation(to: star)
+        do {
+            _ = try await publish(content: star.toPub())
+        } catch {
+            // We don't care the result, move on
+        }
+        if shouldFollow {
+            _ = try await publish(content: Contact(contact: star.feed, following: true))
+        }
+    }
     
     func joinedPubs(completion: @escaping (([Pub], Error?) -> Void)) {
         self.joinedPubs(queue: .main, completion: completion)

@@ -19,6 +19,7 @@
 "Localized.daysAgo" = "{{ days }} days ago";
 "Localized.atDayTime" = "{{ day }} at {{ time }}";
 "Localized.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
+"Localized.profile" = "Profile";
 "Localized.yourProfile" = "Your Profile";
 "Localized.helpAndSupport" = "Help and Support";
 "Localized.reportBug" = "Report a Bug";
@@ -121,6 +122,7 @@
 "Localized.like" = "Like";
 "Localized.debug" = "Debug";
 "Localized.join" = "Join";
+"Localized.joined" = "Joined";
 "Localized.redeemInvitation" = "Redeem an invitation";
 "Localized.pasteAddress" = "Token";
 "Localized.invitationRedeemed" = "Invitation redeemed!";

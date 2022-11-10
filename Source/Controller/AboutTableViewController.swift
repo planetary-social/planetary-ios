@@ -112,7 +112,7 @@ class AboutTableViewController: UITableViewController, UISearchResultsUpdating {
         let about = self.filteredAbouts[indexPath.row]
         let targetController = self.navigationController
 
-        let view = IdentityView(viewModel: IdentityController(identity: about.identity, bot: Bots.current)).environmentObject(BotRepository.shared)
+        let view = IdentityView(identity: about.identity).environmentObject(BotRepository.shared)
         let controller = UIHostingController(rootView: view)
         targetController?.pushViewController(controller, animated: true)
     }

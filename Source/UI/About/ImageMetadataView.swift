@@ -22,6 +22,8 @@ struct ImageMetadataView: View {
             if let image = imageLoader.image {
                 Image(uiImage: image)
                     .resizable()
+            } else if imageLoader.isLoading {
+                ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
             } else {
                 Image("missing-about-icon")
                     .resizable()
@@ -37,8 +39,17 @@ struct ImageMetadataView: View {
 }
 
 struct ImageMetadataView_Previews: PreviewProvider {
+    static var sample: ImageMetadata {
+        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
+        return ImageMetadata(link: "&avatar1")
+    }
+    static var loadingSample: ImageMetadata {
+        return ImageMetadata(link: "&unknown")
+    }
     static var previews: some View {
-        ImageMetadataView(metadata: ImageMetadata(link: "&avatar1"))
+        ImageMetadataView(metadata: sample)
+            .previewLayout(.sizeThatFits)
+        ImageMetadataView(metadata: loadingSample)
             .previewLayout(.sizeThatFits)
     }
 }
@@ -46,6 +57,7 @@ struct ImageMetadataView_Previews: PreviewProvider {
 fileprivate class ImageLoader: ObservableObject {
 
     @Published var image: UIImage?
+    @Published var isLoading = true
 
     var metadata: ImageMetadata?
     private var completion: UUID?
@@ -66,18 +78,21 @@ fileprivate class ImageLoader: ObservableObject {
 
         await MainActor.run { [weak self] in
             guard let metadata = metadata, metadata.link != .null else {
+                isLoading = false
                 return
             }
 
             // cached image
             if let uiImage = Caches.blobs.image(for: metadata.identifier) {
                 self?.image = uiImage
+                self?.isLoading = false
                 return
             }
 
             // request image
             let uuid = Caches.blobs.imageOrPlaceholder(for: metadata.identifier) { [weak self] uiImage in
                 self?.image = uiImage
+                self?.isLoading = false
             }
 
             self?.metadata = metadata
