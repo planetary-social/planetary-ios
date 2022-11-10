@@ -672,6 +672,8 @@
 		5BEE742A2880B0F500897ACC /* ReportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEE74292880B0F500897ACC /* ReportTests.swift */; };
 		5BFFCE9027B56D300088F6D6 /* Logger in Frameworks */ = {isa = PBXBuildFile; productRef = 5BFFCE8F27B56D300088F6D6 /* Logger */; };
 		664DA6493E3CC0506BD71355 /* Pods_APITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76846E865BB285CC1D52D05B /* Pods_APITests.framework */; };
+		7BDA1D15291BFCD500EA2124 /* StoreReviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BDA1D14291BFCD500EA2124 /* StoreReviewController.swift */; };
+		7BDA1D16291BFCD500EA2124 /* StoreReviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BDA1D14291BFCD500EA2124 /* StoreReviewController.swift */; };
 		7CADD3FD394F8FD67E295D85 /* Pods_UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03CA171A11489B333F8AB5B2 /* Pods_UITests.framework */; };
 		8D180359234F5E77004E30AA /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D180357234F5E77004E30AA /* IconButton.swift */; };
 		8D18035D234F5E77004E30AA /* PillButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D180358234F5E77004E30AA /* PillButton.swift */; };
@@ -1635,6 +1637,7 @@
 		621DB089B340548FA47C7060 /* Pods-APITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.debug.xcconfig"; sourceTree = "<group>"; };
 		74E5EF7125A1EB745D546421 /* Pods-Planetary-UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary-UITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary-UITests/Pods-Planetary-UITests.debug.xcconfig"; sourceTree = "<group>"; };
 		76846E865BB285CC1D52D05B /* Pods_APITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_APITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BDA1D14291BFCD500EA2124 /* StoreReviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreReviewController.swift; sourceTree = "<group>"; };
 		8239861775B60A82197B621A /* Pods_FBTTUnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTTUnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		877B114831E3A491F927F333 /* Pods_FBTTAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTTAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		89E37E06DFF99F71EB0E332E /* Pods-APITests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APITests.test.xcconfig"; path = "Pods/Target Support Files/Pods-APITests/Pods-APITests.test.xcconfig"; sourceTree = "<group>"; };
@@ -2157,6 +2160,7 @@
 				C9313A77289A89580093AC47 /* RoomListController.swift */,
 				C9412AE928AEE8EB00F791A7 /* RoomAliasRegistrationController.swift */,
 				2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */,
+				7BDA1D14291BFCD500EA2124 /* StoreReviewController.swift */,
 				C9412AED28AEE9F400F791A7 /* RoomAliasController.swift */,
 				5B1FF5E428D8AA25008F3A85 /* RawMessageController.swift */,
 			);
@@ -4369,6 +4373,7 @@
 				53EE01FB2205035800DFDF16 /* XCTestCase+JSON.swift in Sources */,
 				C9724BEF2809EF45000EBCCD /* UIViewController+TopViewController.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
+				7BDA1D16291BFCD500EA2124 /* StoreReviewController.swift in Sources */,
 				C923DBB2288057EB00569AAB /* HelpDrawerView.swift in Sources */,
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */,
@@ -4951,6 +4956,7 @@
 				23D8CE272253DB29001EB7D5 /* Address.swift in Sources */,
 				53E26C6F230CC88B009240B2 /* UIDevice+Simulator.swift in Sources */,
 				C969F0DF2899CED100081615 /* Room.swift in Sources */,
+				7BDA1D15291BFCD500EA2124 /* StoreReviewController.swift in Sources */,
 				531B92C022CE7CF8005D5255 /* UITableView+VisibleIndexPath.swift in Sources */,
 				53AD3FDB2271131B005228F9 /* UIImage+Round.swift in Sources */,
 				531EC40C230F6B9E001A25AD /* DebugPostsViewController.swift in Sources */,
