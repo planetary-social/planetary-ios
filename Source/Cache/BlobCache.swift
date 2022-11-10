@@ -493,8 +493,8 @@ class BlobCache: DictionaryCache {
     }
 
     private func didLoadBlob(_ notification: Notification) {
+        guard let identifier = notification.blobIdentifier else { return }
         Task {
-            guard let identifier = notification.blobIdentifier else { return }
             await MainActor.run {
                 self.loadImage(for: identifier)
             }

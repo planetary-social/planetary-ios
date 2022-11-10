@@ -43,7 +43,7 @@ class DirectoryOnboardingStep: OnboardingStep, UITableViewDataSource, UITableVie
     }
 
     override func customizeController(controller: ContentViewController) {
-        let nextButton = UIBarButtonItem(title: Text.next.text, style: .plain, target: self, action: #selector(didPressNext))
+        let nextButton = UIBarButtonItem(title: Localized.next.text, style: .plain, target: self, action: #selector(didPressNext))
         controller.navigationItem.rightBarButtonItem = nextButton
         controller.navigationItem.hidesBackButton = true
     }

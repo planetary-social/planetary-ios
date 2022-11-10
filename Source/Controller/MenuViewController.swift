@@ -30,7 +30,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     
     private lazy var connectedPeersViewController: UIViewController = {
         let bot = Bots.current
-        let viewModel = ConnectedPeerListCoordinator(
+        let viewModel = ConnectedPeerListController(
             bot: bot,
             statisticsService: BotStatisticsServiceAdaptor(bot: bot),
             router: self
@@ -142,9 +142,9 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         Analytics.shared.trackDidTapButton(buttonName: "support")
         guard let controller = Support.shared.mainViewController() else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
@@ -157,9 +157,9 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         Analytics.shared.trackDidTapButton(buttonName: "report_bug")
         guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
@@ -352,7 +352,7 @@ private class ProfileImageView: UIView {
 
 private class MenuButton: UIButton {
 
-    init(title: Text, image: UIImage? = nil) {
+    init(title: Localized, image: UIImage? = nil) {
 
         super.init(frame: .zero)
         self.contentHorizontalAlignment = .left

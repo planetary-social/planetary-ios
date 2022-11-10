@@ -23,7 +23,7 @@ class DebugViewController: DebugTableViewController {
         if shouldAddDismissButton {
             self.addDismissBarButtonItem()
         }
-        self.navigationItem.title = Text.debug.text
+        self.navigationItem.title = Localized.debug.text
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -133,7 +133,7 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure: {
                 _ in
                 guard let controller = Support.shared.mainViewController() else {
-                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    self.alert(message: Localized.Error.supportNotConfigured.text)
                     return
                 }
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -148,7 +148,7 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure: {
                 _ in
                 guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
-                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    self.alert(message: Localized.Error.supportNotConfigured.text)
                     return
                 }
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -163,7 +163,7 @@ class DebugViewController: DebugTableViewController {
                                              actionClosure: {
                 _ in
                 guard let controller = Support.shared.newTicketViewController() else {
-                    self.alert(message: Text.Error.supportNotConfigured.text)
+                    self.alert(message: Localized.Error.supportNotConfigured.text)
                     return
                 }
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -307,10 +307,8 @@ class DebugViewController: DebugTableViewController {
                 title: "Export database",
                 cellReuseIdentifier: DebugValueTableViewCell.className,
                 valueClosure: nil,
-                actionClosure: { [weak self] _ in
-                    Task {
-                        await self?.shareDatabase(cell:)
-                    }
+                actionClosure: { cell in
+                    Task { await self.shareDatabase(cell: cell) }
                 }
             )
         ]
@@ -467,8 +465,10 @@ class DebugViewController: DebugTableViewController {
     
     /// Allows the user to export the go-ssb log and SQLite database in a zip file. This function will zip up the files
     /// and present a share sheet as a popover on the given cell.
-    private func shareDatabase(cell: UITableViewCell) async {
+    @MainActor
+    func shareDatabase(cell: UITableViewCell) async {
         cell.showActivityIndicator()
+        cell.isUserInteractionEnabled = false
 
         let presentShareSheet = { [weak self] (activityItems: [Any]) in
             let activityController = UIActivityViewController(
@@ -481,40 +481,36 @@ class DebugViewController: DebugTableViewController {
             self?.present(activityController, animated: true)
         }
         
-        let databaseDirectory = URL(fileURLWithPath: await Bots.current.statistics().repo.path).deletingLastPathComponent()
+        let databasePath = await Bots.current.statistics().repo.path
+        let databaseDirectory = URL(fileURLWithPath: databasePath).deletingLastPathComponent()
         let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
         let url = temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            defer {
-                DispatchQueue.main.sync {
-                    cell.hideActivityIndicator()
+        defer {
+            cell.hideActivityIndicator()
+            cell.isUserInteractionEnabled = false
+        }
+        do {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+            let zipFileURL = temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
+            let destFileURL = url.appendingPathComponent(databaseDirectory.lastPathComponent)
+            try FileManager.default.copyItem(at: databaseDirectory, to: destFileURL)
+            
+            let coord = NSFileCoordinator()
+            var readError: NSError?
+            coord.coordinate(
+                readingItemAt: url,
+                options: .forUploading,
+                error: &readError
+            ) { (zippedURL: URL) -> Void in
+                do {
+                    try FileManager.default.copyItem(at: zippedURL, to: zipFileURL)
+                } catch {
+                    self.alert(error: error)
                 }
+                presentShareSheet([zipFileURL])
             }
-            do {
-                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
-                let zipFileURL = temporaryDirectory.appendingPathComponent("\(UUID().uuidString).zip")
-                let destFileURL = url.appendingPathComponent(databaseDirectory.lastPathComponent)
-                try FileManager.default.copyItem(at: databaseDirectory, to: destFileURL)
-                
-                let coord = NSFileCoordinator()
-                var readError: NSError?
-                coord.coordinate(readingItemAt: url, options: .forUploading, error: &readError) { (zippedURL: URL) -> Void in
-                    do {
-                        try FileManager.default.copyItem(at: zippedURL, to: zipFileURL)
-                    } catch {
-                        DispatchQueue.main.async { [weak self] in
-                            self?.alert(error: error)
-                        }
-                    }
-                    DispatchQueue.main.async {
-                        presentShareSheet([zipFileURL])
-                    }
-                }
-            } catch {
-                DispatchQueue.main.async { [weak self] in
-                    self?.alert(error: error)
-                }
-            }
+        } catch {
+            self.alert(error: error)
         }
     }
     

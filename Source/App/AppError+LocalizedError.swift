@@ -12,9 +12,9 @@ extension AppError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unexpected:
-            return Text.Error.unexpected.text
+            return Localized.Error.unexpected.text
         case .invalidInvite:
-            return Text.Error.unexpected.text
+            return Localized.Error.unexpected.text
         }
     }
 }

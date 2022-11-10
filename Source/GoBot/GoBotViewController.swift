@@ -193,7 +193,7 @@ class GoBotViewController: DebugTableViewController {
     private func repoInfo() -> DebugTableViewController.Settings {
         var stats: ScuttlegobotRepoCounts
         do {
-           stats = try GoBot.shared.bot.repoStatus()
+           stats = try GoBot.shared.bot.repoStats()
         } catch {
             Log.unexpected(.apiError, "repo Info stats failed")
             Log.optional(error)
@@ -252,9 +252,12 @@ extension GoBotViewController {
                 if GoBot.shared.bot.isRunning {
                     _ = GoBot.shared.bot.logout()
                 }
-                let dbPath = GoBot.shared.database.currentPath
-                GoBot.shared.database.close()
-                try FileManager.default.removeItem(atPath: dbPath)
+                if let dbPath = GoBot.shared.database.currentPath {
+                    GoBot.shared.database.close()
+                    try FileManager.default.removeItem(atPath: dbPath)
+                } else {
+                    throw ViewDatabaseError.notOpen
+                }
             } catch {
                 Log.unexpected(.apiError, "purge error")
                 Log.optional(error)

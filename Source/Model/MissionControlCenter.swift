@@ -30,7 +30,7 @@ class MissionControlCenter {
     private(set) var state: State = .stopped
     
     /// OperationQueue where SendMissionOperation and RefreshOperation are executed
-    private let operationQueue = OperationQueue()
+    let operationQueue = OperationQueue()
     
     /// Timer for the SendMissionOperation
     private lazy var sendMissionTimer: RepeatingTimer = {
@@ -41,12 +41,6 @@ class MissionControlCenter {
     private lazy var refreshTimer: RepeatingTimer = {
         RepeatingTimer(interval: 5) { [weak self] in self?.pokeRefresh() }
     }()
-    
-    /// Background Task Identifier for the SendMissionOperation
-    private var sendMissionBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-    
-    /// Background Task Identifier for the RefreshOperation
-    private var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
     
     /// Starts Mission Control Center operations. It starts timers and new missions.
     func start() {
@@ -105,58 +99,32 @@ class MissionControlCenter {
     }
     
     private func sendMissions() {
-        guard self.sendMissionBackgroundTaskIdentifier == .invalid else {
+        guard !operationQueue.operations.contains(where: { $0 is SendMissionOperation }) else {
             Log.info("Mission Controller Center skipped a mission as there is one in progress.")
             return
         }
         
         Log.info("Mission Control Center is sending a mission")
         let sendMissionOperation = SendMissionOperation(quality: .high)
-        
-        let taskName = "SendMissionBackgroundTask"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            sendMissionOperation.cancel()
-            UIApplication.shared.endBackgroundTask(self.sendMissionBackgroundTaskIdentifier)
-            self.sendMissionBackgroundTaskIdentifier = .invalid
-        }
-        self.sendMissionBackgroundTaskIdentifier = taskIdentifier
-        
-        sendMissionOperation.completionBlock = {
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                self.sendMissionBackgroundTaskIdentifier = .invalid
-            }
-        }
-        
-        self.operationQueue.addOperation(sendMissionOperation)
+        operationQueue.addOperation(sendMissionOperation)
     }
     
-    private func pokeRefresh() {
-        guard self.refreshBackgroundTaskIdentifier == .invalid else {
+    func pokeRefresh() {
+        guard !operationQueue.operations.contains(where: { $0 is RefreshOperation }) else {
             Log.info("Mission Controller Center skipped a refresh as there is one in progress.")
             return
         }
         
         Log.info("Mission Control Center is doing a short refresh")
         let refreshOperation = RefreshOperation(refreshLoad: .short)
-        
-        let taskName = "RefreshBackgroundTask"
-        let taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: taskName) {
-            // Expiry handler, iOS will call this shortly before ending the task
-            refreshOperation.cancel()
-            UIApplication.shared.endBackgroundTask(self.refreshBackgroundTaskIdentifier)
-            self.refreshBackgroundTaskIdentifier = .invalid
-        }
-        self.refreshBackgroundTaskIdentifier = taskIdentifier
-        
-        refreshOperation.completionBlock = {
-            if taskIdentifier != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(taskIdentifier)
-                self.refreshBackgroundTaskIdentifier = .invalid
-            }
-        }
-        
-        self.operationQueue.addOperation(refreshOperation)
+        operationQueue.addOperation(refreshOperation)
+    }
+    
+    func cancelAll() {
+        operationQueue.operations.forEach { $0.cancel() }
+    }
+    
+    func waitForCompletion() async throws {
+        try await operationQueue.drain()
     }
 }

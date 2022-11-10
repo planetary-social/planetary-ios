@@ -67,7 +67,7 @@ class ReplyTextView: MessageView {
 
         // this styling is redundant, but needed for when the view is used with no delegate. Could be refactored
         view.font = UIFont.verse.reply
-        view.text = Text.postAReply.text
+        view.text = Localized.postAReply.text
         view.textColor = UIColor.text.placeholder
         view.layer.borderWidth = 1 / UIScreen.main.scale
         view.layer.borderColor = UIColor.textInputBorder.cgColor
@@ -185,7 +185,7 @@ class ReplyTextView: MessageView {
     }
 
     func clear() {
-        self.sourceTextView.text = Text.postAReply.text
+        self.sourceTextView.text = Localized.postAReply.text
         self.sourceTextView.textColor = UIColor.text.placeholder
         self.renderedTextView.alpha = 0
         self.sourceTextView.alpha = 1

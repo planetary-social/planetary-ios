@@ -29,7 +29,7 @@ public extension Analytics {
     }
 
     func trackBotDidUpdateMessages(count: Int) {
-        service.track(event: .did, element: .bot, name: "db_update", param: "inserted", value: "\(count)")
+        //  service.track(event: .did, element: .bot, name: "db_update", param: "inserted", value: "\(count)")
     }
 
     func trackBotDidUpdateDatabase(count: Int, firstTimestamp: Float64, lastTimestamp: Float64, lastHash: String) {
@@ -59,18 +59,20 @@ public extension Analytics {
     }
 
     func trackBotDidSync(duration: TimeInterval, numberOfMessages: Int) {
-        let params: [String: Any] = ["duration": duration,
-                                     "number_of_messages": numberOfMessages]
-        service.track(event: .did, element: .bot, name: "sync", params: params)
+        // disabled so we track less - rabble Nov 9 2022
+        // let params: [String: Any] = ["duration": duration,
+        //                             "number_of_messages": numberOfMessages]
+        // service.track(event: .did, element: .bot, name: "sync", params: params)
     }
 
     func trackBotDidRefresh(load: Int32, duration: TimeInterval, error: Error? = nil) {
-        var params: [String: Any] = ["load": load,
-                                     "duration": duration]
-        if let error = error {
-            params["error"] = error.localizedDescription
-        }
-        service.track(event: .did, element: .bot, name: "refresh", params: params)
+        // disabled so we track less - rabble Nov 9 2022
+        // var params: [String: Any] = ["load": load,
+        //                             "duration": duration]
+        // if let error = error {
+        //    params["error"] = error.localizedDescription
+        // }
+        // service.track(event: .did, element: .bot, name: "refresh", params: params)
     }
     
     func trackDidDropDatabase() {

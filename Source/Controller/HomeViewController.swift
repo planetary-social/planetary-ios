@@ -14,10 +14,8 @@ import CrashReporting
 
 class HomeViewController: ContentViewController, HelpDrawerHost {
 
-    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-    
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -94,7 +92,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
         let detailLabel = UILabel.forAutoLayout()
         detailLabel.numberOfLines = 0
         detailLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        detailLabel.text = Text.emptyHomeFeedMessage.text
+        detailLabel.text = Localized.emptyHomeFeedMessage.text
         detailLabel.textColor = UIColor.text.default
         detailLabel.textAlignment = .center
         view.addSubview(detailLabel)
@@ -108,7 +106,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
         button.addTarget(self, action: #selector(directoryButtonTouchUpInside), for: .touchUpInside)
         let image = UIColor.tint.default.image().resizableImage(withCapInsets: .zero)
         button.setBackgroundImage(image, for: .normal)
-        button.setTitle(Text.goToYourNetwork.text, for: .normal)
+        button.setTitle(Localized.goToYourNetwork.text, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         button.contentEdgeInsets = .pillButton
@@ -135,7 +133,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
         nil
     }
     
-    override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+    override init(scrollable: Bool = true, title: Localized? = nil, dynamicTitle: String? = nil) {
         super.init(scrollable: scrollable, title: title, dynamicTitle: dynamicTitle)
     }
 
@@ -264,7 +262,7 @@ class HomeViewController: ContentViewController, HelpDrawerHost {
                     }
                 }
             }
-            AppController.shared.operationQueue.addOperation(operation)
+            AppController.shared.addOperation(operation)
         }
     }
     

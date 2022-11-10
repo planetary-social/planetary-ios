@@ -20,7 +20,7 @@ class PreviewSettingsViewController: DebugTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = Text.Preview.title.text
+        self.navigationItem.title = Localized.Preview.title.text
         self.registerApplicationWillEnterForeground()
     }
     
@@ -44,7 +44,7 @@ class PreviewSettingsViewController: DebugTableViewController {
     private func blocks() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.Blocking.usersYouHaveBlocked.text,
+        settings += [DebugTableViewCellModel(title: Localized.Blocking.usersYouHaveBlocked.text,
                                              valueClosure: {
                 cell in
                 guard let identity = Bots.current.identity else { return }
@@ -61,7 +61,7 @@ class PreviewSettingsViewController: DebugTableViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
-        return (Text.Blocking.blockedUsers.text, settings, Text.Blocking.footer.text)
+        return (Localized.Blocking.blockedUsers.text, settings, Localized.Blocking.footer.text)
     }
 
     // MARK: Reset / offboarding
@@ -71,7 +71,7 @@ class PreviewSettingsViewController: DebugTableViewController {
 
         settings += [
             DebugTableViewCellModel(
-                title: Text.Offboarding.resetIdentity.text,
+                title: Localized.Offboarding.resetIdentity.text,
                 valueClosure: { cell in
                     cell.textLabel?.textColor = .systemRed
                 },
@@ -81,15 +81,15 @@ class PreviewSettingsViewController: DebugTableViewController {
             )
         ]
 
-        return (Text.Offboarding.reset.text, settings, Text.Offboarding.resetFooter.text)
+        return (Localized.Offboarding.reset.text, settings, Localized.Offboarding.resetFooter.text)
     }
 
     private func confirmOffboard() {
         self.confirm(
-            title: Text.Offboarding.resetConfirmTitle.text,
-            message: Text.Offboarding.resetConfirmMessage.text,
+            title: Localized.Offboarding.resetConfirmTitle.text,
+            message: Localized.Offboarding.resetConfirmMessage.text,
             isDestructive: true,
-            confirmTitle: Text.Offboarding.reset.text
+            confirmTitle: Localized.Offboarding.reset.text
         ) {
             self.confirmOffboardAgain()
         }
@@ -97,10 +97,10 @@ class PreviewSettingsViewController: DebugTableViewController {
 
     private func confirmOffboardAgain() {
         self.confirm(
-            title: Text.Offboarding.resetConfirmAgainTitle.text,
-            message: Text.Offboarding.resetConfirmAgainMessage.text,
+            title: Localized.Offboarding.resetConfirmAgainTitle.text,
+            message: Localized.Offboarding.resetConfirmAgainMessage.text,
             isDestructive: true,
-            confirmTitle: Text.Offboarding.reset.text
+            confirmTitle: Localized.Offboarding.reset.text
         ) {
             self.offboard()
         }
@@ -122,9 +122,9 @@ class PreviewSettingsViewController: DebugTableViewController {
         Log.optional(error)
         switch error {
             case .apiError:
-                self.confirmTryAgain(message: Text.Offboarding.resetApiErrorTryAgain.text)
+                self.confirmTryAgain(message: Localized.Offboarding.resetApiErrorTryAgain.text)
             case .botError:
-                self.confirmTryAgain(message: Text.Offboarding.resetBotErrorTryAgain.text)
+                self.confirmTryAgain(message: Localized.Offboarding.resetBotErrorTryAgain.text)
             default: break
         }
         return true
@@ -132,10 +132,10 @@ class PreviewSettingsViewController: DebugTableViewController {
 
     private func confirmTryAgain(message: String) {
         self.confirm(
-            title: Text.Onboarding.somethingWentWrong.text,
+            title: Localized.Onboarding.somethingWentWrong.text,
             message: message,
             isDestructive: true,
-            confirmTitle: Text.tryAgain.text
+            confirmTitle: Localized.tryAgain.text
         ) {
             self.offboard()
         }
@@ -154,7 +154,7 @@ class PreviewSettingsViewController: DebugTableViewController {
     private func debug() -> DebugTableViewController.Settings {
         var settings: [DebugTableViewCellModel] = []
 
-        settings += [DebugTableViewCellModel(title: Text.Debug.debugMenu.text,
+        settings += [DebugTableViewCellModel(title: Localized.Debug.debugMenu.text,
                                              valueClosure: {
                 cell in
                 cell.accessoryType = .disclosureIndicator
@@ -166,6 +166,6 @@ class PreviewSettingsViewController: DebugTableViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             })]
 
-        return (Text.Debug.debugTitle.text, settings, Text.Debug.debugFooter.text)
+        return (Localized.Debug.debugTitle.text, settings, Localized.Debug.debugFooter.text)
     }
 }

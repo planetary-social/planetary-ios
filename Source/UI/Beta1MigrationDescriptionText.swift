@@ -19,12 +19,12 @@ struct Beta1MigrationDescriptionText<ViewModel>: View where ViewModel: Beta1Migr
     /// The height for the wrapped UITextView
     @State private var textLabelHeight: CGFloat = 0
     
-    var textColor = Color("subheadlineText")
+    var textColor = Color.subheadlineText
     var textUIColor = UIColor(named: "subheadlineText")
     
     var startUsingPlanetaryString: NSMutableAttributedString {
         NSMutableAttributedString(
-            string: Text.beta1StartUsingPlanetary.text,
+            string: Localized.beta1StartUsingPlanetary.text,
             attributes: [
                 .font: UIFont.preferredFont(forTextStyle: .subheadline),
                 .foregroundColor: textUIColor as Any
@@ -36,13 +36,13 @@ struct Beta1MigrationDescriptionText<ViewModel>: View where ViewModel: Beta1Migr
         VStack(alignment: .leading, spacing: 0) {
             
             if viewModel.progress >= 0.995 {
-                Text.beta1MigrationComplete.view
+                Localized.beta1MigrationComplete.view
                     .multilineTextAlignment(.leading)
                     .font(.subheadline)
                     .foregroundColor(textColor)
             } else {
                 
-                Text.beta1MigrationPleaseLeaveAppOpen.view
+                Localized.beta1MigrationPleaseLeaveAppOpen.view
                     .multilineTextAlignment(.leading)
                     .font(.subheadline)
                     .foregroundColor(textColor)
@@ -52,7 +52,7 @@ struct Beta1MigrationDescriptionText<ViewModel>: View where ViewModel: Beta1Migr
                     attributedString: startUsingPlanetaryString,
                     height: $textLabelHeight,
                     hyperLinkItems: [
-                        .init(subText: Text.startUsingPlanetary.text)
+                        .init(subText: Localized.startUsingPlanetary.text)
                     ],
                     openLink: { _ in
                         viewModel.confirmDismissal()
@@ -60,7 +60,7 @@ struct Beta1MigrationDescriptionText<ViewModel>: View where ViewModel: Beta1Migr
                 )
                 .frame(height: textLabelHeight)
                 
-                Text.beta1Disclaimers.view
+                Localized.beta1Disclaimers.view
                     .multilineTextAlignment(.leading)
                     .font(.subheadline)
                     .foregroundColor(textColor)
@@ -241,6 +241,6 @@ struct Beta1MigrationDescriptionText_Previews: PreviewProvider {
                 .frame(maxWidth: 287)
                 .previewLayout(.sizeThatFits)
         }
-        .background(Color("appBackground"))
+        .background(Color.appBackground)
     }
 }

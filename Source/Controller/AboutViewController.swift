@@ -233,7 +233,7 @@ class AboutViewController: ContentViewController {
         
         var actions = [UIAlertAction]()
 
-        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+        let sharePublicIdentifier = UIAlertAction(title: Localized.sharePublicIdentifier.text, style: .default) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
             let activityController = UIActivityViewController(
@@ -246,11 +246,11 @@ class AboutViewController: ContentViewController {
         actions.append(sharePublicIdentifier)
 
         if let publicLink = self.identity.publicLink {
-            let share = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
+            let share = UIAlertAction(title: Localized.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
 
                 let nameOrIdentity = self.about?.name ?? self.identity
-                let text = Text.shareThisProfileText.text([
+                let text = Localized.shareThisProfileText.text([
                     "who": nameOrIdentity,
                     "link": publicLink.absoluteString
                 ])
@@ -267,28 +267,28 @@ class AboutViewController: ContentViewController {
 
         if !identity.isCurrentUser {
             let block = UIAlertAction(
-                title: Text.blockUser.text,
+                title: Localized.blockUser.text,
                 style: .destructive,
                 handler: self.didSelectBlockAction(action:)
             )
             actions.append(block)
 
             let report = UIAlertAction(
-                title: Text.reportUser.text,
+                title: Localized.reportUser.text,
                 style: .destructive,
                 handler: self.didSelectReportAction(action:)
             )
             actions.append(report)
         } else {
             let manageAliases = UIAlertAction(
-                title: Text.Alias.manageAliases.text,
+                title: Localized.Alias.manageAliases.text,
                 style: .default,
                 handler: self.didSelectManageAliasesAction(actionName:)
             )
             actions.append(manageAliases)
         }
 
-        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        let cancel = UIAlertAction(title: Localized.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
         AppController.shared.choose(from: actions, sourceView: sender)
@@ -371,7 +371,7 @@ class AboutViewController: ContentViewController {
 
         var actions = [UIAlertAction]()
 
-        let sharePublicIdentifier = UIAlertAction(title: Text.sharePublicIdentifier.text, style: .default) { _ in
+        let sharePublicIdentifier = UIAlertAction(title: Localized.sharePublicIdentifier.text, style: .default) { _ in
             Analytics.shared.trackDidSelectAction(actionName: "share_public_identifier")
 
             let activityController = UIActivityViewController(
@@ -384,11 +384,11 @@ class AboutViewController: ContentViewController {
         actions.append(sharePublicIdentifier)
 
         if let publicLink = self.identity.publicLink {
-            let sharePublicLink = UIAlertAction(title: Text.shareThisProfile.text, style: .default) { _ in
+            let sharePublicLink = UIAlertAction(title: Localized.shareThisProfile.text, style: .default) { _ in
                 Analytics.shared.trackDidSelectAction(actionName: "share_profile")
 
                 let nameOrIdentity = self.about?.name ?? self.identity
-                let text = Text.shareThisProfileText.text([
+                let text = Localized.shareThisProfileText.text([
                     "who": nameOrIdentity,
                     "link": publicLink.absoluteString
                 ])
@@ -403,7 +403,7 @@ class AboutViewController: ContentViewController {
             actions.append(sharePublicLink)
         }
 
-        let cancel = UIAlertAction(title: Text.cancel.text, style: .cancel) { _ in }
+        let cancel = UIAlertAction(title: Localized.cancel.text, style: .cancel) { _ in }
         actions.append(cancel)
 
         AppController.shared.choose(from: actions, sourceView: sender)
@@ -435,9 +435,9 @@ class AboutViewController: ContentViewController {
         let newTicketVC = Support.shared.newTicketViewController(reporter: currentIdentity, profile: profile)
         guard let controller = newTicketVC else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
@@ -445,7 +445,7 @@ class AboutViewController: ContentViewController {
     }
     
     private func didSelectManageAliasesAction(actionName: UIAlertAction) {
-        let viewModel = RoomAliasCoordinator(bot: Bots.current)
+        let viewModel = RoomAliasController(bot: Bots.current)
         let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
         self.navigationController?.pushViewController(controller, animated: true)
     }

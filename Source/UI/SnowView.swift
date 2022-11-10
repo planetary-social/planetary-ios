@@ -14,7 +14,7 @@ class SnowView: UIView {
     private let cell: CAEmitterCell = {
         let cell = CAEmitterCell()
         cell.birthRate = 10
-        cell.contents = UIImage(named: "icon-planetary-small.png")?.cgImage
+        cell.contents = UIImage.iconPlanetarySmall.cgImage
         cell.emissionLongitude = CGFloat.pi
         cell.emissionRange = CGFloat.pi / 4
         cell.lifetime = 8.0

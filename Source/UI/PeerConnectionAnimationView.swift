@@ -23,7 +23,7 @@ struct PeerConnectionAnimationView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> PeerConnectionAnimation {
         let animationView = PeerConnectionAnimation(
-            color: UIColor(named: "defaultTint")!,
+            color: UIColor.defaultTint,
             sizeMultiplier: sizeMultiplier,
             lineWidth: lineWidth,
             centerDotSize: centerDotSize,
@@ -59,7 +59,7 @@ struct PeerConnectionAnimationView_Previews: PreviewProvider {
             }
             .padding(16)
         }
-        .background(Color("appBackground"))
+        .background(Color.appBackground)
         .previewLayout(.sizeThatFits)
     }
 }

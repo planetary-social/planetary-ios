@@ -49,7 +49,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
 
     // `dynamicTitle` is used to provide a string at runtime instead of the strongly-typed `title` Text object.
     // it will not be used if `title` is also provided
-    init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+    init(scrollable: Bool = true, title: Localized? = nil, dynamicTitle: String? = nil) {
         self.scrollable = scrollable
         super.init(nibName: nil, bundle: nil)
         self.title = title?.text ?? dynamicTitle
@@ -204,7 +204,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
         let view = UILabel.forAutoLayout()
         view.textAlignment = .center
         view.numberOfLines = 2
-        view.text = Text.loadingUpdates.text
+        view.text = Localized.loadingUpdates.text
         view.textColor = UIColor.tint.default
         return view
     }()

@@ -16,7 +16,7 @@ class EarlyAccessOnboardingStep: OnboardingStep {
     }
 
     override func customizeView() {
-        self.view.hintLabel.text = Text.Onboarding.earlyAccess.text
+        self.view.hintLabel.text = Localized.Onboarding.earlyAccess.text
         self.view.primaryButton.setText(.iUnderstand)
     }
 }

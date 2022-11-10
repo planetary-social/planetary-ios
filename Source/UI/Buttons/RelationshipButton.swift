@@ -42,7 +42,7 @@ class RelationshipButton: IconButton {
         self.highlightedImage = UIImage.verse.optionsOn
     }
 
-    typealias ActionData = (title: Text, style: UIAlertAction.Style, action: () -> Void)
+    typealias ActionData = (title: Localized, style: UIAlertAction.Style, action: () -> Void)
 
     override func defaultAction() {
         Analytics.shared.trackDidTapButton(buttonName: "options")
@@ -140,12 +140,12 @@ class RelationshipButton: IconButton {
     func copyMessageIdentifier() {
         Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
         UIPasteboard.general.string = content.key
-        AppController.shared.showToast(Text.identifierCopied.text)
+        AppController.shared.showToast(Localized.identifierCopied.text)
     }
     
     func shareMessage() {
         guard let publicLink = content.key.publicLink else {
-            AppController.shared.alert(message: Text.Error.couldNotGenerateLink.text)
+            AppController.shared.alert(message: Localized.Error.couldNotGenerateLink.text)
             return
         }
         Analytics.shared.trackDidSelectAction(actionName: "share_message")
@@ -158,7 +158,7 @@ class RelationshipButton: IconButton {
 
     func viewSource() {
         Analytics.shared.trackDidSelectAction(actionName: "view_source")
-        let viewModel = RawMessageCoordinator(message: content, bot: Bots.current)
+        let viewModel = RawMessageController(message: content, bot: Bots.current)
         let controller = UIHostingController(rootView: RawMessageView(viewModel: viewModel))
         let navController = UINavigationController(rootViewController: controller)
         AppController.shared.present(navController, animated: true)
@@ -175,9 +175,9 @@ class RelationshipButton: IconButton {
         let profile = AbusiveProfile(identifier: relationship.other, name: otherUserName)
         guard let controller = Support.shared.newTicketViewController(reporter: reporter, profile: profile) else {
             AppController.shared.alert(
-                title: Text.error.text,
-                message: Text.Error.supportNotConfigured.text,
-                cancelTitle: Text.ok.text
+                title: Localized.error.text,
+                message: Localized.Error.supportNotConfigured.text,
+                cancelTitle: Localized.ok.text
             )
             return
         }
@@ -214,10 +214,10 @@ extension SupportReason {
 
     var string: String {
         switch self {
-        case .abusive: return Text.Reporting.abusive.text
-        case .copyright: return Text.Reporting.copyright.text
-        case .offensive: return Text.Reporting.offensive.text
-        case .other: return Text.Reporting.other.text
+        case .abusive: return Localized.Reporting.abusive.text
+        case .copyright: return Localized.Reporting.copyright.text
+        case .offensive: return Localized.Reporting.offensive.text
+        case .other: return Localized.Reporting.other.text
         }
     }
 }
@@ -226,7 +226,7 @@ extension UIAlertAction {
 
     static func cancel() -> UIAlertAction {
         UIAlertAction(
-            title: Text.cancel.text,
+            title: Localized.cancel.text,
             style: .cancel,
             handler: nil
         )

@@ -12,6 +12,11 @@ import Logger
 import Analytics
 import CrashReporting
 
+// Mark UserDefaults as @Sendable for now, because docs say it's thread safe and I can't find another good alternative.
+#if compiler(>=5.5) && canImport(_Concurrency)
+extension UserDefaults: @unchecked Sendable {}
+#endif
+
 class LaunchViewController: UIViewController {
 
     // MARK: Lifecycle
@@ -41,7 +46,7 @@ class LaunchViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.splashBackground
 
-        let splashImageView = UIImageView(image: UIImage(named: "launch"))
+        let splashImageView = UIImageView(image: UIImage.launch)
         splashImageView.contentMode = .scaleAspectFit
         Layout.center(splashImageView, in: self.view, size: CGSize(width: 188, height: 248))
         
@@ -57,24 +62,29 @@ class LaunchViewController: UIViewController {
     // MARK: Actions
 
     @MainActor
-    private func launch() {
-
+    func launch() {
+        
+        guard appConfiguration?.bot?.identity == nil else {
+            launchIntoMain()
+            return
+        }
+        
         // if simulating then onboard
         if UserDefaults.standard.simulateOnboarding {
-            self.launchIntoOnboarding(simulate: true)
+            launchIntoOnboarding(simulate: true)
             return
         }
 
         // if no configuration then onboard
         guard var configuration = appConfiguration else {
-            self.launchIntoOnboarding()
+            launchIntoOnboarding()
             return
         }
 
         let identity = configuration.identity
         // if configuration and is required then onboard
         if Onboarding.status(for: identity) == .started {
-            self.launchIntoOnboarding(status: .started)
+            launchIntoOnboarding(status: .started)
             return
         }
 
@@ -139,6 +149,7 @@ class LaunchViewController: UIViewController {
         // also, user is already logged in
 
         // transition to main app UI
+        Log.info("Showing main view controller")
         appController.showMainViewController(animated: true)
     }
 
@@ -157,8 +168,8 @@ class LaunchViewController: UIViewController {
         guard let bot = configuration.bot else { return }
         
         let controller = UIAlertController(
-            title: Text.error.text,
-            message: Text.Error.login.text,
+            title: Localized.error.text,
+            message: Localized.Error.login.text,
             preferredStyle: .alert
         )
         let action = UIAlertAction(title: "Restart", style: .default) { _ in
@@ -230,7 +241,7 @@ class LaunchViewController: UIViewController {
     }
     
     private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
-        try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: configuration,
             appController: appController,
             userDefaults: userDefaults

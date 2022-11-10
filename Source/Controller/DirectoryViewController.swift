@@ -76,7 +76,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
         controller.searchResultsUpdater = self
         controller.searchBar.delegate = self
         controller.searchBar.isTranslucent = false
-        controller.searchBar.placeholder = Text.searchForUsers.text
+        controller.searchBar.placeholder = Localized.searchForUsers.text
         controller.obscuresBackgroundDuringPresentation = false
         controller.hidesNavigationBarDuringPresentation = false
         return controller
@@ -173,7 +173,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
     
     /// Loads the message with the given id from the database and displays it if it's still valid.
     func loadAndDisplayMessage(with msgID: MessageIdentifier) {
-        AppController.shared.showProgress(after: 0.3, statusText: Text.searching.text)
+        AppController.shared.showProgress(after: 0.3, statusText: Localized.searching.text)
         Task.detached(priority: .high) { [weak self] in
             var result: Either<Message, MessageIdentifier>
             do {
@@ -254,13 +254,13 @@ extension DirectoryViewController: UITableViewDataSource {
         
         switch section {
         case .communityPubs:
-            return Text.pubServers.text
+            return Localized.pubServers.text
         case .users:
-            return Text.users.text
+            return Localized.users.text
         case .posts:
-            return Text.posts.text
+            return Localized.posts.text
         case .network:
-            return Text.usersInYourNetwork.text
+            return Localized.usersInYourNetwork.text
         }
     }
     
@@ -300,10 +300,10 @@ extension DirectoryViewController: UITableViewDataSource {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             
             if let post = searchedPost {
-                cell.textLabel?.text = Text.openPost.text(["postID": post.key])
+                cell.textLabel?.text = Localized.openPost.text(["postID": post.key])
                 cell.textLabel?.textColor = UIColor.tint.default
             } else {
-                cell.textLabel?.text = Text.postNotFound.text
+                cell.textLabel?.text = Localized.postNotFound.text
             }
             
             return cell

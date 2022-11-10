@@ -20,15 +20,20 @@ protocol AlertRouter {
 
 extension UIViewController: AlertRouter {
     
+    @MainActor
     func alert(error: Error) {
-        let controller = UIAlertController(title: Text.error.text,
-                                           message: error.localizedDescription,
-                                           preferredStyle: .alert)
+        let controller = UIAlertController(
+            title: Localized.error.text,
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
         controller.view.tintColor = UIColor.tint.system
 
-        let cancelAction = UIAlertAction(title: Text.cancel.text,
-                                         style: .cancel) { _ in
-                                            controller.dismiss(animated: true)
+        let cancelAction = UIAlertAction(
+            title: Localized.cancel.text,
+            style: .cancel
+        ) { _ in
+            controller.dismiss(animated: true)
         }
         controller.addAction(cancelAction)
         
@@ -45,11 +50,14 @@ extension UIViewController: AlertRouter {
     ///   - message: A description shown below the title.
     ///   - cancelTitle: A button that closes the alert.
     ///   - cancelClosure: A closure that will be called with the alert is dismissed.
-    func alert(from sourceView: AnyObject? = nil,
-               title: String? = nil,
-               message: String,
-               cancelTitle: String = Text.cancel.text,
-               cancelClosure: (() -> Void)? = nil) {
+    @MainActor
+    func alert(
+        from sourceView: AnyObject? = nil,
+        title: String? = nil,
+        message: String,
+        cancelTitle: String = Localized.cancel.text,
+        cancelClosure: (() -> Void)? = nil
+    ) {
         
         let cancel = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
             cancelClosure?()
@@ -61,11 +69,12 @@ extension UIViewController: AlertRouter {
     /// An async alternative to `alert(from:title:message:cancelTitle:cancelClosure)`.
     /// It's name includes async because otherwise Swift gets confused and thinks calls to the completion handler
     /// version are calls to the async version.
+    @MainActor
     func showAsyncAlert(
         from sourceView: AnyObject? = nil,
         title: String? = nil,
         message: String,
-        cancelTitle: String = Text.cancel.text
+        cancelTitle: String = Localized.cancel.text
     ) async {
         
         await withCheckedContinuation { continuation in
@@ -88,17 +97,22 @@ extension UIViewController: AlertRouter {
     ///   - cancelClosure: A closure that will be performed if the cancel button is pressed.
     ///   - confirmTitle: The title of the confirmation button.
     ///   - confirmClosure: A closure that will be performed if the confirmation button is pressed.
-    func confirm(from sourceView: UIView? = nil,
-                 title: String? = nil,
-                 message: String,
-                 isDestructive: Bool = false,
-                 cancelTitle: String = Text.cancel.text,
-                 cancelClosure: (() -> Void)? = nil,
-                 confirmTitle: String = Text.ok.text,
-                 confirmClosure: @escaping (() -> Void)) {
+    @MainActor
+    func confirm(
+        from sourceView: UIView? = nil,
+        title: String? = nil,
+        message: String,
+        isDestructive: Bool = false,
+        cancelTitle: String = Localized.cancel.text,
+        cancelClosure: (() -> Void)? = nil,
+        confirmTitle: String = Localized.ok.text,
+        confirmClosure: @escaping (() -> Void)
+    ) {
         
-        let confirm = UIAlertAction(title: confirmTitle,
-                                    style: isDestructive ? .destructive : .default) { _ in
+        let confirm = UIAlertAction(
+            title: confirmTitle,
+            style: isDestructive ? .destructive : .default
+        ) { _ in
             confirmClosure()
         }
 
@@ -116,8 +130,8 @@ extension UIViewController: AlertRouter {
         title: String? = nil,
         message: String,
         isDestructive: Bool = false,
-        cancelTitle: String = Text.cancel.text,
-        confirmTitle: String = Text.ok.text
+        cancelTitle: String = Localized.cancel.text,
+        confirmTitle: String = Localized.ok.text
     ) async -> Bool {
         
         await withCheckedContinuation { continuation in
@@ -150,15 +164,20 @@ extension UIViewController: AlertRouter {
     ///   - sourceView: The view that the popover arrow should point to on large devices if you would like to display
     ///         the choices as an `.actionSheet`. If this parameter is nil the choices will be displayed in a `.alert`
     ///         style. Should be a subclass of either `UIView` or `UIBarButtonItem`.
-    func choose(from actions: [UIAlertAction],
-                title: String? = nil,
-                message: String? = nil,
-                sourceView: AnyObject? = nil) {
+    @MainActor
+    func choose(
+        from actions: [UIAlertAction],
+        title: String? = nil,
+        message: String? = nil,
+        sourceView: AnyObject? = nil
+    ) {
         
         let style: UIAlertController.Style = sourceView != nil ? .actionSheet : .alert
-        let controller = UIAlertController(title: title,
-                                           message: message,
-                                           preferredStyle: style)
+        let controller = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: style
+        )
         controller.view.tintColor = UIColor.tint.system
         for action in actions { controller.addAction(action) }
         self.present(alertController: controller, sourceView: sourceView)
@@ -174,10 +193,13 @@ extension UIViewController: AlertRouter {
     ///   - sourceRect: The rectangle in the coordinate space of sourceView that the popover should point at. This
     ///      property is ignored if sourceView is a `UIBarButtonItem`.
     ///   - animated: Whether or not the transition should be animated.
-    func present(alertController controller: UIAlertController,
-                 sourceView: AnyObject? = nil,
-                 sourceRect: CGRect? = nil,
-                 animated: Bool = true) {
+    @MainActor
+    func present(
+        alertController controller: UIAlertController,
+        sourceView: AnyObject? = nil,
+        sourceRect: CGRect? = nil,
+        animated: Bool = true
+    ) {
 
         if controller.preferredStyle == .actionSheet && sourceView == nil {
             let errorMessage = "sourceView is required to present a popover controller"
@@ -195,6 +217,7 @@ extension UIViewController: AlertRouter {
     ///     `UIView` or `UIBarButtonItem`
     /// - Parameter rect: The rectangle in the coordinate space of sourceView that the popover should point at. This
     ///      property is ignored if sourceView is a `UIBarButtonItem`.
+    @MainActor
     func configurePopover(from sourceView: AnyObject?, rect: CGRect? = nil) {
         guard let popover = self.popoverPresentationController,
               let sourceView = sourceView else {

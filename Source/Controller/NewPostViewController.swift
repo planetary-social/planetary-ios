@@ -73,7 +73,7 @@ class NewPostViewController: ContentViewController {
             action: #selector(dismissWithoutPost)
         )
         item.tintColor = .secondaryAction
-        item.accessibilityLabel = Text.done.text
+        item.accessibilityLabel = Localized.done.text
         self.navigationItem.leftBarButtonItem = item
     }
     
@@ -115,8 +115,9 @@ class NewPostViewController: ContentViewController {
                 .textPublisher
                 .throttle(for: 3, scheduler: queue, latest: true)
                 .sink { [weak self] newText in
+                    let newTextValue = newText.map { AttributedString($0) }
                     Task(priority: .userInitiated) {
-                        await self?.draftStore.save(text: newText, images: self?.images ?? [])
+                        await self?.draftStore.save(text: newTextValue, images: self?.images ?? [])
                     }
                 }
                 .store(in: &cancellables)
@@ -148,7 +149,7 @@ class NewPostViewController: ContentViewController {
     }
 
     func didPressPostButton(sender: AnyObject) {
-        self.lookBusy(message: Text.NewPost.publishing)
+        self.lookBusy(message: Localized.NewPost.publishing)
         Analytics.shared.trackDidTapButton(buttonName: "post")
         self.buttonsView.postButton.isHidden = true
         
@@ -165,8 +166,9 @@ class NewPostViewController: ContentViewController {
         let images = self.galleryView.images
 
         let draftStore = draftStore
+        let textValue = AttributedString(text)
         Task.detached(priority: .userInitiated) {
-            await draftStore.save(text: text, images: self.galleryView.images)
+            await draftStore.save(text: textValue, images: self.galleryView.images)
             do {
                 _ = try await Bots.current.publish(post, with: images)
                 Analytics.shared.trackDidPost()
@@ -192,8 +194,9 @@ class NewPostViewController: ContentViewController {
     
     @objc
     private func dismissWithoutPost() {
+        let textValue = AttributedString(self.textView.attributedText)
         Task.detached(priority: .userInitiated) {
-            await self.draftStore.save(text: self.textView.attributedText, images: self.images)
+            await self.draftStore.save(text: textValue, images: self.images)
         }
         self.dismiss(animated: true)
     }
@@ -223,8 +226,9 @@ extension NewPostViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
+        let textValue = AttributedString(textView.attributedText)
         Task.detached(priority: .userInitiated) {
-            await self.draftStore.save(text: self.textView.attributedText, images: view.images)
+            await self.draftStore.save(text: textValue, images: view.images)
         }
     }
 
@@ -234,9 +238,9 @@ extension NewPostViewController: ImageGalleryViewDelegate {
         at indexPath: IndexPath
     ) {
         self.confirm(
-            message: Text.NewPost.confirmRemove.text,
+            message: Localized.NewPost.confirmRemove.text,
             isDestructive: true,
-            confirmTitle: Text.NewPost.remove.text,
+            confirmTitle: Localized.NewPost.remove.text,
             confirmClosure: { view.remove(at: indexPath) }
         )
     }
@@ -249,8 +253,9 @@ extension NewPostViewController: UIAdaptivePresentationControllerDelegate {
         let hasImages = !self.galleryView.images.isEmpty
 
         if hasText || hasImages {
+            let textValue = AttributedString(textView.attributedText)
             Task.detached(priority: .userInitiated) {
-                await self.draftStore.save(text: self.textView.attributedText, images: self.images)
+                await self.draftStore.save(text: textValue, images: self.images)
             }
         }
     }

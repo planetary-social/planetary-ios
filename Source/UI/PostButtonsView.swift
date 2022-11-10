@@ -25,7 +25,7 @@ class PostButtonsView: UIView {
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = UIColor.text.detail
-        label.text = Text.markdownSupported.text
+        label.text = Localized.markdownSupported.text
         return label
     }()
 
@@ -39,7 +39,7 @@ class PostButtonsView: UIView {
 
     let postButton: PillButton = {
         let button = PillButton()
-        button.setTitle(.post)
+        button.setTitle(.postAction)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
         button.isSelected = true
         button.height = 32

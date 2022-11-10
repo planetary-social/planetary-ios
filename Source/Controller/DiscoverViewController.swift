@@ -14,10 +14,8 @@ import CrashReporting
 class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate,
     UniversalSearchDelegate, HelpDrawerHost {
     
-    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-    
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage(named: "nav-icon-write")
+        let image = UIImage.navIconWrite
         let item = UIBarButtonItem(
             image: image,
             style: .plain,
@@ -78,7 +76,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         controller.searchResultsUpdater = self
         controller.searchBar.delegate = self
         controller.searchBar.isTranslucent = false
-        controller.searchBar.placeholder = Text.search.text
+        controller.searchBar.placeholder = Localized.search.text
         controller.obscuresBackgroundDuringPresentation = false
         controller.hidesNavigationBarDuringPresentation = false
         return controller
@@ -144,7 +142,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         nil
     }
     
-    override init(scrollable: Bool = true, title: Text? = nil, dynamicTitle: String? = nil) {
+    override init(scrollable: Bool = true, title: Localized? = nil, dynamicTitle: String? = nil) {
         super.init(scrollable: scrollable, title: title, dynamicTitle: dynamicTitle)
     }
     
