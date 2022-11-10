@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add confirmation message when deleting room #893
 - Update the tap target on the Edit profile page #936
 - Removed logging for regular bot actions #952
+- Added code to optimized the database when the phone is off and connected to power. #958
 
 ## [1.3.6] 2022-10-25
 
