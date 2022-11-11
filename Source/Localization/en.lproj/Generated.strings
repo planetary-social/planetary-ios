@@ -34,6 +34,7 @@
 "Localized.liked" = "{{somebody}} liked";
 "Localized.startedFollowing" = "{{somebody}} started following";
 "Localized.stoppedFollowing" = "{{somebody}} stopped following";
+"Localized.startedBlocking" = "{{somebody}} blocked";
 "Localized.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "This user is outside your network";
 "Localized.showMeInDirectory" = "Show me in the directory";

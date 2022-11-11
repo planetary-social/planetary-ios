@@ -27,7 +27,16 @@ struct IdentityView: View {
     private var extendedHeader = true
 
     @State
-    private var oldScrollViewOffset = ScrollViewOffsetPreferenceKey.defaultValue
+    private var headerOffset = CGFloat.zero
+
+    @State
+    private var contentOffset = CGFloat.zero
+
+    @State
+    private var maxSize = CGSize.zero
+
+    @State
+    private var minSize = CGSize.zero
 
     private var showAlert: Binding<Bool> {
         Binding {
@@ -39,7 +48,7 @@ struct IdentityView: View {
     }
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
                 GeometryReader { proxy in
                     let offset = proxy.frame(in: .named("scroll")).minY
@@ -50,128 +59,63 @@ struct IdentityView: View {
                     .frame(height: 0)
                     .border(Color.red)
                 }.frame(height: 0)
-                MessageListView(strategy: NoHopFeedAlgorithm(identity: identity)) {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top, spacing: 18) {
-                            Circle()
-                                .fill(
-                                    LinearGradient.diagonalAccent
-                                )
-                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                                .frame(width: 92, height: 92)
-                                .overlay(
-                                    AvatarView(metadata: about?.image, size: 87)
-                                )
-                                .onTapGesture {
-                                    guard let image = about?.image else {
-                                        return
-                                    }
-                                    AppController.shared.open(string: image.link)
+                IdentityViewHeader(identity: identity, about: about, extendedHeader: extendedHeader)
+                    .background {
+                        IdentityViewHeader(identity: identity, about: about, extendedHeader: true)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .hidden()
+                            .background {
+                                GeometryReader { geometryProxy in
+                                    Color.clear.preference(key: ExtendedSizePreferenceKey.self, value: geometryProxy.size)
                                 }
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(about?.nameOrIdentity ?? identity)
-                                    .font(.title3.weight(.semibold))
-                                    .foregroundColor(Color.primaryTxt)
-                                HStack {
-                                    Text(identity.prefix(7))
-                                        .font(.subheadline)
-                                        .foregroundColor(Color.secondaryTxt)
-                                }
-                                Group {
-                                    if botRepository.current.identity == identity {
-                                        Button {
-                                            AppController.shared.present(
-                                                UINavigationController(
-                                                    rootViewController: EditAboutViewController(with: about)
-                                                ),
-                                                animated: true
-                                            )
-                                        } label: {
-                                            HStack(alignment: .center) {
-                                                Image.buttonEditProfile
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(width: 18, height: 18)
-                                                Text(Localized.editProfile.text)
-                                                    .font(.footnote)
-                                                    .foregroundLinearGradient(
-                                                        LinearGradient.horizontalAccent
-                                                    )
-                                            }
-                                            .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                                            .background(
-                                                LinearGradient(
-                                                    colors: [.relationshipViewBg],
-                                                    startPoint: .leading,
-                                                    endPoint: .trailing
-                                                )
-                                                .cornerRadius(17)
-                                            )
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 17)
-                                                    .stroke(LinearGradient.horizontalAccent, lineWidth: 1)
-                                            )
-                                        }
-                                    } else {
-                                        RelationshipView(identity: identity)
-                                    }
-                                }
-                                .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                             }
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                        if extendedHeader {
-                            if let bio = about?.description {
-                                Text(bio.parseMarkdown())
-                                    .font(.subheadline)
-                                    .foregroundColor(.primaryTxt)
-                                    .accentColor(.accentTxt)
-                                    .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
-                                    .lineLimit(10)
-                            } else if about == nil {
-                                Text(String.loremIpsum(1))
-                                    .font(.subheadline)
-                                    .foregroundColor(.primaryTxt)
-                                    .redacted(reason: .placeholder)
-                                    .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
+                            .onPreferenceChange(ExtendedSizePreferenceKey.self) { newSize in
+                                maxSize = newSize
                             }
-                            HashtagSliderView(identity: identity)
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
-                            SocialStatsView(identity: identity)
-                                .frame(maxWidth: .infinity)
-                        }
                     }
-                    .background(
-                        LinearGradient(
-                            colors: [Color.profileBgTop, Color.profileBgBottom],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .compositingGroup()
-                    .shadow(color: .profileShadow, radius: 10, x: 0, y: 4)
-                }
+                    .background {
+                        IdentityViewHeader(identity: identity, about: about, extendedHeader: false)
+                            .hidden()
+                            .background {
+                                GeometryReader { geometryProxy in
+                                    Color.clear.preference(key: CollapsedSizePreferenceKey.self, value: geometryProxy.size)
+                                }
+                            }
+                            .onPreferenceChange(CollapsedSizePreferenceKey.self) { newSize in
+                                minSize = newSize
+                            }
+                    }
+                    .zIndex(extendedHeader ? 500 : 1000)
+                    .offset(y: headerOffset)
+                MessageListView(strategy: NoHopFeedAlgorithm(identity: identity))
+                    .background(Color.appBg)
+                    .zIndex(extendedHeader ? 1000 : 500)
+                    .offset(y: contentOffset)
+                Spacer()
+                    .frame(height: contentOffset)
             }
         }
         .background(Color.appBg)
         .coordinateSpace(name: "scroll")
         .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-            if value < 0 {
-                if oldScrollViewOffset >= 0 {
-                    withAnimation(.easeIn(duration: 0.1)) {
-                        extendedHeader.toggle()
-                    }
-                }
-            } else {
-                if oldScrollViewOffset < 0 {
-                    withAnimation(.easeIn(duration: 0.1)) {
-                        extendedHeader.toggle()
-                    }
-                }
+            guard minSize.height > 0, maxSize.height > 0 else {
+                return
             }
-            oldScrollViewOffset = value
+            let offset = value
+            if maxSize.height + offset > minSize.height {
+                if !extendedHeader {
+                    extendedHeader = true
+                    contentOffset = 0
+                }
+                headerOffset = -offset
+
+            } else {
+                if extendedHeader {
+                    extendedHeader = false
+                    contentOffset = maxSize.height - minSize.height
+                }
+                headerOffset = -offset
+            }
         }
         .navigationTitle(Localized.profile.text)
         .navigationBarTitleDisplayMode(.inline)
@@ -183,9 +127,6 @@ struct IdentityView: View {
         }
         .alert(isPresented: showAlert) {
             Alert(title: Localized.error.view, message: SwiftUI.Text(errorMessage ?? ""))
-        }
-        .onPreferenceChange(OffsetKey.self) {
-            extendedHeader = ($0 ?? 0) < 143
         }
         .task {
             Task.detached { [identity] in
@@ -207,6 +148,16 @@ struct IdentityView: View {
     }
 }
 
+fileprivate struct ExtendedSizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+}
+
+fileprivate struct CollapsedSizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+}
+
 fileprivate struct ScrollViewOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
 
@@ -215,13 +166,6 @@ fileprivate struct ScrollViewOffsetPreferenceKey: PreferenceKey {
     }
 
     typealias Value = CGFloat
-}
-
-fileprivate struct OffsetKey: PreferenceKey {
-    static let defaultValue: CGFloat? = nil
-    static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
-        value = value ?? nextValue()
-    }
 }
 
 struct IdentityView_Previews: PreviewProvider {

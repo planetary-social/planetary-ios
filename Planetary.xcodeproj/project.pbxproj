@@ -617,6 +617,8 @@
 		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
 		5B32F256291E963B005985E2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F255291E963B005985E2 /* AvatarView.swift */; };
 		5B32F257291E963B005985E2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F255291E963B005985E2 /* AvatarView.swift */; };
+		5B32F259291EC037005985E2 /* IdentityViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F258291EC037005985E2 /* IdentityViewHeader.swift */; };
+		5B32F25A291EC037005985E2 /* IdentityViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F258291EC037005985E2 /* IdentityViewHeader.swift */; };
 		5B373838288B09A30017756B /* ExtendedAboutCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B373837288B09A30017756B /* ExtendedAboutCellView.swift */; };
 		5B373839288B09A30017756B /* ExtendedAboutCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B373837288B09A30017756B /* ExtendedAboutCellView.swift */; };
 		5B3D893828468846002514AF /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B3D893728468846002514AF /* SkeletonView */; };
@@ -1640,6 +1642,7 @@
 		5B1FF5E428D8AA25008F3A85 /* RawMessageCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawMessageCoordinator.swift; sourceTree = "<group>"; };
 		5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableText.swift; sourceTree = "<group>"; };
 		5B32F255291E963B005985E2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		5B32F258291EC037005985E2 /* IdentityViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityViewHeader.swift; sourceTree = "<group>"; };
 		5B373837288B09A30017756B /* ExtendedAboutCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutCellView.swift; sourceTree = "<group>"; };
 		5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfRecentItemsOperation.swift; sourceTree = "<group>"; };
 		5B6C333C2832D512001F10D6 /* swiftlint_diffonly.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = swiftlint_diffonly.sh; sourceTree = "<group>"; };
@@ -2763,6 +2766,7 @@
 			isa = PBXGroup;
 			children = (
 				5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */,
+				5B32F258291EC037005985E2 /* IdentityViewHeader.swift */,
 				5B7AB67E28F46EB1007DCCF1 /* SocialStatsView.swift */,
 				5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */,
 				5B7786D728F876190081B1C6 /* ImageMetadataView.swift */,
@@ -4155,6 +4159,7 @@
 				C9724B502809D5A0000EBCCD /* DiscoverViewController.swift in Sources */,
 				5B9C6952288726F300229469 /* ClearUnreadNotificationsOperation.swift in Sources */,
 				C9724BD22809EDE7000EBCCD /* RemoteNotificationUserInfo.swift in Sources */,
+				5B32F25A291EC037005985E2 /* IdentityViewHeader.swift in Sources */,
 				C9724B322809D47D000EBCCD /* ResumeOnboardingStep.swift in Sources */,
 				C982CBE328353E2D00D8963F /* ExtendedAboutView.swift in Sources */,
 				C9EBE0482880C2C900A2CF51 /* HelpDrawerCoordinator.swift in Sources */,
@@ -5019,6 +5024,7 @@
 				1B5DB7CE24AE598E008DCB81 /* AboutTableViewController.swift in Sources */,
 				53E29CCD22D296BA008A2CB1 /* String+HashtagSubstrings.swift in Sources */,
 				23EF5AAD249D185E00469977 /* BearerBanListAPI.swift in Sources */,
+				5B32F259291EC037005985E2 /* IdentityViewHeader.swift in Sources */,
 				53AD3FD5226FBD91005228F9 /* AppDelegate+UIAppearance.swift in Sources */,
 				53E26C6923062AC3009240B2 /* Layout+Fill.swift in Sources */,
 				5BE8A30929193ECE00C4A38E /* BlobGalleryView.swift in Sources */,

@@ -31,12 +31,12 @@ struct MessageView: View {
             guard let contact = message.content.contact else {
                 return nil
             }
-            if contact.isFollowing {
+            if contact.isBlocking {
+                localized = .startedBlocking
+            } else if contact.isFollowing {
                 localized = .startedFollowing
-            } else if contact.isBlocking {
-                localized = .blocked
             } else {
-                return nil
+                localized = .stoppedFollowing
             }
         default:
             return nil
