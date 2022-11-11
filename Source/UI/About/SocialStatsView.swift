@@ -46,11 +46,7 @@ struct SocialStatsView: View {
                 showingFollowers = true
             }
             .sheet(isPresented: $showingFollowers) {
-                NavigationView {
-                    IdentityListView(identities: socialStats.followers)
-                        .navigationTitle(Localized.followedByCount.text(["count": "\(socialStats.followers.count)"]))
-                        .navigationBarTitleDisplayMode(.inline)
-                }
+                identityList(socialStats.followers, label: .followedByCount, isPresented: $showingFollowers)
             }
             tab(
                 label: .following,
@@ -61,11 +57,7 @@ struct SocialStatsView: View {
                 showingFollows = true
             }
             .sheet(isPresented: $showingFollows) {
-                NavigationView {
-                    IdentityListView(identities: socialStats.follows)
-                        .navigationTitle(Localized.followingCount.text(["count": "\(socialStats.follows.count)"]))
-                        .navigationBarTitleDisplayMode(.inline)
-                }
+                identityList(socialStats.follows, label: .followingCount, isPresented: $showingFollows)
             }
             tab(
                 label: .blocking,
@@ -76,11 +68,7 @@ struct SocialStatsView: View {
                 showingBlocks = true
             }
             .sheet(isPresented: $showingBlocks) {
-                NavigationView {
-                    IdentityListView(identities: socialStats.blocks)
-                        .navigationTitle(Localized.blockingCount.text(["count": "\(socialStats.blocks.count)"]))
-                        .navigationBarTitleDisplayMode(.inline)
-                }
+                identityList(socialStats.blocks, label: .blockingCount, isPresented: $showingBlocks)
             }
             tab(
                 label: .pubServers,
@@ -91,11 +79,7 @@ struct SocialStatsView: View {
                 showingPubServers = true
             }
             .sheet(isPresented: $showingPubServers) {
-                NavigationView {
-                    IdentityListView(identities: socialStats.pubServers)
-                        .navigationTitle(Localized.joinedCount.text(["count": "\(socialStats.pubServers.count)"]))
-                        .navigationBarTitleDisplayMode(.inline)
-                }
+                identityList(socialStats.pubServers, label: .joinedCount, isPresented: $showingPubServers)
             }
         }
         .padding(EdgeInsets(top: 9, leading: 18, bottom: 18, trailing: 18))
@@ -133,6 +117,23 @@ struct SocialStatsView: View {
                     }
                 }
             }
+        }
+    }
+
+    private func identityList(_ list: [Identity], label: Localized, isPresented: Binding<Bool>) -> some View {
+        NavigationView {
+            IdentityListView(identities: list)
+                .navigationTitle(label.text(["count": "\(list.count)"]))
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            isPresented.wrappedValue = false
+                        } label: {
+                            Image.navIconDismiss
+                        }
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
 

@@ -23,28 +23,33 @@ struct MessageListView<Header>: View where Header: View {
     
     var body: some View {
         LazyVStack(pinnedViews: [.sectionHeaders]) {
-            Section(content: {
-                if let messages = messages {
-                    ForEach(messages, id: \.self) { message in
-                        MessageView(message: message)
-                            .onAppear {
-                                if message == messages.last {
-                                    loadMore()
+            Section(
+                content: {
+                    if let messages = messages {
+                        ForEach(messages, id: \.self) { message in
+                            MessageView(message: message)
+                                .onAppear {
+                                    if message == messages.last {
+                                        loadMore()
+                                    }
                                 }
-                            }
-                            .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
-                            .compositingGroup()
-                            .shadow(color: Color.cardBorderBottom, radius: 0, x: 0, y: 4)
-                            .shadow(color: Color.cardShadowBottom, radius: 10, x: 0, y: 4)
+                                .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
+                                .compositingGroup()
+                                .shadow(color: Color.cardBorderBottom, radius: 0, x: 0, y: 4)
+                                .shadow(color: Color.cardShadowBottom, radius: 10, x: 0, y: 4)
+                        }
                     }
-                }
-                if isLoading, !noMoreMessages {
-                    HStack {
-                        ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
+                    if isLoading, !noMoreMessages {
+                        HStack {
+                            ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
+                        }
                     }
-                }
-            }, header: header).task { loadMore() }
+                },
+                header: header
+            )
         }
+        .padding(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0))
+        .task { loadMore() }
     }
 
     func loadMore() {
