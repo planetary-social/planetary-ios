@@ -23,7 +23,7 @@ struct IdentityOptionsView: View {
     private var showingOptions = false
 
     @State
-    private var showingShare = false
+    private var showingManageAlias = false
 
     var body: some View {
         Button {
@@ -32,20 +32,24 @@ struct IdentityOptionsView: View {
             Image("icon-options-off")
         }
         .confirmationDialog(Localized.share.text, isPresented: $showingOptions) {
-            Button(Localized.blockUser.text, role: .destructive) {
-                Analytics.shared.trackDidSelectAction(actionName: "block_identity")
-                blockUser()
-            }
-            Button(Localized.reportUser.text, role: .destructive) {
-                Analytics.shared.trackDidSelectAction(actionName: "report_user")
-                reportUser()
+            if botRepository.current.identity == identity {
+                Button(Localized.Alias.manageAliases.text) {
+                    showingManageAlias = true
+                }
+            } else {
+                Button(Localized.blockUser.text, role: .destructive) {
+                    Analytics.shared.trackDidSelectAction(actionName: "block_identity")
+                    blockUser()
+                }
+                Button(Localized.reportUser.text, role: .destructive) {
+                    Analytics.shared.trackDidSelectAction(actionName: "report_user")
+                    reportUser()
+                }
             }
         }
-        .sheet(isPresented: $showingShare) {
-            if let url = identity.publicLink {
-                ActivityViewController(activityItems: [url])
-            } else {
-                ActivityViewController(activityItems: [])
+        .sheet(isPresented: $showingManageAlias) {
+            NavigationView {
+                ManageAliasView(viewModel: RoomAliasCoordinator(bot: botRepository.current))
             }
         }
     }

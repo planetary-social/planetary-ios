@@ -99,6 +99,7 @@ enum Localized: String, Localizable, CaseIterable {
     case editPost = "Edit this post"
     case confirmDeletePost = "Are you sure you want to delete this post?"
 
+    case readMore = "Read more"
     case postReply = "Post Reply"
     case postAReply = "Post a reply"
     case createProfile = "Create Profile"

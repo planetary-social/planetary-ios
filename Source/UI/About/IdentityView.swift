@@ -55,19 +55,12 @@ struct IdentityView: View {
                         HStack(alignment: .top, spacing: 18) {
                             Circle()
                                 .fill(
-                                    LinearGradient(
-                                        colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                                        startPoint: .bottomLeading,
-                                        endPoint: .topTrailing
-                                    )
+                                    LinearGradient.diagonalAccent
                                 )
                                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                                 .frame(width: 92, height: 92)
                                 .overlay(
-                                    ImageMetadataView(metadata: about?.image)
-                                        .cornerRadius(99)
-                                        .frame(width: 87, height: 87)
-                                        .scaledToFill()
+                                    AvatarView(metadata: about?.image, size: 87)
                                 )
                                 .onTapGesture {
                                     guard let image = about?.image else {
@@ -77,14 +70,52 @@ struct IdentityView: View {
                                 }
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(about?.nameOrIdentity ?? identity)
+                                    .font(.title3.weight(.semibold))
                                     .foregroundColor(Color.primaryTxt)
-                                    .font(.system(size: 20, weight: .semibold))
                                 HStack {
                                     Text(identity.prefix(7))
-                                        .font(.system(size: 12))
+                                        .font(.subheadline)
                                         .foregroundColor(Color.secondaryTxt)
                                 }
-                                RelationshipView(identity: identity)
+                                Group {
+                                    if botRepository.current.identity == identity {
+                                        Button {
+                                            AppController.shared.present(
+                                                UINavigationController(
+                                                    rootViewController: EditAboutViewController(with: about)
+                                                ),
+                                                animated: true
+                                            )
+                                        } label: {
+                                            HStack(alignment: .center) {
+                                                Image.buttonEditProfile
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: 18, height: 18)
+                                                Text(Localized.editProfile.text)
+                                                    .font(.footnote)
+                                                    .foregroundLinearGradient(
+                                                        LinearGradient.horizontalAccent
+                                                    )
+                                            }
+                                            .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                            .background(
+                                                LinearGradient(
+                                                    colors: [.relationshipViewBg],
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                                .cornerRadius(17)
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 17)
+                                                    .stroke(LinearGradient.horizontalAccent, lineWidth: 1)
+                                            )
+                                        }
+                                    } else {
+                                        RelationshipView(identity: identity)
+                                    }
+                                }
                                 .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                             }
@@ -94,14 +125,15 @@ struct IdentityView: View {
                         if extendedHeader {
                             if let bio = about?.description {
                                 Text(bio.parseMarkdown())
-                                    .font(.system(size: 14))
-                                    .foregroundColor(Color.primaryTxt)
+                                    .font(.subheadline)
+                                    .foregroundColor(.primaryTxt)
+                                    .accentColor(.accentTxt)
                                     .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
                                     .lineLimit(10)
                             } else if about == nil {
                                 Text(String.loremIpsum(1))
-                                    .font(.system(size: 14))
-                                    .foregroundColor(Color.primaryTxt)
+                                    .font(.subheadline)
+                                    .foregroundColor(.primaryTxt)
                                     .redacted(reason: .placeholder)
                                     .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
                             }
@@ -119,7 +151,7 @@ struct IdentityView: View {
                         )
                     )
                     .compositingGroup()
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                    .shadow(color: .profileShadow, radius: 10, x: 0, y: 4)
                 }
             }
         }

@@ -12,26 +12,28 @@ struct BlobGalleryView: View {
 
     var blobs: [Blob]
 
+    @State
+    private var selectedBlob: Blob
+
     init(blobs: [Blob]) {
         self.blobs = blobs
-        print("Showing blob gallery for:")
-        print(blobs.map { "\($0.identifier): \($0.metadata?.mimeType ?? "unknown")" }.joined(separator: "\n"))
+        self.selectedBlob = blobs.first ?? Blob(identifier: .null)
     }
     
     var body: some View {
-        TabView {
+        TabView(selection: $selectedBlob) {
             if blobs.isEmpty {
                 Spacer()
             } else {
                 ForEach(blobs) { blob in
                     ImageMetadataView(metadata: ImageMetadata(link: blob.identifier))
                         .scaledToFill()
-                        .tag(blob.identifier)
-                        .onTapGesture {
-                            AppController.shared.open(string: blob.identifier)
-                        }
+                        .tag(blob)
                 }
             }
+        }
+        .onTapGesture {
+            AppController.shared.open(string: selectedBlob.identifier)
         }
         .tabViewStyle(.page)
         .aspectRatio(1, contentMode: .fit)
@@ -44,7 +46,6 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
         return Blob(identifier: "&test")
     }
     static var previews: some View {
-
         BlobGalleryView(blobs: [sample])
             .previewLayout(.sizeThatFits)
     }

@@ -19,18 +19,20 @@ struct IdentityListView: View {
     var identities: [Identity]
 
     var body: some View {
-        List {
-            Section {
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 1) {
                 ForEach(identities, id: \.self) { identity in
                     CompactIdentityView(identity: identity)
                         .onTapGesture {
                             dismiss()
                             AppController.shared.open(identity: identity)
                         }
+                        .background(
+                            Color.cardBackground
+                        )
                 }
-            }.listRowSeparator(.visible, edges: .all)
+            }
         }
-        .listStyle(.plain)
         .background(Color.appBg)
     }
 }
@@ -46,5 +48,10 @@ struct IdentityListView_Previews: PreviewProvider {
             IdentityListView(identities: [sample, sample])
                 .environmentObject(BotRepository.shared)
         }
+        NavigationView {
+            IdentityListView(identities: [sample, sample])
+                .environmentObject(BotRepository.shared)
+        }
+        .preferredColorScheme(.dark)
     }
 }

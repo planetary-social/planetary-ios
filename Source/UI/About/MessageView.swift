@@ -52,10 +52,7 @@ struct MessageView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {
-                ImageMetadataView(metadata: message.metadata.author.about?.image)
-                    .cornerRadius(99)
-                    .frame(width: 24, height: 24)
-                    .scaledToFill()
+                AvatarView(metadata: message.metadata.author.about?.image, size: 24)
                 if let header = attributedHeader {
                     Text(header)
                         .font(.subheadline)

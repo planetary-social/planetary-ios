@@ -52,6 +52,7 @@
 "Localized.deletePost" = "Delete this post";
 "Localized.editPost" = "Edit this post";
 "Localized.confirmDeletePost" = "Are you sure you want to delete this post?";
+"Localized.readMore" = "Read more";
 "Localized.postReply" = "Post Reply";
 "Localized.postAReply" = "Post a reply";
 "Localized.createProfile" = "Create Profile";

@@ -42,8 +42,8 @@ struct CompactPostView: View {
             Text(post.text.parseMarkdown())
                 .lineLimit(5)
                 .font(.body)
-                .foregroundColor(Color.primaryTxt)
-                .accentColor(Color.accentTxt)
+                .foregroundColor(.primaryTxt)
+                .accentColor(.accentTxt)
                 .padding(15)
                 .background {
                     GeometryReader { geometryProxy in
@@ -72,7 +72,7 @@ struct CompactPostView: View {
                 }
             if shouldShowReadMore {
                 ZStack(alignment: .center) {
-                    Text("Read more".uppercased())
+                    Text(Localized.readMore.text.uppercased())
                         .font(.caption)
                         .foregroundColor(.secondaryTxt)
                         .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
@@ -119,6 +119,9 @@ struct CompactPostView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        CompactPostView(post: post).previewLayout(.sizeThatFits).preferredColorScheme(.light)
+        CompactPostView(post: post)
+            .environmentObject(BotRepository.shared)
+            .previewLayout(.sizeThatFits)
+            .preferredColorScheme(.light)
     }
 }

@@ -50,32 +50,22 @@ struct CompactIdentityView: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 18) {
+        HStack(alignment: .center, spacing: 18) {
             Circle()
-                .fill(
-                    LinearGradient(
-                        colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                        startPoint: .bottomLeading,
-                        endPoint: .topTrailing
-                    )
-                )
+                .fill(LinearGradient.diagonalAccent)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 .frame(width: 92, height: 92)
-                .overlay(
-                    ImageMetadataView(metadata: about?.image)
-                        .cornerRadius(99)
-                        .frame(width: 87, height: 87)
-                        .scaledToFill()
-                )
+                .overlay(AvatarView(metadata: about?.image, size: 87))
             VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .center) {
                     VStack(alignment: .leading) {
                         Text(about?.nameOrIdentity ?? identity)
-                            .foregroundColor(Color("primary-txt"))
+                            .lineLimit(1)
+                            .foregroundColor(.primaryTxt)
                             .font(.headline)
                         Text(identity.prefix(7))
-                            .font(.system(size: 12))
-                            .foregroundColor(Color("secondary-txt"))
+                            .font(.footnote)
+                            .foregroundColor(.secondaryTxt)
                     }
                     Spacer()
                     RelationshipView(identity: identity, compact: true)
@@ -83,16 +73,15 @@ struct CompactIdentityView: View {
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 }
                 Text(attributedSocialStats(from: socialStats ?? .zero))
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundColor(Color.secondaryTxt)
                     .redacted(reason: socialStats == nil ? .placeholder : [])
                 if let hashtags = hashtags, !hashtags.isEmpty {
                     Text(hashtags.map{$0.string}.joined(separator: " ").parseMarkdown())
-                        .foregroundLinearGradient(LinearGradient(
-                            colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ))
+                        .font(.subheadline)
+                        .foregroundLinearGradient(.horizontalAccent)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
             }
         }
@@ -107,7 +96,9 @@ struct CompactIdentityView: View {
                         about = result
                     }
                 } catch {
-
+                    await MainActor.run {
+                        about = About(about: identity)
+                    }
                 }
                 do {
                     let result = try await bot.socialStats(for: identity)
@@ -160,6 +151,7 @@ struct CompactIdentityView_Previews: PreviewProvider {
 
     static var previews: some View {
         CompactIdentityView(identity: .null)
+            .environmentObject(BotRepository.shared)
             .previewLayout(.sizeThatFits)
             .preferredColorScheme(.light)
     }

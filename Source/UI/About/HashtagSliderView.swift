@@ -28,20 +28,12 @@ struct HashtagSliderView: View {
                         Button {
                             AppController.shared.open(string: hashtag.string)
                         } label: {
-                            SwiftUI.Text(hashtag.string)
-                                .foregroundLinearGradient(
-                                    LinearGradient(
-                                        colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
+                            Text(hashtag.string)
+                                .font(.footnote)
+                                .foregroundLinearGradient(.horizontalAccent)
                         }
                         .padding(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
-                        .background(
-                            Color.hashtagBg
-                                .cornerRadius(99)
-                        )
+                        .background(Color.hashtagBg.cornerRadius(99))
                     }
                 }
                 .padding(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
@@ -52,7 +44,7 @@ struct HashtagSliderView: View {
                         )
                         .frame(width: 96, height: 33)
                         .cornerRadius(99)
-                        
+
                         Rectangle().fill(
                             Color.hashtagBg
                         )

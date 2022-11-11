@@ -55,6 +55,8 @@ extension Color {
        static let primaryTxt = Color("primary-txt", bundle: Bundle.current)
        static let profileBgBottom = Color("profile-bg-bottom", bundle: Bundle.current)
        static let profileBgTop = Color("profile-bg-top", bundle: Bundle.current)
+       static let profileShadow = Color("profile-shadow", bundle: Bundle.current)
+       static let relationshipViewBg = Color("relationship-view-bg", bundle: Bundle.current)
        static let secondaryTxt = Color("secondary-txt", bundle: Bundle.current)
 }
 
@@ -107,6 +109,8 @@ extension UIColor {
        static let primaryTxt = UIColor(named: "primary-txt", in: Bundle.current, compatibleWith: nil)!
        static let profileBgBottom = UIColor(named: "profile-bg-bottom", in: Bundle.current, compatibleWith: nil)!
        static let profileBgTop = UIColor(named: "profile-bg-top", in: Bundle.current, compatibleWith: nil)!
+       static let profileShadow = UIColor(named: "profile-shadow", in: Bundle.current, compatibleWith: nil)!
+       static let relationshipViewBg = UIColor(named: "relationship-view-bg", in: Bundle.current, compatibleWith: nil)!
        static let secondaryTxt = UIColor(named: "secondary-txt", in: Bundle.current, compatibleWith: nil)!
 }
 
@@ -120,6 +124,8 @@ extension Image {
        static let backChevron = Image("back-chevron", bundle: Bundle.current)
        static let buttonBlock = Image("button-block", bundle: Bundle.current)
        static let buttonBlocked = Image("button-blocked", bundle: Bundle.current)
+       static let buttonBlocking = Image("button-blocking", bundle: Bundle.current)
+       static let buttonEditProfile = Image("button-edit-profile", bundle: Bundle.current)
        static let buttonFollowBig = Image("button-follow-big", bundle: Bundle.current)
        static let buttonFollow = Image("button-follow", bundle: Bundle.current)
        static let buttonFollowingBig = Image("button-following-big", bundle: Bundle.current)
@@ -180,6 +186,8 @@ extension UIImage {
        static let backChevron = UIImage(named: "back-chevron", in: Bundle.current, with: nil)!
        static let buttonBlock = UIImage(named: "button-block", in: Bundle.current, with: nil)!
        static let buttonBlocked = UIImage(named: "button-blocked", in: Bundle.current, with: nil)!
+       static let buttonBlocking = UIImage(named: "button-blocking", in: Bundle.current, with: nil)!
+       static let buttonEditProfile = UIImage(named: "button-edit-profile", in: Bundle.current, with: nil)!
        static let buttonFollowBig = UIImage(named: "button-follow-big", in: Bundle.current, with: nil)!
        static let buttonFollow = UIImage(named: "button-follow", in: Bundle.current, with: nil)!
        static let buttonFollowingBig = UIImage(named: "button-following-big", in: Bundle.current, with: nil)!

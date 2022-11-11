@@ -23,7 +23,7 @@ struct SelectableText: UIViewRepresentable {
         self.text = text
     }
 
-    private var font = UIFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+    private var font = UIFont.preferredFont(forTextStyle: .body)
     private var insets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
 
     func makeUIView(context: Context) -> UITextView {
@@ -32,7 +32,7 @@ struct SelectableText: UIViewRepresentable {
         view.isUserInteractionEnabled = true
         view.isEditable = false
         view.isSelectable = true
-        view.font = font
+        view.font = UIFont.preferredFont(forTextStyle: .body)
         view.textContainerInset = insets
         return view
     }

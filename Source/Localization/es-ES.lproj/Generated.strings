@@ -52,6 +52,7 @@
 "Localized.deletePost" = "Eliminar esta publicación";
 "Localized.editPost" = "Editar esta publicación";
 "Localized.confirmDeletePost" = "¿Estás seguro de que quieres eliminar esta publicación?";
+"Localized.readMore" = "Read more";
 "Localized.postReply" = "Publicar respuesta";
 "Localized.postAReply" = "Publicar una respuesta";
 "Localized.createProfile" = "Crear perfil";

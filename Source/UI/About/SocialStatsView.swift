@@ -49,6 +49,7 @@ struct SocialStatsView: View {
                 NavigationView {
                     IdentityListView(identities: socialStats.followers)
                         .navigationTitle(Localized.followedByCount.text(["count": "\(socialStats.followers.count)"]))
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
             tab(
@@ -63,6 +64,7 @@ struct SocialStatsView: View {
                 NavigationView {
                     IdentityListView(identities: socialStats.follows)
                         .navigationTitle(Localized.followingCount.text(["count": "\(socialStats.follows.count)"]))
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
             tab(
@@ -77,6 +79,7 @@ struct SocialStatsView: View {
                 NavigationView {
                     IdentityListView(identities: socialStats.blocks)
                         .navigationTitle(Localized.blockingCount.text(["count": "\(socialStats.blocks.count)"]))
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
             tab(
@@ -91,6 +94,7 @@ struct SocialStatsView: View {
                 NavigationView {
                     IdentityListView(identities: socialStats.pubServers)
                         .navigationTitle(Localized.joinedCount.text(["count": "\(socialStats.pubServers.count)"]))
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
@@ -136,29 +140,21 @@ struct SocialStatsView: View {
         VStack {
             ZStack(alignment: .leading) {
                 ForEach(Array(zip(avatars.indices, avatars)), id: \.0) { index, avatar in
-                    ImageMetadataView(metadata: avatar)
-                        .cornerRadius(99)
-                        .scaledToFit()
-                        .frame(width: 26, height: 26)
+                    AvatarView(metadata: avatar, size: 26)
                         .offset(x: matrix(avatars.count)[index] * 8.0, y: 0)
                 }
             }
             .frame(width: avatars.isEmpty ? 0 :  CGFloat(30 + 16 * (avatars.count - 1)), height: 30)
             .background(
-                Color("hashtag-bg").cornerRadius(99)
+                Color.hashtagBg.cornerRadius(99)
             )
-            SwiftUI.Text("\(value)")
-                .font(.system(size: 25))
-                .foregroundLinearGradient(
-                    LinearGradient(
-                        colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-            SwiftUI.Text(label.text.lowercased())
-                .font(.system(size: 11))
-                .foregroundColor(Color("secondary-txt"))
+            Text("\(value)")
+                .font(.title)
+                .foregroundLinearGradient(.horizontalAccent)
+            Text(label.text.lowercased())
+                .font(.caption)
+                .dynamicTypeSize(...DynamicTypeSize.xLarge)
+                .foregroundColor(.secondaryTxt)
         }
     }
 

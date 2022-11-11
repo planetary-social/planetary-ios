@@ -21,7 +21,7 @@ struct RelationshipView: View {
     private var botRepository: BotRepository
 
     @State
-    var isLoading = true
+    var isLoading = false
 
     @State
     var isFollowing = false
@@ -30,7 +30,7 @@ struct RelationshipView: View {
     var isFollowedBy = false
 
     @State
-    var isBlocking = false
+    var isBlocking = true
 
     var body: some View {
         Button {
@@ -48,8 +48,8 @@ struct RelationshipView: View {
                 }
                 .frame(width: 18, height: 18)
                 if !compact {
-                    SwiftUI.Text(title)
-                        .font(.system(size: 13))
+                    Text(title)
+                        .font(.footnote)
                         .foregroundLinearGradient(
                             LinearGradient(
                                 colors: foregroundColors,
@@ -71,21 +71,16 @@ struct RelationshipView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 17)
                     .stroke(
-                        LinearGradient(colors: foregroundColors, startPoint: .leading, endPoint: .trailing),
+                        LinearGradient(colors: borderColors, startPoint: .leading, endPoint: .trailing),
                         lineWidth: 1
                     )
             )
         }
         .placeholder(when: isLoading) {
-            Rectangle().fill(
-                LinearGradient(
-                    colors: [Color(hex: "#F08508"), Color(hex: "#F43F75")],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .frame(width: compact ? 50 : 96, height: 33)
-            .cornerRadius(17)
+            Rectangle()
+                .fill(LinearGradient.horizontalAccent)
+                .frame(width: compact ? 50 : 96, height: 33)
+                .cornerRadius(17)
         }
         .onReceive(NotificationCenter.default.publisher(for: .didBlockUser)) { output in
             guard let notifiedIdentity = output.object as? Identity, notifiedIdentity == identity else {
@@ -112,7 +107,8 @@ struct RelationshipView: View {
                             isLoading = false
                         }
                     } catch {
-
+                        CrashReporting.shared.reportIfNeeded(error: error)
+                        Log.shared.optional(error)
                     }
                 }
             }
@@ -134,7 +130,7 @@ struct RelationshipView: View {
             return ""
         }
         if isBlocking {
-            return Localized.unblockUser.text
+            return Localized.blocking.text
         } else if isFollowing {
             if isStar {
                 return Localized.joined.text
@@ -158,7 +154,9 @@ struct RelationshipView: View {
         guard !isLoading else {
             return ""
         }
-        if isFollowing {
+        if isBlocking {
+            return "button-blocking"
+        } else if isFollowing {
             return "button-following"
         } else {
             return "button-follow"
@@ -169,14 +167,39 @@ struct RelationshipView: View {
         guard !isLoading else {
             return []
         }
-        return isFollowing ? [.clear] : [Color(hex: "#F08508"), Color(hex: "#F43F75")]
+        if isBlocking {
+            return [.relationshipViewBg]
+        } else if isFollowing {
+            return [.relationshipViewBg]
+        } else {
+            return [Color(hex: "#F08508"), Color(hex: "#F43F75")]
+        }
     }
 
     var foregroundColors: [Color] {
         guard !isLoading else {
             return []
         }
-        return isFollowing ? [Color(hex: "#F08508"), Color(hex: "#F43F75")] : [.white]
+        if isBlocking {
+            return [Color(hex: "#F08508"), Color(hex: "#F43F75")]
+        } else if isFollowing {
+            return [Color(hex: "#F08508"), Color(hex: "#F43F75")]
+        } else {
+            return [.white]
+        }
+    }
+
+    var borderColors: [Color] {
+        guard !isLoading else {
+            return []
+        }
+        if isBlocking {
+            return [Color(hex: "#F08508"), Color(hex: "#F43F75")]
+        } else if isFollowing {
+            return [Color(hex: "#F08508"), Color(hex: "#F43F75")]
+        } else {
+            return [.clear]
+        }
     }
 
     func didTapButton() {
@@ -244,6 +267,11 @@ struct RelationshipView_Previews: PreviewProvider {
         VStack {
             RelationshipView(identity: .null)
             RelationshipView(identity: .null, compact: true)
-        }.padding().previewLayout(.sizeThatFits).environmentObject(BotRepository.shared)
+        }.background(Color.appBg).padding().previewLayout(.sizeThatFits).environmentObject(BotRepository.fake)
+
+        VStack {
+            RelationshipView(identity: .null)
+            RelationshipView(identity: .null, compact: true)
+        }.background(Color.appBg).padding().previewLayout(.sizeThatFits).preferredColorScheme(.dark).environmentObject(BotRepository.fake)
     }
 }
