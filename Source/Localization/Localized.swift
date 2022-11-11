@@ -399,6 +399,8 @@ extension Localized {
         case loadingRooms = "Loading rooms..."
         case invalidRoomURL = "Invalid room URL"
         case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
+        case deleteRoom = "Delete"
+        case deleteRoomConfirmation = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room."
     }
 }
 
@@ -544,6 +546,7 @@ extension Localized {
         case invalidRoomURL = "Could not parse invitation."
         case invalidRoomInvitationOrAddress = "Planetary does not recognize this as a valid room invitation or address."
         case notLoggedIn = "The operation could not be completed because no user is logged in."
+        case alreadyJoinedRoom = "You are already a member of this room"
     }
 }
 
@@ -565,7 +568,7 @@ extension Localized {
     enum Report: String, Localizable, CaseIterable {
         case somebody = "Somebody"
         case feedFollowed = "%@ started following you"
-        case postReplied = "%@ replied to your post"
+        case postReplied = "%@ replied to a post you commented on"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
     }

@@ -158,7 +158,7 @@ class RelationshipButton: IconButton {
 
     func viewSource() {
         Analytics.shared.trackDidSelectAction(actionName: "view_source")
-        let viewModel = RawMessageCoordinator(message: content, bot: Bots.current)
+        let viewModel = RawMessageController(message: content, bot: Bots.current)
         let controller = UIHostingController(rootView: RawMessageView(viewModel: viewModel))
         let navController = UINavigationController(rootViewController: controller)
         AppController.shared.present(navController, animated: true)

@@ -1,5 +1,5 @@
 //
-//  Beta1MigrationCoordinator.swift
+//  Beta1MigrationController.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 4/7/22.
@@ -32,7 +32,7 @@ enum Beta1MigrationError: Error {
 ///
 /// The go-ssb on-disk database format changed with no migration path circa 2022, so we wrote this custom flow in Swift
 /// to drop all data and resync from the network.
-class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
+class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: - Properties
     
@@ -87,7 +87,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
         Log.info("Beta1 migration triggered.")
         Analytics.shared.trackDidStartBeta1Migration()
         
-        let coordinator = Beta1MigrationCoordinator(
+        let controller = Beta1MigrationController(
             appConfiguration: appConfiguration,
             appController: appController,
             userDefaults: userDefaults,
@@ -95,7 +95,7 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
                 Task { await appController.dismiss(animated: true) }
             }
         )
-        let view = await Beta1MigrationView(viewModel: coordinator)
+        let view = Beta1MigrationView(viewModel: controller)
         let hostingController = await UIHostingController(rootView: view)
         await MainActor.run {
             hostingController.modalPresentationStyle = .fullScreen
@@ -113,11 +113,11 @@ class Beta1MigrationCoordinator: ObservableObject, Beta1MigrationViewModel {
             userDefaults.synchronize()
         } else {
             Log.info("Resuming Beta1 migration")
-            coordinator.progress = userDefaults.float(forKey: beta1MigrationProgress)
+            controller.progress = userDefaults.float(forKey: beta1MigrationProgress)
         }
         
         try await bot.login(config: appConfiguration)
-        await coordinator.bindProgress(to: bot)
+        await controller.bindProgress(to: bot)
         
         return true
     }

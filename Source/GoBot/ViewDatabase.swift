@@ -52,12 +52,11 @@ enum ViewDatabaseTableNames: String {
 }
 
 class ViewDatabase {
-    var currentPath: String { get { self.dbPath } }
-    private var dbPath: String = "/tmp/unset"
-    private var openDB: Connection?
-
-    // TODO: use this to trigger fill on update and wipe previous versions
-    // https://app.asana.com/0/914798787098068/1151842364054322/f
+    
+    var currentPath: String? { self.dbPath }
+    
+    private var dbPath: String?
+    
     static let schemaVersion: UInt = 20
 
     // should be changed on login/logout
@@ -232,26 +231,28 @@ class ViewDatabase {
             throw ViewDatabaseError.alreadyOpen
         }
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
-        self.dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
-        let db = try Connection(self.dbPath) // Q: use proper fs.join API instead of string interpolation?
+        let dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
+        let db = try Connection(dbPath)
         
-        db.busyTimeout = 1
-        db.busyHandler { (tries) -> Bool in
-            tries < 4
-        }
-        
-        self.openDB = db
-        try db.execute("PRAGMA journal_mode = WAL;")
-        try db.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
-        
-        // db.trace { print("\n\n\ntSQL: \($0)\n\n\n") } // print all the statements
+        try setUpConnection(db)
         
         try checkAndRunMigrations(on: db)
         
+        self.dbPath = dbPath
         self.currentUser = user
         self.currentUserID = try self.authorID(of: user, make: true)
 
         try setAllMessagesAsReadIfNeeded()
+    }
+
+    /// Gets a db connection ready to accept commands
+    private func setUpConnection(_ connection: Connection) throws {
+        connection.busyTimeout = 30
+        try connection.execute("PRAGMA journal_mode = WAL;")
+        try connection.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
+
+        // uncomment to print all statements
+        // connection.trace { print("\n\n\ntSQL: \($0)\n\n\n") }
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -414,6 +415,12 @@ class ViewDatabase {
                 )
                 db.userVersion = 21
             }
+            if db.userVersion == 21 {
+                try db.execute(
+                    "CREATE INDEX posts_by_activity ON messages(last_activity_time, type, is_decrypted, claimed_at)"
+                )
+                db.userVersion = 22
+            }
         }
     }
 
@@ -422,9 +429,7 @@ class ViewDatabase {
         guard needsToSetAllMessagesAsRead else {
             return
         }
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         try db.execute(
             """
             INSERT OR REPLACE INTO read_messages
@@ -442,11 +447,11 @@ class ViewDatabase {
     #endif
     
     func isOpen() -> Bool {
-        self.openDB != nil
+        dbPath != nil
     }
     
     func close() {
-        if let db = openDB {
+        if let db = try? checkoutConnection() {
             do {
                 try db.execute("PRAGMA analysis_limit = 400;")
                 try db.execute("PRAGMA optimize;")
@@ -459,21 +464,25 @@ class ViewDatabase {
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
         }
-        self.openDB = nil
+        self.dbPath = nil
         self.currentUser = nil
         self.currentUserID = -1
     }
     
-    func getOpenDB() -> Connection? {
-        guard let db = self.openDB else { return nil }
+    /// Creates a new database connection that will automatically be closed when it goes out of scope.
+    func checkoutConnection() throws -> Connection {
+        guard let dbPath = dbPath else {
+            throw ViewDatabaseError.notOpen
+        }
+        
+        let db = try Connection(dbPath)
+        try setUpConnection(db)
         return db
     }
     
     // returns the number of rows for the respective tables
     func stats() throws -> [ViewDatabaseTableNames: Int] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         return [
             .addresses: try db.scalar(self.addresses.count),
@@ -488,9 +497,7 @@ class ViewDatabase {
     }
     
     func stats(table: ViewDatabaseTableNames) throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         var cnt: Int = 0
         switch table {
@@ -510,16 +517,12 @@ class ViewDatabase {
     
     // helper to get some counts for pagination
     func statsForRootPosts(strategy: FeedStrategy) throws -> Int {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID)
     }
     
     func lastReceivedTimestamp() throws -> Double {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         if let timestamp = try db.scalar(self.msgs.select(colReceivedAt.max)) {
             return timestamp
@@ -532,9 +535,7 @@ class ViewDatabase {
     ///
     /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
     func largestSeqFromReceiveLog() throws -> Int64 {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let rxMaybe = Expression<Int64?>("rx_seq")
         if let rx = try db.scalar(msgs.select(rxMaybe.max)) {
@@ -550,9 +551,7 @@ class ViewDatabase {
     ///
     /// The returned sequence number is the index of a message in go-ssb's RootLog of all messages.
     func largestSeqNotFromPublishedLog() throws -> Int64 {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let rxMaybe = Expression<Int64?>("rx_seq")
         if let rx = try db.scalar(self.msgs.select(rxMaybe.max).where(msgs[colAuthorID] != currentUserID)) {
@@ -565,9 +564,7 @@ class ViewDatabase {
     /// Finds the largest sequence number of all the posts the logged-in user has published. The sequence number is the
     /// index of a message in go-ssb's RootLog of all messages.
     func largestSeqFromPublishedLog() throws -> Int64 {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let rxMaybe = Expression<Int64?>("rx_seq")
         if let rx = try db.scalar(msgs.select(rxMaybe.max).where(msgs[colAuthorID] == currentUserID)) {
@@ -578,9 +575,7 @@ class ViewDatabase {
     }
     
     func minimumReceivedSeq() throws -> Int64 {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let rxMaybe = Expression<Int64?>("rx_seq")
         if let rx = try db.scalar(self.msgs.select(rxMaybe.min)) {
@@ -593,9 +588,7 @@ class ViewDatabase {
     /// Returns the date at which the newest row in the messages table was inserted. Useful for getting a rough idea of
     /// the last time the user synced with peers.
     func lastWrittenMessageDate() throws -> Date? {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         if let milliseconds = try db.scalar(msgs.select(colWrittenAt.max)) {
             return Date(milliseconds: milliseconds)
@@ -612,9 +605,7 @@ class ViewDatabase {
     // MARK: pubs & rooms
 
     func getAllKnownPubs() throws -> [KnownPub] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let qry = self.addresses
            .join(self.authors, on: self.authors[colID] == self.addresses[colAboutID])
@@ -645,9 +636,7 @@ class ViewDatabase {
     }
     
     func getJoinedPubs(identity: Identity? = nil) throws -> [Pub] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         var query = self.msgs.join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
 
@@ -682,9 +671,7 @@ class ViewDatabase {
     }
     
     func getJoinedRooms() throws -> [Room] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         return try db.prepare(rooms).map { row in
             guard let address = MultiserverAddress(string: row[colAddress]) else {
@@ -695,25 +682,19 @@ class ViewDatabase {
     }
     
     func insert(room: Room) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         try db.run(rooms.insert(colAddress <- room.address.string))
     }
     
     func delete(room: Room) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         try db.run(rooms.filter(colAddress == room.address.string).delete())
     }
     
     func getRegisteredAliases() throws -> [RoomAlias] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         return try db.prepare(roomAliases).map { row in
             guard let url = URL(string: row[colAliasURL]) else {
@@ -725,9 +706,7 @@ class ViewDatabase {
     }
     
     func insertRoomAlias(url: URL, room: Room) throws -> RoomAlias {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         guard let roomID = try db.pluck(rooms.filter(colAddress == room.address.string))?.get(colID) else {
             throw ViewDatabaseError.invalidRoom
@@ -756,7 +735,7 @@ class ViewDatabase {
     
     /// Overwrites the banList table with the new banList
     private func updateBanTable(from banList: [String]) throws {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         
         try db.run(self.banList.delete())
         for banHash in banList {
@@ -766,14 +745,14 @@ class ViewDatabase {
     
     /// Looks for feed IDs that match the hashes in the ban list ban list.
     private func authorsMatching(banList: [String]) throws -> [FeedIdentifier] {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         
         return try db.prepare(authors.select(colAuthor).filter(banList.contains(colHashedKey))).map { $0[colAuthor] }
     }
     
     /// Finds authors that are marked banned in the db but not the given ban list.
     private func bannedAuthorsNotIn(banList: [String]) throws -> [FeedIdentifier] {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         
         return try db.prepare(
             authors
@@ -786,7 +765,7 @@ class ViewDatabase {
 
     /// Marks an author as banned. This is mostly so that we can tell if they are subsequently unbanned.
     private func ban(authors: [FeedIdentifier]) throws {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         
         try db.run(
             self.authors
@@ -801,7 +780,7 @@ class ViewDatabase {
     /// Marks a previously banned author as not banned anymore.
     /// We keep track of when authors are unbanned so we can unblock them at the replication level.
     private func unban(authors: [FeedIdentifier]) throws {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         
         try db.run(
             self.authors
@@ -812,7 +791,7 @@ class ViewDatabase {
     
     /// Deletes messages matching the given ban list from the messages table and related tables.
     private func deleteMessagesMatching(banList: [String]) throws {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         
         // look for banned IDs in msgs
         let matchingMsgs = try db.prepare(
@@ -828,38 +807,32 @@ class ViewDatabase {
     
     /// Returns true if the given message is on the ban list.
     func messageMatchesBanList(_ message: Message) throws -> Bool {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         return try db.scalar(banList.filter(colHash == message.key.sha256hash).exists)
     }
     
     /// Returns true if the author of the given message is on the ban list.
     func authorMatchesBanList(_ message: Message) throws -> Bool {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
         return try db.scalar(banList.filter(colHash == message.author.sha256hash).exists)
     }
 
     func hide(allFrom author: FeedIdentifier) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         let authorID = try self.authorID(of: author, make: false)
         let byAuthorQry = self.msgs.filter(colAuthorID == authorID)
         try db.run(byAuthorQry.update(colHidden <- true))
     }
     
     func unhide(for author: FeedIdentifier) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         let authorID = try self.authorID(of: author, make: false)
         let byAuthorQry = self.msgs.filter(colAuthorID == authorID)
         try db.run(byAuthorQry.update(colHidden <- false))
     }
 
     func delete(allFrom author: Identity) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         let authorID = try self.authorID(of: author, make: false)
 
         try db.transaction {
@@ -868,9 +841,7 @@ class ViewDatabase {
     }
 
     private func deleteNoTransaction(allFrom authorIDs: [Int64]) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         // all from abouts
         try db.run(self.abouts.filter(authorIDs.contains(colAuthorID)).delete())
@@ -922,9 +893,7 @@ class ViewDatabase {
     }
 
     func delete(message: MessageIdentifier) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         try db.transaction {
             try self.deleteNoTransact(message: message)
         }
@@ -932,9 +901,7 @@ class ViewDatabase {
 
     // this is just here so that the fill loop can use it without a transaction
     private func deleteNoTransact(message: MessageIdentifier) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         let msgID = try self.msgID(of: message, make: false)
         // delete message from all specialized tables
         let messageTables = [
@@ -957,9 +924,7 @@ class ViewDatabase {
     // MARK: abouts
     
     func getName(feed: Identifier) throws -> String? {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         var aboutID: Int64
         if let authorRow = try db.pluck(self.authors.filter(colAuthor == feed)) {
@@ -982,9 +947,7 @@ class ViewDatabase {
     }
     
     func getAbout(for id: Identifier) throws -> About? {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let aboutID = try self.authorID(of: id)
         
@@ -1004,9 +967,7 @@ class ViewDatabase {
     }
     
     func getAbouts() throws -> [About] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let qry = self.abouts
             .join(self.authors, on: colID == self.abouts[colAboutID])
@@ -1028,9 +989,7 @@ class ViewDatabase {
     }
     
     func abouts(withNameLike queryString: String) throws -> [About] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let query = self.abouts
             .join(self.authors, on: colID == self.abouts[colAboutID])
@@ -1056,9 +1015,7 @@ class ViewDatabase {
     
     // who is this feed following?
     func getFollows(feed: Identity) throws -> [Identity] {
-       guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let authorID = try self.authorID(of: feed, make: false)
         
@@ -1080,9 +1037,7 @@ class ViewDatabase {
     }
 
     func getFollows(feed: Identity) throws -> [About] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let authorID = try self.authorID(of: feed, make: false)
 
@@ -1110,9 +1065,7 @@ class ViewDatabase {
     
     // who is following this feed
     func followedBy(feed: Identity) throws -> [Identity] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let feedID = try self.authorID(of: feed, make: false)
         
@@ -1135,9 +1088,7 @@ class ViewDatabase {
     }
 
     func followedBy(feed: Identity) throws -> [About] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let feedID = try self.authorID(of: feed, make: false)
 
@@ -1167,9 +1118,7 @@ class ViewDatabase {
     // returns the same (who follows this feed) list as above
     // but returns a [Message] (with timestamp) instead of just the public key reference
     func followedBy(feed: Identity, limit: Int = 100) throws -> [Message] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let feedID = try self.authorID(of: feed, make: false)
 
@@ -1220,9 +1169,7 @@ class ViewDatabase {
     
     /// Returns the number of followers and follows for a given identity
     func countNumberOfFollowersAndFollows(feed: Identity) throws -> SocialStats {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
 
         let authorID = try authorID(of: feed)
 
@@ -1245,9 +1192,7 @@ class ViewDatabase {
 
     // who is this feed blocking
     func getBlocks(feed: Identity) throws -> [Identity] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let authorID = try self.authorID(of: feed, make: false)
         
@@ -1268,9 +1213,7 @@ class ViewDatabase {
     }
     
     func blockedBy(feed: Identity) throws -> [Identity] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let authorID = try self.authorID(of: feed, make: false)
         
@@ -1290,9 +1233,7 @@ class ViewDatabase {
     
     // who is this one following and who is follwing back? aka friends
     func getBidirectionalFollows(feed: Identity) throws -> [Identity] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         var authorID: Int64
         if let authorRow = try db.pluck(self.authors.filter(colAuthor == feed)) {
@@ -1337,9 +1278,7 @@ class ViewDatabase {
     }
 
     func numberOfRecentPosts(with strategy: FeedStrategy, since message: MessageIdentifier) throws -> Int {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         return try strategy.countNumberOfKeys(connection: connection, userId: currentUserID, since: message)
     }
     
@@ -1394,26 +1333,28 @@ class ViewDatabase {
     // wraps the query with only authored people by that the current user follows
     // TODO: does a manual sub-query (that could be cached - or pushed down even into the main query with raw sql)
     private func filterOnlyFollowedPeople(qry: Table) throws -> Table {
+        let connection = try checkoutConnection()
         // get the list of people that the active user follows
         let myFollowsQry = self.contacts
             .select(colContactID)
             .filter(colAuthorID == self.currentUserID)
             .filter(colContactState == 1)
         var myFollows: [Int64] = [self.currentUserID] // and from self as well
-        for row in try self.openDB!.prepare(myFollowsQry) {
+        for row in try connection.prepare(myFollowsQry) {
             myFollows.append(row[colContactID])
         }
         return qry.filter(myFollows.contains(colAuthorID))    // authored by one of our follows
     }
     
     private func filterNotFollowingPeople(qry: Table) throws -> Table {
+        let connection = try checkoutConnection()
         // get the list of people that the active user follows
         let myFollowsQry = self.contacts
             .select(colContactID)
             .filter(colAuthorID == self.currentUserID)
             .filter(colContactState == 1)
         var myFollows: [Int64] = [self.currentUserID] // and from self as well
-        for row in try self.openDB!.prepare(myFollowsQry) {
+        for row in try connection.prepare(myFollowsQry) {
             myFollows.append(row[colContactID])
         }
         return qry.filter(!(myFollows.contains(colAuthorID)))    // authored by one of our follows
@@ -1421,9 +1362,7 @@ class ViewDatabase {
     // table.filter(!(array.contains(id)))
 
     private func mapQueryToMessage(qry: Table, useNamespacedTables: Bool = false) throws -> [Message] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         return try db.prepare(qry).compactMap { row in
             return try Message(
@@ -1440,9 +1379,7 @@ class ViewDatabase {
 
     // turns an array of messages into an array of (msg, #people replied)
     private func addNumberOfPeopleReplied(msgs: [Message]) throws -> Messages {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         var r: Messages = []
         for (index, _) in msgs.enumerated() {
@@ -1479,9 +1416,7 @@ class ViewDatabase {
     // TODO: ensure order by sorting by tangle heads
     // bug: currently squashing multiple branches
     func getRepliesTo(thread msg: MessageIdentifier) throws -> [Message] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let msgID = try self.msgID(of: msg)
         let qry = self.tangles
@@ -1574,9 +1509,10 @@ class ViewDatabase {
     }
 
     func mentions(limit: Int = 200, wantPrivate: Bool = false, onlyImages: Bool = true) throws -> Messages {
-        guard let _ = self.openDB else {
+        guard isOpen() else {
             throw ViewDatabaseError.notOpen
         }
+        
         let qry = self.mentions_feed
             .join(self.msgs, on: self.msgs[colMessageID] == self.mentions_feed[colMessageRef])
             .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
@@ -1597,9 +1533,7 @@ class ViewDatabase {
 
     /// Returns the total number of unread reports for the current user.
     func countNumberOfUnreadReports() throws -> Int {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         let queryString = """
             WITH
                 block_list AS (
@@ -1639,9 +1573,7 @@ class ViewDatabase {
     /// It returns true/false either if it was read or not, nil if the message doesn't exist or a report for the
     /// message doesn't exist.
     func isMessageForReportRead(for message: MessageIdentifier) throws -> Bool? {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         let queryString = """
         SELECT
             read_messages.is_read AS is_read
@@ -1671,9 +1603,7 @@ class ViewDatabase {
     ///
     /// This function returns nil if the message doesn't have an associated report.
     func report(for message: MessageIdentifier) throws -> Report? {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         let queryString = """
         SELECT
             reports.type AS report_type,
@@ -1719,9 +1649,7 @@ class ViewDatabase {
     ///
     /// - parameter limit: The maximum number of reports in the list
     func reports(limit: Int = 200) throws -> [Report] {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         let queryString = """
         WITH
             block_list AS (
@@ -1822,9 +1750,7 @@ class ViewDatabase {
     ///
     /// This is useful for knowing if there are new reports since the last displayed one.
     func countNumberOfReports(since report: Report) throws -> Int {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
 
         // swiftlint:disable indentation_width
         let queryString = """
@@ -1861,9 +1787,7 @@ class ViewDatabase {
     }
 
     func feed(for identity: Identity, limit: Int = 5, offset: Int? = nil) throws -> Messages {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         let timeStart = CFAbsoluteTimeGetCurrent()
         let feedAuthorID = try self.authorID(of: identity, make: false)
         
@@ -1895,9 +1819,7 @@ class ViewDatabase {
     /// Fetches all published messages for the current user in chronological order. If the message is not a supported
     /// message type it will not show up in the returned array.
     func publishedMessagesForCurrentUser() throws -> Messages {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let query = msgs
             .join(.leftOuter, posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
@@ -1931,9 +1853,7 @@ class ViewDatabase {
     
     /// Returns the claimed post date of the current user's first published message, or nil if they have none.
     func currentUserCreatedDate() throws -> Date? {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         if let row = try db.pluck(
             msgs
@@ -1950,9 +1870,7 @@ class ViewDatabase {
 
     func getAuthorOf(key: MessageIdentifier) throws -> Int64? {
         let msgId = try self.msgID(of: key, make: false)
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let colAuthorID = Expression<Int64?>("colAuthorID")
         let authorID = try db.scalar(self.msgs
@@ -1965,9 +1883,7 @@ class ViewDatabase {
     // MARK: - Read status
 
     func markMessageAsRead(identifier: MessageIdentifier, isRead: Bool = true) throws {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         let query = """
         INSERT OR REPLACE INTO read_messages (author_id, msg_id, is_read)
         VALUES (
@@ -1986,9 +1902,7 @@ class ViewDatabase {
     }
     
     func post(with messageRef: Int64) throws -> Message {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         // TODO: add 2nd signature to get message by internal ID
         // guard let db = self.openDB else {
@@ -2042,9 +1956,7 @@ class ViewDatabase {
     }
     
     func posts(matching text: String) throws -> [Message] {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         
         // probably need to escape some characters here
         var messages = [Message]()
@@ -2065,16 +1977,12 @@ class ViewDatabase {
 
     /// Returns a list of hashtags sorted by a given strategy
     func hashtags(with strategy: HashtagListStrategy) throws -> [Hashtag] {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         return try strategy.fetchHashtags(connection: connection, userId: currentUserID)
     }
 
     func hashtags(identity: Identity, limit: Int = 100) throws -> [Hashtag] {
-        guard let connection = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let connection = try checkoutConnection()
         let queryString = """
         SELECT c.name AS channel_name
         FROM channel_assignments ca
@@ -2114,9 +2022,7 @@ class ViewDatabase {
     }
     
     private func channelID(from name: String, make: Bool = false) throws -> Int64 {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         var channelID: Int64
         if let chanRow = try db.pluck(self.channels.filter(colName == name)) {
             channelID = chanRow[colID]
@@ -2133,9 +2039,7 @@ class ViewDatabase {
     }
 
     private func getChannel(from id: Int64) throws -> Hashtag {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let qry = self.channels
             .filter(colID == id)
@@ -2167,9 +2071,7 @@ class ViewDatabase {
     }
     
     func saveAddress(feed: Identity, address: MultiserverAddress, redeemed: Double?) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let authorID = try self.authorID(of: feed, make: true)
         
@@ -2183,9 +2085,7 @@ class ViewDatabase {
     }
     
     private func fillAbout(msgID: Int64, msg: Message) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         guard let a = msg.content.about else {
             Log.info("[viewdb/fill] broken about message: \(msg.key)")
@@ -2254,9 +2154,7 @@ class ViewDatabase {
     }
     
     func deleteAbouts(for feed: FeedIdentifier) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let authorID = try authorID(of: feed, make: false)
         
@@ -2273,9 +2171,7 @@ class ViewDatabase {
     }
     
     private func fillContact(msgID: Int64, msg: Message) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         guard let c = msg.content.contact else {
             Log.info("[viewdb/fill] broken contact message: \(msg.key)")
@@ -2319,7 +2215,7 @@ class ViewDatabase {
     }
     
     private func checkAndExecuteDCR(msgID: Int64, msg: Message) throws {
-        guard self.openDB != nil else {
+        guard isOpen() else {
             throw ViewDatabaseError.notOpen
         }
 
@@ -2352,9 +2248,7 @@ class ViewDatabase {
     }
     
     private func fillPub(msgID: Int64, msg: Message) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         guard let p = msg.content.pub,
             p.address.key.isValidIdentifier else {
@@ -2370,9 +2264,7 @@ class ViewDatabase {
     }
     
     private func fillPost(msgID: Int64, msg: Message, pms: Bool) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         guard let p = msg.content.post else {
             Log.info("[viewdb/fill] broken post message: \(msg.key)")
             return
@@ -2413,9 +2305,7 @@ class ViewDatabase {
     }
     
     private func fillVote(msgID: Int64, msg: Message, pms: Bool) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         guard let v = msg.content.vote else {
             Log.info("[viewdb/fill] broken vote message: \(msg.key)")
@@ -2442,9 +2332,7 @@ class ViewDatabase {
     }
     
     private func fillReportIfNeeded(msgID: Int64, msg: Message, pms: Bool) throws -> [Report] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         let createdAt = Date().timeIntervalSince1970 * 1_000
         
@@ -2611,9 +2499,7 @@ class ViewDatabase {
     }
     
     func fillMessages(msgs: [Message], pms: Bool = false) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         Log.info("[rx log] starting fillMessages with \(msgs.count) new messages")
 
@@ -2818,7 +2704,7 @@ class ViewDatabase {
 
     // TODO: RAM cache for these msgRef:IntID maps?
     private func msgID(of key: MessageIdentifier, make: Bool = false) throws -> Int64 {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
 
         if let msgKeysRow = try db.pluck(self.msgKeys.filter(colKey == key)) {
             return msgKeysRow[colID]
@@ -2833,7 +2719,7 @@ class ViewDatabase {
     }
 
     private func msgID(of msg: Message, make: Bool = false) throws -> Int64 {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
 
         if let msgKeysRow = try db.pluck(self.msgKeys.filter(colKey == msg.key)) {
             return msgKeysRow[colID]
@@ -2849,9 +2735,7 @@ class ViewDatabase {
     }
 
     func msgKey(id: Int64) throws -> MessageIdentifier {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         var msgKey: MessageIdentifier
         if let msgKeysRow = try db.pluck(self.msgKeys.filter(colID == id)) {
@@ -2863,7 +2747,7 @@ class ViewDatabase {
     }
     
     func authorID(of author: Identity, make: Bool = false) throws -> Int64 {
-        guard let db = self.openDB else { throw ViewDatabaseError.notOpen }
+        let db = try checkoutConnection()
 
         if let authorRow = try db.pluck(self.authors.filter(colAuthor == author)) {
             return authorRow[colID]
@@ -2878,9 +2762,7 @@ class ViewDatabase {
     }
     
     func author(from id: Int64) throws -> Identity {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         var authorKey: Identity
         if let msgKeysRow = try db.pluck(self.authors.filter(colID == id)) {
@@ -2893,7 +2775,7 @@ class ViewDatabase {
     
     // checks if pubKey is a known local thing, otherwise returns nil
     func identityFromPublicKey(pubKey: String) -> Identity? {
-        guard let _ = self.openDB else {
+        guard isOpen() else {
             let error = ViewDatabaseError.notOpen
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -2912,9 +2794,7 @@ class ViewDatabase {
     
     /// Returns the total number of messages in the database
     func messageCount() throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         do {
             return try db.scalar(self.msgs.count)
         } catch {
@@ -2926,9 +2806,7 @@ class ViewDatabase {
     /// - Parameter since: the date we want to check against.
     /// - Returns: The number of messages added to SQLite since the given date.
     func receivedMessageCount(since: Date) throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         do {
             return try db.scalar(
                 self.msgs
@@ -2945,9 +2823,7 @@ class ViewDatabase {
     // MARK: insert helper
     
     private func insertPrivateRecps(msgID: Int64, recps: [RecipientElement]?) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         guard let recps = recps else {
             // some early messages might not have recps
             Log.unexpected(.missingValue, "[viewdb] warning: no recps in private message (msgID:\(msgID))")
@@ -2968,9 +2844,7 @@ class ViewDatabase {
         root: MessageIdentifier?,
         branches: [MessageIdentifier]?
     ) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         // with root but no branch is a malformed message and should be discarded earlier!
         guard let r = root else { return }
@@ -3006,9 +2880,7 @@ class ViewDatabase {
     }
     
     private func insertMentions(msgID: Int64, mentions: [Mention]) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let notBlobs = mentions.filter { !$0.link.isBlob }
         for m in notBlobs {
@@ -3060,9 +2932,7 @@ class ViewDatabase {
     }
     
     func loadFeedMentions(for msgID: Int64) throws -> [Mention] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let feedQry = mentions_feed.where(colMessageRef == msgID)
         let feedMentions: [Mention] = try db.prepare(feedQry).map { mentionRow in
@@ -3080,9 +2950,7 @@ class ViewDatabase {
     }
 
     func loadMessageMentions(for msgID: Int64) throws -> [Mention] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
 
         let msgMentionQry = mentions_msg.where(colMessageRef == msgID)
         let msgMentions: [Mention] = try db.prepare(msgMentionQry).map { mentionRow in
@@ -3097,9 +2965,7 @@ class ViewDatabase {
     }
     
     private func insertBlobs(msgID: Int64, blobs: [Blob]) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         for b in blobs {
             if !b.identifier.isValidIdentifier {
                 continue
@@ -3118,9 +2984,7 @@ class ViewDatabase {
     }
 
     func loadBlobs(for msgID: Int64) throws -> [Blob] {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         
         // let supportedMimeTypes = [MIMEType.jpeg, MIMEType.png]
         
@@ -3153,9 +3017,7 @@ class ViewDatabase {
     }
     
     private func insertHashtags(msgID: Int64, tags: [Hashtag]) throws {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         for h in tags {
             let chanID = try self.channelID(from: h.name, make: true)
             try db.run(self.channelAssigned.insert(
@@ -3167,9 +3029,7 @@ class ViewDatabase {
     
     /// Returns the number of messages posted by given feed identifier
     func numberOfMessages(for feed: FeedIdentifier) throws -> Int {
-        guard let db = self.openDB else {
-            throw ViewDatabaseError.notOpen
-        }
+        let db = try checkoutConnection()
         do {
             let authorID = try self.authorID(of: feed, make: false)
             return try db.scalar(

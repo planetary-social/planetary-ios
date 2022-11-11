@@ -30,7 +30,7 @@ typealias PubsCompletion = ((Result<[Pub], Error>) -> Void)
 /// - Bool: True if the view database is fully up to date with the backing store.
 typealias RefreshCompletion = ((Result<Bool, Error>, TimeInterval) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
-typealias SyncCompletion = ((Error?, TimeInterval, Int) -> Void)
+typealias SyncCompletion = ((Error?) -> Void)
 typealias ThreadCompletion = ((Message?, PaginatedMessageDataProxy, Error?) -> Void)
 typealias UIImageCompletion = ((Identifier?, UIImage?, Error?) -> Void)
 typealias KnownPubsCompletion = (([KnownPub], Error?) -> Void)
@@ -108,8 +108,6 @@ protocol Bot {
     
     /// Connect to the SSB peer at the given address.
     func connect(to address: MultiserverAddress)
-
-    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion)
 
     // MARK: Refresh
 
@@ -295,6 +293,9 @@ protocol Bot {
 
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion)
     
+    /// Returns the number of messages that have been written to our SQLite database since the given date.
+    func numberOfNewMessages(since: Date) throws -> Int
+        
     func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int)
     
     func lastReceivedTimestam() throws -> Double

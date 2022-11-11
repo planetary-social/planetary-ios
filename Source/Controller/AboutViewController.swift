@@ -445,7 +445,7 @@ class AboutViewController: ContentViewController {
     }
     
     private func didSelectManageAliasesAction(actionName: UIAlertAction) {
-        let viewModel = RoomAliasCoordinator(bot: Bots.current)
+        let viewModel = RoomAliasController(bot: Bots.current)
         let controller = UIHostingController(rootView: ManageAliasView(viewModel: viewModel))
         self.navigationController?.pushViewController(controller, animated: true)
     }

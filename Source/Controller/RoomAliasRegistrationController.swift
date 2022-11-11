@@ -1,5 +1,5 @@
 //
-//  RoomAliasRegistrationCoordinator.swift
+//  RoomAliasRegistrationController.swift
 //  Planetary
 //
 //  Created by Matthew Lorentz on 8/18/22.
@@ -11,7 +11,7 @@ import SwiftUI
 import Logger
 import Secrets
 
-@MainActor class RoomAliasRegistrationCoordinator: AddAliasViewModel {
+@MainActor class RoomAliasRegistrationController: AddAliasViewModel {
     
     @Published var rooms: [Room] = [] {
         didSet {

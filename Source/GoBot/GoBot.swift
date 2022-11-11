@@ -231,10 +231,8 @@ class GoBot: Bot {
 
         // spawn go-bot in the background to return early
         userInitiatedQueue.async {
-            #if DEBUG
             // used for locating the files in the simulator
-            print("===> starting gobot with prefix: \(repoPrefix)")
-            #endif
+            Log.shared.info("===> starting gobot with prefix: \(repoPrefix)")
             let loginErr = self.bot.login(
                 network: network,
                 hmacKey: hmacKey,
@@ -268,6 +266,8 @@ class GoBot: Bot {
             Task.detached(priority: .background) {
                 await self.fetchAndApplyBanList(for: secret.identity)
             }
+            
+            Log.shared.info("Finished login")
         }
     }
     
@@ -418,32 +418,27 @@ class GoBot: Bot {
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         guard self.bot.isRunning else {
             queue.async {
-                completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
+                completion(GoBotError.unexpectedFault("bot not started"))
             }
             return
         }
         guard self._isSyncing == false else {
             queue.async {
-                completion(nil, 0, 0)
+                completion(nil)
             }
             return
         }
 
         self._isSyncing = true
-        let elapsed = Date()
 
         utilityQueue.async {
-            let before = self.repoNumberOfMessages()
             self.bot.dialSomePeers(from: peers)
-            let after = self.repoNumberOfMessages()
-            let newMessages = after - before
-            queue.async {
-                self.notifySyncComplete(
-                    in: -elapsed.timeIntervalSinceNow,
-                    numberOfMessages: newMessages,
-                    completion: completion
-                )
+            self._isSyncing = false
+            self.serialQueue.async {
+                self._statistics.lastSyncDate = Date()
             }
+            completion(nil)
+            NotificationCenter.default.post(name: .didSync, object: nil)
         }
     }
     
@@ -456,66 +451,7 @@ class GoBot: Bot {
             _ = self.bot.dialOne(peer: address)
         }
     }
-    
-    /// Instructs the bot to attempt to connect to one of the given peers and gossip with them.
-    /// Note: this looks like it does the same thing as `sync(queue:peers:completion:)` but it only attempts to dial one
-    /// peer. Presumably this is intended to be a quicker sync operation.
-    ///
-    /// - Parameters:
-    ///   - queue: The queue that `completion` will be called on.
-    ///   - peers: A list of peers to connect to. One will be chosen randomly.
-    ///   - completion: A block that will be called when the operation has finished.
-    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
-        guard self.bot.isRunning else {
-            queue.async {
-                completion(GoBotError.unexpectedFault("bot not started"), 0, 0)
-            }
-            return
-        }
-        guard self._isSyncing == false else {
-            queue.async {
-                completion(nil, 0, 0)
-            }
-            return
-        }
 
-        self._isSyncing = true
-        let elapsed = Date()
-
-        utilityQueue.async {
-            let before = self.repoNumberOfMessages()
-            self.bot.dialForNotifications(from: peers)
-            let after = self.repoNumberOfMessages()
-            let newMessages = after - before
-            queue.async {
-                self.notifySyncComplete(
-                    in: -elapsed.timeIntervalSinceNow,
-                    numberOfMessages: newMessages,
-                    completion: completion
-                )
-            }
-        }
-    }
-
-    private func repoNumberOfMessages() -> Int {
-        guard let counts = try? self.bot.repoStatus() else { return -1 }
-        return Int(counts.messages)
-    }
-
-    private func notifySyncComplete(
-        in elapsed: TimeInterval,
-        numberOfMessages: Int,
-        completion: @escaping SyncCompletion
-    ) {
-        self._isSyncing = false
-        serialQueue.async {
-            self._statistics.lastSyncDate = Date()
-            self._statistics.lastSyncDuration = elapsed
-        }
-        completion(nil, elapsed, numberOfMessages)
-        NotificationCenter.default.post(name: .didSync, object: nil)
-    }
-    
     // refresh specific feed - when we view a profile we should ask gobot to refresh that feed. It might not get back in time
     // to update what the user sees but it'll help. In particular this will happen with pubs.
     
@@ -787,11 +723,14 @@ class GoBot: Bot {
         }
         
         do {
-            let repoStats = try self.bot.repoStatus()
-            if repoStats.messages == 0 {
+            var repoStatsResult: Result<ScuttlegobotRepoCounts, Error>?
+            serialQueue.sync { repoStatsResult = self.bot.repoStats() }
+            let numberOfMessagesInRepo = try repoStatsResult?.get().messages ?? 0
+            
+            if numberOfMessagesInRepo == 0 {
                 return (lastRxSeq, 0)
             }
-            let diff = Int(Int64(repoStats.messages) - 1 - lastRxSeq)
+            let diff = Int(Int64(numberOfMessagesInRepo) - 1 - lastRxSeq)
             if diff < 0 {
                 let errorMessage = "needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))"
                 let error = GoBotError.unexpectedFault(errorMessage)
@@ -1662,7 +1601,7 @@ class GoBot: Bot {
 
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
         serialQueue.async {
-            let counts = try? self.bot.repoStatus()
+            let counts: ScuttlegobotRepoCounts? = try? self.bot.repoStats()
             let sequence = try? self.database.stats(table: .messagekeys)
 
             var ownMessages = -1
@@ -1713,8 +1652,14 @@ class GoBot: Bot {
             queue.async {
                 completion(statistics)
             }
-            Analytics.shared.trackStatistics(statistics.analyticsStatistics)
+            
+            //commenting out because we don't need to be logging this much information - rabble Nov 9 2022
+            //Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
+    }
+    
+    func numberOfNewMessages(since: Date) throws -> Int {
+        try self.database.receivedMessageCount(since: since)
     }
     
     func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
@@ -1742,6 +1687,35 @@ class GoBot: Bot {
     
     func lastReceivedTimestam() throws -> Double {
         Double(try self.database.lastReceivedTimestamp())
+    }
+    
+    /// Verifies that the bot is still responding to function calls. This takes a long time because the bot
+    /// can take a long time to start responding to calls after app boot. #727
+    func isBotStuck() async throws -> Bool {
+        let timeout: TimeInterval = 100
+        
+        let callFinished = try await withThrowingTaskGroup(of: Bool.self, returning: Bool?.self) { group in
+            // Race two tasks: a fetch of the repo statistics and a timeout
+            group.addTask(priority: .high) {
+                _ = await self.statistics()
+                return true
+            }
+            
+            group.addTask {
+                let sleepEndTime = Date(timeIntervalSince1970: Date.now.timeIntervalSince1970 + timeout)
+                try await Task.cancellableSleep(until: sleepEndTime)
+                return false
+            }
+            
+            var result: Bool?
+            for try await callSucceeded in group.prefix(1) {
+                result = callSucceeded
+            }
+            group.cancelAll()
+            return result
+        }
+        
+        return callFinished == false
     }
     
     // MARK: Preloading

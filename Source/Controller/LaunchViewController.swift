@@ -62,24 +62,29 @@ class LaunchViewController: UIViewController {
     // MARK: Actions
 
     @MainActor
-    private func launch() {
-
+    func launch() {
+        
+        guard appConfiguration?.bot?.identity == nil else {
+            launchIntoMain()
+            return
+        }
+        
         // if simulating then onboard
         if UserDefaults.standard.simulateOnboarding {
-            self.launchIntoOnboarding(simulate: true)
+            launchIntoOnboarding(simulate: true)
             return
         }
 
         // if no configuration then onboard
         guard var configuration = appConfiguration else {
-            self.launchIntoOnboarding()
+            launchIntoOnboarding()
             return
         }
 
         let identity = configuration.identity
         // if configuration and is required then onboard
         if Onboarding.status(for: identity) == .started {
-            self.launchIntoOnboarding(status: .started)
+            launchIntoOnboarding(status: .started)
             return
         }
 
@@ -144,6 +149,7 @@ class LaunchViewController: UIViewController {
         // also, user is already logged in
 
         // transition to main app UI
+        Log.info("Showing main view controller")
         appController.showMainViewController(animated: true)
     }
 
@@ -235,7 +241,7 @@ class LaunchViewController: UIViewController {
     }
     
     private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
-        try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: configuration,
             appController: appController,
             userDefaults: userDefaults
