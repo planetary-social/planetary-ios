@@ -6,12 +6,20 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.9] 2022-11-10
+
+- Update the Pubs invite codes
+
+## [1.3.8] 2022-11-04
 
 - Added prompt for App Store review when user posts certain number of messages. #787
 - Ensure bot is logged in when redeeming room invites. #895
 - Add confirmation message when deleting room #893
 - Update the tap target on the Edit profile page #936
+
+## [1.3.7] 2022-10-31
+
+- Stability fix
 - Removed logging for regular bot actions #952
 
 ## [1.3.6] 2022-10-25
