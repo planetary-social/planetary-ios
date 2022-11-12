@@ -95,8 +95,11 @@ enum RoomInvitationRedeemer {
     
     // Redeems token with a given `MultiserverAddress`
     static func redeem(address: MultiserverAddress, token: String, in controller: AppController, bot: Bot) async {
-        if let inviteUrl = URL(string: "https://\(address.host)/join?token=\(token)") {
-            await redeem(inviteURL: inviteUrl, in: controller, bot: bot, showToast: false)
+        do {
+            try await RoomInvitationRedeemer.redeem(token: token, at: address.host, bot: bot)
+        } catch {
+            Log.optional(error)
+            await controller.topViewController.alert(error: error)
         }
     }
     

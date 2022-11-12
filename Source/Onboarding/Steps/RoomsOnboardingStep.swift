@@ -13,21 +13,26 @@ import CrashReporting
 import SwiftUI
 import Secrets
 
-class RoomsOnboardingStep: OnboardingStep {
+class RoomsOnboardingStep: OnboardingStep, ObservableObject {
     
     var viewModel: RoomListController
  
     init() {
         
         self.viewModel = RoomListController(bot: Bots.current)
-        super.init(.joinedRoom, buttonStyle: .verticalStack)
+        // TODO: if there is an already rooms in viewModel.rooms, skip to done step.
+        if !viewModel.rooms.isEmpty {
+            super.init(.done)
+        } else {
+            super.init(.joinedRoom, buttonStyle: .verticalStack)
+        }
         self.view.primaryButton.isHidden = true
     }
     
     override func customizeView() {
         
         let uiHostingController = UIHostingController(
-            rootView: RoomsOnboardingView(viewModel: self.viewModel)
+            rootView: RoomsOnboardingView(viewModel: self.viewModel, step: self)
         )
         uiHostingController.view.backgroundColor = .clear
         Layout.fillSouth(of: view.titleLabel, with: uiHostingController.view)
@@ -56,7 +61,7 @@ class RoomsOnboardingStep: OnboardingStep {
 
 struct RoomsOnboardingView: View {
     @ObservedObject var viewModel: RoomListController
-    let communityRooms = Environment.PlanetarySystem.communityAliasServers
+    var step: RoomsOnboardingStep
     
     var body: some View {
         
@@ -75,11 +80,17 @@ struct RoomsOnboardingView: View {
                 }
             }.padding(.bottom, 20)
             
-            ForEach(communityRooms) { room in
+            ForEach(viewModel.communityRooms) { room in
                 RoomCard(room: room, showTextInput: false)
                     .onTapGesture {
-                        viewModel.addRoom(from: room.address.string, token: room.token)
-                        // show error, or proceed to alias screen.
+                        Task {
+                            do {
+                                try await viewModel.addRoom(from: room.address.string, token: room.token)
+                                step.next(.alias)
+                            } catch {
+                                Log.error("Could not add room")
+                            }
+                        }
                     }
                     .padding(.bottom, 10)
             }

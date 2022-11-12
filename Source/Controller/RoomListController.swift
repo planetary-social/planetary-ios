@@ -19,6 +19,8 @@ import UIKit
     
     @Published var errorMessage: String?
     
+    @Published var communityRooms = Environment.PlanetarySystem.communityAliasServers
+
     private var bot: Bot
     
     init(bot: Bot) {

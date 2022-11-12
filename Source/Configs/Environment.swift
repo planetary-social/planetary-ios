@@ -99,8 +99,6 @@ struct Environment {
             communityAliasServers.append(
                 Room(token: token, identifier: identifier, imageName: imageName, address: address)
             )
-            print("wcs - size is \(communityAliasServers.count)")
-            
         }
         return communityAliasServers
     }

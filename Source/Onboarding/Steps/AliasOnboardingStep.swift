@@ -23,7 +23,7 @@ class AliasOnboardingStep: OnboardingStep {
         
         super.init(.alias, buttonStyle: .verticalStack)
         let uiHostingController = UIHostingController(
-            rootView: RoomsOnboardingView(viewModel: self.viewModel)
+            rootView: AliasOnboardingView(viewModel: self.viewModel)
         )
         uiHostingController.view.backgroundColor = .clear
         Layout.fillSouth(of: view.titleLabel, with: uiHostingController.view)
@@ -49,12 +49,15 @@ struct AliasOnboardingView: View {
     @ObservedObject var viewModel: RoomListController
     
     var body: some View {
-        VStack {
-            RoomCard(room: viewModel.rooms[0], showTextInput: true)
-            Text(Localized.Onboarding.changeAlias.text)
-                .foregroundColor(Color(uiColor: .onboardingMainText))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 40)
-        }.padding(40)
+        
+        if let chosenRoom = viewModel.rooms.first {
+            VStack {
+                RoomCard(room: chosenRoom, showTextInput: true)
+                Text(Localized.Onboarding.changeAlias.text)
+                    .foregroundColor(Color(uiColor: .onboardingMainText))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 40)
+            }.padding(40)
+        }
     }
 }
