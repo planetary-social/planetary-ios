@@ -20,7 +20,7 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
     init() {
         
         self.viewModel = RoomListController(bot: Bots.current)
-        // TODO: if there is an already rooms in viewModel.rooms, skip to done step.
+        // TODO: If viewModel.rooms, is populated skip to done step of Onboarding.
         if !viewModel.rooms.isEmpty {
             super.init(.done)
         } else {
@@ -61,39 +61,75 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
 
 struct RoomsOnboardingView: View {
     @ObservedObject var viewModel: RoomListController
+    @State var roomIsSelected = false
+    var aliasServerParagraph1 = Localized.Onboarding.aliasServerInformationParagraph1.text
+    var aliasServerParagraph2 = Localized.Onboarding.aliasServerInformationParagraph2.text
+    var changeAliasText = Localized.Onboarding.changeAlias.text
+    var titleChooseAliasServer = Localized.Onboarding.StepTitle.joinedRoom.text
+    var titleChooseAlias = Localized.Onboarding.StepTitle.alias.text
+    
     var step: RoomsOnboardingStep
     
     var body: some View {
         
-        VStack {
-            
-            Text(Localized.Onboarding.aliasServerInformationParagraph1.text)
-                .padding(.bottom, 10)
-                .foregroundColor(.onboardingMainText)
-            Text(Localized.Onboarding.aliasServerInformationParagraph2.text) { string in
-                string.foregroundColor = .onboardingMainText
-                if let range = string.range(of: Localized.Onboarding.yourAliasPlanetary.text) {
-                    string[range].foregroundColor = .highlightGradientAverage
-                }
-                if let range = string.range(of: Localized.Onboarding.yourAlias.text) {
-                    string[range].font = .body.italic()
-                }
-            }.padding(.bottom, 20)
-            
-            ForEach(viewModel.communityRooms) { room in
-                RoomCard(room: room, showTextInput: false)
-                    .onTapGesture {
-                        Task {
-                            do {
-                                try await viewModel.addRoom(from: room.address.string, token: room.token)
-                                step.next(.alias)
-                            } catch {
-                                Log.error("Could not add room")
-                            }
+        VStack(alignment: .leading, spacing: 0) {
+            // "Chose a Room" text
+            if !roomIsSelected {
+                VStack {
+                    Text(aliasServerParagraph1)
+                        .padding(.bottom, 10)
+                        .foregroundColor(.onboardingMainText)
+                    Text(aliasServerParagraph2) { string in
+                        string.foregroundColor = .onboardingMainText
+                        if let range = string.range(of: Localized.Onboarding.yourAliasPlanetary.text) {
+                            string[range].foregroundColor = .highlightGradientAverage
+                        }
+                        if let range = string.range(of: Localized.Onboarding.yourAlias.text) {
+                            string[range].font = .body.italic()
                         }
                     }
-                    .padding(.bottom, 10)
+                }
+                .padding(.bottom, 20)
             }
+            
+            VStack {
+                ForEach(viewModel.communityRooms) { room in
+                    RoomCard(room: room, showTextInput: roomIsSelected)
+                        .onTapGesture {
+                            Task {
+                                do {
+                                    await viewModel.addRoom(from: room.address.string, token: room.token)
+                                    if roomIsSelected {
+                                        viewModel.communityRooms = Environment.PlanetarySystem.communityAliasServers
+                                        step.view.titleLabel.text = Localized.Onboarding.StepTitle.joinedRoom.text
+                                        roomIsSelected = false
+                                    } else {
+                                        viewModel.communityRooms = [room]
+                                        step.view.titleLabel.text = Localized.Onboarding.StepTitle.alias.text
+                                        roomIsSelected = true
+                                    }
+                                }
+                            }
+                        }
+                        .onSubmit {
+                            // TODO: onSubmit action should be a property of RoomCard.swift
+                        }
+                        .padding(.bottom, 10)
+                }
+                if roomIsSelected {
+                    Text(aliasServerParagraph1)
+                        .foregroundColor(.onboardingMainText)
+                        .padding(.bottom, 10)
+                        .transition(
+                            .move(edge: .bottom)
+                            .combined(
+                                with: AnyTransition.opacity.animation(
+                                    .easeInOut(duration: 0.5)
+                                )
+                            )
+                        )
+                }
+            }.transition(.move(edge: .top))
         }.padding(40)
     }
 }

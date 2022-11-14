@@ -1167,8 +1167,6 @@
 		E00B89CC2912B18B00D3942C /* RoomCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00B89CA2912B18B00D3942C /* RoomCard.swift */; };
 		E00F7CAD2910D9EB005C27FD /* RoomsOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00F7CAC2910D9EB005C27FD /* RoomsOnboardingStep.swift */; };
 		E00F7CAE2910D9EB005C27FD /* RoomsOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00F7CAC2910D9EB005C27FD /* RoomsOnboardingStep.swift */; };
-		E00F7CB12910D9F4005C27FD /* AliasOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00F7CB02910D9F4005C27FD /* AliasOnboardingStep.swift */; };
-		E00F7CB22910D9F4005C27FD /* AliasOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00F7CB02910D9F4005C27FD /* AliasOnboardingStep.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1814,7 +1812,6 @@
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E00B89CA2912B18B00D3942C /* RoomCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomCard.swift; sourceTree = "<group>"; };
 		E00F7CAC2910D9EB005C27FD /* RoomsOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsOnboardingStep.swift; sourceTree = "<group>"; };
-		E00F7CB02910D9F4005C27FD /* AliasOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliasOnboardingStep.swift; sourceTree = "<group>"; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5523876B975CAA7C89A9615 /* Pods-UITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UITests/Pods-UITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		E7A509DEDCBBEC809B7C2B44 /* Pods-Planetary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.release.xcconfig"; sourceTree = "<group>"; };
@@ -2062,7 +2059,6 @@
 				530F019B22DEAD70007EBAE2 /* SplashOnboardingStep.swift */,
 				2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */,
 				E00F7CAC2910D9EB005C27FD /* RoomsOnboardingStep.swift */,
-				E00F7CB02910D9F4005C27FD /* AliasOnboardingStep.swift */,
 			);
 			path = Steps;
 			sourceTree = "<group>";
@@ -3417,7 +3413,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1320;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = "Verse Communications Inc";
 				TargetAttributes = {
 					0A3880172475BB4500777843 = {
@@ -4278,7 +4274,6 @@
 				5BEE74252880774600897ACC /* MessageValue+ViewDatabase.swift in Sources */,
 				5B92E2772849583C003127F2 /* HashtagListStrategyTests.swift in Sources */,
 				C9FBE36D288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */,
-				E00F7CB22910D9F4005C27FD /* AliasOnboardingStep.swift in Sources */,
 				C9C3788227C692F800238B58 /* ConnectedPeerListController.swift in Sources */,
 				C9724B242809D416000EBCCD /* Beta1MigrationController.swift in Sources */,
 				C9724B0D2809CC2A000EBCCD /* LaunchViewController.swift in Sources */,
@@ -4908,7 +4903,6 @@
 				C9724BAF2809EBE6000EBCCD /* MarkdownStyler.swift in Sources */,
 				531749952370EC7700F4C381 /* UIView+UIImage.swift in Sources */,
 				53E29CDF22D7EE1C008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
-				E00F7CB12910D9F4005C27FD /* AliasOnboardingStep.swift in Sources */,
 				C9EE7BDA27FF3A5D00748106 /* Beta1MigrationController.swift in Sources */,
 				5B0A4657286E0CA60050D6AC /* NumberOfReportsOperation.swift in Sources */,
 				5372175322FD11B3008A760A /* Bool+YesOrNo.swift in Sources */,
@@ -5686,7 +5680,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				MARKETING_VERSION = 1.3.6;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
@@ -5720,7 +5714,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				MARKETING_VERSION = 1.3.6;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;

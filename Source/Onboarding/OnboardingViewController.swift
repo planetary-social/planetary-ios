@@ -28,7 +28,6 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         DoneOnboardingStep(),           // Bot and API calls
         JoinOnboardingStep(),           // Bot and API calls
         RoomsOnboardingStep(),          // Bot and API calls
-        AliasOnboardingStep()
     ]
 
     private let resumeSteps = [
@@ -39,7 +38,6 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
         BioOnboardingStep(),            // Bot and API calls
         DoneOnboardingStep(),           // Bot and API calls
         RoomsOnboardingStep(),          // Bot and API calls
-        AliasOnboardingStep()
     ]
 
     // TODO need to set in init()

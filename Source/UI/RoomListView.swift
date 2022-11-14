@@ -24,7 +24,7 @@ import SwiftUI
     func deleteRooms(at: IndexSet)
     
     /// Tries to add a room to the database from an invitation link or multiserver address string.
-    func addRoom(from: String, token: String?)
+    func addRoom(from: String, token: String?) async
     
     /// Tells the controller that the user wants to open the given room.
     func open(_ room: Room)
@@ -126,12 +126,16 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         .disableAutocorrection(true)
                         .autocapitalization(.none)
                         .onSubmit {
-                            viewModel.addRoom(from: newRoomString, token: nil)
-                            newRoomString = ""
+                            Task {
+                                await viewModel.addRoom(from: newRoomString, token: nil)
+                                newRoomString = ""
+                            }
                         }
                     Button {
-                        viewModel.addRoom(from: newRoomString, token: nil)
-                        newRoomString = ""
+                        Task {
+                            await viewModel.addRoom(from: newRoomString, token: nil)
+                            newRoomString = ""
+                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .foregroundColor(.primaryAction)

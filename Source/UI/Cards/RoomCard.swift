@@ -20,7 +20,7 @@ struct RoomCard: View {
     
     var body: some View {
         
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
                 Image(uiImage: UIImage(named: room.imageName ?? "") ?? UIColor.black.image())
                     .resizable()
@@ -56,6 +56,14 @@ struct RoomCard: View {
                         RoundedRectangle(cornerRadius: 15)
                             .stroke(lineWidth: 1)
                             .fill(Color(.cardTextInputBorder))
+                    )
+                    .transition(
+                        .move(edge: .bottom)
+                        .combined(
+                            with: AnyTransition.opacity.animation(
+                                .easeInOut(duration: 0.5)
+                            )
+                        )
                     )
                 // Error message
                 if aliasTaken {

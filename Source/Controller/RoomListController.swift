@@ -46,7 +46,7 @@ import UIKit
         }
     }
     
-    func addRoom(from string: String, token: String?) {
+    func addRoom(from string: String, token: String?) async {
         // Check if this is an invitation
         if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
             loadingMessage = Localized.joiningRoom.text
