@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icon-twit.png",
+      "filename" : "icon-test-room-lorentz.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "icon-twit 1.png",
+      "filename" : "icon-test-room-lorentz 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "icon-twit 2.png",
+      "filename" : "icon-test-room-lorentz 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

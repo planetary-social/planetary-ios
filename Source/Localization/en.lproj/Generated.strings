@@ -228,13 +228,13 @@
 "Onboarding.useTestNetwork" = "Use Test Network";
 "Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
 "Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
-"Onboarding.aliasServerInformationParagraph1" = "Alias servers are like email servers, where you can define how others will find you on Planetary.";
-"Onboarding.aliasServerInformationParagraph2" = "youralias.planetary.name is a great start, but you can choose your alias on other servers:";
+"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
 "Onboarding.yourAlias" = "youralias";
 "Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
 "Onboarding.aliasSkip" = "Skip choosing an alias";
 "Onboarding.aliasTaken" = "This alias is taken already";
 "Onboarding.typeYourAlias" = "Type your alias";
+"Onboarding.chooseYourAlias" = "< Choose your alias";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
@@ -252,7 +252,7 @@
 "OnboardingStepTitle.photoConfirm" = "Profile photo added";
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
-"OnboardingStepTitle.joinedRoom" = "Choose a server";
+"OnboardingStepTitle.aliasServer" = "Choose a server";
 "OnboardingStepTitle.alias" = "Now choose your alias";
 
 "ManageRelays.relayServers" = "Relay Servers";

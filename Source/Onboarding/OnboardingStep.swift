@@ -76,8 +76,7 @@ class OnboardingStepData {
         case photoConfirm
         case resume
         case start
-        case joinedRoom
-        case alias
+        case aliasServer
 
         var title: Localized.Onboarding.StepTitle {
             switch self {
@@ -97,8 +96,7 @@ class OnboardingStepData {
             case .photoConfirm: return .photoConfirm
             case .resume: return .resume
             case .start: return .start
-            case .joinedRoom: return .joinedRoom
-            case .alias: return .alias
+            case .aliasServer: return .aliasServer
             }
         }
 

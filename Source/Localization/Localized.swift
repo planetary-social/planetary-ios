@@ -301,7 +301,7 @@ extension Localized {
             case photoConfirm = "Profile photo added"
             case resume = "Resuming set up of your identity on Planetary..."
             case start = "\nSocial media for humans, not algorithms."
-            case joinedRoom = "Choose a server"
+            case aliasServer = "Choose a server"
             case alias = "Now choose your alias"
 
             static var namespace: String {
@@ -374,13 +374,13 @@ extension Localized {
         case useTestNetworkDescription = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later."
 
         case changeAlias = "You'll be able to change this alias from Settings."
-        case aliasServerInformationParagraph1 = "Alias servers are like email servers, where you can define how others will find you on Planetary."
-        case aliasServerInformationParagraph2 = "youralias.planetary.name is a great start, but you can choose your alias on other servers:"
+        case aliasServerInformation = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:"
         case yourAlias = "youralias"
         case yourAliasPlanetary = "youralias.planetary.name"
         case aliasSkip = "Skip choosing an alias"
         case aliasTaken = "This alias is taken already"
         case typeYourAlias = "Type your alias"
+        case chooseYourAlias = "< Choose your alias"
     }
 }
 

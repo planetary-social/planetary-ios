@@ -145,6 +145,7 @@ extension Image {
        static let iconShare = Image("icon-share", bundle: Bundle.current)
        static let iconShieldFill = Image("icon-shield-fill", bundle: Bundle.current)
        static let iconShield = Image("icon-shield", bundle: Bundle.current)
+       static let iconTestRoomLorentz = Image("icon-test-room-lorentz", bundle: Bundle.current)
        static let iconTrust = Image("icon-trust", bundle: Bundle.current)
        static let iconTwit = Image("icon-twit", bundle: Bundle.current)
        static let imageOnboarding = Image("image-onboarding", bundle: Bundle.current)
@@ -208,6 +209,7 @@ extension UIImage {
        static let iconShare = UIImage(named: "icon-share", in: Bundle.current, with: nil)!
        static let iconShieldFill = UIImage(named: "icon-shield-fill", in: Bundle.current, with: nil)!
        static let iconShield = UIImage(named: "icon-shield", in: Bundle.current, with: nil)!
+       static let iconTestRoomLorentz = UIImage(named: "icon-test-room-lorentz", in: Bundle.current, with: nil)!
        static let iconTrust = UIImage(named: "icon-trust", in: Bundle.current, with: nil)!
        static let iconTwit = UIImage(named: "icon-twit", in: Bundle.current, with: nil)!
        static let imageOnboarding = UIImage(named: "image-onboarding", in: Bundle.current, with: nil)!

@@ -12,27 +12,28 @@ import Logger
 import CrashReporting
 import SwiftUI
 import Secrets
+import Analytics
 
 class RoomsOnboardingStep: OnboardingStep, ObservableObject {
     
     var viewModel: RoomListController
- 
+    
     init() {
         
         self.viewModel = RoomListController(bot: Bots.current)
-        // TODO: If viewModel.rooms, is populated skip to done step of Onboarding.
-        if !viewModel.rooms.isEmpty {
-            super.init(.done)
-        } else {
-            super.init(.joinedRoom, buttonStyle: .verticalStack)
-        }
+        super.init(.aliasServer, buttonStyle: .verticalStack)
         self.view.primaryButton.isHidden = true
     }
     
     override func customizeView() {
         
         let uiHostingController = UIHostingController(
-            rootView: RoomsOnboardingView(viewModel: self.viewModel, step: self)
+            rootView: RoomsOnboardingView(
+                viewModel: self.viewModel,
+                step: self,
+                backButtonAction: {
+                    print("test")
+                })
         )
         uiHostingController.view.backgroundColor = .clear
         Layout.fillSouth(of: view.titleLabel, with: uiHostingController.view)
@@ -54,32 +55,39 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
         self.view.secondaryButton.setAttributedTitle(skipChoosingAliasText, for: .normal)
     }
     
+    override func willStart() {
+        if !viewModel.rooms.isEmpty || viewModel.communityAliasServers.isEmpty {
+            Log.unexpected(.incorrectValue, "viewModel is in unexpected state.")
+            Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
+            self.next()
+            return
+        }
+    }
+    
     override func performSecondaryAction(sender button: UIButton) {
-        self.next(.done)
+        self.next()
     }
 }
 
 struct RoomsOnboardingView: View {
+    
     @ObservedObject var viewModel: RoomListController
     @State var roomIsSelected = false
-    var aliasServerParagraph1 = Localized.Onboarding.aliasServerInformationParagraph1.text
-    var aliasServerParagraph2 = Localized.Onboarding.aliasServerInformationParagraph2.text
-    var changeAliasText = Localized.Onboarding.changeAlias.text
-    var titleChooseAliasServer = Localized.Onboarding.StepTitle.joinedRoom.text
-    var titleChooseAlias = Localized.Onboarding.StepTitle.alias.text
     
-    var step: RoomsOnboardingStep
+    let aliasServerInformation = Localized.Onboarding.aliasServerInformation.text
+    let changeAliasText = Localized.Onboarding.changeAlias.text
+    let titleChooseAliasServer = Localized.Onboarding.StepTitle.aliasServer.text
+    let titleChooseAlias = Localized.Onboarding.StepTitle.alias.text
+    let step: RoomsOnboardingStep
+    let backButtonAction: () -> Void
     
     var body: some View {
         
-        VStack(alignment: .leading, spacing: 0) {
+        VStack {
             // "Chose a Room" text
             if !roomIsSelected {
                 VStack {
-                    Text(aliasServerParagraph1)
-                        .padding(.bottom, 10)
-                        .foregroundColor(.onboardingMainText)
-                    Text(aliasServerParagraph2) { string in
+                    Text(aliasServerInformation) { string in
                         string.foregroundColor = .onboardingMainText
                         if let range = string.range(of: Localized.Onboarding.yourAliasPlanetary.text) {
                             string[range].foregroundColor = .highlightGradientAverage
@@ -89,37 +97,43 @@ struct RoomsOnboardingView: View {
                         }
                     }
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, 25)
             }
             
             VStack {
-                ForEach(viewModel.communityRooms) { room in
-                    RoomCard(room: room, showTextInput: roomIsSelected)
-                        .onTapGesture {
+                ForEach(viewModel.communityAliasServers) { room in
+                    RoomCard(
+                        room: room,
+                        showTextInput: roomIsSelected,
+                        backAction: {
+                            roomIsSelected = false
+                            viewModel.communityAliasServers = Environment.PlanetarySystem.communityAliasServers
+                        }, onSubmitAction: { alias in
                             Task {
                                 do {
                                     await viewModel.addRoom(from: room.address.string, token: room.token)
-                                    if roomIsSelected {
-                                        viewModel.communityRooms = Environment.PlanetarySystem.communityAliasServers
-                                        step.view.titleLabel.text = Localized.Onboarding.StepTitle.joinedRoom.text
-                                        roomIsSelected = false
-                                    } else {
-                                        viewModel.communityRooms = [room]
-                                        step.view.titleLabel.text = Localized.Onboarding.StepTitle.alias.text
-                                        roomIsSelected = true
-                                    }
+                                    try await viewModel.register(alias, in: room)
+                                    step.self.next()
+                                } catch {
+                                    // errorMessage = error.localizedDescription
+                                    Log.error(error.localizedDescription)
                                 }
                             }
                         }
-                        .onSubmit {
-                            // TODO: onSubmit action should be a property of RoomCard.swift
+                    )
+                    .onTapGesture {
+                        if !roomIsSelected {
+                            viewModel.communityAliasServers = [room]
+                            step.view.titleLabel.text = Localized.Onboarding.StepTitle.alias.text
+                            roomIsSelected = true
                         }
-                        .padding(.bottom, 10)
+                    }
+//                    .padding(.bottom, 5)
                 }
                 if roomIsSelected {
-                    Text(aliasServerParagraph1)
+                    Text(titleChooseAlias)
                         .foregroundColor(.onboardingMainText)
-                        .padding(.bottom, 10)
+                        .padding(.top, 20)
                         .transition(
                             .move(edge: .bottom)
                             .combined(

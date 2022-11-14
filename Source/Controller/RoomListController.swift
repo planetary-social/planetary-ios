@@ -19,7 +19,7 @@ import UIKit
     
     @Published var errorMessage: String?
     
-    @Published var communityRooms = Environment.PlanetarySystem.communityAliasServers
+    @Published var communityAliasServers = Environment.PlanetarySystem.communityAliasServers
 
     private var bot: Bot
     
@@ -93,6 +93,25 @@ import UIKit
         UIApplication.shared.open(url)
     }
     
+    func register(_ desiredAlias: String, in room: Room?) async throws {
+        // TODO: normalize
+        guard let room = room else {
+            // TODO
+            errorMessage = "please select a room"
+            return
+        }
+
+        loadingMessage = Localized.loading.text
+
+        do {
+            _ = try await self.bot.register(alias: desiredAlias, in: room)
+        } catch {
+            Log.optional(error)
+            self.errorMessage = error.localizedDescription
+        }
+        self.loadingMessage = nil
+        
+    }
     // MARK: Helpers
     
     /// Called at the end of all flows that add a room to the db.
@@ -115,5 +134,16 @@ import UIKit
             }
             self.loadingMessage = nil
         }
+    }
+}
+
+enum RoomRegistrationError: Error {
+
+    case aliasTaken
+    case other(Error?)
+
+    static func optional(_ error: Error?) -> RoomRegistrationError? {
+        guard let error = error else { return nil }
+        return RoomRegistrationError.other(error)
     }
 }
