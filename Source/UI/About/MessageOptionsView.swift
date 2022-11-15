@@ -50,7 +50,10 @@ struct MessageOptionsView: View {
             }
         }
         .sheet(isPresented: $showingSource) {
-            RawMessageView(viewModel: RawMessageCoordinator(message: message, bot: botRepository.current))
+            NavigationView {
+                RawMessageView(viewModel: RawMessageController(message: message, bot: botRepository.current))
+                    .navigationBarTitleDisplayMode(.inline)
+            }
         }
         .sheet(isPresented: $showingShare) {
             if let url = message.key.publicLink {

@@ -21,16 +21,16 @@ struct RelationshipView: View {
     private var botRepository: BotRepository
 
     @State
-    var isLoading = false
+    fileprivate var isLoading = false
 
     @State
-    var isFollowing = false
+    private var isFollowing = false
 
     @State
-    var isFollowedBy = false
+    private var isFollowedBy = false
 
     @State
-    var isBlocking = true
+    private var isBlocking = false
 
     var body: some View {
         Button {
@@ -206,6 +206,7 @@ struct RelationshipView: View {
         guard !isLoading else {
             return
         }
+        isLoading = true
         Task.detached { [identity] in
             let bot = await botRepository.current
             Analytics.shared.trackDidTapButton(buttonName: "follow")
@@ -215,12 +216,14 @@ struct RelationshipView: View {
                     Analytics.shared.trackDidFollowPub()
                     await MainActor.run {
                         isFollowing = true
+                        isLoading = false
                     }
                 } else if await isBlocking {
                     try await bot.unblock(identity: identity)
                     Analytics.shared.trackDidUnblockIdentity()
                     await MainActor.run {
                         isBlocking = false
+                        isLoading = false
                     }
                 } else {
                     if await isFollowing {
@@ -228,12 +231,14 @@ struct RelationshipView: View {
                         Analytics.shared.trackDidUnfollowIdentity()
                         await MainActor.run {
                             isFollowing = false
+                            isLoading = false
                         }
                     } else {
                         try await bot.follow(identity: identity)
                         Analytics.shared.trackDidFollowIdentity()
                         await MainActor.run {
                             isFollowing = true
+                            isLoading = false
                         }
                     }
                 }
@@ -242,6 +247,7 @@ struct RelationshipView: View {
                 CrashReporting.shared.reportIfNeeded(error: error)
                 await MainActor.run {
                     AppController.shared.alert(error: error)
+                    isLoading = false
                 }
             }
         }
@@ -263,15 +269,16 @@ struct RelationshipView_Previews: PreviewProvider {
         relationship.isFollowing = true
         return relationship
     }
+
     static var previews: some View {
         VStack {
             RelationshipView(identity: .null)
             RelationshipView(identity: .null, compact: true)
-        }.background(Color.appBg).padding().previewLayout(.sizeThatFits).environmentObject(BotRepository.fake)
+        }.padding().background(Color.appBg).previewLayout(.sizeThatFits).environmentObject(BotRepository.fake)
 
         VStack {
             RelationshipView(identity: .null)
             RelationshipView(identity: .null, compact: true)
-        }.background(Color.appBg).padding().previewLayout(.sizeThatFits).preferredColorScheme(.dark).environmentObject(BotRepository.fake)
+        }.padding().background(Color.appBg).previewLayout(.sizeThatFits).preferredColorScheme(.dark).environmentObject(BotRepository.fake)
     }
 }

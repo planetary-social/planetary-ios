@@ -34,6 +34,14 @@ class MarkdownTests: XCTestCase {
         XCTAssertEqual(hashtags[2].link, "#channel3")
     }
 
+    func testParseHeading() throws {
+        // (?<=(^#)\s).*
+        let markdown = "# This is a title"
+        let attributedString = markdown.parseMarkdown()
+        let headings = parseHeadings(in: attributedString)
+        XCTAssertEqual(headings.count, 1)
+    }
+
     func testParseManyChannels() throws {
         let markdown = "this is a test #channel1 and another #channel2 plus a third #channel3"
         let attributedString = markdown.parseMarkdown()
@@ -89,7 +97,7 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/@0xkjAty6RSr5uhbAvi0rbVR2g9Bz+89qiKth48ECQBE=.ed25519"))
+        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%400xkjAty6RSr5uhbAvi0rbVR2g9Bz%2B89qiKth48ECQBE%3D.ed25519"))
         XCTAssertEqual(link.name, "@SoapDog (SPX)")
     }
     
@@ -108,8 +116,18 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519"))
+        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"))
         XCTAssertEqual(link.name, "@christoph@verse")
+    }
+
+    func testParseMessageLink() throws {
+        let markdown = "may have found a solution: %Ogr2+mPA0PwJEKX4qhKNzYykOxMedvaMDjHB8YT49F4=.sha256"
+        let attributedString = markdown.parseMarkdown()
+        let links = parseLinks(in: attributedString)
+        XCTAssertEqual(links.count, 1)
+        let link = try XCTUnwrap(links[0])
+        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%25Ogr2%2BmPA0PwJEKX4qhKNzYykOxMedvaMDjHB8YT49F4%3D.sha256"))
+        XCTAssertEqual(link.name, "%Ogr2+mPA0PwJEKX4qhKNzYykOxMedvaMDjHB8YT49F4=.sha256")
     }
 
     func testParseIdentifierWithoutLink() throws {
@@ -118,7 +136,7 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519"))
+        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"))
         XCTAssertEqual(link.name, "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519")
     }
     
@@ -137,7 +155,7 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256"))
+        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%26amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw%3D.sha256"))
         XCTAssertEqual(link.name, "we-must-get-back-to-oakland-at-once.jpg")
     }
     
@@ -259,9 +277,9 @@ I've been using more the iPhone I acquired during this quest, and I'd love to ge
         let firstLink = try XCTUnwrap(links[0])
         let secondLink = try XCTUnwrap(links[1])
         XCTAssertEqual(firstLink.name, "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519")
-        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519"))
+        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"))
         XCTAssertEqual(secondLink.name, "@34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519")
-        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/@34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519"))
+        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/%4034sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs%3D.ed25519"))
     }
     
     func test_decodeLinkwithIdentifierWithoutFormat() {
@@ -295,6 +313,22 @@ without format and with an identifier in the middle
             }
             let name = NSAttributedString(AttributedString(attributedString[run.range])).string
             return (name: name, url: link)
+        }
+    }
+
+    private func parseHeadings(in attributedString: AttributedString) -> [String] {
+        attributedString.runs.compactMap { run -> String? in
+            guard let intent = run.presentationIntent else {
+                return nil
+            }
+            if intent.components.contains(where: { $0.kind == .header(level: 1) }) {
+                return NSAttributedString(AttributedString(attributedString[run.range])).string
+            } else if intent.components.contains(where: { $0.kind == .header(level: 2) }) {
+                return NSAttributedString(AttributedString(attributedString[run.range])).string
+            } else if intent.components.contains(where: { $0.kind == .header(level: 3) }) {
+                return NSAttributedString(AttributedString(attributedString[run.range])).string
+            }
+            return nil
         }
     }
 }

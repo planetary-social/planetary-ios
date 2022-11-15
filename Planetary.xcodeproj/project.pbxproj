@@ -690,6 +690,8 @@
 		5BC2975E2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */; };
 		5BC3DE6128299CB900F6A363 /* SocialStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC3DE6028299CB900F6A363 /* SocialStats.swift */; };
 		5BE28DFD27CD7BA1004D7D27 /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE28DFC27CD7BA1004D7D27 /* Analytics */; };
+		5BE553FD29240CDF008B1C9D /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE553FC29240CDF008B1C9D /* BioView.swift */; };
+		5BE553FE29240CDF008B1C9D /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE553FC29240CDF008B1C9D /* BioView.swift */; };
 		5BE69B0D27CEA1B70013D51D /* Analytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5BE69B0C27CEA1B70013D51D /* Analytics */; };
 		5BE8A30929193ECE00C4A38E /* BlobGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */; };
 		5BE8A30A29193ECE00C4A38E /* BlobGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */; };
@@ -1684,6 +1686,7 @@
 		5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAlgorithm.swift; sourceTree = "<group>"; };
 		5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
 		5BC3DE6028299CB900F6A363 /* SocialStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialStats.swift; sourceTree = "<group>"; };
+		5BE553FC29240CDF008B1C9D /* BioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioView.swift; sourceTree = "<group>"; };
 		5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobGalleryView.swift; sourceTree = "<group>"; };
 		5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityListView.swift; sourceTree = "<group>"; };
 		5BE8A30F291A96FE00C4A38E /* IdentityOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityOptionsView.swift; sourceTree = "<group>"; };
@@ -2779,6 +2782,7 @@
 			children = (
 				5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */,
 				5B32F258291EC037005985E2 /* IdentityViewHeader.swift */,
+				5BE553FC29240CDF008B1C9D /* BioView.swift */,
 				5B7AB67E28F46EB1007DCCF1 /* SocialStatsView.swift */,
 				5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */,
 				5B7786D728F876190081B1C6 /* ImageMetadataView.swift */,
@@ -4204,6 +4208,7 @@
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
 				0A64A83924735392009A5EBF /* PushAPIService.swift in Sources */,
 				53C2B13C2295BC940018D0A8 /* Keychain.swift in Sources */,
+				5BE553FE29240CDF008B1C9D /* BioView.swift in Sources */,
 				C9724B7F2809E8F1000EBCCD /* Relationship.swift in Sources */,
 				230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */,
 				C9724B512809D5A6000EBCCD /* AppDelegate+UIAppearance.swift in Sources */,
@@ -5116,6 +5121,7 @@
 				C99DC1BA28F5C21300880A2E /* Assets+Planetary.swift in Sources */,
 				C937883328C154BF003FCCC2 /* Pub+ViewDatabase.swift in Sources */,
 				8D180359234F5E77004E30AA /* IconButton.swift in Sources */,
+				5BE553FD29240CDF008B1C9D /* BioView.swift in Sources */,
 				0A487105249D1B3600BCD063 /* MessagePaginatedCollectionViewDelegate.swift in Sources */,
 				530F01A222DEADD9007EBAE2 /* PhoneOnboardingStep.swift in Sources */,
 				53EAB398239AD0D700DF5530 /* AttributedStringCache.swift in Sources */,
@@ -5784,7 +5790,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 382;
+				CURRENT_PROJECT_VERSION = 385;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -5799,7 +5805,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.3.9;
+				MARKETING_VERSION = 1.3.10;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -5818,7 +5824,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 382;
+				CURRENT_PROJECT_VERSION = 385;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -5833,7 +5839,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.3.9;
+				MARKETING_VERSION = 1.3.10;
 				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;

@@ -147,6 +147,7 @@ extension AppController {
             Log.unexpected(.missingValue, "Selected view controller is not a navigation controller")
             return
         }
+        featureController.dismiss(animated: true)
         featureController.pushViewController(controller, animated: animated)
     }
 }

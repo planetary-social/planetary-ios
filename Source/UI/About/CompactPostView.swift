@@ -19,10 +19,12 @@ struct CompactPostView: View {
     init(post: Post) {
         self.post = post
         self.blobs = post.anyBlobs
+        self.markdown = post.text.parseMarkdown()
     }
 
-    @State
     private var blobs: [Blob]
+
+    private var markdown: AttributedString
 
     @State
     private var shouldShowReadMore = false
@@ -39,7 +41,7 @@ struct CompactPostView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(post.text.parseMarkdown())
+            Text(markdown)
                 .lineLimit(5)
                 .font(.body)
                 .foregroundColor(.primaryTxt)
@@ -51,11 +53,13 @@ struct CompactPostView: View {
                     }
                 }
                 .onPreferenceChange(TruncatedSizePreferenceKey.self) { newSize in
-                    truncatedSize = newSize
-                    updateShouldShowReadMore()
+                    if newSize.height > truncatedSize.height {
+                        truncatedSize = newSize
+                        updateShouldShowReadMore()
+                    }
                 }
                 .background {
-                    Text(post.text.parseMarkdown())
+                    Text(markdown)
                         .font(.body)
                         .padding(15)
                         .fixedSize(horizontal: false, vertical: true)
@@ -66,8 +70,10 @@ struct CompactPostView: View {
                             }
                         }
                         .onPreferenceChange(IntrinsicSizePreferenceKey.self) { newSize in
-                            intrinsicSize = newSize
-                            updateShouldShowReadMore()
+                            if newSize.height > intrinsicSize.height {
+                                intrinsicSize = newSize
+                                updateShouldShowReadMore()
+                            }
                         }
                 }
             if shouldShowReadMore {

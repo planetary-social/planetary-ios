@@ -10,7 +10,74 @@ import Foundation
 import Down
 
 class MarkdownStyler: DownStyler {
-    
+
+    init(respect: Bool) {
+        var fonts = StaticFontCollection()
+        fonts.body = UIFont.preferredFont(forTextStyle: .body)
+        fonts.heading1 = UIFont.preferredFont(forTextStyle: .title3)
+        fonts.heading2 = UIFont.preferredFont(forTextStyle: .headline)
+        fonts.heading3 = UIFont.preferredFont(forTextStyle: .subheadline)
+        fonts.code = UIFont.preferredFont(forTextStyle: .body)
+        fonts.listItemPrefix = UIFont.preferredFont(forTextStyle: .body)
+
+        var colors = StaticColorCollection()
+        colors.body = UIColor.primaryTxt
+        colors.heading1 = UIColor.primaryTxt
+        colors.heading2 = UIColor.primaryTxt
+        colors.heading3 = UIColor.primaryTxt
+        colors.code = UIColor.secondaryTxt
+        colors.link = UIColor.accentTxt
+        colors.listItemPrefix = UIColor.accentTxt
+        colors.quote = UIColor.secondaryTxt
+        colors.quoteStripe = UIColor.secondaryTxt
+        colors.thematicBreak = UIColor.accentTxt
+
+        var paragraphStyles = StaticParagraphStyleCollection()
+        let headingStyle = NSMutableParagraphStyle()
+        let bodyStyle = NSMutableParagraphStyle()
+        let codeStyle = NSMutableParagraphStyle()
+        headingStyle.paragraphSpacingBefore = 0
+        headingStyle.paragraphSpacing = 0
+
+        bodyStyle.lineSpacing = 0
+        bodyStyle.paragraphSpacing = 0
+
+        codeStyle.lineSpacing = 0
+        codeStyle.paragraphSpacing = 0
+
+        paragraphStyles.body = bodyStyle
+        paragraphStyles.heading1 = headingStyle
+        paragraphStyles.heading2 = headingStyle
+        paragraphStyles.heading3 = headingStyle
+        paragraphStyles.code = codeStyle
+
+        var listItemOptions = ListItemOptions()
+        listItemOptions.maxPrefixDigits = 1
+        listItemOptions.spacingAfterPrefix = 0
+        listItemOptions.spacingAbove = 0
+        listItemOptions.spacingBelow = 0
+
+        var quoteStripeOptions = QuoteStripeOptions()
+        quoteStripeOptions.thickness = 1
+        quoteStripeOptions.spacingAfter = 0
+
+        var thematicBreakOptions = ThematicBreakOptions()
+        thematicBreakOptions.thickness = 1
+        thematicBreakOptions.indentation = 0
+
+        var codeBlockOptions = CodeBlockOptions()
+        codeBlockOptions.containerInset = 0
+
+        let downStylerConfiguration = DownStylerConfiguration(fonts: fonts,
+                                                              colors: colors,
+                                                              paragraphStyles: paragraphStyles,
+                                                              listItemOptions: listItemOptions,
+                                                              quoteStripeOptions: quoteStripeOptions,
+                                                              thematicBreakOptions: thematicBreakOptions,
+                                                              codeBlockOptions: codeBlockOptions)
+
+        super.init(configuration: downStylerConfiguration)
+    }
     init(small: Bool = false) {
         var fonts = StaticFontCollection()
         if small {

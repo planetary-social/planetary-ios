@@ -74,7 +74,7 @@ struct RawMessageView<ViewModel>: View where ViewModel: RawMessageViewModel {
                 Button {
                     viewModel.didDismiss()
                 } label: {
-                    Text(.cancel)
+                    Image.navIconDismiss
                 }
             }
         }

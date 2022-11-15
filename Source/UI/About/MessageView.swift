@@ -43,7 +43,11 @@ struct MessageView: View {
         }
         let string = localized.text(["somebody": "**\(name)**"])
         do {
-            return try AttributedString(markdown: string)
+            var attributed = try AttributedString(markdown: string)
+            if let range = attributed.range(of: name) {
+                attributed[range].foregroundColor = .primaryTxt
+            }
+            return attributed
         } catch {
             return nil
         }
@@ -89,7 +93,11 @@ struct MessageView: View {
                     .cornerRadius(18)
                     .shadow(color: .postareplyShadowTop, radius: 0, x: 0, y: -1)
                     .shadow(color: .postareplyShadowBottom, radius: 0, x: 0, y: 1)
-                }.padding(15)
+                }
+                .padding(15)
+                .onTapGesture {
+                    AppController.shared.open(identifier: message.id)
+                }
             }
         }
         .background(

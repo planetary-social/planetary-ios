@@ -13,9 +13,6 @@ struct IdentityListView: View {
     @EnvironmentObject
     var bot: BotRepository
 
-    @SwiftUI.Environment(\.dismiss)
-    private var dismiss
-
     var identities: [Identity]
 
     var body: some View {
@@ -24,7 +21,6 @@ struct IdentityListView: View {
                 ForEach(identities, id: \.self) { identity in
                     CompactIdentityView(identity: identity)
                         .onTapGesture {
-                            dismiss()
                             AppController.shared.open(identity: identity)
                         }
                         .background(

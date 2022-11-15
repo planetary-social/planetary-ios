@@ -17,6 +17,22 @@ struct IdentityViewHeader: View {
     @EnvironmentObject
     private var botRepository: BotRepository
 
+    @State
+    private var showingBio = false
+
+    @State
+    private var shouldShowReadMore = false
+
+    @State
+    private var intrinsicSize = CGSize.zero
+
+    @State
+    private var truncatedSize = CGSize.zero
+
+    func updateShouldShowReadMore() {
+        shouldShowReadMore = intrinsicSize != truncatedSize
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top, spacing: 18) {
@@ -92,18 +108,57 @@ struct IdentityViewHeader: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
             if extendedHeader {
                 if let bio = about?.description {
-                    Text(bio.parseMarkdown())
-                        .font(.subheadline)
-                        .foregroundColor(.primaryTxt)
-                        .accentColor(.accentTxt)
-                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
-                        .lineLimit(10)
+                    BioView(bio: bio, lineLimit: 5)
+                        .background {
+                            GeometryReader { geometryProxy in
+                                Color.clear.preference(key: TruncatedSizePreferenceKey.self, value: geometryProxy.size)
+                            }
+                        }
+                        .onPreferenceChange(TruncatedSizePreferenceKey.self) { newSize in
+                            if newSize.height > truncatedSize.height {
+                                truncatedSize = newSize
+                                updateShouldShowReadMore()
+                            }
+                        }
+                        .background {
+                            BioView(bio: bio)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .hidden()
+                                .background {
+                                    GeometryReader { geometryProxy in
+                                        Color.clear.preference(key: IntrinsicSizePreferenceKey.self, value: geometryProxy.size)
+                                    }
+                                }
+                                .onPreferenceChange(IntrinsicSizePreferenceKey.self) { newSize in
+                                    if newSize.height > intrinsicSize.height {
+                                        intrinsicSize = newSize
+                                        updateShouldShowReadMore()
+                                    }
+                                }
+                        }
+                        .onTapGesture {
+                            showingBio = true
+                        }
+                        .sheet(isPresented: $showingBio) {
+                            extendedBio(bio: bio, isPresented: $showingBio)
+                        }
                 } else if about == nil {
-                    Text(String.loremIpsum(1))
-                        .font(.subheadline)
-                        .foregroundColor(.primaryTxt)
-                        .redacted(reason: .placeholder)
-                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
+                    BioView(bio: String.loremIpsum(1), lineLimit: 5)
+                }
+                if shouldShowReadMore {
+                    ZStack(alignment: .center) {
+                        Text(Localized.readMore.text.uppercased())
+                            .font(.caption)
+                            .foregroundColor(.secondaryTxt)
+                            .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
+                            .background(Color.hashtagBg)
+                            .cornerRadius(4)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+                    .onTapGesture {
+                        showingBio = true
+                    }
                 }
                 HashtagSliderView(identity: identity)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
@@ -120,5 +175,35 @@ struct IdentityViewHeader: View {
         )
         .compositingGroup()
         .shadow(color: .profileShadow, radius: 10, x: 0, y: 4)
+    }
+
+    private func extendedBio(bio: String, isPresented: Binding<Bool>) -> some View {
+        NavigationView {
+            ScrollView(.vertical) {
+                BioView(bio: bio)
+            }
+            .background(Color.cardBackground)
+            .navigationTitle("Bio")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isPresented.wrappedValue = false
+                    } label: {
+                        Image.navIconDismiss
+                    }
+                }
+            }
+        }
+    }
+
+    fileprivate struct IntrinsicSizePreferenceKey: PreferenceKey {
+        static var defaultValue: CGSize = .zero
+        static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+    }
+
+    fileprivate struct TruncatedSizePreferenceKey: PreferenceKey {
+        static var defaultValue: CGSize = .zero
+        static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
     }
 }

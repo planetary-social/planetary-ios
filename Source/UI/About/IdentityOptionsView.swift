@@ -49,7 +49,7 @@ struct IdentityOptionsView: View {
         }
         .sheet(isPresented: $showingManageAlias) {
             NavigationView {
-                ManageAliasView(viewModel: RoomAliasCoordinator(bot: botRepository.current))
+                ManageAliasView(viewModel: RoomAliasController(bot: botRepository.current))
             }
         }
     }

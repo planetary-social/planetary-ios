@@ -21,10 +21,11 @@ extension String {
                 if let range = Range(match.range(withName: "hashtag"), in: markdown) {
                     let hashtag = "\(markdown[range])"
                     let replacement: String
+                    let link = hashtag.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved) ?? hashtag
                     if usingMarkdownLinks {
-                        replacement = "[\(hashtag)](planetary://planetary.link/\(hashtag))"
+                        replacement = "[\(hashtag)](planetary://planetary.link/\(link))"
                     } else {
-                        replacement = "planetary://planetary.link/\(hashtag)"
+                        replacement = "planetary://planetary.link/\(link)"
                     }
                     return try findHashtags(
                         in: markdown.replacingCharacters(in: range, with: replacement),
@@ -42,10 +43,11 @@ extension String {
                 if let range = Range(match.range(withName: "mention"), in: markdown) {
                     let mention = "\(markdown[range])"
                     let replacement: String
+                    let link = mention.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved) ?? mention
                     if usingMarkdownLinks {
-                        replacement = "[\(mention)](planetary://planetary.link/\(mention))"
+                        replacement = "[\(mention)](planetary://planetary.link/\(link))"
                     } else {
-                        replacement = "planetary://planetary.link/\(mention)"
+                        replacement = "planetary://planetary.link/\(link)"
                     }
                     return try findMentions(
                         in: markdown.replacingCharacters(in: range, with: replacement),
@@ -66,19 +68,40 @@ extension String {
             }
         }
 
+        func removePlanetaryAttachmentLinks(in markdown: String) -> String {
+            func checkSubstring(_ substring: String) -> String? {
+                guard let attMatch = markdown.range(of: substring) else {
+                    return nil
+                }
+                let before = markdown[markdown.startIndex..<attMatch.lowerBound]
+                return String(before)
+            }
+            if let trimmedString = checkSubstring("\n\n![planetary attachment no.1") {
+                return trimmedString
+            } else if let trimmedString = checkSubstring("\n![planetary attachment no.1") {
+                return trimmedString
+            }
+            return markdown
+        }
+
         do {
-            var attributed = try AttributedString(
-                markdown: findUnformattedLinks(in: self, usingMarkdownLinks: true)
-            )
+            let markdown = findUnformattedLinks(in: removePlanetaryAttachmentLinks(in: self), usingMarkdownLinks: true)
+            let down = Down(markdownString: markdown)
+            var attributed: AttributedString
+            do {
+                let styler = MarkdownStyler(respect: true)
+                attributed = AttributedString(try down.toAttributedString(.default, styler: styler))
+            } catch {
+                attributed = try AttributedString(
+                    markdown: markdown,
+                    options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .full)
+                )
+            }
             for run in attributed.runs {
                 if let link = run.attributes.link ?? run.attributes.imageURL {
                     if let url = URL(string: findUnformattedLinks(in: link.absoluteString, usingMarkdownLinks: false)) {
                         attributed[run.range].link = url
-                    }
-                }
-                if let intent = run.attributes.presentationIntent {
-                    if intent.components.contains(where: { $0.kind == .header(level: 1) }) {
-                        attributed[run.range].font = .headline
+                        attributed[run.range].foregroundColor = .accentTxt
                     }
                 }
             }

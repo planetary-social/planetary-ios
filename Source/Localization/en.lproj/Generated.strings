@@ -269,6 +269,9 @@
 "ManageRelays.deleteRoom" = "Delete";
 "ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
 
+"Message.noPostsTitle" = "No posts here yet";
+"Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+
 "Alias.manageAliases" = "Manage Aliases (beta)";
 "Alias.addAlias" = "Register a new alias";
 "Alias.roomAliases" = "Room Aliases (beta)";
@@ -336,7 +339,7 @@
 "Error.invalidRoomURL" = "Could not parse invitation.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room";
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";

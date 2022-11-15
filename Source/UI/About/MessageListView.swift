@@ -10,19 +10,42 @@ import SwiftUI
 
 struct MessageListView: View {
 
-    @EnvironmentObject
-    var bot: BotRepository
+    @State
+    var messages = [Message]()
 
-    @State var messages = [Message]()
     var strategy: FeedStrategy
 
-    @State fileprivate var isLoading = false
-    @State fileprivate var offset = 0
-    @State fileprivate var noMoreMessages = false
+    @EnvironmentObject
+    private var bot: BotRepository
+
+    @State
+    private var isLoading = false
+
+    @State
+    private var offset = 0
+
+    @State
+    private var noMoreMessages = false
+
+    private let howGossippingWorks = "https://github.com/planetary-social/planetary-ios/wiki/Distributed-Social-Network"
     
     var body: some View {
-        LazyVStack() {
-            if let messages = messages {
+        LazyVStack {
+            if messages.isEmpty, !isLoading {
+                Text("⏳")
+                    .font(.system(size: 68))
+                    .padding()
+                    .padding(.top, 35)
+                Text(Localized.Message.noPostsTitle.text)
+                    .font(.title3.weight(.semibold))
+                    .foregroundColor(.primaryTxt)
+                Text(noPostsDescription)
+                    .font(.subheadline)
+                    .foregroundColor(.secondaryTxt)
+                    .accentColor(.accentTxt)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            } else {
                 ForEach(messages, id: \.self) { message in
                     MessageView(message: message)
                         .onAppear {
@@ -32,8 +55,8 @@ struct MessageListView: View {
                         }
                         .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
                         .compositingGroup()
-                        .shadow(color: Color.cardBorderBottom, radius: 0, x: 0, y: 4)
-                        .shadow(color: Color.cardShadowBottom, radius: 10, x: 0, y: 4)
+                        .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
+                        .shadow(color: .cardShadowBottom, radius: 10, x: 0, y: 4)
                 }
             }
             if isLoading, !noMoreMessages {
@@ -44,6 +67,18 @@ struct MessageListView: View {
         }
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0))
         .task { loadMore() }
+    }
+
+    var noPostsDescription: AttributedString {
+        let unformattedDescription = Localized.Message.noPostsDescription.text(["link": howGossippingWorks])
+        do {
+            return try AttributedString(
+                markdown: unformattedDescription,
+                options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            )
+        } catch {
+            return AttributedString(unformattedDescription)
+        }
     }
 
     func loadMore() {
@@ -113,11 +148,12 @@ struct MessageListView_Previews: PreviewProvider {
     static var previews: some View {
         MessageListView(messages: [sampleMessage, anotherSampleMessage], strategy: NoHopFeedAlgorithm(identity: .null))
             .background(Color(hex: "eae1e0"))
-            .environmentObject(BotRepository.shared)
+            .environmentObject(BotRepository.fake)
+            .previewLayout(.sizeThatFits)
         
         MessageListView(messages: [sampleMessage], strategy: NoHopFeedAlgorithm(identity: .null))
             .background(Color(hex: "221736"))
-            .environmentObject(BotRepository.shared)
+            .environmentObject(BotRepository.fake)
             .preferredColorScheme(.dark)
             .previewLayout(.sizeThatFits)
     }

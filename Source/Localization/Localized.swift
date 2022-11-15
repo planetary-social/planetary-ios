@@ -13,6 +13,7 @@ extension Localized {
             Localized.Onboarding.self,
             Localized.Onboarding.StepTitle.self,
             Localized.ManageRelays.self,
+            Localized.Message.self,
             Localized.Alias.self,
             Localized.Preview.self,
             Localized.FeedAlgorithm.self,
@@ -404,6 +405,12 @@ extension Localized {
     }
 }
 
+extension Localized {
+    enum Message: String, Localizable, CaseIterable {
+        case noPostsTitle = "No posts here yet"
+        case noPostsDescription = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
+    }
+}
 // MARK: - Manage Aliases
 
 extension Localized {
