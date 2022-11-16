@@ -15,13 +15,13 @@ extension String {
 
     func parseMarkdown() -> AttributedString {
         func findHashtags(in markdown: String, usingMarkdownLinks: Bool) throws -> String {
-            let regex = "(?:^|\\s)(?<hashtag>#[a-z0-9]+|#[a-z0-9]+$)"
+            let regex = "(?:^|\\s)(?<hashtag>#[a-z0-9_-]+|#[a-z0-9_-]+$)"
             let regularExpression = try NSRegularExpression(pattern: regex)
             if let match = regularExpression.firstMatch(in: markdown, range: NSRange(location: 0, length: markdown.utf16.count)) {
                 if let range = Range(match.range(withName: "hashtag"), in: markdown) {
                     let hashtag = "\(markdown[range])"
-                    let replacement: String
                     let link = hashtag.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved) ?? hashtag
+                    let replacement: String
                     if usingMarkdownLinks {
                         replacement = "[\(hashtag)](planetary://planetary.link/\(link))"
                     } else {
@@ -39,11 +39,12 @@ extension String {
         func findMentions(in markdown: String, usingMarkdownLinks: Bool) throws -> String {
             let regex = "(?:^|\\s)(?<mention>[@%&][a-zA-Z0-9+/=]{44}\\.[a-z0-9]+)"
             let regularExpression = try NSRegularExpression(pattern: regex)
-            if let match = regularExpression.firstMatch(in: markdown, range: NSRange(location: 0, length: markdown.utf16.count)) {
+            let range = NSRange(location: 0, length: markdown.utf16.count)
+            if let match = regularExpression.firstMatch(in: markdown, range: range) {
                 if let range = Range(match.range(withName: "mention"), in: markdown) {
                     let mention = "\(markdown[range])"
-                    let replacement: String
                     let link = mention.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved) ?? mention
+                    let replacement: String
                     if usingMarkdownLinks {
                         replacement = "[\(mention)](planetary://planetary.link/\(link))"
                     } else {
@@ -57,14 +58,39 @@ extension String {
             }
             return markdown
         }
+        
+        func findUnformattedLinks(in markdown: String) throws -> String {
+            let regex = "(?:^|\\s)(?<link>((http|https|planetary|ssb)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*))"
+            let regularExpression = try NSRegularExpression(pattern: regex)
+            let range = NSRange(location: 0, length: markdown.utf16.count)
+            if let match = regularExpression.firstMatch(in: markdown, range: range) {
+                if let range = Range(match.range(withName: "link"), in: markdown) {
+                    let link = "\(markdown[range])"
+                    let replacement = "[\(link)](\(link))"
+                    return try findUnformattedLinks(in: markdown.replacingCharacters(in: range, with: replacement))
+                }
+            }
+            return markdown
+        }
 
-        func findUnformattedLinks(in markdown: String, usingMarkdownLinks: Bool) -> String {
+        func fixMarkdownIfNeeded(_ markdown: String) -> String {
             do {
-                var result = try findMentions(in: markdown, usingMarkdownLinks: usingMarkdownLinks)
-                result = try findHashtags(in: result, usingMarkdownLinks: usingMarkdownLinks)
+                var result = try findMentions(in: markdown, usingMarkdownLinks: true)
+                result = try findHashtags(in: result, usingMarkdownLinks: true)
+                result = try findUnformattedLinks(in: result)
                 return result
             } catch {
                 return markdown
+            }
+        }
+
+        func fixLinkIfNeeded(_ link: String) -> String {
+            do {
+                var result = try findMentions(in: link, usingMarkdownLinks: false)
+                result = try findHashtags(in: result, usingMarkdownLinks: false)
+                return result
+            } catch {
+                return link
             }
         }
 
@@ -85,23 +111,14 @@ extension String {
         }
 
         do {
-            let markdown = findUnformattedLinks(in: removePlanetaryAttachmentLinks(in: self), usingMarkdownLinks: true)
+            let markdown = fixMarkdownIfNeeded(removePlanetaryAttachmentLinks(in: self))
             let down = Down(markdownString: markdown)
-            var attributed: AttributedString
-            do {
-                let styler = MarkdownStyler(respect: true)
-                attributed = AttributedString(try down.toAttributedString(.default, styler: styler))
-            } catch {
-                attributed = try AttributedString(
-                    markdown: markdown,
-                    options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .full)
-                )
-            }
+            let styler = MarkdownStyler(respect: true)
+            var attributed = AttributedString(try down.toAttributedString(.default, styler: styler))
             for run in attributed.runs {
                 if let link = run.attributes.link ?? run.attributes.imageURL {
-                    if let url = URL(string: findUnformattedLinks(in: link.absoluteString, usingMarkdownLinks: false)) {
+                    if let url = URL(string: fixLinkIfNeeded(link.absoluteString)) {
                         attributed[run.range].link = url
-                        attributed[run.range].foregroundColor = .accentTxt
                     }
                 }
             }
@@ -115,8 +132,7 @@ extension String {
         let down = Down(markdownString: self)
         let styler = MarkdownStyler(small: small)
         do {
-            let attributedString = try down.toAttributedString(.default,
-                                                               styler: styler)
+            let attributedString = try down.toAttributedString(.default, styler: styler)
             let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
             addHashtagsLinks(in: mutableAttributedString, styler: styler, host: host)
             addUnformattedLinks(in: mutableAttributedString, styler: styler)

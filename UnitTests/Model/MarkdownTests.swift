@@ -34,12 +34,20 @@ class MarkdownTests: XCTestCase {
         XCTAssertEqual(hashtags[2].link, "#channel3")
     }
 
-    func testParseHeading() throws {
-        // (?<=(^#)\s).*
-        let markdown = "# This is a title"
+    func testParseChannelWithDash() throws {
+        let markdown = "this is a test #chan-nel1 and another #chan_nel2 plus a third #channel3"
         let attributedString = markdown.parseMarkdown()
-        let headings = parseHeadings(in: attributedString)
-        XCTAssertEqual(headings.count, 1)
+        let links = parseLinks(in: attributedString)
+        XCTAssertEqual(links.count, 3)
+        let firstLink = try XCTUnwrap(links[0])
+        let secondLink = try XCTUnwrap(links[1])
+        let thirdLink = try XCTUnwrap(links[2])
+        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%23chan-nel1"))
+        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/%23chan_nel2"))
+        XCTAssertEqual(thirdLink.url, URL(string: "planetary://planetary.link/%23channel3"))
+        XCTAssertEqual(firstLink.name, "#chan-nel1")
+        XCTAssertEqual(secondLink.name, "#chan_nel2")
+        XCTAssertEqual(thirdLink.name, "#channel3")
     }
 
     func testParseManyChannels() throws {
@@ -50,9 +58,9 @@ class MarkdownTests: XCTestCase {
         let firstLink = try XCTUnwrap(links[0])
         let secondLink = try XCTUnwrap(links[1])
         let thirdLink = try XCTUnwrap(links[2])
-        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/#channel1"))
-        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/#channel2"))
-        XCTAssertEqual(thirdLink.url, URL(string: "planetary://planetary.link/#channel3"))
+        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%23channel1"))
+        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/%23channel2"))
+        XCTAssertEqual(thirdLink.url, URL(string: "planetary://planetary.link/%23channel3"))
         XCTAssertEqual(firstLink.name, "#channel1")
         XCTAssertEqual(secondLink.name, "#channel2")
         XCTAssertEqual(thirdLink.name, "#channel3")
@@ -295,15 +303,15 @@ without format and with an identifier in the middle
 
     func testParseLinkwithIdentifierWithoutFormat() throws {
         let markdown = """
-This is a link https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519
-without format and with an identifier in the middle
+This is a link https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519 without
+format and with an identifier in the middle
 """
         let attributedString = markdown.parseMarkdown()
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.name, "https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519")
-        XCTAssertEqual(link.url, URL(string: "https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519"))
+        XCTAssertEqual(link.name, "https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519")
+        XCTAssertEqual(link.url, URL(string: "https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519"))
     }
 
     private func parseLinks(in attributedString: AttributedString) -> [(name: String, url: URL)] {
@@ -313,22 +321,6 @@ without format and with an identifier in the middle
             }
             let name = NSAttributedString(AttributedString(attributedString[run.range])).string
             return (name: name, url: link)
-        }
-    }
-
-    private func parseHeadings(in attributedString: AttributedString) -> [String] {
-        attributedString.runs.compactMap { run -> String? in
-            guard let intent = run.presentationIntent else {
-                return nil
-            }
-            if intent.components.contains(where: { $0.kind == .header(level: 1) }) {
-                return NSAttributedString(AttributedString(attributedString[run.range])).string
-            } else if intent.components.contains(where: { $0.kind == .header(level: 2) }) {
-                return NSAttributedString(AttributedString(attributedString[run.range])).string
-            } else if intent.components.contains(where: { $0.kind == .header(level: 3) }) {
-                return NSAttributedString(AttributedString(attributedString[run.range])).string
-            }
-            return nil
         }
     }
 }

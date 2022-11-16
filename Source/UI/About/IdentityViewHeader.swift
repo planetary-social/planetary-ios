@@ -181,9 +181,10 @@ struct IdentityViewHeader: View {
         NavigationView {
             ScrollView(.vertical) {
                 BioView(bio: bio)
+                    .frame(maxWidth: .infinity)
             }
             .background(Color.cardBackground)
-            .navigationTitle("Bio")
+            .navigationTitle(Localized.bio.text)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
