@@ -108,7 +108,9 @@ struct IdentityViewHeader: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
             if extendedHeader {
                 if let bio = about?.description {
-                    BioView(bio: bio, lineLimit: 5)
+                    Text(bio.parseMarkdown())
+                        .lineLimit(5)
+                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
                         .background {
                             GeometryReader { geometryProxy in
                                 Color.clear.preference(key: TruncatedSizePreferenceKey.self, value: geometryProxy.size)
@@ -121,7 +123,8 @@ struct IdentityViewHeader: View {
                             }
                         }
                         .background {
-                            BioView(bio: bio)
+                            Text(bio.parseMarkdown())
+                                .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
                                 .fixedSize(horizontal: false, vertical: true)
                                 .hidden()
                                 .background {
@@ -143,7 +146,10 @@ struct IdentityViewHeader: View {
                             extendedBio(bio: bio, isPresented: $showingBio)
                         }
                 } else if about == nil {
-                    BioView(bio: String.loremIpsum(1), lineLimit: 5)
+                    Text(String.loremIpsum(1))
+                        .lineLimit(5)
+                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
+                        .redacted(reason: .placeholder)
                 }
                 if shouldShowReadMore {
                     ZStack(alignment: .center) {
@@ -179,10 +185,8 @@ struct IdentityViewHeader: View {
 
     private func extendedBio(bio: String, isPresented: Binding<Bool>) -> some View {
         NavigationView {
-            ScrollView(.vertical) {
-                BioView(bio: bio)
-                    .frame(maxWidth: .infinity)
-            }
+            SelectableText(bio.parseMarkdown())
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.cardBackground)
             .navigationTitle(Localized.bio.text)
             .navigationBarTitleDisplayMode(.inline)

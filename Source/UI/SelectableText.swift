@@ -17,10 +17,10 @@ import UIKit
 /// when showing a Source Message.
 struct SelectableText: UIViewRepresentable {
 
-    var text: String
+    var attributedText: AttributedString
 
-    init(text: String) {
-        self.text = text
+    init(_ attributedText: AttributedString) {
+        self.attributedText = attributedText
     }
 
     private var font = UIFont.preferredFont(forTextStyle: .body)
@@ -28,17 +28,18 @@ struct SelectableText: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView.forAutoLayout()
-        view.text = text
+        view.attributedText = NSAttributedString(attributedText)
         view.isUserInteractionEnabled = true
         view.isEditable = false
         view.isSelectable = true
-        view.font = UIFont.preferredFont(forTextStyle: .body)
+        view.tintColor = .accentTxt
         view.textContainerInset = insets
+        view.backgroundColor = .clear
         return view
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.text = text
+        uiView.attributedText = NSAttributedString(attributedText)
     }
 }
 
@@ -69,7 +70,7 @@ struct SelectableText_Previews: PreviewProvider {
         }
         """
         // swiftlint:enable line_length
-        SelectableText(text: string)
+        SelectableText(AttributedString(string))
         .previewLayout(.sizeThatFits)
     }
 }
