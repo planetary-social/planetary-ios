@@ -1167,6 +1167,10 @@
 		E00B89CC2912B18B00D3942C /* RoomCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00B89CA2912B18B00D3942C /* RoomCard.swift */; };
 		E00F7CAD2910D9EB005C27FD /* RoomsOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00F7CAC2910D9EB005C27FD /* RoomsOnboardingStep.swift */; };
 		E00F7CAE2910D9EB005C27FD /* RoomsOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E00F7CAC2910D9EB005C27FD /* RoomsOnboardingStep.swift */; };
+		E0B2144D292536C800368F47 /* RoomsOnboardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B2144C292536C800368F47 /* RoomsOnboardingController.swift */; };
+		E0B2144E292536C800368F47 /* RoomsOnboardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B2144C292536C800368F47 /* RoomsOnboardingController.swift */; };
+		E0B21451292538AC00368F47 /* RoomsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B21450292538AC00368F47 /* RoomsOnboardingView.swift */; };
+		E0B21452292538AC00368F47 /* RoomsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B21450292538AC00368F47 /* RoomsOnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1812,6 +1816,8 @@
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E00B89CA2912B18B00D3942C /* RoomCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomCard.swift; sourceTree = "<group>"; };
 		E00F7CAC2910D9EB005C27FD /* RoomsOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsOnboardingStep.swift; sourceTree = "<group>"; };
+		E0B2144C292536C800368F47 /* RoomsOnboardingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsOnboardingController.swift; sourceTree = "<group>"; };
+		E0B21450292538AC00368F47 /* RoomsOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsOnboardingView.swift; sourceTree = "<group>"; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5523876B975CAA7C89A9615 /* Pods-UITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UITests/Pods-UITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		E7A509DEDCBBEC809B7C2B44 /* Pods-Planetary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.release.xcconfig"; sourceTree = "<group>"; };
@@ -2162,6 +2168,7 @@
 				C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */,
 				C9EBE0462880C2C900A2CF51 /* HelpDrawerCoordinator.swift */,
 				C9313A77289A89580093AC47 /* RoomListController.swift */,
+				E0B2144C292536C800368F47 /* RoomsOnboardingController.swift */,
 				C9412AE928AEE8EB00F791A7 /* RoomAliasRegistrationController.swift */,
 				2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */,
 				C9412AED28AEE9F400F791A7 /* RoomAliasController.swift */,
@@ -2514,6 +2521,7 @@
 				1FFCEC5F25646D12007BC13A /* PostTextEditorView.swift */,
 				539FD4CA22C586CC005A4DF2 /* ReplyTextView.swift */,
 				C969F0E22899D0EC00081615 /* RoomListView.swift */,
+				E0B21450292538AC00368F47 /* RoomsOnboardingView.swift */,
 				1B32D377249AAA4700811DC9 /* SmallPostHeaderView.swift */,
 				536255D723AB16E8001007D0 /* SnowView.swift */,
 				8DD985D12329B94600FA2F1A /* ThreadInteractionView.swift */,
@@ -4133,6 +4141,7 @@
 				C9724B872809E95E000EBCCD /* Caches.swift in Sources */,
 				C9724BC32809ED2C000EBCCD /* NSAttributedString+Mutable.swift in Sources */,
 				530F018B22DADCF7007EBAE2 /* Date+OlderThan.swift in Sources */,
+				E0B2144E292536C800368F47 /* RoomsOnboardingController.swift in Sources */,
 				C9724B272809D42E000EBCCD /* UIViewController+Keyboard.swift in Sources */,
 				C9D1EACC2832A0230092E098 /* BlobTests.swift in Sources */,
 				C9724B582809D5F8000EBCCD /* PostCollectionViewCell.swift in Sources */,
@@ -4322,6 +4331,7 @@
 				C9A2894628F5C97200B347B7 /* SwiftUI+Localized.swift in Sources */,
 				C9724B162809D2F3000EBCCD /* SettingsViewController.swift in Sources */,
 				C9724BF02809EF4D000EBCCD /* UIView+Superview.swift in Sources */,
+				E0B21452292538AC00368F47 /* RoomsOnboardingView.swift in Sources */,
 				531A8A4A21FA3C6400D5C8C0 /* Message.swift in Sources */,
 				23C7445A2200B13F00FB554A /* Contact.swift in Sources */,
 				C9421EBE2888A71B00A4C86D /* LinearGradient+Planetary.swift in Sources */,
@@ -4645,6 +4655,7 @@
 				53C2B1342295AC000018D0A8 /* AppConfiguration+Data.swift in Sources */,
 				53E26C5A23039597009240B2 /* Dictionary+Transform.swift in Sources */,
 				C9C9BB5128C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */,
+				E0B21451292538AC00368F47 /* RoomsOnboardingView.swift in Sources */,
 				C9412AEA28AEE8EB00F791A7 /* RoomAliasRegistrationController.swift in Sources */,
 				530F01AC22DEAE6F007EBAE2 /* BioOnboardingStep.swift in Sources */,
 				0ABCA8F92436769400D7F39C /* APIError.swift in Sources */,
@@ -4874,6 +4885,7 @@
 				53C422B621C476B000A314AD /* UserDefaults+Debug.swift in Sources */,
 				539246DA22A82F9000D01EEC /* API.swift in Sources */,
 				C9F53825286CCF410015A146 /* WelcomeService.swift in Sources */,
+				E0B2144D292536C800368F47 /* RoomsOnboardingController.swift in Sources */,
 				8DB042022355ECC6006AC35B /* AboutTableViewDataSource.swift in Sources */,
 				53E34200225000D4002BB5F4 /* UIViewController+Keyboard.swift in Sources */,
 				C9EADA8927D178D5002066D9 /* View+RoundedCorner.swift in Sources */,

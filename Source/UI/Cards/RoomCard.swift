@@ -19,7 +19,7 @@ struct RoomCard: View {
     @State var alias = ""
     
     @FocusState private var nameIsFocused: Bool
-    var backAction: ( () -> Void)
+    var backButtonAction: ( () -> Void)
     var onSubmitAction: ( (String) -> Void)
     
     var body: some View {
@@ -119,7 +119,7 @@ struct RoomCard: View {
             
             .frame(maxWidth: 400, maxHeight: 150, alignment: .center)
             Button("< Choose Alias Server") {
-                backAction()
+                backButtonAction()
             }
             .foregroundColor(.cardTitle)
             .font(Font(UIFont.verse.peerCountBold))
@@ -134,14 +134,13 @@ struct RoomCard: View {
 struct RoomCard_Previews: PreviewProvider {
     
     struct RoomCardContainer: View {
-        
-        @State var aliasTaken = false
-        
+       
         var body: some View {
             RoomCard(
                 room: room,
                 showTextInput: true,
-                backAction: {
+                errorMessage: Localized.Onboarding.aliasTaken.text,
+                backButtonAction: {
                     print("Back button tapped...")
                 }, onSubmitAction: {_ in
                     print("Submitting...")

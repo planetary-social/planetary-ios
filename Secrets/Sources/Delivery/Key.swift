@@ -39,8 +39,8 @@ public enum Key: String {
     /// Token used to join the Twit room
     case twitRoomToken
     
-    /// Token used to join the Scuttle ID room
-    case lorentzRoomtoken
+    /// Token used to join the Lorentz room
+    case lorentzRoomToken
     
     /// Zendesk App ID
     case zendeskAppID

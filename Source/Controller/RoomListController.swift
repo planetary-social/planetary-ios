@@ -19,8 +19,6 @@ import UIKit
     
     @Published var errorMessage: String?
     
-    @Published var communityAliasServers = Environment.PlanetarySystem.communityAliasServers
-
     private var bot: Bot
     
     init(bot: Bot) {
@@ -46,12 +44,12 @@ import UIKit
         }
     }
     
-    func addRoom(from string: String, token: String?) async {
+    func addRoom(from string: String) {
         // Check if this is an invitation
         if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
             loadingMessage = Localized.joiningRoom.text
             Task {
-                await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
+                try await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
                 self.finishAddingRoom()
             }
         // Check if this is an address
@@ -59,13 +57,8 @@ import UIKit
             loadingMessage = Localized.joiningRoom.text
             Task {
                 do {
-                    if let token {
-                        await RoomInvitationRedeemer.redeem(address: address, token: token, in: AppController.shared, bot: Bots.current)
-                        self.finishAddingRoom()
-                    } else {
-                        try await self.bot.insert(room: Room(address: address))
-                        self.finishAddingRoom()
-                    }
+                    try await self.bot.insert(room: Room(address: address))
+                    self.finishAddingRoom()
                 } catch {
                     Log.optional(error)
                     self.errorMessage = error.localizedDescription
@@ -93,25 +86,6 @@ import UIKit
         UIApplication.shared.open(url)
     }
     
-    func register(_ desiredAlias: String, in room: Room?) async throws {
-        // TODO: normalize
-        guard let room = room else {
-            // TODO
-            errorMessage = "please select a room"
-            return
-        }
-
-        loadingMessage = Localized.loading.text
-
-        do {
-            _ = try await self.bot.register(alias: desiredAlias, in: room)
-        } catch {
-            Log.optional(error)
-            self.errorMessage = error.localizedDescription
-        }
-        self.loadingMessage = nil
-        
-    }
     // MARK: Helpers
     
     /// Called at the end of all flows that add a room to the db.
@@ -134,16 +108,5 @@ import UIKit
             }
             self.loadingMessage = nil
         }
-    }
-}
-
-enum RoomRegistrationError: Error {
-
-    case aliasTaken
-    case other(Error?)
-
-    static func optional(_ error: Error?) -> RoomRegistrationError? {
-        guard let error = error else { return nil }
-        return RoomRegistrationError.other(error)
     }
 }
