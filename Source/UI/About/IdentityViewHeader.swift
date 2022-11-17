@@ -153,18 +153,19 @@ struct IdentityViewHeader: View {
                 }
                 if shouldShowReadMore {
                     ZStack(alignment: .center) {
-                        Text(Localized.readMore.text.uppercased())
-                            .font(.caption)
-                            .foregroundColor(.secondaryTxt)
-                            .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
-                            .background(Color.hashtagBg)
-                            .cornerRadius(4)
+                        Button {
+                            showingBio = true
+                        } label: {
+                            Text(Localized.readMore.text.uppercased())
+                                .font(.caption)
+                                .foregroundColor(.secondaryTxt)
+                                .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
+                                .background(Color.hashtagBg)
+                                .cornerRadius(4)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
-                    .onTapGesture {
-                        showingBio = true
-                    }
                 }
                 HashtagSliderView(identity: identity)
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
@@ -187,18 +188,18 @@ struct IdentityViewHeader: View {
         NavigationView {
             SelectableText(bio.parseMarkdown())
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.cardBackground)
-            .navigationTitle(Localized.bio.text)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        isPresented.wrappedValue = false
-                    } label: {
-                        Image.navIconDismiss
+                .background(Color.cardBackground)
+                .navigationTitle(Localized.bio.text)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            isPresented.wrappedValue = false
+                        } label: {
+                            Image.navIconDismiss
+                        }
                     }
                 }
-            }
         }
     }
 

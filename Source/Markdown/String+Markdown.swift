@@ -15,7 +15,7 @@ extension String {
 
     func parseMarkdown() -> AttributedString {
         func findHashtags(in markdown: String, usingMarkdownLinks: Bool) throws -> String {
-            let regex = "(?:^|\\s)(?<hashtag>#[a-z0-9_-]+|#[a-z0-9_-]+$)"
+            let regex = "(?:^|\\s)(?<hashtag>#[a-zA-Z0-9_-]+|#[a-zA-Z0-9_-]+$)"
             let regularExpression = try NSRegularExpression(pattern: regex)
             if let match = regularExpression.firstMatch(in: markdown, range: NSRange(location: 0, length: markdown.utf16.count)) {
                 if let range = Range(match.range(withName: "hashtag"), in: markdown) {

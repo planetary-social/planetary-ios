@@ -50,6 +50,16 @@ class MarkdownTests: XCTestCase {
         XCTAssertEqual(thirdLink.name, "#channel3")
     }
 
+    func testParseChannelWithCamelCase() throws {
+        let markdown = "this is a test #sameAs"
+        let attributedString = markdown.parseMarkdown()
+        let links = parseLinks(in: attributedString)
+        XCTAssertEqual(links.count, 1)
+        let firstLink = try XCTUnwrap(links[0])
+        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%23sameAs"))
+        XCTAssertEqual(firstLink.name, "#sameAs")
+    }
+
     func testParseManyChannels() throws {
         let markdown = "this is a test #channel1 and another #channel2 plus a third #channel3"
         let attributedString = markdown.parseMarkdown()
