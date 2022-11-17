@@ -11,14 +11,19 @@ import Down
 
 class MarkdownStyler: DownStyler {
 
-    init(respect: Bool) {
+    init() {
         var fonts = StaticFontCollection()
         fonts.body = UIFont.preferredFont(forTextStyle: .body)
         fonts.heading1 = UIFont.preferredFont(forTextStyle: .title3)
         fonts.heading2 = UIFont.preferredFont(forTextStyle: .headline)
         fonts.heading3 = UIFont.preferredFont(forTextStyle: .subheadline)
-        fonts.code = UIFont.preferredFont(forTextStyle: .body)
-        fonts.listItemPrefix = UIFont.preferredFont(forTextStyle: .body)
+        if let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).withDesign(.monospaced) {
+            fonts.code = UIFont(descriptor: descriptor, size: 0)
+            fonts.listItemPrefix = UIFont(descriptor: descriptor, size: 0)
+        } else {
+            fonts.code = UIFont.preferredFont(forTextStyle: .body)
+            fonts.listItemPrefix = UIFont.preferredFont(forTextStyle: .body)
+        }
 
         var colors = StaticColorCollection()
         colors.body = UIColor.primaryTxt
@@ -53,9 +58,9 @@ class MarkdownStyler: DownStyler {
 
         var listItemOptions = ListItemOptions()
         listItemOptions.maxPrefixDigits = 1
-        listItemOptions.spacingAfterPrefix = 0
-        listItemOptions.spacingAbove = 0
-        listItemOptions.spacingBelow = 0
+        listItemOptions.spacingAfterPrefix = 4
+        listItemOptions.spacingAbove = 2
+        listItemOptions.spacingBelow = 4
 
         var quoteStripeOptions = QuoteStripeOptions()
         quoteStripeOptions.thickness = 1
@@ -68,17 +73,20 @@ class MarkdownStyler: DownStyler {
         var codeBlockOptions = CodeBlockOptions()
         codeBlockOptions.containerInset = 0
 
-        let downStylerConfiguration = DownStylerConfiguration(fonts: fonts,
-                                                              colors: colors,
-                                                              paragraphStyles: paragraphStyles,
-                                                              listItemOptions: listItemOptions,
-                                                              quoteStripeOptions: quoteStripeOptions,
-                                                              thematicBreakOptions: thematicBreakOptions,
-                                                              codeBlockOptions: codeBlockOptions)
+        let downStylerConfiguration = DownStylerConfiguration(
+            fonts: fonts,
+            colors: colors,
+            paragraphStyles: paragraphStyles,
+            listItemOptions: listItemOptions,
+            quoteStripeOptions: quoteStripeOptions,
+            thematicBreakOptions: thematicBreakOptions,
+            codeBlockOptions: codeBlockOptions
+        )
 
         super.init(configuration: downStylerConfiguration)
     }
-    init(small: Bool = false) {
+
+    init(small: Bool) {
         var fonts = StaticFontCollection()
         if small {
             fonts.body = UIFont.smallPost.body

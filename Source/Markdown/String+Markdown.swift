@@ -113,7 +113,7 @@ extension String {
         do {
             let markdown = fixMarkdownIfNeeded(removePlanetaryAttachmentLinks(in: self))
             let down = Down(markdownString: markdown)
-            let styler = MarkdownStyler(respect: true)
+            let styler = MarkdownStyler()
             var attributed = AttributedString(try down.toAttributedString(.default, styler: styler))
             for run in attributed.runs {
                 if let link = run.attributes.link ?? run.attributes.imageURL {
