@@ -65,10 +65,10 @@ struct RoomsOnboardingView: View {
                             Task {
                                 do {
                                     try await viewModel.joinAndRegister(room: room, alias: alias)
-                                    self.step.next()
                                 } catch {
                                     viewModel.errorMessage = error.localizedDescription
                                 }
+//                                self.step.next()
                             }
                         }
                     )
@@ -95,5 +95,6 @@ struct RoomsOnboardingView: View {
                 }
             }.transition(.move(edge: .top))
         }.padding(40)
+        Spacer()
     }
 }

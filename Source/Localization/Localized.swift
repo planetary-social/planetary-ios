@@ -380,7 +380,7 @@ extension Localized {
         case aliasSkip = "Skip choosing an alias"
         case aliasTaken = "This alias is taken already"
         case typeYourAlias = "Type your alias"
-        case chooseYourAlias = "< Choose your alias"
+        case chooseYourAlias = "< Choose Alias Server"
     }
 }
 

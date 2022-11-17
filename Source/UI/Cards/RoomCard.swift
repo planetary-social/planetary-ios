@@ -118,15 +118,23 @@ struct RoomCard: View {
             .shadow(color: Color.cardDropShadow, radius: 10, x: 0, y: 4)
             
             .frame(maxWidth: 400, maxHeight: 150, alignment: .center)
-            Button("< Choose Alias Server") {
-                backButtonAction()
+            .padding(7)
+            
+            if showTextInput {
+                Button(Localized.Onboarding.chooseYourAlias.text) {
+                    backButtonAction()
+                }
+                .transition(
+                    .move(edge: .bottom)
+                    .combined(
+                        with: AnyTransition.opacity.animation(
+                            .easeInOut(duration: 0.5)
+                        )
+                    )
+                )
+                .foregroundColor(.cardTitle)
+                .font(Font(UIFont.verse.peerCountBold))
             }
-            .foregroundColor(.cardTitle)
-            .font(Font(UIFont.verse.peerCountBold))
-            .opacity(showTextInput ? 1 : 0)
-            .animation(
-                Animation.easeInOut(duration: 0.5), value: showTextInput
-            )
         }
     }
 }
