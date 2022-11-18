@@ -37,7 +37,8 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
         Layout.fillSouth(of: view.titleLabel, with: uiHostingController.view)
         
         self.view.titleLabel.textColor = .onboardingTitle
-        self.view.primaryButton.isHidden = true
+     
+        self.view.primaryButton.setText(Localized.done)
         
         // Customize appearance of "Skip Choosing Alias" text
         let skipChoosingAliasTextAttributes: [NSAttributedString.Key: Any] = [
@@ -56,6 +57,9 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
     override func willStart() {
         if !viewModel.rooms.isEmpty || viewModel.communityAliasServers.isEmpty {
             Log.unexpected(.incorrectValue, "viewModel is in unexpected state.")
+            if let identity = self.data.context?.identity {
+                Onboarding.set(status: .completed, for: identity)
+            }
             Analytics.shared.trackOnboardingComplete(self.data.analyticsData)
             self.next()
             return

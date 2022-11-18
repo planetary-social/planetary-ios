@@ -65,9 +65,13 @@ struct RoomsOnboardingView: View {
                             Task {
                                 do {
                                     try await viewModel.joinAndRegister(room: room, alias: alias)
+                                    step.view.primaryButton.isEnabled = true
                                 } catch {
                                     viewModel.errorMessage = error.localizedDescription
                                 }
+//                                if let identity = self?.data.context?.identity {
+//                                    Onboarding.set(status: .completed, for: identity)
+//                                }
 //                                self.step.next()
                             }
                         }
@@ -76,6 +80,8 @@ struct RoomsOnboardingView: View {
                         if !roomIsSelected {
                             viewModel.communityAliasServers = [room]
                             step.view.titleLabel.text = Localized.Onboarding.StepTitle.alias.text
+                            step.view.primaryButton.isHidden = false
+                            step.view.primaryButton.isEnabled = false
                             roomIsSelected = true
                         }
                     }

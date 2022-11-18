@@ -19,6 +19,9 @@ import Logger
     
     @Published var communityAliasServers = Environment.PlanetarySystem.communityAliasServers
     
+    private var joinedRoom = false
+    private var addedAlias = false
+    
     private var bot: Bot
     
     init(bot: Bot) {
@@ -28,9 +31,17 @@ import Logger
     // MARK: View Model Actions
     
     func joinAndRegister(room: Room, alias: String) async throws {
+        errorMessage = nil
         do {
-            try await addRoom(from: room.address.string, token: room.token)
-            try await register(alias, in: room)
+            if joinedRoom == false {
+                let myTask = Task {
+                    try await addRoom(from: room.address.string, token: room.token)
+                }
+                _ = await myTask.result
+            }
+            if addedAlias == false {
+                try await register(alias, in: room)
+            }
         } catch {
             errorMessage = error.localizedDescription
             Log.error(error.localizedDescription)
@@ -41,23 +52,22 @@ import Logger
         // Check if this is an invitation
         if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
             loadingMessage = Localized.joiningRoom.text
-            Task {
                 do {
                     try await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
+                    joinedRoom = true
                 } catch {
                     Log.optional(error)
                     self.errorMessage = error.localizedDescription
                 }
                 
                 self.finishAddingRoom()
-            }
         // Check if this is an address
         } else if let address = MultiserverAddress(string: string) {
             loadingMessage = Localized.joiningRoom.text
-            Task {
                 do {
                     if let token {
                         await RoomInvitationRedeemer.redeem(address: address, token: token, in: AppController.shared, bot: Bots.current)
+                        joinedRoom = true
                         self.finishAddingRoom()
                     } else {
                         try await self.bot.insert(room: Room(address: address))
@@ -67,7 +77,6 @@ import Logger
                     Log.optional(error)
                     self.errorMessage = error.localizedDescription
                 }
-            }
         } else {
             errorMessage = Localized.Error.invalidRoomInvitationOrAddress.text
         }
@@ -79,6 +88,7 @@ import Logger
 
         do {
             _ = try await self.bot.register(alias: desiredAlias, in: room)
+            addedAlias = true
         } catch {
             Log.optional(error)
             self.errorMessage = error.localizedDescription

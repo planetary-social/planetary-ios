@@ -51,9 +51,16 @@ struct RoomCard: View {
                 if showTextInput {
                     TextField("", text: $alias)
                         .placeholder(when: alias.isEmpty) {
-                            Text(Localized.Onboarding.typeYourAlias.text).foregroundColor(.secondaryText)
+                            Text(Localized.Onboarding.typeYourAlias.text)
+                                .foregroundColor(.secondaryText)
                         }
                         .focused($nameIsFocused)
+                        .onChange(of: alias) { newValue in
+                            alias = newValue
+                                .lowercased()
+                                .filter("abcdefghijklmnopqrstuvwxyz0123456789-".contains)
+                        }
+                        .disableAutocorrection(true)
                         .font(Font(UIFont.verse.pillButton))
                         .foregroundColor(.cardTextInputText)
                         .padding(7)

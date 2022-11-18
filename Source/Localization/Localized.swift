@@ -47,6 +47,7 @@ enum Localized: String, Localizable, CaseIterable {
     case skip = "Skip"
     case ok = "OK"
     case next = "Next"
+    case back = "Back"
     case done = "Done"
     case save = "Save"
     case yes = "Yes"

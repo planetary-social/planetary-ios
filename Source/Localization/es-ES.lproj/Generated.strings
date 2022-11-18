@@ -6,6 +6,7 @@
 "Localized.skip" = "Omitir";
 "Localized.ok" = "OK";
 "Localized.next" = "Siguiente";
+"Localized.back" = "Back";
 "Localized.done" = "Hecho";
 "Localized.save" = "Guardar";
 "Localized.yes" = "Sí";
@@ -234,7 +235,7 @@
 "Onboarding.aliasSkip" = "Skip choosing an alias";
 "Onboarding.aliasTaken" = "This alias is taken already";
 "Onboarding.typeYourAlias" = "Type your alias";
-"Onboarding.chooseYourAlias" = "< Choose your alias";
+"Onboarding.chooseYourAlias" = "< Choose Alias Server";
 
 "OnboardingStepTitle.backup" = "Okay, hemos creado tu identidad. ¿Te gustaría respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary es una forma más saludable de ser social";
