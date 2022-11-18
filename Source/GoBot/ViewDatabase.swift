@@ -244,13 +244,13 @@ class ViewDatabase {
 
         try setAllMessagesAsReadIfNeeded()
     }
-    
+
     /// Gets a db connection ready to accept commands
     private func setUpConnection(_ connection: Connection) throws {
         connection.busyTimeout = 30
         try connection.execute("PRAGMA journal_mode = WAL;")
         try connection.execute("PRAGMA synchronous = NORMAL;") // Full is best for read performance
-        
+
         // uncomment to print all statements
         // connection.trace { print("\n\n\ntSQL: \($0)\n\n\n") }
     }

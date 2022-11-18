@@ -60,7 +60,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 * Room Aliases
 
 ## Functionality Implemented in Planetary with only debug or api interface:
-* Private Messaging up to 8 people
 * Running multiple identities on a single instance of the app
 * Running multiple distinct scuttlebutt networks.
 * Backup and restore your keys to move identities (accounts) between apps
@@ -73,6 +72,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 
 ## Functionality in Libraries but not in the app
+* Private Messaging up to 8 people
 * Private groups
 * Editing content
 * Tombstoning content
