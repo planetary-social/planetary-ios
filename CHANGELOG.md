@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Stability fix
 - Removed logging for regular bot actions #952
+- Added code to optimized the database when the phone is off and connected to power. #958
 
 ## [1.3.6] 2022-10-25
 

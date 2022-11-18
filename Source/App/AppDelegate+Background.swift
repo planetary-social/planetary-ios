@@ -53,6 +53,7 @@ extension AppDelegate {
     
     static let shortSyncBackgroundTaskIdentifier = "com.planetary.short_sync"
     static let longSyncBackgroundTaskIdentifier = "com.planetary.long_sync"
+    static let dbMaintenanceBackgroundTaskIdentifier = "com.planetary.db_maintenance"
     
     // MARK: Registering
     
@@ -69,13 +70,19 @@ extension AppDelegate {
         ) { task in
             self.handleSyncTask(task: task)
         }
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: AppDelegate.dbMaintenanceBackgroundTaskIdentifier,
+            using: nil
+        ) { task in
+            self.handleDBMaintenance(task: task)
+        }
     }
     
     // MARK: Scheduling
     
     private func scheduleBackgroundTasks() {
-        BGTaskScheduler.shared.cancelAllTaskRequests()
-        self.scheduleSyncTask()
+        scheduleSyncTask()
+        scheduleDBMaintenanceTask()
     }
     
     private func scheduleSyncTask() {
@@ -86,6 +93,12 @@ extension AppDelegate {
         longSyncRequest.earliestBeginDate = Date(timeIntervalSinceNow: 2 * 60 * 60) // 2 hours
         
         scheduleBackgroundTask(taskRequest: longSyncRequest)
+    }
+    
+    private func scheduleDBMaintenanceTask() {
+        let request = BGProcessingTaskRequest(identifier: AppDelegate.dbMaintenanceBackgroundTaskIdentifier)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 24 * 60 * 60) // 24 hours
+        scheduleBackgroundTask(taskRequest: request)
     }
     
     private func scheduleBackgroundTask(taskRequest: BGTaskRequest) {
@@ -113,8 +126,11 @@ extension AppDelegate {
     
     // MARK: Handling
     
+    // swiftlint:disable line_length
     // To test this, run on a real device, hit pause in the debugger, then paste in this command:
-    // e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"com.planetary.sync"]
+    // e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"com.planetary.long_sync"]
+    //
+    // swiftlint:enable line_length
     private func handleSyncTask(task: BGTask) {
         Log.info("Handling task \(task.identifier)")
         Analytics.shared.trackDidStartBackgroundTask(taskIdentifier: task.identifier)
@@ -197,5 +213,19 @@ extension AppDelegate {
             Analytics.shared.trackDidCompleteBackgroundSync(success: true, newMessageCount: newMessageCount)
             return true
         }
+    }
+    
+    private func handleDBMaintenance(task: BGTask) {
+        Log.info("Handling task \(task.identifier)")
+        Analytics.shared.trackDidStartBackgroundTask(taskIdentifier: task.identifier)
+        
+        do {
+            try (Bots.current as? GoBot)?.database.optimize()
+            task.setTaskCompleted(success: true)
+        } catch {
+            Log.optional(error)
+            task.setTaskCompleted(success: false)
+        }
+        Log.info("Completed task \(task.identifier)")
     }
 }

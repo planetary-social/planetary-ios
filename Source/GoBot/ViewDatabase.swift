@@ -423,6 +423,16 @@ class ViewDatabase {
             }
         }
     }
+    
+    func optimize() throws {
+        let db = try checkoutConnection()
+        try db.execute("PRAGMA analysis_limit = 400;")
+        try db.execute("PRAGMA optimize;")
+        // this event is mostly so that I can make sure this works reliably in production and the app
+        // isn't being terminated before it's done.
+        Analytics.shared.trackBotDidOptimizeSQLite()
+        Log.info("Finished optimizing db")
+    }
 
     /// Set all messages as read if needsToSetAllMessagesAsRead is on
     func setAllMessagesAsReadIfNeeded() throws {
@@ -453,12 +463,7 @@ class ViewDatabase {
     func close() {
         if let db = try? checkoutConnection() {
             do {
-                try db.execute("PRAGMA analysis_limit = 400;")
-                try db.execute("PRAGMA optimize;")
-                // this event is mostly so that I can make sure this works reliably in production and the app
-                // isn't being terminated before it's done.
-                Analytics.shared.trackBotDidOptimizeSQLite()
-                Log.info("Finished optimizing db")
+                try optimize()
             } catch {
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
