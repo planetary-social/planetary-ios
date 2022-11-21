@@ -179,8 +179,6 @@ class LaunchViewController: UIViewController {
                 // a notLoggedIn error
                 Log.optional(error)
                 
-                ssbDropIndexData()
-                
                 Analytics.shared.forget()
                 CrashReporting.shared.forget()
                 
@@ -198,8 +196,6 @@ class LaunchViewController: UIViewController {
                 // Don't report error here becuase the normal path is to actually receive
                 // a notLoggedIn error
                 Log.optional(error)
-                
-                ssbDropIndexData()
                 
                 Analytics.shared.forget()
                 CrashReporting.shared.forget()

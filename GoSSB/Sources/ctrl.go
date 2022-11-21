@@ -143,11 +143,6 @@ func ssbNullFeed(ref string) int {
 	return 0
 }
 
-//export ssbDropIndexData
-func ssbDropIndexData() bool {
-	return true
-}
-
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
 	var err error

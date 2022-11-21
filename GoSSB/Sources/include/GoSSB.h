@@ -38,8 +38,6 @@ extern bool ssbBotInit(gostring_t configPath, notifyBlobHandle_t blobFn, notifyN
 extern bool ssbBotStop(void);
 extern char* ssbBotStatus(void);
 
-extern bool ssbDropIndexData(void);
-
 extern int ssbOffsetFSCK(uint32_t mode, fsckProgressHandle_t updateFn);
 extern char* ssbHealRepo(void);
 
@@ -66,7 +64,6 @@ extern char* ssbStreamPrivateLog(uint64_t seq, int limit);
 extern char* ssbStreamPublishedLog(int64_t seq);
 
 // returns true if the connection was successfull
-extern bool ssbConnectPeers(uint32_t count);
 extern bool ssbConnectPeer(gostring_t multisrv);
 
 extern bool ssbDisconnectAllPeers(void);
