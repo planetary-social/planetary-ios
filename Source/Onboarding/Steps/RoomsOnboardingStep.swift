@@ -24,8 +24,8 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
         super.init(.aliasServer, buttonStyle: .verticalStack)
         self.view.primaryButton.isHidden = true
         self.view.titleLabel.removeFromSuperview()
-        self.view.primaryButton.removeFromSuperview()
-        self.view.secondaryButton.removeFromSuperview()
+        self.view.buttonStack.removeFromSuperview()
+        self.view.hintLabel.removeFromSuperview()
     }
     
     override func customizeView() {

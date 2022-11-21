@@ -83,7 +83,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
         Layout.fill(scrollView: self.scrollView, with: self.contentView, scrollable: self.scrollable)
         let (_, _, bottom, _) = Layout.fill(view: self.view,
                                             with: scrollView,
-                                            respectSafeArea: false)
+                                            respectSafeArea: true)
         bottom.priority = .required
         self.contentViewBottomConstraint = bottom
     }
