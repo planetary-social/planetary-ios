@@ -40,11 +40,6 @@ func ssbGenKey() *C.char {
 	return C.CString(string(buf.Bytes()))
 }
 
-//export ssbReplicateUpTo
-func ssbReplicateUpTo() int {
-	return -1
-}
-
 //export ssbOffsetFSCK
 func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 	return 0

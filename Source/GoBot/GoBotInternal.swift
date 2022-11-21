@@ -547,43 +547,6 @@ class GoBotInternal {
         }
     }
     
-    // retreive a list of stored feeds and their current sequence number
-    func getFeedList(completion: @escaping (([Identity: Int], Error?) -> Void)) {
-        var err: Error?
-        var feeds = [Identity: Int]()
-        defer {
-            completion(feeds, err)
-        }
-        
-        let intfd = ssbReplicateUpTo()
-        if intfd == -1 {
-            err = GoBotError.unexpectedFault("feedList pre-processing error")
-            return
-        }
-        let file = FileHandle(fileDescriptor: intfd, closeOnDealloc: true)
-        let fld = file.readDataToEndOfFile()
-    
-        /* form of the response is
-              {
-                  "feed1": currSeqAsInt,
-                  "feed2": currSeqAsInt,
-                  "feed3": currSeqAsInt
-              }
-        */
-       
-        do {
-            let json = try JSONSerialization.jsonObject(with: fld, options: [])
-            if let dictionary = json as? [String: Any] {
-                for (feed, val) in dictionary {
-                    feeds[feed] = val as? Int
-                }
-            }
-        } catch {
-            err = GoBotError.duringProcessing("feedList json decoding error:", error)
-            return
-        }
-    }
-    
     // MARK: message streams
     
     /// This fetches posts from go-ssb's RootLog - the log containing all posts from all users. The Go code will filter

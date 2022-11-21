@@ -60,7 +60,6 @@ extern char* ssbTestingPublishAs(gostring_t nick, gostring_t content);
 extern char* ssbTestingPublishPrivateAs(gostring_t nick, gostring_t content, gostring_t recipients);
 
 extern char* ssbRepoStats(void);
-extern int ssbReplicateUpTo(void);
 
 extern char* ssbStreamRootLog(uint64_t seq, int limit);
 extern char* ssbStreamPrivateLog(uint64_t seq, int limit);
