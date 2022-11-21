@@ -92,9 +92,9 @@ fileprivate class ImageLoader: ObservableObject {
             // request image
             let uuid = Caches.blobs.imageOrPlaceholder(for: metadata.identifier) { [weak self] uiImage in
                 self?.image = uiImage
-                self?.isLoading = false
             }
 
+            self?.isLoading = false
             self?.metadata = metadata
             self?.completion = uuid
         }

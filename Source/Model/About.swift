@@ -178,8 +178,7 @@ extension About: Comparable {
     }
 
     static func == (lhs: About, rhs: About) -> Bool {
-        if let lhs = lhs.name, let rhs = rhs.name { return lhs.compare(rhs) == .orderedSame }
-        return lhs.identity == rhs.identity
+        return lhs.identity == rhs.identity && lhs.name == rhs.name && lhs.description == rhs.description && lhs.image == rhs.image
     }
 }
 

@@ -10,7 +10,7 @@ import UIKit
 
 /// Represents a relationship between two identities. To query the relationship between `identity` and `other`
 /// instantiate a `Relationship` with them and call `load(reload:completion)`.
-class Relationship: Sendable {
+class Relationship: Sendable, Equatable {
 
     let identity: Identity
     let other: Identity
@@ -87,6 +87,15 @@ class Relationship: Sendable {
     func invalidateCache() {
         self.dataCached = false
     }
+
+    static func == (lhs: Relationship, rhs: Relationship) -> Bool {
+        lhs.identity == rhs.identity
+        && lhs.other == rhs.other
+        && lhs.isFollowing == rhs.isFollowing
+        && lhs.isBlocking == rhs.isBlocking
+        && lhs.isFollowedBy == rhs.isFollowedBy
+    }
+
 }
 
 extension Notification {
@@ -94,4 +103,8 @@ extension Notification {
     var relationship: Relationship? {
         self.userInfo?[Relationship.infoKey] as? Relationship
     }
+}
+
+extension Notification.Name {
+    static let didUpdateRelationship = Notification.Name("didUpdateRelationship")
 }

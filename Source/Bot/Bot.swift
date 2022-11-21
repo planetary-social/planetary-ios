@@ -719,7 +719,8 @@ extension Bot {
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
         self.publish(content: content, completionQueue: .main, completion: completion)
     }
-    
+
+    @discardableResult
     func publish(content: ContentCodable) async throws -> MessageIdentifier {
         try await withCheckedThrowingContinuation { continuation in
             publish(content: content) { result, error in

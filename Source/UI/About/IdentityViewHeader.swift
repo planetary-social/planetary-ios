@@ -6,170 +6,122 @@
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
+import Analytics
+import CrashReporting
+import Logger
 import SwiftUI
 
 struct IdentityViewHeader: View {
 
     var identity: Identity
     var about: About?
+    var relationship: Relationship?
+    var hashtags: [Hashtag]?
+    var socialStats: ExtendedSocialStats?
     var extendedHeader: Bool
 
     @EnvironmentObject
     private var botRepository: BotRepository
 
     @State
-    private var showingBio = false
+    var isToggling = false
 
-    @State
-    private var shouldShowReadMore = false
+    private var shouldShowBio: Bool {
+        if let about = about {
+            return about.description?.isEmpty == false
+        }
+        return true
+    }
 
-    @State
-    private var intrinsicSize = CGSize.zero
+    private var shouldShowHashtags: Bool {
+        if let hashtags = hashtags {
+            return !hashtags.isEmpty
+        }
+        return true
+    }
 
-    @State
-    private var truncatedSize = CGSize.zero
+    private var isSelf: Bool {
+        botRepository.current.identity == identity
+    }
 
-    func updateShouldShowReadMore() {
-        shouldShowReadMore = intrinsicSize != truncatedSize
+    private var followButton: some View {
+        Group {
+            if isSelf {
+                EditIdentityButton(about: about)
+            } else {
+                Button {
+                    Analytics.shared.trackDidTapButton(buttonName: "follow")
+                    toggleRelationship()
+                } label: {
+                    RelationshipLabel(relationship: isToggling ? nil : relationship, compact: !extendedHeader)
+                }
+            }
+        }
+        .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
     }
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top, spacing: 18) {
-                Circle()
-                    .fill(
-                        LinearGradient.diagonalAccent
-                    )
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                    .frame(width: 92, height: 92)
-                    .overlay(
-                        AvatarView(metadata: about?.image, size: 87)
-                    )
+                ZStack(alignment: .bottomTrailing) {
+                    Group {
+                        if extendedHeader {
+                            AvatarView(metadata: about?.image, size: 87)
+                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 99)
+                                        .stroke(LinearGradient.diagonalAccent, lineWidth: 3)
+                                )
+                        } else {
+                            AvatarView(metadata: about?.image, size: 45)
+                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 99)
+                                        .stroke(LinearGradient.diagonalAccent, lineWidth: 2)
+                                )
+                        }
+                    }
                     .onTapGesture {
                         guard let image = about?.image else {
                             return
                         }
                         AppController.shared.open(string: image.link)
                     }
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(about?.nameOrIdentity ?? identity)
-                        .lineLimit(1)
-                        .font(.title3.weight(.semibold))
-                        .foregroundColor(Color.primaryTxt)
-                    HStack {
+                    if isSelf {
+                        EditAvatarButton(about: about, large: extendedHeader)
+                    }
+                }
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(about?.nameOrIdentity ?? identity)
+                            .lineLimit(1)
+                            .font(.title3.weight(.semibold))
+                            .foregroundColor(Color.primaryTxt)
                         Text(identity.prefix(7))
                             .font(.subheadline)
                             .foregroundColor(Color.secondaryTxt)
-                    }
-                    Group {
-                        if botRepository.current.identity == identity {
-                            Button {
-                                AppController.shared.present(
-                                    UINavigationController(
-                                        rootViewController: EditAboutViewController(with: about)
-                                    ),
-                                    animated: true
-                                )
-                            } label: {
-                                HStack(alignment: .center) {
-                                    Image.buttonEditProfile
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 18, height: 18)
-                                    Text(Localized.editProfile.text)
-                                        .font(.footnote)
-                                        .foregroundLinearGradient(
-                                            LinearGradient.horizontalAccent
-                                        )
-                                }
-                                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                                .background(
-                                    LinearGradient(
-                                        colors: [.relationshipViewBg],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                    .cornerRadius(17)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 17)
-                                        .stroke(LinearGradient.horizontalAccent, lineWidth: 1)
-                                )
-                            }
-                        } else {
-                            RelationshipView(identity: identity)
+                        if extendedHeader {
+                            followButton
                         }
                     }
-                    .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    if !extendedHeader {
+                        followButton
+                    }
                 }
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .topLeading)
             if extendedHeader {
-                if let bio = about?.description {
-                    Text(bio.parseMarkdown())
-                        .lineLimit(5)
-                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
-                        .background {
-                            GeometryReader { geometryProxy in
-                                Color.clear.preference(key: TruncatedSizePreferenceKey.self, value: geometryProxy.size)
-                            }
-                        }
-                        .onPreferenceChange(TruncatedSizePreferenceKey.self) { newSize in
-                            if newSize.height > truncatedSize.height {
-                                truncatedSize = newSize
-                                updateShouldShowReadMore()
-                            }
-                        }
-                        .background {
-                            Text(bio.parseMarkdown())
-                                .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
-                                .fixedSize(horizontal: false, vertical: true)
-                                .hidden()
-                                .background {
-                                    GeometryReader { geometryProxy in
-                                        Color.clear.preference(key: IntrinsicSizePreferenceKey.self, value: geometryProxy.size)
-                                    }
-                                }
-                                .onPreferenceChange(IntrinsicSizePreferenceKey.self) { newSize in
-                                    if newSize.height > intrinsicSize.height {
-                                        intrinsicSize = newSize
-                                        updateShouldShowReadMore()
-                                    }
-                                }
-                        }
-                        .onTapGesture {
-                            showingBio = true
-                        }
-                        .sheet(isPresented: $showingBio) {
-                            extendedBio(bio: bio, isPresented: $showingBio)
-                        }
-                } else if about == nil {
-                    Text(String.loremIpsum(1))
-                        .lineLimit(5)
-                        .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
-                        .redacted(reason: .placeholder)
+                if shouldShowBio {
+                    BioView(bio: about?.description)
                 }
-                if shouldShowReadMore {
-                    ZStack(alignment: .center) {
-                        Button {
-                            showingBio = true
-                        } label: {
-                            Text(Localized.readMore.text.uppercased())
-                                .font(.caption)
-                                .foregroundColor(.secondaryTxt)
-                                .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
-                                .background(Color.hashtagBg)
-                                .cornerRadius(4)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+                if shouldShowHashtags {
+                    HashtagSliderView(hashtags: hashtags)
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
                 }
-                HashtagSliderView(identity: identity)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
-                SocialStatsView(identity: identity)
+                SocialStatsView(socialStats: socialStats)
                     .frame(maxWidth: .infinity)
             }
         }
@@ -184,32 +136,72 @@ struct IdentityViewHeader: View {
         .shadow(color: .profileShadow, radius: 10, x: 0, y: 4)
     }
 
-    private func extendedBio(bio: String, isPresented: Binding<Bool>) -> some View {
-        NavigationView {
-            SelectableText(bio.parseMarkdown())
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.cardBackground)
-                .navigationTitle(Localized.bio.text)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            isPresented.wrappedValue = false
-                        } label: {
-                            Image.navIconDismiss
-                        }
+    private func toggleRelationship() {
+        guard let relationshipToUpdate = relationship else {
+            return
+        }
+        isToggling = true
+        Task.detached {
+            let bot = await botRepository.current
+            let pubs = (AppConfiguration.current?.communityPubs ?? []) + (AppConfiguration.current?.systemPubs ?? [])
+            let star = pubs.first { $0.feed == relationshipToUpdate.other }
+            do {
+                if let star = star {
+                    try await bot.join(star: star)
+                    Analytics.shared.trackDidFollowPub()
+                    relationshipToUpdate.isFollowing = true
+                } else if relationshipToUpdate.isBlocking {
+                    try await bot.unblock(identity: relationshipToUpdate.other)
+                    Analytics.shared.trackDidUnblockIdentity()
+                    relationshipToUpdate.isBlocking = false
+                } else {
+                    if relationshipToUpdate.isFollowing {
+                        try await bot.unfollow(identity: relationshipToUpdate.other)
+                        Analytics.shared.trackDidUnfollowIdentity()
+                        relationshipToUpdate.isFollowing = false
+                    } else {
+                        try await bot.follow(identity: relationshipToUpdate.other)
+                        Analytics.shared.trackDidFollowIdentity()
+                        relationshipToUpdate.isFollowing = true
                     }
                 }
+                await MainActor.run {
+                    isToggling = false
+                    NotificationCenter.default.post(
+                        name: .didUpdateRelationship,
+                        object: nil,
+                        userInfo: [Relationship.infoKey: relationshipToUpdate]
+                    )
+                }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    isToggling = true
+                    AppController.shared.alert(error: error)
+                }
+            }
         }
     }
+}
 
-    fileprivate struct IntrinsicSizePreferenceKey: PreferenceKey {
-        static var defaultValue: CGSize = .zero
-        static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+struct IdentityViewHeader_Previews: PreviewProvider {
+    static var sample: About {
+        return About(
+            about: .null,
+            name: "Rossina Simonelli",
+            description: "This is a bio",
+            imageLink: nil
+        )
     }
-
-    fileprivate struct TruncatedSizePreferenceKey: PreferenceKey {
-        static var defaultValue: CGSize = .zero
-        static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+    static var errorMessage: String?
+    static var previews: some View {
+        VStack {
+            IdentityViewHeader(identity: .null, about: sample, extendedHeader: false)
+            IdentityViewHeader(identity: .null, about: sample, extendedHeader: true)
+        }
+        .environmentObject(BotRepository.shared)
+        .previewLayout(.sizeThatFits)
     }
 }
+

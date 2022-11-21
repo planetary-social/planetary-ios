@@ -56,12 +56,18 @@ struct MessageView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {
-                AvatarView(metadata: message.metadata.author.about?.image, size: 24)
-                if let header = attributedHeader {
-                    Text(header)
-                        .font(.subheadline)
-                        .foregroundColor(Color.secondaryTxt)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                Button {
+                    AppController.shared.open(identity: message.author)
+                } label: {
+                    HStack(alignment: .center) {
+                        AvatarView(metadata: message.metadata.author.about?.image, size: 24)
+                        if let header = attributedHeader {
+                            Text(header)
+                                .font(.subheadline)
+                                .foregroundColor(Color.secondaryTxt)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
                 }
                 MessageOptionsView(message: message)
             }
@@ -73,28 +79,27 @@ struct MessageView: View {
                         AppController.shared.open(identity: contact.contact)
                     }
             } else if let post = message.content.post {
-                CompactPostView(post: post)
-                    .onTapGesture {
-                        AppController.shared.open(identifier: message.id)
-                    }
-                HStack {
+                Group {
+                    CompactPostView(post: post)
                     HStack {
-                        Text(Localized.postAReply.text)
-                            .font(.subheadline)
-                            .foregroundColor(Color.secondaryTxt)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Image.navIconCamera
-                            .renderingMode(.template)
-                            .foregroundColor(.accentTxt)
+                        HStack {
+                            Text(Localized.postAReply.text)
+                                .font(.subheadline)
+                                .foregroundColor(Color.secondaryTxt)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Image.navIconCamera
+                                .renderingMode(.template)
+                                .foregroundColor(.accentTxt)
+                        }
+                        .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                        .frame(maxWidth: .infinity, idealHeight: 35)
+                        .background(Color.postareplyBackground)
+                        .cornerRadius(18)
+                        .shadow(color: .postareplyShadowTop, radius: 0, x: 0, y: -1)
+                        .shadow(color: .postareplyShadowBottom, radius: 0, x: 0, y: 1)
                     }
-                    .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                    .frame(maxWidth: .infinity, idealHeight: 35)
-                    .background(Color.postareplyBackground)
-                    .cornerRadius(18)
-                    .shadow(color: .postareplyShadowTop, radius: 0, x: 0, y: -1)
-                    .shadow(color: .postareplyShadowBottom, radius: 0, x: 0, y: 1)
+                    .padding(15)
                 }
-                .padding(15)
                 .onTapGesture {
                     AppController.shared.open(identifier: message.id)
                 }

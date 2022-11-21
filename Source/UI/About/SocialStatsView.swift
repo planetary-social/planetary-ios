@@ -12,13 +12,7 @@ import SwiftUI
 
 struct SocialStatsView: View {
 
-    var identity: Identity
-
-    @EnvironmentObject
-    private var botRepository: BotRepository
-
-    @State
-    private var socialStats: ExtendedSocialStats = .zero
+    var socialStats: ExtendedSocialStats?
 
     @State
     private var showingFollowers = false
@@ -32,92 +26,95 @@ struct SocialStatsView: View {
     @State
     private var showingPubServers = false
 
-    @State
-    private var isLoading = true
+    private var isLoading: Bool {
+        socialStats == nil
+    }
+
+    private var followers: [Identity] {
+        socialStats?.followers ?? []
+    }
+
+    private var followersAvatars: [ImageMetadata] {
+        socialStats?.someFollowersAvatars.map { $0 ?? ImageMetadata(link: .null) } ?? []
+    }
+
+    private var follows: [Identity] {
+        socialStats?.follows ?? []
+    }
+
+    private var followsAvatars: [ImageMetadata] {
+        socialStats?.someFollowsAvatars.map { $0 ?? ImageMetadata(link: .null) } ?? []
+    }
+
+    private var blocks: [Identity] {
+        socialStats?.blocks ?? []
+    }
+
+    private var blocksAvatars: [ImageMetadata] {
+        socialStats?.someBlocksAvatars.map { $0 ?? ImageMetadata(link: .null) } ?? []
+    }
+
+    private var pubServers: [Identity] {
+        socialStats?.pubServers ?? []
+    }
+
+    private var pubServersAvatars: [ImageMetadata] {
+        socialStats?.somePubServersAvatars.map { $0 ?? ImageMetadata(link: .null) } ?? []
+    }
 
     var body: some View {
         HStack(alignment: .center, spacing: 18) {
-            tab(
-                label: .followedBy,
-                value: socialStats.followers.count,
-                avatars: socialStats.someFollowersAvatars.map { $0 ?? ImageMetadata(link: .null) }
-            )
-            .onTapGesture {
-                showingFollowers = true
+            Button {
+                showingFollowers = !followers.isEmpty
+            } label: {
+                tab(
+                    label: .followedBy,
+                    value: followers.count,
+                    avatars: followersAvatars
+                )
             }
             .sheet(isPresented: $showingFollowers) {
-                identityList(socialStats.followers, label: .followedByCount, isPresented: $showingFollowers)
+                identityList(followers, label: .followedByCount, isPresented: $showingFollowers)
             }
-            tab(
-                label: .following,
-                value: socialStats.follows.count,
-                avatars: socialStats.someFollowsAvatars.map { $0 ?? ImageMetadata(link: .null) }
-            )
-            .onTapGesture {
-                showingFollows = true
+            Button {
+                showingFollows = !follows.isEmpty
+            } label: {
+                tab(
+                    label: .following,
+                    value: follows.count,
+                    avatars: followsAvatars
+                )
             }
             .sheet(isPresented: $showingFollows) {
-                identityList(socialStats.follows, label: .followingCount, isPresented: $showingFollows)
+                identityList(follows, label: .followingCount, isPresented: $showingFollows)
             }
-            tab(
-                label: .blocking,
-                value: socialStats.blocks.count,
-                avatars: socialStats.someBlocksAvatars.map { $0 ?? ImageMetadata(link: .null) }
-            )
-            .onTapGesture {
-                showingBlocks = true
+            Button {
+                showingBlocks = !blocks.isEmpty
+            } label: {
+                tab(
+                    label: .blocking,
+                    value: blocks.count,
+                    avatars: blocksAvatars
+                )
             }
             .sheet(isPresented: $showingBlocks) {
-                identityList(socialStats.blocks, label: .blockingCount, isPresented: $showingBlocks)
+                identityList(blocks, label: .blockingCount, isPresented: $showingBlocks)
             }
-            tab(
-                label: .pubServers,
-                value: socialStats.pubServers.count,
-                avatars: socialStats.somePubServersAvatars.map { $0 ?? ImageMetadata(link: .null) }
-            )
-            .onTapGesture {
-                showingPubServers = true
+            Button {
+                showingPubServers = !pubServers.isEmpty
+            } label: {
+                tab(
+                    label: .pubServers,
+                    value: pubServers.count,
+                    avatars: pubServersAvatars
+                )
             }
             .sheet(isPresented: $showingPubServers) {
-                identityList(socialStats.pubServers, label: .joinedCount, isPresented: $showingPubServers)
+                identityList(pubServers, label: .joinedCount, isPresented: $showingPubServers)
             }
         }
         .padding(EdgeInsets(top: 9, leading: 18, bottom: 18, trailing: 18))
         .redacted(reason: isLoading ? .placeholder : [])
-        .task {
-            Task.detached { [identity] in
-                let bot = await botRepository.current
-                do {
-                    let followers: [Identity] = try await bot.followers(identity: identity).reversed()
-                    let someFollowers = try await bot.abouts(identities: Array(followers.prefix(2)))
-                    let followings: [Identity] = try await bot.followings(identity: identity).reversed()
-                    let someFollowings = try await bot.abouts(identities: Array(followings.prefix(2)))
-                    let blocks: [Identity] = try await bot.blocks(identity: identity).reversed()
-                    let someBlocks = try await bot.abouts(identities: Array(blocks.prefix(2)))
-                    let pubs: [Identity] = try await bot.pubs(joinedBy: identity).map { $0.address.key }.reversed()
-                    let somePubs = try await bot.abouts(identities: Array(pubs.prefix(2)))
-                    await MainActor.run {
-                        socialStats = ExtendedSocialStats(
-                            followers: followers,
-                            someFollowersAvatars: someFollowers.map { $0?.image },
-                            follows: followings,
-                            someFollowsAvatars: someFollowings.map { $0?.image },
-                            blocks: blocks,
-                            someBlocksAvatars: someBlocks.map { $0?.image },
-                            pubServers: pubs,
-                            somePubServersAvatars: somePubs.map { $0?.image }
-                        )
-                        isLoading = false
-                    }
-                } catch {
-                    Log.optional(error)
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    await MainActor.run {
-                        isLoading = false
-                    }
-                }
-            }
-        }
     }
 
     private func identityList(_ list: [Identity], label: Localized, isPresented: Binding<Bool>) -> some View {
@@ -178,14 +175,28 @@ struct SocialStatsView: View {
 }
 
 struct SocialStatsView_Previews: PreviewProvider {
+    static var sample: ExtendedSocialStats {
+        ExtendedSocialStats(
+            followers: [.null, .null],
+            someFollowersAvatars: [nil, nil],
+            follows: [.null, .null],
+            someFollowsAvatars: [nil, nil],
+            blocks: [],
+            someBlocksAvatars: [],
+            pubServers: [.null],
+            somePubServersAvatars: []
+        )
+    }
     static var previews: some View {
-        SocialStatsView(identity: .null)
+        SocialStatsView(socialStats: sample)
+            .padding()
+            .background(Color.cardBackground)
             .previewLayout(.sizeThatFits)
-            .environmentObject(BotRepository.shared)
 
-        SocialStatsView(identity: .null)
+        SocialStatsView(socialStats: sample)
+            .padding()
+            .background(Color.cardBackground)
             .preferredColorScheme(.dark)
             .previewLayout(.sizeThatFits)
-            .environmentObject(BotRepository.shared)
     }
 }

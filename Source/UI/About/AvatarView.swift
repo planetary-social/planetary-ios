@@ -20,3 +20,13 @@ struct AvatarView: View {
         }.frame(width: size, height: size).cornerRadius(99)
     }
 }
+
+struct AvatarView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            AvatarView(size: 92)
+        }
+        .previewLayout(.sizeThatFits)
+    }
+}
+

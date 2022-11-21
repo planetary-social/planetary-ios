@@ -21,6 +21,15 @@ struct IdentityView: View {
     private var about: About?
 
     @State
+    private var relationship: Relationship?
+
+    @State
+    private var socialStats: ExtendedSocialStats?
+
+    @State
+    private var hashtags: [Hashtag]?
+
+    @State
     private var errorMessage: String?
 
     @State
@@ -47,6 +56,17 @@ struct IdentityView: View {
         }
     }
 
+    private func header(extendedHeader: Bool) -> some View {
+        IdentityViewHeader(
+            identity: identity,
+            about: about,
+            relationship: relationship,
+            hashtags: hashtags,
+            socialStats: socialStats,
+            extendedHeader: extendedHeader
+        )
+    }
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
@@ -59,9 +79,9 @@ struct IdentityView: View {
                     .frame(height: 0)
                     .border(Color.red)
                 }.frame(height: 0)
-                IdentityViewHeader(identity: identity, about: about, extendedHeader: extendedHeader)
+                header(extendedHeader: extendedHeader)
                     .background {
-                        IdentityViewHeader(identity: identity, about: about, extendedHeader: true)
+                        header(extendedHeader: true)
                             .fixedSize(horizontal: false, vertical: true)
                             .hidden()
                             .background {
@@ -74,7 +94,7 @@ struct IdentityView: View {
                             }
                     }
                     .background {
-                        IdentityViewHeader(identity: identity, about: about, extendedHeader: false)
+                        header(extendedHeader: false)
                             .hidden()
                             .background {
                                 GeometryReader { geometryProxy in
@@ -126,22 +146,130 @@ struct IdentityView: View {
             }
         }
         .alert(isPresented: showAlert) {
-            Alert(title: Localized.error.view, message: SwiftUI.Text(errorMessage ?? ""))
+            Alert(title: Localized.error.view, message: Text(errorMessage ?? ""))
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didUpdateAbout)) { output in
+            guard let notifiedAbout = output.about, notifiedAbout.identity == identity else {
+                return
+            }
+            about = notifiedAbout
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didUpdateRelationship)) { output in
+            guard let notifiedRelationship = output.relationship, notifiedRelationship.other == identity else {
+                return
+            }
+            relationship = notifiedRelationship
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didBlockUser)) { output in
+            guard let notifiedIdentity = output.object as? Identity, notifiedIdentity == identity else {
+                return
+            }
+            let relationshipToUpdate = relationship
+            relationshipToUpdate?.isBlocking = true
+            relationship = relationshipToUpdate
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didUnblockUser)) { output in
+            guard let notifiedIdentity = output.object as? Identity, notifiedIdentity == identity else {
+                return
+            }
+            let relationshipToUpdate = relationship
+            relationshipToUpdate?.isBlocking = false
+            relationship = relationshipToUpdate
         }
         .task {
-            Task.detached { [identity] in
-                let bot = await botRepository.current
+            loadAbout()
+            loadRelationship()
+            loadHashtags()
+            loadSocialStats()
+        }
+    }
+
+    private func loadAbout() {
+        Task.detached {
+            let identityToLoad = await identity
+            let bot = await botRepository.current
+            do {
+                let result = try await bot.about(identity: identityToLoad)
+                await MainActor.run {
+                    about = result
+                }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+    private func loadSocialStats() {
+        Task.detached {
+            let identityToLoad = await identity
+            let bot = await botRepository.current
+            do {
+                let followers: [Identity] = try await bot.followers(identity: identityToLoad).reversed()
+                let someFollowers = try await bot.abouts(identities: Array(followers.prefix(2)))
+                let followings: [Identity] = try await bot.followings(identity: identityToLoad).reversed()
+                let someFollowings = try await bot.abouts(identities: Array(followings.prefix(2)))
+                let blocks: [Identity] = try await bot.blocks(identity: identityToLoad).reversed()
+                let someBlocks = try await bot.abouts(identities: Array(blocks.prefix(2)))
+                let pubs: [Identity] = try await bot.pubs(joinedBy: identityToLoad).map { $0.address.key }.reversed()
+                let somePubs = try await bot.abouts(identities: Array(pubs.prefix(2)))
+                let result = ExtendedSocialStats(
+                    followers: followers,
+                    someFollowersAvatars: someFollowers.map { $0?.image },
+                    follows: followings,
+                    someFollowsAvatars: someFollowings.map { $0?.image },
+                    blocks: blocks,
+                    someBlocksAvatars: someBlocks.map { $0?.image },
+                    pubServers: pubs,
+                    somePubServersAvatars: somePubs.map { $0?.image }
+                )
+                await MainActor.run {
+                    socialStats = result
+                }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    socialStats = .zero
+                }
+            }
+        }
+    }
+
+    private func loadHashtags() {
+        Task.detached {
+            let identityToLoad = await identity
+            let bot = await botRepository.current
+            do {
+                let result = try await Bots.current.hashtags(usedBy: identityToLoad, limit: 3)
+                await MainActor.run {
+                    hashtags = result
+                }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    hashtags = []
+                }
+            }
+        }
+    }
+
+    private func loadRelationship() {
+        Task.detached {
+            let identityToLoad = await identity
+            let bot = await botRepository.current
+            if let currentIdentity = bot.identity {
                 do {
-                    let result = try await bot.about(identity: identity)
+                    let result = try await bot.relationship(from: currentIdentity, to: identity)
                     await MainActor.run {
-                        about = result
+                        relationship = result
                     }
                 } catch {
-                    Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
-                    await MainActor.run {
-                        errorMessage = error.localizedDescription
-                    }
+                    Log.shared.optional(error)
                 }
             }
         }

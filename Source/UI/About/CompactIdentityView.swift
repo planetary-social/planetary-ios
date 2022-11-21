@@ -6,15 +6,18 @@
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
+import Analytics
 import SwiftUI
 
 @MainActor
 struct CompactIdentityView: View {
 
-    @EnvironmentObject
-    var botRepository: BotRepository
-
     var identity: Identity
+
+    var relationshipRepository = RelationshipRepositoryAdapter()
+
+    @EnvironmentObject
+    private var botRepository: BotRepository
 
     @State
     private var about: About?
@@ -24,6 +27,9 @@ struct CompactIdentityView: View {
 
     @State
     private var hashtags: [Hashtag]?
+
+    @State
+    private var relationship: Relationship?
 
     func attributedSocialStats(from socialStats: SocialStats) -> AttributedString {
         let numberOfFollowers = socialStats.numberOfFollowers
@@ -68,7 +74,12 @@ struct CompactIdentityView: View {
                             .foregroundColor(.secondaryTxt)
                     }
                     Spacer()
-                    RelationshipView(identity: identity, compact: true)
+                    Button {
+                        Analytics.shared.trackDidTapButton(buttonName: "follow")
+                        toggleRelationship()
+                    } label: {
+                        RelationshipLabel(relationship: relationship, compact: true)
+                    }
                     .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 }
@@ -119,6 +130,39 @@ struct CompactIdentityView: View {
                     await MainActor.run {
                         hashtags = []
                     }
+                }
+            }
+            loadRelationship()
+        }
+    }
+
+    func loadRelationship() {
+        Task.detached {
+            let identityToLoad = await identity
+            let result = await relationshipRepository.relationship(for: identityToLoad)
+            await MainActor.run {
+                relationship = result
+            }
+        }
+    }
+
+    func toggleRelationship() {
+        guard let relationshipToUpdate = relationship else {
+            return
+        }
+        relationship = nil
+        Task.detached {
+            do {
+                let result = try await relationshipRepository.toggle(relationship: relationshipToUpdate)
+                await MainActor.run {
+                    relationship = result
+                }
+            } catch {
+                // Log.optional(error)
+                // CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    relationship = relationshipToUpdate
+                    AppController.shared.alert(error: error)
                 }
             }
         }
