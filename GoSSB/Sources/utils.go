@@ -64,11 +64,6 @@ func ssbHealRepo() *C.char {
 	return C.CString(string(b))
 }
 
-//export planetaryBearerToken
-func planetaryBearerToken() *C.char {
-	return nil
-}
-
 type healReport struct {
 	Authors  []refs.FeedRef
 	Messages uint64
