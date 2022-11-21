@@ -419,12 +419,6 @@ class GoBotInternal {
         }
     }
 
-    func unblock(feed: FeedIdentifier) {
-        feed.withGoString {
-            ssbFeedBlock($0, false)
-        }
-    }
-
     // TODO: call this to fetch a feed without following it
     func replicate(feed: FeedIdentifier) {
         feed.withGoString {
