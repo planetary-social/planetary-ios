@@ -58,6 +58,12 @@
 	<string>$(PLANETARY_NETWORK_KEY)</string>
 	<key>PLPlanetaryNetworkHMAC</key>
 	<string>$(PLANETARY_NETWORK_HMAC)</string>
+	<key>PLAliasServers </key>
+	<string>$(PLANETARY_COMMUNITY_ALIAS_SERVERS)</string>
+	<key>PLTestAliasServers</key>
+	<string>$(TEST_PLANETARY_COMMUNITY_ALIAS_SERVERS)</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

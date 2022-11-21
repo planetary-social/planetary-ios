@@ -114,6 +114,8 @@ class DoneOnboardingStep: OnboardingStep {
             self.next()
             return
         }
+        
+        self.next()
     }
 
     override func didStart() {

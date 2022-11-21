@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "streamlinehq-road-sign-warning-_          transportation-48-ico_mRu4pQJ4vwoPeLj08UNc39zj 1.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "streamlinehq-road-sign-warning-_          transportation-48-ico_mRu4pQJ4vwoPeLj08UNc39zj 1@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "streamlinehq-road-sign-warning-_          transportation-48-ico_mRu4pQJ4vwoPeLj08UNc39zj 1@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -47,6 +47,7 @@ enum Localized: String, Localizable, CaseIterable {
     case skip = "Skip"
     case ok = "OK"
     case next = "Next"
+    case back = "Back"
     case done = "Done"
     case save = "Save"
     case yes = "Yes"
@@ -205,6 +206,7 @@ enum Localized: String, Localizable, CaseIterable {
     case searchingLocally = "Searching for posts in your local database"
     case noResultsFound = "No results found."
     case noResultsHelp = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device."
+    case rooms = "Rooms"
     
     // MARK: - Beta 1 migration strings
     case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."
@@ -300,6 +302,8 @@ extension Localized {
             case photoConfirm = "Profile photo added"
             case resume = "Resuming set up of your identity on Planetary..."
             case start = "\nSocial media for humans, not algorithms."
+            case aliasServer = "Choose an alias server"
+            case alias = "Now choose your alias"
 
             static var namespace: String {
                 "OnboardingStepTitle"
@@ -369,6 +373,17 @@ extension Localized {
         
         case useTestNetwork = "Use Test Network"
         case useTestNetworkDescription = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later."
+
+        case changeAlias = "You'll be able to change this alias from Settings."
+        case aliasServerInformation = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:"
+        case yourAlias = "youralias"
+        case yourAliasPlanetary = "youralias.planetary.name"
+        case aliasSkip = "Skip choosing an alias"
+        case aliasTaken = "This alias is taken already"
+        case invalidAliasFormat = "Incorrect format for alias"
+        case unknownAliasRegistrationError = "There was a problem registering this alias"
+        case typeYourAlias = "Type your alias"
+        case chooseYourAlias = "< Choose Alias Server"
     }
 }
 

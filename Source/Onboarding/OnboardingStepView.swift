@@ -41,7 +41,7 @@ class OnboardingStepView: UIView, UITextViewDelegate, UITextFieldDelegate {
         }
     }
 
-    let titleLabel: UILabel = {
+    var titleLabel: UILabel = {
         let label = UILabel.forAutoLayout()
         label.font = UIFont.systemFont(ofSize: 25, weight: .semibold)
         label.numberOfLines = 0

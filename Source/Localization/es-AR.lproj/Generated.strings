@@ -6,6 +6,7 @@
 "Localized.skip" = "Skip";
 "Localized.ok" = "OK";
 "Localized.next" = "Next";
+"Localized.back" = "Back";
 "Localized.done" = "Done";
 "Localized.save" = "Save";
 "Localized.yes" = "Yes";
@@ -135,6 +136,7 @@
 "Localized.searchingLocally" = "Searching for posts in your local database";
 "Localized.noResultsFound" = "No results found.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
+"Localized.rooms" = "Rooms";
 "Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -226,6 +228,16 @@
 "Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
 "Onboarding.useTestNetwork" = "Use Test Network";
 "Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
+"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
+"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
+"Onboarding.yourAlias" = "youralias";
+"Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
+"Onboarding.aliasSkip" = "Skip choosing an alias";
+"Onboarding.aliasTaken" = "This alias is taken already";
+"Onboarding.invalidAliasFormat" = "Incorrect format for alias";
+"Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
+"Onboarding.typeYourAlias" = "Type your alias";
+"Onboarding.chooseYourAlias" = "< Choose Alias Server";
 
 "OnboardingStepTitle.backup" = "OK, ya creamos tu identidad. ¿Querés respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
@@ -243,6 +255,8 @@
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil añadida";
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
+"OnboardingStepTitle.aliasServer" = "Choose an alias server";
+"OnboardingStepTitle.alias" = "Now choose your alias";
 
 "ManageRelays.relayServers" = "Relay Servers";
 "ManageRelays.managePubs" = "Manage Pubs";
@@ -327,7 +341,7 @@
 "Error.invalidRoomURL" = "Could not parse invitation.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room";
 
 "Channel.one" = "hashtag";
 "Channel.many" = "hashtags";
