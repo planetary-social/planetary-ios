@@ -7,14 +7,14 @@
 //
 
 import Analytics
+import CrashReporting
+import Logger
 import SwiftUI
 
 @MainActor
 struct CompactIdentityView: View {
 
     var identity: Identity
-
-    var relationshipRepository = RelationshipRepositoryAdapter()
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -30,6 +30,9 @@ struct CompactIdentityView: View {
 
     @State
     private var relationship: Relationship?
+
+    @State
+    var isToggling = false
 
     func attributedSocialStats(from socialStats: SocialStats) -> AttributedString {
         let numberOfFollowers = socialStats.numberOfFollowers
@@ -78,7 +81,7 @@ struct CompactIdentityView: View {
                         Analytics.shared.trackDidTapButton(buttonName: "follow")
                         toggleRelationship()
                     } label: {
-                        RelationshipLabel(relationship: relationship, compact: true)
+                        RelationshipLabel(relationship: isToggling ? nil : relationship, compact: true)
                     }
                     .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
@@ -98,6 +101,12 @@ struct CompactIdentityView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
+        .onReceive(NotificationCenter.default.publisher(for: .didUpdateRelationship)) { output in
+            guard let notifiedRelationship = output.relationship, notifiedRelationship.other == identity else {
+                return
+            }
+            relationship = notifiedRelationship
+        }
         .task {
             Task.detached {
                 let bot = await botRepository.current
@@ -136,32 +145,66 @@ struct CompactIdentityView: View {
         }
     }
 
-    func loadRelationship() {
+    private func loadRelationship() {
         Task.detached {
             let identityToLoad = await identity
-            let result = await relationshipRepository.relationship(for: identityToLoad)
-            await MainActor.run {
-                relationship = result
+            let bot = await botRepository.current
+            if let currentIdentity = bot.identity {
+                do {
+                    let result = try await bot.relationship(from: currentIdentity, to: identity)
+                    await MainActor.run {
+                        relationship = result
+                    }
+                } catch {
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                    Log.shared.optional(error)
+                }
             }
         }
     }
 
-    func toggleRelationship() {
+    private func toggleRelationship() {
         guard let relationshipToUpdate = relationship else {
             return
         }
-        relationship = nil
+        isToggling = true
         Task.detached {
+            let bot = await botRepository.current
+            let pubs = (AppConfiguration.current?.communityPubs ?? []) + (AppConfiguration.current?.systemPubs ?? [])
+            let star = pubs.first { $0.feed == relationshipToUpdate.other }
             do {
-                let result = try await relationshipRepository.toggle(relationship: relationshipToUpdate)
+                if let star = star {
+                    try await bot.join(star: star)
+                    Analytics.shared.trackDidFollowPub()
+                    relationshipToUpdate.isFollowing = true
+                } else if relationshipToUpdate.isBlocking {
+                    try await bot.unblock(identity: relationshipToUpdate.other)
+                    Analytics.shared.trackDidUnblockIdentity()
+                    relationshipToUpdate.isBlocking = false
+                } else {
+                    if relationshipToUpdate.isFollowing {
+                        try await bot.unfollow(identity: relationshipToUpdate.other)
+                        Analytics.shared.trackDidUnfollowIdentity()
+                        relationshipToUpdate.isFollowing = false
+                    } else {
+                        try await bot.follow(identity: relationshipToUpdate.other)
+                        Analytics.shared.trackDidFollowIdentity()
+                        relationshipToUpdate.isFollowing = true
+                    }
+                }
                 await MainActor.run {
-                    relationship = result
+                    isToggling = false
+                    NotificationCenter.default.post(
+                        name: .didUpdateRelationship,
+                        object: nil,
+                        userInfo: [Relationship.infoKey: relationshipToUpdate]
+                    )
                 }
             } catch {
-                // Log.optional(error)
-                // CrashReporting.shared.reportIfNeeded(error: error)
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
                 await MainActor.run {
-                    relationship = relationshipToUpdate
+                    isToggling = true
                     AppController.shared.alert(error: error)
                 }
             }
