@@ -46,7 +46,7 @@ extern bool ssbInviteAccept(gostring_t token);
 extern int ssbNullContent(gostring_t author, uint64_t sequence);
 extern int ssbNullFeed(gostring_t author);
 
-extern void ssbFeedReplicate(gostring_t feed, bool yes);
+extern void ssbFeedReplicate(gostring_t feed);
 extern void ssbFeedBlock(gostring_t feed, bool yes);
 
 extern char* ssbPublish(gostring_t content);

@@ -428,13 +428,7 @@ class GoBotInternal {
     // TODO: call this to fetch a feed without following it
     func replicate(feed: FeedIdentifier) {
         feed.withGoString {
-            ssbFeedReplicate($0, true)
-        }
-    }
-
-    func dontReplicate(feed: FeedIdentifier) {
-        feed.withGoString {
-            ssbFeedReplicate($0, false)
+            ssbFeedReplicate($0)
         }
     }
 

@@ -73,34 +73,36 @@ func ssbDisconnectAllPeers() bool {
 	return true
 }
 
+// ssbFeedReplicate temporarily adds a feed to the list of replicated feeds. This can be useful to for example add
+// a specific feed to the list of replicated feeds when a user views it.
 //export ssbFeedReplicate
-func ssbFeedReplicate(ref string, yes bool) {
-	//var err error
-	//defer func() {
-	//	if err != nil {
-	//		level.Error(log).Log("where", "ssbFeedReplicate", "err", err)
-	//	}
-	//}()
+func ssbFeedReplicate(ref string) {
+	var err error
+	defer logError("ssbFeedReplicate", &err)
 
-	//fr, err := refs.ParseFeedRef(ref)
-	//if err != nil {
-	//	err = errors.Wrapf(err, "replicate: invalid feed reference")
-	//	return
-	//}
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return
+	}
 
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot == nil {
-	//	err = ErrNotInitialized
-	//	return
-	//}
+	feedRef, err := refs.NewFeed(ref)
+	if err != nil {
+		err = errors.Wrap(err, "could not create a ref")
+		return
+	}
 
-	//if yes {
-	//	sbot.Replicate(fr)
-	//} else {
-	//	sbot.DontReplicate(fr)
-	//}
-	// todo do we even need this
+	cmd, err := commands.NewDownloadFeed(feedRef)
+	if err != nil {
+		err = errors.Wrap(err, "could not create a command")
+		return
+	}
+
+	err = service.App.Commands.DownloadFeed.Handle(cmd)
+	if err != nil {
+		err = errors.Wrap(err, "command error")
+		return
+	}
 }
 
 //export ssbFeedBlock
