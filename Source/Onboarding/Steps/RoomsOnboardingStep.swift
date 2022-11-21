@@ -23,6 +23,9 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
         self.viewModel = RoomsOnboardingController(bot: Bots.current)
         super.init(.aliasServer, buttonStyle: .verticalStack)
         self.view.primaryButton.isHidden = true
+        self.view.titleLabel.removeFromSuperview()
+        self.view.primaryButton.removeFromSuperview()
+        self.view.secondaryButton.removeFromSuperview()
     }
     
     override func customizeView() {
@@ -34,25 +37,9 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
             )
         )
         uiHostingController.view.backgroundColor = .clear
-        Layout.fillSouth(of: view.titleLabel, with: uiHostingController.view)
-        
-        self.view.titleLabel.textColor = .onboardingTitle
      
-        self.view.primaryButton.setText(Localized.done)
-        
-        // Customize appearance of "Skip Choosing Alias" text
-        let skipChoosingAliasTextAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 15, weight: .medium),
-            .foregroundColor: UIColor.menuSelectedItemText,
-            .underlineStyle: NSUnderlineStyle.single.rawValue
-        ]
-        let skipChoosingAliasText = NSMutableAttributedString(
-            string: Localized.Onboarding.aliasSkip.text,
-            attributes: skipChoosingAliasTextAttributes
-        )
-        
-        self.view.secondaryButton.setAttributedTitle(skipChoosingAliasText, for: .normal)
-    }
+        Layout.fill(view: view, with: uiHostingController.view)
+   }
     
     override func willStart() {
         if !viewModel.rooms.isEmpty || viewModel.communityAliasServers.isEmpty {

@@ -25,82 +25,114 @@ import Logger
 struct RoomsOnboardingView: View {
     
     @ObservedObject var viewModel: RoomsOnboardingController
-    @State var roomIsSelected = false
     
     let aliasServerInformation = Localized.Onboarding.aliasServerInformation.text
-    let changeAliasText = Localized.Onboarding.changeAlias.text
-    let titleChooseAliasServer = Localized.Onboarding.StepTitle.aliasServer.text
-    let titleChooseAlias = Localized.Onboarding.StepTitle.alias.text
     let step: RoomsOnboardingStep
     
     var body: some View {
         
         VStack {
-            // "Chose a Room" text
-            if !roomIsSelected {
-                VStack {
-                    Text(aliasServerInformation) { string in
-                        string.foregroundColor = .onboardingMainText
-                        if let range = string.range(of: Localized.Onboarding.yourAliasPlanetary.text) {
-                            string[range].foregroundColor = .highlightGradientAverage
-                        }
-                        if let range = string.range(of: Localized.Onboarding.yourAlias.text) {
-                            string[range].font = .body.italic()
-                        }
+            HStack {
+                if viewModel.selectedRoom != nil {
+                    Button {
+                        viewModel.deselectRoom()
+                    } label: {
+                        Label("Back", systemImage: "chevron.left")
                     }
+                    .padding(.leading, 10)
                 }
-                .padding(.bottom, 25)
+                Spacer()
             }
-            
             VStack {
-                ForEach(viewModel.communityAliasServers) { room in
-                    RoomCard(
-                        room: room,
-                        showTextInput: roomIsSelected,
-                        errorMessage: viewModel.errorMessage,
-                        backButtonAction: {
-                            roomIsSelected = false
-                            viewModel.communityAliasServers = Environment.PlanetarySystem.communityAliasServers
-                        }, onSubmitAction: { alias in
-                            Task {
-                                do {
-                                    try await viewModel.joinAndRegister(room: room, alias: alias)
-                                    step.view.primaryButton.isEnabled = true
-                                } catch {
-                                    viewModel.errorMessage = error.localizedDescription
-                                }
-//                                if let identity = self?.data.context?.identity {
-//                                    Onboarding.set(status: .completed, for: identity)
-//                                }
-//                                self.step.next()
+                Text(viewModel.title)
+                    .font(Font(UIFont.systemFont(ofSize: 24, weight: .bold)))
+                    .foregroundColor(.onboardingTitle)
+                    .padding(.bottom, 20)
+                
+                Spacer(minLength: 20)
+                
+                // "Chose a Room" text
+                if viewModel.selectedRoom == nil {
+                    VStack {
+                        Text(aliasServerInformation) { string in
+                            string.foregroundColor = .onboardingMainText
+                            if let range = string.range(of: Localized.Onboarding.yourAliasPlanetary.text) {
+                                string[range].foregroundColor = .highlightGradientAverage
+                            }
+                            if let range = string.range(of: Localized.Onboarding.yourAlias.text) {
+                                string[range].font = .body.italic()
                             }
                         }
-                    )
-                    .onTapGesture {
-                        if !roomIsSelected {
-                            viewModel.communityAliasServers = [room]
-                            step.view.titleLabel.text = Localized.Onboarding.StepTitle.alias.text
-                            step.view.primaryButton.isHidden = false
-                            step.view.primaryButton.isEnabled = false
-                            roomIsSelected = true
-                        }
                     }
+                    .padding(.bottom, 10)
                 }
-                if roomIsSelected {
-                    Text(changeAliasText)
-                        .foregroundColor(.onboardingMainText)
-                        .padding(.top, 20)
-                        .transition(
-                            .move(edge: .bottom)
-                            .combined(
-                                with: AnyTransition.opacity.animation(
-                                    .easeInOut(duration: 0.5)
-                                )
-                            )
-                        )
+                
+                VStack(spacing: 0) {
+                    ForEach(viewModel.communityAliasServers) { room in
+                        RoomCard(room: room, viewModel: viewModel)
+                            .onTapGesture {
+                                viewModel.selectRoom(room: room)
+                            }
+                    }
+                    
+                    if viewModel.selectedRoom != nil {
+                        Text(Localized.Onboarding.changeAlias.text)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.onboardingMainText)
+                            .padding(.top, 30)
+                    }
+                    
+                    Spacer()
                 }
-            }.transition(.move(edge: .top))
-        }.padding(40)
-        Spacer()
+            }.padding(40)
+            
+            Spacer()
+            
+            VStack(spacing: 20) {
+                
+                Button {
+                    step.next()
+                } label: {
+                    Text(Localized.Onboarding.aliasSkip.text).underline()
+                        .foregroundColor(.menuSelectedItemText)
+                        .font(Font(UIFont.systemFont(ofSize: 15, weight: .medium)))
+                }
+                if let room = viewModel.selectedRoom {
+                    Button {
+                        Task {
+                            do {
+                                let alias = try await viewModel.joinAndRegister(room: room, alias: viewModel.alias)
+                                self.step.next()
+                            } catch {
+                                viewModel.errorMessage = error.localizedDescription
+                            }
+                            if let identity = step.data.context?.identity {
+                                Onboarding.set(status: .completed, for: identity)
+                            }
+                        }
+                    } label: {
+                        Text(Localized.done.text)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(PillButtonStyle())
+                    .disabled(!viewModel.aliasIsValid())
+                    .font(Font(UIFont.verse.pillButton))
+                    .frame(maxWidth: .infinity)
+                    .padding([.leading, .trailing], 40)
+                }
+            }.padding(.bottom, 10)
+        }
+    }
+}
+
+struct PillButtonStyle: ButtonStyle {
+    @SwiftUI.Environment(\.isEnabled) private var isEnabled
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .background(isEnabled ? Color.pillButtonBackground : Color.pillButtonBackgroundDisabled)
+            .foregroundColor(isEnabled ? Color.pillButtonText : Color.pillButtonTextDisabled)
+            .clipShape(Capsule())
     }
 }

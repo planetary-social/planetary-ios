@@ -13,14 +13,7 @@ import SwiftUI
 struct RoomCard: View {
     
     var room: Room
-    var showTextInput: Bool
-    var errorMessage: String?
-   
-    @State var alias = ""
-    
-    @FocusState private var nameIsFocused: Bool
-    var backButtonAction: ( () -> Void)
-    var onSubmitAction: ( (String) -> Void)
+    @ObservedObject var viewModel: RoomsOnboardingController
     
     var body: some View {
         
@@ -48,19 +41,18 @@ struct RoomCard: View {
                     }.multilineTextAlignment(.leading)
                 }
                 // Text Input
-                if showTextInput {
-                    TextField("", text: $alias)
-                        .placeholder(when: alias.isEmpty) {
+                if viewModel.selectedRoom != nil {
+                    TextField("", text: $viewModel.alias)
+                        .autocorrectionDisabled(true)
+                        .placeholder(when: viewModel.alias.isEmpty) {
                             Text(Localized.Onboarding.typeYourAlias.text)
                                 .foregroundColor(.secondaryText)
                         }
-                        .focused($nameIsFocused)
-                        .onChange(of: alias) { newValue in
-                            alias = newValue
+                        .onChange(of: viewModel.alias) { newValue in
+                            viewModel.alias = newValue
                                 .lowercased()
                                 .filter("abcdefghijklmnopqrstuvwxyz0123456789-".contains)
                         }
-                        .disableAutocorrection(true)
                         .font(Font(UIFont.verse.pillButton))
                         .foregroundColor(.cardTextInputText)
                         .padding(7)
@@ -78,21 +70,21 @@ struct RoomCard: View {
                                 )
                             )
                         )
-                        .onSubmit {
-                            nameIsFocused = false
-                            onSubmitAction(alias)
-                        }
                     // Error message
-                    if let errorMessage {
-                        Text(verbatim: errorMessage)
-                            .font(Font(UIFont.verse.pillButton))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.highlightGradientLeading, .highlightGradientTrailing],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                    if let errorMessage = viewModel.errorMessage {
+                        HStack {
+                            Image(uiImage: .warning)
+                            Text(verbatim: errorMessage)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .font(Font(UIFont.verse.pillButton))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.highlightGradientLeading, .highlightGradientTrailing],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                            )
+                        }
                     }
                 }
             }
@@ -123,57 +115,45 @@ struct RoomCard: View {
             .padding(.bottom, -5)
             .shadow(color: Color.cardDropShadow, radius: 3, x: 0, y: 4)
             .shadow(color: Color.cardDropShadow, radius: 10, x: 0, y: 4)
-            
-            .frame(maxWidth: 400, maxHeight: 150, alignment: .center)
-            .padding(7)
-            
-            if showTextInput {
-                Button(Localized.Onboarding.chooseYourAlias.text) {
-                    backButtonAction()
-                }
-                .transition(
-                    .move(edge: .bottom)
-                    .combined(
-                        with: AnyTransition.opacity.animation(
-                            .easeInOut(duration: 0.5)
-                        )
-                    )
-                )
-                .foregroundColor(.cardTitle)
-                .font(Font(UIFont.verse.peerCountBold))
-            }
+            .frame(maxWidth: 400, maxHeight: 100, alignment: .center)
         }
     }
 }
 
+fileprivate class PreviewViewModel: RoomsOnboardingController {
+    
+    init() {
+        super.init(bot: FakeBot())
+        self.selectedRoom = Room(
+            identifier: "Planetary Alias",
+            imageName: "icon-planetary-3",
+            address: MultiserverAddress(
+                keyID: "Planetary",
+                host: "planetary.name",
+                port: 8008
+            )
+        )
+        self.errorMessage = Localized.Onboarding.aliasTaken.text
+    }
+}
+
+// swiftlint:disable force_unwrapping
 struct RoomCard_Previews: PreviewProvider {
     
     struct RoomCardContainer: View {
-       
         var body: some View {
+            let viewModel = PreviewViewModel()
+            
             RoomCard(
-                room: room,
-                showTextInput: true,
-                errorMessage: Localized.Onboarding.aliasTaken.text,
-                backButtonAction: {
-                    print("Back button tapped...")
-                }, onSubmitAction: {_ in
-                    print("Submitting...")
-                }
+                room: viewModel.selectedRoom!,
+                viewModel: viewModel
             )
         }
     }
-    static var room = Room(
-        imageName: "icon-planetary-3",
-        address: MultiserverAddress(
-            keyID: "Planetary",
-            host: "planetary.name",
-            port: 8008
-        )
-    )
     
     static var previews: some View {
         RoomCardContainer()
+            .padding(40)
     }
 }
 

@@ -39,6 +39,10 @@ extension Color {
        static let networkAnimation = Color("networkAnimation", bundle: Bundle.current)
        static let onboardingMainText = Color("onboardingMainText", bundle: Bundle.current)
        static let onboardingTitle = Color("onboardingTitle", bundle: Bundle.current)
+       static let pillButtonBackground = Color("pillButtonBackground", bundle: Bundle.current)
+       static let pillButtonBackgroundDisabled = Color("pillButtonBackgroundDisabled", bundle: Bundle.current)
+       static let pillButtonText = Color("pillButtonText", bundle: Bundle.current)
+       static let pillButtonTextDisabled = Color("pillButtonTextDisabled", bundle: Bundle.current)
        static let primaryAction = Color("primaryAction", bundle: Bundle.current)
        static let reactionUser = Color("reactionUser", bundle: Bundle.current)
        static let screenOverlay = Color("screenOverlay", bundle: Bundle.current)
@@ -90,6 +94,10 @@ extension UIColor {
        static let networkAnimation = UIColor(named: "networkAnimation", in: Bundle.current, compatibleWith: nil)!
        static let onboardingMainText = UIColor(named: "onboardingMainText", in: Bundle.current, compatibleWith: nil)!
        static let onboardingTitle = UIColor(named: "onboardingTitle", in: Bundle.current, compatibleWith: nil)!
+       static let pillButtonBackground = UIColor(named: "pillButtonBackground", in: Bundle.current, compatibleWith: nil)!
+       static let pillButtonBackgroundDisabled = UIColor(named: "pillButtonBackgroundDisabled", in: Bundle.current, compatibleWith: nil)!
+       static let pillButtonText = UIColor(named: "pillButtonText", in: Bundle.current, compatibleWith: nil)!
+       static let pillButtonTextDisabled = UIColor(named: "pillButtonTextDisabled", in: Bundle.current, compatibleWith: nil)!
        static let primaryAction = UIColor(named: "primaryAction", in: Bundle.current, compatibleWith: nil)!
        static let reactionUser = UIColor(named: "reactionUser", in: Bundle.current, compatibleWith: nil)!
        static let screenOverlay = UIColor(named: "screenOverlay", in: Bundle.current, compatibleWith: nil)!
@@ -170,6 +178,7 @@ extension Image {
        static let tabIconNotifications = Image("tab-icon-notifications", bundle: Bundle.current)
        static let title = Image("title", bundle: Bundle.current)
        static let unsupportedBlobPlaceholder = Image("unsupported-blob-placeholder", bundle: Bundle.current)
+       static let warning = Image("warning", bundle: Bundle.current)
 }
 
 extension UIImage {
@@ -234,4 +243,5 @@ extension UIImage {
        static let tabIconNotifications = UIImage(named: "tab-icon-notifications", in: Bundle.current, with: nil)!
        static let title = UIImage(named: "title", in: Bundle.current, with: nil)!
        static let unsupportedBlobPlaceholder = UIImage(named: "unsupported-blob-placeholder", in: Bundle.current, with: nil)!
+       static let warning = UIImage(named: "warning", in: Bundle.current, with: nil)!
 }

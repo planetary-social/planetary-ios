@@ -234,6 +234,8 @@
 "Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
 "Onboarding.aliasSkip" = "Skip choosing an alias";
 "Onboarding.aliasTaken" = "This alias is taken already";
+"Onboarding.invalidAliasFormat" = "Incorrect format for alias";
+"Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
 "Onboarding.typeYourAlias" = "Type your alias";
 "Onboarding.chooseYourAlias" = "< Choose Alias Server";
 
@@ -253,7 +255,7 @@
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil añadida";
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
 "OnboardingStepTitle.start" = "\nRedes sociales para humanos, no para algoritmos.";
-"OnboardingStepTitle.aliasServer" = "Choose a server";
+"OnboardingStepTitle.aliasServer" = "Choose an alias server";
 "OnboardingStepTitle.alias" = "Now choose your alias";
 
 "ManageRelays.relayServers" = "Retransmitir servidores";

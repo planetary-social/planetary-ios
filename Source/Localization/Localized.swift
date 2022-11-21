@@ -302,7 +302,7 @@ extension Localized {
             case photoConfirm = "Profile photo added"
             case resume = "Resuming set up of your identity on Planetary..."
             case start = "\nSocial media for humans, not algorithms."
-            case aliasServer = "Choose a server"
+            case aliasServer = "Choose an alias server"
             case alias = "Now choose your alias"
 
             static var namespace: String {
@@ -380,6 +380,8 @@ extension Localized {
         case yourAliasPlanetary = "youralias.planetary.name"
         case aliasSkip = "Skip choosing an alias"
         case aliasTaken = "This alias is taken already"
+        case invalidAliasFormat = "Incorrect format for alias"
+        case unknownAliasRegistrationError = "There was a problem registering this alias"
         case typeYourAlias = "Type your alias"
         case chooseYourAlias = "< Choose Alias Server"
     }

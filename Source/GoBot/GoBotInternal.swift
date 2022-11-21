@@ -665,7 +665,7 @@ class GoBotInternal {
     
     // MARK: Aliases
     
-    func register(alias: String, in room: Room) -> Bool {
+    func register(alias: String, in room: Room) throws -> String {
         Log.debug("Registering room alias: \(alias) at \(room.address.string)")
         let result: ssbRoomsAliasRegisterReturn_t = room.address.string.withGoString { roomAddress in
             alias.withGoString { alias in
@@ -676,11 +676,18 @@ class GoBotInternal {
         if result.alias != nil {
             let aliasURLString = String(cString: result.alias)
             if aliasURLString.isEmpty == false {
-                // TODO: return alias or error
-                return true
+                return aliasURLString
             }
         }
-            return false
+        
+        switch result.err {
+        case 2:
+            throw RoomRegistrationError.aliasTaken
+        case 1:
+            fallthrough
+        default:
+            throw RoomRegistrationError.unknownError
+        }
     }
     
     func revoke(alias: RoomAlias) async throws {

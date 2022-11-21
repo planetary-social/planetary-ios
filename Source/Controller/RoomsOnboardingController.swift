@@ -13,14 +13,17 @@ import Logger
     
     @Published var rooms = [Room]()
     
-    @Published var loadingMessage: String?
-    
     @Published var errorMessage: String?
     
     @Published var communityAliasServers = Environment.PlanetarySystem.communityAliasServers
     
-    private var joinedRoom = false
-    private var addedAlias = false
+    @Published var title = Localized.Onboarding.StepTitle.aliasServer.text
+    
+    @Published var selectedRoom: Room?
+    
+    @Published var alias = ""
+    
+    @Published var registeredRoom = false
     
     private var bot: Bot
     
@@ -30,48 +33,49 @@ import Logger
     
     // MARK: View Model Actions
     
-    func joinAndRegister(room: Room, alias: String) async throws {
+    func aliasIsValid() -> Bool {
+        guard alias.count > 1,
+            !alias.starts(with: "-") else {
+            return false
+        }
+        return true
+    }
+    
+    func joinAndRegister(room: Room, alias: String) async throws -> RoomAlias {
         errorMessage = nil
         do {
-            if joinedRoom == false {
-                let myTask = Task {
-                    try await addRoom(from: room.address.string, token: room.token)
-                }
-                _ = await myTask.result
+            if registeredRoom == false {
+                try await addRoom(from: room.address.string, token: room.token)
             }
-            if addedAlias == false {
-                try await register(alias, in: room)
-            }
+            return try await register(alias, in: room)
         } catch {
             errorMessage = error.localizedDescription
             Log.error(error.localizedDescription)
         }
+        throw RoomRegistrationError.unknownError
     }
-        
+    
     func addRoom(from string: String, token: String?) async throws {
         // Check if this is an invitation
         if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
-            loadingMessage = Localized.joiningRoom.text
                 do {
-                    try await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
-                    joinedRoom = true
+                    try await RoomInvitationRedeemer.redeem(
+                        inviteURL: url,
+                        in: AppController.shared, bot: Bots.current
+                    )
+                    registeredRoom = true
                 } catch {
                     Log.optional(error)
                     self.errorMessage = error.localizedDescription
                 }
                 
-                self.finishAddingRoom()
         // Check if this is an address
         } else if let address = MultiserverAddress(string: string) {
-            loadingMessage = Localized.joiningRoom.text
                 do {
                     if let token {
                         await RoomInvitationRedeemer.redeem(address: address, token: token, in: AppController.shared, bot: Bots.current)
-                        joinedRoom = true
-                        self.finishAddingRoom()
                     } else {
                         try await self.bot.insert(room: Room(address: address))
-                        self.finishAddingRoom()
                     }
                 } catch {
                     Log.optional(error)
@@ -82,52 +86,46 @@ import Logger
         }
     }
     
-    func register(_ desiredAlias: String, in room: Room) async throws {
-
-        loadingMessage = Localized.loading.text
+    func register(_ desiredAlias: String, in room: Room) async throws -> RoomAlias {
 
         do {
-            _ = try await self.bot.register(alias: desiredAlias, in: room)
-            addedAlias = true
+            let alias = try await self.bot.register(alias: desiredAlias, in: room)
+            return alias
         } catch {
-            Log.optional(error)
             self.errorMessage = error.localizedDescription
         }
-        self.loadingMessage = nil
+        
+        throw RoomRegistrationError.unknownError
     }
     
-    // MARK: Helpers
-    
-    /// Called at the end of all flows that add a room to the db.
-    private func finishAddingRoom() {
-        self.loadingMessage = nil
-        self.loadRooms()
-        AppController.shared.missionControlCenter.sendMission()
+    func selectRoom(room: Room) {
+        title = Localized.Onboarding.StepTitle.alias.text
+        communityAliasServers = [room]
+        selectedRoom = room
     }
     
-    /// Loads rooms from the db into this controller's `rooms` array.
-    private func loadRooms() {
-        loadingMessage = "Loading rooms..."
-        Task {
-            do {
-                let rooms = try await self.bot.joinedRooms()
-                self.rooms = rooms
-            } catch {
-                Log.optional(error)
-                self.errorMessage = error.localizedDescription
-            }
-            self.loadingMessage = nil
-        }
+    func deselectRoom() {
+        title = Localized.Onboarding.StepTitle.aliasServer.text
+        communityAliasServers = Environment.PlanetarySystem.communityAliasServers
+        selectedRoom = nil
     }
 }
 
-enum RoomRegistrationError: Error {
-
+/// An enumeration of the errors produced by `RoomsOnboardingController`.
+enum RoomRegistrationError: LocalizedError {
+    
     case aliasTaken
-    case other(Error?)
-
-    static func optional(_ error: Error?) -> RoomRegistrationError? {
-        guard let error = error else { return nil }
-        return RoomRegistrationError.other(error)
+    case invalidFormat
+    case unknownError
+    
+    var errorDescription: String? {
+        switch self {
+        case .aliasTaken:
+            return Localized.Onboarding.aliasTaken.text
+        case .invalidFormat:
+            return Localized.Onboarding.invalidAliasFormat.text
+        case .unknownError:
+            return Localized.Onboarding.unknownAliasRegistrationError.text
+        }
     }
 }
