@@ -94,12 +94,15 @@ enum RoomInvitationRedeemer {
     }
     
     // Redeems token with a given `MultiserverAddress`
-    static func redeem(address: MultiserverAddress, token: String, in controller: AppController, bot: Bot) async {
+    static func redeem(address: MultiserverAddress, token: String, in controller: AppController, bot: Bot, showAlert: Bool = false) async throws {
         do {
             try await RoomInvitationRedeemer.redeem(token: token, at: address.host, bot: bot)
         } catch {
             Log.optional(error)
-            await controller.topViewController.alert(error: error)
+            if showAlert {
+                await controller.topViewController.alert(error: error)
+            }
+            throw error
         }
     }
     

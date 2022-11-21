@@ -51,51 +51,29 @@ import Logger
         } catch {
             errorMessage = error.localizedDescription
             Log.error(error.localizedDescription)
+            throw error
         }
-        throw RoomRegistrationError.unknownError
     }
     
     func addRoom(from string: String, token: String?) async throws {
-        // Check if this is an invitation
-        if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
-                do {
-                    try await RoomInvitationRedeemer.redeem(
-                        inviteURL: url,
-                        in: AppController.shared, bot: Bots.current
-                    )
+        if let address = MultiserverAddress(string: string) {
+            do {
+                if let token {
+                    try await RoomInvitationRedeemer.redeem(address: address, token: token, in: AppController.shared, bot: Bots.current, showAlert: false)
                     registeredRoom = true
-                } catch {
-                    Log.optional(error)
-                    self.errorMessage = error.localizedDescription
                 }
-                
-        // Check if this is an address
-        } else if let address = MultiserverAddress(string: string) {
-                do {
-                    if let token {
-                        await RoomInvitationRedeemer.redeem(address: address, token: token, in: AppController.shared, bot: Bots.current)
-                    } else {
-                        try await self.bot.insert(room: Room(address: address))
-                    }
-                } catch {
-                    Log.optional(error)
-                    self.errorMessage = error.localizedDescription
-                }
+            } catch {
+                Log.optional(error)
+                self.errorMessage = error.localizedDescription
+            }
         } else {
             errorMessage = Localized.Error.invalidRoomInvitationOrAddress.text
         }
     }
     
     func register(_ desiredAlias: String, in room: Room) async throws -> RoomAlias {
-
-        do {
-            let alias = try await self.bot.register(alias: desiredAlias, in: room)
-            return alias
-        } catch {
-            self.errorMessage = error.localizedDescription
-        }
-        
-        throw RoomRegistrationError.unknownError
+        let alias = try await self.bot.register(alias: desiredAlias, in: room)
+        return alias
     }
     
     func selectRoom(room: Room) {

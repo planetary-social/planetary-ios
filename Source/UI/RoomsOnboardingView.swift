@@ -100,12 +100,8 @@ struct RoomsOnboardingView: View {
                 if let room = viewModel.selectedRoom {
                     Button {
                         Task {
-                            do {
-                                let alias = try await viewModel.joinAndRegister(room: room, alias: viewModel.alias)
-                                self.step.next()
-                            } catch {
-                                viewModel.errorMessage = error.localizedDescription
-                            }
+                            _ = try await viewModel.joinAndRegister(room: room, alias: viewModel.alias)
+                            self.step.next()
                             if let identity = step.data.context?.identity {
                                 Onboarding.set(status: .completed, for: identity)
                             }
