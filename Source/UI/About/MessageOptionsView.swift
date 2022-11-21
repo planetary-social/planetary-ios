@@ -30,6 +30,8 @@ struct MessageOptionsView: View {
             showingOptions = true
         } label: {
             Image("icon-options-off")
+                // This hack fixes a weird issue where the confirmationDialog wouldn't be shown sometimes. ¯\_(ツ)_/¯
+                .background(showingOptions == true ? .clear : .clear)
         }
         .confirmationDialog(Localized.share.text, isPresented: $showingOptions) {
             Button(Localized.copyMessageIdentifier.text) {
