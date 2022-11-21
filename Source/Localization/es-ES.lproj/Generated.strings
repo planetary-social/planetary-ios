@@ -327,7 +327,7 @@
 "Error.invalidRoomURL" = "No se pudo analizar tu invitación.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";

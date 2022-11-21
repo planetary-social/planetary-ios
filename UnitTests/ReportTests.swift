@@ -14,9 +14,9 @@ class ReportTests: XCTestCase {
     var db = ViewDatabase()
     let testAuthor: Identity = DatabaseFixture.exampleFeed.identities[0]
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        db.close()
+    override func setUp() async throws {
+        try await super.setUp()
+        await db.close()
 
         // get random location for the new
         tmpURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/viewDBtest-feedFill2"))
@@ -34,9 +34,9 @@ class ReportTests: XCTestCase {
         try db.open(path: dbPath, user: testAuthor, maxAge: -60 * 60 * 24 * 30 * 48)
     }
 
-    override func tearDown() {
-        super.tearDown()
-        db.close()
+    override func tearDown() async throws {
+        try await super.tearDown()
+        await db.close()
     }
 
     func testRecentReports() throws {

@@ -32,6 +32,7 @@ enum Beta1MigrationError: Error {
 ///
 /// The go-ssb on-disk database format changed with no migration path circa 2022, so we wrote this custom flow in Swift
 /// to drop all data and resync from the network.
+@MainActor 
 class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
     
     // MARK: - Properties

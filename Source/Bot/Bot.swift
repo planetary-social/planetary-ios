@@ -44,7 +44,7 @@ enum RefreshLoad: Int32, CaseIterable {
 
 /// Abstract interface to any SSB bot implementation.
 /// - SeeAlso: `GoBot`
-protocol Bot: AnyObject {
+protocol Bot: AnyObject, Sendable {
 
     // MARK: Name
     var name: String { get }
@@ -121,8 +121,8 @@ protocol Bot: AnyObject {
     /// - Parameter queue: The queue that `completion` will be called on.
     /// - Parameter config: An object containing high-level parameters like the user's keys and the network key.
     /// - Parameter completion: A handler that will be called with the result of the operation.
-    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion)
-    func logout(completion: @escaping ErrorCompletion)
+    @MainActor func login(config: AppConfiguration) async throws
+    @MainActor func logout() async throws
 
     // MARK: Invites
 
@@ -314,32 +314,6 @@ extension Bot {
                     continuation.resume(throwing: BotError.internalError)
                 }
             }
-        }
-    }
-    
-    func login(config: AppConfiguration, completion: @escaping ErrorCompletion) {
-        self.login(queue: .main, config: config, completion: completion)
-    }
-    
-    func login(config: AppConfiguration) async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.login(config: config) { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
-        }
-    }
-    
-    @MainActor func logout() async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.logout { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
         }
     }
     
