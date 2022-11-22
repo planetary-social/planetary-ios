@@ -47,7 +47,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
             try viewDatabase.open(path: dbDirPath, user: user, maxAge: maxAge)
             setupExpectation.fulfill()
         }
-        wait(for: [setupExpectation], timeout: 5)
+        wait(for: [setupExpectation], timeout: 10)
     }
     
     func setUpSmallDB() throws {
@@ -73,7 +73,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
             try viewDatabase.open(path: dbDirPath, user: user, maxAge: maxAge)
             setupExpectation.fulfill()
         }
-        wait(for: [setupExpectation], timeout: 5)
+        wait(for: [setupExpectation], timeout: 10)
     }
     
     func resetSmallDB() throws {
