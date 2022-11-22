@@ -82,16 +82,6 @@ final class AnalyticsTests: XCTestCase {
 
     // MARK: Bot
 
-    func testTrackBotDidUpdateMessages() {
-        analytics.trackBotDidUpdateMessages(count: 2)
-        XCTAssertTrue(service.tracked)
-    }
-
-    func testTrackBotDidSync() {
-        analytics.trackBotDidSkipMessage(key: "noop", reason: "unknown")
-        XCTAssertTrue(service.tracked)
-    }
-
     func testTrackBodDidUpdateDatabase() {
         analytics.trackBotDidUpdateDatabase(count: 1,
                                             firstTimestamp: 2,
@@ -108,11 +98,6 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.tracked)
     }
 
-    func testTrackBotDidRefresh() {
-        analytics.trackBotDidRefresh(load: 1, duration: 2, error: nil)
-        XCTAssertTrue(service.tracked)
-    }
-    
     func testTrackDidStartBeta1Migration() {
         analytics.trackDidStartBeta1Migration()
         XCTAssertTrue(service.tracked)
