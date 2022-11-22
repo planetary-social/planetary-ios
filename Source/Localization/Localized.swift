@@ -379,6 +379,7 @@ extension Localized {
         case yourAlias = "youralias"
         case yourAliasPlanetary = "youralias.planetary.name"
         case aliasSkip = "Skip choosing an alias"
+        case aliasServerSkip = "Skip choosing a server"
         case aliasTaken = "This alias is taken already"
         case invalidAliasFormat = "Incorrect format for alias"
         case unknownAliasRegistrationError = "There was a problem registering this alias"

@@ -93,7 +93,8 @@ struct RoomsOnboardingView: View {
                 Button {
                     step.next()
                 } label: {
-                    Text(Localized.Onboarding.aliasSkip.text).underline()
+                    Text(viewModel.selectedRoom == nil ? Localized.Onboarding.aliasServerSkip.text :
+                            Localized.Onboarding.aliasSkip.text).underline()
                         .foregroundColor(.menuSelectedItemText)
                         .font(Font(UIFont.systemFont(ofSize: 15, weight: .medium)))
                 }

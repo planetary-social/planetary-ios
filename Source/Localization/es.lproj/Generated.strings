@@ -233,6 +233,7 @@
 "Onboarding.yourAlias" = "youralias";
 "Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
 "Onboarding.aliasSkip" = "Skip choosing an alias";
+"Onboarding.aliasServerSkip" = "Skip choosing a server";
 "Onboarding.aliasTaken" = "This alias is taken already";
 "Onboarding.invalidAliasFormat" = "Incorrect format for alias";
 "Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
