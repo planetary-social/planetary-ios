@@ -69,7 +69,7 @@ struct MessageView: View {
                         }
                     }
                 }
-                MessageOptionsView(message: message)
+                MessageOptionsButton(message: message)
             }
             .padding(10)
             Divider().background(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
@@ -117,25 +117,14 @@ struct MessageView: View {
 }
 
 struct MessageView_Previews: PreviewProvider {
-    static let message: Message = {
-        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
-        Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
-        Caches.blobs.update(UIImage(named: "avatar3") ?? .remove, for: "&avatar3")
-        Caches.blobs.update(UIImage(named: "avatar4") ?? .remove, for: "&avatar4")
-        Caches.blobs.update(UIImage(named: "avatar5") ?? .remove, for: "&avatar5")
+    static var message: Message {
         let post = Post(
-            blobs: [
-                Blob(identifier: "&avatar1"),
-                Blob(identifier: "&avatar2"),
-                Blob(identifier: "&avatar3"),
-                Blob(identifier: "&avatar4"),
-                Blob(identifier: "&avatar5")
-            ],
+            blobs: nil,
             branches: nil,
             hashtags: nil,
             mentions: nil,
             root: nil,
-            text: .loremIpsum(6)
+            text: .loremIpsum(1)
         )
         let content = Content(from: post)
         let value = MessageValue(
@@ -148,7 +137,7 @@ struct MessageView_Previews: PreviewProvider {
             claimedTimestamp: 0
         )
         var message = Message(
-            key: .null,
+            key: "@unset",
             value: value,
             timestamp: 0
         )
@@ -158,14 +147,20 @@ struct MessageView_Previews: PreviewProvider {
             isPrivate: false
         )
         return message
-    }()
+    }
 
     static var previews: some View {
-        MessageView(message: message)
-            .environmentObject(BotRepository.shared)
-            .preferredColorScheme(.light)
-        MessageView(message: message)
-            .environmentObject(BotRepository.shared)
+        Group {
+            VStack {
+                MessageView(message: message)
+            }
+            VStack {
+                MessageView(message: message)
+            }
             .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.appBg)
+        .environmentObject(BotRepository.fake)
     }
 }

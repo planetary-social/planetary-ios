@@ -6,6 +6,8 @@
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
+import CrashReporting
+import Logger
 import SwiftUI
 
 struct MessageListView: View {
@@ -98,6 +100,8 @@ struct MessageListView: View {
                     isLoading = false
                 }
             } catch {
+                CrashReporting.shared.reportIfNeeded(error: error)
+                Log.shared.optional(error)
                 await MainActor.run {
                     isLoading = false
                 }
@@ -166,11 +170,15 @@ struct MessageListView_Previews: PreviewProvider {
         Group {
             VStack {
                 MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
-                MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                ScrollView {
+                    MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                }
             }
             VStack {
                 MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
-                MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                ScrollView {
+                    MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                }
             }
             .preferredColorScheme(.dark)
         }

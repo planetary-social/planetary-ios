@@ -1,5 +1,5 @@
 //
-//  MessageOptionsView.swift
+//  MessageOptionsButton.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 4/11/22.
@@ -9,7 +9,7 @@
 import Analytics
 import SwiftUI
 
-struct MessageOptionsView: View {
+struct MessageOptionsButton: View {
 
     var message: Message
 
@@ -17,13 +17,13 @@ struct MessageOptionsView: View {
     private var botRepository: BotRepository
 
     @State
-    fileprivate var showingOptions = false
+    private var showingOptions = false
 
     @State
-    fileprivate var showingShare = false
+    private var showingShare = false
 
     @State
-    fileprivate var showingSource = false
+    private var showingSource = false
 
     var body: some View {
         Button {
@@ -78,49 +78,39 @@ struct MessageOptionsView: View {
 
 struct MessageOptionsView_Previews: PreviewProvider {
     static let message: Message = {
-        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
-        Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
-        Caches.blobs.update(UIImage(named: "avatar3") ?? .remove, for: "&avatar3")
-        Caches.blobs.update(UIImage(named: "avatar4") ?? .remove, for: "&avatar4")
-        Caches.blobs.update(UIImage(named: "avatar5") ?? .remove, for: "&avatar5")
-        let post = Post(
-            blobs: [
-                Blob(identifier: "&avatar1"),
-                Blob(identifier: "&avatar2"),
-                Blob(identifier: "&avatar3"),
-                Blob(identifier: "&avatar4"),
-                Blob(identifier: "&avatar5")
-            ],
-            branches: nil,
-            hashtags: nil,
-            mentions: nil,
-            root: nil,
-            text: .loremIpsum(6)
-        )
-        let content = Content(from: post)
-        let value = MessageValue(
-            author: .null,
-            content: content,
-            hash: "",
-            previous: nil,
-            sequence: 0,
-            signature: .null,
-            claimedTimestamp: 0
-        )
         var message = Message(
             key: .null,
-            value: value,
+            value: MessageValue(
+                author: .null,
+                content: Content(
+                    from: Post(
+                        blobs: nil,
+                        branches: nil,
+                        hashtags: nil,
+                        mentions: nil,
+                        root: nil,
+                        text: .loremIpsum(1)
+                    )
+                ),
+                hash: "",
+                previous: nil,
+                sequence: 0,
+                signature: .null,
+                claimedTimestamp: 0
+            ),
             timestamp: 0
-        )
-        message.metadata = Message.Metadata(
-            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
-            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
-            isPrivate: false
         )
         return message
     }()
 
     static var previews: some View {
-        MessageOptionsView(message: message).preferredColorScheme(.light)
+        Group {
+            MessageOptionsButton(message: message)
+            MessageOptionsButton(message: message)
+                .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .environmentObject(BotRepository.fake)
     }
 }

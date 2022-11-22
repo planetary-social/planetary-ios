@@ -1,5 +1,5 @@
 //
-//  ImagePicker.swift
+//  UIImagePicker.swift
 //  FBTT
 //
 //  Created by Christoph on 7/16/19.
@@ -12,7 +12,7 @@ import Photos
 import UIKit
 import Analytics
 
-class ImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class UIImagePicker: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     // presenting view controller has to be weak in case the
     // owner of this instance is also the view controller presenting

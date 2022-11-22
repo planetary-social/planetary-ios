@@ -106,7 +106,18 @@ fileprivate struct TruncatedSizePreferenceKey: PreferenceKey {
 }
 
 struct CompactPostView_Previews: PreviewProvider {
-    static let post: Post = {
+    static var shortPost: Post {
+        let post = Post(
+            blobs: nil,
+            branches: nil,
+            hashtags: nil,
+            mentions: nil,
+            root: nil,
+            text: .loremIpsum(1)
+        )
+        return post
+    }
+    static var longPostWithBlobs: Post {
         let post = Post(
             blobs: [
                 Blob(identifier: "&avatar1"),
@@ -122,12 +133,22 @@ struct CompactPostView_Previews: PreviewProvider {
             text: .loremIpsum(5)
         )
         return post
-    }()
+    }
 
     static var previews: some View {
-        CompactPostView(post: post)
-            .environmentObject(BotRepository.shared)
-            .previewLayout(.sizeThatFits)
-            .preferredColorScheme(.light)
+        Group {
+            VStack {
+                CompactPostView(post: shortPost)
+                CompactPostView(post: longPostWithBlobs)
+            }
+            VStack {
+                CompactPostView(post: shortPost)
+                CompactPostView(post: longPostWithBlobs)
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .environmentObject(BotRepository.fake)
     }
 }

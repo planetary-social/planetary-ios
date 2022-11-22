@@ -1,5 +1,5 @@
 //
-//  IdentityShareView.swift
+//  IdentityShareButton.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 8/11/22.
@@ -9,18 +9,15 @@
 import Analytics
 import SwiftUI
 
-struct IdentityShareView: View {
+struct IdentityShareButton: View {
 
     var identity: Identity
 
-    @EnvironmentObject
-    private var botRepository: BotRepository
+    @State
+    private var showingOptions = false
 
     @State
-    fileprivate var showingOptions = false
-
-    @State
-    fileprivate var showingShare = false
+    private var showingShare = false
 
     var body: some View {
         Button {
@@ -53,8 +50,14 @@ struct IdentityShareView: View {
     }
 }
 
-struct IdentityShareView_Previews: PreviewProvider {
+struct IdentityShareButton_Previews: PreviewProvider {
     static var previews: some View {
-        IdentityShareView(identity: .null).preferredColorScheme(.light)
+        Group {
+            IdentityShareButton(identity: .null)
+            IdentityShareButton(identity: .null)
+                .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
     }
 }

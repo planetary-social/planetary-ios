@@ -14,6 +14,7 @@ import SwiftUI
 struct EditIdentityButton: View {
 
     var about: About?
+    var compact = false
     
     var body: some View {
         Button {
@@ -47,11 +48,13 @@ struct EditIdentityButton: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 18, height: 18)
-                Text(Localized.editProfile.text)
-                    .font(.footnote)
-                    .foregroundLinearGradient(
-                        LinearGradient.horizontalAccent
-                    )
+                if !compact {
+                    Text(Localized.editProfile.text)
+                        .font(.footnote)
+                        .foregroundLinearGradient(
+                            LinearGradient.horizontalAccent
+                        )
+                }
             }
             .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             .background(
@@ -69,5 +72,23 @@ struct EditIdentityButton: View {
         }
         .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+    }
+}
+
+struct EditIdentityButton_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VStack {
+                EditIdentityButton(compact: true)
+                EditIdentityButton()
+            }
+            VStack {
+                EditIdentityButton()
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .environmentObject(BotRepository.fake)
     }
 }

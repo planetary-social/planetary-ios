@@ -11,7 +11,6 @@ import CrashReporting
 import Logger
 import SwiftUI
 
-@MainActor
 struct CompactIdentityView: View {
 
     var identity: Identity
@@ -87,7 +86,7 @@ struct CompactIdentityView: View {
                     .foregroundColor(Color.secondaryTxt)
                     .redacted(reason: socialStats == nil ? .placeholder : [])
                 if let hashtags = hashtags, !hashtags.isEmpty {
-                    Text(hashtags.map{$0.string}.joined(separator: " ").parseMarkdown())
+                    Text(hashtags.map { $0.string }.joined(separator: " ").parseMarkdown())
                         .font(.subheadline)
                         .foregroundLinearGradient(.horizontalAccent)
                         .lineLimit(1)
@@ -104,40 +103,29 @@ struct CompactIdentityView: View {
             relationship = notifiedRelationship
         }
         .task {
-            Task.detached {
-                let bot = await botRepository.current
-                do {
-                    let result = try await bot.about(identity: identity)
-                    await MainActor.run {
-                        about = result
-                    }
-                } catch {
-                    await MainActor.run {
-                        about = About(about: identity)
-                    }
+            loadAbout()
+            loadRelationship()
+            loadHashtags()
+            loadSocialStats()
+        }
+    }
+
+    private func loadAbout() {
+        Task.detached {
+            let identityToLoad = await identity
+            let bot = await botRepository.current
+            do {
+                let result = try await bot.about(identity: identityToLoad)
+                await MainActor.run {
+                    about = result
                 }
-                do {
-                    let result = try await bot.socialStats(for: identity)
-                    await MainActor.run {
-                        socialStats = result
-                    }
-                } catch {
-                    await MainActor.run {
-                        socialStats = .zero
-                    }
-                }
-                do {
-                    let result = try await bot.hashtags(usedBy: identity, limit: 3)
-                    await MainActor.run {
-                        hashtags = result
-                    }
-                } catch {
-                    await MainActor.run {
-                        hashtags = []
-                    }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    about = About(about: identity)
                 }
             }
-            loadRelationship()
         }
     }
 
@@ -147,7 +135,7 @@ struct CompactIdentityView: View {
             let bot = await botRepository.current
             if let currentIdentity = bot.identity {
                 do {
-                    let result = try await bot.relationship(from: currentIdentity, to: identity)
+                    let result = try await bot.relationship(from: currentIdentity, to: identityToLoad)
                     await MainActor.run {
                         relationship = result
                     }
@@ -158,32 +146,47 @@ struct CompactIdentityView: View {
             }
         }
     }
+
+    private func loadHashtags() {
+        Task.detached {
+            let identityToLoad = await identity
+            let bot = await botRepository.current
+            do {
+                let result = try await bot.hashtags(usedBy: identityToLoad, limit: 3)
+                await MainActor.run {
+                    hashtags = result
+                }
+            } catch {
+                CrashReporting.shared.reportIfNeeded(error: error)
+                Log.shared.optional(error)
+                await MainActor.run {
+                    hashtags = []
+                }
+            }
+        }
+    }
+
+    private func loadSocialStats() {
+        Task.detached {
+            let identityToLoad = await identity
+            let bot = await botRepository.current
+            do {
+                let result = try await bot.socialStats(for: identityToLoad)
+                await MainActor.run {
+                    socialStats = result
+                }
+            } catch {
+                CrashReporting.shared.reportIfNeeded(error: error)
+                Log.shared.optional(error)
+                await MainActor.run {
+                    socialStats = .zero
+                }
+            }
+        }
+    }
 }
 
 struct CompactIdentityView_Previews: PreviewProvider {
-    static let post: Post = {
-        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
-        Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
-        Caches.blobs.update(UIImage(named: "avatar3") ?? .remove, for: "&avatar3")
-        Caches.blobs.update(UIImage(named: "avatar4") ?? .remove, for: "&avatar4")
-        Caches.blobs.update(UIImage(named: "avatar5") ?? .remove, for: "&avatar5")
-        let post = Post(
-            blobs: [
-                Blob(identifier: "&avatar1"),
-                Blob(identifier: "&avatar2"),
-                Blob(identifier: "&avatar3"),
-                Blob(identifier: "&avatar4"),
-                Blob(identifier: "&avatar5")
-            ],
-            branches: nil,
-            hashtags: nil,
-            mentions: nil,
-            root: nil,
-            text: "Hello"
-        )
-        return post
-    }()
-
     static var previews: some View {
         Group {
             VStack {

@@ -1,5 +1,5 @@
 //
-//  IdentityOptionsView.swift
+//  IdentityOptionsButton.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 8/11/22.
@@ -10,7 +10,7 @@ import Analytics
 import Support
 import SwiftUI
 
-struct IdentityOptionsView: View {
+struct IdentityOptionsButton: View {
 
     var identity: Identity
 
@@ -25,6 +25,10 @@ struct IdentityOptionsView: View {
     @State
     private var showingManageAlias = false
 
+    private var isSelf: Bool {
+        botRepository.current.identity == identity
+    }
+
     var body: some View {
         Button {
             showingOptions = true
@@ -32,7 +36,7 @@ struct IdentityOptionsView: View {
             Image("icon-options-off")
         }
         .confirmationDialog(Localized.share.text, isPresented: $showingOptions) {
-            if botRepository.current.identity == identity {
+            if isSelf {
                 Button(Localized.Alias.manageAliases.text) {
                     showingManageAlias = true
                 }
@@ -73,51 +77,21 @@ struct IdentityOptionsView: View {
     }
 }
 
-struct IdentityOptionsView_Previews: PreviewProvider {
-    static let message: Message = {
-        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
-        Caches.blobs.update(UIImage(named: "avatar2") ?? .remove, for: "&avatar2")
-        Caches.blobs.update(UIImage(named: "avatar3") ?? .remove, for: "&avatar3")
-        Caches.blobs.update(UIImage(named: "avatar4") ?? .remove, for: "&avatar4")
-        Caches.blobs.update(UIImage(named: "avatar5") ?? .remove, for: "&avatar5")
-        let post = Post(
-            blobs: [
-                Blob(identifier: "&avatar1"),
-                Blob(identifier: "&avatar2"),
-                Blob(identifier: "&avatar3"),
-                Blob(identifier: "&avatar4"),
-                Blob(identifier: "&avatar5")
-            ],
-            branches: nil,
-            hashtags: nil,
-            mentions: nil,
-            root: nil,
-            text: .loremIpsum(6)
-        )
-        let content = Content(from: post)
-        let value = MessageValue(
-            author: .null,
-            content: content,
-            hash: "",
-            previous: nil,
-            sequence: 0,
-            signature: .null,
-            claimedTimestamp: 0
-        )
-        var message = Message(
-            key: .null,
-            value: value,
-            timestamp: 0
-        )
-        message.metadata = Message.Metadata(
-            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
-            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
-            isPrivate: false
-        )
-        return message
-    }()
-
+struct IdentityOptionsButton_Previews: PreviewProvider {
     static var previews: some View {
-        MessageOptionsView(message: message).preferredColorScheme(.light)
+        Group {
+            VStack {
+                IdentityOptionsButton(identity: .null)
+                IdentityOptionsButton(identity: "@unset")
+            }
+            VStack {
+                IdentityOptionsButton(identity: .null)
+                IdentityOptionsButton(identity: "@unset")
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .environmentObject(BotRepository.fake)
     }
 }

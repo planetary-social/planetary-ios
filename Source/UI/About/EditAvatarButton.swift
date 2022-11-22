@@ -106,7 +106,7 @@ struct EditAvatarButton: View {
             }
         )
         .sheet(isPresented: showImagePicker) {
-            AvatarPicker(sourceType: imagePickerSourceType ?? .camera) { image in
+            ImagePicker(sourceType: imagePickerSourceType ?? .camera) { image in
                 guard let image = image else {
                     imagePickerSourceType = nil
                     isEditingAvatar = false

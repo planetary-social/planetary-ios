@@ -38,22 +38,6 @@ struct ImageMetadataView: View {
     }
 }
 
-struct ImageMetadataView_Previews: PreviewProvider {
-    static var sample: ImageMetadata {
-        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
-        return ImageMetadata(link: "&avatar1")
-    }
-    static var loadingSample: ImageMetadata {
-        return ImageMetadata(link: "&unknown")
-    }
-    static var previews: some View {
-        ImageMetadataView(metadata: sample)
-            .previewLayout(.sizeThatFits)
-        ImageMetadataView(metadata: loadingSample)
-            .previewLayout(.sizeThatFits)
-    }
-}
-
 fileprivate class ImageLoader: ObservableObject {
 
     @Published var image: UIImage?
@@ -98,5 +82,30 @@ fileprivate class ImageLoader: ObservableObject {
             self?.metadata = metadata
             self?.completion = uuid
         }
+    }
+}
+
+struct ImageMetadataView_Previews: PreviewProvider {
+    static var sample: ImageMetadata {
+        Caches.blobs.update(UIImage(named: "test") ?? .remove, for: "&test")
+        return ImageMetadata(link: "&test")
+    }
+    static var loadingSample: ImageMetadata {
+        return ImageMetadata(link: "&unknown")
+    }
+    static var previews: some View {
+        Group {
+            VStack {
+                ImageMetadataView(metadata: loadingSample)
+                ImageMetadataView(metadata: sample)
+            }
+            VStack {
+                ImageMetadataView(metadata: loadingSample)
+                ImageMetadataView(metadata: sample)
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
     }
 }

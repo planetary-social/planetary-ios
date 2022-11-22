@@ -45,8 +45,23 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
         Caches.blobs.update(UIImage(named: "test") ?? .remove, for: "&test")
         return Blob(identifier: "&test")
     }
+    static var anotherSample: Blob {
+        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
+        return Blob(identifier: "&avatar1")
+    }
     static var previews: some View {
-        BlobGalleryView(blobs: [sample])
-            .previewLayout(.sizeThatFits)
+        Group {
+            VStack {
+                BlobGalleryView(blobs: [sample])
+                BlobGalleryView(blobs: [sample, anotherSample])
+            }
+            VStack {
+                BlobGalleryView(blobs: [sample])
+                BlobGalleryView(blobs: [sample, anotherSample])
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
     }
 }

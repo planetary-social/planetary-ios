@@ -137,7 +137,7 @@ class ThreadViewController: ContentViewController {
         return view
     }()
     
-    private let imagePicker = ImagePicker()
+    private let imagePicker = UIImagePicker()
 
     private var onNextUpdateScrollToPostWithMessageKey: Identifier?
     private var indexPathToScrollToOnKeyboardDidShow: IndexPath?

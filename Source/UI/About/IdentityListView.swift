@@ -10,9 +10,6 @@ import SwiftUI
 
 struct IdentityListView: View {
 
-    @EnvironmentObject
-    var bot: BotRepository
-
     var identities: [Identity]
 
     var body: some View {
@@ -40,14 +37,17 @@ struct IdentityListView_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        NavigationView {
-            IdentityListView(identities: [sample, sample])
-                .environmentObject(BotRepository.shared)
+        Group {
+            VStack {
+                IdentityListView(identities: [sample, "@unset"])
+            }
+            VStack {
+                IdentityListView(identities: [sample, "@unset"])
+            }
+            .preferredColorScheme(.dark)
         }
-        NavigationView {
-            IdentityListView(identities: [sample, sample])
-                .environmentObject(BotRepository.shared)
-        }
-        .preferredColorScheme(.dark)
+        .padding()
+        .background(Color.appBg)
+        .environmentObject(BotRepository.fake)
     }
 }

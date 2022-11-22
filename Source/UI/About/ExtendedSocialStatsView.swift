@@ -1,5 +1,5 @@
 //
-//  SocialStatsView.swift
+//  ExtendedSocialStatsView.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 10/10/22.
@@ -10,7 +10,7 @@ import CrashReporting
 import Logger
 import SwiftUI
 
-struct SocialStatsView: View {
+struct ExtendedSocialStatsView: View {
 
     var socialStats: ExtendedSocialStats?
 
@@ -174,7 +174,7 @@ struct SocialStatsView: View {
     }
 }
 
-struct SocialStatsView_Previews: PreviewProvider {
+struct ExtendedSocialStatsView_Previews: PreviewProvider {
     static var sample: ExtendedSocialStats {
         ExtendedSocialStats(
             followers: [.null, .null],
@@ -190,12 +190,12 @@ struct SocialStatsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             VStack {
-                SocialStatsView(socialStats: nil)
-                SocialStatsView(socialStats: sample)
+                ExtendedSocialStatsView(socialStats: nil)
+                ExtendedSocialStatsView(socialStats: sample)
             }
             VStack {
-                SocialStatsView(socialStats: nil)
-                SocialStatsView(socialStats: sample)
+                ExtendedSocialStatsView(socialStats: nil)
+                ExtendedSocialStatsView(socialStats: sample)
             }
             .preferredColorScheme(.dark)
         }

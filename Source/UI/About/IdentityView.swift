@@ -141,8 +141,8 @@ struct IdentityView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                IdentityShareView(identity: identity)
-                IdentityOptionsView(identity: identity, name: about?.name)
+                IdentityShareButton(identity: identity)
+                IdentityOptionsButton(identity: identity, name: about?.name)
             }
         }
         .alert(isPresented: showAlert) {
@@ -243,7 +243,7 @@ struct IdentityView: View {
             let identityToLoad = await identity
             let bot = await botRepository.current
             do {
-                let result = try await Bots.current.hashtags(usedBy: identityToLoad, limit: 3)
+                let result = try await bot.hashtags(usedBy: identityToLoad, limit: 3)
                 await MainActor.run {
                     hashtags = result
                 }
@@ -263,7 +263,7 @@ struct IdentityView: View {
             let bot = await botRepository.current
             if let currentIdentity = bot.identity {
                 do {
-                    let result = try await bot.relationship(from: currentIdentity, to: identity)
+                    let result = try await bot.relationship(from: currentIdentity, to: identityToLoad)
                     await MainActor.run {
                         relationship = result
                     }
@@ -298,16 +298,17 @@ fileprivate struct ScrollViewOffsetPreferenceKey: PreferenceKey {
 
 struct IdentityView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            IdentityView(identity: .null)
-                .environmentObject(BotRepository.shared)
-        }
-        .preferredColorScheme(.light)
+        Group {
+            NavigationView {
+                IdentityView(identity: .null)
+            }
+            .preferredColorScheme(.light)
 
-        NavigationView {
-            IdentityView(identity: .null)
-                .environmentObject(BotRepository.shared)
+            NavigationView {
+                IdentityView(identity: .null)
+            }
+            .preferredColorScheme(.dark)
         }
-        .preferredColorScheme(.dark)
+        .environmentObject(BotRepository.fake)
     }
 }

@@ -44,7 +44,7 @@ struct IdentityHeaderView: View {
     private var followButton: some View {
         Group {
             if isSelf {
-                EditIdentityButton(about: about)
+                EditIdentityButton(about: about, compact: !extendedHeader)
             } else {
                 RelationshipButton(relationship: relationship, compact: !extendedHeader)
             }
@@ -111,7 +111,7 @@ struct IdentityHeaderView: View {
                     HashtagSliderView(hashtags: hashtags)
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
                 }
-                SocialStatsView(socialStats: socialStats)
+                ExtendedSocialStatsView(socialStats: socialStats)
                     .frame(maxWidth: .infinity)
             }
         }
