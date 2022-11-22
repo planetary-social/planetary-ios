@@ -1557,13 +1557,16 @@ class GoBot: Bot {
     private var _statistics = BotStatistics()
 
     func statistics(queue: DispatchQueue, completion: @escaping StatisticsCompletion) {
+        let repoIdentity = identity
         serialQueue.async {
             let counts: ScuttlegobotRepoCounts? = try? self.bot.repoStats()
             let sequence = try? self.database.stats(table: .messagekeys)
 
             var ownMessages = -1
             self.numberOfPublishedMessagesLock.lock()
-            if let identity = self._identity, let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
+            if let identity = self._identity,
+                identity == repoIdentity,
+                let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
                 ownMessages = ownMessageCount
                 self.saveNumberOfPublishedMessages(from: self._statistics.repo)
             }
@@ -1579,6 +1582,7 @@ class GoBot: Bot {
             }
             self._statistics.repo = RepoStatistics(
                 path: self.bot.currentRepoPath,
+                identity: self.identity,
                 feedCount: feedCount,
                 messageCount: messageCount,
                 numberOfPublishedMessages: ownMessages,
