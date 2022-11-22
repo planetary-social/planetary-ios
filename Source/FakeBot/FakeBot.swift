@@ -169,7 +169,7 @@ class FakeBot: Bot {
     
     // MARK: Login
     private var _network: String?
-    private var _identity: Identity?
+    private var _identity: Identity? = .null
     var identity: Identity? { self._identity }
 
     func createSecret(completion: SecretCompletion) {

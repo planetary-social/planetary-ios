@@ -128,15 +128,20 @@ struct BioView: View {
 
 struct BioView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            BioView(bio: nil)
-            BioView(bio: .loremIpsum(1))
-            BioView(bio: .loremIpsum(3))
-        }.padding().background(Color.cardBackground)
-        VStack {
-            BioView(bio: nil)
-            BioView(bio: .loremIpsum(1))
-            BioView(bio: .loremIpsum(3))
-        }.padding().background(Color.cardBackground).preferredColorScheme(.dark)
+        Group {
+            VStack {
+                BioView(bio: nil)
+                BioView(bio: .loremIpsum(1))
+                BioView(bio: .loremIpsum(3))
+            }
+            VStack {
+                BioView(bio: nil)
+                BioView(bio: .loremIpsum(1))
+                BioView(bio: .loremIpsum(3))
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
     }
 }

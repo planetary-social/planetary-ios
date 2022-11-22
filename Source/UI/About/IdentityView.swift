@@ -57,7 +57,7 @@ struct IdentityView: View {
     }
 
     private func header(extendedHeader: Bool) -> some View {
-        IdentityViewHeader(
+        IdentityHeaderView(
             identity: identity,
             about: about,
             relationship: relationship,

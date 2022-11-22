@@ -16,7 +16,7 @@ struct MessageListView: View {
     var strategy: FeedStrategy
 
     @EnvironmentObject
-    private var bot: BotRepository
+    private var botRepository: BotRepository
 
     @State
     private var isLoading = false
@@ -87,9 +87,10 @@ struct MessageListView: View {
         }
         isLoading = true
         Task.detached {
+            let bot = await botRepository.current
             let pageSize = 50
             do {
-                let newMessages = try await bot.current.feed(strategy: strategy, limit: pageSize, offset: offset)
+                let newMessages = try await bot.feed(strategy: strategy, limit: pageSize, offset: offset)
                 await MainActor.run {
                     messages.append(contentsOf: newMessages)
                     offset += newMessages.count
@@ -105,56 +106,76 @@ struct MessageListView: View {
     }
 }
 
-let sampleMessage = Message(
-    key: "%12345",
-    value: MessageValue(
-        author: "@4Wxraodifldsjf=.ed25519",
-        content: Content(
-            from: Post(text: "Hello, world")
-        ),
-        hash: "akldsjfa",
-        previous: nil,
-        sequence: 0,
-        signature: "%alksdjfadsfi",
-        claimedTimestamp: 345
-    ),
-    timestamp: 356,
-    receivedSeq: 0,
-    hashedKey: nil,
-    offChain: false
-)
-
-let anotherSampleMessage = Message(
-    key: "%12346",
-    value: MessageValue(
-        author: "@4Wxraodifldsjf=.ed25519",
-        content: Content(
-            from: Post(text: "Hello, world")
-        ),
-        hash: "akldsjfa",
-        previous: nil,
-        sequence: 0,
-        signature: "%alksdjfadsfi",
-        claimedTimestamp: 345
-    ),
-    timestamp: 356,
-    receivedSeq: 0,
-    hashedKey: nil,
-    offChain: false
-)
-
 struct MessageListView_Previews: PreviewProvider {
 
+    static var sample: Message {
+        var message = Message(
+            key: "%12345",
+            value: MessageValue(
+                author: "@4Wxraodifldsjf=.ed25519",
+                content: Content(
+                    from: Post(text: .loremIpsum(1))
+                ),
+                hash: "akldsjfa",
+                previous: nil,
+                sequence: 0,
+                signature: "%alksdjfadsfi",
+                claimedTimestamp: 345
+            ),
+            timestamp: 356,
+            receivedSeq: 0,
+            hashedKey: nil,
+            offChain: false
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
+            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
+            isPrivate: false
+        )
+        return message
+    }
+
+    static var another: Message {
+        var message = Message(
+            key: "%32346",
+            value: MessageValue(
+                author: "@4Wxraodifldsjf=.ed25519",
+                content: Content(
+                    from: Post(text: .loremIpsum(1))
+                ),
+                hash: "vkldsjfa",
+                previous: nil,
+                sequence: 0,
+                signature: "%blksdjfadsfi",
+                claimedTimestamp: 345
+            ),
+            timestamp: 356,
+            receivedSeq: 1,
+            hashedKey: nil,
+            offChain: false
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
+            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
+            isPrivate: false
+        )
+        return message
+    }
+
     static var previews: some View {
-        MessageListView(messages: [sampleMessage, anotherSampleMessage], strategy: NoHopFeedAlgorithm(identity: .null))
-            .background(Color(hex: "eae1e0"))
-            .environmentObject(BotRepository.fake)
-            .previewLayout(.sizeThatFits)
-        
-        MessageListView(messages: [sampleMessage], strategy: NoHopFeedAlgorithm(identity: .null))
-            .background(Color(hex: "221736"))
-            .environmentObject(BotRepository.fake)
+        Group {
+            VStack {
+                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
+                MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+            }
+            VStack {
+                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
+                MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+            }
             .preferredColorScheme(.dark)
-            .previewLayout(.sizeThatFits)
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .environmentObject(BotRepository.fake)
     }
 }

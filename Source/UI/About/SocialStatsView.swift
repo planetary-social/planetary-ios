@@ -184,19 +184,22 @@ struct SocialStatsView_Previews: PreviewProvider {
             blocks: [],
             someBlocksAvatars: [],
             pubServers: [.null],
-            somePubServersAvatars: []
+            somePubServersAvatars: [nil]
         )
     }
     static var previews: some View {
-        SocialStatsView(socialStats: sample)
-            .padding()
-            .background(Color.cardBackground)
-            .previewLayout(.sizeThatFits)
-
-        SocialStatsView(socialStats: sample)
-            .padding()
-            .background(Color.cardBackground)
+        Group {
+            VStack {
+                SocialStatsView(socialStats: nil)
+                SocialStatsView(socialStats: sample)
+            }
+            VStack {
+                SocialStatsView(socialStats: nil)
+                SocialStatsView(socialStats: sample)
+            }
             .preferredColorScheme(.dark)
-            .previewLayout(.sizeThatFits)
+        }
+        .padding()
+        .background(Color.cardBackground)
     }
 }

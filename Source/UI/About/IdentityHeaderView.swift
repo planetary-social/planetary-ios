@@ -11,7 +11,7 @@ import CrashReporting
 import Logger
 import SwiftUI
 
-struct IdentityViewHeader: View {
+struct IdentityHeaderView: View {
 
     var identity: Identity
     var about: About?
@@ -22,9 +22,6 @@ struct IdentityViewHeader: View {
 
     @EnvironmentObject
     private var botRepository: BotRepository
-
-    @State
-    var isToggling = false
 
     private var shouldShowBio: Bool {
         if let about = about {
@@ -49,16 +46,9 @@ struct IdentityViewHeader: View {
             if isSelf {
                 EditIdentityButton(about: about)
             } else {
-                Button {
-                    Analytics.shared.trackDidTapButton(buttonName: "follow")
-                    toggleRelationship()
-                } label: {
-                    RelationshipLabel(relationship: isToggling ? nil : relationship, compact: !extendedHeader)
-                }
+                RelationshipButton(relationship: relationship, compact: !extendedHeader)
             }
         }
-        .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
     }
 
     var body: some View {
@@ -135,73 +125,133 @@ struct IdentityViewHeader: View {
         .compositingGroup()
         .shadow(color: .profileShadow, radius: 10, x: 0, y: 4)
     }
-
-    private func toggleRelationship() {
-        guard let relationshipToUpdate = relationship else {
-            return
-        }
-        isToggling = true
-        Task.detached {
-            let bot = await botRepository.current
-            let pubs = (AppConfiguration.current?.communityPubs ?? []) + (AppConfiguration.current?.systemPubs ?? [])
-            let star = pubs.first { $0.feed == relationshipToUpdate.other }
-            do {
-                if let star = star {
-                    try await bot.join(star: star)
-                    Analytics.shared.trackDidFollowPub()
-                    relationshipToUpdate.isFollowing = true
-                } else if relationshipToUpdate.isBlocking {
-                    try await bot.unblock(identity: relationshipToUpdate.other)
-                    Analytics.shared.trackDidUnblockIdentity()
-                    relationshipToUpdate.isBlocking = false
-                } else {
-                    if relationshipToUpdate.isFollowing {
-                        try await bot.unfollow(identity: relationshipToUpdate.other)
-                        Analytics.shared.trackDidUnfollowIdentity()
-                        relationshipToUpdate.isFollowing = false
-                    } else {
-                        try await bot.follow(identity: relationshipToUpdate.other)
-                        Analytics.shared.trackDidFollowIdentity()
-                        relationshipToUpdate.isFollowing = true
-                    }
-                }
-                await MainActor.run {
-                    isToggling = false
-                    NotificationCenter.default.post(
-                        name: .didUpdateRelationship,
-                        object: nil,
-                        userInfo: [Relationship.infoKey: relationshipToUpdate]
-                    )
-                }
-            } catch {
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                await MainActor.run {
-                    isToggling = true
-                    AppController.shared.alert(error: error)
-                }
-            }
-        }
-    }
 }
 
-struct IdentityViewHeader_Previews: PreviewProvider {
-    static var sample: About {
-        return About(
+struct IdentityHeaderView_Previews: PreviewProvider {
+    static var identity = Identity("@unset")
+    static var about: About {
+        About(
             about: .null,
             name: "Rossina Simonelli",
             description: "This is a bio",
             imageLink: nil
         )
     }
+    static var relationship: Relationship {
+        Relationship(from: .null, to: .null)
+    }
+    static var socialStats: ExtendedSocialStats {
+        ExtendedSocialStats(
+            followers: [.null, .null],
+            someFollowersAvatars: [nil, nil],
+            follows: [.null, .null],
+            someFollowsAvatars: [nil, nil],
+            blocks: [],
+            someBlocksAvatars: [],
+            pubServers: [.null],
+            somePubServersAvatars: [nil]
+        )
+    }
+    static var hashtags: [Hashtag] {
+        [Hashtag(name: "Design"), Hashtag(name: "Architecture"), Hashtag(name: "Chess")]
+    }
+
     static var errorMessage: String?
     static var previews: some View {
-        VStack {
-            IdentityViewHeader(identity: .null, about: sample, extendedHeader: false)
-            IdentityViewHeader(identity: .null, about: sample, extendedHeader: true)
+        Group {
+            VStack {
+                IdentityHeaderView(
+                    identity: identity,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: false
+                )
+                IdentityHeaderView(
+                    identity: identity,
+                    about: nil,
+                    relationship: nil,
+                    hashtags: nil,
+                    socialStats: nil,
+                    extendedHeader: true
+                )
+                IdentityHeaderView(
+                    identity: identity,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: true
+                )
+            }
+            VStack {
+                IdentityHeaderView(
+                    identity: .null,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: false
+                )
+                IdentityHeaderView(
+                    identity: .null,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: true
+                )
+            }
+            VStack {
+                IdentityHeaderView(
+                    identity: identity,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: false
+                )
+                IdentityHeaderView(
+                    identity: identity,
+                    about: nil,
+                    relationship: nil,
+                    hashtags: nil,
+                    socialStats: nil,
+                    extendedHeader: true
+                )
+                IdentityHeaderView(
+                    identity: identity,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: true
+                )
+            }
+            .preferredColorScheme(.dark)
+            VStack {
+                IdentityHeaderView(
+                    identity: .null,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: false
+                )
+                IdentityHeaderView(
+                    identity: .null,
+                    about: about,
+                    relationship: relationship,
+                    hashtags: hashtags,
+                    socialStats: socialStats,
+                    extendedHeader: true
+                )
+            }
+            .preferredColorScheme(.dark)
         }
-        .environmentObject(BotRepository.shared)
-        .previewLayout(.sizeThatFits)
+        .padding()
+        .background(Color.cardBackground)
+        .environmentObject(BotRepository.fake)
     }
 }
-

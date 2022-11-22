@@ -1,5 +1,5 @@
 //
-//  RelationshipButton.swift
+//  RelationshipUIButton.swift
 //  Planetary
 //
 //  Created by Zef Houssney on 9/30/19.
@@ -13,7 +13,7 @@ import CrashReporting
 import Support
 import SwiftUI
 
-class RelationshipButton: IconButton {
+class RelationshipUIButton: IconButton {
 
     private var relationship: Relationship
     private var otherUserName: String

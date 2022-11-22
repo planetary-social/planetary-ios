@@ -38,22 +38,15 @@ struct HashtagSliderView: View {
             .padding(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
             .placeholder(when: isLoading) {
                 HStack {
-                    Rectangle().fill(
-                        Color.hashtagBg
-                    )
-                    .frame(width: 96, height: 33)
-                    .cornerRadius(99)
-
-                    Rectangle().fill(
-                        Color.hashtagBg
-                    )
-                    .frame(width: 96, height: 33)
-                    .cornerRadius(99)
-                    Rectangle().fill(
-                        Color.hashtagBg
-                    )
-                    .frame(width: 96, height: 33)
-                    .cornerRadius(99)
+                    ForEach((1...3).reversed(), id: \.self) { _ in
+                        ZStack {
+                            Text(verbatim: "#\(String.loremIpsum(words: 1))")
+                                .font(.footnote)
+                                .hidden()
+                        }
+                        .padding(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
+                        .background(Color.hashtagBg.cornerRadius(99))
+                    }
                 }
                 .padding(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
             }
@@ -62,11 +55,22 @@ struct HashtagSliderView: View {
 }
 
 struct HashtagSliderView_Previews: PreviewProvider {
+    static var hashtags: [Hashtag] {
+        [Hashtag(name: "Design"), Hashtag(name: "Architecture"), Hashtag(name: "Chess")]
+    }
     static var previews: some View {
-        HashtagSliderView(hashtags: nil)
-            .previewLayout(.sizeThatFits)
-
-        HashtagSliderView(hashtags: [Hashtag(name: "Design")])
-            .previewLayout(.sizeThatFits)
+        Group {
+            VStack {
+                HashtagSliderView(hashtags: nil)
+                HashtagSliderView(hashtags: hashtags)
+            }
+            VStack {
+                HashtagSliderView(hashtags: nil)
+                HashtagSliderView(hashtags: hashtags)
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
     }
 }

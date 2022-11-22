@@ -31,10 +31,11 @@ struct CompactIdentityView: View {
     @State
     private var relationship: Relationship?
 
-    @State
-    var isToggling = false
+    private var isSelf: Bool {
+        botRepository.current.identity == identity
+    }
 
-    func attributedSocialStats(from socialStats: SocialStats) -> AttributedString {
+    private func attributedSocialStats(from socialStats: SocialStats) -> AttributedString {
         let numberOfFollowers = socialStats.numberOfFollowers
         let numberOfFollows = socialStats.numberOfFollows
         let string = Localized.followStats.text
@@ -77,14 +78,9 @@ struct CompactIdentityView: View {
                             .foregroundColor(.secondaryTxt)
                     }
                     Spacer()
-                    Button {
-                        Analytics.shared.trackDidTapButton(buttonName: "follow")
-                        toggleRelationship()
-                    } label: {
-                        RelationshipLabel(relationship: isToggling ? nil : relationship, compact: true)
+                    if !isSelf {
+                        RelationshipButton(relationship: relationship, compact: true)
                     }
-                    .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
                 }
                 Text(attributedSocialStats(from: socialStats ?? .zero))
                     .font(.footnote)
@@ -162,54 +158,6 @@ struct CompactIdentityView: View {
             }
         }
     }
-
-    private func toggleRelationship() {
-        guard let relationshipToUpdate = relationship else {
-            return
-        }
-        isToggling = true
-        Task.detached {
-            let bot = await botRepository.current
-            let pubs = (AppConfiguration.current?.communityPubs ?? []) + (AppConfiguration.current?.systemPubs ?? [])
-            let star = pubs.first { $0.feed == relationshipToUpdate.other }
-            do {
-                if let star = star {
-                    try await bot.join(star: star)
-                    Analytics.shared.trackDidFollowPub()
-                    relationshipToUpdate.isFollowing = true
-                } else if relationshipToUpdate.isBlocking {
-                    try await bot.unblock(identity: relationshipToUpdate.other)
-                    Analytics.shared.trackDidUnblockIdentity()
-                    relationshipToUpdate.isBlocking = false
-                } else {
-                    if relationshipToUpdate.isFollowing {
-                        try await bot.unfollow(identity: relationshipToUpdate.other)
-                        Analytics.shared.trackDidUnfollowIdentity()
-                        relationshipToUpdate.isFollowing = false
-                    } else {
-                        try await bot.follow(identity: relationshipToUpdate.other)
-                        Analytics.shared.trackDidFollowIdentity()
-                        relationshipToUpdate.isFollowing = true
-                    }
-                }
-                await MainActor.run {
-                    isToggling = false
-                    NotificationCenter.default.post(
-                        name: .didUpdateRelationship,
-                        object: nil,
-                        userInfo: [Relationship.infoKey: relationshipToUpdate]
-                    )
-                }
-            } catch {
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                await MainActor.run {
-                    isToggling = true
-                    AppController.shared.alert(error: error)
-                }
-            }
-        }
-    }
 }
 
 struct CompactIdentityView_Previews: PreviewProvider {
@@ -237,9 +185,19 @@ struct CompactIdentityView_Previews: PreviewProvider {
     }()
 
     static var previews: some View {
-        CompactIdentityView(identity: .null)
-            .environmentObject(BotRepository.shared)
-            .previewLayout(.sizeThatFits)
-            .preferredColorScheme(.light)
+        Group {
+            VStack {
+                CompactIdentityView(identity: "@unset")
+                CompactIdentityView(identity: .null)
+            }
+            VStack {
+                CompactIdentityView(identity: "@unset")
+                CompactIdentityView(identity: .null)
+            }
+            .preferredColorScheme(.dark)
+        }
+        .padding()
+        .background(Color.cardBackground)
+        .environmentObject(BotRepository.fake)
     }
 }
