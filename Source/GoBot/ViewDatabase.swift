@@ -2696,8 +2696,6 @@ class ViewDatabase {
         }
         #endif
 
-        Analytics.shared.trackBotDidUpdateMessages(count: msgs.count)
-
         if skipped > 0 {
             Log.info("[rx log] skipped \(skipped) messages.")
         }
