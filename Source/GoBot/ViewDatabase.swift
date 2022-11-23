@@ -349,7 +349,7 @@ class ViewDatabase {
                 )
                 db.userVersion = 16
             }
-             if db.userVersion == 16 {
+            if db.userVersion == 16 {
                 try db.execute(
                     """
                     ALTER TABLE authors ADD banned INTEGER NOT NULL DEFAULT (0);
@@ -468,9 +468,10 @@ class ViewDatabase {
     /// Closes all connections to the database and performs cleanup tasks. This function will wait for all open
     /// connections to finish their queries before returning.
     func close() async {
-        do {
+        optimize: do {
             try optimize()
         } catch {
+            if case ViewDatabaseError.notOpen = error { break optimize } // close should be idempotent
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
         }

@@ -30,50 +30,52 @@ class ViewDatabasePerformanceTests: XCTestCase {
         try await super.tearDown()
     }
     
-    func setUpEmptyDB(user: Identity) throws {
-        let setupExpectation = expectation(description: "setup")
-        // Performance tests do not with with async/await yet so we wrap these calls in a Task and use an expecatation to wait on it.
-        Task {
-            await viewDatabase.close()
-            viewDatabase = ViewDatabase()
-            let dbDir = FileManager.default.temporaryDirectory.appendingPathComponent("ViewDatabaseBenchmarkTests")
-            dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
-            try? FileManager.default.removeItem(at: dbURL)
-            try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
-            
-            // open DB
-            dbDirPath = dbDir.absoluteString.replacingOccurrences(of: "file://", with: "")
-            maxAge = -60 * 60 * 24 * 30 * 48  // 48 month (so roughtly until 2023)
-            try viewDatabase.open(path: dbDirPath, user: user, maxAge: maxAge)
-            setupExpectation.fulfill()
-        }
-        wait(for: [setupExpectation], timeout: 10)
+    /// Creates a directory where we can initialized a database for the tests and returns the URL to it.
+    private func createDBDirectory() async throws -> URL {
+        viewDatabase = ViewDatabase()
+        let dbDir = FileManager
+            .default
+            .temporaryDirectory
+            .appendingPathComponent("ViewDatabaseBenchmarkTests")
+            .appendingPathComponent(UUID().uuidString)
+        dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
+        try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
+        return dbDir
     }
     
-    func setUpSmallDB() throws {
+    private func openDB(in directory: URL, user: Identity) throws {
+        dbDirPath = directory.absoluteString.replacingOccurrences(of: "file://", with: "")
+        try viewDatabase.open(path: dbDirPath, user: user, maxAge: -.infinity)
+    }
+    
+    private func setUpEmptyDB(user: Identity) throws {
+        let setupExpectation = expectation(description: "setup")
+        // Performance tests do not with with async/await yet so we wrap these calls in a Task and use an expecatation
+        // to wait on it.
+        Task {
+            let dbDir = try await createDBDirectory()
+            try openDB(in : dbDir, user: user)
+            setupExpectation.fulfill()
+        }
+        wait(for: [setupExpectation], timeout: 20)
+    }
+    
+    private func setUpSmallDB() throws {
         try loadDB(named: "Feed_big", user: testFeed.owner)
     }
     
-    func loadDB(named dbName: String, user: Identity) throws {
-        // Performance tests do not with with async/await yet so we wrap these calls in a Task and use an expecatation to wait on it.
+    private func loadDB(named dbName: String?, user: Identity) throws {
+        // Performance tests do not with with async/await yet so we wrap these calls in a Task and use an expecatation
+        // to wait on it.
         let setupExpectation = expectation(description: "setup")
         Task {
-            await viewDatabase.close()
-            viewDatabase = ViewDatabase()
-            let dbDir = FileManager.default.temporaryDirectory.appendingPathComponent("ViewDatabaseBenchmarkTests")
-            dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
-            try? FileManager.default.removeItem(at: dbURL)
-            try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
+            let dbDir = try await createDBDirectory()
             let sqliteURL = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: dbName, withExtension: "sqlite"))
             try FileManager.default.copyItem(at: sqliteURL, to: dbURL)
-            
-            // open DB
-            dbDirPath = dbDir.absoluteString.replacingOccurrences(of: "file://", with: "")
-            maxAge = -60 * 60 * 24 * 30 * 48  // 48 month (so roughtly until 2023)
-            try viewDatabase.open(path: dbDirPath, user: user, maxAge: maxAge)
+            try openDB(in : dbDir, user: user)
             setupExpectation.fulfill()
         }
-        wait(for: [setupExpectation], timeout: 10)
+        wait(for: [setupExpectation], timeout: 20)
     }
     
     func resetSmallDB() throws {

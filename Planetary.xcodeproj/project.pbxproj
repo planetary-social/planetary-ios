@@ -1059,6 +1059,7 @@
 		C9C3789127C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */; };
 		C9C9BB5128C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */; };
 		C9C9BB5228C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */; };
+		C9D0401D292E53C100C7F226 /* ViewDatabaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D0401C292E53C100C7F226 /* ViewDatabaseTestCase.swift */; };
 		C9D1EACA2832A0230092E098 /* AttributedStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1EAC02832A0220092E098 /* AttributedStringTests.swift */; };
 		C9D1EACB2832A0230092E098 /* IdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1EAC12832A0220092E098 /* IdentifierTests.swift */; };
 		C9D1EACC2832A0230092E098 /* BlobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1EAC22832A0230092E098 /* BlobTests.swift */; };
@@ -1748,6 +1749,7 @@
 		C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotStatisticsServiceTests.swift; sourceTree = "<group>"; };
 		C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GoSSB.xcodeproj; path = GoSSB/GoSSB.xcodeproj; sourceTree = "<group>"; };
 		C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fix814AccountsHelper.swift; sourceTree = "<group>"; };
+		C9D0401C292E53C100C7F226 /* ViewDatabaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabaseTestCase.swift; sourceTree = "<group>"; };
 		C9D1EAC02832A0220092E098 /* AttributedStringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributedStringTests.swift; sourceTree = "<group>"; };
 		C9D1EAC12832A0220092E098 /* IdentifierTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifierTests.swift; sourceTree = "<group>"; };
 		C9D1EAC22832A0230092E098 /* BlobTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlobTests.swift; sourceTree = "<group>"; };
@@ -2940,6 +2942,7 @@
 				C9C3788927C6CC3200238B58 /* XCTestCase+Combine.swift */,
 				C9C3788B27C6CC6900238B58 /* Publisher+collectNext.swift */,
 				C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */,
+				C9D0401C292E53C100C7F226 /* ViewDatabaseTestCase.swift */,
 			);
 			path = "Test Helpers";
 			sourceTree = "<group>";
@@ -4175,6 +4178,7 @@
 				C9724B672809D6F4000EBCCD /* PostReplyPaginatedDelegate+DataSource.swift in Sources */,
 				53E29CCB22D292A3008A2CB1 /* String+Whitespace.swift in Sources */,
 				C9313A7D289AD9D40093AC47 /* RoomInvitationRedeemer.swift in Sources */,
+				C9D0401D292E53C100C7F226 /* ViewDatabaseTestCase.swift in Sources */,
 				C9724BC52809ED5F000EBCCD /* UIImageView+Fade.swift in Sources */,
 				C949E9722811A8AF006C5F18 /* VerticallyCenteringScrollView.swift in Sources */,
 				C9724BAB2809EB6E000EBCCD /* MessagePaginatedTableViewDataSource.swift in Sources */,
