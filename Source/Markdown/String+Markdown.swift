@@ -188,12 +188,12 @@ extension String {
     func addUnformattedLinks(in mutableAttributedString: NSMutableAttributedString, styler: DownStyler) {
         let string = mutableAttributedString.string
         let types: NSTextCheckingResult.CheckingType = [.link]
+        // swiftlint:disable legacy_objc_type
         guard let detector = try? NSDataDetector(types: types.rawValue) else {
             return
         }
-        // swiftlint:disable legacy_objc_type
-        let range = NSRange(location: 0, length: mutableAttributedString.length)
         // swiftlint:enable legacy_objc_type
+        let range = NSRange(location: 0, length: mutableAttributedString.length)
         detector.enumerateMatches(in: string, options: [], range: range) { (result, _, _) in
             guard let result = result else {
                 return
