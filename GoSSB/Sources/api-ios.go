@@ -147,6 +147,7 @@ type botConfig struct {
 	ListenAddr string
 	Hops       uint
 	Testing    bool
+    DisableEBT bool
 
 	// Pubs that host planetary specific muxrpc calls
 	ServicePubs []refs.FeedRef

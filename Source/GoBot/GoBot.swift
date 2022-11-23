@@ -248,6 +248,10 @@ class GoBot: Bot {
             return
         }
 
+        if isRestoring {
+            Log.info("It seems like the user is restoring their feed. Disabling EBT replication to work around #847.")
+        }
+        
         // spawn go-bot in the background to return early
         userInitiatedQueue.async {
             // used for locating the files in the simulator
