@@ -42,8 +42,11 @@ struct ImageMetadataView: View {
 
 fileprivate class ImageLoader: ObservableObject {
 
-    @Published var image: UIImage?
-    @Published var isLoading = true
+    @Published
+    var image: UIImage?
+    
+    @Published
+    var isLoading = true
 
     var metadata: ImageMetadata?
     private var completion: UUID?
@@ -80,7 +83,6 @@ fileprivate class ImageLoader: ObservableObject {
                 self?.image = uiImage
             }
 
-            self?.isLoading = false
             self?.metadata = metadata
             self?.completion = uuid
         }

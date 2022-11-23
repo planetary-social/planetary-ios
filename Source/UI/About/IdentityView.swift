@@ -56,6 +56,16 @@ struct IdentityView: View {
         }
     }
 
+    private var isStar: Bool {
+        let pubs = (AppConfiguration.current?.communityPubs ?? []) +
+            (AppConfiguration.current?.systemPubs ?? [])
+        return pubs.contains { $0.feed == identity }
+    }
+
+    private var strategy: FeedStrategy {
+        isStar ? OneHopFeedAlgorithm(identity: identity) : NoHopFeedAlgorithm(identity: identity)
+    }
+
     private func header(extendedHeader: Bool) -> some View {
         IdentityHeaderView(
             identity: identity,
@@ -113,7 +123,7 @@ struct IdentityView: View {
                     }
                     .zIndex(extendedHeader ? 500 : 1000)
                     .offset(y: headerOffset)
-                MessageListView(strategy: NoHopFeedAlgorithm(identity: identity))
+                MessageListView(strategy: strategy)
                     .background(Color.appBg)
                     .zIndex(extendedHeader ? 1000 : 500)
                     .offset(y: contentOffset)
