@@ -12,7 +12,7 @@ import SwiftUI
 struct ActivityViewController: UIViewControllerRepresentable {
 
     var activityItems: [Any]
-    var applicationActivities: [UIActivity]? = nil
+    var applicationActivities: [UIActivity]?
 
     func makeUIViewController(
         context: UIViewControllerRepresentableContext<ActivityViewController>
@@ -24,5 +24,4 @@ struct ActivityViewController: UIViewControllerRepresentable {
         _ uiViewController: UIActivityViewController,
         context: UIViewControllerRepresentableContext<ActivityViewController>
     ) { }
-
 }

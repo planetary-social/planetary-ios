@@ -15,16 +15,12 @@ class Relationship: Sendable, Equatable {
     let identity: Identity
     let other: Identity
 
-    @Published
     var isFollowing = false
 
-    @Published
     var isFollowedBy = false
 
-    @Published
     var isFriend = false
 
-    @Published
     var isBlocking = false
 
     private var dataCached = false
@@ -72,8 +68,8 @@ class Relationship: Sendable, Equatable {
         }
     }
 
-    var notificationName: NSNotification.Name {
-        NSNotification.Name(rawValue: "Relationship-\(identity)-\(other)")
+    var notificationName: Notification.Name {
+        Notification.Name("Relationship-\(identity)-\(other)")
     }
 
     static var infoKey: String {
@@ -95,7 +91,6 @@ class Relationship: Sendable, Equatable {
         && lhs.isBlocking == rhs.isBlocking
         && lhs.isFollowedBy == rhs.isFollowedBy
     }
-
 }
 
 extension Notification {

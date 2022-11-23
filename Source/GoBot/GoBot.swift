@@ -347,7 +347,7 @@ class GoBot: Bot {
                 queue.async {
                     completion(.success(pubs))
                 }
-            } catch let error {
+            } catch {
                 queue.async {
                     completion(.failure(error))
                 }

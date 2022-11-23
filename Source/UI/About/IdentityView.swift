@@ -86,7 +86,10 @@ struct IdentityView: View {
                             .hidden()
                             .background {
                                 GeometryReader { geometryProxy in
-                                    Color.clear.preference(key: ExtendedSizePreferenceKey.self, value: geometryProxy.size)
+                                    Color.clear.preference(
+                                        key: ExtendedSizePreferenceKey.self,
+                                        value: geometryProxy.size
+                                    )
                                 }
                             }
                             .onPreferenceChange(ExtendedSizePreferenceKey.self) { newSize in
@@ -98,7 +101,10 @@ struct IdentityView: View {
                             .hidden()
                             .background {
                                 GeometryReader { geometryProxy in
-                                    Color.clear.preference(key: CollapsedSizePreferenceKey.self, value: geometryProxy.size)
+                                    Color.clear.preference(
+                                        key: CollapsedSizePreferenceKey.self,
+                                        value: geometryProxy.size
+                                    )
                                 }
                             }
                             .onPreferenceChange(CollapsedSizePreferenceKey.self) { newSize in
@@ -128,7 +134,6 @@ struct IdentityView: View {
                     contentOffset = 0
                 }
                 headerOffset = -offset
-
             } else {
                 if extendedHeader {
                     extendedHeader = false

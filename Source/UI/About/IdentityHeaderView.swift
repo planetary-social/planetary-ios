@@ -55,7 +55,12 @@ struct IdentityHeaderView: View {
         VStack(alignment: .leading) {
             HStack(alignment: .top, spacing: 18) {
                 ZStack(alignment: .bottomTrailing) {
-                    Group {
+                    Button {
+                        guard let image = about?.image else {
+                            return
+                        }
+                        AppController.shared.open(string: image.link)
+                    } label: {
                         if extendedHeader {
                             AvatarView(metadata: about?.image, size: 87)
                                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
@@ -71,12 +76,6 @@ struct IdentityHeaderView: View {
                                         .stroke(LinearGradient.diagonalAccent, lineWidth: 2)
                                 )
                         }
-                    }
-                    .onTapGesture {
-                        guard let image = about?.image else {
-                            return
-                        }
-                        AppController.shared.open(string: image.link)
                     }
                     if isSelf {
                         EditAvatarButton(about: about, large: extendedHeader)

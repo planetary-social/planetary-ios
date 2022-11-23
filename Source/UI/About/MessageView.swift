@@ -13,9 +13,7 @@ struct MessageView: View {
     var message: Message
 
     var attributedHeader: AttributedString? {
-        guard let name = message.metadata.author.about?.nameOrIdentity else {
-            return nil
-        }
+        let name = message.metadata.author.about?.name?.trimmedForSingleLine ?? String(message.author.prefix(7))
         var localized: Localized
         switch message.contentType {
         case .post:
@@ -63,8 +61,10 @@ struct MessageView: View {
                         AvatarView(metadata: message.metadata.author.about?.image, size: 24)
                         if let header = attributedHeader {
                             Text(header)
+                                .lineLimit(2)
                                 .font(.subheadline)
                                 .foregroundColor(Color.secondaryTxt)
+                                .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
@@ -117,28 +117,30 @@ struct MessageView: View {
 }
 
 struct MessageView_Previews: PreviewProvider {
-    static var message: Message {
-        let post = Post(
-            blobs: nil,
-            branches: nil,
-            hashtags: nil,
-            mentions: nil,
-            root: nil,
-            text: .loremIpsum(1)
-        )
-        let content = Content(from: post)
-        let value = MessageValue(
-            author: .null,
-            content: content,
+    static var messageValue: MessageValue {
+        MessageValue(
+            author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
+            content: Content(
+                from: Post(
+                    blobs: nil,
+                    branches: nil,
+                    hashtags: nil,
+                    mentions: nil,
+                    root: nil,
+                    text: .loremIpsum(1)
+                )
+            ),
             hash: "",
             previous: nil,
             sequence: 0,
             signature: .null,
             claimedTimestamp: 0
         )
+    }
+    static var message: Message {
         var message = Message(
             key: "@unset",
-            value: value,
+            value: messageValue,
             timestamp: 0
         )
         message.metadata = Message.Metadata(
@@ -149,13 +151,39 @@ struct MessageView_Previews: PreviewProvider {
         return message
     }
 
+    static var messageWithLongAuthor: Message {
+        var message = Message(
+            key: "@unset",
+            value: messageValue,
+            timestamp: 0
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: .loremIpsum(words: 8))),
+            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
+            isPrivate: false
+        )
+        return message
+    }
+
+    static var messageWithUnknownAuthor: Message {
+        Message(
+            key: "@unset",
+            value: messageValue,
+            timestamp: 0
+        )
+    }
+
     static var previews: some View {
         Group {
             VStack {
                 MessageView(message: message)
+                MessageView(message: messageWithLongAuthor)
+                MessageView(message: messageWithUnknownAuthor)
             }
             VStack {
                 MessageView(message: message)
+                MessageView(message: messageWithLongAuthor)
+                MessageView(message: messageWithUnknownAuthor)
             }
             .preferredColorScheme(.dark)
         }

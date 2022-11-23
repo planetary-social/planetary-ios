@@ -49,7 +49,7 @@ struct RelationshipButton: View {
                     startPoint: .leading,
                     endPoint: .trailing
                 ).mask {
-                    Image(image)
+                    image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 }
@@ -139,16 +139,13 @@ struct RelationshipButton: View {
         }
     }
 
-    private var image: String {
-        guard !isLoading else {
-            return ""
-        }
+    private var image: Image {
         if isBlocking {
-            return "button-blocking"
+            return .buttonBlocking
         } else if isFollowing {
-            return "button-following"
+            return .buttonFollowing
         } else {
-            return "button-follow"
+            return .buttonFollow
         }
     }
 

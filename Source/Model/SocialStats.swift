@@ -22,6 +22,6 @@ struct SocialStats {
     var numberOfFollows: Int
 
     static var zero: SocialStats {
-        return SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
+        SocialStats(numberOfFollowers: 0, numberOfFollows: 0)
     }
 }

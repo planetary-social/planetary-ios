@@ -11,7 +11,9 @@ import SwiftUI
 struct ImageMetadataView: View {
 
     var metadata: ImageMetadata?
-    @StateObject private var imageLoader = ImageLoader()
+
+    @StateObject
+    private var imageLoader = ImageLoader()
 
     init(metadata: ImageMetadata?) {
         self.metadata = metadata
@@ -91,7 +93,7 @@ struct ImageMetadataView_Previews: PreviewProvider {
         return ImageMetadata(link: "&test")
     }
     static var loadingSample: ImageMetadata {
-        return ImageMetadata(link: "&unknown")
+        ImageMetadata(link: "&unknown")
     }
     static var previews: some View {
         Group {

@@ -115,12 +115,17 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%400xkjAty6RSr5uhbAvi0rbVR2g9Bz%2B89qiKth48ECQBE%3D.ed25519"))
+        let expected = "planetary://planetary.link/%400xkjAty6RSr5uhbAvi0rbVR2g9Bz%2B89qiKth48ECQBE%3D.ed25519"
+        XCTAssertEqual(link.url, URL(string: expected))
         XCTAssertEqual(link.name, "@SoapDog (SPX)")
     }
     
     func test_decodeLinkWithIdentifier() {
-        let markdown = "Hey [@christoph@verse](@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519)!\n\nNext week sounds great. I'd love to help out. I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client on it as well."
+        let markdown = """
+        Hey [@christoph@verse](@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519)!\n\nNext week sounds great. \
+        I'd love to help out. I've been using more the iPhone I acquired during this quest, and I'd love to get a \
+        working SSB client on it as well.
+        """
         let attributedString = markdown.decodeMarkdown()
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 1)
@@ -134,7 +139,8 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"))
+        let expected = "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"
+        XCTAssertEqual(link.url, URL(string: expected))
         XCTAssertEqual(link.name, "@christoph@verse")
     }
 
@@ -144,7 +150,8 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%25Ogr2%2BmPA0PwJEKX4qhKNzYykOxMedvaMDjHB8YT49F4%3D.sha256"))
+        let expected = "planetary://planetary.link/%25Ogr2%2BmPA0PwJEKX4qhKNzYykOxMedvaMDjHB8YT49F4%3D.sha256"
+        XCTAssertEqual(link.url, URL(string: expected))
         XCTAssertEqual(link.name, "%Ogr2+mPA0PwJEKX4qhKNzYykOxMedvaMDjHB8YT49F4=.sha256")
     }
 
@@ -154,12 +161,16 @@ class MarkdownTests: XCTestCase {
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"))
+        let expected = "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"
+        XCTAssertEqual(link.url, URL(string: expected))
         XCTAssertEqual(link.name, "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519")
     }
     
     func test_decodeImageWithIdentifier() {
-        let markdown = "![we-must-get-back-to-oakland-at-once.jpg](&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256) \"We must get back to Oakland at once!\")"
+        let markdown = """
+        ![we-must-get-back-to-oakland-at-once.jpg](&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256) \"We must get \
+        back to Oakland at once!\")
+        """
         let attributedString = markdown.decodeMarkdown()
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 1)
@@ -168,12 +179,16 @@ class MarkdownTests: XCTestCase {
     }
 
     func testParseImageWithIdentifier() throws {
-        let markdown = "![we-must-get-back-to-oakland-at-once.jpg](&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256) \"We must get back to Oakland at once!\")"
+        let markdown = """
+        ![we-must-get-back-to-oakland-at-once.jpg](&amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw=.sha256) \"We must get \
+        back to Oakland at once!\")
+        """
         let attributedString = markdown.parseMarkdown()
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.url, URL(string: "planetary://planetary.link/%26amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw%3D.sha256"))
+        let expected = "planetary://planetary.link/%26amU7IBkAyTIAhsXXWvIGHphMj6niAWWMcvYaMFoAyKw%3D.sha256"
+        XCTAssertEqual(link.url, URL(string: expected))
         XCTAssertEqual(link.name, "we-must-get-back-to-oakland-at-once.jpg")
     }
     
@@ -221,7 +236,9 @@ class MarkdownTests: XCTestCase {
     }
 
     func test_decodeTwoDifferentLinks() {
-        let markdown = "This is a test for [one](http://www.one.com) link in markdown plus a http://www.second.com link not formatted."
+        let markdown = """
+        This is a test for [one](http://www.one.com) link in markdown plus a http://www.second.com link not formatted.
+        """
         let attributedString = markdown.decodeMarkdown()
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 2)
@@ -231,7 +248,9 @@ class MarkdownTests: XCTestCase {
     }
 
     func testParseTwoDifferentLinks() throws {
-        let markdown = "This is a test for [one](http://www.one.com) link in markdown plus a http://www.second.com link not formatted."
+        let markdown = """
+        This is a test for [one](http://www.one.com) link in markdown plus a http://www.second.com link not formatted.
+        """
         let attributedString = markdown.parseMarkdown()
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 2)
@@ -264,13 +283,11 @@ class MarkdownTests: XCTestCase {
     
     func test_decodeIdentifiersWithoutLink() {
         let markdown = """
-    Hey @8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519
-and @34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519!\n
-\n
-Next week sounds great.
-I'd love to help out.
-I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client on it as well.
-"""
+        Hey @8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519 and \
+        @34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519!\n\nNext week sounds great. I'd love to help out. \
+        I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client \
+        on it as well.
+        """
         let attributedString = markdown.decodeMarkdown()
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 2)
@@ -282,29 +299,29 @@ I've been using more the iPhone I acquired during this quest, and I'd love to ge
 
     func testParseIdentifiersWithoutLink() throws {
         let markdown = """
-Hey @8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519
-and @34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519!\n
-\n
-Next week sounds great.
-I'd love to help out.
-I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client on it as well.
-"""
+        Hey @8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519 and \
+        @34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519!\n\nNext week sounds great. I'd love to help out. \
+        I've been using more the iPhone I acquired during this quest, and I'd love to get a working SSB client \
+        on it as well.
+        """
         let attributedString = markdown.parseMarkdown()
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 2)
         let firstLink = try XCTUnwrap(links[0])
         let secondLink = try XCTUnwrap(links[1])
+        var expected = "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"
         XCTAssertEqual(firstLink.name, "@8Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn/M=.ed25519")
-        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%408Y7zrkRdt1HxkueXjdwIU4fbYkjapDztCHgjNjiCn%2FM%3D.ed25519"))
+        XCTAssertEqual(firstLink.url, URL(string: expected))
+        expected = "planetary://planetary.link/%4034sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs%3D.ed25519"
         XCTAssertEqual(secondLink.name, "@34sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs=.ed25519")
-        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/%4034sT5kRdt1HxkueXfRsIU4fbYkjapDztCHgjNjiCnDs%3D.ed25519"))
+        XCTAssertEqual(secondLink.url, URL(string: expected))
     }
     
     func test_decodeLinkwithIdentifierWithoutFormat() {
         let markdown = """
-    This is a link https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519
-without format and with an identifier in the middle
-"""
+        This is a link https://planetary.link/@/+6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg=.ed25519 \
+        without format and with an identifier in the middle
+        """
         let attributedString = markdown.decodeMarkdown()
         let mentions = attributedString.mentions()
         XCTAssertEqual(mentions.count, 1)
@@ -313,23 +330,24 @@ without format and with an identifier in the middle
 
     func testParseLinkwithIdentifierWithoutFormat() throws {
         let markdown = """
-This is a link https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519 without
-format and with an identifier in the middle
-"""
+        This is a link https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519 without \
+        format and with an identifier in the middle
+        """
         let attributedString = markdown.parseMarkdown()
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 1)
         let link = try XCTUnwrap(links[0])
-        XCTAssertEqual(link.name, "https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519")
-        XCTAssertEqual(link.url, URL(string: "https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519"))
+        let expected = "https://planetary.link/%40%2F%2B6dlGNjBoNbmOkK08U43xfodyZ2LHHOwcsVpfRv4vg%3D.ed25519"
+        XCTAssertEqual(link.name, expected)
+        XCTAssertEqual(link.url, URL(string: expected))
     }
 
     private func parseLinks(in attributedString: AttributedString) -> [(name: String, url: URL)] {
-        attributedString.runs.compactMap { run -> (name: String, url: URL)? in
-            guard let link = run.link ?? run.imageURL else {
+        attributedString.runs.compactMap { attributedRun -> (name: String, url: URL)? in
+            guard let link = attributedRun.link ?? attributedRun.imageURL else {
                 return nil
             }
-            let name = NSAttributedString(AttributedString(attributedString[run.range])).string
+            let name = NSAttributedString(AttributedString(attributedString[attributedRun.range])).string
             return (name: name, url: link)
         }
     }

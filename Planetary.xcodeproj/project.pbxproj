@@ -621,8 +621,6 @@
 		5B373838288B09A30017756B /* ExtendedAboutCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B373837288B09A30017756B /* ExtendedAboutCellView.swift */; };
 		5B373839288B09A30017756B /* ExtendedAboutCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B373837288B09A30017756B /* ExtendedAboutCellView.swift */; };
 		5B3D893828468846002514AF /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B3D893728468846002514AF /* SkeletonView */; };
-		5B3FBE24292682DB004F34CC /* UINavigationController+Back.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3FBE23292682DB004F34CC /* UINavigationController+Back.swift */; };
-		5B3FBE25292682DB004F34CC /* UINavigationController+Back.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3FBE23292682DB004F34CC /* UINavigationController+Back.swift */; };
 		5B3FBE2B29280AAA004F34CC /* EditIdentityButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3FBE2A29280AAA004F34CC /* EditIdentityButton.swift */; };
 		5B3FBE2C29280AAA004F34CC /* EditIdentityButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3FBE2A29280AAA004F34CC /* EditIdentityButton.swift */; };
 		5B3FBE3129295CEC004F34CC /* BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3FBE3029295CEC004F34CC /* BioView.swift */; };
@@ -1648,7 +1646,6 @@
 		5B32F255291E963B005985E2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		5B32F258291EC037005985E2 /* IdentityHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityHeaderView.swift; sourceTree = "<group>"; };
 		5B373837288B09A30017756B /* ExtendedAboutCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutCellView.swift; sourceTree = "<group>"; };
-		5B3FBE23292682DB004F34CC /* UINavigationController+Back.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Back.swift"; sourceTree = "<group>"; };
 		5B3FBE2A29280AAA004F34CC /* EditIdentityButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditIdentityButton.swift; sourceTree = "<group>"; };
 		5B3FBE3029295CEC004F34CC /* BioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioView.swift; sourceTree = "<group>"; };
 		5B3FBE39292BB9E5004F34CC /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
@@ -2498,7 +2495,6 @@
 				C920A3A5289B1525009C83F3 /* Array+Chunked.swift */,
 				C97A826428D256D00064848A /* Task+CancellableSleep.swift */,
 				C9A2894428F5C97200B347B7 /* SwiftUI+Localized.swift */,
-				5B3FBE23292682DB004F34CC /* UINavigationController+Back.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -4387,7 +4383,6 @@
 				C937883028C15186003FCCC2 /* About+ViewDatabase.swift in Sources */,
 				5336611522D9669E00100707 /* UIColor+UIImage.swift in Sources */,
 				5B3FBE3E292BE5E0004F34CC /* EditAvatarButton.swift in Sources */,
-				5B3FBE25292682DB004F34CC /* UINavigationController+Back.swift in Sources */,
 				C941A6E527ECBE2A009B38C9 /* PreloadedBlobService.swift in Sources */,
 				2388897D22086A650030CB92 /* GoBotInternal.swift in Sources */,
 				C9724B4F2809D59A000EBCCD /* ChannelsViewController.swift in Sources */,
@@ -4823,7 +4818,6 @@
 				23EF5A99249CDCF900469977 /* BanListAPIService.swift in Sources */,
 				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				5BAD727D2892C4C5001494B4 /* NoHopFeedAlgorithm.swift in Sources */,
-				5B3FBE24292682DB004F34CC /* UINavigationController+Back.swift in Sources */,
 				C997F3E028B1D86D00DAC117 /* AliasCell.swift in Sources */,
 				0AF9E0A42465D7D000910575 /* ThreadReplyView.swift in Sources */,
 				0A64A83C247353CE009A5EBF /* VersePushAPI.swift in Sources */,
