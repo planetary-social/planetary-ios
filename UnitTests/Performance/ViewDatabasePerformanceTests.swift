@@ -54,7 +54,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         // to wait on it.
         Task {
             let dbDir = try await createDBDirectory()
-            try openDB(in : dbDir, user: user)
+            try openDB(in: dbDir, user: user)
             setupExpectation.fulfill()
         }
         wait(for: [setupExpectation], timeout: 20)
