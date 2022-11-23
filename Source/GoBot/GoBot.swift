@@ -1595,12 +1595,12 @@ class GoBot: Bot {
         serialQueue.async {
             let counts: ScuttlegobotRepoCounts? = try? self.bot.repoStats()
             let sequence = try? self.database.stats(table: .messagekeys)
-
+            
             var ownMessages = -1
             self.numberOfPublishedMessagesLock.lock()
             if let identity = self._identity,
-                identity == repoIdentity,
-                let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
+               identity == repoIdentity,
+               let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
                 ownMessages = ownMessageCount
                 self.saveNumberOfPublishedMessages(from: self._statistics.repo)
             }
@@ -1622,7 +1622,7 @@ class GoBot: Bot {
                 numberOfPublishedMessages: ownMessages,
                 lastHash: counts?.lastHash ?? ""
             )
-
+            
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()
             
@@ -1651,9 +1651,9 @@ class GoBot: Bot {
             //commenting out because we don't need to be logging this much information - rabble Nov 9 2022
             //Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
-    func numberOfNewMessages(since: Date) throws -> Int {
     }
     
+    func numberOfNewMessages(since: Date) throws -> Int {
         try self.database.receivedMessageCount(since: since)
     }
     
