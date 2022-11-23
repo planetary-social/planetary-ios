@@ -58,6 +58,9 @@ extension BotStatistics {
 /// Statistics for the go-ssb log
 struct RepoStatistics: Equatable {
 
+	/// Identity associated with the repo
+    let identity: Identity?
+	
     /// Path to the repo
     let path: String
 
@@ -73,11 +76,15 @@ struct RepoStatistics: Equatable {
     /// Last message in the repo
     let lastHash: String
 
-    init(path: String? = nil,
-         feedCount: Int = -1,
-         messageCount: Int = 0,
-         numberOfPublishedMessages: Int = 0,
-         lastHash: String = "") {
+    init(
+        path: String? = nil,
+        identity: Identity? = nil,
+        feedCount: Int = -1,
+        messageCount: Int = 0,
+        numberOfPublishedMessages: Int = 0,
+        lastHash: String = ""
+    ) {
+        self.identity = identity
         self.path = path ?? "unknown"
         self.feedCount = feedCount
         self.messageCount = messageCount

@@ -14,8 +14,6 @@ import CrashReporting
 
 class HomeViewController: ContentViewController, HelpDrawerHost {
 
-    private static var refreshBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-    
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage.navIconWrite
         let item = UIBarButtonItem(

@@ -33,7 +33,8 @@ extension AppDelegate {
 extension AppDelegate {
     
     func handleBackgroundFetch(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        let backgroundSyncTask = startBackgroundSyncTask()
+        let backgroundSyncTask = startBackgroundSyncTask(long: false)
+        Analytics.shared.trackDidStartBackgroundTask(taskIdentifier: "push-notification")
         
         Task.detached(priority: .background) {
             let result = await backgroundSyncTask.result
@@ -50,38 +51,73 @@ extension AppDelegate {
 
 extension AppDelegate {
     
-    static let syncBackgroundTaskIdentifier = "com.planetary.sync"
+    static let shortSyncBackgroundTaskIdentifier = "com.planetary.short_sync"
+    static let longSyncBackgroundTaskIdentifier = "com.planetary.long_sync"
+    static let dbMaintenanceBackgroundTaskIdentifier = "com.planetary.db_maintenance"
     
     // MARK: Registering
     
     private func registerBackgroundTasks() {
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: AppDelegate.syncBackgroundTaskIdentifier,
-                                        using: nil) { task in
-                                            self.handleSyncTask(task: task)
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: AppDelegate.shortSyncBackgroundTaskIdentifier,
+            using: nil
+        ) { task in
+            self.handleSyncTask(task: task)
+        }
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: AppDelegate.longSyncBackgroundTaskIdentifier,
+            using: nil
+        ) { task in
+            self.handleSyncTask(task: task)
+        }
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: AppDelegate.dbMaintenanceBackgroundTaskIdentifier,
+            using: nil
+        ) { task in
+            self.handleDBMaintenance(task: task)
         }
     }
     
     // MARK: Scheduling
     
     private func scheduleBackgroundTasks() {
-        BGTaskScheduler.shared.cancelAllTaskRequests()
-        self.scheduleSyncTask()
+        scheduleSyncTask()
+        scheduleDBMaintenanceTask()
     }
     
     private func scheduleSyncTask() {
-        let syncTaskRequest = BGProcessingTaskRequest(identifier: AppDelegate.syncBackgroundTaskIdentifier)
-        syncTaskRequest.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60) // 1 hour
-        scheduleBackgroundTask(taskRequest: syncTaskRequest)
+        // go-ssb cannot generally boot up quick enough to get data in the timeframe for a BGRefreshTask (which in
+        // my testing only gets around 21-24 seconds before getting killed) so we are only scheduling the heavier
+        // BGProcessingTasks for now.
+        let longSyncRequest = BGProcessingTaskRequest(identifier: AppDelegate.longSyncBackgroundTaskIdentifier)
+        longSyncRequest.earliestBeginDate = Date(timeIntervalSinceNow: 2 * 60 * 60) // 2 hours
+        
+        scheduleBackgroundTask(taskRequest: longSyncRequest)
+    }
+    
+    private func scheduleDBMaintenanceTask() {
+        let request = BGProcessingTaskRequest(identifier: AppDelegate.dbMaintenanceBackgroundTaskIdentifier)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 24 * 60 * 60) // 24 hours
+        scheduleBackgroundTask(taskRequest: request)
     }
     
     private func scheduleBackgroundTask(taskRequest: BGTaskRequest) {
         do {
-            Log.info("Scheduling backgound task \(taskRequest.identifier) for " +
-                     "\(taskRequest.earliestBeginDate?.description ?? "nil")")
+            Log.info(
+                "Scheduling backgound task \(taskRequest.identifier) for " +
+                "\(taskRequest.earliestBeginDate?.description ?? "nil")"
+            )
+            Analytics.shared.trackDidScheduleBackgroundTask(
+                taskIdentifier: taskRequest.identifier,
+                for: taskRequest.earliestBeginDate
+            )
             try BGTaskScheduler.shared.submit(taskRequest)
         } catch BGTaskScheduler.Error.unavailable {
             // User could have just disabled background refresh in settings
-            Log.info("Could not schedule task \(taskRequest.identifier). Background refresh is not permitted or running in simulator.")
+            Log.info(
+                "Could not schedule task \(taskRequest.identifier). " +
+                "Background refresh is not permitted or running in simulator."
+            )
         } catch {
             Log.optional(error, "Could not schedule task \(taskRequest.identifier)")
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -90,20 +126,29 @@ extension AppDelegate {
     
     // MARK: Handling
     
+    // swiftlint:disable line_length
+    // To test this, run on a real device, hit pause in the debugger, then paste in this command:
+    // e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"com.planetary.long_sync"]
+    //
+    // swiftlint:enable line_length
     private func handleSyncTask(task: BGTask) {
-        Log.info("Handling task \(AppDelegate.syncBackgroundTaskIdentifier)")
-        Analytics.shared.trackDidBackgroundTask(taskIdentifier: AppDelegate.syncBackgroundTaskIdentifier)
+        Log.info("Handling task \(task.identifier)")
+        Analytics.shared.trackDidStartBackgroundTask(taskIdentifier: task.identifier)
         
         // Schedule a new sync task
         self.scheduleSyncTask()
         
-        let backgroundSync = startBackgroundSyncTask()
+        let backgroundSync = startBackgroundSyncTask(
+            long: task.identifier == AppDelegate.longSyncBackgroundTaskIdentifier
+        )
         task.expirationHandler = {
-            Log.info("Task \(AppDelegate.syncBackgroundTaskIdentifier) expired")
+            Log.info("Background sync: Task \(task.identifier) expired")
+            AppController.shared.missionControlCenter.cancelAll()
+            Analytics.shared.trackDidCancelBackgroundSync()
             backgroundSync.cancel()
         }
         
-        Task.detached {
+        Task {
             let result = await backgroundSync.result
             
             switch result {
@@ -117,54 +162,70 @@ extension AppDelegate {
     
     /// Starts a background Task that will give the GoBot some time to sync with peers. Intended to be used when the
     /// app is not in the foreground.
-    private func startBackgroundSyncTask() -> Task<Bool, Error> {
-        Task(priority: .background) { () -> Bool in
-            let sendMissionOperation = SendMissionOperation(quality: .high)
-            let refreshOperation = RefreshOperation(refreshLoad: .short)
-            let statisticsOperation = StatisticsOperation()
+    private func startBackgroundSyncTask(long isLongSync: Bool) -> Task<Bool, Error> {
+        Task { () -> Bool in
+            Log.info("Background sync: starting.")
+            let startDate = Date.now
             
-            let operationQueue = OperationQueue()
-            operationQueue.name = "Background Sync Queue"
-            operationQueue.maxConcurrentOperationCount = 1
-            operationQueue.qualityOfService = .background
-            operationQueue.addOperation(sendMissionOperation)
-            try await operationQueue.drain()
-                
-            let sleepStartTime = Date().timeIntervalSince1970
-            let sleepSeconds: TimeInterval = 25
-            Log.info("Sleeping \(sleepSeconds) seconds so SendMissionOperation can run.")
+            // Wait for login
+            // this is terrible!
+            try await Task.sleep(nanoseconds: 2_000_000_000)
             
-            while Date().timeIntervalSince1970 - sleepStartTime < sleepSeconds {
-                do {
-                    try await Task.sleep(nanoseconds: 100_000_000)
-                } catch {
-                    Log.optional(error, "Failed to complete background task")
-                    return false
-                }
-                
-                if Task.isCancelled {
-                    refreshOperation.cancel()
-                    statisticsOperation.cancel()
-                    Log.info("Background sync task canceled")
-                    return false
-                }
-            }
-            Log.info("Done sleeping")
+            Log.info("Background sync: sending mission.")
+            AppController.shared.missionControlCenter.sendMission()
             
-            operationQueue.addOperation(refreshOperation)
-            operationQueue.addOperation(statisticsOperation)
+            let goBot = Bots.current as? GoBot
+            async let isBotStuck = goBot?.isBotStuck() ?? false
             
-            try await operationQueue.drain()
-        
-            Analytics.shared.trackDidBackgroundFetch()
-
-            switch (sendMissionOperation.result, !refreshOperation.isCancelled) {
-            case (.success, true):
-                Log.info("Completed background sync task")
-                return true
-            default:
+            // Sleep to allow time for syncing.
+            let sleepSeconds: TimeInterval = isLongSync ? 180 : 20
+            let sleepEndTime = Date(timeIntervalSince1970: startDate.timeIntervalSince1970 + sleepSeconds)
+            Log.info("Background sync: sleeping \(sleepSeconds) seconds for replication.")
+            try await Task.cancellableSleep(until: sleepEndTime, cancellationCheckInterval: 100_000_000)
+            guard !Task.isCancelled else {
                 return false
             }
+            Log.info("Background sync: Done sleeping. Starting refresh.")
+            
+            AppController.shared.missionControlCenter.pokeRefresh()
+            
+            // Make sure that the bot is not stuck. #727
+            if isLongSync {
+                guard try await isBotStuck == false else {
+                    Log.error("Background sync: GoBot is stuck, forcing a crash.")
+                    Analytics.shared.trackBotDeadlock()
+                    Analytics.shared.trackDidCompleteBackgroundSync(success: false, newMessageCount: 0)
+                    CrashReporting.shared.reportIfNeeded(error: GoBotError.deadlock)
+                    fatalError("Detected GoBot deadlock.")
+                }
+            }
+            
+            try await AppController.shared.missionControlCenter.waitForCompletion()
+            
+            // Wait 10 more seconds to let push notification routine finish if we have time
+            if isLongSync {
+                try await Task.sleep(nanoseconds: 10_000_000_000)
+            }
+        
+            let newMessageCount = (try? Bots.current.numberOfNewMessages(since: startDate)) ?? 0
+
+            Log.info("Completed background sync task successfully, received \(newMessageCount) messages.")
+            Analytics.shared.trackDidCompleteBackgroundSync(success: true, newMessageCount: newMessageCount)
+            return true
         }
+    }
+    
+    private func handleDBMaintenance(task: BGTask) {
+        Log.info("Handling task \(task.identifier)")
+        Analytics.shared.trackDidStartBackgroundTask(taskIdentifier: task.identifier)
+        
+        do {
+            try (Bots.current as? GoBot)?.database.optimize()
+            task.setTaskCompleted(success: true)
+        } catch {
+            Log.optional(error)
+            task.setTaskCompleted(success: false)
+        }
+        Log.info("Completed task \(task.identifier)")
     }
 }

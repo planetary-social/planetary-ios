@@ -6,11 +6,52 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.9] 2022-11-10
 
+- Update the Pubs invite codes
+
+## [1.3.8] 2022-11-04
+
+- Added prompt for App Store review when user posts certain number of messages. #787
+- Ensure bot is logged in when redeeming room invites. #895
+- Add confirmation message when deleting room #893
+- Update the tap target on the Edit profile page #936
+
+## [1.3.7] 2022-10-31
+
+- Stability fix
+- Removed logging for regular bot actions #952
+- Added code to optimized the database when the phone is off and connected to power. #958
+
+## [1.3.6] 2022-10-25
+
+- Improved background syncing #833
 - Update to Xcode 14. #839
 - Add a button to delete the SQL database in the debug settings. #738
+- Speed up database using a many connections instead of one. #884
+- Fixed the Share Database button in the debug settings. #918
+- Fixed incorrect aspect ratio of avatar images. #753
+- Fixes bug where the number of published messages is calculated incorrectly which causes a forked feed protection error message to be displayed. #611 #923
 
+- Fixed an issue that could potentially freeze the UI on startup. #865
+- Fixed an issue that could cause the home feed to load slowly. #921
+- Added a button to delete the SQL database in the debug settings. #738
+- Changelog merge strategy by @mplorentz in #863
+- Make it more clear that Text.post is the verb form of the word by @mplorentz in #867
+- Add Discord and Matrix links by @mplorentz in #881
+- New Crowdin updates by @martindsq in #862
+- Add SwiftGen tool to generate color and image extensions from xcassets by @mplorentz in #904
+- Rename Text to Localized by @mplorentz in #905
+- skip plugin verification by @mplorentz in #906
+- Remove SwiftGenPlugin and add SwiftGen as a CocoaPod by @wsarles in #913
+- Fix avatar image aspect ratio by @wsarles in #917
+- New Crowdin updates by @martindsq in #885
+- Kill bot when stuck by @mplorentz in #883
+- Add another index to speed up the home feed by @mplorentz in #921
+- Rename Coordinators to Controllers by @mplorentz in #924
+- Don't call bot on main thread by @mplorentz in #925
+- add type to posthog events to separate bot from user actions by @rabble in #903
+- Multithread db by @mplorentz in #915
 
 ## [1.3.5] 2022-10-03
 

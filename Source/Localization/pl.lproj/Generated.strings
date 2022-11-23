@@ -257,6 +257,8 @@
 "ManageRelays.loadingRooms" = "Loading rooms...";
 "ManageRelays.invalidRoomURL" = "Invalid room URL";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
+"ManageRelays.deleteRoom" = "Delete";
+"ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
 
 "Alias.manageAliases" = "Manage Aliases (beta)";
 "Alias.addAlias" = "Register a new alias";
@@ -325,6 +327,7 @@
 "Error.invalidRoomURL" = "Could not parse invitation.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room.";
 
 "Channel.one" = "kanał";
 "Channel.many" = "kanały";
@@ -334,7 +337,7 @@
 
 "Report.somebody" = "Ktoś";
 "Report.feedFollowed" = "%@ zaczął Cię obserwować";
-"Report.postReplied" = "%@ odpowiedział na Twój post";
+"Report.postReplied" = "%@ replied to a post you commented on";
 "Report.feedMentioned" = "%@ wspomniał o Tobie w poście";
 "Report.messageLiked" = "%@ polubił twój post";
 

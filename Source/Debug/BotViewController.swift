@@ -247,9 +247,7 @@ class BotViewController: DebugTableViewController {
                 return
             }
             
-            Bots.current.sync(peers: [multiserver]) { error, _, _ in
-                Log.optional(error)
-            }
+            Bots.current.connect(to: multiserver)
         })]
 
         settings += [DebugTableViewCellModel(title: "Connections (open/total)",
