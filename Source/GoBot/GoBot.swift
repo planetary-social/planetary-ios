@@ -177,6 +177,18 @@ class GoBot: Bot {
         
         Analytics.shared.trackDidDropDatabase()
     }
+    
+    private func guessIfRestoring() throws -> Bool {
+        guard database.isOpen(),
+            let config = config else {
+            throw BotError.notLoggedIn
+        }
+        
+        let numberOfPublishedMessagesInViewDB = try database.numberOfMessages(for: config.identity)
+        let numberOfPublishedMessagesInAppConfig = config.numberOfPublishedMessages
+        return numberOfPublishedMessagesInViewDB == 0 ||
+            numberOfPublishedMessagesInViewDB < numberOfPublishedMessagesInAppConfig
+    }
 
     // MARK: Login/Logout
     
@@ -192,7 +204,12 @@ class GoBot: Bot {
         completion(secret, nil)
     }
     
-    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
+    func login(
+        queue: DispatchQueue,
+        config: AppConfiguration,
+        fromOnboarding isLoggingInFromOnboarding: Bool = false,
+        completion: @escaping ErrorCompletion
+    ) {
         guard let network = config.network else {
             queue.async { completion(BotError.invalidAppConfiguration) }
             return
@@ -224,6 +241,8 @@ class GoBot: Bot {
                 path: repoPrefix,
                 user: secret.identity
             )
+            
+            isRestoring = isLoggingInFromOnboarding ? false : try guessIfRestoring()
         } catch {
             queue.async { completion(error) }
             return
@@ -237,7 +256,8 @@ class GoBot: Bot {
                 network: network,
                 hmacKey: hmacKey,
                 secret: secret,
-                pathPrefix: repoPrefix
+                pathPrefix: repoPrefix,
+                disableEBT: self.isRestoring // This is a terrible hack to work around #847
             )
             
             defer {

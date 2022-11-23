@@ -66,7 +66,7 @@ class GoBotOrderedTests: XCTestCase {
         }
 
         var ex = self.expectation(description: "login")
-        GoBotOrderedTests.shared.login(config: botTestConfiguration) {
+        GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: false) {
             error in
             defer { ex.fulfill() }
             XCTAssertNil(error)
@@ -84,7 +84,7 @@ class GoBotOrderedTests: XCTestCase {
 
         // calling login twice works too
         ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.login(config: botTestConfiguration) {
+        GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: false) {
             loginErr in
             defer { ex.fulfill() }
             XCTAssertNil(loginErr)
@@ -125,7 +125,7 @@ class GoBotOrderedTests: XCTestCase {
 
         // finally log in again
         let exAgain = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.login(config: botTestConfiguration) {
+        GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: false) {
             loginErr in
             XCTAssertNil(loginErr)
             exAgain.fulfill()

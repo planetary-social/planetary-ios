@@ -327,7 +327,7 @@
 "Error.invalidRoomURL" = "Could not parse invitation.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room";
 
 "Channel.one" = "频道";
 "Channel.many" = "频道";

@@ -21,6 +21,9 @@ class GoBotIntegrationTests: XCTestCase {
     let fileManager = FileManager.default
     let userDefaultsSuiteName = "GoBotIntegrationTests"
 
+    var testPost: Post {
+        Post(text: "\(#function)")
+    }
 
     override func setUpWithError() throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
@@ -45,7 +48,7 @@ class GoBotIntegrationTests: XCTestCase {
         appConfig.bot = sut
         
         let loginExpectation = self.expectation(description: "login")
-        sut.login(config: appConfig) { error in
+        sut.login(config: appConfig, fromOnboarding: false) { error in
             defer { loginExpectation.fulfill() }
             XCTAssertNil(error)
         }
@@ -514,7 +517,29 @@ class GoBotIntegrationTests: XCTestCase {
     }
     
     /// Verifies that the isRestoring value defaults to false.
-    func testIsRestoringDefaultValue() {
+    func testIsRestoringWhenSomeMessagesPublished() async throws {
+        _ = try await sut.publish(content: testPost)
+        try await sut.logout()
+        try await sut.login(config: appConfig, fromOnboarding: false)
+        XCTAssertEqual(sut.isRestoring, false)
+    }
+    
+    func testIsRestoringWhenForkedFeedProtectionActive() async throws {
+        _ = try await sut.publish(content: testPost)
+        AppConfiguration.current?.numberOfPublishedMessages = 2
+        XCTAssertEqual(sut.isRestoring, true)
+        
+    }
+    
+    /// Verifies that the isRestoring value is set to true when we have no feed.
+    func testIsRestoringWithoutPublishedMessages() {
+        XCTAssertEqual(sut.isRestoring, true)
+    }
+    
+    /// Verifies that the isRestoring value is set to true when we have no feed.
+    func testIsRestoringAfterOnboarding() async throws {
+        try await sut.logout()
+        try await sut.login(config: appConfig, fromOnboarding: true)
         XCTAssertEqual(sut.isRestoring, false)
     }
 
@@ -530,7 +555,7 @@ class GoBotIntegrationTests: XCTestCase {
         let loginExpectation = self.expectation(description: "login")
         
         // Act
-        sut.login(config: appConfig) { error in
+        sut.login(config: appConfig, fromOnboarding: false) { error in
             defer { loginExpectation.fulfill() }
             XCTAssertNil(error)
         }

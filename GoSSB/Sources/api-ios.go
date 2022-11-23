@@ -269,7 +269,7 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 			// TODO: make version that prints bytes "unhumanized" so that we can count them
 			return countconn.WrapConn(level.Debug(log), c), nil
 		}),
-		mksbot.DisableEBT(false),
+		mksbot.DisableEBT(cfg.DisableEBT),
 		mksbot.WithPublicAuthorizer(newAcceptAllAuthorizer()),
 	}
 

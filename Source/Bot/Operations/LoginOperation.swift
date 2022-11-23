@@ -31,7 +31,7 @@ class LoginOperation: AsynchronousOperation {
             self.success = true
             self.finish()
         } else {
-            Bots.current.login(config: configuration) { [weak self] (error) in
+            Bots.current.login(config: configuration, fromOnboarding: false) { [weak self] (error) in
                 if let strongSelf = self, !strongSelf.isCancelled {
                     self?.success = ((error as? BotError) == .alreadyLoggedIn) || error == nil
                     self?.error = error

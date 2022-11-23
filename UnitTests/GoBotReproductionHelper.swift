@@ -69,7 +69,7 @@ class API_GoBot: XCTestCase {
         }
         
         let loginExpecation = self.expectation(description: "login")
-        API_GoBot.bot.login(config: reproConfiguration) {
+        API_GoBot.bot.login(config: reproConfiguration, fromOnboarding: false) {
             error in
             XCTAssertNil(error)
             loginExpecation.fulfill()

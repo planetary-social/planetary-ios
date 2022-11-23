@@ -120,8 +120,14 @@ protocol Bot: AnyObject {
     /// whose data is contained in `AppConfiguration`.
     /// - Parameter queue: The queue that `completion` will be called on.
     /// - Parameter config: An object containing high-level parameters like the user's keys and the network key.
+    /// - Parameter fromOnboarding: A flag that should be true if the user is logging in from the onboarding flow.
     /// - Parameter completion: A handler that will be called with the result of the operation.
-    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion)
+    func login(
+        queue: DispatchQueue,
+        config: AppConfiguration,
+        fromOnboarding: Bool,
+        completion: @escaping ErrorCompletion
+    )
     func logout(completion: @escaping ErrorCompletion)
 
     // MARK: Invites
@@ -317,13 +323,13 @@ extension Bot {
         }
     }
     
-    func login(config: AppConfiguration, completion: @escaping ErrorCompletion) {
-        self.login(queue: .main, config: config, completion: completion)
+    func login(config: AppConfiguration, fromOnboarding: Bool, completion: @escaping ErrorCompletion) {
+        self.login(queue: .main, config: config, fromOnboarding: fromOnboarding, completion: completion)
     }
     
-    func login(config: AppConfiguration) async throws {
+    func login(config: AppConfiguration, fromOnboarding: Bool) async throws {
         let error: Error? = await withCheckedContinuation { continuation in
-            self.login(config: config) { error in
+            self.login(config: config, fromOnboarding: fromOnboarding) { error in
                 continuation.resume(with: .success(error))
             }
         }

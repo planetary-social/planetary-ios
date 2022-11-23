@@ -118,7 +118,7 @@ class Onboarding {
         
         // login to bot
         do {
-            try await context.bot.login(config: configuration)
+            try await context.bot.login(config: configuration, fromOnboarding: true)
         } catch {
             throw StartError.botError(error)
         }
@@ -238,8 +238,9 @@ class Onboarding {
             return
         }
 
-        Bots.current.login(config: configuration) { error in
+        Bots.current.login(config: configuration, fromOnboarding: true) { error in
             if let error = error { completion(context, .botError(error)) }
+            Bots.current.isRestoring = false
 
             // get About for context identity
             Bots.current.about(identity: context.identity) {

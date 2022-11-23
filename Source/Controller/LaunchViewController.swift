@@ -123,7 +123,7 @@ class LaunchViewController: UIViewController {
                 guard configuration.network != nil else { return }
                 guard let bot = configuration.bot else { return }
                 
-                try await bot.login(config: configuration)
+                try await bot.login(config: configuration, fromOnboarding: false)
             } catch {
                 self.handleLoginFailure(with: error, configuration: configuration)
             }
