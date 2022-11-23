@@ -257,8 +257,8 @@
 "ManageRelays.loadingRooms" = "Cargando salas...";
 "ManageRelays.invalidRoomURL" = "URL de sala inválido";
 "ManageRelays.roomHelpText" = "Los servidores de sala permiten a los miembros conectarse entre ellos y susurrarse directamente, usando el servidor como un túnel. Para añadir una sala necesitas preguntar a un miembro de una sala existente por una invitación o ejecutar la tuya propia.";
-"ManageRelays.deleteRoom" = "Delete";
-"ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
+"ManageRelays.deleteRoom" = "Eliminar";
+"ManageRelays.deleteRoomConfirmation" = "Nota: Esto solamente eliminará la sala de tu base de datos local de Planetary. No te elimina como miembro de la sala.";
 
 "Alias.manageAliases" = "Administrar alias (beta)";
 "Alias.addAlias" = "Registrar un nuevo alias";
@@ -327,7 +327,7 @@
 "Error.invalidRoomURL" = "No se pudo analizar tu invitación.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary no reconoce esto como una invitación de sala o dirección válida.";
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room.";
+"Error.alreadyJoinedRoom" = "Ya eres un miembro de esta sala.";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
