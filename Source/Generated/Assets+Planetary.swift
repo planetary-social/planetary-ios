@@ -41,6 +41,7 @@ extension Color {
        static let onboardingTitle = Color("onboardingTitle", bundle: Bundle.current)
        static let pillButtonBackground = Color("pillButtonBackground", bundle: Bundle.current)
        static let pillButtonBackgroundDisabled = Color("pillButtonBackgroundDisabled", bundle: Bundle.current)
+       static let pillButtonBackgroundPressed = Color("pillButtonBackgroundPressed", bundle: Bundle.current)
        static let pillButtonText = Color("pillButtonText", bundle: Bundle.current)
        static let pillButtonTextDisabled = Color("pillButtonTextDisabled", bundle: Bundle.current)
        static let primaryAction = Color("primaryAction", bundle: Bundle.current)
@@ -96,6 +97,7 @@ extension UIColor {
        static let onboardingTitle = UIColor(named: "onboardingTitle", in: Bundle.current, compatibleWith: nil)!
        static let pillButtonBackground = UIColor(named: "pillButtonBackground", in: Bundle.current, compatibleWith: nil)!
        static let pillButtonBackgroundDisabled = UIColor(named: "pillButtonBackgroundDisabled", in: Bundle.current, compatibleWith: nil)!
+       static let pillButtonBackgroundPressed = UIColor(named: "pillButtonBackgroundPressed", in: Bundle.current, compatibleWith: nil)!
        static let pillButtonText = UIColor(named: "pillButtonText", in: Bundle.current, compatibleWith: nil)!
        static let pillButtonTextDisabled = UIColor(named: "pillButtonTextDisabled", in: Bundle.current, compatibleWith: nil)!
        static let primaryAction = UIColor(named: "primaryAction", in: Bundle.current, compatibleWith: nil)!

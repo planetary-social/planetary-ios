@@ -121,15 +121,3 @@ struct RoomsOnboardingView: View {
         }
     }
 }
-
-struct PillButtonStyle: ButtonStyle {
-    @SwiftUI.Environment(\.isEnabled) private var isEnabled
-    
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding()
-            .background(isEnabled ? Color.pillButtonBackground : Color.pillButtonBackgroundDisabled)
-            .foregroundColor(isEnabled ? Color.pillButtonText : Color.pillButtonTextDisabled)
-            .clipShape(Capsule())
-    }
-}
