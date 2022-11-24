@@ -59,11 +59,13 @@ import Logger
         if let address = MultiserverAddress(string: string) {
             do {
                 if let token {
-                    try await RoomInvitationRedeemer.redeem(address: address,
-                                                            token: token,
-                                                            in: AppController.shared,
-                                                            bot: Bots.current,
-                                                            showAlert: false)
+                    try await RoomInvitationRedeemer.redeem(
+                        address: address,
+                        token: token,
+                        in: AppController.shared,
+                        bot: Bots.current,
+                        showAlert: false
+                    )
                     registeredRoom = true
                 }
             } catch {

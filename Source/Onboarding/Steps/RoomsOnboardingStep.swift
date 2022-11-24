@@ -14,6 +14,7 @@ import SwiftUI
 import Secrets
 import Analytics
 
+/// Presents a choice of alias servers to join and allows a user to register an alias.
 class RoomsOnboardingStep: OnboardingStep, ObservableObject {
     
     var viewModel: RoomsOnboardingController

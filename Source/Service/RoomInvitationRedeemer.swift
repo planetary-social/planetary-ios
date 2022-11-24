@@ -93,7 +93,7 @@ enum RoomInvitationRedeemer {
         return true
     }
     
-    // Redeems token with a given `MultiserverAddress`
+    // Redeems an unlimited-use token with a room at the given `MultiserverAddress`. This token is referred to as the MAGIC_TOKEN in go-ssb-server.
     static func redeem(address: MultiserverAddress, token: String, in controller: AppController, bot: Bot, showAlert: Bool = false) async throws {
         do {
             try await RoomInvitationRedeemer.redeem(token: token, at: address.host, bot: bot)
