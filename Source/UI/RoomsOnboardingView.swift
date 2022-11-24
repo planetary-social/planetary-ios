@@ -35,7 +35,9 @@ struct RoomsOnboardingView: View {
             HStack {
                 if viewModel.selectedRoom != nil {
                     Button {
-                        viewModel.deselectRoom()
+                        withAnimation {
+                            viewModel.deselectRoom()
+                        }
                     } label: {
                         Label("Back", systemImage: "chevron.left")
                     }
@@ -71,7 +73,9 @@ struct RoomsOnboardingView: View {
                     ForEach(viewModel.communityAliasServers) { room in
                         RoomCard(room: room, viewModel: viewModel)
                             .onTapGesture {
-                                viewModel.selectRoom(room: room)
+                                withAnimation {
+                                    viewModel.selectRoom(room: room)
+                                }
                             }
                     }
                     
