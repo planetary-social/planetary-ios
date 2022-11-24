@@ -369,8 +369,13 @@ class GoBot: Bot {
     }
     
     func register(alias: String, in room: Room) async throws -> RoomAlias {
-        _ = try self.bot.register(alias: alias, in: room)
-        return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room)
+        let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
+                
+            try self.bot.register(alias: alias, in: room)
+            
+            return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room)
+        }
+        return try await task.value
     }
     
     func revoke(alias: RoomAlias) async throws {
