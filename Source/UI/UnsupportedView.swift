@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class UnsupportedView: MessageView {
+class UnsupportedView: MessageUIView {
 
     let label: UILabel = {
         let label = UILabel()

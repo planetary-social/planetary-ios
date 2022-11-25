@@ -65,6 +65,10 @@ extension Hashtag: Equatable {
     }
 }
 
+extension Hashtag: Identifiable {
+    var id: String { name }
+}
+
 typealias Hashtags = [Hashtag]
 
 extension Hashtags {

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SkeletonView
 
-class ExtendedAboutView: MessageView {
+class ExtendedAboutView: MessageUIView {
 
     let imageView: AvatarImageView = {
         let view = AvatarImageView(borderColor: .primaryAction, borderWidth: 2)

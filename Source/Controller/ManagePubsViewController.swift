@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Logger
 import CrashReporting
+import SwiftUI
 
 class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSourceDelegate {
     
@@ -62,7 +63,10 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
             }
             targetController?.pushViewController(controller, animated: true)
         } else {
-            let controller = AboutViewController(with: self.dataSource.pubs[indexPath.row].address.key)
+            let identity = dataSource.pubs[indexPath.row].address.key
+            let controller = UIHostingController(
+                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+            )
             targetController?.pushViewController(controller, animated: true)
         }
     }

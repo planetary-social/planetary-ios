@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import Combine
 
-class ReplyTextView: MessageView {
+class ReplyTextView: MessageUIView {
 
     // The max height of the view is based on the max number
     // of lines the text view should have before scrolling.
