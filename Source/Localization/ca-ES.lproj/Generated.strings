@@ -331,14 +331,14 @@
 "Error.unexpected" = "Something unexpected happened.";
 "Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
-"Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
-"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
-"Error.restoring" = "Planetary is currently restoring your data from the network.";
+"Error.invitationRedemptionFailedWithReason" = "No s'ha pogut bescanviar la invitació amb el missatge: {{ reason }}.";
+"Error.cannotPublishBecauseRestoring" = "Planetary està restaurant les teves dades de la xarxa i no pot publicar entrades noves en aquest moment.";
+"Error.restoring" = "Planetary està restaurant les teves dades de la xarxa.";
 "Error.invalidAppConfiguration" = "Configuració no vàlida";
-"Error.couldNotGenerateLink" = "Could not generate link.";
-"Error.invalidRoomURL" = "Could not parse invitation.";
-"Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
-"Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
+"Error.couldNotGenerateLink" = "No s'ha pogut generar l'enllaç.";
+"Error.invalidRoomURL" = "No s'ha pogut analitzar la invitació.";
+"Error.invalidRoomInvitationOrAddress" = "Planetary no ho reconeix com a invitació d'espai vàlid o adreça vàlida.";
+"Error.notLoggedIn" = "L'operació no s'ha pogut completar perquè no hi ha cap usuari amb la sessió iniciada.";
 "Error.alreadyJoinedRoom" = "Ja ets un membre d'aquest espai";
 
 "Channel.one" = "canal";
@@ -353,25 +353,25 @@
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";
 
-"Notifications.markAllAsRead" = "Mark all as read";
+"Notifications.markAllAsRead" = "Marca tot com a llegit";
 
-"Help.help" = "Help";
+"Help.help" = "Ajuda";
 "Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
 
 "Home.title" = "See posts from users and topics you follow";
 "Home.body" = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed.";
-"Home.highlightedWord" = "Discover";
+"Home.highlightedWord" = "Descobreix";
 
 "Discover.title" = "See what's new and grow your network";
 "Discover.body" = "See posts from users and topics followed by your friends. Follow them to see their content in your Home Feed!";
-"Discover.highlightedWord" = "Home Feed";
+"Discover.highlightedWord" = "Línia de temps principal";
 
 "Notifications.title" = "Keep up-to-date in all your conversations";
 "Notifications.body" = "Check this screen for replies and reactions to your posts as well as conversations you participate in. We'll also notify you when someone mentions you.";
 
 "Hashtags.title" = "What the community is talking about";
 "Hashtags.body" = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network.";
-"Hashtags.highlightedWord" = "Your Network";
+"Hashtags.highlightedWord" = "La teva xarxa";
 
 "YourNetwork.title" = "Your friends, connections and pubs";
 "YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
