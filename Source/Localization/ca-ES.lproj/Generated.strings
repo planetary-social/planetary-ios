@@ -222,7 +222,7 @@
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
 "Onboarding.welcomeBotName" = "Planetary Help";
 "Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
-"Onboarding.joinPlanetarySystem" = "Join Planetary Network";
+"Onboarding.joinPlanetarySystem" = "Uneix-te a la xarxa Planetary";
 "Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
 "Onboarding.useTestNetwork" = "Use Test Network";
 "Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
@@ -240,7 +240,7 @@
 "OnboardingStepTitle.phone" = "And what's your mobile number?";
 "OnboardingStepTitle.phoneVerify" = "Enter the code we just sent you to confirm...";
 "OnboardingStepTitle.photo" = "Okay that's the hard stuff - now let's get you a profile image";
-"OnboardingStepTitle.photoConfirm" = "Profile photo added";
+"OnboardingStepTitle.photoConfirm" = "Foto de perfil afegida";
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
 
@@ -251,7 +251,7 @@
 "ManageRelays.addingPubs" = "Adding Pubs";
 "ManageRelays.yourPubs" = "Your Pubs";
 "ManageRelays.lastWorked" = "Last worked on";
-"ManageRelays.pasteAddress" = "Paste the address here";
+"ManageRelays.pasteAddress" = "Enganxa l'adreça aquí";
 "ManageRelays.joinedRooms" = "Joined Rooms";
 "ManageRelays.addRooms" = "Add Rooms";
 "ManageRelays.loadingRooms" = "Loading rooms...";
