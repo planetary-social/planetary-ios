@@ -19,6 +19,7 @@
 "Localized.daysAgo" = "fa {{days}} dies";
 "Localized.atDayTime" = "{{ day }} at {{ time }}";
 "Localized.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
+"Localized.profile" = "Profile";
 "Localized.yourProfile" = "El teu perfil";
 "Localized.helpAndSupport" = "Ajuda i suport";
 "Localized.reportBug" = "Informa d'un error";
@@ -28,10 +29,12 @@
 "Localized.usersInYourNetwork" = "Usuaris a la teva xarxa";
 "Localized.goToYourNetwork" = "Ves a la teva xarxa";
 "Localized.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
+"Localized.posted" = "{{somebody}} posted";
 "Localized.replied" = "{{somebody}} replied";
 "Localized.liked" = "{{somebody}} liked";
 "Localized.startedFollowing" = "{{somebody}} started following";
 "Localized.stoppedFollowing" = "{{somebody}} stopped following";
+"Localized.startedBlocking" = "{{somebody}} blocked";
 "Localized.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "This user is outside your network";
 "Localized.showMeInDirectory" = "Mostra'm al directori";
@@ -50,6 +53,7 @@
 "Localized.deletePost" = "Suprimeix aquesta entrada";
 "Localized.editPost" = "Edita aquesta publicació";
 "Localized.confirmDeletePost" = "Estàs segur que vols suprimir aquesta publicació?";
+"Localized.readMore" = "Read more";
 "Localized.postReply" = "Post Reply";
 "Localized.postAReply" = "Post a reply";
 "Localized.createProfile" = "Create Profile";
@@ -62,13 +66,17 @@
 "Localized.dislikesThis" = "dislikes this";
 "Localized.block" = "Ignore";
 "Localized.blocked" = "Ignored";
+"Localized.blocking" = "Ignoring";
 "Localized.deleteSecretAndIdentity" = "Delete this secret and identity";
+"Localized.followBack" = "Follow back";
 "Localized.follow" = "Follow";
 "Localized.following" = "Following";
 "Localized.followedBy" = "Followed By";
 "Localized.isFollowingYou" = "is currently following you";
 "Localized.followedByCount" = "Followed by {{ count }}";
 "Localized.followingCount" = "Following {{ count }}";
+"Localized.blockingCount" = "Ignoring {{ count }}";
+"Localized.joinedCount" = "Joined {{ count }}";
 "Localized.inYourNetwork" = " in your network";
 "Localized.followedByShortCount" = "{{ count }} Followers";
 "Localized.unfollow" = "Stop following";
@@ -116,6 +124,7 @@
 "Localized.like" = "M'agrada";
 "Localized.debug" = "Depurar";
 "Localized.join" = "Uneix-te";
+"Localized.joined" = "Joined";
 "Localized.redeemInvitation" = "Demana una invitació";
 "Localized.pasteAddress" = "Token";
 "Localized.invitationRedeemed" = "Invitació bescanviada!";
@@ -260,6 +269,9 @@
 "ManageRelays.deleteRoom" = "Delete";
 "ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
 
+"Message.noPostsTitle" = "No posts here yet";
+"Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+
 "Alias.manageAliases" = "Manage Aliases (beta)";
 "Alias.addAlias" = "Register a new alias";
 "Alias.roomAliases" = "Room Aliases (beta)";
@@ -327,7 +339,7 @@
 "Error.invalidRoomURL" = "Could not parse invitation.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room";
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";
