@@ -13,7 +13,7 @@ import Logger
 /// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
 ///
 /// It doesn't include pubs follows and posts in the feed
-class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
+final class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     /// SQL query to count the total number of items in the feed

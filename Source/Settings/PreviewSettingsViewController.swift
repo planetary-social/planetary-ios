@@ -49,7 +49,7 @@ class PreviewSettingsViewController: DebugTableViewController {
                 cell in
                 guard let identity = Bots.current.identity else { return }
                 cell.showActivityIndicator()
-                Bots.current.blocks(identity: identity) {
+            Bots.current.blocks(identity: identity, queue: .main) {
                     identities, _ in
                     cell.hideActivityIndicator(andShow: .disclosureIndicator)
                     cell.detailTextLabel?.text = "\(identities.count)"

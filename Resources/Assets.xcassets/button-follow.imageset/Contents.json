@@ -1,50 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icon-dark-relationship-follow-1.png",
+      "filename" : "Follow icon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon-dark-relationship-follow.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "icon-dark-relationship-follow@2x-1.png",
+      "filename" : "Follow icon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon-dark-relationship-follow@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "icon-dark-relationship-follow@3x-1.png",
-      "idiom" : "universal",
-      "scale" : "3x"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "icon-dark-relationship-follow@3x.png",
+      "filename" : "Follow icon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
