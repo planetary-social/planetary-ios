@@ -23,10 +23,10 @@
 "Localized.helpAndSupport" = "Ajuda i suport";
 "Localized.reportBug" = "Informa d'un error";
 "Localized.settings" = "Preferències";
-"Localized.yourNetwork" = "Your Network";
+"Localized.yourNetwork" = "La teva xarxa";
 "Localized.pubServers" = "Pub Servers";
-"Localized.usersInYourNetwork" = "Users in your network";
-"Localized.goToYourNetwork" = "Go to Your Network";
+"Localized.usersInYourNetwork" = "Usuaris a la teva xarxa";
+"Localized.goToYourNetwork" = "Ves a la teva xarxa";
 "Localized.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
 "Localized.replied" = "{{somebody}} replied";
 "Localized.liked" = "{{somebody}} liked";
@@ -34,13 +34,13 @@
 "Localized.stoppedFollowing" = "{{somebody}} stopped following";
 "Localized.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "This user is outside your network";
-"Localized.showMeInDirectory" = "Show me in the directory";
+"Localized.showMeInDirectory" = "Mostra'm al directori";
 "Localized.showMeInUserDirectory" = "Show me in the user directory";
 "Localized.hideMeFromUserDirectory" = "Hide me from the user directory";
 "Localized.analyticsAndCrash" = "Analytics & Crash Reports";
 "Localized.usageData" = "Usage Data";
 "Localized.userDirectoryMessage" = "Being in the user directory means that people can find you if they already know your name, short code or phone number.";
-"Localized.sendAnalytics" = "Send analytics to Planetary";
+"Localized.sendAnalytics" = "Envia analítiques a Planetary";
 "Localized.dontSendAnalytics" = "Don't send analytics at all";
 "Localized.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Localized.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
@@ -266,15 +266,15 @@
 "Alias.aliases" = "Aliases";
 "Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
 
-"Preview.title" = "Advanced Settings";
+"Preview.title" = "Configuració avançada";
 "Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
 
-"FeedAlgorithm.algorithms" = "Algorithms";
+"FeedAlgorithm.algorithms" = "Algorismes";
 "FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
 "FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
-"FeedAlgorithm.recentPostsAlgorithm" = "Recent posts";
+"FeedAlgorithm.recentPostsAlgorithm" = "Publicacions recents";
 "FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
-"FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Recent posts and follows";
+"FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Publicacions recents i seguiments";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Shows posts and follow messages from the people you follow in the order they were posted.";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Recently active posts and follows (default)";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Shows posts and follow messages from the people you follow. If a message receives a reply it will be pushed back up to the top of the feed.";
