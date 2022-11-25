@@ -240,7 +240,7 @@ class Onboarding {
 
         Bots.current.login(config: configuration, fromOnboarding: true) { error in
             if let error = error { completion(context, .botError(error)) }
-            Bots.current.isRestoring = false
+            Bots.current.setRestoring(false)
 
             // get About for context identity
             Bots.current.about(identity: context.identity) {
