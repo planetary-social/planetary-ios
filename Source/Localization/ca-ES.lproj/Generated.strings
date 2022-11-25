@@ -306,7 +306,7 @@
 "WebServices.title" = "Serveis web";
 "WebServices.publicWebHosting" = "Allotjament web públic";
 "WebServices.aliases" = "Àlies (beta)";
-"WebServices.footer" = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible.";
+"WebServices.footer" = "Activa per indicar que vols que el teu canal aparegui als llocs web de passarel·les públiques. Els canvis poden tardar un parell d'hores a ser visibles.";
 
 "Push.enabled" = "Enabled";
 "Push.title" = "Push Notifications";
@@ -334,21 +334,21 @@
 "Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
 "Error.restoring" = "Planetary is currently restoring your data from the network.";
-"Error.invalidAppConfiguration" = "Invalid app configuration";
+"Error.invalidAppConfiguration" = "Configuració no vàlida";
 "Error.couldNotGenerateLink" = "Could not generate link.";
 "Error.invalidRoomURL" = "Could not parse invitation.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room";
+"Error.alreadyJoinedRoom" = "Ja ets un membre d'aquest espai";
 
-"Channel.one" = "channel";
-"Channel.many" = "channels";
+"Channel.one" = "canal";
+"Channel.many" = "canals";
 
-"Post.one" = "post";
-"Post.many" = "posts";
+"Post.one" = "publicació";
+"Post.many" = "publicacions";
 
-"Report.somebody" = "Somebody";
-"Report.feedFollowed" = "%@ started following you";
+"Report.somebody" = "Algú";
+"Report.feedFollowed" = "%@ ha començat a seguir-te!";
 "Report.postReplied" = "%@ replied to a post you commented on";
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";
