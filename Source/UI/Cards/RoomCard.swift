@@ -51,7 +51,7 @@ struct RoomCard: View {
                         .onChange(of: viewModel.alias) { newValue in
                             viewModel.alias = newValue
                                 .lowercased()
-                                .filter("abcdefghijklmnopqrstuvwxyz0123456789-".contains)
+                                .filter("abcdefghijklmnopqrstuvwxyz0123456789".contains)
                         }
                         .font(Font(UIFont.verse.pillButton))
                         .foregroundColor(.cardTextInputText)

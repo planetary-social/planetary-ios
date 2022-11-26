@@ -43,8 +43,7 @@ import Logger
     // MARK: View Model Actions
     
     func aliasIsValid() -> Bool {
-        guard alias.count > 1,
-            !alias.starts(with: "-") else {
+        guard alias.count > 1 else {
             return false
         }
         return true
