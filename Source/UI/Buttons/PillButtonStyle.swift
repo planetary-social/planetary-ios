@@ -14,8 +14,10 @@ struct PillButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding()
-            .background(!isEnabled ? Color.pillButtonBackgroundDisabled :
-                            configuration.isPressed ? Color.pillButtonBackgroundPressed : Color.pillButtonBackground)
+            .background(
+                !isEnabled ? Color.pillButtonBackgroundDisabled :
+                    configuration.isPressed ? Color.pillButtonBackgroundPressed : Color.pillButtonBackground
+            )
             .foregroundColor(isEnabled ? Color.pillButtonText : Color.pillButtonTextDisabled)
             .clipShape(Capsule())
     }

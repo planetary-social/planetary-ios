@@ -54,9 +54,8 @@ struct Environment {
         }()
         
         static let communityAliasServers: [Room] = {
-            return parseCommunityServers(environmentKey: "PLTestAliasServers")
+            parseCommunityServers(environmentKey: "PLTestAliasServers")
         }()
-
     }
     
     private static func value(for key: String) -> String {
@@ -81,18 +80,17 @@ struct Environment {
     }()
     
     private static func parseCommunityServers(environmentKey: String) -> [Room] {
-        
         var communityAliasServers = [Room]()
+        
         Environment.value(for: environmentKey).components(separatedBy: "||").forEach {
             let aliasServerComponents = $0.components(separatedBy: "::")
-            
             let identifier = aliasServerComponents[0]
             let imageName = aliasServerComponents[2]
             guard let key = Key(rawValue: aliasServerComponents[3]),
-                  let token = Keys.shared.get(key: key),
-                  let address = MultiserverAddress(string: aliasServerComponents[1]),
-                  !identifier.isEmpty,
-                  !imageName.isEmpty
+                let token = Keys.shared.get(key: key),
+                let address = MultiserverAddress(string: aliasServerComponents[1]),
+                !identifier.isEmpty,
+                !imageName.isEmpty
             else {
                 return
             }

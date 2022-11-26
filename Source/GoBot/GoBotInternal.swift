@@ -683,8 +683,6 @@ class GoBotInternal {
         switch result.err {
         case 2:
             throw RoomRegistrationError.aliasTaken
-        case 1:
-            fallthrough
         default:
             throw RoomRegistrationError.unknownError
         }
