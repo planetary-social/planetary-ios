@@ -9,7 +9,7 @@
 import SwiftUI
 import Logger
 
-/// A view model for the RoomListView
+/// A view model for `RoomsOnboardingView`.
 @MainActor protocol RoomsOnboardingViewModel: ObservableObject {
     
     /// A list of rooms the user is a member of.

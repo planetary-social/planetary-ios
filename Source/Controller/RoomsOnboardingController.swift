@@ -9,6 +9,8 @@
 import Foundation
 import Logger
 
+/// A controller for the `RoomsOnboardingView` utilized in `RoomsOnboardingStep`. Allows users to choose and join an alias server
+/// from a preset list and to optionally register an alias with that server.
 @MainActor class RoomsOnboardingController: RoomsOnboardingViewModel {
     
     @Published var rooms = [Room]()
