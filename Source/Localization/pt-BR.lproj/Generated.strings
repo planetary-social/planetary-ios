@@ -238,7 +238,7 @@
 "Onboarding.invalidAliasFormat" = "Incorrect format for alias";
 "Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
 "Onboarding.typeYourAlias" = "Type your alias";
-"Onboarding.chooseYourAlias" = "< Choose Alias Server";
+"Onboarding.registeringAlias" = "Registering Alias...";
 
 "OnboardingStepTitle.backup" = "Tudo bem, criamos a sua identidade — gostaria de fazer um backup dela?";
 "OnboardingStepTitle.benefits" = "O Planetary é uma maneira mais saudável de ser sociável";

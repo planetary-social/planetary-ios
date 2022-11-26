@@ -384,7 +384,7 @@ extension Localized {
         case invalidAliasFormat = "Incorrect format for alias"
         case unknownAliasRegistrationError = "There was a problem registering this alias"
         case typeYourAlias = "Type your alias"
-        case chooseYourAlias = "< Choose Alias Server"
+        case registeringAlias = "Registering Alias..."
     }
 }
 

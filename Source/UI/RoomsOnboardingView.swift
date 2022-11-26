@@ -15,6 +15,9 @@ import Logger
     /// A list of rooms the user is a member of.
     var rooms: [Room] { get }
     
+    /// A loading message that should be displayed when it is not nil
+    var loadingMessage: String? { get set }
+    
     /// An error message that should be displayed when it is not nil
     var errorMessage: String? { get }
     
@@ -122,6 +125,6 @@ struct RoomsOnboardingView: View {
                     .padding([.leading, .trailing], 40)
                 }
             }.padding(.bottom, 10)
-        }
+        }.overlay(LoadingOverlay(message: $viewModel.loadingMessage))
     }
 }

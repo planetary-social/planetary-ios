@@ -13,6 +13,8 @@ import Logger
     
     @Published var rooms = [Room]()
     
+    @Published var loadingMessage: String?
+    
     @Published var errorMessage: String?
     
     @Published var communityAliasServers = Environment.PlanetarySystem.communityAliasServers
@@ -29,6 +31,11 @@ import Logger
     
     init(bot: Bot) {
         self.bot = bot
+        
+        loadingMessage = Localized.loading.text
+        Task {
+            self.loadingMessage = nil
+        }
     }
     
     // MARK: View Model Actions
@@ -43,6 +50,7 @@ import Logger
     
     func joinAndRegister(room: Room, alias: String) async throws -> RoomAlias {
         errorMessage = nil
+        loadingMessage = Localized.Onboarding.registeringAlias.text
         do {
             if registeredRoom == false {
                 try await addRoom(from: room.address.string, token: room.token)
@@ -50,6 +58,7 @@ import Logger
             return try await register(alias, in: room)
         } catch {
             errorMessage = error.localizedDescription
+            self.loadingMessage = nil
             Log.error(error.localizedDescription)
             throw error
         }
@@ -79,6 +88,7 @@ import Logger
     
     func register(_ desiredAlias: String, in room: Room) async throws -> RoomAlias {
         let alias = try await self.bot.register(alias: desiredAlias, in: room)
+        self.loadingMessage = nil
         return alias
     }
     
