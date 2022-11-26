@@ -84,9 +84,9 @@ class AppController: UIViewController {
 
     // MARK: Main tab view controller
 
-    func showMainViewController(with controller: UIViewController? = nil, animated: Bool = true, crossFade: Bool = false) {
+    func showMainViewController(with controller: UIViewController? = nil, animated: Bool = true, fadeIn: Bool = false) {
         let controller = MainViewController()
-        if animated && crossFade {
+        if animated && fadeIn {
             self.view.layer.add(crossFadeTransition, forKey: nil)
         }
         self.setRootViewController(controller, animated: animated)

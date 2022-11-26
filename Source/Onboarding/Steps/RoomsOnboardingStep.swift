@@ -38,9 +38,9 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
             )
         )
         uiHostingController.view.backgroundColor = .clear
-     
+        
         Layout.fill(view: view, with: uiHostingController.view)
-   }
+    }
     
     override func willStart() {
         if !viewModel.rooms.isEmpty || viewModel.communityAliasServers.isEmpty {

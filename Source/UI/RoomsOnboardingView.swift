@@ -100,10 +100,12 @@ struct RoomsOnboardingView: View {
                 Button {
                     step.next()
                 } label: {
-                    Text(viewModel.selectedRoom == nil ? Localized.Onboarding.aliasServerSkip.text :
-                        Localized.Onboarding.aliasSkip.text).underline()
-                            .foregroundColor(.menuSelectedItemText)
-                            .font(Font(UIFont.systemFont(ofSize: 15, weight: .medium)))
+                    Text(
+                        viewModel.selectedRoom == nil ? Localized.Onboarding.aliasServerSkip.text :
+                            Localized.Onboarding.aliasSkip.text
+                    ).underline()
+                        .foregroundColor(.menuSelectedItemText)
+                        .font(Font(UIFont.systemFont(ofSize: 15, weight: .medium)))
                 }
                 if let room = viewModel.selectedRoom {
                     Button {

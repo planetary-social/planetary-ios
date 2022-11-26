@@ -135,7 +135,7 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
     private func done() {
         // AppController.shared.showDirectoryViewController()
         Analytics.shared.trackOnboardingEnd()
-        AppController.shared.showMainViewController(crossFade: true)
+        AppController.shared.showMainViewController(fadeIn: true)
     }
 
     // MARK: OnboardingStepDelegate
