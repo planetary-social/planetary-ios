@@ -11,13 +11,13 @@ import ImageSlideshow
 import UIKit
 import SkeletonView
 
-class PostCellView: MessageView {
+class PostCellView: MessageUIView {
 
     let verticalSpace: CGFloat = 5
 
     private lazy var seeMoreString: NSAttributedString = {
         let seeMore = NSMutableAttributedString(string: "... \(Localized.seeMore.text)")
-        let styler = MarkdownStyler()
+        let styler = MarkdownStyler(small: false)
         styler.style(seeMore: seeMore)
         let range = (seeMore.string as NSString).range(of: Localized.seeMore.text)
         seeMore.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.tint.default], range: range)

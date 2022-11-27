@@ -12,7 +12,7 @@ import UIKit
 import SkeletonView
 import Logger
 
-class ContactCellView: MessageView {
+class ContactCellView: MessageUIView {
 
     let verticalSpace: CGFloat = Layout.verticalSpacing
 

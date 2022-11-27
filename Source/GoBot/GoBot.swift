@@ -339,6 +339,21 @@ class GoBot: Bot {
             }
         }
     }
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion) {
+        userInitiatedQueue.async {
+            do {
+                let pubs = try self.database.getJoinedPubs(identity: identity)
+                queue.async {
+                    completion(.success(pubs))
+                }
+            } catch {
+                queue.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
     
     func joinedRooms() async throws -> [Room] {
         let task = Task.detached(priority: .userInitiated) {
@@ -1114,26 +1129,24 @@ class GoBot: Bot {
         }
     }
 
-    func follows(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+    func follows(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let follows: [Identity] = try self.database.getFollows(feed: identity)
-                DispatchQueue.main.async { completion(follows, nil) }
+                queue.async { completion(follows, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                queue.async { completion([], error) }
             }
         }
     }
     
-    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+    func followedBy(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
-                DispatchQueue.main.async { completion(follows, nil) }
+                queue.async { completion(follows, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                queue.async { completion([], error) }
             }
         }
     }
@@ -1201,15 +1214,15 @@ class GoBot: Bot {
     
     // MARK: Blocks & Bans
     
-    func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
+    func blocks(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let identities = try self.database.getBlocks(feed: identity)
-                DispatchQueue.main.async {
+                queue.async {
                     completion(identities, nil)
                 }
             } catch {
-                DispatchQueue.main.async {
+                queue.async {
                     completion([], error)
                 }
             }
@@ -1265,6 +1278,7 @@ class GoBot: Bot {
                 return
             }
             completion(messageIdentifier, nil)
+            NotificationCenter.default.post(name: .didUnblockUser, object: identity)
         }
     }
     
@@ -1492,6 +1506,17 @@ class GoBot: Bot {
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
+            }
+        }
+    }
+
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
+        userInitiatedQueue.async { [database] in
+            do {
+                let messages = try strategy.fetchMessages(database: database, userId: 0, limit: limit, offset: offset)
+                completion(messages, nil)
+            } catch {
+                completion([], error)
             }
         }
     }
