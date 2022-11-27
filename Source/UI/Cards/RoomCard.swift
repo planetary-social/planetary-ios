@@ -49,6 +49,7 @@ struct RoomCard: View {
                                 .foregroundColor(.secondaryText)
                         }
                         .onChange(of: viewModel.alias) { newValue in
+                            viewModel.errorMessage = nil
                             viewModel.alias = newValue
                                 .lowercased()
                                 .filter("abcdefghijklmnopqrstuvwxyz0123456789".contains)
