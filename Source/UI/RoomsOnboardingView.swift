@@ -86,7 +86,7 @@ struct RoomsOnboardingView: View {
                         Text(Localized.Onboarding.changeAlias.text)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.onboardingMainText)
-                            .padding(.top, 30)
+                            .padding(.top, 60)
                     }
                     
                     Spacer()
