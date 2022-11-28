@@ -213,7 +213,7 @@
 "Onboarding.listMeTitle" = "在用户目录中显示";
 "Onboarding.listMeMessage" = "This allows people to find you if they know your name or phone number";
 "Onboarding.thanksForTrying" = "Thanks for trying Planetary! It's customary to use the #newpeople hashtag to introduce yourself.";
-"Onboarding.doneOnboarding" = "Phew! I'm done!";
+"Onboarding.doneOnboarding" = "One more thing…";
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
@@ -255,7 +255,7 @@
 "OnboardingStepTitle.birthday" = "Before we start, when's your birthday?";
 "OnboardingStepTitle.contacts" = "You can connect your address book to see which of your friends are using Planetary";
 "OnboardingStepTitle.directory" = "People you might know";
-"OnboardingStepTitle.done" = "Well done, you made it through in one piece";
+"OnboardingStepTitle.done" = "Customize your settings or just use the defaults";
 "OnboardingStepTitle.earlyAccess" = "Gentle reminder: This is early access software";
 "OnboardingStepTitle.join" = "Creating your identity on Planetary...";
 "OnboardingStepTitle.name" = "Now, what would you like to be called?";

@@ -213,7 +213,7 @@
 "Onboarding.listMeTitle" = "Zeige mich im Benutzerverzeichnis";
 "Onboarding.listMeMessage" = "Dies erlaubt Leuten dich zu finden, wenn sie deinen Namen oder deine Telefonnummer kennen";
 "Onboarding.thanksForTrying" = "Danke, dass du Planetary ausprobierst! Es ist üblich, den #newpeople Hashtag zu benutzen, um dich vorzustellen.";
-"Onboarding.doneOnboarding" = "Puh! Ich bin fertig!";
+"Onboarding.doneOnboarding" = "One more thing…";
 "Onboarding.earlyAccess" = "Diese App befindet sich in einem frühen Stadium. Wir haben unsere Zeit auf die Grundlagen konzentriert, also gibt es Lücken und raue Teile in der Benutzeroberfläche. Hab ein wenig Geduld!";
 "Onboarding.iUnderstand" = "Ja, ich verstehe";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
@@ -255,7 +255,7 @@
 "OnboardingStepTitle.birthday" = "Bevor wir beginnen, wann ist dein Geburtstag?";
 "OnboardingStepTitle.contacts" = "Sie können Ihr Adressbuch verbinden, um zu sehen, welche Ihrer Freunde Planetary verwenden";
 "OnboardingStepTitle.directory" = "Leute, die du vielleicht kennst";
-"OnboardingStepTitle.done" = "Gut gemacht, du hast es in einem Stück durchgemacht";
+"OnboardingStepTitle.done" = "Customize your settings or just use the defaults";
 "OnboardingStepTitle.earlyAccess" = "Gentle-Erinnerung: Dies ist eine frühe Zugriffssoftware";
 "OnboardingStepTitle.join" = "Erstelle deine Identität auf Planetar...";
 "OnboardingStepTitle.name" = "Wie möchtest du genannt werden?";
