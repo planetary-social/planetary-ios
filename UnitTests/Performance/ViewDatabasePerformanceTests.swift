@@ -72,7 +72,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
             let dbDir = try await createDBDirectory()
             let sqliteURL = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: dbName, withExtension: "sqlite"))
             try FileManager.default.copyItem(at: sqliteURL, to: dbURL)
-            try openDB(in : dbDir, user: user)
+            try openDB(in: dbDir, user: user)
             setupExpectation.fulfill()
         }
         wait(for: [setupExpectation], timeout: 20)
