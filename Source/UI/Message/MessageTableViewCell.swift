@@ -12,11 +12,11 @@ import UIKit
 class MessageTableViewCell: UITableViewCell, MessageUpdateable {
 
     let type: ContentType
-    let messageView: MessageView
+    let messageView: MessageUIView
 
-    init(for type: ContentType, with view: MessageView? = nil, height: CGFloat? = nil) {
+    init(for type: ContentType, with view: MessageUIView? = nil, height: CGFloat? = nil) {
         self.type = type
-        self.messageView = view ?? MessageView.for(type)
+        self.messageView = view ?? MessageUIView.for(type)
         super.init(style: .default, reuseIdentifier: type.reuseIdentifier)
         self.constrainMessageViewToContentView(height)
         self.selectionStyle = .none

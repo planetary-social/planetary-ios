@@ -53,10 +53,14 @@ class FeatureViewController: UINavigationController {
         self.tabBarItem.accessibilityLabel = title
     }
         
-    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
             setTabBarItem(title: viewControllers.first?.navigationItem.title)
         }
+    }
+
+    override func viewWillLayoutSubviews() {
+        navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
 
     @discardableResult
@@ -83,7 +87,7 @@ class FeatureViewController: UINavigationController {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -93,7 +97,8 @@ class FeatureViewController: UINavigationController {
 
     // MARK: Actions
 
-    @objc func profileButtonTouchUpInside() {
+    @objc
+    func profileButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "menu")
         AppController.shared.showMenuViewController()
     }

@@ -12,6 +12,7 @@ import Foundation
 
 extension Notification.Name {
     static let didBlockUser = Notification.Name("didBlockUser")
+    static let didUnblockUser = Notification.Name("didUnblockUser")
 }
 
 // MARK: - Blobs
