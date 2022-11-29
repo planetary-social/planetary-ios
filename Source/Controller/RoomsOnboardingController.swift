@@ -101,6 +101,7 @@ import Logger
     
     func deselectRoom() {
         alias = ""
+        errorMessage = nil
         title = Localized.Onboarding.StepTitle.aliasServer.text
         communityAliasServers = Environment.PlanetarySystem.communityAliasServers
         selectedRoom = nil
