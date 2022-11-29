@@ -61,6 +61,12 @@ class FakeBot: Bot {
             completion([], nil)
         }
     }
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion) {
+        queue.async {
+            completion(.success([]))
+        }
+    }
     
     func joinedRooms() async throws -> [Room] {
         []
@@ -120,11 +126,11 @@ class FakeBot: Bot {
 
     func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) { }
     
-    func follows(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func follows(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
     
     func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     
-    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func followedBy(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
 
     func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     
@@ -132,7 +138,7 @@ class FakeBot: Bot {
 
     func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void)) { }
     
-    func blocks(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func blocks(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
     
     func blockedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
 
@@ -163,7 +169,7 @@ class FakeBot: Bot {
     
     // MARK: Login
     private var _network: String?
-    private var _identity: Identity?
+    private var _identity: Identity? = .null
     var identity: Identity? { self._identity }
 
     func createSecret(completion: SecretCompletion) {
@@ -289,6 +295,10 @@ class FakeBot: Bot {
         } else {
             completion(StaticDataProxy(), nil)
         }
+    }
+    
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
+        completion([], nil)
     }
 
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {

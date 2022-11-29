@@ -10,6 +10,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
 
 protocol AboutTableViewDelegate {
     func reload()
@@ -92,16 +93,11 @@ extension AboutTableViewDataSource: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         Analytics.shared.trackDidSelectItem(kindName: "identity")
-        
         let identity = self.identities[indexPath.row]
+        let controller = UIHostingController(
+            rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+        )
         let targetController = self.delegate?.navigationController
-
-        if let about = self.abouts[identity] {
-            let controller = AboutViewController(with: about)
-            targetController?.pushViewController(controller, animated: true)
-        } else {
-            let controller = AboutViewController(with: identity)
-            targetController?.pushViewController(controller, animated: true)
-        }
+        targetController?.pushViewController(controller, animated: true)
     }
 }

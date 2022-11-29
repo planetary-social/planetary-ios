@@ -40,6 +40,24 @@ extension Color {
        static let textInputBackground = Color("textInputBackground", bundle: Bundle.current)
        static let textInputBorder = Color("textInputBorder", bundle: Bundle.current)
        static let unselectedTab = Color("unselectedTab", bundle: Bundle.current)
+       static let accentTxt = Color("accent-txt", bundle: Bundle.current)
+       static let appBg = Color("app-bg", bundle: Bundle.current)
+       static let cardBgBottom = Color("card-bg-bottom", bundle: Bundle.current)
+       static let cardBgTop = Color("card-bg-top", bundle: Bundle.current)
+       static let cardBorderBottom = Color("card-border-bottom", bundle: Bundle.current)
+       static let cardDividerShadow = Color("card-divider-shadow", bundle: Bundle.current)
+       static let cardDivider = Color("card-divider", bundle: Bundle.current)
+       static let cardShadowBottom = Color("card-shadow-bottom", bundle: Bundle.current)
+       static let hashtagBg = Color("hashtag-bg", bundle: Bundle.current)
+       static let postareplyBackground = Color("postareply-background", bundle: Bundle.current)
+       static let postareplyShadowBottom = Color("postareply-shadow-bottom", bundle: Bundle.current)
+       static let postareplyShadowTop = Color("postareply-shadow-top", bundle: Bundle.current)
+       static let primaryTxt = Color("primary-txt", bundle: Bundle.current)
+       static let profileBgBottom = Color("profile-bg-bottom", bundle: Bundle.current)
+       static let profileBgTop = Color("profile-bg-top", bundle: Bundle.current)
+       static let profileShadow = Color("profile-shadow", bundle: Bundle.current)
+       static let relationshipViewBg = Color("relationship-view-bg", bundle: Bundle.current)
+       static let secondaryTxt = Color("secondary-txt", bundle: Bundle.current)
 }
 
 extension UIColor {
@@ -76,6 +94,24 @@ extension UIColor {
        static let textInputBackground = UIColor(named: "textInputBackground", in: Bundle.current, compatibleWith: nil)!
        static let textInputBorder = UIColor(named: "textInputBorder", in: Bundle.current, compatibleWith: nil)!
        static let unselectedTab = UIColor(named: "unselectedTab", in: Bundle.current, compatibleWith: nil)!
+       static let accentTxt = UIColor(named: "accent-txt", in: Bundle.current, compatibleWith: nil)!
+       static let appBg = UIColor(named: "app-bg", in: Bundle.current, compatibleWith: nil)!
+       static let cardBgBottom = UIColor(named: "card-bg-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let cardBgTop = UIColor(named: "card-bg-top", in: Bundle.current, compatibleWith: nil)!
+       static let cardBorderBottom = UIColor(named: "card-border-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let cardDividerShadow = UIColor(named: "card-divider-shadow", in: Bundle.current, compatibleWith: nil)!
+       static let cardDivider = UIColor(named: "card-divider", in: Bundle.current, compatibleWith: nil)!
+       static let cardShadowBottom = UIColor(named: "card-shadow-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let hashtagBg = UIColor(named: "hashtag-bg", in: Bundle.current, compatibleWith: nil)!
+       static let postareplyBackground = UIColor(named: "postareply-background", in: Bundle.current, compatibleWith: nil)!
+       static let postareplyShadowBottom = UIColor(named: "postareply-shadow-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let postareplyShadowTop = UIColor(named: "postareply-shadow-top", in: Bundle.current, compatibleWith: nil)!
+       static let primaryTxt = UIColor(named: "primary-txt", in: Bundle.current, compatibleWith: nil)!
+       static let profileBgBottom = UIColor(named: "profile-bg-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let profileBgTop = UIColor(named: "profile-bg-top", in: Bundle.current, compatibleWith: nil)!
+       static let profileShadow = UIColor(named: "profile-shadow", in: Bundle.current, compatibleWith: nil)!
+       static let relationshipViewBg = UIColor(named: "relationship-view-bg", in: Bundle.current, compatibleWith: nil)!
+       static let secondaryTxt = UIColor(named: "secondary-txt", in: Bundle.current, compatibleWith: nil)!
 }
 
 extension Image {
@@ -88,6 +124,8 @@ extension Image {
        static let backChevron = Image("back-chevron", bundle: Bundle.current)
        static let buttonBlock = Image("button-block", bundle: Bundle.current)
        static let buttonBlocked = Image("button-blocked", bundle: Bundle.current)
+       static let buttonBlocking = Image("button-blocking", bundle: Bundle.current)
+       static let buttonEditProfile = Image("button-edit-profile", bundle: Bundle.current)
        static let buttonFollowBig = Image("button-follow-big", bundle: Bundle.current)
        static let buttonFollow = Image("button-follow", bundle: Bundle.current)
        static let buttonFollowingBig = Image("button-following-big", bundle: Bundle.current)
@@ -148,6 +186,8 @@ extension UIImage {
        static let backChevron = UIImage(named: "back-chevron", in: Bundle.current, with: nil)!
        static let buttonBlock = UIImage(named: "button-block", in: Bundle.current, with: nil)!
        static let buttonBlocked = UIImage(named: "button-blocked", in: Bundle.current, with: nil)!
+       static let buttonBlocking = UIImage(named: "button-blocking", in: Bundle.current, with: nil)!
+       static let buttonEditProfile = UIImage(named: "button-edit-profile", in: Bundle.current, with: nil)!
        static let buttonFollowBig = UIImage(named: "button-follow-big", in: Bundle.current, with: nil)!
        static let buttonFollow = UIImage(named: "button-follow", in: Bundle.current, with: nil)!
        static let buttonFollowingBig = UIImage(named: "button-following-big", in: Bundle.current, with: nil)!

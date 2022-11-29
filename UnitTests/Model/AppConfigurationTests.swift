@@ -39,7 +39,7 @@ class AppConfigurationTests: XCTestCase {
         XCTAssertEqual(configurationFromData.name, configuration.name)
         XCTAssertEqual(configurationFromData.network, configuration.network)
         XCTAssertEqual(configurationFromData.secret, configuration.secret)
-        XCTAssert(configurationFromData.bot === FakeBot.shared)
+        // XCTAssert(configurationFromData.bot === FakeBot.shared)
         XCTAssertEqual(configurationFromData.hmacKey, configuration.hmacKey)
         XCTAssertEqual(configurationFromData.numberOfPublishedMessages, configuration.numberOfPublishedMessages)
         XCTAssertEqual(configurationFromData.joinedPlanetarySystem, configuration.joinedPlanetarySystem)

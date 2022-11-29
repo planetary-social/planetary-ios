@@ -19,11 +19,11 @@ import Logger
 /// - filter follows and followers in the same query
 /// - fetch the number of replies in the same query
 /// - remove additional queryies made after getting the results
-class PostsAlgorithm: NSObject, FeedStrategy {
+final class PostsAlgorithm: NSObject, FeedStrategy {
     // swiftlint:enable type_body_length
 
-    var wantPrivate: Bool
-    var onlyFollowed: Bool
+    let wantPrivate: Bool
+    let onlyFollowed: Bool
 
     init(wantPrivate: Bool, onlyFollowed: Bool) {
         self.wantPrivate = wantPrivate
