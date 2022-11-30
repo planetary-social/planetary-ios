@@ -17,34 +17,34 @@
 "Localized.recently" = "Recentment";
 "Localized.future" = "En el futur";
 "Localized.daysAgo" = "fa {{days}} dies";
-"Localized.atDayTime" = "{{ day }} at {{ time }}";
-"Localized.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
-"Localized.profile" = "Profile";
+"Localized.atDayTime" = "{{ day }} a les {{ time }}";
+"Localized.minutesAbbreviated" = "{{ numberOfMinutes }} minuts";
+"Localized.profile" = "Perfil";
 "Localized.yourProfile" = "El teu perfil";
 "Localized.helpAndSupport" = "Ajuda i suport";
 "Localized.reportBug" = "Informa d'un error";
 "Localized.settings" = "Preferències";
 "Localized.yourNetwork" = "La teva xarxa";
-"Localized.pubServers" = "Pub Servers";
+"Localized.pubServers" = "Servidors públics";
 "Localized.usersInYourNetwork" = "Usuaris a la teva xarxa";
 "Localized.goToYourNetwork" = "Ves a la teva xarxa";
-"Localized.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
-"Localized.posted" = "{{somebody}} posted";
-"Localized.replied" = "{{somebody}} replied";
-"Localized.liked" = "{{somebody}} liked";
-"Localized.startedFollowing" = "{{somebody}} started following";
-"Localized.stoppedFollowing" = "{{somebody}} stopped following";
-"Localized.startedBlocking" = "{{somebody}} blocked";
-"Localized.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
-"Localized.userOusideNetwork" = "This user is outside your network";
+"Localized.emptyHomeFeedMessage" = "I està més aviat buit! T'has plantejat seguir uns quants usuaris o temes?";
+"Localized.posted" = "{{somebody}} ha publicat";
+"Localized.replied" = "{{somebody}} ha contestat";
+"Localized.liked" = "{{somebody}} li ha agradat";
+"Localized.startedFollowing" = "{{somebody}} ha començat a seguir-te!";
+"Localized.stoppedFollowing" = "{{somebody}} ha deixat de seguir-te!";
+"Localized.startedBlocking" = "{{somebody}} t'ha blocat!";
+"Localized.followStats" = "Seguint a {{numberOfFollows}} • Seguit per {{numberOfFollowers}}";
+"Localized.userOusideNetwork" = "Aquest usuari es troba fora de la teva xarxa";
 "Localized.showMeInDirectory" = "Mostra'm al directori";
-"Localized.showMeInUserDirectory" = "Show me in the user directory";
-"Localized.hideMeFromUserDirectory" = "Hide me from the user directory";
-"Localized.analyticsAndCrash" = "Analytics & Crash Reports";
-"Localized.usageData" = "Usage Data";
-"Localized.userDirectoryMessage" = "Being in the user directory means that people can find you if they already know your name, short code or phone number.";
+"Localized.showMeInUserDirectory" = "Mostra'm en el directori d'usuaris";
+"Localized.hideMeFromUserDirectory" = "Amaga'm del directori d'usuaris";
+"Localized.analyticsAndCrash" = "Dades d'anàlisi i informes d'error";
+"Localized.usageData" = "Dades d'ús";
+"Localized.userDirectoryMessage" = "Estar al directori d'usuaris vol dir que la gent et pot trobar si ja sap el teu nom, codi curt o número de telèfon.";
 "Localized.sendAnalytics" = "Envia analítiques a Planetary";
-"Localized.dontSendAnalytics" = "Don't send analytics at all";
+"Localized.dontSendAnalytics" = "No envieu cap dada d'anàlisi";
 "Localized.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
 "Localized.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
 "Localized.postAction" = "Publicació";
@@ -349,14 +349,15 @@
 
 "Report.somebody" = "Algú";
 "Report.feedFollowed" = "%@ ha començat a seguir-te!";
-"Report.postReplied" = "%@ replied to a post you commented on";
-"Report.feedMentioned" = "%@ mentioned you in a post";
-"Report.messageLiked" = "%@ liked your post";
+"Report.postReplied" = "%@ ha respost a una publicació que has comentat";
+"Report.feedMentioned" = "%@ t'ha mencionat a una publicació";
+"Report.messageLiked" = "%@ li ha agradat la teva publicació";
 
 "Notifications.markAllAsRead" = "Marcar tots com a llegits";
 
 "Help.help" = "Ajuda";
-"Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
+"Help.indexOfTip" = "
+{{tipIndex}} de {{totalTipCount}} consells";
 
 "Home.title" = "Consulta les publicacions dels usuaris i els temes que segueixes";
 "Home.body" = "Si el vostre canal està buit, obriu la pestanya Descobriu, cerqueu alguna cosa interessant i seguiu els usuaris o els temes per veure les seves publicacions al vostre canal d'inici.";
@@ -373,6 +374,6 @@
 "Hashtags.body" = "Navega per milers de temes, participa en converses i mantén-te al dia amb els temes més candents amb la gent de la teva xarxa.";
 "Hashtags.highlightedWord" = "La teva xarxa";
 
-"YourNetwork.title" = "Your friends, connections and pubs";
-"YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
-"YourNetwork.highlightedWord" = "*gossip*";
+"YourNetwork.title" = "Els teus amics, connexions i pubs";
+"YourNetwork.body" = "La teva xarxa és única: està feta pels usuaris que segueixes, els que ells segueixen i els servidors públics que fas servir per xafardejar missatges amb tots ells.";
+"YourNetwork.highlightedWord" = "xafarderia";
