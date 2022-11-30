@@ -107,6 +107,7 @@ class Beta1MigrationTests: XCTestCase {
         XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), "beta3Test")
     }
     
+    // swiftlint:disable function_body_length
     func testMigrationDoesntRunTwiceForDifferentProfiles() async throws {
         // Arrange
         // swiftlint:disable line_length indentation_width
@@ -163,6 +164,7 @@ class Beta1MigrationTests: XCTestCase {
         XCTAssertEqual(migrating, false)
         XCTAssertEqual(mockBot.identity, nil)
     }
+    // swiftlint:enable function_body_length
     
     /// Verifies that the LaunchViewController does not resume the migration after it has been completed
     func testLaunchViewControllerDoesNotResumeCompletedMigration() async throws {

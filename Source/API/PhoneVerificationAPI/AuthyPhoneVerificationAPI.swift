@@ -18,7 +18,11 @@ class AuthyPhoneVerificationAPI: PhoneVerificationAPIService {
         self.token = Keys.shared.get(key: .authy)
     }
     
-    func requestCode(country: String, phone: String, completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void)) {
+    func requestCode(
+        country: String,
+        phone: String,
+        completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void)
+    ) {
         let path = "https://api.authy.com/protected/json/phones/verification/start"
         var items = [URLQueryItem(name: "via", value: "sms")]
         items += [URLQueryItem(name: "code_length", value: "6")]
@@ -30,7 +34,12 @@ class AuthyPhoneVerificationAPI: PhoneVerificationAPIService {
         }
     }
     
-    func verifyCode(_ code: String, country: String, phone: String, completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void)) {
+    func verifyCode(
+        _ code: String,
+        country: String,
+        phone: String,
+        completion: @escaping ((PhoneVerificationResponse?, APIError?) -> Void)
+    ) {
         let path = "https://api.authy.com/protected/json/phones/verification/check"
         var items = [URLQueryItem(name: "country_code", value: country)]
         items += [URLQueryItem(name: "phone_number", value: phone)]
@@ -52,7 +61,14 @@ extension AuthyPhoneVerificationAPI: API {
         }
     }
     
-    func send(method: APIMethod, path: String, query: [URLQueryItem], body: Data?, headers: APIHeaders?, completion: @escaping APICompletion) {
+    func send(
+        method: APIMethod,
+        path: String,
+        query: [URLQueryItem],
+        body: Data?,
+        headers: APIHeaders?,
+        completion: @escaping APICompletion
+    ) {
         assert(Thread.isMainThread)
         assert(method == .GET || method == .POST, "AuthyAPI only supports GET or POST")
         assert(body == nil, "AuthyAPI does not support body data")
@@ -67,12 +83,12 @@ extension AuthyPhoneVerificationAPI: API {
         request.httpMethod = method.rawValue
         request.httpBody = body
 
-        URLSession.shared.dataTask(with: request) {
-            data, response, error in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             let apiError = response?.httpStatusCodeError ?? APIError.optional(error)
             DispatchQueue.main.async { completion(data, apiError) }
             Log.optional(apiError, from: response)
-        }.resume()
+        }
+        .resume()
     }
 }
 

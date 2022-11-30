@@ -16,7 +16,9 @@ class BlockButton: PillButton {
 
     var relationship: Relationship? {
         didSet {
+            // swiftlint:disable notification_center_detachment
             NotificationCenter.default.removeObserver(self)
+            // swiftlint:enable notification_center_detachment
 
             guard let relationship = self.relationship else {
                 self.isHidden = true
@@ -26,10 +28,12 @@ class BlockButton: PillButton {
             self.isSelected = relationship.isBlocking
             self.isHidden = relationship.identity == relationship.other
 
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(relationshipDidChange(notification:)),
-                                                   name: relationship.notificationName,
-                                                   object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(relationshipDidChange(notification:)),
+                name: relationship.notificationName,
+                object: nil
+            )
         }
     }
 
@@ -95,11 +99,13 @@ class BlockButton: PillButton {
         }
     }
 
-    @objc func relationshipDidChange(notification: Notification) {
+    @objc
+    func relationshipDidChange(notification: Notification) {
         guard let relationship = notification.relationship else { return }
         self.relationship = relationship
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

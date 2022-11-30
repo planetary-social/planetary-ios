@@ -642,12 +642,12 @@ class ViewDatabase {
             }
             
             return KnownPub(
-                AddressID: try row.get(colAddressID),
-                ForFeed: try row.get(colAuthor),
-                Address: try row.get(colAddress),
-                InUse: try row.get(colUse),
-                WorkedLast: workedWhen,
-                LastError: try row.get(colLastErr),
+                addressID: try row.get(colAddressID),
+                forFeed: try row.get(colAuthor),
+                address: try row.get(colAddress),
+                inUse: try row.get(colUse),
+                workedLast: workedWhen,
+                lastError: try row.get(colLastErr),
                 redeemed: redeemedDate
             )
         }

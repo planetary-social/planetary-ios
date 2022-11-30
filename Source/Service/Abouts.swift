@@ -30,18 +30,15 @@ enum AboutService {
         // return abouts for recent mentions
         let useRecent = (string?.isEmpty ?? true) && self.identities.count > 0
         if useRecent {
-            self.sortedAbouts(for: self.identities, filteredBy: string) {
-                abouts, _ in
+            self.sortedAbouts(for: self.identities, filteredBy: string) { abouts, _ in
                 completion(abouts, nil)
             }
             return
         }
 
         // otherwise return abouts for my network
-        self.network {
-            identities, _ in
-            self.sortedAbouts(for: identities, filteredBy: string) {
-                abouts, _ in
+        self.network { identities, _ in
+            self.sortedAbouts(for: identities, filteredBy: string) { abouts, _ in
                 completion(abouts, nil)
             }
         }
@@ -50,11 +47,12 @@ enum AboutService {
     /// IMPORTANT!
     /// This will likely be performed on the main thread, so if the
     /// identities array is very large this could be a bottleneck.
-    private static func sortedAbouts(for identities: [Identity],
-                                     filteredBy string: String?,
-                                     completion: @escaping AboutsCompletion) {
-        Bots.current.abouts(identities: identities) {
-            abouts, error in
+    private static func sortedAbouts(
+        for identities: [Identity],
+        filteredBy string: String?,
+        completion: @escaping AboutsCompletion
+    ) {
+        Bots.current.abouts(identities: identities) { abouts, error in
             guard let string = string else { completion(abouts.sorted(), error); return }
             guard string.isEmpty == false else { completion(abouts.sorted(), error); return }
             let filtered = abouts.filter { $0.contains(string) }
@@ -62,11 +60,11 @@ enum AboutService {
         }
     }
 
-    // TODO move to Bot+Me extension for logged in identity specific calls
+    // move to Bot+Me extension for logged in identity specific calls
     private static func network(completion: @escaping ContactsCompletion) {
         assert(Thread.isMainThread)
 
-        // TODO Bot should have a "me" version
+        // Bot should have a "me" version
         guard let identity = Bots.current.identity else {
             completion([], BotError.notLoggedIn)
             return
@@ -82,8 +80,7 @@ enum AboutService {
         }
 
         group.enter()
-        Bots.current.followedBy(identity: identity, queue: .main) {
-            contacts, _ in
+        Bots.current.followedBy(identity: identity, queue: .main) { contacts, _ in
             identities = identities.union(Set<Identity>(contacts))
             group.leave()
         }

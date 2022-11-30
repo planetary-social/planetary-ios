@@ -9,12 +9,14 @@ import Foundation
 @testable import Analytics
 import XCTest
 
+// swiftlint:disable implicitly_unwrapped_optional
 class AnalyticsServiceAdapterTests: XCTestCase {
 
     private var apiService: APIServiceMock!
     private var service: AnalyticsServiceAdapter!
 
     override func setUp() {
+        super.setUp()
         apiService = APIServiceMock()
         service = AnalyticsServiceAdapter(apiService: apiService)
     }

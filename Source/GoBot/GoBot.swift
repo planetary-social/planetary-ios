@@ -33,7 +33,7 @@ let greatestRequestedSequenceNumberFromGoBotKey = "greatestRequestedSequenceNumb
 /// is used as a cache to speed up fetching of posts (ADR #4). The GoBot acts as a gatekeeper to these two components,
 /// presenting a simpler interface for read and write operations, while internally it manages several threads and
 /// synchronization between GoSSB's internal database and the SQLite layer.
-class GoBot: Bot {
+class GoBot: Bot, @unchecked Sendable {
     
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?

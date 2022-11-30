@@ -33,7 +33,7 @@ enum Beta1MigrationError: Error {
 /// The go-ssb on-disk database format changed with no migration path circa 2022, so we wrote this custom flow in Swift
 /// to drop all data and resync from the network.
 @MainActor 
-class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
+class Beta1MigrationController: Beta1MigrationViewModel {
     
     // MARK: - Properties
     
@@ -93,16 +93,16 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             appController: appController,
             userDefaults: userDefaults,
             dismissHandler: {
-                Task { await appController.dismiss(animated: true) }
+                Task { appController.dismiss(animated: true) }
             }
         )
         let view = Beta1MigrationView(viewModel: controller)
-        let hostingController = await UIHostingController(rootView: view)
+        let hostingController = UIHostingController(rootView: view)
         await MainActor.run {
             hostingController.modalPresentationStyle = .fullScreen
             hostingController.modalTransitionStyle = .crossDissolve
         }
-        await appController.present(hostingController, animated: true)
+        appController.present(hostingController, animated: true)
      
         bot.isRestoring = true
    

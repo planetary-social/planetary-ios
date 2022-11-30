@@ -28,7 +28,8 @@ class AppButton: UIButton {
         assertionFailure("Default action was not implemented.")
     }
 
-    @objc func didPress(sender: AnyObject) {
+    @objc
+    func didPress(sender: AnyObject) {
         if let action = self.action {
             action(sender)
         } else {
@@ -36,6 +37,7 @@ class AppButton: UIButton {
         }
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

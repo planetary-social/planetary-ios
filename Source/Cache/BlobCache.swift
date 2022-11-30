@@ -14,6 +14,7 @@ import CrashReporting
 enum BlobCacheError: Error {
     case unsupported
     case network(Error?)
+    case `internal`
 }
 
 /// An object that loads image blob data. This class not only caches blobs but also coordinates loading them from
@@ -29,6 +30,7 @@ enum BlobCacheError: Error {
 /// 6. If go-ssb is able to get the blob from a peer it calls the swift function `notifyBlobReceived` which posts a
 /// notification that `BlobCache` is listening for.
 /// 7. `BlobCache` hears the notification and retries step 3.
+@preconcurrency
 class BlobCache: DictionaryCache {
 
     // MARK: Lifecycle
@@ -44,8 +46,6 @@ class BlobCache: DictionaryCache {
 
     // MARK: Request UIImage blob
 
-    // TODO https://app.asana.com/0/0/1152660926488309/f
-    // TODO make UIImageCompletionHandle opaque for image(for:completion)
     typealias UIImageCompletion = ((Result<(BlobIdentifier, UIImage), Error>) -> Void)
     typealias UIImageCompletionHandle = UUID
 
@@ -185,13 +185,18 @@ class BlobCache: DictionaryCache {
         let hexRef = blobRef.hexEncodedString()
         
         // first 2 chars are directory
-        let dir = String(hexRef.prefix(2))
+        let directory = String(hexRef.prefix(2))
         // rest ist filename
         let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
         let rest = String(hexRef[restIdx...])
         
-        var gsUrl = URL(string: "https://blobs.planetary.social/")!
-        gsUrl.appendPathComponent(dir)
+        guard let baseURL = URL(string: "https://blobs.planetary.social/") else {
+            Log.error("BlobCache: Could not construct baseURL")
+            completion(.failure(.internal))
+            return
+        }
+        var gsUrl = baseURL
+        gsUrl.appendPathComponent(directory)
         gsUrl.appendPathComponent(rest)
         
         let dataTask = URLSession.shared.dataTask(with: gsUrl) { [weak self] (data, response, error) in
@@ -440,7 +445,9 @@ class BlobCache: DictionaryCache {
 
         // remember the stats for tracking
         let from = (count: self.count, numberOfBytes: self.bytes)
+        // swiftlint:disable identifier_name
         var to = (count: 0, numberOfBytes: 0)
+        // swiftlint:enable identifier_name
 
         // loop through oldest items first
         let items = self.itemsSortedByDateAscending()
@@ -478,18 +485,19 @@ class BlobCache: DictionaryCache {
     // MARK: Notifications
 
     private func registerNotifications() {
-        NotificationCenter.default.addObserver(forName: .didLoadBlob,
-                                               object: nil,
-                                               queue: OperationQueue.main) {
-            [weak self] notification in
+        // swiftlint:disable discarded_notification_center_observer
+        NotificationCenter.default.addObserver(
+            forName: .didLoadBlob,
+            object: nil,
+            queue: OperationQueue.main
+        ) { [weak self] notification in
             self?.didLoadBlob(notification)
         }
+        // swiftlint:enable discarded_notification_center_observer
     }
 
     private func deregisterNotifications() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: .didLoadBlob,
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didLoadBlob, object: nil)
     }
 
     private func didLoadBlob(_ notification: Notification) {
@@ -509,3 +517,5 @@ extension UIImage {
         return image.bytesPerRow * image.height
     }
 }
+
+// swiftlint:disable file_length

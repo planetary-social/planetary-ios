@@ -330,12 +330,9 @@ extension Bot {
     }
     
     @discardableResult
-    func refresh(
-        load: RefreshLoad,
-        queue: DispatchQueue = .main
-    ) async throws -> (TimeInterval, Bool) {
+    func refresh(load: RefreshLoad) async throws -> (TimeInterval, Bool) {
         try await withCheckedThrowingContinuation { continuation in
-            refresh(load: load, queue: queue) { refreshResult, timeElapsed in
+            refresh(load: load, queue: .main) { refreshResult, timeElapsed in
                 do {
                     let finished = try refreshResult.get()
                     continuation.resume(returning: (timeElapsed, finished))
