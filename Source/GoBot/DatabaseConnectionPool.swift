@@ -25,7 +25,7 @@ final class DatabaseConnectionPool: Sendable {
     /// causes the retain count to go up as well.
     static let connectionReleaseThreshold = 3
     
-    /// Queries whether the connection pool is ready to server connections. Connections can not be checked out until
+    /// Queries whether the connection pool is ready to serve connections. Connections can not be checked out until
     /// the database has been initialized.
     var isOpen: Bool {
         lock.lock()
