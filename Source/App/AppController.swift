@@ -30,7 +30,7 @@ class AppController: UIViewController {
     /// One and a half second `CATransition` `.easeInEaseOut` with type `CATransitionType.fade`.
     private var crossFadeTransition: CATransition {
         let transition = CATransition()
-        transition.duration = 1.5
+        transition.duration = 0.3
         transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         transition.type = CATransitionType.fade
         return transition
