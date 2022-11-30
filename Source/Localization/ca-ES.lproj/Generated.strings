@@ -353,17 +353,17 @@
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";
 
-"Notifications.markAllAsRead" = "Marca tot com a llegit";
+"Notifications.markAllAsRead" = "Marcar tots com a llegits";
 
 "Help.help" = "Ajuda";
 "Help.indexOfTip" = "{{tipIndex}} of {{totalTipCount}} tips";
 
-"Home.title" = "See posts from users and topics you follow";
-"Home.body" = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed.";
+"Home.title" = "Consulta les publicacions dels usuaris i els temes que segueixes";
+"Home.body" = "Si el vostre canal està buit, obriu la pestanya Descobriu, cerqueu alguna cosa interessant i seguiu els usuaris o els temes per veure les seves publicacions al vostre canal d'inici.";
 "Home.highlightedWord" = "Descobreix";
 
-"Discover.title" = "See what's new and grow your network";
-"Discover.body" = "See posts from users and topics followed by your friends. Follow them to see their content in your Home Feed!";
+"Discover.title" = "Mireu les novetats i feu créixer la vostra xarxa";
+"Discover.body" = "Consulta les publicacions dels usuaris i els temes seguits pels teus amics. Segueix-los per veure el seu contingut al teu canal d'inici!";
 "Discover.highlightedWord" = "Línia de temps principal";
 
 "Notifications.title" = "Keep up-to-date in all your conversations";
