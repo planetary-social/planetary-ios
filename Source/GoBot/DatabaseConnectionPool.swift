@@ -20,7 +20,7 @@ final class DatabaseConnectionPool: Sendable {
     private var lock = NSLock()
     
     /// This number is the retain count at which we consider a Connection to no longer be in use. When a caller checks
-    /// out a Connection with `checkout()` the will incremement the retain count and when they are done using it they
+    /// out a Connection with `checkout()` they will increment the retain count and when they are done using it they
     /// decrement it. The reason this number is more than one is because iterating through the array of connections
     /// causes the retain count to go up as well.
     static let connectionReleaseThreshold = 3
