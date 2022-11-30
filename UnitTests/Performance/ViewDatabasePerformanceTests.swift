@@ -30,7 +30,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         try await super.tearDown()
     }
     
-    /// Creates a directory where we can initialized a database for the tests and returns the URL to it.
+    /// Creates a directory where we can initialize a database for the tests and returns the URL to it.
     private func createDBDirectory() async throws -> URL {
         viewDatabase = ViewDatabase()
         let dbDir = FileManager
