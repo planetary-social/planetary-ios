@@ -44,7 +44,7 @@ final class DatabaseConnectionPool: Sendable {
         lock.withLock { _isOpen = false }
         while !openConnections.isEmpty {
             lock.withLock {
-                openConnections.removeAll(where: { CFGetRetainCount($0) <= 3 })
+                openConnections.removeAll(where: { CFGetRetainCount($0) <= Self.connectionReleaseThreshold })
             }
             try? await Task.sleep(nanoseconds: 50_000_000) // 50 milliseconds
         }
@@ -58,7 +58,7 @@ final class DatabaseConnectionPool: Sendable {
         defer { lock.unlock() }
         guard _isOpen else { throw ViewDatabaseError.notOpen }
             
-        return openConnections.first(where: { CFGetRetainCount($0) <= 3 })
+        return openConnections.first(where: { CFGetRetainCount($0) <= Self.connectionReleaseThreshold })
     }
     
     /// Adds a new connection to the pool.
