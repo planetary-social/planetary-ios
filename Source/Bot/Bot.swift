@@ -712,7 +712,7 @@ extension Bot {
     }
     
     @MainActor
-    func addBlob(data: Data) async throws -> BlobIdentifier{
+    func addBlob(data: Data) async throws -> BlobIdentifier {
         try await withCheckedThrowingContinuation { continuation in
             addBlob(data: data) { result, error in
                 if let error = error {

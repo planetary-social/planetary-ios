@@ -64,7 +64,6 @@ opt_in_rules: # some rules are turned off by default, so you need to opt-in
   - unused_import
   - vertical_parameter_alignment_on_call
   - vertical_whitespace_closing_braces
-  - weak_delegate
   - yoda_condition
 
 
@@ -81,6 +80,7 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Planetary.xcworkspace/
   - Pofile
   - Pods/
+  - "**/.build"
 analyzer_rules: # Rules run by `swiftlint analyze` (experimental)
   - explicit_self
 
@@ -137,6 +137,7 @@ identifier_name:
     - app
     - at
     - bio
+    - me
 number_separator:
   minimum_length: 5
 reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, codeclimate, junit, html, emoji, sonarqube, markdown, github-actions-logging)

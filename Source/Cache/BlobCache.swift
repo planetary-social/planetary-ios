@@ -296,7 +296,7 @@ class BlobCache: DictionaryCache {
 
         /// The number of pending blob identifiers currently being loaded
         var numberOfBlobIdentifiers: Int {
-            return self.completions.count
+            self.completions.count
         }
 
         // The total number of requests for all blob identifiers
@@ -339,7 +339,7 @@ class BlobCache: DictionaryCache {
 
         /// Forgets the all the completions for the specified blob identifier.
         func forgetCompletions(for identifier: BlobIdentifier) {
-            let _ = self.completions.removeValue(forKey: identifier)
+            _ = self.completions.removeValue(forKey: identifier)
             cancelDataTask(for: identifier)
             retries.removeValue(forKey: identifier)
         }
@@ -417,8 +417,8 @@ class BlobCache: DictionaryCache {
 
     // the max number of bytes that will trigger a purge
     // the min number of bytes that will remain after a purge
-    private let maxNumberOfBytes: Int = (1_024 * 1_024 * 100)
-    private let minNumberOfBytes: Int = (1_024 * 1_024 * 50)
+    private let maxNumberOfBytes: Int = (1024 * 1024 * 100)
+    private let minNumberOfBytes: Int = (1024 * 1024 * 50)
 
     // tracks the total bytes in use
     private var bytes: Int = 0

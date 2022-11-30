@@ -231,7 +231,6 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
     func unapplyIfCurrent() {
         if self.isCurrent { self.unapply() }
     }
-    
 }
 
 extension AppConfiguration {

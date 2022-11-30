@@ -57,7 +57,7 @@ extension API {
         query: [URLQueryItem] = [],
         headers: APIHeaders? = nil
     ) async throws -> Data {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             get(path: path, query: query, headers: headers) { responseData, error in
                 if let error = error {
                     continuation.resume(throwing: error)
@@ -71,7 +71,6 @@ extension API {
             }
         }
     }
-    
 
     // MARK: Put
 

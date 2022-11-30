@@ -208,7 +208,7 @@ class BotViewController: DebugTableViewController {
         
         settings += [DebugTableViewCellModel(title: "Connect",
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
-                                             actionClosure: { [weak self] cell in
+                                             actionClosure: { [weak self] _ in
             guard let enteredString = self?.connectToPeerCell?.textField.text,
                 let multiserver = MultiserverAddress(string: enteredString) else {
                 Log.error("Could not parse peer address")

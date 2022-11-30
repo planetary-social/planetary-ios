@@ -21,7 +21,6 @@ class GoBotIntegrationTests: XCTestCase {
     let fileManager = FileManager.default
     let userDefaultsSuiteName = "GoBotIntegrationTests"
 
-
     override func setUp() async throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
         // run the unit tests. For now this will have to do.

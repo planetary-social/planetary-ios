@@ -15,7 +15,7 @@ import Secrets
     
     @Published var rooms: [Room] = [] {
         didSet {
-            showJoinPlanetaryRoomButton = !rooms.contains(where: { $0.address.string.contains("planetary.name")})
+            showJoinPlanetaryRoomButton = !rooms.contains(where: { $0.address.string.contains("planetary.name") })
         }
     }
     

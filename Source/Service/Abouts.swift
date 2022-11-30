@@ -8,9 +8,8 @@
 
 import Foundation
 
-// TODO https://app.asana.com/0/914798787098068/1121081744093372/f
 // this should become part of Caches.mentions.recent
-struct AboutService {
+enum AboutService {
 
     private static var identities: [Identity] = []
 
@@ -24,8 +23,10 @@ struct AboutService {
         self.identities = Array(identities.prefix(5))
     }
 
-    static func matching(_ string: String? = nil,
-                         completion: @escaping AboutsCompletion) {
+    static func matching(
+        _ string: String? = nil,
+        completion: @escaping AboutsCompletion
+    ) {
         // return abouts for recent mentions
         let useRecent = (string?.isEmpty ?? true) && self.identities.count > 0
         if useRecent {

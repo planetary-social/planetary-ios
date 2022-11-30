@@ -66,7 +66,7 @@ class CachesViewController: DebugTableViewController {
                                              cellReuseIdentifier: DebugValueTableViewCell.className,
                                              valueClosure: {
                 cell in
-                let mb = Caches.blobs.estimatedBytes / 1_024 / 1_024
+                let mb = Caches.blobs.estimatedBytes / 1024 / 1024
                 let string = mb == 0 ? "< 1" : "\(mb)"
                 cell.detailTextLabel?.text = "\(Caches.blobs.count) / \(string) MB"
             },

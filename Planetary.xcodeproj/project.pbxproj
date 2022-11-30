@@ -3874,7 +3874,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "sh $SRCROOT/Scripts/swiftlint_diffonly.sh\n";
+			shellScript = "/opt/homebrew/bin/swiftlint --lenient\n";
 		};
 		7723EA9C2D57EFC61D5051B3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

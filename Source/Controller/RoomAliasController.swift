@@ -56,4 +56,3 @@ import UIKit
     func deleteAliases(at: IndexSet) {
     }
 }
-

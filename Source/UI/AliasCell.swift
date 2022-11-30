@@ -23,7 +23,6 @@ class AliasCell: UIView {
         return stack
     }()
     
-    
     var zeroHeightConstraint: NSLayoutConstraint?
     
     init() {

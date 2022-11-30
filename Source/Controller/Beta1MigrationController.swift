@@ -193,7 +193,6 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
                 Log.info("Resync progress: \(self.progress)")
             })
             .store(in: &self.cancellabes)
-
     }
     
     /// This opens up a special connection to the SQLLite database and retrieves the total message count.

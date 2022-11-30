@@ -17,7 +17,7 @@ class CrashReportingServiceAdapter: CrashReportingService {
         self.apiService = apiService
         self.logger = logger
         self.apiService.onEventHandler = { (identity) -> Logs in
-            return logsBuilder.build(logger: logger, identity: identity)
+            logsBuilder.build(logger: logger, identity: identity)
         }
         self.apiService.start()
     }
