@@ -366,11 +366,11 @@
 "Discover.body" = "Consulta les publicacions dels usuaris i els temes seguits pels teus amics. Segueix-los per veure el seu contingut al teu canal d'inici!";
 "Discover.highlightedWord" = "Línia de temps principal";
 
-"Notifications.title" = "Keep up-to-date in all your conversations";
-"Notifications.body" = "Check this screen for replies and reactions to your posts as well as conversations you participate in. We'll also notify you when someone mentions you.";
+"Notifications.title" = "Estigues al dia en totes les teves converses";
+"Notifications.body" = "Comprova aquesta pantalla per trobar respostes i reaccions a les teves publicacions, així com a les converses en què participes. També et notificarem quan algú et mencioni.";
 
-"Hashtags.title" = "What the community is talking about";
-"Hashtags.body" = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network.";
+"Hashtags.title" = "De què parla la comunitat";
+"Hashtags.body" = "Navega per milers de temes, participa en converses i mantén-te al dia amb els temes més candents amb la gent de la teva xarxa.";
 "Hashtags.highlightedWord" = "La teva xarxa";
 
 "YourNetwork.title" = "Your friends, connections and pubs";
