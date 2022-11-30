@@ -50,7 +50,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     
     private func setUpEmptyDB(user: Identity) throws {
         let setupExpectation = expectation(description: "setup")
-        // Performance tests do not with with async/await yet so we wrap these calls in a Task and use an expecatation
+        // Performance tests do not work with async/await yet so we wrap these calls in a Task and use an expecatation
         // to wait on it.
         Task {
             let dbDir = try await createDBDirectory()
