@@ -45,7 +45,7 @@
 "Localized.userDirectoryMessage" = "Estar al directori d'usuaris vol dir que la gent et pot trobar si ja sap el teu nom, codi curt o número de telèfon.";
 "Localized.sendAnalytics" = "Envia analítiques a Planetary";
 "Localized.dontSendAnalytics" = "No envieu cap dada d'anàlisi";
-"Localized.analyticsMessage" = "Allow us to collect data about your use of the app so we can make it better.";
+"Localized.analyticsMessage" = "Permet-nos recopilar dades sobre el teu ús de l'aplicació perquè puguem millorar-la.";
 "Localized.loadingUpdates" = "Planetary is searching for updates\non the peer to peer decentralized web.";
 "Localized.postAction" = "Publicació";
 "Localized.preview" = "Vista prèvia";
