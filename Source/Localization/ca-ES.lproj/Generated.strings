@@ -185,8 +185,8 @@
 "Offboarding.resetConfirmAgainTitle" = "N'estàs segur?";
 "Offboarding.resetConfirmAgainMessage" = "Confirmes que vols suprimir la teva identitat d'aquest dispositiu? Perdràs aquest perfil i tot el contingut relacionat. Això no es pot desfer.";
 "Offboarding.resetFooter" = "Això destruirà la teva identitat al teu dispositiu. No podràs recuperar la teva identitat, però en podràs crear una de nova.";
-"Offboarding.resetApiErrorTryAgain" = "We weren't able to connect to the directory to remove you. Please try again.";
-"Offboarding.resetBotErrorTryAgain" = "Something unexpected happened but don't worry, we've made a note to fix it. Please try again.";
+"Offboarding.resetApiErrorTryAgain" = "No ens hem pogut connectar al directori per eliminar-te. Si us plau, torna-ho a provar.";
+"Offboarding.resetBotErrorTryAgain" = "Ha passat una cosa inesperada, però no us preocupeu, hem fet una nota per solucionar-ho. Si us plau, torna-ho a provar.";
 
 "Onboarding.getStartedButton" = "Comencem!";
 "Onboarding.photoButtonAdd" = "Afegeix una foto";
