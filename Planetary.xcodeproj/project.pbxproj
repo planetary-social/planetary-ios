@@ -1208,6 +1208,10 @@
 		C9F5E477288891DC000BCF03 /* HighlightedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5E476288891DC000BCF03 /* HighlightedText.swift */; };
 		C9FBE36C288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */; };
 		C9FBE36D288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */; };
+		E0020B27292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */; };
+		E0020B28292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */; };
+		E0020B2C292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json in Resources */ = {isa = PBXBuildFile; fileRef = E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */; };
+		E041A24C293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json in Resources */ = {isa = PBXBuildFile; fileRef = E041A24B293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1874,6 +1878,9 @@
 		C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleAxisGeometryReader.swift; sourceTree = "<group>"; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomAliasAnnouncement+ViewDatabase.swift"; sourceTree = "<group>"; };
+		E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_registered.json; sourceTree = "<group>"; };
+		E041A24B293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_revoked.json; sourceTree = "<group>"; };
 		E0C3E36DB95E1F07BAA33927 /* Pods_FBTT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FBTT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5523876B975CAA7C89A9615 /* Pods-UITests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UITests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UITests/Pods-UITests.appstore.xcconfig"; sourceTree = "<group>"; };
 		E7A509DEDCBBEC809B7C2B44 /* Pods-Planetary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.release.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.release.xcconfig"; sourceTree = "<group>"; };
@@ -2270,6 +2277,7 @@
 				233A8F89220138F600CE01CE /* ViewDatabase.swift */,
 				C98A9E8C292C2C0400A17251 /* DatabaseConnectionPool.swift */,
 				C937883228C154BF003FCCC2 /* Pub+ViewDatabase.swift */,
+				E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */,
 				C937882E28C15186003FCCC2 /* About+ViewDatabase.swift */,
 				236761582450681800A97140 /* ViewDatabase+Pagination.swift */,
 				231314CB2237ACDB0000C989 /* ViewDatabaseSchema.sql */,
@@ -3016,6 +3024,8 @@
 				23237A112423CE0300FE112C /* PostsWithMentions.json */,
 				23E76A5523F2F0F70074F424 /* ValueTimestamp.json */,
 				C943A12E2819BBEC00E1AF96 /* Pub.json */,
+				E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */,
+				E041A24B293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3646,6 +3656,7 @@
 				C9F0B68227E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B68627E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B6BE27E2728800BE2F0E /* Generated.strings in Resources */,
+				E0020B2C292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json in Resources */,
 				531A8A5521FB87A600D5C8C0 /* UnsupportedBlob.json in Resources */,
 				C9F0B69A27E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B67C27E2728800BE2F0E /* Generated.strings in Resources */,
@@ -3669,6 +3680,7 @@
 				5316E95921FFD19F0053832E /* Invalid.json in Resources */,
 				C9F0B6A027E2728800BE2F0E /* Generated.strings in Resources */,
 				C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */,
+				E041A24C293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json in Resources */,
 				C9F0B69427E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B68427E2728800BE2F0E /* Generated.strings in Resources */,
 				C9F0B68827E2728800BE2F0E /* Generated.strings in Resources */,
@@ -4149,6 +4161,7 @@
 				C9724B3D2809D481000EBCCD /* Onboarding+Verify.swift in Sources */,
 				C9724B3E2809D481000EBCCD /* OnboardingStep.swift in Sources */,
 				C9724B3F2809D481000EBCCD /* OnboardingStepView.swift in Sources */,
+				E0020B28292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */,
 				C9724B912809EA08000EBCCD /* AvatarButton.swift in Sources */,
 				5BE8A311291A96FE00C4A38E /* IdentityOptionsButton.swift in Sources */,
 				C9724B142809D2DF000EBCCD /* OnboardingViewController.swift in Sources */,
@@ -4819,6 +4832,7 @@
 				53211CCE227BF068007FB785 /* Array+ElementsAtIndexes.swift in Sources */,
 				0ABCA8FD2436B41300D7F39C /* APIError+LocalizedError.swift in Sources */,
 				53211CCA227BA725007FB785 /* Array+SafeSubscript.swift in Sources */,
+				E0020B27292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */,
 				533EDBED238603D8008B3565 /* BlobCache.swift in Sources */,
 				8DE093D52344CA10009E505D /* RelationshipUIButton.swift in Sources */,
 				5BE8A310291A96FE00C4A38E /* IdentityOptionsButton.swift in Sources */,

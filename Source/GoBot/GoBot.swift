@@ -358,16 +358,24 @@ class GoBot: Bot {
     }
     
     func registeredAliases() async throws -> [RoomAlias] {
+        guard let identity = _identity else {
+            throw BotError.notLoggedIn
+        }
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.getRegisteredAliases()
+            return try self.database.getRegisteredAliasesByUser(user: identity)
         }
         return try await task.value
     }
     
     func register(alias: String, in room: Room) async throws -> RoomAlias {
+        
+        guard let identity = _identity else {
+            throw BotError.notLoggedIn
+        }
+        
         let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
             if self.bot.register(alias: alias, in: room) {
-                return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room)
+                return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room, user: identity)
             } else {
                 // TODO: localize, better error messages i.e. in case of conflicts.
                 throw GoBotError.unexpectedFault("Failed to register room alias")

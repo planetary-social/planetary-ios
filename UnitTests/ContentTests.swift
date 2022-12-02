@@ -8,6 +8,7 @@
 
 import XCTest
 
+// swiftlint:disable identifier_name
 class ContentTests: XCTestCase {
 
     func test_message() throws {
@@ -212,6 +213,21 @@ class ContentTests: XCTestCase {
         XCTAssertEqual(pub.address.port, 8008)
         XCTAssertEqual(pub.address.multiserver.string, "net:two.planetary.pub:8008~shs:7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=")
     }
+    
+    func testRoomAliasAnnouncementParsing() throws {
+        let data = self.data(for: "RoomAliasAnnouncement_registered.json")
+        let msg = try JSONDecoder().decode(Message.self, from: data)
+        XCTAssertEqual(msg.content.type, .roomAliasAnnouncement)
+        XCTAssertEqual(msg.content.isValid, true)
+        XCTAssertEqual(msg.content.contentException, nil)
+        let roomAliasAnnouncement = try XCTUnwrap(msg.content.roomAliasAnnouncement)
+        XCTAssertEqual(roomAliasAnnouncement.action, RoomAliasAnnouncement.RoomAliasActionType.registered)
+        XCTAssertEqual(roomAliasAnnouncement.alias, "matt")
+        XCTAssertEqual(roomAliasAnnouncement.type, ContentType.roomAliasAnnouncement)
+        XCTAssertEqual(roomAliasAnnouncement.room, "@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519")
+        XCTAssertEqual(roomAliasAnnouncement.aliasURL, "https://matt.hermies.club")
+    }
+    
 
     // TODO need to confirm string content to ensure everything was captured
     // prefix ![
@@ -406,7 +422,7 @@ class ContentTests: XCTestCase {
                 XCTAssertTrue(content?.assertValid() ?? false)
                 
                 // models that SHOULD NOT be encoded
-            case .pub, .address, .unknown, .unsupported: break
+            case .pub, .address, .roomAliasAnnouncement, .unknown, .unsupported: break
             }
         }
     }
@@ -439,6 +455,7 @@ fileprivate extension Content {
             case .pub: return self.pub != nil
             case .post: return self.post != nil
             case .vote: return self.vote != nil
+            case .roomAliasAnnouncement: return self.roomAliasAnnouncement != nil
             case .unsupported: return false
             case .unknown: return false
         }

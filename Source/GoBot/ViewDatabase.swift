@@ -209,9 +209,13 @@ class ViewDatabase {
     
     // Rooms
     let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
+    let colRoomID = Expression<Int64?>("room_id")
+    let colAction =  Expression<String>("action")
+    let colPubKey = Expression<String>("pub_key")
+    
+    // Room Aliases
     let roomAliases = Table(ViewDatabaseTableNames.roomAliases.rawValue)
     let colAliasURL = Expression<String>("alias_url")
-    let colRoomID = Expression<Int64>("room_id")
     
     // Search
     private let postSearch = VirtualTable("post_search")
@@ -425,6 +429,73 @@ class ViewDatabase {
                     "CREATE INDEX posts_by_activity ON messages(last_activity_time, type, is_decrypted, claimed_at)"
                 )
                 db.userVersion = 22
+            }
+            if db.userVersion == 22 {
+                try db.execute(
+                    """
+                    ALTER TABLE room_aliases ADD author_id INTEGER NOT NULL DEFAULT (0);
+                    CREATE TABLE tmp_rooms (
+                        id INTEGER PRIMARY KEY,
+                        host TEXT NOT NULL,
+                        port INT NOT NULL,
+                        pub_key INT NOT NULL
+                    );
+                    CREATE TABLE tmp_room_aliases (
+                        id INTEGER PRIMARY KEY,
+                        room_id INTEGER,
+                        alias_url TEXT UNIQUE NOT NULL,
+                        author_id INTEGER NOT NULL DEFAULT (0),
+                        FOREIGN KEY ( room_id ) REFERENCES rooms( "id" )
+                    );
+                    """
+                )
+                
+                let tempRoomTable = Table("tmp_rooms")
+                _ = try db.prepare(rooms).map { row in
+                    if let address = MultiserverAddress(string: row[colAddress]) {
+                        _ = tempRoomTable.insert(
+                            colID <- row[colID],
+                            colHost <- address.host,
+                            colPort <- Int(address.port),
+                            colPubKey <- address.keyID
+                        )
+                    }
+                }
+                let tempRoomAliasTable = Table("tmp_room_aliases")
+                _ = try db.prepare(roomAliases).map { row in
+                    _ = tempRoomAliasTable.insert(
+                        colID <- row[colID],
+                        colRoomID <- row[colRoomID],
+                        colAliasURL <- row[colAliasURL],
+                        colAuthorID <- row[colAuthorID]
+                    )
+                }
+                try db.execute(
+                    """
+                    DROP TABLE rooms;
+                    CREATE TABLE rooms (
+                        id INTEGER PRIMARY KEY,
+                        host TEXT NOT NULL,
+                        port INT NOT NULL,
+                        pub_key INT NOT NULL
+                    );
+                    INSERT INTO rooms (id, host, port, pub_key) SELECT id, host, port, pub_key FROM tmp_rooms;
+                    DROP TABLE tmp_rooms;
+                    
+                    DROP TABLE room_aliases;
+                    CREATE TABLE room_aliases (
+                        id INTEGER PRIMARY KEY,
+                        room_id INTEGER,
+                        alias_url TEXT UNIQUE NOT NULL,
+                        author_id INTEGER NOT NULL DEFAULT (0),
+                        FOREIGN KEY ( room_id ) REFERENCES rooms( "id" )
+                    );
+                    INSERT INTO room_aliases (id, room_id, alias_url, author_id)
+                        SELECT id, room_id, alias_url, author_id FROM tmp_room_aliases;
+                    DROP TABLE tmp_room_aliases;
+                    """
+                )
+                db.userVersion = 23
             }
         }
     }
@@ -692,9 +763,11 @@ class ViewDatabase {
         let db = try checkoutConnection()
 
         return try db.prepare(rooms).map { row in
-            guard let address = MultiserverAddress(string: row[colAddress]) else {
-                throw ViewDatabaseError.invalidAddress(row[colAddress])
-            }
+            let address = MultiserverAddress(
+                keyID: row[colPubKey],
+                host: row[colHost],
+                port: UInt(row[colPort])
+            ) 
             return Room(address: address)
         }
     }
@@ -702,36 +775,60 @@ class ViewDatabase {
     func insert(room: Room) throws {
         let db = try checkoutConnection()
         
-        try db.run(rooms.insert(colAddress <- room.address.string))
+        try db.run(
+            rooms.insert(
+                colID <- 1,
+                colHost <- room.address.host,
+                colPort <- Int(room.address.port),
+                colPubKey <- room.address.keyID
+            )
+        )
     }
     
     func delete(room: Room) throws {
         let db = try checkoutConnection()
         
-        try db.run(rooms.filter(colAddress == room.address.string).delete())
+        try db.run(rooms
+            .filter(colHost == room.address.host)
+            .filter(colPort == Int(room.address.port))
+            .filter(colPubKey == room.address.keyID)
+        .delete())
     }
     
-    func getRegisteredAliases() throws -> [RoomAlias] {
+    private func getRegisteredAliases(userID: Int64) throws -> [RoomAlias] {
         let db = try checkoutConnection()
 
-        return try db.prepare(roomAliases).map { row in
-            guard let url = URL(string: row[colAliasURL]) else {
-                throw ViewDatabaseError.invalidAliasURL(row[colAliasURL])
-            }
-            
-            return RoomAlias(id: row[colID], aliasURL: url)
+        return try db.prepare(roomAliases.filter(colAuthorID == userID)).map { row in
+            try RoomAlias(row: row, db: self)
         }
     }
     
-    func insertRoomAlias(url: URL, room: Room) throws -> RoomAlias {
+    func getRegisteredAliasesByUser(user: Identity) throws -> [RoomAlias] {
+        let authorID = try authorID(of: user)
+        return try getRegisteredAliases(userID: authorID)
+    }
+    
+    func insertRoomAlias(url: URL, room: Room, user: Identity) throws -> RoomAlias {
+        
+        let authorID = try authorID(of: user)
+        return try insertRoomAlias(url: url, room: room, userID: authorID)
+    }
+    
+    
+    func insertRoomAlias(url: URL, room: Room, userID: Int64) throws -> RoomAlias {
         let db = try checkoutConnection()
         
-        guard let roomID = try db.pluck(rooms.filter(colAddress == room.address.string))?.get(colID) else {
+        guard let roomID = try db.pluck(rooms.filter(colPubKey == room.address.keyID))?.get(colID) else {
             throw ViewDatabaseError.invalidRoom
         }
         
-        let aliasID = try db.run(roomAliases.insert(colAliasURL <- url.absoluteString, colRoomID <- roomID))
-        return RoomAlias(id: aliasID, aliasURL: url)
+        let aliasID = try db.run(
+            roomAliases.insert(
+                colAliasURL <- url.absoluteString,
+                colRoomID <- roomID,
+                colAuthorID <- userID)
+        )
+        return RoomAlias(id: aliasID, aliasURL: url, roomID: roomID, authorID: userID)
     }
     
     // MARK: moderation / delete
@@ -2281,6 +2378,35 @@ class ViewDatabase {
                                     colKey <- p.address.key))
     }
     
+    private func fillRoomAlias(msgID: Int64, message: Message) throws {
+        let db = try checkoutConnection()
+        
+        guard let roomAliasAnnouncement = message.content.roomAliasAnnouncement else {
+            Log.info("[viewdb/fill] broken roomAlias message: \(message.key)")
+            return
+        }
+        
+        let roomID = try self.roomID(of: roomAliasAnnouncement.aliasURL)
+        
+        if roomAliasAnnouncement.action == RoomAliasAnnouncement.RoomAliasActionType.registered {
+            try db.run(
+                self.roomAliases.insert(
+                    or: .replace,
+                    colAuthorID <- self.authorID(of: message.author),
+                    colRoomID <- roomID,
+                    colAliasURL <- roomAliasAnnouncement.aliasURL
+                )
+            )
+        } else if roomAliasAnnouncement.action == RoomAliasAnnouncement.RoomAliasActionType.revoked,
+            let roomID = try self.roomID(of: roomAliasAnnouncement.aliasURL) {
+            try db.run(
+                self.roomAliases
+                    .filter(colRoomID == roomID)
+                    .delete()
+            )
+        }
+    }
+    
     private func fillPost(msgID: Int64, msg: Message, pms: Bool) throws {
         let db = try checkoutConnection()
         guard let p = msg.content.post else {
@@ -2501,6 +2627,8 @@ class ViewDatabase {
             break
         case .pub:
             break
+        case .roomAliasAnnouncement:
+            break
         case .unknown:
             break
         case .unsupported:
@@ -2665,6 +2793,9 @@ class ViewDatabase {
                 case .vote:
                     try self.fillVote(msgID: msgKeyID, msg: msg, pms: pms)
                     
+                case .roomAliasAnnouncement:
+                    try self.fillRoomAlias(msgID: msgKeyID, message: msg)
+                    
                 case .unknown: // ignore encrypted
                     continue
                     
@@ -2780,6 +2911,20 @@ class ViewDatabase {
             colAuthor <- author,
             colHashedKey <- author.sha256hash
         ))
+    }
+    
+    func roomID(of aliasURL: String) throws -> Int64? {
+        let db = try checkoutConnection()
+        
+        var roomID: Int64?
+        
+        guard let aliasURLHost = URL(string: aliasURL)?.host else {
+            throw ViewDatabaseError.invalidRoom
+        }
+        if let roomRow = try db.pluck(self.rooms.filter(colHost == aliasURLHost)) {
+            roomID = roomRow[colID]
+        }
+        return roomID
     }
     
     func author(from id: Int64) throws -> Identity {

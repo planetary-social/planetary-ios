@@ -33,6 +33,7 @@ extension ContentCodable {
             case .pub:      if let encodable = self as? Pub { return try JSONEncoder().encode(encodable) }
             case .post:     if let encodable = self as? Post { return try JSONEncoder().encode(encodable) }
             case .vote:     if let encodable = self as? ContentVote { return try JSONEncoder().encode(encodable) }
+            case .roomAliasAnnouncement: if let encodable = self as? RoomAliasAnnouncement { return try JSONEncoder().encode(encodable) }
 
             // models that SHOULD NOT be published
             case .address:      throw BotError.encodeFailure
