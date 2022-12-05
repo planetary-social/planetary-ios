@@ -11,6 +11,9 @@ on:
 env:
   SIMULATOR: platform=iOS Simulator,name=iPhone 14,OS=16.0
   DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
     
 jobs:
   unit_test:

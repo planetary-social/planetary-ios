@@ -224,45 +224,49 @@ extension GoBotViewController {
         
         let delRepo = UIAlertAction(title: "Repo and View", style: .destructive) {
             _ in
-            do {
-                if GoBot.shared.bot.isRunning {
-                    _ = GoBot.shared.bot.logout()
+            Task {
+                do {
+                    if GoBot.shared.bot.isRunning {
+                        _ = GoBot.shared.bot.logout()
+                    }
+                    
+                    // TODO https://app.asana.com/0/914798787098068/1153254864207581/f
+                    // TODO crash when deleting a repo without an active configuration
+                    await GoBot.shared.database.close()
+                    let appSupportDir = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
+                    let path = appSupportDir
+                        .appending("/FBTT/")
+                        .appending(AppConfiguration.current!.network!.hexEncodedString())
+                    try FileManager.default.removeItem(atPath: path)
+                    Log.info("repo deleted.. should stop and restart sbot")
+                } catch {
+                    Log.unexpected(.apiError, "purge error")
+                    Log.optional(error)
                 }
-
-                // TODO https://app.asana.com/0/914798787098068/1153254864207581/f
-                // TODO crash when deleting a repo without an active configuration
-                GoBot.shared.database.close()
-                let appSupportDir = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
-                let path = appSupportDir
-                    .appending("/FBTT/")
-                    .appending(AppConfiguration.current!.network!.hexEncodedString())
-                try FileManager.default.removeItem(atPath: path)
-                Log.info("repo deleted.. should stop and restart sbot")
-            } catch {
-                Log.unexpected(.apiError, "purge error")
-                Log.optional(error)
+                self.updateSettings()
             }
-            self.updateSettings()
         }
         controller.addAction(delRepo)
         
         let delView = UIAlertAction(title: "Just view DB", style: .destructive) {
             _ in
-            do {
-                if GoBot.shared.bot.isRunning {
-                    _ = GoBot.shared.bot.logout()
+            Task {
+                do {
+                    if GoBot.shared.bot.isRunning {
+                        _ = GoBot.shared.bot.logout()
+                    }
+                    if let dbPath = GoBot.shared.database.currentPath {
+                        await GoBot.shared.database.close()
+                        try FileManager.default.removeItem(atPath: dbPath)
+                    } else {
+                        throw ViewDatabaseError.notOpen
+                    }
+                } catch {
+                    Log.unexpected(.apiError, "purge error")
+                    Log.optional(error)
                 }
-                if let dbPath = GoBot.shared.database.currentPath {
-                    GoBot.shared.database.close()
-                    try FileManager.default.removeItem(atPath: dbPath)
-                } else {
-                    throw ViewDatabaseError.notOpen
-                }
-            } catch {
-                Log.unexpected(.apiError, "purge error")
-                Log.optional(error)
+                self.updateSettings()
             }
-            self.updateSettings()
         }
         controller.addAction(delView)
         

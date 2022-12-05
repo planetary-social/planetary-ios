@@ -213,12 +213,14 @@ class Onboarding {
     /// should not have been set.  Check out `Onboarding.start()` to see all the work that is
     /// done, and to use a template to know what work to undo.
     static func reset(completion: @escaping ResetCompletion) {
-        Bots.current.logout { error in
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            
+        Task {
+            do {
+                try await Bots.current.logout()
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
             Analytics.shared.forget()
-            
             completion()
         }
     }
@@ -231,16 +233,20 @@ class Onboarding {
     /// MUST BE completed before `resume()` will work.  Check out `start()` and see that
     /// it does not write status until all those steps are complete.
     static func resume(completion: @escaping StartCompletion) {
-
-        guard let configuration = AppConfiguration.current,
-            var context = Context(from: configuration) else {
-            completion(nil, .configurationFailed)
-            return
-        }
-
-        Bots.current.login(config: configuration) { error in
-            if let error = error { completion(context, .botError(error)) }
-
+        
+        Task {
+            guard let configuration = AppConfiguration.current,
+                var context = Context(from: configuration) else {
+                completion(nil, .configurationFailed)
+                return
+            }
+            
+            do {
+                try await Bots.current.login(config: configuration)
+            } catch {
+                completion(context, .botError(error))
+            }
+            
             // get About for context identity
             Bots.current.about(identity: context.identity) {
                 about, error in
@@ -260,7 +266,7 @@ class Onboarding {
                 Analytics.shared.identify(identifier: about.identity,
                                           name: about.name,
                                           network: context.network.name)
-
+                
                 completion(context, nil)
             }
         }
