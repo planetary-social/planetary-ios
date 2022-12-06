@@ -814,7 +814,6 @@ class ViewDatabase {
         return try insertRoomAlias(url: url, room: room, userID: authorID)
     }
     
-    
     func insertRoomAlias(url: URL, room: Room, userID: Int64) throws -> RoomAlias {
         let db = try checkoutConnection()
         

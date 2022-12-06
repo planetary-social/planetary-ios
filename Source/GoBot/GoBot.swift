@@ -375,7 +375,14 @@ class GoBot: Bot {
         
         let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
             if self.bot.register(alias: alias, in: room) {
-                return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room, user: identity)
+                guard let url = URL(string: "https://" + alias + "." + room.address.host) else {
+                    throw GoBotError.unexpectedFault("Invalid URL")
+                }
+                return try self.database.insertRoomAlias(
+                    url: url,
+                    room: room,
+                    user: identity
+                )
             } else {
                 // TODO: localize, better error messages i.e. in case of conflicts.
                 throw GoBotError.unexpectedFault("Failed to register room alias")

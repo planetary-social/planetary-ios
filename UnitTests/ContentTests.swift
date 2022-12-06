@@ -448,16 +448,26 @@ fileprivate extension Content {
     /// should be read only which would negate the need for this.
     func assertValid() -> Bool {
         switch self.type {
-            case .about: return self.about != nil
-            case .address: return self.address != nil
-            case .contact: return self.contact != nil
-            case .dropContentRequest: return self.dropContentRequest != nil
-            case .pub: return self.pub != nil
-            case .post: return self.post != nil
-            case .vote: return self.vote != nil
-            case .roomAliasAnnouncement: return self.roomAliasAnnouncement != nil
-            case .unsupported: return false
-            case .unknown: return false
+        case .about:
+            return self.about != nil
+        case .address:
+            return self.address != nil
+        case .contact:
+            return self.contact != nil
+        case .dropContentRequest:
+            return self.dropContentRequest != nil
+        case .pub:
+            return self.pub != nil
+        case .post:
+            return self.post != nil
+        case .vote:
+            return self.vote != nil
+        case .roomAliasAnnouncement:
+            return self.roomAliasAnnouncement != nil
+        case .unsupported:
+            return false
+        case .unknown:
+            return false
         }
     }
 }
