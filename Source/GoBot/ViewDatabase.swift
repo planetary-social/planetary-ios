@@ -210,7 +210,7 @@ class ViewDatabase {
     // Rooms
     let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
     let colRoomID = Expression<Int64?>("room_id")
-    let colAction =  Expression<String>("action")
+    let colAction = Expression<String>("action")
     let colPubKey = Expression<String>("pub_key")
     
     // Room Aliases
@@ -788,11 +788,13 @@ class ViewDatabase {
     func delete(room: Room) throws {
         let db = try checkoutConnection()
         
-        try db.run(rooms
-            .filter(colHost == room.address.host)
-            .filter(colPort == Int(room.address.port))
-            .filter(colPubKey == room.address.keyID)
-        .delete())
+        try db.run(
+            rooms
+                .filter(colHost == room.address.host)
+                .filter(colPort == Int(room.address.port))
+                .filter(colPubKey == room.address.keyID)
+                .delete()
+        )
     }
     
     private func getRegisteredAliases(userID: Int64) throws -> [RoomAlias] {
@@ -825,7 +827,8 @@ class ViewDatabase {
             roomAliases.insert(
                 colAliasURL <- url.absoluteString,
                 colRoomID <- roomID,
-                colAuthorID <- userID)
+                colAuthorID <- userID
+            )
         )
         return RoomAlias(id: aliasID, aliasURL: url, roomID: roomID, authorID: userID)
     }
