@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1400"
+   LastUpgradeVersion = "1410"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5344D82A21C4649700704A34"
-               BuildableName = "Planetary.app"
-               BlueprintName = "Planetary"
-               ReferencedContainer = "container:Planetary.xcodeproj">
+               BuildableName = "Planetary-scuttle.app"
+               BlueprintName = "Planetary-scuttle"
+               ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5344D82A21C4649700704A34"
-            BuildableName = "Planetary.app"
-            BlueprintName = "Planetary"
-            ReferencedContainer = "container:Planetary.xcodeproj">
+            BuildableName = "Planetary-scuttle.app"
+            BlueprintName = "Planetary-scuttle"
+            ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
          </BuildableReference>
       </CodeCoverageTargets>
       <Testables>
@@ -46,7 +46,7 @@
                BlueprintIdentifier = "5308168421C46A52005C48ED"
                BuildableName = "UnitTests.xctest"
                BlueprintName = "UnitTests"
-               ReferencedContainer = "container:Planetary.xcodeproj">
+               ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
             </BuildableReference>
             <SkippedTests>
                <Test
@@ -60,6 +60,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = "IDELaunchSchemeLanguageAccentedLatin"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -71,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5344D82A21C4649700704A34"
-            BuildableName = "Planetary.app"
-            BlueprintName = "Planetary"
-            ReferencedContainer = "container:Planetary.xcodeproj">
+            BuildableName = "Planetary-scuttle.app"
+            BlueprintName = "Planetary-scuttle"
+            ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -110,9 +111,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5344D82A21C4649700704A34"
-            BuildableName = "Planetary.app"
-            BlueprintName = "Planetary"
-            ReferencedContainer = "container:Planetary.xcodeproj">
+            BuildableName = "Planetary-scuttle.app"
+            BlueprintName = "Planetary-scuttle"
+            ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

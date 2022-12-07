@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Planetary.xcodeproj">
+      location = "group:/Users/wsarles/Developer/planetary-ios-raptor/Planetary-scuttle.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Analytics">

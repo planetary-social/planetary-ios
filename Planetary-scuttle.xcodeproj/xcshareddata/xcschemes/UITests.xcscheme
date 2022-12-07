@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1400"
+   LastUpgradeVersion = "1410"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,19 +16,11 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5308168421C46A52005C48ED"
-               BuildableName = "UnitTests.xctest"
-               BlueprintName = "UnitTests"
-               ReferencedContainer = "container:Planetary.xcodeproj">
+               BlueprintIdentifier = "0A3880172475BB4500777843"
+               BuildableName = "UITests.xctest"
+               BlueprintName = "UITests"
+               ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "API_GoBot">
-               </Test>
-               <Test
-                  Identifier = "ContentTests/test_postWithBlobAltText()">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
