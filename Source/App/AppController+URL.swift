@@ -136,8 +136,8 @@ extension AppController {
     }
 
     func pushChannelViewController(for hashtag: String) {
-        let controller = ChannelViewController(named: hashtag)
-        self.push(controller)
+        let view = HashtagView(hashtag: Hashtag.named(hashtag)).environmentObject(BotRepository.shared)
+        self.push(UIHostingController(rootView: view))
     }
 
     // TODO this is incorrectly scoped, push to the app controller should

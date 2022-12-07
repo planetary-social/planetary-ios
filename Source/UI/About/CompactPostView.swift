@@ -92,6 +92,7 @@ struct CompactPostView: View {
                 BlobGalleryView(blobs: blobs)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

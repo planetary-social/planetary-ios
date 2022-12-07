@@ -52,68 +52,72 @@ struct IdentityHeaderView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .top, spacing: 18) {
-                ZStack(alignment: .bottomTrailing) {
-                    Button {
-                        guard let image = about?.image else {
-                            return
+        ZStack {
+            VStack(alignment: .leading) {
+                HStack(alignment: .top, spacing: 18) {
+                    ZStack(alignment: .bottomTrailing) {
+                        Button {
+                            guard let image = about?.image else {
+                                return
+                            }
+                            AppController.shared.open(string: image.link)
+                        } label: {
+                            if extendedHeader {
+                                AvatarView(metadata: about?.image, size: 87)
+                                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 99)
+                                            .stroke(LinearGradient.diagonalAccent, lineWidth: 3)
+                                    )
+                            } else {
+                                AvatarView(metadata: about?.image, size: 45)
+                                    .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 99)
+                                            .stroke(LinearGradient.diagonalAccent, lineWidth: 2)
+                                    )
+                            }
                         }
-                        AppController.shared.open(string: image.link)
-                    } label: {
-                        if extendedHeader {
-                            AvatarView(metadata: about?.image, size: 87)
-                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 99)
-                                        .stroke(LinearGradient.diagonalAccent, lineWidth: 3)
-                                )
-                        } else {
-                            AvatarView(metadata: about?.image, size: 45)
-                                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 4)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 99)
-                                        .stroke(LinearGradient.diagonalAccent, lineWidth: 2)
-                                )
+                        if isSelf {
+                            EditAvatarButton(about: about, large: extendedHeader)
                         }
                     }
-                    if isSelf {
-                        EditAvatarButton(about: about, large: extendedHeader)
-                    }
-                }
-                HStack(alignment: .center) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(about?.nameOrIdentity ?? identity)
-                            .lineLimit(1)
-                            .font(.title3.weight(.semibold))
-                            .foregroundColor(Color.primaryTxt)
-                        Text(identity.prefix(7))
-                            .font(.subheadline)
-                            .foregroundColor(Color.secondaryTxt)
-                        if extendedHeader {
+                    HStack(alignment: .center) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(about?.nameOrIdentity ?? identity)
+                                .lineLimit(1)
+                                .font(.title3.weight(.semibold))
+                                .foregroundColor(Color.primaryTxt)
+                            Text(identity.prefix(7))
+                                .font(.subheadline)
+                                .foregroundColor(Color.secondaryTxt)
+                            if extendedHeader {
+                                followButton
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        if !extendedHeader {
                             followButton
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    if !extendedHeader {
-                        followButton
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                if extendedHeader {
+                    if shouldShowBio {
+                        BioView(bio: about?.description)
                     }
+                    if shouldShowHashtags {
+                        HashtagSliderView(hashtags: hashtags)
+                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
+                    }
+                    ExtendedSocialStatsView(socialStats: socialStats)
+                        .frame(maxWidth: .infinity)
                 }
             }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            if extendedHeader {
-                if shouldShowBio {
-                    BioView(bio: about?.description)
-                }
-                if shouldShowHashtags {
-                    HashtagSliderView(hashtags: hashtags)
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 9, trailing: 0))
-                }
-                ExtendedSocialStatsView(socialStats: socialStats)
-                    .frame(maxWidth: .infinity)
-            }
+            .frame(maxWidth: 500)
         }
+        .frame(maxWidth: .infinity)
         .background(
             LinearGradient(
                 colors: [Color.profileBgTop, Color.profileBgBottom],

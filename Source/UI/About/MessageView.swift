@@ -100,6 +100,7 @@ struct MessageView: View {
                     }
                     .padding(15)
                 }
+                .contentShape(Rectangle())
                 .onTapGesture {
                     AppController.shared.open(identifier: message.id)
                 }
@@ -113,6 +114,10 @@ struct MessageView: View {
             )
         )
         .cornerRadius(20)
+        .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
+        .compositingGroup()
+        .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
+        .shadow(color: .cardShadowBottom, radius: 10, x: 0, y: 4)
     }
 }
 
@@ -127,7 +132,7 @@ struct MessageView_Previews: PreviewProvider {
                     hashtags: nil,
                     mentions: nil,
                     root: nil,
-                    text: .loremIpsum(1)
+                    text: .loremIpsum(words: 10)
                 )
             ),
             hash: "",
@@ -175,11 +180,18 @@ struct MessageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            VStack {
-                MessageView(message: message)
-                MessageView(message: messageWithLongAuthor)
-                MessageView(message: messageWithUnknownAuthor)
+            ScrollView {
+                ZStack {
+                    LazyVStack {
+                        MessageView(message: message)
+                        MessageView(message: messageWithLongAuthor)
+                        MessageView(message: messageWithUnknownAuthor)
+                    }
+                    .frame(maxWidth: 300)
+                }
+                .frame(maxWidth: .infinity)
             }
+            .background(Color.appBg)
             VStack {
                 MessageView(message: message)
                 MessageView(message: messageWithLongAuthor)

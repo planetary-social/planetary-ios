@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "tab-icon-write.png",
+      "filename" : "icon_create.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "tab-icon-write@2x.png",
+      "filename" : "icon_create@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "tab-icon-write@3x.png",
+      "filename" : "icon_create@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

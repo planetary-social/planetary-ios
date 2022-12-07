@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import Analytics
 import Logger
+import SwiftUI
 
 enum MainTab {
     case home, discover, notifications, hashtags, network
@@ -91,24 +92,16 @@ enum MainTab {
 
 class MainViewController: UITabBarController {
 
-    var homeViewController: HomeViewController? {
-        self.homeFeatureViewController.viewControllers.first as? HomeViewController
-    }
+    let helpDrawerState = HelpDrawerState()
 
-    let homeFeatureViewController = FeatureViewController(
-        rootViewController: HomeViewController(),
-        tabBarItemImageName: "tab-icon-home"
-    )
+    let homeFeatureViewController: FeatureViewController
 
     let notificationsFeatureViewController = FeatureViewController(
         rootViewController: NotificationsViewController(),
         tabBarItemImageName: "tab-icon-notifications"
     )
 
-    let channelsFeatureViewController = FeatureViewController(
-        rootViewController: ChannelsViewController(),
-        tabBarItemImageName: "tab-icon-channels"
-    )
+    let channelsFeatureViewController: FeatureViewController
 
     let directoryFeatureViewController = FeatureViewController(
         rootViewController: DirectoryViewController(),
@@ -122,6 +115,26 @@ class MainViewController: UITabBarController {
 
     // custom separator on the top edge of the tab bar
     private var topBorder: UIView?
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        homeFeatureViewController = FeatureViewController(
+            rootViewController: UIHostingController(
+                rootView: HomeView()
+                    .environmentObject(BotRepository.shared)
+                    .environmentObject(helpDrawerState)
+            ),
+            tabBarItemImageName: "tab-icon-home"
+        )
+        channelsFeatureViewController = FeatureViewController(
+            rootViewController: UIHostingController(
+                rootView: HashtagListView()
+                    .environmentObject(BotRepository.shared)
+                    .environmentObject(helpDrawerState)
+            ),
+            tabBarItemImageName: "tab-icon-channels"
+        )
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
 
     convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -138,6 +151,10 @@ class MainViewController: UITabBarController {
             self.directoryFeatureViewController
         ]
         self.setViewControllers(controllers, animated: false)
+    }
+
+    required init?(coder: NSCoder) {
+        nil
     }
 
     /// Updates the icon of the notifications tab bar item to match the application badge number

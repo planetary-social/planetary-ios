@@ -61,6 +61,14 @@ extension HelpDrawerHost {
         HelpDrawerCoordinator.showHelp(for: self)
     }
 }
+
+class HelpDrawerState: ObservableObject {
+    @Published
+    var isShowingHomeHelpDrawer = false
+
+    @Published
+    var isShowingHashtagsHelpDrawer = false
+}
     
 /// A bunc of stateless functions to help with showing help drawers.
 enum HelpDrawerCoordinator {
@@ -71,13 +79,32 @@ enum HelpDrawerCoordinator {
         if viewController.presentedViewController == nil {
             let controller = HelpDrawerCoordinator.helpController(for: viewController)
             viewController.present(controller, animated: true, completion: nil)
-            UserDefaults.standard.set(true, forKey: helpDrawerType.hasSeenDrawerKey)
-            UserDefaults.standard.synchronize()
+            didShowHelp(for: helpDrawerType)
         }
         
         Analytics.shared.trackDidShowScreen(screenName: helpDrawerType.screenName)
     }
-        
+
+    /// Marks the help drawer as seen and does not show it again at first time
+    @MainActor static func didShowHelp(for helpDrawer: HelpDrawer) {
+        UserDefaults.standard.set(true, forKey: helpDrawer.hasSeenDrawerKey)
+        UserDefaults.standard.synchronize()
+    }
+
+    /// Shows the help drawer only if the user has never seen it before.
+    @MainActor static func showFirstTimeHelp(for helpDrawer: HelpDrawer, state: HelpDrawerState) {
+        if UserDefaults.standard.bool(forKey: helpDrawer.hasSeenDrawerKey) == false {
+            switch helpDrawer {
+            case .home:
+                state.isShowingHomeHelpDrawer = true
+            case .hashtags:
+                state.isShowingHashtagsHelpDrawer = true
+            default:
+                break
+            }
+        }
+    }
+
     /// Shows the help drawer only if the user has never seen it before.
     @MainActor static func showFirstTimeHelp(for viewController: HelpDrawerHost) {
         let helpDrawerType = viewController.helpDrawerType
@@ -90,7 +117,10 @@ enum HelpDrawerCoordinator {
     /// popover depending on size class.
     @MainActor static func helpController(for viewController: HelpDrawerHost) -> UIViewController {
         
-        let view = helpDrawerView(for: viewController, dismissAction: { viewController.dismiss(animated: true) })
+        let view = helpDrawerView(
+            for: viewController.helpDrawerType,
+            dismissAction: { viewController.dismiss(animated: true) }
+        )
         let controller = UIHostingController(rootView: view)
         
         controller.modalPresentationStyle = .popover
@@ -127,13 +157,10 @@ enum HelpDrawerCoordinator {
             return {
                 viewController.dismiss(animated: true) {
                     let featureVC = tabBar?.homeFeatureViewController
-                    let helpHost = featureVC?.viewControllers.first as? HomeViewController
                     tabBar?.selectedViewController = featureVC
-                    // Yield so we don't end up presenting on a view that hasn't loaded yet.
-                    Task { await helpHost?.helpButtonTouchUpInside() }
+                    tabBar?.helpDrawerState.isShowingHomeHelpDrawer = true	
                 }
             }
-            
         case .discover:
             return {
                 viewController.dismiss(animated: true) {
@@ -158,10 +185,8 @@ enum HelpDrawerCoordinator {
             return {
                 viewController.dismiss(animated: true) {
                     let featureVC = tabBar?.channelsFeatureViewController
-                    let helpHost = featureVC?.viewControllers.first as? ChannelsViewController
                     tabBar?.selectedViewController = featureVC
-                    // Yield so we don't end up presenting on a view that hasn't loaded yet.
-                    Task { await helpHost?.helpButtonTouchUpInside() }
+                    tabBar?.helpDrawerState.isShowingHashtagsHelpDrawer = true
                 }
             }
         case .network:
@@ -178,19 +203,20 @@ enum HelpDrawerCoordinator {
     }
     
     // swiftlint:disable function_body_length
-    /// Builds the SwiftUI help drawer view for the given view controller.
-    @MainActor private static func helpDrawerView(
-        for viewController: HelpDrawerHost,
+    /// Builds the SwiftUI help drawer view for the given view controller type.
+    @MainActor static func helpDrawerView(
+        for type: HelpDrawer,
         dismissAction: @escaping () -> Void
     ) -> HelpDrawerView? {
-        
-        let inDrawer = viewController.traitCollection.horizontalSizeClass == .compact
-        
+        guard let mainViewController = AppController.shared.mainViewController else {
+            return nil
+        }
         // This function is a little kludgy but I'm not going to spend time refactoring it now. It would be
         // better to build a configuration object and pass that to the HelpDrawerView initializer rather than having
         // so many parameters.
-        switch viewController.helpDrawerType {
+        switch type {
         case .home:
+            let controller = mainViewController.homeFeatureViewController
             return HelpDrawerView(
                 tabName: Localized.home.text,
                 tabImageName: "tab-icon-home",
@@ -200,13 +226,14 @@ enum HelpDrawerCoordinator {
                 highlightedWord: Localized.Help.Home.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: MainTab.discover.url,
-                inDrawer: inDrawer,
+                inDrawer: controller.traitCollection.horizontalSizeClass == .compact,
                 tipIndex: 1,
-                nextTipAction: createShowClosure(for: .discover, from: viewController),
+                nextTipAction: createShowClosure(for: .discover, from: controller),
                 previousTipAction: nil,
                 dismissAction: dismissAction
             )
         case .discover:
+            let controller = mainViewController.everyoneViewController
             return HelpDrawerView(
                 tabName: Localized.explore.text,
                 tabImageName: "tab-icon-everyone",
@@ -216,13 +243,14 @@ enum HelpDrawerCoordinator {
                 highlightedWord: Localized.Help.Discover.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: MainTab.home.url,
-                inDrawer: inDrawer,
+                inDrawer: controller.traitCollection.horizontalSizeClass == .compact,
                 tipIndex: 2,
-                nextTipAction: createShowClosure(for: .notifications, from: viewController),
-                previousTipAction: createShowClosure(for: .home, from: viewController),
+                nextTipAction: createShowClosure(for: .notifications, from: controller),
+                previousTipAction: createShowClosure(for: .home, from: controller),
                 dismissAction: dismissAction
             )
         case .notifications:
+            let controller = mainViewController.notificationsFeatureViewController
             return HelpDrawerView(
                 tabName: Localized.notifications.text,
                 tabImageName: "tab-icon-notifications",
@@ -232,13 +260,14 @@ enum HelpDrawerCoordinator {
                 highlightedWord: nil,
                 highlight: .diagonalAccent,
                 link: nil,
-                inDrawer: inDrawer,
+                inDrawer: controller.traitCollection.horizontalSizeClass == .compact,
                 tipIndex: 3,
-                nextTipAction: createShowClosure(for: .hashtags, from: viewController),
-                previousTipAction: createShowClosure(for: .discover, from: viewController),
+                nextTipAction: createShowClosure(for: .hashtags, from: controller),
+                previousTipAction: createShowClosure(for: .discover, from: controller),
                 dismissAction: dismissAction
             )
         case .hashtags:
+            let controller = mainViewController.channelsFeatureViewController
             return HelpDrawerView(
                 tabName: Localized.channels.text,
                 tabImageName: "tab-icon-channels",
@@ -248,13 +277,14 @@ enum HelpDrawerCoordinator {
                 highlightedWord: Localized.Help.Hashtags.highlightedWord.text,
                 highlight: .diagonalAccent,
                 link: MainTab.network.url,
-                inDrawer: inDrawer,
+                inDrawer: controller.traitCollection.horizontalSizeClass == .compact,
                 tipIndex: 4,
-                nextTipAction: createShowClosure(for: .network, from: viewController),
-                previousTipAction: createShowClosure(for: .notifications, from: viewController),
+                nextTipAction: createShowClosure(for: .network, from: controller),
+                previousTipAction: createShowClosure(for: .notifications, from: controller),
                 dismissAction: dismissAction
             )
         case .network:
+            let controller = mainViewController.directoryFeatureViewController
             return HelpDrawerView(
                 tabName: Localized.yourNetwork.text,
                 tabImageName: "tab-icon-directory",
@@ -264,10 +294,10 @@ enum HelpDrawerCoordinator {
                 highlightedWord: Localized.Help.YourNetwork.highlightedWord.text,
                 highlight: .solidBlack,
                 link: nil,
-                inDrawer: inDrawer,
+                inDrawer: controller.traitCollection.horizontalSizeClass == .compact,
                 tipIndex: 5,
                 nextTipAction: nil,
-                previousTipAction: createShowClosure(for: .hashtags, from: viewController),
+                previousTipAction: createShowClosure(for: .hashtags, from: controller),
                 dismissAction: dismissAction
             )
         }

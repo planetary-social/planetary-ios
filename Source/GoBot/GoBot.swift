@@ -512,7 +512,9 @@ class GoBot: Bot {
             self._statistics.lastRefreshDuration = elapsed
         }
         completion(result, elapsed)
-        NotificationCenter.default.post(name: .didRefresh, object: nil)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .didRefresh, object: nil)
+        }
     }
     
     // MARK: Invites
@@ -1515,7 +1517,12 @@ class GoBot: Bot {
     func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
         userInitiatedQueue.async { [database] in
             do {
-                let messages = try strategy.fetchMessages(database: database, userId: 0, limit: limit, offset: offset)
+                let messages = try strategy.fetchMessages(
+                    database: database,
+                    userId: database.currentUserID,
+                    limit: limit,
+                    offset: offset
+                )
                 completion(messages, nil)
             } catch {
                 completion([], error)
