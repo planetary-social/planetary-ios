@@ -1606,8 +1606,8 @@ class GoBot: Bot {
             var ownMessages = -1
             self.numberOfPublishedMessagesLock.lock()
             if let identity = self._identity,
-               identity == repoIdentity,
-               let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
+                identity == repoIdentity,
+                let ownMessageCount = try? self.database.numberOfMessages(for: identity) {
                 ownMessages = ownMessageCount
                 self.saveNumberOfPublishedMessages(from: self._statistics.repo)
             }
