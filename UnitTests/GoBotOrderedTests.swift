@@ -65,7 +65,7 @@ class GoBotOrderedTests: XCTestCase {
             print("removing previous failed - propbably not exists")
         }
 
-        try await GoBotOrderedTests.shared.login(config: botTestConfiguration)
+        try await GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: true)
 
         let nicks = ["alice", "barbara", "claire", "denise", "page"]
         do {
@@ -77,7 +77,7 @@ class GoBotOrderedTests: XCTestCase {
         }
 
         // calling login twice works too
-        try await GoBotOrderedTests.shared.login(config: botTestConfiguration)
+        try await GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: true)
     }
     
     func test001_regression_tests() async throws {
@@ -107,7 +107,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [exFirstStats], timeout: 10)
 
         // finally log in again
-        try await GoBotOrderedTests.shared.login(config: botTestConfiguration)
+        try await GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: true)
 
         // has the test keys keys
         do {

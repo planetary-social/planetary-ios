@@ -92,6 +92,9 @@ private struct GoBotConfig: Encodable {
     let SchemaVersion: UInt
 
     let ServicePubs: [Identity]? // identities of services which supply planetary specific services
+    
+    /// Disables EBT replication if true. Part of a workaround for #847.
+    let DisableEBT: Bool
 
     #if DEBUG
     let Testing = true
@@ -132,7 +135,7 @@ class GoBotInternal {
 
     // MARK: login / logout
 
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String) throws {
+    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String, disableEBT: Bool) throws {
         if self.isRunning {
             guard self.logout() == true else {
                 throw GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
@@ -155,7 +158,9 @@ class GoBotInternal {
             ListenAddr: listenAddr,
             Hops: 1,
             SchemaVersion: ViewDatabase.schemaVersion,
-            ServicePubs: servicePubs)
+            ServicePubs: servicePubs,
+            DisableEBT: disableEBT
+        )
         
         let enc = JSONEncoder()
         var cfgStr: String

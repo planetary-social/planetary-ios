@@ -69,7 +69,7 @@ class API_GoBot: XCTestCase {
         }
         
         let loginExpecation = self.expectation(description: "login")
-        try await API_GoBot.bot.login(config: reproConfiguration)
+        try await API_GoBot.bot.login(config: reproConfiguration, fromOnboarding: false)
     }
     
     // check we loaded all the messages from the fixtures repo
