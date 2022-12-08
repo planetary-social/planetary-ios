@@ -17,7 +17,7 @@ import CryptoKit
 /// one can be in use at a time.
 ///
 /// The AppConfiguration is also used to prevent feed forks in some cases by storing the number of published messages.
-final class AppConfiguration: NSObject, NSCoding, Identifiable, @unchecked Sendable { // #982
+class AppConfiguration: NSObject, NSCoding, Identifiable, @unchecked Sendable { // #982
     
     var id: String {
         let idComponents: [String] = [
