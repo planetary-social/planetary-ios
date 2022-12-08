@@ -20,12 +20,12 @@ final class DatabaseConnectionPool: Sendable {
     private var lock = NSLock()
     
     /// This number is the retain count at which we consider a Connection to no longer be in use. When a caller checks
-    /// out a Connection with `checkout()` the will incremement the retain count and when they are done using it they
+    /// out a Connection with `checkout()` they will increment the retain count and when they are done using it they
     /// decrement it. The reason this number is more than one is because iterating through the array of connections
     /// causes the retain count to go up as well.
     static let connectionReleaseThreshold = 3
     
-    /// Queries whether the connection pool is ready to server connections. Connections can not be checked out until
+    /// Queries whether the connection pool is ready to serve connections. Connections can not be checked out until
     /// the database has been initialized.
     var isOpen: Bool {
         lock.lock()
@@ -44,7 +44,7 @@ final class DatabaseConnectionPool: Sendable {
         lock.withLock { _isOpen = false }
         while !openConnections.isEmpty {
             lock.withLock {
-                openConnections.removeAll(where: { CFGetRetainCount($0) <= 3 })
+                openConnections.removeAll(where: { CFGetRetainCount($0) <= Self.connectionReleaseThreshold })
             }
             try? await Task.sleep(nanoseconds: 50_000_000) // 50 milliseconds
         }
@@ -58,7 +58,7 @@ final class DatabaseConnectionPool: Sendable {
         defer { lock.unlock() }
         guard _isOpen else { throw ViewDatabaseError.notOpen }
             
-        return openConnections.first(where: { CFGetRetainCount($0) <= 3 })
+        return openConnections.first(where: { CFGetRetainCount($0) <= Self.connectionReleaseThreshold })
     }
     
     /// Adds a new connection to the pool.

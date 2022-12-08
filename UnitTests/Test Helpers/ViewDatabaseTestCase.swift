@@ -19,7 +19,7 @@ class ViewDatabaseTestCase: XCTestCase {
         try await super.setUp()
         await db.close()
 
-        // get random location for the new
+        // get random location for the new database.
         dbURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/ViewDatabaseTestCase/\(UUID().uuidString)"))
         try FileManager.default.createDirectory(at: dbURL, withIntermediateDirectories: true)
 

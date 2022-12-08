@@ -30,7 +30,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         try await super.tearDown()
     }
     
-    /// Creates a directory where we can initialized a database for the tests and returns the URL to it.
+    /// Creates a directory where we can initialize a database for the tests and returns the URL to it.
     private func createDBDirectory() async throws -> URL {
         viewDatabase = ViewDatabase()
         let dbDir = FileManager
@@ -50,7 +50,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     
     private func setUpEmptyDB(user: Identity) throws {
         let setupExpectation = expectation(description: "setup")
-        // Performance tests do not with with async/await yet so we wrap these calls in a Task and use an expecatation
+        // Performance tests do not work with async/await yet so we wrap these calls in a Task and use an expecatation
         // to wait on it.
         Task {
             let dbDir = try await createDBDirectory()
@@ -65,7 +65,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     private func loadDB(named dbName: String?, user: Identity) throws {
-        // Performance tests do not with with async/await yet so we wrap these calls in a Task and use an expecatation
+        // Performance tests do not work with async/await yet so we wrap these calls in a Task and use an expecatation
         // to wait on it.
         let setupExpectation = expectation(description: "setup")
         Task {
