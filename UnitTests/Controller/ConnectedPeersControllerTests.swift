@@ -123,6 +123,8 @@ class ConnectedPeerListControllerTests: XCTestCase {
     
     /// Verifies that when a peer disappears from the statistics it is markedd as not active.
     func testPublishingNewStatisticsUpdatesCurrentlyActiveProperty() async throws {
+        XCTExpectFailure("This test fails intermittently. See #992", strict: false)
+
         // Arrange
         XCTAssertEqual(sut.peers, nil)
         let firstPeerStatistics = PeerStatistics(

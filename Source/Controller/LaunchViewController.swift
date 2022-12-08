@@ -123,7 +123,7 @@ class LaunchViewController: UIViewController {
                 guard configuration.network != nil else { return }
                 guard let bot = configuration.bot else { return }
                 
-                try await bot.login(config: configuration)
+                try await bot.login(config: configuration, fromOnboarding: false)
             } catch {
                 self.handleLoginFailure(with: error, configuration: configuration)
             }
@@ -173,40 +173,44 @@ class LaunchViewController: UIViewController {
             preferredStyle: .alert
         )
         let action = UIAlertAction(title: "Restart", style: .default) { _ in
-            Log.debug("Restarting launch...")
-            bot.logout { error in
-                // Don't report error here becuase the normal path is to actually receive
-                // a notLoggedIn error
-                Log.optional(error)
-                
+            Task {
+                Log.debug("Restarting launch...")
+                do {
+                    try await bot.logout()
+                } catch {
+                    // Don't report error here becuase the normal path is to actually receive
+                    // a notLoggedIn error
+                    Log.optional(error)
+                }
+                    
                 ssbDropIndexData()
                 
                 Analytics.shared.forget()
                 CrashReporting.shared.forget()
                 
-                Task {
-                    await self.appController.relaunch()
-                }
+                await self.appController.relaunch()
             }
         }
         controller.addAction(action)
         
         let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
-            Log.debug("Resetting current configuration and restarting launch...")
-            AppConfiguration.current?.unapply()
-            bot.logout { error in
-                // Don't report error here becuase the normal path is to actually receive
-                // a notLoggedIn error
-                Log.optional(error)
-                
+            Task {
+                Log.debug("Resetting current configuration and restarting launch...")
+                AppConfiguration.current?.unapply()
+                do {
+                    try await bot.logout()
+                } catch {
+                    // Don't report error here becuase the normal path is to actually receive
+                    // a notLoggedIn error
+                    Log.optional(error)
+                }
+                    
                 ssbDropIndexData()
                 
                 Analytics.shared.forget()
                 CrashReporting.shared.forget()
                 
-                Task {
-                    await self.appController.relaunch()
-                }
+                await self.appController.relaunch()
             }
         }
         controller.addAction(reset)

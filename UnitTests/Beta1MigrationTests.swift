@@ -80,7 +80,7 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the proper user defaults keys are set when a user creates a new profile
     func testUserDefaultsSetAfterNewAccountCreation() async throws {
         // Act
-        try await mockBot.login(config: appConfig)
+        try await mockBot.login(config: appConfig, fromOnboarding: false)
         
         // Assert
         XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
@@ -227,11 +227,11 @@ class Beta1MigrationTests: XCTestCase {
     }
     
     /// Verifies that the migration controller removes the bot from restoring mode when dismissed.
-    @MainActor func testBotIsNotRestoringAfterMigration() async throws {
+    func testBotIsNotRestoringAfterMigration() async throws {
         // Arrange
         try touchSQLiteDatabase()
         XCTAssertEqual(mockBot.isRestoring, false)
-        
+
         // Act
         // Present migration screen
         _ = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
@@ -239,16 +239,15 @@ class Beta1MigrationTests: XCTestCase {
             appController: appController,
             userDefaults: userDefaults
         )
-        
-        let hostingController = try XCTUnwrap(
-            self.appController.presentedViewControllerParam as?
-                UIHostingController<Beta1MigrationView<Beta1MigrationController>>
-        )
-        let migrationCoordinator = hostingController.rootView.viewModel
-        
+
+        let hostingController = await self.appController.presentedViewControllerParam as?
+            UIHostingController<Beta1MigrationView<Beta1MigrationController>>
+        XCTAssertNotNil(hostingController)
+        let migrationCoordinator = await hostingController?.rootView.viewModel
+
         // Dismiss migration screen
-        migrationCoordinator.dismissPressed()
-        
+        await migrationCoordinator?.dismissPressed()
+
         XCTAssertEqual(mockBot.isRestoring, false)
     }
     

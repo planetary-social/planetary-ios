@@ -221,7 +221,7 @@ enum RoomInvitationRedeemer {
         // If app isn't running, the bot must log in before redeeming room invite.
         if bot.identity == nil, let appConfiguration = AppConfiguration.current {
             do {
-                try await bot.login(config: appConfiguration)
+                try await bot.login(config: appConfiguration, fromOnboarding: false)
             } catch {
                 Log.error("Bot is unable to log in to redeem invitation.")
                 throw RoomInvitationError.notLoggedIn
