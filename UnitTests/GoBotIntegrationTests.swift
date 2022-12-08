@@ -500,7 +500,6 @@ class GoBotIntegrationTests: XCTestCase {
         _ = try await sut.publish(content: testPost)
         AppConfiguration.current?.numberOfPublishedMessages = 2
         XCTAssertEqual(sut.isRestoring, true)
-        
     }
     
     /// Verifies that the isRestoring value is set to true when we have no feed.
