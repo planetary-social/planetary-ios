@@ -59,7 +59,8 @@ protocol Bot: AnyObject, Sendable {
     
     /// A flag that signals that the bot is resyncing the user's feed from the network.
     /// Currently used to suppress push notifications because the user has already seen them.
-    var isRestoring: Bool { get set }
+    var isRestoring: Bool { get }
+    func setRestoring(_ value: Bool)
     
     // MARK: Logs
     var logFileUrls: [URL] { get }

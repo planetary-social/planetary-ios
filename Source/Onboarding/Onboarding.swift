@@ -246,7 +246,7 @@ class Onboarding {
             } catch {
                 completion(context, .botError(error))
             }
-            Bots.current.isRestoring = false
+            Bots.current.setRestoring(false)
 
             // get About for context identity
             Bots.current.about(identity: context.identity) {

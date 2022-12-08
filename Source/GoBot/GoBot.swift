@@ -50,6 +50,10 @@ class GoBot: Bot {
     var identity: Identity? { self._identity }
     
     var isRestoring = false
+
+    func setRestoring(_ value: Bool) {
+        isRestoring = value
+    }
     
     var logFileUrls: [URL] {
         let url = URL(fileURLWithPath: self.bot.currentRepoPath.appending("/debug"))

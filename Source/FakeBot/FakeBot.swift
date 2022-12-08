@@ -17,6 +17,10 @@ enum FakeBotError: Error {
 class FakeBot: Bot {
     
     var isRestoring = false
+
+    func setRestoring(_ value: Bool) {
+        isRestoring = value
+    }
     
     required init(
         userDefaults: UserDefaults,

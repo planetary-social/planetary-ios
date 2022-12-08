@@ -239,7 +239,7 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             syncedMessages: syncedMessages,
             totalMessages: completionMessageCount
         )
-        appConfiguration.bot?.isRestoring = false
+        appConfiguration.bot?.setRestoring(false)
 
         cancellabes.forEach { $0.cancel() }
         dismissHandler()
