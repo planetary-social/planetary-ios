@@ -645,6 +645,8 @@
 		5B8F2F5328AEA24F005EE536 /* OneHopFeedAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */; };
 		5B8F2F5528B044EA005EE536 /* NoHopFeedAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD727C2892C4C5001494B4 /* NoHopFeedAlgorithm.swift */; };
 		5B8F2F5628B044EE005EE536 /* OneHopFeedAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */; };
+		5B90A8F12940CD1100467C6A /* StackedAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */; };
+		5B90A8F22940CD1100467C6A /* StackedAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */; };
 		5B929DA4290857DB007922AB /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B929DA3290857DB007922AB /* MessageView.swift */; };
 		5B929DA5290857DB007922AB /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B929DA3290857DB007922AB /* MessageView.swift */; };
 		5B929DAA29086954007922AB /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B929DA929086954007922AB /* MessageListView.swift */; };
@@ -1657,6 +1659,7 @@
 		5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagSliderView.swift; sourceTree = "<group>"; };
 		5B8E8058291547D9005009FC /* MessageOptionsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageOptionsButton.swift; sourceTree = "<group>"; };
 		5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneHopFeedAlgorithm.swift; sourceTree = "<group>"; };
+		5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedAvatarsView.swift; sourceTree = "<group>"; };
 		5B929DA3290857DB007922AB /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		5B929DA929086954007922AB /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
 		5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategyTests.swift; sourceTree = "<group>"; };
@@ -2797,6 +2800,7 @@
 				5B3FBE39292BB9E5004F34CC /* ImagePicker.swift */,
 				5B3FBE3C292BE5E0004F34CC /* EditAvatarButton.swift */,
 				5B040164292D1BE20048CD1F /* RelationshipButton.swift */,
+				5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */,
 			);
 			path = About;
 			sourceTree = "<group>";
@@ -4511,6 +4515,7 @@
 				53211CE522838107007FB785 /* UIImage+Resize.swift in Sources */,
 				23888979220867DB0030CB92 /* ViewDatabaseTests.swift in Sources */,
 				C9724B712809E782000EBCCD /* CGSize+Square.swift in Sources */,
+				5B90A8F22940CD1100467C6A /* StackedAvatarsView.swift in Sources */,
 				53211CE622838121007FB785 /* Image+UIImage.swift in Sources */,
 				C9724BB52809EC57000EBCCD /* DebugUIViewController.swift in Sources */,
 				C9C3788527C6940C00238B58 /* IdentityFixtures.swift in Sources */,
@@ -4724,6 +4729,7 @@
 				23C744402200B12000FB554A /* Profile.swift in Sources */,
 				53AD3FDF22721AC2005228F9 /* Tappable.swift in Sources */,
 				0A7C5D5224EEC21C005E5035 /* MissionControlCenter.swift in Sources */,
+				5B90A8F12940CD1100467C6A /* StackedAvatarsView.swift in Sources */,
 				C9A2DE2927CFCB5F00EAFA73 /* Publisher+Async.swift in Sources */,
 				536255D823AB16E8001007D0 /* SnowView.swift in Sources */,
 				5BC297482804A22500C0CD81 /* ExtendedAboutView.swift in Sources */,
@@ -5804,7 +5810,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 391;
+				CURRENT_PROJECT_VERSION = 392;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -5838,7 +5844,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 391;
+				CURRENT_PROJECT_VERSION = 392;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;

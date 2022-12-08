@@ -341,6 +341,9 @@
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
 "Error.alreadyJoinedRoom" = "You are already a member of this room";
 
+"Reply.one" = "{{ count }} respuesta";
+"Reply.many" = "{{ count }} respuestas";
+
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
 

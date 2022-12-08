@@ -133,6 +133,7 @@ extension Image {
        static let buttonFollowingBig = Image("button-following-big", bundle: Bundle.current)
        static let buttonFollowing = Image("button-following", bundle: Bundle.current)
        static let buttonPencil = Image("button-pencil", bundle: Bundle.current)
+       static let buttonReply = Image("button-reply", bundle: Bundle.current)
        static let buttonShare = Image("button-share", bundle: Bundle.current)
        static let cameraLarge = Image("camera-large", bundle: Bundle.current)
        static let cellChevron = Image("cell-chevron", bundle: Bundle.current)
@@ -197,6 +198,7 @@ extension UIImage {
        static let buttonFollowingBig = UIImage(named: "button-following-big", in: Bundle.current, with: nil)!
        static let buttonFollowing = UIImage(named: "button-following", in: Bundle.current, with: nil)!
        static let buttonPencil = UIImage(named: "button-pencil", in: Bundle.current, with: nil)!
+       static let buttonReply = UIImage(named: "button-reply", in: Bundle.current, with: nil)!
        static let buttonShare = UIImage(named: "button-share", in: Bundle.current, with: nil)!
        static let cameraLarge = UIImage(named: "camera-large", in: Bundle.current, with: nil)!
        static let cellChevron = UIImage(named: "cell-chevron", in: Bundle.current, with: nil)!

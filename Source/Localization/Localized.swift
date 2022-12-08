@@ -23,6 +23,7 @@ extension Localized {
             Localized.Reporting.self,
             Localized.Debug.self,
             Localized.Error.self,
+            Localized.Reply.self,
             Localized.Channel.self,
             Localized.Post.self,
             Localized.Report.self,
@@ -557,6 +558,12 @@ extension Localized {
     }
 }
 
+extension Localized {
+    enum Reply: String, Localizable, CaseIterable {
+        case one = "{{ count }} reply"
+        case many = "{{ count }} replies"
+    }
+}
 extension Localized {
     enum Channel: String, Localizable, CaseIterable {
         case one = "channel"
