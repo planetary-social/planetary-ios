@@ -50,6 +50,10 @@ class GoBot: Bot {
     var identity: Identity? { self._identity }
     
     var isRestoring = false
+
+    func setRestoring(_ value: Bool) {
+        isRestoring = value
+    }
     
     var logFileUrls: [URL] {
         let url = URL(fileURLWithPath: self.bot.currentRepoPath.appending("/debug"))
@@ -177,6 +181,18 @@ class GoBot: Bot {
         
         Analytics.shared.trackDidDropDatabase()
     }
+    
+    private func guessIfRestoring() throws -> Bool {
+        guard database.isOpen(),
+            let config = config else {
+            throw BotError.notLoggedIn
+        }
+        
+        let numberOfPublishedMessagesInViewDB = try database.numberOfMessages(for: config.identity)
+        let numberOfPublishedMessagesInAppConfig = config.numberOfPublishedMessages
+        return numberOfPublishedMessagesInViewDB == 0 ||
+            numberOfPublishedMessagesInViewDB < numberOfPublishedMessagesInAppConfig
+    }
 
     // MARK: Login/Logout
     
@@ -192,7 +208,11 @@ class GoBot: Bot {
         completion(secret, nil)
     }
     
-    @MainActor func login(config: AppConfiguration) async throws {
+    @MainActor func login(
+        config: AppConfiguration,
+        fromOnboarding isLoggingInFromOnboarding: Bool = false
+    ) async throws {
+        Log.info("Logging in with identity \(config.secret.identity)")
         guard let network = config.network else {
             throw BotError.invalidAppConfiguration
         }
@@ -204,7 +224,6 @@ class GoBot: Bot {
             } else {
                 throw BotError.alreadyLoggedIn
             }
-            return
         }
         
         self.config = config
@@ -215,21 +234,23 @@ class GoBot: Bot {
         if database.isOpen() {
             await database.close()
         }
-        
+
         repoPrefix = try config.databaseDirectory()
         
-        try self.database.open(
-            path: repoPrefix,
-            user: secret.identity
-        )
+        try self.database.open(path: repoPrefix, user: secret.identity)
         
-        Log.shared.info("===> starting gobot with prefix: \(repoPrefix)")
+        isRestoring = isLoggingInFromOnboarding ? false : try guessIfRestoring()
+
+        if isRestoring {
+            Log.info("It seems like the user is restoring their feed. Disabling EBT replication to work around #847.")
+        }
         
         try bot.login(
             network: network,
             hmacKey: hmacKey,
             secret: secret,
-            pathPrefix: repoPrefix
+            pathPrefix: repoPrefix,
+            disableEBT: isRestoring
         )
         
         // Save GoBot version to disk in case we need to migrate in the future.
