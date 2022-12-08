@@ -22,7 +22,4 @@
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:/Users/matt/planetary/ios/UnitTests/Performance Tests.xctestplan">
-   </FileRef>
 </Workspace>
