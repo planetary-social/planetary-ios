@@ -33,7 +33,7 @@ class LoginOperation: AsynchronousOperation {
         } else {
             Task {
                 do {
-                    try await Bots.current.login(config: configuration)
+                    try await Bots.current.login(config: configuration, fromOnboarding: false)
                     self.success = true
                 } catch {
                     if error as? BotError == .alreadyLoggedIn {

@@ -17,6 +17,10 @@ enum FakeBotError: Error {
 class FakeBot: Bot {
     
     var isRestoring = false
+
+    func setRestoring(_ value: Bool) {
+        isRestoring = value
+    }
     
     required init(
         userDefaults: UserDefaults,
@@ -180,7 +184,7 @@ class FakeBot: Bot {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
     }
 
-    func login(config: AppConfiguration) async throws {
+    func login(config: AppConfiguration, fromOnboarding: Bool) async throws {
         self._network = config.network?.string
         self._identity = config.secret.identity
     }

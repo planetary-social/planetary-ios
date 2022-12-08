@@ -103,8 +103,6 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             hostingController.modalTransitionStyle = .crossDissolve
         }
         await appController.present(hostingController, animated: true)
-     
-        bot.isRestoring = true
    
         if !userDefaults.bool(forKey: beta1MigrationStartKey) {
             try await bot.dropDatabase(for: appConfiguration)
@@ -117,7 +115,8 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             controller.progress = userDefaults.float(forKey: beta1MigrationProgress)
         }
         
-        try await bot.login(config: appConfiguration)
+        try await bot.login(config: appConfiguration, fromOnboarding: false)
+        bot.isRestoring = true
         await controller.bindProgress(to: bot)
         
         return true
@@ -240,7 +239,7 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             syncedMessages: syncedMessages,
             totalMessages: completionMessageCount
         )
-        appConfiguration.bot?.isRestoring = false
+        appConfiguration.bot?.setRestoring(false)
 
         cancellabes.forEach { $0.cancel() }
         dismissHandler()
