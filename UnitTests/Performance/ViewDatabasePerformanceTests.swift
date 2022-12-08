@@ -24,51 +24,64 @@ class ViewDatabasePerformanceTests: XCTestCase {
         try super.setUpWithError()
     }
     
-    override func tearDownWithError() throws {
-        viewDatabase.close()
+    override func tearDown() async throws {
+        await viewDatabase.close()
         try FileManager.default.removeItem(at: self.dbURL)
-        try super.tearDownWithError()
+        try await super.tearDown()
     }
     
-    func setUpEmptyDB(user: Identity) throws {
-        viewDatabase.close()
+    /// Creates a directory where we can initialize a database for the tests and returns the URL to it.
+    private func createDBDirectory() async throws -> URL {
         viewDatabase = ViewDatabase()
-        let dbDir = FileManager.default.temporaryDirectory.appendingPathComponent("ViewDatabaseBenchmarkTests")
+        let dbDir = FileManager
+            .default
+            .temporaryDirectory
+            .appendingPathComponent("ViewDatabaseBenchmarkTests")
+            .appendingPathComponent(UUID().uuidString)
         dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
-        try? FileManager.default.removeItem(at: dbURL)
         try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
-        
-        // open DB
-        dbDirPath = dbDir.absoluteString.replacingOccurrences(of: "file://", with: "")
-        maxAge = -60 * 60 * 24 * 30 * 48  // 48 month (so roughtly until 2023)
-        try viewDatabase.open(path: dbDirPath, user: user, maxAge: maxAge)
+        return dbDir
     }
     
-    func setUpSmallDB() throws {
+    private func openDB(in directory: URL, user: Identity) throws {
+        dbDirPath = directory.absoluteString.replacingOccurrences(of: "file://", with: "")
+        try viewDatabase.open(path: dbDirPath, user: user, maxAge: -.infinity)
+    }
+    
+    private func setUpEmptyDB(user: Identity) throws {
+        let setupExpectation = expectation(description: "setup")
+        // Performance tests do not work with async/await yet so we wrap these calls in a Task and use an expecatation
+        // to wait on it.
+        Task {
+            let dbDir = try await createDBDirectory()
+            try openDB(in: dbDir, user: user)
+            setupExpectation.fulfill()
+        }
+        wait(for: [setupExpectation], timeout: 20)
+    }
+    
+    private func setUpSmallDB() throws {
         try loadDB(named: "Feed_big", user: testFeed.owner)
     }
     
-    func loadDB(named dbName: String, user: Identity) throws {
-        viewDatabase.close()
-        viewDatabase = ViewDatabase()
-        let dbDir = FileManager.default.temporaryDirectory.appendingPathComponent("ViewDatabaseBenchmarkTests")
-        dbURL = dbDir.appendingPathComponent("schema-built\(ViewDatabase.schemaVersion).sqlite")
-        try? FileManager.default.removeItem(at: dbURL)
-        try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
-        let sqliteURL = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: dbName, withExtension: "sqlite"))
-        try FileManager.default.copyItem(at: sqliteURL, to: dbURL)
-        
-        // open DB
-        dbDirPath = dbDir.absoluteString.replacingOccurrences(of: "file://", with: "")
-        maxAge = -60 * 60 * 24 * 30 * 48  // 48 month (so roughtly until 2023)
-        try viewDatabase.open(path: dbDirPath, user: user, maxAge: maxAge)
+    private func loadDB(named dbName: String?, user: Identity) throws {
+        // Performance tests do not work with async/await yet so we wrap these calls in a Task and use an expecatation
+        // to wait on it.
+        let setupExpectation = expectation(description: "setup")
+        Task {
+            let dbDir = try await createDBDirectory()
+            let sqliteURL = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: dbName, withExtension: "sqlite"))
+            try FileManager.default.copyItem(at: sqliteURL, to: dbURL)
+            try openDB(in: dbDir, user: user)
+            setupExpectation.fulfill()
+        }
+        wait(for: [setupExpectation], timeout: 20)
     }
     
     func resetSmallDB() throws {
-        try tearDownWithError()
         try setUpSmallDB()
     }
-
+    
     /// Measures the peformance of `fillMessages(msgs:)`. This is the function that is called to copy posts from go-ssb
     /// to sqlite.
     func testFillMessagesGivenSmallDB() throws {
@@ -80,7 +93,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
         XCTAssertEqual(msgs.count, 2500)
         
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
-            try! setUpEmptyDB(user: testFeed.owner)
+            try! self.setUpEmptyDB(user: testFeed.owner)
             startMeasuring()
             try? viewDatabase.fillMessages(msgs: msgs)
             stopMeasuring()
@@ -110,7 +123,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func testPostsAndContactsAlgorithmGivenSmallDB() throws {
-        viewDatabase.close()
         let strategy = PostsAndContactsAlgorithm()
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
@@ -122,7 +134,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func testRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
-        viewDatabase.close()
         let strategy = RecentlyActivePostsAndContactsAlgorithm()
         measureMetrics([XCTPerformanceMetric.wallClockTime], automaticallyStartMeasuring: false) {
             try! resetSmallDB()
@@ -134,7 +145,6 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     func testCountNumberOfKeysSinceUsingRecentlyActivePostsAndContactsAlgorithmGivenSmallDB() throws {
-        viewDatabase.close()
         try! resetSmallDB()
         let strategy = RecentlyActivePostsAndContactsAlgorithm()
         let messages = try self.viewDatabase.recentPosts(strategy: strategy, limit: 100, offset: 0)
@@ -228,7 +238,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
                 }
             }
             
-            waitForExpectations(timeout: 10)
+            waitForExpectations(timeout: 20)
             stopMeasuring()
         }
     }

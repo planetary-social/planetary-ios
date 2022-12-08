@@ -180,22 +180,13 @@ class FakeBot: Bot {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
     }
 
-    func login(
-        queue: DispatchQueue,
-        config: AppConfiguration,
-        fromOnboarding: Bool,
-        completion: @escaping ErrorCompletion
-    ) {
+    func login(config: AppConfiguration, fromOnboarding: Bool) async throws {
         self._network = config.network?.string
         self._identity = config.secret.identity
-        queue.async {
-            completion(nil)
-        }
     }
 
-    func logout(completion: ErrorCompletion) {
+    func logout() async throws {
         self._identity = nil
-        completion(nil)
         self._network = nil
     }
 

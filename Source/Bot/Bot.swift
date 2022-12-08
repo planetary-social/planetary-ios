@@ -45,7 +45,7 @@ enum RefreshLoad: Int32, CaseIterable {
 
 /// Abstract interface to any SSB bot implementation.
 /// - SeeAlso: `GoBot`
-protocol Bot {
+protocol Bot: AnyObject, Sendable {
 
     // MARK: Name
     var name: String { get }
@@ -126,13 +126,8 @@ protocol Bot {
     /// - Parameter config: An object containing high-level parameters like the user's keys and the network key.
     /// - Parameter fromOnboarding: A flag that should be true if the user is logging in from the onboarding flow.
     /// - Parameter completion: A handler that will be called with the result of the operation.
-    func login(
-        queue: DispatchQueue,
-        config: AppConfiguration,
-        fromOnboarding: Bool,
-        completion: @escaping ErrorCompletion
-    )
-    func logout(completion: @escaping ErrorCompletion)
+    @MainActor func login(config: AppConfiguration, fromOnboarding: Bool) async throws
+    @MainActor func logout() async throws
 
     // MARK: Invites
 
@@ -329,32 +324,6 @@ extension Bot {
                     continuation.resume(throwing: BotError.internalError)
                 }
             }
-        }
-    }
-    
-    func login(config: AppConfiguration, fromOnboarding: Bool, completion: @escaping ErrorCompletion) {
-        self.login(queue: .main, config: config, fromOnboarding: fromOnboarding, completion: completion)
-    }
-    
-    func login(config: AppConfiguration, fromOnboarding: Bool) async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.login(config: config, fromOnboarding: fromOnboarding) { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
-        }
-    }
-    
-    @MainActor func logout() async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.logout { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
         }
     }
     

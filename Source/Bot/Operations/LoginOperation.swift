@@ -31,13 +31,20 @@ class LoginOperation: AsynchronousOperation {
             self.success = true
             self.finish()
         } else {
-            Bots.current.login(config: configuration, fromOnboarding: false) { [weak self] (error) in
-                if let strongSelf = self, !strongSelf.isCancelled {
-                    self?.success = ((error as? BotError) == .alreadyLoggedIn) || error == nil
-                    self?.error = error
+            Task {
+                do {
+                    try await Bots.current.login(config: configuration, fromOnboarding: false)
+                    self.success = true
+                } catch {
+                    if error as? BotError == .alreadyLoggedIn {
+                        self.success = true
+                    } else {
+                        self.success = false
+                        self.error = error
+                    }
                 }
-                self?.finish()
+                self.finish()
             }
         }
-     }
+    }
 }
