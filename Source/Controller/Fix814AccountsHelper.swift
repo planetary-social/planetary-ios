@@ -83,7 +83,7 @@ enum Fix814AccountsHelper {
             newConfiguration.bot = bot
             newConfiguration.ssbNetwork = Environment.Networks.mainNet
             
-            try await bot.login(config: newConfiguration)
+            try await bot.login(config: newConfiguration, fromOnboarding: false)
             
             // copy published messages
             for message in publishedMessages {

@@ -80,7 +80,7 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the proper user defaults keys are set when a user creates a new profile
     func testUserDefaultsSetAfterNewAccountCreation() async throws {
         // Act
-        try await mockBot.login(config: appConfig)
+        try await mockBot.login(config: appConfig, fromOnboarding: false)
         
         // Assert
         XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
