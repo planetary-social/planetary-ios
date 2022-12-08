@@ -98,7 +98,13 @@ struct About: ContentCodable, Equatable {
         self.publicWebHosting = nil
     }
 
-    init(about: Identity, name: String?, description: String?, imageLink: BlobIdentifier?, publicWebHosting: Bool? = nil) {
+    init(
+        about: Identity,
+        name: String?,
+        description: String?,
+        imageLink: BlobIdentifier?,
+        publicWebHosting: Bool? = nil
+    ) {
         self.type = .about
         self.about = about
         self.description = description
@@ -126,16 +132,20 @@ struct About: ContentCodable, Equatable {
         }
     }
 
-    func mutatedCopy(identity: Identity? = nil,
-                     name: String? = nil,
-                     description: String? = nil,
-                     image: ImageMetadata? = nil,
-                     publicWebHosting: Bool? = nil) -> About {
-        About(identity: identity ?? self.identity,
-                     name: name ?? self.name,
-                     description: description ?? self.description,
-                     image: image ?? self.image,
-                     publicWebHosting: publicWebHosting ?? self.publicWebHosting)
+    func mutatedCopy(
+        identity: Identity? = nil,
+        name: String? = nil,
+        description: String? = nil,
+        image: ImageMetadata? = nil,
+        publicWebHosting: Bool? = nil
+    ) -> About {
+        About(
+            identity: identity ?? self.identity,
+            name: name ?? self.name,
+            description: description ?? self.description,
+            image: image ?? self.image,
+            publicWebHosting: publicWebHosting ?? self.publicWebHosting
+        )
     }
 }
 
@@ -149,7 +159,7 @@ extension About {
         self.name?.trimmedForSingleLine ?? self.identity
     }
 
-    // TODO this is not performant, need to cache md results
+    // this is not performant, need to cache md results (MD: this should be removed after we stop using AboutView)
     var attributedDescription: NSMutableAttributedString {
         NSMutableAttributedString(attributedString: self.description?.decodeMarkdown() ?? NSAttributedString())
     }
@@ -170,7 +180,9 @@ extension About {
 extension About: Comparable {
 
     static func < (lhs: About, rhs: About) -> Bool {
-        if let lhs = lhs.name, let rhs = rhs.name { return lhs.compare(rhs, options: .caseInsensitive) == .orderedAscending }
+        if let lhs = lhs.name, let rhs = rhs.name {
+            return lhs.compare(rhs, options: .caseInsensitive) == .orderedAscending
+        }
         if lhs.name == nil, rhs.name == nil {
             return lhs.identity < rhs.identity
         }
@@ -178,8 +190,10 @@ extension About: Comparable {
     }
 
     static func == (lhs: About, rhs: About) -> Bool {
-        if let lhs = lhs.name, let rhs = rhs.name { return lhs.compare(rhs) == .orderedSame }
-        return lhs.identity == rhs.identity
+        lhs.identity == rhs.identity &&
+        lhs.name == rhs.name &&
+        lhs.description == rhs.description &&
+        lhs.image == rhs.image
     }
 }
 

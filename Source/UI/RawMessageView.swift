@@ -61,20 +61,32 @@ struct RawMessageView<ViewModel>: View where ViewModel: RawMessageViewModel {
     private var showProgress: Bool {
         viewModel.loadingMessage?.isEmpty == false
     }
+
+    private func format(source: String) -> AttributedString {
+        var attributed = AttributedString(source)
+        var container = AttributeContainer()
+        container.uiKit.foregroundColor = .primaryTxt
+        if let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).withDesign(.monospaced) {
+            container.uiKit.font = UIFont(descriptor: descriptor, size: 0)
+        }
+        attributed.mergeAttributes(container)
+        return attributed
+    }
     
     var body: some View {
         ZStack {
             if let source = viewModel.rawMessage {
-                SelectableText(text: source)
+                SelectableText(format(source: source))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(Color.cardBackground)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     viewModel.didDismiss()
                 } label: {
-                    Text(.cancel)
+                    Image.navIconDismiss
                 }
             }
         }

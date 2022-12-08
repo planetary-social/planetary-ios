@@ -52,7 +52,7 @@ class GoBotOrderedTests: XCTestCase {
     static var simpleThread: MessageIdentifier = "%fake.unset"
 
     // MARK: login/logout (and test setup)
-    func test000_setup() {
+    func test000_setup() async throws {
         let fm = FileManager.default
 
         let appSupportDir = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
@@ -65,13 +65,7 @@ class GoBotOrderedTests: XCTestCase {
             print("removing previous failed - propbably not exists")
         }
 
-        var ex = self.expectation(description: "login")
-        GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: false) {
-            error in
-            defer { ex.fulfill() }
-            XCTAssertNil(error)
-        }
-        self.wait(for: [ex], timeout: 10)
+        try await GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: true)
 
         let nicks = ["alice", "barbara", "claire", "denise", "page"]
         do {
@@ -83,23 +77,12 @@ class GoBotOrderedTests: XCTestCase {
         }
 
         // calling login twice works too
-        ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: false) {
-            loginErr in
-            defer { ex.fulfill() }
-            XCTAssertNil(loginErr)
-        }
-        self.wait(for: [ex], timeout: 10)
+        try await GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: true)
     }
     
-    @MainActor func test001_regression_tests() {
+    func test001_regression_tests() async throws {
         // first, log out for things we shouldn't be able to do
-        let ex = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.logout {
-            XCTAssertNil($0)
-            ex.fulfill()
-        }
-        self.wait(for: [ex], timeout: 10)
+        try await GoBotOrderedTests.shared.logout()
 
         // make sure we can't sync
         for i in 1...20 {
@@ -124,13 +107,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [exFirstStats], timeout: 10)
 
         // finally log in again
-        let exAgain = self.expectation(description: "\(#function)")
-        GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: false) {
-            loginErr in
-            XCTAssertNil(loginErr)
-            exAgain.fulfill()
-        }
-        self.wait(for: [exAgain], timeout: 10)
+        try await GoBotOrderedTests.shared.login(config: botTestConfiguration, fromOnboarding: true)
 
         // has the test keys keys
         do {
@@ -327,7 +304,7 @@ class GoBotOrderedTests: XCTestCase {
 
         for tc in whoFollowsWho {
             let ex = self.expectation(description: "\(#function) follow \(tc)")
-            GoBotOrderedTests.shared.follows(identity: GoBotOrderedTests.pubkeys[tc.key]!) {
+            GoBotOrderedTests.shared.follows(identity: GoBotOrderedTests.pubkeys[tc.key]!, queue: .main) {
                 contacts, err in
                 XCTAssertNil(err, "err for \(tc.key)")
                 XCTAssertEqual(contacts.count, tc.value.count, "wrong number of follows for \(tc.key)")
@@ -349,7 +326,7 @@ class GoBotOrderedTests: XCTestCase {
         ]
         for tc in whoIsFollowedByWho {
             let ex = self.expectation(description: "\(#function) check \(tc)")
-            GoBotOrderedTests.shared.followedBy(identity: GoBotOrderedTests.pubkeys[tc.key]!) {
+            GoBotOrderedTests.shared.followedBy(identity: GoBotOrderedTests.pubkeys[tc.key]!, queue: .main) {
                 contacts, err in
                 XCTAssertNil(err, "err for \(tc.key)")
                 XCTAssertEqual(contacts.count, tc.value.count, "wrong number of follows for \(tc.key)")

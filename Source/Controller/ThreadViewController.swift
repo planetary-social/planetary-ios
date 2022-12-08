@@ -137,7 +137,7 @@ class ThreadViewController: ContentViewController {
         return view
     }()
     
-    private let imagePicker = ImagePicker()
+    private let imagePicker = UIImagePicker()
 
     private var onNextUpdateScrollToPostWithMessageKey: Identifier?
     private var indexPathToScrollToOnKeyboardDidShow: IndexPath?
@@ -399,7 +399,6 @@ class ThreadViewController: ContentViewController {
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
-            
             await MainActor.run { self.buttonsView.postButton.isEnabled = true }
             await AppController.shared.hideProgress()
         }

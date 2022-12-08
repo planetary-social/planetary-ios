@@ -20,6 +20,12 @@ extension Identity {
         return URL(string: host + msgPath)
     }
 
+    var deepLink: URL? {
+        let host = "planetary://planetary/"
+        let msgPath = self.addingPercentEncoding(withAllowedCharacters: .rfc3986Unreserved)!
+        return URL(string: host + msgPath)
+    }
+
     static func parse(publicLink: URL) -> Identifier? {
         guard publicLink.host == "planetary.link" else {
             return nil

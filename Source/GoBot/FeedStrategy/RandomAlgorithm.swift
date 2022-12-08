@@ -13,7 +13,7 @@ import Logger
 /// This algorithm returns a feed with user's and follows' posts, and follows' following other users in the network
 ///
 /// It doesn't include pubs follows and posts in the feed
-class RandomAlgorithm: NSObject, FeedStrategy {
+final class RandomAlgorithm: NSObject, FeedStrategy {
 
     /// SQL query to count the total number of items in the feed
     ///
@@ -278,7 +278,7 @@ class RandomAlgorithm: NSObject, FeedStrategy {
     """
     // swiftlint:enable indentation_width
 
-    var onlyFollowed: Bool
+    let onlyFollowed: Bool
 
     init(onlyFollowed: Bool) {
         self.onlyFollowed = onlyFollowed

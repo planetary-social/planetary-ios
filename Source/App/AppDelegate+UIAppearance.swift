@@ -77,5 +77,6 @@ extension UITabBar {
         appearance.shadowColor = nil
         appearance.shadowImage = UIImage()
         self.standardAppearance = appearance
+        self.scrollEdgeAppearance = appearance
     }
 }

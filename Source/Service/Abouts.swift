@@ -75,13 +75,13 @@ struct AboutService {
         let group = DispatchGroup()
 
         group.enter()
-        Bots.current.follows(identity: identity) { (contacts: [Identity], _) in
+        Bots.current.follows(identity: identity, queue: .main) { (contacts: [Identity], _) in
             identities = identities.union(Set<Identity>(contacts))
             group.leave()
         }
 
         group.enter()
-        Bots.current.followedBy(identity: identity) {
+        Bots.current.followedBy(identity: identity, queue: .main) {
             contacts, _ in
             identities = identities.union(Set<Identity>(contacts))
             group.leave()

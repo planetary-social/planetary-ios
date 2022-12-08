@@ -10,6 +10,7 @@ import UIKit
 import Combine
 import Logger
 import CrashReporting
+import SwiftUI
 
 protocol UniversalSearchDelegate: AnyObject {
     func present(_ controller: UIViewController)
@@ -473,7 +474,9 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         switch section {
         case .users:
             let identity = searchQuery
-            let controller = AboutViewController(with: identity)
+            let controller = UIHostingController(
+                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+            )
             delegate?.present(controller)
         case .posts:
             guard let posts = searchResults.posts else {
@@ -487,7 +490,10 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
                 return
             }
             let about = inNetworkPeople[indexPath.row]
-            let controller = AboutViewController(with: about)
+            let identity = about.identity
+            let controller = UIHostingController(
+                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+            )
             delegate?.present(controller)
         }
     }

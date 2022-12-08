@@ -39,7 +39,7 @@ class NewPostViewController: ContentViewController {
         return view
     }()
 
-    private let imagePicker = ImagePicker()
+    private let imagePicker = UIImagePicker()
     
     private let draftStore: DraftStore
     private let draftKey: String

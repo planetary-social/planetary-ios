@@ -25,7 +25,7 @@ class GoBotIntegrationTests: XCTestCase {
         Post(text: "\(#function)")
     }
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
         // run the unit tests. For now this will have to do.
         workingDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
@@ -47,18 +47,13 @@ class GoBotIntegrationTests: XCTestCase {
         appConfig.hmacKey = botTestHMAC
         appConfig.bot = sut
         
-        let loginExpectation = self.expectation(description: "login")
-        sut.login(config: appConfig, fromOnboarding: false) { error in
-            defer { loginExpectation.fulfill() }
-            XCTAssertNil(error)
-        }
-        self.wait(for: [loginExpectation], timeout: 10)
+        try await sut.login(config: appConfig, fromOnboarding: false)
 
         let nicks = ["alice", "bob"]
         for nick in nicks {
             try sut.testingCreateKeypair(nick: nick)
         }
-        try super.setUpWithError()
+        try await super.setUp()
     }
 
     override func tearDown() async throws {
@@ -172,71 +167,48 @@ class GoBotIntegrationTests: XCTestCase {
         XCTAssertThrowsError(try Data(contentsOf: databaseURL))
     }
     
-    func testLogoutWithDirectoryMissing() throws {
-        // Arrange
-        let firstLogout = self.expectation(description: "first logout finished")
-        sut.logout(completion: { error in
-            XCTAssertNil(error)
-            firstLogout.fulfill()
-        })
-        
-        waitForExpectations(timeout: 10)
-        
+    func testLogoutWithDirectoryMissing() async throws {
         // Act
+        try await sut.logout()
+        
         do {
             try fileManager.removeItem(atPath: workingDirectory)
         } catch {
             print(error)
         }
 
-        let secondLogout = self.expectation(description: "second logout finished")
-        sut.logout(completion: { error in
-            XCTAssertNotNil(error)
-            secondLogout.fulfill()
-        })
-        
-        waitForExpectations(timeout: 10)
+        do {
+            try await sut.logout()
+            XCTFail("Should throw notLoggedIn error")
+        } catch {
+            XCTAssert(error as? BotError == .notLoggedIn)
+        }
     }
     
-    @MainActor func testLogoutWithDirectoryPresent() throws {
+    func testLogoutWithDirectoryPresent() async throws {
         // Arrange
-        let firstLogout = self.expectation(description: "first logout finished")
-        sut.logout { error in
-            XCTAssertNil(error)
-            firstLogout.fulfill()
-        }
-        
-        waitForExpectations(timeout: 10)
+        try await sut.logout()
         
         // Act
         try fileManager.removeItem(atPath: workingDirectory)
         try fileManager.createDirectory(atPath: workingDirectory, withIntermediateDirectories: true)
-
-        let secondLogout = self.expectation(description: "second logout finished")
-        sut.logout { error in
-            XCTAssertNotNil(error)
-            secondLogout.fulfill()
-        }
         
-        waitForExpectations(timeout: 10)
+        do {
+            try await sut.logout()
+            XCTFail("Should throw notLoggedIn error")
+        } catch {
+            XCTAssert(error as? BotError == .notLoggedIn)
+        }
     }
     
-    @MainActor func testLogoutTwice() throws {
-        let firstLogout = self.expectation(description: "first logout finished")
-        sut.logout { error in
-            XCTAssertNil(error)
-            firstLogout.fulfill()
+    func testLogoutTwice() async throws {
+        try await sut.logout()
+        do {
+            try await sut.logout()
+            XCTFail("Should throw notLoggedIn error")
+        } catch {
+            XCTAssert(error as? BotError == .notLoggedIn)
         }
-        
-        waitForExpectations(timeout: 10)
-        
-        let secondLogout = self.expectation(description: "second logout finished")
-        sut.logout { error in
-            XCTAssertNotNil(error)
-            secondLogout.fulfill()
-        }
-        
-        waitForExpectations(timeout: 10)
     }
 
     // Disabled until scuttlego #908
@@ -552,17 +524,13 @@ class GoBotIntegrationTests: XCTestCase {
 
         let mockPreloader = MockPreloadedPubService()
         sut = GoBot(preloadedPubService: mockPreloader)
-        let loginExpectation = self.expectation(description: "login")
         
         // Act
-        sut.login(config: appConfig, fromOnboarding: false) { error in
-            defer { loginExpectation.fulfill() }
-            XCTAssertNil(error)
-        }
-        self.wait(for: [loginExpectation], timeout: 10)
+        try await sut.login(config: appConfig, fromOnboarding: false)
         
         // Assert
-        XCTAssertEqual(mockPreloader.preloadPubsCallCount, 1)
+        let expectation = XCTBlockExpectation { mockPreloader.preloadPubsCallCount == 1 }
+        wait(for: [expectation], timeout: 10)
     }
 
     // MARK: Hashtags

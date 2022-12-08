@@ -135,7 +135,7 @@ class PostHeaderView: UIView {
                 button = EditPostButton(post: message)
             } else {
                 let relationship = Relationship(from: me, to: identity)
-                button = RelationshipButton(with: relationship, name: name, content: message)
+                button = RelationshipUIButton(with: relationship, name: name, content: message)
             }
             self.rightButtonContainer.subviews.forEach { $0.removeFromSuperview() }
             Layout.fill(view: self.rightButtonContainer, with: button)

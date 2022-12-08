@@ -23,6 +23,7 @@ typealias PublishCompletion = ((MessageIdentifier, Error?) -> Void)
 typealias CountCompletion = ((Result<Int, Error>) -> Void)
 typealias VoidCompletion = ((Result<Void, Error>) -> Void)
 typealias RawCompletion = ((Result<String, Error>) -> Void)
+typealias PubsCompletion = ((Result<[Pub], Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
@@ -44,7 +45,7 @@ enum RefreshLoad: Int32, CaseIterable {
 
 /// Abstract interface to any SSB bot implementation.
 /// - SeeAlso: `GoBot`
-protocol Bot: AnyObject {
+protocol Bot: AnyObject, Sendable {
 
     // MARK: Name
     var name: String { get }
@@ -82,6 +83,8 @@ protocol Bot: AnyObject {
     
     /// Retrieves a list of all pubs the current user is currently a member of.
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void))
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion)
     
     func joinedRooms() async throws -> [Room]
     func insert(room: Room) async throws
@@ -122,13 +125,8 @@ protocol Bot: AnyObject {
     /// - Parameter config: An object containing high-level parameters like the user's keys and the network key.
     /// - Parameter fromOnboarding: A flag that should be true if the user is logging in from the onboarding flow.
     /// - Parameter completion: A handler that will be called with the result of the operation.
-    func login(
-        queue: DispatchQueue,
-        config: AppConfiguration,
-        fromOnboarding: Bool,
-        completion: @escaping ErrorCompletion
-    )
-    func logout(completion: @escaping ErrorCompletion)
+    @MainActor func login(config: AppConfiguration, fromOnboarding: Bool) async throws
+    @MainActor func logout() async throws
 
     // MARK: Invites
 
@@ -168,8 +166,8 @@ protocol Bot: AnyObject {
     func follow(_ identity: Identity, completion: @escaping ContactCompletion)
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion)
 
-    func follows(identity: Identity, completion:  @escaping ContactsCompletion)
-    func followedBy(identity: Identity, completion:  @escaping ContactsCompletion)
+    func follows(identity: Identity, queue: DispatchQueue, completion:  @escaping ContactsCompletion)
+    func followedBy(identity: Identity, queue: DispatchQueue, completion:  @escaping ContactsCompletion)
     
     func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
     func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion)
@@ -184,7 +182,7 @@ protocol Bot: AnyObject {
 
     // MARK: Block
 
-    func blocks(identity: Identity, completion:  @escaping ContactsCompletion)
+    func blocks(identity: Identity, queue: DispatchQueue, completion:  @escaping ContactsCompletion)
     func blockedBy(identity: Identity, completion:  @escaping ContactsCompletion)
     func block(_ identity: Identity, completion: @escaping PublishCompletion)
     func unblock(_ identity: Identity, completion: @escaping PublishCompletion)
@@ -228,6 +226,11 @@ protocol Bot: AnyObject {
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.
     func feed(identity: Identity, completion: @escaping PaginatedCompletion)
+
+    /// Returns all the messages created by the specified Identity.
+    /// This is useful for showing all the posts from a particular
+    /// person, like in an About screen.
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion)
     
     /// Fetches the post with the given ID from the database.
     func post(from key: MessageIdentifier) throws -> Message
@@ -323,32 +326,6 @@ extension Bot {
         }
     }
     
-    func login(config: AppConfiguration, fromOnboarding: Bool, completion: @escaping ErrorCompletion) {
-        self.login(queue: .main, config: config, fromOnboarding: fromOnboarding, completion: completion)
-    }
-    
-    func login(config: AppConfiguration, fromOnboarding: Bool) async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.login(config: config, fromOnboarding: fromOnboarding) { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
-        }
-    }
-    
-    @MainActor func logout() async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.logout { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
-        }
-    }
-    
     func sync(peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
@@ -399,12 +376,131 @@ extension Bot {
         self.abouts(queue: .main, completion: completion)
     }
 
+    func follow(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            follow(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func unfollow(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            unfollow(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func block(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            block(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func unblock(identity: Identity) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            unblock(identity) { _, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
     func followers(identity: Identity, completion:  @escaping AboutsCompletion) {
         self.followers(identity: identity, queue: .main, completion: completion)
     }
 
+    func followers(identity: Identity) async throws -> [About] {
+        try await withCheckedThrowingContinuation { continuation in
+            followers(identity: identity, queue: .global(qos: .background)) { abouts, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: abouts)
+                }
+            }
+        }
+    }
+
+    func followers(identity: Identity) async throws -> [Identity] {
+        try await withCheckedThrowingContinuation { continuation in
+            followedBy(identity: identity, queue: .global(qos: .background)) { identities, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: identities)
+                }
+            }
+        }
+    }
+
     func followings(identity: Identity, completion:  @escaping AboutsCompletion) {
         self.followings(identity: identity, queue: .main, completion: completion)
+    }
+
+    func followings(identity: Identity) async throws -> [About] {
+        try await withCheckedThrowingContinuation { continuation in
+            followings(identity: identity, queue: .global(qos: .background)) { abouts, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: abouts)
+                }
+            }
+        }
+    }
+
+    func followings(identity: Identity) async throws -> [Identity] {
+        try await withCheckedThrowingContinuation { continuation in
+            follows(identity: identity, queue: .global(qos: .background)) { identities, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: identities)
+                }
+            }
+        }
+    }
+
+    func blocks(identity: Identity) async throws -> [Identity] {
+        try await withCheckedThrowingContinuation { continuation in
+            blocks(identity: identity, queue: .global(qos: .background)) { identities, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: identities)
+                }
+            }
+        }
+    }
+
+    func relationship(from source: Identity, to target: Identity) async throws -> Relationship {
+        let followers: [Identity] = try await followers(identity: source)
+        let followings: [Identity] = try await followings(identity: source)
+        let blocks: [Identity] = try await blocks(identity: source)
+        let relationship = Relationship(from: source, to: target)
+        relationship.isFollowing = followings.contains(target)
+        relationship.isFollowedBy = followers.contains(target)
+        relationship.isBlocking = blocks.contains(target)
+        return relationship
     }
 
     func statistics(completion: @escaping StatisticsCompletion) {
@@ -479,6 +575,15 @@ extension Bot {
             }
         }
     }
+
+    func abouts(identities: [Identity]) async throws -> [About?] {
+        var abouts = [About?]()
+        for identity in identities {
+            let about = try await about(identity: identity)
+            abouts.append(about)
+        }
+        return abouts
+    }
     
     func about() async throws -> About? {
         try await withCheckedThrowingContinuation { continuation in
@@ -488,6 +593,19 @@ extension Bot {
                     return
                 }
                 continuation.resume(returning: about)
+            }
+        }
+    }
+
+    func pubs(joinedBy identity: Identity) async throws -> [Pub] {
+        try await withCheckedThrowingContinuation { continuation in
+            pubs(joinedBy: identity, queue: .global(qos: .background)) { result in
+                switch result {
+                case .success(let pubs):
+                    continuation.resume(returning: pubs)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
@@ -532,6 +650,30 @@ extension Bot {
     func redeemInvitation(to star: Star, completion: @escaping ErrorCompletion) {
         self.redeemInvitation(to: star, completionQueue: .main, completion: completion)
     }
+
+    func redeemInvitation(to star: Star) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            redeemInvitation(to: star, completionQueue: .global(qos: .background)) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    func join(star: Star, shouldFollow: Bool = true) async throws {
+        try await redeemInvitation(to: star)
+        do {
+            _ = try await publish(content: star.toPub())
+        } catch {
+            // We don't care the result, move on
+        }
+        if shouldFollow {
+            _ = try await publish(content: Contact(contact: star.feed, following: true))
+        }
+    }
     
     func joinedPubs(completion: @escaping (([Pub], Error?) -> Void)) {
         self.joinedPubs(queue: .main, completion: completion)
@@ -552,7 +694,8 @@ extension Bot {
     func publish(content: ContentCodable, completion: @escaping PublishCompletion) {
         self.publish(content: content, completionQueue: .main, completion: completion)
     }
-    
+
+    @discardableResult
     func publish(content: ContentCodable) async throws -> MessageIdentifier {
         try await withCheckedThrowingContinuation { continuation in
             publish(content: content) { result, error in
@@ -617,6 +760,21 @@ extension Bot {
                     continuation.resume(returning: string)
                 case .failure(let error):
                     continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    /// Returns all the messages created by the specified Identity.
+    /// This is useful for showing all the posts from a particular
+    /// person, like in an About screen.
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?) async throws -> [Message] {
+        try await withCheckedThrowingContinuation { continuation in
+            feed(strategy: strategy, limit: limit, offset: offset) { messages, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: messages)
                 }
             }
         }

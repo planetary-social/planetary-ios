@@ -19,6 +19,7 @@
 "Localized.daysAgo" = "Hace {{ days }} días";
 "Localized.atDayTime" = "{{ day }} a las {{ time }}";
 "Localized.minutesAbbreviated" = "{{ numberOfMinutes }} minutos";
+"Localized.profile" = "Profile";
 "Localized.yourProfile" = "Tu perfil";
 "Localized.helpAndSupport" = "Ayuda y soporte";
 "Localized.reportBug" = "Reportar un error";
@@ -28,10 +29,12 @@
 "Localized.usersInYourNetwork" = "Usuarios en tu red";
 "Localized.goToYourNetwork" = "Ir a tu red";
 "Localized.emptyHomeFeedMessage" = "¡Está vacío! ¿Has considerado seguir a algunos usuarios o temas?";
+"Localized.posted" = "{{somebody}} posted";
 "Localized.replied" = "{{somebody}} respondió";
 "Localized.liked" = "A {{somebody}} le gustó";
 "Localized.startedFollowing" = "{{somebody}} empezó a seguirte";
 "Localized.stoppedFollowing" = "{{somebody}} dejó de seguirte";
+"Localized.startedBlocking" = "{{somebody}} blocked";
 "Localized.followStats" = "Siguiendo a {{numberOfFollows}} • Seguido por {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "Este usuario está fuera de tu red";
 "Localized.showMeInDirectory" = "Mostrarme en el directorio";
@@ -50,6 +53,7 @@
 "Localized.deletePost" = "Eliminar esta publicación";
 "Localized.editPost" = "Editar esta publicación";
 "Localized.confirmDeletePost" = "¿Estás seguro de que quieres eliminar esta publicación?";
+"Localized.readMore" = "Read more";
 "Localized.postReply" = "Publicar respuesta";
 "Localized.postAReply" = "Publicar una respuesta";
 "Localized.createProfile" = "Crear perfil";
@@ -62,13 +66,17 @@
 "Localized.dislikesThis" = "no le gusta esto";
 "Localized.block" = "Ignorar";
 "Localized.blocked" = "Ignorado";
+"Localized.blocking" = "Ignoring";
 "Localized.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
+"Localized.followBack" = "Follow back";
 "Localized.follow" = "Seguir";
 "Localized.following" = "Siguiendo";
 "Localized.followedBy" = "Seguido por";
 "Localized.isFollowingYou" = "está siguiéndote actualmente";
 "Localized.followedByCount" = "Seguido por {{ count }}";
 "Localized.followingCount" = "Siguiendo {{ count }}";
+"Localized.blockingCount" = "Ignoring {{ count }}";
+"Localized.joinedCount" = "Joined {{ count }}";
 "Localized.inYourNetwork" = " en tu red";
 "Localized.followedByShortCount" = "{{ count }} Seguidores";
 "Localized.unfollow" = "Dejar de seguir";
@@ -116,6 +124,7 @@
 "Localized.like" = "Me gusta";
 "Localized.debug" = "Depuración";
 "Localized.join" = "Unirse";
+"Localized.joined" = "Joined";
 "Localized.redeemInvitation" = "Canjear una invitación";
 "Localized.pasteAddress" = "Token";
 "Localized.invitationRedeemed" = "¡Invitación canjeada!";
@@ -259,6 +268,9 @@
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 "ManageRelays.deleteRoom" = "Delete";
 "ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
+
+"Message.noPostsTitle" = "No posts here yet";
+"Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 
 "Alias.manageAliases" = "Administrar alias (beta)";
 "Alias.addAlias" = "Registrar un nuevo alias";
