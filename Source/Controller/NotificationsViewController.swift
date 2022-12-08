@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
 
 class NotificationsViewController: ContentViewController, HelpDrawerHost {
 
@@ -286,7 +287,10 @@ private class NotificationsTableViewDelegate: MessageTableViewDelegate {
 
         if message.contentType == .contact {
             Analytics.shared.trackDidSelectItem(kindName: "identity")
-            let controller = AboutViewController(with: message.author)
+            let identity = message.author
+            let controller = UIHostingController(
+                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+            )
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         } else if message.contentType == .post {
             Analytics.shared.trackDidSelectItem(kindName: "post")

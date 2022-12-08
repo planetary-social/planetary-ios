@@ -22,32 +22,30 @@ enum OffboardingError: Error {
 
 enum Offboarding {
 
-    typealias Completion = ((OffboardingError?) -> Void)
-
-    static func offboard(completion: @escaping Completion) {
-        guard let identity = Bots.current.identity else { completion(.mustBeLoggedIn); return }
-        guard let configuration = AppConfiguration.current else { completion(.invalidConfiguration) ; return }
-        guard configuration.identity == identity else { completion(.invalidIdentity); return }
+    static func offboard() async throws {
+        guard let identity = Bots.current.identity else { throw OffboardingError.mustBeLoggedIn }
+        guard let configuration = AppConfiguration.current else { throw OffboardingError.invalidConfiguration }
+        guard configuration.identity == identity else { throw OffboardingError.invalidIdentity }
 
         Analytics.shared.trackOffboardingStart()
 
         // log out
         // errors not allowed
-        Bots.current.logout { error in
+        do {
+            try await Bots.current.logout()
+        } catch {
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             
-            if let error = error { completion(.botError(error)); return }
-            
-            // remove configuration
-            configuration.unapply()
-            AppConfigurations.delete(configuration)
-            
-            // done
-            Analytics.shared.trackOffboardingEnd()
-            Analytics.shared.forget()
-            
-            completion(nil)
+            throw OffboardingError.botError(error)
         }
+            
+        // remove configuration
+        configuration.unapply()
+        AppConfigurations.delete(configuration)
+        
+        // done
+        Analytics.shared.trackOffboardingEnd()
+        Analytics.shared.forget()
     }
 }

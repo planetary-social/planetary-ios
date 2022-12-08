@@ -193,7 +193,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // Update the application badge number
         updateApplicationBadgeNumber()
 
-        Bots.current.blocks(identity: currentIdentity) { [weak self] blockedIdentities, error in
+        Bots.current.blocks(
+            identity: currentIdentity,
+            queue: .global(qos: .background)
+        ) { [weak self] blockedIdentities, error in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             reports.forEach { [weak self] report in

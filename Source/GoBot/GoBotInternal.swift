@@ -132,10 +132,10 @@ class GoBotInternal {
 
     // MARK: login / logout
 
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String) -> Error? {
+    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String) throws {
         if self.isRunning {
             guard self.logout() == true else {
-                return GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
+                throw GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
             }
         }
         
@@ -163,7 +163,7 @@ class GoBotInternal {
             let d = try enc.encode(cfg)
             cfgStr = String(data: d, encoding: .utf8)!
         } catch {
-            return GoBotError.duringProcessing("config prep failed", error)
+            throw GoBotError.duringProcessing("config prep failed", error)
         }
 
         var worked = false
@@ -179,10 +179,10 @@ class GoBotInternal {
                 self.replicate(feed: pub)
             }
             
-            return nil
+            return
         }
         
-        return GoBotError.unexpectedFault("failed to start")
+        throw GoBotError.unexpectedFault("failed to start")
     }
     
     func logout() -> Bool {

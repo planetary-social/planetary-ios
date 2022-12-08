@@ -8,7 +8,6 @@
 
 import Foundation
 import Logger
-import Analytics
 import CrashReporting
 
 class RefreshOperation: AsynchronousOperation {
@@ -40,7 +39,6 @@ class RefreshOperation: AsynchronousOperation {
             if case .failure(let actualError) = refreshResult {
                 error = actualError
             }
-            Analytics.shared.trackBotDidRefresh(load: refreshLoad.rawValue, duration: timeElapsed, error: error)
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             

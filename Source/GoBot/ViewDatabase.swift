@@ -58,6 +58,10 @@ class ViewDatabase {
     private var dbPath: String?
     
     static let schemaVersion: UInt = 20
+    
+    /// Manages concurrent open connections to the sqlite database.
+    /// Generally this should not be accessed directly. See `checkoutConnection()`, `open()`, and `close()`.
+    private let connectionPool = DatabaseConnectionPool()
 
     // should be changed on login/logout
     private var currentUserID: Int64 = -1
@@ -233,14 +237,15 @@ class ViewDatabase {
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
         let dbPath = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let db = try Connection(dbPath)
-        
         try setUpConnection(db)
         
         try checkAndRunMigrations(on: db)
         
         self.dbPath = dbPath
         self.currentUser = user
-        self.currentUserID = try self.authorID(of: user, make: true)
+        self.currentUserID = try self.authorID(of: user, make: true, connection: db)
+        connectionPool.open()
+        try connectionPool.add(db)
 
         try setAllMessagesAsReadIfNeeded()
     }
@@ -256,9 +261,9 @@ class ViewDatabase {
     }
     
     /// Deletes the database at the given path.
-    func dropDatabase(at path: String) throws {
+    func dropDatabase(at path: String) async throws {
         if isOpen() {
-            close(andOptimize: false)
+            await close(andOptimize: false)
         }
         let path = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
         let wal = path.appending("-wal")
@@ -358,7 +363,7 @@ class ViewDatabase {
                 )
                 db.userVersion = 16
             }
-             if db.userVersion == 16 {
+            if db.userVersion == 16 {
                 try db.execute(
                     """
                     ALTER TABLE authors ADD banned INTEGER NOT NULL DEFAULT (0);
@@ -474,29 +479,39 @@ class ViewDatabase {
         dbPath != nil
     }
     
-    func close(andOptimize shouldOptimize: Bool = true) {
-        if shouldOptimize, let db = try? checkoutConnection() {
-            do {
+    /// Closes all connections to the database and performs cleanup tasks. This function will wait for all open
+    /// connections to finish their queries before returning.
+    func close(andOptimize shouldOptimize: Bool = true) async {
+        if shouldOptimize {
+            optimize: do {
                 try optimize()
             } catch {
+                if case ViewDatabaseError.notOpen = error { break optimize } // close should be idempotent
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
         }
-        self.dbPath = nil
-        self.currentUser = nil
-        self.currentUserID = -1
+        
+        await connectionPool.close()
+        dbPath = nil
+        currentUser = nil
+        currentUserID = -1
     }
     
-    /// Creates a new database connection that will automatically be closed when it goes out of scope.
+    /// Creates a new database connection that will automatically be returned to the pool when it goes out of scope.
     func checkoutConnection() throws -> Connection {
-        guard let dbPath = dbPath else {
+        guard let dbPath = dbPath, connectionPool.isOpen else {
             throw ViewDatabaseError.notOpen
         }
         
-        let db = try Connection(dbPath)
-        try setUpConnection(db)
-        return db
+        if let existingConnection = try connectionPool.checkout() {
+            return existingConnection
+        }
+        
+        let newConnection = try Connection(dbPath)
+        try setUpConnection(newConnection)
+        try connectionPool.add(newConnection)
+        return newConnection
     }
     
     // returns the number of rows for the respective tables
@@ -654,14 +669,18 @@ class ViewDatabase {
         }
     }
     
-    func getJoinedPubs() throws -> [Pub] {
+    func getJoinedPubs(identity: Identity? = nil) throws -> [Pub] {
         let db = try checkoutConnection()
 
-        let query = self.msgs
-            .join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
-            .where(self.msgs[colAuthorID] == currentUserID)
-            .where(self.msgs[colMsgType] == "pub")
-            .order(colSequence.desc)
+        var query = self.msgs.join(self.pubs, on: self.pubs[colMessageRef] == self.msgs[colMessageID])
+
+        if let identity = identity {
+            query = query.join(self.authors, on: self.authors[colID] == self.msgs[colAuthorID])
+                .where(self.authors[colAuthor] == identity)
+        } else {
+            query = query.where(self.msgs[colAuthorID] == currentUserID)
+        }
+        query = query.where(self.msgs[colMsgType] == "pub").order(colSequence.desc)
         
         let pubs: [Pub] = try db.prepare(query).map { row in
             let host = try row.get(colHost)
@@ -2706,8 +2725,6 @@ class ViewDatabase {
         }
         #endif
 
-        Analytics.shared.trackBotDidUpdateMessages(count: msgs.count)
-
         if skipped > 0 {
             Log.info("[rx log] skipped \(skipped) messages.")
         }
@@ -2761,8 +2778,13 @@ class ViewDatabase {
         return msgKey
     }
     
-    func authorID(of author: Identity, make: Bool = false) throws -> Int64 {
-        let db = try checkoutConnection()
+    func authorID(of author: Identity, make: Bool = false, connection: Connection? = nil) throws -> Int64 {
+        var db: Connection
+        if let connection {
+            db = connection
+        } else {
+            db = try checkoutConnection()
+        }
 
         if let authorRow = try db.pluck(self.authors.filter(colAuthor == author)) {
             return authorRow[colID]

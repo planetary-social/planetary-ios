@@ -13,7 +13,7 @@ import Logger
 /// This algorithm returns a feed with user's follows' posts. That is, the network from the perspective of that user.
 ///
 /// It discards content from followed pubs.
-class OneHopFeedAlgorithm: NSObject, FeedStrategy {
+final class OneHopFeedAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     /// SQL query to count the total number of items in the feed
@@ -262,18 +262,22 @@ class OneHopFeedAlgorithm: NSObject, FeedStrategy {
     """
     // swiftlint:enable indentation_width
 
-    var identity = Identity.null
+    let identity: Identity
 
     override init() {
+        self.identity = .null
         super.init()
     }
 
     init(identity: Identity) {
-        super.init()
         self.identity = identity
+        super.init()
     }
 
-    required init?(coder: NSCoder) {}
+    required init?(coder: NSCoder) {
+        self.identity = .null
+        super.init()
+    }
     func encode(with coder: NSCoder) {}
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {

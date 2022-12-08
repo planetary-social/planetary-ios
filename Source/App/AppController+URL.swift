@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Logger
+import SwiftUI
 
 extension AppController {
 
@@ -113,7 +114,8 @@ extension AppController {
     func pushViewController(for contentType: ContentType,
                             with identity: Identity) {
         guard contentType == .about else { return }
-        let controller = AboutViewController(with: identity)
+        let view = IdentityView(identity: identity).environmentObject(BotRepository.shared)
+        let controller = UIHostingController(rootView: view)
         self.push(controller, animated: true)
     }
 
@@ -145,6 +147,7 @@ extension AppController {
             Log.unexpected(.missingValue, "Selected view controller is not a navigation controller")
             return
         }
+        featureController.dismiss(animated: true)
         featureController.pushViewController(controller, animated: animated)
     }
 }

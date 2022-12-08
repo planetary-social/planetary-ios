@@ -8,7 +8,6 @@
 
 import Foundation
 import Logger
-import Analytics
 import CrashReporting
 
 /// Tries to connect to the given peers to gossip with them. Don't use this SyncOperation directly, use

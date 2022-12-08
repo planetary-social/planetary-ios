@@ -17,7 +17,7 @@ import Foundation
 ///
 /// You can read more about the structure of feeds and messages in the protocol guide:
 /// https://ssbc.github.io/scuttlebutt-protocol-guide/#feeds
-struct Message: Codable, Identifiable {
+struct Message: Codable, Identifiable, @unchecked Sendable {
 
     enum CodingKeys: String, CodingKey {
         case key

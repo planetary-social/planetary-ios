@@ -12,7 +12,7 @@ import UIKit
 
 class PhotoOnboardingStep: OnboardingStep, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    private let imagePicker = ImagePicker()
+    private let imagePicker = UIImagePicker()
 
     init() {
         super.init(.photo)

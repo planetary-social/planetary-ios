@@ -8,36 +8,7 @@
 
 import XCTest
 
-class ReportTests: XCTestCase {
-
-    var tmpURL = URL(fileURLWithPath: "unset")
-    var db = ViewDatabase()
-    let testAuthor: Identity = DatabaseFixture.exampleFeed.identities[0]
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        db.close(andOptimize: false)
-
-        // get random location for the new
-        tmpURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/viewDBtest-feedFill2"))
-
-        do {
-            try FileManager.default.removeItem(at: tmpURL)
-        } catch {
-            // ignore - most likely not exists
-        }
-
-        try FileManager.default.createDirectory(at: tmpURL, withIntermediateDirectories: true)
-
-        // open DB
-        let dbPath = tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-        try db.open(path: dbPath, user: testAuthor, maxAge: -60 * 60 * 24 * 30 * 48)
-    }
-
-    override func tearDown() {
-        super.tearDown()
-        db.close(andOptimize: false)
-    }
+class ReportTests: ViewDatabaseTestCase {
 
     func testRecentReports() throws {
         try fillSampleMessages()

@@ -145,7 +145,7 @@ class GoBot: Bot {
     func exit() async {
         _ = await Task(priority: .userInitiated) {
             self.bot.disconnectAll()
-            self.database.close()
+            await self.database.close()
         }.result
     }
     
@@ -185,7 +185,7 @@ class GoBot: Bot {
 
         Log.info("Dropping GoBot SQL ViewDatabase...")
         let databaseDirectory = try config.databaseDirectory()
-        try database.dropDatabase(at: databaseDirectory)
+        try await database.dropDatabase(at: databaseDirectory)
         userDefaults.set(0, forKey: greatestRequestedSequenceNumberFromGoBotKey)
         try self.database.open(
             path: databaseDirectory,
@@ -208,18 +208,17 @@ class GoBot: Bot {
         completion(secret, nil)
     }
     
-    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
+    @MainActor func login(config: AppConfiguration) async throws {
         guard let network = config.network else {
-            queue.async { completion(BotError.invalidAppConfiguration) }
-            return
+            throw BotError.invalidAppConfiguration
         }
 
         let secret = config.secret
         guard self._identity == nil else {
             if secret.identity == self._identity {
-                queue.async { completion(nil) }
+                return
             } else {
-                queue.async { completion(BotError.alreadyLoggedIn) }
+                throw BotError.alreadyLoggedIn
             }
             return
         }
@@ -229,48 +228,35 @@ class GoBot: Bot {
         
         var repoPrefix: String
 
-        do {
-            if database.isOpen() {
-                database.close()
-            }
-            
-            repoPrefix = try config.databaseDirectory()
-            
-            try self.database.open(
-                path: repoPrefix,
-                user: secret.identity
-            )
-        } catch {
-            queue.async { completion(error) }
-            return
+        if database.isOpen() {
+            await database.close()
         }
+        
+        repoPrefix = try config.databaseDirectory()
+        
+        try self.database.open(
+            path: repoPrefix,
+            user: secret.identity
+        )
+        
+        Log.shared.info("===> starting gobot with prefix: \(repoPrefix)")
+        
+        try bot.login(
+            network: network,
+            hmacKey: hmacKey,
+            secret: secret,
+            pathPrefix: repoPrefix
+        )
+        
+        // Save GoBot version to disk in case we need to migrate in the future.
+        // This is a side-effect that may cause problems if we want to use other bots in the future.
+        userDefaults.set(version, forKey: GoBot.versionKey)
+        userDefaults.synchronize()
+        
+        _identity = secret.identity
 
-        // spawn go-bot in the background to return early
-        userInitiatedQueue.async {
-            // used for locating the files in the simulator
-            Log.shared.info("===> starting gobot with prefix: \(repoPrefix)")
-            let loginErr = self.bot.login(
-                network: network,
-                hmacKey: hmacKey,
-                secret: secret,
-                pathPrefix: repoPrefix
-            )
-            
-            defer {
-                queue.async { completion(loginErr) }
-            }
-            
-            guard loginErr == nil else {
-                return
-            }
-            
-            // Save GoBot version to disk in case we need to migrate in the future.
-            // This is a side-effect that may cause problems if we want to use other bots in the future.
-            self.userDefaults.set(self.version, forKey: GoBot.versionKey)
-            self.userDefaults.synchronize()
-            
-            self._identity = secret.identity
-            
+        // Run the rest of our post-login tasks off the main thread
+        Task(priority: .high) {
             do {
                 try self.welcomeService?.insertNewMessages(in: self.database)
             } catch {
@@ -278,28 +264,23 @@ class GoBot: Bot {
                 CrashReporting.shared.reportIfNeeded(error: error)
             }
             self.preloadedPubService?.preloadPubs(in: self, from: nil)
-            
-            Task.detached(priority: .background) {
-                await self.fetchAndApplyBanList(for: secret.identity)
-            }
-            
-            Log.shared.info("Finished login")
+        }
+        
+        Task.detached(priority: .background) { [weak self] in
+            await self?.fetchAndApplyBanList(for: secret.identity)
         }
     }
     
-    func logout(completion: @escaping ErrorCompletion) {
-        Thread.assertIsMainThread()
+    @MainActor func logout() async throws {
         if self._identity == nil {
-            completion(BotError.notLoggedIn)
-            return
+            throw BotError.notLoggedIn
         }
         if !self.bot.logout() {
             Log.unexpected(.botError, "failed to logout")
         }
-        database.close()
+        await database.close()
         self._identity = nil
         self.config = nil
-        completion(nil)
     }
 
     // MARK: Sync
@@ -351,6 +332,21 @@ class GoBot: Bot {
             } catch {
                 queue.async {
                     completion([], error)
+                }
+            }
+        }
+    }
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion) {
+        userInitiatedQueue.async {
+            do {
+                let pubs = try self.database.getJoinedPubs(identity: identity)
+                queue.async {
+                    completion(.success(pubs))
+                }
+            } catch {
+                queue.async {
+                    completion(.failure(error))
                 }
             }
         }
@@ -585,7 +581,8 @@ class GoBot: Bot {
                 }
             } catch {
                 self.numberOfPublishedMessagesLock.unlock()
-                completion(MessageIdentifier.null, error)
+                completionQueue.async { completion(MessageIdentifier.null, error) }
+                return
             }
             
             self.bot.publish(content) { [weak self] key, error in
@@ -1132,26 +1129,24 @@ class GoBot: Bot {
         }
     }
 
-    func follows(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+    func follows(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let follows: [Identity] = try self.database.getFollows(feed: identity)
-                DispatchQueue.main.async { completion(follows, nil) }
+                queue.async { completion(follows, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                queue.async { completion([], error) }
             }
         }
     }
     
-    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) {
-        Thread.assertIsMainThread()
+    func followedBy(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let follows: [Identity] = try self.database.followedBy(feed: identity)
-                DispatchQueue.main.async { completion(follows, nil) }
+                queue.async { completion(follows, nil) }
             } catch {
-                DispatchQueue.main.async { completion([], error) }
+                queue.async { completion([], error) }
             }
         }
     }
@@ -1219,15 +1214,15 @@ class GoBot: Bot {
     
     // MARK: Blocks & Bans
     
-    func blocks(identity: FeedIdentifier, completion: @escaping ContactsCompletion) {
+    func blocks(identity: FeedIdentifier, queue: DispatchQueue, completion: @escaping ContactsCompletion) {
         userInitiatedQueue.async {
             do {
                 let identities = try self.database.getBlocks(feed: identity)
-                DispatchQueue.main.async {
+                queue.async {
                     completion(identities, nil)
                 }
             } catch {
-                DispatchQueue.main.async {
+                queue.async {
                     completion([], error)
                 }
             }
@@ -1283,6 +1278,7 @@ class GoBot: Bot {
                 return
             }
             completion(messageIdentifier, nil)
+            NotificationCenter.default.post(name: .didUnblockUser, object: identity)
         }
     }
     
@@ -1510,6 +1506,17 @@ class GoBot: Bot {
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
+            }
+        }
+    }
+
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
+        userInitiatedQueue.async { [database] in
+            do {
+                let messages = try strategy.fetchMessages(database: database, userId: 0, limit: limit, offset: offset)
+                completion(messages, nil)
+            } catch {
+                completion([], error)
             }
         }
     }

@@ -515,19 +515,19 @@ class DebugViewController: DebugTableViewController {
     }
     
     private func applyConfigurationAndDismiss() {
-        Bots.current.logout {
-            [weak self] error in
-            
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
+        Task { [weak self] in
+            do {
+                try await Bots.current.logout()
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
             
             Analytics.shared.forget()
             CrashReporting.shared.forget()
             
-            Task { [weak self] in
-                await AppController.shared.relaunch()
-                self?.dismiss(animated: true, completion: nil)
-            }
+            await AppController.shared.relaunch()
+            self?.dismiss(animated: true, completion: nil)
         }
     }
 

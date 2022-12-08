@@ -14,7 +14,7 @@ import CrashReporting
 
 class PhotoConfirmOnboardingStep: OnboardingStep {
 
-    private let imagePicker = ImagePicker()
+    private let imagePicker = UIImagePicker()
 
     // TODO this is duplicated from AboutView
     private let circleView: UIView = {
