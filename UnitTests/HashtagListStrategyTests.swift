@@ -9,36 +9,7 @@
 import XCTest
 
 /// Tests to make sure our `FeedStrategy`s fetch the posts we expect.
-class HashtagListStrategyTests: XCTestCase {
-
-    var tmpURL = URL(fileURLWithPath: "unset")
-    var db = ViewDatabase()
-    let testAuthor: Identity = DatabaseFixture.exampleFeed.identities[0]
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        db.close()
-
-        // get random location for the new
-        tmpURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/viewDBtest-feedFill2"))
-
-        do {
-            try FileManager.default.removeItem(at: tmpURL)
-        } catch {
-            // ignore - most likely not exists
-        }
-
-        try FileManager.default.createDirectory(at: tmpURL, withIntermediateDirectories: true)
-
-        // open DB
-        let dbPath = tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-        try db.open(path: dbPath, user: testAuthor, maxAge: -60 * 60 * 24 * 30 * 48)
-    }
-
-    override func tearDown() {
-        super.tearDown()
-        db.close()
-    }
+class HashtagListStrategyTests: ViewDatabaseTestCase {
 
     func testPopularHashtagsStrategy() throws {
         let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis

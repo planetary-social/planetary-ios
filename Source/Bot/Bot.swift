@@ -45,7 +45,7 @@ enum RefreshLoad: Int32, CaseIterable {
 
 /// Abstract interface to any SSB bot implementation.
 /// - SeeAlso: `GoBot`
-protocol Bot {
+protocol Bot: AnyObject, Sendable {
 
     // MARK: Name
     var name: String { get }
@@ -59,7 +59,8 @@ protocol Bot {
     
     /// A flag that signals that the bot is resyncing the user's feed from the network.
     /// Currently used to suppress push notifications because the user has already seen them.
-    var isRestoring: Bool { get set }
+    var isRestoring: Bool { get }
+    func setRestoring(_ value: Bool)
     
     // MARK: Logs
     var logFileUrls: [URL] { get }
@@ -123,9 +124,10 @@ protocol Bot {
     /// whose data is contained in `AppConfiguration`.
     /// - Parameter queue: The queue that `completion` will be called on.
     /// - Parameter config: An object containing high-level parameters like the user's keys and the network key.
+    /// - Parameter fromOnboarding: A flag that should be true if the user is logging in from the onboarding flow.
     /// - Parameter completion: A handler that will be called with the result of the operation.
-    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion)
-    func logout(completion: @escaping ErrorCompletion)
+    @MainActor func login(config: AppConfiguration, fromOnboarding: Bool) async throws
+    @MainActor func logout() async throws
 
     // MARK: Invites
 
@@ -322,32 +324,6 @@ extension Bot {
                     continuation.resume(throwing: BotError.internalError)
                 }
             }
-        }
-    }
-    
-    func login(config: AppConfiguration, completion: @escaping ErrorCompletion) {
-        self.login(queue: .main, config: config, completion: completion)
-    }
-    
-    func login(config: AppConfiguration) async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.login(config: config) { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
-        }
-    }
-    
-    @MainActor func logout() async throws {
-        let error: Error? = await withCheckedContinuation { continuation in
-            self.logout { error in
-                continuation.resume(with: .success(error))
-            }
-        }
-        if let error = error {
-            throw error
         }
     }
     

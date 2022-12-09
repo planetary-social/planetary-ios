@@ -36,7 +36,7 @@ class API_GoBot: XCTestCase {
     
     static var bot = GoBot()
 
-    func test00_login() {
+    func test00_login() async throws {
         let fm = FileManager.default
         
         let appSupportDir = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
@@ -69,13 +69,7 @@ class API_GoBot: XCTestCase {
         }
         
         let loginExpecation = self.expectation(description: "login")
-        API_GoBot.bot.login(config: reproConfiguration) {
-            error in
-            XCTAssertNil(error)
-            loginExpecation.fulfill()
-        }
-
-        waitForExpectations(timeout: 10)
+        try await API_GoBot.bot.login(config: reproConfiguration, fromOnboarding: false)
     }
     
     // check we loaded all the messages from the fixtures repo
@@ -137,13 +131,7 @@ class API_GoBot: XCTestCase {
         XCTAssertEqual(statistics.repo.messageCount, 6700)
     }
 
-    func test900_logout() {
-        let logoutExpectation = self.expectation(description: "logout")
-        API_GoBot.bot.logout { error in
-            XCTAssertNil(error)
-            logoutExpectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 10)
+    func test900_logout() async throws {
+        try await API_GoBot.bot.logout()
     }
 }
