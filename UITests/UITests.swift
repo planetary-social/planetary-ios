@@ -71,7 +71,7 @@ class UITests: XCTestCase {
         // Skip bio step
         elementsQuery.buttons["Skip"].tap()
         
-        elementsQuery.buttons["One more thing…"].tap()
+        elementsQuery.buttons["Phew! I'm done!"].tap()
 
         let count = elementsQuery.tables["FeedTableView"].children(matching: .cell).count
         XCTAssert(count > 0)

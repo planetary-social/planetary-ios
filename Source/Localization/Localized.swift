@@ -349,7 +349,7 @@ extension Localized {
         case listMeTitle = "List me in the user directory"
         case listMeMessage = "This allows people to find you if they know your name or phone number"
         case orUseTheDefaults = "Or just use the defaults"
-        case doneOnboarding = "One more thing…"
+        case doneOnboarding = "Phew! I'm done!"
         case earlyAccess = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!"
         case iUnderstand = "Yes, I understand"
         case followPlanetaryToggleTitle = "Follow Planetary"
