@@ -83,20 +83,22 @@ struct Environment {
         var communityAliasServers = [Room]()
         
         Environment.value(for: environmentKey).components(separatedBy: "||").forEach {
-            let aliasServerComponents = $0.components(separatedBy: "::")
-            let identifier = aliasServerComponents[0]
-            let imageName = aliasServerComponents[2]
-            guard let key = Key(rawValue: aliasServerComponents[3]),
-                let token = Keys.shared.get(key: key),
-                let address = MultiserverAddress(string: aliasServerComponents[1]),
-                !identifier.isEmpty,
-                !imageName.isEmpty
-            else {
-                return
+            if !$0.isEmpty {
+                let aliasServerComponents = $0.components(separatedBy: "::")
+                let identifier = aliasServerComponents[0]
+                let imageName = aliasServerComponents[2]
+                guard let key = Key(rawValue: aliasServerComponents[3]),
+                      let token = Keys.shared.get(key: key),
+                      let address = MultiserverAddress(string: aliasServerComponents[1]),
+                      !identifier.isEmpty,
+                      !imageName.isEmpty
+                else {
+                    return
+                }
+                communityAliasServers.append(
+                    Room(token: token, identifier: identifier, imageName: imageName, address: address)
+                )
             }
-            communityAliasServers.append(
-                Room(token: token, identifier: identifier, imageName: imageName, address: address)
-            )
         }
         return communityAliasServers
     }

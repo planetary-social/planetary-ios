@@ -54,12 +54,5 @@ COMMUNITIES = ${CRYPTO} ${FLOSS} ${FREESOCIAL} ${SCUTTLEUS} ${PORRO} ${GARDENING
 PLANETARY = @l1sGqWeCZRA99gN+t9sI6+UOzGcHq3KhLQUYEwb4DCo=.ed25519
 PLANETARY_SYSTEM = ${PLANETARY}
 
-ALIAS_SERVER_ONE = Planetary Alias::net:planetary.name:8008~shs:42ACINb4+Qjd1kPYYpJ67V16CTHIWp93cjd1gDX7FKY=::icon-planetary-3::planetaryRoomToken
-ALIAS_SERVER_TWO = This Week in Tech::net:twit.planetary.name:8008~shs:fs26fDL6HzqnHoc2Ekq40AD0ETdf/D3Ze5oAIiEn8sM=::icon-twit::twitRoomToken
-ALIAS_SERVER_THREE = Lorentz Test Room::net:test-room.lorentz.is:8008~shs:mxAUHhdpkdu7Lg6uB4T1gWcvAD3ugdhNiUb8K37YEh4=::icon-test-room-lorentz::lorentzRoomToken
-PLANETARY_COMMUNITY_ALIAS_SERVERS = ${ALIAS_SERVER_ONE}||${ALIAS_SERVER_TWO}||${ALIAS_SERVER_THREE}
-
-TEST_ALIAS_SERVER_ONE = Planetary Alias::net:planetary.name:8008~shs:42ACINb4+Qjd1kPYYpJ67V16CTHIWp93cjd1gDX7FKY=::icon-planetary-3::planetaryRoomToken
-TEST_ALIAS_SERVER_TWO = This Week in Tech::net:twit.planetary.name:8008~shs:fs26fDL6HzqnHoc2Ekq40AD0ETdf/D3Ze5oAIiEn8sM=::icon-twit::twitRoomToken
-TEST_ALIAS_SERVER_THREE = Lorentz Test Room::net:test-room.lorentz.is:8008~shs:mxAUHhdpkdu7Lg6uB4T1gWcvAD3ugdhNiUb8K37YEh4=::icon-test-room-lorentz::lorentzRoomToken
-TEST_PLANETARY_COMMUNITY_ALIAS_SERVERS = ${TEST_ALIAS_SERVER_ONE}||${TEST_ALIAS_SERVER_TWO}||${TEST_ALIAS_SERVER_THREE}
+TEST_ALIAS_SERVER_ONE = Lorentz Test Room::net:test-room.lorentz.is:8008~shs:mxAUHhdpkdu7Lg6uB4T1gWcvAD3ugdhNiUb8K37YEh4=::icon-test-room-lorentz::lorentzRoomToken
+TEST_PLANETARY_COMMUNITY_ALIAS_SERVERS = ${TEST_ALIAS_SERVER_ONE}||

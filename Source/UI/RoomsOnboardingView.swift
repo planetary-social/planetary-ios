@@ -73,7 +73,7 @@ struct RoomsOnboardingView: View {
                 }
                 
                 VStack(spacing: 0) {
-                    ForEach(viewModel.communityAliasServers) { room in
+                    ForEach(AppConfiguration.current?.communityAliasServers ?? []) { room in
                         RoomCard(room: room, viewModel: viewModel)
                             .onTapGesture {
                                 withAnimation {

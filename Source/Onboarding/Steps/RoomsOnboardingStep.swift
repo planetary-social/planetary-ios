@@ -43,7 +43,7 @@ class RoomsOnboardingStep: OnboardingStep, ObservableObject {
     }
     
     override func willStart() {
-        if !viewModel.rooms.isEmpty || viewModel.communityAliasServers.isEmpty {
+        if !viewModel.rooms.isEmpty || (AppConfiguration.current?.communityAliasServers ?? []).isEmpty {
             Log.unexpected(.incorrectValue, "viewModel is in unexpected state.")
             if let identity = self.data.context?.identity {
                 Onboarding.set(status: .completed, for: identity)

@@ -19,7 +19,7 @@ import Logger
     
     @Published var errorMessage: String?
     
-    @Published var communityAliasServers = Environment.PlanetarySystem.communityAliasServers
+    @Published var communityAliasServers = AppConfiguration.current?.communityAliasServers
     
     @Published var title = Localized.Onboarding.StepTitle.aliasServer.text
     
@@ -103,7 +103,7 @@ import Logger
         alias = ""
         errorMessage = nil
         title = Localized.Onboarding.StepTitle.aliasServer.text
-        communityAliasServers = Environment.PlanetarySystem.communityAliasServers
+        communityAliasServers = AppConfiguration.current?.communityAliasServers
         selectedRoom = nil
     }
 }
