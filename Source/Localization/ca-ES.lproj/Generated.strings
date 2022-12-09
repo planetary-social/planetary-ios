@@ -271,6 +271,7 @@
 
 "Message.noPostsTitle" = "No posts here yet";
 "Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+"Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 
 "Alias.manageAliases" = "Manage Aliases (beta)";
 "Alias.addAlias" = "Register a new alias";

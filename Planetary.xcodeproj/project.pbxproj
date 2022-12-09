@@ -666,6 +666,8 @@
 		5BA32ED92915930000744984 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32ED72915930000744984 /* ActivityView.swift */; };
 		5BA32EDC291597DE00744984 /* BotRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32EDB291597DE00744984 /* BotRepository.swift */; };
 		5BA32EDD291597DE00744984 /* BotRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32EDB291597DE00744984 /* BotRepository.swift */; };
+		5BA45C232943CF150036217C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3AB293447BA000393AC /* HomeView.swift */; };
+		5BA45C252943CFE70036217C /* EmptyHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B50BBBD293E1935001D4C9A /* EmptyHomeView.swift */; };
 		5BA6E3AC293447BA000393AC /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3AB293447BA000393AC /* HomeView.swift */; };
 		5BA6E3B429366E90000393AC /* HashtagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3B329366E8F000393AC /* HashtagView.swift */; };
 		5BA6E3B529366E90000393AC /* HashtagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3B329366E8F000393AC /* HashtagView.swift */; };
@@ -4322,6 +4324,7 @@
 				C9724BD12809EDE2000EBCCD /* CommunityCellView.swift in Sources */,
 				C9724B5D2809D62A000EBCCD /* MessagePaginatedCollectionViewDataSource.swift in Sources */,
 				C9724B642809D6DC000EBCCD /* NotificationCellView.swift in Sources */,
+				5BA45C232943CF150036217C /* HomeView.swift in Sources */,
 				C9724BBE2809ECCC000EBCCD /* UITextView+Verse.swift in Sources */,
 				53E29CE022D80424008A2CB1 /* Hashtag+String.swift in Sources */,
 				C9724BB72809EC68000EBCCD /* (null) in Sources */,
@@ -4461,6 +4464,7 @@
 				C9421EBE2888A71B00A4C86D /* LinearGradient+Planetary.swift in Sources */,
 				C9F53837286F6E220015A146 /* Message+ViewDatabase.swift in Sources */,
 				2346ECB422141D9E009A94CB /* Bot.swift in Sources */,
+				5BA45C252943CFE70036217C /* EmptyHomeView.swift in Sources */,
 				C9724B6E2809E735000EBCCD /* MessageUIView.swift in Sources */,
 				5B373839288B09A30017756B /* ExtendedAboutCellView.swift in Sources */,
 				C9A2DE3527D0038700EAFA73 /* UIViewController+Alert.swift in Sources */,
