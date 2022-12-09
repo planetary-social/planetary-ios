@@ -6,6 +6,7 @@
 "Localized.skip" = "Skip";
 "Localized.ok" = "OK";
 "Localized.next" = "Next";
+"Localized.back" = "Back";
 "Localized.done" = "Done";
 "Localized.save" = "Save";
 "Localized.yes" = "Yes";
@@ -144,6 +145,7 @@
 "Localized.searchingLocally" = "Searching for posts in your local database";
 "Localized.noResultsFound" = "No results found.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
+"Localized.rooms" = "Rooms";
 "Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -210,8 +212,8 @@
 "Onboarding.contactsWIP" = "Apologies, this feature is a work in progress. Tap 'OK' to see a list of recommended users to follow.";
 "Onboarding.listMeTitle" = "List me in the user directory";
 "Onboarding.listMeMessage" = "This allows people to find you if they know your name or phone number";
-"Onboarding.thanksForTrying" = "Thanks for trying Planetary! It's customary to use the #newpeople hashtag to introduce yourself.";
-"Onboarding.doneOnboarding" = "Phew! I'm done!";
+"Onboarding.orUseTheDefaults" = "Or just use the defaults";
+"Onboarding.doneOnboarding" = "One more thing…";
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
@@ -235,6 +237,17 @@
 "Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
 "Onboarding.useTestNetwork" = "Use Test Network";
 "Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
+"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
+"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
+"Onboarding.yourAlias" = "youralias";
+"Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
+"Onboarding.aliasSkip" = "Skip choosing an alias";
+"Onboarding.aliasServerSkip" = "Skip choosing a server";
+"Onboarding.aliasTaken" = "This alias is taken already";
+"Onboarding.invalidAliasFormat" = "Incorrect format for alias";
+"Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
+"Onboarding.typeYourAlias" = "Type your alias";
+"Onboarding.registeringAlias" = "Registering Alias...";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
@@ -242,7 +255,7 @@
 "OnboardingStepTitle.birthday" = "Before we start, when's your birthday?";
 "OnboardingStepTitle.contacts" = "You can connect your address book to see which of your friends are using Planetary";
 "OnboardingStepTitle.directory" = "People you might know";
-"OnboardingStepTitle.done" = "Well done, you made it through in one piece";
+"OnboardingStepTitle.done" = "Customize your settings";
 "OnboardingStepTitle.earlyAccess" = "Gentle reminder: This is early access software";
 "OnboardingStepTitle.join" = "Creating your identity on Planetary...";
 "OnboardingStepTitle.name" = "Now, what would you like to be called?";
@@ -252,6 +265,8 @@
 "OnboardingStepTitle.photoConfirm" = "Profile photo added";
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
+"OnboardingStepTitle.aliasServer" = "Choose an alias server";
+"OnboardingStepTitle.alias" = "Now choose your alias";
 
 "ManageRelays.relayServers" = "Relay Servers";
 "ManageRelays.managePubs" = "Manage Pubs";
