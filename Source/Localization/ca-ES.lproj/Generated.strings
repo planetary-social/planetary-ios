@@ -6,6 +6,7 @@
 "Localized.skip" = "Omet";
 "Localized.ok" = "D'acord";
 "Localized.next" = "Següent";
+"Localized.back" = "Back";
 "Localized.done" = "Fet";
 "Localized.save" = "Desa";
 "Localized.yes" = "Sí";
@@ -144,6 +145,7 @@
 "Localized.searchingLocally" = "Searching for posts in your local database";
 "Localized.noResultsFound" = "No results found.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
+"Localized.rooms" = "Rooms";
 "Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -210,7 +212,7 @@
 "Onboarding.contactsWIP" = "Disculpa, estem treballant en aquesta funcionalitat. Toca \"D'acord\" per veure una llista d'usuaris recomanats a seguir.";
 "Onboarding.listMeTitle" = "Mostra'm en el directori d'usuaris";
 "Onboarding.listMeMessage" = "Això permet que les persones et trobin si saben el teu nom o número de telèfon";
-"Onboarding.thanksForTrying" = "Gràcies per provar Planetary! És habitual utilitzar l'etiqueta #newpeople per presentar-te.";
+"Onboarding.orUseTheDefaults" = "Or just use the defaults";
 "Onboarding.doneOnboarding" = "Uf! He acabat!";
 "Onboarding.earlyAccess" = "Aquesta aplicació està en una fase inicial. Hem estat centrant el nostre temps en els fonaments, de manera que hi ha buits i fragments aproximats a la interfície d'usuari. Tingues paciència amb nosaltres!";
 "Onboarding.iUnderstand" = "Sí, ho entenc";
@@ -235,6 +237,17 @@
 "Onboarding.joinPlanetarySystemDescription" = "Unir-te significa que utilitzaràs els servidors de transmissió de Planetary per intercanviar missatges amb altres persones. Recomanat per a usuaris nous.";
 "Onboarding.useTestNetwork" = "Utilitza la xarxa de prova";
 "Onboarding.useTestNetworkDescription" = "Això crearà la teva identitat amb una clau de xarxa alternativa que no es replicarà amb la xarxa SSB principal. Això no es pot canviar més endavant.";
+"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
+"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
+"Onboarding.yourAlias" = "youralias";
+"Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
+"Onboarding.aliasSkip" = "Skip choosing an alias";
+"Onboarding.aliasServerSkip" = "Skip choosing a server";
+"Onboarding.aliasTaken" = "This alias is taken already";
+"Onboarding.invalidAliasFormat" = "Incorrect format for alias";
+"Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
+"Onboarding.typeYourAlias" = "Type your alias";
+"Onboarding.registeringAlias" = "Registering Alias...";
 
 "OnboardingStepTitle.backup" = "D'acord, hem creat la teva identitat; vols fer-ne una còpia de seguretat?";
 "OnboardingStepTitle.benefits" = "Planetary és una manera més saludable de ser social";
@@ -252,6 +265,8 @@
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil afegida";
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
+"OnboardingStepTitle.aliasServer" = "Choose an alias server";
+"OnboardingStepTitle.alias" = "Now choose your alias";
 
 "ManageRelays.relayServers" = "Relay Servers";
 "ManageRelays.managePubs" = "Manage Pubs";

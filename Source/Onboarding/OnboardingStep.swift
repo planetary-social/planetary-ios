@@ -35,6 +35,8 @@ class OnboardingStepData {
     var name: String?
     var phone: String?
     var simulated = false
+    var joinedRoom: Room?
+    var roomAlias: String?
 
     var analyticsData: Analytics.OnboardingStepData {
         Analytics.OnboardingStepData(
@@ -74,25 +76,27 @@ class OnboardingStepData {
         case photoConfirm
         case resume
         case start
+        case aliasServer
 
         var title: Localized.Onboarding.StepTitle {
             switch self {
-                case .backup: return .backup
-                case .benefits: return .benefits
-                case .birthday: return .birthday
-                case .bio: return .bio
-                case .contacts: return .contacts
-                case .directory: return .directory
-                case .done: return .done
-                case .earlyAccess: return .earlyAccess
-                case .join: return .join
-                case .name: return .name
-                case .phone: return .phone
-                case .phoneVerify: return .phoneVerify
-                case .photo: return .photo
-                case .photoConfirm: return .photoConfirm
-                case .resume: return .resume
-                case .start: return .start
+            case .backup: return .backup
+            case .benefits: return .benefits
+            case .birthday: return .birthday
+            case .bio: return .bio
+            case .contacts: return .contacts
+            case .directory: return .directory
+            case .done: return .done
+            case .earlyAccess: return .earlyAccess
+            case .join: return .join
+            case .name: return .name
+            case .phone: return .phone
+            case .phoneVerify: return .phoneVerify
+            case .photo: return .photo
+            case .photoConfirm: return .photoConfirm
+            case .resume: return .resume
+            case .start: return .start
+            case .aliasServer: return .aliasServer
             }
         }
 

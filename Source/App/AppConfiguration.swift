@@ -138,6 +138,17 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
         }
     }
     
+    var communityAliasServers: [Room] {
+        switch ssbNetwork {
+        case Environment.Networks.mainNet:
+            return Environment.PlanetarySystem.communityAliasServers
+        case Environment.Networks.test:
+            return Environment.TestNetwork.communityAliasServers
+        default:
+            return []
+        }
+    }
+    
     func databaseDirectory() throws -> String {
         // lookup Application Support folder for bot and database
         let appSupportDirs = NSSearchPathForDirectoriesInDomains(

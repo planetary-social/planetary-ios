@@ -26,6 +26,15 @@ class AppController: UIViewController {
     private var didStartDatabaseProcessingObserver: NSObjectProtocol?
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
     private var didUpdateDatabaseProgressObserver: NSObjectProtocol?
+    
+    /// One and a half second `CATransition` `.easeInEaseOut` with type `CATransitionType.fade`.
+    private var crossFadeTransition: CATransition {
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        transition.type = CATransitionType.fade
+        return transition
+    }
 
     @MainActor convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -75,8 +84,11 @@ class AppController: UIViewController {
 
     // MARK: Main tab view controller
 
-    func showMainViewController(with controller: UIViewController? = nil, animated: Bool = true) {
+    func showMainViewController(with controller: UIViewController? = nil, animated: Bool = true, fadeIn: Bool = false) {
         let controller = MainViewController()
+        if animated && fadeIn {
+            self.view.layer.add(crossFadeTransition, forKey: nil)
+        }
         self.setRootViewController(controller, animated: animated)
         self.missionControlCenter.start()
     }
