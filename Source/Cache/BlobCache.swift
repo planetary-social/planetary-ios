@@ -5,6 +5,7 @@
 //  Created by Christoph on 6/23/19.
 //  Copyright © 2019 Verse Communications Inc. All rights reserved.
 //
+// swiftlint:disable file_length
 
 import Foundation
 import UIKit
@@ -517,5 +518,3 @@ extension UIImage {
         return image.bytesPerRow * image.height
     }
 }
-
-// swiftlint:disable file_length

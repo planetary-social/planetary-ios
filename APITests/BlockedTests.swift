@@ -195,7 +195,7 @@ class BlockedTests: XCTestCase {
         var postAfterBlock: MessageIdentifier = "%unset"
         BlockedTests.bot.publish(content: Post(text: "geeeeezuz why are people so bad?")) { reference, error in
             XCTAssertNil(error)
-            postAfterBlock = refrence
+            postAfterBlock = reference
             publishExpectation.fulfill()
         }
         self.wait(for: [publishExpectation], timeout: 30)
