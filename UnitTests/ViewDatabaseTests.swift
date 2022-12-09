@@ -490,7 +490,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `testLargestSeqFromReceiveLog()` excludes posts published by the current user.
     func testLargestSeqFromReceiveLog() throws {
         // Arrange
-        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
         
         // Assert
@@ -506,7 +506,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqNotFromPublishedLog()` excludes posts published by the current user.
     func testLargestSeqNotFromPublishedLog() throws {
         // Arrange
-        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
 
         // Assert
@@ -522,7 +522,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqFromPublishedLog()` only looks at posts published by the current user.
     func testLargestSeqFromPublishedLog() throws {
         // Arrange
-        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1000, author: fixture.owner)
         let largestPublishedSeqInDbAtStart: Int64 = 77
         
         // Assert

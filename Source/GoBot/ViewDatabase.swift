@@ -184,7 +184,7 @@ class ViewDatabase {
     // msg_ref
     // contact_id
     
-    let addresses: Table = Table(ViewDatabaseTableNames.addresses.rawValue)
+    let addresses = Table(ViewDatabaseTableNames.addresses.rawValue)
     let colAddressID = Expression<Int64>("address_id")
     // colAboutID
     let colAddress = Expression<String>("address")
@@ -638,16 +638,16 @@ class ViewDatabase {
 
             var redeemedDate: Date?
             if let redeemedTimestamp = try row.get(colRedeemed) {
-                redeemedDate = Date(timeIntervalSince1970: redeemedTimestamp / 1_000)
+                redeemedDate = Date(timeIntervalSince1970: redeemedTimestamp / 1000)
             }
             
             return KnownPub(
-                AddressID: try row.get(colAddressID),
-                ForFeed: try row.get(colAuthor),
-                Address: try row.get(colAddress),
-                InUse: try row.get(colUse),
-                WorkedLast: workedWhen,
-                LastError: try row.get(colLastErr),
+                addressID: try row.get(colAddressID),
+                forFeed: try row.get(colAuthor),
+                address: try row.get(colAddress),
+                inUse: try row.get(colUse),
+                workedLast: workedWhen,
+                lastError: try row.get(colLastErr),
                 redeemed: redeemedDate
             )
         }
@@ -1292,7 +1292,7 @@ class ViewDatabase {
 
     // MARK: recent
     func recentPosts(strategy: FeedStrategy, limit: Int, offset: Int? = nil) throws -> Messages {
-        return try strategy.fetchMessages(database: self, userId: currentUserID, limit: limit, offset: offset)
+        try strategy.fetchMessages(database: self, userId: currentUserID, limit: limit, offset: offset)
     }
 
     func numberOfRecentPosts(with strategy: FeedStrategy, since message: MessageIdentifier) throws -> Int {
@@ -1383,7 +1383,7 @@ class ViewDatabase {
         let db = try checkoutConnection()
 
         return try db.prepare(qry).compactMap { row in
-            return try Message(
+            try Message(
                 row: row,
                 database: self,
                 useNamespacedTables: true,
@@ -2352,7 +2352,7 @@ class ViewDatabase {
     private func fillReportIfNeeded(msgID: Int64, msg: Message, pms: Bool) throws -> [Report] {
         let db = try checkoutConnection()
         
-        let createdAt = Date().timeIntervalSince1970 * 1_000
+        let createdAt = Date().timeIntervalSince1970 * 1000
         
         switch msg.content.type { // insert individual message types
         case .contact:
@@ -2374,7 +2374,7 @@ class ViewDatabase {
                 let report = Report(authorIdentity: c.contact,
                                     messageIdentifier: msg.key,
                                     reportType: .feedFollowed,
-                                    createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
+                                    createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                     message: msg)
                 return [report]
             }
@@ -2403,7 +2403,7 @@ class ViewDatabase {
                         let report = Report(authorIdentity: repliedIdentity,
                                             messageIdentifier: msg.key,
                                             reportType: .postReplied,
-                                            createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
+                                            createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                             message: msg)
                         reports.append(report)
                         reportsIdentities.append(repliedIdentity)
@@ -2423,7 +2423,7 @@ class ViewDatabase {
                             let report = Report(authorIdentity: replyAuthorIdentity,
                                                 messageIdentifier: msg.key,
                                                 reportType: .postReplied,
-                                                createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                                 message: msg)
                             reports.append(report)
                             reportsIdentities.append(replyAuthorIdentity)
@@ -2448,7 +2448,7 @@ class ViewDatabase {
                             let report = Report(authorIdentity: identifier,
                                                 messageIdentifier: msg.key,
                                                 reportType: .feedMentioned,
-                                                createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
+                                                createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                                 message: msg)
                             reports.append(report)
                             reportsIdentities.append(identifier)
@@ -2484,7 +2484,7 @@ class ViewDatabase {
                     let report = Report(authorIdentity: likedMsgIdentity,
                                         messageIdentifier: msg.key,
                                         reportType: .messageLiked,
-                                        createdAt: Date(timeIntervalSince1970: createdAt / 1_000),
+                                        createdAt: Date(timeIntervalSince1970: createdAt / 1000),
                                         message: msg)
                     return [report]
                 }
@@ -2532,7 +2532,7 @@ class ViewDatabase {
         var skipped: UInt = 0
         var lastRxSeq: Int64 = -1
         
-        let loopStart = Date().timeIntervalSince1970 * 1_000
+        let loopStart = Date().timeIntervalSince1970 * 1000
         for msg in msgs {
             if let msgRxSeq = msg.receivedSeq {
                 lastRxSeq = msgRxSeq

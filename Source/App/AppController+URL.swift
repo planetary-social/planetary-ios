@@ -47,7 +47,6 @@ extension AppController {
         }
     }
 
-    // TODO how to extract identifier and content type?
     func open(identifier: Identifier) {
         switch identifier.sigil {
         case .blob:
@@ -61,7 +60,7 @@ extension AppController {
         }
     }
 
-    // TODO this is not great because Identity and Identifier
+    // this is not great because Identity and Identifier
     // as essentially the same so the caller needs to signal intent
     func open(identity: Identity) {
         self.pushViewController(for: .about, with: identity)
@@ -72,11 +71,12 @@ extension AppController {
             Log.unexpected(.missingValue, "Selected view controller is not a navigation controller")
             return
         }
-        let controller = UIAlertController(title: "This is an invite to a Pub",
-                                           message: "Are you sure you want to redeem this invite?",
-                                           preferredStyle: .alert)
-        var action = UIAlertAction(title: Localized.cancel.text, style: .cancel) {
-            _ in
+        let controller = UIAlertController(
+            title: "This is an invite to a Pub",
+            message: "Are you sure you want to redeem this invite?",
+            preferredStyle: .alert
+        )
+        var action = UIAlertAction(title: Localized.cancel.text, style: .cancel) { _ in
             controller.dismiss(animated: true, completion: nil)
         }
         controller.addAction(action)
@@ -109,10 +109,9 @@ extension AppController {
         featureController.present(alertController: controller, animated: true)
     }
 
-    // TODO this is incorrectly scoped, push to the app controller should
+    // this is incorrectly scoped, push to the app controller should
     // reset the root controller, not push into a child feature controller
-    func pushViewController(for contentType: ContentType,
-                            with identity: Identity) {
+    func pushViewController(for contentType: ContentType, with identity: Identity) {
         guard contentType == .about else { return }
         let view = IdentityView(identity: identity).environmentObject(BotRepository.shared)
         let controller = UIHostingController(rootView: view)
@@ -140,7 +139,7 @@ extension AppController {
         self.push(controller)
     }
 
-    // TODO this is incorrectly scoped, push to the app controller should
+    // this is incorrectly scoped, push to the app controller should
     // reset the root controller, not push into a child feature controller
     func push(_ controller: UIViewController, animated: Bool = true) {
         guard let featureController = self.mainViewController?.selectedViewController as? UINavigationController else {

@@ -206,9 +206,8 @@ class GoBotInternal {
     // MARK: planetary services
 
     // TODO: deprecated
-    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = { cstr, expires in
-        return
-    }
+    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = { _, _ in
+        }
 
     // MARK: connections
 
@@ -694,6 +693,5 @@ class GoBotInternal {
     }
     
     func revoke(alias: RoomAlias) async throws {
-        
     }
 }

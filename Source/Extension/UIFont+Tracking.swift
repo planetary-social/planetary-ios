@@ -14,6 +14,6 @@ extension UIFont {
     // this translates the `tracking` from an Adobe-compatible value
     // based on the spacing and the font size
     func kerning(_ tracking: CGFloat) -> CGFloat {
-        self.pointSize * tracking / 1_000
+        self.pointSize * tracking / 1000
     }
 }

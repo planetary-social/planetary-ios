@@ -295,7 +295,7 @@ class GoBotOrderedTests: XCTestCase {
         let extra = 2 + 5 // abouts
         var statistics = BotStatistics()
         let statisticsExpectation = self.expectation(description: "statistics fetched")
-        GoBotOrderedTests.shared.statistics() { newStatistics in
+        GoBotOrderedTests.shared.statistics { newStatistics in
             statistics = newStatistics
             statisticsExpectation.fulfill()
         }
@@ -343,7 +343,7 @@ class GoBotOrderedTests: XCTestCase {
     func test111_skip_unsupported_messages() {
         var statistics = BotStatistics()
         var statisticsExpectation = self.expectation(description: "statistics fetched")
-        GoBotOrderedTests.shared.statistics() { newStatistics in
+        GoBotOrderedTests.shared.statistics { newStatistics in
             statistics = newStatistics
             statisticsExpectation.fulfill()
         }
@@ -366,7 +366,7 @@ class GoBotOrderedTests: XCTestCase {
         self.wait(for: [ex], timeout: 10)
 
         statisticsExpectation = self.expectation(description: "statistics fetched")
-        GoBotOrderedTests.shared.statistics() { newStatistics in
+        GoBotOrderedTests.shared.statistics { newStatistics in
             statistics = newStatistics
             statisticsExpectation.fulfill()
         }

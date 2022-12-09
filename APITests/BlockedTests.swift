@@ -8,15 +8,7 @@
 
 import XCTest
 
-// MARK: TODO
-
-/* scenario2: blocked contact doesn't see the posts from the author of the block
- * TODO: add tests to the view/bot (local) unit tests, that the UI/ViewDB doesn't expose content from the block author
- */
-
-// TODO: fix pub setup
-
-// scenario1: unblock works
+// swiftlint:disable function_body_length force_unwrapping
 class BlockedTests: XCTestCase {
 
     static var newSecret: Secret?
@@ -25,24 +17,28 @@ class BlockedTests: XCTestCase {
     static var badBot: Identity = "@unset"
 
     // MARK: login and test setup
+    
     func test000_setup1_login_and_onboard() {
-        let fm = FileManager.default
+        let fileManager = FileManager.default
 
-        let appSupportDir = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
+        let appSupportDir = NSSearchPathForDirectoriesInDomains(
+            .applicationSupportDirectory,
+            .userDomainMask,
+            true
+        ).first!
 
         // start fresh
         do {
-            try fm.removeItem(atPath: appSupportDir.appending("/FBTT"))
+            try fileManager.removeItem(atPath: appSupportDir.appending("/FBTT"))
         } catch {
             print(error)
             print("removing previous failed - propbably not exists")
         }
 
         let createSecretExpectation = self.expectation(description: "Create secret")
-        BlockedTests.bot.createSecret {
-            sec, err in
-            XCTAssertNil(err)
-            BlockedTests.newSecret = sec
+        BlockedTests.bot.createSecret { secret, error in
+            XCTAssertNil(error)
+            BlockedTests.newSecret = secret
             createSecretExpectation.fulfill()
         }
         self.wait(for: [createSecretExpectation], timeout: 30)
@@ -56,8 +52,7 @@ class BlockedTests: XCTestCase {
         BlockedTests.bot.login(
             network: NetworkKey.integrationTests,
             hmacKey: HMACKey.integrationTests,
-            secret: newBotSecret) {
-            error in
+            secret: newBotSecret) { error in
             XCTAssertNil(error)
                 loginExpectation.fulfill()
         }
@@ -66,9 +61,8 @@ class BlockedTests: XCTestCase {
         var followExpectations = [XCTestExpectation]()
         for id in Identities.for(NetworkKey.integrationTests) {
             let expectation = self.expectation(description: "Follow \(id)")
-            BlockedTests.bot.follow(id) {
-                contact, err in
-                XCTAssertNil(err)
+            BlockedTests.bot.follow(id) { contact, error in
+                XCTAssertNil(error)
                 XCTAssertNotNil(contact)
                 expectation.fulfill()
             }
@@ -84,20 +78,19 @@ class BlockedTests: XCTestCase {
 
         let aboutMe = About(
             about: newBotSecret.identity,
-            name: "BlockedTest \(formatter.string(from: currentDateTime))")
+            name: "BlockedTest \(formatter.string(from: currentDateTime))"
+        )
 
         let publishExpectation = self.expectation(description: "Publish about")
-        BlockedTests.bot.publish(content: aboutMe) {
-            _, err in
-            XCTAssertNil(err)
+        BlockedTests.bot.publish(content: aboutMe) { _, error in
+            XCTAssertNil(error)
             publishExpectation.fulfill()
         }
         self.wait(for: [publishExpectation], timeout: 30)
 
         // follow back
         let followBackExpectation = self.expectation(description: "Follow back")
-        TestAPI.shared.invitePubsToFollow(newBotSecret.identity) {
-            success, error in
+        TestAPI.shared.invitePubsToFollow(newBotSecret.identity) { success, error in
             XCTAssertNil(error)
             XCTAssertTrue(success)
             followBackExpectation.fulfill()
@@ -107,10 +100,9 @@ class BlockedTests: XCTestCase {
         if !self.syncAndRefresh() { return }
 
         let feedExpectation = self.expectation(description: "Fetch feed")
-        BlockedTests.bot.feed(identity: Identities.testNet.pubs["integrationpub1"]!) {
-            msgs, err in
+        BlockedTests.bot.feed(identity: Identities.testNet.pubs["integrationpub1"]!) { msgs, error in
             defer { feedExpectation.fulfill() }
-            XCTAssertNil(err)
+            XCTAssertNil(error)
             if msgs.count < 1 {
                 XCTAssertGreaterThan(BlockedTests.bot.statistics.repo.feedCount, 1, "didnt even get feed")
                 XCTFail("Expected init message from pub")
@@ -125,10 +117,8 @@ class BlockedTests: XCTestCase {
     // regression test
     func test000_setup2_regression_sync_then_logout() {
         let syncExpectation = self.expectation(description: "Sync")
-        BlockedTests.bot.sync {
-            err, ts, _ in
-            XCTAssertNil(err)
-            XCTAssertNotEqual(ts, 0)
+        BlockedTests.bot.sync { error in
+            XCTAssertNil(error)
             syncExpectation.fulfill()
         }
         self.wait(for: [syncExpectation], timeout: 30)
@@ -142,25 +132,23 @@ class BlockedTests: XCTestCase {
     }
 
     func test001_followBadBot() {
-        guard let sec = BlockedTests.newSecret else { XCTFail("bot setup failed"); return }
+        guard let secret = BlockedTests.newSecret else { XCTFail("bot setup failed"); return }
 
         // login again
         var loginExpectation = self.expectation(description: "Login")
         BlockedTests.bot.login(
             network: NetworkKey.integrationTests,
             hmacKey: HMACKey.integrationTests,
-            secret: sec) {
-            error in
+            secret: secret) { error in
                 XCTAssertNil(error)
                 loginExpectation.fulfill()
         }
         self.wait(for: [loginExpectation], timeout: 30)
 
         var startExpectation = self.expectation(description: "Start")
-        TestAPI.shared.blockedStart(sec.identity) {
-            newid, err in
+        TestAPI.shared.blockedStart(secret.identity) { newid, error in
             defer { startExpectation.fulfill() }
-            XCTAssertNil(err)
+            XCTAssertNil(error)
             if err != nil { return }
             BlockedTests.badBot = newid
         }
@@ -170,9 +158,8 @@ class BlockedTests: XCTestCase {
         if !self.syncAndRefresh() { return }
 
         var followExpectation = self.expectation(description: "Follow")
-        BlockedTests.bot.follow(BlockedTests.badBot) {
-            _, err in
-            XCTAssertNil(err)
+        BlockedTests.bot.follow(BlockedTests.badBot) { _, error in
+            XCTAssertNil(error)
             followExpectation.fulfill()
         }
         self.wait(for: [followExpectation], timeout: 30)
@@ -180,10 +167,9 @@ class BlockedTests: XCTestCase {
         if !self.syncAndRefresh() { return }
 
         var feedExpectation = self.expectation(description: "Fetch feed")
-        BlockedTests.bot.feed(identity: BlockedTests.badBot) {
-            msgs, err in
+        BlockedTests.bot.feed(identity: BlockedTests.badBot) { msgs, error in
             defer { feedExpectation.fulfill() }
-            XCTAssertNil(err)
+            XCTAssertNil(error)
             if msgs.count < 1 {
                 XCTFail("no messages for feed")
                 return
@@ -199,19 +185,17 @@ class BlockedTests: XCTestCase {
         if BlockedTests.badBot == "@unset" { XCTFail("blocked bot start failed"); return }
 
         let blockExpectation = self.expectation(description: "Block")
-        BlockedTests.bot.block(BlockedTests.badBot) {
-            _, err in
-            XCTAssertNil(err)
+        BlockedTests.bot.block(BlockedTests.badBot) { _, error in
+            XCTAssertNil(error)
             blockExpectation.fulfill()
         }
         self.wait(for: [blockExpectation], timeout: 30)
 
         let publishExpectation = self.expectation(description: "Publish")
         var postAfterBlock: MessageIdentifier = "%unset"
-        BlockedTests.bot.publish(content: Post(text: "geeeeezuz why are people so bad?")) {
-            ref, err in
-            XCTAssertNil(err)
-            postAfterBlock = ref
+        BlockedTests.bot.publish(content: Post(text: "geeeeezuz why are people so bad?")) { reference, error in
+            XCTAssertNil(error)
+            postAfterBlock = reference
             publishExpectation.fulfill()
         }
         self.wait(for: [publishExpectation], timeout: 30)
@@ -219,10 +203,9 @@ class BlockedTests: XCTestCase {
 
         let feedExpectation = self.expectation(description: "Fetch feed")
         var latestSeq: Int = -1
-        BlockedTests.bot.feed(identity: BlockedTests.bot.identity!) {
-            msgs, err in
+        BlockedTests.bot.feed(identity: BlockedTests.bot.identity!) { msgs, error in
             defer { feedExpectation.fulfill() }
-            XCTAssertNil(err)
+            XCTAssertNil(error)
             if msgs.count < 1 {
                 XCTFail("should have the published msg")
                 return
@@ -236,12 +219,13 @@ class BlockedTests: XCTestCase {
         if !self.syncAndRefresh() { return }
 
         let blockedExpectation = self.expectation(description: "Blocked blocked")
-        TestAPI.shared.blockedBlocked(bot: BlockedTests.badBot,
-                                   author: BlockedTests.bot.identity!,
-                                      seq: latestSeq,
-                                      ref: postAfterBlock) {
-            err in
-            XCTAssertNil(err)
+        TestAPI.shared.blockedBlocked(
+            bot: BlockedTests.badBot,
+            author: BlockedTests.bot.identity!,
+            seq: latestSeq,
+            ref: postAfterBlock
+        ) { error in
+            XCTAssertNil(error)
             blockedExpectation.fulfill()
         }
         self.wait(for: [blockedExpectation], timeout: 10)
@@ -250,33 +234,30 @@ class BlockedTests: XCTestCase {
 
         // can't see posts now
         let emptyFeedExpectation = self.expectation(description: "Fetch empty feed")
-        BlockedTests.bot.feed(identity: BlockedTests.badBot) {
-            msgs, err in
+        BlockedTests.bot.feed(identity: BlockedTests.badBot) { msgs, error in
             defer { emptyFeedExpectation.fulfill() }
-            XCTAssertNotNil(err)
+            XCTAssertNotNil(error)
             XCTAssertEqual(msgs.count, 0)
             XCTAssertLessThan(msgs.count, 20, "did get new messages after block!")
         }
         self.wait(for: [emptyFeedExpectation], timeout: 30)
     }
 
-    func test003_unblockBadBot() {
+    func test003_unblockBadBot() throws {
         if BlockedTests.badBot == "@unset" { XCTFail("blocked bot start failed"); return }
 
         let unblockExpectation = self.expectation(description: "Unblock")
-        BlockedTests.bot.unblock(BlockedTests.badBot) {
-            _, err in
-            XCTAssertNil(err)
+        BlockedTests.bot.unblock(BlockedTests.badBot) { _, error in
+            XCTAssertNil(error)
             unblockExpectation.fulfill()
         }
         self.wait(for: [unblockExpectation], timeout: 10)
 
         let publishExpectation = self.expectation(description: "Publish")
         var unblockPostRef: MessageIdentifier = "%unset"
-        BlockedTests.bot.publish(content: Post(text: "lets see if they improved")) {
-            ref, err in
-            XCTAssertNil(err)
-            unblockPostRef = ref
+        BlockedTests.bot.publish(content: Post(text: "lets see if they improved")) { reference, error in
+            XCTAssertNil(error)
+            unblockPostRef = reference
             publishExpectation.fulfill()
         }
         self.wait(for: [publishExpectation], timeout: 10)
@@ -287,15 +268,11 @@ class BlockedTests: XCTestCase {
         // get the latest sequence from the test users feeds
         let threadExpectation = self.expectation(description: "Thread")
         var latestSeq: Int = -1
-        BlockedTests.bot.thread(rootKey: unblockPostRef) {
-            root, _, err in
+        BlockedTests.bot.thread(rootKey: unblockPostRef) { root, _, error in
             defer { threadExpectation.fulfill() }
-            XCTAssertNil(err)
-            guard let r = root else {
-                XCTFail("no root message?!")
-                return
-            }
-            latestSeq = r.sequence
+            XCTAssertNil(error)
+            let root = try XCTUnwrap(root, "no root message?!")
+            latestSeq = root.sequence
         }
         self.wait(for: [threadExpectation], timeout: 30)
         if latestSeq == -1 {
@@ -305,12 +282,13 @@ class BlockedTests: XCTestCase {
 
         // badBot receives new messages
         let blockedExpectation = self.expectation(description: "Blocked unblocked")
-        TestAPI.shared.blockedUnblocked(bot: BlockedTests.badBot,
-                                     author: BlockedTests.bot.identity!,
-                                        seq: latestSeq,
-                                        ref: unblockPostRef) {
-            err in
-            XCTAssertNil(err)
+        TestAPI.shared.blockedUnblocked(
+            bot: BlockedTests.badBot,
+            author: BlockedTests.bot.identity!,
+            seq: latestSeq,
+            ref: unblockPostRef
+        ) { error in
+            XCTAssertNil(error)
             blockedExpectation.fulfill()
         }
         self.wait(for: [blockedExpectation], timeout: 10)
@@ -319,10 +297,9 @@ class BlockedTests: XCTestCase {
         if !self.syncAndRefresh() { return }
 
         let feedExpectation = self.expectation(description: "Fetch feed")
-        BlockedTests.bot.feed(identity: BlockedTests.badBot) {
-            msgs, err in
+        BlockedTests.bot.feed(identity: BlockedTests.badBot) { msgs, error in
             defer { feedExpectation.fulfill() }
-            XCTAssertNil(err)
+            XCTAssertNil(error)
             XCTAssertNotEqual(msgs.count, 0, "should have some messages")
             XCTAssertGreaterThan(msgs.count, 20, "should also have the new messages")
         }
@@ -333,26 +310,23 @@ class BlockedTests: XCTestCase {
         if BlockedTests.badBot == "@unset" { XCTFail("blocked bot start failed"); return }
 
         let blockedExpectation = self.expectation(description: "Blocked stop")
-        TestAPI.shared.blockedStop(bot: BlockedTests.badBot) {
-            err in
-            XCTAssertNil(err)
+        TestAPI.shared.blockedStop(bot: BlockedTests.badBot) { error in
+            XCTAssertNil(error)
             blockedExpectation.fulfill()
         }
         self.wait(for: [blockedExpectation], timeout: 10)
 
         let unfollowExpectation = self.expectation(description: "Unfollow pub")
-        TestAPI.shared.letTestPubUnfollow(BlockedTests.newSecret!.identity) {
-            worked, err in
+        TestAPI.shared.letTestPubUnfollow(BlockedTests.newSecret!.identity) { worked, error in
             XCTAssertTrue(worked)
-            XCTAssertNil(err)
+            XCTAssertNil(error)
             unfollowExpectation.fulfill()
         }
         self.wait(for: [unfollowExpectation], timeout: 10)
 
         let logoutExpectation = self.expectation(description: "Logout")
-        BlockedTests.bot.logout {
-            err in
-            XCTAssertNil(err)
+        BlockedTests.bot.logout { error in
+            XCTAssertNil(error)
             logoutExpectation.fulfill()
         }
         self.wait(for: [logoutExpectation], timeout: 10)
@@ -362,16 +336,14 @@ class BlockedTests: XCTestCase {
     @discardableResult
     func syncAndRefresh() -> Bool {
         let syncExpectation = self.expectation(description: "Sync")
-        BlockedTests.bot.sync {
-            error, _, _ in
+        BlockedTests.bot.sync { error, _, _ in
             XCTAssertNil(error)
             syncExpectation.fulfill()
         }
         self.wait(for: [syncExpectation], timeout: 30)
 
         let refreshExpectation = self.expectation(description: "Refresh")
-        BlockedTests.bot.refresh {
-            error, _ in
+        BlockedTests.bot.refresh { error, _ in
             XCTAssertNil(error, "view refresh failed")
             refreshExpectation.fulfill()
         }

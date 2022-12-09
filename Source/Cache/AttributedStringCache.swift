@@ -14,8 +14,7 @@ class AttributedStringCache: DictionaryCache {
     private let minNumberOfItems = Int(50)
 
     @discardableResult
-    func attributedString(for key: String,
-                          markdown: String) -> NSAttributedString {
+    func attributedString(for key: String, markdown: String) -> NSAttributedString {
         Thread.assertIsMainThread()
 
         // cached value if possible
@@ -58,11 +57,13 @@ class AttributedStringCache: DictionaryCache {
     /// A local queue to render markdown and cache in advance.  The
     /// `prefill()` and `cancel()` funcs can only be called from
     /// the main thread.
-    private let queue = DispatchQueue(label: "AttributedStringCache",
-                                      qos: .userInitiated,
-                                      attributes: .concurrent,
-                                      autoreleaseFrequency: .workItem,
-                                      target: nil)
+    private let queue = DispatchQueue(
+        label: "AttributedStringCache",
+        qos: .userInitiated,
+        attributes: .concurrent,
+        autoreleaseFrequency: .workItem,
+        target: nil
+    )
 
     /// A serial queue of keys and markdowns to render.  This is implemented as
     /// an array for simplicity, and is suitable for dozens of items.  If the needs are
