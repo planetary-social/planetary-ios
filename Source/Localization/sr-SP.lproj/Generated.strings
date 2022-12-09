@@ -198,7 +198,7 @@
 "Onboarding.contactsWIP" = "Apologies, this feature is a work in progress. Tap 'OK' to see a list of recommended users to follow.";
 "Onboarding.listMeTitle" = "List me in the user directory";
 "Onboarding.listMeMessage" = "This allows people to find you if they know your name or phone number";
-"Onboarding.thanksForTrying" = "Thanks for trying Planetary! It's customary to use the #newpeople hashtag to introduce yourself.";
+"Onboarding.orUseTheDefaults" = "Or just use the defaults";
 "Onboarding.doneOnboarding" = "Phew! I'm done!";
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";

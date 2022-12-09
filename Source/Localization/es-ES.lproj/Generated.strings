@@ -237,6 +237,8 @@
 "Onboarding.joinPlanetarySystemDescription" = "Unirse significa que usarás los servidores de retransmisión de Planetary para intercambiar mensajes con otros. Recomendado para nuevos usuarios.";
 "Onboarding.useTestNetwork" = "Usar red de pruebas";
 "Onboarding.useTestNetworkDescription" = "Esto creará tu identidad con una clave de red alternativa que no se replicará con la red SSB principal. Esto no se puede cambiar más tarde.";
+"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
+"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
 "Onboarding.yourAlias" = "youralias";
 "Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
 "Onboarding.aliasSkip" = "Skip choosing an alias";

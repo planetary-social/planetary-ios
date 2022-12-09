@@ -212,7 +212,7 @@
 "Onboarding.contactsWIP" = "Disculpa, estem treballant en aquesta funcionalitat. Toca \"D'acord\" per veure una llista d'usuaris recomanats a seguir.";
 "Onboarding.listMeTitle" = "Mostra'm en el directori d'usuaris";
 "Onboarding.listMeMessage" = "Això permet que les persones et trobin si saben el teu nom o número de telèfon";
-"Onboarding.thanksForTrying" = "Gràcies per provar Planetary! És habitual utilitzar l'etiqueta #newpeople per presentar-te.";
+"Onboarding.orUseTheDefaults" = "Or just use the defaults";
 "Onboarding.doneOnboarding" = "Uf! He acabat!";
 "Onboarding.earlyAccess" = "Aquesta aplicació està en una fase inicial. Hem estat centrant el nostre temps en els fonaments, de manera que hi ha buits i fragments aproximats a la interfície d'usuari. Tingues paciència amb nosaltres!";
 "Onboarding.iUnderstand" = "Sí, ho entenc";
@@ -237,6 +237,8 @@
 "Onboarding.joinPlanetarySystemDescription" = "Unir-te significa que utilitzaràs els servidors de transmissió de Planetary per intercanviar missatges amb altres persones. Recomanat per a usuaris nous.";
 "Onboarding.useTestNetwork" = "Utilitza la xarxa de prova";
 "Onboarding.useTestNetworkDescription" = "Això crearà la teva identitat amb una clau de xarxa alternativa que no es replicarà amb la xarxa SSB principal. Això no es pot canviar més endavant.";
+"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
+"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
 "Onboarding.yourAlias" = "youralias";
 "Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
 "Onboarding.aliasSkip" = "Skip choosing an alias";
