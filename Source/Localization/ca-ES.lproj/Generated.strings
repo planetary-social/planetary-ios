@@ -200,12 +200,12 @@
 "Onboarding.youEnteredNumber" = "Has introduït el número {{ phone }}";
 "Onboarding.confirmNumber" = "Si aquest número és correcte, prem \"Torna a enviar SMS\". Si és incorrecte, prem \"Torna a entrar\".";
 "Onboarding.ageLimit" = "Per raons legals, has de tenir més de setze anys per utilitzar Planetary.";
-"Onboarding.chooseProfileImage" = "Choose a\nprofile image";
+"Onboarding.chooseProfileImage" = "Tria una\n imatge de perfil";
 "Onboarding.changePhoto" = "Canvia la foto";
-"Onboarding.confirmPhoto" = "Yes, that's good!";
+"Onboarding.confirmPhoto" = "Sí, això és bo!";
 "Onboarding.startOver" = "Torna a començar";
-"Onboarding.contactsHint" = "We one-way encrypt this data so we can never access it directly.";
-"Onboarding.connect" = "Connect away!";
+"Onboarding.contactsHint" = "Encriptem aquestes dades en una sola direcció perquè mai hi puguem accedir directament.";
+"Onboarding.connect" = "Connecta't!";
 "Onboarding.notNow" = "Ara no";
 "Onboarding.contactsWIP" = "Apologies, this feature is a work in progress. Tap 'OK' to see a list of recommended users to follow.";
 "Onboarding.listMeTitle" = "List me in the user directory";
