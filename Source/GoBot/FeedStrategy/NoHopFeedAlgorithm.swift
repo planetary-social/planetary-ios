@@ -11,7 +11,7 @@ import SQLite
 import Logger
 
 /// This algorithm returns a feed with user's posts, replies and follows
-class NoHopFeedAlgorithm: NSObject, FeedStrategy {
+final class NoHopFeedAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     /// SQL query to count the total number of items in the feed
@@ -201,18 +201,22 @@ class NoHopFeedAlgorithm: NSObject, FeedStrategy {
     """
     // swiftlint:enable indentation_width
 
-    var identity = Identity.null
+    let identity: Identity
 
     override init() {
+        self.identity = .null
         super.init()
     }
 
     init(identity: Identity) {
-        super.init()
         self.identity = identity
+        super.init()
     }
 
-    required init?(coder: NSCoder) {}
+    required init?(coder: NSCoder) {
+        self.identity = .null
+        super.init()
+    }
     func encode(with coder: NSCoder) {}
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {
@@ -243,7 +247,7 @@ class NoHopFeedAlgorithm: NSObject, FeedStrategy {
     }
 
     func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message] {
-        guard let connection = database.getOpenDB() else {
+        guard let connection = try? database.checkoutConnection() else {
             Log.error("db is closed")
             return []
         }

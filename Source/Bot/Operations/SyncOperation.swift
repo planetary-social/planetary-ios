@@ -8,7 +8,6 @@
 
 import Foundation
 import Logger
-import Analytics
 import CrashReporting
 
 /// Tries to connect to the given peers to gossip with them. Don't use this SyncOperation directly, use
@@ -23,9 +22,6 @@ class SyncOperation: AsynchronousOperation {
     
     /// If true, only will sync to one peer with no retries
     var notificationsOnly = false
-    
-    /// Number of new messages available in the repo after the sync
-    private(set) var newMessages: Int = 0
     
     private(set) var error: Error?
     
@@ -42,46 +38,24 @@ class SyncOperation: AsynchronousOperation {
         let loggedInIdentity = Bots.current.identity
         guard loggedInIdentity != nil, loggedInIdentity == configuredIdentity else {
             Log.info("Not logged in. SyncOperation finished.")
-            self.newMessages = -1
             self.error = BotError.notLoggedIn
             self.finish()
             return
         }
         
         let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        if self.notificationsOnly {
-            Bots.current.syncNotifications(
-                queue: queue,
-                peers: pubs
-            ) { [weak self] (error, timeInterval, newMessages) in
-                Analytics.shared.trackBotDidSync(duration: timeInterval,
-                                          numberOfMessages: newMessages)
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.info("SyncOperation finished with \(newMessages) new messages. Took \(timeInterval) seconds to sync.")
-                if let strongSelf = self, !strongSelf.isCancelled {
-                    self?.newMessages = newMessages
-                    self?.error = error
-                }
-                self?.finish()
+        Bots.current.sync(queue: queue, peers: pubs) { [weak self] (error) in
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+            Log.info("Dialing rooms")
+            self?.rooms.forEach {
+                Bots.current.connect(to: $0)
             }
-        } else {
-            Bots.current.sync(queue: queue, peers: pubs) { [weak self] (error, timeInterval, newMessages) in
-                Analytics.shared.trackBotDidSync(duration: timeInterval,
-                                          numberOfMessages: newMessages)
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.info("SyncOperation finished with \(newMessages) new messages. Took \(timeInterval) seconds to sync.")
-                Log.info("Dialing rooms")
-                self?.rooms.forEach {
-                    Bots.current.connect(to: $0)
-                }
-                if let strongSelf = self, !strongSelf.isCancelled {
-                    self?.newMessages = newMessages
-                    self?.error = error
-                }
-                self?.finish()
+            if let strongSelf = self, !strongSelf.isCancelled {
+                self?.error = error
             }
+            Log.info("SyncOperation finished.")
+            self?.finish()
         }
     }
 }

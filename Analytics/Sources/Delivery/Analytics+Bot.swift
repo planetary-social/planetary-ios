@@ -28,10 +28,6 @@ public extension Analytics {
                                                                          "Reason": reason])
     }
 
-    func trackBotDidUpdateMessages(count: Int) {
-        service.track(event: .did, element: .bot, name: "db_update", param: "inserted", value: "\(count)")
-    }
-
     func trackBotDidUpdateDatabase(count: Int, firstTimestamp: Float64, lastTimestamp: Float64, lastHash: String) {
         let params: [String: Any] = ["msg.count": count,
                                      "first.timestamp": firstTimestamp,
@@ -58,21 +54,6 @@ public extension Analytics {
         service.track(event: .did, element: .bot, name: "repair", params: params)
     }
 
-    func trackBotDidSync(duration: TimeInterval, numberOfMessages: Int) {
-        let params: [String: Any] = ["duration": duration,
-                                     "number_of_messages": numberOfMessages]
-        service.track(event: .did, element: .bot, name: "sync", params: params)
-    }
-
-    func trackBotDidRefresh(load: Int32, duration: TimeInterval, error: Error? = nil) {
-        var params: [String: Any] = ["load": load,
-                                     "duration": duration]
-        if let error = error {
-            params["error"] = error.localizedDescription
-        }
-        service.track(event: .did, element: .bot, name: "refresh", params: params)
-    }
-    
     func trackDidDropDatabase() {
         service.track(event: .did, element: .bot, name: "drop_database")
     }

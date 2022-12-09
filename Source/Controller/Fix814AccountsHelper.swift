@@ -42,7 +42,7 @@ enum Fix814AccountsHelper {
             let identityCreationDate = try? db.currentUserCreatedDate(),
             identityCreationDate > Date(timeIntervalSince1970: 1_661_265_000), // 2022-08-23 10:30am
             identityCreationDate < Date(timeIntervalSince1970: 1_662_587_210) else { // 2022-09-07
-            db.close()
+            await db.close()
             userDefaults.set(true, forKey: hasPromptedKey)
             userDefaults.synchronize()
             return nil
@@ -72,7 +72,7 @@ enum Fix814AccountsHelper {
             Analytics.shared.trackDidStart814Fix()
                      
             let publishedMessages = try db.publishedMessagesForCurrentUser()
-            db.close()
+            await db.close()
             Log.info("Prompting for 814 fix.")
             Log.info("Found \(publishedMessages.count) published messages")
             
@@ -83,7 +83,7 @@ enum Fix814AccountsHelper {
             newConfiguration.bot = bot
             newConfiguration.ssbNetwork = Environment.Networks.mainNet
             
-            try await bot.login(config: newConfiguration)
+            try await bot.login(config: newConfiguration, fromOnboarding: false)
             
             // copy published messages
             for message in publishedMessages {

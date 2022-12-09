@@ -92,6 +92,9 @@ private struct GoBotConfig: Encodable {
     let SchemaVersion: UInt
 
     let ServicePubs: [Identity]? // identities of services which supply planetary specific services
+    
+    /// Disables EBT replication if true. Part of a workaround for #847.
+    let DisableEBT: Bool
 
     #if DEBUG
     let Testing = true
@@ -132,10 +135,10 @@ class GoBotInternal {
 
     // MARK: login / logout
 
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String) -> Error? {
+    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String, disableEBT: Bool) throws {
         if self.isRunning {
             guard self.logout() == true else {
-                return GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
+                throw GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
             }
         }
         
@@ -155,7 +158,9 @@ class GoBotInternal {
             ListenAddr: listenAddr,
             Hops: 1,
             SchemaVersion: ViewDatabase.schemaVersion,
-            ServicePubs: servicePubs)
+            ServicePubs: servicePubs,
+            DisableEBT: disableEBT
+        )
         
         let enc = JSONEncoder()
         var cfgStr: String
@@ -163,7 +168,7 @@ class GoBotInternal {
             let d = try enc.encode(cfg)
             cfgStr = String(data: d, encoding: .utf8)!
         } catch {
-            return GoBotError.duringProcessing("config prep failed", error)
+            throw GoBotError.duringProcessing("config prep failed", error)
         }
 
         var worked = false
@@ -179,10 +184,10 @@ class GoBotInternal {
                 self.replicate(feed: pub)
             }
             
-            return nil
+            return
         }
         
-        return GoBotError.unexpectedFault("failed to start")
+        throw GoBotError.unexpectedFault("failed to start")
     }
     
     func logout() -> Bool {
@@ -284,18 +289,13 @@ class GoBotInternal {
             Log.error("Failed to disconnect peers")
         }
         
-        let connectToHealthy = ssbConnectPeers(2)
-        if !connectToHealthy {
-            Log.error("Failed to connect to healthy peers")
-        }
-        
         // Also connect to two random peers
         let connectToRandom = self.dial(from: peers, atLeast: 2, tries: 10)
         if !connectToRandom {
             Log.error("Failed to connect to random peers")
         }
         
-        return disconnectSuccess && connectToHealthy && connectToRandom
+        return disconnectSuccess && connectToRandom
     }
     
     func dialOne(peer: MultiserverAddress) -> Bool {
@@ -321,7 +321,9 @@ class GoBotInternal {
 
     // MARK: Status / repo stats
 
-    func repoStatus() throws -> ScuttlegobotRepoCounts {
+    /// Fetches some metadata about the go-ssb log including how many messages it has.
+    /// This should only be called on the `serialQueue`.
+    func repoStats() throws -> ScuttlegobotRepoCounts {
         guard let counts = ssbRepoStats() else {
             throw GoBotError.unexpectedFault("failed to get repo counts")
         }
@@ -329,6 +331,16 @@ class GoBotInternal {
         free(counts)
         let dec = JSONDecoder()
         return try dec.decode(ScuttlegobotRepoCounts.self, from: countData)
+    }
+    
+    /// Fetches some metadata about the go-ssb log including how many messages it has.
+    /// This should only be called on the `serialQueue`.
+    func repoStats() -> Result<ScuttlegobotRepoCounts, Error> {
+        do {
+            return .success(try repoStats())
+        } catch {
+            return .failure(error)
+        }
     }
     
     // repoFSCK returns true if the repo is fine and otherwise false

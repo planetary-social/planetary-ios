@@ -30,7 +30,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     
     private lazy var connectedPeersViewController: UIViewController = {
         let bot = Bots.current
-        let viewModel = ConnectedPeerListCoordinator(
+        let viewModel = ConnectedPeerListController(
             bot: bot,
             statisticsService: BotStatisticsServiceAdaptor(bot: bot),
             router: self
@@ -120,15 +120,17 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     @objc private func profileViewTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "profile")
         guard let identity = Bots.current.identity else { return }
-        AppController.shared.pushViewController(for: .about, with: identity)
-        self.close()
+        self.close {
+            AppController.shared.pushViewController(for: .about, with: identity)
+        }
     }
     
     @objc private func profileButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "your_profile")
         guard let identity = Bots.current.identity else { return }
-        AppController.shared.pushViewController(for: .about, with: identity)
-        self.close()
+        self.close {
+            AppController.shared.pushViewController(for: .about, with: identity)
+        }
     }
 
     @objc private func settingsButtonTouchUpInside() {
@@ -201,8 +203,9 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
     
     // MARK: - ConnectedPeerListRouter
     func showProfile(for identity: Identity) {
-        AppController.shared.pushViewController(for: .about, with: identity)
-        close()
+        self.close {
+            AppController.shared.pushViewController(for: .about, with: identity)
+        }
     }
 }
 

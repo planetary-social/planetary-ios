@@ -62,24 +62,29 @@ class LaunchViewController: UIViewController {
     // MARK: Actions
 
     @MainActor
-    private func launch() {
-
+    func launch() {
+        
+        guard appConfiguration?.bot?.identity == nil else {
+            launchIntoMain()
+            return
+        }
+        
         // if simulating then onboard
         if UserDefaults.standard.simulateOnboarding {
-            self.launchIntoOnboarding(simulate: true)
+            launchIntoOnboarding(simulate: true)
             return
         }
 
         // if no configuration then onboard
         guard var configuration = appConfiguration else {
-            self.launchIntoOnboarding()
+            launchIntoOnboarding()
             return
         }
 
         let identity = configuration.identity
         // if configuration and is required then onboard
         if Onboarding.status(for: identity) == .started {
-            self.launchIntoOnboarding(status: .started)
+            launchIntoOnboarding(status: .started)
             return
         }
 
@@ -118,7 +123,7 @@ class LaunchViewController: UIViewController {
                 guard configuration.network != nil else { return }
                 guard let bot = configuration.bot else { return }
                 
-                try await bot.login(config: configuration)
+                try await bot.login(config: configuration, fromOnboarding: false)
             } catch {
                 self.handleLoginFailure(with: error, configuration: configuration)
             }
@@ -144,6 +149,7 @@ class LaunchViewController: UIViewController {
         // also, user is already logged in
 
         // transition to main app UI
+        Log.info("Showing main view controller")
         appController.showMainViewController(animated: true)
     }
 
@@ -167,40 +173,44 @@ class LaunchViewController: UIViewController {
             preferredStyle: .alert
         )
         let action = UIAlertAction(title: "Restart", style: .default) { _ in
-            Log.debug("Restarting launch...")
-            bot.logout { error in
-                // Don't report error here becuase the normal path is to actually receive
-                // a notLoggedIn error
-                Log.optional(error)
-                
+            Task {
+                Log.debug("Restarting launch...")
+                do {
+                    try await bot.logout()
+                } catch {
+                    // Don't report error here becuase the normal path is to actually receive
+                    // a notLoggedIn error
+                    Log.optional(error)
+                }
+                    
                 ssbDropIndexData()
                 
                 Analytics.shared.forget()
                 CrashReporting.shared.forget()
                 
-                Task {
-                    await self.appController.relaunch()
-                }
+                await self.appController.relaunch()
             }
         }
         controller.addAction(action)
         
         let reset = UIAlertAction(title: "Reset", style: .destructive) { _ in
-            Log.debug("Resetting current configuration and restarting launch...")
-            AppConfiguration.current?.unapply()
-            bot.logout { error in
-                // Don't report error here becuase the normal path is to actually receive
-                // a notLoggedIn error
-                Log.optional(error)
-                
+            Task {
+                Log.debug("Resetting current configuration and restarting launch...")
+                AppConfiguration.current?.unapply()
+                do {
+                    try await bot.logout()
+                } catch {
+                    // Don't report error here becuase the normal path is to actually receive
+                    // a notLoggedIn error
+                    Log.optional(error)
+                }
+                    
                 ssbDropIndexData()
                 
                 Analytics.shared.forget()
                 CrashReporting.shared.forget()
                 
-                Task {
-                    await self.appController.relaunch()
-                }
+                await self.appController.relaunch()
             }
         }
         controller.addAction(reset)
@@ -235,7 +245,7 @@ class LaunchViewController: UIViewController {
     }
     
     private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
-        try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: configuration,
             appController: appController,
             userDefaults: userDefaults

@@ -13,6 +13,7 @@ extension Localized {
             Localized.Onboarding.self,
             Localized.Onboarding.StepTitle.self,
             Localized.ManageRelays.self,
+            Localized.Message.self,
             Localized.Alias.self,
             Localized.Preview.self,
             Localized.FeedAlgorithm.self,
@@ -62,6 +63,7 @@ enum Localized: String, Localizable, CaseIterable {
     case atDayTime = "{{ day }} at {{ time }}"
     case minutesAbbreviated = "{{ numberOfMinutes }} mins"
 
+    case profile = "Profile"
     case yourProfile = "Your Profile"
     case helpAndSupport = "Help and Support"
     case reportBug = "Report a Bug"
@@ -71,10 +73,12 @@ enum Localized: String, Localizable, CaseIterable {
     case usersInYourNetwork = "Users in your network"
     case goToYourNetwork = "Go to Your Network"
     case emptyHomeFeedMessage = "And it is rather bare! Have you considered following a few users or topics?"
+    case posted = "{{somebody}} posted"
     case replied = "{{somebody}} replied"
     case liked = "{{somebody}} liked"
     case startedFollowing = "{{somebody}} started following"
     case stoppedFollowing = "{{somebody}} stopped following"
+    case startedBlocking = "{{somebody}} blocked"
     case followStats = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}"
     case userOusideNetwork = "This user is outside your network"
     case showMeInDirectory = "Show me in the directory"
@@ -97,6 +101,7 @@ enum Localized: String, Localizable, CaseIterable {
     case editPost = "Edit this post"
     case confirmDeletePost = "Are you sure you want to delete this post?"
 
+    case readMore = "Read more"
     case postReply = "Post Reply"
     case postAReply = "Post a reply"
     case createProfile = "Create Profile"
@@ -110,9 +115,11 @@ enum Localized: String, Localizable, CaseIterable {
 
     case block = "Ignore"
     case blocked = "Ignored"
+    case blocking = "Ignoring"
 
     case deleteSecretAndIdentity = "Delete this secret and identity"
 
+    case followBack = "Follow back"
     case follow = "Follow"
     case following = "Following"
     case followedBy = "Followed By"
@@ -120,6 +127,8 @@ enum Localized: String, Localizable, CaseIterable {
     
     case followedByCount = "Followed by {{ count }}"
     case followingCount = "Following {{ count }}"
+    case blockingCount = "Ignoring {{ count }}"
+    case joinedCount = "Joined {{ count }}"
     case inYourNetwork = " in your network"
     
     case followedByShortCount = "{{ count }} Followers"
@@ -182,6 +191,7 @@ enum Localized: String, Localizable, CaseIterable {
     case debug = "Debug"
     
     case join = "Join"
+    case joined = "Joined"
     case redeemInvitation = "Redeem an invitation"
     case pasteAddress = "Token"
     case invitationRedeemed = "Invitation redeemed!"
@@ -390,9 +400,17 @@ extension Localized {
         case loadingRooms = "Loading rooms..."
         case invalidRoomURL = "Invalid room URL"
         case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
+        case deleteRoom = "Delete"
+        case deleteRoomConfirmation = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room."
     }
 }
 
+extension Localized {
+    enum Message: String, Localizable, CaseIterable {
+        case noPostsTitle = "No posts here yet"
+        case noPostsDescription = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
+    }
+}
 // MARK: - Manage Aliases
 
 extension Localized {
@@ -535,6 +553,7 @@ extension Localized {
         case invalidRoomURL = "Could not parse invitation."
         case invalidRoomInvitationOrAddress = "Planetary does not recognize this as a valid room invitation or address."
         case notLoggedIn = "The operation could not be completed because no user is logged in."
+        case alreadyJoinedRoom = "You are already a member of this room"
     }
 }
 
@@ -556,7 +575,7 @@ extension Localized {
     enum Report: String, Localizable, CaseIterable {
         case somebody = "Somebody"
         case feedFollowed = "%@ started following you"
-        case postReplied = "%@ replied to your post"
+        case postReplied = "%@ replied to a post you commented on"
         case feedMentioned = "%@ mentioned you in a post"
         case messageLiked = "%@ liked your post"
     }

@@ -16,7 +16,7 @@ import Logger
 /// It doesn't include pubs follows and posts in the feed.
 ///
 /// NOTE: This has a lot of code copied from PostsAndContactsAlgorithm. We should factor it out. (#564)
-class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
+final class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
 
     // swiftlint:disable indentation_width
     private let countNumberOfKeysQuery = """
@@ -200,7 +200,7 @@ class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
     }
 
     func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message] {
-        guard let connection = database.getOpenDB() else {
+        guard let connection = try? database.checkoutConnection() else {
             Log.error("db is closed")
             return []
         }

@@ -49,7 +49,7 @@ class PreviewSettingsViewController: DebugTableViewController {
                 cell in
                 guard let identity = Bots.current.identity else { return }
                 cell.showActivityIndicator()
-                Bots.current.blocks(identity: identity) {
+            Bots.current.blocks(identity: identity, queue: .main) {
                     identities, _ in
                     cell.hideActivityIndicator(andShow: .disclosureIndicator)
                     cell.detailTextLabel?.text = "\(identities.count)"
@@ -108,11 +108,15 @@ class PreviewSettingsViewController: DebugTableViewController {
 
     private func offboard() {
         AppController.shared.showProgress(after: 0)
-        Offboarding.offboard {
-            [weak self] error in
-            AppController.shared.hideProgress()
-            guard let me = self else { return }
-            if me.didError(error) { return } else { me.relaunch() }
+        Task { [weak self] in
+            do {
+                try await Offboarding.offboard()
+                AppController.shared.hideProgress()
+            } catch {
+                AppController.shared.hideProgress()
+                return
+            }
+            self?.relaunch()
         }
     }
 

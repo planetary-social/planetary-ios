@@ -12,7 +12,7 @@ import SwiftUI
 // swiftlint:disable implicitly_unwrapped_optional force_unwrapping
 
 /// Tests for the "beta1" go-ssb migration. More info on this migration can be found in
-/// `Beta1MigrationCoordinator.swift`.
+/// `Beta1MigrationController.swift`.
 class Beta1MigrationTests: XCTestCase {
     
     var mockBot: MockMigrationBot!
@@ -55,7 +55,7 @@ class Beta1MigrationTests: XCTestCase {
         }
     }
     
-    // MARK: - Beta1MigrationCoordinator
+    // MARK: - Beta1MigrationController
     
     /// Verifies that the proper user defaults keys are set after the migration
     func testUserDefaultsSetAfterMigration() async throws {
@@ -66,7 +66,7 @@ class Beta1MigrationTests: XCTestCase {
         XCTAssertEqual(self.userDefaults.string(forKey: "GoBotDatabaseVersion"), nil)
         
         // Act
-        _ = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        _ = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
@@ -80,7 +80,7 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the proper user defaults keys are set when a user creates a new profile
     func testUserDefaultsSetAfterNewAccountCreation() async throws {
         // Act
-        try await mockBot.login(config: appConfig)
+        try await mockBot.login(config: appConfig, fromOnboarding: false)
         
         // Assert
         XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
@@ -95,7 +95,7 @@ class Beta1MigrationTests: XCTestCase {
         self.userDefaults.set("beta3Test", forKey: "GoBotDatabaseVersion")
         
         // Act
-        let isMigrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        let isMigrating = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
@@ -142,7 +142,7 @@ class Beta1MigrationTests: XCTestCase {
         
         // Act
         // Migrate Bob
-        var migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        var migrating = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: bobConfig,
             appController: appController,
             userDefaults: userDefaults
@@ -155,7 +155,7 @@ class Beta1MigrationTests: XCTestCase {
         userDefaults.synchronize()
         
         // Try to migrate alice
-        migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        migrating = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: aliceConfig,
             appController: appController,
             userDefaults: userDefaults
@@ -172,7 +172,7 @@ class Beta1MigrationTests: XCTestCase {
         userDefaults.set("beta2Test", forKey: "GoBotDatabaseVersion")
         
         // Act
-        let isMigrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        let isMigrating = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
@@ -191,7 +191,7 @@ class Beta1MigrationTests: XCTestCase {
         appConfig.numberOfPublishedMessages = 1
         
         // Act
-        let migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        let migrating = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
@@ -209,14 +209,14 @@ class Beta1MigrationTests: XCTestCase {
     
     // MARK: Bot isRestoring
     
-    /// Verifies that the migration coordinator puts the bot into restoring mode.
+    /// Verifies that the migration controller puts the bot into restoring mode.
     func testBotIsRestoringDuringMigration() async throws {
         // Arrange
         try touchSQLiteDatabase()
         XCTAssertEqual(mockBot.isRestoring, false)
         
         // Act
-        let migrating = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        let migrating = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
@@ -226,29 +226,28 @@ class Beta1MigrationTests: XCTestCase {
         XCTAssertEqual(mockBot.isRestoring, true)
     }
     
-    /// Verifies that the migration coordinator removes the bot from restoring mode when dismissed.
-    @MainActor func testBotIsNotRestoringAfterMigration() async throws {
+    /// Verifies that the migration controller removes the bot from restoring mode when dismissed.
+    func testBotIsNotRestoringAfterMigration() async throws {
         // Arrange
         try touchSQLiteDatabase()
         XCTAssertEqual(mockBot.isRestoring, false)
-        
+
         // Act
         // Present migration screen
-        _ = try await Beta1MigrationCoordinator.performBeta1MigrationIfNeeded(
+        _ = try await Beta1MigrationController.performBeta1MigrationIfNeeded(
             appConfiguration: appConfig,
             appController: appController,
             userDefaults: userDefaults
         )
-        
-        let hostingController = try XCTUnwrap(
-            self.appController.presentedViewControllerParam as?
-                UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>>
-        )
-        let migrationCoordinator = hostingController.rootView.viewModel
-        
+
+        let hostingController = await self.appController.presentedViewControllerParam as?
+            UIHostingController<Beta1MigrationView<Beta1MigrationController>>
+        XCTAssertNotNil(hostingController)
+        let migrationCoordinator = await hostingController?.rootView.viewModel
+
         // Dismiss migration screen
-        migrationCoordinator.dismissPressed()
-        
+        await migrationCoordinator?.dismissPressed()
+
         XCTAssertEqual(mockBot.isRestoring, false)
     }
     
@@ -299,7 +298,7 @@ class Beta1MigrationTests: XCTestCase {
         /// Wait for migration view to be presented
         let expectation = XCTBlockExpectation {
             self.appController.presentedViewControllerParam is
-                UIHostingController<Beta1MigrationView<Beta1MigrationCoordinator>>
+                UIHostingController<Beta1MigrationView<Beta1MigrationController>>
         }
         wait(for: [expectation], timeout: 10)
     }

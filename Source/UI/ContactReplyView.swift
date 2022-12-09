@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /// Composite view of the PostCellView, a ReplyTextView, and a bottom separator.
-class ContactReplyView: MessageView {
+class ContactReplyView: MessageUIView {
 
     let contactView = ContactCellView()
 

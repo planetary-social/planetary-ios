@@ -12,11 +12,13 @@ import Analytics
 import Logger
 import CrashReporting
 
-@MainActor class BlobViewController: ContentViewController {
+class BlobViewController: ContentViewController {
 
     private let blob: BlobIdentifier
 
     private let imageView: UIImageView
+
+    private var completion: UUID?
     
     init(with blob: BlobIdentifier) {
         self.blob = blob
@@ -27,6 +29,10 @@ import CrashReporting
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        forgetBlobCompletion()
     }
 
     override func viewDidLoad() {
@@ -41,9 +47,28 @@ import CrashReporting
         Analytics.shared.trackDidShowScreen(screenName: "blob")
     }
 
+    private func forgetBlobCompletion() {
+        guard let uuid = self.completion else { return }
+        Caches.blobs.forgetCompletions(with: uuid, for: blob)
+    }
+
     private func update() {
-        Task {
-            imageView.image = await Caches.blobs.imageOrPlaceholder(for: blob)
+        // always forget any pending completion
+        forgetBlobCompletion()
+
+        Task { @MainActor [weak self] in
+            // cached image
+            if let uiImage = Caches.blobs.image(for: blob) {
+                self?.imageView.image = uiImage
+                return
+            }
+
+            // request image
+            let uuid = Caches.blobs.imageOrPlaceholder(for: blob) { [weak self] uiImage in
+                self?.imageView.image = uiImage
+            }
+
+            self?.completion = uuid
         }
     }
 }

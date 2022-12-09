@@ -17,6 +17,10 @@ enum FakeBotError: Error {
 class FakeBot: Bot {
     
     var isRestoring = false
+
+    func setRestoring(_ value: Bool) {
+        isRestoring = value
+    }
     
     required init(
         userDefaults: UserDefaults,
@@ -59,6 +63,12 @@ class FakeBot: Bot {
     func joinedPubs(queue: DispatchQueue, completion: @escaping (([Pub], Error?) -> Void)) {
         queue.async {
             completion([], nil)
+        }
+    }
+
+    func pubs(joinedBy identity: Identity, queue: DispatchQueue, completion: @escaping PubsCompletion) {
+        queue.async {
+            completion(.success([]))
         }
     }
     
@@ -120,11 +130,11 @@ class FakeBot: Bot {
 
     func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) { }
     
-    func follows(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func follows(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
     
     func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     
-    func followedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func followedBy(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
 
     func followings(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }
     
@@ -132,7 +142,7 @@ class FakeBot: Bot {
 
     func socialStats(for identity: Identity, completion: @escaping ((SocialStats, Error?) -> Void)) { }
     
-    func blocks(identity: Identity, completion: @escaping ContactsCompletion) { }
+    func blocks(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
     
     func blockedBy(identity: Identity, completion: @escaping ContactsCompletion) { }
 
@@ -163,24 +173,20 @@ class FakeBot: Bot {
     
     // MARK: Login
     private var _network: String?
-    private var _identity: Identity?
+    private var _identity: Identity? = .null
     var identity: Identity? { self._identity }
 
     func createSecret(completion: SecretCompletion) {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
     }
 
-    func login(queue: DispatchQueue, config: AppConfiguration, completion: @escaping ErrorCompletion) {
+    func login(config: AppConfiguration, fromOnboarding: Bool) async throws {
         self._network = config.network?.string
         self._identity = config.secret.identity
-        queue.async {
-            completion(nil)
-        }
     }
 
-    func logout(completion: ErrorCompletion) {
+    func logout() async throws {
         self._identity = nil
-        completion(nil)
         self._network = nil
     }
 
@@ -191,19 +197,12 @@ class FakeBot: Bot {
     func sync(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self._statistics.lastSyncDate = Date()
         queue.async {
-            completion(nil, 0, 0)
+            completion(nil)
         }
     }
     
     func connect(to address: MultiserverAddress) { }
     
-    func syncNotifications(queue: DispatchQueue, peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
-        self._statistics.lastSyncDate = Date()
-        queue.async {
-            completion(nil, 0, 0)
-        }
-    }
-
     // MARK: Refresh
 
     let isRefreshing = false
@@ -301,6 +300,10 @@ class FakeBot: Bot {
             completion(StaticDataProxy(), nil)
         }
     }
+    
+    func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
+        completion([], nil)
+    }
 
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
@@ -331,6 +334,10 @@ class FakeBot: Bot {
     private var _statistics = BotStatistics()
     var mockStatistics = [BotStatistics]()
     var statistics: BotStatistics { mockStatistics.popLast() ?? _statistics }
+    
+    func numberOfNewMessages(since: Date) throws -> Int {
+        0
+    }
     
     var mockRecentlyDownloadedPostData = (0, 0)
     func recentlyDownloadedPostData() -> (recentlyDownloadedPostCount: Int, recentlyDownloadedPostDuration: Int) {
