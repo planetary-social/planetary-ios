@@ -88,11 +88,10 @@ struct Environment {
                 let identifier = aliasServerComponents[0]
                 let imageName = aliasServerComponents[2]
                 guard let key = Key(rawValue: aliasServerComponents[3]),
-                      let token = Keys.shared.get(key: key),
-                      let address = MultiserverAddress(string: aliasServerComponents[1]),
-                      !identifier.isEmpty,
-                      !imageName.isEmpty
-                else {
+                    let token = Keys.shared.get(key: key),
+                    let address = MultiserverAddress(string: aliasServerComponents[1]),
+                    !identifier.isEmpty,
+                    !imageName.isEmpty else {
                     return
                 }
                 communityAliasServers.append(
