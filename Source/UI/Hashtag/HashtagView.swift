@@ -42,15 +42,24 @@ struct HashtagView: View {
                     ZStack {
                         LazyVStack {
                             if messages.isEmpty {
-                                EmptyPostsView()
+                                EmptyPostsView(description: Localized.Message.noPostsInHashtagDescription)
                             } else {
                                 ForEach(messages) { message in
-                                    MessageView(message: message)
-                                        .onAppear {
-                                            if message == messages.last {
-                                                loadMore()
-                                            }
+                                    Button {
+                                        if let contact = message.content.contact {
+                                            AppController.shared.open(identity: contact.contact)
+                                        } else {
+                                            AppController.shared.open(identifier: message.id)
                                         }
+                                    } label: {
+                                        MessageView(message: message)
+                                            .onAppear {
+                                                if message == messages.last {
+                                                    loadMore()
+                                                }
+                                            }
+                                    }
+                                    .buttonStyle(MessageButtonStyle())
                                 }
                             }
                         }

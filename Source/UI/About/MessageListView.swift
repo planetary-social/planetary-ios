@@ -33,15 +33,24 @@ struct MessageListView: View {
         ZStack {
             LazyVStack {
                 if messages.isEmpty, !isLoading {
-                    EmptyPostsView()
+                    EmptyPostsView(description: Localized.Message.noPostsDescription)
                 } else {
                     ForEach(messages, id: \.self) { message in
-                        MessageView(message: message)
-                            .onAppear {
-                                if message == messages.last {
-                                    loadMore()
-                                }
+                        Button {
+                            if let contact = message.content.contact {
+                                AppController.shared.open(identity: contact.contact)
+                            } else {
+                                AppController.shared.open(identifier: message.id)
                             }
+                        } label: {
+                            MessageView(message: message)
+                                .onAppear {
+                                    if message == messages.last {
+                                        loadMore()
+                                    }
+                                }
+                        }
+                        .buttonStyle(MessageButtonStyle())
                     }
                 }
                 if isLoading, !noMoreMessages {

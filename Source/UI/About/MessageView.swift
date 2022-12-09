@@ -75,9 +75,6 @@ struct MessageView: View {
             Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
             if let contact = message.content.contact {
                 CompactIdentityView(identity: contact.contact)
-                    .onTapGesture {
-                        AppController.shared.open(identity: contact.contact)
-                    }
             } else if let post = message.content.post {
                 Group {
                     CompactPostView(post: post)
@@ -94,10 +91,6 @@ struct MessageView: View {
                     }
                     .padding(15)
                 }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    AppController.shared.open(identifier: message.id)
-                }
             }
         }
         .background(
@@ -109,9 +102,6 @@ struct MessageView: View {
         )
         .cornerRadius(20)
         .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
-        .compositingGroup()
-        .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
-        .shadow(color: .cardShadowBottom, radius: 10, x: 0, y: 4)
     }
 
     private var replies: [ImageMetadata] {

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct EmptyPostsView: View {
+    var description: Localizable
     var body: some View {
         VStack {
             Text("⏳")
@@ -30,7 +31,7 @@ struct EmptyPostsView: View {
     private let howGossippingWorks = "https://github.com/planetary-social/planetary-ios/wiki/Distributed-Social-Network"
 
     private var noPostsDescription: AttributedString {
-        let unformattedDescription = Localized.Message.noPostsDescription.text(["link": howGossippingWorks])
+        let unformattedDescription = description.text(["link": howGossippingWorks])
         do {
             return try AttributedString(
                 markdown: unformattedDescription,

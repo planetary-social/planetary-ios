@@ -14,6 +14,8 @@ struct FloatingButton: View {
 
     var isLoading: Bool
 
+    var proxy: ScrollViewProxy?
+
     @SwiftUI.Environment(\.refresh)
     private var refresh
 

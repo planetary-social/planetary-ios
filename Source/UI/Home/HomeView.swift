@@ -70,12 +70,21 @@ struct HomeView: View {
                                     EmptyHomeView()
                                 } else {
                                     ForEach(messages) { message in
-                                        MessageView(message: message)
-                                            .onAppear {
-                                                if message == messages.last {
-                                                    loadMore()
-                                                }
+                                        Button {
+                                            if let contact = message.content.contact {
+                                                AppController.shared.open(identity: contact.contact)
+                                            } else {
+                                                AppController.shared.open(identifier: message.id)
                                             }
+                                        } label: {
+                                            MessageView(message: message)
+                                                .onAppear {
+                                                    if message == messages.last {
+                                                        loadMore()
+                                                    }
+                                                }
+                                        }
+                                        .buttonStyle(MessageButtonStyle())
                                     }
                                 }
                             }
@@ -201,7 +210,7 @@ struct HomeView: View {
         let bot = botRepository.current
         let pageSize = 50
         do {
-            let newMessages = try await bot.feed(strategy: strategy, limit: 50, offset: 0)
+            let newMessages = try await bot.feed(strategy: strategy, limit: pageSize, offset: 0)
             await MainActor.run {
                 messages = newMessages
                 offset = newMessages.count
@@ -264,7 +273,7 @@ struct HomeView: View {
     private func checkNewItemsIfNeeded() async {
         // Check that more than a minute passed since the last time we checked for new updates
         let elapsed = Date().timeIntervalSince(lastTimeNewFeedUpdatesWasChecked)
-        guard elapsed > 5 else {
+        guard elapsed > 60 else {
             return
         }
         let bot = botRepository.current

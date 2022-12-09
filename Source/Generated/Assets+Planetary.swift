@@ -147,6 +147,7 @@ extension Image {
        static let iconOptionsOn = Image("icon-options-on", bundle: Bundle.current)
        static let iconOptions = Image("icon-options", bundle: Bundle.current)
        static let iconPlanetary2 = Image("icon-planetary-2", bundle: Bundle.current)
+       static let iconPlanetary3 = Image("icon-planetary-3", bundle: Bundle.current)
        static let iconPlanetarySmall = Image("icon-planetary-small", bundle: Bundle.current)
        static let iconPlanetary = Image("icon-planetary", bundle: Bundle.current)
        static let iconProfile = Image("icon-profile", bundle: Bundle.current)
@@ -212,6 +213,7 @@ extension UIImage {
        static let iconOptionsOn = UIImage(named: "icon-options-on", in: Bundle.current, with: nil)!
        static let iconOptions = UIImage(named: "icon-options", in: Bundle.current, with: nil)!
        static let iconPlanetary2 = UIImage(named: "icon-planetary-2", in: Bundle.current, with: nil)!
+       static let iconPlanetary3 = UIImage(named: "icon-planetary-3", in: Bundle.current, with: nil)!
        static let iconPlanetarySmall = UIImage(named: "icon-planetary-small", in: Bundle.current, with: nil)!
        static let iconPlanetary = UIImage(named: "icon-planetary", in: Bundle.current, with: nil)!
        static let iconProfile = UIImage(named: "icon-profile", in: Bundle.current, with: nil)!

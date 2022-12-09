@@ -12,7 +12,7 @@ struct EmptyHomeView: View {
     var body: some View {
         ZStack(alignment: .center) {
             VStack(alignment: .center, spacing: 20) {
-                Image.iconPlanetary
+                Image.iconPlanetary3
                 Text("Welcome!\nThis is your feed")
                     .font(.headline)
                     .foregroundColor(.primaryTxt)
@@ -49,8 +49,14 @@ struct EmptyHomeView: View {
 
 struct EmptyHomeView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            EmptyHomeView()
+        Group {
+            VStack {
+                EmptyHomeView()
+            }
+            VStack {
+                EmptyHomeView()
+            }
+            .preferredColorScheme(.dark)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.appBg)

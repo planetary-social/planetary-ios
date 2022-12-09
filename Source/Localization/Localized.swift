@@ -410,6 +410,7 @@ extension Localized {
     enum Message: String, Localizable, CaseIterable {
         case noPostsTitle = "No posts here yet"
         case noPostsDescription = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
+        case noPostsInHashtagDescription = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
     }
 }
 // MARK: - Manage Aliases
