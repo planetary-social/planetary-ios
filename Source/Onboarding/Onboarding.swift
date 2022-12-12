@@ -86,7 +86,6 @@ class Onboarding {
         if let name = data.name {
             guard name.isValidName else {
                 throw StartError.invalidName
-                
             }
         }
         

@@ -8,12 +8,14 @@
 import XCTest
 @testable import Analytics
 
+// swiftlint:disable implicitly_unwrapped_optional
 final class AnalyticsTests: XCTestCase {
 
     private var service: AnalyticsServiceMock!
     private var analytics: Analytics!
 
     override func setUp() {
+        super.setUp()
         service = AnalyticsServiceMock()
         analytics = Analytics(service: service)
     }
@@ -83,17 +85,12 @@ final class AnalyticsTests: XCTestCase {
     // MARK: Bot
 
     func testTrackBodDidUpdateDatabase() {
-        analytics.trackBotDidUpdateDatabase(count: 1,
-                                            firstTimestamp: 2,
-                                            lastTimestamp: 3,
-                                            lastHash: "")
+        analytics.trackBotDidUpdateDatabase(count: 1, firstTimestamp: 2, lastTimestamp: 3, lastHash: "")
         XCTAssertTrue(service.tracked)
     }
 
     func testTrackBotDidRepair() {
-        let repair = Analytics.BotRepair(function: #function,
-                                         numberOfMessagesInDB: 2,
-                                         numberOfMessagesInRepo: 1)
+        let repair = Analytics.BotRepair(function: #function, numberOfMessagesInDB: 2, numberOfMessagesInRepo: 1)
         analytics.trackBotDidRepair(databaseError: "", error: nil, repair: repair)
         XCTAssertTrue(service.tracked)
     }
@@ -257,10 +254,12 @@ final class AnalyticsTests: XCTestCase {
         let now = Date.init(timeIntervalSinceNow: 0)
         var statistics = Analytics.Statistics(lastSyncDate: now, lastRefreshDate: now)
         statistics.database = Analytics.DatabaseStatistics(lastReceivedMessage: 1, messageCount: 1)
-        statistics.repo = Analytics.RepoStatistics(feedCount: 1,
-                                                   messageCount: 2,
-                                                   numberOfPublishedMessages: 3,
-                                                   lastHash: "")
+        statistics.repo = Analytics.RepoStatistics(
+            feedCount: 1,
+            messageCount: 2,
+            numberOfPublishedMessages: 3,
+            lastHash: ""
+        )
         statistics.peer = Analytics.PeerStatistics(peers: 1, connectedPeers: 2)
         analytics.trackStatistics(statistics)
         XCTAssertTrue(service.tracked)

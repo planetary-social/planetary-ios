@@ -49,6 +49,7 @@ enum Localized: String, Localizable, CaseIterable {
     case skip = "Skip"
     case ok = "OK"
     case next = "Next"
+    case back = "Back"
     case done = "Done"
     case save = "Save"
     case yes = "Yes"
@@ -216,6 +217,7 @@ enum Localized: String, Localizable, CaseIterable {
     case searchingLocally = "Searching for posts in your local database"
     case noResultsFound = "No results found."
     case noResultsHelp = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device."
+    case rooms = "Rooms"
     
     // MARK: - Beta 1 migration strings
     case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."
@@ -301,7 +303,7 @@ extension Localized {
             case birthday = "Before we start, when's your birthday?"
             case contacts = "You can connect your address book to see which of your friends are using Planetary"
             case directory = "People you might know"
-            case done = "Well done, you made it through in one piece"
+            case done = "Customize your settings"
             case earlyAccess = "Gentle reminder: This is early access software"
             case join = "Creating your identity on Planetary..."
             case name = "Now, what would you like to be called?"
@@ -311,6 +313,8 @@ extension Localized {
             case photoConfirm = "Profile photo added"
             case resume = "Resuming set up of your identity on Planetary..."
             case start = "\nSocial media for humans, not algorithms."
+            case aliasServer = "Choose an alias server"
+            case alias = "Now choose your alias"
 
             static var namespace: String {
                 "OnboardingStepTitle"
@@ -345,7 +349,7 @@ extension Localized {
         case contactsWIP = "Apologies, this feature is a work in progress. Tap 'OK' to see a list of recommended users to follow."
         case listMeTitle = "List me in the user directory"
         case listMeMessage = "This allows people to find you if they know your name or phone number"
-        case thanksForTrying = "Thanks for trying Planetary! It's customary to use the #newpeople hashtag to introduce yourself."
+        case orUseTheDefaults = "Or just use the defaults"
         case doneOnboarding = "Phew! I'm done!"
         case earlyAccess = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!"
         case iUnderstand = "Yes, I understand"
@@ -380,6 +384,18 @@ extension Localized {
         
         case useTestNetwork = "Use Test Network"
         case useTestNetworkDescription = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later."
+
+        case changeAlias = "You'll be able to change this alias from Settings."
+        case aliasServerInformation = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:"
+        case yourAlias = "youralias"
+        case yourAliasPlanetary = "youralias.planetary.name"
+        case aliasSkip = "Skip choosing an alias"
+        case aliasServerSkip = "Skip choosing a server"
+        case aliasTaken = "This alias is taken already"
+        case invalidAliasFormat = "Incorrect format for alias"
+        case unknownAliasRegistrationError = "There was a problem registering this alias"
+        case typeYourAlias = "Type your alias"
+        case registeringAlias = "Registering Alias..."
     }
 }
 

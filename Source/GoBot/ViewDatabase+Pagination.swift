@@ -186,4 +186,3 @@ class RecentViewMessageSource: MessageSource {
         try self.view.recentPosts(strategy: strategy, limit: limit, offset: offset)
     }
 }
-

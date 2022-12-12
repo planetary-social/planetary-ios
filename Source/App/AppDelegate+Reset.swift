@@ -17,7 +17,7 @@ extension AppDelegate {
         
         Keychain.clear()
         
-        let domain = Bundle.main.bundleIdentifier!
+        let domain = Bundle.main.bundleIdentifier ?? ""
         UserDefaults.standard.removePersistentDomain(forName: domain)
         UserDefaults.standard.synchronize()
     }

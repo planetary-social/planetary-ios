@@ -5,6 +5,7 @@
 //  Created by Christoph on 6/23/19.
 //  Copyright © 2019 Verse Communications Inc. All rights reserved.
 //
+// swiftlint:disable file_length
 
 import Foundation
 import UIKit
@@ -14,6 +15,7 @@ import CrashReporting
 enum BlobCacheError: Error {
     case unsupported
     case network(Error?)
+    case `internal`
 }
 
 /// An object that loads image blob data. This class not only caches blobs but also coordinates loading them from
@@ -29,6 +31,7 @@ enum BlobCacheError: Error {
 /// 6. If go-ssb is able to get the blob from a peer it calls the swift function `notifyBlobReceived` which posts a
 /// notification that `BlobCache` is listening for.
 /// 7. `BlobCache` hears the notification and retries step 3.
+@preconcurrency
 class BlobCache: DictionaryCache {
 
     // MARK: Lifecycle
@@ -44,8 +47,6 @@ class BlobCache: DictionaryCache {
 
     // MARK: Request UIImage blob
 
-    // TODO https://app.asana.com/0/0/1152660926488309/f
-    // TODO make UIImageCompletionHandle opaque for image(for:completion)
     typealias UIImageCompletion = ((Result<(BlobIdentifier, UIImage), Error>) -> Void)
     typealias UIImageCompletionHandle = UUID
 
@@ -185,13 +186,18 @@ class BlobCache: DictionaryCache {
         let hexRef = blobRef.hexEncodedString()
         
         // first 2 chars are directory
-        let dir = String(hexRef.prefix(2))
+        let directory = String(hexRef.prefix(2))
         // rest ist filename
         let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
         let rest = String(hexRef[restIdx...])
         
-        var gsUrl = URL(string: "https://blobs.planetary.social/")!
-        gsUrl.appendPathComponent(dir)
+        guard let baseURL = URL(string: "https://blobs.planetary.social/") else {
+            Log.error("BlobCache: Could not construct baseURL")
+            completion(.failure(.internal))
+            return
+        }
+        var gsUrl = baseURL
+        gsUrl.appendPathComponent(directory)
         gsUrl.appendPathComponent(rest)
         
         let dataTask = URLSession.shared.dataTask(with: gsUrl) { [weak self] (data, response, error) in
@@ -296,7 +302,7 @@ class BlobCache: DictionaryCache {
 
         /// The number of pending blob identifiers currently being loaded
         var numberOfBlobIdentifiers: Int {
-            return self.completions.count
+            self.completions.count
         }
 
         // The total number of requests for all blob identifiers
@@ -339,7 +345,7 @@ class BlobCache: DictionaryCache {
 
         /// Forgets the all the completions for the specified blob identifier.
         func forgetCompletions(for identifier: BlobIdentifier) {
-            let _ = self.completions.removeValue(forKey: identifier)
+            _ = self.completions.removeValue(forKey: identifier)
             cancelDataTask(for: identifier)
             retries.removeValue(forKey: identifier)
         }
@@ -417,8 +423,8 @@ class BlobCache: DictionaryCache {
 
     // the max number of bytes that will trigger a purge
     // the min number of bytes that will remain after a purge
-    private let maxNumberOfBytes: Int = (1_024 * 1_024 * 100)
-    private let minNumberOfBytes: Int = (1_024 * 1_024 * 50)
+    private let maxNumberOfBytes: Int = (1024 * 1024 * 100)
+    private let minNumberOfBytes: Int = (1024 * 1024 * 50)
 
     // tracks the total bytes in use
     private var bytes: Int = 0
@@ -440,7 +446,9 @@ class BlobCache: DictionaryCache {
 
         // remember the stats for tracking
         let from = (count: self.count, numberOfBytes: self.bytes)
+        // swiftlint:disable identifier_name
         var to = (count: 0, numberOfBytes: 0)
+        // swiftlint:enable identifier_name
 
         // loop through oldest items first
         let items = self.itemsSortedByDateAscending()
@@ -478,18 +486,19 @@ class BlobCache: DictionaryCache {
     // MARK: Notifications
 
     private func registerNotifications() {
-        NotificationCenter.default.addObserver(forName: .didLoadBlob,
-                                               object: nil,
-                                               queue: OperationQueue.main) {
-            [weak self] notification in
+        // swiftlint:disable discarded_notification_center_observer
+        NotificationCenter.default.addObserver(
+            forName: .didLoadBlob,
+            object: nil,
+            queue: OperationQueue.main
+        ) { [weak self] notification in
             self?.didLoadBlob(notification)
         }
+        // swiftlint:enable discarded_notification_center_observer
     }
 
     private func deregisterNotifications() {
-        NotificationCenter.default.removeObserver(self,
-                                                  name: .didLoadBlob,
-                                                  object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didLoadBlob, object: nil)
     }
 
     private func didLoadBlob(_ notification: Notification) {

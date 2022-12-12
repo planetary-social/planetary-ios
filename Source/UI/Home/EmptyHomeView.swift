@@ -12,7 +12,7 @@ struct EmptyHomeView: View {
     var body: some View {
         ZStack(alignment: .center) {
             VStack(alignment: .center, spacing: 20) {
-                Image.iconPlanetary3
+                Image.iconPlanetary4
                 Text("Welcome!\nThis is your feed")
                     .font(.headline)
                     .foregroundColor(.primaryTxt)

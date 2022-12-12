@@ -49,7 +49,7 @@ import UIKit
         if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
             loadingMessage = Localized.joiningRoom.text
             Task {
-                await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
+                try await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
                 self.finishAddingRoom()
             }
         // Check if this is an address

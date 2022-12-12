@@ -23,7 +23,11 @@ class BioOnboardingStep: OnboardingStep, UITextViewDelegate {
         self.view.textView.backgroundColor = .appBackground
         self.view.hintLabel.text = Localized.Onboarding.bioHint.text
         self.view.secondaryButton.setText(.skip)
-        self.view.titleLabelTopConstraint?.constant = UIScreen.main.isShort ? Layout.verticalSpacing : Layout.verticalSpacing * 2
+        if UIScreen.main.isShort {
+            view.titleLabelTopConstraint?.constant = Layout.verticalSpacing
+        } else {
+            view.titleLabelTopConstraint?.constant = Layout.verticalSpacing * 2
+        }
         if UIScreen.main.isShort {
             self.view.textViewTopConstraint?.constant = Layout.verticalSpacing
         }
