@@ -10,10 +10,8 @@ import Foundation
 import UIKit
 
 extension AppController {
-
     func showDebug() {
         let controller = UINavigationController(rootViewController: DebugViewController())
         self.present(controller, animated: true, completion: nil)
     }
-    
 }

@@ -57,7 +57,11 @@ struct StackedAvatarsView_Previews: PreviewProvider {
                 StackedAvatarsView(avatars: [ImageMetadata(link: .null), ImageMetadata(link: .null)])
                 StackedAvatarsView(avatars: [], size: 20, border: 0)
                 StackedAvatarsView(avatars: [ImageMetadata(link: .null)], size: 20, border: 0)
-                StackedAvatarsView(avatars: [ImageMetadata(link: .null), ImageMetadata(link: .null)], size: 20, border: 0)
+                StackedAvatarsView(
+                    avatars: [ImageMetadata(link: .null), ImageMetadata(link: .null)],
+                    size: 20,
+                    border: 0
+                )
             }
             VStack {
                 StackedAvatarsView(avatars: [])
@@ -65,7 +69,11 @@ struct StackedAvatarsView_Previews: PreviewProvider {
                 StackedAvatarsView(avatars: [ImageMetadata(link: .null), ImageMetadata(link: .null)])
                 StackedAvatarsView(avatars: [], size: 20, border: 0)
                 StackedAvatarsView(avatars: [ImageMetadata(link: .null)], size: 20, border: 0)
-                StackedAvatarsView(avatars: [ImageMetadata(link: .null), ImageMetadata(link: .null)], size: 20, border: 0)
+                StackedAvatarsView(
+                    avatars: [ImageMetadata(link: .null), ImageMetadata(link: .null)],
+                    size: 20,
+                    border: 0
+                )
             }
             .preferredColorScheme(.dark)
         }

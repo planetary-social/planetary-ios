@@ -155,7 +155,7 @@ final class HashtagAlgorithm: NSObject, FeedStrategy {
     }
 
     func countNumberOfKeys(connection: Connection, userId: Int64, since message: MessageIdentifier) throws -> Int {
-        return 0
+        0
     }
 
     func fetchMessages(database: ViewDatabase, userId: Int64, limit: Int, offset: Int?) throws -> [Message] {

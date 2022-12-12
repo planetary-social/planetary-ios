@@ -528,7 +528,6 @@
 		53C422B621C476B000A314AD /* UserDefaults+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B221C476AF00A314AD /* UserDefaults+Debug.swift */; };
 		53C422B721C476B000A314AD /* DebugTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B321C476AF00A314AD /* DebugTableViewController.swift */; };
 		53C422B821C476B000A314AD /* DebugTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B421C476AF00A314AD /* DebugTableViewCell.swift */; };
-		53C422BA21C4772D00A314AD /* UIViewController+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422B921C4772D00A314AD /* UIViewController+Debug.swift */; };
 		53C422BC21C477EC00A314AD /* NSObject+Classname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C422BB21C477EC00A314AD /* NSObject+Classname.swift */; };
 		53C966E2236D037000E70689 /* UIViewController+Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C966E1236D037000E70689 /* UIViewController+Report.swift */; };
 		53C966E4236D074700E70689 /* Bot+Blobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C966E3236D074700E70689 /* Bot+Blobs.swift */; };
@@ -698,8 +697,6 @@
 		5BAE9C8C281F5226008AEA84 /* ContactCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */; };
 		5BAE9C8E281F556A008AEA84 /* ContactReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */; };
 		5BAE9C90281F779F008AEA84 /* ContactHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */; };
-		5BBD5C332943B1CF00B99C5A /* MessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD5C322943B1CF00B99C5A /* MessageButton.swift */; };
-		5BBD5C342943B1CF00B99C5A /* MessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD5C322943B1CF00B99C5A /* MessageButton.swift */; };
 		5BBD5C372943B21800B99C5A /* MessageButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD5C362943B21800B99C5A /* MessageButtonStyle.swift */; };
 		5BBD5C382943B21800B99C5A /* MessageButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD5C362943B21800B99C5A /* MessageButtonStyle.swift */; };
 		5BC2974628048AD800C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC2974528048AD800C0CD81 /* SQLite */; };
@@ -1597,7 +1594,6 @@
 		53C422B221C476AF00A314AD /* UserDefaults+Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Debug.swift"; sourceTree = "<group>"; };
 		53C422B321C476AF00A314AD /* DebugTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugTableViewController.swift; sourceTree = "<group>"; };
 		53C422B421C476AF00A314AD /* DebugTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugTableViewCell.swift; sourceTree = "<group>"; };
-		53C422B921C4772D00A314AD /* UIViewController+Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Debug.swift"; sourceTree = "<group>"; };
 		53C422BB21C477EC00A314AD /* NSObject+Classname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+Classname.swift"; sourceTree = "<group>"; };
 		53C966E1236D037000E70689 /* UIViewController+Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Report.swift"; sourceTree = "<group>"; };
 		53C966E3236D074700E70689 /* Bot+Blobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bot+Blobs.swift"; sourceTree = "<group>"; };
@@ -1695,7 +1691,6 @@
 		5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCellView.swift; sourceTree = "<group>"; };
 		5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactReplyView.swift; sourceTree = "<group>"; };
 		5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactHeaderView.swift; sourceTree = "<group>"; };
-		5BBD5C322943B1CF00B99C5A /* MessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageButton.swift; sourceTree = "<group>"; };
 		5BBD5C362943B21800B99C5A /* MessageButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageButtonStyle.swift; sourceTree = "<group>"; };
 		5BC297472804A22500C0CD81 /* ExtendedAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutView.swift; sourceTree = "<group>"; };
 		5BC297532805F4A800C0CD81 /* FeedStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategy.swift; sourceTree = "<group>"; };
@@ -2617,7 +2612,6 @@
 				53C422AC21C4769900A314AD /* DebugViewController.swift */,
 				53FCAFDD22051C88009E9E82 /* SecretViewController.swift */,
 				2346ECB922144D61009A94CB /* SimplePublishView.swift */,
-				53C422B921C4772D00A314AD /* UIViewController+Debug.swift */,
 				53C422B221C476AF00A314AD /* UserDefaults+Debug.swift */,
 			);
 			path = Debug;
@@ -2803,7 +2797,6 @@
 				5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */,
 				5B929DA929086954007922AB /* MessageListView.swift */,
 				5B929DA3290857DB007922AB /* MessageView.swift */,
-				5BBD5C322943B1CF00B99C5A /* MessageButton.swift */,
 				5BAB1840290C2634009F8F90 /* CompactPostView.swift */,
 				5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */,
 				5BAB1844290C2767009F8F90 /* CompactIdentityView.swift */,
@@ -4344,7 +4337,6 @@
 				53B4F5FA22B8602F00027C6A /* Mention+NSAttributedString.swift in Sources */,
 				0A64A84824735717009A5EBF /* PhoneVerificationAPIService.swift in Sources */,
 				C9134DE328184D4200595D49 /* (null) in Sources */,
-				5BBD5C342943B1CF00B99C5A /* MessageButton.swift in Sources */,
 				C9724BE72809EEA4000EBCCD /* SimplePublishView.swift in Sources */,
 				C9724B432809D4F1000EBCCD /* UIButton+Text.swift in Sources */,
 				535754F722692B59002A6989 /* BotError.swift in Sources */,
@@ -5103,7 +5095,6 @@
 				533F4055225FB3B40060B4B9 /* Layout+SpacerView.swift in Sources */,
 				53211CDE228250D7007FB785 /* UIView+Stroke.swift in Sources */,
 				0A4870FD2498014F00BCD063 /* UICollectionView+Verse.swift in Sources */,
-				53C422BA21C4772D00A314AD /* UIViewController+Debug.swift in Sources */,
 				C9EE7BD827FF371200748106 /* Beta1MigrationView.swift in Sources */,
 				8D317ECD2357A37C0009E073 /* UIImageView+Fade.swift in Sources */,
 				C9313A7C289AD9D40093AC47 /* RoomInvitationRedeemer.swift in Sources */,
@@ -5161,7 +5152,6 @@
 				53F24FB422C70B5200CFCBAA /* AvatarButton.swift in Sources */,
 				0A4870F72492BF6700BCD063 /* AsynchronousBlockOperation.swift in Sources */,
 				0A1CA4C724EB097B006CAC43 /* PubArray+Constellation.swift in Sources */,
-				5BBD5C332943B1CF00B99C5A /* MessageButton.swift in Sources */,
 				C9F5381F286B78240015A146 /* UniversalSearchResultsView.swift in Sources */,
 				531B92B922CD128F005D5255 /* UITextView+Mention.swift in Sources */,
 				533EDBF42389BBE8008B3565 /* Blob+UIColor.swift in Sources */,
