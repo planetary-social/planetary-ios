@@ -210,7 +210,6 @@ class ViewDatabase {
     // Rooms
     let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
     let colRoomID = Expression<Int64?>("room_id")
-    let colAction = Expression<String>("action")
     let colPubKey = Expression<String>("pub_key")
     
     // Room Aliases
@@ -777,7 +776,6 @@ class ViewDatabase {
         
         try db.run(
             rooms.insert(
-                colID <- 1,
                 colHost <- room.address.host,
                 colPort <- Int(room.address.port),
                 colPubKey <- room.address.keyID
