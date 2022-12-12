@@ -1772,6 +1772,8 @@
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListView.swift; sourceTree = "<group>"; };
+		C965F42F294259E400886611 /* Planetary Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Planetary Unit Tests.xctestplan"; sourceTree = "<group>"; };
+		C965F43129425AB000886611 /* Performance Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = "Performance Tests.xctestplan"; path = "/Users/matt/planetary/ios/UnitTests/Performance Tests.xctestplan"; sourceTree = "<absolute>"; };
 		C969F0DE2899CED100081615 /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		C969F0E22899D0EC00081615 /* RoomListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomListView.swift; sourceTree = "<group>"; };
 		C969F438282C7A3700FF6FE3 /* bouncing_ellipse.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = bouncing_ellipse.json; sourceTree = "<group>"; };
@@ -2083,6 +2085,8 @@
 		5308168621C46A53005C48ED /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				C965F42F294259E400886611 /* Planetary Unit Tests.xctestplan */,
+				C965F43129425AB000886611 /* Performance Tests.xctestplan */,
 				C9134DDE28184B3B00595D49 /* Model */,
 				C9C3787A27C68DD200238B58 /* Controller */,
 				C98A013727907FF600E29A97 /* Resources */,

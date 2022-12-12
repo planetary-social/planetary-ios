@@ -1,0 +1,36 @@
+{
+  "configurations" : [
+    {
+      "id" : "AA21CD2B-0588-4409-9DCD-5FB9749341FC",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "ViewDatabasePerformanceTests\/testCountNumberOfFollowersAndFollows()",
+        "ViewDatabasePerformanceTests\/testCountNumberOfKeysSinceUsingRecentlyActivePostsAndContactsAlgorithmGivenSmallDB()",
+        "ViewDatabasePerformanceTests\/testCurrentPostsAlgorithmGivenSmallDb()",
+        "ViewDatabasePerformanceTests\/testDiscoverAlgorithmGivenSmallDb()",
+        "ViewDatabasePerformanceTests\/testFeedForIdentity()",
+        "ViewDatabasePerformanceTests\/testFillMessagesGivenSmallDB()",
+        "ViewDatabasePerformanceTests\/testGetFollows()",
+        "ViewDatabasePerformanceTests\/testPostsAndContactsAlgorithmGivenSmallDB()",
+        "ViewDatabasePerformanceTests\/testRecentlyActivePostsAndContactsAlgorithmGivenSmallDB()",
+        "ViewDatabasePerformanceTests\/testSimultanousReadsAndWrites()"
+      ],
+      "target" : {
+        "containerPath" : "container:Planetary.xcodeproj",
+        "identifier" : "5308168421C46A52005C48ED",
+        "name" : "UnitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
