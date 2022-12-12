@@ -1520,6 +1520,13 @@ class GoBot: Bot, @unchecked Sendable {
             }
         }
     }
+    
+    func privateMessagesFeed(limit: Int, offset: Int?) async throws -> [Message] {
+        let task = Task.detached(priority: .userInitiated) {
+            try self.database.privateMessages(limit: limit, offset: offset ?? 0)
+        }
+        return try await task.value
+    }
 
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         userInitiatedQueue.async {

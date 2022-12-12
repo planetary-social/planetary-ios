@@ -66,6 +66,7 @@ enum Localized: String, Localizable, CaseIterable {
 
     case profile = "Profile"
     case yourProfile = "Your Profile"
+    case privateMessages = "Private Messages"
     case helpAndSupport = "Help and Support"
     case reportBug = "Report a Bug"
     case settings = "Settings"

@@ -108,6 +108,7 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         self.menuView.profileView.imageView.isUserInteractionEnabled = true
         self.menuView.profileView.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(profileViewTouchUpInside)))
         self.menuView.profileButton.addTarget(self, action: #selector(profileButtonTouchUpInside), for: .touchUpInside)
+        self.menuView.privateMessageButton.addTarget(self, action: #selector(privateMessageButtonTouchUpInside), for: .touchUpInside)
         self.menuView.settingsButton.addTarget(self, action: #selector(settingsButtonTouchUpInside), for: .touchUpInside)
         self.menuView.helpButton.addTarget(self, action: #selector(helpButtonTouchUpInside), for: .touchUpInside)
         self.menuView.reportBugButton.addTarget(self, action: #selector(reportBugButtonTouchUpInside), for: .touchUpInside)
@@ -130,6 +131,14 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         guard let identity = Bots.current.identity else { return }
         self.close {
             AppController.shared.pushViewController(for: .about, with: identity)
+        }
+    }
+    
+    @objc private func privateMessageButtonTouchUpInside() {
+        let view = PrivateMessageListView().environmentObject(BotRepository.shared)
+        let hostingController = UIHostingController(rootView: view)
+        self.close {
+            AppController.shared.push(hostingController)
         }
     }
 
@@ -223,6 +232,7 @@ private class MenuView: UIView {
     }()
 
     let profileButton = MenuButton(title: .yourProfile, image: UIImage.verse.profile)
+    let privateMessageButton = MenuButton(title: .privateMessages)
     let settingsButton = MenuButton(title: .settings, image: UIImage.verse.settings)
     let helpButton = MenuButton(title: .helpAndSupport, image: UIImage.verse.help)
     let reportBugButton = MenuButton(title: .reportBug, image: UIImage.verse.reportBug)
@@ -288,6 +298,12 @@ private class MenuView: UIView {
         
         separator = Layout.separatorView(color: UIColor.menuBorderColor)
         Layout.fillSouth(of: self.profileButton, with: separator)
+        
+        Layout.fillSouth(of: separator, with: self.privateMessageButton)
+        self.privateMessageButton.constrainHeight(to: 50)
+        
+        separator = Layout.separatorView(color: UIColor.menuBorderColor)
+        Layout.fillSouth(of: self.privateMessageButton, with: separator)
 
         Layout.fillSouth(of: separator, with: self.settingsButton)
         self.settingsButton.constrainHeight(to: 50)

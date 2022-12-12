@@ -233,6 +233,8 @@ protocol Bot: AnyObject, Sendable {
     /// person, like in an About screen.
     func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion)
     
+    func privateMessagesFeed(limit: Int, offset: Int?) async throws -> [Message]
+    
     /// Fetches the post with the given ID from the database.
     func post(from key: MessageIdentifier) throws -> Message
     

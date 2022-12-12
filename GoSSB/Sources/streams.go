@@ -12,6 +12,7 @@ import (
 	"go.cryptoscope.co/luigi/mfr"
 	"go.cryptoscope.co/margaret"
 	"go.cryptoscope.co/margaret/indexes"
+    "go.cryptoscope.co/ssb/private"
 	"go.cryptoscope.co/ssb/multilogs"
 	"go.mindeco.de/encodedTime"
 	refs "go.mindeco.de/ssb-refs"
@@ -50,43 +51,47 @@ func ssbStreamRootLog(seq int64, limit int) *C.char {
 }
 
 //export ssbStreamPrivateLog
-func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
-	// return empty array until there is actual UI in place for these
-	return C.CString("[]")
-	//var err error
-	//defer func() {
-	//	if err != nil {
-	//		level.Error(log).Log("ssbStreamPrivateLog", err)
-	//	}
-	//}()
-	//
-	//lock.Lock()
-	//if sbot == nil {
-	//	err = ErrNotInitialized
-	//	return nil
-	//}
-	//lock.Unlock()
-	//
-	//pl, ok := sbot.GetMultiLog("privLogs")
-	//if !ok {
-	//	err = errors.Errorf("sbot: missing privLogs index")
-	//	return nil
-	//}
-	//
-	//userPrivs, err := pl.Get(sbot.KeyPair.ID().StoredAddr())
-	//if err != nil {
-	//	err = errors.Wrap(err, "failed to open user private index")
-	//	return nil
-	//}
-	//
-	//unboxlog := private.NewUnboxerLog(sbot.ReceiveLog, userPrivs, sbot.KeyPair)
-	//buf, err := newLogDrain(unboxlog, seq, limit)
-	//if err != nil {
-	//	err = errors.Wrap(err, "PrivateLog: pipe draining failed")
-	//	return nil
-	//}
-	//
-	//return C.CString(buf.String())
+func ssbStreamPrivateLog(seq int64, limit int) *C.char {
+	var err error
+	defer func() {
+		if err != nil {
+			level.Error(log).Log("ssbStreamPrivateLog", err)
+		}
+	}()
+	
+	lock.Lock()
+	if sbot == nil {
+		err = ErrNotInitialized
+		return nil
+	}
+	lock.Unlock()
+	
+	pl, ok := sbot.GetMultiLog("privLogs")
+	if !ok {
+		err = errors.Errorf("sbot: missing privLogs index")
+		return nil
+	}
+    
+    addr, err := feedStoredAddr(sbot.KeyPair.ID())
+    if err != nil {
+        err = errors.Wrap(err, "failed to get the address used for storage")
+        return nil
+    }
+	
+	userPrivs, err := pl.Get(addr)
+	if err != nil {
+		err = errors.Wrap(err, "failed to open user private index")
+		return nil
+	}
+	
+	unboxlog := private.NewUnboxerLog(sbot.ReceiveLog, userPrivs, sbot.KeyPair)
+	buf, err := newLogDrain(unboxlog, seq, limit)
+	if err != nil {
+		err = errors.Wrap(err, "PrivateLog: pipe draining failed")
+		return nil
+	}
+	
+	return C.CString(buf.String())
 }
 
 //export ssbStreamPublishedLog

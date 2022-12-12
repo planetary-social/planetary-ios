@@ -304,6 +304,10 @@ class FakeBot: Bot {
     func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
         completion([], nil)
     }
+    
+    func privateMessagesFeed(limit: Int, offset: Int?) async throws -> [Message] {
+        return []
+    }
 
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         completion(StaticDataProxy(), nil)

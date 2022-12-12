@@ -1302,7 +1302,7 @@ class ViewDatabase {
     
     // MARK: common query constructors
 
-    private func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {
+    func basicRecentPostsQuery(limit: Int, wantPrivate: Bool, onlyRoots: Bool = true, offset: Int? = nil) -> Table {
         var qry = self.msgs
             .join(self.posts, on: self.posts[colMessageRef] == self.msgs[colMessageID])
             .join(.leftOuter, self.tangles, on: self.tangles[colMessageRef] == self.msgs[colMessageID])
@@ -1823,6 +1823,31 @@ class ViewDatabase {
             onlyRoots: true,
             offset: offset)
             .filter(colAuthorID == feedAuthorID)
+            .order(colClaimedAt.desc)
+            .filter(colClaimedAt <= Date().millisecondsSince1970)
+            .filter(colHidden == false)
+
+        let feedOfMsgs = try self.mapQueryToMessage(qry: postsQry)
+        let msgs = try self.addNumberOfPeopleReplied(msgs: feedOfMsgs)
+        let timeDone = CFAbsoluteTimeGetCurrent()
+        print("\(#function) took \(timeDone - timeStart)")
+        return msgs
+    }
+    
+    func privateMessages(limit: Int, offset: Int) throws -> Messages {
+        let db = try checkoutConnection()
+        let timeStart = CFAbsoluteTimeGetCurrent()
+        
+        // TODO: block
+
+        let postsQry = self.basicRecentPostsQuery(
+            limit: limit,
+            wantPrivate: true,
+            onlyRoots: true,
+            offset: offset
+        )
+            .join(.inner, privateRecps, on: msgs[colMessageID] == privateRecps[colMessageRef])
+            .filter(privateRecps[colContactID] == currentUserID)
             .order(colClaimedAt.desc)
             .filter(colClaimedAt <= Date().millisecondsSince1970)
             .filter(colHidden == false)

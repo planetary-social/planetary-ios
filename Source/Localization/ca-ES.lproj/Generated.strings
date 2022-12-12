@@ -22,6 +22,7 @@
 "Localized.minutesAbbreviated" = "{{ numberOfMinutes }} minuts";
 "Localized.profile" = "Perfil";
 "Localized.yourProfile" = "El teu perfil";
+"Localized.privateMessages" = "Private Messages";
 "Localized.helpAndSupport" = "Ajuda i suport";
 "Localized.reportBug" = "Informa d'un error";
 "Localized.settings" = "Preferències";
