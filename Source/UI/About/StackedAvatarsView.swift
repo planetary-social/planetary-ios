@@ -24,7 +24,10 @@ struct StackedAvatarsView: View {
                     .offset(x: matrix(avatars.count)[index] * totalSize / 4, y: 0)
             }
         }
-        .frame(width: avatars.isEmpty ? 0 : totalSize + CGFloat(Int(totalSize) / 2 * (avatars.count - 1)), height: totalSize)
+        .frame(
+            width: avatars.isEmpty ? 0 : totalSize + CGFloat(Int(totalSize) / 2 * (avatars.count - 1)),
+            height: totalSize
+        )
         .background(
             Color.hashtagBg.cornerRadius(99)
         )
