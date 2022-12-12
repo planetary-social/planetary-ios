@@ -98,7 +98,7 @@ final class HashtagAlgorithm: NSObject, FeedStrategy {
               JOIN messages AS tangled_message ON tangled_message.msg_id = tangles.msg_ref
               JOIN abouts ON abouts.about_id = tangled_message.author_id
             WHERE
-              tangles.root = messages.msg_id
+              tangles.root = msgs.msg_id
               AND abouts.image IS NOT NULL
             LIMIT
               2
