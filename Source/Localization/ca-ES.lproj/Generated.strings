@@ -106,11 +106,11 @@
 "Localized.andCountOthers" = " i {{ count }} altres";
 "Localized.countOthers" = "{{ count }} altres";
 "Localized.andOneOther" = " i un altre";
-"Localized.connectedPeers" = "Connected Peers";
-"Localized.countOnlinePeers" = "{{ count }} ONLINE PEERS";
-"Localized.countLocalPeers" = "{{ count }} LOCAL PEERS";
-"Localized.lastSynced" = "SYNCED: {{ when }}";
-"Localized.syncingMessages" = "Syncing Messages...";
+"Localized.connectedPeers" = "Companys connectats";
+"Localized.countOnlinePeers" = "{{ count }} COMPANYS CONNECTATS";
+"Localized.countLocalPeers" = "{{ count }} COMPANYS LOCALS";
+"Localized.lastSynced" = "SINCRONITZAT: {{ when }}";
+"Localized.syncingMessages" = "Sincronitzant missatges...";
 "Localized.recentlyDownloaded" = "Downloaded {{ postCount }} posts in the last {{ duration }} mins";
 "Localized.identityNotFound" = "We don't know enough about this peer to show their profile.";
 "Localized.channels" = "Etiquetes";
