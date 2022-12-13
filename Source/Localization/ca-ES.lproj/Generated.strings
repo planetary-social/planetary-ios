@@ -288,17 +288,17 @@
 "Message.noPostsDescription" = "Això vol dir que l'usuari no ha publicat res o que no tens prou connexions en comú per sincronitzar les seves publicacions.\n\nAprèn [com funcionen les xafarderies]({{ link }}) a Planetary.";
 
 "Alias.manageAliases" = "Gestiona els àlies (beta)";
-"Alias.addAlias" = "Register a new alias";
-"Alias.roomAliases" = "Room Aliases (beta)";
+"Alias.addAlias" = "Registra un àlies nou";
+"Alias.roomAliases" = "Àlies de sala (beta)";
 "Alias.aliases" = "Àlies";
-"Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
+"Alias.introText" = "Els àlies de sala són enllaços que pots compartir amb els teus amics per ajudar-los a connectar-vos a Planetary o a qualsevol altra aplicació de Scuttlebutt.";
 
 "Preview.title" = "Configuració avançada";
-"Preview.footer" = "New features that are being developed and tested, and haven't found a permanent home yet in the app.";
+"Preview.footer" = "Noves funcions que s'estan desenvolupant i provant, i que encara no han trobat una casa permanent a l'aplicació.";
 
 "FeedAlgorithm.algorithms" = "Algorismes";
-"FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
-"FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
+"FeedAlgorithm.feedAlgorithmTitle" = "Algoritme de canal d'inici";
+"FeedAlgorithm.feedAlgorithmDescription" = "Tria els algoritmes utilitzats per ordenar i filtrar els vostres canals.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Publicacions recents";
 "FeedAlgorithm.recentPostsAlgorithmDescription" = "Mostra les publicacions de les persones que segueixes en l'ordre en què s'han publicat. Exclou missatges de gràfics socials com els següents.";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Publicacions recents i seguiments";
@@ -325,14 +325,14 @@
 
 "Push.enabled" = "Habilitat";
 "Push.title" = "Notificacions push";
-"Push.prompt" = "Push notifications for Planetary are controlled in your device's Settings app.  Would you like to open Settings now?";
-"Push.footer" = "Show a system notification when you are mentioned, replied to, or followed.  The notification infrastructure is still in development, so you may not receive notifications consistently.";
+"Push.prompt" = "Les notificacions push de Planetary es controlen a l'aplicació Configuració del dispositiu. Vols obrir Configuració ara?";
+"Push.footer" = "Mostra una notificació del sistema quan se't mencioni, respongui o segueixi. La infraestructura de notificacions encara està en desenvolupament, de manera que és possible que no rebis notificacions de manera coherent.";
 
-"Reporting.abusive" = "Abusive to me or someone else";
-"Reporting.copyright" = "Infringes on my copyright";
-"Reporting.offensive" = "Offensive or inappropriate";
-"Reporting.other" = "Some other reason";
-"Reporting.whyAreYouReportingThisPost" = "Why are you reporting this post?";
+"Reporting.abusive" = "Abusiu per a mi o una altra persona";
+"Reporting.copyright" = "Infringeix els meus drets d'autor";
+"Reporting.offensive" = "Ofensiu o inadequat";
+"Reporting.other" = "Algun altre motiu";
+"Reporting.whyAreYouReportingThisPost" = "Per què estàs denunciant aquesta publicació?";
 
 "Debug.debugTitle" = "Mode hacker";
 "Debug.debugMenu" = "Menú de depuració perillós i potent";
