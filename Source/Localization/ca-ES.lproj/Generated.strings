@@ -157,8 +157,8 @@
 "Localized.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
 "Localized.areYouSure" = "Estàs segur?";
 "Localized.dismissMigrationEarlyMessage" = "Aquesta pantalla s'eliminarà i podràs utilitzar Planetary mentre les teves dades es continuen descarregant en segon pla. Estàs segur?";
-"Localized.confirmCopyToMainNetwork" = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network.";
-"Localized.confirmSkipCopyToMainNetwork" = "You will not be prompted to run this fix again. Are you sure you want to skip it?";
+"Localized.confirmCopyToMainNetwork" = "A causa d'un error, el teu perfil es va crear a la xarxa de proves de Planetary en lloc de la xarxa principal SSB. Ara l'aplicació copiarà el teu perfil a la xarxa principal.";
+"Localized.confirmSkipCopyToMainNetwork" = "No se't demanarà que tornis a executar aquesta correcció. Estàs segur que vols saltar-la?";
 
 "Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
 "Blocking.buttonTitle" = "Yes, ignore {{ name }}";
