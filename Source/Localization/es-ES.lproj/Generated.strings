@@ -238,9 +238,9 @@
 "Onboarding.useTestNetwork" = "Usar red de pruebas";
 "Onboarding.useTestNetworkDescription" = "Esto creará tu identidad con una clave de red alternativa que no se replicará con la red SSB principal. Esto no se puede cambiar más tarde.";
 "Onboarding.changeAlias" = "Podrás cambiar este alias desde los ajustes.";
-"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
-"Onboarding.yourAlias" = "youralias";
-"Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
+"Onboarding.aliasServerInformation" = "Los regidores de alias son como los servidores de email, donde puedes definir como los demás te encontrarán en Planetary.\n\ntualias.planetary.name es un buen comienzo, pero puedes elegir tu alias en otros servidores:";
+"Onboarding.yourAlias" = "tualias";
+"Onboarding.yourAliasPlanetary" = "tualias.planetary.name";
 "Onboarding.aliasSkip" = "Omitir la selección de un alias";
 "Onboarding.aliasServerSkip" = "Omitir la selección de un servidor";
 "Onboarding.aliasTaken" = "Este alias ya está en uso";
