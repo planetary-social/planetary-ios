@@ -18,7 +18,7 @@ class Beta1MigrationTests: XCTestCase {
     var mockBot: MockMigrationBot!
     var userDefaults: UserDefaults!
     var appConfig: MockAppConfiguration!
-    let userDefaultsSuite = "com.Planetary.unit-tests.Beta1MigrationTests"
+    let userDefaultsSuite = "com.Planetary.scuttle.unit-tests.Beta1MigrationTests"
     var testPath: String!
     var appController: MockAppController!
     

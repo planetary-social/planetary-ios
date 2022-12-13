@@ -51,9 +51,9 @@ extension AppDelegate {
 
 extension AppDelegate {
     
-    static let shortSyncBackgroundTaskIdentifier = "com.planetary.short_sync"
-    static let longSyncBackgroundTaskIdentifier = "com.planetary.long_sync"
-    static let dbMaintenanceBackgroundTaskIdentifier = "com.planetary.db_maintenance"
+    static let shortSyncBackgroundTaskIdentifier = "com.planetary.scuttle.short_sync"
+    static let longSyncBackgroundTaskIdentifier = "com.planetary.scuttle.long_sync"
+    static let dbMaintenanceBackgroundTaskIdentifier = "com.planetary.scuttle.db_maintenance"
     
     // MARK: Registering
     

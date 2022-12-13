@@ -1488,7 +1488,7 @@
 		533F4052225FAD740060B4B9 /* UIScrollView+Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Default.swift"; sourceTree = "<group>"; };
 		533F4054225FB3B40060B4B9 /* Layout+SpacerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Layout+SpacerView.swift"; sourceTree = "<group>"; };
 		5342426E2368A66F00192293 /* EarlyAccessOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarlyAccessOnboardingStep.swift; sourceTree = "<group>"; };
-		5344D82B21C4649700704A34 /* Planetary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Planetary.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5344D82B21C4649700704A34 /* Planetary-scuttle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Planetary-scuttle.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5344D82E21C4649700704A34 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5344D83521C4649A00704A34 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../Resources/Assets.xcassets; sourceTree = "<group>"; };
 		5344D83821C4649A00704A34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -2334,7 +2334,7 @@
 		5344D82C21C4649700704A34 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5344D82B21C4649700704A34 /* Planetary.app */,
+				5344D82B21C4649700704A34 /* Planetary-scuttle.app */,
 				5308168521C46A52005C48ED /* UnitTests.xctest */,
 				5308169121C46A6E005C48ED /* APITests.xctest */,
 				0A3880182475BB4500777843 /* UITests.xctest */,
@@ -3439,9 +3439,9 @@
 			productReference = 5308169121C46A6E005C48ED /* APITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		5344D82A21C4649700704A34 /* Planetary */ = {
+		5344D82A21C4649700704A34 /* Planetary-scuttle */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5344D83D21C4649A00704A34 /* Build configuration list for PBXNativeTarget "Planetary" */;
+			buildConfigurationList = 5344D83D21C4649A00704A34 /* Build configuration list for PBXNativeTarget "Planetary-scuttle" */;
 			buildPhases = (
 				D4A56648BF87798DA8D53240 /* [CP] Check Pods Manifest.lock */,
 				E08B98F028F85984003E4B83 /* Run SwiftGen */,
@@ -3459,7 +3459,7 @@
 			);
 			dependencies = (
 			);
-			name = Planetary;
+			name = "Planetary-scuttle";
 			packageProductDependencies = (
 				5BFFCE8F27B56D300088F6D6 /* Logger */,
 				5B0D584F27BEAE93002F927D /* Secrets */,
@@ -3471,7 +3471,7 @@
 				5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */,
 			);
 			productName = FBTT;
-			productReference = 5344D82B21C4649700704A34 /* Planetary.app */;
+			productReference = 5344D82B21C4649700704A34 /* Planetary-scuttle.app */;
 			productType = "com.apple.product-type.application";
 		};
 		C91D9E5B27EDE56B00C79009 /* swiftlint */ = {
@@ -3496,7 +3496,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1320;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = "Verse Communications Inc";
 				TargetAttributes = {
 					0A3880172475BB4500777843 = {
@@ -3526,7 +3526,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */;
+			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary-scuttle" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -3590,7 +3590,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				5344D82A21C4649700704A34 /* Planetary */,
+				5344D82A21C4649700704A34 /* Planetary-scuttle */,
 				5308169021C46A6E005C48ED /* APITests */,
 				5308168421C46A52005C48ED /* UnitTests */,
 				0A3880172475BB4500777843 /* UITests */,
@@ -5142,17 +5142,17 @@
 /* Begin PBXTargetDependency section */
 		0A38801E2475BB4500777843 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5344D82A21C4649700704A34 /* Planetary */;
+			target = 5344D82A21C4649700704A34 /* Planetary-scuttle */;
 			targetProxy = 0A38801D2475BB4500777843 /* PBXContainerItemProxy */;
 		};
 		0AD00E7223FC5C66006BF017 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5344D82A21C4649700704A34 /* Planetary */;
+			target = 5344D82A21C4649700704A34 /* Planetary-scuttle */;
 			targetProxy = 0AD00E7123FC5C66006BF017 /* PBXContainerItemProxy */;
 		};
 		0AD00E7423FC5C71006BF017 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5344D82A21C4649700704A34 /* Planetary */;
+			target = 5344D82A21C4649700704A34 /* Planetary-scuttle */;
 			targetProxy = 0AD00E7323FC5C71006BF017 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -5496,7 +5496,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.UITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.scuttlego.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5518,7 +5518,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.UITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.scuttlego.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5551,7 +5551,7 @@
 					"\"Multipart\"",
 					"-lssb-go",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.planetary.ios-scuttlego.UnitTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -5582,7 +5582,7 @@
 					"\"Multipart\"",
 					"-lssb-go",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.planetary.ios-scuttlego.UnitTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -5616,7 +5616,7 @@
 					"-lssb-go",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\"";
-				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.APITests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.planetary.ios-scuttlego.APITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "${PROJECT_DIR}/Source/GoBot/GoBotBridge.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5651,7 +5651,7 @@
 					"-lssb-go",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\"";
-				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.APITests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.planetary.ios-scuttlego.APITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "${PROJECT_DIR}/Source/GoBot/GoBotBridge.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5790,7 +5790,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 387;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -5804,9 +5804,11 @@
 					"@executable_path/Frameworks",
 					"@executable_path/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.3.10;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.planetary.ios-scuttlego";
+				PRODUCT_NAME = "Planetary-scuttle";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -5824,7 +5826,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 387;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -5838,9 +5840,11 @@
 					"@executable_path/Frameworks",
 					"@executable_path/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 1.3.10;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.planetary.ios-scuttlego";
+				PRODUCT_NAME = "Planetary-scuttle";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -5917,7 +5921,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */ = {
+		5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary-scuttle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5344D83B21C4649A00704A34 /* Debug */,
@@ -5926,7 +5930,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5344D83D21C4649A00704A34 /* Build configuration list for PBXNativeTarget "Planetary" */ = {
+		5344D83D21C4649A00704A34 /* Build configuration list for PBXNativeTarget "Planetary-scuttle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5344D83E21C4649A00704A34 /* Debug */,
