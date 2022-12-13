@@ -13,7 +13,6 @@ import (
 	"github.com/planetary-social/scuttlego/service/domain"
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
-	"github.com/planetary-social/scuttlego/service/domain/invites"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
 	refs "go.mindeco.de/ssb-refs"
 	"os"
@@ -32,6 +31,7 @@ type BotConfig struct {
 	HMACKey    string `json:"HMACKey"`
 	KeyBlob    string `json:"KeyBlob"`
 	Repo       string `json:"Repo"`
+	OldRepo    string `json:"OldRepo"`
 	ListenAddr string `json:"ListenAddr"`
 	Hops       uint   `json:"Hops"`
 	Testing    bool   `json:"Testing"`
@@ -51,9 +51,6 @@ type Node struct {
 func NewNode() *Node {
 	return &Node{}
 }
-
-// todo remove
-var testPubInvite = invites.MustNewInviteFromString("198.199.90.207:8008:@2xO+nZ1D46RIc6hGKk1fJ4ccynogPNry1S7q18XZQGk=.ed25519~9qgQcC9XngzFLV2A9kIOyVo0q8P+twN6VLKl4DBOgsQ=")
 
 func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded OnBlobDownloadedFn) error {
 	n.mutex.Lock()
@@ -171,8 +168,6 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
-	dataDirectory := path.Join(swiftConfig.Repo, "raptor")
-
 	logger := NewKitlogLogger(kitlogLogger, "gossb", logging.LevelDebug) // todo set level to debug
 
 	// todo do something with hops
@@ -180,18 +175,14 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 	// todo use the testing option to change log level?
 
 	config := di.Config{
-		DataDirectory: dataDirectory,
-		ListenAddress: swiftConfig.ListenAddr,
-		NetworkKey:    networkKey,
-		MessageHMAC:   messageHMAC,
-		Logger:        logger,
-		PeerManagerConfig: domain.PeerManagerConfig{ // todo do not hardcode
-			PreferredPubs: []domain.Pub{
-				{
-					Identity: testPubInvite.Remote().Identity(),
-					Address:  testPubInvite.Address(),
-				},
-			},
+		DataDirectory:      swiftConfig.Repo,
+		GoSSBDataDirectory: swiftConfig.OldRepo,
+		ListenAddress:      swiftConfig.ListenAddr,
+		NetworkKey:         networkKey,
+		MessageHMAC:        messageHMAC,
+		Logger:             logger,
+		PeerManagerConfig: domain.PeerManagerConfig{
+			PreferredPubs: nil,
 		},
 	}
 

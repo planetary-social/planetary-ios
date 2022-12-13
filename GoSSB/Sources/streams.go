@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
+	"github.com/planetary-social/scuttlego/service/app/common"
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"time"
 )
@@ -28,7 +29,7 @@ func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 		return nil
 	}
 
-	receiveLogSequence, err := queries.NewReceiveLogSequence(int(startSeq))
+	receiveLogSequence, err := common.NewReceiveLogSequence(int(startSeq))
 	if err != nil {
 		err = errors.Wrap(err, "could not create a receive log sequence")
 		return nil
@@ -91,7 +92,7 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 	}
 
 	if afterSeq >= 0 {
-		sequence, err := queries.NewReceiveLogSequence(int(afterSeq))
+		sequence, err := common.NewReceiveLogSequence(int(afterSeq))
 		if err != nil {
 			err = errors.Wrap(err, "failed to create a message sequence")
 			return nil

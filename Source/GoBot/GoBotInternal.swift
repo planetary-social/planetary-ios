@@ -87,6 +87,7 @@ private struct GoBotConfig: Encodable {
     let HMACKey: String
     let KeyBlob: String
     let Repo: String
+    let OldRepo: String
     let ListenAddr: String
     let Hops: UInt // setting this value to 0 means "a person that you follow" (1 hop away), therefore this value should be understood slightly differently than in the case of some other clients
     let SchemaVersion: UInt
@@ -139,7 +140,8 @@ class GoBotInternal {
             }
         }
         
-        self.repoPath = pathPrefix.appending("/GoSbot")
+        let oldRepoPath = pathPrefix.appending("/GoSbot")
+        self.repoPath = pathPrefix.appending("/scuttlego")
         
         // TODO: device address enumeration (v6 and v4)
         // https://github.com/VerseApp/ios/issues/82
@@ -152,6 +154,7 @@ class GoBotInternal {
             HMACKey: hmacKey == nil ? "" : hmacKey!.string,
             KeyBlob: secret.jsonString()!,
             Repo: self.repoPath,
+            OldRepo: oldRepoPath,
             ListenAddr: listenAddr,
             Hops: 1,
             SchemaVersion: ViewDatabase.schemaVersion,
