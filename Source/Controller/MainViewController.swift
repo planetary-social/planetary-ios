@@ -153,6 +153,7 @@ class MainViewController: UITabBarController {
         self.setViewControllers(controllers, animated: false)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         nil
     }
