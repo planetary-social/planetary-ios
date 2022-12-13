@@ -46,11 +46,7 @@ struct HashtagView: View {
                             } else {
                                 ForEach(messages) { message in
                                     Button {
-                                        if let contact = message.content.contact {
-                                            AppController.shared.open(identity: contact.contact)
-                                        } else {
-                                            AppController.shared.open(identifier: message.id)
-                                        }
+                                        AppController.shared.open(identifier: message.id)
                                     } label: {
                                         MessageView(message: message)
                                             .onAppear {

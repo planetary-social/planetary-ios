@@ -12,14 +12,14 @@ import SwiftUI
 
 struct MessageListView: View {
 
-    @State
-    var messages = [Message]()
-
     var strategy: FeedStrategy
 
     @EnvironmentObject
     private var botRepository: BotRepository
 
+    @State
+    private var messages = [Message]()
+    
     @State
     private var isLoading = false
 
@@ -152,21 +152,21 @@ struct MessageListView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             VStack {
-                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
+                MessageListView(strategy: StaticAlgorithm(messages: []))
                 ScrollView {
-                    MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                    MessageListView(strategy: StaticAlgorithm(messages: [sample, another]))
                 }
             }
             VStack {
-                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
+                MessageListView(strategy: StaticAlgorithm(messages: []))
                 ScrollView {
-                    MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                    MessageListView(strategy: StaticAlgorithm(messages: [sample, another]))
                 }
             }
             .preferredColorScheme(.dark)
         }
         .padding()
         .background(Color.cardBackground)
-        .environmentObject(BotRepository.fake)
+        .environmentObject(BotRepository.shared)
     }
 }

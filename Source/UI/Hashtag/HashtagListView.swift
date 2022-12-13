@@ -60,6 +60,7 @@ struct HashtagListView: View {
                     }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: (.always)))
+                .disableAutocorrection(true)
                 .onChange(of: searchText) { value in
                     if value.isEmpty && !isSearching {
                         filter()

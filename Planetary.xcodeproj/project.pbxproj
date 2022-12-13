@@ -661,6 +661,8 @@
 		5B9C6952288726F300229469 /* ClearUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */; };
 		5B9C69562888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */; };
 		5B9C69572888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */; };
+		5BA321672949083400EF740B /* StaticAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA321662949083400EF740B /* StaticAlgorithm.swift */; };
+		5BA321682949083400EF740B /* StaticAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA321662949083400EF740B /* StaticAlgorithm.swift */; };
 		5BA32ED82915930000744984 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32ED72915930000744984 /* ActivityView.swift */; };
 		5BA32ED92915930000744984 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32ED72915930000744984 /* ActivityView.swift */; };
 		5BA32EDC291597DE00744984 /* BotRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32EDB291597DE00744984 /* BotRepository.swift */; };
@@ -1682,6 +1684,7 @@
 		5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularHashtagsAlgorithm.swift; sourceTree = "<group>"; };
 		5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearUnreadNotificationsOperation.swift; sourceTree = "<group>"; };
 		5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountUnreadNotificationsOperation.swift; sourceTree = "<group>"; };
+		5BA321662949083400EF740B /* StaticAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticAlgorithm.swift; sourceTree = "<group>"; };
 		5BA32ED72915930000744984 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		5BA32EDB291597DE00744984 /* BotRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotRepository.swift; sourceTree = "<group>"; };
 		5BA6E3AB293447BA000393AC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -2868,6 +2871,7 @@
 				5BAD727C2892C4C5001494B4 /* NoHopFeedAlgorithm.swift */,
 				5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */,
 				5BA6E3B629366ED4000393AC /* HashtagAlgorithm.swift */,
+				5BA321662949083400EF740B /* StaticAlgorithm.swift */,
 			);
 			path = FeedStrategy;
 			sourceTree = "<group>";
@@ -4293,6 +4297,7 @@
 				C9724BF32809EFC9000EBCCD /* AvatarImageViewRepresentable.swift in Sources */,
 				C9C3787C27C68DE900238B58 /* ConnectedPeersControllerTests.swift in Sources */,
 				C9724BBA2809ECA2000EBCCD /* StatisticsOperation.swift in Sources */,
+				5BA321682949083400EF740B /* StaticAlgorithm.swift in Sources */,
 				5316E96721FFED620053832E /* About.swift in Sources */,
 				C9421EB92888A44700A4C86D /* NoControlsVideoPlayer.swift in Sources */,
 				C9724BB12809EC10000EBCCD /* ImageButton.swift in Sources */,
@@ -5055,6 +5060,7 @@
 				53375F83232178DB00610932 /* UIPageControl+Verse.swift in Sources */,
 				53BD748623232FB70060E47E /* Blob+UIImage.swift in Sources */,
 				0A4870FF249801CD00BCD063 /* MessagePaginatedCollectionViewDataSource.swift in Sources */,
+				5BA321672949083400EF740B /* StaticAlgorithm.swift in Sources */,
 				5B92E27C284A7B12003127F2 /* PopularHashtagsAlgorithm.swift in Sources */,
 				53BD748A23289B3F0060E47E /* ImageGalleryView.swift in Sources */,
 				C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */,

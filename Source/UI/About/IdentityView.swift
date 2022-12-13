@@ -123,7 +123,7 @@ struct IdentityView: View {
                     }
                     .zIndex(extendedHeader ? 500 : 1000)
                     .offset(y: headerOffset)
-                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: identity))
+                MessageListView(strategy: strategy)
                     .background(Color.appBg)
                     .zIndex(extendedHeader ? 1000 : 500)
                     .offset(y: contentOffset)
