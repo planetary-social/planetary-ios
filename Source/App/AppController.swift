@@ -26,6 +26,15 @@ class AppController: UIViewController {
     private var didStartDatabaseProcessingObserver: NSObjectProtocol?
     private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
     private var didUpdateDatabaseProgressObserver: NSObjectProtocol?
+    
+    /// One and a half second `CATransition` `.easeInEaseOut` with type `CATransitionType.fade`.
+    private var crossFadeTransition: CATransition {
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        transition.type = CATransitionType.fade
+        return transition
+    }
 
     @MainActor convenience init() {
         self.init(nibName: nil, bundle: nil)
@@ -44,7 +53,11 @@ class AppController: UIViewController {
     /// Because controllers are nested and presented when the keyboard is also being presented,
     /// Autolayout may not have had a chance to do its thing.  So, it is forced here to ensure
     /// that the view hierarchy has been sized correctly before presenting.
-    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+    override func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
         viewControllerToPresent.view.setNeedsLayout()
         viewControllerToPresent.view.layoutIfNeeded()
         super.present(viewControllerToPresent, animated: flag, completion: completion)
@@ -75,8 +88,11 @@ class AppController: UIViewController {
 
     // MARK: Main tab view controller
 
-    func showMainViewController(with controller: UIViewController? = nil, animated: Bool = true) {
+    func showMainViewController(with controller: UIViewController? = nil, animated: Bool = true, fadeIn: Bool = false) {
         let controller = MainViewController()
+        if animated && fadeIn {
+            self.view.layer.add(crossFadeTransition, forKey: nil)
+        }
         self.setRootViewController(controller, animated: animated)
         self.missionControlCenter.start()
     }
@@ -99,9 +115,11 @@ class AppController: UIViewController {
     
     // MARK: Onboarding view controller
 
-    func showOnboardingViewController(_ status: Onboarding.Status = .notStarted,
-                                      _ simulate: Bool = false,
-                                      animated: Bool = true) {
+    func showOnboardingViewController(
+        _ status: Onboarding.Status = .notStarted,
+        _ simulate: Bool = false,
+        animated: Bool = true
+    ) {
         let controller = OnboardingViewController(status: status, simulate: simulate)
         self.setRootViewController(controller, animated: animated)
     }
@@ -119,8 +137,8 @@ class AppController: UIViewController {
     // MARK: Settings view controller
 
     func showSettingsViewController() {
-        let nc = UINavigationController(rootViewController: SettingsViewController())
-        self.mainViewController?.present(nc, animated: true)
+        let navController = UINavigationController(rootViewController: SettingsViewController())
+        self.mainViewController?.present(navController, animated: true)
     }
     
     func dismissSettingsViewController(completion: (() -> Void)? = nil) {
@@ -134,25 +152,29 @@ class AppController: UIViewController {
             // self?.showProgress(statusText: notification.databaseProgressStatus)
             self?.missionControlCenter.pause()
         }
-//        let updateProgress = { (notification: Notification) -> Void in
-//            guard let percDone = notification.databaseProgressPercentageDone else { return }
-//            guard let status = notification.databaseProgressStatus else { return }
-//            self?.updateProgress(perc: percDone, status: status)
-//        }
+        // let updateProgress = { (notification: Notification) -> Void in
+        //     guard let percDone = notification.databaseProgressPercentageDone else { return }
+        //     guard let status = notification.databaseProgressStatus else { return }
+        //     self?.updateProgress(perc: percDone, status: status)
+        // }
         let dismissProgress = { [weak self] (_: Notification) -> Void in
             // self?.hideProgress()
             self?.missionControlCenter.resume()
         }
         removeObservers()
         let notificationCenter = NotificationCenter.default
-        didStartDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didStartFSCKRepair,
-                                                                    object: nil,
-                                                                    queue: .main,
-                                                                    using: showProgress)
-        didFinishDatabaseProcessingObserver = notificationCenter.addObserver(forName: .didFinishFSCKRepair,
-                                                                     object: nil,
-                                                                     queue: .main,
-                                                                     using: dismissProgress)
+        didStartDatabaseProcessingObserver = notificationCenter.addObserver(
+            forName: .didStartFSCKRepair,
+            object: nil,
+            queue: .main,
+            using: showProgress
+        )
+        didFinishDatabaseProcessingObserver = notificationCenter.addObserver(
+            forName: .didFinishFSCKRepair,
+            object: nil,
+            queue: .main,
+            using: dismissProgress
+        )
 //        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateFSCKRepair,
 //                                                                       object: nil,
 //                                                                       queue: .main,

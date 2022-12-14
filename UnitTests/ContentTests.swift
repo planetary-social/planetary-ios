@@ -177,7 +177,7 @@ class ContentTests: XCTestCase {
         XCTAssertEqual(b.name, "1614434_10206454331651096_887999461891506870_o.jpg")
         XCTAssertEqual(b.metadata?.numberOfBytes, 67_654)
         XCTAssertEqual(b.metadata?.dimensions?.height, 440)
-        XCTAssertEqual(b.metadata?.dimensions?.width, 1_024)
+        XCTAssertEqual(b.metadata?.dimensions?.width, 1024)
         XCTAssertEqual(b.metadata?.mimeType, "image/jpeg")
     }
 
@@ -334,7 +334,7 @@ class ContentTests: XCTestCase {
         let data = self.data(for: "ValueTimestamp.json")
         let val = try JSONDecoder().decode(MessageValue.self, from: data)
         XCTAssertTrue(val.content.type == .vote)
-        XCTAssertEqual(val.claimedTimestamp, 1_573_673_656_588.015_9)
+        XCTAssertEqual(val.claimedTimestamp, 1_573_673_656_588.0159)
         let kv = Message(key: "%test.msg", value: val, timestamp: 0)
         XCTAssertEqual(kv.claimedDate, Date(timeIntervalSince1970: 1_573_673_656.588_015_9))
     }
@@ -392,7 +392,6 @@ class ContentTests: XCTestCase {
                 let content = try? JSONDecoder().decode(Content.self, from: data)
                 XCTAssertTrue(content?.assertValid() ?? false)
                 break
-                
                     
             case .dropContentRequest:
                 let fakeHash = "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.ggfeed-v1"

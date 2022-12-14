@@ -150,7 +150,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .refreshable {
             viewModel.refresh()
         }
-        .onAppear() {
+        .onAppear {
             viewModel.refresh()
         }
         .navigationBarTitle(Localized.Alias.roomAliases.text, displayMode: .inline)

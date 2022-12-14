@@ -21,6 +21,9 @@ class GoBotIntegrationTests: XCTestCase {
     let fileManager = FileManager.default
     let userDefaultsSuiteName = "GoBotIntegrationTests"
 
+    var testPost: Post {
+        Post(text: "\(#function)")
+    }
 
     override func setUp() async throws {
         // We should refactor GoBot to use a configurable directory, so we don't clobber existing data every time we
@@ -44,7 +47,7 @@ class GoBotIntegrationTests: XCTestCase {
         appConfig.hmacKey = botTestHMAC
         appConfig.bot = sut
         
-        try await sut.login(config: appConfig)
+        try await sut.login(config: appConfig, fromOnboarding: false)
 
         let nicks = ["alice", "bob"]
         for nick in nicks {
@@ -486,7 +489,28 @@ class GoBotIntegrationTests: XCTestCase {
     }
     
     /// Verifies that the isRestoring value defaults to false.
-    func testIsRestoringDefaultValue() {
+    func testIsRestoringWhenSomeMessagesPublished() async throws {
+        _ = try await sut.publish(content: testPost)
+        try await sut.logout()
+        try await sut.login(config: appConfig, fromOnboarding: false)
+        XCTAssertEqual(sut.isRestoring, false)
+    }
+    
+    func testIsRestoringWhenForkedFeedProtectionActive() async throws {
+        _ = try await sut.publish(content: testPost)
+        AppConfiguration.current?.numberOfPublishedMessages = 2
+        XCTAssertEqual(sut.isRestoring, true)
+    }
+    
+    /// Verifies that the isRestoring value is set to true when we have no feed.
+    func testIsRestoringWithoutPublishedMessages() {
+        XCTAssertEqual(sut.isRestoring, true)
+    }
+    
+    /// Verifies that the isRestoring value is set to true when we have no feed.
+    func testIsRestoringAfterOnboarding() async throws {
+        try await sut.logout()
+        try await sut.login(config: appConfig, fromOnboarding: true)
         XCTAssertEqual(sut.isRestoring, false)
     }
 
@@ -501,7 +525,7 @@ class GoBotIntegrationTests: XCTestCase {
         sut = GoBot(preloadedPubService: mockPreloader)
         
         // Act
-        try await sut.login(config: appConfig)
+        try await sut.login(config: appConfig, fromOnboarding: false)
         
         // Assert
         let expectation = XCTBlockExpectation { mockPreloader.preloadPubsCallCount == 1 }

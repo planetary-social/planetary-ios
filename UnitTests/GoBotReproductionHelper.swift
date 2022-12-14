@@ -69,7 +69,7 @@ class API_GoBot: XCTestCase {
         }
         
         let loginExpecation = self.expectation(description: "login")
-        try await API_GoBot.bot.login(config: reproConfiguration)
+        try await API_GoBot.bot.login(config: reproConfiguration, fromOnboarding: false)
     }
     
     // check we loaded all the messages from the fixtures repo
@@ -77,7 +77,7 @@ class API_GoBot: XCTestCase {
         let statistics = await API_GoBot.bot.statistics()
         XCTAssertEqual(statistics.repo.feedCount, 200)
         XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
-        XCTAssertEqual(statistics.repo.messageCount, 6_700)
+        XCTAssertEqual(statistics.repo.messageCount, 6700)
         
         XCTAssertFalse(API_GoBot.bot.bot.repoFSCK(.Sequences))
     }

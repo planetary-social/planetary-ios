@@ -49,7 +49,7 @@ class DebugOnboardingViewController: DebugTableViewController {
         return view
     }()
 
-    private var birthdate = Date.random(in: 1_975)
+    private var birthdate = Date.random(in: 1975)
 
     private lazy var birthdateTextField: UITextField = {
         let view = UITextField()

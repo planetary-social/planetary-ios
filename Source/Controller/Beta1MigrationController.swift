@@ -33,7 +33,7 @@ enum Beta1MigrationError: Error {
 /// The go-ssb on-disk database format changed with no migration path circa 2022, so we wrote this custom flow in Swift
 /// to drop all data and resync from the network.
 @MainActor 
-class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
+class Beta1MigrationController: Beta1MigrationViewModel {
     
     // MARK: - Properties
     
@@ -93,18 +93,16 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             appController: appController,
             userDefaults: userDefaults,
             dismissHandler: {
-                Task { await appController.dismiss(animated: true) }
+                Task { appController.dismiss(animated: true) }
             }
         )
         let view = Beta1MigrationView(viewModel: controller)
-        let hostingController = await UIHostingController(rootView: view)
+        let hostingController = UIHostingController(rootView: view)
         await MainActor.run {
             hostingController.modalPresentationStyle = .fullScreen
             hostingController.modalTransitionStyle = .crossDissolve
         }
-        await appController.present(hostingController, animated: true)
-     
-        bot.isRestoring = true
+        appController.present(hostingController, animated: true)
    
         if !userDefaults.bool(forKey: beta1MigrationStartKey) {
             try await bot.dropDatabase(for: appConfiguration)
@@ -117,7 +115,8 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             controller.progress = userDefaults.float(forKey: beta1MigrationProgress)
         }
         
-        try await bot.login(config: appConfiguration)
+        try await bot.login(config: appConfiguration, fromOnboarding: false)
+        bot.isRestoring = true
         await controller.bindProgress(to: bot)
         
         return true
@@ -193,7 +192,6 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
                 Log.info("Resync progress: \(self.progress)")
             })
             .store(in: &self.cancellabes)
-
     }
     
     /// This opens up a special connection to the SQLLite database and retrieves the total message count.
@@ -240,7 +238,7 @@ class Beta1MigrationController: ObservableObject, Beta1MigrationViewModel {
             syncedMessages: syncedMessages,
             totalMessages: completionMessageCount
         )
-        appConfiguration.bot?.isRestoring = false
+        appConfiguration.bot?.setRestoring(false)
 
         cancellabes.forEach { $0.cancel() }
         dismissHandler()

@@ -86,7 +86,6 @@ class Onboarding {
         if let name = data.name {
             guard name.isValidName else {
                 throw StartError.invalidName
-                
             }
         }
         
@@ -118,7 +117,7 @@ class Onboarding {
         
         // login to bot
         do {
-            try await context.bot.login(config: configuration)
+            try await context.bot.login(config: configuration, fromOnboarding: true)
         } catch {
             throw StartError.botError(error)
         }
@@ -242,11 +241,12 @@ class Onboarding {
             }
             
             do {
-                try await Bots.current.login(config: configuration)
+                try await Bots.current.login(config: configuration, fromOnboarding: true)
             } catch {
                 completion(context, .botError(error))
             }
-            
+            Bots.current.setRestoring(false)
+
             // get About for context identity
             Bots.current.about(identity: context.identity) {
                 about, error in

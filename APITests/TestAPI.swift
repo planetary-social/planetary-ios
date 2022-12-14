@@ -14,7 +14,7 @@ class TestAPI: PubAPI {
     override init() {
         super.init()
         super.headers = ["Verse-Authorize-Pub": "KrztmpEgK0LEX0yseDBfccgWaxTVZIl/bJOZPjkXV+ArUlP9m5te1cUjQKyc0YuH48"]
-        super.httpPort = 8_443
+        super.httpPort = 8443
         super.httpHost = "pub.verse.app"
         super.httpPathPrefix = ""
     }

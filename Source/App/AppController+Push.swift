@@ -132,8 +132,7 @@ extension AppController {
     /// has determined the device token has changed, like when the
     /// app is reinstalled or the OS is updated.
     func updatePushNotificationToken(_ token: Data?) {
-        // TODO https://app.asana.com/0/914798787098068/1145662769684306/f
-        // TODO make sure this gets called when identities are switched or added
+        // make sure this gets called when identities are switched or added #994
         let identities = AppConfigurations.current.compactMap { $0.identity }
         for identity in identities {
             PushAPI.shared.update(token, for: identity) { _, _ in

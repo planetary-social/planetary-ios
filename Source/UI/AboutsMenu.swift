@@ -62,6 +62,7 @@ class AboutsMenu: UIView {
         Layout.fillBottom(of: self, with: self.bottomSeparator, respectSafeArea: false)
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -73,8 +74,7 @@ class AboutsMenu: UIView {
     func filter(by string: String?) {
         guard let string = string, !string.isEmpty else { self.hide(); return }
         self.show()
-        AboutService.matching(string.withoutAtPrefix) {
-            [weak self] abouts, _ in
+        AboutService.matching(string.withoutAtPrefix) { [weak self] abouts, _ in
             self?.abouts = abouts
         }
     }
@@ -128,6 +128,7 @@ private class MiniAboutTableViewCell: UITableViewCell {
         Layout.fill(view: self.contentView, with: self.aboutView)
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

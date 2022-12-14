@@ -94,18 +94,20 @@ class AboutView: MessageUIView {
         self.addSubviews()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: Layout
 
+    // swiftlint:disable function_body_length
     private func addSubviews() {
 
         Layout.addSeparator(toTopOf: self)
         
         Layout.center(self.circleView, atTopOf: self, inset: 23, size: CGSize(square: Layout.profileImageOutside))
-       // self.addLoadingAnimation()
+        // self.addLoadingAnimation()
 
         Layout.center(self.imageView, in: self.circleView, size: CGSize(square: Layout.profileImageInside))
 
@@ -115,7 +117,7 @@ class AboutView: MessageUIView {
         self.editPhotoButton.constrainLeading(to: self.circleView, constant: 140)
 
         var insets = UIEdgeInsets.topLeftRight
-        insets.top = insets.top - 2
+        insets.top -= 2
         Layout.fillSouth(of: self.circleView, with: self.nameLabel, insets: insets)
 
         Layout.fillSouth(of: self.nameLabel, with: self.followingLabel, insets: .leftBottomRight)
@@ -138,7 +140,12 @@ class AboutView: MessageUIView {
         let descriptionContainer = UIView.forAutoLayout()
         descriptionContainer.clipsToBounds = true
         let verticalInset = Layout.verticalSpacing - 10
-        insets = UIEdgeInsets(top: verticalInset, left: Layout.postSideMargins, bottom: -verticalInset, right: -Layout.postSideMargins)
+        insets = UIEdgeInsets(
+            top: verticalInset,
+            left: Layout.postSideMargins,
+            bottom: -verticalInset,
+            right: -Layout.postSideMargins
+        )
         Layout.fill(view: descriptionContainer, with: self.descriptionTextView, insets: insets)
         Layout.addSeparator(toBottomOf: descriptionContainer)
 
@@ -156,11 +163,11 @@ class AboutView: MessageUIView {
         Layout.fillSouth(of: separator, with: self.followingView)
         self.followingView.constrainHeight(to: 50)
 
-        separator = Layout.sectionSeparatorView(bottom: false,
-                                                color: .appBackground)
+        separator = Layout.sectionSeparatorView(bottom: false, color: .appBackground)
         Layout.fillSouth(of: self.followingView, with: separator)
         separator.pinBottomToSuperviewBottom()
     }
+    // swiftlint:enable function_body_length
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -214,17 +221,13 @@ class AboutView: MessageUIView {
 
     func update(with about: About) {
 
-        self.update(name: about.nameOrIdentity,
-                    bio: about.attributedDescription,
-                    identity: about.identity)
+        self.update(name: about.nameOrIdentity, bio: about.attributedDescription, identity: about.identity)
 
         self.imageView.set(image: about.image)
     }
 
     func update(with person: Person) {
-        self.update(name: person.name,
-                    bio: person.attributedBio,
-                    identity: person.identity)
+        self.update(name: person.name, bio: person.attributedBio, identity: person.identity)
 
         self.imageView.load(for: person, animate: true)
     }
@@ -251,7 +254,12 @@ class AboutView: MessageUIView {
             self.followButton.relationship = relationship
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(relationshipDidChange(notification:)), name: relationship.notificationName, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(relationshipDidChange(notification:)),
+            name: relationship.notificationName,
+            object: nil
+        )
     }
 
     func update(with relationship: Relationship) {
@@ -264,7 +272,8 @@ class AboutView: MessageUIView {
         }
     }
 
-    @objc func relationshipDidChange(notification: Notification) {
+    @objc
+    func relationshipDidChange(notification: Notification) {
         guard let relationship = notification.userInfo?[Relationship.infoKey] as? Relationship else {
             return
         }

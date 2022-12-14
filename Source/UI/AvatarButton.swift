@@ -44,10 +44,12 @@ class AvatarButton: ImageButton {
             self?.setImage(for: newAbout)
         }
         self.removeObservers()
-        self.didUpdateAboutObserver = NotificationCenter.default.addObserver(forName: .didUpdateAbout,
-                                                                             object: nil,
-                                                                             queue: .main,
-                                                                             using: updateBlock)
+        self.didUpdateAboutObserver = NotificationCenter.default.addObserver(
+            forName: .didUpdateAbout,
+            object: nil,
+            queue: .main,
+            using: updateBlock
+        )
         self.reset()
         guard let image = about?.image else { return }
         self.set(image: image)

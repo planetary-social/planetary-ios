@@ -59,7 +59,8 @@ protocol Bot: AnyObject, Sendable {
     
     /// A flag that signals that the bot is resyncing the user's feed from the network.
     /// Currently used to suppress push notifications because the user has already seen them.
-    var isRestoring: Bool { get set }
+    var isRestoring: Bool { get }
+    func setRestoring(_ value: Bool)
     
     // MARK: Logs
     var logFileUrls: [URL] { get }
@@ -123,8 +124,9 @@ protocol Bot: AnyObject, Sendable {
     /// whose data is contained in `AppConfiguration`.
     /// - Parameter queue: The queue that `completion` will be called on.
     /// - Parameter config: An object containing high-level parameters like the user's keys and the network key.
+    /// - Parameter fromOnboarding: A flag that should be true if the user is logging in from the onboarding flow.
     /// - Parameter completion: A handler that will be called with the result of the operation.
-    @MainActor func login(config: AppConfiguration) async throws
+    @MainActor func login(config: AppConfiguration, fromOnboarding: Bool) async throws
     @MainActor func logout() async throws
 
     // MARK: Invites
@@ -330,12 +332,9 @@ extension Bot {
     }
     
     @discardableResult
-    func refresh(
-        load: RefreshLoad,
-        queue: DispatchQueue = .main
-    ) async throws -> (TimeInterval, Bool) {
+    func refresh(load: RefreshLoad) async throws -> (TimeInterval, Bool) {
         try await withCheckedThrowingContinuation { continuation in
-            refresh(load: load, queue: queue) { refreshResult, timeElapsed in
+            refresh(load: load, queue: .main) { refreshResult, timeElapsed in
                 do {
                     let finished = try refreshResult.get()
                     continuation.resume(returning: (timeElapsed, finished))
@@ -712,7 +711,7 @@ extension Bot {
     }
     
     @MainActor
-    func addBlob(data: Data) async throws -> BlobIdentifier{
+    func addBlob(data: Data) async throws -> BlobIdentifier {
         try await withCheckedThrowingContinuation { continuation in
             addBlob(data: data) { result, error in
                 if let error = error {

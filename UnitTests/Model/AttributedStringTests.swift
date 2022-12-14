@@ -69,20 +69,20 @@ class AttributedStringTests: XCTestCase {
     // Fixes this issue, and is referenced for historical purposes.
     func test_stringAlphaNumericHashtagsOnly() {
         let string = """
-                     #Q23AS9D0APQQ2
-                     Q23AS9D0APQQ2
-                     #111111
-                     #aaaaaa
-                     #q2IasK231@!@!#_+123
-                     #asdas12312...1231@asda___213-1
-                     #asdas123121231asda2131
-                     asdas123121231asda2131
-
-                     hello #hashtag my old friend
-
-                     #1234567890 #1234abcd1234 #abcd1234abcd #abcdefghijkl
-                     #1234abcdefgh
-                     """
+        #Q23AS9D0APQQ2
+        Q23AS9D0APQQ2
+        #111111
+        #aaaaaa
+        #q2IasK231@!@!#_+123
+        #asdas12312...1231@asda___213-1
+        #asdas123121231asda2131
+        asdas123121231asda2131
+        
+        hello #hashtag my old friend
+        
+        #1234567890 #1234abcd1234 #abcd1234abcd #abcdefghijkl
+        #1234abcdefgh
+        """
         let expected = 10
         let count = string.hashtags().count
         XCTAssertTrue(count == expected, "Expected \(expected) hashtags, got \(count)")

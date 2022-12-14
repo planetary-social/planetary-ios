@@ -80,7 +80,7 @@ class Beta1MigrationTests: XCTestCase {
     /// Verifies that the proper user defaults keys are set when a user creates a new profile
     func testUserDefaultsSetAfterNewAccountCreation() async throws {
         // Act
-        try await mockBot.login(config: appConfig)
+        try await mockBot.login(config: appConfig, fromOnboarding: false)
         
         // Assert
         XCTAssertEqual(self.userDefaults.bool(forKey: "StartedBeta1Migration"), false)
@@ -181,7 +181,6 @@ class Beta1MigrationTests: XCTestCase {
         // Assert
         XCTAssertEqual(isMigrating, false)
     }
-        
 
     /// Verifies that the user cannot publish after the migration has started if forked feed protection is enabled.
     func testForkedFeedProtectionAfterMigration() async throws {
@@ -421,7 +420,7 @@ class MockAppConfiguration: AppConfiguration {
     }
     
     override func databaseDirectory() throws -> String {
-        return mockDatabaseDirectory
+        mockDatabaseDirectory
     }
 }
 

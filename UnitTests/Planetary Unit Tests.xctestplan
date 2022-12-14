@@ -1,0 +1,63 @@
+{
+  "configurations" : [
+    {
+      "id" : "2D0F4016-6D92-4805-B0DB-FE6720EB8676",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:Planetary.xcodeproj",
+          "identifier" : "5344D82A21C4649700704A34",
+          "name" : "Planetary"
+        }
+      ]
+    },
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "mock-phone-verification-api",
+        "enabled" : false
+      },
+      {
+        "argument" : "mock-push-api",
+        "enabled" : false
+      },
+      {
+        "argument" : "mock-directory-api",
+        "enabled" : false
+      },
+      {
+        "argument" : "mock-pub-api",
+        "enabled" : false
+      },
+      {
+        "argument" : "use-ci-network",
+        "enabled" : false
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Planetary.xcodeproj",
+      "identifier" : "5344D82A21C4649700704A34",
+      "name" : "Planetary"
+    }
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "API_GoBot",
+        "ViewDatabasePerformanceTests"
+      ],
+      "target" : {
+        "containerPath" : "container:Planetary.xcodeproj",
+        "identifier" : "5308168421C46A52005C48ED",
+        "name" : "UnitTests"
+      }
+    }
+  ],
+  "version" : 1
+}

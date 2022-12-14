@@ -11,13 +11,13 @@ import UIKit
 
 extension Blob.Metadata {
 
-    static func describing(_ image: UIImage,
-                           mimeType: MIMEType? = nil,
-                           data: Data? = nil) -> Blob.Metadata {
-        Blob.Metadata(averageColorRGB: image.averageColor()?.rgb,
-                             dimensions: Dimensions(image.size),
-                             mimeType: mimeType?.rawValue,
-                             numberOfBytes: data?.count ?? 0)
+    static func describing(_ image: UIImage, mimeType: MIMEType? = nil, data: Data? = nil) -> Blob.Metadata {
+        Blob.Metadata(
+            averageColorRGB: image.averageColor()?.rgb,
+            dimensions: Dimensions(image.size),
+            mimeType: mimeType?.rawValue,
+            numberOfBytes: data?.count ?? 0
+        )
     }
 }
 

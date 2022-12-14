@@ -19,10 +19,12 @@ struct Blob: Codable {
 
     struct Metadata: Codable {
 
+        // swiftlint:disable nesting
         struct Dimensions: Codable {
             let width: Int
             let height: Int
         }
+        // swiftlint:enable nesting
 
         // optional metadata
         let averageColorRGB: Int?

@@ -26,7 +26,7 @@ import SwiftUI
     /// Tries to add a room to the database from an invitation link or multiserver address string.
     func addRoom(from: String)
     
-    /// Tells the controller that the user wants to open the given room.
+    /// Tells the coordinator that the user wants to open the given room.
     func open(_ room: Room)
     
     /// Called when the user dismisses the shown error message. Should clear `errorMessage`.
@@ -75,8 +75,6 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
         }
     }
     
-    @State private var showingDeleteAlert = false
-    @State private var indexSetToDelete: IndexSet?
     var body: some View {
         List {
             // Joined Rooms
@@ -91,23 +89,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                         .foregroundColor(.mainText)
                         .listRowBackground(Color.cardBackground)
                     }
-                    .onDelete { indexSet in
-                        self.indexSetToDelete = indexSet
-                        withAnimation {
-                            showingDeleteAlert = true
-                        }
-                    }
-                    .alert(isPresented: $showingDeleteAlert) {
-                        Alert(
-                            title: Text(Localized.ManageRelays.deleteRoomConfirmation.text),
-                            primaryButton: .destructive(Text(Localized.ManageRelays.deleteRoom.text)) {
-                                if let indexSetToDelete {
-                                    viewModel.deleteRooms(at: indexSetToDelete)
-                                }
-                            },
-                            secondaryButton: .cancel()
-                        )
-                    }
+                    .onDelete(perform: { viewModel.deleteRooms(at: $0) })
                 } header: {
                     Localized.ManageRelays.joinedRooms.view
                         .foregroundColor(.secondaryText)

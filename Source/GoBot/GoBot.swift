@@ -33,7 +33,7 @@ let greatestRequestedSequenceNumberFromGoBotKey = "greatestRequestedSequenceNumb
 /// is used as a cache to speed up fetching of posts (ADR #4). The GoBot acts as a gatekeeper to these two components,
 /// presenting a simpler interface for read and write operations, while internally it manages several threads and
 /// synchronization between GoSSB's internal database and the SQLite layer.
-class GoBot: Bot {
+class GoBot: Bot, @unchecked Sendable {
     
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
@@ -50,6 +50,10 @@ class GoBot: Bot {
     var identity: Identity? { self._identity }
     
     var isRestoring = false
+
+    func setRestoring(_ value: Bool) {
+        isRestoring = value
+    }
     
     var logFileUrls: [URL] {
         let url = URL(fileURLWithPath: self.bot.currentRepoPath.appending("/debug"))
@@ -177,6 +181,18 @@ class GoBot: Bot {
         
         Analytics.shared.trackDidDropDatabase()
     }
+    
+    private func guessIfRestoring() throws -> Bool {
+        guard database.isOpen(),
+            let config = config else {
+            throw BotError.notLoggedIn
+        }
+        
+        let numberOfPublishedMessagesInViewDB = try database.numberOfMessages(for: config.identity)
+        let numberOfPublishedMessagesInAppConfig = config.numberOfPublishedMessages
+        return numberOfPublishedMessagesInViewDB == 0 ||
+            numberOfPublishedMessagesInViewDB < numberOfPublishedMessagesInAppConfig
+    }
 
     // MARK: Login/Logout
     
@@ -192,7 +208,11 @@ class GoBot: Bot {
         completion(secret, nil)
     }
     
-    @MainActor func login(config: AppConfiguration) async throws {
+    @MainActor func login(
+        config: AppConfiguration,
+        fromOnboarding isLoggingInFromOnboarding: Bool = false
+    ) async throws {
+        Log.info("Logging in with identity \(config.secret.identity)")
         guard let network = config.network else {
             throw BotError.invalidAppConfiguration
         }
@@ -204,7 +224,6 @@ class GoBot: Bot {
             } else {
                 throw BotError.alreadyLoggedIn
             }
-            return
         }
         
         self.config = config
@@ -215,21 +234,23 @@ class GoBot: Bot {
         if database.isOpen() {
             await database.close()
         }
-        
+
         repoPrefix = try config.databaseDirectory()
         
-        try self.database.open(
-            path: repoPrefix,
-            user: secret.identity
-        )
+        try self.database.open(path: repoPrefix, user: secret.identity)
         
-        Log.shared.info("===> starting gobot with prefix: \(repoPrefix)")
+        isRestoring = isLoggingInFromOnboarding ? false : try guessIfRestoring()
+
+        if isRestoring {
+            Log.info("It seems like the user is restoring their feed. Disabling EBT replication to work around #847.")
+        }
         
         try bot.login(
             network: network,
             hmacKey: hmacKey,
             secret: secret,
-            pathPrefix: repoPrefix
+            pathPrefix: repoPrefix,
+            disableEBT: isRestoring
         )
         
         // Save GoBot version to disk in case we need to migrate in the future.
@@ -338,21 +359,21 @@ class GoBot: Bot {
     
     func joinedRooms() async throws -> [Room] {
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.getJoinedRooms()
+            try self.database.getJoinedRooms()
         }
         return try await task.value
     }
     
     func insert(room: Room) async throws {
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.insert(room: room)
+            try self.database.insert(room: room)
         }
         return try await task.value
     }
     
     func delete(room: Room) async throws {
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.delete(room: room)
+            try self.database.delete(room: room)
         }
         return try await task.value
     }
@@ -362,7 +383,7 @@ class GoBot: Bot {
             throw BotError.notLoggedIn
         }
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.getRegisteredAliasesByUser(user: identity)
+            try self.database.getRegisteredAliasesByUser(user: identity)
         }
         return try await task.value
     }
@@ -374,27 +395,21 @@ class GoBot: Bot {
         }
         
         let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
-            if self.bot.register(alias: alias, in: room) {
-                guard let url = URL(string: "https://" + alias + "." + room.address.host) else {
-                    throw GoBotError.unexpectedFault("Invalid URL")
-                }
-                return try self.database.insertRoomAlias(
-                    url: url,
-                    room: room,
-                    user: identity
-                )
-            } else {
-                // TODO: localize, better error messages i.e. in case of conflicts.
-                throw GoBotError.unexpectedFault("Failed to register room alias")
+            _ = try self.bot.register(alias: alias, in: room)
+            guard let url = URL(string: "https://" + alias + "." + room.address.host) else {
+                throw GoBotError.unexpectedFault("Invalid URL")
             }
+            return try self.database.insertRoomAlias(
+                url: url,
+                room: room,
+                user: identity
+            )
         }
         return try await task.value
     }
     
     func revoke(alias: RoomAlias) async throws {
-        
     }
-    
 
     private var _isSyncing = false
     var isSyncing: Bool { self._isSyncing }
@@ -456,7 +471,6 @@ class GoBot: Bot {
             self.bot.replicate(feed: feed)
         }
     }
-    
 
     // MARK: Refresh
 
@@ -1585,7 +1599,7 @@ class GoBot: Bot {
     
     func posts(matching filter: String) async throws -> [Message] {
         let task = Task.detached(priority: .high) {
-            return try self.database.posts(matching: filter)
+            try self.database.posts(matching: filter)
         }
         
         return try await task.result.get()
@@ -1654,8 +1668,8 @@ class GoBot: Bot {
                 completion(statistics)
             }
             
-            //commenting out because we don't need to be logging this much information - rabble Nov 9 2022
-            //Analytics.shared.trackStatistics(statistics.analyticsStatistics)
+            // commenting out because we don't need to be logging this much information - rabble Nov 9 2022
+            // Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
     }
     
