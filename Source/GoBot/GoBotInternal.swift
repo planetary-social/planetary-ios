@@ -105,6 +105,7 @@ class GoBotInternal {
 
     var currentRepoPath: String { self.repoPath }
     private var repoPath: String = "/tmp/FBTT/unset"
+    private var oldRepoPath: String = "/tmp/FBTT/unset"
     
     let name = "GoBot"
 
@@ -140,7 +141,7 @@ class GoBotInternal {
             }
         }
         
-        let oldRepoPath = pathPrefix.appending("/GoSbot")
+        self.oldRepoPath = pathPrefix.appending("/GoSbot")
         self.repoPath = pathPrefix.appending("/scuttlego")
         
         // TODO: device address enumeration (v6 and v4)
@@ -154,7 +155,7 @@ class GoBotInternal {
             HMACKey: hmacKey == nil ? "" : hmacKey!.string,
             KeyBlob: secret.jsonString()!,
             Repo: self.repoPath,
-            OldRepo: oldRepoPath,
+            OldRepo: self.oldRepoPath,
             ListenAddr: listenAddr,
             Hops: 1,
             SchemaVersion: ViewDatabase.schemaVersion,
@@ -502,12 +503,17 @@ class GoBotInternal {
         if hexRef.isEmpty {
             throw GoBotError.unexpectedFault("blobGet: could not make hex representation of blob reference")
         }
+         // first 2 chars are directory
+        let dir = String(hexRef.prefix(2))
+        // rest ist filename
+        let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
+        let rest = String(hexRef[restIdx...])
 
-        var u = URL(fileURLWithPath: self.repoPath)
-        u.appendPathComponent("raptor")
+        var u = URL(fileURLWithPath: self.oldRepoPath)
         u.appendPathComponent("blobs")
-        u.appendPathComponent("storage")
-        u.appendPathComponent(hexRef)
+        u.appendPathComponent("sha256")
+        u.appendPathComponent(dir)
+        u.appendPathComponent(rest)
        
         return u
     }

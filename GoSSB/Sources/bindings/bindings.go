@@ -87,7 +87,7 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 
 	go func() {
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
-			logger := config.Logger.WithField("blob", event.Id).WithField("size", event.Size)
+			logger := config.Logger.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
 			if err := onBlobDownloaded(event); err != nil {
 				logger.WithError(err).Error("error calling onBlobDownloaded")
 			} else {
