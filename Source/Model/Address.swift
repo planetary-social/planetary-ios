@@ -146,3 +146,17 @@ struct KnownPub: Hashable {
 }
 
 typealias KnownPubs = [KnownPub]
+
+/// A message type that announces the registering or revoking of an alias.
+struct RoomAliasAnnouncement: ContentCodable {
+    let type: ContentType
+    let action: RoomAliasActionType
+    let alias: String
+    let room: Identity
+    let aliasURL: String
+
+    enum RoomAliasActionType: String, Codable {
+        case registered
+        case revoked
+    }
+}

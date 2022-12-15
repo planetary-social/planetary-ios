@@ -379,18 +379,31 @@ class GoBot: Bot, @unchecked Sendable {
     }
     
     func registeredAliases() async throws -> [RoomAlias] {
+        guard let identity = _identity else {
+            throw BotError.notLoggedIn
+        }
         let task = Task.detached(priority: .userInitiated) {
-            try self.database.getRegisteredAliases()
+            try self.database.getRegisteredAliasesByUser(user: identity)
         }
         return try await task.value
     }
     
     func register(alias: String, in room: Room) async throws -> RoomAlias {
+        
+        guard let identity = _identity else {
+            throw BotError.notLoggedIn
+        }
+        
         let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
-                
-            try self.bot.register(alias: alias, in: room)
-            
-            return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room)
+            _ = try self.bot.register(alias: alias, in: room)
+            guard let url = URL(string: "https://" + alias + "." + room.address.host) else {
+                throw GoBotError.unexpectedFault("Invalid URL")
+            }
+            return try self.database.insertRoomAlias(
+                url: url,
+                room: room,
+                user: identity
+            )
         }
         return try await task.value
     }
