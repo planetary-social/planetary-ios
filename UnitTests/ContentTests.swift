@@ -228,7 +228,6 @@ class ContentTests: XCTestCase {
         XCTAssertEqual(roomAliasAnnouncement.aliasURL, "https://matt.hermies.club")
     }
     
-
     // TODO need to confirm string content to ensure everything was captured
     // prefix ![
     // suffix =.sha256)
