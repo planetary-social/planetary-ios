@@ -2913,8 +2913,8 @@ class ViewDatabase {
         ))
     }
     
-    /// Returns the `room_id` from the database for a given alias url. This will throw if a host cannot be extracted from `aliasURL` and will return
-    /// nil if there if the given `aliasURL` is not in the database.
+    /// Returns the `room_id` from the database for a given alias url. This will throw if a host cannot be extracted from
+    ///  `aliasURL` and will return `nil` if the given `aliasURL` is not in the database.
     ///
     /// - parameter aliasURL: The alias url that is being looked up (i.e. https://roomname.servername.com).
     func roomID(of aliasURL: String) throws -> Int64? {
