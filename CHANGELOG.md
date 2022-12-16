@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Disabled EBT when the user is restoring their feed to work around a bug in our pubs
 - Added new redesigned Profile screen. #681 #976 
 - Fixed a bug in macOS that prevented users from load the identity from the keychain. #978
+- Publish announce messages for room aliases #899
 
 ## [1.3.9] 2022-11-10
 
