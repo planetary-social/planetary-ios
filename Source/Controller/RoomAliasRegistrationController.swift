@@ -55,8 +55,7 @@ import Secrets
         // TODO: normalize
         guard let room = room else {
             alertMessageTitle = Localized.error.text
-            // TODO
-            alertMessage = "please select a room"
+            alertMessage = Localized.pleaseSelectRoom.text
             return
         }
         

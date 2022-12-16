@@ -199,6 +199,7 @@ enum Localized: String, Localizable, CaseIterable {
     case invitationRedeemed = "Invitation redeemed!"
     case addRoomAddressOrInvitation = "paste address or invitation"
     case joiningRoom = "Joining room..."
+    case pleaseSelectRoom = "Please select a room"
     
     case refreshSingular = "{{ count }} unread post!"
     case refreshPlural = "{{ count }} unread posts!"
