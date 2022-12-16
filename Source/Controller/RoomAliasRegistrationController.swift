@@ -21,7 +21,9 @@ import Secrets
     
     @Published var loadingMessage: String?
     
-    @Published var errorMessage: String?
+    @Published var alertMessage: String?
+    
+    @Published var alertMessageTitle: String?
     
     @Published var shouldDismiss = false
     
@@ -44,15 +46,17 @@ import Secrets
             self.rooms = try await bot.joinedRooms()
         } catch {
             Log.optional(error)
-            self.errorMessage = error.localizedDescription
+            self.alertMessageTitle = Localized.error.text
+            self.alertMessage = error.localizedDescription
         }
     }
     
     func register(_ desiredAlias: String, in room: Room?) {
         // TODO: normalize
         guard let room = room else {
+            alertMessageTitle = Localized.error.text
             // TODO
-            errorMessage = "please select a room"
+            alertMessage = "please select a room"
             return
         }
         
@@ -63,7 +67,8 @@ import Secrets
                 self.shouldDismiss = true
             } catch {
                 Log.optional(error)
-                self.errorMessage = error.localizedDescription
+                self.alertMessageTitle = Localized.error.text
+                self.alertMessage = error.localizedDescription
             }
             self.loadingMessage = nil
         }
@@ -76,10 +81,12 @@ import Secrets
                 let token = Keys.shared.get(key: .planetaryRoomToken)!
                 try await RoomInvitationRedeemer.redeem(token: token, at: "planetary.name", bot: bot)
                 await refresh()
-                self.errorMessage = Localized.invitationRedeemed.text
+                self.alertMessageTitle = Localized.success.text
+                self.alertMessage = Localized.invitationRedeemed.text
             } catch {
                 Log.optional(error)
-                self.errorMessage = error.localizedDescription
+                self.alertMessageTitle = Localized.error.text
+                self.alertMessage = error.localizedDescription
             }
             self.loadingMessage = nil
         }

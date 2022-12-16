@@ -15,8 +15,11 @@ import SwiftUI
     /// A loading message that should be displayed when it is not nil
     var loadingMessage: String? { get set }
     
-    /// An error message that should be displayed when it is not nil
-    var errorMessage: String? { get set }
+    /// An alert message that should be displayed when it is not nil
+    var alertMessage: String? { get set }
+    
+    /// An alert title that should be displayed when it is not nil
+    var alertMessageTitle: String? { get set }
     
     var shouldDismiss: Bool { get }
     
@@ -37,9 +40,9 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
     
     private var showAlert: Binding<Bool> {
         Binding {
-            viewModel.errorMessage != nil
+            viewModel.alertMessage != nil
         } set: { _ in
-            viewModel.errorMessage = nil
+            viewModel.alertMessage = nil
         }
     }
     
@@ -103,8 +106,8 @@ struct AddAliasView<ViewModel>: View where ViewModel: AddAliasViewModel {
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Localized.error.view,
-                message: Text(viewModel.errorMessage ?? "")
+                title: Text(viewModel.alertMessageTitle ?? ""),
+                message: Text(viewModel.alertMessage ?? "")
             )
         }
         .onAppear {
@@ -126,7 +129,9 @@ class AddAliasPreviewViewModel: AddAliasViewModel {
     
     var loadingMessage: String?
     
-    var errorMessage: String?
+    var alertMessage: String?
+    
+    var alertMessageTitle: String?
     
     var shouldDismiss = true
 
