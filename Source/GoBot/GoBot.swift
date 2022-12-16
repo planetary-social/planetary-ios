@@ -388,6 +388,12 @@ class GoBot: Bot, @unchecked Sendable {
         return try await task.value
     }
     
+    func identityFromAlias(url: URL) throws -> Identity? {
+        try self.database.identityFromAlias(
+            url: url
+        )
+    }
+    
     func register(alias: String, in room: Room) async throws -> RoomAlias {
         
         guard let identity = _identity else {

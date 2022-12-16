@@ -162,6 +162,10 @@ class FakeBot: Bot {
     
     func replicate(feed: FeedIdentifier) { }
     
+    func identityFromAlias(url: URL) throws -> Identity? {
+        return nil
+    }
+    
     required init() {}
     static let shared = FakeBot()
 

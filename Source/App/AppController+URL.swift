@@ -18,17 +18,29 @@ extension AppController {
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
 
-    func open(url: URL, completion: ((Bool) -> Void)? = nil) {
-        Log.info("open(url): \(url.absoluteString)")
-        if url.absoluteString.isHashtag {
-            self.pushChannelViewController(for: url.absoluteString)
-        } else if let identifier = url.identifier {
-            self.open(identifier: identifier)
-        } else if Star.isValid(invite: url.absoluteString) {
-            self.redeem(invite: url.absoluteString)
-        } else {
-            UIApplication.shared.open(url, options: [:], completionHandler: completion)
+    func open(url: URL, alias: String? = nil) -> Bool {
+        
+        do {
+            Log.info("open(url): \(url.absoluteString)")
+            if alias != nil, let identity = try Bots.current.identityFromAlias(url: url) {
+                self.open(identifier: identity)
+                return true
+            } else
+            if url.absoluteString.isHashtag {
+                self.pushChannelViewController(for: url.absoluteString)
+                return true
+            } else if let identifier = url.identifier {
+                self.open(identifier: identifier)
+                return true
+            } else if Star.isValid(invite: url.absoluteString) {
+                self.redeem(invite: url.absoluteString)
+                return true
+            }
+        } catch {
+            Log.error("Cannot fetch identity from alias: \(error.localizedDescription)")
+            return false
         }
+        return false
     }
     
     func open(string: String) {
@@ -64,6 +76,12 @@ extension AppController {
     // as essentially the same so the caller needs to signal intent
     func open(identity: Identity) {
         self.pushViewController(for: .about, with: identity)
+    }
+    
+    func open(_ url: URL,
+              options: [UIApplication.OpenExternalURLOptionsKey: Any],
+              completionHandler completion: ((Bool) -> Void)?)  {
+        
     }
     
     func redeem(invite: String) {

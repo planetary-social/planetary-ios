@@ -1890,6 +1890,7 @@
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomAliasAnnouncement+ViewDatabase.swift"; sourceTree = "<group>"; };
 		E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_registered.json; sourceTree = "<group>"; };
+		E021F69B294CBAF5000F6AF3 /* PlanetaryDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PlanetaryDebug.entitlements; sourceTree = "<group>"; };
 		E041A24B293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_revoked.json; sourceTree = "<group>"; };
 		E0A4AB1B294A52BC00A410CB /* PillButtonStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillButtonStyle.swift; sourceTree = "<group>"; };
 		E0A4AB20294A52C300A410CB /* RoomCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomCard.swift; sourceTree = "<group>"; };
@@ -2338,6 +2339,7 @@
 		5344D82221C4649700704A34 = {
 			isa = PBXGroup;
 			children = (
+				E021F69B294CBAF5000F6AF3 /* PlanetaryDebug.entitlements */,
 				C9BF623428F5B54700FD69A3 /* swiftgen.yml */,
 				C9489999278CCC3A009BE021 /* README.md */,
 				C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */,
@@ -5840,7 +5842,7 @@
 			baseConfigurationReference = C98A01422790B9EE00E29A97 /* Planetary.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
+				CODE_SIGN_ENTITLEMENTS = PlanetaryDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 387;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;

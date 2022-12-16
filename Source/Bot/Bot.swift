@@ -309,6 +309,10 @@ protocol Bot: AnyObject, Sendable {
     // MARK: Raw message
 
     func raw(of message: Message, completion: @escaping RawCompletion)
+    
+    //
+    
+    func identityFromAlias(url: URL) throws -> Identity? 
 }
 
 extension Bot {

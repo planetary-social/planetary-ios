@@ -1,4 +1,4 @@
-//
+
 //  ViewDatabase.swift
 //  FBTT
 //
@@ -823,12 +823,34 @@ class ViewDatabase {
         
         let aliasID = try db.run(
             roomAliases.insert(
-                colAliasURL <- url.absoluteString,
+                colAliasURL <- sanitizeURL(url),
                 colRoomID <- roomID,
                 colAuthorID <- userID
             )
         )
         return RoomAlias(id: aliasID, aliasURL: url, roomID: roomID, authorID: userID)
+    }
+    
+    /// Returns an identity for a given room alias
+    func identityFromAlias(url: URL) throws -> Identity? {
+        let db = try checkoutConnection()
+        var authorID: Int64
+        var identity: Identity?
+        
+        if let authorRow = try db.pluck(roomAliases.filter(colAliasURL == sanitizeURL(url))) {
+            authorID = authorRow[colID]
+            identity = try self.author(from: authorID)
+        }
+        return identity
+    }
+    
+    func sanitizeURL(_ url: URL) -> String {
+        
+        var sanitizedURL = url.absoluteString
+        if sanitizedURL.last == "/" {
+            sanitizedURL = String(sanitizedURL.dropLast())
+        }
+        return sanitizedURL
     }
     
     // MARK: moderation / delete

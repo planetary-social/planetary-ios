@@ -24,6 +24,25 @@ extension AppDelegate {
         }
         
         Log.info("Incoming URL: \(incomingURL)")
+        
+        var alias: String
+        
+        // Look for an alias in this format: https://alias.host.com
+        if let host = incomingURL.host,
+            incomingURL.path.replacingOccurrences(of: "/", with: "").isEmpty,
+            host.components(separatedBy: ".").count > 1,
+            let aliasComponent = host.components(separatedBy: ".").first {
+            
+            alias = aliasComponent
+            return AppController.shared.open(url: incomingURL, alias: alias)
+        // Look for an alias in this format: https://host.com/alias
+        } else if incomingURL.path.components(separatedBy: "/").count == 2,
+            let aliasComponent = incomingURL.path.components(separatedBy: "/").last {
+            
+            alias = aliasComponent
+            return AppController.shared.open(url: incomingURL, alias: alias)
+        }
+        
         if let identifier = Identifier.parse(publicLink: incomingURL) {
             Log.info("Identifier = \(identifier)")
             switch identifier.sigil {
@@ -45,4 +64,5 @@ extension AppDelegate {
         
         return false
     }
+
 }
