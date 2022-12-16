@@ -11,17 +11,36 @@ import CrashReporting
 import Logger
 import SwiftUI
 
-struct HomeView: View {
-    
+struct HomeView: View, HelpDrawerHost {
+    init(helpDrawerState: HelpDrawerState) {
+        self.helpDrawerState = helpDrawerState
+    }
+
+    @ObservedObject
+    private var helpDrawerState: HelpDrawerState
+
     private var feedStrategyStore = FeedStrategyStore()
 
     @EnvironmentObject
     private var botRepository: BotRepository
 
     @EnvironmentObject
-    private var helpDrawerState: HelpDrawerState
+    private var appController: AppController
 
-    private let helpDrawer = HelpDrawer.home
+    let helpDrawerType = HelpDrawer.home
+
+    func dismissDrawer(completion: (() -> Void)?) {
+        helpDrawerState.isShowingHomeHelpDrawer = false
+        // Unfortunately, there is no good way to know when the popover dismissed in SwiftUI
+        // So here I use a nasty simple trick to let the completion open the next drawer.
+        // Fortunately, we can get rid of this after we migrate the remaining screens to SwiftUI.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            completion?()
+        }
+    }
+
+    @SwiftUI.Environment(\.horizontalSizeClass)
+    var horizontalSizeClass
 
     @State
     private var messages: [Message]?
@@ -72,9 +91,9 @@ struct HomeView: View {
                                     ForEach(messages) { message in
                                         Button {
                                             if let contact = message.content.contact {
-                                                AppController.shared.open(identity: contact.contact)
+                                                appController.open(identity: contact.contact)
                                             } else {
-                                                AppController.shared.open(identifier: message.id)
+                                                appController.open(identifier: message.id)
                                             }
                                         } label: {
                                             MessageView(message: message)
@@ -106,6 +125,41 @@ struct HomeView: View {
                 FloatingButton(count: numberOfNewItems, isLoading: isLoadingFromScratch)
             }
         }
+        .background(Color.appBg)
+        .navigationTitle(Localized.home.text)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button {
+                    helpDrawerState.isShowingHomeHelpDrawer = true
+                } label: {
+                    Image.navIconHelp
+                }
+                .popover(isPresented: $helpDrawerState.isShowingHomeHelpDrawer) {
+                    Group {
+                        if #available(iOS 16.0, *) {
+                            HelpDrawerCoordinator.helpDrawerView(for: self) {
+                                helpDrawerState.isShowingHomeHelpDrawer = false
+                            }
+                            .presentationDetents([.medium])
+                        } else {
+                            HelpDrawerCoordinator.helpDrawerView(for: self) {
+                                helpDrawerState.isShowingHomeHelpDrawer = false
+                            }
+                        }
+                    }
+                    .onAppear {
+                        Analytics.shared.trackDidShowScreen(screenName: helpDrawerType.screenName)
+                        HelpDrawerCoordinator.didShowHelp(for: helpDrawerType)
+                    }
+                }
+                Button {
+                    Analytics.shared.trackDidTapButton(buttonName: "compose")
+                    showCompose()
+                } label: {
+                    Image.navIconWrite
+                }
+            }
+        }
         .alert(
             Localized.error.text,
             isPresented: shouldShowAlert,
@@ -124,46 +178,12 @@ struct HomeView: View {
             }
         )
         .task {
-            await loadFromScratch()
+            if messages == nil {
+                await loadFromScratch()
+            }
         }
         .refreshable {
             await loadFromScratch()
-        }
-        .environmentObject(botRepository)
-        .navigationTitle(Localized.home.text)
-        .background(Color.appBg)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button {
-                    helpDrawerState.isShowingHomeHelpDrawer = true
-                } label: {
-                    Image.navIconHelp
-                }
-                .popover(isPresented: $helpDrawerState.isShowingHomeHelpDrawer) {
-                    Group {
-                        if #available(iOS 16.0, *) {
-                            HelpDrawerCoordinator.helpDrawerView(for: helpDrawer) {
-                                helpDrawerState.isShowingHomeHelpDrawer = false
-                            }
-                            .presentationDetents([.medium])
-                        } else {
-                            HelpDrawerCoordinator.helpDrawerView(for: helpDrawer) {
-                                helpDrawerState.isShowingHomeHelpDrawer = false
-                            }
-                        }
-                    }
-                    .onAppear {
-                        Analytics.shared.trackDidShowScreen(screenName: helpDrawer.screenName)
-                        HelpDrawerCoordinator.didShowHelp(for: helpDrawer)
-                    }
-                }
-                Button {
-                    Analytics.shared.trackDidTapButton(buttonName: "compose")
-                    showCompose()
-                } label: {
-                    Image.navIconWrite
-                }
-            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didChangeHomeFeedAlgorithm)) { _ in
             Task.detached {
@@ -188,7 +208,7 @@ struct HomeView: View {
         .onAppear {
             CrashReporting.shared.record("Did Show Home")
             Analytics.shared.trackDidShowScreen(screenName: "home")
-            HelpDrawerCoordinator.showFirstTimeHelp(for: helpDrawer, state: helpDrawerState)
+            HelpDrawerCoordinator.showFirstTimeHelp(for: helpDrawerType, state: helpDrawerState)
         }
     }
 
@@ -198,7 +218,7 @@ struct HomeView: View {
             NotificationCenter.default.post(.didPublishPost(post))
         }
         let navController = UINavigationController(rootViewController: controller)
-        AppController.shared.present(navController, animated: true)
+        appController.present(navController, animated: true)
     }
 
     func loadFromScratch() async {
@@ -262,7 +282,7 @@ struct HomeView: View {
     }
 
     private func updateBadgeNumber(value: Int) {
-        let navigationController = AppController.shared.mainViewController?.homeFeatureViewController
+        let navigationController = appController.mainViewController?.homeFeatureViewController
         if value > 0 {
             navigationController?.tabBarItem.badgeValue = "\(value)"
         } else {
@@ -307,8 +327,16 @@ struct FeedStrategyStore {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
-            .environmentObject(BotRepository.fake)
-            .environmentObject(HelpDrawerState())
+        Group {
+            NavigationView {
+                HomeView(helpDrawerState: HelpDrawerState())
+            }
+            NavigationView {
+                HomeView(helpDrawerState: HelpDrawerState())
+            }
+            .preferredColorScheme(.dark)
+        }
+        .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

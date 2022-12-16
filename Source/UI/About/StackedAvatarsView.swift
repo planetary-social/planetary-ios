@@ -8,14 +8,17 @@
 
 import SwiftUI
 
+/// This view displays a stacked list of avatars as we use it in when displaying replies in a post, and a list of
+/// followers/follows/blocks in a profile.
 struct StackedAvatarsView: View {
+    /// The list of avatars to display
     var avatars: [ImageMetadata]
-    var size: CGFloat = 26
-    var border: CGFloat = 2
 
-    private var totalSize: CGFloat {
-        size + border * 2
-    }
+    /// The size of the circle avatar (it doesn't counts the border)
+    var size: CGFloat = 26
+
+    /// The size of the border. Use zero if you don't want any background
+    var border: CGFloat = 2
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -31,6 +34,10 @@ struct StackedAvatarsView: View {
         .background(
             Color.hashtagBg.cornerRadius(99)
         )
+    }
+
+    private var totalSize: CGFloat {
+        size + border * 2
     }
 
     private func matrix(_ numberOfItems: Int) -> [CGFloat] {

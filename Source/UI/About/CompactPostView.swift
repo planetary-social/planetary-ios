@@ -10,13 +10,16 @@ import SwiftUI
 
 struct CompactPostView: View {
 
+    let identifier: MessageIdentifier
+
     var post: Post {
         didSet {
             blobs = post.anyBlobs
         }
     }
 
-    init(post: Post) {
+    init(identifier: MessageIdentifier, post: Post) {
+        self.identifier = identifier
         self.post = post
         self.blobs = post.anyBlobs
         self.markdown = post.text.parseMarkdown()
@@ -34,6 +37,9 @@ struct CompactPostView: View {
 
     @State
     private var truncatedSize = CGSize.zero
+
+    @EnvironmentObject
+    private var appController: AppController
 
     func updateShouldShowReadMore() {
         shouldShowReadMore = intrinsicSize != truncatedSize
@@ -78,12 +84,16 @@ struct CompactPostView: View {
                 }
             if shouldShowReadMore {
                 ZStack(alignment: .center) {
-                    Text(Localized.readMore.text.uppercased())
-                        .font(.caption)
-                        .foregroundColor(.secondaryTxt)
-                        .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
-                        .background(Color.hashtagBg)
-                        .cornerRadius(4)
+                    Button {
+                        appController.open(string: identifier)
+                    } label: {
+                        Text(Localized.readMore.text.uppercased())
+                            .font(.caption)
+                            .foregroundColor(.secondaryTxt)
+                            .padding(EdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6))
+                            .background(Color.hashtagBg)
+                            .cornerRadius(4)
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
@@ -139,12 +149,12 @@ struct CompactPostView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             VStack {
-                CompactPostView(post: shortPost)
-                CompactPostView(post: longPostWithBlobs)
+                CompactPostView(identifier: .null, post: shortPost)
+                CompactPostView(identifier: .null, post: longPostWithBlobs)
             }
             VStack {
-                CompactPostView(post: shortPost)
-                CompactPostView(post: longPostWithBlobs)
+                CompactPostView(identifier: .null, post: shortPost)
+                CompactPostView(identifier: .null, post: longPostWithBlobs)
             }
             .preferredColorScheme(.dark)
         }

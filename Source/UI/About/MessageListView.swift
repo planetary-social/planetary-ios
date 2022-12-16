@@ -17,6 +17,9 @@ struct MessageListView: View {
     @EnvironmentObject
     private var botRepository: BotRepository
 
+    @EnvironmentObject
+    private var appController: AppController
+
     @State
     private var messages = [Message]()
     
@@ -38,9 +41,9 @@ struct MessageListView: View {
                     ForEach(messages, id: \.self) { message in
                         Button {
                             if let contact = message.content.contact {
-                                AppController.shared.open(identity: contact.contact)
+                                appController.open(identity: contact.contact)
                             } else {
-                                AppController.shared.open(identifier: message.id)
+                                appController.open(identifier: message.id)
                             }
                         } label: {
                             MessageView(message: message)
@@ -167,6 +170,7 @@ struct MessageListView_Previews: PreviewProvider {
         }
         .padding()
         .background(Color.cardBackground)
-        .environmentObject(BotRepository.shared)
+        .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

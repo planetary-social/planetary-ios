@@ -12,7 +12,7 @@ import Analytics
 import CrashReporting
 
 class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UISearchBarDelegate,
-    UniversalSearchDelegate, HelpDrawerHost {
+    UniversalSearchDelegate, HelpDrawerViewControllerHost {
     
     private lazy var newPostBarButtonItem: UIBarButtonItem = {
         let image = UIImage.navIconWrite

@@ -35,6 +35,9 @@ struct HashtagView: View {
     @EnvironmentObject
     private var botRepository: BotRepository
 
+    @EnvironmentObject
+    private var appController: AppController
+
     var body: some View {
         Group {
             if let messages = messages {
@@ -46,7 +49,7 @@ struct HashtagView: View {
                             } else {
                                 ForEach(messages) { message in
                                     Button {
-                                        AppController.shared.open(identifier: message.id)
+                                        appController.open(identifier: message.id)
                                     } label: {
                                         MessageView(message: message)
                                             .onAppear {
@@ -137,5 +140,6 @@ struct HashtagView_Previews: PreviewProvider {
             HashtagView(hashtag: Hashtag(name: "technology"))
         }
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

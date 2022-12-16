@@ -119,17 +119,19 @@ class MainViewController: UITabBarController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         homeFeatureViewController = FeatureViewController(
             rootViewController: UIHostingController(
-                rootView: HomeView()
+                rootView: HomeView(helpDrawerState: helpDrawerState)
                     .environmentObject(BotRepository.shared)
-                    .environmentObject(helpDrawerState)
+
+                
+                    .environmentObject(AppController.shared)
             ),
             tabBarItemImageName: "tab-icon-home"
         )
         channelsFeatureViewController = FeatureViewController(
             rootViewController: UIHostingController(
-                rootView: HashtagListView()
+                rootView: HashtagListView(helpDrawerState: helpDrawerState)
                     .environmentObject(BotRepository.shared)
-                    .environmentObject(helpDrawerState)
+                    .environmentObject(AppController.shared)
             ),
             tabBarItemImageName: "tab-icon-channels"
         )

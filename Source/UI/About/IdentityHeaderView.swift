@@ -23,6 +23,9 @@ struct IdentityHeaderView: View {
     @EnvironmentObject
     private var botRepository: BotRepository
 
+    @EnvironmentObject
+    private var appController: AppController
+
     private var shouldShowBio: Bool {
         if let about = about {
             return about.description?.isEmpty == false
@@ -60,7 +63,7 @@ struct IdentityHeaderView: View {
                             guard let image = about?.image else {
                                 return
                             }
-                            AppController.shared.open(string: image.link)
+                            appController.open(string: image.link)
                         } label: {
                             if extendedHeader {
                                 AvatarView(metadata: about?.image, size: 87)
@@ -256,5 +259,6 @@ struct IdentityHeaderView_Previews: PreviewProvider {
         .padding()
         .background(Color.cardBackground)
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

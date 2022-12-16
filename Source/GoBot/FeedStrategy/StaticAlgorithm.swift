@@ -33,6 +33,4 @@ final class StaticAlgorithm: NSObject, FeedStrategy {
     init?(coder: NSCoder) {
         nil
     }
-
-    
 }

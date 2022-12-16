@@ -63,7 +63,7 @@ struct MessageButtonStyle_Previews: PreviewProvider {
 
     static var previews: some View {
         Button {
-
+            print("Clicked")
         } label: {
             MessageView(message: message)
         }

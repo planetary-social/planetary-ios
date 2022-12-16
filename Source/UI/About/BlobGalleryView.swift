@@ -15,6 +15,9 @@ struct BlobGalleryView: View {
     @State
     private var selectedBlob: Blob
 
+    @EnvironmentObject
+    private var appController: AppController
+
     init(blobs: [Blob]) {
         self.blobs = blobs
         self.selectedBlob = blobs.first ?? Blob(identifier: .null)
@@ -33,7 +36,7 @@ struct BlobGalleryView: View {
             }
         }
         .onTapGesture {
-            AppController.shared.open(string: selectedBlob.identifier)
+            appController.open(string: selectedBlob.identifier)
         }
         .tabViewStyle(.page)
         .aspectRatio(1, contentMode: .fit)
@@ -63,5 +66,6 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
         }
         .padding()
         .background(Color.cardBackground)
+        .environmentObject(AppController.shared)
     }
 }
