@@ -25,6 +25,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"time"
 	"unsafe"
@@ -34,9 +35,20 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	kilobyte = 1000
+	megabyte = 1000 * kilobyte
+	gigabyte = 1000 * megabyte
+)
+const (
+	memoryLimitInBytes = 1 * gigabyte
+)
+
 func init() {
 	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
 	log = kitlog.With(log, "warning", "pre-init")
+
+	debug.SetMemoryLimit(memoryLimitInBytes)
 }
 
 var (

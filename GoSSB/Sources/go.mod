@@ -4,7 +4,7 @@ require (
 	github.com/boreq/errors v0.1.0
 	github.com/go-kit/kit v0.10.0
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20221214130436-5858e57bca2c
+	github.com/planetary-social/scuttlego v0.0.0-20221216132835-e1e3cc69db77
 	github.com/stretchr/testify v1.7.0
 	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
 	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
@@ -14,7 +14,6 @@ require (
 require (
 	filippo.io/edwards25519 v1.0.0-rc.1 // indirect
 	github.com/DataDog/zstd v1.4.1 // indirect
-	github.com/RoaringBitmap/roaring v0.6.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/badger/v3 v3.2011.1 // indirect
@@ -34,14 +33,10 @@ require (
 	github.com/karrick/gopool v1.2.2 // indirect
 	github.com/keks/persist v0.0.0-20210520094901-9bdd97c1fad2 // indirect
 	github.com/libp2p/go-reuseport v0.0.1 // indirect
-	github.com/machinebox/progress v0.2.0 // indirect
-	github.com/mschoch/smat v0.0.0-20160514031455-90eadee771ae // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rs/cors v1.7.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/ssb-ngi-pointer/go-metafeed v1.1.1 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
-	github.com/willf/bitset v1.1.10 // indirect
 	github.com/zeebo/bencode v1.0.0 // indirect
 	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8 // indirect
 	go.cryptoscope.co/margaret v0.4.3 // indirect
@@ -56,7 +51,6 @@ require (
 	golang.org/x/crypto v0.0.0-20220210151621-f4118a5b28e2 // indirect
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
 	golang.org/x/text v0.3.6 // indirect
 	gonum.org/v1/gonum v0.0.0-20190911200027-40d3308efe80 // indirect
@@ -70,4 +64,4 @@ replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-2020030
 
 replace go.mindeco.de => github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7
 
-replace go.cryptoscope.co/ssb => github.com/planetary-social/ssb v0.2.2-0.20220907154211-c7dc092193fc
+replace go.cryptoscope.co/ssb => github.com/planetary-social/ssb v0.2.2-0.20221215175110-f4588d5494a2
