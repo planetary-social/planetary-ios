@@ -678,16 +678,10 @@
 		5BA32ED92915930000744984 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32ED72915930000744984 /* ActivityView.swift */; };
 		5BA32EDC291597DE00744984 /* BotRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32EDB291597DE00744984 /* BotRepository.swift */; };
 		5BA32EDD291597DE00744984 /* BotRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA32EDB291597DE00744984 /* BotRepository.swift */; };
-		5BA45C232943CF150036217C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3AB293447BA000393AC /* HomeView.swift */; };
-		5BA45C252943CFE70036217C /* EmptyHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B50BBBD293E1935001D4C9A /* EmptyHomeView.swift */; };
-		5BA6E3B529366E90000393AC /* HashtagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3B329366E8F000393AC /* HashtagView.swift */; };
 		5BA6E3B729366ED4000393AC /* HashtagAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3B629366ED4000393AC /* HashtagAlgorithm.swift */; };
 		5BA6E3B829366ED4000393AC /* HashtagAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3B629366ED4000393AC /* HashtagAlgorithm.swift */; };
-		5BA6E3BB29368C34000393AC /* EmptyPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3B929368C34000393AC /* EmptyPostsView.swift */; };
 		5BA6E3C02937907E000393AC /* Notification+Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3BF2937907E000393AC /* Notification+Post.swift */; };
 		5BA6E3C12937907E000393AC /* Notification+Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3BF2937907E000393AC /* Notification+Post.swift */; };
-		5BA6E3C42938178E000393AC /* HashtagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3C22938178E000393AC /* HashtagListView.swift */; };
-		5BA6E3C729397486000393AC /* CompactHashtagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3C529397486000393AC /* CompactHashtagView.swift */; };
 		5BA6E3C929397CA9000393AC /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3C829397CA9000393AC /* LoadingView.swift */; };
 		5BA6E3CA29397CA9000393AC /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3C829397CA9000393AC /* LoadingView.swift */; };
 		5BA6E3CC2939A96C000393AC /* FloatingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6E3CB2939A96C000393AC /* FloatingButton.swift */; };
@@ -4193,7 +4187,6 @@
 				237D057E23351E4600973D63 /* Hashtag.swift in Sources */,
 				C937883428C154BF003FCCC2 /* Pub+ViewDatabase.swift in Sources */,
 				C9724B682809D70F000EBCCD /* AppController+URL.swift in Sources */,
-				5BA6E3BB29368C34000393AC /* EmptyPostsView.swift in Sources */,
 				C9724B952809EA6D000EBCCD /* Bool+YesOrNo.swift in Sources */,
 				110CA7F62910DEBB003BF90A /* TextFieldWithInsets.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
@@ -4354,7 +4347,6 @@
 				C9724BAE2809EBE4000EBCCD /* MarkdownStyler.swift in Sources */,
 				23EF5AAF249D185E00469977 /* BearerBanListAPI.swift in Sources */,
 				C9724B832809E934000EBCCD /* AboutView.swift in Sources */,
-				5BA6E3C729397486000393AC /* CompactHashtagView.swift in Sources */,
 				53E26C5B23039631009240B2 /* Dictionary+Transform.swift in Sources */,
 				5BE8A30E2919C9E800C4A38E /* IdentityListView.swift in Sources */,
 				C9724B632809D6CE000EBCCD /* MessageTableViewDataSource.swift in Sources */,
@@ -4364,7 +4356,6 @@
 				C9724B1B2809D370000EBCCD /* DebugTableViewCell.swift in Sources */,
 				C9724B292809D43B000EBCCD /* UIViewController+NavigationItems.swift in Sources */,
 				0A3880092475AAE000777843 /* PushAPI.swift in Sources */,
-				5BA6E3B529366E90000393AC /* HashtagView.swift in Sources */,
 				C9724B972809EA7D000EBCCD /* Comparable+Clamped.swift in Sources */,
 				C9C3788A27C6CC3200238B58 /* XCTestCase+Combine.swift in Sources */,
 				C982CBDF28353DE700D8963F /* ContactReplyView.swift in Sources */,
@@ -4395,7 +4386,6 @@
 				C9724BD12809EDE2000EBCCD /* CommunityCellView.swift in Sources */,
 				C9724B5D2809D62A000EBCCD /* MessagePaginatedCollectionViewDataSource.swift in Sources */,
 				C9724B642809D6DC000EBCCD /* NotificationCellView.swift in Sources */,
-				5BA45C232943CF150036217C /* HomeView.swift in Sources */,
 				C9724BBE2809ECCC000EBCCD /* UITextView+Verse.swift in Sources */,
 				53E29CE022D80424008A2CB1 /* Hashtag+String.swift in Sources */,
 				C9724BB72809EC68000EBCCD /* (null) in Sources */,
@@ -4448,7 +4438,6 @@
 				C9724B782809E7C1000EBCCD /* AppController+Push.swift in Sources */,
 				5BA32EDD291597DE00744984 /* BotRepository.swift in Sources */,
 				C9134DDB28184AF700595D49 /* (null) in Sources */,
-				5BA6E3C42938178E000393AC /* HashtagListView.swift in Sources */,
 				C9724BE02809EE5A000EBCCD /* Tappable.swift in Sources */,
 				C9F1C84927C92842005A3228 /* Localizable.swift in Sources */,
 				C9724B212809D3FE000EBCCD /* PeerConnectionAnimation.swift in Sources */,
@@ -4536,7 +4525,6 @@
 				C9421EBE2888A71B00A4C86D /* LinearGradient+Planetary.swift in Sources */,
 				C9F53837286F6E220015A146 /* Message+ViewDatabase.swift in Sources */,
 				2346ECB422141D9E009A94CB /* Bot.swift in Sources */,
-				5BA45C252943CFE70036217C /* EmptyHomeView.swift in Sources */,
 				C9724B6E2809E735000EBCCD /* MessageUIView.swift in Sources */,
 				5B373839288B09A30017756B /* ExtendedAboutCellView.swift in Sources */,
 				C9A2DE3527D0038700EAFA73 /* UIViewController+Alert.swift in Sources */,

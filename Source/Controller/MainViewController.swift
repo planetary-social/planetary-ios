@@ -121,8 +121,6 @@ class MainViewController: UITabBarController {
             rootViewController: UIHostingController(
                 rootView: HomeView(helpDrawerState: helpDrawerState)
                     .environmentObject(BotRepository.shared)
-
-                
                     .environmentObject(AppController.shared)
             ),
             tabBarItemImageName: "tab-icon-home"
