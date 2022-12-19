@@ -38,10 +38,9 @@ import (
 const (
 	kilobyte = 1000
 	megabyte = 1000 * kilobyte
-	gigabyte = 1000 * megabyte
 )
 const (
-	memoryLimitInBytes = 1 * gigabyte
+	memoryLimitInBytes = 500 * megabyte
 )
 
 func init() {
