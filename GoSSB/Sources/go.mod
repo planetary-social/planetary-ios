@@ -4,7 +4,7 @@ require (
 	github.com/boreq/errors v0.1.0
 	github.com/go-kit/kit v0.10.0
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20221216132835-e1e3cc69db77
+	github.com/planetary-social/scuttlego v0.0.0-20221219150127-c0db3822a4b3
 	github.com/stretchr/testify v1.7.0
 	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
 	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
@@ -25,6 +25,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/flatbuffers v1.12.0 // indirect
+	github.com/google/subcommands v1.0.1 // indirect
 	github.com/google/wire v0.5.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -50,9 +51,12 @@ require (
 	go.opencensus.io v0.22.5 // indirect
 	golang.org/x/crypto v0.0.0-20220210151621-f4118a5b28e2 // indirect
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
+	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
 	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/tools v0.1.1 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gonum.org/v1/gonum v0.0.0-20190911200027-40d3308efe80 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect

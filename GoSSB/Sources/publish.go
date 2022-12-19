@@ -17,8 +17,10 @@ func ssbPublish(content string) *C.char {
 		return nil
 	}
 
-	cmd := commands.PublishRaw{
-		Content: []byte(content),
+	cmd, err := commands.NewPublishRaw([]byte(content))
+	if err != nil {
+		err = errors.Wrap(err, "error creating a command")
+		return nil
 	}
 
 	id, err := service.App.Commands.PublishRaw.Handle(cmd)
