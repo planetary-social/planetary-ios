@@ -89,6 +89,10 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	n.cleanup = cleanup
 	n.repository = config.DataDirectory
 
+	go n.printStats(ctx, config.Logger, service)
+	//go n.captureProfileCPU(ctx, config)
+	//go n.captureProfileMemory(ctx, config)
+
 	go func() {
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
 			logger := config.Logger.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
@@ -106,9 +110,6 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 			// todo what to do if the service terminates for some reason? should it be restarted or should we just cleanup node?
 		}
 	}()
-
-	go n.printStats(ctx, config.Logger, service)
-	//go n.captureProfileCPU(ctx, config)
 
 	return nil
 }
@@ -186,7 +187,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
-	logger := NewKitlogLogger(kitlogLogger, "gossb", logging.LevelDebug) // todo set level to debug
+	logger := NewKitlogLogger(kitlogLogger, "gossb", logging.LevelTrace) // todo set level to debug
 
 	// todo do something with hops
 	// todo do something service pubs?
@@ -256,15 +257,26 @@ func (n *Node) printStats(ctx context.Context, logger logging.Logger, service di
 				logger = logger.WithField("speed", fmt.Sprintf("%f msgs/min", speed))
 			}
 
+			var m runtime.MemStats
+			runtime.ReadMemStats(&m)
+
+			logger = logger.WithField("mem_alloc", fmt.Sprintf("%v MB", bToMb(m.Alloc)))
+			logger = logger.WithField("mem_sys", fmt.Sprintf("%v MB", bToMb(m.Sys)))
+			logger = logger.WithField("num_gc", m.NumGC)
+
 			logger.Debug("stats")
 		}
 
 		select {
-		case <-time.After(5 * time.Second):
+		case <-time.After(30 * time.Second):
 		case <-ctx.Done():
 			return
 		}
 	}
+}
+
+func bToMb(b uint64) uint64 {
+	return b / 1000 / 1000
 }
 
 func (n *Node) captureProfileCPU(ctx context.Context, config di.Config) {
@@ -287,6 +299,35 @@ func (n *Node) captureProfileCPU(ctx context.Context, config di.Config) {
 		}
 
 		pprof.StopCPUProfile()
+
+		if err := f.Close(); err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (n *Node) captureProfileMemory(ctx context.Context, config di.Config) {
+	for {
+		name := path.Join(config.DataDirectory, fmt.Sprintf("%d.heapprofile", time.Now().Unix()))
+		f, err := os.Create(name)
+		if err != nil {
+			panic(err)
+		}
+
+		err = pprof.WriteHeapProfile(f)
+		if err != nil {
+			panic(err)
+		}
+
+		if err := f.Close(); err != nil {
+			panic(err)
+		}
+
+		select {
+		case <-time.After(30 * time.Second):
+		case <-ctx.Done():
+			return
+		}
 	}
 }
 
