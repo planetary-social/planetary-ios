@@ -104,7 +104,7 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	}()
 
 	go n.printStats(ctx, config.Logger, service)
-	go n.captureProfileCPU(ctx, config)
+	//go n.captureProfileCPU(ctx, config)
 
 	return nil
 }
