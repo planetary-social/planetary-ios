@@ -43,9 +43,10 @@ type BotConfig struct {
 }
 
 type Node struct {
-	mutex   sync.Mutex
-	service *di.Service
-	cancel  context.CancelFunc
+	mutex      sync.Mutex
+	service    *di.Service
+	cancel     context.CancelFunc
+	repository string
 }
 
 func NewNode() *Node {
@@ -84,6 +85,7 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 
 	n.service = &service
 	n.cancel = cancel
+	n.repository = config.DataDirectory
 
 	go func() {
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
@@ -123,6 +125,17 @@ func (n *Node) Stop() error {
 	n.cancel = nil
 
 	return nil
+}
+
+func (n *Node) Repository() (string, error) {
+	n.mutex.Lock()
+	defer n.mutex.Unlock()
+
+	if !n.isRunning() {
+		return "", errors.New("node isn't running")
+	}
+
+	return n.repository, nil
 }
 
 func (n *Node) Get() (*di.Service, error) {

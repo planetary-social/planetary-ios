@@ -1,64 +1,125 @@
 package tests
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
 	"github.com/planetary-social/scuttlego/service/domain/refs"
-	"sync"
+	"io/fs"
+	"os"
+	"path/filepath"
 )
 
+const everyone = 0777
+
 type TestKeys struct {
-	keys map[string]identity.Private
-	lock sync.Mutex
+	storage *Storage
 }
 
-func NewTestKeys() *TestKeys {
+func NewTestKeys(storage *Storage) *TestKeys {
 	return &TestKeys{
-		keys: make(map[string]identity.Private),
+		storage: storage,
 	}
 }
 
 func (k *TestKeys) CreateNamedKey(name string) error {
-	k.lock.Lock()
-	defer k.lock.Unlock()
-
-	if _, ok := k.keys[name]; ok {
-		return fmt.Errorf("key with name '%s' already exists", name)
-	}
-
 	iden, err := identity.NewPrivate()
 	if err != nil {
 		return errors.Wrap(err, "error creating a new key")
 	}
 
-	k.keys[name] = iden
+	if err := k.storage.Put(name, iden.PrivateKey()); err != nil {
+		return errors.Wrap(err, "error storing the key")
+	}
+
 	return nil
 }
 
-func (k *TestKeys) ListNamedKeys() map[string]refs.Identity {
-	k.lock.Lock()
-	defer k.lock.Unlock()
+func (k *TestKeys) ListNamedKeys() (map[string]refs.Identity, error) {
+	names, err := k.storage.List()
+	if err != nil {
+		return nil, errors.Wrap(err, "error listing keys")
+	}
 
 	result := make(map[string]refs.Identity)
-	for name, iden := range k.keys {
+
+	for _, name := range names {
+		iden, err := k.load(name)
+		if err != nil {
+			return nil, errors.Wrap(err, "error loading a key")
+		}
+
 		ref, err := refs.NewIdentityFromPublic(iden.Public())
 		if err != nil {
-			panic(err)
+			return nil, errors.Wrap(err, "error creating a ref")
 		}
 		result[name] = ref
 	}
-	return result
+
+	return result, nil
 }
 
 func (k *TestKeys) GetNamedKey(name string) (identity.Private, error) {
-	k.lock.Lock()
-	defer k.lock.Unlock()
+	return k.load(name)
+}
 
-	iden, ok := k.keys[name]
-	if !ok {
-		return identity.Private{}, errors.New("key not found")
+func (k *TestKeys) load(name string) (identity.Private, error) {
+	b, err := k.storage.Get(name)
+	if err != nil {
+		return identity.Private{}, errors.Wrap(err, "error retrieving from storage")
+	}
+
+	iden, err := identity.NewPrivateFromBytes(b)
+	if err != nil {
+		return identity.Private{}, errors.Wrap(err, "error creating an identity")
 	}
 
 	return iden, nil
+}
+
+type Storage struct {
+	directory string
+}
+
+func NewStorage(directory string) *Storage {
+	return &Storage{directory: directory}
+}
+
+func (s *Storage) Put(name string, data []byte) error {
+	if err := os.MkdirAll(s.directory, everyone); err != nil {
+		return errors.Wrap(err, "error creating the directory")
+	}
+
+	return os.WriteFile(s.filepath(name), data, everyone)
+}
+
+func (s *Storage) Get(name string) ([]byte, error) {
+	b, err := os.ReadFile(s.filepath(name))
+	if err != nil {
+		return nil, errors.Wrap(err, "error reading file")
+	}
+
+	return b, nil
+}
+
+func (s *Storage) List() ([]string, error) {
+	var names []string
+	if err := filepath.Walk(s.directory, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return errors.Wrap(err, "received an error")
+		}
+
+		if !info.IsDir() {
+			names = append(names, info.Name())
+		}
+
+		return nil
+	}); err != nil {
+		return nil, errors.Wrap(err, "walk error")
+	}
+
+	return names, nil
+}
+
+func (s *Storage) filepath(name string) string {
+	return filepath.Join(s.directory, name)
 }
