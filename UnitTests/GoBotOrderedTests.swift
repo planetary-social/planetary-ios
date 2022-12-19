@@ -127,7 +127,7 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertEqual(statistics.repo.feedCount, 0)
             XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
             XCTAssertEqual(statistics.repo.messageCount, 0)
-            XCTAssertEqual(statistics.repo.lastHash, "")
+            XCTAssertEqual(statistics.repo.lastHash, "last_hash_is_not_supported")
             exSecondStats.fulfill()
         }
         self.wait(for: [exSecondStats], timeout: 10)
@@ -151,7 +151,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.statistics { statistics in
             XCTAssertEqual(statistics.db.lastReceivedMessage, 0)
             XCTAssertEqual(statistics.repo.messageCount, 1)
-            XCTAssertEqual(statistics.repo.lastHash, messageHash)
+            XCTAssertEqual(statistics.repo.lastHash, "last_hash_is_not_supported")
             exStats.fulfill()
         }
         self.wait(for: [exStats], timeout: 10)
