@@ -357,6 +357,8 @@ class GoBot: Bot, @unchecked Sendable {
         }
     }
     
+    // MARK: Rooms and Aliases
+    
     func joinedRooms() async throws -> [Room] {
         let task = Task.detached(priority: .userInitiated) {
             try self.database.getJoinedRooms()

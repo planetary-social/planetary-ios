@@ -310,7 +310,7 @@ protocol Bot: AnyObject, Sendable {
 
     func raw(of message: Message, completion: @escaping RawCompletion)
     
-    //
+    // MARK: Alias
     
     func identityFromAlias(url: URL) throws -> Identity? 
 }

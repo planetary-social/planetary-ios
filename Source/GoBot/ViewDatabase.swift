@@ -1,4 +1,3 @@
-
 //  ViewDatabase.swift
 //  FBTT
 //
