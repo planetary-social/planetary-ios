@@ -394,7 +394,7 @@
 "YourNetwork.highlightedWord" = "xafarderia";
 
 /* Reply.one */
-"Reply.one" = "{{ count }} reply";
+"Reply.one" = "{{ count }} resposta";
 
 /* Reply.many */
-"Reply.many" = "{{ count }} replies";
+"Reply.many" = "{{ count }} respostes";
