@@ -113,7 +113,7 @@ func (n *Node) Stop() error {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
-	if !n.IsRunning() {
+	if !n.isRunning() {
 		return errors.New("node isn't running")
 	}
 
